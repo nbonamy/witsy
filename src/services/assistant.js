@@ -8,7 +8,7 @@ export default class {
 
   constructor(config) {
     this.config = config
-    this.llm = new OpenAI(config)
+    this.llm = null
     this.chat = null
     this.newChat()
   }
@@ -31,6 +31,14 @@ export default class {
 
   setChat(chat) {
     this.chat = chat
+  }
+
+  initLlm() {
+    this.llm = new OpenAI(store.config)
+  }
+
+  hasLlm() {
+    return this.llm !== null
   }
 
   async route(prompt) {

@@ -5,7 +5,7 @@ export default class {
   constructor(config) {
     this.config = config
     this.client = new OpenAI({
-      //apiKey: config.openAI.apiKey,
+      apiKey: config.openAI.apiKey,
       dangerouslyAllowBrowser: true
     })
   }
