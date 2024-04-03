@@ -1,0 +1,119 @@
+<template>
+  <div class="chats">
+    <div v-for="c in store.chats" :key="c.createdAt" class="chat" :class="c.createdAt == chat.createdAt ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png?20230903231118" class="logo" />
+      <div class="info">
+        <div class="title">{{ c.title }}</div>
+        <div class="subtitle">{{ c.subtitle() }}</div>
+      </div>
+    </div>
+    <Overlay v-if="showMenu" @click="closeContextMenu" />
+    <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+    </div>
+</template>
+
+<script setup>
+
+import { ref } from 'vue'
+import { saveStore, store } from '../services/store'
+import Chat from '../models/chat'
+import Overlay from './Overlay.vue'
+import ContextMenu from './ContextMenu.vue'
+import useEventBus from '../composables/useEventBus'
+const { emitEvent } = useEventBus()
+
+const props = defineProps({
+  chat: Chat
+})
+
+const showMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+const targetRow = ref({})
+const contextMenuActions = [
+  { label: 'Delete', action: 'delete' },
+]
+
+const onSelectChat = (chat) => {
+  emitEvent('selectChat', chat)
+}
+
+const showContextMenu = (event, user) => {
+  showMenu.value = true
+  targetRow.value = user
+  menuX.value = event.clientX
+  menuY.value = event.clientY
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false;
+}
+
+const handleActionClick = (action) => {
+  closeContextMenu()
+  if (action === 'delete') {
+
+    // fist remove
+    let index = store.chats.indexOf(targetRow.value)
+    store.chats.splice(index, 1)
+    saveStore()
+
+    // if current chat
+    if (props.chat.createdAt === targetRow.value.createdAt) {
+      emitEvent('newChat')
+    }
+  }
+}
+
+</script>
+
+<style scoped>
+
+.chats {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  overflow-y: scroll;
+}
+
+.chat {
+  margin: 4px 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 8px;
+}
+
+.chat.selected {
+  background-color: #c9c9c8;
+}
+
+.chat .info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chat .info * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chat .logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+.chat .title {
+  font-weight: bold;
+  font-size: 11pt;
+}
+
+.chat .subtitle {
+  font-size: 10pt;
+}
+
+</style>

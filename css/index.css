@@ -1,0 +1,16 @@
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: auto;
+  user-select: none;
+}
+
+pre:has(code) {
+  overflow-x: auto;
+  background-color: black;
+  color: white;
+  padding: 12px;
+}

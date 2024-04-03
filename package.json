@@ -1,0 +1,46 @@
+{
+  "name": "witty-ai",
+  "productName": "witty-ai",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.3.1",
+    "@electron-forge/maker-deb": "^7.3.1",
+    "@electron-forge/maker-rpm": "^7.3.1",
+    "@electron-forge/maker-squirrel": "^7.3.1",
+    "@electron-forge/maker-zip": "^7.3.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
+    "@electron-forge/plugin-fuses": "^7.2.0",
+    "@electron-forge/plugin-vite": "^7.3.1",
+    "@electron/fuses": "^1.7.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "electron": "29.1.6",
+    "vite": "^5.0.12",
+    "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Nicolas Bonamy",
+    "email": "nicolas@bonamy.fr"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap-icons-vue": "^1.11.3",
+    "electron-dl": "^3.5.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-storage": "^1.0.7",
+    "highlight.js": "^11.9.0",
+    "mitt": "^3.0.1",
+    "openai": "^4.32.1",
+    "vue": "^3.4.21",
+    "vue-markdown-render": "^2.1.1"
+  }
+}
