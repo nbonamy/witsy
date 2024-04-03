@@ -7,21 +7,18 @@
     </div>
     <ChatList :chat="chat" />
     <div class="footer">
-      <div class="icon-text" @click="onSetup">
+      <div class="icon-text" @click="onSettings">
         <BIconGearFill />
-        <span>Setup</span>
+        <span>Settings</span>
       </div>
     </div>
-    <Settings id="settings"/>
   </div>
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
-import Settings from './Settings.vue'
 
 import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
@@ -30,8 +27,8 @@ const props = defineProps({
   chat: Chat
 })
 
-const onSetup = () => {
-  document.querySelector('#settings').showModal()
+const onSettings = () => {
+  emitEvent('openSettings')
 }
 
 const onNewChat = () => {

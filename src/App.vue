@@ -2,6 +2,7 @@
   <div class="main">
     <Sidebar :chat="assistant.chat" />
     <ChatArea :chat="assistant.chat" />
+    <Settings id="settings"/>
   </div>
 </template>
 
@@ -11,10 +12,11 @@
 import { ref, onMounted } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatArea from './components/ChatArea.vue'
+import Settings from './components/Settings.vue'
 
 // bus
 import useEventBus from './composables/useEventBus'
-const { onEvent } = useEventBus()
+const { onEvent, emitEvent } = useEventBus()
 
 // store
 import { store, loadStore } from './services/store'
@@ -30,6 +32,7 @@ onMounted(() => {
   onEvent('newChat', onNewChat)
   onEvent('selectChat', onSelectChat)
   onEvent('sendPrompt', onSendPrompt)
+  onEvent('openSettings', onOpenSettings)
 })
 
 const onNewChat = () => {
@@ -40,7 +43,23 @@ const onSelectChat = (chat) => {
   assistant.value.setChat(chat)
 }
 
+const onOpenSettings = () => {
+  document.querySelector('#settings').showModal()
+}
+
 const onSendPrompt = async (prompt) => {
+
+  // do we need to init llm
+  if (!assistant.value.hasLlm()) {
+    if (store.config.openAI.apiKey) {
+      assistant.value.initLlm()
+    } else {
+      emitEvent('openSettings')
+      return
+    }
+  }
+
+  // 
   assistant.value.prompt(prompt)
 }
 
