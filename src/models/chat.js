@@ -30,7 +30,11 @@ export default class Chat {
   }
 
   subtitle() {
-    return this.messages.length > 1 ? this.lastMessage().content?.text : ''
+    if (this.messages.length > 2 && this.messages[2].type == 'text') {
+      return this.messages[2].content
+    } else {
+      return ''
+    }
   }
 
   setTitle(title) {
