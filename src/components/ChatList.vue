@@ -106,7 +106,7 @@ const handleActionClick = (action) => {
 }
 
 .chat.selected {
-  background-color: #c9c9c8;
+  background-color: var(--sidebar-selected-color);
 }
 
 .chat .info {
@@ -122,8 +122,8 @@ const handleActionClick = (action) => {
 }
 
 .chat .logo {
-  width: 32px;
-  height: 32px;
+  width: var(--sidebar-logo-size);
+  height: var(--sidebar-logo-size);
   margin-right: 8px;
 }
 

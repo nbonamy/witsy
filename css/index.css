@@ -1,7 +1,12 @@
 
 :root {
+
+  --hightlight-color: #4a99fe;
+
   --sidebar-width: 450px;
-  --sidebar-bg-color: #e1e0df
+  --sidebar-bg-color: #e1e0df;
+  --sidebar-selected-color: #c9c9c8;
+  --sidebar-logo-size: 32px;
 }
 
 * {

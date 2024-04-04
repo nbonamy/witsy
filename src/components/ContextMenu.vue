@@ -33,7 +33,7 @@ const emitAction = (action) => {
 }
 
 .context-menu div:hover {
-  background-color: #4a99fe;
+  background-color: var(--highlight-color);
   color: white;
 }
 
