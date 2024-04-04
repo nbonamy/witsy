@@ -31,7 +31,7 @@ form .group input, form .group select, form .group textarea {
   width: 100%;
 }
 
-form .group input {
+form .group input, form .group textarea {
   width: calc(100% - 16px);
 }
 
