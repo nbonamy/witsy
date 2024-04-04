@@ -13,7 +13,8 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
-- [X] Copy code button
+- [x] OpenAI links in settings
+- [x] Copy code button
 - [x] Chat list ordering
 - [x] OpenAI model choice
 - [x] CSS variables

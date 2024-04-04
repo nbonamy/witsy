@@ -6,6 +6,11 @@ form .group {
   margin: 8px;
 }
 
+form .group:has(.subgroup) {
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
 form .group label {
   min-width: 150px;
   margin-right: 10px;
@@ -22,4 +27,13 @@ form .group input, form .group select {
 
 form .group input:focus, form .group select:focus {
   outline: 2px solid #83aaf2;
+}
+
+form .subgroup {
+  font-size: 10pt;
+}
+
+form .subgroup a {
+  display: inline-block;
+  margin-top: 4px;
 }
