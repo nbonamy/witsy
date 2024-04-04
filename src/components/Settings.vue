@@ -6,7 +6,10 @@
       <main>
         <div class="group">
           <label>OpenAI API Key</label>
-          <input type="text" v-model="openAI_apiKey" />
+          <div class="subgroup">
+            <input type="text" v-model="openAI_apiKey" /><br/>
+            <a href="https://platform.openai.com/api-keys">Create an API key</a>
+          </div>
         </div>
         <div class="group">
           <label>OpenAI Chat Model</label>
@@ -16,9 +19,12 @@
         </div>
         <div class="group">
           <label>OpenAI Image Model</label>
-          <select v-model="openAI_image_model">
-            <option v-for="model in openAI_image_models" :value="model.value">{{ model.name }}</option>
-          </select>
+          <div class="subgroup">
+            <select v-model="openAI_image_model">
+              <option v-for="model in openAI_image_models" :value="model.value">{{ model.name }}</option>
+            </select><br/>
+            <a href="https://openai.com/pricing">OpenAI pricing</a>
+          </div>
         </div>
       </main>
       <footer>
