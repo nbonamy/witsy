@@ -15,7 +15,8 @@ export default class Chat {
     // default
     this.uuid = uuidv4()
     this.title = obj || 'New Chat'
-    this.createdAt = new Date()
+    this.createdAt = Date.now()
+    this.lastModified = Date.now()
     this.messages = []
   
   }
@@ -24,6 +25,7 @@ export default class Chat {
     this.uuid = obj.uuid || uuidv4()
     this.title = obj.title
     this.createdAt = obj.createdAt
+    this.lastModified = obj.lastModified || obj.createdAt
     this.messages = []
     for (let msg of obj.messages) {
       let message = new Message(msg)
@@ -45,6 +47,7 @@ export default class Chat {
 
   addMessage(message) {
     this.messages.push(message)
+    this.lastModified = Date.now()
   }
 
   lastMessage() {

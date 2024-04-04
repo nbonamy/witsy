@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 const divChats = ref(null)
-const chatsReversed = computed(() => store.chats.toReversed())
+const chatsReversed = computed(() => store.chats.toSorted((a,b) => b.lastModified - a.lastModified))
 
 const showMenu = ref(false)
 const menuX = ref(0)
