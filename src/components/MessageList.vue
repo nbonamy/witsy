@@ -1,6 +1,6 @@
 <template>
   <div class="messages" ref="divMessages">
-    <div v-for="message in messages" :key="message.createdAt" class="message" :class="message.role">
+    <div v-for="message in messages" :key="message.uuid" class="message" :class="message.role">
       <div v-if="message.role != 'system'" class="body">
         <div v-if="message.type == 'text'">
           <Loader v-if="message.content === null" class="text" />
@@ -24,7 +24,6 @@ import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
 
 import useEventBus from '../composables/useEventBus'
-import { BIconCloudArrowDown } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 const divMessages = ref(null)

@@ -41,6 +41,7 @@
     "highlight.js": "^11.9.0",
     "mitt": "^3.0.1",
     "openai": "^4.32.1",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-markdown-render": "^2.1.1"
   }

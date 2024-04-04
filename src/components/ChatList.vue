@@ -1,6 +1,6 @@
 <template>
   <div class="chats" ref="divChats">
-    <div v-for="c in chatsReversed" :key="c.createdAt" class="chat" :class="c.createdAt == chat.createdAt ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+    <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png?20230903231118" class="logo" />
       <div class="info">
         <div class="title">{{ c.title }}</div>
@@ -73,7 +73,7 @@ const handleActionClick = (action) => {
     store.save()
 
     // if current chat
-    if (props.chat.createdAt === targetRow.value.createdAt) {
+    if (props.chat.uuid === targetRow.value.uuid) {
       emitEvent('newChat')
     }
   }
