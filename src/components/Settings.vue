@@ -30,7 +30,6 @@ const openAI_apiKey = ref(store.config.openAI?.apiKey || '')
 const openAI_model = ref(store.config.openAI?.model || '')
 
 const onSubmit = () => {
-  console.log(openAI_apiKey.value)
   store.config.openAI.apiKey = openAI_apiKey.value
   store.config.openAI.model = openAI_model.value
   store.save()
