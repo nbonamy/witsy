@@ -23,6 +23,10 @@ store.save = () => {
   fs.writeFileSync(settingsFilePath(), JSON.stringify(store.config))
 }
 
+store.cleanEmptyChats = () => {
+  store.chats = store.chats.filter((chat) => chat.messages.length > 1)
+}
+
 function historyFilePath() {
   return path.join(userDataPath, 'history.json')
 }
