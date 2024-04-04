@@ -1,17 +1,34 @@
 
+import { v4 as uuidv4 } from 'uuid'
+
 export default class Message {
 
   constructor(role, obj) {
+
+    // json
+    if (typeof role === 'object') {
+      this.fromJson(role)
+      return
+    }
+
+    // default
+    this.uuid = uuidv4()
     this.createdAt = new Date()
     this.role = role
     this.attachment = null
     this.type = 'unknown'
     if (typeof obj === 'string') {
       this.setText(obj)
-    } else if (typeof obj === 'object') {
-      this.type = obj.type
-      this.content = obj.content
     }
+  }
+
+  fromJson(obj) {
+    this.uuid = obj.uuid || uuidv4()
+    this.createdAt = obj.createdAt
+    this.role = obj.role
+    this.type = obj.type
+    this.content = obj.content
+    this.attachment = obj.attachment
   }
 
   setText(text) {

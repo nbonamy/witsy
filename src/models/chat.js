@@ -1,4 +1,5 @@
 
+import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
 export default class Chat {
@@ -12,6 +13,7 @@ export default class Chat {
     }
 
     // default
+    this.uuid = uuidv4()
     this.title = obj || 'New Chat'
     this.createdAt = new Date()
     this.messages = []
@@ -19,12 +21,12 @@ export default class Chat {
   }
 
   fromJson(obj) {
+    this.uuid = obj.uuid || uuidv4()
     this.title = obj.title
     this.createdAt = obj.createdAt
     this.messages = []
     for (let msg of obj.messages) {
-      let message = new Message(msg.role, msg)
-      message.createdAt = new Date(msg.createdAt)
+      let message = new Message(msg)
       this.messages.push(message)
     }
   }
