@@ -25,6 +25,7 @@ dialog header {
 
 dialog main {
   padding: 24px;
+  background-color: white;
 }
 
 dialog footer {
@@ -33,6 +34,7 @@ dialog footer {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  background-color: white;
 }
 
 dialog footer button {

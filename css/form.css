@@ -16,6 +16,11 @@ form .group label {
   margin-right: 10px;
   font-weight: bold;
   font-size: 11pt;
+  text-align: right;
+}
+
+form .group:has(.subgroup) label {
+  margin-top: 4px;
 }
 
 form .group input, form .group select {
