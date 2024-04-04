@@ -1,5 +1,5 @@
 <template>
-  <div class="messages">
+  <div class="messages" ref="divMessages">
     <div v-for="message in messages" :key="message.createdAt" class="message" :class="message.role">
       <div v-if="message.role != 'system'" class="body">
         <vue-markdown v-if="message.type == 'text'" class="text" :source="message.content || '...'" :options="mdOptions" />
@@ -12,8 +12,14 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
+import { ref, onMounted, nextTick } from 'vue'
 import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
+
+import useEventBus from '../composables/useEventBus'
+const { onEvent } = useEventBus()
+
+const divMessages = ref(null)
 
 defineProps({
   messages: Array
@@ -28,6 +34,16 @@ const mdOptions = {
     }
     return '' // use external default escaping
   }
+}
+
+onMounted(() => {
+  onEvent('newChunk', onNewChunk)
+})
+
+const onNewChunk = () => {
+  nextTick(() => {
+    divMessages.value.scrollTop = divMessages.value.scrollHeight
+  })
 }
 
 const onDownload = (message) => {
