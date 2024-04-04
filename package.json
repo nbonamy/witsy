@@ -11,8 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "postinstall": "electron-builder install-app-deps",
-		"build": "electron-builder --mac --windows --linux",
-		"release": "electron-builder --mac --windows --linux --publish always"
+    "build": "electron-builder --mac --windows --linux",
+    "release": "electron-builder --mac --windows --linux --publish always"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
@@ -40,7 +40,6 @@
     "bootstrap-icons-vue": "^1.11.3",
     "electron-dl": "^3.5.2",
     "electron-squirrel-startup": "^1.0.0",
-    "electron-storage": "^1.0.7",
     "highlight.js": "^11.9.0",
     "mitt": "^3.0.1",
     "openai": "^4.32.1",
