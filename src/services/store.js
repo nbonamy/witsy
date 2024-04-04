@@ -41,15 +41,20 @@ function loadHistory() {
       store.chats.push(chat)
     }
   } catch (error) {
-    console.log('Error retrieving user data', error)
+    if (error.code !== 'ENOENT') {
+      console.log('Error retrieving history data', error)
+    }
   }
 }
 
 function loadSettings(defaults) {
+  let data = '{}'
   try {
-    const data = fs.readFileSync(settingsFilePath(), 'utf-8')
-    store.config = {...defaults, ...JSON.parse(data)}
+    data = fs.readFileSync(settingsFilePath(), 'utf-8')
   } catch (error) {
-    console.log('Error retrieving user data', error)
+    if (error.code !== 'ENOENT') {
+      console.log('Error retrieving settings data', error)
+    }
   }
+  store.config = {...defaults, ...JSON.parse(data)}
 }

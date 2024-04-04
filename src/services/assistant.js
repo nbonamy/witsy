@@ -34,7 +34,7 @@ export default class {
   }
 
   initLlm() {
-    this.llm = new OpenAI(store.config)
+    this.llm = new OpenAI(this.config)
   }
 
   hasLlm() {
