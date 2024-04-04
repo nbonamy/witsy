@@ -12,7 +12,7 @@ module.exports = {
       config: {},
     },
     {
-      name: '@electron-forge/maker-zip',
+      name: '@electron-forge/maker-dmg',
       platforms: ['darwin'],
     },
     {
@@ -61,4 +61,16 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'nbonamy',
+          name: 'witty-ai'
+        },
+        prerelease: true
+      }
+    }
+  ]
 };
