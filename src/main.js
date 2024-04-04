@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { download } = require('electron-dl');
+const process = require('node:process');
 const path = require('node:path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -29,7 +30,9 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.DEBUG) {
+    mainWindow.webContents.openDevTools();
+  }
   return mainWindow;
 };
 
