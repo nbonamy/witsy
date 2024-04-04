@@ -69,6 +69,7 @@ const handleActionClick = (action) => {
 
     // fist remove
     let index = store.chats.indexOf(targetRow.value)
+    store.chats[index].delete()
     store.chats.splice(index, 1)
     store.save()
 

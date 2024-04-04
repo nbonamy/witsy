@@ -1,4 +1,6 @@
 
+import { ipcRenderer } from 'electron'
+import { v4 as uuidv4 } from 'uuid'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import OpenAI from '../services/openai'
@@ -98,9 +100,26 @@ export default class {
   }
 
   async generateImage(prompt, callback) {
+
+    // generate 
     let response = await this.llm.image(prompt)
-    this.chat.lastMessage().setImage(response.url)
-    if (callback) callback(response.url)
+
+    // we need to download it locally
+    let filename = `${uuidv4()}.png`
+    filename = ipcRenderer.sendSync('download', {
+      url: response.url,
+      properties: {
+        filename: filename,
+        directory: 'userData',
+        subdir: 'images',
+        prompt: false
+      }
+    })
+
+    // save
+    filename = `file://${filename}`
+    this.chat.lastMessage().setImage(filename)
+    if (callback) callback(filename)
   }
 
   async getTitle() {

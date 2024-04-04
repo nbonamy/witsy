@@ -6,7 +6,7 @@
         <vue-markdown v-else class="text" :source="message.content" :options="mdOptions" />
       </div>
       <div v-if="message.type == 'image'" class="image-container">
-        <img :src="message.content" class="image" />
+        <img :src="imageUrl" class="image" />
         <BIconDownload class="download" @click="onDownload(message)" />
       </div>
     </div>
@@ -16,13 +16,27 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
+import { computed } from 'vue'
 import Message from '../models/message.js'
 import Loader from './Loader.vue'
 import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
 
-defineProps({
+const props = defineProps({
   message: Message
+})
+
+const imageUrl = computed(() => {
+  if (props.message.type !== 'image' || typeof props.message.content !== 'string') {
+    return null
+  } else if (props.message.content.startsWith('http')) {
+    return props.message.content
+  } else if (props.message.content.startsWith('file://')) {
+    //TODO: custom protocol to re-enable websecurity
+    return props.message.content.replace('file://', 'file://')
+  } else {
+    return 'data:image/png;base64,' + props.message.content
+  }
 })
 
 const mdOptions = {
@@ -42,11 +56,9 @@ const mdOptions = {
 
 const onDownload = (message) => {
   ipcRenderer.send('download', {
-    payload: {
-      url: message.content,
-      properties: {
-        filename: 'image.png',
-      }
+    url: message.content,
+    properties: {
+      filename: 'image.png',
     }
   })
 }
