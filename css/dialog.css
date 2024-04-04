@@ -1,6 +1,6 @@
 
 dialog {
-  background-color: #ececec;
+  background-color: white;
   border: 1px solid #a8a8a8;
   border-radius: 16px;
   padding: 0px;
@@ -20,21 +20,21 @@ dialog header {
   color: #474747;
   font-size: 11pt;
   padding: 8px;
-  border-bottom: 0.5px solid #474747;
+  background-color: var(--dialog-bg-color);
+  border-bottom: 0.5px solid var(--dialog-separator-color);
 }
 
 dialog main {
   padding: 24px;
-  background-color: white;
 }
 
 dialog footer {
-  padding: 24px;
-  padding-top: 0px;
+  padding: 16px;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  background-color: white;
+  background-color: var(--dialog-bg-color);
+  border-bottom: 0.5px solid var(--dialog-separator-color);
 }
 
 dialog footer button {
