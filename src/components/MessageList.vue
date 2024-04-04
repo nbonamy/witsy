@@ -6,7 +6,10 @@
           <Loader v-if="message.content === null" class="text" />
           <vue-markdown v-else class="text" :source="message.content" :options="mdOptions" />
         </div>
-        <img  v-if="message.type == 'image'" :src="message.content" class="image" @click="onDownload(message)"/>
+        <div v-if="message.type == 'image'" class="image-container">
+          <img :src="message.content" class="image" />
+          <BIconDownload class="download" @click="onDownload(message)" />
+        </div>
       </div>
     </div>
   </div>
@@ -21,6 +24,7 @@ import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
 
 import useEventBus from '../composables/useEventBus'
+import { BIconCloudArrowDown } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 const divMessages = ref(null)
@@ -92,7 +96,8 @@ const onDownload = (message) => {
 }
 
 .message .image {
-  width: 75%;
+  width: 100%;
+  max-width: 400px;
   margin-top: 16px;
   border-radius: 8px;
 }
@@ -114,6 +119,28 @@ const onDownload = (message) => {
 .message .body:has(.image) {
   padding: 0px;
   background-color: transparent;
+}
+
+.message .image-container {
+  position: relative;
+  width: 75%;
+}
+
+.message .download {
+  display: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.66);
+  top: 24px;
+  right: 12px;
+  cursor: pointer;
+  font-size: 10pt;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+}
+
+.message .image-container:hover .download {
+  display: block;
 }
 
 </style>
