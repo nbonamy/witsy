@@ -12,3 +12,4 @@ Electron based ChatGPT desktop application
 - [ ] Global shortcut for assistants
 - [ ] Copy code button
 - [ ] Execute generated code (??)
+- [ ] Proper database (SQLite3) storage (??)
