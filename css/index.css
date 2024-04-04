@@ -18,9 +18,19 @@ body {
   user-select: none;
 }
 
-pre:has(code) {
-  overflow-x: auto;
-  background-color: black;
-  color: white;
-  padding: 12px;
+code, pre, code * {
+  font-family: Söhne Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
+  font-size: 10pt;
 }
+
+pre.hljs {
+  overflow-x: auto;
+  padding: 12px;
+  padding-bottom: 16px;
+  overflow: auto;
+}
+
+code[class=language-plaintext] {
+  white-space:pre-line
+}
+

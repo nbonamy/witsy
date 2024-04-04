@@ -1,16 +1,12 @@
-code, pre, code * {
-  font-family: Söhne Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-  font-size: 10pt;
-}
 
-code[class=language-plaintext] {
-  white-space:pre-line
+.hljs {
+  background-color: rgb(13,13,13);
+  color: #fff;
 }
 
 code.hljs, code[class*=language-], pre[class*=language-] {
   word-wrap: normal;
   background: none;
-  color: #fff;
   -webkit-hyphens: none;
   hyphens: none;
   line-height: 1.5;
