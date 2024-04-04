@@ -1,6 +1,6 @@
 {
   "name": "witty-ai",
-  "productName": "witty-ai",
+  "productName": "Witty AI",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
