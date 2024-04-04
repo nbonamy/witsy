@@ -2,7 +2,10 @@
   <div class="messages" ref="divMessages">
     <div v-for="message in messages" :key="message.createdAt" class="message" :class="message.role">
       <div v-if="message.role != 'system'" class="body">
-        <vue-markdown v-if="message.type == 'text'" class="text" :source="message.content || '...'" :options="mdOptions" />
+        <div v-if="message.type == 'text'">
+          <Loader v-if="message.content === null" class="text" />
+          <vue-markdown v-else class="text" :source="message.content" :options="mdOptions" />
+        </div>
         <img  v-if="message.type == 'image'" :src="message.content" class="image" @click="onDownload(message)"/>
       </div>
     </div>
@@ -13,6 +16,7 @@
 
 import { ipcRenderer } from 'electron'
 import { ref, onMounted, nextTick } from 'vue'
+import Loader from './Loader.vue'
 import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
 
