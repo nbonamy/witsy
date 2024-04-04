@@ -109,11 +109,11 @@ const handleActionClick = (action) => {
 
 .chat .title {
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 10.5pt;
 }
 
 .chat .subtitle {
-  font-size: 10pt;
+  font-size: 9pt;
 }
 
 </style>
