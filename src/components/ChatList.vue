@@ -74,7 +74,7 @@ const handleActionClick = (action) => {
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .chat {
