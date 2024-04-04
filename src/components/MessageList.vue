@@ -1,5 +1,5 @@
 <template>
-  <div class="messages" ref="divMessages">
+  <div class="messages" :class="chatTheme" ref="divMessages">
     <div v-for="message in messages" :key="message.uuid">
       <MessageItem :message="message" />
     </div>
@@ -8,13 +8,16 @@
 
 <script setup>
 
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { store } from '../services/store'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '../composables/useEventBus'
 const { onEvent } = useEventBus()
 
 const divMessages = ref(null)
+
+const chatTheme = computed(() => store.config.appearance.chat.theme)
 
 defineProps({
   messages: Array

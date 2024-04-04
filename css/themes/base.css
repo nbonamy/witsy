@@ -1,0 +1,46 @@
+
+.message {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.message .body {
+  margin: 0px 32px; 
+}
+
+.message .text {
+  user-select: text;
+  font-size: 11pt;
+}
+
+.message .image {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 16px;
+  border-radius: 8px;
+}
+
+.message .image-container {
+  position: relative;
+}
+
+.message img {
+  background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
+}
+
+.message .download {
+  display: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.66);
+  top: 24px;
+  right: 12px;
+  cursor: pointer;
+  font-size: 10pt;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+}
+
+.message .image-container:hover .download {
+  display: block;
+}

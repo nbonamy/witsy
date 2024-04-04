@@ -3,7 +3,7 @@
 
   --highlight-color: #4a99fe;
 
-  --sidebar-width: 450px;
+  --sidebar-width: 300px;
   --sidebar-bg-color: #e1e0df;
   --sidebar-selected-color: #c9c9c8;
   --sidebar-logo-size: 32px;
@@ -23,7 +23,7 @@ body {
 }
 
 code, pre, code * {
-  font-family: Söhne Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
+  font-family: Monaco,Andale Mono,Ubuntu Mono,monospace !important;
   font-size: 10pt;
 }
 

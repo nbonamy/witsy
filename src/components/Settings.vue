@@ -23,6 +23,13 @@
           </ul>
           <div id="tab-content-General" class="content">
             <div class="group">
+              <label>Chat theme</label>
+              <select v-model="general_chatTheme">
+                <option value="openai">OpenAI</option>
+                <option value="conversation">Conversation</option>
+              </select>
+            </div>
+            <div class="group">
               <label>Default instructions</label>
               <div class="subgroup">
                 <textarea v-model="general_defaultInstructions" />
@@ -72,6 +79,7 @@ import OpenAI from '../services/openai'
 import defaults from '../../defaults/settings.json'
 
 const general_defaultInstructions = ref(store.config.instructions.default || '')
+const general_chatTheme = ref(store.config.appearance.chat.theme || 'openai')
 const openAI_apiKey = ref(store.config.openAI?.apiKey || '')
 const openAI_chat_model = ref(store.config.openAI?.models?.chat || '')
 const openAI_image_model = ref(store.config.openAI?.models?.image || '')
@@ -114,6 +122,7 @@ const onKeyChange = () => {
 
 const onSubmit = () => {
   store.config.instructions.default = general_defaultInstructions.value
+  store.config.appearance.chat.theme = general_chatTheme.value
   store.config.openAI.apiKey = openAI_apiKey.value
   store.config.openAI.models = {
     chat: openAI_chat_model.value,

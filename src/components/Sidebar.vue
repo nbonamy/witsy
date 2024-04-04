@@ -42,6 +42,7 @@ const onNewChat = () => {
   width: var(--sidebar-width);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   height: 100vh;
   background-color: var(--sidebar-bg-color);
   border-right: 1px solid #d0cfce;
