@@ -1,4 +1,5 @@
 
+import { ipcRenderer } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
@@ -52,6 +53,17 @@ export default class Chat {
 
   lastMessage() {
     return this.messages[this.messages.length - 1]
+  }
+
+  delete() {
+    for (let message of this.messages) {
+      if (message.type === 'image' && typeof message.content === 'string') {
+        ipcRenderer.send('delete', { path: message.content })
+      }
+      if (typeof message.attachment == 'string') {
+        ipcRenderer.send('delete', { path: message.attachment })
+      }
+    }
   }
 
 }

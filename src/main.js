@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { download } = require('electron-dl');
 const process = require('node:process');
 const path = require('node:path');
+const fs = require('node:fs');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -19,6 +20,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
   });
 
@@ -67,18 +69,46 @@ ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
 })
 
-ipcMain.on('download', async (event, { payload }) => {
+ipcMain.on('delete', (event, payload) => {
+  try {
+    let path = payload.path;
+    if (path.startsWith('file://')) {
+      path = path.slice(7);
+    }
+    fs.unlinkSync(path);
+    event.returnValue = true;
+  } catch (error) {
+    console.error('Error while deleting file', error);
+    event.returnValue = false;
+  }
+})
+
+ipcMain.on('download', async (event, payload) => {
+
+  // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
-  const defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split('/').pop();
-  let customURL = dialog.showSaveDialogSync({
-    defaultPath: `${defaultPath}/${defaultFileName}`
-  });
+  let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
+  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split('/').pop();
+  if (properties.subdir) {
+    defaultPath = path.join(defaultPath, properties.subdir);
+    if (!fs.existsSync(defaultPath)) {
+      fs.mkdirSync(defaultPath, { recursive: true })
+    }
+  }
+
+  // now prompt or not
+  let customURL = path.join(defaultPath, defaultFileName);
+  if (properties.prompt !== false) {
+    customURL = dialog.showSaveDialogSync({
+      defaultPath: customURL
+    });
+  }
   if (customURL) {
     let filePath = customURL.split('/');
     let filename = `${filePath.pop()}`;
     let directory = filePath.join('/');
     properties = { ...properties, directory, filename };
+    //console.log(`downloading ${payload.url} to ${customURL}`)
     await download(BrowserWindow.getFocusedWindow(),
       payload.url, {
       ...properties,
@@ -89,6 +119,7 @@ ipcMain.on('download', async (event, { payload }) => {
         //mainWindow.webContents.send('download-complete', item)
       }
     });
+    event.returnValue = customURL;    
   } else { /*save cancelled*/
   }
 })
