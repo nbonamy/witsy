@@ -53,7 +53,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt) {
+  async prompt(prompt, callback) {
 
     // check
     prompt = prompt.trim()
@@ -68,13 +68,14 @@ export default class {
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
     this.chat.lastMessage().setText(null)
+    if (callback) callback()
 
     // route
     let route = await this.route(prompt)
     if (route === 'IMAGE') {
-      this.generateImage(prompt)
+      await this.generateImage(prompt, callback)
     } else {
-      this.generateText(prompt)
+      await this.generateText(prompt, callback)
     }
 
     // check if we need to update title
@@ -87,16 +88,19 @@ export default class {
 
   }
 
-  async generateText(prompt) {
+  async generateText(prompt, callback) {
     let stream = await this.llm.stream(this.chat.messages)
     for await (let chunk of stream) {
-      this.chat.lastMessage().appendText(chunk.choices[0]?.delta?.content || '')
+      let text = chunk.choices[0]?.delta?.content || ''
+      this.chat.lastMessage().appendText(text)
+      if (callback) callback(text)
     }
   }
 
-  async generateImage(prompt) {
+  async generateImage(prompt, callback) {
     let response = await this.llm.image(prompt)
     this.chat.lastMessage().setImage(response.url)
+    if (callback) callback(response.url)
   }
 
   async getTitle() {

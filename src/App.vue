@@ -9,7 +9,7 @@
 <script setup>
 
 // components
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatArea from './components/ChatArea.vue'
 import Settings from './components/Settings.vue'
@@ -40,6 +40,9 @@ const onNewChat = () => {
 
 const onSelectChat = (chat) => {
   assistant.value.setChat(chat)
+  nextTick(() => {
+    emitEvent('newChunk')
+  })
 }
 
 const onOpenSettings = () => {
@@ -59,7 +62,9 @@ const onSendPrompt = async (prompt) => {
   }
 
   // 
-  assistant.value.prompt(prompt)
+  assistant.value.prompt(prompt, (text) => {
+    emitEvent('newChunk', text)
+  })
 }
 
 </script>
