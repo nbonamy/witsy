@@ -1,6 +1,6 @@
 <template>
-  <div class="chats">
-    <div v-for="c in store.chats" :key="c.createdAt" class="chat" :class="c.createdAt == chat.createdAt ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+  <div class="chats" ref="divChats">
+    <div v-for="c in chatsReversed" :key="c.createdAt" class="chat" :class="c.createdAt == chat.createdAt ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png?20230903231118" class="logo" />
       <div class="info">
         <div class="title">{{ c.title }}</div>
@@ -14,7 +14,7 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import Overlay from './Overlay.vue'
@@ -26,6 +26,9 @@ const props = defineProps({
   chat: Chat
 })
 
+const divChats = ref(null)
+const chatsReversed = computed(() => store.chats.toReversed())
+
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -33,6 +36,17 @@ const targetRow = ref({})
 const contextMenuActions = [
   { label: 'Delete', action: 'delete' },
 ]
+
+let scrollEndTimeout = null
+onMounted(() => {
+  divChats.value.addEventListener('scroll', (ev) => {
+    ev.target.classList.add('scrolling')
+    clearTimeout(scrollEndTimeout)
+    scrollEndTimeout = setTimeout(() => {
+      ev.target.classList.remove('scrolling')
+    }, 500)
+  })
+})
 
 const onSelectChat = (chat) => {
   emitEvent('selectChat', chat)
@@ -72,9 +86,15 @@ const handleActionClick = (action) => {
 .chats {
   flex: 1;
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
+  flex-direction: column;
   overflow-y: auto;
+  width: 100%;
+  padding-right: 20px;
+  scrollbar-color: #888 var(--sidebar-bg-color);
+}
+
+.chats.scrolling {
+  padding-right: 0px;
 }
 
 .chat {

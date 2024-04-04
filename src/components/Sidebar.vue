@@ -39,12 +39,13 @@ const onNewChat = () => {
 
 <style scoped>
 .sidebar {
-  width: 300px;
+  width: var(--sidebar-width);
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #e1e0df;
+  background-color: var(--sidebar-bg-color);
   border-right: 1px solid #d0cfce;
+  overflow-x: hidden;
 }
 
 .toolbar {
