@@ -66,6 +66,7 @@ export default class {
     // add message
     let message = new Message('user', prompt)
     this.chat.addMessage(message)
+    store.cleanEmptyChats()
 
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
