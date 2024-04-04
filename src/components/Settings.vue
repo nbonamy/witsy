@@ -141,6 +141,10 @@ const onSubmit = () => {
 
 <style scoped>
 
+dialog {
+  width: 600px;
+}
+
 .tabs .tab>label {
   padding: 0px 16px;
 }
@@ -157,7 +161,7 @@ const onSubmit = () => {
 }
 
 .tabs .content {
-  padding: 16px;
+  padding: 16px 32px;
   height: 170px;
 }
 
