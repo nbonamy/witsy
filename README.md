@@ -14,5 +14,6 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Chat list ordering
 - [x] OpenAI model choice
 - [x] CSS variables

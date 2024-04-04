@@ -13,7 +13,7 @@ export default class Message {
 
     // default
     this.uuid = uuidv4()
-    this.createdAt = new Date()
+    this.createdAt = Date.now()
     this.role = role
     this.attachment = null
     this.type = 'unknown'
