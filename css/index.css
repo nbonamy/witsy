@@ -1,4 +1,9 @@
 
+:root {
+  --sidebar-width: 450px;
+  --sidebar-bg-color: #e1e0df
+}
+
 * {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
