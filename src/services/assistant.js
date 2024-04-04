@@ -91,7 +91,7 @@ export default class {
   }
 
   async generateText(prompt, callback) {
-    let stream = await this.llm.stream(this.chat.messages)
+    let stream = await this.llm.stream(this._getRelevantChatMessages())
     for await (let chunk of stream) {
       let text = chunk.choices[0]?.delta?.content || ''
       this.chat.lastMessage().appendText(text)
@@ -140,6 +140,13 @@ export default class {
       title = title.substring(6)
     }
     return title.trim().replace(/^"|"$/g, '').trim()
+  }
+
+  _getRelevantChatMessages() {
+    const relevantMessagesCount = 5
+    let chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
+    let messages = [this.chat.messages[0], ...chatMessages.slice(-relevantMessagesCount-1, -1)]
+    return messages
   }
 
 }
