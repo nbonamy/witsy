@@ -1,19 +1,37 @@
 
 import { reactive } from 'vue'
+import { ipcRenderer } from 'electron'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
+
+let userDataPath = null
 
 export const store = reactive({
   config: {},
   chats: [],
 })
 
-function historyFilePath() {
-  return path.join('/Users/nbonamy/Library/Application Support/witty-ai', 'history.json')
+store.load = (defaults = {}) => {
+  userDataPath = ipcRenderer.sendSync('get-app-path')
+  loadSettings(defaults)
+  loadHistory()
 }
 
-export function loadStore() {
+store.save = () => {
+  fs.writeFileSync(historyFilePath(), JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
+  fs.writeFileSync(settingsFilePath(), JSON.stringify(store.config))
+}
+
+function historyFilePath() {
+  return path.join(userDataPath, 'history.json')
+}
+
+function settingsFilePath() {
+  return path.join(userDataPath, 'settings.json')
+}
+
+function loadHistory() {
   try {
     store.chats = []
     const data = fs.readFileSync(historyFilePath(), 'utf-8')
@@ -27,6 +45,11 @@ export function loadStore() {
   }
 }
 
-export function saveStore() {
-  fs.writeFileSync(historyFilePath(), JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
+function loadSettings(defaults) {
+  try {
+    const data = fs.readFileSync(settingsFilePath(), 'utf-8')
+    store.config = {...defaults, ...JSON.parse(data)}
+  } catch (error) {
+    console.log('Error retrieving user data', error)
+  }
 }

@@ -2,7 +2,7 @@
 import Chat from '../models/chat'
 import Message from '../models/message'
 import OpenAI from '../services/openai'
-import { store, saveStore } from '../services/store'
+import { store } from '../services/store'
 
 export default class {
 
@@ -25,7 +25,7 @@ export default class {
       this.chat = new Chat(title)
       this.chat.addMessage(new Message('system', this.config.instructions.default))
       store.chats.push(this.chat)
-      saveStore()
+      store.save()
     }
   }
 
@@ -83,7 +83,7 @@ export default class {
     }
   
     // save
-    saveStore()
+    store.save()
 
   }
 

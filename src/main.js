@@ -60,6 +60,10 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+ipcMain.on('get-app-path', (event) => {
+  event.returnValue = app.getPath('userData');
+})
+
 ipcMain.on('download', async (event, { payload }) => {
   let properties = payload.properties ? { ...payload.properties } : {};
   const defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
