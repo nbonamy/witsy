@@ -13,13 +13,13 @@ form .group label {
   font-size: 11pt;
 }
 
-form .group input {
+form .group input, form .group select {
   flex: 1;
   padding: 6px;
   border: 1px solid #dad9d9;
   font-size: 11pt;
 }
 
-form .group input:focus {
+form .group input:focus, form .group select:focus {
   outline: 2px solid #83aaf2;
 }

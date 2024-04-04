@@ -10,11 +10,20 @@ export default class {
     })
   }
 
+  async getModels() {
+    try {
+      const response = await this.client.models.list()
+      return response.data
+    } catch (error) {
+      console.error("Error listing models:", error);
+    }
+  }
+
   async complete(thread, opts) {
 
     // call
     const response = await this.client.chat.completions.create({
-      model: opts?.model || this.config.openAI.model,
+      model: opts?.model || this.config.openAI.models.chat,
       messages: this._buildMessages(thread),
     });
 
@@ -27,7 +36,7 @@ export default class {
 
   async stream(thread) {
     return this.client.chat.completions.create({
-      model: this.config.openAI.model,
+      model: this.config.openAI.models.chat,
       messages: this._buildMessages(thread),
       stream: true,
     })
@@ -37,7 +46,7 @@ export default class {
     
     // call
     const response = await this.client.images.generate({
-      model: 'dall-e-3',
+      model: this.config.openAI.models.image,
       prompt: prompt,
       n:1,
     })
