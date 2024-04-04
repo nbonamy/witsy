@@ -4,6 +4,7 @@ Electron based ChatGPT desktop application
 
 ## TODO
 
+- [ ] File upload
 - [ ] Save DALL-E images locally (and delete properly)
 - [ ] Image placeholder
 - [ ] Status/Tray bar icon + global shortcut to invoke
