@@ -7,21 +7,21 @@
         <div class="group">
           <label>OpenAI API Key</label>
           <div class="subgroup">
-            <input type="text" v-model="openAI_apiKey" /><br/>
+            <input type="text" v-model="openAI_apiKey" @blur="onKeyChange" /><br/>
             <a href="https://platform.openai.com/api-keys" target="_blank">Create an API key</a>
           </div>
         </div>
         <div class="group">
           <label>OpenAI Chat Model</label>
           <select v-model="openAI_chat_model">
-            <option v-for="model in openAI_chat_models" :value="model.value">{{ model.name }}</option>
+            <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
           </select>
         </div>
         <div class="group">
           <label>OpenAI Image Model</label>
           <div class="subgroup">
             <select v-model="openAI_image_model">
-              <option v-for="model in openAI_image_models" :value="model.value">{{ model.name }}</option>
+              <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}</option>
             </select><br/>
             <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
           </div>
@@ -62,6 +62,13 @@ const getOpenAOIModels = async () => {
     .filter(model => model.id.startsWith('dall-e-'))
     .map(model => { return { name: model.id, value: model.id } })
     .sort((a, b) => a.name.localeCompare(b.name))
+}
+
+const onKeyChange = () => {
+  if (openAI_chat_models.value.length === 0 && openAI_apiKey.value.length > 0) {
+    store.config.openAI.apiKey = openAI_apiKey.value
+    getOpenAOIModels()
+  }
 }
 
 const onSubmit = () => {
