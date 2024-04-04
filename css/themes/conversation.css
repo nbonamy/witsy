@@ -1,0 +1,38 @@
+
+.messages.conversation .message {
+  flex-direction: row;
+}
+
+.messages.conversation .message .body {
+  max-width: 66%;
+  border-radius: 12px;
+  padding: 0px 16px;
+}
+
+.messages.conversation .message .role {
+  display: none;
+}
+
+.messages.conversation .message.user {
+  justify-content: flex-end;
+}
+
+.messages.conversation .message.user .body {
+  background-color: #2993f3;
+  color: white;
+}
+
+.messages.conversation .message.assistant .body {
+  background-color: #e9e9eb;
+  color: black;
+}
+
+.messages.conversation .message .image-container {
+  width: 75%;
+}
+
+.messages.conversation .message .body:has(.image) {
+  padding: 0px;
+  background-color: transparent;
+}
+

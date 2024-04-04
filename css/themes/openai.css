@@ -1,0 +1,33 @@
+
+
+.messages.openai .message {
+  flex-direction: column;
+}
+
+.messages.openai .message .role {
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.messages.openai .message .role .avatar {
+  font-size: 16pt;
+  flex: 0 0 32px;
+}
+
+.messages.openai .message .body {
+  flex: 1;
+}
+
+.messages.openai .message .text p {
+  margin-top: 8px;
+}
+
+.messages.openai .message .image-container {
+  width: 400px;
+}
+
+.messages.openai pre.hljs {
+  border-radius: 8px;
+}

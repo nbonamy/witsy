@@ -6,7 +6,7 @@
         {{ chat.title }}
       </div>
     </div>
-    <MessageList class="messages" :messages="chat.messages" />
+    <MessageList :messages="chat.messages" />
     <Prompt class="prompt" />
   </div>
 </template>

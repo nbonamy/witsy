@@ -5,6 +5,11 @@
     "routing": "Your role is to determine if the following request is a text or an image generation request. You just reply TEXT or IMAGE.",
     "titling": "You are an assistant whose task is to find the best title for a conversation. Just reply with the title based on the conversation below."
   },
+  "appearance": {
+    "chat": {
+      "theme": "openai"
+    }
+  },
   "openAI": {
     "apiKey": "",
     "models": {
