@@ -15,7 +15,7 @@
 <script setup>
 
 import { ref } from 'vue'
-import { saveStore, store } from '../services/store'
+import { store } from '../services/store'
 import Chat from '../models/chat'
 import Overlay from './Overlay.vue'
 import ContextMenu from './ContextMenu.vue'
@@ -56,7 +56,7 @@ const handleActionClick = (action) => {
     // fist remove
     let index = store.chats.indexOf(targetRow.value)
     store.chats.splice(index, 1)
-    saveStore()
+    store.save()
 
     // if current chat
     if (props.chat.createdAt === targetRow.value.createdAt) {

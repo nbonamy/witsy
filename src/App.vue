@@ -19,10 +19,9 @@ import useEventBus from './composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
 // store
-import { store, loadStore } from './services/store'
+import { store } from './services/store'
 import defaults from '../defaults/settings.json'
-store.config = defaults
-loadStore()
+store.load(defaults)
 
 // assistant
 import Assistant from './services/assistant'

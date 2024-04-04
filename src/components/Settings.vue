@@ -33,7 +33,7 @@ const onSubmit = () => {
   console.log(openAI_apiKey.value)
   store.config.openAI.apiKey = openAI_apiKey.value
   store.config.openAI.model = openAI_model.value
-  //store.save()
+  store.save()
 }
 
 </script>
