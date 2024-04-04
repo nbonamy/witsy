@@ -125,6 +125,10 @@ const onDownload = (message) => {
   width: 75%;
 }
 
+.message img {
+  background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
+}
+
 .message .download {
   display: none;
   position: absolute;
