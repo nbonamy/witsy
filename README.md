@@ -4,7 +4,7 @@ Electron based ChatGPT desktop application
 
 ## TODO
 
-- [ ] OpenAI model choice
+- [ ] Image placeholder
 - [ ] Save DALL-E images locally (and delete properly)
 - [ ] Status/Tray bar icon + global shortcut to invoke
 - [ ] Specialized assistants
@@ -13,4 +13,6 @@ Electron based ChatGPT desktop application
 - [ ] Copy code button
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
+
+- [x] OpenAI model choice
 - [x] CSS variables
