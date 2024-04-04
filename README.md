@@ -4,7 +4,6 @@ Electron based ChatGPT desktop application
 
 ## TODO
 
-- [ ] Copy code button
 - [ ] Save DALL-E images locally (and delete properly)
 - [ ] Image placeholder
 - [ ] Status/Tray bar icon + global shortcut to invoke
@@ -14,6 +13,7 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [X] Copy code button
 - [x] Chat list ordering
 - [x] OpenAI model choice
 - [x] CSS variables
