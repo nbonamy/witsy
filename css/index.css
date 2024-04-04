@@ -7,6 +7,10 @@
   --sidebar-bg-color: #e1e0df;
   --sidebar-selected-color: #c9c9c8;
   --sidebar-logo-size: 32px;
+
+  --dialog-bg-color: #ececec;
+  --dialog-separator-color: #474747;
+
 }
 
 * {
@@ -21,6 +25,10 @@ body {
 code, pre, code * {
   font-family: Söhne Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
   font-size: 10pt;
+}
+
+a, a:visited, a:active, a:focus {
+  color: #0000ee;
 }
 
 pre.hljs {

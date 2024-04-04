@@ -1,0 +1,48 @@
+
+.tabs, .tabs * {
+  margin: 0;
+  padding: 0;
+}
+
+.tabs ul {
+  display: flex;
+  justify-content: center;
+}
+
+.tabs .tab {
+  display: block;
+}
+
+.tabs .tab>input[type="radio"] {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+.tabs .tab>label {
+  display: block;
+  cursor: pointer;
+  position: relative;
+}
+
+.tabs .content {
+  display: none;
+}
+
+.tabs .tab>[id^="tab"]:checked+label {
+  color: var(--highlight-color);
+}
+
+dialog:has(.tabs) header {
+  border-bottom: none;
+}
+
+dialog:has(.tabs) main {
+  padding: 0;
+}
+
+dialog .tabs ul {
+  padding: 16px;
+  background-color: var(--dialog-bg-color);
+  border-bottom: 0.5px solid var(--dialog-separator-color);
+}

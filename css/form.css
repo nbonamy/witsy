@@ -23,18 +23,24 @@ form .group:has(.subgroup) label {
   margin-top: 4px;
 }
 
-form .group input, form .group select {
+form .group input, form .group select, form .group textarea {
   flex: 1;
   padding: 6px;
   border: 1px solid #dad9d9;
   font-size: 11pt;
+  width: 100%;
 }
 
-form .group input:focus, form .group select:focus {
+form .group input {
+  width: calc(100% - 16px);
+}
+
+form .group input:focus, form .group select:focus, form .group textarea:focus {
   outline: 2px solid #83aaf2;
 }
 
 form .subgroup {
+  flex: 1;
   font-size: 10pt;
 }
 
