@@ -206,7 +206,7 @@ dialog {
 
 .tabs .tab>label {
   padding: 8px;
-  margin: 0px 8px;
+  margin: 0px 2px;
 }
 
 .tabs .tab>[id^="tab"]:checked+label {
