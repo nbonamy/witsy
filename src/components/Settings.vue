@@ -13,6 +13,13 @@
               </label>
             </li>
             <li class="tab">
+              <input type="radio" name="tabs" id="tabAppearance" />
+              <label for="tabAppearance">
+                <BIconPalette class="icon" />
+                <span class="title">Appearance</span>
+              </label>
+            </li>
+            <li class="tab">
               <input type="radio" name="tabs" id="tabOpenAI" />
               <label for="tabOpenAI">
                 <EngineLogo engine="openai" class="icon" />
@@ -29,17 +36,10 @@
           </ul>
           <div id="tab-content-General" class="content">
             <div class="group">
-              <label>LLM Engine</label>
+              <label>LLM engine</label>
               <select v-model="general_llmEngine">
                 <option value="openai">OpenAI</option>
                 <option value="ollama">Ollama</option>
-              </select>
-            </div>
-            <div class="group">
-              <label>Chat theme</label>
-              <select v-model="general_chatTheme">
-                <option value="openai">OpenAI</option>
-                <option value="conversation">Conversation</option>
               </select>
             </div>
             <div class="group">
@@ -50,23 +50,47 @@
               </div>
             </div>
           </div>
+          <div id="tab-content-Appearance" class="content">
+            <div class="group">
+              <label>Chat theme</label>
+              <select v-model="general_chatTheme" @change="onChangeAppearance">
+                <option value="openai">OpenAI</option>
+                <option value="conversation">Conversation</option>
+              </select>
+            </div>
+            <div class="group">
+              <label>Chat font size</label>
+              <span class="fontsize small">A</span>
+              <div class="slidergroup">
+                <input type="range" min="1" max="5" v-model="general_fontSize" @input="onChangeAppearance" />
+                <datalist id="fontsize">
+                  <option value="1"></option>
+                  <option value="2"></option>
+                  <option value="3"></option>
+                  <option value="4"></option>
+                  <option value="5"></option>
+                </datalist>
+              </div>
+              <span class="fontsize large">A</span>
+            </div>
+          </div>
           <div id="tab-content-openAI" class="content">
             <div class="group">
-              <label>OpenAI API Key</label>
+              <label>OpenAI API key</label>
               <div class="subgroup">
                 <input type="text" v-model="openAI_apiKey" @blur="onKeyChange" /><br />
                 <a href="https://platform.openai.com/api-keys" target="_blank">Create an API key</a>
               </div>
             </div>
             <div class="group">
-              <label>OpenAI Chat Model</label>
+              <label>OpenAI chat model</label>
               <select v-model="openAI_chat_model" :disabled="openAI_chat_models.length == 0">
                 <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}
                 </option>
               </select>
             </div>
             <div class="group">
-              <label>OpenAI Image Model</label>
+              <label>OpenAI image model</label>
               <div class="subgroup">
                 <select v-model="openAI_image_model" :disabled="openAI_image_models.length == 0">
                   <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}
@@ -78,7 +102,7 @@
           </div>
           <div id="tab-content-Ollama" class="content">
             <div class="group">
-              <label>Ollama Chat Model</label>
+              <label>Ollama chat model</label>
               <select v-model="ollama_chat_model" :disabled="ollama_chat_models.length == 0">
                 <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}
                 </option>
@@ -111,6 +135,7 @@ const { onEvent } = useEventBus()
 const general_llmEngine = ref(store.config.llm.engine || 'openai')
 const general_defaultInstructions = ref(store.config.instructions.default || '')
 const general_chatTheme = ref(store.config.appearance.chat.theme || 'openai')
+const general_fontSize = ref(store.config.appearance.chat.fontSize || 3)
 const openAI_apiKey = ref(store.config.openai?.apiKey || '')
 const openAI_chat_model = ref(store.config.openai?.models?.chat || '')
 const openAI_image_model = ref(store.config.openai?.models?.image || '')
@@ -176,10 +201,15 @@ const onKeyChange = () => {
   }
 }
 
+const onChangeAppearance = () => {
+  store.config.appearance.chat.theme = general_chatTheme.value
+  store.config.appearance.chat.fontSize = general_fontSize.value
+  store.save()
+}
+
 const onSubmit = () => {
   store.config.llm.engine = general_llmEngine.value
   store.config.instructions.default = general_defaultInstructions.value
-  store.config.appearance.chat.theme = general_chatTheme.value
   store.config.openai.apiKey = openAI_apiKey.value
   store.config.openai.models = {
     chat: openAI_chat_model.value,
@@ -238,6 +268,18 @@ dialog {
   height: 150px;
 }
 
+.fontsize {
+  display: inline-block;
+  margin: 0 8px;
+}
+
+.fontsize.small {
+  font-size: 8pt;
+}
+
+.fontsize.large {
+  font-size: 12pt;
+}
 textarea {
   height: 50px;
   resize: none;
