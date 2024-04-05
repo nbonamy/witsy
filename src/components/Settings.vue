@@ -82,6 +82,7 @@ const onSave = () => {
 </style>
 
 <style>
+
 dialog {
   width: 500px;
 }
@@ -120,20 +121,9 @@ dialog {
   height: 150px;
 }
 
-.fontsize {
-  display: inline-block;
-  margin: 0 8px;
-}
-
-.fontsize.small {
-  font-size: 8pt;
-}
-
-.fontsize.large {
-  font-size: 12pt;
-}
 textarea {
   height: 50px;
   resize: none;
 }
+
 </style>
