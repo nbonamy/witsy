@@ -63,6 +63,15 @@ export default class extends LLmService {
     }
   }
 
+  addImageToPayload(message, payload) {
+    payload.content = [
+      { type: 'text', text: message.content },
+      { type: 'image_url', image_url: {
+        url: 'data:image/jpeg;base64,' + message.attachment.contents,
+      }}
+    ]
+  }
+
   async image(prompt) {
     
     // call
