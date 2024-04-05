@@ -2,8 +2,8 @@
   <div class="content">
     <div class="group">
       <label>Ollama chat model</label>
-      <select v-model="ollama_chat_model" :disabled="ollama_chat_models.length == 0">
-        <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}
+      <select v-model="chat_model" :disabled="chat_models.length == 0">
+        <option v-for="model in chat_models" :key="model.value" :value="model.value">{{ model.name }}
         </option>
       </select>
     </div>
@@ -17,32 +17,32 @@ import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import Ollama from '../services/ollama'
 
-const ollama_chat_model = ref(null)
-const ollama_chat_models = ref([])
+const chat_model = ref(null)
+const chat_models = ref([])
 
 onMounted(async () => {
   getOllamaModels()
 })
 
 const load = () => {
-  ollama_chat_model.value = store.config.ollama?.models?.chat || ''
+  chat_model.value = store.config.ollama?.models?.chat || ''
 }
 
 const getOllamaModels = async () => {
   const ollama = new Ollama(store.config)
   const models = await ollama.getModels()
   if (models == null) {
-    ollama_chat_models.value = []
+    chat_models.value = []
   } else {
-    ollama_chat_models.value = models
+    chat_models.value = models
       .map(model => { return { name: model.name, value: model.model } })
       .sort((a, b) => a.name.localeCompare(b.name))
   }
 }
 
 const save = () => {
-  if (ollama_chat_model.value != null) {
-    store.config.ollama.models.chat = ollama_chat_model.value
+  if (chat_model.value != null) {
+    store.config.ollama.models.chat = chat_model.value
   }
 }
 
