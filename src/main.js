@@ -1,5 +1,6 @@
 const { app, Menu, Tray, BrowserWindow, ipcMain, dialog, shell, nativeImage, globalShortcut } = require('electron');
 const { download } = require('electron-dl');
+const Store = require('electron-store')
 const process = require('node:process');
 const path = require('node:path');
 const fs = require('node:fs');
@@ -11,8 +12,10 @@ if (require('electron-squirrel-startup')) {
 
 // main window
 let window = null;
+const store = new Store()
 const createWindow = () => {
-  // Create the browser window.
+  
+  // Create the browser window
   const mainWindow = new BrowserWindow({
     width: 1400,
     height: 800,
@@ -25,6 +28,12 @@ const createWindow = () => {
       webSecurity: false,
     },
   });
+
+  // restore and save state
+  mainWindow.setBounds(store.get('bounds'))
+  mainWindow.on('close', () => {
+    store.set('bounds', mainWindow.getBounds())
+})
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
