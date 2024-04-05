@@ -12,6 +12,8 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Save/Restore window position
+- [x] Ollama support
 - [x] View image full screen
 - [x] Status/Tray bar icon + global shortcut to invoke
 - [x] Chat themes
