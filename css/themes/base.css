@@ -11,6 +11,7 @@
 .message .text {
   user-select: text;
   font-size: 11pt;
+  line-height: 14pt;
 }
 
 .message .body .text pre.hljs code.hljs {
