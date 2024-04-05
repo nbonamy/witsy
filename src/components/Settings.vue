@@ -1,4 +1,3 @@
-
 <template>
   <dialog>
     <form method="dialog">
@@ -9,21 +8,21 @@
             <li class="tab">
               <input type="radio" name="tabs" id="tabGeneral" checked />
               <label for="tabGeneral">
-                <BIconCpu class="icon"/>
+                <BIconCpu class="icon" />
                 <span class="title">General</span>
               </label>
             </li>
             <li class="tab">
               <input type="radio" name="tabs" id="tabOpenAI" />
               <label for="tabOpenAI">
-                <BIconAt class="icon"/>
+                <BIconAt class="icon" />
                 <span class="title">OpenAI</span>
               </label>
             </li>
             <li class="tab">
               <input type="radio" name="tabs" id="tabOllama" />
               <label for="tabOllama">
-                <BIconAt class="icon"/>
+                <BIconAt class="icon" />
                 <span class="title">Ollama</span>
               </label>
             </li>
@@ -55,22 +54,24 @@
             <div class="group">
               <label>OpenAI API Key</label>
               <div class="subgroup">
-                <input type="text" v-model="openAI_apiKey" @blur="onKeyChange" /><br/>
+                <input type="text" v-model="openAI_apiKey" @blur="onKeyChange" /><br />
                 <a href="https://platform.openai.com/api-keys" target="_blank">Create an API key</a>
               </div>
             </div>
             <div class="group">
               <label>OpenAI Chat Model</label>
               <select v-model="openAI_chat_model" :disabled="openAI_chat_models.length == 0">
-                <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
+                <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}
+                </option>
               </select>
             </div>
             <div class="group">
               <label>OpenAI Image Model</label>
               <div class="subgroup">
                 <select v-model="openAI_image_model" :disabled="openAI_image_models.length == 0">
-                  <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}</option>
-                </select><br/>
+                  <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}
+                  </option>
+                </select><br />
                 <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
               </div>
             </div>
@@ -79,7 +80,8 @@
             <div class="group">
               <label>Ollama Chat Model</label>
               <select v-model="ollama_chat_model" :disabled="ollama_chat_models.length == 0">
-                <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
+                <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}
+                </option>
               </select>
             </div>
           </div>
@@ -126,22 +128,31 @@ const showActiveTab = () => {
 const getOpenAOIModels = async () => {
   const openAI = new OpenAI(store.config)
   const models = await openAI.getModels()
-  openAI_chat_models.value = models
-    .filter(model => model.id.startsWith('gpt-'))
-    .map(model => { return { name: model.id, value: model.id } })
-    .sort((a, b) => a.name.localeCompare(b.name))
-  openAI_image_models.value = models
-    .filter(model => model.id.startsWith('dall-e-'))
-    .map(model => { return { name: model.id, value: model.id } })
-    .sort((a, b) => a.name.localeCompare(b.name))
+  if (models == null) {
+    openAI_chat_models.value = []
+    openAI_image_models.value = []
+  } else {
+    openAI_chat_models.value = models
+      .filter(model => model.id.startsWith('gpt-'))
+      .map(model => { return { name: model.id, value: model.id } })
+      .sort((a, b) => a.name.localeCompare(b.name))
+    openAI_image_models.value = models
+      .filter(model => model.id.startsWith('dall-e-'))
+      .map(model => { return { name: model.id, value: model.id } })
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }
 }
 
 const getOllamaModels = async () => {
   const ollama = new Ollama(store.config)
   const models = await ollama.getModels()
-  ollama_chat_models.value = models
-    .map(model => { return { name: model.name, value: model.model } })
-    .sort((a, b) => a.name.localeCompare(b.name))
+  if (models == null) {
+    ollama_chat_models.value = []
+  } else {
+    ollama_chat_models.value = models
+      .map(model => { return { name: model.name, value: model.model } })
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }
 }
 
 const onResetDefaultInstructions = () => {
@@ -179,7 +190,6 @@ const onSubmit = () => {
 </style>
 
 <style scoped>
-
 dialog {
   width: 600px;
 }
@@ -208,5 +218,4 @@ textarea {
   height: 50px;
   resize: none;
 }
-
 </style>
