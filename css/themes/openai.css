@@ -12,8 +12,19 @@
 }
 
 .messages.openai .message .role .avatar {
-  font-size: 16pt;
   flex: 0 0 32px;
+  width: 16px;
+  height: 16px;
+  font-size: 14pt;
+  object-fit: contain;
+}
+
+.messages.openai .message .role.user .avatar {
+  filter: invert(55%) sepia(15%) saturate(864%) hue-rotate(189deg) brightness(88%) contrast(84%);
+}
+
+.messages.openai .message .role.assistant .avatar.openai {
+  filter: invert(67%) sepia(23%) saturate(433%) hue-rotate(115deg) brightness(90%) contrast(86%);
 }
 
 .messages.openai .message .body {

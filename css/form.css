@@ -1,4 +1,8 @@
 
+form {
+  --form-font-size: 9.5pt;
+}
+
 form .group {
   display: flex;
   flex-direction: row;
@@ -14,8 +18,12 @@ form .group:has(.subgroup) {
 form .group label {
   min-width: 150px;
   margin-right: 10px;
-  font-size: 9pt;
+  font-size: var(--form-font-size);
   text-align: right;
+}
+
+form .group label::after {
+  content: ':';
 }
 
 form .group:has(.subgroup) label {
@@ -26,7 +34,7 @@ form .group input, form .group select, form .group textarea {
   flex: 1;
   padding: 4px;
   border: 1px solid #dad9d9;
-  font-size: 9pt;
+  font-size: var(--form-font-size);
   width: 100%;
 }
 
@@ -46,5 +54,5 @@ form .subgroup {
 form .subgroup a {
   display: inline-block;
   margin-top: 4px;
-  font-size: 9pt;
+  font-size: var(--form-font-size);
 }

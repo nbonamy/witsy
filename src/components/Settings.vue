@@ -8,7 +8,7 @@
             <li class="tab">
               <input type="radio" name="tabs" id="tabGeneral" checked />
               <label for="tabGeneral">
-                <BIconCpu class="icon" />
+                <BIconGear class="icon" />
                 <span class="title">General</span>
               </label>
             </li>
@@ -205,7 +205,13 @@ dialog {
 }
 
 .tabs .tab>label {
-  padding: 0px 16px;
+  padding: 8px;
+  margin: 0px 8px;
+}
+
+.tabs .tab>[id^="tab"]:checked+label {
+  background-color: #e5e6e6;
+  border-radius: 8px;
 }
 
 .tabs label .icon {
@@ -214,6 +220,7 @@ dialog {
   width: 15pt;
   height: 15pt;
   color: var(--tabs-header-normal-color);
+  filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
 }
 
 .tabs .tab>[id^="tab"]:checked+label .icon {

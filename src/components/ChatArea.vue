@@ -6,7 +6,7 @@
         {{ chat.title }}
       </div>
     </div>
-    <MessageList :messages="chat.messages" v-if="chat.messages.length > 1"/>
+    <MessageList :chat="chat" v-if="chat.messages.length > 1"/>
     <div v-else class="empty">
       <EngineLogo :engine="store.config.llm.engine" />
       <p class="version">{{ model }}</p>

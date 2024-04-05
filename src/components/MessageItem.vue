@@ -1,7 +1,8 @@
 <template>
   <div class="message" :class="message.role" v-if="message.role != 'system'">
     <div class="role" :class="message.role">
-      <div class="avatar">{{ authorAvatar }}</div>
+      <EngineLogo :engine="chat.engine" class="avatar" v-if="message.role == 'assistant'" />
+      <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
       <div class="name">{{ authorName }}</div>
     </div>
     <div class="body">
@@ -25,20 +26,19 @@
 
 import { ipcRenderer } from 'electron'
 import { ref, computed } from 'vue'
+import Chat from '../models/chat.js'
 import Message from '../models/message.js'
 import Loader from './Loader.vue'
+import EngineLogo from './EngineLogo.vue'
 import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
 
 const props = defineProps({
+  chat: Chat,
   message: Message
 })
 
 const fullScreenImageUrl = ref(null)
-
-const authorAvatar = computed(() => {
-  return props.message.role === 'assistant' ? '🤖' : '👤'
-})
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
