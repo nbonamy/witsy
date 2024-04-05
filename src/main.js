@@ -87,7 +87,9 @@ const trayMenu = [
 app.whenReady().then(() => {
   
   // hide dock
-  app.dock.hide();
+  if (!process.env.DEBUG) {
+    app.dock.hide();
+  }
 
   // create the main window
   window = createWindow();
@@ -124,6 +126,10 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
+})
+
+ipcMain.on('fullscreen', (event, flag) => {
+  window.setFullScreen(flag);
 })
 
 ipcMain.on('delete', (event, payload) => {
