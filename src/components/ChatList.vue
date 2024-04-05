@@ -1,7 +1,7 @@
 <template>
   <div class="chats" ref="divChats">
     <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/1024px-ChatGPT_logo.svg.png?20230903231118" class="logo" />
+      <img :src="'/assets/'+engine(c)+'.svg'" class="logo" :class="engine(c)" />
       <div class="info">
         <div class="title">{{ c.title }}</div>
         <div class="subtitle">{{ c.subtitle() }}</div>
@@ -25,6 +25,8 @@ const { emitEvent } = useEventBus()
 const props = defineProps({
   chat: Chat
 })
+
+const engine = (chat) => chat.engine || store.config.llm.engine
 
 const divChats = ref(null)
 const chatsReversed = computed(() => store.chats.toSorted((a,b) => b.lastModified - a.lastModified))
@@ -126,6 +128,20 @@ const handleActionClick = (action) => {
   width: var(--sidebar-logo-size);
   height: var(--sidebar-logo-size);
   margin-right: 8px;
+}
+
+.chat .logo.openai {
+  background-color: #865563;
+  border-radius: 4px;
+  filter: invert(1);
+  padding: 4px;
+}
+
+.chat .logo.ollama {
+  object-fit: cover;
+  background-color: white;
+  border-radius: 4px;
+  padding: 4px;
 }
 
 .chat .title {

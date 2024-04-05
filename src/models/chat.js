@@ -18,6 +18,8 @@ export default class Chat {
     this.title = obj || 'New Chat'
     this.createdAt = Date.now()
     this.lastModified = Date.now()
+    this.engine = null
+    this.model = null
     this.messages = []
   
   }
@@ -27,11 +29,18 @@ export default class Chat {
     this.title = obj.title
     this.createdAt = obj.createdAt
     this.lastModified = obj.lastModified || obj.createdAt
+    this.engine = obj.engine || 'openai'
+    this.model = obj.model
     this.messages = []
     for (let msg of obj.messages) {
       let message = new Message(msg)
       this.messages.push(message)
     }
+  }
+
+  setEngineModel(engine, model) {
+    this.engine = engine
+    this.model = model
   }
 
   subtitle() {

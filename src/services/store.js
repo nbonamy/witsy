@@ -1,11 +1,13 @@
 
 import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
+import buildConfig from './config'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
 
 let userDataPath = null
+let defaultSettings = null
 
 export const store = reactive({
   config: {},
@@ -14,28 +16,33 @@ export const store = reactive({
 
 store.load = (defaults = {}) => {
   userDataPath = ipcRenderer.sendSync('get-app-path')
+  defaultSettings = defaults
   loadSettings(defaults)
   loadHistory()
 }
 
 store.save = () => {
-  fs.writeFileSync(historyFilePath(), JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
-  fs.writeFileSync(settingsFilePath(), JSON.stringify(store.config))
+  saveHistory()
+  saveSettings()
 }
 
 store.cleanEmptyChats = () => {
   store.chats = store.chats.filter((chat) => chat.messages.length > 1)
 }
 
-function historyFilePath() {
+store.dump = () => {
+  console.dir(JSON.parse(JSON.stringify(store.config)))
+}
+
+const historyFilePath = () => {
   return path.join(userDataPath, 'history.json')
 }
 
-function settingsFilePath() {
+const settingsFilePath = () => {
   return path.join(userDataPath, 'settings.json')
 }
 
-function loadHistory() {
+const loadHistory = () => {
   try {
     store.chats = []
     const data = fs.readFileSync(historyFilePath(), 'utf-8')
@@ -51,7 +58,15 @@ function loadHistory() {
   }
 }
 
-function loadSettings(defaults) {
+const saveHistory = () => {
+  try {
+    fs.writeFileSync(historyFilePath(), JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
+  } catch (error) {
+    console.log('Error saving history data', error)
+  }
+}
+
+const loadSettings = (defaults) => {
   let data = '{}'
   try {
     data = fs.readFileSync(settingsFilePath(), 'utf-8')
@@ -60,5 +75,24 @@ function loadSettings(defaults) {
       console.log('Error retrieving settings data', error)
     }
   }
-  store.config = {...defaults, ...JSON.parse(data)}
+  store.config = buildConfig(defaults, JSON.parse(data))
+}
+
+const saveSettings = () => {
+  try {
+
+    // remove instructions that are the same as the default
+    let settings = JSON.parse(JSON.stringify(store.config))
+    for (let instr in settings.instructions) {
+      if (settings.instructions[instr] === defaultSettings.instructions[instr]) {
+        delete settings.instructions[instr]
+      }
+    }
+
+    // save
+    fs.writeFileSync(settingsFilePath(), JSON.stringify(settings))
+
+  } catch (error) {
+    console.log('Error saving settings data', error)
+  }
 }

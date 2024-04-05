@@ -7,7 +7,7 @@ export default class extends LLmService {
   constructor(config) {
     super(config)
     this.client = new OpenAI({
-      apiKey: config.openAI.apiKey,
+      apiKey: config.openai.apiKey,
       dangerouslyAllowBrowser: true
     })
   }
@@ -29,7 +29,7 @@ export default class extends LLmService {
 
     // call
     const response = await this.client.chat.completions.create({
-      model: opts?.model || this.config.openAI.models.chat,
+      model: opts?.model || this.config.openai.models.chat,
       messages: this._buildMessages(thread),
     });
 
@@ -42,7 +42,7 @@ export default class extends LLmService {
 
   async stream(thread) {
     return this.client.chat.completions.create({
-      model: this.config.openAI.models.chat,
+      model: this.config.openai.models.chat,
       messages: this._buildMessages(thread),
       stream: true,
     })
@@ -59,7 +59,7 @@ export default class extends LLmService {
     
     // call
     const response = await this.client.images.generate({
-      model: this.config.openAI.models.image,
+      model: this.config.openai.models.image,
       prompt: prompt,
       n:1,
     })

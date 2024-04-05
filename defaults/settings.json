@@ -13,7 +13,7 @@
       "theme": "openai"
     }
   },
-  "openAI": {
+  "openai": {
     "apiKey": "",
     "models": {
       "chat": "gpt-3.5-turbo",
