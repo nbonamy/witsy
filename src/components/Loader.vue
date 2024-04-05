@@ -9,22 +9,18 @@
 <style scoped>
 /* HTML: <div class="loader"></div> */
 .loader {
-  padding: 16px 0;
-  width: 30px;
-  aspect-ratio: 10;
-  --_g: no-repeat radial-gradient(circle closest-side,#444 50%,#4440);
-  --_w: 25%;
-  background: 
-    var(--_g) 0%   50%,
-    var(--_g) 50%  50%,
-    var(--_g) 100% 50%;
-  background-size: var(--_w) 100%;
-  animation: l7 1.5s infinite linear;
+  margin: 16px 0px;
+  width: 8px;
+  height: 8px;
+  background-color: #444;
+  border-radius: 50%;
+  animation: glow 1s infinite;
 }
-@keyframes l7 {
-    17%{background-size:var(--_w) 0%  ,var(--_w) 100%,var(--_w) 100%}
-    50%{background-size:var(--_w) 100%,var(--_w) 0%  ,var(--_w) 100%}
-    84%{background-size:var(--_w) 100%,var(--_w) 100%,var(--_w) 0%  }
-}
+
+  /* Définition de l'animation */
+  @keyframes glow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+  }
 
 </style>
