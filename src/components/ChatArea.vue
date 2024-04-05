@@ -8,7 +8,7 @@
     </div>
     <MessageList :messages="chat.messages" v-if="chat.messages.length > 1"/>
     <div v-else class="empty">
-      <img :src="logo" class="logo" />
+      <EngineLogo :engine="store.config.llm.engine" />
       <p class="version">{{ model }}</p>
     </div>
     <Prompt class="prompt" />
@@ -20,6 +20,7 @@
 import { computed } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
+import EngineLogo from './EngineLogo.vue'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
 
@@ -31,10 +32,6 @@ const props = defineProps({
 // we cannot use store.config.getActiveModel here
 // because we will lose reactivity :-(
 //
-
-const logo = computed(() => {
-  return `/assets/${store.config.llm.engine}.svg`
-})
 
 const model = computed(() => {
   return store.config?.[store.config.llm.engine]?.models?.chat || ''

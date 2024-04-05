@@ -6,10 +6,11 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "DEBUG=1 electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "_package": "electron-forge package",
+    "_make": "electron-forge make",
+    "make": "npx electron-builder --dir --mac --universal",
+    "_publish": "electron-forge publish",
+    "_lint": "echo \"No linting configured\""
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
@@ -25,6 +26,7 @@
     "@electron/fuses": "^1.7.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "29.1.6",
+    "electron-builder": "^24.13.3",
     "vite": "^5.0.12",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
@@ -45,5 +47,12 @@
     "uuid": "^9.0.1",
     "vue": "^3.4.21",
     "vue-markdown-render": "^2.1.1"
+  },
+  "build": {
+    "appId": "fr.bonamy.witty-ai",
+    "mac": {
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.productivity"
+    }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="chats" ref="divChats">
     <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
-      <img :src="'/assets/'+engine(c)+'.svg'" class="logo" :class="engine(c)" />
+      <EngineLogo :engine="engine(c)" :background="true" />
       <div class="info">
         <div class="title">{{ c.title }}</div>
         <div class="subtitle">{{ c.subtitle() }}</div>
@@ -18,6 +18,7 @@ import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import Overlay from './Overlay.vue'
+import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
 import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
@@ -128,20 +129,6 @@ const handleActionClick = (action) => {
   width: var(--sidebar-logo-size);
   height: var(--sidebar-logo-size);
   margin-right: 8px;
-}
-
-.chat .logo.openai {
-  background-color: #865563;
-  border-radius: 4px;
-  filter: invert(1);
-  padding: 4px;
-}
-
-.chat .logo.ollama {
-  object-fit: cover;
-  background-color: white;
-  border-radius: 4px;
-  padding: 4px;
 }
 
 .chat .title {
