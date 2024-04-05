@@ -10,15 +10,16 @@
     <script type="module" src="/src/renderer.js"></script>
     <script>
       function installTabs() {
-        const tabs = document.querySelectorAll('.tabs *[name="tabs"]')
+        const tabs = document.querySelectorAll('.tabs ul li')
         tabs.forEach((tab, index) => {
-          tab.addEventListener('change', () => {
+          tab.addEventListener('click', (e) => {
+            tab.querySelector('input').checked = true
             showActiveTab()
           })
         })
       }
       function showActiveTab() {
-        const tabs = document.querySelectorAll('.tabs *[name="tabs"]')
+        const tabs = document.querySelectorAll('.tabs input[name="tabs"]')
         const contents = document.querySelectorAll('.tabs .content')
         tabs.forEach((tab, index) => {
           contents[index].style.display = tab.checked ? 'block' : 'none'
