@@ -6,13 +6,13 @@ Electron based ChatGPT desktop application
 
 - [ ] File upload
 - [ ] Image placeholder
-- [ ] Status/Tray bar icon + global shortcut to invoke
 - [ ] Specialized assistants
 - [ ] Customized assistants
 - [ ] Global shortcut for assistants
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Status/Tray bar icon + global shortcut to invoke
 - [x] Chat themes
 - [x] Default instructions in settings
 - [x] Save DALL-E images locally (and delete properly)
