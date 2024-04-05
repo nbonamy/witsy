@@ -44,6 +44,9 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools();
   }
 
+  // show in the dock
+  app.dock.show();
+
   // done
   return mainWindow;
 };
@@ -87,9 +90,9 @@ const trayMenu = [
 app.whenReady().then(() => {
   
   // hide dock
-  if (!process.env.DEBUG) {
-    app.dock.hide();
-  }
+  // if (!process.env.DEBUG) {
+  //   app.dock.hide();
+  // }
 
   // create the main window
   window = createWindow();
@@ -118,6 +121,8 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  } else {
+    app.dock.hide();
   }
 });
 
