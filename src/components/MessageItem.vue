@@ -10,9 +10,13 @@
         <vue-markdown v-else class="text" :source="message.content" :options="mdOptions" />
       </div>
       <div v-if="message.type == 'image'" class="image-container">
-        <img :src="imageUrl" class="image" />
+        <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)"/>
         <BIconDownload class="download" @click="onDownload(message)" />
       </div>
+    </div>
+    <div class="fullscreen" v-if="fullScreenImageUrl" @click="onCloseFullscreen">
+      <img :src="fullScreenImageUrl"/>
+      <BIconXLg class="close" />
     </div>
   </div>
 </template>
@@ -20,7 +24,7 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import Message from '../models/message.js'
 import Loader from './Loader.vue'
 import VueMarkdown from 'vue-markdown-render'
@@ -29,6 +33,8 @@ import hljs from 'highlight.js'
 const props = defineProps({
   message: Message
 })
+
+const fullScreenImageUrl = ref(null)
 
 const authorAvatar = computed(() => {
   return props.message.role === 'assistant' ? '🤖' : '👤'
@@ -66,6 +72,16 @@ const mdOptions = {
   }
 }
 
+const onFullscreen = (url) => {
+  fullScreenImageUrl.value = url
+  ipcRenderer.send('fullscreen', true)
+}
+
+const onCloseFullscreen = () => {
+  fullScreenImageUrl.value = null
+  ipcRenderer.send('fullscreen', false)
+}
+
 const onDownload = (message) => {
   ipcRenderer.send('download', {
     url: message.content,
@@ -77,9 +93,44 @@ const onDownload = (message) => {
 
 </script>
 
-<style>
+<style scoped>
 @import '../../css/themes/base.css';
 @import '../../css/themes/openai.css';
 @import '../../css/themes/conversation.css';
 @import '../../css/highlight.css';
+</style>
+
+<style scoped>
+
+.message .body img {
+  cursor: pointer;
+}
+
+.fullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  padding: 8px;
+  z-index: 1000;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.fullscreen img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.fullscreen .close {
+  color: white;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 14pt;
+}
+
 </style>

@@ -12,6 +12,7 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] View image full screen
 - [x] Status/Tray bar icon + global shortcut to invoke
 - [x] Chat themes
 - [x] Default instructions in settings
