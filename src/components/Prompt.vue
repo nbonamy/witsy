@@ -3,7 +3,7 @@
     <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
     <div class="input">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
-        <BIconPaperclip class="icon" />
+        <img :src="attachmentUrl" class="icon" />
       </div>
       <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input" autofocus />
     </div>
@@ -31,6 +31,14 @@ const input = ref(null)
 
 const working = computed(() => {
   return props.chat.lastMessage().transient
+})
+
+const attachmentUrl = computed(() => {
+  if (store.pendingAttachment?.contents) {
+    return 'data:image/png;base64,' + store.pendingAttachment.contents
+  } else {
+    return null
+  }
 })
 
 onMounted(() => {
@@ -100,11 +108,6 @@ const autoGrow = (element) => {
   margin: 0px 8px;
   padding: 4px 12px 1px;
   flex: 1;
-  display: flex;
-}
-
-.input:has(.attachment) {
-  padding-left: 0px;
 }
 
 .input .attachment {
@@ -127,6 +130,12 @@ const autoGrow = (element) => {
 
 .input .icon {
   margin-left: 8px;
+}
+
+.input .attachment img {
+  height: 36pt !important;
+  width: 36pt !important;
+  object-fit: cover;
 }
 
 </style>

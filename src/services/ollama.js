@@ -9,7 +9,7 @@ export default class extends LLmService {
   }
 
   hasVision() {
-    return false
+    return this.config.ollama.models.chat.includes('llava')
   }
 
   getRountingModel() {
@@ -60,18 +60,11 @@ export default class extends LLmService {
     }
   }
 
+  addImageToPayload(message, payload) {
+    payload.images = [ message.attachment.contents ]
+  }
+
   async image(prompt) {
     return null    
   }
-
-  _buildMessages(thread) {
-    if (typeof thread === 'string') {
-      return [{ role: 'user', content: thread }]
-    } else {
-      return thread.filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
-        return { role: msg.role, content: msg.content }
-      })
-    }
-  }
-
 }
