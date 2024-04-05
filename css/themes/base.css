@@ -10,9 +10,33 @@
 
 .message .text {
   user-select: text;
+}
+
+.message .body.size1 .text {
+  font-size: 9pt;
+  line-height: 11pt;
+}
+
+.message .body.size2 .text {
+  font-size: 10pt;
+  line-height: 12.5pt;
+}
+
+.message .body.size3 .text {
   font-size: 11pt;
   line-height: 14pt;
 }
+
+.message .body.size4 .text {
+  font-size: 12pt;
+  line-height: 15.5pt;
+}
+
+.message .body.size5 .text {
+  font-size: 13pt;
+  line-height: 17pt;
+}
+
 
 .message .body .text pre.hljs code.hljs {
   white-space: pre-wrap !important;

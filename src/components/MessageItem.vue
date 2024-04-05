@@ -5,7 +5,7 @@
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
       <div class="name">{{ authorName }}</div>
     </div>
-    <div class="body">
+    <div class="body" :class="'size' + store.config.appearance.chat.fontSize">
       <div v-if="message.attachment">
         <img :src="attachmentUrl" class="attachment" @click="onFullscreen(attachmentUrl)"/>
       </div>
@@ -29,6 +29,7 @@
 
 import { ipcRenderer } from 'electron'
 import { ref, computed } from 'vue'
+import { store } from '../services/store'
 import Chat from '../models/chat.js'
 import Message from '../models/message.js'
 import Loader from './Loader.vue'

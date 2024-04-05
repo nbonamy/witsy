@@ -10,7 +10,8 @@
   },
   "appearance": {
     "chat": {
-      "theme": "openai"
+      "theme": "openai",
+      "fontSize": 3
     }
   },
   "openai": {
