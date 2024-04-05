@@ -160,6 +160,21 @@ ipcMain.on('delete', (event, payload) => {
   }
 })
 
+ipcMain.on('pick-file', (event, payload) => {
+  let fileURL = dialog.showOpenDialogSync({
+    filters: payload?.filters
+  });
+  if (fileURL) {
+    let fileContents = fs.readFileSync(fileURL[0]);
+    event.returnValue = {
+      url: fileURL[0],
+      contents: fileContents.toString('base64')
+    };
+  } else {
+    event.returnValue = null;
+  }
+})
+
 ipcMain.on('download', async (event, payload) => {
 
   // parse properties

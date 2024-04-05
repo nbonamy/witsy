@@ -71,7 +71,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt, callback) {
+  async prompt(prompt, attachment, callback) {
 
     // check
     prompt = prompt.trim()
@@ -95,8 +95,8 @@ export default class {
 
     // add message
     let message = new Message('user', prompt)
+    message.attachFile(attachment)
     this.chat.addMessage(message)
-    store.cleanEmptyChats()
 
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
@@ -182,6 +182,18 @@ export default class {
       await this.llm?.stop(this.stream)
       this.chat.lastMessage().appendText(null, true)
     }
+  }
+
+  async attach(file) {
+
+    // make sure last message is from user else create it
+    if (this.chat.lastMessage().role !== 'user') {
+      this.chat.addMessage(new Message('user'), '')
+    }
+
+    // now attach
+    this.chat.lastMessage().attachFile(file)
+
   }
 
   async getTitle() {

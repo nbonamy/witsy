@@ -12,6 +12,7 @@ let defaultSettings = null
 export const store = reactive({
   config: {},
   chats: [],
+  pendingAttachment: null
 })
 
 store.load = (defaults = {}) => {

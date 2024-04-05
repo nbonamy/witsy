@@ -6,6 +6,9 @@
       <div class="name">{{ authorName }}</div>
     </div>
     <div class="body">
+      <div v-if="message.attachment">
+        <img :src="attachmentUrl" class="attachment" @click="onFullscreen(attachmentUrl)"/>
+      </div>
       <div v-if="message.type == 'text'">
         <vue-markdown v-if="message.content !== null" class="text" :source="message.content" :options="mdOptions" />
         <Loader v-if="message.transient" />
@@ -42,6 +45,14 @@ const fullScreenImageUrl = ref(null)
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
+})
+
+const attachmentUrl = computed(() => {
+  if (props.message.attachment?.contents) {
+    return 'data:image/png;base64,' + props.message.attachment.contents
+  } else {
+    return null
+  }
 })
 
 const imageUrl = computed(() => {

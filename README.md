@@ -4,14 +4,15 @@ Electron based ChatGPT desktop application
 
 ## TODO
 
-- [ ] File upload
 - [ ] Image placeholder
 - [ ] Specialized assistants
 - [ ] Customized assistants
 - [ ] Global shortcut for assistants
+- [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Image attachment for vision
 - [x] Stop response streaming
 - [x] Save/Restore window position
 - [x] Ollama support

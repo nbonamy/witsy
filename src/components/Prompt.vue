@@ -1,17 +1,22 @@
 <template>
   <div class="prompt">
-    <BIconFileEarmarkPlus class="icon upload" @click="upload"/>
+    <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
     <div class="input">
+      <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
+        <BIconPaperclip class="icon" />
+      </div>
       <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input" autofocus />
     </div>
-    <BIconSquareFill class="icon" @click="stopAssistant" v-if="working" />
-    <BIconSendFill class="icon" @click="sendPrompt" v-else />
+    <BIconSquareFill class="icon" @click="onStopAssistant" v-if="working" />
+    <BIconSendFill class="icon" @click="onSendPrompt" v-else />
   </div>
 </template>
 
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
+import { ipcRenderer } from 'electron'
+import { store } from '../services/store'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/useEventBus'
@@ -32,13 +37,24 @@ onMounted(() => {
   autoGrow(input.value)
 })
 
-const sendPrompt = () => {
+const onSendPrompt = () => {
   emitEvent('sendPrompt', prompt.value)
   prompt.value = ''
 }
 
-const stopAssistant = () => {
+const onStopAssistant = () => {
   emitEvent('stopAssistant')
+}
+
+const onAttach = () => {
+  let file = ipcRenderer.sendSync('pick-file', { filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }] })
+  if (file) {
+    emitEvent('attachFile', file)
+  }
+}
+
+const onDetach = () => {
+  emitEvent('detachFile')
 }
 
 const onKeyUp = (event) => {
@@ -49,7 +65,7 @@ const onEnter = (event) => {
   if (event.shiftKey) {
 
   } else {
-    sendPrompt()
+    onSendPrompt()
     event.preventDefault()
     event.stopPropagation()
     return false
@@ -59,10 +75,6 @@ const onEnter = (event) => {
 const autoGrow = (element) => {
   element.style.height = '5px'
   element.style.height = (element.scrollHeight) + 'px'
-}
-
-const upload = () => {
-  console.log('Upload')
 }
 
 </script>
@@ -89,6 +101,15 @@ const upload = () => {
   padding: 4px 12px 1px;
   flex: 1;
   display: flex;
+}
+
+.input:has(.attachment) {
+  padding-left: 0px;
+}
+
+.input .attachment {
+  margin-top: 2.5px;
+  margin-right: 2px;
 }
 
 .input textarea {

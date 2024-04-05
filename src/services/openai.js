@@ -12,6 +12,10 @@ export default class extends LLmService {
     })
   }
 
+  hasVision() {
+    return this.config.openai.models.chat.includes('vision')
+  }
+
   getRountingModel() {
     return 'gpt-3.5-turbo'
   }

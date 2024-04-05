@@ -31,6 +31,8 @@ onMounted(() => {
   onEvent('newChat', onNewChat)
   onEvent('selectChat', onSelectChat)
   onEvent('sendPrompt', onSendPrompt)
+  onEvent('attachFile', onAttachFile)
+  onEvent('detachFile', onDetachFile)
   onEvent('stopAssistant', onStopAssistant)
 })
 
@@ -54,9 +56,21 @@ const onSendPrompt = async (prompt) => {
   }
 
   // 
-  assistant.value.prompt(prompt, (text) => {
+  assistant.value.prompt(prompt, store.pendingAttachment, (text) => {
     emitEvent('newChunk', text)
   })
+
+  // clear stuff
+  store.pendingAttachment = null
+  store.cleanEmptyChats()
+}
+
+const onAttachFile = async (file) => {
+  store.pendingAttachment = file
+}
+
+const onDetachFile = async () => {
+  store.pendingAttachment = null
 }
 
 const onStopAssistant = async () => {
