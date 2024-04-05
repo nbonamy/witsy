@@ -61,14 +61,14 @@
             </div>
             <div class="group">
               <label>OpenAI Chat Model</label>
-              <select v-model="openAI_chat_model">
+              <select v-model="openAI_chat_model" :disabled="openAI_chat_models.length == 0">
                 <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
               </select>
             </div>
             <div class="group">
               <label>OpenAI Image Model</label>
               <div class="subgroup">
-                <select v-model="openAI_image_model">
+                <select v-model="openAI_image_model" :disabled="openAI_image_models.length == 0">
                   <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}</option>
                 </select><br/>
                 <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
@@ -78,7 +78,7 @@
           <div id="tab-content-Ollama" class="content">
             <div class="group">
               <label>Ollama Chat Model</label>
-              <select v-model="ollama_chat_model">
+              <select v-model="ollama_chat_model" :disabled="ollama_chat_models.length == 0">
                 <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
               </select>
             </div>
