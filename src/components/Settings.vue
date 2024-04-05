@@ -15,14 +15,14 @@
             <li class="tab">
               <input type="radio" name="tabs" id="tabOpenAI" />
               <label for="tabOpenAI">
-                <img src="/assets/openai.svg" class="icon" />
+                <EngineLogo engine="openai" class="icon" />
                 <span class="title">OpenAI</span>
               </label>
             </li>
             <li class="tab">
               <input type="radio" name="tabs" id="tabOllama" />
               <label for="tabOllama">
-                <img src="/assets/ollama.svg" class="icon" />
+                <EngineLogo engine="ollama" class="icon" />
                 <span class="title">Ollama</span>
               </label>
             </li>
@@ -99,6 +99,7 @@
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
+import EngineLogo from './EngineLogo.vue'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import defaults from '../../defaults/settings.json'
