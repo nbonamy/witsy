@@ -15,14 +15,14 @@
             <li class="tab">
               <input type="radio" name="tabs" id="tabOpenAI" />
               <label for="tabOpenAI">
-                <BIconAt class="icon" />
+                <img src="/assets/openai.svg" class="icon" />
                 <span class="title">OpenAI</span>
               </label>
             </li>
             <li class="tab">
               <input type="radio" name="tabs" id="tabOllama" />
               <label for="tabOllama">
-                <BIconAt class="icon" />
+                <img src="/assets/ollama.svg" class="icon" />
                 <span class="title">Ollama</span>
               </label>
             </li>
@@ -103,29 +103,38 @@ import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import defaults from '../../defaults/settings.json'
 
+// bus
+import useEventBus from '../composables/useEventBus'
+const { onEvent } = useEventBus()
+
 const general_llmEngine = ref(store.config.llm.engine || 'openai')
 const general_defaultInstructions = ref(store.config.instructions.default || '')
 const general_chatTheme = ref(store.config.appearance.chat.theme || 'openai')
-const openAI_apiKey = ref(store.config.openAI?.apiKey || '')
-const openAI_chat_model = ref(store.config.openAI?.models?.chat || '')
-const openAI_image_model = ref(store.config.openAI?.models?.image || '')
+const openAI_apiKey = ref(store.config.openai?.apiKey || '')
+const openAI_chat_model = ref(store.config.openai?.models?.chat || '')
+const openAI_image_model = ref(store.config.openai?.models?.image || '')
 const ollama_chat_model = ref(store.config.ollama?.models?.chat || '')
 const openAI_chat_models = ref([])
 const openAI_image_models = ref([])
 const ollama_chat_models = ref([])
 
 onMounted(async () => {
-  getOpenAOIModels()
+  onEvent('openSettings', onOpenSettings)
+  getOpenAIModels()
   getOllamaModels()
   showActiveTab()
   installTabs()
 })
 
+const onOpenSettings = () => {
+  document.querySelector('#settings').showModal()
+}
+
 const showActiveTab = () => {
   window.showActiveTab()
 }
 
-const getOpenAOIModels = async () => {
+const getOpenAIModels = async () => {
   const openAI = new OpenAI(store.config)
   const models = await openAI.getModels()
   if (models == null) {
@@ -161,8 +170,8 @@ const onResetDefaultInstructions = () => {
 
 const onKeyChange = () => {
   if (openAI_chat_models.value.length === 0 && openAI_apiKey.value.length > 0) {
-    store.config.openAI.apiKey = openAI_apiKey.value
-    getOpenAOIModels()
+    store.config.openai.apiKey = openAI_apiKey.value
+    getOpenAIModels()
   }
 }
 
@@ -170,13 +179,13 @@ const onSubmit = () => {
   store.config.llm.engine = general_llmEngine.value
   store.config.instructions.default = general_defaultInstructions.value
   store.config.appearance.chat.theme = general_chatTheme.value
-  store.config.openAI.apiKey = openAI_apiKey.value
-  store.config.openAI.models = {
+  store.config.openai.apiKey = openAI_apiKey.value
+  store.config.openai.models = {
     chat: openAI_chat_model.value,
     image: openAI_image_model.value
   }
-  store.config.ollama.models = {
-    chat: ollama_chat_model.value
+  if (ollama_chat_model.value != null) {
+    store.config.ollama.models.chat = ollama_chat_model.value
   }
   store.save()
 }
@@ -202,6 +211,8 @@ dialog {
   display: block;
   margin: 0 auto 8px;
   font-size: 16pt;
+  width: 24px;
+  height: 24px;
 }
 
 .tabs label .title {

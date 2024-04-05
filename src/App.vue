@@ -31,7 +31,6 @@ onMounted(() => {
   onEvent('newChat', onNewChat)
   onEvent('selectChat', onSelectChat)
   onEvent('sendPrompt', onSendPrompt)
-  onEvent('openSettings', onOpenSettings)
 })
 
 const onNewChat = () => {
@@ -43,10 +42,6 @@ const onSelectChat = (chat) => {
   nextTick(() => {
     emitEvent('newChunk')
   })
-}
-
-const onOpenSettings = () => {
-  document.querySelector('#settings').showModal()
 }
 
 const onSendPrompt = async (prompt) => {

@@ -39,7 +39,7 @@ export default class {
   initLlm() {
     if (store.config.llm.engine === 'ollama') {
     this.llm = new Ollama(this.config)
-    } else if (store.config.openAI.apiKey) {
+    } else if (store.config.openai.apiKey) {
       this.llm = new OpenAI(this.config)
     } else {
       this.llm = null
@@ -83,6 +83,13 @@ export default class {
       if (this.initLlm() === null) {
         return
       }
+    }
+
+    // set engine and model
+    if (this.chat.engine === null) {
+      let engine = store.config.llm.engine
+      let model = store.config.getActiveModel()
+      this.chat.setEngineModel(engine, model)
     }
 
     // add message
