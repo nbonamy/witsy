@@ -1,7 +1,7 @@
 <template>
   <div class="messages" :class="chatTheme" ref="divMessages">
-    <div v-for="message in messages" :key="message.uuid">
-      <MessageItem :message="message" />
+    <div v-for="message in chat.messages" :key="message.uuid">
+      <MessageItem :chat="chat" :message="message" />
     </div>
   </div>
 </template>
@@ -10,6 +10,7 @@
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '../composables/useEventBus'
@@ -20,7 +21,7 @@ const divMessages = ref(null)
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 
 defineProps({
-  messages: Array
+  chat: Chat
 })
 
 onMounted(() => {
