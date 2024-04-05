@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import OpenAI from '../services/openai'
+import Ollama from '../services/ollama'
 import { store } from '../services/store'
 
 export default class {
@@ -36,7 +37,14 @@ export default class {
   }
 
   initLlm() {
-    this.llm = new OpenAI(this.config)
+    if (store.config.llm.engine === 'ollama') {
+    this.llm = new Ollama(this.config)
+    } else if (store.config.openAI.apiKey) {
+      this.llm = new OpenAI(this.config)
+    } else {
+      this.llm = null
+    }
+    return this.llm
   }
 
   hasLlm() {
@@ -44,6 +52,13 @@ export default class {
   }
 
   async route(prompt) {
+    
+    // check if routing possibble
+    let routingModel = this.llm.getRountingModel()
+    if (routingModel === null) {
+      return null
+    }
+    
     // build messages
     let messages = [
       new Message('system', this.config.instructions.routing),
@@ -51,7 +66,7 @@ export default class {
     ]
 
     // now get it
-    let route = await this.llm.complete(messages, { model: 'gpt-3.5-turbo' })
+    let route = await this.llm.complete(messages, { model: routingModel })
     return route.content
   }
 
@@ -61,6 +76,13 @@ export default class {
     prompt = prompt.trim()
     if (prompt === '') {
       return
+    }
+
+    // we need an llm
+    if (this.llm === null) {
+      if (this.initLlm() === null) {
+        return
+      }
     }
 
     // add message
@@ -94,8 +116,7 @@ export default class {
   async generateText(prompt, callback) {
     let stream = await this.llm.stream(this._getRelevantChatMessages())
     for await (let chunk of stream) {
-      let text = chunk.choices[0]?.delta?.content || ''
-      let done = chunk.choices[0]?.finish_reason === 'stop'
+      const { text, done } = this.llm.processChunk(chunk)
       this.chat.lastMessage().appendText(text, done)
       if (callback) callback(text)
     }
@@ -105,6 +126,13 @@ export default class {
 
     // generate 
     let response = await this.llm.image(prompt)
+
+    // check error
+    if (response === null) {
+      this.chat.lastMessage().setText('Sorry, I could not generate an image for that prompt.')
+      if (callback) callback(null)
+      return
+    }
 
     // we need to download it locally
     let filename = `${uuidv4()}.png`
@@ -135,7 +163,10 @@ export default class {
 
     // now get it
     let response = await this.llm.complete(messages)
-    let title = response.content
+    let title = response.content.trim()
+    if (title === '') {
+      return this.chat.messages[1].content
+    }
 
     // now clean up
     if (title.startsWith('Title:')) {

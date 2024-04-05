@@ -10,12 +10,16 @@ export default class {
     })
   }
 
+  getRountingModel() {
+    return 'gpt-3.5-turbo'
+  }
+
   async getModels() {
     try {
       const response = await this.client.models.list()
       return response.data
     } catch (error) {
-      console.error("Error listing models:", error);
+      console.error('Error listing models:', error);
     }
   }
 
@@ -42,21 +46,35 @@ export default class {
     })
   }
 
+  processChunk(chunk) {
+    return {
+      text: chunk.choices[0]?.delta?.content || '',
+      done: chunk.choices[0]?.finish_reason === 'stop'
+    }
+  }
+
   async image(prompt) {
     
-    // call
-    const response = await this.client.images.generate({
-      model: this.config.openAI.models.image,
-      prompt: prompt,
-      n:1,
-    })
-    
-    // return an object
-    return {
-      type: 'image',
-      original_prompt: prompt,
-      revised_prompt: response.data[0].revised_prompt,
-      url: response.data[0].url,
+    try {
+
+      // call
+      const response = await this.client.images.generate({
+        model: this.config.openAI.models.image,
+        prompt: prompt,
+        n:1,
+      })
+
+      // return an object
+      return {
+        type: 'image',
+        original_prompt: prompt,
+        revised_prompt: response.data[0].revised_prompt,
+        url: response.data[0].url,
+      }
+
+    } catch (error) {
+      console.error('Error generating image:', error)
+      return null
     }
 
   }

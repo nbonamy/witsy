@@ -52,13 +52,9 @@ const onOpenSettings = () => {
 const onSendPrompt = async (prompt) => {
 
   // do we need to init llm
-  if (!assistant.value.hasLlm()) {
-    if (store.config.openAI.apiKey) {
-      assistant.value.initLlm()
-    } else {
-      emitEvent('openSettings')
-      return
-    }
+  if (assistant.value.initLlm() === null) {
+    emitEvent('openSettings')
+    return
   }
 
   // 

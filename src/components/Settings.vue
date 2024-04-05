@@ -20,8 +20,22 @@
                 <span class="title">OpenAI</span>
               </label>
             </li>
+            <li class="tab">
+              <input type="radio" name="tabs" id="tabOllama" />
+              <label for="tabOllama">
+                <BIconAt class="icon"/>
+                <span class="title">Ollama</span>
+              </label>
+            </li>
           </ul>
           <div id="tab-content-General" class="content">
+            <div class="group">
+              <label>LLM Engine</label>
+              <select v-model="general_llmEngine">
+                <option value="openai">OpenAI</option>
+                <option value="ollama">Ollama</option>
+              </select>
+            </div>
             <div class="group">
               <label>Chat theme</label>
               <select v-model="general_chatTheme">
@@ -61,6 +75,14 @@
               </div>
             </div>
           </div>
+          <div id="tab-content-Ollama" class="content">
+            <div class="group">
+              <label>Ollama Chat Model</label>
+              <select v-model="ollama_chat_model">
+                <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}</option>
+              </select>
+            </div>
+          </div>
         </div>
       </main>
       <footer>
@@ -76,18 +98,23 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import OpenAI from '../services/openai'
+import Ollama from '../services/ollama'
 import defaults from '../../defaults/settings.json'
 
+const general_llmEngine = ref(store.config.llm.engine || 'openai')
 const general_defaultInstructions = ref(store.config.instructions.default || '')
 const general_chatTheme = ref(store.config.appearance.chat.theme || 'openai')
 const openAI_apiKey = ref(store.config.openAI?.apiKey || '')
 const openAI_chat_model = ref(store.config.openAI?.models?.chat || '')
 const openAI_image_model = ref(store.config.openAI?.models?.image || '')
+const ollama_chat_model = ref(store.config.ollama?.models?.chat || '')
 const openAI_chat_models = ref([])
 const openAI_image_models = ref([])
+const ollama_chat_models = ref([])
 
 onMounted(async () => {
   getOpenAOIModels()
+  getOllamaModels()
   showActiveTab()
   installTabs()
 })
@@ -109,6 +136,14 @@ const getOpenAOIModels = async () => {
     .sort((a, b) => a.name.localeCompare(b.name))
 }
 
+const getOllamaModels = async () => {
+  const ollama = new Ollama(store.config)
+  const models = await ollama.getModels()
+  ollama_chat_models.value = models
+    .map(model => { return { name: model.name, value: model.model } })
+    .sort((a, b) => a.name.localeCompare(b.name))
+}
+
 const onResetDefaultInstructions = () => {
   general_defaultInstructions.value = defaults.instructions.default
 }
@@ -121,12 +156,16 @@ const onKeyChange = () => {
 }
 
 const onSubmit = () => {
+  store.config.llm.engine = general_llmEngine.value
   store.config.instructions.default = general_defaultInstructions.value
   store.config.appearance.chat.theme = general_chatTheme.value
   store.config.openAI.apiKey = openAI_apiKey.value
   store.config.openAI.models = {
     chat: openAI_chat_model.value,
     image: openAI_image_model.value
+  }
+  store.config.ollama.models = {
+    chat: ollama_chat_model.value
   }
   store.save()
 }
