@@ -201,7 +201,7 @@ const onSubmit = () => {
 
 <style scoped>
 dialog {
-  width: 600px;
+  width: 500px;
 }
 
 .tabs .tab>label {
@@ -210,20 +210,25 @@ dialog {
 
 .tabs label .icon {
   display: block;
-  margin: 0 auto 8px;
-  font-size: 16pt;
-  width: 24px;
-  height: 24px;
+  margin: 0 auto;
+  width: 15pt;
+  height: 15pt;
+  color: var(--tabs-header-normal-color);
+}
+
+.tabs .tab>[id^="tab"]:checked+label .icon {
+  color: var(--tabs-header-selected-color);
+  /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
+  filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);
 }
 
 .tabs label .title {
-  font-weight: bold;
-  font-size: 11pt;
+  font-size: 9pt;
 }
 
 .tabs .content {
   padding: 16px 32px;
-  height: 170px;
+  height: 150px;
 }
 
 textarea {
