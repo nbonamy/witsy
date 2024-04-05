@@ -14,6 +14,12 @@
       "fontSize": 3
     }
   },
+  "shortcuts": {
+    "chat": {
+      "key": "Space",
+      "alt": true
+    }
+  },
   "openai": {
     "apiKey": "",
     "models": {

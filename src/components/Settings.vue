@@ -7,13 +7,15 @@
           <ul>
             <SettingsTab title="General" :checked="true"><BIconGear class="icon" /></SettingsTab>
             <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
+            <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab title="OpenAI"><EngineLogo engine="openai" class="icon" /></SettingsTab>
             <SettingsTab title="Ollama"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
           </ul>
-          <SettingsGeneral class="content" ref="settingsGeneral" />
-          <SettingsAppearance class="content" ref="settingsAppearance" />
-          <SettingsOpenAI class="content" ref="settingsOpenAI" />
-          <SettingsOllama class="content" ref="settingsOllama" />
+          <SettingsGeneral ref="settingsGeneral" />
+          <SettingsAppearance ref="settingsAppearance" />
+          <SettingsShortcuts ref="settingsShortcuts" />
+          <SettingsOpenAI ref="settingsOpenAI" />
+          <SettingsOllama ref="settingsOllama" />
         </div>
       </main>
       <footer>
@@ -33,6 +35,7 @@ import EngineLogo from './EngineLogo.vue'
 import SettingsTab from './SettingsTab.vue'
 import SettingsGeneral from './SettingsGeneral.vue'
 import SettingsAppearance from './SettingsAppearance.vue'
+import SettingsShortcuts from './SettingsShortcuts.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 
@@ -42,6 +45,7 @@ const { onEvent } = useEventBus()
 
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
+const settingsShortcuts = ref(null)
 const settingsOpenAI = ref(null)
 const settingsOllama = ref(null)
 
@@ -54,6 +58,7 @@ onMounted(async () => {
 const onOpenSettings = () => {
   settingsGeneral.value.load()
   settingsAppearance.value.load()
+  settingsShortcuts.value.load()
   settingsOpenAI.value.load()
   settingsOllama.value.load()
   document.querySelector('#settings').showModal()
@@ -62,6 +67,7 @@ const onOpenSettings = () => {
 const onSave = () => {
   settingsGeneral.value.save()
   settingsAppearance.value.save()
+  settingsShortcuts.value.save()
   settingsOpenAI.value.save()
   settingsOllama.value.save()
   store.save()
