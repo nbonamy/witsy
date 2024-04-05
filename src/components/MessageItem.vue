@@ -93,11 +93,14 @@ const onDownload = (message) => {
 
 </script>
 
+<style>
+@import '../../css/highlight.css';
+</style>
+
 <style scoped>
 @import '../../css/themes/base.css';
 @import '../../css/themes/openai.css';
 @import '../../css/themes/conversation.css';
-@import '../../css/highlight.css';
 </style>
 
 <style scoped>
