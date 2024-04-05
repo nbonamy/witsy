@@ -8,6 +8,10 @@ export default class extends LLmService {
     super(config)
   }
 
+  hasVision() {
+    return false
+  }
+
   getRountingModel() {
     return null
   }

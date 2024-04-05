@@ -29,11 +29,14 @@
 }
 
 
-.message .image {
-  width: 100%;
+.message .attachment, .message .image {
   max-width: 400px;
   margin-top: 16px;
   border-radius: 8px;
+}
+
+.message .attachment {
+  max-width: 200px;
 }
 
 .message .image-container {
