@@ -30,15 +30,3 @@ code, pre, code * {
 a, a:visited, a:active, a:focus {
   color: #0000ee;
 }
-
-pre.hljs {
-  overflow-x: auto;
-  padding: 12px;
-  padding-bottom: 16px;
-  overflow: auto;
-}
-
-code[class=language-plaintext] {
-  white-space:pre-line
-}
-
