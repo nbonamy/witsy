@@ -1,9 +1,11 @@
-import ollama from 'ollama'
 
-export default class {
+import ollama from 'ollama'
+import LLmService from './llm_service'
+
+export default class extends LLmService {
 
   constructor(config) {
-    this.config = config
+    super(config)
   }
 
   getRountingModel() {

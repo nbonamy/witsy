@@ -1,9 +1,11 @@
-import OpenAI from 'openai'
 
-export default class {
+import OpenAI from 'openai'
+import LLmService from './llm_service'
+
+export default class extends LLmService {
 
   constructor(config) {
-    this.config = config
+    super(config)
     this.client = new OpenAI({
       apiKey: config.openAI.apiKey,
       dangerouslyAllowBrowser: true
@@ -70,16 +72,6 @@ export default class {
       url: response.data[0].url,
     }
 
-  }
-
-  _buildMessages(thread) {
-    if (typeof thread === 'string') {
-      return [{ role: 'user', content: thread }]
-    } else {
-      return thread.filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
-        return { role: msg.role, content: msg.content }
-      })
-    }
   }
 
 }
