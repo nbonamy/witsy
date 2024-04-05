@@ -11,7 +11,7 @@
       <EngineLogo :engine="store.config.llm.engine" />
       <p class="version">{{ model }}</p>
     </div>
-    <Prompt class="prompt" />
+    <Prompt :chat="chat" class="prompt" />
   </div>
 </template>
 
@@ -51,10 +51,14 @@ const model = computed(() => {
 .toolbar {
   padding: 16px;
   -webkit-app-region: drag;
+  display: grid;
 }
 
 .title {
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty {

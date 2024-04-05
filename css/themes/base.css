@@ -17,6 +17,18 @@
   white-space: pre-wrap !important;
 }
 
+.message .body .text pre.hljs {
+  overflow-x: auto;
+  padding: 12px;
+  padding-bottom: 16px;
+  overflow: auto;
+}
+
+.message .body .text pre.hljs code[class=language-plaintext] {
+  white-space: pre-wrap;
+}
+
+
 .message .image {
   width: 100%;
   max-width: 400px;
