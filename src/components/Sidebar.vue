@@ -66,6 +66,7 @@ const onNewChat = () => {
 
 .icon-text {
   color: #5b5a59;
+  cursor: pointer;
 }
 
 .icon-text span {

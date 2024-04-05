@@ -5,114 +5,19 @@
       <main>
         <div class="tabs">
           <ul>
-            <li class="tab">
-              <input type="radio" name="tabs" id="tabGeneral" checked />
-              <label for="tabGeneral">
-                <BIconGear class="icon" />
-                <span class="title">General</span>
-              </label>
-            </li>
-            <li class="tab">
-              <input type="radio" name="tabs" id="tabAppearance" />
-              <label for="tabAppearance">
-                <BIconPalette class="icon" />
-                <span class="title">Appearance</span>
-              </label>
-            </li>
-            <li class="tab">
-              <input type="radio" name="tabs" id="tabOpenAI" />
-              <label for="tabOpenAI">
-                <EngineLogo engine="openai" class="icon" />
-                <span class="title">OpenAI</span>
-              </label>
-            </li>
-            <li class="tab">
-              <input type="radio" name="tabs" id="tabOllama" />
-              <label for="tabOllama">
-                <EngineLogo engine="ollama" class="icon" />
-                <span class="title">Ollama</span>
-              </label>
-            </li>
+            <SettingsTab title="General" :checked="true"><BIconGear class="icon" /></SettingsTab>
+            <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
+            <SettingsTab title="OpenAI"><EngineLogo engine="openai" class="icon" /></SettingsTab>
+            <SettingsTab title="Ollama"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
           </ul>
-          <div id="tab-content-General" class="content">
-            <div class="group">
-              <label>LLM engine</label>
-              <select v-model="general_llmEngine">
-                <option value="openai">OpenAI</option>
-                <option value="ollama">Ollama</option>
-              </select>
-            </div>
-            <div class="group">
-              <label>Default instructions</label>
-              <div class="subgroup">
-                <textarea v-model="general_defaultInstructions" />
-                <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
-              </div>
-            </div>
-          </div>
-          <div id="tab-content-Appearance" class="content">
-            <div class="group">
-              <label>Chat theme</label>
-              <select v-model="general_chatTheme" @change="onChangeAppearance">
-                <option value="openai">OpenAI</option>
-                <option value="conversation">Conversation</option>
-              </select>
-            </div>
-            <div class="group">
-              <label>Chat font size</label>
-              <span class="fontsize small">A</span>
-              <div class="slidergroup">
-                <input type="range" min="1" max="5" v-model="general_fontSize" @input="onChangeAppearance" />
-                <datalist id="fontsize">
-                  <option value="1"></option>
-                  <option value="2"></option>
-                  <option value="3"></option>
-                  <option value="4"></option>
-                  <option value="5"></option>
-                </datalist>
-              </div>
-              <span class="fontsize large">A</span>
-            </div>
-          </div>
-          <div id="tab-content-openAI" class="content">
-            <div class="group">
-              <label>OpenAI API key</label>
-              <div class="subgroup">
-                <input type="text" v-model="openAI_apiKey" @blur="onKeyChange" /><br />
-                <a href="https://platform.openai.com/api-keys" target="_blank">Create an API key</a>
-              </div>
-            </div>
-            <div class="group">
-              <label>OpenAI chat model</label>
-              <select v-model="openAI_chat_model" :disabled="openAI_chat_models.length == 0">
-                <option v-for="model in openAI_chat_models" :key="model.value" :value="model.value">{{ model.name }}
-                </option>
-              </select>
-            </div>
-            <div class="group">
-              <label>OpenAI image model</label>
-              <div class="subgroup">
-                <select v-model="openAI_image_model" :disabled="openAI_image_models.length == 0">
-                  <option v-for="model in openAI_image_models" :key="model.value" :value="model.value">{{ model.name }}
-                  </option>
-                </select><br />
-                <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
-              </div>
-            </div>
-          </div>
-          <div id="tab-content-Ollama" class="content">
-            <div class="group">
-              <label>Ollama chat model</label>
-              <select v-model="ollama_chat_model" :disabled="ollama_chat_models.length == 0">
-                <option v-for="model in ollama_chat_models" :key="model.value" :value="model.value">{{ model.name }}
-                </option>
-              </select>
-            </div>
-          </div>
+          <SettingsGeneral class="content" ref="settingsGeneral" />
+          <SettingsAppearance class="content" ref="settingsAppearance" />
+          <SettingsOpenAI class="content" ref="settingsOpenAI" />
+          <SettingsOllama class="content" ref="settingsOllama" />
         </div>
       </main>
       <footer>
-        <button @click="onSubmit" class="default">Save</button>
+        <button @click="onSave" class="default">Save</button>
         <button class="destructive">Cancel</button>
       </footer>
     </form>
@@ -124,100 +29,41 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
-import OpenAI from '../services/openai'
-import Ollama from '../services/ollama'
-import defaults from '../../defaults/settings.json'
+
+import SettingsTab from './SettingsTab.vue'
+import SettingsGeneral from './SettingsGeneral.vue'
+import SettingsAppearance from './SettingsAppearance.vue'
+import SettingsOpenAI from './SettingsOpenAI.vue'
+import SettingsOllama from './SettingsOllama.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
 const { onEvent } = useEventBus()
 
-const general_llmEngine = ref(store.config.llm.engine || 'openai')
-const general_defaultInstructions = ref(store.config.instructions.default || '')
-const general_chatTheme = ref(store.config.appearance.chat.theme || 'openai')
-const general_fontSize = ref(store.config.appearance.chat.fontSize || 3)
-const openAI_apiKey = ref(store.config.openai?.apiKey || '')
-const openAI_chat_model = ref(store.config.openai?.models?.chat || '')
-const openAI_image_model = ref(store.config.openai?.models?.image || '')
-const ollama_chat_model = ref(store.config.ollama?.models?.chat || '')
-const openAI_chat_models = ref([])
-const openAI_image_models = ref([])
-const ollama_chat_models = ref([])
+const settingsGeneral = ref(null)
+const settingsAppearance = ref(null)
+const settingsOpenAI = ref(null)
+const settingsOllama = ref(null)
 
 onMounted(async () => {
   onEvent('openSettings', onOpenSettings)
-  getOpenAIModels()
-  getOllamaModels()
   showActiveTab()
   installTabs()
 })
 
 const onOpenSettings = () => {
+  settingsGeneral.value.load()
+  settingsAppearance.value.load()
+  settingsOpenAI.value.load()
+  settingsOllama.value.load()
   document.querySelector('#settings').showModal()
 }
 
-const showActiveTab = () => {
-  window.showActiveTab()
-}
-
-const getOpenAIModels = async () => {
-  const openAI = new OpenAI(store.config)
-  const models = await openAI.getModels()
-  if (models == null) {
-    openAI_chat_models.value = []
-    openAI_image_models.value = []
-  } else {
-    openAI_chat_models.value = models
-      .filter(model => model.id.startsWith('gpt-'))
-      .map(model => { return { name: model.id, value: model.id } })
-      .sort((a, b) => a.name.localeCompare(b.name))
-    openAI_image_models.value = models
-      .filter(model => model.id.startsWith('dall-e-'))
-      .map(model => { return { name: model.id, value: model.id } })
-      .sort((a, b) => a.name.localeCompare(b.name))
-  }
-}
-
-const getOllamaModels = async () => {
-  const ollama = new Ollama(store.config)
-  const models = await ollama.getModels()
-  if (models == null) {
-    ollama_chat_models.value = []
-  } else {
-    ollama_chat_models.value = models
-      .map(model => { return { name: model.name, value: model.model } })
-      .sort((a, b) => a.name.localeCompare(b.name))
-  }
-}
-
-const onResetDefaultInstructions = () => {
-  general_defaultInstructions.value = defaults.instructions.default
-}
-
-const onKeyChange = () => {
-  if (openAI_chat_models.value.length === 0 && openAI_apiKey.value.length > 0) {
-    store.config.openai.apiKey = openAI_apiKey.value
-    getOpenAIModels()
-  }
-}
-
-const onChangeAppearance = () => {
-  store.config.appearance.chat.theme = general_chatTheme.value
-  store.config.appearance.chat.fontSize = general_fontSize.value
-  store.save()
-}
-
-const onSubmit = () => {
-  store.config.llm.engine = general_llmEngine.value
-  store.config.instructions.default = general_defaultInstructions.value
-  store.config.openai.apiKey = openAI_apiKey.value
-  store.config.openai.models = {
-    chat: openAI_chat_model.value,
-    image: openAI_image_model.value
-  }
-  if (ollama_chat_model.value != null) {
-    store.config.ollama.models.chat = ollama_chat_model.value
-  }
+const onSave = () => {
+  settingsGeneral.value.save()
+  settingsAppearance.value.save()
+  settingsOpenAI.value.save()
+  settingsOllama.value.save()
   store.save()
 }
 
@@ -229,7 +75,7 @@ const onSubmit = () => {
 @import '../../css/form.css';
 </style>
 
-<style scoped>
+<style>
 dialog {
   width: 500px;
 }
@@ -239,7 +85,7 @@ dialog {
   margin: 0px 2px;
 }
 
-.tabs .tab>[id^="tab"]:checked+label {
+.tabs .tab>[name="tabs"]:checked+label {
   background-color: #e5e6e6;
   border-radius: 8px;
 }
@@ -253,7 +99,7 @@ dialog {
   filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
 }
 
-.tabs .tab>[id^="tab"]:checked+label .icon {
+.tabs .tab>[name="tabs"]:checked+label .icon {
   color: var(--tabs-header-selected-color);
   /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
   filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);

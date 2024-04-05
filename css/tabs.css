@@ -13,7 +13,7 @@
   display: block;
 }
 
-.tabs .tab>input[type="radio"] {
+.tabs .tab>[name="tabs"] {
   position: absolute;
   top: -9999px;
   left: -9999px;
@@ -30,7 +30,7 @@
   display: none;
 }
 
-.tabs .tab>[id^="tab"]:checked+label {
+.tabs .tab>[name="tabs"]:checked+label {
   color: var(--tabs-header-selected-color);
 }
 
