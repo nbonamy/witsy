@@ -55,26 +55,19 @@ export default class {
 
   async image(prompt) {
     
-    try {
+    // call
+    const response = await this.client.images.generate({
+      model: this.config.openAI.models.image,
+      prompt: prompt,
+      n:1,
+    })
 
-      // call
-      const response = await this.client.images.generate({
-        model: this.config.openAI.models.image,
-        prompt: prompt,
-        n:1,
-      })
-
-      // return an object
-      return {
-        type: 'image',
-        original_prompt: prompt,
-        revised_prompt: response.data[0].revised_prompt,
-        url: response.data[0].url,
-      }
-
-    } catch (error) {
-      console.error('Error generating image:', error)
-      return null
+    // return an object
+    return {
+      type: 'image',
+      original_prompt: prompt,
+      revised_prompt: response.data[0].revised_prompt,
+      url: response.data[0].url,
     }
 
   }

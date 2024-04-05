@@ -114,43 +114,56 @@ export default class {
   }
 
   async generateText(prompt, callback) {
-    let stream = await this.llm.stream(this._getRelevantChatMessages())
-    for await (let chunk of stream) {
-      const { text, done } = this.llm.processChunk(chunk)
-      this.chat.lastMessage().appendText(text, done)
-      if (callback) callback(text)
+
+    try {
+
+      let stream = await this.llm.stream(this._getRelevantChatMessages())
+      for await (let chunk of stream) {
+        const { text, done } = this.llm.processChunk(chunk)
+        this.chat.lastMessage().appendText(text, done)
+        if (callback) callback(text)
+      }
+
+    } catch (error) {
+      console.error(error)
+      this.chat.lastMessage().setText('Sorry, I could not generate text for that prompt.')
+      if (callback) callback(null)
     }
+  
   }
 
   async generateImage(prompt, callback) {
 
-    // generate 
-    let response = await this.llm.image(prompt)
+    try {
 
-    // check error
-    if (response === null) {
+      // generate 
+      let response = await this.llm.image(prompt)
+
+      // we need to download it locally
+      let filename = `${uuidv4()}.png`
+      filename = ipcRenderer.sendSync('download', {
+        url: response.url,
+        properties: {
+          filename: filename,
+          directory: 'userData',
+          subdir: 'images',
+          prompt: false
+        }
+      })
+
+      // save
+      filename = `file://${filename}`
+      this.chat.lastMessage().setImage(filename)
+      if (callback) callback(filename)
+
+    } catch (error) {
+      console.error(error)
       this.chat.lastMessage().setText('Sorry, I could not generate an image for that prompt.')
       if (callback) callback(null)
-      return
     }
 
-    // we need to download it locally
-    let filename = `${uuidv4()}.png`
-    filename = ipcRenderer.sendSync('download', {
-      url: response.url,
-      properties: {
-        filename: filename,
-        directory: 'userData',
-        subdir: 'images',
-        prompt: false
-      }
-    })
-
-    // save
-    filename = `file://${filename}`
-    this.chat.lastMessage().setImage(filename)
-    if (callback) callback(filename)
   }
+     
 
   async getTitle() {
 
