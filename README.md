@@ -37,6 +37,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and insta
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
+- [ ] Nicer icon
 
 - [x] Shortcut editor
 - [x] Chat font size settings
