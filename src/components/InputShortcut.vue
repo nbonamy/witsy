@@ -48,7 +48,7 @@ const onDelete = () => {
 
 const onKeyDown = (event) => {
   // default
-  console.log('keydown', event)
+  //console.log('keydown', event)
   event.preventDefault()
 
   // delete
