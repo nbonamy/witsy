@@ -12,6 +12,7 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Stop response streaming
 - [x] Save/Restore window position
 - [x] Ollama support
 - [x] View image full screen

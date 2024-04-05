@@ -13,6 +13,7 @@ export default class {
     this.config = config
     this.llm = null
     this.chat = null
+    this.stream = null
     this.newChat()
   }
 
@@ -124,18 +125,23 @@ export default class {
 
     try {
 
-      let stream = await this.llm.stream(this._getRelevantChatMessages())
-      for await (let chunk of stream) {
+      this.stream = await this.llm.stream(this._getRelevantChatMessages())
+      for await (let chunk of this.stream) {
         const { text, done } = this.llm.processChunk(chunk)
         this.chat.lastMessage().appendText(text, done)
         if (callback) callback(text)
       }
 
     } catch (error) {
-      console.error(error)
-      this.chat.lastMessage().setText('Sorry, I could not generate text for that prompt.')
-      if (callback) callback(null)
+      if (error.name !== 'AbortError') {
+        console.error(error)
+        this.chat.lastMessage().setText('Sorry, I could not generate text for that prompt.')
+      }
     }
+
+    // cleanup
+    this.stream = null
+    if (callback) callback(null)
   
   }
 
@@ -170,7 +176,13 @@ export default class {
     }
 
   }
-     
+
+  async stop() {
+    if (this.stream) {
+      await this.llm?.stop(this.stream)
+      this.chat.lastMessage().appendText(null, true)
+    }
+  }
 
   async getTitle() {
 
@@ -192,7 +204,24 @@ export default class {
     if (title.startsWith('Title:')) {
       title = title.substring(6)
     }
-    return title.trim().replace(/^"|"$/g, '').trim()
+
+    // remove quotes
+    title.trim().replace(/^"|"$/g, '').trim()
+
+    // take only up to 80 words
+    const words = title.split(' ')
+    title = ''
+    for (const word of words) {
+      if (title.length + word.length < 80) {
+        title += word + ' '
+      } else {
+        title = title.slice(0, -1) + '...'
+        break
+      }
+    }
+
+    // done
+    return title
   }
 
   _getRelevantChatMessages() {

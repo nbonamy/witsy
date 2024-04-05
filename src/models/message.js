@@ -45,7 +45,7 @@ export default class Message {
   }
 
   appendText(chunk, done = false) {
-    if (this.type === 'text') {
+    if (this.type === 'text' && chunk) {
       if (!this.content) this.content = ''
       this.content = this.content + chunk
     }

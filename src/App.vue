@@ -31,6 +31,7 @@ onMounted(() => {
   onEvent('newChat', onNewChat)
   onEvent('selectChat', onSelectChat)
   onEvent('sendPrompt', onSendPrompt)
+  onEvent('stopAssistant', onStopAssistant)
 })
 
 const onNewChat = () => {
@@ -56,6 +57,10 @@ const onSendPrompt = async (prompt) => {
   assistant.value.prompt(prompt, (text) => {
     emitEvent('newChunk', text)
   })
+}
+
+const onStopAssistant = async () => {
+  await assistant.value.stop()
 }
 
 </script>
