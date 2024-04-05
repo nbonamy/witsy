@@ -88,7 +88,7 @@
         </div>
       </main>
       <footer>
-        <button @click="onSubmit" class="default">OK</button>
+        <button @click="onSubmit" class="default">Save</button>
         <button class="destructive">Cancel</button>
       </footer>
     </form>
