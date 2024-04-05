@@ -208,18 +208,6 @@ export default class {
     // remove quotes
     title.trim().replace(/^"|"$/g, '').trim()
 
-    // take only up to 80 words
-    const words = title.split(' ')
-    title = ''
-    for (const word of words) {
-      if (title.length + word.length < 80) {
-        title += word + ' '
-      } else {
-        title = title.slice(0, -1) + '...'
-        break
-      }
-    }
-
     // done
     return title
   }
