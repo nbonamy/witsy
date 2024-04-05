@@ -1,16 +1,19 @@
 
 :root {
 
-  --highlight-color: #4a99fe;
+  --highlight-color: #0366eb;
 
   --sidebar-width: 300px;
   --sidebar-bg-color: #e1e0df;
   --sidebar-selected-color: #c9c9c8;
   --sidebar-logo-size: 32px;
 
-  --dialog-bg-color: #ececec;
-  --dialog-separator-color: #474747;
+  --dialog-header-bg-color: #e6e6e5;
+  --dialog-body-bg-color: #ececeb;
+  --dialog-separator-color: #c6c6c5;
 
+  --tabs-header-normal-color: #6d6c6b;
+  --tabs-header-selected-color: var(--highlight-color);
 }
 
 * {

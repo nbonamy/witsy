@@ -23,6 +23,7 @@
   display: block;
   cursor: pointer;
   position: relative;
+  color: var(--tabs-header-normal-color);
 }
 
 .tabs .content {
@@ -30,7 +31,7 @@
 }
 
 .tabs .tab>[id^="tab"]:checked+label {
-  color: var(--highlight-color);
+  color: var(--tabs-header-selected-color);
 }
 
 dialog:has(.tabs) header {
@@ -42,7 +43,7 @@ dialog:has(.tabs) main {
 }
 
 dialog .tabs ul {
-  padding: 16px;
-  background-color: var(--dialog-bg-color);
+  padding: 8px;
+  background-color: var(--dialog-header-bg-color);
   border-bottom: 0.5px solid var(--dialog-separator-color);
 }
