@@ -3,20 +3,30 @@
     <BIconFileEarmarkPlus class="icon upload" @click="upload"/>
     <div class="input">
       <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input" autofocus />
-      <BIconArrowUpSquareFill class="icon" @click="sendPrompt"/>
     </div>
+    <BIconSquareFill class="icon" @click="stopAssistant" v-if="working" />
+    <BIconSendFill class="icon" @click="sendPrompt" v-else />
   </div>
 </template>
 
 <script setup>
 
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import Chat from '../models/chat'
 
 import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
 
+const props = defineProps({
+  chat: Chat
+})
+
 const prompt = ref('')
 const input = ref(null)
+
+const working = computed(() => {
+  return props.chat.lastMessage().transient
+})
 
 onMounted(() => {
   autoGrow(input.value)
@@ -25,6 +35,10 @@ onMounted(() => {
 const sendPrompt = () => {
   emitEvent('sendPrompt', prompt.value)
   prompt.value = ''
+}
+
+const stopAssistant = () => {
+  emitEvent('stopAssistant')
 }
 
 const onKeyUp = (event) => {
@@ -58,18 +72,14 @@ const upload = () => {
 .prompt {
   padding: 8px 12px;
   display: flex;
+  align-items: center;
 }
 
 .icon {
   cursor: pointer;
   color: #5b5a59;
-  height: 16pt !important;
-  width: 16pt !important;
-}
-
-.upload {
-  position: relative;
-  top: 6px;
+  height: 14pt !important;
+  width: 14pt !important;
 }
 
 .input {

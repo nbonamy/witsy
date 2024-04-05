@@ -48,6 +48,10 @@ export default class extends LLmService {
     })
   }
 
+  async stop(stream) {
+    await stream?.controller?.abort()
+  }
+
   processChunk(chunk) {
     return {
       text: chunk.choices[0]?.delta?.content || '',

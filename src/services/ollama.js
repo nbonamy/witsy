@@ -45,6 +45,10 @@ export default class extends LLmService {
     })
   }
 
+  async stop() {
+    await ollama.abort()
+  }
+
   processChunk(chunk) {
     return {
       text: chunk.message.content,
