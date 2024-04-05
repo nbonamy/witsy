@@ -8,6 +8,7 @@ export const registerShortcut = (shortcut, callback) => {
   if (shortcut.alt) accelerator += 'Alt+'
   if (shortcut.control) accelerator += 'Control+'
   if (shortcut.shift) accelerator += 'Shift+'
+  if (shortcut.meta) accelerator += 'Command+'
   accelerator += shortcut.key
 
   // debug
