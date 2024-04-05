@@ -1,6 +1,29 @@
 # Witty AI
 
-Electron based ChatGPT desktop application
+Generative AI desktop application:
+- Chat completion and image generation
+- Vision model support
+- OpenAI and Ollama models supported
+- Local history conversation
+
+<img src="doc/main1.jpg" width="320" />
+<img src="doc/main2.jpg" width="320" />
+
+## Setup
+
+Until pre-packaged binaries are provided, you need to clone the repo and build yourself:
+```
+npm install
+npm start
+```
+
+## Prerequisites
+
+To use OpenAI models, you need to enter your [API key](https://platform.openai.com/api-keys).
+
+To use Ollama models, you need to install [Ollama](https://ollama.com) and install [models](https://ollama.com/library).
+
+<img src="doc/settings.jpg" width="320" />
 
 ## TODO
 
