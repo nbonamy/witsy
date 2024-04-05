@@ -120,7 +120,7 @@ const autoGrow = (element) => {
   resize: none;
   overflow: hidden;
   font-size: 11.5pt;
-  flex: 1;
+  width: 100%;
 } 
 
 .input textarea:focus {
