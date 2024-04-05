@@ -2,7 +2,7 @@
   <div class="prompt">
     <BIconFileEarmarkPlus class="icon upload" @click="upload"/>
     <div class="input">
-      <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input"/>
+      <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input" autofocus />
       <BIconArrowUpSquareFill class="icon" @click="sendPrompt"/>
     </div>
   </div>

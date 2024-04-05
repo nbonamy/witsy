@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, Menu, Tray, BrowserWindow, ipcMain, dialog, shell, nativeImage, globalShortcut } = require('electron');
 const { download } = require('electron-dl');
 const process = require('node:process');
 const path = require('node:path');
@@ -9,6 +9,8 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// main window
+let window = null;
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -41,22 +43,71 @@ const createWindow = () => {
   if (process.env.DEBUG) {
     mainWindow.webContents.openDevTools();
   }
+
+  // done
   return mainWindow;
 };
+
+// App functions
+
+const openMainWindow = () => {
+
+  // try to show existig one
+  if (window) {
+    try {
+      window.show();
+      return
+    } catch {
+    }
+  }
+
+  // else open a new one
+  window = createWindow();
+
+}
+
+const quitApp = () => {
+  app.quit();
+}
+
+//  Tray icon
+
+let tray = null;
+import trayIcon from '../assets/brainTemplate.png?asset';
+
+// tray menu
+const trayMenu = [
+  { label: 'Message', click: openMainWindow },
+  { label: 'Quit', click: quitApp }
+];
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow();
+  
+  // hide dock
+  app.dock.hide();
+
+  // create the main window
+  window = createWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      window = createWindow();
     }
   });
+
+  // create tray
+  tray = new Tray(nativeImage.createFromDataURL(trayIcon));
+  const contextMenu = Menu.buildFromTemplate(trayMenu);
+  tray.setContextMenu(contextMenu);
+
+  // global shortcut
+  const ret = globalShortcut.register('Alt+Space', openMainWindow)
+
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
