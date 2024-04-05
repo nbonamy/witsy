@@ -13,6 +13,10 @@
   font-size: 11pt;
 }
 
+.message .body .text pre.hljs code.hljs {
+  white-space: pre-wrap !important;
+}
+
 .message .image {
   width: 100%;
   max-width: 400px;
