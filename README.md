@@ -12,6 +12,7 @@ Electron based ChatGPT desktop application
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Shortcut editor
 - [x] Chat font size settings
 - [x] Image attachment for vision
 - [x] Stop response streaming

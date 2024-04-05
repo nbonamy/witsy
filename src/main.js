@@ -5,6 +5,8 @@ const process = require('node:process');
 const path = require('node:path');
 const fs = require('node:fs');
 
+import { registerShortcut } from './shortcuts';
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -61,6 +63,17 @@ const createWindow = () => {
 };
 
 // App functions
+
+const registerShortcuts = (shortcuts) => {
+  unregisterShortcuts();
+  if (shortcuts.chat) {
+    registerShortcut(shortcuts.chat, openMainWindow);
+  }
+}
+
+const unregisterShortcuts = () => {
+  globalShortcut.unregisterAll();
+}
 
 const openMainWindow = () => {
 
@@ -119,9 +132,6 @@ app.whenReady().then(() => {
   const contextMenu = Menu.buildFromTemplate(trayMenu);
   tray.setContextMenu(contextMenu);
 
-  // global shortcut
-  const ret = globalShortcut.register('Alt+Space', openMainWindow)
-
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -140,6 +150,14 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
+})
+
+ipcMain.on('register-shortcuts', (event, shortcuts) => {
+  registerShortcuts(JSON.parse(shortcuts));
+})
+
+ipcMain.on('unregister-shortcuts', () => {
+  unregisterShortcuts();
 })
 
 ipcMain.on('fullscreen', (event, flag) => {

@@ -9,6 +9,7 @@
 <script setup>
 
 // components
+import { ipcRenderer } from 'electron'
 import { ref, onMounted, nextTick } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import ChatArea from './components/ChatArea.vue'
@@ -22,6 +23,9 @@ const { onEvent, emitEvent } = useEventBus()
 import { store } from './services/store'
 import defaults from '../defaults/settings.json'
 store.load(defaults)
+
+// install shortcuts
+ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
 
 // assistant
 import Assistant from './services/assistant'
