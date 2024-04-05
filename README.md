@@ -5,8 +5,11 @@ Generative AI desktop application:
 - Vision model support
 - OpenAI and Ollama models supported
 - Local history conversation
+- Code generation with easy copy
+- Image download
 
-<img src="doc/main1.jpg" width="320" />
+<p></p>
+<img src="doc/main1.jpg" width="320" /> &nbsp;
 <img src="doc/main2.jpg" width="320" />
 
 ## Setup
