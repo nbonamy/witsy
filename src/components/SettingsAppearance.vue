@@ -56,3 +56,20 @@ defineExpose({
 @import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>
+
+<style scoped>
+
+.fontsize {
+  display: inline-block;
+  margin: 0 8px;
+}
+
+.fontsize.small {
+  font-size: 8pt;
+}
+
+.fontsize.large {
+  font-size: 12pt;
+}
+
+</style>
