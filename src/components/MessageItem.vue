@@ -6,8 +6,8 @@
     </div>
     <div class="body">
       <div v-if="message.type == 'text'">
-        <Loader v-if="message.content === null" class="text" />
-        <vue-markdown v-else class="text" :source="message.content" :options="mdOptions" />
+        <vue-markdown v-if="message.content !== null" class="text" :source="message.content" :options="mdOptions" />
+        <Loader v-if="message.transient" />
       </div>
       <div v-if="message.type == 'image'" class="image-container">
         <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)"/>

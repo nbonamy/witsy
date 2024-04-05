@@ -95,7 +95,8 @@ export default class {
     let stream = await this.llm.stream(this._getRelevantChatMessages())
     for await (let chunk of stream) {
       let text = chunk.choices[0]?.delta?.content || ''
-      this.chat.lastMessage().appendText(text)
+      let done = chunk.choices[0]?.finish_reason === 'stop'
+      this.chat.lastMessage().appendText(text, done)
       if (callback) callback(text)
     }
   }
