@@ -2,15 +2,15 @@
 <template>
   <div class="content">
     <div class="group">
-      <label>Run at login</label>
-      <input type="checkbox" v-model="runAtLogin" />
-    </div>
-    <div class="group">
       <label>LLM engine</label>
       <select v-model="llmEngine">
         <option value="openai">OpenAI</option>
         <option value="ollama">Ollama</option>
       </select>
+    </div>
+    <div class="group">
+      <label>Run at login</label>
+      <input type="checkbox" v-model="runAtLogin" />
     </div>
   </div>
 </template>
