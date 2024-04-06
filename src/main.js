@@ -1,97 +1,28 @@
-const { app, Menu, Tray, BrowserWindow, ipcMain, shell, nativeImage, globalShortcut } = require('electron');
-const Store = require('electron-store')
+const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
 const process = require('node:process');
-const path = require('node:path');
 
 import { deleteFile, pickFile, downloadFile } from './file';
-import { registerShortcut, shortcutAccelerator } from './shortcuts';
+import { unregisterShortcuts, registerShortcut, shortcutAccelerator } from './shortcuts';
+import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
+import { runCommand } from './automations/commander.mjs';
 import trayIcon from '../assets/brainTemplate.png?asset';
-import runAssistant from './automations/assistant';
-import Automator from './automations/robot';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// main window
-let window = null;
-const store = new Store()
-const createWindow = () => {
-  
-  // Create the browser window
-  const mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 800,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 16, y: 16 },
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
-      webSecurity: false,
-    },
-  });
-
-  // restore and save state
-  mainWindow.setBounds(store.get('bounds'))
-  mainWindow.on('close', () => {
-    store.set('bounds', mainWindow.getBounds())
-})
-
-  // and load the index.html of the app.
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
-  } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
-  }
-
-  // open links in default browser
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
-
-  // Open the DevTools.
-  if (process.env.DEBUG) {
-    mainWindow.webContents.openDevTools();
-  }
-
-  // show in the dock
-  app.dock.show();
-
-  // done
-  return mainWindow;
-};
-
+var restoreMainWindow = false;
 const registerShortcuts = (shortcuts) => {
   unregisterShortcuts();
   if (shortcuts.chat) {
     registerShortcut(shortcuts.chat, openMainWindow);
   }
   if (shortcuts.assistant) {
-    registerShortcut(shortcuts.assistant, () => runAssistant(app));
+    registerShortcut(shortcuts.assistant, async () => {
+      restoreMainWindow = await openCommandPalette()
+    });
   }
-}
-
-const unregisterShortcuts = () => {
-  globalShortcut.unregisterAll();
-}
-
-const openMainWindow = () => {
-
-  // try to show existig one
-  if (window) {
-    try {
-      window.show();
-      return
-    } catch {
-    }
-  }
-
-  // else open a new one
-  window = createWindow();
-
 }
 
 const quitApp = () => {
@@ -114,19 +45,15 @@ const buildTrayMenu = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   
-  // hide dock
-  // if (!process.env.DEBUG) {
-  //   app.dock.hide();
-  // }
-
   // create the main window
-  window = createWindow();
+  console.log('Creating initial main window');
+  openMainWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      window = createWindow();
+      openMainWindow();
     }
   });
 
@@ -177,7 +104,8 @@ ipcMain.on('unregister-shortcuts', () => {
 })
 
 ipcMain.on('fullscreen', (event, flag) => {
-  window.setFullScreen(flag);
+  mainWindow.setFullScreen(flag);
+  toggleMainWindowFullscreen(flag);
 })
 
 ipcMain.on('delete', (event, payload) => {
@@ -190,4 +118,15 @@ ipcMain.on('pick-file', (event, payload) => {
 
 ipcMain.on('download', async (event, payload) => {
   event.returnValue = await downloadFile(app, payload);
+})
+
+ipcMain.on('run-command', async (event, payload) => {
+  const command = JSON.parse(payload);
+  await closeCommandPalette();
+  await releaseFocus();
+  await runCommand(app, command);
+  if (restoreMainWindow) {
+    console.log('Restoring main window')
+    openMainWindow(false);
+  }
 })

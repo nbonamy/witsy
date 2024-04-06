@@ -1,6 +1,10 @@
 
 const { globalShortcut } = require('electron');
 
+export const unregisterShortcuts = () => {
+  globalShortcut.unregisterAll();
+}
+
 export const shortcutAccelerator = (shortcut) => {
 
   // null check
@@ -14,7 +18,10 @@ export const shortcutAccelerator = (shortcut) => {
   if (shortcut.control) accelerator += 'Control+'
   if (shortcut.shift) accelerator += 'Shift+'
   if (shortcut.meta) accelerator += 'Command+'
-  accelerator += shortcut.key
+
+  // key
+  if (shortcut.key == 'Comma') accelerator += ','
+  else accelerator += shortcut.key
 
   // done
   return accelerator

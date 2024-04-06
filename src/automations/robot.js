@@ -2,7 +2,13 @@
 import { clipboard } from 'electron';
 import { keyTap } from 'robotjs';
 
-const getSelectedText = async () => {
+export const moveCaretBelow = async () => {
+  keyTap("right");
+  keyTap("enter");
+}
+
+export const getSelectedText = async () => {
+
 
   const currentClipboardContent = clipboard.readText();
   clipboard.clear();
@@ -14,7 +20,7 @@ const getSelectedText = async () => {
 
 }
 
-const pasteText = async (text) => {
+export const pasteText = async (text) => {
 
   const currentClipboardContent = clipboard.readText();
   clipboard.writeText(text)
@@ -22,9 +28,4 @@ const pasteText = async (text) => {
   await new Promise((resolve) => setTimeout(resolve, 200));
   clipboard.writeText(currentClipboardContent);
   
-}
-
-export {
-  getSelectedText,
-  pasteText
 }

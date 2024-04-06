@@ -5,8 +5,11 @@
       <InputShortcut v-model="chat" />
     </div>
     <div class="group">
-      <label>Assistant</label>
-      <InputShortcut v-model="assistant" />
+      <label>AI Commands</label>
+      <div class="subgroup">
+        <InputShortcut v-model="command" />
+        <span>Usage: Highlight your text, press keyboard shortcut then choose an Al command</span>
+      </div>
     </div>
   </div>
 </template>
@@ -19,16 +22,16 @@ import { store } from '../services/store'
 import InputShortcut from './InputShortcut.vue'
 
 const chat = ref(null)
-const assistant = ref(null)
+const command = ref(null)
 
 const load = () => {
   chat.value = store.config.shortcuts.chat
-  assistant.value = store.config.shortcuts.assistant
+  command.value = store.config.shortcuts.command
 }
 
 const save = () => {
   store.config.shortcuts.chat = chat.value
-  store.config.shortcuts.assistant = assistant.value
+  store.config.shortcuts.command = command.value
   ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
   store.save()
 }

@@ -6,10 +6,11 @@ import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
 
-let userDataPath = null
 let defaultSettings = null
 
 export const store = reactive({
+  userDataPath: null,
+  commands: [], 
   config: {},
   chats: [],
   models: {
@@ -20,7 +21,7 @@ export const store = reactive({
 })
 
 store.load = (defaults = {}) => {
-  userDataPath = ipcRenderer.sendSync('get-app-path')
+  store.userDataPath = ipcRenderer.sendSync('get-app-path')
   defaultSettings = defaults
   loadSettings(defaults)
   loadHistory()
@@ -40,11 +41,11 @@ store.dump = () => {
 }
 
 const historyFilePath = () => {
-  return path.join(userDataPath, 'history.json')
+  return path.join(store.userDataPath, 'history.json')
 }
 
 const settingsFilePath = () => {
-  return path.join(userDataPath, 'settings.json')
+  return path.join(store.userDataPath, 'settings.json')
 }
 
 const loadHistory = () => {
