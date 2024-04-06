@@ -46,6 +46,12 @@ form .group input:focus, form .group select:focus, form .group textarea:focus {
   outline: 2px solid #83aaf2;
 }
 
+form .group input[type=checkbox] {
+  flex: 0;
+  padding: 0;
+  border-radius: 2px;
+}
+
 form .group input[type=range] {
   -webkit-appearance: none;
   appearance: none;

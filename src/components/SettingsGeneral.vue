@@ -2,43 +2,36 @@
 <template>
   <div class="content">
     <div class="group">
+      <label>Run at login</label>
+      <input type="checkbox" v-model="runAtLogin" />
+    </div>
+    <div class="group">
       <label>LLM engine</label>
       <select v-model="llmEngine">
         <option value="openai">OpenAI</option>
         <option value="ollama">Ollama</option>
       </select>
     </div>
-    <div class="group">
-      <label>Default instructions</label>
-      <div class="subgroup">
-        <textarea v-model="defaultInstructions" />
-        <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 
-import { ref, } from 'vue'
+import { ref } from 'vue'
+import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
-import defaults from '../../defaults/settings.json'
 
+const runAtLogin = ref(false)
 const llmEngine = ref(null)
-const defaultInstructions = ref(null)
 
 const load = () => {
+  runAtLogin.value = ipcRenderer.sendSync('get-run-at-login').openAtLogin
   llmEngine.value = store.config.llm.engine || 'openai'
-  defaultInstructions.value = store.config.instructions.default || ''
-}
-
-const onResetDefaultInstructions = () => {
-  defaultInstructions.value = defaults.instructions.default
 }
 
 const save = () => {
   store.config.llm.engine = llmEngine.value
-  store.config.instructions.default = defaultInstructions.value
+  ipcRenderer.send('set-run-at-login', runAtLogin.value)
 }
 
 defineExpose({
