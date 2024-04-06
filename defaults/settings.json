@@ -1,7 +1,8 @@
 
 {
   "llm": {
-    "engine": "openai"
+    "engine": "openai",
+    "autoVisionSwitch": true
   },
   "instructions": {
     "default": "You are a helpful assistant. You are here to help the user with any questions they have.",

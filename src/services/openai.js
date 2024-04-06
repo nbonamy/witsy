@@ -1,6 +1,9 @@
 
 import OpenAI from 'openai'
 import LLmService from './llm_service'
+import { store } from './store'
+
+const visionModels = ['gpt-4-vision', 'gpt-4-vision-preview', '*vision']
 
 export default class extends LLmService {
 
@@ -12,7 +15,7 @@ export default class extends LLmService {
     })
   }
 
-  hasVision() {
+  _hasVision() {
     return this.config.openai.models.chat.includes('vision')
   }
 
@@ -45,11 +48,28 @@ export default class extends LLmService {
   }
 
   async stream(thread) {
-    return this.client.chat.completions.create({
+
+    // model: switch to vision if needed
+    let model = this.config.openai.models.chat
+    if (this._requiresVisionModel(thread)) {
+      let visionModel = this._findModel(store.models.openai, visionModels)
+      if (visionModel) {
+        console.log('Switching to vision model:', visionModel.id)
+        this.config.openai.models.chat = visionModel.id
+      }
+    }
+
+    // call
+    let stream = this.client.chat.completions.create({
       model: this.config.openai.models.chat,
       messages: this._buildMessages(thread),
       stream: true,
     })
+
+    // restore and done
+    this.config.openai.models.chat = model
+    return stream
+
   }
 
   async stop(stream) {
