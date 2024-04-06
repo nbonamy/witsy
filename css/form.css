@@ -10,6 +10,10 @@ form .group {
   margin: 8px;
 }
 
+form .group.top {
+  align-items: flex-start;
+}
+
 form .group:has(.subgroup) {
   align-items: flex-start;
   margin-bottom: 12px;

@@ -1,6 +1,9 @@
 
 import ollama from 'ollama'
 import LLmService from './llm_service'
+import { store } from './store'
+
+const visionModels = ['llava:latest', '*llava']
 
 export default class extends LLmService {
 
@@ -8,7 +11,7 @@ export default class extends LLmService {
     super(config)
   }
 
-  hasVision() {
+  _hasVision() {
     return this.config.ollama.models.chat.includes('llava')
   }
 
@@ -42,11 +45,28 @@ export default class extends LLmService {
   }
 
   async stream(thread) {
-    return ollama.chat({
+
+    // model: switch to vision if needed
+    let model = this.config.ollama.models.chat
+    if (this._requiresVisionModel(thread)) {
+      let visionModel = this._findModel(store.models.ollama, visionModels)
+      if (visionModel) {
+        console.log('Switching to vision model:', visionModel.id)
+        this.config.ollama.models.chat = visionModel.id
+      }
+    }
+  
+    // call
+    let stream = ollama.chat({
       model: this.config.ollama.models.chat,
       messages: this._buildMessages(thread),
       stream: true,
     })
+
+    // restore and done
+    this.config.ollama.models.chat = model
+    return stream
+
   }
 
   async stop() {

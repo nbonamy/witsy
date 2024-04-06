@@ -1,6 +1,10 @@
 
 <template>
   <div class="content">
+    <div class="group top">
+      <label>Automatically switch<br/>to vision model</label>
+      <input type="checkbox" v-model="autoVisionSwitch" />
+    </div>
     <div class="group">
       <label>Default instructions</label>
       <div class="subgroup">
@@ -18,8 +22,10 @@ import { store } from '../services/store'
 import defaults from '../../defaults/settings.json'
 
 const defaultInstructions = ref(null)
+const autoVisionSwitch = ref(null)
 
 const load = () => {
+  autoVisionSwitch.value = store.config.llm.autoVisionSwitch || true
   defaultInstructions.value = store.config.instructions.default || ''
 }
 
@@ -28,6 +34,7 @@ const onResetDefaultInstructions = () => {
 }
 
 const save = () => {
+  store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.instructions.default = defaultInstructions.value
 }
 

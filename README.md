@@ -30,7 +30,6 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
-- [ ] Auto-switch to vision model
 - [ ] Image placeholder
 - [ ] Specialized assistants
 - [ ] Customized assistants
@@ -40,6 +39,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Proper database (SQLite3) storage (??)
 - [ ] Nicer icon
 
+- [x] Auto-switch to vision model
 - [x] Run at login
 - [x] Shortcut editor
 - [x] Chat font size settings
