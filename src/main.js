@@ -7,6 +7,7 @@ const fs = require('node:fs');
 
 import { registerShortcut, shortcutAccelerator } from './shortcuts';
 import trayIcon from '../assets/brainTemplate.png?asset';
+import promptLlm from './automations/assistant';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -64,11 +65,40 @@ const createWindow = () => {
 };
 
 // App functions
+let macAutomator = null
+const runAssistant = async () => {
+  try {
+
+    // first grab text
+    let text = await macAutomator.getSelectedText();
+    //console.log(`Grabbed ${text}`);
+
+    // now prompt llm
+    const response = await promptLlm(app, 'Translate the following text to French', text);
+
+    // now paste
+    await macAutomator.pasteText(response.content);
+  
+  } catch (error) {
+    console.error('Error while testing', error);
+  }
+}
+
+const initMacosAutomation = async () => {
+  const MacosAutomation = await import('./automations/macos');
+  macAutomator = new MacosAutomation.default(null);
+  macAutomator.findMenus();
+}
+
+initMacosAutomation();
 
 const registerShortcuts = (shortcuts) => {
   unregisterShortcuts();
   if (shortcuts.chat) {
     registerShortcut(shortcuts.chat, openMainWindow);
+  }
+  if (shortcuts.assistant) {
+    registerShortcut(shortcuts.assistant, runAssistant);
   }
 }
 

@@ -9,6 +9,10 @@ export default class extends LLmService {
 
   constructor(config) {
     super(config)
+    this.ollama = ollama
+    if (!this.ollama.chat) {
+      this.ollama = ollama.default
+    }
   }
 
   _hasVision() {
@@ -21,7 +25,7 @@ export default class extends LLmService {
 
   async getModels() {
     try {
-      const response = await ollama.list()
+      const response = await this.ollama.list()
       return response.models
     } catch (error) {
       console.error('Error listing models:', error);
@@ -31,7 +35,7 @@ export default class extends LLmService {
   async complete(thread, opts) {
 
     // call
-    const response = await ollama.chat({
+    const response = await this.ollama.chat({
       model: opts?.model || this.config.ollama.models.chat,
       messages: this._buildMessages(thread),
       stream: false
@@ -57,7 +61,7 @@ export default class extends LLmService {
     }
   
     // call
-    let stream = ollama.chat({
+    let stream = this.ollama.chat({
       model: this.config.ollama.models.chat,
       messages: this._buildMessages(thread),
       stream: true,
