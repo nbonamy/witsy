@@ -5,7 +5,8 @@ const process = require('node:process');
 const path = require('node:path');
 const fs = require('node:fs');
 
-import { registerShortcut } from './shortcuts';
+import { registerShortcut, shortcutAccelerator } from './shortcuts';
+import trayIcon from '../assets/brainTemplate.png?asset';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -98,13 +99,13 @@ const quitApp = () => {
 //  Tray icon
 
 let tray = null;
-import trayIcon from '../assets/brainTemplate.png?asset';
-
-// tray menu
-const trayMenu = [
-  { label: 'Message', click: openMainWindow },
-  { label: 'Quit', click: quitApp }
-];
+let globalShortcuts = null;
+const buildTrayMenu = () => {
+  return [
+    { label: 'Chat...', accelerator: shortcutAccelerator(globalShortcuts?.chat), click: openMainWindow },
+    { label: 'Quit', accelerator: 'Command+Q', click: quitApp }
+  ];
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -129,7 +130,7 @@ app.whenReady().then(() => {
 
   // create tray
   tray = new Tray(nativeImage.createFromDataURL(trayIcon));
-  const contextMenu = Menu.buildFromTemplate(trayMenu);
+  const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
   tray.setContextMenu(contextMenu);
 
 });
@@ -153,7 +154,9 @@ ipcMain.on('get-app-path', (event) => {
 })
 
 ipcMain.on('register-shortcuts', (event, shortcuts) => {
-  registerShortcuts(JSON.parse(shortcuts));
+  globalShortcuts = JSON.parse(shortcuts);
+  registerShortcuts(globalShortcuts);
+  tray.setContextMenu(Menu.buildFromTemplate(buildTrayMenu()));
 })
 
 ipcMain.on('unregister-shortcuts', () => {

@@ -1,7 +1,12 @@
 
 const { globalShortcut } = require('electron');
 
-export const registerShortcut = (shortcut, callback) => {
+export const shortcutAccelerator = (shortcut) => {
+
+  // null check
+  if (shortcut == null) {
+    return null
+  }
 
   // build accelerator
   let accelerator = ''
@@ -10,6 +15,16 @@ export const registerShortcut = (shortcut, callback) => {
   if (shortcut.shift) accelerator += 'Shift+'
   if (shortcut.meta) accelerator += 'Command+'
   accelerator += shortcut.key
+
+  // done
+  return accelerator
+
+}
+
+export const registerShortcut = (shortcut, callback) => {
+
+  // build accelerator
+  let accelerator = shortcutAccelerator(shortcut)
 
   // debug
   //console.log('Registering shortcut', shortcut, accelerator)
