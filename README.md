@@ -30,6 +30,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
+- [ ] Auto-switch to vision model
 - [ ] Image placeholder
 - [ ] Specialized assistants
 - [ ] Customized assistants
