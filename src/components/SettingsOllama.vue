@@ -1,9 +1,10 @@
+
 <template>
   <div class="content">
     <div class="group">
       <label>Ollama chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0">
-        <option v-for="model in chat_models" :key="model.value" :value="model.value">{{ model.name }}
+        <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
       </select>
     </div>
@@ -21,7 +22,7 @@ const chat_model = ref(null)
 const chat_models = ref([])
 
 onMounted(async () => {
-  getOllamaModels()
+  await getOllamaModels()
 })
 
 const load = () => {
@@ -29,15 +30,27 @@ const load = () => {
 }
 
 const getOllamaModels = async () => {
-  const ollama = new Ollama(store.config)
-  const models = await ollama.getModels()
-  if (models == null) {
-    chat_models.value = []
-  } else {
-    chat_models.value = models
-      .map(model => { return { name: model.name, value: model.model } })
-      .sort((a, b) => a.name.localeCompare(b.name))
+
+  // load if needed
+  if (!store.models.ollama) {
+    const ollama = new Ollama(store.config)
+    const models = await ollama.getModels()
+    if (!models) {
+      store.models.ollama = null
+    } else {
+      store.models.ollama = models
+        .map(model => { return {
+          id: model.model,
+          name: model.name,
+          meta: model
+        }})
+        .sort((a, b) => a.name.localeCompare(b.name))
+    }
   }
+
+  // assign
+  chat_models.value = store.models.ollama || []
+
 }
 
 const save = () => {

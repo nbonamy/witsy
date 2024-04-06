@@ -10,7 +10,7 @@
     <div class="group">
       <label>OpenAI chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0">
-        <option v-for="model in chat_models" :key="model.value" :value="model.value">{{ model.name }}
+        <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
       </select>
     </div>
@@ -18,7 +18,7 @@
       <label>OpenAI image model</label>
       <div class="subgroup">
         <select v-model="image_model" :disabled="image_models.length == 0">
-          <option v-for="model in image_models" :key="model.value" :value="model.value">{{ model.name }}
+          <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select><br />
         <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
@@ -41,7 +41,7 @@ const chat_models = ref([])
 const image_models = ref([])
 
 onMounted(async () => {
-  getOpenAIModels()
+  await getOpenAIModels()
 })
 
 const load = () => {
@@ -51,21 +51,36 @@ const load = () => {
 }
 
 const getOpenAIModels = async () => {
-  const openAI = new OpenAI(store.config)
-  const models = await openAI.getModels()
-  if (models == null) {
+
+  if (!store.models.openai) {
+    const openAI = new OpenAI(store.config)
+    const models = await openAI.getModels()
+    if (!models) {
+      store.models.openai = null
+    } else {
+      store.models.openai = models
+        .map(model => { return {
+          id: model.id,
+          name: model.id,
+          meta: model
+        }})
+        .sort((a, b) => a.name.localeCompare(b.name))
+
+    }
+  }
+
+  if (!store.models.openai) {
     chat_models.value = []
     image_models.value = []
-  } else {
-    chat_models.value = models
-      .filter(model => model.id.startsWith('gpt-'))
-      .map(model => { return { name: model.id, value: model.id } })
-      .sort((a, b) => a.name.localeCompare(b.name))
-    image_models.value = models
-      .filter(model => model.id.startsWith('dall-e-'))
-      .map(model => { return { name: model.id, value: model.id } })
-      .sort((a, b) => a.name.localeCompare(b.name))
+    return
   }
+
+  chat_models.value = store.models.openai
+    .filter(model => model.id.startsWith('gpt-'))
+
+  image_models.value = store.models.openai
+    .filter(model => model.id.startsWith('dall-e-'))
+
 }
 
 const onKeyChange = () => {

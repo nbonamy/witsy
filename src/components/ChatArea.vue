@@ -9,7 +9,9 @@
     <MessageList :chat="chat" v-if="chat.messages.length > 1"/>
     <div v-else class="empty">
       <EngineLogo :engine="store.config.llm.engine" />
-      <p class="version">{{ model }}</p>
+      <select v-model="model" class="select-model" @change="onSelectModel">
+        <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+      </select>
     </div>
     <Prompt :chat="chat" class="prompt" />
   </div>
@@ -33,9 +35,14 @@ const props = defineProps({
 // because we will lose reactivity :-(
 //
 
-const model = computed(() => {
-  return store.config?.[store.config.llm.engine]?.models?.chat || ''
-})
+const models = computed(() => store.models[store.config.llm.engine] || [])
+const model = computed(() => store.config?.[store.config.llm.engine]?.models?.chat)
+
+const onSelectModel = (ev) => {
+  let model = ev.target.value
+  store.config[store.config.llm.engine].models.chat = model
+  store.save()
+}
 
 </script>
 
@@ -74,4 +81,12 @@ const model = computed(() => {
   width: 48px;
 }
 
+.select-model {
+  border: none;
+  outline: none;
+  margin-top: 16px;
+  padding: 0px;
+  font-size: 12pt;
+  text-align: center;
+}
 </style>

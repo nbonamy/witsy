@@ -12,6 +12,10 @@ let defaultSettings = null
 export const store = reactive({
   config: {},
   chats: [],
+  models: {
+    openai: null,
+    ollama: null,
+  },
   pendingAttachment: null
 })
 
