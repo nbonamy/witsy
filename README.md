@@ -40,6 +40,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Proper database (SQLite3) storage (??)
 - [ ] Nicer icon
 
+- [x] Run at login
 - [x] Shortcut editor
 - [x] Chat font size settings
 - [x] Image attachment for vision

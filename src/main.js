@@ -153,6 +153,17 @@ ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
 })
 
+ipcMain.on('get-run-at-login', (event) => {
+  event.returnValue = app.getLoginItemSettings();
+})
+
+ipcMain.on('set-run-at-login', (event, value) => {
+  app.setLoginItemSettings({
+    openAtLogin: value,
+    openAsHidden: true,
+  });
+})
+
 ipcMain.on('register-shortcuts', (event, shortcuts) => {
   globalShortcuts = JSON.parse(shortcuts);
   registerShortcuts(globalShortcuts);

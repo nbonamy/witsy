@@ -10,12 +10,14 @@
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab title="OpenAI"><EngineLogo engine="openai" class="icon" /></SettingsTab>
             <SettingsTab title="Ollama"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
+            <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
           <SettingsAppearance ref="settingsAppearance" />
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsOpenAI ref="settingsOpenAI" />
           <SettingsOllama ref="settingsOllama" />
+          <SettingsAdvanced ref="settingsAdvanced" />
         </div>
       </main>
       <footer>
@@ -38,6 +40,7 @@ import SettingsAppearance from './SettingsAppearance.vue'
 import SettingsShortcuts from './SettingsShortcuts.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
+import SettingsAdvanced from './SettingsAdvanced.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
@@ -48,6 +51,7 @@ const settingsAppearance = ref(null)
 const settingsShortcuts = ref(null)
 const settingsOpenAI = ref(null)
 const settingsOllama = ref(null)
+const settingsAdvanced = ref(null)
 
 onMounted(async () => {
   onEvent('openSettings', onOpenSettings)
@@ -61,6 +65,7 @@ const onOpenSettings = () => {
   settingsShortcuts.value.load()
   settingsOpenAI.value.load()
   settingsOllama.value.load()
+  settingsAdvanced.value.load()
   document.querySelector('#settings').showModal()
 }
 
@@ -70,6 +75,7 @@ const onSave = () => {
   settingsShortcuts.value.save()
   settingsOpenAI.value.save()
   settingsOllama.value.save()
+  settingsAdvanced.value.save()
   store.save()
 }
 
