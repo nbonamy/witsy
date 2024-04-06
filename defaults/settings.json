@@ -20,8 +20,8 @@
       "key": "Space",
       "alt": true
     },
-    "assistant": {
-      "key": "A",
+    "command": {
+      "key": "B",
       "meta": true,
       "alt": true
     }

@@ -107,7 +107,7 @@ form .subgroup {
   font-size: 10pt;
 }
 
-form .subgroup a {
+form .subgroup span, form .subgroup a {
   display: inline-block;
   margin-top: 4px;
   font-size: var(--form-font-size);

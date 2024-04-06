@@ -4,7 +4,7 @@ const { download } = require('electron-dl');
 const path = require('node:path');
 const fs = require('node:fs');
 
-const deleteFile = (app, payload) => {
+export const deleteFile = (app, payload) => {
 
   try {
     let path = payload.path;
@@ -20,7 +20,7 @@ const deleteFile = (app, payload) => {
 
 }
 
-const pickFile = (app, payload) => {
+export const pickFile = (app, payload) => {
 
   let fileURL = dialog.showOpenDialogSync({
     filters: payload?.filters
@@ -37,7 +37,7 @@ const pickFile = (app, payload) => {
 
 }
 
-const downloadFile = async (app, payload) => {
+export const downloadFile = async (app, payload) => {
 
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
@@ -78,5 +78,3 @@ const downloadFile = async (app, payload) => {
     return null
   }  
 }
-
-export { deleteFile, pickFile, downloadFile }

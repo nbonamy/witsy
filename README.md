@@ -31,15 +31,17 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 ## TODO
 
 - [ ] Image placeholder
+- [ ] Edit commands
+- [ ] Customized commands
 - [ ] Specialized assistants
 - [ ] Customized assistants
-- [ ] Global shortcut for assistants
 - [ ] Rename conversation
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 - [ ] Nicer icon
 
+- [x] AI Commands with shortcut
 - [x] Auto-switch to vision model
 - [x] Run at login
 - [x] Shortcut editor
