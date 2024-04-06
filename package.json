@@ -54,6 +54,10 @@
     "mac": {
       "icon": "assets/icon.icns",
       "category": "public.app-category.productivity"
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": "portable"
     }
   }
 }
