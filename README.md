@@ -24,7 +24,7 @@ npm start
 
 To use OpenAI models, you need to enter your [API key](https://platform.openai.com/api-keys).
 
-To use Ollama models, you need to install [Ollama](https://ollama.com) and install [models](https://ollama.com/library).
+To use Ollama models, you need to install [Ollama](https://ollama.com) and download [models](https://ollama.com/library).
 
 <img src="doc/settings.jpg" width="320" />
 
