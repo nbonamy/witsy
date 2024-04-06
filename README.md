@@ -34,6 +34,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Specialized assistants
 - [ ] Customized assistants
 - [ ] Global shortcut for assistants
+- [ ] Rename conversation
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)

@@ -4,6 +4,10 @@
       <label>Activate chat</label>
       <InputShortcut v-model="chat" />
     </div>
+    <div class="group">
+      <label>Assistant</label>
+      <InputShortcut v-model="assistant" />
+    </div>
   </div>
 </template>
 
@@ -15,13 +19,16 @@ import { store } from '../services/store'
 import InputShortcut from './InputShortcut.vue'
 
 const chat = ref(null)
+const assistant = ref(null)
 
 const load = () => {
   chat.value = store.config.shortcuts.chat
+  assistant.value = store.config.shortcuts.assistant
 }
 
 const save = () => {
   store.config.shortcuts.chat = chat.value
+  store.config.shortcuts.assistant = assistant.value
   ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
   store.save()
 }
