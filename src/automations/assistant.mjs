@@ -44,5 +44,26 @@ const promptLlm = (app, system, user) => {
 
 }
 
-export default promptLlm
+const runAssistant = async (app, automator) => {
+
+  try {
+
+    // first grab text
+    let text = await automator.getSelectedText();
+    //console.log(`Grabbed ${text}`);
+
+    // now prompt llm
+    const response = await promptLlm(app, 'Translate the following text to French', text);
+
+    // now paste
+    await automator.pasteText(response.content);
+  
+  } catch (error) {
+    console.error('Error while testing', error);
+  }
+
+}
+
+export default runAssistant
+
 

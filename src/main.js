@@ -1,13 +1,12 @@
-const { app, Menu, Tray, BrowserWindow, ipcMain, dialog, shell, nativeImage, globalShortcut } = require('electron');
-const { download } = require('electron-dl');
+const { app, Menu, Tray, BrowserWindow, ipcMain, shell, nativeImage, globalShortcut } = require('electron');
 const Store = require('electron-store')
 const process = require('node:process');
 const path = require('node:path');
-const fs = require('node:fs');
 
+import { deleteFile, pickFile, downloadFile } from './file';
 import { registerShortcut, shortcutAccelerator } from './shortcuts';
 import trayIcon from '../assets/brainTemplate.png?asset';
-import promptLlm from './automations/assistant';
+import runAssistant from './automations/assistant';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -65,29 +64,11 @@ const createWindow = () => {
 };
 
 // App functions
-let macAutomator = null
-const runAssistant = async () => {
-  try {
-
-    // first grab text
-    let text = await macAutomator.getSelectedText();
-    //console.log(`Grabbed ${text}`);
-
-    // now prompt llm
-    const response = await promptLlm(app, 'Translate the following text to French', text);
-
-    // now paste
-    await macAutomator.pasteText(response.content);
-  
-  } catch (error) {
-    console.error('Error while testing', error);
-  }
-}
-
+let automator = null
 const initMacosAutomation = async () => {
   const MacosAutomation = await import('./automations/macos');
-  macAutomator = new MacosAutomation.default(null);
-  macAutomator.findMenus();
+  automator = new MacosAutomation.default(null);
+  automator.findMenus();
 }
 
 initMacosAutomation();
@@ -98,7 +79,7 @@ const registerShortcuts = (shortcuts) => {
     registerShortcut(shortcuts.chat, openMainWindow);
   }
   if (shortcuts.assistant) {
-    registerShortcut(shortcuts.assistant, runAssistant);
+    registerShortcut(shortcuts.assistant, () => runAssistant(app, automator));
   }
 }
 
@@ -209,71 +190,13 @@ ipcMain.on('fullscreen', (event, flag) => {
 })
 
 ipcMain.on('delete', (event, payload) => {
-  try {
-    let path = payload.path;
-    if (path.startsWith('file://')) {
-      path = path.slice(7);
-    }
-    fs.unlinkSync(path);
-    event.returnValue = true;
-  } catch (error) {
-    console.error('Error while deleting file', error);
-    event.returnValue = false;
-  }
+  event.returnValue = deleteFile(app, payload);
 })
 
 ipcMain.on('pick-file', (event, payload) => {
-  let fileURL = dialog.showOpenDialogSync({
-    filters: payload?.filters
-  });
-  if (fileURL) {
-    let fileContents = fs.readFileSync(fileURL[0]);
-    event.returnValue = {
-      url: fileURL[0],
-      contents: fileContents.toString('base64')
-    };
-  } else {
-    event.returnValue = null;
-  }
+  event.returnValue = pickFile(app, payload);
 })
 
 ipcMain.on('download', async (event, payload) => {
-
-  // parse properties
-  let properties = payload.properties ? { ...payload.properties } : {};
-  let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split('/').pop();
-  if (properties.subdir) {
-    defaultPath = path.join(defaultPath, properties.subdir);
-    if (!fs.existsSync(defaultPath)) {
-      fs.mkdirSync(defaultPath, { recursive: true })
-    }
-  }
-
-  // now prompt or not
-  let customURL = path.join(defaultPath, defaultFileName);
-  if (properties.prompt !== false) {
-    customURL = dialog.showSaveDialogSync({
-      defaultPath: customURL
-    });
-  }
-  if (customURL) {
-    let filePath = customURL.split('/');
-    let filename = `${filePath.pop()}`;
-    let directory = filePath.join('/');
-    properties = { ...properties, directory, filename };
-    //console.log(`downloading ${payload.url} to ${customURL}`)
-    await download(BrowserWindow.getFocusedWindow(),
-      payload.url, {
-      ...properties,
-      onProgress: (progress) => {
-        //mainWindow.webContents.send('download-progress', progress)
-      },
-      onCompleted: (item) => {
-        //mainWindow.webContents.send('download-complete', item)
-      }
-    });
-    event.returnValue = customURL;    
-  } else { /*save cancelled*/
-  }
+  event.returnValue = await downloadFile(app, payload);
 })
