@@ -4,6 +4,7 @@ import path from 'path'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
+import { getSelectedText, pasteText } from './robot'
 
 const loadConfig = (app) => {
   const userDataPath = app.getPath('userData')
@@ -44,19 +45,20 @@ const promptLlm = (app, system, user) => {
 
 }
 
-const runAssistant = async (app, automator) => {
+const runAssistant = async (app) => {
 
   try {
 
     // first grab text
-    let text = await automator.getSelectedText();
+    let text = await getSelectedText();
     //console.log(`Grabbed ${text}`);
 
     // now prompt llm
     const response = await promptLlm(app, 'Translate the following text to French', text);
 
     // now paste
-    await automator.pasteText(response.content);
+    //console.log(`Pasting ${response.content}`);
+    await pasteText(response.content);
   
   } catch (error) {
     console.error('Error while testing', error);

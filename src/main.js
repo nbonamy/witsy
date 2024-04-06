@@ -7,6 +7,7 @@ import { deleteFile, pickFile, downloadFile } from './file';
 import { registerShortcut, shortcutAccelerator } from './shortcuts';
 import trayIcon from '../assets/brainTemplate.png?asset';
 import runAssistant from './automations/assistant';
+import Automator from './automations/robot';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -63,23 +64,13 @@ const createWindow = () => {
   return mainWindow;
 };
 
-// App functions
-let automator = null
-const initMacosAutomation = async () => {
-  const MacosAutomation = await import('./automations/macos');
-  automator = new MacosAutomation.default(null);
-  automator.findMenus();
-}
-
-initMacosAutomation();
-
 const registerShortcuts = (shortcuts) => {
   unregisterShortcuts();
   if (shortcuts.chat) {
     registerShortcut(shortcuts.chat, openMainWindow);
   }
   if (shortcuts.assistant) {
-    registerShortcut(shortcuts.assistant, () => runAssistant(app, automator));
+    registerShortcut(shortcuts.assistant, () => runAssistant(app));
   }
 }
 
