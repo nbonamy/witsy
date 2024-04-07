@@ -1,10 +1,10 @@
 
 .message {
   display: flex;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
-.message .body {
+.message .body, .message .actions {
   margin: 0px 32px; 
 }
 
@@ -37,7 +37,6 @@
   line-height: 17pt;
 }
 
-
 .message .body .text pre.hljs code.hljs {
   white-space: pre-wrap !important;
 }
@@ -53,6 +52,26 @@
   white-space: pre-wrap;
 }
 
+.message .actions {
+  display: none;
+}
+
+.message:hover {
+  margin-bottom: 0px !important;
+}
+
+.message:hover .actions {
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.message .action {
+  cursor: pointer;
+  color: #8e8e93;
+  font-size: 9pt;
+}
 
 .message .attachment, .message .image {
   max-width: 400px;

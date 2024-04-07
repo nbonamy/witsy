@@ -20,7 +20,7 @@ import { store } from '../services/store'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/useEventBus'
-const { emitEvent } = useEventBus()
+const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat
@@ -42,8 +42,15 @@ const attachmentUrl = computed(() => {
 })
 
 onMounted(() => {
+  onEvent('set-prompt', onSetPrompt)
   autoGrow(input.value)
 })
+
+const onSetPrompt = (message) => {
+  store.pendingAttachment = message.attachment
+  prompt.value = message.content
+  input.value.focus()
+}
 
 const onSendPrompt = () => {
   emitEvent('sendPrompt', prompt.value)

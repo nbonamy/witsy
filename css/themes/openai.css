@@ -42,3 +42,14 @@
 .messages.openai pre.hljs {
   border-radius: 8px;
 }
+
+.messages.openai .message.text:hover .actions {
+  position: relative;
+  top: -16px;
+}
+
+.messages.openai .message.image:hover .actions {
+  position: relative;
+  top: -4px;
+}
+
