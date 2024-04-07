@@ -5,8 +5,8 @@ import { clipboard } from 'electron'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
+import Automator from './automator'
 import { openWaitingPanel, closeWaitingPanel, releaseFocus } from '../window'
-import { moveCaretBelow, getSelectedText, pasteText } from './robot'
 
 const loadConfig = (app) => {
   const userDataPath = app.getPath('userData')
@@ -46,18 +46,18 @@ const promptLlm = (app, engine, model, prompt) => {
 
 }
 
-const finalizeCommand = async (behavior, text) => {
+const finalizeCommand = async (automator, behavior, text) => {
 
   if (behavior == 'new_window') {
   
   } else if (behavior == 'insert_below') {
 
-    await moveCaretBelow()
-    await pasteText(text)
+    await automator.moveCaretBelow()
+    await automator.pasteText(text)
 
   } else if (behavior == 'replace_selection') {
 
-    await pasteText(text)
+    await automator.pasteText(text)
 
   } else if (behavior == 'copy_cliboard') {
 
@@ -78,8 +78,11 @@ export const runCommand = async (app, command) => {
     const model = command.model;
     // const temperature = command.temperature;
 
+    // we need an automator
+    const automator = new Automator();
+
     // first grab text
-    let text = await getSelectedText();
+    let text = await automator.getSelectedText();
     //console.log(`Grabbed [${text}]`);
     if (text.trim() === '') {
       console.log('No text selected');
@@ -102,7 +105,7 @@ export const runCommand = async (app, command) => {
 
     // now paste
     //console.log(`Processing ${response.content}`);
-    await finalizeCommand(behavior, response.content);
+    await finalizeCommand(automator, behavior, response.content);
 
   } catch (error) {
     console.error('Error while testing', error);
