@@ -26,7 +26,7 @@ export default class {
     const script = `
       set previous to the clipboard
       set the clipboard to ""
-      tell application "System Events" to  keystroke "c" using command down      
+      tell application "System Events" to keystroke "c" using command down      
       repeat 5 times
         delay 0.1
         set clipboardContents to the clipboard
