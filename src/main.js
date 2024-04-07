@@ -19,7 +19,7 @@ const registerShortcuts = (shortcuts) => {
     registerShortcut(shortcuts.chat, openMainWindow);
   }
   if (shortcuts.assistant) {
-    registerShortcut(shortcuts.assistant, async () => {
+    registerShortcut(shortcuts.command, async () => {
       restoreMainWindow = await openCommandPalette()
     });
   }
