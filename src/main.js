@@ -80,49 +80,53 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
-})
+});
 
 ipcMain.on('get-run-at-login', (event) => {
   event.returnValue = app.getLoginItemSettings();
-})
+});
 
 ipcMain.on('set-run-at-login', (event, value) => {
   app.setLoginItemSettings({
     openAtLogin: value,
     openAsHidden: true,
   });
-})
+});
 
 ipcMain.on('register-shortcuts', (event, shortcuts) => {
   globalShortcuts = JSON.parse(shortcuts);
   registerShortcuts(globalShortcuts);
   tray.setContextMenu(Menu.buildFromTemplate(buildTrayMenu()));
-})
+});
 
 ipcMain.on('unregister-shortcuts', () => {
   unregisterShortcuts();
-})
+});
 
 ipcMain.on('fullscreen', (event, flag) => {
   mainWindow.setFullScreen(flag);
   toggleMainWindowFullscreen(flag);
-})
+});
 
 ipcMain.on('delete', (event, payload) => {
   event.returnValue = deleteFile(app, payload);
-})
+});
 
 ipcMain.on('pick-file', (event, payload) => {
   event.returnValue = pickFile(app, payload);
-})
+});
 
 ipcMain.on('download', async (event, payload) => {
   event.returnValue = await downloadFile(app, payload);
-})
+});
+
+ipcMain.on('close-command-palette', async (event) => {
+  closeCommandPalette(restoreMainWindow);
+});
 
 ipcMain.on('run-command', async (event, payload) => {
   const command = JSON.parse(payload);
-  await closeCommandPalette();
+  await closeCommandPalette(false);
   await releaseFocus();
   let result = await runCommand(app, command);
   if (restoreMainWindow) {
@@ -133,4 +137,4 @@ ipcMain.on('run-command', async (event, payload) => {
     result.chatWindow.moveTop();
     app.focus();
   }
-})
+});

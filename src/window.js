@@ -126,17 +126,25 @@ export const openChatWindow = (params) => {
 }
 
 let commandPalette = null;
-export const closeCommandPalette = async () => {
+export const closeCommandPalette = async (restoreMainWindow) => {
   try {
     commandPalette.close()
     await new Promise((resolve) => setTimeout(resolve, 200));
   } catch {}
+
+  try {
+    if (restoreMainWindow) {
+      console.log('Restoring main window')
+      openMainWindow(false);
+    }
+  } catch {}
+
 }
 
 export const openCommandPalette = async () => {
 
   // try to show existig one
-  closeCommandPalette();
+  closeCommandPalette(false);
 
   // remember to restore main window
   let restoreMainWindow = false;
@@ -169,7 +177,7 @@ export const openCommandPalette = async () => {
   });
 
   commandPalette.on('blur', () => {
-    closeCommandPalette();
+    closeCommandPalette(restoreMainWindow);
   });
 
   return restoreMainWindow;

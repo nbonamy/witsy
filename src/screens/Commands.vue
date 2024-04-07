@@ -11,15 +11,19 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import {
   BIconBoxArrowInUpRight,
   BIconArrowReturnLeft,
   BIconInputCursor,
   BIconClipboard
 } from 'bootstrap-icons-vue'
-
 import { store } from '../services/store'
+
+onMounted(() => {
+  document.addEventListener('keyup', onKeyUp)
+})
+
 
 const enabledCommands = computed(() => store.commands.filter(command => command.enabled))
 
@@ -28,7 +32,12 @@ const behavior = (command) => {
   if (command.behavior == 'insert_below') return BIconArrowReturnLeft
   if (command.behavior == 'replace_selection') return BIconInputCursor
   if (command.behavior == 'copy_cliboard') return BIconClipboard
+}
 
+const onKeyUp = (event) => {
+  if (event.key == 'Escape') {
+    ipcRenderer.send('close-command-palette')
+  }
 }
 
 const onRunCommand = (command) => {
