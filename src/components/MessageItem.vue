@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="message.role" v-if="message.role != 'system'">
+  <div class="message" :class="[ message.role, message.type ]" v-if="message.role != 'system'">
     <div class="role" :class="message.role">
       <EngineLogo :engine="chat.engine" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
@@ -18,6 +18,14 @@
         <BIconDownload class="download" @click="onDownload(message)" />
       </div>
     </div>
+    <div class="actions">
+      <div class="action" v-if="message.role == 'assistant'" @click="onCopy(message)">
+        <BIconClipboard /> Copy
+      </div>
+      <div class="action" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
+        <BIconPencil /> Edit
+      </div>
+    </div>
     <div class="fullscreen" v-if="fullScreenImageUrl" @click="onCloseFullscreen">
       <img :src="fullScreenImageUrl"/>
       <BIconXLg class="close" />
@@ -27,7 +35,7 @@
 
 <script setup>
 
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, clipboard, nativeImage } from 'electron'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat.js'
@@ -36,6 +44,9 @@ import Loader from './Loader.vue'
 import EngineLogo from './EngineLogo.vue'
 import VueMarkdown from 'vue-markdown-render'
 import hljs from 'highlight.js'
+
+import useEventBus from '../composables/useEventBus'
+const { emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
@@ -82,6 +93,19 @@ const mdOptions = {
     }
     return '' // use external default escaping
   }
+}
+
+const onCopy = (message) => {
+  if (message.type == 'text') {
+    clipboard.writeText(message.content)
+  } else if (message.type == 'image') {
+    let image = nativeImage.createFromPath(props.message.content.replace('file://', ''))
+    clipboard.writeImage(image)
+  }
+}
+
+const onEdit = (message) => {
+  emitEvent('set-prompt', message)
 }
 
 const onFullscreen = (url) => {

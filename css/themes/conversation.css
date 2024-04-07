@@ -1,6 +1,6 @@
 
 .messages.conversation .message {
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .messages.conversation .message .body {
@@ -14,7 +14,7 @@
 }
 
 .messages.conversation .message.user {
-  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .messages.conversation .message.user .body {
@@ -35,4 +35,3 @@
   padding: 0px;
   background-color: transparent;
 }
-
