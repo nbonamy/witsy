@@ -1,0 +1,63 @@
+
+div:where(.swal2-container) div:where(.swal2-popup) {
+  border-radius: 16px;
+}
+
+div:where(.swal2-container) h2:where(.swal2-title) {
+  padding-top: 16px;
+  padding-left: 24px;
+  padding-right: 8px;
+  text-align: left;
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+div:where(.swal2-container) input:where(.swal2-input), div:where(.swal2-container) input:where(.swal2-file), div:where(.swal2-container) textarea:where(.swal2-textarea) {
+  margin-left: 24px;
+  font-size: 10pt;
+  box-shadow: none;
+  border-radius: 0px;
+  border: 1px solid #dad9d9;
+}
+
+div:where(.swal2-container) input:where(.swal2-input):focus, div:where(.swal2-container) input:where(.swal2-file):focus, div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
+  box-shadow: none;
+  outline: 3px solid #83aaf2;
+}
+
+div:where(.swal2-container) .swal2-input {
+  height: auto;
+  padding: 2px;
+}
+
+div:where(.swal2-container) div:where(.swal2-actions) {
+  width: 100%;
+  padding-right: 20px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled) {
+  width: auto !important;
+  margin: 0 8px !important;
+  padding: 4px 8px !important;
+  border-radius: .3rem !important;
+  border: 1px solid #cacaca !important;
+  box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3) !important;
+  font-size: 9pt !important;
+  font-weight: normal !important;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+  background-color: #227bec;
+  color: white;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
+  background-color: white;
+  color: black;
+}
+
+div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover {
+  background-image: none;
+}
