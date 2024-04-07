@@ -14,7 +14,7 @@
 
 <script setup>
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
 import Chat from '../models/chat'
@@ -49,7 +49,10 @@ onMounted(() => {
 const onSetPrompt = (message) => {
   store.pendingAttachment = message.attachment
   prompt.value = message.content
-  input.value.focus()
+  nextTick(() => {
+    autoGrow(input.value)
+    input.value.focus()
+  })
 }
 
 const onSendPrompt = () => {
