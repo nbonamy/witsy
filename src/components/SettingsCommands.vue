@@ -82,7 +82,7 @@ const onDragOver = (event) => {
   const rows = document.querySelectorAll('tr[data-id]');
   const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
   commands.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
-  console.log(commands.value);
+
 }
 
 const load = () => {
