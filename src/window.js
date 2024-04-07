@@ -21,16 +21,32 @@ const createWindow = (opts = {}) => {
   });
 
   // get query params
-  let queryParams = '';
-  if (opts.queryParams) {
-    queryParams = '?' + Object.keys(opts.queryParams).map(key => key + '=' + encodeURIComponent(opts.queryParams[key])).join('&');
-  }
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+
+    // build query params
+    let queryParams = '';
+    if (opts.queryParams) {
+      queryParams = '?' + Object.keys(opts.queryParams).map(key => key + '=' + encodeURIComponent(opts.queryParams[key])).join('&');
+    }
+
+    // load url
     window.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${queryParams}#${opts.hash||''}`);
+  
   } else {
-    window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html}${queryParams}#${opts.hash||''}`));
+
+    // build query params
+    let queryParams = {};
+    if (opts.queryParams) {
+      for (let key in opts.queryParams) {
+        queryParams[key] = encodeURIComponent(opts.queryParams[key]);
+      }
+    }
+
+    // load file
+    window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`), { hash: opts.hash||'', query: queryParams });
+  
   }
 
   // done
