@@ -5,7 +5,7 @@ import { deleteFile, pickFile, downloadFile } from './file';
 import { unregisterShortcuts, registerShortcut, shortcutAccelerator } from './shortcuts';
 import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
 import { runCommand } from './automations/commander.mjs';
-import trayIcon from '../assets/brainTemplate.png?asset';
+import trayIcon from '../assets/bulbTemplate.png?asset';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
