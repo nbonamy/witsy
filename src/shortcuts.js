@@ -5,6 +5,16 @@ export const unregisterShortcuts = () => {
   globalShortcut.unregisterAll();
 }
 
+const keyToAccelerator = (key) => {
+  if (key === '+') return 'Plus'
+  if (key === '↑') return 'Up'
+  if (key === '↓') return 'Down'
+  if (key === '←') return 'Left'
+  if (key === '→') return 'Right'
+  return key
+}
+
+
 export const shortcutAccelerator = (shortcut) => {
 
   // null check
@@ -20,8 +30,7 @@ export const shortcutAccelerator = (shortcut) => {
   if (shortcut.meta) accelerator += 'Command+'
 
   // key
-  if (shortcut.key == 'Comma') accelerator += ','
-  else accelerator += shortcut.key
+  accelerator += keyToAccelerator(shortcut.key)
 
   // done
   return accelerator

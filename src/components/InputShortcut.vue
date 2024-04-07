@@ -48,7 +48,7 @@ const onDelete = () => {
 
 const onKeyDown = (event) => {
   // default
-  //console.log('keydown', event)
+  console.log('keydown', event)
   event.preventDefault()
 
   // delete
@@ -72,9 +72,27 @@ const onKeyDown = (event) => {
     return
   }
 
+  // build key
+  let key = event.code.replace('Key', '').replace('Digit', '')
+  if (key === 'Minus')  key = '-'
+  if (key === 'Equal')  key = '='
+  if (key === 'BracketLeft')  key = '['
+  if (key === 'BracketRight')  key = ']'
+  if (key === 'Backslash')  key = '\\'
+  if (key === 'Semicolon')  key = ';'
+  if (key === 'Quote')  key = "'"
+  if (key === 'Comma')  key = ','
+  if (key === 'Period')  key = '.'
+  if (key === 'Slash')  key = '/'
+  if (key === 'Backquote')  key = '`'
+  if (key === 'ArrowUp')  key = '↑'
+  if (key === 'ArrowDown')  key = '↓'
+  if (key === 'ArrowLeft')  key = '←'
+  if (key === 'ArrowRight')  key = '→'
+
   // seems ok
   value.value = {
-    key: event.code.replace('Key', '').replace('Digit', ''),
+    key: key,
     alt: event.altKey,
     shift: event.shiftKey,
     ctrl: event.ctrlKey,
