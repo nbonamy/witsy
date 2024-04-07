@@ -15,6 +15,7 @@
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
+import Swal from 'sweetalert2'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import Overlay from './Overlay.vue'
@@ -37,6 +38,7 @@ const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref({})
 const contextMenuActions = [
+  { label: 'Rename Chat', action: 'rename' },
   { label: 'Delete', action: 'delete' },
 ]
 
@@ -66,18 +68,38 @@ const closeContextMenu = () => {
   showMenu.value = false;
 }
 
-const handleActionClick = (action) => {
+const handleActionClick = async (action) => {
+
+  // init
   closeContextMenu()
+  let chat = targetRow.value
+
+  if (action === 'rename') {
+
+    // prompt
+    const { value: title } = await Swal.fire({
+      title: "Rename Chat",
+      input: "text",
+      inputValue: chat.title,
+      showCancelButton: true,
+    });
+    if (title) {
+      chat.title = title
+      store.save()
+    }
+
+  }
+
   if (action === 'delete') {
 
     // fist remove
-    let index = store.chats.indexOf(targetRow.value)
+    let index = store.chats.indexOf(chat)
     store.chats[index].delete()
     store.chats.splice(index, 1)
     store.save()
 
     // if current chat
-    if (props.chat.uuid === targetRow.value.uuid) {
+    if (props.chat.uuid === chat.uuid) {
       emitEvent('newChat')
     }
   }
@@ -85,7 +107,12 @@ const handleActionClick = (action) => {
 
 </script>
 
+<style>
+@import '../../css/swal2.css';
+</style>
+
 <style scoped>
+
 
 .chats {
   flex: 1;
