@@ -5,14 +5,14 @@ export default class {
     this.config = config
   }
 
-  _hasVision() {
+  _isVisionModel(model) {
     return false
   }
 
-  _requiresVisionModel(thread) {
+  _requiresVisionModel(thread, currentModel) {
     
     // if we already have a vision or auto switch is disabled
-    if (this._hasVision() || !this.config.llm.autoVisionSwitch) {
+    if (this._isVisionModel(currentModel) || !this.config.llm.autoVisionSwitch) {
       return false
     }
 
@@ -34,13 +34,13 @@ export default class {
     return null
   }
 
-  _buildMessages(thread) {
+  _buildPayload(thread, model) {
     if (typeof thread === 'string') {
       return [{ role: 'user', content: thread }]
     } else {
       return thread.filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
         let payload = { role: msg.role, content: msg.content }
-        if (msg.attachment && this._hasVision()) {
+        if (msg.attachment && this._isVisionModel(model)) {
           this.addImageToPayload(msg, payload)
         }
         return payload

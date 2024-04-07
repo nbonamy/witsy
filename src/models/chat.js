@@ -38,6 +38,33 @@ export default class Chat {
     }
   }
 
+  patchFromJson(obj) {
+
+    // any diff spotted
+    let patched = false
+    if (this.title !== obj.title || this.lastModified !== obj.lastModified) {
+      patched = true
+    }
+
+    // header
+    this.title = obj.title
+    this.lastModified = obj.lastModified
+
+    // messages
+    if (this.messages.length < obj.messages.length) {
+      //console.log(`patching ${obj.messages.length - this.messages.length} messages`)
+      let messages = obj.messages.slice(this.messages.length)
+      for (let msg of messages) {
+        let message = new Message(msg)
+        this.messages.push(message)
+        patched = true
+      }
+    }
+
+    // done
+    return patched
+  }
+
   setEngineModel(engine, model) {
     this.engine = engine
     this.model = model
@@ -49,10 +76,6 @@ export default class Chat {
     } else {
       return ''
     }
-  }
-
-  setTitle(title) {
-    this.title = title
   }
 
   addMessage(message) {

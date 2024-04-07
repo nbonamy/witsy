@@ -20,11 +20,17 @@ const createWindow = (opts = {}) => {
     },
   });
 
+  // get query params
+  let queryParams = '';
+  if (opts.queryParams) {
+    queryParams = '?' + Object.keys(opts.queryParams).map(key => key + '=' + encodeURIComponent(opts.queryParams[key])).join('&');
+  }
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    window.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}#${opts.hash||''}`);
+    window.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${queryParams}#${opts.hash||''}`);
   } else {
-    window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html}#${opts.hash||''}`));
+    window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html}${queryParams}#${opts.hash||''}`));
   }
 
   // done
@@ -87,6 +93,22 @@ export const openMainWindow = (active) => {
 
 }
 
+export const openChatWindow = (params) => {
+
+  // always open
+  let chatWindow = createWindow({
+    width: 600,
+    height: 600,
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 16, y: 16 },
+    queryParams: params,
+  });
+
+  // done
+  return chatWindow;
+
+}
+
 let commandPalette = null;
 export const closeCommandPalette = async () => {
   try {
@@ -127,7 +149,6 @@ export const openCommandPalette = async () => {
     height: height,
     frame: false,
     skipTaskbar: true,
-    acceptFirstMouse: true,
     hiddenInMissionControl: true,
   });
 

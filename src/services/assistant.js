@@ -17,19 +17,24 @@ export default class {
     this.newChat()
   }
 
-  newChat(title) {
+  newChat(save = true) {
 
     // select last chat
-    if (store.chats.length > 0) {
-      this.chat = store.chats[store.chats.length - 1]
+    this.chat = null
+    if (save) {
+      if (store.chats.length > 0) {
+        this.chat = store.chats[store.chats.length - 1]
+      }
     }
 
     // now check
     if (this.chat === null || this.chat.messages.length > 1) { 
-      this.chat = new Chat(title)
+      this.chat = new Chat()
       this.chat.addMessage(new Message('system', this.config.instructions.default))
-      store.chats.push(this.chat)
-      store.save()
+      if (save) {
+        store.chats.push(this.chat)
+        store.save()
+      }
     }
   }
 
@@ -37,15 +42,14 @@ export default class {
     this.chat = chat
   }
 
-  initLlm() {
-    if (store.config.llm.engine === 'ollama') {
-    this.llm = new Ollama(this.config)
+  initLlm(engine) {
+    if (engine === 'ollama') {
+      return new Ollama(this.config)
     } else if (store.config.openai.apiKey) {
-      this.llm = new OpenAI(this.config)
+      return new OpenAI(this.config)
     } else {
-      this.llm = null
+      return null
     }
-    return this.llm
   }
 
   hasLlm() {
@@ -71,7 +75,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt, attachment, callback) {
+  async prompt(prompt, opts, callback) {
 
     // check
     prompt = prompt.trim()
@@ -79,23 +83,26 @@ export default class {
       return
     }
 
-    // we need an llm
-    if (this.llm === null) {
-      if (this.initLlm() === null) {
-        return
-      }
+    // set engine and model
+    let engine = opts.engine || store.config.llm.engine
+    let model = opts.model || store.config.getActiveModel()
+    if (this.chat.engine === null) {
+      this.chat.setEngineModel(engine, model)
+    } else {
+      engine = this.chat.engine
+      model = this.chat.model
+      opts.model = model
     }
 
-    // set engine and model
-    if (this.chat.engine === null) {
-      let engine = store.config.llm.engine
-      let model = store.config.getActiveModel()
-      this.chat.setEngineModel(engine, model)
+    // we need an llm
+    this.llm = this.initLlm(engine)
+    if (this.llm === null) {
+      return
     }
 
     // add message
     let message = new Message('user', prompt)
-    message.attachFile(attachment)
+    message.attachFile(opts.attachment)
     this.chat.addMessage(message)
 
     // add assistant message
@@ -106,14 +113,14 @@ export default class {
     // route
     let route = await this.route(prompt)
     if (route === 'IMAGE') {
-      await this.generateImage(prompt, callback)
+      await this.generateImage(prompt, opts, callback)
     } else {
-      await this.generateText(prompt, callback)
+      await this.generateText(prompt, opts, callback)
     }
 
     // check if we need to update title
     if (this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
-      this.chat.setTitle(await this.getTitle())
+      this.chat.title = await this.getTitle();
     }
   
     // save
@@ -121,11 +128,11 @@ export default class {
 
   }
 
-  async generateText(prompt, callback) {
+  async generateText(prompt, opts, callback) {
 
     try {
 
-      this.stream = await this.llm.stream(this._getRelevantChatMessages())
+      this.stream = await this.llm.stream(this._getRelevantChatMessages(), opts)
       for await (let chunk of this.stream) {
         const { text, done } = this.llm.processChunk(chunk)
         this.chat.lastMessage().appendText(text, done)
@@ -145,12 +152,12 @@ export default class {
   
   }
 
-  async generateImage(prompt, callback) {
+  async generateImage(prompt, opts, callback) {
 
     try {
 
       // generate 
-      let response = await this.llm.image(prompt)
+      let response = await this.llm.image(prompt, opts)
 
       // we need to download it locally
       let filename = `${uuidv4()}.png`
@@ -206,7 +213,8 @@ export default class {
     ]
 
     // now get it
-    let response = await this.llm.complete(messages)
+    this.llm = this.initLlm(this.chat.engine)
+    let response = await this.llm.complete(messages, { model: this.chat.model })
     let title = response.content.trim()
     if (title === '') {
       return this.chat.messages[1].content
@@ -218,7 +226,7 @@ export default class {
     }
 
     // remove quotes
-    title.trim().replace(/^"|"$/g, '').trim()
+    title = title.trim().replace(/^"|"$/g, '').trim()
 
     // done
     return title
