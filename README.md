@@ -38,8 +38,8 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
-- [ ] Nicer icon
 
+- [x] Nicer icon (still temporary)
 - [x] Rename conversation
 - [x] Copy/edit messages
 - [x] New chat window for AI command
