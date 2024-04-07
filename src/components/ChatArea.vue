@@ -5,7 +5,7 @@
       <div class="title">
         {{ chat.title }}
       </div>
-      <div v-if="standalone" class="action" @click="onSave">
+      <div v-if="standalone && !saved" class="action" @click="onSave">
         <BIconFloppy />
       </div>
     </div>
