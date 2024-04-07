@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <Sidebar :chat="assistant.chat" />
-    <ChatArea :chat="assistant.chat" />
+    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
+    <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings"/>
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script setup>
 
 // components
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
@@ -23,6 +23,17 @@ const { onEvent, emitEvent } = useEventBus()
 import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
 
+const prompt = ref(null)
+const engine = ref(null)
+const model = ref(null)
+const props = defineProps({
+  extra: Object
+})
+
+const isStandaloneChat = computed(() => {
+  return prompt.value !== null
+})
+
 onMounted(() => {
   onEvent('newChat', onNewChat)
   onEvent('selectChat', onSelectChat)
@@ -30,6 +41,23 @@ onMounted(() => {
   onEvent('attachFile', onAttachFile)
   onEvent('detachFile', onDetachFile)
   onEvent('stopAssistant', onStopAssistant)
+
+  // load extra from props
+  prompt.value = props.extra?.prompt || null
+  engine.value = props.extra?.engine || null
+  model.value = props.extra?.model || null
+
+  // init assistant
+  if (prompt.value !== null) {
+    assistant.value.newChat(false)
+    assistant.value.prompt(prompt.value, {
+      engine: engine.value,
+      model: model.value
+    }, (text) => {
+     emitEvent('newChunk', text)
+    })
+  }
+
 })
 
 const onNewChat = () => {
@@ -45,14 +73,16 @@ const onSelectChat = (chat) => {
 
 const onSendPrompt = async (prompt) => {
 
-  // do we need to init llm
-  if (assistant.value.initLlm() === null) {
+  // make sure we can have an llm
+  if (assistant.value.initLlm(store.config.llm.engine) === null) {
     emitEvent('openSettings')
     return
   }
 
-  // 
-  assistant.value.prompt(prompt, store.pendingAttachment, (text) => {
+  // prompt
+  assistant.value.prompt(prompt, {
+    attachment: store.pendingAttachment,
+  }, (text) => {
     emitEvent('newChunk', text)
   })
 

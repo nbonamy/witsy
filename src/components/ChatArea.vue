@@ -1,9 +1,12 @@
 
 <template>
-  <div class="content">
+  <div class="content" :class="{ standalone: standalone }">
     <div class="toolbar">
       <div class="title">
         {{ chat.title }}
+      </div>
+      <div v-if="standalone" class="action" @click="onSave">
+        <BIconFloppy />
       </div>
     </div>
     <MessageList :chat="chat" v-if="chat.messages.length > 1"/>
@@ -19,7 +22,7 @@
 
 <script setup>
 
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import EngineLogo from './EngineLogo.vue'
@@ -27,8 +30,11 @@ import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
 
 const props = defineProps({
-  chat: Chat
+  chat: Chat,
+  standalone: Boolean,
 })
+
+const saved = ref(false)
 
 //
 // we cannot use store.config.getActiveModel here
@@ -44,6 +50,13 @@ const onSelectModel = (ev) => {
   store.save()
 }
 
+const onSave = () => {
+  if (saved.value) return
+  store.chats.push(props.chat)
+  store.save()
+  saved.value = true
+}
+
 </script>
 
 <style scoped>
@@ -56,16 +69,32 @@ const onSelectModel = (ev) => {
 }
 
 .toolbar {
-  padding: 16px;
+  padding: 15px 16px 24px;
   -webkit-app-region: drag;
   display: grid;
 }
 
-.title {
+.content.standalone .toolbar {
+  grid-template-columns: auto 32px;
+}
+
+.toolbar .title {
+  grid-column: 1;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.toolbar .action {
+  -webkit-app-region: no-drag;
+  grid-column: 2;
+  cursor: pointer;
+  text-align: right;
+}
+
+.content.standalone .toolbar {
+  padding-left: 80px;
 }
 
 .empty {

@@ -1,5 +1,5 @@
 <template>
-  <component :is="currentView" />
+  <component :is="currentView" :extra="queryParams" />
 </template>
 
 <script setup>
@@ -25,6 +25,7 @@ installCommands();
 // routing
 const routes = {
   '/': Main,
+  '/chat': Main,
   '/wait': Wait,
   '/assistant': Assistant
 }
@@ -32,9 +33,17 @@ const routes = {
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
-  console.log(currentPath.value)
+  //console.log(currentPath.value)
   return routes[currentPath.value.slice(1) || '/']
 })
 
+const queryParams = computed(() => {
+  const params = new URLSearchParams(window.location.search);
+  const queryParams = {};
+  for (const [key, value] of params) {
+    queryParams[key] = value;
+  }
+  return queryParams;
+})
 
 </script>

@@ -124,9 +124,13 @@ ipcMain.on('run-command', async (event, payload) => {
   const command = JSON.parse(payload);
   await closeCommandPalette();
   await releaseFocus();
-  await runCommand(app, command);
+  let result = await runCommand(app, command);
   if (restoreMainWindow) {
     console.log('Restoring main window')
     openMainWindow(false);
+  }
+  if (result?.chatWindow) {
+    result.chatWindow.moveTop();
+    app.focus();
   }
 })

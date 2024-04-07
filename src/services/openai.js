@@ -15,8 +15,8 @@ export default class extends LLmService {
     })
   }
 
-  _hasVision() {
-    return this.config.openai.models.chat.includes('vision')
+  _isVisionModel(model) {
+    return model.includes('vision')
   }
 
   getRountingModel() {
@@ -35,9 +35,11 @@ export default class extends LLmService {
   async complete(thread, opts) {
 
     // call
+    let model = opts?.model || this.config.openai.models.chat
+    console.log(`[openai] prompting model ${model}`)
     const response = await this.client.chat.completions.create({
-      model: opts?.model || this.config.openai.models.chat,
-      messages: this._buildMessages(thread),
+      model: model,
+      messages: this._buildPayload(thread, model),
     });
 
     // return an object
@@ -47,27 +49,26 @@ export default class extends LLmService {
     }
   }
 
-  async stream(thread) {
+  async stream(thread, opts) {
 
     // model: switch to vision if needed
-    let model = this.config.openai.models.chat
-    if (this._requiresVisionModel(thread)) {
+    let model = opts?.model || this.config.openai.models.chat
+    if (this._requiresVisionModel(thread, model)) {
       let visionModel = this._findModel(store.models.openai, visionModels)
       if (visionModel) {
-        console.log('Switching to vision model:', visionModel.id)
-        this.config.openai.models.chat = visionModel.id
+        model = visionModel.id
       }
     }
 
     // call
+    console.log(`[openai] prompting model ${model}`)
     let stream = this.client.chat.completions.create({
-      model: this.config.openai.models.chat,
-      messages: this._buildMessages(thread),
+      model: model,
+      messages: this._buildPayload(thread, model),
       stream: true,
     })
 
-    // restore and done
-    this.config.openai.models.chat = model
+    // done
     return stream
 
   }
@@ -92,11 +93,13 @@ export default class extends LLmService {
     ]
   }
 
-  async image(prompt) {
+  async image(prompt, opts) {
     
     // call
+    let model = this.config.openai.models.image
+    console.log(`[openai] prompting model ${model}`)
     const response = await this.client.images.generate({
-      model: this.config.openai.models.image,
+      model: model,
       prompt: prompt,
       n:1,
     })

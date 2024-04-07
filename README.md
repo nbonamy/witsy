@@ -30,6 +30,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
+- [ ] Copy/edit/... messages
 - [ ] Image placeholder
 - [ ] Edit commands
 - [ ] Customized commands
@@ -41,6 +42,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Proper database (SQLite3) storage (??)
 - [ ] Nicer icon
 
+- [x] New chat window for AI command
 - [x] AI Commands with shortcut
 - [x] Auto-switch to vision model
 - [x] Run at login

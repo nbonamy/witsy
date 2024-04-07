@@ -15,8 +15,8 @@ export default class extends LLmService {
     }
   }
 
-  _hasVision() {
-    return this.config.ollama.models.chat.includes('llava')
+  _isVisionModel(model) {
+    return model.includes('llava')
   }
 
   getRountingModel() {
@@ -35,9 +35,11 @@ export default class extends LLmService {
   async complete(thread, opts) {
 
     // call
+    let model = opts?.model || this.config.ollama.models.chat
+    console.log(`[ollama] prompting model ${model}`)
     const response = await this.ollama.chat({
-      model: opts?.model || this.config.ollama.models.chat,
-      messages: this._buildMessages(thread),
+      model: model,
+      messages: this._buildPayload(thread, model),
       stream: false
     });
 
@@ -48,27 +50,26 @@ export default class extends LLmService {
     }
   }
 
-  async stream(thread) {
+  async stream(thread, opts) {
 
     // model: switch to vision if needed
-    let model = this.config.ollama.models.chat
-    if (this._requiresVisionModel(thread)) {
+    let model = opts?.model || this.config.ollama.models.chat
+    if (this._requiresVisionModel(thread, model)) {
       let visionModel = this._findModel(store.models.ollama, visionModels)
       if (visionModel) {
-        console.log('Switching to vision model:', visionModel.id)
-        this.config.ollama.models.chat = visionModel.id
+        model = visionModel.id
       }
     }
   
     // call
+    console.log(`[ollama] prompting model ${model}`)
     let stream = this.ollama.chat({
-      model: this.config.ollama.models.chat,
-      messages: this._buildMessages(thread),
+      model: model,
+      messages: this._buildPayload(thread, model),
       stream: true,
     })
 
-    // restore and done
-    this.config.ollama.models.chat = model
+    // done
     return stream
 
   }

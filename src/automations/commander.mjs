@@ -6,7 +6,7 @@ import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
-import { openWaitingPanel, closeWaitingPanel, releaseFocus } from '../window'
+import { openChatWindow, openWaitingPanel, closeWaitingPanel, releaseFocus } from '../window'
 
 const loadConfig = (app) => {
   const userDataPath = app.getPath('userData')
@@ -46,20 +46,26 @@ const promptLlm = (app, engine, model, prompt) => {
 
 }
 
-const finalizeCommand = async (automator, behavior, text) => {
+const finalizeCommand = async (automator, command, text) => {
 
-  if (behavior == 'new_window') {
+  if (command.behavior === 'new_window') {
+
+    return openChatWindow({
+      prompt: text,
+      engine: command.engine,
+      model: command.model
+    })
   
-  } else if (behavior == 'insert_below') {
+  } else if (command.behavior === 'insert_below') {
 
     await automator.moveCaretBelow()
     await automator.pasteText(text)
 
-  } else if (behavior == 'replace_selection') {
+  } else if (command.behavior === 'replace_selection') {
 
     await automator.pasteText(text)
 
-  } else if (behavior == 'copy_cliboard') {
+  } else if (command.behavior === 'copy_cliboard') {
 
     await clipboard.writeText(text)
 
@@ -68,6 +74,14 @@ const finalizeCommand = async (automator, behavior, text) => {
 }
 
 export const runCommand = async (app, command) => {
+
+  //
+  let result = {
+    text: null,
+    prompt: null,
+    response: null,
+    chatWindow: null,
+  };
 
   try {
 
@@ -82,38 +96,51 @@ export const runCommand = async (app, command) => {
     const automator = new Automator();
 
     // first grab text
-    let text = await automator.getSelectedText();
-    //console.log(`Grabbed [${text}]`);
-    if (text.trim() === '') {
+    result.text = await automator.getSelectedText();
+    //console.log(`Grabbed [${result.text}]`);
+    if (result.text.trim() === '') {
       console.log('No text selected');
-      return;
+      return result;
     }
 
-    // open waiting panel
-    openWaitingPanel();
-
     // build prompt
-    const prompt = template.replace('{input}', text);
+    result.prompt = template.replace('{input}', result.text);
 
-    // now prompt llm
-    //console.log(`Prompting with ${prompt}`);
-    const response = await promptLlm(app, engine, model, prompt);
+    // new window is different
+    if (behavior === 'new_window') {
+      
+      result.chatWindow = await finalizeCommand(automator, command, result.prompt);
 
-    // done
-    await closeWaitingPanel();
-    await releaseFocus();
+    } else {
+      
+      // open waiting panel
+      openWaitingPanel();
 
-    // now paste
-    //console.log(`Processing ${response.content}`);
-    await finalizeCommand(automator, behavior, response.content);
+      // now prompt llm
+      //console.log(`Prompting with ${result.prompt}`);
+      const response = await promptLlm(app, engine, model, result.prompt);
+      result.response = response.content;
+
+      // done
+      await closeWaitingPanel();
+      await releaseFocus();
+
+      // now paste
+      //console.log(`Processing ${result.response}`);
+      await finalizeCommand(automator, command, result.response);
+
+    }
 
   } catch (error) {
     console.error('Error while testing', error);
   }
 
-  // done
+  // done waiting
   console.log('Destroying waiting panel')
   await closeWaitingPanel(true);
   releaseFocus();
+
+  // done
+  return result;
 
 }
