@@ -41,7 +41,7 @@ const queryParams = computed(() => {
   const params = new URLSearchParams(window.location.search);
   const queryParams = {};
   for (const [key, value] of params) {
-    queryParams[key] = value;
+    queryParams[key] = decodeURIComponent(value);
   }
   return queryParams;
 })
