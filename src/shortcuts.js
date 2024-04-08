@@ -2,7 +2,18 @@
 const { globalShortcut } = require('electron');
 
 export const unregisterShortcuts = () => {
+  //console.log('Unregistering shortcuts')
   globalShortcut.unregisterAll();
+}
+
+export const registerShortcuts = (shortcuts, callbacks) => {
+  unregisterShortcuts();
+  if (shortcuts.chat && callbacks.chat) {
+    registerShortcut(shortcuts.chat, callbacks.chat);
+  }
+  if (shortcuts.command && callbacks.command) {
+    registerShortcut(shortcuts.command, callbacks.command);
+  }
 }
 
 const keyToAccelerator = (key) => {
@@ -13,7 +24,6 @@ const keyToAccelerator = (key) => {
   if (key === '→') return 'Right'
   return key
 }
-
 
 export const shortcutAccelerator = (shortcut) => {
 
@@ -37,7 +47,7 @@ export const shortcutAccelerator = (shortcut) => {
 
 }
 
-export const registerShortcut = (shortcut, callback) => {
+const registerShortcut = (shortcut, callback) => {
 
   // build accelerator
   let accelerator = shortcutAccelerator(shortcut)

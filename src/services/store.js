@@ -81,7 +81,8 @@ const saveHistory = () => {
   clearInterval(historyMonitor)
   
   try {
-    fs.writeFileSync(historyFilePath(), JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
+    let chats = store.chats.filter((chat) => chat.messages.length > 1)
+    fs.writeFileSync(historyFilePath(), JSON.stringify(chats), null, 2)
   } catch (error) {
     console.log('Error saving history data', error)
   }

@@ -30,6 +30,9 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
+- [ ] Log file
+- [ ] Save attachment on disk vs JSON
+- [ ] Conversation menu (info, save...)
 - [ ] Image placeholder
 - [ ] Edit commands
 - [ ] Customized commands
@@ -39,6 +42,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Keep running in system tray
 - [x] Nicer icon (still temporary)
 - [x] Rename conversation
 - [x] Copy/edit messages
