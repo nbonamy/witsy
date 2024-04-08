@@ -26,6 +26,7 @@ onMounted(async () => {
 })
 
 const load = () => {
+  if (store.models.ollama == null)  getOllamaModels()
   chat_model.value = store.config.ollama?.models?.chat || ''
 }
 
