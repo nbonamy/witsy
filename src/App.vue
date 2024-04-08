@@ -12,8 +12,7 @@ import Assistant from './screens/Commands.vue'
 
 // store
 import { store } from './services/store'
-import defaults from '../defaults/settings.json'
-store.load(defaults)
+store.load()
 
 // install shortcuts
 ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
