@@ -74,7 +74,7 @@
 }
 
 .message .attachment, .message .image {
-  max-width: 400px;
+  width: 100%;
   margin-top: 16px;
   border-radius: 8px;
 }
@@ -85,6 +85,7 @@
 
 .message .image-container {
   position: relative;
+  width: 400px;
 }
 
 .message img {
