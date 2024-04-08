@@ -11,6 +11,7 @@
 // components
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import { download } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import Settings from '../components/Settings.vue'
@@ -77,6 +78,13 @@ const onSendPrompt = async (prompt) => {
   if (assistant.value.initLlm(store.config.llm.engine) === null) {
     emitEvent('openSettings')
     return
+  }
+
+  // save the attachment
+  if (store.pendingAttachment?.downloaded === false) {
+    let filename = download(store.pendingAttachment.url)
+    store.pendingAttachment.downloaded = true
+    store.pendingAttachment.url = `file://${filename}`
   }
 
   // prompt

@@ -92,8 +92,8 @@ export default class Chat {
       if (message.type === 'image' && typeof message.content === 'string') {
         ipcRenderer.send('delete', { path: message.content })
       }
-      if (typeof message.attachment == 'string') {
-        ipcRenderer.send('delete', { path: message.attachment })
+      if (message.attachment?.downloaded) {
+        ipcRenderer.send('delete', { path: message.attachment.url })
       }
     }
   }

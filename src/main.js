@@ -2,7 +2,7 @@ const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electr
 const process = require('node:process');
 
 import { settingsFilePath, loadSettings } from './config';
-import { deleteFile, pickFile, downloadFile } from './file';
+import { getFileContents, deleteFile, pickFile, downloadFile } from './file';
 import { unregisterShortcuts, registerShortcuts as _registerShortcuts, shortcutAccelerator } from './shortcuts';
 import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
 import { runCommand } from './automations/commander.mjs';
@@ -144,6 +144,10 @@ ipcMain.on('delete', (event, payload) => {
 
 ipcMain.on('pick-file', (event, payload) => {
   event.returnValue = pickFile(app, payload);
+});
+
+ipcMain.on('get-contents', async (event, payload) => {
+  event.returnValue = getFileContents(app, payload);
 });
 
 ipcMain.on('download', async (event, payload) => {
