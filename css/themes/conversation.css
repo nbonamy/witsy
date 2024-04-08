@@ -27,10 +27,6 @@
   color: black;
 }
 
-.messages.conversation .message .image-container {
-  width: 75%;
-}
-
 .messages.conversation .message .body:has(.image) {
   padding: 0px;
   background-color: transparent;

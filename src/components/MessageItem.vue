@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="actions">
-      <div class="action" v-if="message.role == 'assistant'" @click="onCopy(message)">
+      <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
         <BIconClipboard /> Copy
       </div>
       <div class="action" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
