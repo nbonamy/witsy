@@ -3,7 +3,7 @@ const process = require('node:process');
 
 import { settingsFilePath, loadSettings } from './config';
 import { deleteFile, pickFile, downloadFile } from './file';
-import { unregisterShortcuts, registerShortcut, shortcutAccelerator } from './shortcuts';
+import { unregisterShortcuts, registerShortcuts as _registerShortcuts, shortcutAccelerator } from './shortcuts';
 import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
 import { runCommand } from './automations/commander.mjs';
 import trayIcon from '../assets/bulbTemplate.png?asset';
@@ -15,22 +15,12 @@ if (require('electron-squirrel-startup')) {
 
 var restoreMainWindow = false;
 const registerShortcuts = (shortcuts) => {
-  unregisterShortcuts();
-  if (shortcuts.chat) {
-    registerShortcut(shortcuts.chat, openMainWindow);
-  }
-  if (shortcuts.assistant) {
-    registerShortcut(shortcuts.command, async () => {
+  _registerShortcuts(shortcuts, {
+    chat: openMainWindow,
+    command: async () => {
       restoreMainWindow = await openCommandPalette()
-    });
-  }
-}
-
-// quit at all costs
-let quitAnyway = false;
-const quitApp = () => {
-  quitAnyway = true;
-  app.exit();
+    }
+  });
 }
 
 //  Tray icon
@@ -44,12 +34,20 @@ const buildTrayMenu = () => {
   ];
 };
 
+// quit at all costs
+let quitAnyway = false;
+const quitApp = () => {
+  quitAnyway = true;
+  app.exit();
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   
   // create the main window
+  // TODO detect when lauched from login item
   let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
   if (!hidden) {
     console.log('Creating initial main window');

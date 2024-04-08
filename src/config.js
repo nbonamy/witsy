@@ -66,7 +66,7 @@ export const saveSettings = (filepath, config) => {
     }
 
     // save
-    fs.writeFileSync(filepath, JSON.stringify(settings))
+    fs.writeFileSync(filepath, JSON.stringify(settings, null, 2))
 
   } catch (error) {
     console.log('Error saving settings data', error)
