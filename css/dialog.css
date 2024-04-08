@@ -40,6 +40,7 @@ dialog footer {
 }
 
 dialog footer button {
+  box-sizing: border-box;
   width: auto;
   margin: 0 8px;
   padding: 4px 8px;
@@ -51,7 +52,8 @@ dialog footer button {
 }
 
 button.default {
-  background-color: #227bec;
+  border: none;
+  background: linear-gradient(#2991FF, #057AFF);
   color: white;
 }
 
