@@ -63,7 +63,7 @@ const attachmentUrl = computed(() => {
   if (props.message.attachment?.contents) {
     return 'data:image/png;base64,' + props.message.attachment.contents
   } else {
-    return null
+    return props.message.attachment?.url
   }
 })
 

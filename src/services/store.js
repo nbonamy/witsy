@@ -81,8 +81,21 @@ const saveHistory = () => {
   clearInterval(historyMonitor)
   
   try {
+
+    // we need to srip attchment contents
     let chats = store.chats.filter((chat) => chat.messages.length > 1)
-    fs.writeFileSync(historyFilePath(), JSON.stringify(chats), null, 2)
+    chats = JSON.parse(JSON.stringify(chats))
+    for (let chat of chats) {
+      for (let message of chat.messages) {
+        if (message.attachment) {
+          message.attachment.contents = null
+        }
+      }
+    }
+    
+    // save
+    fs.writeFileSync(historyFilePath(), JSON.stringify(chats, null, 2))
+
   } catch (error) {
     console.log('Error saving history data', error)
   }

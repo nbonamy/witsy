@@ -1,4 +1,6 @@
 
+import { getFileContents } from './download'
+
 export default class {
 
   constructor(config) {
@@ -38,13 +40,28 @@ export default class {
     if (typeof thread === 'string') {
       return [{ role: 'user', content: thread }]
     } else {
-      return thread.filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
+
+      // we only want to upload the last attchment
+      // sp build messages in reverse order
+      // and then rerse the array
+
+      let attached = false
+      return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
         let payload = { role: msg.role, content: msg.content }
-        if (msg.attachment && this._isVisionModel(model)) {
+        if (!attached && msg.attachment && this._isVisionModel(model)) {
+          
+          // tis can be a loaded chat where contents is not present
+          if (!msg.attachment.contents) {
+            msg.attachment.contents = getFileContents(msg.attachment.url).contents
+          }
+
+          // now we can attach
           this.addImageToPayload(msg, payload)
+          attached = true
+
         }
         return payload
-      })
+      }).reverse()
     }
   }
 

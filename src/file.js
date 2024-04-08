@@ -4,6 +4,23 @@ const { download } = require('electron-dl');
 const path = require('node:path');
 const fs = require('node:fs');
 
+export const getFileContents = (app, payload) => {
+
+  try {
+    let fileContents = fs.readFileSync(payload);
+    if (fileContents) {
+      return {
+        url: `file://${payload}`,
+        contents: fileContents.toString('base64')
+      };
+    }
+  } catch {}
+
+  // default
+  return null;
+
+}
+
 export const deleteFile = (app, payload) => {
 
   try {
@@ -22,18 +39,17 @@ export const deleteFile = (app, payload) => {
 
 export const pickFile = (app, payload) => {
 
-  let fileURL = dialog.showOpenDialogSync({
-    filters: payload?.filters
-  });
-  if (fileURL) {
-    let fileContents = fs.readFileSync(fileURL[0]);
-    return {
-      url: fileURL[0],
-      contents: fileContents.toString('base64')
-    };
-  } else {
-    return null;
-  }
+  try {
+    let fileURL = dialog.showOpenDialogSync({
+      filters: payload?.filters
+    });
+    if (fileURL) {
+      return getFileContents(app, fileURL[0]);
+    }
+  } catch {}
+
+  // default
+  return null;
 
 }
 

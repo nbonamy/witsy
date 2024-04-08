@@ -37,7 +37,7 @@ const attachmentUrl = computed(() => {
   if (store.pendingAttachment?.contents) {
     return 'data:image/png;base64,' + store.pendingAttachment.contents
   } else {
-    return null
+    return store.pendingAttachment?.url
   }
 })
 
@@ -67,7 +67,7 @@ const onStopAssistant = () => {
 const onAttach = () => {
   let file = ipcRenderer.sendSync('pick-file', { filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }] })
   if (file) {
-    emitEvent('attachFile', file)
+    emitEvent('attachFile', {...file, downloaded: false })
   }
 }
 

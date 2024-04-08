@@ -1,11 +1,10 @@
 
-import { ipcRenderer } from 'electron'
-import { v4 as uuidv4 } from 'uuid'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import { store } from '../services/store'
+import { download } from '../services/download'
 
 export default class {
 
@@ -160,19 +159,10 @@ export default class {
       let response = await this.llm.image(prompt, opts)
 
       // we need to download it locally
-      let filename = `${uuidv4()}.png`
-      filename = ipcRenderer.sendSync('download', {
-        url: response.url,
-        properties: {
-          filename: filename,
-          directory: 'userData',
-          subdir: 'images',
-          prompt: false
-        }
-      })
-
-      // save
+      let filename = download(response.url)
       filename = `file://${filename}`
+
+      // ssve
       this.chat.lastMessage().setImage(filename)
       if (callback) callback(filename)
 
