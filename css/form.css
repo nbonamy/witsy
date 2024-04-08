@@ -51,9 +51,37 @@ form .group input:focus, form .group select:focus, form .group textarea:focus {
 }
 
 form .group input[type=checkbox] {
-  flex: 0;
+  outline: none;
+  appearance: none;
   padding: 0;
-  border-radius: 2px;
+  border-radius: 4px;
+  background: white;
+  height: 14px;
+  max-width: 14px !important;
+}
+
+form .group input[type=checkbox]:checked {
+  border: none;
+  background: linear-gradient(#2991FF, #057AFF);
+}
+
+
+form .group input[type=checkbox]:after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 5px;
+  width: 5px;
+  height: 11px;
+  opacity: 1;
+  transform: rotate(45deg) scale(0);
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+form .group input[type=checkbox]:checked:after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
 }
 
 form .group input[type=range] {
