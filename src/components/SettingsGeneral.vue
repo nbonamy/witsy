@@ -12,6 +12,10 @@
       <label>Run at login</label>
       <input type="checkbox" v-model="runAtLogin" />
     </div>
+    <div class="group">
+      <label>Keep in Status Bar</label>
+      <input type="checkbox" v-model="keepRunning" />
+    </div>
   </div>
 </template>
 
@@ -21,17 +25,20 @@ import { ref } from 'vue'
 import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
 
-const runAtLogin = ref(false)
 const llmEngine = ref(null)
+const runAtLogin = ref(false)
+const keepRunning = ref(false)
 
 const load = () => {
-  runAtLogin.value = ipcRenderer.sendSync('get-run-at-login').openAtLogin
   llmEngine.value = store.config.llm.engine || 'openai'
+  runAtLogin.value = ipcRenderer.sendSync('get-run-at-login').openAtLogin
+  keepRunning.value = store.config.general.keepRunning
 }
 
 const save = () => {
   store.config.llm.engine = llmEngine.value
   ipcRenderer.send('set-run-at-login', runAtLogin.value)
+  store.config.general.keepRunning = keepRunning.value
 }
 
 defineExpose({

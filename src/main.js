@@ -1,6 +1,7 @@
 const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
 const process = require('node:process');
 
+import { settingsFilePath, loadSettings } from './config';
 import { deleteFile, pickFile, downloadFile } from './file';
 import { unregisterShortcuts, registerShortcut, shortcutAccelerator } from './shortcuts';
 import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
@@ -25,8 +26,11 @@ const registerShortcuts = (shortcuts) => {
   }
 }
 
+// quit at all costs
+let quitAnyway = false;
 const quitApp = () => {
-  app.quit();
+  quitAnyway = true;
+  app.exit();
 }
 
 //  Tray icon
@@ -46,8 +50,13 @@ const buildTrayMenu = () => {
 app.whenReady().then(() => {
   
   // create the main window
-  console.log('Creating initial main window');
-  openMainWindow();
+  let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
+  if (!hidden) {
+    console.log('Creating initial main window');
+    openMainWindow();
+  } else {
+    app.dock.hide();
+  }
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -73,6 +82,29 @@ app.on('window-all-closed', () => {
   } else {
     app.dock.hide();
   }
+});
+
+//
+app.on('before-quit', (ev) => {
+
+  // if force quit
+  if (process.env.DEBUG || quitAnyway) {
+    return;
+  }
+
+  // check settings
+  const settings = loadSettings(settingsFilePath(app));
+  if (!settings.general.keepRunning) {
+    return;
+  }
+
+  // close all windows but do not quit
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.removeAllListeners('close');
+    win.close();
+  });
+  ev.preventDefault();
+
 });
 
 // In this file you can include the rest of your app's specific main process

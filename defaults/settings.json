@@ -1,5 +1,8 @@
 
 {
+  "general": {
+    "keepRunning": true
+  },
   "llm": {
     "engine": "openai",
     "autoVisionSwitch": true
