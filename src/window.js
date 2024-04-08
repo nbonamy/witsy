@@ -20,7 +20,14 @@ const createWindow = (opts = {}) => {
     },
   });
 
-  // get query params
+  // web console to here
+  if (process.env.DEBUG) {
+    window.webContents.on('console-message', (event, level, message, line, sourceId) => {
+      if (!message.includes('Electron Security Warning') && !message.includes('Third-party cookie will be blocked')){
+        console.log(`${message} ${sourceId}:${line}`);
+      }
+    });
+  }
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
