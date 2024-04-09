@@ -34,16 +34,16 @@
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
-import EngineLogo from './EngineLogo.vue'
+import EngineLogo from '../components/EngineLogo.vue'
 
-import SettingsTab from './SettingsTab.vue'
-import SettingsGeneral from './SettingsGeneral.vue'
-import SettingsAppearance from './SettingsAppearance.vue'
-import SettingsCommands from './SettingsCommands.vue'
-import SettingsShortcuts from './SettingsShortcuts.vue'
-import SettingsOpenAI from './SettingsOpenAI.vue'
-import SettingsOllama from './SettingsOllama.vue'
-import SettingsAdvanced from './SettingsAdvanced.vue'
+import SettingsTab from '../components/SettingsTab.vue'
+import SettingsGeneral from '../components/SettingsGeneral.vue'
+import SettingsAppearance from '../components/SettingsAppearance.vue'
+import SettingsCommands from '../components/SettingsCommands.vue'
+import SettingsShortcuts from '../components/SettingsShortcuts.vue'
+import SettingsOpenAI from '../components/SettingsOpenAI.vue'
+import SettingsOllama from '../components/SettingsOllama.vue'
+import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'

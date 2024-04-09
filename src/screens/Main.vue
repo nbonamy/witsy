@@ -15,7 +15,7 @@ import { store } from '../services/store'
 import { download } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
-import Settings from '../components/Settings.vue'
+import Settings from './Settings.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
