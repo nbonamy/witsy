@@ -125,7 +125,6 @@ const patchHistory = (jsonChats) => {
       if (chat) {
         patched = patched || chat.patchFromJson(jsonChat)
       } else {
-        //console.log('New chat detected')
         let chat = new Chat(jsonChat)
         store.chats.push(chat)
         patched = true
