@@ -157,7 +157,6 @@ ipcMain.on('unregister-shortcuts', () => {
 
 ipcMain.on('fullscreen', (event, flag) => {
   window.mainWindow.setFullScreen(flag);
-  toggleMainWindowFullscreen(flag);
 });
 
 ipcMain.on('delete', (event, payload) => {

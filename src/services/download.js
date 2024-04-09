@@ -9,7 +9,7 @@ export const getFileContents = (url) => {
 export const download = (url) => {
 
   // get extension from url
-  let extension = url.split('.').pop().trim()
+  let extension = url.split(/[#?]/)[0].split('.').pop().trim()
   if (extension == '') {
     extension = 'jpg'
   }
