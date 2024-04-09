@@ -5,9 +5,7 @@
       <div class="title">
         {{ chat.title }}
       </div>
-      <div v-if="standalone && !saved" class="action" @click="onSave">
-        <BIconFloppy />
-      </div>
+      <div class="menu" @click="onMenu"></div>
     </div>
     <MessageList :chat="chat" v-if="chat.messages.length > 1"/>
     <div v-else class="empty">
@@ -17,6 +15,8 @@
       </select>
     </div>
     <Prompt :chat="chat" class="prompt" />
+    <Overlay v-if="showChatMenu" @click="closeChatMenu" />
+    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
   </div>
 </template>
 
@@ -24,16 +24,32 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
+import ContextMenu from './ContextMenu.vue'
+import Overlay from './Overlay.vue'
 import Chat from '../models/chat'
 import EngineLogo from './EngineLogo.vue'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
+import useEventBus from '../composables/useEventBus'
+const { emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
   standalone: Boolean,
 })
 
+const chatMenuActions = computed(() => {
+  return [
+    props.chat.engine ? { label: `${props.chat.engine} ${props.chat.model}`, disabled: true } : null,
+    props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
+    { label: 'Rename Chat', action: 'rename' },
+    { label: 'Delete', action: 'delete' },
+  ].filter((a) => a != null)
+})
+
+const showChatMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
 const saved = ref(false)
 
 //
@@ -48,6 +64,27 @@ const onSelectModel = (ev) => {
   let model = ev.target.value
   store.config[store.config.llm.engine].models.chat = model
   store.save()
+}
+
+const onMenu = (event) => {
+  showChatMenu.value = true
+  menuX.value = event.clientX - 150
+  menuY.value = event.clientY
+}
+
+const closeChatMenu = () => {
+  showChatMenu.value = false
+}
+
+const handleActionClick = async (action) => {
+  closeChatMenu()
+  if (action === 'rename') {
+    emitEvent('renameChat', props.chat)
+  } else if (action === 'delete') {
+    emitEvent('deleteChat', props.chat)
+  } else if (action == 'save') {
+    onSave()
+  }
 }
 
 const onSave = () => {
@@ -72,10 +109,7 @@ const onSave = () => {
   padding: 15px 16px 24px;
   -webkit-app-region: drag;
   display: grid;
-}
-
-.content.standalone .toolbar {
-  grid-template-columns: auto 32px;
+  grid-template-columns: auto 16px;
 }
 
 .toolbar .title {
@@ -86,11 +120,16 @@ const onSave = () => {
   text-overflow: ellipsis;
 }
 
-.toolbar .action {
+.toolbar .menu {
   -webkit-app-region: no-drag;
   grid-column: 2;
   cursor: pointer;
   text-align: right;
+  width: 16px;
+  height: 16px;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDMyIDMyOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHdpZHRoPSIzMnB4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cGF0aCBkPSJNNCwxMGgyNGMxLjEwNCwwLDItMC44OTYsMi0ycy0wLjg5Ni0yLTItMkg0QzIuODk2LDYsMiw2Ljg5NiwyLDhTMi44OTYsMTAsNCwxMHogTTI4LDE0SDRjLTEuMTA0LDAtMiwwLjg5Ni0yLDIgIHMwLjg5NiwyLDIsMmgyNGMxLjEwNCwwLDItMC44OTYsMi0yUzI5LjEwNCwxNCwyOCwxNHogTTI4LDIySDRjLTEuMTA0LDAtMiwwLjg5Ni0yLDJzMC44OTYsMiwyLDJoMjRjMS4xMDQsMCwyLTAuODk2LDItMiAgUzI5LjEwNCwyMiwyOCwyMnoiLz48L3N2Zz4=');
+  background-position: 0px -1px;
+  background-size: 16px;
 }
 
 .content.standalone .toolbar {
@@ -117,5 +156,6 @@ const onSave = () => {
   padding: 0px;
   font-size: 12pt;
   text-align: center;
+  cursor: pointer;
 }
 </style>

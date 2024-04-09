@@ -10,6 +10,7 @@
 
 // components
 import { ref, computed, onMounted, nextTick } from 'vue'
+import Swal from 'sweetalert2'
 import { store } from '../services/store'
 import { download } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
@@ -37,6 +38,8 @@ const isStandaloneChat = computed(() => {
 
 onMounted(() => {
   onEvent('newChat', onNewChat)
+  onEvent('renameChat', onRenameChat)
+  onEvent('deleteChat', onDeleteChat)
   onEvent('selectChat', onSelectChat)
   onEvent('sendPrompt', onSendPrompt)
   onEvent('attachFile', onAttachFile)
@@ -63,6 +66,35 @@ onMounted(() => {
 
 const onNewChat = () => {
   assistant.value.newChat()
+}
+
+const onRenameChat = async (chat) => {
+  // prompt
+  const { value: title } = await Swal.fire({
+    title: "Rename Chat",
+    input: "text",
+    inputValue: chat.title,
+    showCancelButton: true,
+  });
+  if (title) {
+    chat.title = title
+    store.save()
+  }
+}
+
+const onDeleteChat = async (chat) => {
+
+  // fist remove
+  let index = store.chats.indexOf(chat)
+  store.chats[index].delete()
+  store.chats.splice(index, 1)
+  store.save()
+
+  // if current chat
+  if (chat.uuid == assistant.value.chat?.uuid) {
+    emitEvent('newChat')
+  }
+
 }
 
 const onSelectChat = (chat) => {

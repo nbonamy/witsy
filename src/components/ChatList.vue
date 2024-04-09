@@ -9,13 +9,12 @@
     </div>
     <Overlay v-if="showMenu" @click="closeContextMenu" />
     <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
-    </div>
+  </div>
 </template>
 
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
-import Swal from 'sweetalert2'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import Overlay from './Overlay.vue'
@@ -75,34 +74,11 @@ const handleActionClick = async (action) => {
   let chat = targetRow.value
 
   if (action === 'rename') {
-
-    // prompt
-    const { value: title } = await Swal.fire({
-      title: "Rename Chat",
-      input: "text",
-      inputValue: chat.title,
-      showCancelButton: true,
-    });
-    if (title) {
-      chat.title = title
-      store.save()
-    }
-
+    emitEvent('renameChat', chat)
+  } else if (action === 'delete') {
+    emitEvent('deleteChat', chat)
   }
 
-  if (action === 'delete') {
-
-    // fist remove
-    let index = store.chats.indexOf(chat)
-    store.chats[index].delete()
-    store.chats.splice(index, 1)
-    store.save()
-
-    // if current chat
-    if (props.chat.uuid === chat.uuid) {
-      emitEvent('newChat')
-    }
-  }
 }
 
 </script>
