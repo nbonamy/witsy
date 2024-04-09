@@ -67,30 +67,48 @@ export const downloadFile = async (app, payload) => {
   }
 
   // now prompt or not
-  let customURL = path.join(defaultPath, defaultFileName);
+  let destinationURL = path.join(defaultPath, defaultFileName);
   if (properties.prompt !== false) {
-    customURL = dialog.showSaveDialogSync({
-      defaultPath: customURL
+    destinationURL = dialog.showSaveDialogSync({
+      defaultPath: destinationURL
     });
   }
-  if (customURL) {
-    let filePath = customURL.split('/');
-    let filename = `${filePath.pop()}`;
-    let directory = filePath.join('/');
-    properties = { ...properties, directory, filename };
-    //console.log(`downloading ${payload.url} to ${customURL}`)
+
+  // cancelled
+  if (!destinationURL) {
+    return null;
+  }
+
+  // if file to file, copy
+  if (payload.url.startsWith('file://')) {
+    try {
+      let src = payload.url.slice(7);
+      console.log(`copying ${src} to ${destinationURL}`)
+      await fs.copyFileSync(src, destinationURL);
+      return destinationURL;
+    } catch (err) {
+      console.error('Error while copying file', err);
+      return null;
+    }
+  }
+  
+  // download
+  let filePath = destinationURL.split('/');
+  let filename = `${filePath.pop()}`;
+  let directory = filePath.join('/');
+  properties = { ...properties, directory, filename };
+  console.log(`downloading ${payload.url} to ${destinationURL}`)
+
+  try {
     await download(BrowserWindow.getFocusedWindow(),
       payload.url, {
       ...properties,
-      onProgress: (progress) => {
-        //mainWindow.webContents.send('download-progress', progress)
-      },
-      onCompleted: (item) => {
-        //mainWindow.webContents.send('download-complete', item)
-      }
     });
-    return customURL;    
-  } else {
+    return destinationURL;
+
+  } catch (error) {
+    console.error('Error while downloading file', error);
     return null
-  }  
+  }
+
 }
