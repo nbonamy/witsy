@@ -19,10 +19,6 @@ export const store = reactive({
   commands: [], 
   config: {},
   chats: [],
-  models: {
-    openai: null,
-    ollama: null,
-  },
   pendingAttachment: null
 })
 

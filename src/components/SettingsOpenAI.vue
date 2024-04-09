@@ -46,40 +46,39 @@ onMounted(async () => {
 
 const load = () => {
   apiKey.value = store.config.openai?.apiKey || ''
-  chat_model.value = store.config.openai?.models?.chat || ''
-  image_model.value = store.config.openai?.models?.image || ''
+  chat_model.value = store.config.openai?.model?.chat || ''
+  image_model.value = store.config.openai?.model?.image || ''
 }
 
 const getOpenAIModels = async () => {
 
-  if (!store.models.openai) {
-    const openAI = new OpenAI(store.config)
-    const models = await openAI.getModels()
-    if (!models) {
-      store.models.openai = null
-    } else {
-      store.models.openai = models
-        .map(model => { return {
-          id: model.id,
-          name: model.id,
-          meta: model
-        }})
-        .sort((a, b) => a.name.localeCompare(b.name))
-
-    }
-  }
-
-  if (!store.models.openai) {
+  const openAI = new OpenAI(store.config)
+  let models = await openAI.getModels()
+  if (!models) {
+    store.config.openai.models = { chat: [], image: [], }
     chat_models.value = []
     image_models.value = []
     return
   }
 
-  chat_models.value = store.models.openai
-    .filter(model => model.id.startsWith('gpt-'))
+  // xform
+  models = models
+    .map(model => { return {
+      id: model.id,
+      name: model.id,
+      meta: model
+    }})
+    .sort((a, b) => a.name.localeCompare(b.name))
 
-  image_models.value = store.models.openai
-    .filter(model => model.id.startsWith('dall-e-'))
+  // store
+  store.config.openai.models = {
+    chat: models.filter(model => model.id.startsWith('gpt-')),
+    image: models.filter(model => model.id.startsWith('dall-e-'))
+  }
+
+  // assign
+  chat_models.value = store.config.openai.models.chat
+  image_models.value = store.config.openai.models.image
 
 }
 
@@ -92,7 +91,7 @@ const onKeyChange = () => {
 
 const save = () => {
   store.config.openai.apiKey = apiKey.value
-  store.config.openai.models = {
+  store.config.openai.model = {
     chat: chat_model.value,
     image: image_model.value
   }
