@@ -123,7 +123,12 @@ const patchHistory = (jsonChats) => {
     for (const jsonChat of jsonChats) {
       let chat = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
       if (chat) {
-        patched = patched || chat.patchFromJson(jsonChat)
+        if (jsonChat.deleted) {
+          store.chats = store.chats.filter((chat) => chat.uuid !== jsonChat.uuid)
+          patched = true
+        } else {
+          patched = patched || chat.patchFromJson(jsonChat)
+        }
       } else {
         let chat = new Chat(jsonChat)
         store.chats.push(chat)
@@ -134,6 +139,11 @@ const patchHistory = (jsonChats) => {
     if (error.code !== 'ENOENT') {
       console.log('Error patching history data', error)
     }
+  }
+
+  // save
+  if (patched) {
+    saveHistory()
   }
 
 }

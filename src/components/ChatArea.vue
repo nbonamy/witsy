@@ -43,7 +43,7 @@ const chatMenuActions = computed(() => {
     props.chat.engine ? { label: `${props.chat.engine} ${props.chat.model}`, disabled: true } : null,
     props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
     { label: 'Rename Chat', action: 'rename' },
-    { label: 'Delete', action: 'delete' },
+    { label: 'Delete', action: 'delete', disabled: props.standalone && !saved.value },
   ].filter((a) => a != null)
 })
 
