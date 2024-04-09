@@ -35,7 +35,7 @@ export default class extends LLmService {
   async complete(thread, opts) {
 
     // call
-    let model = opts?.model || this.config.openai.models.chat
+    let model = opts?.model || this.config.openai.model.chat
     console.log(`[openai] prompting model ${model}`)
     const response = await this.client.chat.completions.create({
       model: model,
@@ -52,9 +52,9 @@ export default class extends LLmService {
   async stream(thread, opts) {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.openai.models.chat
+    let model = opts?.model || this.config.openai.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.models.openai, visionModels)
+      let visionModel = this._findModel(store.config.openai.models, visionModels)
       if (visionModel) {
         model = visionModel.id
       }
@@ -96,7 +96,7 @@ export default class extends LLmService {
   async image(prompt, opts) {
     
     // call
-    let model = this.config.openai.models.image
+    let model = this.config.openai.model.image
     console.log(`[openai] prompting model ${model}`)
     const response = await this.client.images.generate({
       model: model,

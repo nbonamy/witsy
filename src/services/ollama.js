@@ -35,7 +35,7 @@ export default class extends LLmService {
   async complete(thread, opts) {
 
     // call
-    let model = opts?.model || this.config.ollama.models.chat
+    let model = opts?.model || this.config.ollama.model.chat
     console.log(`[ollama] prompting model ${model}`)
     const response = await this.ollama.chat({
       model: model,
@@ -53,9 +53,9 @@ export default class extends LLmService {
   async stream(thread, opts) {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.ollama.models.chat
+    let model = opts?.model || this.config.ollama.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.models.ollama, visionModels)
+      let visionModel = this._findModel(store.config.ollama.models, visionModels)
       if (visionModel) {
         model = visionModel.id
       }

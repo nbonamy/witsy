@@ -34,7 +34,7 @@ const buildConfig = (defaults, overrides) => {
 
   // add some methods
   config.getActiveModel = () => {
-    return config[config.llm.engine].models.chat
+    return config[config.llm.engine].model.chat
   }
 
   // done
