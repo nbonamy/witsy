@@ -6,6 +6,12 @@
       <input type="checkbox" v-model="autoVisionSwitch" />
     </div>
     <div class="group">
+      <label>Conversation length</label>
+      <select v-model="conversationLength">
+        <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+      </select>
+    </div>
+    <div class="group">
       <label>Default instructions</label>
       <div class="subgroup">
         <textarea v-model="defaultInstructions" />
@@ -23,10 +29,12 @@ import defaults from '../../defaults/settings.json'
 
 const defaultInstructions = ref(null)
 const autoVisionSwitch = ref(null)
+const conversationLength = ref(null)
 
 const load = () => {
-  autoVisionSwitch.value = store.config.llm.autoVisionSwitch || true
+  autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   defaultInstructions.value = store.config.instructions.default || ''
+  conversationLength.value = store.config.llm.conversationLength || 5
 }
 
 const onResetDefaultInstructions = () => {
@@ -36,6 +44,7 @@ const onResetDefaultInstructions = () => {
 const save = () => {
   store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.instructions.default = defaultInstructions.value
+  store.config.llm.conversationLength = conversationLength.value
 }
 
 defineExpose({
