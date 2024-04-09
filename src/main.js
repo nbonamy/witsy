@@ -6,7 +6,7 @@ import * as config from './config';
 import * as file from './file';
 import * as shortcuts from './shortcuts';
 import * as window from './window';
-import * as commander from './automations/commander.mjs';
+import * as commander from './automations/commander';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
