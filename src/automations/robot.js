@@ -1,6 +1,7 @@
 
 //import { clipboard } from 'electron';
 //import { keyTap } from 'robotjs';
+//import { wait } from './utils';
 
 export default class RobotAutomator {
   
@@ -17,7 +18,7 @@ export default class RobotAutomator {
     // const currentClipboardContent = clipboard.readText();
     // clipboard.clear();
     // keyTap("c", process.platform === "darwin" ? "command" : "control");
-    // await new Promise((resolve) => setTimeout(resolve, 200));
+    // await wait();
     // const selectedText = clipboard.readText();
     // clipboard.writeText(currentClipboardContent);
     // return selectedText;
@@ -27,7 +28,7 @@ export default class RobotAutomator {
     // const currentClipboardContent = clipboard.readText();
     // clipboard.writeText(text)
     // keyTap("v", process.platform === "darwin" ? "command" : "control");
-    // await new Promise((resolve) => setTimeout(resolve, 200));
+    // await wait();
     // clipboard.writeText(currentClipboardContent);
   }
 

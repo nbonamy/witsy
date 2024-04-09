@@ -8,7 +8,7 @@ import { ipcRenderer } from 'electron'
 import { ref, computed } from 'vue'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
-import Assistant from './screens/Commands.vue'
+import Commands from './screens/Commands.vue'
 
 // store
 import { store } from './services/store'
@@ -26,7 +26,7 @@ const routes = {
   '/': Main,
   '/chat': Main,
   '/wait': Wait,
-  '/assistant': Assistant
+  '/command': Commands
 }
 
 const currentPath = ref(window.location.hash)

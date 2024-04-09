@@ -20,10 +20,13 @@ import {
 } from 'bootstrap-icons-vue'
 import { store } from '../services/store'
 
+const props = defineProps({
+  extra: Object
+})
+
 onMounted(() => {
   document.addEventListener('keyup', onKeyUp)
 })
-
 
 const enabledCommands = computed(() => store.commands.filter(command => command.enabled))
 
@@ -41,7 +44,10 @@ const onKeyUp = (event) => {
 }
 
 const onRunCommand = (command) => {
-  ipcRenderer.send('run-command', JSON.stringify(command))
+  ipcRenderer.send('run-command', JSON.stringify({
+    text: props.extra.text,
+    command: command
+  }))
 }
 
 </script>
