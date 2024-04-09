@@ -223,9 +223,9 @@ export default class {
   }
 
   _getRelevantChatMessages() {
-    const relevantMessagesCount = 5
+    const conversationLength = this.config.llm.conversationLength
     let chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
-    let messages = [this.chat.messages[0], ...chatMessages.slice(-relevantMessagesCount-1, -1)]
+    let messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength-1, -1)]
     return messages
   }
 
