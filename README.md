@@ -32,14 +32,14 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 - [ ] Log file
 - [ ] Image placeholder
-- [ ] Edit commands
-- [ ] Customized commands
 - [ ] Specialized assistants
 - [ ] Customized assistants
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+- [x] Edit commands
+- [x] Customized commands
 - [x] Conversation menu (info, save...)
 - [x] Conversation depth setting
 - [x] Save attachment on disk

@@ -9,10 +9,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="command in commands" :key="command.id" :data-id="command.id" class="command" :class="selected == command.id ? 'selected' : ''"
-              @click="onSelect(command.id)" @dblclick="onEdit(command.id)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver"
+          <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
+              @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver"
           >
-            <td class="enabled"><input type="checkbox" :checked="command.enabled" @click="onEnabled(command)" /></td>
+            <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
             <td class="label">{{ command.label }}</td>
             <td class="behavior">{{ behavior(command.behavior) }}</td>
@@ -20,17 +20,29 @@
         </tbody>
       </table>
     </div>
+    <div class="actions">
+      <button @click.prevent="onNew">New</button>
+      <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
+      <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
+    </div>
+    <CommandEditor id="editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import { ref, computed } from 'vue'
+import Swal from 'sweetalert2'
 import { store } from '../services/store'
-import { saveCommands } from '../services/commands';
+import { newCommand, saveCommands } from '../services/commands'
+import CommandEditor from '../screens/CommandEditor.vue'
 
 const commands = ref(null)
 const selected = ref(null)
+const edited = ref(null)
+
+const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
@@ -46,16 +58,70 @@ const behavior = (behavior) => {
   if (behavior == 'copy_cliboard') return 'Copy Clipboard'
 }
 
-const onSelect = (id) => {
-  selected.value = id
+const onSelect = (command) => {
+  selected.value = command
 }
 
-const onEdit = (id) => {
-  alert('Command edit coming soon!')
+const onNew = () => {
+  selected.value = null
+  edited.value = newCommand()
+  document.getElementById('editor').showModal()
+}
+
+const onEdit = (command) => {
+  edited.value = command
+  selected.value = command
+  document.getElementById('editor').showModal()
+}
+
+const onDelete = () => {
+  Swal.fire({
+    target: document.querySelector('.commands'),
+    title: 'Are you sure you want to delete this command? This cannot be undone.',
+    confirmButtonText: 'Delete',
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      if (selected.value.type == 'system') {
+        selected.value.state = 'deleted'
+      } else {
+        const index = commands.value.indexOf(selected.value)
+        commands.value.splice(index, 1)
+      }
+      selected.value = null
+    }
+  })
 }
 
 const onEnabled = (command) => {
-  command.enabled = !command.enabled
+  command.state = (command.state == 'enabled' ? 'disabled' : 'enabled')
+}
+
+const onCommandModified = (payload) => {
+
+  // new command?
+  let command = null
+  if (payload.id == null) {
+    command = newCommand()
+    command.id = uuidv4()
+    store.commands.push(command)
+  } else {
+    command = commands.find(command => command.id == payload.id)
+  }
+
+  // update
+  if (command) {
+    command.label = payload.label
+    command.icon = payload.icon
+    command.behavior = payload.behavior
+    command.template = payload.template
+    command.engine = payload.engine
+    command.model = payload.model
+  }
+
+  // done
+  selected.value = command
+
 }
 
 var draggedRow
@@ -102,6 +168,10 @@ defineExpose({
 </script>
 
 <style scoped>
+@import '../../css/dialog.css';
+</style>
+
+<style scoped>
 
 .content {
   width: 500px !important;
@@ -146,6 +216,14 @@ td.icon {
 input[type=checkbox] {
   width: 12px;
   height: 12px;
+}
+
+.actions {
+  margin-top: 8px;
+}
+
+.actions button:first-child {
+  margin-left: 0px;
 }
 
 </style>

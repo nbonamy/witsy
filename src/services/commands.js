@@ -36,11 +36,25 @@ const commandsFilePath = () => {
 
 }
 
+export const newCommand = () => {
+  return {
+    id: null,
+    type: 'user',
+    icon: null,
+    label: 'New Command',
+    behavior: 'new_window',
+    template: null,
+    engine: null,
+    model: null,
+    state: 'enabled'
+  }
+}
+
 export const saveCommands = () => {
   
   // save file
   try {
-    fs.writeFileSync(commandsFilePath(), JSON.stringify(store.commands))
+    fs.writeFileSync(commandsFilePath(), JSON.stringify(store.commands, null, 2))
   } catch (error) {
     console.log('Error saving commands data', error)
   }

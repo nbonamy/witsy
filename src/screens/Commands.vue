@@ -28,7 +28,7 @@ onMounted(() => {
   document.addEventListener('keyup', onKeyUp)
 })
 
-const enabledCommands = computed(() => store.commands.filter(command => command.enabled))
+const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
 const behavior = (command) => {
   if (command.behavior == 'new_window') return BIconBoxArrowInUpRight
