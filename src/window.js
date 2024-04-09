@@ -61,6 +61,7 @@ const createWindow = (opts = {}) => {
   return window;
 };
 
+// https://ashleyhindle.com/thoughts/electron-returning-focus
 export const releaseFocus = async () => {
   if (process.platform === 'darwin') {
     Menu.sendActionToFirstResponder('hide:');
