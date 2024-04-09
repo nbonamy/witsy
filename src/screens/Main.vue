@@ -85,14 +85,24 @@ const onRenameChat = async (chat) => {
 const onDeleteChat = async (chat) => {
 
   // fist remove
-  let index = store.chats.indexOf(chat)
-  store.chats[index].delete()
-  store.chats.splice(index, 1)
-  store.save()
+  if (isStandaloneChat.value) {
+    chat.deleted = true
+    store.save()
+  } else {
+    let index = store.chats.indexOf(chat)
+    store.chats[index].delete()
+    store.chats.splice(index, 1)
+    store.save()
+  }
 
   // if current chat
   if (chat.uuid == assistant.value.chat?.uuid) {
     emitEvent('newChat')
+  }
+
+  // close window if standalone
+  if (isStandaloneChat.value) {
+    window.close()
   }
 
 }
