@@ -5,7 +5,8 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import process from 'process'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
@@ -20,6 +21,22 @@ ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
 // install commands
 import { installCommands } from './services/commands'
 installCommands();
+
+// add platform name
+onMounted(() => {
+
+  // platform friendly name
+  let platform = {
+    'win32': 'windows',
+    'darwin': 'macos',
+  }[process.platform]||''
+
+  // add it everywhere
+  window.platform = platform
+  document.platform = platform
+  document.querySelector('body').classList.add(platform)
+
+})
 
 // routing
 const routes = {

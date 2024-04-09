@@ -4,6 +4,15 @@ const { app, BrowserWindow, Menu, screen } = require('electron');
 const Store = require('electron-store');
 import { wait } from './utils';
 
+// titlebarOptions
+const titleBarOptions = {
+  titleBarStyle: 'hidden',
+  titleBarOverlay: {
+    color: '#ffffff',
+  },
+  trafficLightPosition: { x: 16, y: 16 },
+}
+
 // create window
 const store = new Store()
 const createWindow = (opts = {}) => {
@@ -85,8 +94,7 @@ export const openMainWindow = () => {
   mainWindow = createWindow({
     width: 1400,
     height: 800,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 16, y: 16 },
+    ...titleBarOptions,
     show: false,
   });
 
@@ -124,8 +132,7 @@ export const openChatWindow = (params) => {
   let chatWindow = createWindow({
     width: 600,
     height: 600,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 16, y: 16 },
+    ...titleBarOptions,
     queryParams: params,
   });
 

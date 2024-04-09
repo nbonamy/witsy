@@ -18,7 +18,7 @@
     </div>
     <Prompt :chat="chat" class="prompt" />
     <Overlay v-if="showChatMenu" @click="closeChatMenu" />
-    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="right"/>
+    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :align="chatMenuAlign"/>
   </div>
 </template>
 
@@ -38,6 +38,10 @@ const { emitEvent } = useEventBus()
 const props = defineProps({
   chat: Chat,
   standalone: Boolean,
+})
+
+const chatMenuAlign = computed(() => {
+  return window.platform == 'windows' ? 'left' : 'right'
 })
 
 const chatMenuActions = computed(() => {
@@ -85,7 +89,7 @@ const onSelectModel = (ev) => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16
+  menuX.value = 16 + (chatMenuAlign.value == 'left' ? document.querySelector('.sidebar').offsetWidth : 0) 
   menuY.value = 32
 }
 
@@ -149,7 +153,23 @@ const onSave = () => {
   background-size: 16px;
 }
 
-.content.standalone .toolbar {
+.windows .toolbar {
+  grid-template-columns: 16px auto;
+}
+
+.windows .toolbar .title {
+  margin-left: 8px;
+  grid-column: 2;
+  order: 2;
+}
+
+.windows .toolbar .menu {
+  margin-top: 4px;
+  grid-column: 1;
+  order: 1;
+}
+
+.macos .content.standalone .toolbar {
   padding-left: 80px;
 }
 
