@@ -1,7 +1,8 @@
 
-const { app, BrowserWindow, Menu, screen } = require('electron');
-const Store = require('electron-store')
 const path = require('node:path');
+const { app, BrowserWindow, Menu, screen } = require('electron');
+const Store = require('electron-store');
+import { wait } from './utils';
 
 // create window
 const store = new Store()
@@ -63,7 +64,7 @@ const createWindow = (opts = {}) => {
 export const releaseFocus = async () => {
   if (process.platform === 'darwin') {
     Menu.sendActionToFirstResponder('hide:');
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await wait();
   }
 };
 
@@ -135,40 +136,11 @@ export const openChatWindow = (params) => {
 
 };
 
-export const restoreWindows = (windowsToRestore) => {
-  if (windowsToRestore.length) {
-    console.log('Restoring active windows')
-    if (windowsToRestore.includes(mainWindow)) {
-      mainWindow.showInactive();
-    }
-    for (let window of windowsToRestore) {
-      try {
-        if (window != mainWindow) {
-          window.showInactive();
-        }
-      } catch {}
-    }
-  }
-};
-
-let commandPalette = null;
-export const closeCommandPalette = async (windowsToRestore) => {
-  try {
-    commandPalette.close()
-    await new Promise((resolve) => setTimeout(resolve, 200));
-  } catch {}
-  try {
-    restoreWindows(windowsToRestore);
-  } catch {}
-};
-
-export const openCommandPalette = async () => {
-
-  // try to show existig one
-  closeCommandPalette(false);
+let windowsToRestore = [];
+export const hideActiveWindows = async () => {
 
   // remember to restore all windows
-  let windowsToRestore = [];
+  windowsToRestore = [];
   try {
     console.log('Hiding active windows');
     let windows = BrowserWindow.getAllWindows();
@@ -181,6 +153,38 @@ export const openCommandPalette = async () => {
     await releaseFocus();
   } catch {}
 
+}
+
+export const restoreWindows = () => {
+  if (windowsToRestore.length) {
+    console.log('Restoring active windows')
+    if (windowsToRestore.includes(mainWindow)) {
+      mainWindow.showInactive();
+    }
+    for (let window of windowsToRestore) {
+      try {
+        if (window != mainWindow) {
+          window.showInactive();
+        }
+      } catch {}
+    }
+    windowsToRestore = [];
+  }
+};
+
+let commandPalette = null;
+export const closeCommandPalette = async () => {
+  try {
+    commandPalette.close()
+    await wait();
+  } catch {}
+};
+
+export const openCommandPalette = async (text) => {
+
+  // try to show existig one
+  closeCommandPalette();
+
   // get bounds
   const width = 300;
   const height = 320;
@@ -188,7 +192,7 @@ export const openCommandPalette = async () => {
 
   // open a new one
   commandPalette = createWindow({
-    hash: '/assistant',
+    hash: '/command',
     x: x - width/2,
     y: y - 24,
     width: width,
@@ -196,13 +200,15 @@ export const openCommandPalette = async () => {
     frame: false,
     skipTaskbar: true,
     hiddenInMissionControl: true,
+    queryParams: {
+      text: text,
+    }
   });
 
   commandPalette.on('blur', () => {
-    closeCommandPalette(windowsToRestore);
+    closeCommandPalette();
+    restoreWindows();
   });
-
-  return windowsToRestore;
 
 }
 
@@ -212,7 +218,7 @@ export const closeWaitingPanel = async (destroy) => {
   try {
     if (destroy) waitingPanel.destroy()
     else waitingPanel.close()
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await wait();
   } catch {}
 }
 

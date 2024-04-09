@@ -1,7 +1,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import { clipboard, Notification } from 'electron'
+import { clipboard } from 'electron'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
@@ -46,7 +46,10 @@ const promptLlm = (app, engine, model, prompt) => {
 
 }
 
-const finalizeCommand = async (automator, command, text) => {
+const finalizeCommand = async (command, text) => {
+
+  // we need an automator
+  const automator = new Automator();
 
   if (command.behavior === 'new_window') {
 
@@ -73,11 +76,16 @@ const finalizeCommand = async (automator, command, text) => {
 
 }
 
-export const runCommand = async (app, command) => {
+export const grabText = async (app) => {
+  const automator = new Automator();
+  return await automator.getSelectedText();
+}
+
+export const runCommand = async (app, text, command) => {
 
   //
   let result = {
-    text: null,
+    text: text,
     prompt: null,
     response: null,
     chatWindow: null,
@@ -93,28 +101,13 @@ export const runCommand = async (app, command) => {
     const model = command.model;
     // const temperature = command.temperature;
 
-    // we need an automator
-    const automator = new Automator();
-
-    // first grab text
-    result.text = await automator.getSelectedText();
-    //console.log(`Grabbed [${result.text}]`);
-    if (result.text.trim() === '') {
-      new Notification({
-        title: app.name,
-        body: 'Please highlight the text you want to analyze'
-      }).show()
-      console.log('No text selected');
-      return result;
-    }
-
     // build prompt
     result.prompt = template.replace('{input}', result.text);
 
     // new window is different
     if (behavior === 'new_window') {
       
-      result.chatWindow = await finalizeCommand(automator, command, result.prompt);
+      result.chatWindow = await finalizeCommand(command, result.prompt);
 
     } else {
       
@@ -132,7 +125,7 @@ export const runCommand = async (app, command) => {
 
       // now paste
       //console.log(`Processing ${result.response}`);
-      await finalizeCommand(automator, command, result.response);
+      await finalizeCommand(command, result.response);
 
     }
 

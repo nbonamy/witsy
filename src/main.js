@@ -1,29 +1,49 @@
-const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
+
 const process = require('node:process');
+const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, Notification } = require('electron');
 
 import { settingsFilePath, loadSettings } from './config';
 import { getFileContents, deleteFile, pickFile, downloadFile } from './file';
 import { unregisterShortcuts, registerShortcuts as _registerShortcuts, shortcutAccelerator } from './shortcuts';
-import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, restoreWindows, releaseFocus } from './window';
-import { runCommand } from './automations/commander.mjs';
-import trayIcon from '../assets/bulbTemplate.png?asset';
+import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, hideActiveWindows, restoreWindows, releaseFocus } from './window';
+import { grabText, runCommand } from './automations/commander.mjs';
+import { wait } from './utils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-var windowsToRestore = [];
 const registerShortcuts = (shortcuts) => {
   _registerShortcuts(shortcuts, {
     chat: openMainWindow,
     command: async () => {
-      windowsToRestore = await openCommandPalette()
+
+      // hide active windows
+      hideActiveWindows();
+
+      // grab text
+      await releaseFocus();
+      const text = await grabText(app);
+      if (text.trim() === '') {
+        new Notification({
+          title: app.name,
+          body: 'Please highlight the text you want to analyze'
+        }).show()
+        console.log('No text selected');
+        restoreWindows();
+        return;
+      }
+  
+      // go on
+      await openCommandPalette(text)
     }
   });
 }
 
 //  Tray icon
+
+import trayIcon from '../assets/bulbTemplate.png?asset';
 
 let tray = null;
 let globalShortcuts = null;
@@ -155,15 +175,16 @@ ipcMain.on('download', async (event, payload) => {
 });
 
 ipcMain.on('close-command-palette', async (event) => {
-  closeCommandPalette(windowsToRestore);
+  closeCommandPalette();
+  restoreWindows();
 });
 
 ipcMain.on('run-command', async (event, payload) => {
-  const command = JSON.parse(payload);
-  await closeCommandPalette(false);
+  const args = JSON.parse(payload);
+  await closeCommandPalette();
   await releaseFocus();
-  let result = await runCommand(app, command);
-  restoreWindows(windowsToRestore);
+  let result = await runCommand(app, args.text, args.command);
+  restoreWindows();
   if (result?.chatWindow) {
     result.chatWindow.show();
     result.chatWindow.moveTop();
