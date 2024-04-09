@@ -1,5 +1,5 @@
 <template>
-  <div class="context-menu" :style="{ top: y + 'px', left: x + 'px' }">
+  <div class="context-menu" :style="position">
     <div v-for="action in actions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
       {{ action.label }}
     </div>
@@ -7,8 +7,22 @@
 </template>
 
 <script setup>
-defineProps(['actions', 'x', 'y']);
+
+import { computed } from 'vue';
+
+const props = defineProps(['actions', 'align', 'x', 'y']);
+
 const emit = defineEmits(['action-clicked']);
+
+const position = computed(() => {
+  let position = { top: props.y + 'px' }
+  if (props.align === 'right') {
+    position.right = props.x + 'px'
+  } else {
+    position.left = props.x + 'px'
+  }
+  return position
+});
 
 const onAction = (action) => {
   if (!action.disabled) {  

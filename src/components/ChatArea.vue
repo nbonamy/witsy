@@ -16,7 +16,7 @@
     </div>
     <Prompt :chat="chat" class="prompt" />
     <Overlay v-if="showChatMenu" @click="closeChatMenu" />
-    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="right"/>
   </div>
 </template>
 
@@ -66,10 +66,10 @@ const onSelectModel = (ev) => {
   store.save()
 }
 
-const onMenu = (event) => {
+const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = event.clientX - 150
-  menuY.value = event.clientY
+  menuX.value = 16
+  menuY.value = 32
 }
 
 const closeChatMenu = () => {
