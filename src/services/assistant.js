@@ -13,28 +13,7 @@ export default class {
     this.llm = null
     this.chat = null
     this.stream = null
-    this.newChat()
-  }
-
-  newChat(save = true) {
-
-    // select last chat
     this.chat = null
-    if (save) {
-      if (store.chats.length > 0) {
-        this.chat = store.chats[store.chats.length - 1]
-      }
-    }
-
-    // now check
-    if (this.chat === null || this.chat.messages.length > 1) { 
-      this.chat = new Chat()
-      this.chat.addMessage(new Message('system', this.config.instructions.default))
-      if (save) {
-        store.chats.push(this.chat)
-        store.save()
-      }
-    }
   }
 
   setChat(chat) {
@@ -82,12 +61,21 @@ export default class {
       return
     }
 
-    // set engine and model
+    // engine and model
     let engine = opts.engine || store.config.llm.engine
     let model = opts.model || store.config.getActiveModel()
-    if (this.chat.engine === null) {
+
+    // we need a chat
+    if (this.chat === null) {
+      this.chat = new Chat()
       this.chat.setEngineModel(engine, model)
+      this.chat.addMessage(new Message('system', this.config.instructions.default))
+      if (opts.save == null || opts.save !== false) {
+        store.chats.push(this.chat)
+        store.save()
+      }
     } else {
+      // make sure we have the right engine and model
       engine = this.chat.engine
       model = this.chat.model
       opts.model = model

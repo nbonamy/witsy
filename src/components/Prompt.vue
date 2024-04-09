@@ -30,7 +30,7 @@ const prompt = ref('')
 const input = ref(null)
 
 const working = computed(() => {
-  return props.chat.lastMessage().transient
+  return props.chat?.lastMessage().transient
 })
 
 const attachmentUrl = computed(() => {

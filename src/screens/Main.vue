@@ -53,10 +53,10 @@ onMounted(() => {
 
   // init assistant
   if (prompt.value !== null) {
-    assistant.value.newChat(false)
     assistant.value.prompt(prompt.value, {
       engine: engine.value,
-      model: model.value
+      model: model.value,
+      save: false,
     }, (text) => {
      emitEvent('newChunk', text)
     })
@@ -65,14 +65,14 @@ onMounted(() => {
 })
 
 const onNewChat = () => {
-  assistant.value.newChat()
+  assistant.value.setChat(null)
 }
 
 const onRenameChat = async (chat) => {
   // prompt
   const { value: title } = await Swal.fire({
-    title: "Rename Chat",
-    input: "text",
+    title: 'Rename Chat',
+    input: 'text',
     inputValue: chat.title,
     showCancelButton: true,
   });
@@ -128,7 +128,7 @@ const onSendPrompt = async (prompt) => {
 
   // clear stuff
   store.pendingAttachment = null
-  store.cleanEmptyChats()
+
 }
 
 const onAttachFile = async (file) => {
