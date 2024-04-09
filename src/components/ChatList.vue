@@ -1,6 +1,6 @@
 <template>
   <div class="chats" ref="divChats">
-    <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+    <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
       <EngineLogo :engine="engine(c)" :background="true" />
       <div class="info">
         <div class="title">{{ c.title }}</div>

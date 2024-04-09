@@ -33,10 +33,6 @@ store.save = () => {
   saveSettings()
 }
 
-store.cleanEmptyChats = () => {
-  store.chats = store.chats.filter((chat) => chat.messages.length > 1)
-}
-
 store.dump = () => {
   console.dir(JSON.parse(JSON.stringify(store.config)))
 }
@@ -79,8 +75,7 @@ const saveHistory = () => {
   try {
 
     // we need to srip attchment contents
-    let chats = store.chats.filter((chat) => chat.messages.length > 1)
-    chats = JSON.parse(JSON.stringify(chats))
+    let chats = JSON.parse(JSON.stringify(chats))
     for (let chat of chats) {
       for (let message of chat.messages) {
         if (message.attachment) {
@@ -140,11 +135,6 @@ const patchHistory = (jsonChats) => {
     if (error.code !== 'ENOENT') {
       console.log('Error patching history data', error)
     }
-  }
-
-  // update empty chat ('new chat' is empty)
-  if (patched) {
-    store.chats.find((chat) => chat.messages.length === 1).lastModified = Date.now()
   }
 
 }

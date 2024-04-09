@@ -3,11 +3,11 @@
   <div class="content" :class="{ standalone: standalone }">
     <div class="toolbar">
       <div class="title">
-        {{ chat.title }}
+        {{ chat?.title }}
       </div>
       <div class="menu" @click="onMenu"></div>
     </div>
-    <MessageList :chat="chat" v-if="chat.messages.length > 1"/>
+    <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
     <div v-else class="empty">
       <EngineLogo :engine="store.config.llm.engine" />
       <select v-model="model" class="select-model" @change="onSelectModel" v-if="models">
