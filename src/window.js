@@ -26,7 +26,7 @@ const createWindow = (opts = {}) => {
       contextIsolation: false,
       webSecurity: false,
       defaultEncoding: 'UTF-8',
-      //devTools: process.env.DEBUG,
+      devTools: process.env.DEBUG,
     },
   });
 
