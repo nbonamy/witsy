@@ -54,7 +54,7 @@ export default class extends LLmService {
     // model: switch to vision if needed
     let model = opts?.model || this.config.openai.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.config.openai.models, visionModels)
+      let visionModel = this._findModel(store.config.openai.models.chat, visionModels)
       if (visionModel) {
         model = visionModel.id
       }

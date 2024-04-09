@@ -55,7 +55,7 @@ export default class extends LLmService {
     // model: switch to vision if needed
     let model = opts?.model || this.config.ollama.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.config.ollama.models, visionModels)
+      let visionModel = this._findModel(store.config.ollama.models.chat, visionModels)
       if (visionModel) {
         model = visionModel.id
       }
