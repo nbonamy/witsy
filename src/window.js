@@ -68,17 +68,16 @@ export const releaseFocus = async () => {
 };
 
 export let mainWindow = null;
-export const openMainWindow = (active) => {
+export const openMainWindow = () => {
 
   // try to show existig one
   if (mainWindow) {
     try {
-      if (active) mainWindow.show();
-      else mainWindow.showInactive();
+      mainWindow.show();
       return
     } catch {
     }
-  }
+  };
 
   // else open a new one
   mainWindow = createWindow({
@@ -90,8 +89,7 @@ export const openMainWindow = (active) => {
   });
 
   mainWindow.once('ready-to-show', () => {
-    if (active) mainWindow.show();
-    else mainWindow.showInactive();
+    mainWindow.show();
   });
 
   // restore and save state
@@ -106,7 +104,7 @@ export const openMainWindow = (active) => {
     return { action: 'deny' };
   });
 
-  // Open the DevTools.
+  // open the DevTools
   if (process.env.DEBUG) {
     mainWindow.webContents.openDevTools();
   }
@@ -114,7 +112,7 @@ export const openMainWindow = (active) => {
   // show in dock
   app.dock.show();
 
-}
+};
 
 export const openChatWindow = (params) => {
 
@@ -127,43 +125,60 @@ export const openChatWindow = (params) => {
     queryParams: params,
   });
 
+  // open the DevTools
+  if (process.env.DEBUG) {
+    //chatWindow.webContents.openDevTools();
+  }
+
   // done
   return chatWindow;
 
-}
+};
+
+export const restoreWindows = (windowsToRestore) => {
+  if (windowsToRestore.length) {
+    console.log('Restoring active windows')
+    if (windowsToRestore.includes(mainWindow)) {
+      mainWindow.showInactive();
+    }
+    for (let window of windowsToRestore) {
+      try {
+        if (window != mainWindow) {
+          window.showInactive();
+        }
+      } catch {}
+    }
+  }
+};
 
 let commandPalette = null;
-export const closeCommandPalette = async (restoreMainWindow) => {
+export const closeCommandPalette = async (windowsToRestore) => {
   try {
     commandPalette.close()
     await new Promise((resolve) => setTimeout(resolve, 200));
   } catch {}
-
   try {
-    if (restoreMainWindow) {
-      console.log('Restoring main window')
-      openMainWindow(false);
-    }
+    restoreWindows(windowsToRestore);
   } catch {}
-
-}
+};
 
 export const openCommandPalette = async () => {
 
   // try to show existig one
   closeCommandPalette(false);
 
-  // remember to restore main window
-  let restoreMainWindow = false;
+  // remember to restore all windows
+  let windowsToRestore = [];
   try {
-    if (mainWindow != null && mainWindow.isDestroyed() == false) {
-      if (mainWindow.isVisible() && !mainWindow.isFocused() && !mainWindow.isMinimized()) {
-        console.log('Hiding main window');
-        restoreMainWindow = true;
-        mainWindow.hide();
-        await releaseFocus();
+    console.log('Hiding active windows');
+    let windows = BrowserWindow.getAllWindows();
+    for (let window of windows) {
+      if (!window.isDestroyed() && window.isVisible() && !window.isFocused() && !window.isMinimized()) {
+        windowsToRestore.push(window);
+        window.hide();
       }
     }
+    await releaseFocus();
   } catch {}
 
   // get bounds
@@ -184,10 +199,10 @@ export const openCommandPalette = async () => {
   });
 
   commandPalette.on('blur', () => {
-    closeCommandPalette(restoreMainWindow);
+    closeCommandPalette(windowsToRestore);
   });
 
-  return restoreMainWindow;
+  return windowsToRestore;
 
 }
 

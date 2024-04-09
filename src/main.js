@@ -4,7 +4,7 @@ const process = require('node:process');
 import { settingsFilePath, loadSettings } from './config';
 import { getFileContents, deleteFile, pickFile, downloadFile } from './file';
 import { unregisterShortcuts, registerShortcuts as _registerShortcuts, shortcutAccelerator } from './shortcuts';
-import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, releaseFocus } from './window';
+import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, restoreWindows, releaseFocus } from './window';
 import { runCommand } from './automations/commander.mjs';
 import trayIcon from '../assets/bulbTemplate.png?asset';
 
@@ -13,12 +13,12 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-var restoreMainWindow = false;
+var windowsToRestore = [];
 const registerShortcuts = (shortcuts) => {
   _registerShortcuts(shortcuts, {
     chat: openMainWindow,
     command: async () => {
-      restoreMainWindow = await openCommandPalette()
+      windowsToRestore = await openCommandPalette()
     }
   });
 }
@@ -155,7 +155,7 @@ ipcMain.on('download', async (event, payload) => {
 });
 
 ipcMain.on('close-command-palette', async (event) => {
-  closeCommandPalette(restoreMainWindow);
+  closeCommandPalette(windowsToRestore);
 });
 
 ipcMain.on('run-command', async (event, payload) => {
@@ -163,11 +163,9 @@ ipcMain.on('run-command', async (event, payload) => {
   await closeCommandPalette(false);
   await releaseFocus();
   let result = await runCommand(app, command);
-  if (restoreMainWindow) {
-    console.log('Restoring main window')
-    openMainWindow(false);
-  }
+  restoreWindows(windowsToRestore);
   if (result?.chatWindow) {
+    result.chatWindow.show();
     result.chatWindow.moveTop();
     app.focus();
   }
