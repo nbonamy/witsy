@@ -2,42 +2,44 @@
 const process = require('node:process');
 const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, Notification } = require('electron');
 
-import { settingsFilePath, loadSettings } from './config';
-import { getFileContents, deleteFile, pickFile, downloadFile } from './file';
-import { unregisterShortcuts, registerShortcuts as _registerShortcuts, shortcutAccelerator } from './shortcuts';
-import { mainWindow, openMainWindow, openCommandPalette, closeCommandPalette, hideActiveWindows, restoreWindows, releaseFocus } from './window';
-import { grabText, runCommand } from './automations/commander.mjs';
-import { wait } from './utils';
+import * as config from './config';
+import * as file from './file';
+import * as shortcuts from './shortcuts';
+import * as window from './window';
+import * as commander from './automations/commander.mjs';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const registerShortcuts = (shortcuts) => {
-  _registerShortcuts(shortcuts, {
-    chat: openMainWindow,
-    command: async () => {
+const startRunCommand = async () => {
 
-      // hide active windows
-      hideActiveWindows();
+  // hide active windows
+  window.hideActiveWindows();
 
-      // grab text
-      await releaseFocus();
-      const text = await grabText(app);
-      if (text.trim() === '') {
-        new Notification({
-          title: app.name,
-          body: 'Please highlight the text you want to analyze'
-        }).show()
-        console.log('No text selected');
-        restoreWindows();
-        return;
-      }
-  
-      // go on
-      await openCommandPalette(text)
-    }
+  // grab text
+  await window.releaseFocus();
+  const text = await commander.grabText(app);
+  if (text.trim() === '') {
+    new Notification({
+      title: app.name,
+      body: 'Please highlight the text you want to analyze'
+    }).show()
+    console.log('No text selected');
+    window.restoreWindows();
+    return;
+  }
+
+  // go on
+  await window.openCommandPalette(text)
+
+}
+
+const registerShortcuts = (userShortcuts) => {
+  shortcuts.registerShortcuts(userShortcuts, {
+    chat: window.openMainWindow,
+    command: startRunCommand,
   });
 }
 
@@ -49,7 +51,7 @@ let tray = null;
 let globalShortcuts = null;
 const buildTrayMenu = () => {
   return [
-    { label: 'Chat...', accelerator: shortcutAccelerator(globalShortcuts?.chat), click: openMainWindow },
+    { label: 'Chat...', accelerator: shortcuts.shortcutAccelerator(globalShortcuts?.chat), click: window.openMainWindow },
     { label: 'Quit', accelerator: 'Command+Q', click: quitApp }
   ];
 };
@@ -71,7 +73,7 @@ app.whenReady().then(() => {
   let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
   if (!hidden) {
     console.log('Creating initial main window');
-    openMainWindow();
+    window.openMainWindow();
   } else {
     app.dock.hide();
   }
@@ -80,7 +82,7 @@ app.whenReady().then(() => {
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      openMainWindow();
+      window.openMainWindow();
     }
   });
 
@@ -111,7 +113,7 @@ app.on('before-quit', (ev) => {
   }
 
   // check settings
-  const settings = loadSettings(settingsFilePath(app));
+  const settings = config.loadSettings(config.settingsFilePath(app));
   if (!settings.general.keepRunning) {
     return;
   }
@@ -150,41 +152,41 @@ ipcMain.on('register-shortcuts', (event, shortcuts) => {
 });
 
 ipcMain.on('unregister-shortcuts', () => {
-  unregisterShortcuts();
+  shortcuts.unregisterShortcuts();
 });
 
 ipcMain.on('fullscreen', (event, flag) => {
-  mainWindow.setFullScreen(flag);
+  window.mainWindow.setFullScreen(flag);
   toggleMainWindowFullscreen(flag);
 });
 
 ipcMain.on('delete', (event, payload) => {
-  event.returnValue = deleteFile(app, payload);
+  event.returnValue = file.deleteFile(app, payload);
 });
 
 ipcMain.on('pick-file', (event, payload) => {
-  event.returnValue = pickFile(app, payload);
+  event.returnValue = file.pickFile(app, payload);
 });
 
 ipcMain.on('get-contents', async (event, payload) => {
-  event.returnValue = getFileContents(app, payload);
+  event.returnValue = file.getFileContents(app, payload);
 });
 
 ipcMain.on('download', async (event, payload) => {
-  event.returnValue = await downloadFile(app, payload);
+  event.returnValue = await file.downloadFile(app, payload);
 });
 
 ipcMain.on('close-command-palette', async (event) => {
-  closeCommandPalette();
-  restoreWindows();
+  window.closeCommandPalette();
+  window.restoreWindows();
 });
 
 ipcMain.on('run-command', async (event, payload) => {
   const args = JSON.parse(payload);
-  await closeCommandPalette();
-  await releaseFocus();
-  let result = await runCommand(app, args.text, args.command);
-  restoreWindows();
+  await window.closeCommandPalette();
+  await window.releaseFocus();
+  let result = await commander.runCommand(app, args.text, args.command);
+  window.restoreWindows();
   if (result?.chatWindow) {
     result.chatWindow.show();
     result.chatWindow.moveTop();
