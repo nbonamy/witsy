@@ -5,7 +5,7 @@
       <div class="title">
         {{ chat?.title }}
       </div>
-      <div class="menu" @click="onMenu"></div>
+      <div class="menu" @click="onMenu" v-if="chat"></div>
     </div>
     <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
     <div v-else class="empty">
