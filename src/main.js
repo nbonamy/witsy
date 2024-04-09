@@ -45,7 +45,9 @@ const registerShortcuts = (userShortcuts) => {
 
 //  Tray icon
 
-import trayIcon from '../assets/bulbTemplate.png?asset';
+import trayIconMacos from '../assets/bulbTemplate.png?asset';
+import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
+const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
 let tray = null;
 let globalShortcuts = null;
