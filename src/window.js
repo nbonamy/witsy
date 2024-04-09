@@ -17,7 +17,7 @@ const createWindow = (opts = {}) => {
       contextIsolation: false,
       webSecurity: false,
       defaultEncoding: 'UTF-8',
-      devTools: process.env.DEBUG,
+      //devTools: process.env.DEBUG,
     },
   });
 
@@ -112,7 +112,9 @@ export const openMainWindow = () => {
   }
 
   // show in dock
-  app.dock.show();
+  if (process.platform === 'darwin') {
+    app.dock.show();
+  }
 
 };
 

@@ -21,7 +21,7 @@ const startRunCommand = async () => {
   // grab text
   await window.releaseFocus();
   const text = await commander.grabText(app);
-  if (text.trim() === '') {
+  if (text == null || text.trim() === '') {
     new Notification({
       title: app.name,
       body: 'Please highlight the text you want to analyze'

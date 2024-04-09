@@ -35,7 +35,7 @@ export const shortcutAccelerator = (shortcut) => {
   // build accelerator
   let accelerator = ''
   if (shortcut.alt) accelerator += 'Alt+'
-  if (shortcut.control) accelerator += 'Control+'
+  if (shortcut.ctrl) accelerator += 'Control+'
   if (shortcut.shift) accelerator += 'Shift+'
   if (shortcut.meta) accelerator += 'Command+'
 
