@@ -54,7 +54,12 @@ const onRunCommand = (command) => {
 
 <style scoped>
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .commands {
+  box-sizing: border-box;
   height: 100vh;
   display: flex;
   flex-direction: column;
