@@ -58,7 +58,7 @@ export const downloadFile = async (app, payload) => {
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
   let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split('/').pop();
+  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
   if (properties.subdir) {
     defaultPath = path.join(defaultPath, properties.subdir);
     if (!fs.existsSync(defaultPath)) {
@@ -93,16 +93,23 @@ export const downloadFile = async (app, payload) => {
   }
   
   // download
-  let filePath = destinationURL.split('/');
+  let filePath = destinationURL.split(path.sep);
   let filename = `${filePath.pop()}`;
-  let directory = filePath.join('/');
+  let directory = filePath.join(path.sep);
   properties = { ...properties, directory, filename };
-  console.log(`downloading ${payload.url} to ${destinationURL}`)
+  //console.log(`downloading ${payload.url} to ${JSON.stringify(properties)}`)
 
   try {
     await download(BrowserWindow.getFocusedWindow(),
       payload.url, {
       ...properties,
+      onProgress: (status) => {
+        //console.log(status);
+      },
+      onCompleted: (status) => {
+        //console.log(status);
+      },
+
     });
     return destinationURL;
 
