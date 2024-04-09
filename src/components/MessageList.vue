@@ -26,12 +26,17 @@ defineProps({
 
 onMounted(() => {
   onEvent('newChunk', onNewChunk)
+  scrollDown()
 })
 
-const onNewChunk = () => {
+const scrollDown = () => {
   nextTick(() => {
     divMessages.value.scrollTop = divMessages.value.scrollHeight
   })
+}
+
+const onNewChunk = () => {
+  scrollDown()
 }
 
 </script>
