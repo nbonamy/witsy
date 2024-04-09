@@ -1,5 +1,5 @@
 
-//import { clipboard } from 'electron';
+import { clipboard } from 'electron';
 //import { keyTap } from 'robotjs';
 //import { wait } from './utils';
 
@@ -15,7 +15,8 @@ export default class RobotAutomator {
   }
 
   async getSelectedText() {
-    // const currentClipboardContent = clipboard.readText();
+    const currentClipboardContent = clipboard.readText();
+    return currentClipboardContent;
     // clipboard.clear();
     // keyTap("c", process.platform === "darwin" ? "command" : "control");
     // await wait();
@@ -26,7 +27,7 @@ export default class RobotAutomator {
 
   async pasteText(text) {
     // const currentClipboardContent = clipboard.readText();
-    // clipboard.writeText(text)
+    clipboard.writeText(text)
     // keyTap("v", process.platform === "darwin" ? "command" : "control");
     // await wait();
     // clipboard.writeText(currentClipboardContent);

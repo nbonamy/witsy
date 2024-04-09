@@ -80,11 +80,11 @@ watch(() => props.command || {}, () => {
   template.value = props.command?.template || ''
   behavior.value = props.command?.behavior || 'new_window'
   engine.value = props.command?.engine || 'openai'
-  model.value = props.command?.model || store.config[engine.value].models.chat[0].id
+  model.value = props.command?.model || store.config[engine.value].models.chat?.[0]?.id
 }, { immediate: true })
 
 const onChangeEngine = () => {
-  model.value = store.config[engine.value].models.chat[0].id
+  model.value = store.config[engine.value].models.chat?.[0]?.id
 }
 
 const onSave = (event) => {
