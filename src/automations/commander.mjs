@@ -1,7 +1,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import { clipboard } from 'electron'
+import { clipboard, Notification } from 'electron'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
@@ -83,6 +83,7 @@ export const runCommand = async (app, command) => {
     chatWindow: null,
   };
 
+
   try {
 
     // extract what we need
@@ -99,6 +100,10 @@ export const runCommand = async (app, command) => {
     result.text = await automator.getSelectedText();
     //console.log(`Grabbed [${result.text}]`);
     if (result.text.trim() === '') {
+      new Notification({
+        title: app.name,
+        body: 'Please highlight the text you want to analyze'
+      }).show()
       console.log('No text selected');
       return result;
     }
