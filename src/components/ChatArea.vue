@@ -9,8 +9,10 @@
     </div>
     <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
     <div v-else class="empty">
-      <EngineLogo :engine="store.config.llm.engine" />
-      <select v-model="model" class="select-model" @change="onSelectModel" v-if="models">
+      <div class="engines">
+        <EngineLogo v-for="engine in ['openai','ollama']" :key="engine" :engine="engine" :class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }" @click="onEngine(engine)"/>
+      </div>
+      <select v-if="models" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel">
         <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
       </select>
     </div>
@@ -47,6 +49,7 @@ const chatMenuActions = computed(() => {
   ].filter((a) => a != null)
 })
 
+const showAllEngines = ref(false)
 const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -59,6 +62,20 @@ const saved = ref(false)
 
 const models = computed(() => store.config?.[store.config.llm.engine]?.models.chat)
 const model = computed(() => store.config?.[store.config.llm.engine]?.model?.chat)
+
+const isCurrentEngine = (engine) => {
+  return store.config.llm.engine === engine
+}
+
+const onEngine = (engine) => {
+  if (showAllEngines.value === false) {
+    showAllEngines.value = true
+  } else {
+    showAllEngines.value = false
+    store.config.llm.engine = engine
+    store.save()
+  }
+}
 
 const onSelectModel = (ev) => {
   let model = ev.target.value
@@ -145,11 +162,26 @@ const onSave = () => {
   align-items: center;
 }
 
-.empty .logo {
-  width: 48px;
+.empty .engines {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.select-model {
+.empty .engines .logo {
+  transition: all 0.2s;
+  flex: 0 0 48px;
+  cursor: pointer;
+  margin: 0px 16px;
+}
+
+.empty .engines .logo.hidden {
+  width: 0px;
+  flex-basis: 0px;
+  margin: 0px;
+}
+
+.empty .select-model {
   border: none;
   outline: none;
   margin-top: 16px;
@@ -158,4 +190,9 @@ const onSave = () => {
   text-align: center;
   cursor: pointer;
 }
+
+.empty .select-model.hidden {
+  visibility: hidden;
+}
+
 </style>
