@@ -107,7 +107,7 @@ export default class {
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
     this.chat.lastMessage().setText(null)
-    if (callback) callback()
+    callback?.call(null)
 
     // route
     let route = await this.route(prompt)
@@ -135,7 +135,7 @@ export default class {
       for await (let chunk of this.stream) {
         const { text, done } = this.llm.processChunk(chunk)
         this.chat.lastMessage().appendText(text, done)
-        if (callback) callback(text)
+        callback?.call(text)
       }
 
     } catch (error) {
@@ -147,7 +147,7 @@ export default class {
 
     // cleanup
     this.stream = null
-    if (callback) callback(null)
+    callback?.call(null)
   
   }
 
@@ -164,12 +164,12 @@ export default class {
 
       // ssve
       this.chat.lastMessage().setImage(filename)
-      if (callback) callback(filename)
+      callback?.call(filename)
 
     } catch (error) {
       console.error(error)
       this.chat.lastMessage().setText('Sorry, I could not generate an image for that prompt.')
-      if (callback) callback(null)
+      callback?.call(null)
     }
 
   }
