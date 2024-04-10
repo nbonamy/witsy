@@ -10,9 +10,12 @@
     <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
     <div v-else class="empty">
       <div class="engines">
-        <EngineLogo v-for="engine in ['openai','ollama']" :key="engine" :engine="engine" :class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }" @click="onEngine(engine)"/>
+        <EngineLogo v-for="engine in engines" :engine="engine"
+          :class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }"
+          @click="onEngine(engine)"
+        />
       </div>
-      <select v-if="models" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel">
+      <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel">
         <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
       </select>
     </div>
@@ -32,6 +35,7 @@ import Chat from '../models/chat'
 import EngineLogo from './EngineLogo.vue'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
+import { availableEngines, isEngineReady } from '../services/llm'
 import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
 
@@ -64,7 +68,8 @@ const saved = ref(false)
 // because we will lose reactivity :-(
 //
 
-const models = computed(() => store.config?.[store.config.llm.engine]?.models.chat)
+const engines = computed(() => availableEngines.filter((e) => isEngineReady(e)))
+const models = computed(() => store.config?.[store.config.llm.engine]?.models?.chat)
 const model = computed(() => store.config?.[store.config.llm.engine]?.model?.chat)
 
 const isCurrentEngine = (engine) => {
@@ -72,6 +77,7 @@ const isCurrentEngine = (engine) => {
 }
 
 const onEngine = (engine) => {
+  if (engines.value.length < 2) return
   if (showAllEngines.value === false) {
     showAllEngines.value = true
   } else {
