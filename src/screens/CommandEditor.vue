@@ -4,19 +4,19 @@
       <header>Command details</header>
       <main>
         <div class="group">
-          <label>Label*</label>
-          <input type="text" v-model="label" />
+          <label>Label</label>
+          <input type="text" v-model="label" required />
         </div>
         <div class="group">
-          <label>Prompt*</label>
+          <label>Prompt</label>
           <div class="subgroup">
-            <textarea v-model="template"></textarea>
+            <textarea v-model="template" required></textarea>
             <span v-pre>{input} will be subsituted with highlighted text</span>
           </div>
         </div>
         <div class="group">
-          <label>Behavior*</label>
-          <select v-model="behavior">
+          <label>Behavior</label>
+          <select v-model="behavior" required>
             <option value="new_window">New Window</option>
             <option value="insert_below">Insert Below</option>
             <option value="replace_selection">Replace Selection</option>
@@ -24,16 +24,16 @@
           </select>
         </div>
         <div class="group">
-          <label>LLM Provider*</label>
-          <select v-model="engine" @change="onChangeEngine">
+          <label>LLM Provider</label>
+          <select v-model="engine" @change="onChangeEngine" required>
             <option value="">Default</option>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
           </select>
         </div>
         <div class="group">
-          <label>LLM Model*</label>
-          <select v-model="model">
+          <label>LLM Model</label>
+          <select v-model="model" required>
             <option value="" v-if="!models.length">Default</option>
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
@@ -46,7 +46,7 @@
       </main>
       <footer>
         <button @click="onSave" class="default">Save</button>
-        <button class="destructive">Cancel</button>
+        <button @click="onCancel" formnovalidate class="destructive">Cancel</button>
       </footer>
     </form>
   </dialog>
@@ -76,16 +76,18 @@ const models = computed(() => {
   return store.config[engine.value].models.chat
 })
 
-// not really sure this is how it supposed to be done
-// but at least it works!
-watch(() => props.command || {}, () => {
+const load = () => {
   icon.value = props.command?.icon || '⚡️'
   label.value = props.command?.label || ''
   template.value = props.command?.template || ''
   behavior.value = props.command?.behavior || 'new_window'
   engine.value = props.command?.engine
   model.value = props.command?.model
-}, { immediate: true })
+}
+
+// not really sure this is how it supposed to be done
+// but at least it works!
+watch(() => props.command || {}, load, { immediate: true })
 
 const onChangeEngine = () => {
   if (engine.value == '') model.value = ''
@@ -99,10 +101,14 @@ const onIconKeyDown = (event) => {
     }
   }
 }
-const onIconKeyUp = (event) => {
+const onIconKeyUp = () => {
   if (icon.value?.length > 1) {
     icon.value = icon.value.trim()[0]
   }
+}
+
+const onCancel = () => {
+  load()
 }
 
 const onSave = (event) => {
