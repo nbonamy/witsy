@@ -5,6 +5,7 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: 'assets/icon',
+    executableName: 'witty-ai',
   },
   rebuildConfig: {},
   makers: [
