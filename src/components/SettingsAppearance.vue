@@ -2,7 +2,7 @@
   <div class="content">
     <div class="group">
       <label>Chat theme</label>
-      <select v-model="theme" @change="onChange">
+      <select v-model="theme" @change="save">
         <option value="openai">OpenAI</option>
         <option value="conversation">Conversation</option>
       </select>
@@ -11,7 +11,7 @@
       <label>Chat font size</label>
       <span class="fontsize small">A</span>
       <div class="slidergroup">
-        <input type="range" min="1" max="5" v-model="fontSize" @input="onChange" />
+        <input type="range" min="1" max="5" v-model="fontSize" @input="save" />
         <datalist id="fontsize">
           <option value="1"></option>
           <option value="2"></option>
@@ -38,12 +38,10 @@ const load = () => {
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
 
-const onChange = () => {
+const save = () => {
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontSize = fontSize.value
-}
-
-const save = () => {
+  store.saveSettings()
 }
 
 defineExpose({

@@ -3,18 +3,18 @@
   <div class="content">
     <div class="group">
       <label>LLM engine</label>
-      <select v-model="llmEngine">
+      <select v-model="llmEngine" @change="save">
         <option value="openai">OpenAI</option>
         <option value="ollama">Ollama</option>
       </select>
     </div>
     <div class="group">
       <label>Run at login</label>
-      <input type="checkbox" v-model="runAtLogin" />
+      <input type="checkbox" v-model="runAtLogin" @change="save" />
     </div>
     <div class="group">
       <label>Keep in Status Bar</label>
-      <input type="checkbox" v-model="keepRunning" />
+      <input type="checkbox" v-model="keepRunning" @change="save" />
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ const save = () => {
   store.config.llm.engine = llmEngine.value
   ipcRenderer.send('set-run-at-login', runAtLogin.value)
   store.config.general.keepRunning = keepRunning.value
+  store.saveSettings()
 }
 
 defineExpose({

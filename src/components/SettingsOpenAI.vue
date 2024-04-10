@@ -9,7 +9,7 @@
     </div>
     <div class="group">
       <label>OpenAI chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0">
+      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
         <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
       </select>
@@ -18,7 +18,7 @@
     <div class="group">
       <label>OpenAI image model</label>
       <div class="subgroup">
-        <select v-model="image_model" :disabled="image_models.length == 0">
+        <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
           <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select><br />
@@ -86,6 +86,7 @@ const onKeyChange = () => {
     store.config.openai.apiKey = apiKey.value
     getOpenAIModels()
   }
+  save()
 }
 
 const save = () => {
@@ -94,6 +95,7 @@ const save = () => {
     chat: chat_model.value,
     image: image_model.value
   }
+  store.saveSettings()
 }
 
 defineExpose({
