@@ -15,6 +15,8 @@ import { store } from '../services/store'
 
 const value = defineModel()
 
+const emit = defineEmits(['change']);
+
 const modifiers = {
   'ctrl': process.platform === 'darwin' ? '⌃' : 'Ctrl+',
   'alt': process.platform === 'darwin' ? '⌥' : 'Alt+',
@@ -45,6 +47,7 @@ const onBlur = () => {
 
 const onDelete = () => {
   value.value = null
+  emit('change')
 }
 
 const onKeyDown = (event) => {
@@ -52,6 +55,7 @@ const onKeyDown = (event) => {
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {
     value.value = null
+    emit('change')
     return
   }
 
@@ -96,6 +100,9 @@ const onKeyDown = (event) => {
     ctrl: event.ctrlKey,
     meta: event.metaKey
   }
+
+  // notify
+  emit('change')
 
 }
 

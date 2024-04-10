@@ -3,7 +3,7 @@
   <div class="content">
     <div class="group">
       <label>Ollama chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0">
+      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
         <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
       </select>
@@ -56,9 +56,8 @@ const getModels = async () => {
 }
 
 const save = () => {
-  if (chat_model.value != null) {
-    store.config.ollama.model.chat = chat_model.value
-  }
+  store.config.ollama.model.chat = chat_model.value
+  store.saveSettings()
 }
 
 defineExpose({

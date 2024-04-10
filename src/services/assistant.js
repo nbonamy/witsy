@@ -72,7 +72,7 @@ export default class {
       this.chat.addMessage(new Message('system', this.config.instructions.default))
       if (opts.save == null || opts.save !== false) {
         store.chats.push(this.chat)
-        store.save()
+        store.saveHistory()
       }
     } else {
       // make sure we have the right engine and model
@@ -114,7 +114,7 @@ export default class {
     }
   
     // save
-    store.save()
+    store.saveHistory()
 
   }
 

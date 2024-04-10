@@ -80,7 +80,7 @@ const onRenameChat = async (chat) => {
   });
   if (title) {
     chat.title = title
-    store.save()
+    store.saveHistory()
   }
 }
 
@@ -97,12 +97,12 @@ const onDeleteChat = async (chat) => {
       // fist remove
       if (isStandaloneChat.value) {
         chat.deleted = true
-        store.save()
+        store.saveHistory()
       } else {
         let index = store.chats.indexOf(chat)
         store.chats[index].delete()
         store.chats.splice(index, 1)
-        store.save()
+        store.saveHistory()
       }
 
       // if current chat

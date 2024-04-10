@@ -10,7 +10,7 @@
         </thead>
         <tbody>
           <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
-              @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver"
+              @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
           >
             <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
@@ -89,12 +89,14 @@ const onDelete = () => {
         commands.value.splice(index, 1)
       }
       selected.value = null
+      save()
     }
   })
 }
 
 const onEnabled = (command) => {
   command.state = (command.state == 'enabled' ? 'disabled' : 'enabled')
+  save()
 }
 
 const onCommandModified = (payload) => {
@@ -121,6 +123,7 @@ const onCommandModified = (payload) => {
 
   // done
   selected.value = command
+  save()
 
 }
 
@@ -149,6 +152,10 @@ const onDragOver = (event) => {
   const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
   commands.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
 
+}
+
+const onDragEnd = () => {
+  save()
 }
 
 const load = () => {

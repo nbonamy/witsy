@@ -2,12 +2,12 @@
   <div class="content">
     <div class="group">
       <label>Activate chat</label>
-      <InputShortcut v-model="chat" />
+      <InputShortcut v-model="chat" @change="save "/>
     </div>
     <div class="group">
       <label>AI Commands</label>
       <div class="subgroup">
-        <InputShortcut v-model="command" />
+        <InputShortcut v-model="command" @change="save" />
         <span>Usage: Highlight your text, press keyboard shortcut then choose an Al command</span>
       </div>
     </div>
@@ -32,8 +32,7 @@ const load = () => {
 const save = () => {
   store.config.shortcuts.chat = chat.value
   store.config.shortcuts.command = command.value
-  ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
-  store.save()
+  store.saveSettings()
 }
 
 defineExpose({

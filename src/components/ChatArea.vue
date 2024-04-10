@@ -83,14 +83,14 @@ const onEngine = (engine) => {
   } else {
     showAllEngines.value = false
     store.config.llm.engine = engine
-    store.save()
+    store.saveSettings()
   }
 }
 
 const onSelectModel = (ev) => {
   let model = ev.target.value
   store.config[store.config.llm.engine].model.chat = model
-  store.save()
+  store.saveSettings()
 }
 
 const onMenu = () => {
@@ -117,7 +117,7 @@ const handleActionClick = async (action) => {
 const onSave = () => {
   if (saved.value) return
   store.chats.push(props.chat)
-  store.save()
+  store.saveHistory()
   saved.value = true
 }
 

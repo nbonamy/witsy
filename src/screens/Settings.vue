@@ -1,7 +1,13 @@
 <template>
   <dialog class="settings">
     <form method="dialog">
-      <header>Settings</header>
+      <header>
+        <div class="macos" @click="onClose"></div>
+        <div class="title">Settings</div>
+        <div class="windows" @click="onClose">
+          <BIconXLg />
+        </div>
+      </header>
       <main>
         <div class="tabs">
           <ul>
@@ -22,10 +28,6 @@
           <SettingsAdvanced ref="settingsAdvanced" />
         </div>
       </main>
-      <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button class="destructive">Cancel</button>
-      </footer>
     </form>
   </dialog>
 </template>
@@ -81,15 +83,8 @@ const onOpenSettings = () => {
   showActiveTab()
 }
 
-const onSave = () => {
-  settingsGeneral.value.save()
-  settingsAppearance.value.save()
-  settingsCommands.value.save()
-  settingsShortcuts.value.save()
-  settingsOpenAI.value.save()
-  settingsOllama.value.save()
-  settingsAdvanced.value.save()
-  store.save()
+const onClose = () => {
+  document.querySelector('#settings').close()
 }
 
 </script>
@@ -106,14 +101,49 @@ dialog.settings {
   width: 600px;
 }
 
+dialog.settings header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+dialog.settings header .title {
+  flex: 1;
+}
+
+dialog.settings header .macos {
+  width: 12px;
+  height: 12px;
+  margin-left: 3px;
+  border-radius: 6px;
+  background-color: #fe5f57;
+  border: 0.5px solid #e24138;
+}
+
+dialog.settings header .macos:hover {
+  background-color: #b60609;
+}
+
+.windows dialog.settings header .macos {
+  display: none;
+}
+
+dialog.settings header .windows {
+  margin-right: 4px;
+}
+
+.macos dialog.settings header .windows {
+  display: none;
+}
+
 dialog.settings .content {
   width: 440px;
   margin: 0 auto;
-  padding: 16px 0px;
+  padding: 24px 0px;
   min-height: 160px;
   max-height: 250px;
 }
-
 
 dialog.settings .tabs .tab>label {
   padding: 8px;

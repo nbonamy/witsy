@@ -44,11 +44,6 @@ store.load = async () => {
   }
 }
 
-store.save = () => {
-  saveHistory()
-  saveSettings()
-}
-
 store.dump = () => {
   console.dir(JSON.parse(JSON.stringify(store.config)))
 }
@@ -83,7 +78,7 @@ const loadHistory = () => {
 
 }
 
-const saveHistory = () => {
+store.saveHistory = () => {
 
   // avoid infinite loop
   clearInterval(historyMonitor)
@@ -159,7 +154,7 @@ const patchHistory = (jsonChats) => {
 
   // save
   if (patched) {
-    saveHistory()
+    store.saveHistory()
   }
 
 }
@@ -168,6 +163,6 @@ const loadSettings = () => {
   store.config = _loadSettings(settingsFilePath())
 }
 
-const saveSettings = () => {
+store.saveSettings = () => {
   _saveSettings(settingsFilePath(), store.config)
 }
