@@ -30,6 +30,8 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
+- [ ] Text-to-speech
+- [ ] Models refresh
 - [ ] Log file
 - [ ] Image placeholder
 - [ ] Specialized assistants
