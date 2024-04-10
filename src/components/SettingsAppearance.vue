@@ -63,7 +63,7 @@ defineExpose({
 
 .fontsize {
   display: inline-block;
-  margin: 0 8px;
+  margin: 0 8px !important;
 }
 
 .fontsize.small {
