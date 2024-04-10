@@ -3,7 +3,7 @@
     <form method="dialog">
       <header>
         <div class="macos">
-          <div class="close" @click="onClose"></div>
+          <div class="close" @click="onClose"><BIconX/></div>
           <div class="minimize"></div>
           <div class="zoom"></div>
         </div>
@@ -131,13 +131,22 @@ dialog.settings header .macos > * {
   border: 0.5px solid #B2B3B0;
 }
 
+dialog.settings header .macos svg {
+  font-weight: bold;
+  font-size: 10pt;
+  position: relative;
+  top: -1px;
+  left: -1px;
+}
+
 dialog.settings header .macos .close {
+  color: #FF5F56;
   background-color: #FF5F56;
   border-color: #E14138;
 }
 
 dialog.settings header .macos:hover .close {
-  background-color: #b60609;
+  color: #730000;
 }
 
 .windows dialog.settings header .macos {
