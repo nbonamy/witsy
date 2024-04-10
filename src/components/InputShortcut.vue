@@ -16,10 +16,10 @@ import { store } from '../services/store'
 const value = defineModel()
 
 const modifiers = {
-  'ctrl': process.plaform === 'darwin' ? '⌃' : 'Ctrl+',
-  'alt': process.plaform === 'darwin' ? '⌥' : 'Alt+',
-  'shift': process.plaform === 'darwin' ? '⇧' : 'Shift+',
-  'meta': process.plaform === 'darwin' ? '⌘' : 'Win+',
+  'ctrl': process.platform === 'darwin' ? '⌃' : 'Ctrl+',
+  'alt': process.platform === 'darwin' ? '⌥' : 'Alt+',
+  'shift': process.platform === 'darwin' ? '⇧' : 'Shift+',
+  'meta': process.platform === 'darwin' ? '⌘' : 'Win+',
 }
 
 const display = computed(() => {
