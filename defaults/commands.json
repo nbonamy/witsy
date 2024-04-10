@@ -422,7 +422,7 @@
     "type": "system",
     "icon": "🧑‍💻",
     "label": "Complete this code",
-    "behavior": "replace_selection",
+    "behavior": "insert_below",
     "template": "Finish the code below. Strictly answer with the new code, do not explain.\n\n```\n{input}\n```",
     "state": "enabled",
     "engine": "openai",
