@@ -24,8 +24,9 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const registerShortcuts = (userShortcuts) => {
-  shortcuts.registerShortcuts(userShortcuts, {
+// this is going to be called later
+const registerShortcuts = () => {
+  shortcuts.registerShortcuts(app, {
     chat: window.openMainWindow,
     command: commander.prepareCommand,
   });
@@ -58,6 +59,9 @@ const quitApp = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   
+  // register shortcuts
+  registerShortcuts();
+
   // create the main window
   // TODO detect when lauched from login item
   let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
@@ -140,9 +144,8 @@ ipcMain.on('set-run-at-login', (event, value) => {
   });
 });
 
-ipcMain.on('register-shortcuts', (event, shortcuts) => {
-  globalShortcuts = JSON.parse(shortcuts);
-  registerShortcuts(globalShortcuts);
+ipcMain.on('register-shortcuts', (event, payload) => {
+  registerShortcuts();
   tray.setContextMenu(Menu.buildFromTemplate(buildTrayMenu()));
 });
 

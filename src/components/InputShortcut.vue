@@ -11,7 +11,6 @@
 import process from 'process'
 import { ipcRenderer } from 'electron'
 import { computed } from 'vue'
-import { store } from '../services/store'
 
 const value = defineModel()
 
@@ -42,7 +41,7 @@ const onFocus = () => {
 }
 
 const onBlur = () => {
-  ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
+  ipcRenderer.send('register-shortcuts')
 }
 
 const onDelete = () => {

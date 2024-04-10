@@ -5,7 +5,6 @@
 <script setup>
 
 import process from 'process'
-import { ipcRenderer } from 'electron'
 import { ref, computed, onMounted } from 'vue'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
@@ -14,9 +13,6 @@ import Commands from './screens/Commands.vue'
 // store
 import { store } from './services/store'
 store.load()
-
-// install shortcuts
-ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
 
 // install commands
 import { installCommands } from './services/commands'
