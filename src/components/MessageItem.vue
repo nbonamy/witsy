@@ -87,7 +87,7 @@ const mdOptions = {
         let code = '<pre class="hljs"><code class="hljs">';
         code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
         code += '</code></pre>';
-        code += '<a href="#" onclick="navigator.clipboard.writeText(atob(\'' + btoa(str) + '\'))" class="copy">Copy code</a>';
+        code += '<a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString())" class="copy">Copy code</a>';
         return code;
       } catch (__) {}
     }
