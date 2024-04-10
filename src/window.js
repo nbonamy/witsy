@@ -85,6 +85,10 @@ export const openMainWindow = () => {
   if (mainWindow) {
     try {
       mainWindow.show();
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus();
       return
     } catch {
     }

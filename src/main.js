@@ -8,6 +8,13 @@ import * as shortcuts from './shortcuts';
 import * as window from './window';
 import * as commander from './automations/commander';
 
+// first-thing: single instance
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+  process.exit(0);
+}
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -93,6 +100,11 @@ app.whenReady().then(() => {
   const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
   tray.setContextMenu(contextMenu);
 
+});
+
+// called when the app is already running
+app.on('second-instance', () => {
+  window.openMainWindow();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
