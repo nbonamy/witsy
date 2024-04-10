@@ -38,7 +38,7 @@
         </div>
         <div class="group">
           <label>Icon</label>
-          <input type="text" v-model="icon" maxlength="1" />
+          <input type="text" v-model="icon" class="icon" maxlength="1" />
         </div>
       </main>
       <footer>
@@ -154,6 +154,16 @@ dialog.command form .group label {
 
 dialog.command textarea {
   height: 120px;
+}
+
+dialog.command form .group input.icon {
+  flex: 0 0 32px;
+  text-align: center;
+}
+
+.windows dialog.command .icon {
+  font-family: 'NotoColorEmojiLimited';
+  font-size: 9pt;
 }
 
 </style>

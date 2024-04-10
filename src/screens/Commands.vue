@@ -86,6 +86,12 @@ const onRunCommand = (command) => {
 .icon {
   flex: 0 0 24px;
   font-size: 13pt;
+  text-align: center;
+}
+
+.windows .icon {
+  font-size: 12pt;
+  font-family: 'NotoColorEmojiLimited'
 }
 
 .label {
