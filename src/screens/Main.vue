@@ -86,27 +86,37 @@ const onRenameChat = async (chat) => {
 
 const onDeleteChat = async (chat) => {
 
-  // fist remove
-  if (isStandaloneChat.value) {
-    chat.deleted = true
-    store.save()
-  } else {
-    let index = store.chats.indexOf(chat)
-    store.chats[index].delete()
-    store.chats.splice(index, 1)
-    store.save()
-  }
+  Swal.fire({
+    target: document.querySelector('.main'),
+    title: 'Are you sure you want to delete this conversation? This cannot be undone.',
+    confirmButtonText: 'Delete',
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
 
-  // if current chat
-  if (chat.uuid == assistant.value.chat?.uuid) {
-    emitEvent('newChat')
-  }
+      // fist remove
+      if (isStandaloneChat.value) {
+        chat.deleted = true
+        store.save()
+      } else {
+        let index = store.chats.indexOf(chat)
+        store.chats[index].delete()
+        store.chats.splice(index, 1)
+        store.save()
+      }
 
-  // close window if standalone
-  if (isStandaloneChat.value) {
-    window.close()
-  }
+      // if current chat
+      if (chat.uuid == assistant.value.chat?.uuid) {
+        emitEvent('newChat')
+      }
 
+      // close window if standalone
+      if (isStandaloneChat.value) {
+        window.close()
+      }
+
+    }
+  })
 }
 
 const onSelectChat = (chat) => {
