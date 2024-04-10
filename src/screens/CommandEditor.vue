@@ -38,7 +38,8 @@
         </div>
         <div class="group">
           <label>Icon</label>
-          <input type="text" v-model="icon" class="icon" maxlength="1" />
+          <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
+          <input type="text" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
         </div>
       </main>
       <footer>
@@ -85,6 +86,19 @@ watch(() => props.command || {}, () => {
 
 const onChangeEngine = () => {
   model.value = store.config[engine.value].models.chat?.[0]?.id
+}
+
+const onIconKeyDown = (event) => {
+  if (icon.value?.length) {
+    if (event.key !== 'Backspace' && event.key !== 'Delete') {
+      event.preventDefault()
+    }
+  }
+}
+const onIconKeyUp = (event) => {
+  if (icon.value?.length > 1) {
+    icon.value = icon.value.trim()[0]
+  }
 }
 
 const onSave = (event) => {
