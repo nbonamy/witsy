@@ -53,10 +53,19 @@ button {
   font-size: 9pt;
 }
 
+button:active {
+  background-color: #f2f2f2;
+}
+
 button.default {
   border: none;
   background: linear-gradient(#2991FF, #057AFF);
   color: white;
+}
+
+button.default:active {
+  background: linear-gradient(#2280e4, #0469dc);
+  color: #e2e2e2;
 }
 
 button.destructive {
