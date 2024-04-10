@@ -1,6 +1,6 @@
 
 const process = require('node:process');
-const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, Notification } = require('electron');
+const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
 
 import * as config from './config';
 import * as file from './file';
@@ -20,33 +20,10 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const startRunCommand = async () => {
-
-  // hide active windows
-  window.hideActiveWindows();
-
-  // grab text
-  await window.releaseFocus();
-  const text = await commander.grabText(app);
-  if (text == null || text.trim() === '') {
-    new Notification({
-      title: app.name,
-      body: 'Please highlight the text you want to analyze'
-    }).show()
-    console.log('No text selected');
-    window.restoreWindows();
-    return;
-  }
-
-  // go on
-  await window.openCommandPalette(text)
-
-}
-
 const registerShortcuts = (userShortcuts) => {
   shortcuts.registerShortcuts(userShortcuts, {
     chat: window.openMainWindow,
-    command: startRunCommand,
+    command: commander.prepareCommand,
   });
 }
 

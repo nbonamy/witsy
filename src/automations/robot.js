@@ -14,7 +14,7 @@ export default class RobotAutomator {
     // keyTap("enter");
   }
 
-  async getSelectedText() {
+  async copySelectedText() {
     const currentClipboardContent = clipboard.readText();
     return currentClipboardContent;
     // clipboard.clear();

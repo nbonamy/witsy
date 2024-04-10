@@ -1,5 +1,6 @@
 
 const path = require('node:path');
+const process = require('node:process');
 const { app, BrowserWindow, Menu, screen } = require('electron');
 const Store = require('electron-store');
 import { wait } from './utils';
@@ -72,9 +73,26 @@ const createWindow = (opts = {}) => {
 
 // https://ashleyhindle.com/thoughts/electron-returning-focus
 export const releaseFocus = async () => {
+
   if (process.platform === 'darwin') {
+
     Menu.sendActionToFirstResponder('hide:');
     await wait();
+
+  } else if (process.platform === 'win32') {
+
+    const dummyTransparentWindow = new BrowserWindow({
+        width: 1,
+        height: 1,
+        x: -100,
+        y: -100,
+        transparent: true,
+        frame: false,
+      });
+
+    dummyTransparentWindow.close();
+
+    await wait(500);
   }
 };
 

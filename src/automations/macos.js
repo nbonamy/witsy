@@ -3,8 +3,7 @@ var applescript = require('applescript');
 
 export default class {
 
-  constructor(config) {
-    this.config = config
+  constructor() {
   }
 
   async moveCaretBelow() {
@@ -21,10 +20,9 @@ export default class {
     return this._runScript(script);    
   }
 
-  getSelectedText() {
+  async copySelectedText() {
 
     const script = `
-      set previous to the clipboard
       set the clipboard to ""
       tell application "System Events" to keystroke "c" using command down      
       repeat 5 times
@@ -32,8 +30,6 @@ export default class {
         set clipboardContents to the clipboard
         if clipboardContents is not "" then exit repeat
       end repeat
-      set the clipboard to previous
-      return clipboardContents
     `
 
     // run it
@@ -41,14 +37,11 @@ export default class {
 
   }
 
-  pasteText(text) {
+  async pasteText() {
 
     const script = `
-      set previous to the clipboard
-      set the clipboard to "${text.replace(/"/g, '\\"')}"
       tell application "System Events" to keystroke "v" using command down      
       delay 0.1
-      set the clipboard to previous
     `
 
     // run it
