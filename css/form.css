@@ -55,28 +55,32 @@ form .group input:focus, form .group select:focus, form .group textarea:focus {
 }
 
 form .group input[type=checkbox] {
+  height: 14px;
+  max-width: 14px !important;
+}
+
+.macos form .group input[type=checkbox] {
   outline: none;
   appearance: none;
   padding: 0;
   border-radius: 4px;
   background: white;
-  height: 14px;
-  max-width: 14px !important;
 }
 
-form .group input[type=checkbox]:checked {
+.macos form .group input[type=checkbox]:checked {
   border: none;
   background: linear-gradient(#2991FF, #057AFF);
 }
 
-form .group input[type=checkbox]:checked:after {
+.macos form .group input[type=checkbox]:checked:after {
   position: relative;
   content: '\2713';
   color: white;
   left: 2px;
   font-size: 8pt;
   font-weight: bold;
-  top: -1px;}
+  top: -1px;
+}
 
 form .group input[type=range] {
   -webkit-appearance: none;
