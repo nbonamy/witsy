@@ -17,37 +17,54 @@ export default class {
   }
 
   async moveCaretBelow() {
-    await this.automator.moveCaretBelow();
+    try {
+      await this.automator.moveCaretBelow();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getSelectedText() {
 
-    // save and set
-    const clipboardText = clipboard.readText();
-    clipboard.writeText('');
+    try {
 
-    // get it
-    await this.automator.copySelectedText();
-    const selectedText = clipboard.readText();
+      // save and set
+      const clipboardText = clipboard.readText();
+      clipboard.writeText('');
 
-    // restore and done
-    clipboard.writeText(clipboardText);
-    return selectedText;
+      // get it
+      await this.automator.copySelectedText();
+      const selectedText = clipboard.readText();
+
+      // restore and done
+      clipboard.writeText(clipboardText);
+      return selectedText;
+
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
   
   }
 
   async pasteText(textToPaste) {
 
-    // save and set
-    const clipboardText = clipboard.readText();
-    clipboard.writeText(textToPaste);
+    try {
 
-    // paste it
-    await this.automator.pasteText();
+      // save and set
+      const clipboardText = clipboard.readText();
+      clipboard.writeText(textToPaste);
 
-    // restore
-    clipboard.writeText(clipboardText);
-  
+      // paste it
+      await this.automator.pasteText();
+
+      // restore
+      clipboard.writeText(clipboardText);
+    
+    } catch (error) {
+      console.error(error);
+    }
+
   }
 
 }

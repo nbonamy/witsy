@@ -1,6 +1,7 @@
 
 const process = require('node:process');
 const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
+import log from 'electron-log/main';
 
 import * as config from './config';
 import * as file from './file';
@@ -14,6 +15,9 @@ if (!gotTheLock) {
   app.quit();
   process.exit(0);
 }
+
+// set up logging
+Object.assign(console, log.functions);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -38,7 +42,7 @@ let globalShortcuts = null;
 const buildTrayMenu = () => {
   return [
     { label: 'Chat...', accelerator: shortcuts.shortcutAccelerator(globalShortcuts?.chat), click: window.openMainWindow },
-    { label: 'Quit', accelerator: 'Command+Q', click: quitApp }
+    { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
   ];
 };
 
@@ -58,7 +62,7 @@ app.whenReady().then(() => {
   // TODO detect when lauched from login item
   let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
   if (!hidden) {
-    console.log('Creating initial main window');
+    log.info('Creating initial main window');
     window.openMainWindow();
   } else {
     app.dock.hide();
