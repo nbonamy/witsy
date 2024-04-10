@@ -2,7 +2,11 @@
   <dialog class="settings">
     <form method="dialog">
       <header>
-        <div class="macos" @click="onClose"></div>
+        <div class="macos">
+          <div class="close" @click="onClose"></div>
+          <div class="minimize"></div>
+          <div class="zoom"></div>
+        </div>
         <div class="title">Settings</div>
         <div class="windows" @click="onClose">
           <BIconXLg />
@@ -35,7 +39,6 @@
 <script setup>
 
 import { ref, onMounted } from 'vue'
-import { store } from '../services/store'
 import EngineLogo from '../components/EngineLogo.vue'
 
 import SettingsTab from '../components/SettingsTab.vue'
@@ -113,15 +116,27 @@ dialog.settings header .title {
 }
 
 dialog.settings header .macos {
-  width: 12px;
-  height: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin-left: 3px;
-  border-radius: 6px;
-  background-color: #fe5f57;
-  border: 0.5px solid #e24138;
 }
 
-dialog.settings header .macos:hover {
+dialog.settings header .macos > * {
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 6px;
+  background-color: #D5D4D3;
+  border: 0.5px solid #B2B3B0;
+}
+
+dialog.settings header .macos .close {
+  background-color: #FF5F56;
+  border-color: #E14138;
+}
+
+dialog.settings header .macos:hover .close {
   background-color: #b60609;
 }
 
