@@ -98,7 +98,10 @@ export default class {
     callback?.call(null)
 
     // route
-    let route = await this.route(prompt)
+    let route = null
+    if (opts.route == null || opts.route !== false) {
+      route = await this.route(prompt)
+    }
     if (route === 'IMAGE') {
       await this.generateImage(prompt, opts, callback)
     } else {
