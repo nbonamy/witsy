@@ -85,7 +85,7 @@ export const prepareCommand = async () => {
   // grab text
   const automator = new Automator();
   const text = await automator.getSelectedText();
-  console.log('Text grabbed', text);
+  //console.log('Text grabbed', text);
 
   // notify if no text
   if (text == null || text.trim() === '') {
@@ -146,7 +146,7 @@ export const runCommand = async (app, text, command) => {
       await window.releaseFocus();
 
       // now paste
-      console.log(`Processing LLM output: ${result.response}`);
+      //console.log(`Processing LLM output: ${result.response}`);
       await finalizeCommand(command, result.response);
 
     }

@@ -83,7 +83,7 @@ export const downloadFile = async (app, payload) => {
   if (payload.url.startsWith('file://')) {
     try {
       let src = payload.url.slice(7);
-      console.log(`copying ${src} to ${destinationURL}`)
+      //console.log(`copying ${src} to ${destinationURL}`)
       await fs.copyFileSync(src, destinationURL);
       return destinationURL;
     } catch (err) {
