@@ -13,7 +13,7 @@
   {
     "id": "3e629079-6a0b-4096-9e5d-e2dd39268fa7",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Fix spelling and grammar",
     "behavior": "replace_selection",
     "template": "Correct the text in triple quotes below into standard English and fix the grammar. Make your best effort.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the corrected text. Do not wrap responses in quotes.",
@@ -35,7 +35,7 @@
   {
     "id": "ae93b6e7-5d19-43dd-a859-967194523550",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Expand my writing",
     "behavior": "insert_below",
     "template": "The following text in triple quotes below has already been written:\n\n\"\"\"\n{input}\n\"\"\"\n\nExpand the writing. Write at least 3 paragraphs. Do not return anything other than the expanded writing. Do not wrap responses in quotes.",
@@ -46,7 +46,7 @@
   {
     "id": "9bbae0f1-afde-41f8-b423-c5d8db1a264d",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Simplify my writing",
     "behavior": "insert_below",
     "template": "The following text in triple quotes below has already been written:\n\n\"\"\"\"\"\n{input}\n\"\"\"\n\nSimplify and condense the writing. Do not return anything other than the simplified writing. Do not wrap responses in quotes.",
@@ -57,7 +57,7 @@
   {
     "id": "c57f4afd-2524-4914-be65-f18eb8566544",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "List key takeaways",
     "behavior": "chat_window",
     "template": "My notes are below in triple quotes:\n\n\"\"\"\n{input}\n\"\"\"\n\nWrite a markdown list (using dashes) of key takeaways from my notes. Write at least 10 items. Do not wrap responses in quotes.",
@@ -68,7 +68,7 @@
   {
     "id": "177bf65e-20ec-46ee-ae0e-84f9b0eb7490",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Write a short summary",
     "behavior": "chat_window",
     "template": "Summarize the text in triple quotes but keep it concise. Summarize using plain and simple language and keep the same tense.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the summary. Do not wrap responses in quotes.",
@@ -79,7 +79,7 @@
   {
     "id": "1fc4e041-f4bc-471f-a02e-82cf20d12ea1",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Write a longer summary",
     "behavior": "chat_window",
     "template": "Summarize the text in triple quotes below into three long paragraphs. Summarize using plain and simple language and keep the same tense.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the summary. Do not wrap responses in quotes.",
@@ -90,7 +90,7 @@
   {
     "id": "49de2329-9863-4fb4-beea-ad2677408e3f",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in friendly tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in friendly tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -101,7 +101,7 @@
   {
     "id": "d0306fbe-f1c4-497c-a356-a8fd4b5cbf0c",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in professional tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in professional tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -112,7 +112,7 @@
   {
     "id": "9ca7d996-4490-4c86-99c2-223686fdd48e",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in persuasive tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in persuasive tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -123,7 +123,7 @@
   {
     "id": "84fd2995-946a-4d42-81d3-dfe150212529",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in instructive tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in instructive tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -134,7 +134,7 @@
   {
     "id": "7556325e-ece7-45f2-acbb-c0d78cfa3e9b",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in humorous tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in humorous tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -145,7 +145,7 @@
   {
     "id": "7a213d4a-9ba9-4bc9-ada8-b6bab611d4ee",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in sarcastic tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in sarcastic tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -156,7 +156,7 @@
   {
     "id": "c29ef79c-d850-4ca5-8c14-089156154f70",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in empathetic tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in empathetic tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -167,7 +167,7 @@
   {
     "id": "b1c563a9-0d8e-4295-87b1-b78c283c19e6",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in authoritative tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in authoritative tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -178,7 +178,7 @@
   {
     "id": "56a4da10-8aad-4830-8e7a-a70780bd6abe",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Rewrite in inspiring tone",
     "behavior": "replace_selection",
     "template": "Rewrite the text in triple quotes below in your own words. Rephrase the text in inspiring tone.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the rephrased text. Do not wrap responses in quotes.",
@@ -299,7 +299,7 @@
   {
     "id": "a0bb82a3-7c81-43f8-977f-0a327913d1c8",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Write a disagreement",
     "behavior": "insert_below",
     "template": "The following text in triple quotes below has already been written:\n\n\"\"\"\n{input}\n\"\"\"\n\nWrite a response that disagrees with the main point in a respectful way. Include specific reasons for your disagreement. Do not wrap responses in quotes.",
@@ -310,7 +310,7 @@
   {
     "id": "8b3ecb01-75c2-4902-998d-04d619abd147",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Edit like a copy editor",
     "behavior": "insert_below",
     "template": "Act as a copy editor. Go through the text in triple quotes below. Edit it for spelling mistakes, grammar issues, punctuation, and generally for readability and flow.\n\n\"\"\"\n{input}\n\"\"\"\n\nReturn only the edited text. Do not wrap your response in quotes.",
@@ -321,7 +321,7 @@
   {
     "id": "e245e8cc-6c0a-40a5-8c1e-faf96aabfa3b",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Suggest a few titles options",
     "behavior": "insert_below",
     "template": "The blog post below has already been written:\n\n\"\"\"BLOG POST: {input}\"\"\"\n\nGenerate a markdown list (using dashes) of five appropriate headlines for the blog post. Do not return anything other than the headlines. Do not wrap responses in quotes.",
@@ -332,7 +332,7 @@
   {
     "id": "624bfd2a-3a98-4575-bee0-1e28d12deafa",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Suggest a few tweets based on my writing",
     "behavior": "insert_below",
     "template": "The blog post below has already been written:\n\n\"\"\"BLOG POST: {input}\"\"\"\n\nGenerate a markdown list (using dashes) of five tweets based off the blog post:",
@@ -343,7 +343,7 @@
   {
     "id": "5c83e343-3305-435f-8ecc-c5406f9cf05b",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Generate an overview for an article",
     "behavior": "insert_below",
     "template": "The article is below in the triple quotes:\n\"\"\"\n{input}\n\"\"\"\n\nProvide a overview of the article. Use the following format:\n\"\"\"\nSummary:\n\n< one to two line summary >\n\nKey takeaways:\n1. < first key takeaway >\n2. < second key takeaway >\n3. < third key takeaway >\n\nCounter arguments:\n1. < first main counter argument >\n2. < second main counter argument >\n\"\"\"\n\nDo not return anything other than the overview. Do not wrap responses in quotes.",
@@ -354,7 +354,7 @@
   {
     "id": "e4583555-85f3-441e-b199-05bdcd0e374d",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Generate a counter argument",
     "behavior": "insert_below",
     "template": "Give the counter argument to the text below:\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the counter-argument. Do not wrap responses in quotes.",
@@ -365,7 +365,7 @@
   {
     "id": "0979ebe7-f71f-44a3-b76b-2841cb00a5b6",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Generate an email",
     "behavior": "insert_below",
     "template": "Write a professional and articulate email for the subject below:\n\"\"\"\nSubject: {input}\n\"\"\"\n\nDo not return anything other than the email. Do not wrap responses in quotes.",
@@ -376,7 +376,7 @@
   {
     "id": "a6f1a4bf-6c3d-4f10-be6f-a7c72c06ec22",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "List action items",
     "behavior": "insert_below",
     "template": "My note is below in triple quotes:\n\"\"\"\n{input}\n\"\"\"\n\nWrite a todo list of action items from my notes using the following format:\n\n- [ ] <first action item>\n- [ ] <second action item>\n- [ ] <third action item>\n- [ ] <fourth action item>\n\nDo not return anything other than the todo list. Do not wrap responses in quotes.",
@@ -387,7 +387,7 @@
   {
     "id": "35847b3b-0ff6-44b2-aa59-5d8ad5e17f5c",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Write a blog post",
     "behavior": "chat_window",
     "template": "Write a blog post using the outline in triple quotes below. Use plain and simple language. Do not return anything other than the blog post. Do not wrap responses in quotes.\n\n\"\"\"\n{input}\n\"\"\"\n",
@@ -398,7 +398,7 @@
   {
     "id": "2015c27c-6b97-461f-acb7-6fc9886be376",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Format paragraphs",
     "behavior": "replace_selection",
     "template": "Format the text in triple quotes below into paragraphs. Do not return anything other than the formatted text. Do not wrap responses in quotes.\n\n\"\"\"\n{input}\n\"\"\"",
@@ -409,7 +409,7 @@
   {
     "id": "57c9ccec-1da3-443b-a3db-5626728d20e8",
     "type": "system",
-    "icon": "⚡️",
+    "icon": "💡",
     "label": "Write analogies",
     "behavior": "insert_below",
     "template": "Write three different analogies for the text in quotes below. Use plain and simple language. Do not return anything other than the analogies. Do not wrap responses in quotes.\n\n\"\"\"\n{input}\n\"\"\"",
