@@ -158,8 +158,12 @@ ipcMain.on('pick-file', (event, payload) => {
   event.returnValue = file.pickFile(app, payload);
 });
 
-ipcMain.on('get-contents', async (event, payload) => {
+ipcMain.on('get-contents', (event, payload) => {
   event.returnValue = file.getFileContents(app, payload);
+});
+
+ipcMain.on('write-contents', (event, payload) => {
+  event.returnValue = file.writeFileContents(app, JSON.parse(payload));
 });
 
 ipcMain.on('download', async (event, payload) => {

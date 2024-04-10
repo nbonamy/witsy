@@ -53,6 +53,34 @@ export const pickFile = (app, payload) => {
 
 }
 
+
+export const writeFileContents = (app, payload) => {
+
+  // parse properties
+  let properties = payload.properties ? { ...payload.properties } : {};
+  let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
+  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
+  if (properties.subdir) {
+    defaultPath = path.join(defaultPath, properties.subdir);
+    if (!fs.existsSync(defaultPath)) {
+      fs.mkdirSync(defaultPath, { recursive: true })
+    }
+  }
+
+  // destination
+  let destinationURL = path.join(defaultPath, defaultFileName);
+
+  // try
+  try {
+    fs.writeFileSync(destinationURL, Buffer.from(payload.contents, 'base64'));
+    return destinationURL;
+  } catch (error) {
+    console.error('Error while writing file', error);
+    return null
+  }
+
+}
+
 export const downloadFile = async (app, payload) => {
 
   // parse properties
@@ -84,7 +112,7 @@ export const downloadFile = async (app, payload) => {
     try {
       let src = payload.url.slice(7);
       //console.log(`copying ${src} to ${destinationURL}`)
-      await fs.copyFileSync(src, destinationURL);
+      fs.copyFileSync(src, destinationURL);
       return destinationURL;
     } catch (err) {
       console.error('Error while copying file', err);

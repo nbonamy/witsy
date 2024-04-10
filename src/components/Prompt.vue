@@ -1,11 +1,11 @@
 <template>
   <div class="prompt">
     <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
-    <div class="input">
+    <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <img :src="attachmentUrl" class="icon" />
       </div>
-      <textarea @keydown.enter="onEnter" @keyup="onKeyUp" v-model="prompt" ref="input" autofocus />
+      <textarea v-model="prompt" @keydown.enter="onEnter" @keyup="onKeyUp" ref="input" autofocus />
     </div>
     <BIconStopCircleFill class="icon" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon" @click="onSendPrompt" v-else />
@@ -73,6 +73,29 @@ const onAttach = () => {
 
 const onDetach = () => {
   emitEvent('detachFile')
+}
+
+const onPaste = (event) => {
+  for (let item of event.clipboardData.items) {
+    if (item.kind === 'file') {
+      let blob = item.getAsFile();
+      let reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target.readyState === FileReader.DONE) {
+          let result = event.target.result
+          let format = result.split(';')[0].split('/')[1]
+          let contents = result.split(',')[1]
+          emitEvent('attachFile', {
+            url: 'clipboard://',
+            format: format,
+            contents: contents,
+            downloaded: false 
+          })
+        }
+      }
+      reader.readAsDataURL(blob);
+    }
+  }
 }
 
 const onKeyUp = (event) => {
