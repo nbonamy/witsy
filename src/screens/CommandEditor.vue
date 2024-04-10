@@ -26,6 +26,7 @@
         <div class="group">
           <label>LLM Provider*</label>
           <select v-model="engine" @change="onChangeEngine">
+            <option value="">Default</option>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
           </select>
@@ -33,6 +34,7 @@
         <div class="group">
           <label>LLM Model*</label>
           <select v-model="model">
+            <option value="" v-if="!models.length">Default</option>
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
         </div>
@@ -70,6 +72,7 @@ const model = ref(null)
 
 const models = computed(() => {
   if (!engine.value) return []
+  if (engine.value == '_default') return []
   return store.config[engine.value].models.chat
 })
 
@@ -80,12 +83,13 @@ watch(() => props.command || {}, () => {
   label.value = props.command?.label || ''
   template.value = props.command?.template || ''
   behavior.value = props.command?.behavior || 'new_window'
-  engine.value = props.command?.engine || 'openai'
-  model.value = props.command?.model || store.config[engine.value].models.chat?.[0]?.id
+  engine.value = props.command?.engine
+  model.value = props.command?.model
 }, { immediate: true })
 
 const onChangeEngine = () => {
-  model.value = store.config[engine.value].models.chat?.[0]?.id
+  if (engine.value == '') model.value = ''
+  else model.value = store.config[engine.value].models.chat?.[0]?.id
 }
 
 const onIconKeyDown = (event) => {
@@ -104,7 +108,7 @@ const onIconKeyUp = (event) => {
 const onSave = (event) => {
 
   // check
-  if (!label.value || !template.value || !behavior.value || !engine.value || !model.value) {
+  if (!label.value || !template.value || !behavior.value) {
     event.preventDefault()
     alert('All fields marked with * are required.')
     return
