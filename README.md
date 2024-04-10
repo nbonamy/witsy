@@ -31,7 +31,6 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 ## TODO
 
 - [ ] Text-to-speech
-- [ ] Models refresh
 - [ ] Log file
 - [ ] Image placeholder
 - [ ] Specialized assistants
@@ -40,6 +39,9 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
+## DONE
+
+- [x] Models refresh
 - [x] Edit commands
 - [x] Customized commands
 - [x] Conversation menu (info, save...)

@@ -13,6 +13,7 @@
         <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
       </select>
+      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
     <div class="group">
       <label>OpenAI image model</label>
@@ -23,6 +24,7 @@
         </select><br />
         <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
       </div>
+      <button style="visibility: hidden">{{ refreshLabel }}</button>
     </div>
   </div>  
 </template>
@@ -35,6 +37,7 @@ import { store } from '../services/store'
 import OpenAI from '../services/openai'
 
 const apiKey = ref(null)
+const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const image_model = ref(null)
 const chat_models = ref([])
@@ -50,6 +53,16 @@ const load = () => {
   image_model.value = store.config.openai?.model?.image || ''
 }
 
+const onRefresh = async () => {
+  refreshLabel.value = 'Refreshing...'
+  setTimeout(() => getOpenAIModels(), 500)
+}
+
+const setEphemeralRefreshLabel = (text) => {
+  refreshLabel.value = text
+  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+}
+
 const getOpenAIModels = async () => {
 
   const openAI = new OpenAI(store.config)
@@ -58,6 +71,7 @@ const getOpenAIModels = async () => {
     store.config.openai.models = { chat: [], image: [], }
     chat_models.value = []
     image_models.value = []
+    setEphemeralRefreshLabel('Error!')
     return
   }
 
@@ -79,6 +93,9 @@ const getOpenAIModels = async () => {
   // assign
   chat_models.value = store.config.openai.models.chat
   image_models.value = store.config.openai.models.image
+
+  // done
+  setEphemeralRefreshLabel('Done!')
 
 }
 
