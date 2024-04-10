@@ -6,11 +6,11 @@
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "cross-env DEBUG=1 electron-forge start",
-    "_package": "electron-forge package",
-    "_make": "electron-forge make",
-    "make": "npx electron-builder --dir --mac --universal",
-    "_publish": "electron-forge publish",
-    "_lint": "echo \"No linting configured\""
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "make2": "npx electron-builder --dir --mac --universal",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
