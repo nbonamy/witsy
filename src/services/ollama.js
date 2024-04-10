@@ -16,7 +16,7 @@ export default class extends LlmEngine {
   }
 
   _isVisionModel(model) {
-    return model.includes('llava')
+    return visionModels.includes(model) || model.includes('llava')
   }
 
   getRountingModel() {

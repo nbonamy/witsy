@@ -3,7 +3,7 @@ import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
 
-const visionModels = ['gpt-4-vision', 'gpt-4-vision-preview', '*vision']
+const visionModels = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
 
 export default class extends LlmEngine {
 
@@ -16,7 +16,7 @@ export default class extends LlmEngine {
   }
 
   _isVisionModel(model) {
-    return model.includes('vision')
+    return visionModels.includes(model) || model.includes('vision')
   }
 
   getRountingModel() {
