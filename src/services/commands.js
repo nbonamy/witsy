@@ -42,7 +42,7 @@ export const newCommand = () => {
     type: 'user',
     icon: null,
     label: 'New Command',
-    behavior: 'new_window',
+    behavior: 'chat_window',
     template: null,
     engine: null,
     model: null,

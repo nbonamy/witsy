@@ -107,7 +107,7 @@ dialog.settings {
 }
 
 dialog.settings .content {
-  width: 400px;
+  width: 440px;
   margin: 0 auto;
   padding: 16px 0px;
   min-height: 160px;

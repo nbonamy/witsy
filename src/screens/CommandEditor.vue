@@ -17,15 +17,15 @@
         <div class="group">
           <label>Behavior</label>
           <select v-model="behavior" required>
-            <option value="new_window">New Window</option>
+            <option value="chat_window">Chat Window</option>
             <option value="insert_below">Insert Below</option>
             <option value="replace_selection">Replace Selection</option>
-            <option value="copy_cliboard">Copy Clipboard</option>
+            <option value="copy_cliboard">Copy to Clipboard</option>
           </select>
         </div>
         <div class="group">
           <label>LLM Provider</label>
-          <select v-model="engine" @change="onChangeEngine" required>
+          <select v-model="engine" @change="onChangeEngine">
             <option value="">Default</option>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
@@ -33,7 +33,7 @@
         </div>
         <div class="group">
           <label>LLM Model</label>
-          <select v-model="model" required>
+          <select v-model="model">
             <option value="" v-if="!models.length">Default</option>
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
@@ -80,7 +80,7 @@ const load = () => {
   icon.value = props.command?.icon || '⚡️'
   label.value = props.command?.label || ''
   template.value = props.command?.template || ''
-  behavior.value = props.command?.behavior || 'new_window'
+  behavior.value = props.command?.behavior || 'chat_window'
   engine.value = props.command?.engine
   model.value = props.command?.model
 }

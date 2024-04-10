@@ -31,7 +31,7 @@ onMounted(() => {
 const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
 const behavior = (command) => {
-  if (command.behavior == 'new_window') return BIconBoxArrowInUpRight
+  if (command.behavior == 'chat_window') return BIconBoxArrowInUpRight
   if (command.behavior == 'insert_below') return BIconArrowReturnLeft
   if (command.behavior == 'replace_selection') return BIconInputCursor
   if (command.behavior == 'copy_cliboard') return BIconClipboard
