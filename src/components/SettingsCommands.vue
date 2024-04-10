@@ -213,6 +213,11 @@ td.icon {
   text-align: center;
 }
 
+.windows td.icon {
+  font-family: 'NotoColorEmojiLimited';
+  font-size: 9pt;
+}
+
 input[type=checkbox] {
   width: 12px;
   height: 12px;
