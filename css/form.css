@@ -26,6 +26,10 @@ form .group label {
   text-align: right;
 }
 
+form .group:has([required]) label:not(:empty)::after {
+  content: ':*';
+}
+
 form .group label:not(:empty)::after {
   content: ':';
 }
