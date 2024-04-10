@@ -163,6 +163,11 @@ export const openChatWindow = (params) => {
     //chatWindow.webContents.openDevTools();
   }
 
+  // show in dock
+  if (process.platform === 'darwin') {
+    app.dock.show();
+  }
+
   // done
   return chatWindow;
 
@@ -231,6 +236,7 @@ export const openCommandPalette = async (text) => {
     height: height,
     frame: false,
     skipTaskbar: true,
+    alwaysOnTop: true,
     hiddenInMissionControl: true,
     queryParams: {
       text: text,
@@ -272,6 +278,7 @@ export const openWaitingPanel = () => {
     width: width,
     height: height,
     frame: false,
+    alwaysOnTop: true,
     hasShadow: false,
   });
 
