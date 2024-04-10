@@ -2,7 +2,7 @@
   <div class="main">
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
-    <Settings id="settings"/>
+    <Settings id="settings" :initial-tab="settingsInitialTab"/>
   </div>
 </template>
 
@@ -25,6 +25,7 @@ const { onEvent, emitEvent } = useEventBus()
 import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
 
+const settingsInitialTab = ref('general')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -118,7 +119,8 @@ const onSendPrompt = async (prompt) => {
 
   // make sure we can have an llm
   if (assistant.value.initLlm(store.config.llm.engine) === null) {
-    emitEvent('openSettings')
+    settingsInitialTab.value = 'openai'
+    nextTick(() => emitEvent('openSettings'))
     return
   }
 

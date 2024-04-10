@@ -5,12 +5,12 @@
       <main>
         <div class="tabs">
           <ul>
-            <SettingsTab title="General" :checked="true"><BIconGear class="icon" /></SettingsTab>
+            <SettingsTab title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
             <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
             <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-            <SettingsTab title="OpenAI"><EngineLogo engine="openai" class="icon" /></SettingsTab>
-            <SettingsTab title="Ollama"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
+            <SettingsTab title="OpenAI" :checked="initialTab == 'openai'"><EngineLogo engine="openai" class="icon" /></SettingsTab>
+            <SettingsTab title="Ollama" :checked="initialTab == 'ollama'"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
             <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
@@ -49,6 +49,12 @@ import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 import useEventBus from '../composables/useEventBus'
 const { onEvent } = useEventBus()
 
+const props = defineProps({
+  initialTab: {
+    type: String,
+    default: 'general'
+  }
+})
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
@@ -72,6 +78,7 @@ const onOpenSettings = () => {
   settingsOllama.value.load()
   settingsAdvanced.value.load()
   document.querySelector('#settings').showModal()
+  showActiveTab()
 }
 
 const onSave = () => {
