@@ -51,13 +51,22 @@ div:where(.swal2-container) button:where(.swal2-styled) {
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
   border: 1px solid transparent !important;
-  background: linear-gradient(#2991FF, #057AFF);
+  background-image: linear-gradient(#2991FF, #057AFF);
   color: white;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm:active {
+  background-image: linear-gradient(#2280e4, #0469dc) !important;
+  color: #e2e2e2 !important;
 }
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
   background-color: white;
   color: black;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel:active {
+  background-color: #f2f2f2 !important;
 }
 
 div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover {
