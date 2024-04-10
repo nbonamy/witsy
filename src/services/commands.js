@@ -44,8 +44,8 @@ export const newCommand = () => {
     label: 'New Command',
     behavior: 'chat_window',
     template: null,
-    engine: null,
-    model: null,
+    engine: '',
+    model: '',
     state: 'enabled'
   }
 }
