@@ -41,6 +41,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## DONE
 
+- [x] Run commands with default models
 - [x] Models refresh
 - [x] Edit commands
 - [x] Customized commands

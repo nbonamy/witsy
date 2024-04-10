@@ -1,7 +1,7 @@
 
-import fs from 'fs'
 import path from 'path'
 import { clipboard, Notification } from 'electron'
+import { loadSettings } from '../config'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
@@ -11,8 +11,7 @@ import * as window from '../window'
 const loadConfig = (app) => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
-  const settingsContents = fs.readFileSync(settingsFilePath, 'utf-8')
-  return JSON.parse(settingsContents)
+  return loadSettings(settingsFilePath)
 }
 
 const buildLLm = (config, engine) => {
@@ -28,10 +27,7 @@ const buildLLm = (config, engine) => {
 
 }
 
-const promptLlm = (app, engine, model, prompt) => {
-
-  // config
-  const config = loadConfig(app)
+const promptLlm = (config, engine, model, prompt) => {
 
   // get llm
   const llm = buildLLm(config, engine)
@@ -46,7 +42,7 @@ const promptLlm = (app, engine, model, prompt) => {
 
 }
 
-const finalizeCommand = async (command, text) => {
+const finalizeCommand = async (command, text, engine, model) => {
   
   // we need an automator
   const automator = new Automator();
@@ -55,8 +51,8 @@ const finalizeCommand = async (command, text) => {
 
     return window.openChatWindow({
       prompt: text,
-      engine: command.engine,
-      model: command.model
+      engine: engine || command.engine,
+      model: model || command.model
     })
   
   } else if (command.behavior === 'insert_below') {
@@ -116,11 +112,14 @@ export const runCommand = async (app, text, command) => {
 
   try {
 
+    // config
+    const config = loadConfig(app);
+
     // extract what we need
     const template = command.template;
     const behavior = command.behavior;
-    const engine = command.engine;
-    const model = command.model;
+    const engine = command.engine || config.llm.engine;
+    const model = command.model || config.getActiveModel();
     // const temperature = command.temperature;
 
     // build prompt
@@ -129,7 +128,7 @@ export const runCommand = async (app, text, command) => {
     // new window is different
     if (behavior === 'new_window') {
       
-      result.chatWindow = await finalizeCommand(command, result.prompt);
+      result.chatWindow = await finalizeCommand(command, result.prompt, engine, model);
 
     } else {
       
@@ -138,7 +137,7 @@ export const runCommand = async (app, text, command) => {
 
       // now prompt llm
       //console.log(`Prompting with ${result.prompt}`);
-      const response = await promptLlm(app, engine, model, result.prompt);
+      const response = await promptLlm(config, engine, model, result.prompt);
       result.response = response.content;
 
       // done
@@ -147,7 +146,7 @@ export const runCommand = async (app, text, command) => {
 
       // now paste
       //console.log(`Processing LLM output: ${result.response}`);
-      await finalizeCommand(command, result.response);
+      await finalizeCommand(command, result.response, engine, model);
 
     }
 
