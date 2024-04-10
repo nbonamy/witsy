@@ -6,6 +6,8 @@ module.exports = {
     asar: true,
     icon: 'assets/icon',
     executableName: 'witty-ai',
+    appBundleId: 'fr.bonamy.witty-ai',
+    extendInfo: './assets/Info.plist',
   },
   rebuildConfig: {},
   makers: [

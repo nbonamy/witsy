@@ -85,12 +85,14 @@ export const prepareCommand = async () => {
 
   // notify if no text
   if (text == null || text.trim() === '') {
-    new Notification({
-      title: 'Witty AI',
-      body: 'Please highlight the text you want to analyze'
-    }).show()
-    console.log('No text selected');
-    window.restoreWindows();
+    try {
+      new Notification({
+        title: 'Witty AI',
+        body: 'Please highlight the text you want to analyze'
+      }).show()
+      console.log('No text selected');
+      window.restoreWindows();
+    } catch {}
     return;
   }
 

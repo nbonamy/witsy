@@ -2,13 +2,13 @@
 const { globalShortcut } = require('electron');
 
 export const unregisterShortcuts = () => {
-  console.log('Unregistering shortcuts')
+  console.verbose('Unregistering shortcuts')
   globalShortcut.unregisterAll();
 }
 
 export const registerShortcuts = (shortcuts, callbacks) => {
   unregisterShortcuts();
-  console.log('Registering shortcuts')
+  console.verbose('Registering shortcuts')
   if (shortcuts.chat && callbacks.chat) {
     registerShortcut(shortcuts.chat, callbacks.chat);
   }
@@ -54,7 +54,7 @@ const registerShortcut = (shortcut, callback) => {
   let accelerator = shortcutAccelerator(shortcut)
 
   // debug
-  //console.log('Registering shortcut', shortcut, accelerator)
+  console.debug('Registering shortcut', shortcut, accelerator)
 
   // do it
   globalShortcut.register(accelerator, callback)
