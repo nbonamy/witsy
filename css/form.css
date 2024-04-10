@@ -122,6 +122,9 @@ form .group input[type="range"] + datalist option {
 
 form .subgroup {
   flex: 1;
+}
+
+form .subgroup span, form .subgroup a {
   font-size: 10pt;
 }
 
