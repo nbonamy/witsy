@@ -12,7 +12,7 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import Swal from 'sweetalert2'
 import { store } from '../services/store'
-import { download } from '../services/download'
+import { download, saveFileContents } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import Settings from './Settings.vue'
@@ -137,9 +137,16 @@ const onSendPrompt = async (prompt) => {
 
   // save the attachment
   if (store.pendingAttachment?.downloaded === false) {
-    let filename = download(store.pendingAttachment.url)
-    store.pendingAttachment.downloaded = true
-    store.pendingAttachment.url = `file://${filename}`
+    let filename = null
+    if (store.pendingAttachment.url === 'clipboard://') {
+      filename = saveFileContents(store.pendingAttachment.format, store.pendingAttachment.contents)
+    } else {
+      filename = download(store.pendingAttachment.url)
+    }
+    if (filename) {
+      store.pendingAttachment.downloaded = true
+      store.pendingAttachment.url = `file://${filename}`
+    }
   }
 
   // prompt
