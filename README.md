@@ -30,11 +30,10 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## TODO
 
-- [ ] Text-to-speech
 - [ ] Log file
 - [ ] Image placeholder
-- [ ] Specialized assistants
-- [ ] Customized assistants
+- [ ] Specialized/customized assistants (??)
+- [ ] Text-to-speech (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
