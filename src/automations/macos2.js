@@ -25,7 +25,7 @@ export default class {
     return this._runScript(script);    
   }
 
-  getSelectedText() {
+  copySelectedText() {
 
     if (!editCopy) {
       throw 'Edit copy menu not found!'

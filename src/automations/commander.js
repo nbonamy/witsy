@@ -1,12 +1,12 @@
 
 import fs from 'fs'
 import path from 'path'
-import { clipboard } from 'electron'
+import { clipboard, Notification } from 'electron'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
-import { openChatWindow, openWaitingPanel, closeWaitingPanel, releaseFocus } from '../window'
+import * as window from '../window'
 
 const loadConfig = (app) => {
   const userDataPath = app.getPath('userData')
@@ -47,13 +47,13 @@ const promptLlm = (app, engine, model, prompt) => {
 }
 
 const finalizeCommand = async (command, text) => {
-
+  
   // we need an automator
   const automator = new Automator();
 
   if (command.behavior === 'new_window') {
 
-    return openChatWindow({
+    return window.openChatWindow({
       prompt: text,
       engine: command.engine,
       model: command.model
@@ -76,9 +76,31 @@ const finalizeCommand = async (command, text) => {
 
 }
 
-export const grabText = async (app) => {
+export const prepareCommand = async () => {
+
+  // hide active windows
+  window.hideActiveWindows();
+  await window.releaseFocus();
+
+  // grab text
   const automator = new Automator();
-  return await automator.getSelectedText();
+  const text = await automator.getSelectedText();
+  console.log('Text grabbed', text);
+
+  // notify if no text
+  if (text == null || text.trim() === '') {
+    new Notification({
+      title: 'Witty AI',
+      body: 'Please highlight the text you want to analyze'
+    }).show()
+    console.log('No text selected');
+    window.restoreWindows();
+    return;
+  }
+
+  // go on
+  await window.openCommandPalette(text)
+
 }
 
 export const runCommand = async (app, text, command) => {
@@ -112,7 +134,7 @@ export const runCommand = async (app, text, command) => {
     } else {
       
       // open waiting panel
-      openWaitingPanel();
+      window.openWaitingPanel();
 
       // now prompt llm
       //console.log(`Prompting with ${result.prompt}`);
@@ -120,11 +142,11 @@ export const runCommand = async (app, text, command) => {
       result.response = response.content;
 
       // done
-      await closeWaitingPanel();
-      await releaseFocus();
+      await window.closeWaitingPanel();
+      await window.releaseFocus();
 
       // now paste
-      //console.log(`Processing ${result.response}`);
+      console.log(`Processing LLM output: ${result.response}`);
       await finalizeCommand(command, result.response);
 
     }
@@ -135,8 +157,8 @@ export const runCommand = async (app, text, command) => {
 
   // done waiting
   console.log('Destroying waiting panel')
-  await closeWaitingPanel(true);
-  releaseFocus();
+  await window.closeWaitingPanel(true);
+  window.releaseFocus();
 
   // done
   return result;
