@@ -15,6 +15,13 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
+"@el3um4s/run-vbs@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/@el3um4s/run-vbs/-/run-vbs-1.1.2.tgz"
+  integrity sha512-I48Aw1d/GAJQOnvSZfXFFL47UakLkQlPvEi8OIvVopHzs3K26X49+jN5JYTFH5BFGbS6nTsV2lboyUTNnRAYog==
+  dependencies:
+    tmp "^0.2.1"
+
 "@electron-forge/cli@^7.3.1":
   version "7.3.1"
   resolved "https://registry.npmjs.org/@electron-forge/cli/-/cli-7.3.1.tgz"
@@ -4817,7 +4824,7 @@ tmp-promise@^3.0.2:
   dependencies:
     tmp "^0.2.0"
 
-tmp@^0.2.0:
+tmp@^0.2.0, tmp@^0.2.1:
   version "0.2.3"
   resolved "https://registry.npmjs.org/tmp/-/tmp-0.2.3.tgz"
   integrity sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==
