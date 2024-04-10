@@ -36,11 +36,11 @@ const display = computed(() => {
 })
 
 const onFocus = () => {
-  ipcRenderer.send('unregister-values')
+  ipcRenderer.send('unregister-shortcuts')
 }
 
 const onBlur = () => {
-  ipcRenderer.send('register-values', JSON.stringify(store.config.values))
+  ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
 }
 
 const onDelete = () => {
