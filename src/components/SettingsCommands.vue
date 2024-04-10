@@ -104,9 +104,9 @@ const onCommandModified = (payload) => {
   if (payload.id == null) {
     command = newCommand()
     command.id = uuidv4()
-    store.commands.push(command)
+    commands.value.push(command)
   } else {
-    command = commands.find(command => command.id == payload.id)
+    command = commands.value.find(command => command.id == payload.id)
   }
 
   // update
@@ -152,7 +152,7 @@ const onDragOver = (event) => {
 }
 
 const load = () => {
-  commands.value = store.commands
+  commands.value = JSON.parse(JSON.stringify(store.commands))
 }
 
 const save = () => {

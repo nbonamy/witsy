@@ -1,7 +1,7 @@
 
 const path = require('node:path');
 const process = require('node:process');
-const { app, BrowserWindow, Menu, screen } = require('electron');
+const { app, BrowserWindow, Menu, screen, shell } = require('electron');
 const Store = require('electron-store');
 import { wait } from './utils';
 
@@ -77,7 +77,7 @@ export const releaseFocus = async () => {
   if (process.platform === 'darwin') {
 
     Menu.sendActionToFirstResponder('hide:');
-    await wait();
+    await wait(500);
 
   } else if (process.platform === 'win32') {
 
