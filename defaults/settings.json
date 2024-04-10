@@ -22,12 +22,12 @@
   "shortcuts": {
     "chat": {
       "key": "Space",
-      "alt": true
+      "alt": true,
+      "ctrl": true
     },
     "command": {
-      "key": "↓",
-      "meta": true,
-      "alt": true
+      "key": "Space",
+      "ctrl": true
     }
   },
   "openai": {
