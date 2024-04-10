@@ -4,9 +4,9 @@
 
 <script setup>
 
+import process from 'process'
 import { ipcRenderer } from 'electron'
 import { ref, computed, onMounted } from 'vue'
-import process from 'process'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'

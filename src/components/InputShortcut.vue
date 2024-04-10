@@ -8,38 +8,39 @@
 
 <script setup>
 
+import process from 'process'
 import { ipcRenderer } from 'electron'
 import { computed } from 'vue'
 import { store } from '../services/store'
 
 const value = defineModel()
 
+const modifiers = {
+  'ctrl': process.plaform === 'darwin' ? '⌃' : 'Ctrl+',
+  'alt': process.plaform === 'darwin' ? '⌥' : 'Alt+',
+  'shift': process.plaform === 'darwin' ? '⇧' : 'Shift+',
+  'meta': process.plaform === 'darwin' ? '⌘' : 'Win+',
+}
+
 const display = computed(() => {
   let display = ''
   if (value.value != null) {
-    display = value.value.key
-    if (value.value.meta) {
-      display = '⌘' + display
+    for (const modifier of Object.keys(modifiers)) {
+      if (value.value[modifier]) {
+        display = display + modifiers[modifier]
+      }
     }
-    if (value.value.shift) {
-      display = '⇧' + display
-    }
-    if (value.value.alt) {
-      display = '⌥' + display
-    }
-    if (value.value.ctrl) {
-      display = '⌃' + display
-    }
+    display = display + value.value.key
   }
   return display
 })
 
 const onFocus = () => {
-  ipcRenderer.send('unregister-shortcuts')
+  ipcRenderer.send('unregister-values')
 }
 
 const onBlur = () => {
-  ipcRenderer.send('register-shortcuts', JSON.stringify(store.config.shortcuts))
+  ipcRenderer.send('register-values', JSON.stringify(store.config.values))
 }
 
 const onDelete = () => {
