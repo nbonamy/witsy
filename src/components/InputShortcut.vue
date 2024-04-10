@@ -1,7 +1,7 @@
 
 <template>
   <div class="wrapper">
-    <input type="text" v-model="display" @focus="onFocus" @blur="onBlur" @keydown="onKeyDown" />
+    <input type="text" v-model="display" @focus="onFocus" @blur="onBlur" @keydown.prevent="onKeyDown" />
     <BIconXCircleFill class="icon" @click="onDelete" />
   </div>
 </template>
@@ -47,9 +47,6 @@ const onDelete = () => {
 }
 
 const onKeyDown = (event) => {
-  // default
-  console.log('keydown', event)
-  event.preventDefault()
 
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {
