@@ -1,11 +1,11 @@
 
-import ollama from 'ollama'
-import LLmService from './llm_service'
 import { store } from './store'
+import LlmEngine from './engine'
+import ollama from 'ollama'
 
 const visionModels = ['llava:latest', '*llava']
 
-export default class extends LLmService {
+export default class extends LlmEngine {
 
   constructor(config) {
     super(config)

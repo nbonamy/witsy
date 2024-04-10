@@ -1,7 +1,7 @@
 
 import { getFileContents } from './download'
 
-export default class {
+export default class LlmEngine {
 
   constructor(config) {
     this.config = config

@@ -32,9 +32,9 @@
 
 <script setup>
 
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
-import OpenAI from '../services/openai'
+import { loadOpenAIModels } from '../services/llm'
 
 const apiKey = ref(null)
 const refreshLabel = ref('Refresh')
@@ -43,12 +43,10 @@ const image_model = ref(null)
 const chat_models = ref([])
 const image_models = ref([])
 
-onMounted(async () => {
-  await getOpenAIModels()
-})
-
 const load = () => {
   apiKey.value = store.config.openai?.apiKey || ''
+  chat_models.value = store.config.openai?.models?.chat || []
+  image_models.value = store.config.openai?.models?.image || []
   chat_model.value = store.config.openai?.model?.chat || ''
   image_model.value = store.config.openai?.model?.image || ''
 }
@@ -65,34 +63,17 @@ const setEphemeralRefreshLabel = (text) => {
 
 const getOpenAIModels = async () => {
 
-  const openAI = new OpenAI(store.config)
-  let models = await openAI.getModels()
-  if (!models) {
-    store.config.openai.models = { chat: [], image: [], }
+  // load
+  let success = await loadOpenAIModels()
+  if (!success) {
     chat_models.value = []
     image_models.value = []
     setEphemeralRefreshLabel('Error!')
     return
   }
 
-  // xform
-  models = models
-    .map(model => { return {
-      id: model.id,
-      name: model.id,
-      meta: model
-    }})
-    .sort((a, b) => a.name.localeCompare(b.name))
-
-  // store
-  store.config.openai.models = {
-    chat: models.filter(model => model.id.startsWith('gpt-')),
-    image: models.filter(model => model.id.startsWith('dall-e-'))
-  }
-
-  // assign
-  chat_models.value = store.config.openai.models.chat
-  image_models.value = store.config.openai.models.image
+  // reload
+  load()
 
   // done
   setEphemeralRefreshLabel('Done!')

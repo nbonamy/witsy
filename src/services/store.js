@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
 import { loadSettings as _loadSettings } from '../config'
 import { saveSettings as _saveSettings } from '../config'
+import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
@@ -22,10 +23,25 @@ export const store = reactive({
   pendingAttachment: null
 })
 
-store.load = () => {
+store.load = async () => {
+
+  // load data
   store.userDataPath = ipcRenderer.sendSync('get-app-path')
   loadSettings()
   loadHistory()
+
+  // load models
+  // and select valid engine
+  await loadAllModels()
+  if (!isEngineReady(store.config.llm.engine)) {
+    for (const engine of availableEngines) {
+      if (isEngineReady(engine)) {
+        console.log(`Default engine ready, selecting ${engine} as default`)
+        store.config.llm.engine = engine
+        break
+      }
+    }
+  }
 }
 
 store.save = () => {

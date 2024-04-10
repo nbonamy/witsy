@@ -1,11 +1,11 @@
 
-import OpenAI from 'openai'
-import LLmService from './llm_service'
 import { store } from './store'
+import LlmEngine from './engine'
+import OpenAI from 'openai'
 
 const visionModels = ['gpt-4-vision', 'gpt-4-vision-preview', '*vision']
 
-export default class extends LLmService {
+export default class extends LlmEngine {
 
   constructor(config) {
     super(config)

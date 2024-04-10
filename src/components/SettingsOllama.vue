@@ -14,26 +14,22 @@
 
 <script setup>
 
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
-import Ollama from '../services/ollama'
+import { loadOllamaModels } from '../services/llm'
 
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
 
-onMounted(async () => {
-  await getOllamaModels()
-})
-
 const load = () => {
-  if (chat_models.value.length == 0) getOllamaModels()
+  chat_models.value = store.config.ollama.models.chat || []
   chat_model.value = store.config.ollama?.model?.chat || ''
 }
 
 const onRefresh = async () => {
   refreshLabel.value = 'Refreshing...'
-  setTimeout(() => getOllamaModels(), 500)
+  setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text) => {
@@ -41,31 +37,18 @@ const setEphemeralRefreshLabel = (text) => {
   setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }
 
-const getOllamaModels = async () => {
+const getModels = async () => {
 
-  // load if needed
-  const ollama = new Ollama(store.config)
-  const models = await ollama.getModels()
-  if (!models) {
-    store.config.ollama.models = { chat: [], image: [], }
+  // load
+  let success = await loadOllamaModels()
+  if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')
     return
   }
 
-  // store
-  store.config.ollama.models = {
-    chat: models
-    .map(model => { return {
-      id: model.model,
-      name: model.name,
-      meta: model
-    }})
-    .sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // assign
-  chat_models.value = store.config.ollama.models.chat
+  // reload
+  load()
 
   // done
   setEphemeralRefreshLabel('Done!')
