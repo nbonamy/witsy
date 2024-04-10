@@ -47,7 +47,7 @@ const finalizeCommand = async (command, text, engine, model) => {
   // we need an automator
   const automator = new Automator();
 
-  if (command.behavior === 'new_window') {
+  if (command.behavior === 'chat_window') {
 
     return window.openChatWindow({
       prompt: text,
@@ -126,7 +126,7 @@ export const runCommand = async (app, text, command) => {
     result.prompt = template.replace('{input}', result.text);
 
     // new window is different
-    if (behavior === 'new_window') {
+    if (behavior === 'chat_window') {
       
       result.chatWindow = await finalizeCommand(command, result.prompt, engine, model);
 

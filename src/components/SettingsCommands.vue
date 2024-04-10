@@ -52,10 +52,10 @@ const columns = [
 ]
 
 const behavior = (behavior) => {
-  if (behavior == 'new_window') return 'New Window'
+  if (behavior == 'chat_window') return 'Chat Window'
   if (behavior == 'insert_below') return 'Insert Below'
   if (behavior == 'replace_selection') return 'Replace Selection'
-  if (behavior == 'copy_cliboard') return 'Copy Clipboard'
+  if (behavior == 'copy_cliboard') return 'Copy to Clipboard'
 }
 
 const onSelect = (command) => {
