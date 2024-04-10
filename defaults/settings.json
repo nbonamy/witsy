@@ -22,11 +22,11 @@
   "shortcuts": {
     "chat": {
       "key": "Space",
-      "alt": true,
       "ctrl": true
     },
     "command": {
       "key": "Space",
+      "alt": true,
       "ctrl": true
     }
   },
