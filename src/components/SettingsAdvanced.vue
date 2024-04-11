@@ -39,6 +39,7 @@ const load = () => {
 
 const onResetDefaultInstructions = () => {
   defaultInstructions.value = defaults.instructions.default
+  save()
 }
 
 const save = () => {

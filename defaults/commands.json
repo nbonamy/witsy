@@ -5,7 +5,7 @@
     "icon": "❓",
     "label": "Explain this",
     "behavior": "chat_window",
-    "template": "Explain the text in triple quotes below:\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the explaination. Do not wrap responses in quotes.",
+    "template": "Explain the text in triple quotes below:\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the explanation. Do not wrap responses in quotes.",
     "state": "enabled",
     "engine": "",
     "model": ""

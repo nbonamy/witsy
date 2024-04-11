@@ -28,6 +28,10 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 <img src="doc/settings.jpg" width="320" />
 
+## Credits
+
+Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170](https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170).
+
 ## TODO
 
 - [ ] Log file
@@ -40,6 +44,7 @@ To use Ollama models, you need to install [Ollama](https://ollama.com) and downl
 
 ## DONE
 
+- [x] Conversation language settings
 - [x] Paste image in prompt
 - [x] Run commands with default models
 - [x] Models refresh

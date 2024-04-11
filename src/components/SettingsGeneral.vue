@@ -9,6 +9,10 @@
       </select>
     </div>
     <div class="group">
+      <label>Answer in</label>
+      <LangSelect v-model="language" @change="save" />
+    </div>
+    <div class="group">
       <label>Run at login</label>
       <input type="checkbox" v-model="runAtLogin" @change="save" />
     </div>
@@ -24,19 +28,23 @@
 import { ref } from 'vue'
 import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
+import LangSelect from './LangSelect.vue'
 
 const llmEngine = ref(null)
+const language = ref(null)
 const runAtLogin = ref(false)
 const keepRunning = ref(false)
 
 const load = () => {
   llmEngine.value = store.config.llm.engine || 'openai'
+  language.value = store.config.general.language
   runAtLogin.value = ipcRenderer.sendSync('get-run-at-login').openAtLogin
   keepRunning.value = store.config.general.keepRunning
 }
 
 const save = () => {
   store.config.llm.engine = llmEngine.value
+  store.config.general.language = language.value
   ipcRenderer.send('set-run-at-login', runAtLogin.value)
   store.config.general.keepRunning = keepRunning.value
   store.saveSettings()
