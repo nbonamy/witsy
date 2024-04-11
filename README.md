@@ -34,7 +34,6 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] Log file
 - [ ] Image placeholder
 - [ ] Specialized/customized assistants (??)
 - [ ] Text-to-speech (??)
@@ -44,6 +43,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## DONE
 
+- [x] Log file (electron-log)
 - [x] Conversation language settings
 - [x] Paste image in prompt
 - [x] Run commands with default models
