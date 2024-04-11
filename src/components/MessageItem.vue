@@ -20,7 +20,7 @@
     </div>
     <div class="actions">
       <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
-        <BIconClipboard /> Copy
+        <BIconClipboard /> {{ copyLabel }}
       </div>
       <div class="action" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
         <BIconPencil /> Edit
@@ -54,6 +54,7 @@ const props = defineProps({
 })
 
 const fullScreenImageUrl = ref(null)
+const copyLabel = ref('Copy')
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
@@ -103,6 +104,8 @@ const onCopy = (message) => {
     let image = nativeImage.createFromPath(props.message.content.replace('file://', ''))
     clipboard.writeImage(image)
   }
+  copyLabel.value = 'Copied!'
+  setTimeout(() => copyLabel.value = 'Copy', 1000)
 }
 
 const onEdit = (message) => {
