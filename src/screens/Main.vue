@@ -9,8 +9,8 @@
 <script setup>
 
 // components
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { ref, computed, onMounted, nextTick } from 'vue'
-import Swal from 'sweetalert2'
 import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
@@ -174,6 +174,11 @@ const onStopAssistant = async () => {
 }
 
 </script>
+
+<style>
+@import 'sweetalert2/dist/sweetalert2.css';
+@import '../../css/swal2.css';
+</style>
 
 <style scoped>
 

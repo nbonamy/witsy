@@ -83,10 +83,6 @@ const handleActionClick = async (action) => {
 
 </script>
 
-<style>
-@import '../../css/swal2.css';
-</style>
-
 <style scoped>
 
 
