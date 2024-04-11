@@ -36,7 +36,3 @@ all: clean mac win linux
 
 publish:
 	gh release create v$(VERSION) --title $(VERSION) --generate-notes ./out/*.zip
-
-# Example usage in a target
-info:
-	@echo "Project Version: $(VERSION)"
