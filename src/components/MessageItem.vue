@@ -22,6 +22,12 @@
       <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
         <BIconClipboard /> {{ copyLabel }}
       </div>
+      <div class="action read" v-if="message.role == 'assistant' && !message.transient" @click="onToggleRead(message)">
+        <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
+        <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
+        <span v-else><BIconPlayCircle /> Read</span>
+        <audio/>
+      </div>
       <div class="action" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
         <BIconPencil /> Edit
       </div>
@@ -35,9 +41,11 @@
 
 <script setup>
 
+import { SpeechPlayer } from 'openai-speech-stream-player'
 import { ipcRenderer, clipboard, nativeImage } from 'electron'
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
+import Tts from '../services/tts'
 import Chat from '../models/chat.js'
 import Message from '../models/message.js'
 import Loader from './Loader.vue'
@@ -55,6 +63,14 @@ const props = defineProps({
 
 const fullScreenImageUrl = ref(null)
 const copyLabel = ref('Copy')
+const audioState = ref({
+  state: 'idle',
+  message: null,
+})
+
+const mgsAudioState = (message) => {
+  return message == audioState.value.message ? audioState.value.state : 'idle'
+}
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
@@ -107,6 +123,77 @@ const onCopy = (message) => {
   copyLabel.value = 'Copied!'
   setTimeout(() => copyLabel.value = 'Copy', 1000)
 }
+
+let player = null
+const onToggleRead = async (message) => {
+  
+  // if same message is playing, stop
+  if (message == audioState.value.message && audioState.value.state != 'idle') {
+    stopAudio()
+    return
+  }
+
+  // if not same message 1st thing is to stop
+  if (audioState.value.state != 'idle' && message != audioState.value.message) {
+    stopAudio()
+  }
+
+  // set status
+  audioState.value = {
+    state: 'loading',
+    message: message,
+  }
+
+  // give it a chance to appear
+  nextTick(async () => {
+      
+    try {
+  
+      // get the stream
+      const tts = new Tts(store.config)
+      const response = await tts.synthetize(message.content)
+
+      // stream it
+      const audioEl = document.querySelector('.read audio')
+      player = new SpeechPlayer({
+        audio: audioEl,
+        onPlaying: () => {
+          audioState.value = {
+            state: 'playing',
+            message: message,
+          }
+        },
+        onPause: () => {},
+        onChunkEnd: () => {
+          stopAudio()
+        },
+        mimeType: 'audio/mpeg',
+      })
+      await player.init()
+      player.feedWithResponse(response.content)
+
+    } catch (e) {
+      console.error(e)
+    }
+
+  })
+
+}
+
+const stopAudio = () => {
+  try {
+    player?.pause()
+    player?.destroy()
+  } catch (e) {
+    //console.error(e)
+  }
+  player = null
+  audioState.value = {
+    state: 'idle',
+    message: null,
+  }
+}
+
 
 const onEdit = (message) => {
   emitEvent('set-prompt', message)
@@ -171,6 +258,31 @@ const onDownload = (message) => {
   top: 16px;
   right: 16px;
   font-size: 14pt;
+}
+
+.actions {
+
+  .action {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 8px;
+
+    &:first-child {
+      margin-left: 0px;
+    }
+
+    svg {
+      margin-right: 4px;
+    }
+
+    &.read svg {
+      position: relative;
+      top: 1.5px;
+    }
+  }
+
+
 }
 
 </style>
