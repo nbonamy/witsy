@@ -15,7 +15,7 @@
             <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
             <td class="label">{{ command.label }}</td>
-            <td class="behavior">{{ behavior(command.behavior) }}</td>
+            <td class="action">{{ action(command.action) }}</td>
           </tr>
         </tbody>
       </table>
@@ -48,14 +48,14 @@ const columns = [
   { field: 'enabled', title: '' },
   { field: 'icon', title: 'Icon' },
   { field: 'label', title: 'Name', },
-  { field: 'behavior', title: 'Behavior', },
+  { field: 'action', title: 'Action', },
 ]
 
-const behavior = (behavior) => {
-  if (behavior == 'chat_window') return 'Chat Window'
-  if (behavior == 'insert_below') return 'Insert Below'
-  if (behavior == 'replace_selection') return 'Replace Selection'
-  if (behavior == 'copy_cliboard') return 'Copy to Clipboard'
+const action = (action) => {
+  if (action == 'chat_window') return 'Chat Window'
+  if (action == 'paste_below') return 'Insert Below'
+  if (action == 'paste_in_place') return 'Replace Selection'
+  if (action == 'clipboard_copy') return 'Copy to Clipboard'
 }
 
 const onSelect = (command) => {
@@ -115,7 +115,7 @@ const onCommandModified = (payload) => {
   if (command) {
     command.label = payload.label
     command.icon = payload.icon
-    command.behavior = payload.behavior
+    command.action = payload.action
     command.template = payload.template
     command.engine = payload.engine
     command.model = payload.model
