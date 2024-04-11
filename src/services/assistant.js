@@ -5,6 +5,7 @@ import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import { store } from '../services/store'
 import { download } from '../services/download'
+import { countryCodeToName } from './i18n'
 
 export default class {
 
@@ -69,7 +70,7 @@ export default class {
     if (this.chat === null) {
       this.chat = new Chat()
       this.chat.setEngineModel(engine, model)
-      this.chat.addMessage(new Message('system', this.config.instructions.default))
+      this.chat.addMessage(new Message('system', this.getSystemInstructions()))
       if (opts.save == null || opts.save !== false) {
         store.chats.push(this.chat)
         store.saveHistory()
@@ -218,6 +219,12 @@ export default class {
     let chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
     let messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength-1, -1)]
     return messages
+  }
+
+  getSystemInstructions() {
+    let instr = this.config.instructions.default
+    if (!this.config.general.language) return instr
+    return instr + ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
   }
 
 }

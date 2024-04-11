@@ -1,7 +1,8 @@
 
 {
   "general": {
-    "keepRunning": true
+    "keepRunning": true,
+    "language": ""
   },
   "llm": {
     "engine": "openai",
