@@ -17,6 +17,10 @@
         </option>
       </select>
     </div>
+    <div class="group">
+      <label></label>
+      <span>Make sure you enter your OpenAI API key in the Models pane.</span>
+    </div>
   </div>
 </template>
 
