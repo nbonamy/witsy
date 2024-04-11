@@ -5,7 +5,7 @@ clean:
 	-rm -rf out
 
 mac_arm64:
-	-rm -rf out/*darwin-amd64*
+	-rm -rf out/*darwin-arm64*
 	npx electron-forge package -p darwin -a arm64
 	codesign --force --deep --sign - "out/Witty AI-darwin-arm64/Witty AI.app"
 	cd out ; zip -r Witty_AI-darwin-arm64.zip "Witty AI-darwin-arm64/"
