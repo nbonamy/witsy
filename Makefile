@@ -2,7 +2,7 @@
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 
 clean:
-	rm -rf out
+	-rm -rf out
 
 mac_arm64:
 	-rm -rf out/*darwin-amd64*
