@@ -31,9 +31,9 @@
 
 <script setup>
 
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
-import Swal from 'sweetalert2'
 import { store } from '../services/store'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandEditor from '../screens/CommandEditor.vue'
