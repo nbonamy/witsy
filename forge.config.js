@@ -8,6 +8,16 @@ module.exports = {
     executableName: 'witty-ai',
     appBundleId: 'fr.bonamy.witty-ai',
     extendInfo: './assets/Info.plist',
+    osxSign: {
+      identity: 'Developer ID Application: Nicolas Bonamy (TP8BYQ64C4)',
+      optionsForFile: () => { return { entitlements: './Entitlements.plist' }; },
+    },
+    // osxNotarize: {
+    //   tool: 'notarytool',
+    // appleId: process.env.APPLE_ID,
+    // appleIdPassword: process.env.APPLE_PASSWORD,
+    // teamId: process.env.APPLE_TEAM_ID
+    // }
   },
   rebuildConfig: {},
   makers: [
