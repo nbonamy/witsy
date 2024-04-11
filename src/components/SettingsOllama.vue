@@ -1,6 +1,6 @@
 
 <template>
-  <div class="content">
+  <div>
     <div class="group">
       <label>Ollama chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
@@ -60,10 +60,7 @@ const save = () => {
   store.saveSettings()
 }
 
-defineExpose({
-  load,
-  save
-})
+defineExpose({ load })
 
 </script>
 

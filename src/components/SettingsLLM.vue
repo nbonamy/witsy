@@ -1,0 +1,120 @@
+
+<template>
+  <div class="content">
+    <div class="llm">
+      <div class="engines">
+        <div class="engine" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
+          <EngineLogo :engine="engine.id" />
+          {{ engine.label }}
+        </div>
+      </div>
+      <component :is="currentView" class="settings" ref="engineSettings" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+import { ref, computed, nextTick } from 'vue'
+import { availableEngines } from '../services/llm'
+import EngineLogo from './EngineLogo.vue'
+import SettingsOpenAI from './SettingsOpenAI.vue'
+import SettingsOllama from './SettingsOllama.vue'
+
+const currentEngine = ref(availableEngines[0])
+const engineSettings = ref(null)
+
+const engines = computed(() => {
+  return availableEngines.map(engine => {
+    return {
+      id: engine,
+      label: {
+        openai: 'OpenAI',
+        ollama: 'Ollama'
+      }[engine],
+    }
+  })
+})
+
+const currentView = computed(() => {
+  if (currentEngine.value == 'openai') return SettingsOpenAI
+  if (currentEngine.value == 'ollama') return SettingsOllama
+})
+
+const selectEngine = (engine) => {
+  currentEngine.value = engine.id
+  nextTick(() => engineSettings.value.load())
+}
+
+const load = () => {
+  engineSettings.value.load()
+}
+
+const save = () => {
+}
+
+defineExpose({ load })
+
+</script>
+
+<style scoped>
+@import '../../css/dialog.css';
+@import '../../css/tabs.css';
+@import '../../css/form.css';
+</style>
+
+<style scoped>
+
+dialog.settings .content {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+}
+
+.llm {
+  
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  .engines {
+    background-color: white;
+    border-right: 1px solid #ccc;
+    width: 140px;
+    padding: 10px;
+
+    .engine {
+
+      flex-direction: row;
+      align-items: center;
+      height: 24px;
+      padding: 0px 8px;
+      margin: 2px 0px;
+      display: flex;
+      border-radius: 4px;
+      font-size: 10.5pt;
+
+      .logo {
+        height: 10pt;
+        margin-right: 4px;
+      }
+
+      &.selected {
+        background-color: var(--highlight-color);
+        color: white;
+        .logo {
+          filter: invert(1);
+        }
+      }
+    }
+  }
+
+}
+
+.settings {
+  flex: 1;
+  min-height: 200px;
+  padding: 16px 16px 16px 0px !important;
+}
+
+</style>

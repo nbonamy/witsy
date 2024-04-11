@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div>
     <div class="group">
       <label>OpenAI API key</label>
       <div class="subgroup">
@@ -98,10 +98,7 @@ const save = () => {
   store.saveSettings()
 }
 
-defineExpose({
-  load,
-  save
-})
+defineExpose({ load })
 
 </script>
 
