@@ -4,7 +4,8 @@
     <div class="group">
       <label>Ollama chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
+        <option v-for="model in chat_models" :key="model.id" :value="model.id">
+          {{ model.name }}
         </option>
       </select>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>

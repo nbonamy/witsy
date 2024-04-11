@@ -3789,6 +3789,11 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
+openai-speech-stream-player@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.npmjs.org/openai-speech-stream-player/-/openai-speech-stream-player-1.0.8.tgz"
+  integrity sha512-0SUybbhStl65s66ezh2QaoZE5k1kNb2t5M8tDOqJFILdHpwHaBqnYy4uHl3Hk/8F5VFWxxHaLamjKOnfNDKgbw==
+
 openai@^4.32.1:
   version "4.32.1"
   resolved "https://registry.npmjs.org/openai/-/openai-4.32.1.tgz"

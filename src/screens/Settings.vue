@@ -20,6 +20,7 @@
             <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+            <SettingsTab title="TTS" :checked="initialTab == 'tts'"><BIconMegaphone class="icon" /></SettingsTab>
             <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
@@ -27,6 +28,7 @@
           <SettingsCommands ref="settingsCommands" />
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsLLM ref="settingsLLM" />
+          <SettingsTTS ref="settingsTTS" />
           <SettingsAdvanced ref="settingsAdvanced" />
         </div>
       </main>
@@ -37,7 +39,6 @@
 <script setup>
 
 import { ref, onMounted } from 'vue'
-import EngineLogo from '../components/EngineLogo.vue'
 
 import SettingsTab from '../components/SettingsTab.vue'
 import SettingsGeneral from '../components/SettingsGeneral.vue'
@@ -45,6 +46,7 @@ import SettingsAppearance from '../components/SettingsAppearance.vue'
 import SettingsCommands from '../components/SettingsCommands.vue'
 import SettingsShortcuts from '../components/SettingsShortcuts.vue'
 import SettingsLLM from '../components/SettingsLLM.vue'
+import SettingsTTS from '../components/SettingsTTS.vue'
 import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 
 // bus
@@ -62,6 +64,7 @@ const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
 const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
+const settingsTTS = ref(null)
 const settingsAdvanced = ref(null)
 
 onMounted(async () => {
@@ -76,6 +79,7 @@ const onOpenSettings = () => {
   settingsShortcuts.value.load()
   settingsCommands.value.load()
   settingsLLM.value.load()
+  settingsTTS.value.load()
   settingsAdvanced.value.load()
   document.querySelector('#settings').showModal()
   showActiveTab()

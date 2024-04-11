@@ -36,13 +36,13 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 - [ ] Image placeholder
 - [ ] Specialized/customized assistants (??)
-- [ ] Text-to-speech (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] Text-to-speech
 - [x] Log file (electron-log)
 - [x] Conversation language settings
 - [x] Paste image in prompt
