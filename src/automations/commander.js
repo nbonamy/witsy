@@ -1,18 +1,11 @@
 
-import path from 'path'
 import { clipboard, Notification } from 'electron'
-import { loadSettings } from '../config'
+import { settingsFilePath, loadSettings } from '../config'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
 import * as window from '../window'
-
-const loadConfig = (app) => {
-  const userDataPath = app.getPath('userData')
-  const settingsFilePath = path.join(userDataPath, 'settings.json')
-  return loadSettings(settingsFilePath)
-}
 
 const buildLLm = (config, engine) => {
 
@@ -96,6 +89,9 @@ export const prepareCommand = async () => {
     return;
   }
 
+  // log
+  console.debug('Text grabbed:', `${text.slice(0, 50)}...`);
+
   // go on
   await window.openCommandPalette(text)
 
@@ -115,7 +111,7 @@ export const runCommand = async (app, text, command) => {
   try {
 
     // config
-    const config = loadConfig(app);
+    const config = loadSettings(settingsFilePath(app));
 
     // extract what we need
     const template = command.template;
@@ -138,7 +134,7 @@ export const runCommand = async (app, text, command) => {
       window.openWaitingPanel();
 
       // now prompt llm
-      //console.log(`Prompting with ${result.prompt}`);
+      console.debug(`Prompting with ${result.prompt.slice(0, 50)}...`);
       const response = await promptLlm(config, engine, model, result.prompt);
       result.response = response.content;
 
@@ -147,7 +143,7 @@ export const runCommand = async (app, text, command) => {
       await window.releaseFocus();
 
       // now paste
-      //console.log(`Processing LLM output: ${result.response}`);
+      console.debug(`Processing LLM output: ${result.response.slice(0, 50)}...`);
       await finalizeCommand(command, result.response, engine, model);
 
     }

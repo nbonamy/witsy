@@ -32,8 +32,6 @@ export default class {
     }
 
     const script = `
-      set previous to the clipboard
-      set the clipboard to ""
       tell application "System Events"
         set activeApp to name of first process whose frontmost is true
         tell process activeApp
@@ -46,7 +44,6 @@ export default class {
         set clipboardContents to the clipboard
         if clipboardContents is not "" then exit repeat
       end repeat
-      set the clipboard to previous
       return clipboardContents
     `
 
@@ -62,8 +59,6 @@ export default class {
     }
 
     const script = `
-      set previous to the clipboard
-      set the clipboard to "${text.replace(/"/g, '\\"')}"
       tell application "System Events"
         set activeApp to name of first process whose frontmost is true
         tell process activeApp
@@ -72,7 +67,6 @@ export default class {
         end tell
       end tell
       delay 0.1
-      set the clipboard to previous
     `
 
     // run it
@@ -81,16 +75,17 @@ export default class {
   }
 
   async _findMenus() {
-    if (editCopy && editPaste) return
-    if (!editCopy) editCopy = await this._findMenu('C', 0)
-    if (!editPaste) editPaste = await this._findMenu('V', 0)
-    console.log('Menus found:', editCopy, editPaste)
-  }
 
-  _findMenu(shortcut, modifier) {
+    // only once
+    if (editCopy && editPaste) {
+      return
+    }
 
     const script = `
-      on findMenu(shortcut, modifier)
+      on findMenu(shortcut1, shortcut2, modifier)
+        set menuName to ""
+        set menuItemName1 to ""
+        set menuItemName2 to ""
         tell application "System Events"
           set activeApp to name of first process whose frontmost is true
           tell process activeApp
@@ -107,8 +102,16 @@ export default class {
                   set menuItemName to name of menu item j of currentMenu
                   set menuItemShortcut to value of attribute "AXMenuItemCmdChar" of currentMenuItem
                   set menuItemModifier to value of attribute "AXMenuItemCmdModifiers" of currentMenuItem
-                  if menuItemShortcut = shortcut and menuItemModifier = modifier then
-                    return {currentMenuName, menuItemName}
+                  if menuItemShortcut = shortcut1 and menuItemModifier = modifier then
+                    set menuName to currentMenuName
+                    set menuItemName1 to menuItemName
+                  end if
+                  if menuItemShortcut = shortcut2 and menuItemModifier = modifier then
+                    set menuName to currentMenuName
+                    set menuItemName2 to menuItemName
+                  end if
+                  if menuItemName1 ≠ "" and menuItemName2 ≠ "" then
+                    return {menuName, menuItemName1, menuItemName2}
                   end if
                 end try
               end repeat
@@ -116,11 +119,16 @@ export default class {
           end tell
         end tell
       end findMenu
-      return findMenu("${shortcut}", ${modifier})
+      return findMenu("c", "v", 0)
     `
 
     // now run
-    return this._runScript(script);
+    console.log('Finding menus...')
+    let result = await this._runScript(script);
+    editCopy = [ result[0], result[1] ]
+    editPaste = [ result[0], result[2] ]
+    console.log('Menus found:', editCopy, editPaste)
+
   }
 
   _runScript(script) {
