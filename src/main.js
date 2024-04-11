@@ -50,8 +50,8 @@ const buildTrayMenu = () => {
   const configShortcuts = config.loadSettings(config.settingsFilePath(app)).shortcuts;
 
   return [
-    { label: 'Chat...', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-    { label: 'Run AI Command...', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
+    { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
+    { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
     { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
   ];
 };
