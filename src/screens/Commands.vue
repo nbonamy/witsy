@@ -3,7 +3,7 @@
     <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand(command)">
       <div class="icon">{{ command.icon }}</div>
       <div class="label">{{ command.label }}</div>
-      <div class="behavior"><component :is="behavior(command)"></component></div>
+      <div class="action"><component :is="action(command)"></component></div>
     </div>
   </div>
 </template>
@@ -30,11 +30,11 @@ onMounted(() => {
 
 const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
-const behavior = (command) => {
-  if (command.behavior == 'chat_window') return BIconBoxArrowInUpRight
-  if (command.behavior == 'insert_below') return BIconArrowReturnLeft
-  if (command.behavior == 'replace_selection') return BIconInputCursor
-  if (command.behavior == 'copy_cliboard') return BIconClipboard
+const action = (command) => {
+  if (command.action == 'chat_window') return BIconBoxArrowInUpRight
+  if (command.action == 'paste_below') return BIconArrowReturnLeft
+  if (command.action == 'paste_in_place') return BIconInputCursor
+  if (command.action == 'clipboard_copy') return BIconClipboard
 }
 
 const onKeyUp = (event) => {

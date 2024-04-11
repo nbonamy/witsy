@@ -40,7 +40,7 @@ const finalizeCommand = async (command, text, engine, model) => {
   // we need an automator
   const automator = new Automator();
 
-  if (command.behavior === 'chat_window') {
+  if (command.action === 'chat_window') {
 
     return window.openChatWindow({
       prompt: text,
@@ -48,16 +48,16 @@ const finalizeCommand = async (command, text, engine, model) => {
       model: model || command.model
     })
   
-  } else if (command.behavior === 'insert_below') {
+  } else if (command.action === 'paste_below') {
 
     await automator.moveCaretBelow()
     await automator.pasteText(text)
 
-  } else if (command.behavior === 'replace_selection') {
+  } else if (command.action === 'paste_in_place') {
 
     await automator.pasteText(text)
 
-  } else if (command.behavior === 'copy_cliboard') {
+  } else if (command.action === 'clipboard_copy') {
 
     await clipboard.writeText(text)
 
@@ -115,7 +115,7 @@ export const runCommand = async (app, text, command) => {
 
     // extract what we need
     const template = command.template;
-    const behavior = command.behavior;
+    const action = command.action;
     const engine = command.engine || config.llm.engine;
     const model = command.model || config.getActiveModel();
     // const temperature = command.temperature;
@@ -124,7 +124,7 @@ export const runCommand = async (app, text, command) => {
     result.prompt = template.replace('{input}', result.text);
 
     // new window is different
-    if (behavior === 'chat_window') {
+    if (action === 'chat_window') {
       
       result.chatWindow = await finalizeCommand(command, result.prompt, engine, model);
 

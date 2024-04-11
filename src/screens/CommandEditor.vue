@@ -15,12 +15,12 @@
           </div>
         </div>
         <div class="group">
-          <label>Behavior</label>
-          <select v-model="behavior" required>
+          <label>Action</label>
+          <select v-model="action" required>
             <option value="chat_window">Chat Window</option>
-            <option value="insert_below">Insert Below</option>
-            <option value="replace_selection">Replace Selection</option>
-            <option value="copy_cliboard">Copy to Clipboard</option>
+            <option value="paste_below">Insert Below</option>
+            <option value="paste_in_place">Replace Selection</option>
+            <option value="clipboard_copy">Copy to Clipboard</option>
           </select>
         </div>
         <div class="group">
@@ -66,7 +66,7 @@ const props = defineProps({
 const icon = ref(null)
 const label = ref(null)
 const template = ref(null)
-const behavior = ref(null)
+const action = ref(null)
 const engine = ref(null)
 const model = ref(null)
 
@@ -80,7 +80,7 @@ const load = () => {
   icon.value = props.command?.icon || '⚡️'
   label.value = props.command?.label || ''
   template.value = props.command?.template || ''
-  behavior.value = props.command?.behavior || 'chat_window'
+  action.value = props.command?.action || 'chat_window'
   engine.value = props.command?.engine
   model.value = props.command?.model
 }
@@ -114,7 +114,7 @@ const onCancel = () => {
 const onSave = (event) => {
 
   // check
-  if (!label.value || !template.value || !behavior.value) {
+  if (!label.value || !template.value || !action.value) {
     event.preventDefault()
     alert('All fields marked with * are required.')
     return
@@ -126,7 +126,7 @@ const onSave = (event) => {
     icon: icon.value,
     label: label.value,
     template: template.value,
-    behavior: behavior.value,
+    action: action.value,
     engine: engine.value,
     model: model.value
   })
