@@ -1,6 +1,8 @@
 
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 
+default: mac-arm64
+
 clean:
 	-rm -rf out
 
