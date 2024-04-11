@@ -45,8 +45,13 @@ const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows
 let tray = null;
 let globalShortcuts = null;
 const buildTrayMenu = () => {
+
+  // load the config
+  const configShortcuts = config.loadSettings(config.settingsFilePath(app)).shortcuts;
+
   return [
-    { label: 'Chat...', accelerator: shortcuts.shortcutAccelerator(globalShortcuts?.chat), click: window.openMainWindow },
+    { label: 'Chat...', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
+    { label: 'Run AI Command...', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
     { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
   ];
 };
