@@ -32,7 +32,6 @@ linux_x64:
 
 linux: linux_x64
 
-
 all: clean mac win linux
 
 publish:
