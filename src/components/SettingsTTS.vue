@@ -41,7 +41,7 @@ const voices = [
   { id: 'alloy', label: 'Alloy' },
   { id: 'echo', label: 'Echo' },
   { id: 'fable', label: 'Fable' },
-  { id: 'onyx', label: 'Only' },
+  { id: 'onyx', label: 'Onyx' },
   { id: 'nova', label: 'Nova' },
   { id: 'shimmer', label: 'Shimmer' },
 ]
