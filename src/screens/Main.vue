@@ -130,7 +130,7 @@ const onSendPrompt = async (prompt) => {
 
   // make sure we can have an llm
   if (assistant.value.initLlm(store.config.llm.engine) === null) {
-    settingsInitialTab.value = 'openai'
+    settingsInitialTab.value = 'models'
     nextTick(() => emitEvent('openSettings'))
     return
   }

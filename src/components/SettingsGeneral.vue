@@ -50,10 +50,7 @@ const save = () => {
   store.saveSettings()
 }
 
-defineExpose({
-  load,
-  save
-})
+defineExpose({ load })
 
 </script>
 

@@ -167,10 +167,7 @@ const save = () => {
   saveCommands()
 }
 
-defineExpose({
-  load,
-  save
-})
+defineExpose({ load })
 
 </script>
 

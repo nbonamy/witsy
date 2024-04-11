@@ -19,16 +19,14 @@
             <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
             <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-            <SettingsTab title="OpenAI" :checked="initialTab == 'openai'"><EngineLogo engine="openai" class="icon" /></SettingsTab>
-            <SettingsTab title="Ollama" :checked="initialTab == 'ollama'"><EngineLogo engine="ollama" class="icon" /></SettingsTab>
+            <SettingsTab title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
             <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
           <SettingsAppearance ref="settingsAppearance" />
           <SettingsCommands ref="settingsCommands" />
           <SettingsShortcuts ref="settingsShortcuts" />
-          <SettingsOpenAI ref="settingsOpenAI" />
-          <SettingsOllama ref="settingsOllama" />
+          <SettingsLLM ref="settingsLLM" />
           <SettingsAdvanced ref="settingsAdvanced" />
         </div>
       </main>
@@ -46,8 +44,7 @@ import SettingsGeneral from '../components/SettingsGeneral.vue'
 import SettingsAppearance from '../components/SettingsAppearance.vue'
 import SettingsCommands from '../components/SettingsCommands.vue'
 import SettingsShortcuts from '../components/SettingsShortcuts.vue'
-import SettingsOpenAI from '../components/SettingsOpenAI.vue'
-import SettingsOllama from '../components/SettingsOllama.vue'
+import SettingsLLM from '../components/SettingsLLM.vue'
 import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 
 // bus
@@ -64,8 +61,7 @@ const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
 const settingsShortcuts = ref(null)
-const settingsOpenAI = ref(null)
-const settingsOllama = ref(null)
+const settingsLLM = ref(null)
 const settingsAdvanced = ref(null)
 
 onMounted(async () => {
@@ -79,8 +75,7 @@ const onOpenSettings = () => {
   settingsAppearance.value.load()
   settingsShortcuts.value.load()
   settingsCommands.value.load()
-  settingsOpenAI.value.load()
-  settingsOllama.value.load()
+  settingsLLM.value.load()
   settingsAdvanced.value.load()
   document.querySelector('#settings').showModal()
   showActiveTab()
