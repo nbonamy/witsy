@@ -1,5 +1,12 @@
 
+# This Makefile is used to build the electron app for different platforms.
+# On MacOS, you need to have the codesigning identity in the .env file.
+# Check available identities with `security find-identity -v -p codesigning`
+# The .env file should have the following line:
+# IDENTITY="Developer ID Application: Your Name (XXXXXXXXXX)"
+
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
+IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
 
 default: mac-arm64
 
@@ -9,13 +16,13 @@ clean:
 mac-arm64:
 	-rm -rf out/*darwin-arm64*
 	npx electron-forge package -p darwin -a arm64
-	codesign --force --deep --sign - "out/Witty AI-darwin-arm64/Witty AI.app"
+	source .env ; codesign --force --deep --sign $(IDENTITY) "out/Witty AI-darwin-arm64/Witty AI.app"
 	cd out ; zip -r Witty_AI-darwin-arm64.zip "Witty AI-darwin-arm64/"
 
 mac-x64:
 	-rm -rf out/*darwin-x64*
 	npx electron-forge package -p darwin -a x64
-	codesign --force --deep --sign - "out/Witty AI-darwin-x64/Witty AI.app"
+	source .env ; codesign --force --deep --sign $(IDENTITY) "out/Witty AI-darwin-x64/Witty AI.app"
 	cd out ; zip -r Witty_AI-darwin-x64.zip "Witty AI-darwin-x64/"
 
 mac: mac-arm64 mac-x64
