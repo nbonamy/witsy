@@ -70,7 +70,7 @@ export default class {
     if (this.chat === null) {
       this.chat = new Chat()
       this.chat.setEngineModel(engine, model)
-      this.chat.addMessage(new Message('system', this.getSystemInstructions()))
+      this.chat.addMessage(new Message('system', this.getLocalizedInstructions(this.config.instructions.default)))
       if (opts.save == null || opts.save !== false) {
         store.chats.push(this.chat)
         store.saveHistory()
@@ -189,7 +189,7 @@ export default class {
 
     // build messages
     let messages = [
-      new Message('system', this.config.instructions.titling),
+      new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
       this.chat.messages[1],
       this.chat.messages[2]
     ]
@@ -221,8 +221,8 @@ export default class {
     return messages
   }
 
-  getSystemInstructions() {
-    let instr = this.config.instructions.default
+  getLocalizedInstructions(instructions) {
+    let instr = instructions
     if (!this.config.general.language) return instr
     return instr + ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
   }
