@@ -128,15 +128,7 @@ form .group input[type="range"] + datalist option {
   margin-top: 6px;
 }
 
-form .subgroup {
-  flex: 1;
-}
-
-form .subgroup span, form .subgroup a {
-  font-size: 10pt;
-}
-
-form .subgroup span, form .subgroup a {
+form .group span, form .group a {
   display: inline-block;
   margin-top: 4px;
   font-size: var(--form-font-size);
