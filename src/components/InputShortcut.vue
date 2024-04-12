@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import process from 'process'
 import { ipcRenderer } from 'electron'

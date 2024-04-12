@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'

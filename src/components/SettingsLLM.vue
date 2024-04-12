@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import { ref, computed, nextTick } from 'vue'
 import { availableEngines } from '../services/llm'
