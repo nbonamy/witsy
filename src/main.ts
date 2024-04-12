@@ -4,10 +4,10 @@ import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import log from 'electron-log/main';
 
-import * as config from './config';
-import * as file from './file';
-import * as shortcuts from './shortcuts';
-import * as window from './window';
+import * as config from './main/config';
+import * as file from './main/file';
+import * as shortcuts from './main/shortcuts';
+import * as window from './main/window';
 import * as commander from './automations/commander';
 
 // first-thing: single instance

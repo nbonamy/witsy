@@ -2,12 +2,12 @@
 import { Command } from '../index.d'
 import { Configuration } from '../config.d'
 import { App, BrowserWindow, clipboard, Notification } from 'electron'
-import { settingsFilePath, loadSettings } from '../config'
+import { settingsFilePath, loadSettings } from '../main/config'
+import * as window from '../main/window'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
-import * as window from '../window'
 
 const buildLLm = (config: Configuration, engine:string) => {
 

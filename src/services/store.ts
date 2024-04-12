@@ -2,7 +2,7 @@
 import { Store } from '../index.d'
 import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
-import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../config'
+import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../main/config'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 import path from 'path'
@@ -132,7 +132,7 @@ const patchHistory = (jsonChats: any[]) => {
 
   try {
     for (const jsonChat of jsonChats) {
-      const chat = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
+      const chat: any = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
       if (chat) {
         if (jsonChat.deleted) {
           store.chats = store.chats.filter((chat) => chat.uuid !== jsonChat.uuid)
