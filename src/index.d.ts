@@ -80,6 +80,9 @@ interface LlmCompletionOpts {
   save?: boolean
   attachment?: Attachment
   route?: boolean
+  size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792' | null
+  style?: 'vivid' | 'natural' | null
+  n?: number
 }
 
 interface LLmCompletionPayload {

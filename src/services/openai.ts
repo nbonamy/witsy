@@ -108,7 +108,10 @@ export default class extends LlmEngine {
     const response = await this.client.images.generate({
       model: model,
       prompt: prompt,
-      n:1,
+      response_format: 'b64_json',
+      size: opts?.size,
+      style: opts?.style,
+      n: opts?.n || 1,
     })
 
     // return an object
@@ -117,6 +120,7 @@ export default class extends LlmEngine {
       original_prompt: prompt,
       revised_prompt: response.data[0].revised_prompt,
       url: response.data[0].url,
+      content: response.data[0].b64_json,
     }
 
   }

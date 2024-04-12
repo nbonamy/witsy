@@ -35,7 +35,6 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] Image placeholder while downloading
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
@@ -43,6 +42,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## DONE
 
+- [x] Image generation as b64_json
 - [x] Text-to-speech
 - [x] Log file (electron-log)
 - [x] Conversation language settings

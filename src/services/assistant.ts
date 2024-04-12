@@ -1,12 +1,13 @@
 
-import { Attachment, Configuration, LlmCompletionOpts } from '../index.d'
+import { Attachment, LlmCompletionOpts } from '../index.d'
+import { Configuration } from '../config.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
 import OpenAI from './openai'
 import Ollama from './ollama'
 import { store } from './store'
-import { download } from './download'
+import { download, saveFileContents } from './download'
 import { countryCodeToName } from './i18n'
 
 export default class {
@@ -157,12 +158,19 @@ export default class {
       // generate 
       const response = await this.llm.image(prompt, opts)
 
-      // we need to download it locally
-      let filename = download(response.url)
-      filename = `file://${filename}`
+      // we need to download/write it locally
+      let filename = null
+      if (response.url) {
+        filename = download(response.url)
+      } else if (response.content) {
+        filename = saveFileContents('png', response.content)
+      }
+      if (!filename) {
+        throw new Error('Could not save image')
+      }
 
       // ssve
-      this.chat.lastMessage().setImage(filename)
+      this.chat.lastMessage().setImage(`file://${filename}`)
       callback?.call(filename)
 
     } catch (error) {
