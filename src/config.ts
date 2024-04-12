@@ -1,9 +1,9 @@
 
+import { anyDict } from './index.d'
 import { App } from 'electron'
 import defaultSettings from '../defaults/settings.json'
 import path from 'path'
 import fs from 'fs'
-import { anyDict } from './index.d'
 
 export const settingsFilePath = (app: App) => {
   const userDataPath = app.getPath('userData')

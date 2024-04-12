@@ -1,8 +1,8 @@
 
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import Message from '../models/message'
 import { Stream } from 'openai/streaming'
 

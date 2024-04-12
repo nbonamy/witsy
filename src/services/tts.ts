@@ -1,6 +1,6 @@
 
-import OpenAI from 'openai'
 import { Configuration } from '../index.d'
+import OpenAI from 'openai'
 
 export default class {
 
