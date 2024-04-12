@@ -8,11 +8,13 @@
 import { computed } from 'vue'
 import logoOpenAI from '../../assets/openai.svg'
 import logoOllama from '../../assets/ollama.svg'
+import logoAnthropic from '../../assets/anthropic.svg'
 import logoMistralAI from '../../assets/mistralai.svg'
 
 const logos = {
   openai: logoOpenAI,
   ollama: logoOllama,
+  anthropic: logoAnthropic,
   mistralai: logoMistralAI,
 }
 

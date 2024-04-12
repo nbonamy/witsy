@@ -6,6 +6,8 @@ import Message from '../models/message'
 import LlmEngine from './engine'
 import OpenAI from './openai'
 import Ollama from './ollama'
+import MistralAI from './mistralai'
+import Anthropic from './anthropic'
 import { store } from './store'
 import { download, saveFileContents } from './download'
 import { countryCodeToName } from './i18n'
@@ -32,6 +34,10 @@ export default class {
   initLlm(engine: string) {
     if (engine === 'ollama') {
       return new Ollama(this.config)
+    } else if (engine === 'anthropic') {
+      return new Anthropic(this.config)
+    } else if (engine === 'mistralai') {
+      return new MistralAI(this.config)
     } else if (store.config.engines.openai.apiKey) {
       return new OpenAI(this.config)
     } else {

@@ -42,7 +42,7 @@ export default class implements Chat {
     this.model = obj.model
     this.messages = []
     for (const msg of obj.messages) {
-      const message = new Message('', msg)
+      const message = new Message(msg.role, msg)
       this.messages.push(message)
     }
   }
@@ -64,7 +64,7 @@ export default class implements Chat {
       //console.log(`patching ${obj.messages.length - this.messages.length} messages`)
       const messages = obj.messages.slice(this.messages.length)
       for (const msg of messages) {
-        const message = new Message('', msg)
+        const message = new Message(msg.role, msg)
         this.messages.push(message)
         patched = true
       }
