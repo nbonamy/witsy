@@ -1,5 +1,6 @@
 
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Configuration } from '../config.d'
 import { store } from './store'
 import LlmEngine from './engine'
 import ollama from 'ollama'
