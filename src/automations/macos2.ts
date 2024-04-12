@@ -1,7 +1,6 @@
 
-// @ts-ignore 
 import applescript from 'applescript';
-import { Automator } from '../index'
+import { Automator } from '../index.d'
 
 let editCopy: [string,string] = null
 let editPaste: [string,string] = null
@@ -125,7 +124,7 @@ export default class implements Automator {
 
     // now run
     console.log('Finding menus...')
-    let result = await this._runScript(script);
+    const result = await this._runScript(script);
     editCopy = [ result[0], result[1] ]
     editPaste = [ result[0], result[2] ]
     console.log('Menus found:', editCopy, editPaste)

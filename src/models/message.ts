@@ -1,5 +1,5 @@
 
-import { Attachment } from 'src'
+import { Attachment } from '../index.d'
 import { v4 as uuidv4 } from 'uuid'
 
 export default class Message {
@@ -53,7 +53,7 @@ export default class Message {
     this.content = url
   }
 
-  appendText(chunk: string, done: boolean = false) {
+  appendText(chunk: string, done = false) {
     if (this.type === 'text' && chunk) {
       if (!this.content) this.content = ''
       this.content = this.content + chunk

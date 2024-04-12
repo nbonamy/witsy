@@ -1,12 +1,8 @@
 
-// @ts-ignore 
 import applescript from 'applescript';
-import { Automator } from '../index'
+import { Automator } from '../index.d'
 
 export default class implements Automator {
-
-  constructor() {
-  }
 
   async moveCaretBelow() {
 

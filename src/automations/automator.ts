@@ -1,5 +1,5 @@
 
-import { Automator } from '../index'
+import { Automator } from '../index.d'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
 import WindowsAutomator from './windows'

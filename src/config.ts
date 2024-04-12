@@ -3,7 +3,7 @@ import { App } from 'electron'
 import defaultSettings from '../defaults/settings.json'
 import path from 'path'
 import fs from 'fs'
-import { anyDict } from './index'
+import { anyDict } from './index.d'
 
 export const settingsFilePath = (app: App) => {
   const userDataPath = app.getPath('userData')
@@ -32,11 +32,21 @@ const mergeConfig = (defaults: anyDict, overrides: anyDict) => {
 const buildConfig = (defaults: anyDict, overrides: anyDict) => {
 
   // 1st merge
-  let config = mergeConfig(defaults, overrides)
+  const config = mergeConfig(defaults, overrides)
 
   // add some methods
   config.getActiveModel = () => {
     return config[config.llm.engine].model.chat
+  }
+
+  // backwards compatibility
+  if (config.openai || config.ollama) {
+    config.engines = {
+      openai: config.openai,
+      ollama: config.ollama
+    }
+    delete config.openai
+    delete config.ollama
   }
 
   // done
@@ -60,8 +70,8 @@ export const saveSettings = (filepath:string, config: anyDict) => {
   try {
 
     // remove instructions that are the same as the default
-    let settings = JSON.parse(JSON.stringify(config))
-    for (let instr in settings.instructions) {
+    const settings = JSON.parse(JSON.stringify(config))
+    for (const instr in settings.instructions) {
       if (settings.instructions[instr as keyof typeof settings.instructions] === defaultSettings.instructions[instr as keyof typeof defaultSettings.instructions]) {
         delete settings.instructions[instr]
       }

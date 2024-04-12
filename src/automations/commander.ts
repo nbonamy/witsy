@@ -1,5 +1,5 @@
 
-import { Configuration, Command } from '../index'
+import { Configuration, Command } from '../index.d'
 import { App, BrowserWindow, clipboard, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../config'
 import OpenAI from '../services/openai'
@@ -13,7 +13,7 @@ const buildLLm = (config: Configuration, engine:string) => {
   // build llm
   if (engine === 'ollama') {
     return new Ollama(config)
-  } else if (config.openai.apiKey) {
+  } else if (config.engines.openai.apiKey) {
     return new OpenAI(config)
   } else {
     return null
@@ -27,7 +27,7 @@ const promptLlm = (config: Configuration, engine: string, model: string, prompt:
   const llm = buildLLm(config, engine)
 
   // build messages
-  let messages = [
+  const messages = [
     new Message('user', prompt)
   ]
 
@@ -86,7 +86,9 @@ export const prepareCommand = async () => {
       }).show()
       console.log('No text selected');
       window.restoreWindows();
-    } catch {}
+    } catch (error) {
+      console.error('Error showing notification', error);
+    }
     return;
   }
 
@@ -101,7 +103,7 @@ export const prepareCommand = async () => {
 export const runCommand = async (app: App, text: string, command: Command) => {
 
   //
-  let result = {
+  const result = {
     text: text,
     prompt: null as string | null,
     response: null as string | null,

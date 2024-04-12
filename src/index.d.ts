@@ -1,81 +1,81 @@
 
 
 import Chat from './models/chat'
-import ChatCompletion from 'openai'
+
+declare module 'applescript'
 
 type anyDict = {[key: string]: any}
 type strDict = {[key: string]: string}
 
-import { BrowserWindowConstructorOptions } from 'electron';
+import { BrowserWindowConstructorOptions } from 'electron'
 
 interface Configuration {
-  general: GeneralConfig;
-  llm: LLMConfig;
-  instructions: InstructionsConfig;
-  appearance: AppearanceConfig;
-  shortcuts: ShortcutsConfig;
-  openai: ProviderConfig;
-  ollama: ProviderConfig;
-  getActiveModel: () => string;
+  general: GeneralConfig
+  llm: LLMConfig
+  instructions: InstructionsConfig
+  appearance: AppearanceConfig
+  shortcuts: ShortcutsConfig
+  engines: {[key:string]: EngineConfig}
+  getActiveModel: () => string
 }
 
 interface GeneralConfig {
-  keepRunning: boolean;
-  language: string;
+  keepRunning: boolean
+  language: string
 }
 
 interface LLMConfig {
-  engine: string;
-  autoVisionSwitch: boolean;
-  conversationLength: number;
+  engine: string
+  autoVisionSwitch: boolean
+  conversationLength: number
 }
 
 interface InstructionsConfig {
-  default: string;
-  routing: string;
-  titling: string;
+  default: string
+  routing: string
+  titling: string
 }
 
 interface AppearanceConfig {
-  chat: ChatAppearance;
+  chat: ChatAppearance
 }
 
 interface ChatAppearance {
-  theme: string;
-  fontSize: number;
+  theme: string
+  fontSize: number
 }
 
 interface ShortcutsConfig {
-  chat: Shortcut;
-  command: Shortcut;
+  chat: Shortcut
+  command: Shortcut
 }
 
-interface ProviderConfig {
-  apiKey?: string;
-  models: ModelsConfig;
-  model: ModelConfig;
-  tts?: TTSConfig;
+interface EngineConfig {
+  apiKey?: string
+  models: ModelsConfig
+  model: ModelConfig
+  tts?: TTSConfig
 }
 
 interface Model {
-  id: string;
-  name: string;
-  meta: any;
+  id: string
+  name: string
+  meta: any
 }
 
 interface ModelsConfig {
-  chat: Model[];
-  image: Model[];
+  chat: Model[]
+  image?: Model[]
 }
 
 interface ModelConfig {
-  chat: string;
-  image: string;
+  chat: string
+  image: string
 }
 
 interface TTSConfig {
-  model: string;
-  voice: string;
+  model: string
+  voice: string
 }
 
 interface Command {
@@ -91,9 +91,9 @@ interface Command {
 }
 
 interface Automator {
-  moveCaretBelow(): Promise<void>;
-  copySelectedText(): Promise<void>;
-  pasteText(): Promise<void>;
+  moveCaretBelow(): Promise<void>
+  copySelectedText(): Promise<void>
+  pasteText(): Promise<void>
 }
 
 interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
@@ -115,26 +115,26 @@ interface ShortcutCallbacks {
 }
 
 interface Store {
-  userDataPath: string;
-  commands: Command[];
-  config: Configuration;
-  chats: Chat[];
-  pendingAttachment: string;
-  saveHistory?(): void;
-  saveSettings?(): void;
-  load?(): Promise<void>;
-  dump?(): void;
+  userDataPath: string
+  commands: Command[]
+  config: Configuration
+  chats: Chat[]
+  pendingAttachment: string
+  saveHistory?(): void
+  saveSettings?(): void
+  load?(): Promise<void>
+  dump?(): void
 }
 
 interface LlmResponse {
-  type: string;
-  content?: string;
-  original_prompt?: string;
-  revised_prompt?: string;
-  url?: string;
+  type: string
+  content?: string
+  original_prompt?: string
+  revised_prompt?: string
+  url?: string
 }
 
-type LlmStream = AsyncGenerator|ChatCompletion
+type LlmStream = AsyncGenerator|Stream
 
 interface Attachment {
   type: string

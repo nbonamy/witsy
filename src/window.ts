@@ -2,7 +2,7 @@
 import path from 'node:path';
 import process from 'node:process';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, screen, shell } from 'electron';
-import { CreateWindowOpts, strDict } from './index';
+import { CreateWindowOpts, strDict } from './index.d';
 import Store from 'electron-store';
 import { wait } from './utils';
 
@@ -56,9 +56,9 @@ const createWindow = (opts: CreateWindowOpts = {}) => {
   } else {
 
     // build query params
-    let queryParams: strDict = {};
+    const queryParams: strDict = {};
     if (opts.queryParams) {
-      for (let key in opts.queryParams) {
+      for (const key in opts.queryParams) {
         queryParams[key] = encodeURIComponent(opts.queryParams[key]);
       }
     }
@@ -109,9 +109,10 @@ export const openMainWindow = () => {
       }
       mainWindow.focus();
       return
-    } catch {
+    } catch (error) {
+      console.error('Error while showing main window', error);
     }
-  };
+  }
 
   // else open a new one
   mainWindow = createWindow({
@@ -152,7 +153,7 @@ export const openMainWindow = () => {
 export const openChatWindow = (params: strDict) => {
 
   // always open
-  let chatWindow = createWindow({
+  const chatWindow = createWindow({
     width: 600,
     height: 600,
     ...titleBarOptions,
@@ -181,15 +182,17 @@ export const hideActiveWindows = async () => {
   windowsToRestore = [];
   try {
     console.log('Hiding active windows');
-    let windows = BrowserWindow.getAllWindows();
-    for (let window of windows) {
+    const windows = BrowserWindow.getAllWindows();
+    for (const window of windows) {
       if (!window.isDestroyed() && window.isVisible() && !window.isFocused() && !window.isMinimized()) {
         windowsToRestore.push(window);
         window.hide();
       }
     }
     await releaseFocus();
-  } catch {}
+  } catch (error) {
+    console.error('Error while hiding active windows', error);
+  }
 
 }
 
@@ -199,12 +202,14 @@ export const restoreWindows = () => {
     if (windowsToRestore.includes(mainWindow)) {
       mainWindow.showInactive();
     }
-    for (let window of windowsToRestore) {
+    for (const window of windowsToRestore) {
       try {
         if (window != mainWindow) {
           window.showInactive();
         }
-      } catch {}
+      } catch (error) {
+        console.error('Error while restoring window', error);
+      }
     }
     windowsToRestore = [];
   }
@@ -213,9 +218,11 @@ export const restoreWindows = () => {
 let commandPalette:BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
-    commandPalette.close()
+    commandPalette?.close()
     await wait();
-  } catch {}
+  } catch (error) {
+    console.error('Error while closing command palette', error);
+  }
 };
 
 export const openCommandPalette = async (text:string) => {
@@ -254,10 +261,12 @@ export const openCommandPalette = async (text:string) => {
 let waitingPanel:BrowserWindow = null;
 export const closeWaitingPanel = async (destroy?:boolean) => {
   try {
-    if (destroy) waitingPanel.destroy()
-    else waitingPanel.close()
+    if (destroy) waitingPanel?.destroy()
+    else waitingPanel?.close()
     await wait();
-  } catch {}
+  } catch (error) {
+    console.error('Error while closing waiting panel', error);
+  }
 }
 
 export const openWaitingPanel = () => {

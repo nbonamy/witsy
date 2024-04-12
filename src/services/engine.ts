@@ -1,7 +1,7 @@
 
-import Message from 'src/models/message'
+import Message from '../models/message'
 import { getFileContents } from './download'
-import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from 'src'
+import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
 
 export default class LlmEngine {
 
@@ -11,6 +11,7 @@ export default class LlmEngine {
     this.config = config
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _isVisionModel(model: string) {
     return false
   }
@@ -28,12 +29,12 @@ export default class LlmEngine {
   }
 
   _findModel(models: Model[], filters: string[]) {
-    for (let filter of filters) {
+    for (const filter of filters) {
       if (filter.startsWith('*')) {
-        let matches = models.filter((m) => !m.id.includes(filter.substring(1)))
+        const matches = models.filter((m) => !m.id.includes(filter.substring(1)))
         if (matches.length > 0) return matches[0]
       } else {
-        let model = models.find((m) => m.id == filter)
+        const model = models.find((m) => m.id == filter)
         if (model) return model
       }
     }
@@ -51,7 +52,7 @@ export default class LlmEngine {
 
       let attached = false
       return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
-        let payload = { role: msg.role, content: msg.content }
+        const payload = { role: msg.role, content: msg.content }
         if (!attached && msg.attachment && this._isVisionModel(model)) {
           
           // tis can be a loaded chat where contents is not present
@@ -73,26 +74,32 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async stop(stream: any): Promise<void> {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   processChunk(chunk: any): any {
     throw new Error('Not implemented')
   }

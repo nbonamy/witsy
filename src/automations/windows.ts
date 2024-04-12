@@ -1,11 +1,8 @@
 
-import { Automator } from '../index'
+import { Automator } from '../index.d'
 import { runVbs } from '@el3um4s/run-vbs'
 
 export default class implements Automator {
-
-  constructor() {
-  }
 
   async moveCaretBelow() {
 

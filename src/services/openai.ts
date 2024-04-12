@@ -2,8 +2,8 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index'
-import Message from 'src/models/message'
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import Message from '../models/message'
 import { Stream } from 'openai/streaming'
 
 const visionModels = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
@@ -15,7 +15,7 @@ export default class extends LlmEngine {
   constructor(config: Configuration) {
     super(config)
     this.client = new OpenAI({
-      apiKey: config.openai.apiKey,
+      apiKey: config.engines.openai.apiKey,
       dangerouslyAllowBrowser: true
     })
   }
@@ -40,7 +40,7 @@ export default class extends LlmEngine {
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call
-    let model = opts?.model || this.config.openai.model.chat
+    const model = opts?.model || this.config.engines.openai.model.chat
     console.log(`[openai] prompting model ${model}`)
     const response = await this.client.chat.completions.create({
       model: model,
@@ -57,9 +57,9 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.openai.model.chat
+    let model = opts?.model || this.config.engines.openai.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.config.openai.models.chat, visionModels)
+      const visionModel = this._findModel(store.config.engines.openai.models.chat, visionModels)
       if (visionModel) {
         model = visionModel.id
       }
@@ -67,7 +67,7 @@ export default class extends LlmEngine {
 
     // call
     console.log(`[openai] prompting model ${model}`)
-    let stream = this.client.chat.completions.create({
+    const stream = this.client.chat.completions.create({
       model: model,
       messages: this._buildPayload(thread, model) as Array<any>,
       stream: true,
@@ -98,10 +98,11 @@ export default class extends LlmEngine {
     ]
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     
     // call
-    let model = this.config.openai.model.image
+    const model = this.config.engines.openai.model.image
     console.log(`[openai] prompting model ${model}`)
     const response = await this.client.images.generate({
       model: model,

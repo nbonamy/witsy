@@ -40,8 +40,8 @@ export default class Chat {
     this.engine = obj.engine || 'openai'
     this.model = obj.model
     this.messages = []
-    for (let msg of obj.messages) {
-      let message = new Message('', msg)
+    for (const msg of obj.messages) {
+      const message = new Message('', msg)
       this.messages.push(message)
     }
   }
@@ -61,9 +61,9 @@ export default class Chat {
     // messages
     if (this.messages.length < obj.messages.length) {
       //console.log(`patching ${obj.messages.length - this.messages.length} messages`)
-      let messages = obj.messages.slice(this.messages.length)
-      for (let msg of messages) {
-        let message = new Message('', msg)
+      const messages = obj.messages.slice(this.messages.length)
+      for (const msg of messages) {
+        const message = new Message('', msg)
         this.messages.push(message)
         patched = true
       }
@@ -96,7 +96,7 @@ export default class Chat {
   }
 
   delete() {
-    for (let message of this.messages) {
+    for (const message of this.messages) {
       if (message.type === 'image' && typeof message.content === 'string') {
         ipcRenderer.send('delete', { path: message.content })
       }
