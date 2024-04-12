@@ -138,3 +138,16 @@ interface Attachment {
   contents: string
   downloaded: boolean
 }
+
+interface LlmCompletionOpts {
+  engine?: string
+  model?: string
+  save?: boolean
+  attachment?: Attachment
+  route?: boolean
+}
+
+interface LLmCompletionPayload {
+  content: any
+  images?: string[]
+}

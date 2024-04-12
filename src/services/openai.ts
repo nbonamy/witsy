@@ -2,7 +2,7 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
-import { Configuration, LlmResponse } from 'src'
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse } from 'src'
 import Message from 'src/models/message'
 import { Stream } from 'openai/streaming'
 
@@ -37,7 +37,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async complete(thread: Message[], opts: {[key:string]:any}): Promise<LlmResponse> {
+  async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call
     let model = opts?.model || this.config.openai.model.chat
@@ -54,7 +54,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async stream(thread: Message[], opts: {[key:string]:any}): Promise<any> {
+  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<any> {
 
     // model: switch to vision if needed
     let model = opts?.model || this.config.openai.model.chat
@@ -89,7 +89,7 @@ export default class extends LlmEngine {
     }
   }
 
-  addImageToPayload(message: Message, payload: any) {
+  addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     payload.content = [
       { type: 'text', text: message.content },
       { type: 'image_url', image_url: {
@@ -98,7 +98,7 @@ export default class extends LlmEngine {
     ]
   }
 
-  async image(prompt: string, opts: {[key:string]:any}): Promise<LlmResponse> {
+  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     
     // call
     let model = this.config.openai.model.image

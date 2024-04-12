@@ -1,7 +1,7 @@
 
 import Message from 'src/models/message'
 import { getFileContents } from './download'
-import { Configuration, Model, LlmResponse } from 'src'
+import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload } from 'src'
 
 export default class LlmEngine {
 
@@ -73,19 +73,19 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
-  async complete(thread: Message[], opts: {[key:string]:any}): Promise<LlmResponse> {
+  async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
     throw new Error('Not implemented')
   }
 
-  async stream(thread: Message[], opts: {[key:string]:any}): Promise<any> {
+  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<any> {
     throw new Error('Not implemented')
   }
 
-  async image(prompt: string, opts: {[key:string]:any}): Promise<LlmResponse> {
+  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     throw new Error('Not implemented')
   }
 
-  addImageToPayload(message: Message, payload: any) {
+  addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     throw new Error('Not implemented')
   }
 

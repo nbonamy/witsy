@@ -2,7 +2,7 @@
   <component :is="currentView" :extra="queryParams" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import process from 'process'
 import { ref, computed, onMounted } from 'vue'

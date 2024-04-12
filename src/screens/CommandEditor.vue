@@ -52,7 +52,7 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, watch } from 'vue'
 import { store } from '../services/store'
