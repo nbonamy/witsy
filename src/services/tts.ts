@@ -1,6 +1,6 @@
 
 import OpenAI from 'openai'
-import { Configuration } from 'src';
+import { Configuration } from '../index.d'
 
 export default class {
 
@@ -10,7 +10,7 @@ export default class {
   constructor(config: Configuration) {
     this.config = config
     this.client = new OpenAI({
-      apiKey: config.openai.apiKey,
+      apiKey: config.engines.openai.apiKey,
       dangerouslyAllowBrowser: true
     })
   }
@@ -19,8 +19,8 @@ export default class {
     
     // call
     const response = await this.client.audio.speech.create({
-      model: opts.model || this.config.openai.tts.model || 'tts-1',
-      voice: opts.voice || this.config.openai.tts.voice || 'alloy',
+      model: opts.model || this.config.engines.openai.tts.model || 'tts-1',
+      voice: opts.voice || this.config.engines.openai.tts.voice || 'alloy',
       input: text
     });
 

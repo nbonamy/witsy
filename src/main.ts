@@ -38,14 +38,13 @@ const registerShortcuts = () => {
 
 //  Tray icon 
 
-// @ts-ignore
+// eslint-disable-next-line import/no-unresolved
 import trayIconMacos from '../assets/bulbTemplate.png?asset';
-// @ts-ignore
+// eslint-disable-next-line import/no-unresolved
 import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
 const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
 let tray: Tray = null;
-let globalShortcuts = null;
 const buildTrayMenu = () => {
 
   // load the config
@@ -75,7 +74,7 @@ app.whenReady().then(() => {
 
   // create the main window
   // TODO detect when lauched from login item
-  let hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
+  const hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
   if (!hidden) {
     log.info('Creating initial main window');
     window.openMainWindow();
@@ -148,14 +147,14 @@ ipcMain.on('get-run-at-login', (event) => {
   event.returnValue = app.getLoginItemSettings();
 });
 
-ipcMain.on('set-run-at-login', (event, value) => {
+ipcMain.on('set-run-at-login', (_, value) => {
   app.setLoginItemSettings({
     openAtLogin: value,
     openAsHidden: true,
   });
 });
 
-ipcMain.on('register-shortcuts', (event, payload) => {
+ipcMain.on('register-shortcuts', () => {
   registerShortcuts();
   tray.setContextMenu(Menu.buildFromTemplate(buildTrayMenu()));
 });
@@ -164,7 +163,7 @@ ipcMain.on('unregister-shortcuts', () => {
   shortcuts.unregisterShortcuts();
 });
 
-ipcMain.on('fullscreen', (event, flag) => {
+ipcMain.on('fullscreen', (_, flag) => {
   window.mainWindow.setFullScreen(flag);
 });
 
@@ -188,7 +187,7 @@ ipcMain.on('download', async (event, payload) => {
   event.returnValue = await file.downloadFile(app, payload);
 });
 
-ipcMain.on('close-command-palette', async (event) => {
+ipcMain.on('close-command-palette', async () => {
   window.closeCommandPalette();
   window.restoreWindows();
 });
@@ -197,7 +196,7 @@ ipcMain.on('run-command', async (event, payload) => {
   const args = JSON.parse(payload);
   await window.closeCommandPalette();
   await window.releaseFocus();
-  let result = await commander.runCommand(app, args.text, args.command);
+  const result = await commander.runCommand(app, args.text, args.command);
   window.restoreWindows();
   if (result?.chatWindow) {
     result.chatWindow.show();

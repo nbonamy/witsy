@@ -1,13 +1,10 @@
 
-import { Automator } from '../index'
+import { Automator } from '../index.d'
 //import { keyTap } from 'robotjs';
 //import { wait } from './utils';
 
 export default class RobotAutomator implements Automator {
   
-  constructor() {
-  }
-
   async moveCaretBelow() {
     // keyTap("right");
     // keyTap("enter");

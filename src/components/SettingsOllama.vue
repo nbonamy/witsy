@@ -24,8 +24,8 @@ const chat_model = ref(null)
 const chat_models = ref([])
 
 const load = () => {
-  chat_models.value = store.config.ollama.models.chat || []
-  chat_model.value = store.config.ollama?.model?.chat || ''
+  chat_models.value = store.config.engines.ollama.models.chat || []
+  chat_model.value = store.config.engines.ollama?.model?.chat || ''
 }
 
 const onRefresh = async () => {
@@ -57,7 +57,7 @@ const getModels = async () => {
 }
 
 const save = () => {
-  store.config.ollama.model.chat = chat_model.value
+  store.config.engines.ollama.model.chat = chat_model.value
   store.saveSettings()
 }
 

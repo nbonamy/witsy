@@ -1,5 +1,5 @@
 
-import { Attachment, Configuration, LlmCompletionOpts } from 'src'
+import { Attachment, Configuration, LlmCompletionOpts } from '../index.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
@@ -31,7 +31,7 @@ export default class {
   initLlm(engine: string) {
     if (engine === 'ollama') {
       return new Ollama(this.config)
-    } else if (store.config.openai.apiKey) {
+    } else if (store.config.engines.openai.apiKey) {
       return new OpenAI(this.config)
     } else {
       return null
@@ -45,19 +45,19 @@ export default class {
   async route(prompt: string) {
     
     // check if routing possibble
-    let routingModel = this.llm.getRountingModel()
+    const routingModel = this.llm.getRountingModel()
     if (routingModel === null) {
       return null
     }
     
     // build messages
-    let messages = [
+    const messages = [
       new Message('system', this.config.instructions.routing),
       new Message('user', prompt)
     ]
 
     // now get it
-    let route = await this.llm.complete(messages, { model: routingModel })
+    const route = await this.llm.complete(messages, { model: routingModel })
     return route.content
   }
 
@@ -96,7 +96,7 @@ export default class {
     }
 
     // add message
-    let message = new Message('user', prompt)
+    const message = new Message('user', prompt)
     message.attachFile(opts.attachment)
     this.chat.addMessage(message)
 
@@ -131,7 +131,7 @@ export default class {
     try {
 
       this.stream = await this.llm.stream(this._getRelevantChatMessages(), opts)
-      for await (let chunk of this.stream) {
+      for await (const chunk of this.stream) {
         const { text, done } = this.llm.processChunk(chunk)
         this.chat.lastMessage().appendText(text, done)
         callback?.call(text)
@@ -155,7 +155,7 @@ export default class {
     try {
 
       // generate 
-      let response = await this.llm.image(prompt, opts)
+      const response = await this.llm.image(prompt, opts)
 
       // we need to download it locally
       let filename = download(response.url)
@@ -195,7 +195,7 @@ export default class {
   async getTitle() {
 
     // build messages
-    let messages = [
+    const messages = [
       new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
       this.chat.messages[1],
       this.chat.messages[2]
@@ -203,7 +203,7 @@ export default class {
 
     // now get it
     this.llm = this.initLlm(this.chat.engine)
-    let response = await this.llm.complete(messages, { model: this.chat.model })
+    const response = await this.llm.complete(messages, { model: this.chat.model })
     let title = response.content.trim()
     if (title === '') {
       return this.chat.messages[1].content
@@ -223,13 +223,13 @@ export default class {
 
   _getRelevantChatMessages() {
     const conversationLength = this.config.llm.conversationLength
-    let chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
-    let messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength-1, -1)]
+    const chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
+    const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength-1, -1)]
     return messages
   }
 
   getLocalizedInstructions(instructions: string) {
-    let instr = instructions
+    const instr = instructions
     if (!this.config.general.language) return instr
     return instr + ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
   }

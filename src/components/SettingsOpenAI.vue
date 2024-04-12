@@ -45,11 +45,11 @@ const chat_models = ref([])
 const image_models = ref([])
 
 const load = () => {
-  apiKey.value = store.config.openai?.apiKey || ''
-  chat_models.value = store.config.openai?.models?.chat || []
-  image_models.value = store.config.openai?.models?.image || []
-  chat_model.value = store.config.openai?.model?.chat || ''
-  image_model.value = store.config.openai?.model?.image || ''
+  apiKey.value = store.config.engines.openai?.apiKey || ''
+  chat_models.value = store.config.engines.openai?.models?.chat || []
+  image_models.value = store.config.engines.openai?.models?.image || []
+  chat_model.value = store.config.engines.openai?.model?.chat || ''
+  image_model.value = store.config.engines.openai?.model?.image || ''
 }
 
 const onRefresh = async () => {
@@ -83,15 +83,15 @@ const getOpenAIModels = async () => {
 
 const onKeyChange = () => {
   if (chat_models.value.length === 0 && apiKey.value.length > 0) {
-    store.config.openai.apiKey = apiKey.value
+    store.config.engines.openai.apiKey = apiKey.value
     getOpenAIModels()
   }
   save()
 }
 
 const save = () => {
-  store.config.openai.apiKey = apiKey.value
-  store.config.openai.model = {
+  store.config.engines.openai.apiKey = apiKey.value
+  store.config.engines.openai.model = {
     chat: chat_model.value,
     image: image_model.value
   }

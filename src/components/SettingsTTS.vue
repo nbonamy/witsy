@@ -47,13 +47,13 @@ const voices = [
 ]
 
 const load = () => {
-  voice.value = store.config.openai.tts?.voice || 'tts-1'
-  model.value = store.config.openai.tts?.model || 'alloy'
+  voice.value = store.config.engines.openai.tts?.voice || 'tts-1'
+  model.value = store.config.engines.openai.tts?.model || 'alloy'
 }
 
 const save = () => {
-  store.config.openai.tts.voice = voice.value
-  store.config.openai.tts.model = model.value
+  store.config.engines.openai.tts.voice = voice.value
+  store.config.engines.openai.tts.model = model.value
   store.saveSettings()
 }
 

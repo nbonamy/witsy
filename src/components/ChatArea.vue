@@ -69,8 +69,8 @@ const saved = ref(false)
 //
 
 const engines = computed(() => availableEngines.filter((e) => isEngineReady(e)))
-const models = computed(() => store.config?.[store.config.llm.engine]?.models?.chat)
-const model = computed(() => store.config?.[store.config.llm.engine]?.model?.chat)
+const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
+const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
 
 const isCurrentEngine = (engine) => {
   return store.config.llm.engine === engine
@@ -89,7 +89,7 @@ const onEngine = (engine) => {
 
 const onSelectModel = (ev) => {
   let model = ev.target.value
-  store.config[store.config.llm.engine].model.chat = model
+  store.config.engines[store.config.llm.engine].model.chat = model
   store.saveSettings()
 }
 

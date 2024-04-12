@@ -3,19 +3,21 @@ import { App, BrowserWindow, dialog } from 'electron';
 import { download } from 'electron-dl';
 import path from 'node:path';
 import fs from 'node:fs';
-import { anyDict } from './index';
+import { anyDict } from './index.d';
 
 export const getFileContents = (app: App, payload: string) => {
 
   try {
-    let fileContents = fs.readFileSync(payload);
+    const fileContents = fs.readFileSync(payload);
     if (fileContents) {
       return {
         url: `file://${payload}`,
         contents: fileContents.toString('base64')
       };
     }
-  } catch {}
+  } catch (error) {
+    console.error('Error while reading file', error);
+  }
 
   // default
   return null;
@@ -41,13 +43,15 @@ export const deleteFile = (app: App, payload: anyDict) => {
 export const pickFile = (app: App, payload: anyDict) => {
 
   try {
-    let fileURL = dialog.showOpenDialogSync({
+    const fileURL = dialog.showOpenDialogSync({
       filters: payload?.filters
     });
     if (fileURL) {
       return getFileContents(app, fileURL[0]);
     }
-  } catch {}
+  } catch (error) {
+    console.error('Error while picking file', error);
+  }
 
   // default
   return null;
@@ -58,9 +62,9 @@ export const pickFile = (app: App, payload: anyDict) => {
 export const writeFileContents = (app: App, payload: anyDict) => {
 
   // parse properties
-  let properties = payload.properties ? { ...payload.properties } : {};
+  const properties = payload.properties ? { ...payload.properties } : {};
   let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
+  const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
   if (properties.subdir) {
     defaultPath = path.join(defaultPath, properties.subdir);
     if (!fs.existsSync(defaultPath)) {
@@ -69,7 +73,7 @@ export const writeFileContents = (app: App, payload: anyDict) => {
   }
 
   // destination
-  let destinationURL = path.join(defaultPath, defaultFileName);
+  const destinationURL = path.join(defaultPath, defaultFileName);
 
   // try
   try {
@@ -87,7 +91,7 @@ export const downloadFile = async (app: App, payload: anyDict) => {
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
   let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  let defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
+  const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
   if (properties.subdir) {
     defaultPath = path.join(defaultPath, properties.subdir);
     if (!fs.existsSync(defaultPath)) {
@@ -111,7 +115,7 @@ export const downloadFile = async (app: App, payload: anyDict) => {
   // if file to file, copy
   if (payload.url.startsWith('file://')) {
     try {
-      let src = payload.url.slice(7);
+      const src = payload.url.slice(7);
       //console.log(`copying ${src} to ${destinationURL}`)
       fs.copyFileSync(src, destinationURL);
       return destinationURL;
@@ -122,21 +126,20 @@ export const downloadFile = async (app: App, payload: anyDict) => {
   }
   
   // download
-  let filePath = destinationURL.split(path.sep);
-  let filename = `${filePath.pop()}`;
-  let directory = filePath.join(path.sep);
+  const filePath = destinationURL.split(path.sep);
+  const filename = `${filePath.pop()}`;
+  const directory = filePath.join(path.sep);
   properties = { ...properties, directory, filename };
   //console.log(`downloading ${payload.url} to ${JSON.stringify(properties)}`)
 
   try {
-    // @ts-ignore
     await download(BrowserWindow.getFocusedWindow(),
       payload.url, {
       ...properties,
-      onProgress: (status) => {
+      onProgress: () => {
         //console.log(status);
       },
-      onCompleted: (status) => {
+      onCompleted: () => {
         //console.log(status);
       },
 

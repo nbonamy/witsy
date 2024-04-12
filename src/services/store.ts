@@ -1,10 +1,9 @@
 
 import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
-import { loadSettings as _loadSettings } from '../config'
-import { saveSettings as _saveSettings } from '../config'
+import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../config'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
-import { Store } from 'src'
+import { Store } from '../index.d'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
@@ -64,8 +63,8 @@ const loadHistory = () => {
     historyLoadedSize = fs.statSync(historyFilePath()).size
     const data = fs.readFileSync(historyFilePath(), 'utf-8')
     const jsonChats = JSON.parse(data)
-    for (let jsonChat of jsonChats) {
-      let chat = new Chat(jsonChat)
+    for (const jsonChat of jsonChats) {
+      const chat = new Chat(jsonChat)
       store.chats.push(chat)
     }
   } catch (error) {
@@ -87,9 +86,9 @@ store.saveHistory = () => {
   try {
 
     // we need to srip attchment contents
-    let chats = JSON.parse(JSON.stringify(store.chats))
-    for (let chat of chats) {
-      for (let message of chat.messages) {
+    const chats = JSON.parse(JSON.stringify(store.chats))
+    for (const chat of chats) {
+      for (const message of chat.messages) {
         if (message.attachment) {
           message.attachment.contents = null
         }
@@ -133,7 +132,7 @@ const patchHistory = (jsonChats: any[]) => {
 
   try {
     for (const jsonChat of jsonChats) {
-      let chat = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
+      const chat = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
       if (chat) {
         if (jsonChat.deleted) {
           store.chats = store.chats.filter((chat) => chat.uuid !== jsonChat.uuid)
@@ -142,7 +141,7 @@ const patchHistory = (jsonChats: any[]) => {
           patched = patched || chat.patchFromJson(jsonChat)
         }
       } else {
-        let chat = new Chat(jsonChat)
+        const chat = new Chat(jsonChat)
         store.chats.push(chat)
         patched = true
       }

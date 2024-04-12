@@ -2,7 +2,7 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import ollama from 'ollama'
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from 'src'
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import Message from '../models/message'
 
 const visionModels = ['llava:latest', '*llava']
@@ -14,10 +14,6 @@ export default class extends LlmEngine {
   constructor(config: Configuration) {
     super(config)
     this.client = ollama
-    if (!this.client.chat) {
-      // @ts-ignore
-      this.client = ollama.default
-    }
   }
 
   _isVisionModel(model: string) {
@@ -40,7 +36,7 @@ export default class extends LlmEngine {
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call
-    let model = opts?.model || this.config.ollama.model.chat
+    const model = opts?.model || this.config.engines.ollama.model.chat
     console.log(`[ollama] prompting model ${model}`)
     const response = await this.client.chat({
       model: model,
@@ -58,9 +54,9 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.ollama.model.chat
+    let model = opts?.model || this.config.engines.ollama.model.chat
     if (this._requiresVisionModel(thread, model)) {
-      let visionModel = this._findModel(store.config.ollama.models.chat, visionModels)
+      const visionModel = this._findModel(store.config.engines.ollama.models.chat, visionModels)
       if (visionModel) {
         model = visionModel.id
       }
@@ -68,7 +64,7 @@ export default class extends LlmEngine {
   
     // call
     console.log(`[ollama] prompting model ${model}`)
-    let stream = this.client.chat({
+    const stream = this.client.chat({
       model: model,
       messages: this._buildPayload(thread, model),
       stream: true,
@@ -94,6 +90,7 @@ export default class extends LlmEngine {
     payload.images = [ message.attachment.contents ]
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
     return null    
   }

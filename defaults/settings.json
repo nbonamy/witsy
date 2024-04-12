@@ -31,28 +31,30 @@
       "ctrl": true
     }
   },
-  "openai": {
-    "apiKey": "",
-    "models": {
-      "chat": [],
-      "image": []
+  "engines": {
+    "openai": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "gpt-3.5-turbo",
+        "image": "dall-e-2"
+      },
+      "tts": {
+        "model": "tts-1",
+        "voice": "alloy"
+      }
     },
-    "model": {
-      "chat": "gpt-3.5-turbo",
-      "image": "dall-e-2"
-    },
-    "tts": {
-      "model": "tts-1",
-      "voice": "alloy"
-    }
-  },
-  "ollama": {
-    "models": {
-      "chat": [],
-      "image": []
-    },
-    "model": {
-      "chat": "llama2"
+    "ollama": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "llama2"
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 
-import { Model } from 'src'
+import { Model, EngineConfig } from '../index.d'
 import { store } from './store'
 import OpenAI from './openai'
 import Ollama from './ollama'
@@ -7,16 +7,19 @@ import Ollama from './ollama'
 export const availableEngines = ['openai', 'ollama']
 
 export const isEngineReady = (engine: string) => {
-  return store.config?.[engine as keyof typeof store.config]?.models?.chat?.length > 0
+  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
+  return engineConfig?.models?.chat?.length > 0
 }
 
 export const getEngineChatModels = (engine: string) => {
-  return store.config?.[engine as keyof typeof store.config]?.models?.chat
+  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
+  return engineConfig?.models?.chat
 }
 
 export const getValidModelId = (engine: string, type: string, modelId: string) => {
-  let models: Model[] = store.config?.[engine as keyof typeof store.config]?.models?.[type]
-  let m = models?.find(m => m.id == modelId)
+  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
+  const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
+  const m = models?.find(m => m.id == modelId)
   return m ? modelId : (models?.[0]?.id || null)
 }
 
@@ -44,7 +47,7 @@ export const loadOpenAIModels = async () => {
     console.error('Error listing Ollama models:', error);
   }
   if (!models) {
-    store.config.openai.models = { chat: [], image: [], }
+    store.config.engines.openai.models = { chat: [], image: [], }
     return false
   }
 
@@ -58,14 +61,14 @@ export const loadOpenAIModels = async () => {
     .sort((a, b) => a.name.localeCompare(b.name))
 
   // store
-  store.config.openai.models = {
+  store.config.engines.openai.models = {
     chat: models.filter(model => model.id.startsWith('gpt-')),
     image: models.filter(model => model.id.startsWith('dall-e-'))
   }
 
   // select valid model
-  store.config.openai.model.chat = getValidModelId('openai', 'chat', store.config.openai.model.chat)
-  store.config.openai.model.image = getValidModelId('openai', 'image', store.config.openai.model.image)
+  store.config.engines.openai.model.chat = getValidModelId('openai', 'chat', store.config.engines.openai.model.chat)
+  store.config.engines.openai.model.image = getValidModelId('openai', 'image', store.config.engines.openai.model.image)
 
   // done
   return true
@@ -83,12 +86,12 @@ export const loadOllamaModels = async () => {
     console.error('Error listing OpenAI models:', error);
   }
   if (!models) {
-    store.config.ollama.models = { chat: [], image: [], }
+    store.config.engines.ollama.models = { chat: [], image: [], }
     return false
   }
 
   // store
-  store.config.ollama.models = {
+  store.config.engines.ollama.models = {
     chat: models
     .map(model => { return {
       id: model.model,
@@ -99,7 +102,7 @@ export const loadOllamaModels = async () => {
   }
 
   // select valid model
-  store.config.ollama.model.chat = getValidModelId('ollama', 'chat', store.config.ollama.model.chat)
+  store.config.engines.ollama.model.chat = getValidModelId('ollama', 'chat', store.config.engines.ollama.model.chat)
 
   // done
   return true

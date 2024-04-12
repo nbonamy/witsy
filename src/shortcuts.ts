@@ -1,7 +1,7 @@
 
 import { App, globalShortcut } from 'electron';
 import { settingsFilePath, loadSettings } from './config';
-import { Shortcut, ShortcutCallbacks } from './index';
+import { Shortcut, ShortcutCallbacks } from './index.d';
 
 export const unregisterShortcuts = () => {
   console.info('Unregistering shortcuts')
@@ -62,12 +62,12 @@ const registerShortcut = (shortcut:Shortcut, callback: () => void) => {
   }
   
   // build accelerator
-  let accelerator = shortcutAccelerator(shortcut)
+  const accelerator = shortcutAccelerator(shortcut)
 
   // debug
   console.debug('Registering shortcut', shortcut, accelerator)
 
   // do it
-  globalShortcut.register(accelerator!, callback)
+  globalShortcut.register(accelerator, callback)
 
 };
