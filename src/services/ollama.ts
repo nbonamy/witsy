@@ -6,7 +6,7 @@ import LlmEngine from './engine'
 import ollama from 'ollama'
 import Message from '../models/message'
 
-const visionModels = ['llava:latest', '*llava']
+const visionModels: string[] = ['llava:latest', '*llava']
 
 export default class extends LlmEngine {
 
@@ -25,7 +25,7 @@ export default class extends LlmEngine {
     return null
   }
 
-  async getModels() {
+  async getModels(): Promise<any[]> {
     try {
       const response = await this.client.list()
       return response.models

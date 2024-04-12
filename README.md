@@ -35,6 +35,8 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
+- [ ] Anthropic API integration
+- [ ] Mistral AI API integration
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)

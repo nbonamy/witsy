@@ -2,6 +2,13 @@
 <template>
   <div>
     <div class="group">
+      <label>API key</label>
+      <div class="subgroup">
+        <input type="text" v-model="apiKey" @blur="onKeyChange" /><br />
+        <a href="https://console.mistral.ai/api-keys/" target="_blank">Create an API key</a>
+      </div>
+    </div>
+    <div class="group">
       <label>Chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
         <option v-for="model in chat_models" :key="model.id" :value="model.id">
@@ -17,15 +24,17 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../services/llm'
+import { loadMistralAIModels } from '../services/llm'
 
+const apiKey = ref(null)
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
 
 const load = () => {
-  chat_models.value = store.config.engines.ollama.models.chat || []
-  chat_model.value = store.config.engines.ollama?.model?.chat || ''
+  apiKey.value = store.config.engines.mistralai?.apiKey || ''
+  chat_models.value = store.config.engines.mistralai?.models.chat || []
+  chat_model.value = store.config.engines.mistralai?.model?.chat || ''
 }
 
 const onRefresh = async () => {
@@ -41,7 +50,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadOllamaModels()
+  let success = await loadMistralAIModels()
   if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')
@@ -56,8 +65,17 @@ const getModels = async () => {
 
 }
 
+const onKeyChange = () => {
+  if (chat_models.value.length === 0 && apiKey.value.length > 0) {
+    store.config.engines.mistralai.apiKey = apiKey.value
+    getModels()
+  }
+  save()
+}
+
 const save = () => {
-  store.config.engines.ollama.model.chat = chat_model.value
+  store.config.engines.mistralai.apiKey = apiKey.value
+  store.config.engines.mistralai.model.chat = chat_model.value
   store.saveSettings()
 }
 

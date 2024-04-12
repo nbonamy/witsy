@@ -1,10 +1,11 @@
 
-import { Model, EngineConfig } from '../index.d'
+import { Model, EngineConfig } from '../config.d'
 import { store } from './store'
 import OpenAI from './openai'
 import Ollama from './ollama'
+import MistralAI from './mistralai'
 
-export const availableEngines = ['openai', 'ollama']
+export const availableEngines = ['openai', 'ollama']//, 'mistralai']
 
 export const isEngineReady = (engine: string) => {
   const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
@@ -26,6 +27,7 @@ export const getValidModelId = (engine: string, type: string, modelId: string) =
 export const loadAllModels = async () => {
   await loadModels('openai')
   await loadModels('ollama')
+  await loadModels('mistralai')
 }
 
 export const loadModels = async (engine: string) => {
@@ -33,6 +35,8 @@ export const loadModels = async (engine: string) => {
     await loadOpenAIModels()
   } else if (engine === 'ollama') {
     await loadOllamaModels()
+  } else if (engine === 'mistralai') {
+    await loadMistralAIModels()
   }
 }
 
@@ -103,6 +107,42 @@ export const loadOllamaModels = async () => {
 
   // select valid model
   store.config.engines.ollama.model.chat = getValidModelId('ollama', 'chat', store.config.engines.ollama.model.chat)
+
+  // done
+  return true
+
+}
+
+export const loadMistralAIModels = async () => {
+
+  // load
+  let models: any[] = null
+  try {
+    const mistralai = new MistralAI(store.config)
+    models = await mistralai.getModels()
+  } catch (error) {
+    console.error('Error listing OpenAI models:', error);
+  }
+  if (!models) {
+    store.config.engines.mistralai.models = { chat: [], image: [], }
+    return false
+  }
+
+  console.log(models)
+
+  // store
+  store.config.engines.mistralai.models = {
+    chat: models
+    .map(model => { return {
+      id: model.model,
+      name: model.name,
+      meta: model
+    }})
+    .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.mistralai.model.chat = getValidModelId('mistralai', 'chat', store.config.engines.mistralai.model.chat)
 
   // done
   return true
