@@ -19,7 +19,7 @@ import ChatArea from '../components/ChatArea.vue'
 import Settings from './Settings.vue'
 
 // store
-const Store = require('electron-store');
+import Store from 'electron-store'
 
 // bus
 import useEventBus from '../composables/useEventBus'
