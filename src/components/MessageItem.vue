@@ -22,7 +22,7 @@
       <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
         <BIconClipboard /> {{ copyLabel }}
       </div>
-      <div class="action read" v-if="message.role == 'assistant' && !message.transient" @click="onToggleRead(message)">
+      <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
         <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
         <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
         <span v-else><BIconPlayCircle /> Read</span>
