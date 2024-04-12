@@ -27,7 +27,7 @@ import { store } from '../services/store'
 import { loadAnthropicModels } from '../services/llm'
 
 const apiKey = ref(null)
-//const refreshLabel = ref('Refresh')
+const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
 
