@@ -2,7 +2,7 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse } from 'src'
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index'
 import Message from 'src/models/message'
 import { Stream } from 'openai/streaming'
 
@@ -24,7 +24,7 @@ export default class extends LlmEngine {
     return visionModels.includes(model) || model.includes('vision')
   }
 
-  getRountingModel(): string {
+  getRountingModel(): string|null {
     return 'gpt-3.5-turbo'
   }
 
@@ -54,7 +54,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<any> {
+  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
     let model = opts?.model || this.config.openai.model.chat

@@ -1,8 +1,10 @@
 
-declare module '*png?asset' {
-  const value: any;
-  export = value;
-}
+
+import Chat from './models/chat'
+import ChatCompletion from 'openai'
+
+type anyDict = {[key: string]: any}
+type strDict = {[key: string]: string}
 
 import { BrowserWindowConstructorOptions } from 'electron';
 
@@ -48,7 +50,7 @@ interface ShortcutsConfig {
   command: Shortcut;
 }
 
-interface EngineConfig {
+interface ProviderConfig {
   apiKey?: string;
   models: ModelsConfig;
   model: ModelConfig;
@@ -95,7 +97,7 @@ interface Automator {
 }
 
 interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
-  queryParams?: { [key: string]: string  },
+  queryParams?: strDict,
   hash? : string,
 }
 
@@ -131,6 +133,8 @@ interface LlmResponse {
   revised_prompt?: string;
   url?: string;
 }
+
+type LlmStream = AsyncGenerator|ChatCompletion
 
 interface Attachment {
   type: string

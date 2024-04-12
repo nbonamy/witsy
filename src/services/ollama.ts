@@ -2,8 +2,8 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import ollama from 'ollama'
-import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse } from 'src'
-import Message from 'src/models/message'
+import { Configuration, LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from 'src'
+import Message from '../models/message'
 
 const visionModels = ['llava:latest', '*llava']
 
@@ -24,7 +24,7 @@ export default class extends LlmEngine {
     return visionModels.includes(model) || model.includes('llava')
   }
 
-  getRountingModel(): string {
+  getRountingModel(): string|null {
     return null
   }
 
@@ -55,7 +55,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<any> {
+  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
     let model = opts?.model || this.config.ollama.model.chat
@@ -94,7 +94,7 @@ export default class extends LlmEngine {
     payload.images = [ message.attachment.contents ]
   }
 
-  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
+  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
     return null    
   }
 }

@@ -3,6 +3,7 @@ import { App } from 'electron'
 import defaultSettings from '../defaults/settings.json'
 import path from 'path'
 import fs from 'fs'
+import { anyDict } from './index'
 
 export const settingsFilePath = (app: App) => {
   const userDataPath = app.getPath('userData')
@@ -10,7 +11,7 @@ export const settingsFilePath = (app: App) => {
   return settingsFilePath
 }
 
-const mergeConfig = (defaults: {[key: string]: any}, overrides: {[key: string]: any}) => {
+const mergeConfig = (defaults: anyDict, overrides: anyDict) => {
 
   const result = JSON.parse(JSON.stringify(defaults))
   
@@ -28,7 +29,7 @@ const mergeConfig = (defaults: {[key: string]: any}, overrides: {[key: string]: 
   return result
 }
 
-const buildConfig = (defaults: {[key: string]: any}, overrides: {[key: string]: any}) => {
+const buildConfig = (defaults: anyDict, overrides: anyDict) => {
 
   // 1st merge
   let config = mergeConfig(defaults, overrides)
@@ -55,7 +56,7 @@ export const loadSettings = (filepath:string) => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (filepath:string, config: {[key: string]: any}) => {
+export const saveSettings = (filepath:string, config: anyDict) => {
   try {
 
     // remove instructions that are the same as the default
