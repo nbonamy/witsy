@@ -56,8 +56,12 @@ const onSetPrompt = (message) => {
 }
 
 const onSendPrompt = () => {
-  emitEvent('sendPrompt', prompt.value)
+  let message = prompt.value.trim()
   prompt.value = ''
+  nextTick(() => {
+    autoGrow(input.value)
+    emitEvent('sendPrompt', message)
+  })
 }
 
 const onStopAssistant = () => {
@@ -115,7 +119,7 @@ const onEnter = (event) => {
 
 const autoGrow = (element) => {
   element.style.height = '5px'
-  element.style.height = (element.scrollHeight) + 'px'
+  element.style.height = Math.min(150, element.scrollHeight) + 'px'
 }
 
 </script>
@@ -151,7 +155,8 @@ const autoGrow = (element) => {
 .input textarea {
   border: none;
   resize: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-size: 11.5pt;
   width: 100%;
 } 
