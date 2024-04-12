@@ -1,5 +1,6 @@
 
-import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
+import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
+import { Configuration, Model } from '../config.d'
 import Message from '../models/message'
 import { getFileContents } from './download'
 
