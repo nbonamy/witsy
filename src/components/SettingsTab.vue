@@ -9,7 +9,7 @@
   </li>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import { v4 as uuidv4 } from 'uuid'
 

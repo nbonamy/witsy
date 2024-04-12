@@ -3,7 +3,7 @@
   <img :src="logo" class="logo" :class="[ engine, background ? 'bg' : '' ]" />
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import { computed } from 'vue'
 import logoOpenai from '../../assets/openai.svg'

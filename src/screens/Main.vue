@@ -7,7 +7,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 // components
 import Swal from 'sweetalert2/dist/sweetalert2.js'

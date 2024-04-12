@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 import { ipcRenderer } from 'electron'
 import { computed, onMounted } from 'vue'
