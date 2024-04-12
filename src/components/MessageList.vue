@@ -5,7 +5,7 @@
         <MessageItem :chat="chat" :message="message" @image-loaded="onImageLoaded" />
       </div>
     </div>
-    <div v-if="overflown" class="overflow">
+    <div v-if="overflown" class="overflow" @click="scrollDown">
       <BIconArrowDown />
     </div>
   </div>
@@ -101,7 +101,7 @@ const onScroll = () => {
   border: 1px solid #ccc;
   font-size: 14pt;
   font-weight: bold;
-
+  cursor: pointer;
 }
 
 </style>
