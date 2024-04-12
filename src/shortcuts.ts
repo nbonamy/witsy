@@ -68,6 +68,6 @@ const registerShortcut = (shortcut:Shortcut, callback: () => void) => {
   console.debug('Registering shortcut', shortcut, accelerator)
 
   // do it
-  globalShortcut.register(accelerator, callback)
+  globalShortcut.register(accelerator!, callback)
 
 };

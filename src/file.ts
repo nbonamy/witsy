@@ -3,6 +3,7 @@ import { App, BrowserWindow, dialog } from 'electron';
 import { download } from 'electron-dl';
 import path from 'node:path';
 import fs from 'node:fs';
+import { anyDict } from './index';
 
 export const getFileContents = (app: App, payload: string) => {
 
@@ -21,7 +22,7 @@ export const getFileContents = (app: App, payload: string) => {
 
 }
 
-export const deleteFile = (app: App, payload: {[key:string]: any}) => {
+export const deleteFile = (app: App, payload: anyDict) => {
 
   try {
     let path = payload.path;
@@ -37,7 +38,7 @@ export const deleteFile = (app: App, payload: {[key:string]: any}) => {
 
 }
 
-export const pickFile = (app: App, payload: {[key:string]: any}) => {
+export const pickFile = (app: App, payload: anyDict) => {
 
   try {
     let fileURL = dialog.showOpenDialogSync({
@@ -54,7 +55,7 @@ export const pickFile = (app: App, payload: {[key:string]: any}) => {
 }
 
 
-export const writeFileContents = (app: App, payload: {[key:string]: any}) => {
+export const writeFileContents = (app: App, payload: anyDict) => {
 
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
@@ -81,7 +82,7 @@ export const writeFileContents = (app: App, payload: {[key:string]: any}) => {
 
 }
 
-export const downloadFile = async (app: App, payload: {[key:string]: any}) => {
+export const downloadFile = async (app: App, payload: anyDict) => {
 
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
@@ -95,7 +96,7 @@ export const downloadFile = async (app: App, payload: {[key:string]: any}) => {
   }
 
   // now prompt or not
-  let destinationURL = path.join(defaultPath, defaultFileName);
+  let destinationURL: string|undefined = path.join(defaultPath, defaultFileName);
   if (properties.prompt !== false) {
     destinationURL = dialog.showSaveDialogSync({
       defaultPath: destinationURL
@@ -128,6 +129,7 @@ export const downloadFile = async (app: App, payload: {[key:string]: any}) => {
   //console.log(`downloading ${payload.url} to ${JSON.stringify(properties)}`)
 
   try {
+    // @ts-ignore
     await download(BrowserWindow.getFocusedWindow(),
       payload.url, {
       ...properties,

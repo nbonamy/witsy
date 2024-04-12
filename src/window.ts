@@ -2,7 +2,7 @@
 import path from 'node:path';
 import process from 'node:process';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, screen, shell } from 'electron';
-import { CreateWindowOpts } from './index';
+import { CreateWindowOpts, strDict } from './index';
 import Store from 'electron-store';
 import { wait } from './utils';
 
@@ -56,7 +56,7 @@ const createWindow = (opts: CreateWindowOpts = {}) => {
   } else {
 
     // build query params
-    let queryParams: { [key: string]: string } = {};
+    let queryParams: strDict = {};
     if (opts.queryParams) {
       for (let key in opts.queryParams) {
         queryParams[key] = encodeURIComponent(opts.queryParams[key]);
@@ -149,7 +149,7 @@ export const openMainWindow = () => {
 
 };
 
-export const openChatWindow = (params: { [key: string]: string }) => {
+export const openChatWindow = (params: strDict) => {
 
   // always open
   let chatWindow = createWindow({

@@ -1,7 +1,7 @@
 
 import Message from 'src/models/message'
 import { getFileContents } from './download'
-import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload } from 'src'
+import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from 'src'
 
 export default class LlmEngine {
 
@@ -69,7 +69,7 @@ export default class LlmEngine {
     }
   }
 
-  getRountingModel(): string {
+  getRountingModel(): string|null {
     throw new Error('Not implemented')
   }
 
@@ -77,7 +77,7 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
-  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<any> {
+  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
     throw new Error('Not implemented')
   }
 
