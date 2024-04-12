@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'

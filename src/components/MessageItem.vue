@@ -39,7 +39,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { SpeechPlayer } from 'openai-speech-stream-player'
 import { ipcRenderer, clipboard, nativeImage } from 'electron'

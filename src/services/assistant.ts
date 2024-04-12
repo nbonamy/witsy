@@ -1,5 +1,5 @@
 
-import { Attachment, Configuration } from 'src'
+import { Attachment, Configuration, LlmCompletionOpts } from 'src'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
@@ -61,7 +61,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
+  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
 
     // check
     prompt = prompt.trim()
@@ -126,7 +126,7 @@ export default class {
 
   }
 
-  async generateText(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
+  async generateText(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
 
     try {
 
@@ -150,7 +150,7 @@ export default class {
   
   }
 
-  async generateImage(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
+  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
 
     try {
 

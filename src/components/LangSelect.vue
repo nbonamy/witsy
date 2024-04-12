@@ -26,7 +26,7 @@
   </select>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 const language = defineModel()
 

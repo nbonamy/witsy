@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { v4 as uuidv4 } from 'uuid'
