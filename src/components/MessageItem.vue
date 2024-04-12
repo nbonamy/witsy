@@ -14,7 +14,7 @@
         <Loader v-if="message.transient" />
       </div>
       <div v-if="message.type == 'image'" class="image-container">
-        <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)"/>
+        <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)" @load="onImageLoaded(message)"/>
         <BIconDownload class="download" @click="onDownload(message)" />
       </div>
     </div>
@@ -61,6 +61,8 @@ const props = defineProps({
   message: Message
 })
 
+const emits = defineEmits(['image-loaded'])
+
 const fullScreenImageUrl = ref(null)
 const copyLabel = ref('Copy')
 const audioState = ref({
@@ -97,20 +99,8 @@ const imageUrl = computed(() => {
   }
 })
 
-const mdOptions = {
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        let code = '<pre class="hljs"><code class="hljs">';
-        code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
-        code += '</code></pre>';
-        code += '<p><a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString());';
-        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000)" class="copy">Copy code</a></p>';
-        return code;
-      } catch (__) {}
-    }
-    return '' // use external default escaping
-  }
+const onImageLoaded = (message) => {
+  emits('image-loaded', message)
 }
 
 const onCopy = (message) => {
@@ -194,7 +184,6 @@ const stopAudio = () => {
   }
 }
 
-
 const onEdit = (message) => {
   emitEvent('set-prompt', message)
 }
@@ -216,6 +205,22 @@ const onDownload = (message) => {
       filename: 'image.png',
     }
   })
+}
+
+const mdOptions = {
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        let code = '<pre class="hljs"><code class="hljs">';
+        code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
+        code += '</code></pre>';
+        code += '<p><a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString());';
+        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000)" class="copy">Copy code</a></p>';
+        return code;
+      } catch (__) {}
+    }
+    return '' // use external default escaping
+  }
 }
 
 </script>

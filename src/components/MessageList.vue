@@ -2,7 +2,7 @@
   <div class="container">
     <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat.messages" :key="message.uuid">
-        <MessageItem :chat="chat" :message="message" />
+        <MessageItem :chat="chat" :message="message" @image-loaded="onImageLoaded" />
       </div>
     </div>
     <div v-if="overflown" class="overflow">
@@ -35,6 +35,12 @@ onMounted(() => {
   onEvent('newChunk', onNewChunk)
   scrollDown()
 })
+
+const onImageLoaded = (message) => {
+  if (!overflown.value) {
+    scrollDown()
+  }
+}
 
 const scrollDown = () => {
   nextTick(() => {
