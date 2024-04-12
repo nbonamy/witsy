@@ -73,7 +73,7 @@ const model = ref(null)
 const models = computed(() => {
   if (!engine.value) return []
   if (engine.value == '_default') return []
-  return store.config[engine.value].models.chat
+  return store.config.providers[engine.value].models.chat
 })
 
 const load = () => {
@@ -91,7 +91,7 @@ watch(() => props.command || {}, load, { immediate: true })
 
 const onChangeEngine = () => {
   if (engine.value == '') model.value = ''
-  else model.value = store.config[engine.value].models.chat?.[0]?.id
+  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
 }
 
 const onIconKeyDown = (event) => {

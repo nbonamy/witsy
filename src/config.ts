@@ -36,7 +36,7 @@ const buildConfig = (defaults: anyDict, overrides: anyDict) => {
 
   // add some methods
   config.getActiveModel = () => {
-    return config[config.llm.engine].model.chat
+    return config.engines[config.llm.engine].model.chat
   }
 
   // backwards compatibility
