@@ -75,6 +75,7 @@ const onScroll = () => {
 }
 
 .messages {
+  width: 100%;
   padding: 16px;
   overflow-y: auto;
 }
