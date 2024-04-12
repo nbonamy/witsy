@@ -1,6 +1,7 @@
 
 import process from 'node:process';
 import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import log from 'electron-log/main';
 
 import * as config from './config';
@@ -68,6 +69,12 @@ const quitApp = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  
+  if (process.env.DEBUG) {
+    installExtension(VUEJS_DEVTOOLS)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error while installing Extension: ', err));
+  }
   
   // register shortcuts
   registerShortcuts();
