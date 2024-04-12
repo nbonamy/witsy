@@ -7,6 +7,7 @@
 
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
+CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
 
 default: mac-arm64
 
@@ -16,13 +17,13 @@ clean:
 mac-arm64:
 	-rm -rf out/*darwin-arm64*
 	npx electron-forge package -p darwin -a arm64
-	source .env ; codesign --force --deep --sign $(IDENTITY) "out/Witty AI-darwin-arm64/Witty AI.app"
+	source .env ; codesign $(CODESIGN_OPTS) "out/Witty AI-darwin-arm64/Witty AI.app"
 	cd out ; zip -r Witty_AI-darwin-arm64.zip "Witty AI-darwin-arm64/"
 
 mac-x64:
 	-rm -rf out/*darwin-x64*
 	npx electron-forge package -p darwin -a x64
-	source .env ; codesign --force --deep --sign $(IDENTITY) "out/Witty AI-darwin-x64/Witty AI.app"
+	source .env ; codesign $(CODESIGN_OPTS) "out/Witty AI-darwin-x64/Witty AI.app"
 	cd out ; zip -r Witty_AI-darwin-x64.zip "Witty AI-darwin-x64/"
 
 mac: mac-arm64 mac-x64
