@@ -1,8 +1,8 @@
 
-import { Attachment } from '../index.d'
+import { Message, Attachment, LlmChunk } from '../index.d'
 import { v4 as uuidv4 } from 'uuid'
 
-export default class Message {
+export default class implements Message {
 
   uuid: string
   createdAt: number
@@ -53,12 +53,12 @@ export default class Message {
     this.content = url
   }
 
-  appendText(chunk: string, done = false) {
-    if (this.type === 'text' && chunk) {
+  appendText(chunk: LlmChunk) {
+    if (this.type === 'text' && chunk.text) {
       if (!this.content) this.content = ''
-      this.content = this.content + chunk
+      this.content = this.content + chunk.text
     }
-    if (done) {
+    if (chunk.done) {
       this.transient = false
     }
   }

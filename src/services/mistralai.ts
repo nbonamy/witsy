@@ -1,9 +1,8 @@
-import { LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { Configuration } from '../config.d'
 import { store } from './store'
 import LlmEngine from './engine'
 //import MistralClient from '@mistralai/mistralai'
-import Message from '../models/message'
 
 const visionModels: string[] = []
 
@@ -80,7 +79,7 @@ export default class extends LlmEngine {
   async stop() {
   }
 
-  processChunk(chunk: any) {
+  streamChunkToLlmChunk(chunk: any): LlmChunk {
     return {
       text: chunk.message.content,
       done: chunk.done

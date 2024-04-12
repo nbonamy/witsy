@@ -69,8 +69,8 @@ onMounted(() => {
       model: model.value,
       route: false,
       save: false,
-    }, (text) => {
-     emitEvent('newChunk', text)
+    }, (chunk) => {
+     emitEvent('newChunk', chunk)
     })
   }
 
@@ -162,8 +162,8 @@ const onSendPrompt = async (prompt) => {
   // prompt
   assistant.value.prompt(prompt, {
     attachment: store.pendingAttachment,
-  }, (text) => {
-    emitEvent('newChunk', text)
+  }, (chunk) => {
+    emitEvent('newChunk', chunk)
   })
 
   // clear stuff

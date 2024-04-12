@@ -1,5 +1,6 @@
 
-import { Configuration, Command } from '../index.d'
+import { Command } from '../index.d'
+import { Configuration } from '../config.d'
 import { App, BrowserWindow, clipboard, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../config'
 import OpenAI from '../services/openai'
