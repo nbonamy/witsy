@@ -1,12 +1,13 @@
 # Witty AI
 
 Generative AI desktop application:
-- Chat completion and image generation
-- Vision model support
 - OpenAI and Ollama models supported
-- Local history conversation
-- Code generation with easy copy
-- Image download
+- Chat completion and image generation with Vision models support
+- AI commands runnable on highlighted text in almost any application
+- Read aloud of assistant messages (requires OpenAI API key)
+- Local history of conversations (with automatic titles)
+- Formatting and copy to clipboard of generated code
+- Image copy and download
 
 <p></p>
 <img src="doc/main1.jpg" width="320" /> &nbsp;
@@ -14,7 +15,7 @@ Generative AI desktop application:
 
 ## Setup
 
-Until pre-packaged binaries are provided, you need to clone the repo and build yourself:
+You can download a binary from the Releases page or build yourself:
 ```
 npm install
 npm start
@@ -24,7 +25,7 @@ npm start
 
 To use OpenAI models, you need to enter your [API key](https://platform.openai.com/api-keys).
 
-To use Ollama models, you need to install [Ollama](https://ollama.com) and download [models](https://ollama.com/library).
+To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
 
 <img src="doc/settings.jpg" width="320" />
 
@@ -34,7 +35,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] Image placeholder
+- [ ] Image placeholder while downloading
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
