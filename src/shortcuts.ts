@@ -1,7 +1,7 @@
 
+import { Shortcut, ShortcutCallbacks } from './index.d';
 import { App, globalShortcut } from 'electron';
 import { settingsFilePath, loadSettings } from './config';
-import { Shortcut, ShortcutCallbacks } from './index.d';
 
 export const unregisterShortcuts = () => {
   console.info('Unregistering shortcuts')

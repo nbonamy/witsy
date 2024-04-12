@@ -1,9 +1,9 @@
 
+import { anyDict } from './index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { download } from 'electron-dl';
 import path from 'node:path';
 import fs from 'node:fs';
-import { anyDict } from './index.d';
 
 export const getFileContents = (app: App, payload: string) => {
 

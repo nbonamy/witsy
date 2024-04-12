@@ -1,6 +1,6 @@
 
-import applescript from 'applescript';
 import { Automator } from '../index.d'
+import applescript from 'applescript';
 
 let editCopy: [string,string] = null
 let editPaste: [string,string] = null

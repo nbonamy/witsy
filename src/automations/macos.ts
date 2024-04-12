@@ -1,6 +1,6 @@
 
-import applescript from 'applescript';
 import { Automator } from '../index.d'
+import applescript from 'applescript';
 
 export default class implements Automator {
 

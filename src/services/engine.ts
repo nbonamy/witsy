@@ -1,7 +1,7 @@
 
+import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
 import Message from '../models/message'
 import { getFileContents } from './download'
-import { Configuration, Model, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
 
 export default class LlmEngine {
 

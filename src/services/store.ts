@@ -1,9 +1,9 @@
 
+import { Store } from '../index.d'
 import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
 import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../config'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
-import { Store } from '../index.d'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
