@@ -1,10 +1,13 @@
 
+import { Automator } from '../index'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
 import WindowsAutomator from './windows'
 import RobotAutomator  from './robot'
 
 export default class {
+  
+  automator: Automator;
 
   constructor() {
     if (process.platform === 'darwin') {
@@ -47,7 +50,7 @@ export default class {
   
   }
 
-  async pasteText(textToPaste) {
+  async pasteText(textToPaste: string) {
 
     try {
 

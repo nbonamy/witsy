@@ -2,12 +2,17 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
+import { Configuration, LlmResponse } from 'src'
+import Message from 'src/models/message'
+import { Stream } from 'openai/streaming'
 
 const visionModels = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
 
 export default class extends LlmEngine {
 
-  constructor(config) {
+  client: OpenAI
+
+  constructor(config: Configuration) {
     super(config)
     this.client = new OpenAI({
       apiKey: config.openai.apiKey,
@@ -15,15 +20,15 @@ export default class extends LlmEngine {
     })
   }
 
-  _isVisionModel(model) {
+  _isVisionModel(model: string) {
     return visionModels.includes(model) || model.includes('vision')
   }
 
-  getRountingModel() {
+  getRountingModel(): string {
     return 'gpt-3.5-turbo'
   }
 
-  async getModels() {
+  async getModels(): Promise<any[]> {
     try {
       const response = await this.client.models.list()
       return response.data
@@ -32,14 +37,14 @@ export default class extends LlmEngine {
     }
   }
 
-  async complete(thread, opts) {
+  async complete(thread: Message[], opts: {[key:string]:any}): Promise<LlmResponse> {
 
     // call
     let model = opts?.model || this.config.openai.model.chat
     console.log(`[openai] prompting model ${model}`)
     const response = await this.client.chat.completions.create({
       model: model,
-      messages: this._buildPayload(thread, model),
+      messages: this._buildPayload(thread, model) as Array<any>
     });
 
     // return an object
@@ -49,7 +54,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async stream(thread, opts) {
+  async stream(thread: Message[], opts: {[key:string]:any}): Promise<any> {
 
     // model: switch to vision if needed
     let model = opts?.model || this.config.openai.model.chat
@@ -64,7 +69,7 @@ export default class extends LlmEngine {
     console.log(`[openai] prompting model ${model}`)
     let stream = this.client.chat.completions.create({
       model: model,
-      messages: this._buildPayload(thread, model),
+      messages: this._buildPayload(thread, model) as Array<any>,
       stream: true,
     })
 
@@ -73,18 +78,18 @@ export default class extends LlmEngine {
 
   }
 
-  async stop(stream) {
+  async stop(stream: Stream<any>) {
     await stream?.controller?.abort()
   }
 
-  processChunk(chunk) {
+  processChunk(chunk: any) {
     return {
       text: chunk.choices[0]?.delta?.content || '',
       done: chunk.choices[0]?.finish_reason === 'stop'
     }
   }
 
-  addImageToPayload(message, payload) {
+  addImageToPayload(message: Message, payload: any) {
     payload.content = [
       { type: 'text', text: message.content },
       { type: 'image_url', image_url: {
@@ -93,7 +98,7 @@ export default class extends LlmEngine {
     ]
   }
 
-  async image(prompt, opts) {
+  async image(prompt: string, opts: {[key:string]:any}): Promise<LlmResponse> {
     
     // call
     let model = this.config.openai.model.image

@@ -1,13 +1,13 @@
 
+import { Automator } from '../index'
 var applescript = require('applescript');
 
-let editCopy = null
-let editPaste = null
+let editCopy: [string,string] = null
+let editPaste: [string,string] = null
 
-export default class {
+export default class implements Automator {
 
-  constructor(config) {
-    this.config = config
+  constructor() {
     this._findMenus()
   }
 
@@ -22,10 +22,10 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);    
+    await this._runScript(script);    
   }
 
-  copySelectedText() {
+  async copySelectedText() {
 
     if (!editCopy) {
       throw 'Edit copy menu not found!'
@@ -48,11 +48,11 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);
+    await this._runScript(script);
 
   }
 
-  pasteText(text) {
+  async pasteText() {
 
     if (!editPaste) {
       throw 'Edit paste menu not found!'
@@ -70,7 +70,7 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);
+    await this._runScript(script);
     
   }
 
@@ -131,9 +131,9 @@ export default class {
 
   }
 
-  _runScript(script) {
+  _runScript(script: string): Promise<any>{
     return new Promise((resolve, reject) => {
-      applescript.execString(script, (err, rtn) => {
+      applescript.execString(script, (err: Error, rtn: any) => {
         if (err) {
           reject(err);
         } else {

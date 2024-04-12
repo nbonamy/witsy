@@ -2,11 +2,11 @@
 import { ipcRenderer } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 
-export const getFileContents = (url) => {
+export const getFileContents = (url: string) => {
   return ipcRenderer.sendSync('get-contents', url.replace('file://', ''))
 }
 
-export const saveFileContents = (extension, contents) => {
+export const saveFileContents = (extension: string, contents: string) => {
 
   // call main
   let filename = `${uuidv4()}.${extension}`
@@ -24,7 +24,7 @@ export const saveFileContents = (extension, contents) => {
   return filename
 }
   
-export const download = (url) => {
+export const download = (url: string) => {
 
   // get extension from url
   let extension = url.split(/[#?]/)[0].split('.').pop().trim()

@@ -1,13 +1,22 @@
 
+import { Attachment } from 'src'
 import { v4 as uuidv4 } from 'uuid'
 
 export default class Message {
 
-  constructor(role, obj) {
+  uuid: string
+  createdAt: number
+  role: string
+  type: string
+  content: string
+  attachment: Attachment
+  transient: boolean
+
+  constructor(role: string, obj?: any) {
 
     // json
-    if (typeof role === 'object') {
-      this.fromJson(role)
+    if (typeof obj === 'object') {
+      this.fromJson(obj)
       return
     }
 
@@ -23,7 +32,7 @@ export default class Message {
     }
   }
 
-  fromJson(obj) {
+  fromJson(obj: any) {
     this.uuid = obj.uuid || uuidv4()
     this.createdAt = obj.createdAt
     this.role = obj.role
@@ -33,18 +42,18 @@ export default class Message {
     this.transient = false
   }
 
-  setText(text) {
+  setText(text: string|null) {
     this.type = 'text'
     this.content = text
     this.transient = (text == null)
   }
 
-  setImage(url) {
+  setImage(url: string) {
     this.type = 'image'
     this.content = url
   }
 
-  appendText(chunk, done = false) {
+  appendText(chunk: string, done: boolean = false) {
     if (this.type === 'text' && chunk) {
       if (!this.content) this.content = ''
       this.content = this.content + chunk
@@ -54,7 +63,7 @@ export default class Message {
     }
   }
 
-  attachFile(file) {
+  attachFile(file: Attachment) {
     this.attachment = file
   }
 

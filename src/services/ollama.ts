@@ -2,42 +2,47 @@
 import { store } from './store'
 import LlmEngine from './engine'
 import ollama from 'ollama'
+import { Configuration, LlmResponse } from 'src'
+import Message from 'src/models/message'
 
 const visionModels = ['llava:latest', '*llava']
 
 export default class extends LlmEngine {
 
-  constructor(config) {
+  client: any
+
+  constructor(config: Configuration) {
     super(config)
-    this.ollama = ollama
-    if (!this.ollama.chat) {
-      this.ollama = ollama.default
+    this.client = ollama
+    if (!this.client.chat) {
+      // @ts-ignore
+      this.client = ollama.default
     }
   }
 
-  _isVisionModel(model) {
+  _isVisionModel(model: string) {
     return visionModels.includes(model) || model.includes('llava')
   }
 
-  getRountingModel() {
+  getRountingModel(): string {
     return null
   }
 
   async getModels() {
     try {
-      const response = await this.ollama.list()
+      const response = await this.client.list()
       return response.models
     } catch (error) {
       console.error('Error listing models:', error);
     }
   }
 
-  async complete(thread, opts) {
+  async complete(thread: Message[], opts: {[key:string]:any}): Promise<LlmResponse> {
 
     // call
     let model = opts?.model || this.config.ollama.model.chat
     console.log(`[ollama] prompting model ${model}`)
-    const response = await this.ollama.chat({
+    const response = await this.client.chat({
       model: model,
       messages: this._buildPayload(thread, model),
       stream: false
@@ -50,7 +55,7 @@ export default class extends LlmEngine {
     }
   }
 
-  async stream(thread, opts) {
+  async stream(thread: Message[], opts: {[key:string]:any}): Promise<any> {
 
     // model: switch to vision if needed
     let model = opts?.model || this.config.ollama.model.chat
@@ -63,7 +68,7 @@ export default class extends LlmEngine {
   
     // call
     console.log(`[ollama] prompting model ${model}`)
-    let stream = this.ollama.chat({
+    let stream = this.client.chat({
       model: model,
       messages: this._buildPayload(thread, model),
       stream: true,
@@ -78,18 +83,18 @@ export default class extends LlmEngine {
     await ollama.abort()
   }
 
-  processChunk(chunk) {
+  processChunk(chunk: any) {
     return {
       text: chunk.message.content,
       done: chunk.done
     }
   }
 
-  addImageToPayload(message, payload) {
+  addImageToPayload(message: Message, payload: any) {
     payload.images = [ message.attachment.contents ]
   }
 
-  async image(prompt) {
+  async image(prompt: string): Promise<any> {
     return null    
   }
 }

@@ -1,7 +1,8 @@
 
+import { Automator } from '../index'
 import { runVbs } from '@el3um4s/run-vbs'
 
-export default class {
+export default class implements Automator {
 
   constructor() {
   }
@@ -15,7 +16,7 @@ export default class {
     `
 
     // run it
-    return await runVbs({ vbs: script }) 
+    await runVbs({ vbs: script }) 
   }
 
   async copySelectedText() {
@@ -27,7 +28,7 @@ export default class {
     `
 
     // run it
-    return await runVbs({ vbs: script }) 
+    await runVbs({ vbs: script }) 
 
   }
 
@@ -40,7 +41,7 @@ export default class {
     `
 
     // run it
-    return await runVbs({ vbs: script }) 
+    await runVbs({ vbs: script }) 
     
   }
 

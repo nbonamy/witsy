@@ -1,10 +1,10 @@
 
-const { BrowserWindow, dialog } = require('electron');
-const { download } = require('electron-dl');
-const path = require('node:path');
-const fs = require('node:fs');
+import { App, BrowserWindow, dialog } from 'electron';
+import { download } from 'electron-dl';
+import path from 'node:path';
+import fs from 'node:fs';
 
-export const getFileContents = (app, payload) => {
+export const getFileContents = (app: App, payload: string) => {
 
   try {
     let fileContents = fs.readFileSync(payload);
@@ -21,7 +21,7 @@ export const getFileContents = (app, payload) => {
 
 }
 
-export const deleteFile = (app, payload) => {
+export const deleteFile = (app: App, payload: {[key:string]: any}) => {
 
   try {
     let path = payload.path;
@@ -37,7 +37,7 @@ export const deleteFile = (app, payload) => {
 
 }
 
-export const pickFile = (app, payload) => {
+export const pickFile = (app: App, payload: {[key:string]: any}) => {
 
   try {
     let fileURL = dialog.showOpenDialogSync({
@@ -54,7 +54,7 @@ export const pickFile = (app, payload) => {
 }
 
 
-export const writeFileContents = (app, payload) => {
+export const writeFileContents = (app: App, payload: {[key:string]: any}) => {
 
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};
@@ -81,7 +81,7 @@ export const writeFileContents = (app, payload) => {
 
 }
 
-export const downloadFile = async (app, payload) => {
+export const downloadFile = async (app: App, payload: {[key:string]: any}) => {
 
   // parse properties
   let properties = payload.properties ? { ...payload.properties } : {};

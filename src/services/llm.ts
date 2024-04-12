@@ -1,20 +1,21 @@
 
+import { Model } from 'src'
 import { store } from './store'
 import OpenAI from './openai'
 import Ollama from './ollama'
 
 export const availableEngines = ['openai', 'ollama']
 
-export const isEngineReady = (engine) => {
-  return store.config?.[engine]?.models?.chat?.length > 0
+export const isEngineReady = (engine: string) => {
+  return store.config?.[engine as keyof typeof store.config]?.models?.chat?.length > 0
 }
 
-export const getEngineChatModels = (engine) => {
-  return store.config?.[engine]?.models?.chat
+export const getEngineChatModels = (engine: string) => {
+  return store.config?.[engine as keyof typeof store.config]?.models?.chat
 }
 
-export const getValidModelId = (engine, type, modelId) => {
-  let models = store.config?.[engine]?.models?.[type]
+export const getValidModelId = (engine: string, type: string, modelId: string) => {
+  let models: Model[] = store.config?.[engine as keyof typeof store.config]?.models?.[type]
   let m = models?.find(m => m.id == modelId)
   return m ? modelId : (models?.[0]?.id || null)
 }
@@ -24,7 +25,7 @@ export const loadAllModels = async () => {
   await loadModels('ollama')
 }
 
-export const loadModels = async (engine) => {
+export const loadModels = async (engine: string) => {
   if (engine === 'openai') {
     await loadOpenAIModels()
   } else if (engine === 'ollama') {
@@ -74,7 +75,7 @@ export const loadOpenAIModels = async () => {
 export const loadOllamaModels = async () => {
 
   // load
-  let models = null
+  let models: any[] = null
   try {
     const ollama = new Ollama(store.config)
     models = await ollama.getModels()

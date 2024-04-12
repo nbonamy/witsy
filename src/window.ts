@@ -1,12 +1,13 @@
 
-const path = require('node:path');
-const process = require('node:process');
-const { app, BrowserWindow, Menu, screen, shell } = require('electron');
-const Store = require('electron-store');
+import path from 'node:path';
+import process from 'node:process';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, screen, shell } from 'electron';
+import { CreateWindowOpts } from './index';
+import Store from 'electron-store';
 import { wait } from './utils';
 
 // titlebarOptions
-const titleBarOptions = {
+const titleBarOptions:BrowserWindowConstructorOptions = {
   titleBarStyle: 'hidden',
   titleBarOverlay: {
     color: '#ffffff',
@@ -16,7 +17,7 @@ const titleBarOptions = {
 
 // create window
 const store = new Store()
-const createWindow = (opts = {}) => {
+const createWindow = (opts: CreateWindowOpts = {}) => {
   
   // Create the browser window
   const window = new BrowserWindow({
@@ -27,7 +28,7 @@ const createWindow = (opts = {}) => {
       contextIsolation: false,
       webSecurity: false,
       defaultEncoding: 'UTF-8',
-      devTools: process.env.DEBUG,
+      devTools: process.env.DEBUG ? true : false,
     },
   });
 
@@ -55,7 +56,7 @@ const createWindow = (opts = {}) => {
   } else {
 
     // build query params
-    let queryParams = {};
+    let queryParams: { [key: string]: string } = {};
     if (opts.queryParams) {
       for (let key in opts.queryParams) {
         queryParams[key] = encodeURIComponent(opts.queryParams[key]);
@@ -96,7 +97,7 @@ export const releaseFocus = async () => {
   }
 };
 
-export let mainWindow = null;
+export let mainWindow:BrowserWindow = null;
 export const openMainWindow = () => {
 
   // try to show existig one
@@ -148,7 +149,7 @@ export const openMainWindow = () => {
 
 };
 
-export const openChatWindow = (params) => {
+export const openChatWindow = (params: { [key: string]: string }) => {
 
   // always open
   let chatWindow = createWindow({
@@ -173,7 +174,7 @@ export const openChatWindow = (params) => {
 
 };
 
-let windowsToRestore = [];
+let windowsToRestore: BrowserWindow[] = [];
 export const hideActiveWindows = async () => {
 
   // remember to restore all windows
@@ -209,7 +210,7 @@ export const restoreWindows = () => {
   }
 };
 
-let commandPalette = null;
+let commandPalette:BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
     commandPalette.close()
@@ -217,7 +218,7 @@ export const closeCommandPalette = async () => {
   } catch {}
 };
 
-export const openCommandPalette = async (text) => {
+export const openCommandPalette = async (text:string) => {
 
   // try to show existig one
   closeCommandPalette();
@@ -250,9 +251,8 @@ export const openCommandPalette = async (text) => {
 
 }
 
-let waitingPanel = null;
-
-export const closeWaitingPanel = async (destroy) => {
+let waitingPanel:BrowserWindow = null;
+export const closeWaitingPanel = async (destroy?:boolean) => {
   try {
     if (destroy) waitingPanel.destroy()
     else waitingPanel.close()
