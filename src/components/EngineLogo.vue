@@ -6,12 +6,14 @@
 <script setup>
 
 import { computed } from 'vue'
-import logoOpenai from '../../assets/openai.svg'
+import logoOpenAI from '../../assets/openai.svg'
 import logoOllama from '../../assets/ollama.svg'
+import logoMistralAI from '../../assets/mistralai.svg'
 
 const logos = {
-  openai: logoOpenai,
-  ollama: logoOllama
+  openai: logoOpenAI,
+  ollama: logoOllama,
+  mistralai: logoMistralAI,
 }
 
 const props = defineProps({

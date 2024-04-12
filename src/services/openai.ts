@@ -7,7 +7,7 @@ import OpenAI from 'openai'
 import Message from '../models/message'
 import { Stream } from 'openai/streaming'
 
-const visionModels = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
+const visionModels: string[] = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
 
 export default class extends LlmEngine {
 

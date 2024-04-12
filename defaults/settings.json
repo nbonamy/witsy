@@ -47,6 +47,15 @@
         "voice": "alloy"
       }
     },
+    "mistralai": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "ollama": {
       "models": {
         "chat": [],

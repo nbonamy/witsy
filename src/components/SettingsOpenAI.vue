@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="group">
-      <label>OpenAI API key</label>
+      <label>API key</label>
       <div class="subgroup">
         <input type="text" v-model="apiKey" @blur="onKeyChange" /><br />
         <a href="https://platform.openai.com/api-keys" target="_blank">Create an API key</a>
       </div>
     </div>
     <div class="group">
-      <label>OpenAI chat model</label>
+      <label>Chat model</label>
       <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
         <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
         </option>
@@ -16,7 +16,7 @@
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
     <div class="group">
-      <label>OpenAI image model</label>
+      <label>Image model</label>
       <div class="subgroup">
         <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
           <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
@@ -54,7 +54,7 @@ const load = () => {
 
 const onRefresh = async () => {
   refreshLabel.value = 'Refreshing...'
-  setTimeout(() => getOpenAIModels(), 500)
+  setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text) => {
@@ -62,7 +62,7 @@ const setEphemeralRefreshLabel = (text) => {
   setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }
 
-const getOpenAIModels = async () => {
+const getModels = async () => {
 
   // load
   let success = await loadOpenAIModels()
@@ -84,7 +84,7 @@ const getOpenAIModels = async () => {
 const onKeyChange = () => {
   if (chat_models.value.length === 0 && apiKey.value.length > 0) {
     store.config.engines.openai.apiKey = apiKey.value
-    getOpenAIModels()
+    getModels()
   }
   save()
 }

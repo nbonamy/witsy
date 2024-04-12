@@ -71,6 +71,10 @@ export default class LlmEngine {
     }
   }
 
+  async getModels(): Promise<any[]> {
+    throw new Error('Not implemented')
+  }
+  
   getRountingModel(): string|null {
     throw new Error('Not implemented')
   }
