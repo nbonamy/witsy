@@ -104,8 +104,8 @@ const mdOptions = {
         let code = '<pre class="hljs"><code class="hljs">';
         code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
         code += '</code></pre>';
-        code += '<a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString());';
-        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000)" class="copy">Copy code</a>';
+        code += '<p><a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString());';
+        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000)" class="copy">Copy code</a></p>';
         return code;
       } catch (__) {}
     }
