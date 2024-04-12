@@ -1,6 +1,7 @@
 
+// @ts-ignore 
+import applescript from 'applescript';
 import { Automator } from '../index'
-var applescript = require('applescript');
 
 let editCopy: [string,string] = null
 let editPaste: [string,string] = null
