@@ -1,5 +1,5 @@
 
-import { Attachment, LlmCompletionOpts } from '../index.d'
+import { Attachment, LlmChunk, LlmCompletionOpts } from '../index.d'
 import { Configuration } from '../config.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
@@ -62,7 +62,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
+  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
 
     // check
     prompt = prompt.trim()
@@ -104,7 +104,7 @@ export default class {
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
     this.chat.lastMessage().setText(null)
-    callback?.call(null)
+    callback?.call(null, null)
 
     // route
     let route = null
@@ -114,7 +114,7 @@ export default class {
     if (route === 'IMAGE') {
       await this.generateImage(prompt, opts, callback)
     } else {
-      await this.generateText(prompt, opts, callback)
+      await this.generateText(opts, callback)
     }
 
     // check if we need to update title
@@ -127,15 +127,15 @@ export default class {
 
   }
 
-  async generateText(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
+  async generateText(opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
 
     try {
 
       this.stream = await this.llm.stream(this._getRelevantChatMessages(), opts)
-      for await (const chunk of this.stream) {
-        const { text, done } = this.llm.processChunk(chunk)
-        this.chat.lastMessage().appendText(text, done)
-        callback?.call(text)
+      for await (const streamChunk of this.stream) {
+        const chunk: LlmChunk = this.llm.streamChunkToLlmChunk(streamChunk)
+        this.chat.lastMessage().appendText(chunk)
+        callback?.call(null, chunk)
       }
 
     } catch (error) {
@@ -147,11 +147,11 @@ export default class {
 
     // cleanup
     this.stream = null
-    callback?.call(null)
+    //callback?.call(null, null)
   
   }
 
-  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (text: string) => void) {
+  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
 
     try {
 
@@ -171,12 +171,15 @@ export default class {
 
       // ssve
       this.chat.lastMessage().setImage(`file://${filename}`)
-      callback?.call(filename)
+      callback?.call(null, {
+        text: filename,
+        done: true
+      })
 
     } catch (error) {
       console.error(error)
       this.chat.lastMessage().setText('Sorry, I could not generate an image for that prompt.')
-      callback?.call(null)
+      callback?.call(null, null)
     }
 
   }
@@ -184,7 +187,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().appendText(null, true)
+      this.chat.lastMessage().appendText({ text: null, done: true})
     }
   }
 

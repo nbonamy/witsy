@@ -1,10 +1,9 @@
 
-import { LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { Configuration } from '../config.d'
 import { store } from './store'
 import LlmEngine from './engine'
-import ollama from 'ollama'
-import Message from '../models/message'
+import ollama, { ChatResponse } from 'ollama'
 
 const visionModels: string[] = ['llava:latest', '*llava']
 
@@ -80,7 +79,7 @@ export default class extends LlmEngine {
     await ollama.abort()
   }
 
-  processChunk(chunk: any) {
+  streamChunkToLlmChunk(chunk: ChatResponse): LlmChunk {
     return {
       text: chunk.message.content,
       done: chunk.done

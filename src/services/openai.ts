@@ -1,10 +1,10 @@
 
-import { LLmCompletionPayload, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { Configuration } from '../config.d'
 import { store } from './store'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
-import Message from '../models/message'
+import { ChatCompletionChunk } from 'openai/resources'
 import { Stream } from 'openai/streaming'
 
 const visionModels: string[] = ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
@@ -83,7 +83,7 @@ export default class extends LlmEngine {
     await stream?.controller?.abort()
   }
 
-  processChunk(chunk: any) {
+  streamChunkToLlmChunk(chunk: ChatCompletionChunk): LlmChunk {
     return {
       text: chunk.choices[0]?.delta?.content || '',
       done: chunk.choices[0]?.finish_reason === 'stop'

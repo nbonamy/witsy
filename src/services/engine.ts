@@ -1,7 +1,6 @@
 
-import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream } from '../index.d'
+import { Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk } from '../index.d'
 import { Configuration, Model } from '../config.d'
-import Message from '../models/message'
 import { getFileContents } from './download'
 
 export default class LlmEngine {
@@ -105,7 +104,7 @@ export default class LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  processChunk(chunk: any): any {
+  streamChunkToLlmChunk(chunk: any): LlmChunk {
     throw new Error('Not implemented')
   }
 

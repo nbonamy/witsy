@@ -1,13 +1,39 @@
 
 
-import Chat from './models/chat'
-
 declare module 'applescript'
 
 type anyDict = {[key: string]: any}
 type strDict = {[key: string]: string}
 
-import { BrowserWindowConstructorOptions } from 'electron'
+//
+// model stuff
+//
+interface Chat {
+  uuid: string
+  title: string
+  createdAt: number
+  lastModified: number
+  engine: string
+  model: string
+  messages: Message[]
+}
+
+interface Message {
+  uuid: string
+  createdAt: number
+  role: string
+  type: string
+  content: string
+  attachment: Attachment
+  transient: boolean
+}
+
+interface Attachment {
+  type: string
+  url: string
+  contents: string
+  downloaded: boolean
+}
 
 interface Command {
   id: string,
@@ -21,28 +47,12 @@ interface Command {
   model: string,
 }
 
-interface Automator {
-  moveCaretBelow(): Promise<void>
-  copySelectedText(): Promise<void>
-  pasteText(): Promise<void>
-}
-
-interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
-  queryParams?: strDict,
-  hash? : string,
-}
-
 interface Shortcut {
   alt?: boolean
   ctrl?: boolean
   shift?: boolean
   meta?: boolean
   key: string
-}
-
-interface ShortcutCallbacks {
-  chat: () => void
-  command: () => void
 }
 
 interface Store {
@@ -57,6 +67,25 @@ interface Store {
   dump?(): void
 }
 
+//
+// automation stuff
+//
+
+interface ShortcutCallbacks {
+  chat: () => void
+  command: () => void
+}
+
+interface Automator {
+  moveCaretBelow(): Promise<void>
+  copySelectedText(): Promise<void>
+  pasteText(): Promise<void>
+}
+
+//
+// llm stuff
+//
+
 interface LlmResponse {
   type: string
   content?: string
@@ -66,13 +95,6 @@ interface LlmResponse {
 }
 
 type LlmStream = AsyncGenerator|Stream
-
-interface Attachment {
-  type: string
-  url: string
-  contents: string
-  downloaded: boolean
-}
 
 interface LlmCompletionOpts {
   engine?: string
@@ -88,4 +110,19 @@ interface LlmCompletionOpts {
 interface LLmCompletionPayload {
   content: any
   images?: string[]
+}
+
+interface LlmChunk {
+  text: string
+  done: boolean
+}
+
+//
+// window stuff
+//
+
+import { BrowserWindowConstructorOptions } from 'electron'
+interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
+  queryParams?: strDict,
+  hash? : string,
 }
