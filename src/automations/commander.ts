@@ -28,7 +28,7 @@ const promptLlm = (config: Configuration, engine: string, model: string, prompt:
   const llm = buildLLm(config, engine)
 
   // build messages
-  const messages = [
+  const messages: Message[]  = [
     new Message('user', prompt)
   ]
 

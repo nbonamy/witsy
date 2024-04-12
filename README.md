@@ -35,7 +35,6 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] Anthropic API integration
 - [ ] Mistral AI API integration
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
@@ -44,6 +43,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## DONE
 
+- [x] Anthropic API integration
 - [x] Image generation as b64_json
 - [x] Text-to-speech
 - [x] Log file (electron-log)

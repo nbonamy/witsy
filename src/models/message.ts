@@ -1,18 +1,18 @@
 
-import { Message, Attachment, LlmChunk } from '../index.d'
+import { Message, Attachment, LlmRole, LlmChunk } from '../index.d'
 import { v4 as uuidv4 } from 'uuid'
 
 export default class implements Message {
 
   uuid: string
   createdAt: number
-  role: string
+  role: LlmRole
   type: string
   content: string
   attachment: Attachment
   transient: boolean
 
-  constructor(role: string, obj?: any) {
+  constructor(role: LlmRole, obj?: any) {
 
     // json
     if (typeof obj === 'object') {
@@ -54,11 +54,11 @@ export default class implements Message {
   }
 
   appendText(chunk: LlmChunk) {
-    if (this.type === 'text' && chunk.text) {
+    if (this.type === 'text' && chunk?.text) {
       if (!this.content) this.content = ''
       this.content = this.content + chunk.text
     }
-    if (chunk.done) {
+    if (chunk?.done) {
       this.transient = false
     }
   }

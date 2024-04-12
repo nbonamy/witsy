@@ -199,6 +199,8 @@ const onSave = () => {
   flex: 0 0 48px;
   cursor: pointer;
   margin: 0px 16px;
+  width: 48px;
+  height: 48px;
 }
 
 .empty .engines .logo.hidden {

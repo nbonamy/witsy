@@ -21,6 +21,7 @@ import EngineLogo from './EngineLogo.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
+import SettingsAnthropic from './SettingsAnthropic.vue'
 
 const currentEngine = ref(availableEngines[0])
 const engineSettings = ref(null)
@@ -32,6 +33,7 @@ const engines = computed(() => {
       label: {
         openai: 'OpenAI',
         ollama: 'Ollama',
+        anthropic: 'Anthropic',
         mistralai: 'Mistral AI',
       }[engine],
     }
@@ -41,6 +43,7 @@ const engines = computed(() => {
 const currentView = computed(() => {
   if (currentEngine.value == 'openai') return SettingsOpenAI
   if (currentEngine.value == 'ollama') return SettingsOllama
+  if (currentEngine.value == 'anthropic') return SettingsAnthropic
   if (currentEngine.value == 'mistralai') return SettingsMistralAI
 })
 

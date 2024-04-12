@@ -5,6 +5,8 @@ declare module 'applescript'
 type anyDict = {[key: string]: any}
 type strDict = {[key: string]: string}
 
+type LlmRole = 'system'|'user'|'assistant'
+
 //
 // model stuff
 //
@@ -21,7 +23,7 @@ interface Chat {
 interface Message {
   uuid: string
   createdAt: number
-  role: string
+  role: llmRole
   type: string
   content: string
   attachment: Attachment
@@ -104,12 +106,29 @@ interface LlmCompletionOpts {
   route?: boolean
   size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792' | null
   style?: 'vivid' | 'natural' | null
+  maxTokens?: number
   n?: number
 }
 
 interface LLmCompletionPayload {
-  content: any
+  role: llmRole
+  content: sring|LlmContentPayload[]
   images?: string[]
+}
+
+interface LlmContentPayload {
+  type: string
+  text?: string
+  // openai
+  image_url?: {
+    url: string
+  }
+  // anthropic
+  source?: {
+    type: string
+    media_type: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'
+    data: string
+  }
 }
 
 interface LlmChunk {

@@ -41,7 +41,7 @@ export default class LlmEngine {
     return null
   }
 
-  _buildPayload(thread: Message[], model: string) {
+  _buildPayload(thread: Message[], model: string): LLmCompletionPayload[] {
     if (typeof thread === 'string') {
       return [{ role: 'user', content: thread }]
     } else {
@@ -51,8 +51,8 @@ export default class LlmEngine {
       // and then rerse the array
 
       let attached = false
-      return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg) => {
-        const payload = { role: msg.role, content: msg.content }
+      return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg):LLmCompletionPayload => {
+        const payload: LLmCompletionPayload = { role: msg.role, content: msg.content }
         if (!attached && msg.attachment && this._isVisionModel(model)) {
           
           // tis can be a loaded chat where contents is not present

@@ -4,12 +4,15 @@ import { store } from './store'
 import OpenAI from './openai'
 import Ollama from './ollama'
 import MistralAI from './mistralai'
+import Anthropic from './anthropic'
 
-export const availableEngines = ['openai', 'ollama']//, 'mistralai']
+export const availableEngines = ['openai', 'ollama', 'anthropic']//, 'mistralai']
 
 export const isEngineReady = (engine: string) => {
   const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
-  return engineConfig?.models?.chat?.length > 0
+  if (!engineConfig?.models?.chat?.length) return false
+  if (engine == 'anthropic') return engineConfig.apiKey
+  return true
 }
 
 export const getEngineChatModels = (engine: string) => {
@@ -28,6 +31,7 @@ export const loadAllModels = async () => {
   await loadModels('openai')
   await loadModels('ollama')
   await loadModels('mistralai')
+  await loadModels('anthropic')
 }
 
 export const loadModels = async (engine: string) => {
@@ -37,6 +41,8 @@ export const loadModels = async (engine: string) => {
     await loadOllamaModels()
   } else if (engine === 'mistralai') {
     await loadMistralAIModels()
+  } else if (engine === 'anthropic') {
+    await loadAnthropicModels()
   }
 }
 
@@ -147,4 +153,37 @@ export const loadMistralAIModels = async () => {
   // done
   return true
 
+}
+
+export const loadAnthropicModels = async () => {
+  
+  let models = []
+
+  try {
+    const anthropic = new Anthropic(store.config)
+    models = await anthropic.getModels()
+  } catch (error) {
+    console.error('Error listing OpenAI models:', error);
+  }
+  if (!models) {
+    store.config.engines.anthropic.models = { chat: [], image: [], }
+    return false
+  }
+
+  // store
+  store.config.engines.anthropic.models = {
+    chat: models
+    .map(model => { return {
+      id: model.id,
+      name: model.name,
+      meta: model
+    }})
+    .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.anthropic.model.chat = getValidModelId('anthropic', 'chat', store.config.engines.anthropic.model.chat)
+
+  // done
+  return true
 }
