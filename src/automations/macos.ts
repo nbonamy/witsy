@@ -1,5 +1,6 @@
 
-var applescript = require('applescript');
+// @ts-ignore 
+import applescript from 'applescript';
 import { Automator } from '../index'
 
 export default class implements Automator {
