@@ -1,7 +1,8 @@
 
 var applescript = require('applescript');
+import { Automator } from '../index'
 
-export default class {
+export default class implements Automator {
 
   constructor() {
   }
@@ -17,7 +18,7 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);    
+    await this._runScript(script);    
   }
 
   async copySelectedText() {
@@ -33,7 +34,7 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);
+    await this._runScript(script);
 
   }
 
@@ -45,14 +46,14 @@ export default class {
     `
 
     // run it
-    return this._runScript(script);
+    await this._runScript(script);
     
   }
 
 
-  _runScript(script) {
+  _runScript(script: string) {
     return new Promise((resolve, reject) => {
-      applescript.execString(script, (err, rtn) => {
+      applescript.execString(script, (err: Error, rtn: any) => {
         if (err) {
           reject(err);
         } else {

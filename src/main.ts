@@ -1,6 +1,6 @@
 
-const process = require('node:process');
-const { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } = require('electron');
+import process from 'node:process';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import log from 'electron-log/main';
 
 import * as config from './config';
@@ -36,13 +36,15 @@ const registerShortcuts = () => {
   });
 }
 
-//  Tray icon
+//  Tray icon 
 
+// @ts-ignore
 import trayIconMacos from '../assets/bulbTemplate.png?asset';
+// @ts-ignore
 import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
 const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
-let tray = null;
+let tray: Tray = null;
 let globalShortcuts = null;
 const buildTrayMenu = () => {
 

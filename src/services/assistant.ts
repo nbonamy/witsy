@@ -1,27 +1,34 @@
 
+import { Attachment, Configuration } from 'src'
 import Chat from '../models/chat'
 import Message from '../models/message'
-import OpenAI from '../services/openai'
-import Ollama from '../services/ollama'
-import { store } from '../services/store'
-import { download } from '../services/download'
+import LlmEngine from './engine'
+import OpenAI from './openai'
+import Ollama from './ollama'
+import { store } from './store'
+import { download } from './download'
 import { countryCodeToName } from './i18n'
 
 export default class {
 
-  constructor(config) {
+  config: Configuration
+  llm: LlmEngine
+  chat: Chat
+  stream: any
+
+
+  constructor(config: Configuration) {
     this.config = config
     this.llm = null
     this.chat = null
     this.stream = null
-    this.chat = null
   }
 
-  setChat(chat) {
+  setChat(chat: Chat) {
     this.chat = chat
   }
 
-  initLlm(engine) {
+  initLlm(engine: string) {
     if (engine === 'ollama') {
       return new Ollama(this.config)
     } else if (store.config.openai.apiKey) {
@@ -35,7 +42,7 @@ export default class {
     return this.llm !== null
   }
 
-  async route(prompt) {
+  async route(prompt: string) {
     
     // check if routing possibble
     let routingModel = this.llm.getRountingModel()
@@ -54,7 +61,7 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt, opts, callback) {
+  async prompt(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
 
     // check
     prompt = prompt.trim()
@@ -119,7 +126,7 @@ export default class {
 
   }
 
-  async generateText(prompt, opts, callback) {
+  async generateText(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
 
     try {
 
@@ -143,7 +150,7 @@ export default class {
   
   }
 
-  async generateImage(prompt, opts, callback) {
+  async generateImage(prompt: string, opts: {[key:string]:any}, callback: (text: string) => void) {
 
     try {
 
@@ -173,11 +180,11 @@ export default class {
     }
   }
 
-  async attach(file) {
+  async attach(file: Attachment) {
 
     // make sure last message is from user else create it
     if (this.chat.lastMessage().role !== 'user') {
-      this.chat.addMessage(new Message('user'), '')
+      this.chat.addMessage(new Message('user'))
     }
 
     // now attach
@@ -221,7 +228,7 @@ export default class {
     return messages
   }
 
-  getLocalizedInstructions(instructions) {
+  getLocalizedInstructions(instructions: string) {
     let instr = instructions
     if (!this.config.general.language) return instr
     return instr + ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'

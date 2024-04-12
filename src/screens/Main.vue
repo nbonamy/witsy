@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
+    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" :style="`width: ${sidebarWidth}` "/>
+    <div class="resizer" @mousedown="onResizeStart">&nbsp;</div>
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" :initial-tab="settingsInitialTab"/>
   </div>
@@ -17,6 +18,9 @@ import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import Settings from './Settings.vue'
 
+// store
+const Store = require('electron-store');
+
 // bus
 import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
@@ -26,6 +30,7 @@ import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
 
 const settingsInitialTab = ref('general')
+const sidebarWidth = ref('250px')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -38,6 +43,11 @@ const isStandaloneChat = computed(() => {
 })
 
 onMounted(() => {
+
+  // geometry
+  sidebarWidth.value = new Store().get('sidebarWidth', '250px')
+
+  // events
   onEvent('newChat', onNewChat)
   onEvent('renameChat', onRenameChat)
   onEvent('deleteChat', onDeleteChat)
@@ -173,6 +183,23 @@ const onStopAssistant = async () => {
   await assistant.value.stop()
 }
 
+const onResizeStart = (event) => {
+  window.addEventListener('mousemove', onResizeMove)
+  window.addEventListener('mouseup', onResizeEnd)
+
+}
+
+const onResizeMove = (event) => {
+  let width = Math.max(150, Math.min(400, event.clientX))
+  sidebarWidth.value = `${width}px`
+}
+
+const onResizeEnd = () => {
+  window.removeEventListener('mousemove', onResizeMove)
+  window.removeEventListener('mouseup', onResizeEnd)
+  new Store().set('sidebarWidth', sidebarWidth.value)
+}
+
 </script>
 
 <style>
@@ -186,6 +213,13 @@ const onStopAssistant = async () => {
   display: flex;
   flex-direction: row;
   height: 100vh;
+}
+
+.resizer {
+  position: relative;
+  left: -5px;
+  width: 10px;
+  cursor: ew-resize;
 }
 
 </style>

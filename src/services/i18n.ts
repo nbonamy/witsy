@@ -1,5 +1,5 @@
 
-export const countryCodeToName = (code) => {
+export const countryCodeToName = (code: string): string => {
   if (code == 'en') return 'English'
   if (code == 'es') return 'Spanish'
   if (code == 'fr') return 'French'

@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron'
 import { loadSettings as _loadSettings } from '../config'
 import { saveSettings as _saveSettings } from '../config'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
+import { Store } from 'src'
 import Chat from '../models/chat'
 import path from 'path'
 import fs from 'fs'
@@ -12,15 +13,15 @@ import fs from 'fs'
 // but it is a separate vuejs application so we will not detecte it
 // therefore we need to go back to monitoring the file
 const historyMonitorInterval = 1000
-let historyLoadedSize = null
-let historyMonitor = null
+let historyLoadedSize: number = null
+let historyMonitor: NodeJS.Timeout = null
 
-export const store = reactive({
+export const store: Store = reactive({
   userDataPath: null,
   commands: [], 
-  config: {},
+  config: null,
   chats: [],
-  pendingAttachment: null
+  pendingAttachment: null,
 })
 
 store.load = async () => {
@@ -125,7 +126,7 @@ const monitorHistory = () => {
 }
 
 // 
-const patchHistory = (jsonChats) => {
+const patchHistory = (jsonChats: any[]) => {
 
   // need to know
   let patched = false

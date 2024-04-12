@@ -1,5 +1,6 @@
 
-import { clipboard, Notification } from 'electron'
+import { Configuration, Command } from '../index'
+import { App, BrowserWindow, clipboard, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../config'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
@@ -7,7 +8,7 @@ import Message from '../models/message'
 import Automator from './automator'
 import * as window from '../window'
 
-const buildLLm = (config, engine) => {
+const buildLLm = (config: Configuration, engine:string) => {
 
   // build llm
   if (engine === 'ollama') {
@@ -20,7 +21,7 @@ const buildLLm = (config, engine) => {
 
 }
 
-const promptLlm = (config, engine, model, prompt) => {
+const promptLlm = (config: Configuration, engine: string, model: string, prompt: string) => {
 
   // get llm
   const llm = buildLLm(config, engine)
@@ -35,7 +36,7 @@ const promptLlm = (config, engine, model, prompt) => {
 
 }
 
-const finalizeCommand = async (command, text, engine, model) => {
+const finalizeCommand = async (command: Command, text: string, engine: string, model: string) => {
   
   // we need an automator
   const automator = new Automator();
@@ -97,14 +98,14 @@ export const prepareCommand = async () => {
 
 }
 
-export const runCommand = async (app, text, command) => {
+export const runCommand = async (app: App, text: string, command: Command) => {
 
   //
   let result = {
     text: text,
-    prompt: null,
-    response: null,
-    chatWindow: null,
+    prompt: null as string | null,
+    response: null as string | null,
+    chatWindow: null as BrowserWindow | null,
   };
 
 

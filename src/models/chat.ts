@@ -5,7 +5,15 @@ import Message from './message'
 
 export default class Chat {
 
-  constructor(obj) {
+  uuid: string
+  title: string
+  createdAt: number
+  lastModified: number
+  engine: string
+  model: string
+  messages: Message[]
+
+  constructor(obj?: any) {
 
     // json
     if (typeof obj === 'object') {
@@ -24,7 +32,7 @@ export default class Chat {
   
   }
 
-  fromJson(obj) {
+  fromJson(obj: any) {
     this.uuid = obj.uuid || uuidv4()
     this.title = obj.title
     this.createdAt = obj.createdAt
@@ -33,12 +41,12 @@ export default class Chat {
     this.model = obj.model
     this.messages = []
     for (let msg of obj.messages) {
-      let message = new Message(msg)
+      let message = new Message('', msg)
       this.messages.push(message)
     }
   }
 
-  patchFromJson(obj) {
+  patchFromJson(obj: any) {
 
     // any diff spotted
     let patched = false
@@ -55,7 +63,7 @@ export default class Chat {
       //console.log(`patching ${obj.messages.length - this.messages.length} messages`)
       let messages = obj.messages.slice(this.messages.length)
       for (let msg of messages) {
-        let message = new Message(msg)
+        let message = new Message('', msg)
         this.messages.push(message)
         patched = true
       }
@@ -65,7 +73,7 @@ export default class Chat {
     return patched
   }
 
-  setEngineModel(engine, model) {
+  setEngineModel(engine: string, model: string) {
     this.engine = engine
     this.model = model
   }
@@ -78,7 +86,7 @@ export default class Chat {
     }
   }
 
-  addMessage(message) {
+  addMessage(message: Message) {
     this.messages.push(message)
     this.lastModified = Date.now()
   }

@@ -1,15 +1,16 @@
 
+import { App } from 'electron'
 import defaultSettings from '../defaults/settings.json'
 import path from 'path'
 import fs from 'fs'
 
-export const settingsFilePath = (app) => {
+export const settingsFilePath = (app: App) => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
 }
 
-const mergeConfig = (defaults, overrides) => {
+const mergeConfig = (defaults: {[key: string]: any}, overrides: {[key: string]: any}) => {
 
   const result = JSON.parse(JSON.stringify(defaults))
   
@@ -27,7 +28,7 @@ const mergeConfig = (defaults, overrides) => {
   return result
 }
 
-const buildConfig = (defaults, overrides) => {
+const buildConfig = (defaults: {[key: string]: any}, overrides: {[key: string]: any}) => {
 
   // 1st merge
   let config = mergeConfig(defaults, overrides)
@@ -42,7 +43,7 @@ const buildConfig = (defaults, overrides) => {
 
 }
 
-export const loadSettings = (filepath) => {
+export const loadSettings = (filepath:string) => {
   let data = '{}'
   try {
     data = fs.readFileSync(filepath, 'utf-8')
@@ -54,13 +55,13 @@ export const loadSettings = (filepath) => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (filepath, config) => {
+export const saveSettings = (filepath:string, config: {[key: string]: any}) => {
   try {
 
     // remove instructions that are the same as the default
     let settings = JSON.parse(JSON.stringify(config))
     for (let instr in settings.instructions) {
-      if (settings.instructions[instr] === defaultSettings.instructions[instr]) {
+      if (settings.instructions[instr as keyof typeof settings.instructions] === defaultSettings.instructions[instr as keyof typeof defaultSettings.instructions]) {
         delete settings.instructions[instr]
       }
     }

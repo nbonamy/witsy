@@ -1,13 +1,14 @@
 
-const { globalShortcut } = require('electron');
+import { App, globalShortcut } from 'electron';
 import { settingsFilePath, loadSettings } from './config';
+import { Shortcut, ShortcutCallbacks } from './index';
 
 export const unregisterShortcuts = () => {
-  console.verbose('Unregistering shortcuts')
+  console.info('Unregistering shortcuts')
   globalShortcut.unregisterAll();
 }
 
-export const registerShortcuts = (app, callbacks) => {
+export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
 
   // unregister
   unregisterShortcuts();
@@ -16,13 +17,13 @@ export const registerShortcuts = (app, callbacks) => {
   const config = loadSettings(settingsFilePath(app));
 
   // now register
-  console.verbose('Registering shortcuts')
+  console.info('Registering shortcuts')
   registerShortcut(config.shortcuts.chat, callbacks.chat);
   registerShortcut(config.shortcuts.command, callbacks.command);
 
 }
 
-const keyToAccelerator = (key) => {
+const keyToAccelerator = (key:string) => {
   if (key === '+') return 'Plus'
   if (key === '↑') return 'Up'
   if (key === '↓') return 'Down'
@@ -31,7 +32,7 @@ const keyToAccelerator = (key) => {
   return key
 }
 
-export const shortcutAccelerator = (shortcut) => {
+export const shortcutAccelerator = (shortcut:Shortcut) => {
 
   // null check
   if (shortcut == null) {
@@ -53,7 +54,7 @@ export const shortcutAccelerator = (shortcut) => {
 
 }
 
-const registerShortcut = (shortcut, callback) => {
+const registerShortcut = (shortcut:Shortcut, callback: () => void) => {
 
   // check
   if (!shortcut || !callback) {

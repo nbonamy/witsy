@@ -1,8 +1,11 @@
 
-import { store } from './store.js'
-import defaultCommands from '../../defaults/commands'
+import { Command } from 'src'
+import { store } from './store'
 import path from 'path'
 import fs from 'fs'
+
+// @ts-ignore
+import defaultCommands from '../../defaults/commands'
 
 const commandsFilePath = () => {
   const userDataPath = store.userDataPath
@@ -24,7 +27,7 @@ const commandsFilePath = () => {
 
   // now add new commands
   for (let command of defaultCommands) {
-    let c = commands.find((cmd) => cmd.id === command.id)
+    let c = commands.find((cmd:Command) => cmd.id === command.id)
     if (c == null) {
       commands.push(command)
     }
@@ -36,7 +39,7 @@ const commandsFilePath = () => {
 
 }
 
-export const newCommand = () => {
+export const newCommand = ():Command => {
   return {
     id: null,
     type: 'user',

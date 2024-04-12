@@ -1,17 +1,21 @@
 
+import Message from 'src/models/message'
 import { getFileContents } from './download'
+import { Configuration, Model, LlmResponse } from 'src'
 
 export default class LlmEngine {
 
-  constructor(config) {
+  config: Configuration
+
+  constructor(config: Configuration) {
     this.config = config
   }
 
-  _isVisionModel(model) {
+  _isVisionModel(model: string) {
     return false
   }
 
-  _requiresVisionModel(thread, currentModel) {
+  _requiresVisionModel(thread: Message[], currentModel: string) {
     
     // if we already have a vision or auto switch is disabled
     if (this._isVisionModel(currentModel) || !this.config.llm.autoVisionSwitch) {
@@ -23,10 +27,10 @@ export default class LlmEngine {
 
   }
 
-  _findModel(models, filters) {
+  _findModel(models: Model[], filters: string[]) {
     for (let filter of filters) {
       if (filter.startsWith('*')) {
-        let matches = models.filter((m) => !m.id.includes(match.substring(1)))
+        let matches = models.filter((m) => !m.id.includes(filter.substring(1)))
         if (matches.length > 0) return matches[0]
       } else {
         let model = models.find((m) => m.id == filter)
@@ -36,7 +40,7 @@ export default class LlmEngine {
     return null
   }
 
-  _buildPayload(thread, model) {
+  _buildPayload(thread: Message[], model: string) {
     if (typeof thread === 'string') {
       return [{ role: 'user', content: thread }]
     } else {
@@ -63,6 +67,34 @@ export default class LlmEngine {
         return payload
       }).reverse()
     }
+  }
+
+  getRountingModel(): string {
+    throw new Error('Not implemented')
+  }
+
+  async complete(thread: Message[], opts: {[key:string]:any}): Promise<LlmResponse> {
+    throw new Error('Not implemented')
+  }
+
+  async stream(thread: Message[], opts: {[key:string]:any}): Promise<any> {
+    throw new Error('Not implemented')
+  }
+
+  async image(prompt: string, opts: {[key:string]:any}): Promise<LlmResponse> {
+    throw new Error('Not implemented')
+  }
+
+  addImageToPayload(message: Message, payload: any) {
+    throw new Error('Not implemented')
+  }
+
+  async stop(stream: any): Promise<void> {
+    throw new Error('Not implemented')
+  }
+
+  processChunk(chunk: any): any {
+    throw new Error('Not implemented')
   }
 
 }
