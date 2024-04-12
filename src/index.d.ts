@@ -18,6 +18,7 @@ interface Chat {
   engine: string
   model: string
   messages: Message[]
+  patchFromJson(jsonChat: any): boolean
 }
 
 interface Message {

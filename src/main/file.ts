@@ -1,5 +1,5 @@
 
-import { anyDict } from './index.d';
+import { anyDict } from '../index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { download } from 'electron-dl';
 import path from 'node:path';
