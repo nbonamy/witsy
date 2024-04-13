@@ -45,7 +45,7 @@ export default class LlmMock extends LlmEngine {
   }
 
   streamChunkToLlmChunk(chunk: any): LlmChunk {
-    if (chunk.toString('utf8') == 'DONE') {
+    if (chunk.toString('utf8') == '<DONE>') {
       return {
         text: null,
         done: true
