@@ -9,9 +9,10 @@ Generative AI desktop application:
 - Formatting and copy to clipboard of generated code
 - Image copy and download
 
-<p></p>
-<img src="doc/main1.jpg" width="200" /> &nbsp;
-<img src="doc/main2.jpg" width="200" />
+<p align="center">
+  <img src="doc/main1.jpg" height="250" />&nbsp;&nbsp;
+  <img src="doc/main2.jpg" height="250" />
+</p>
 
 ## AI Commands
 
@@ -22,10 +23,10 @@ AI commands are quick helpers accessible from a shortcut that leverage LLM to bo
 
 You can also create custom commands with the prompt of your liking!
 
-<p></p>
-<img src="doc/commands1.jpg" width="160" /> &nbsp;
-<img src="doc/commands2.jpg" width="160" />
-
+<p align="center">
+  <img src="doc/commands1.jpg" height="200" />&nbsp;>&nbsp;
+  <img src="doc/commands2.jpg" height="200" />
+</p>
 
 
 ## Setup
@@ -42,7 +43,9 @@ To use OpenAI models, you need to enter your [API key](https://platform.openai.c
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
 
-<img src="doc/settings.jpg" width="300" />
+<p align="center">
+  <img src="doc/settings.jpg" height="250" />&nbsp;>&nbsp;
+</p>
 
 ## Credits
 
