@@ -8,7 +8,7 @@ let editPaste: [string,string] = null
 export default class implements Automator {
 
   constructor() {
-    this._findMenus()
+    this.findMenus()
   }
 
   async moveCaretBelow() {
@@ -22,7 +22,7 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);    
+    await this.runScript(script);    
   }
 
   async copySelectedText() {
@@ -48,7 +48,7 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);
+    await this.runScript(script);
 
   }
 
@@ -70,11 +70,11 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);
+    await this.runScript(script);
     
   }
 
-  async _findMenus() {
+  async findMenus() {
 
     // only once
     if (editCopy && editPaste) {
@@ -124,14 +124,14 @@ export default class implements Automator {
 
     // now run
     console.log('Finding menus...')
-    const result = await this._runScript(script);
+    const result = await this.runScript(script);
     editCopy = [ result[0], result[1] ]
     editPaste = [ result[0], result[2] ]
     console.log('Menus found:', editCopy, editPaste)
 
   }
 
-  _runScript(script: string): Promise<any>{
+  runScript(script: string): Promise<any>{
     return new Promise((resolve, reject) => {
       applescript.execString(script, (err: Error, rtn: any) => {
         if (err) {

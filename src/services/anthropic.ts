@@ -1,12 +1,9 @@
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload } from '../index.d'
 import { Configuration } from '../config.d'
-import { store } from './store'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
 import { Stream } from '@anthropic-ai/sdk/streaming'
 import { ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam } from '@anthropic-ai/sdk/resources'
-
-const visionModels: string[] = []
 
 export default class extends LlmEngine {
 
@@ -19,8 +16,16 @@ export default class extends LlmEngine {
     })
   }
 
+  getName(): string {
+    return 'anthropic'
+  }
+
+  getVisionModels(): string[] {
+    return []
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _isVisionModel(model: string): boolean {
+  isVisionModel(model: string): boolean {
     return true
   }
 
@@ -45,7 +50,7 @@ export default class extends LlmEngine {
       model: model,
       system: thread[0].content,
       max_tokens: opts?.maxTokens || 4096,
-      messages: this._buildPayload(thread, model),
+      messages: this.buildPayload(thread, model),
     });
 
     // return an object
@@ -58,13 +63,7 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.engines.anthropic.model.chat
-    if (this._requiresVisionModel(thread, model)) {
-      const visionModel = this._findModel(store.config.engines.anthropic.models.chat, visionModels)
-      if (visionModel) {
-        model = visionModel.id
-      }
-    }
+    const model = this.selectModel(thread, opts?.model || this.getChatModel())
   
     // call
     console.log(`[anthropic] prompting model ${model}`)
@@ -72,7 +71,7 @@ export default class extends LlmEngine {
       model: model,
       system: thread[0].content,
       max_tokens: opts?.maxTokens || 4096,
-      messages: this._buildPayload(thread, model),
+      messages: this.buildPayload(thread, model),
       stream: true,
     })
 
@@ -109,8 +108,8 @@ export default class extends LlmEngine {
     ]
   }
 
-  _buildPayload(thread: Message[], model: string): Array<MessageParam> {
-    const payload: LLmCompletionPayload[] = super._buildPayload(thread, model)
+  buildPayload(thread: Message[], model: string): Array<MessageParam> {
+    const payload: LLmCompletionPayload[] = super.buildPayload(thread, model)
     return payload.filter((payload) => payload.role != 'system').map((payload): MessageParam => {
       if (typeof payload.content == 'string') {
         return {

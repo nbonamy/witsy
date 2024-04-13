@@ -1,11 +1,8 @@
 
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { Configuration } from '../config.d'
-import { store } from './store'
 import LlmEngine from './engine'
 import ollama, { ChatResponse } from 'ollama'
-
-const visionModels: string[] = ['llava:latest', '*llava']
 
 export default class extends LlmEngine {
 
@@ -16,8 +13,16 @@ export default class extends LlmEngine {
     this.client = ollama
   }
 
-  _isVisionModel(model: string): boolean {
-    return visionModels.includes(model) || model.includes('llava')
+  getName(): string {
+    return 'ollama'
+  }
+
+  getVisionModels(): string[] {
+    return ['llava:latest', '*llava']
+  }
+
+  isVisionModel(model: string): boolean {
+    return this.getVisionModels().includes(model) || model.includes('llava')
   }
 
   getRountingModel(): string|null {
@@ -40,7 +45,7 @@ export default class extends LlmEngine {
     console.log(`[ollama] prompting model ${model}`)
     const response = await this.client.chat({
       model: model,
-      messages: this._buildPayload(thread, model),
+      messages: this.buildPayload(thread, model),
       stream: false
     });
 
@@ -54,19 +59,13 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    let model = opts?.model || this.config.engines.ollama.model.chat
-    if (this._requiresVisionModel(thread, model)) {
-      const visionModel = this._findModel(store.config.engines.ollama.models.chat, visionModels)
-      if (visionModel) {
-        model = visionModel.id
-      }
-    }
+    const model = this.selectModel(thread, opts?.model || this.getChatModel())
   
     // call
     console.log(`[ollama] prompting model ${model}`)
     const stream = this.client.chat({
       model: model,
-      messages: this._buildPayload(thread, model),
+      messages: this.buildPayload(thread, model),
       stream: true,
     })
 

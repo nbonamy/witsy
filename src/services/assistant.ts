@@ -155,7 +155,7 @@ export default class {
 
     try {
 
-      this.stream = await this.llm.stream(this._getRelevantChatMessages(), opts)
+      this.stream = await this.llm.stream(this.getRelevantChatMessages(), opts)
       for await (const streamChunk of this.stream) {
         const chunk: LlmChunk = this.llm.streamChunkToLlmChunk(streamChunk)
         this.chat.lastMessage().appendText(chunk)
@@ -256,7 +256,7 @@ export default class {
     return title
   }
 
-  _getRelevantChatMessages() {
+  getRelevantChatMessages() {
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
     const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength*2, -1)]
