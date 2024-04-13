@@ -10,7 +10,7 @@
         <img :src="attachmentUrl" class="attachment" @click="onFullscreen(attachmentUrl)"/>
       </div>
       <div v-if="message.type == 'text'">
-        <vue-markdown v-if="message.content !== null" class="text" :source="message.content" :options="mdOptions" />
+        <vue-markdown v-if="message.content !== null" class="text" :source="mdPreprocess(message.content)" :options="mdOptions" :plugins="mdPlugins"/>
         <Loader v-if="message.transient" />
       </div>
       <div v-if="message.type == 'image'" class="image-container">
@@ -51,6 +51,7 @@ import Message from '../models/message'
 import Loader from './Loader.vue'
 import EngineLogo from './EngineLogo.vue'
 import VueMarkdown from 'vue-markdown-render'
+import MarkdownItKatex from '@iktakahiro/markdown-it-katex'
 import hljs from 'highlight.js'
 
 import useEventBus from '../composables/useEventBus'
@@ -207,6 +208,12 @@ const onDownload = (message) => {
   })
 }
 
+const mdPreprocess = (content) => {
+  // for katex processing, we need to replace \[ and \] with $$ to trigger processing
+  // until https://github.com/iktakahiro/markdown-it-katex/pull/13 is merged
+  return content.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
+}
+
 const mdOptions = {
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
@@ -223,6 +230,8 @@ const mdOptions = {
   }
 }
 
+const mdPlugins = [MarkdownItKatex]
+
 </script>
 
 <style>
@@ -230,6 +239,12 @@ const mdOptions = {
 @import '../../css/themes/base.css';
 @import '../../css/themes/openai.css';
 @import '../../css/themes/conversation.css';
+</style>
+
+<style>
+.message .body .katex-html {
+  display: none;
+}
 </style>
 
 <style scoped>

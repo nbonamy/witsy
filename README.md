@@ -54,6 +54,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 ## TODO
 
 - [ ] Mistral AI API integration
+- [ ] LLM tools (web-search...)
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Execute generated code (??)
@@ -61,6 +62,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## DONE
 
+- [x] Latex rendering
 - [x] Anthropic API integration
 - [x] Image generation as b64_json
 - [x] Text-to-speech
