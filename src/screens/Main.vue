@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" :style="`width: ${sidebarWidth}` "/>
-    <div class="resizer" @mousedown="onResizeStart">&nbsp;</div>
+    <div class="resizer" @mousedown="onResizeSidebarStart">&nbsp;</div>
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" :initial-tab="settingsInitialTab"/>
   </div>
@@ -77,7 +77,17 @@ onMounted(() => {
 })
 
 const onNewChat = () => {
-  assistant.value.setChat(null)
+  onSelectChat(null)
+}
+
+const onSelectChat = (chat) => {
+  // create a new assistant to allow parallel querying
+  // this will be garbage collected anyway
+  assistant.value = new Assistant(store.config)
+  assistant.value.setChat(chat)
+  nextTick(() => {
+    emitEvent('newChunk')
+  })
 }
 
 const onRenameChat = async (chat) => {
@@ -129,13 +139,6 @@ const onDeleteChat = async (chat) => {
   })
 }
 
-const onSelectChat = (chat) => {
-  assistant.value.setChat(chat)
-  nextTick(() => {
-    emitEvent('newChunk')
-  })
-}
-
 const onSendPrompt = async (prompt) => {
 
   // make sure we can have an llm
@@ -183,20 +186,20 @@ const onStopAssistant = async () => {
   await assistant.value.stop()
 }
 
-const onResizeStart = (event) => {
-  window.addEventListener('mousemove', onResizeMove)
-  window.addEventListener('mouseup', onResizeEnd)
+const onResizeSidebarStart = (event) => {
+  window.addEventListener('mousemove', onResizeSidebarMove)
+  window.addEventListener('mouseup', onResizeSidebarEnd)
 
 }
 
-const onResizeMove = (event) => {
+const onResizeSidebarMove = (event) => {
   let width = Math.max(150, Math.min(400, event.clientX))
   sidebarWidth.value = `${width}px`
 }
 
-const onResizeEnd = () => {
-  window.removeEventListener('mousemove', onResizeMove)
-  window.removeEventListener('mouseup', onResizeEnd)
+const onResizeSidebarEnd = () => {
+  window.removeEventListener('mousemove', onResizeSidebarMove)
+  window.removeEventListener('mouseup', onResizeSidebarEnd)
   new Store().set('sidebarWidth', sidebarWidth.value)
 }
 
