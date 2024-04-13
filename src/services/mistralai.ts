@@ -1,10 +1,7 @@
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { Configuration } from '../config.d'
-import { store } from './store'
 import LlmEngine from './engine'
 //import MistralClient from '@mistralai/mistralai'
-
-const visionModels: string[] = []
 
 export default class extends LlmEngine {
 
@@ -15,8 +12,16 @@ export default class extends LlmEngine {
     //this.client = new MistralClient(config.engines.mistralai?.apiKey)
   }
 
-  _isVisionModel(model: string): boolean {
-    return visionModels.includes(model)
+  getName(): string {
+    return 'mistralai'
+  }
+
+  getVisionModels(): string[] {
+    return []
+  }
+
+  isVisionModel(model: string): boolean {
+    return this.getVisionModels().includes(model)
   }
 
   getRountingModel(): string|null {
@@ -40,7 +45,7 @@ export default class extends LlmEngine {
     // console.log(`[mistralai] prompting model ${model}`)
     // const response = await this.client.chat({
     //   model: model,
-    //   messages: this._buildPayload(thread, model),
+    //   messages: this.buildPayload(thread, model),
     // });
 
     // return an object
@@ -53,19 +58,13 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // // model: switch to vision if needed
-    // let model = opts?.model || this.config.engines.mistralai.model.chat
-    // if (this._requiresVisionModel(thread, model)) {
-    //   const visionModel = this._findModel(store.config.engines.mistralai.models.chat, visionModels)
-    //   if (visionModel) {
-    //     model = visionModel.id
-    //   }
-    // }
+    // const model = this.selectModel(thread, opts?.model || this.getChatModel())
   
     // // call
     // console.log(`[mistralai] prompting model ${model}`)
     // const stream = this.client.chatStream({
     //   model: model,
-    //   messages: this._buildPayload(thread, model),
+    //   messages: this.buildPayload(thread, model),
     // })
 
     // // done

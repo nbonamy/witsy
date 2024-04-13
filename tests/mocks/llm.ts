@@ -36,7 +36,7 @@ export default class LlmMock extends LlmEngine {
     super(null)
   }
 
-  _isVisionModel(model: string): boolean {
+  isVisionModel(model: string): boolean {
     return model == 'vision'
   }
 

@@ -15,7 +15,7 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);    
+    await this.runScript(script);    
   }
 
   async copySelectedText() {
@@ -31,7 +31,7 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);
+    await this.runScript(script);
 
   }
 
@@ -43,12 +43,12 @@ export default class implements Automator {
     `
 
     // run it
-    await this._runScript(script);
+    await this.runScript(script);
     
   }
 
 
-  _runScript(script: string) {
+  runScript(script: string) {
     return new Promise((resolve, reject) => {
       applescript.execString(script, (err: Error, rtn: any) => {
         if (err) {
