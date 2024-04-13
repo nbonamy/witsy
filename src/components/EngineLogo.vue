@@ -32,24 +32,23 @@ const logo = computed(() => logos[props.engine])
 
 <style scoped>
 
-.logo.bg.openai {
-  background-color: #865563;
-  border-radius: 4px;
-  filter: invert(1);
+.logo.bg {
+  object-fit: contain;
+  border-radius: 6px;
   padding: 4px;
 }
 
+.logo.bg.openai {
+  background-color: #865563;
+  filter: invert(1);
+}
+
 .logo.bg.ollama {
-  object-fit: cover;
   background-color: white;
-  border-radius: 4px;
-  padding: 4px;
 }
 
 .logo.bg.anthropic {
   background-color: #f0f0ea;
-  border-radius: 4px;
-  padding: 4px;
 }
 
 </style>

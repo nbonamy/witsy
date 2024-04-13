@@ -101,7 +101,7 @@ const handleActionClick = async (action) => {
 }
 
 .chat {
-  margin: 4px 8px;
+  margin: 2px 8px;
   padding: 12px;
   display: flex;
   flex-direction: row;
