@@ -1,7 +1,9 @@
 <template>
   <dialog class="command">
     <form method="dialog">
-      <header>Command details</header>
+      <header>
+        <div class="title">Command details</div>
+      </header>
       <main>
         <div class="group">
           <label>Label</label>
