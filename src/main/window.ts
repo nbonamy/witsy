@@ -218,8 +218,10 @@ export const restoreWindows = () => {
 let commandPalette: BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
-    commandPalette?.close()
-    await wait();
+    if (commandPalette && !commandPalette.isDestroyed()) {
+      commandPalette?.close()
+      await wait();
+    }
   } catch (error) {
     console.error('Error while closing command palette', error);
   }
@@ -261,9 +263,11 @@ export const openCommandPalette = async (text: string) => {
 let waitingPanel: BrowserWindow = null;
 export const closeWaitingPanel = async (destroy?: boolean) => {
   try {
-    if (destroy) waitingPanel?.destroy()
-    else waitingPanel?.close()
-    await wait();
+    if (waitingPanel && !waitingPanel.isDestroyed()) {
+      if (destroy) waitingPanel?.destroy()
+      else waitingPanel?.close()
+      await wait();
+    }
   } catch (error) {
     console.error('Error while closing waiting panel', error);
   }
