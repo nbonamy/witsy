@@ -60,9 +60,9 @@ test('Assistant Completion', async () => {
 test('Conversaton Length 1', async () => {
   store.config.llm.conversationLength = 1
   await prompt('Hello LLM1')
-  const content = await prompt('Hello LLM2')
+  await prompt('Hello LLM2')
+  const thread = JSON.parse(assistant.chat.lastMessage().content)
   expect(assistant.chat.messages.length).toBe(5)
-  const thread = JSON.parse(content)
   expect(thread).toHaveLength(3)
   expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant'])
 })
@@ -70,9 +70,8 @@ test('Conversaton Length 1', async () => {
 test('Conversaton Length 2', async () => {
   store.config.llm.conversationLength = 2
   await prompt('Hello LLM1')
-  const content = await prompt('Hello LLM2')
-  expect(assistant.chat.messages.length).toBe(5)
-  const thread = JSON.parse(content)
+  await prompt('Hello LLM2')
+  const thread = JSON.parse(assistant.chat.lastMessage().content)
   expect(thread).toHaveLength(5)
   expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
 })
