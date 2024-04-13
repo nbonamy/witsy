@@ -142,7 +142,8 @@ const onDeleteChat = async (chat) => {
 const onSendPrompt = async (prompt) => {
 
   // make sure we can have an llm
-  if (assistant.value.initLlm(store.config.llm.engine) === null) {
+  assistant.value.initLlm(store.config.llm.engine)
+  if (!assistant.value.hasLlm()) {
     settingsInitialTab.value = 'models'
     nextTick(() => emitEvent('openSettings'))
     return
