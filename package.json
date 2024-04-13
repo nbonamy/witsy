@@ -10,7 +10,9 @@
     "make": "electron-forge make",
     "make2": "npx electron-builder --dir --mac --universal",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "test": "vitest --reporter=basic --disable-console-intercept",
+    "tests": "vitest --reporter=basic --disable-console-intercept"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
@@ -37,7 +39,8 @@
     "ts-node": "^10.0.0",
     "typescript": "~4.5.4",
     "vite": "^5.0.12",
-    "vite-plugin-electron-renderer": "^0.14.5"
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vitest": "^1.5.0"
   },
   "keywords": [],
   "author": {

@@ -12,7 +12,7 @@ export default class LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _isVisionModel(model: string) {
+  _isVisionModel(model: string): boolean {
     return false
   }
 
