@@ -2,9 +2,9 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { LlmStream, LlmCompletionOpts, Message } from '../src/index.d'
 import { store } from '../src/services/store'
+import defaults from '../defaults/settings.json'
 import Assistant from '../src/services/assistant'
 import LlmMock from './mocks/llm'
-import defaults from '../defaults/settings.json'
 
 let assistant: Assistant = null
 

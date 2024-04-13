@@ -6,7 +6,7 @@ import { Stream } from '@anthropic-ai/sdk/streaming'
 import { ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam } from '@anthropic-ai/sdk/resources'
 
 export const isAnthropicReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig.apiKey.length > 0
+  return engineConfig.apiKey?.length > 0
 }
 
 export default class extends LlmEngine {
