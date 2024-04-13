@@ -6,6 +6,8 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import fs from 'fs';
+import path from 'path';
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -61,6 +63,11 @@ const config: ForgeConfig = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  hooks: {
+    packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+      fs.unlinkSync(path.join(buildPath, 'node_modules/@iktakahiro/markdown-it-katex/node_modules/.bin/katex'))
+    }
+  }
 };
 
 export default config;
