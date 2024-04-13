@@ -60,7 +60,7 @@ export default class extends LlmEngine {
     // return an object
     return {
       type: 'text',
-      content: response.content.toString()
+      content: response.content[0].text
     }
   }
 
