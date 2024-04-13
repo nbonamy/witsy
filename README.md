@@ -1,7 +1,7 @@
 # Witty AI
 
 Generative AI desktop application:
-- OpenAI, Ollama, Anthropic and soon MistralAI models supported
+- OpenAI, Ollama, Anthropic and MistralAI models supported
 - Chat completion and image generation with Vision models support
 - AI commands runnable on highlighted text in almost any application
 - Read aloud of assistant messages (requires OpenAI API key)
@@ -53,7 +53,6 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] Mistral AI API integration
 - [ ] LLM tools (web-search...)
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
@@ -62,6 +61,7 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## DONE
 
+- [x] Mistral AI API integration
 - [x] Latex rendering
 - [x] Anthropic API integration
 - [x] Image generation as b64_json
