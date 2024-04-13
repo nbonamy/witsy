@@ -15,7 +15,7 @@ export default class extends LlmEngine {
     //this.client = new MistralClient(config.engines.mistralai?.apiKey)
   }
 
-  _isVisionModel(model: string) {
+  _isVisionModel(model: string): boolean {
     return visionModels.includes(model)
   }
 

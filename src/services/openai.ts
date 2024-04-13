@@ -21,7 +21,7 @@ export default class extends LlmEngine {
     })
   }
 
-  _isVisionModel(model: string) {
+  _isVisionModel(model: string): boolean {
     return visionModels.includes(model) || model.includes('vision')
   }
 

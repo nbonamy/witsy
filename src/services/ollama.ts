@@ -16,7 +16,7 @@ export default class extends LlmEngine {
     this.client = ollama
   }
 
-  _isVisionModel(model: string) {
+  _isVisionModel(model: string): boolean {
     return visionModels.includes(model) || model.includes('llava')
   }
 
