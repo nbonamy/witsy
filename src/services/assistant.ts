@@ -153,19 +153,23 @@ export default class {
 
   async generateText(opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
+    // we need this to be const during generation
+    const llm = this.llm
+    const message = this.chat.lastMessage()
+
     try {
 
-      this.stream = await this.llm.stream(this.getRelevantChatMessages(), opts)
+      this.stream = await llm.stream(this.getRelevantChatMessages(), opts)
       for await (const streamChunk of this.stream) {
-        const chunk: LlmChunk = this.llm.streamChunkToLlmChunk(streamChunk)
-        this.chat.lastMessage().appendText(chunk)
+        const chunk: LlmChunk = llm.streamChunkToLlmChunk(streamChunk)
+        message.appendText(chunk)
         callback?.call(null, chunk)
       }
 
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error(error)
-        this.chat.lastMessage().setText('Sorry, I could not generate text for that prompt.')
+        message.setText('Sorry, I could not generate text for that prompt.')
       }
     }
 
@@ -177,10 +181,14 @@ export default class {
 
   async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
+    // we need this to be const during generation
+    const llm = this.llm
+    const message = this.chat.lastMessage()
+
     try {
 
       // generate 
-      const response = await this.llm.image(prompt, opts)
+      const response = await llm.image(prompt, opts)
 
       // we need to download/write it locally
       let filename = null
@@ -194,7 +202,7 @@ export default class {
       }
 
       // save
-      this.chat.lastMessage().setImage(`file://${filename}`)
+      message.setImage(`file://${filename}`)
       callback?.call(null, {
         text: filename,
         done: true
@@ -202,7 +210,7 @@ export default class {
 
     } catch (error) {
       console.error(error)
-      this.chat.lastMessage().setText('Sorry, I could not generate an image for that prompt.')
+      message.setText('Sorry, I could not generate an image for that prompt.')
       callback?.call(null, null)
     }
 

@@ -1,9 +1,13 @@
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload } from '../index.d'
-import { Configuration } from '../config.d'
+import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
 import { Stream } from '@anthropic-ai/sdk/streaming'
 import { ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam } from '@anthropic-ai/sdk/resources'
+
+export const isAnthropicReady = (engineConfig: EngineConfig): boolean => {
+  return engineConfig.apiKey.length > 0
+}
 
 export default class extends LlmEngine {
 

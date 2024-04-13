@@ -1,30 +1,19 @@
 
 import { Model, EngineConfig } from '../config.d'
 import { store } from './store'
-import OpenAI from './openai'
-import Ollama from './ollama'
-import MistralAI from './mistralai'
-import Anthropic from './anthropic'
+import OpenAI, { isOpenAIReady } from './openai'
+import Ollama, { isOllamaReady } from './ollama'
+import MistralAI, { isMistrailAIReady } from './mistralai'
+import Anthropic, { isAnthropicReady } from './anthropic'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic']//, 'mistralai']
 
 export const isEngineReady = (engine: string) => {
-  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
-  if (!engineConfig?.models?.chat?.length) return false
-  if (engine == 'anthropic') return engineConfig.apiKey
-  return true
-}
-
-export const getEngineChatModels = (engine: string) => {
-  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
-  return engineConfig?.models?.chat
-}
-
-export const getValidModelId = (engine: string, type: string, modelId: string) => {
-  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
-  const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
-  const m = models?.find(m => m.id == modelId)
-  return m ? modelId : (models?.[0]?.id || null)
+  if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
+  if (engine === 'ollama') return isOllamaReady(store.config.engines.ollama)
+  if (engine === 'mistralai') return isMistrailAIReady(store.config.engines.mistralai)
+  if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
+  return false
 }
 
 export const loadAllModels = async () => {
@@ -44,6 +33,13 @@ export const loadModels = async (engine: string) => {
   } else if (engine === 'anthropic') {
     await loadAnthropicModels()
   }
+}
+
+const getValidModelId = (engine: string, type: string, modelId: string) => {
+  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
+  const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
+  const m = models?.find(m => m.id == modelId)
+  return m ? modelId : (models?.[0]?.id || null)
 }
 
 export const loadOpenAIModels = async () => {

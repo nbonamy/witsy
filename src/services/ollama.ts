@@ -1,8 +1,12 @@
 
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
-import { Configuration } from '../config.d'
+import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import ollama, { ChatResponse } from 'ollama'
+
+export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
+  return engineConfig.model.chat.length > 0
+}
 
 export default class extends LlmEngine {
 
