@@ -33,10 +33,12 @@ test('Ollaama Configuration', () => {
 })
 
 test('MistralAI Configuration', () => {
+  store.config.engines.mistralai.apiKey = '123'
+  expect(isEngineReady('mistralai')).toBe(false)
   store.config.engines.mistralai.models.image = [model]
   expect(isEngineReady('mistralai')).toBe(false)
   store.config.engines.mistralai.models.chat = [model]
-  expect(isEngineReady('mistralai')).toBe(false)
+  expect(isEngineReady('mistralai')).toBe(true)
 })
 
 test('Anthropic Configuration', () => {

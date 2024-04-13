@@ -241,7 +241,8 @@ export default class {
     const messages = [
       new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
       this.chat.messages[1],
-      this.chat.messages[2]
+      this.chat.messages[2],
+      new Message('user', this.config.instructions.titling_user)
     ]
 
     // now get it

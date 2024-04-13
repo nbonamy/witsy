@@ -6,7 +6,7 @@ import Ollama, { isOllamaReady } from './ollama'
 import MistralAI, { isMistrailAIReady } from './mistralai'
 import Anthropic, { isAnthropicReady } from './anthropic'
 
-export const availableEngines = ['openai', 'ollama', 'anthropic']//, 'mistralai']
+export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai']
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
@@ -130,14 +130,12 @@ export const loadMistralAIModels = async () => {
     return false
   }
 
-  console.log(models)
-
   // store
   store.config.engines.mistralai.models = {
     chat: models
     .map(model => { return {
-      id: model.model,
-      name: model.name,
+      id: model.id,
+      name: model.id,
       meta: model
     }})
     .sort((a, b) => a.name.localeCompare(b.name))

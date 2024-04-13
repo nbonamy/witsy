@@ -2,20 +2,22 @@
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
+
+// until https://github.com/mistralai/client-js/issues/59 is fixed
 //import MistralClient from '@mistralai/mistralai'
+import MistralClient from '../vendor/mistralai'
 
 export const isMistrailAIReady = (engineConfig: EngineConfig): boolean => {
-  //return engineConfig.models.chat.length > 0
-  return false
+  return engineConfig.models.chat.length > 0
 }
 
 export default class extends LlmEngine {
 
-  //client: MistralClient
+  client: MistralClient
 
   constructor(config: Configuration) {
     super(config)
-    //this.client = new MistralClient(config.engines.mistralai?.apiKey)
+    this.client = new MistralClient(config.engines.mistralai?.apiKey)
   }
 
   getName(): string {
@@ -35,48 +37,47 @@ export default class extends LlmEngine {
   }
 
   async getModels(): Promise<any[]> {
-    return null
-    // try {
-    //   const response = await this.client.listModels()
-    //   return response.data
-    // } catch (error) {
-    //   console.error('Error listing models:', error);
-    // }
+    try {
+      const response = await this.client.listModels()
+      return response.data
+    } catch (error) {
+      console.error('Error listing models:', error);
+    }
   }
 
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
-    // // call
-    // const model = opts?.model || this.config.engines.mistralai.model.chat
-    // console.log(`[mistralai] prompting model ${model}`)
-    // const response = await this.client.chat({
-    //   model: model,
-    //   messages: this.buildPayload(thread, model),
-    // });
+    console.log(JSON.parse(JSON.stringify(thread)))
+    
+    // call
+    const model = opts?.model || this.config.engines.mistralai.model.chat
+    console.log(`[mistralai] prompting model ${model}`)
+    const response = await this.client.chat({
+      model: model,
+      messages: this.buildPayload(thread, model),
+    });
 
     // return an object
     return {
       type: 'text',
-      content: 'Not implemented'//response.choices[0].message.content
+      content: response.choices[0].message.content
     }
   }
 
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
-    // // model: switch to vision if needed
-    // const model = this.selectModel(thread, opts?.model || this.getChatModel())
+    // model: switch to vision if needed
+    const model = this.selectModel(thread, opts?.model || this.getChatModel())
   
-    // // call
-    // console.log(`[mistralai] prompting model ${model}`)
-    // const stream = this.client.chatStream({
-    //   model: model,
-    //   messages: this.buildPayload(thread, model),
-    // })
+    // call
+    console.log(`[mistralai] prompting model ${model}`)
+    const stream = this.client.chatStream({
+      model: model,
+      messages: this.buildPayload(thread, model),
+    })
 
-    // // done
-    // return stream
-
-    return null
+    // done
+    return stream
 
   }
 
@@ -86,8 +87,8 @@ export default class extends LlmEngine {
 
   streamChunkToLlmChunk(chunk: any): LlmChunk {
     return {
-      text: chunk.message.content,
-      done: chunk.done
+      text: chunk.choices[0].delta.content,
+      done: chunk.choices[0].finish_reason != null
     }
   }
 
