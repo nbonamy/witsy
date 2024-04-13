@@ -26,7 +26,7 @@ const commandsFilePath = () => {
 
   // now add new commands
   for (const command of defaultCommands) {
-    const c = commands.find((cmd:Command) => cmd.id === command.id)
+    const c = commands.find((cmd: Command) => cmd.id === command.id)
     if (c == null) {
       commands.push(command)
     }
@@ -38,7 +38,7 @@ const commandsFilePath = () => {
 
 }
 
-export const newCommand = ():Command => {
+export const newCommand = (): Command => {
   return {
     id: null,
     type: 'user',

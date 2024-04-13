@@ -7,7 +7,7 @@ import Store from 'electron-store';
 import { wait } from './utils';
 
 // titlebarOptions
-const titleBarOptions:BrowserWindowConstructorOptions = {
+const titleBarOptions: BrowserWindowConstructorOptions = {
   titleBarStyle: 'hidden',
   titleBarOverlay: {
     color: '#ffffff',
@@ -97,7 +97,7 @@ export const releaseFocus = async () => {
   }
 };
 
-export let mainWindow:BrowserWindow = null;
+export let mainWindow: BrowserWindow = null;
 export const openMainWindow = () => {
 
   // try to show existig one
@@ -215,7 +215,7 @@ export const restoreWindows = () => {
   }
 };
 
-let commandPalette:BrowserWindow = null;
+let commandPalette: BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
     commandPalette?.close()
@@ -225,7 +225,7 @@ export const closeCommandPalette = async () => {
   }
 };
 
-export const openCommandPalette = async (text:string) => {
+export const openCommandPalette = async (text: string) => {
 
   // try to show existig one
   closeCommandPalette();
@@ -258,8 +258,8 @@ export const openCommandPalette = async (text:string) => {
 
 }
 
-let waitingPanel:BrowserWindow = null;
-export const closeWaitingPanel = async (destroy?:boolean) => {
+let waitingPanel: BrowserWindow = null;
+export const closeWaitingPanel = async (destroy?: boolean) => {
   try {
     if (destroy) waitingPanel?.destroy()
     else waitingPanel?.close()

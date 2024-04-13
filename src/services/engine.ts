@@ -51,7 +51,7 @@ export default class LlmEngine {
       // and then rerse the array
 
       let attached = false
-      return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg):LLmCompletionPayload => {
+      return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg): LLmCompletionPayload => {
         const payload: LLmCompletionPayload = { role: msg.role, content: msg.content }
         if (!attached && msg.attachment && this._isVisionModel(model)) {
           

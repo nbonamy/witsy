@@ -23,7 +23,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
 
 }
 
-const keyToAccelerator = (key:string) => {
+const keyToAccelerator = (key: string) => {
   if (key === '+') return 'Plus'
   if (key === '↑') return 'Up'
   if (key === '↓') return 'Down'
@@ -32,7 +32,7 @@ const keyToAccelerator = (key:string) => {
   return key
 }
 
-export const shortcutAccelerator = (shortcut:Shortcut) => {
+export const shortcutAccelerator = (shortcut: Shortcut) => {
 
   // null check
   if (shortcut == null) {
@@ -54,7 +54,7 @@ export const shortcutAccelerator = (shortcut:Shortcut) => {
 
 }
 
-const registerShortcut = (shortcut:Shortcut, callback: () => void) => {
+const registerShortcut = (shortcut: Shortcut, callback: () => void) => {
 
   // check
   if (!shortcut || !callback) {

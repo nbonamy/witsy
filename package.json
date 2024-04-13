@@ -11,8 +11,8 @@
     "make2": "npx electron-builder --dir --mac --universal",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "vitest --reporter=basic --disable-console-intercept",
-    "tests": "vitest --reporter=basic --disable-console-intercept"
+    "test": "npm run tests",
+    "tests": "vitest"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",

@@ -9,7 +9,7 @@ import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
 
-const buildLLm = (config: Configuration, engine:string) => {
+const buildLLm = (config: Configuration, engine: string) => {
 
   // build llm
   if (engine === 'ollama') {

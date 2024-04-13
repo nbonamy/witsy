@@ -1,6 +1,6 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { LlmStream, LlmCompletionOpts } from '../src/index.d'
+import { LlmStream, LlmCompletionOpts, Message } from '../src/index.d'
 import { store } from '../src/services/store'
 import Assistant from '../src/services/assistant'
 import LlmMock from './mocks/llm'
@@ -64,7 +64,7 @@ test('Conversaton Length 1', async () => {
   expect(assistant.chat.messages.length).toBe(5)
   const thread = JSON.parse(content)
   expect(thread).toHaveLength(3)
-  expect(thread.map(m => m.role)).toEqual(['system', 'user', 'assistant'])
+  expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant'])
 })
 
 test('Conversaton Length 1', async () => {
@@ -74,5 +74,5 @@ test('Conversaton Length 1', async () => {
   expect(assistant.chat.messages.length).toBe(5)
   const thread = JSON.parse(content)
   expect(thread).toHaveLength(5)
-  expect(thread.map(m => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
+  expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
 })
