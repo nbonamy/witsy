@@ -3,6 +3,7 @@ import process from 'node:process';
 import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import log from 'electron-log/main';
+import { wait } from './main/utils';
 
 import * as config from './main/config';
 import * as file from './main/file';
@@ -206,8 +207,13 @@ ipcMain.on('run-command', async (event, payload) => {
   const result = await commander.runCommand(app, args.text, args.command);
   window.restoreWindows();
   if (result?.chatWindow) {
+    await wait();
     result.chatWindow.show();
     result.chatWindow.moveTop();
-    app.focus();
+    await wait();
+    app.show();
+    app.focus({
+      steal: true,
+    });
   }
 });
