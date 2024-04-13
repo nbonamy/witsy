@@ -46,4 +46,10 @@ const logo = computed(() => logos[props.engine])
   padding: 4px;
 }
 
+.logo.bg.anthropic {
+  background-color: #f0f0ea;
+  border-radius: 4px;
+  padding: 4px;
+}
+
 </style>
