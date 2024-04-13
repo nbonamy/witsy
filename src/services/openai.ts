@@ -1,10 +1,16 @@
 
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
-import { Configuration } from '../config.d'
+import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
 import { Stream } from 'openai/streaming'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const isOpenAIReady = (engineConfig: EngineConfig): boolean => {
+  // this is the default so pretend it is always ready
+  return true
+}
 
 export default class extends LlmEngine {
 

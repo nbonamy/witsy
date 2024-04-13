@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
-import { Configuration } from '../config.d'
+import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 //import MistralClient from '@mistralai/mistralai'
+
+export const isMistrailAIReady = (engineConfig: EngineConfig): boolean => {
+  //return engineConfig.model.chat.length > 0
+  return false
+}
 
 export default class extends LlmEngine {
 
