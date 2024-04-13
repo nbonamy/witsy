@@ -54,7 +54,7 @@ const buildConfig = (defaults: anyDict, overrides: anyDict) => {
 
 }
 
-export const loadSettings = (filepath:string) => {
+export const loadSettings = (filepath: string) => {
   let data = '{}'
   try {
     data = fs.readFileSync(filepath, 'utf-8')
@@ -66,7 +66,7 @@ export const loadSettings = (filepath:string) => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (filepath:string, config: anyDict) => {
+export const saveSettings = (filepath: string, config: anyDict) => {
   try {
 
     // remove instructions that are the same as the default

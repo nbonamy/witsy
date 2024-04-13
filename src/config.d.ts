@@ -7,7 +7,7 @@ interface Configuration {
   instructions: InstructionsConfig
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
-  engines: {[key:string]: EngineConfig}
+  engines: {[key: string]: EngineConfig}
   getActiveModel: () => string
 }
 
