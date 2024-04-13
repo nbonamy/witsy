@@ -1,7 +1,7 @@
 # Witty AI
 
 Generative AI desktop application:
-- OpenAI and Ollama models supported
+- OpenAI, Ollama, Anthropic and soon MistralAI models supported
 - Chat completion and image generation with Vision models support
 - AI commands runnable on highlighted text in almost any application
 - Read aloud of assistant messages (requires OpenAI API key)
@@ -10,8 +10,23 @@ Generative AI desktop application:
 - Image copy and download
 
 <p></p>
-<img src="doc/main1.jpg" width="320" /> &nbsp;
-<img src="doc/main2.jpg" width="320" />
+<img src="doc/main1.jpg" width="200" /> &nbsp;
+<img src="doc/main2.jpg" width="200" />
+
+## AI Commands
+
+AI commands are quick helpers accessible from a shortcut that leverage LLM to boost your productivity:
+- Select any text in any application
+- Hit the AI command shorcut (Alt+Control+Space / ⌃⌥Space)
+- Select one of the commands and let LLM do their magic!
+
+You can also create custom commands with the prompt of your liking!
+
+<p></p>
+<img src="doc/commands1.jpg" width="160" /> &nbsp;
+<img src="doc/commands2.jpg" width="160" />
+
+
 
 ## Setup
 
@@ -27,7 +42,7 @@ To use OpenAI models, you need to enter your [API key](https://platform.openai.c
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
 
-<img src="doc/settings.jpg" width="320" />
+<img src="doc/settings.jpg" width="300" />
 
 ## Credits
 
