@@ -5,7 +5,7 @@ import LlmEngine from './engine'
 import ollama, { ChatResponse } from 'ollama'
 
 export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig.model.chat.length > 0
+  return engineConfig.models.chat.length > 0
 }
 
 export default class extends LlmEngine {
