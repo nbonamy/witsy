@@ -15,13 +15,14 @@ import { countryCodeToName } from './i18n'
 export default class {
 
   config: Configuration
+  engine: string
   llm: LlmEngine
   chat: Chat
   stream: any
 
-
   constructor(config: Configuration) {
     this.config = config
+    this.engine = null
     this.llm = null
     this.chat = null
     this.stream = null
@@ -31,18 +32,30 @@ export default class {
     this.chat = chat
   }
 
-  initLlm(engine: string) {
-    if (engine === 'ollama') {
-      return new Ollama(this.config)
-    } else if (engine === 'anthropic') {
-      return new Anthropic(this.config)
-    } else if (engine === 'mistralai') {
-      return new MistralAI(this.config)
-    } else if (store.config.engines.openai.apiKey) {
-      return new OpenAI(this.config)
-    } else {
-      return null
+  initLlm(engine: string): void {
+    
+    // same?
+    if (this.engine === engine && this.llm !== null) {
+      return
     }
+
+    // switch
+    if (engine === 'ollama') {
+      this.setLlm(engine, new Ollama(this.config))
+    } else if (engine === 'anthropic') {
+      this.setLlm(engine, new Anthropic(this.config))
+    } else if (engine === 'mistralai') {
+      this.setLlm(engine, new MistralAI(this.config))
+    } else if (store.config.engines.openai.apiKey) {
+      this.setLlm(engine, new OpenAI(this.config))
+    } else {
+      this.setLlm(null, null)
+    }
+  }
+
+  setLlm(engine: string, llm: LlmEngine) {
+    this.engine = engine
+    this.llm = llm
   }
 
   hasLlm() {
@@ -68,24 +81,27 @@ export default class {
     return route.content
   }
 
-  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
+  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
     // check
     prompt = prompt.trim()
     if (prompt === '') {
-      return
+      return null
     }
 
     // engine and model
     let engine = opts.engine || store.config.llm.engine
     let model = opts.model || store.config.getActiveModel()
 
+    // save histore
+    const save = opts.save == null || opts.save !== false
+
     // we need a chat
     if (this.chat === null) {
       this.chat = new Chat()
       this.chat.setEngineModel(engine, model)
       this.chat.addMessage(new Message('system', this.getLocalizedInstructions(this.config.instructions.default)))
-      if (opts.save == null || opts.save !== false) {
+      if (save) {
         store.chats.push(this.chat)
         store.saveHistory()
       }
@@ -97,9 +113,9 @@ export default class {
     }
 
     // we need an llm
-    this.llm = this.initLlm(engine)
+    this.initLlm(engine)
     if (this.llm === null) {
-      return
+      return null
     }
 
     // add message
@@ -129,11 +145,13 @@ export default class {
     }
   
     // save
-    store.saveHistory()
+    if (save) {
+      store.saveHistory()
+    }
 
   }
 
-  async generateText(opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
+  async generateText(opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
     try {
 
@@ -157,7 +175,7 @@ export default class {
   
   }
 
-  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void) {
+  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
     try {
 
@@ -175,7 +193,7 @@ export default class {
         throw new Error('Could not save image')
       }
 
-      // ssve
+      // save
       this.chat.lastMessage().setImage(`file://${filename}`)
       callback?.call(null, {
         text: filename,
@@ -219,7 +237,7 @@ export default class {
     ]
 
     // now get it
-    this.llm = this.initLlm(this.chat.engine)
+    this.initLlm(this.chat.engine)
     const response = await this.llm.complete(messages, { model: this.chat.model })
     let title = response.content.trim()
     if (title === '') {
@@ -241,7 +259,7 @@ export default class {
   _getRelevantChatMessages() {
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
-    const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength-1, -1)]
+    const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength*2, -1)]
     return messages
   }
 
