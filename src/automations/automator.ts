@@ -70,4 +70,8 @@ export default class {
 
   }
 
+  async copyToClipboard(text: string) {
+    await clipboard.writeText(text)
+  }
+
 }

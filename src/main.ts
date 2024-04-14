@@ -209,7 +209,7 @@ ipcMain.on('run-command', async (event, payload) => {
   const args = JSON.parse(payload);
   await window.closeCommandPalette();
   await window.releaseFocus();
-  const result = await commander.runCommand(app, args.text, args.command);
+  const result = await commander.runCommand(app, null, args.text, args.command);
   window.restoreWindows();
   if (result?.chatWindow) {
     await wait();
