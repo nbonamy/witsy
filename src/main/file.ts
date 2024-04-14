@@ -1,7 +1,9 @@
 
 import { anyDict } from '../index.d';
 import { App, BrowserWindow, dialog } from 'electron';
+import { execSync } from 'child_process';
 import { download } from 'electron-dl';
+import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -47,7 +49,8 @@ export const pickFile = (app: App, payload: anyDict) => {
       filters: payload?.filters
     });
     if (fileURL) {
-      return getFileContents(app, fileURL[0]);
+      if (payload.location) return fileURL[0];
+      else return getFileContents(app, fileURL[0]);
     }
   } catch (error) {
     console.error('Error while picking file', error);
@@ -58,6 +61,17 @@ export const pickFile = (app: App, payload: anyDict) => {
 
 }
 
+export const findProgram = (app: App, program: string) => {
+  if (process.platform !== 'win32') {
+    try {
+      const path = execSync(`which ${program}`).toString().trim();
+      return path;
+    } catch(error) {
+      console.error(`Error while finding program ${program}`, error);
+    }
+  }
+  return null;
+}
 
 export const writeFileContents = (app: App, payload: anyDict) => {
 

@@ -1,17 +1,17 @@
 
 import { PluginParameter, anyDict } from '../index.d'
-import { Configuration } from '../config.d'
+import { PluginConfig } from '../config.d'
 import { ipcRenderer } from 'electron'
 import Plugin from './plugin'
 
 export default class extends Plugin {
 
-  constructor(config: Configuration) {
+  constructor(config: PluginConfig) {
     super(config)
   }
 
   isEnabled(): boolean {
-    return true
+    return this.config.enabled && this.config.binpath
   }
 
   getName(): string {

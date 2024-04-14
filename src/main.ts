@@ -184,6 +184,10 @@ ipcMain.on('pick-file', (event, payload) => {
   event.returnValue = file.pickFile(app, payload);
 });
 
+ipcMain.on('find-program', (event, payload) => {
+  event.returnValue = file.findProgram(app, payload);
+});
+
 ipcMain.on('get-contents', (event, payload) => {
   event.returnValue = file.getFileContents(app, payload);
 });

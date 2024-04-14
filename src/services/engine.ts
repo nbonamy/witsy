@@ -6,7 +6,7 @@ import Plugin from '../plugins/plugin'
 import WeatherPlugin from '../plugins/weather'
 import PythonPlugin from '../plugins/python'
 
-const availablePlugins: anyDict = {
+export const availablePlugins: anyDict = {
   weather: WeatherPlugin,
   python:  PythonPlugin
 }

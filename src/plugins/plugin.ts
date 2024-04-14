@@ -1,11 +1,11 @@
 import { PluginParameter, anyDict } from '../index.d'
-import { Configuration } from '../config.d'
+import { PluginConfig } from '../config.d'
 
 export default class {
 
-  config: Configuration
+  config: PluginConfig
   
-  constructor(config: Configuration) {
+  constructor(config: PluginConfig) {
     this.config = config
   }
 

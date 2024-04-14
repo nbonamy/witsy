@@ -118,6 +118,9 @@ export default class {
       return null
     }
 
+    // make sure llm has latest tools
+    this.llm.loadPlugins()
+
     // add message
     const message = new Message('user', prompt)
     message.attachFile(opts.attachment)
