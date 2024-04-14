@@ -77,7 +77,7 @@
     }
   },
   "plugins": {
-    "weather": {},
+    "tavily": {},
     "python": {}
   }
 }

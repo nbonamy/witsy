@@ -43,7 +43,7 @@
 
 import { SpeechPlayer } from 'openai-speech-stream-player'
 import { ipcRenderer, clipboard, nativeImage } from 'electron'
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import Tts from '../services/tts'
 import Chat from '../models/chat'
@@ -69,6 +69,20 @@ const copyLabel = ref('Copy')
 const audioState = ref({
   state: 'idle',
   message: null,
+})
+
+// onUpdated is not called for an unknown reason
+// so let's hack it
+let updateLinkInterval = null 
+onMounted(() => {
+  updateLinkInterval = setInterval(() => {
+    document.querySelectorAll('.messages a').forEach(link => {
+      link.target = "_blank"
+    })
+  }, 599)
+})
+onUnmounted(() => {
+  clearInterval(updateLinkInterval)
 })
 
 const mgsAudioState = (message) => {

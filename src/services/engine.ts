@@ -3,12 +3,12 @@ import { anyDict, Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload,
 import { Configuration, Model } from '../config.d'
 import { getFileContents } from './download'
 import Plugin from '../plugins/plugin'
-import WeatherPlugin from '../plugins/weather'
+import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'
 
 export const availablePlugins: anyDict = {
-  weather: WeatherPlugin,
-  python:  PythonPlugin
+  python:  PythonPlugin,
+  tavily: TavilyPlugin,
 }
 
 export default class LlmEngine {

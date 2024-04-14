@@ -4,7 +4,8 @@
     <div class="tools">
       <div class="plugins">
         <div class="plugin" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" @click="selectPlugin(plugin)">
-          <img class="logo" :src="plugin.logo" />
+          <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
+          <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
           {{ plugin.label }}
         </div>
       </div>
@@ -17,10 +18,10 @@
 
 import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../services/engine'
-import SettingsWeather from './SettingsWeather.vue'
+import SettingsTavily from './SettingsTavily.vue'
 import SettingsPython from './SettingsPython.vue'
-import logoWeather from '../../assets/openweather.svg'
 import logoPython from '../../assets/python.svg'
+import { BIconSearch } from 'bootstrap-icons-vue'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -30,19 +31,19 @@ const plugins = computed(() => {
     return {
       id: plugin,
       label: {
-        weather: 'Weather',
+        tavily: 'Tavily',
         python: 'Python',
       }[plugin],
       logo: {
-        weather: logoWeather,
-        python: logoPython,
+        tavily: { icon: BIconSearch },
+        python: { image: logoPython },
       }[plugin],
     }
   })
 })
 
 const currentView = computed(() => {
-  if (currentPlugin.value == 'weather') return SettingsWeather
+  if (currentPlugin.value == 'tavily') return SettingsTavily
   if (currentPlugin.value == 'python') return SettingsPython
 })
 
@@ -107,7 +108,7 @@ dialog.settings .content {
       &.selected {
         background-color: var(--highlight-color);
         color: white;
-        .logo {
+        .logo.image {
           filter: invert(1);
         }
       }

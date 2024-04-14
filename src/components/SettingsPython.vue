@@ -10,8 +10,8 @@
       <div class="subgroup">
         <input type="text" v-model="binpath" @change="save">
         <div class="actions">
-          <button @click.prevent="search">Search</button>
           <button @click.prevent="pick">Pick</button>  
+          <button @click.prevent="search" class="search">Search</button>
         </div>
       </div>
     </div>
@@ -83,5 +83,8 @@ defineExpose({ load })
   margin-left: 0px;
 }
 
+.windows .actions .search {
+  display: none;
+}
 
 </style>
