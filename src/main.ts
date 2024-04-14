@@ -227,9 +227,13 @@ ipcMain.on('run-python-code', async (event, payload) => {
   try {
     console.log('Running Python code:', payload);
     const result = await PythonShell.runString(payload);
-    event.returnValue = result;
+    event.returnValue = {
+      result: result
+    }
   } catch (error) {
     console.error(error);
-    event.returnValue = null;
+    event.returnValue = {
+      error: error
+    }
   }
 })
