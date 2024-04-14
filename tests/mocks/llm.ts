@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, Message } from '../../src/index.d'
+import { Configuration } from '../../src/config.d'
 import LlmEngine from '../../src/services/engine'
 import RandomChunkStream from './stream'
 
 export default class LlmMock extends LlmEngine {
 
-  constructor() {
-    super(null)
+  constructor(config: Configuration) {
+    super(config)
   }
 
   isVisionModel(model: string): boolean {
@@ -44,7 +45,7 @@ export default class LlmMock extends LlmEngine {
     stream.destroy()
   }
 
-  streamChunkToLlmChunk(chunk: any): LlmChunk {
+  async streamChunkToLlmChunk(chunk: any): Promise<LlmChunk|null> {
     if (chunk.toString('utf8') == '<DONE>') {
       return {
         text: null,
