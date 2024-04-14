@@ -39,7 +39,6 @@ Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/
 You can download a binary from the Releases page or build yourself:
 ```
 npm install
-npm test
 npm start
 ```
 
