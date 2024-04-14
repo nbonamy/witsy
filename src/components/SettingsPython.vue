@@ -3,7 +3,7 @@
   <div>
     <div class="group">
       <label>Enabled</label>
-      <input type="checkbox" v-model="enabled" @change="save" />
+      <input type="checkbox" v-model="enabled" :disabled="!binpath" @change="save" />
     </div>
     <div class="group">
       <label>Python Binary</label>
@@ -15,6 +15,14 @@
         </div>
       </div>
     </div>
+    <div class="group">
+      <label></label>
+      <span>
+        Warning! Enabling this plugin will allow LLM engines to run arbitray code on your computer.
+        There is no way to predict if the code that LLM engines will generate is safe or not.<br/>
+        Use at your own risk!
+      </span>
+    </div>
   </div>
 </template>
 
@@ -22,7 +30,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron'
 
 const enabled = ref(false)
 const binpath = ref(null)
