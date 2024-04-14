@@ -41,7 +41,7 @@ beforeEach(() => {
 
   // init assistant
   assistant = new Assistant(store.config)
-  assistant.setLlm('mock', new LlmMock())
+  assistant.setLlm('mock', new LlmMock(store.config))
 })
 
 test('Assistant Creation', () => {
