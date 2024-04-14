@@ -21,7 +21,7 @@ import { availablePlugins } from '../services/engine'
 import SettingsTavily from './SettingsTavily.vue'
 import SettingsPython from './SettingsPython.vue'
 import logoPython from '../../assets/python.svg'
-import { BIconSearch } from 'bootstrap-icons-vue'
+import logoTavily from '../../assets/tavily.svg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -31,11 +31,11 @@ const plugins = computed(() => {
     return {
       id: plugin,
       label: {
-        tavily: 'Tavily',
+        tavily: 'Tavily Search',
         python: 'Python',
       }[plugin],
       logo: {
-        tavily: { icon: BIconSearch },
+        tavily: { image: logoTavily },
         python: { image: logoPython },
       }[plugin],
     }
