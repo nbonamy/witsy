@@ -54,7 +54,7 @@ test('Assistant Completion', async () => {
   expect(content).toBe('[{"role":"system","content":"You are a chat assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(assistant.chat.lastMessage().content).toBe(content)
   expect(assistant.chat.messages.length).toBe(3)
-  expect(assistant.chat.title).toBe('Be kind. Don\'t mock me')
+  expect(assistant.chat.title).toBe('[{"role":"system","content":"You are a titling assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\\"role\\":\\"system\\",\\"content\\":\\"You are a chat assistant\\"},{\\"role\\":\\"user\\",\\"content\\":\\"Hello LLM\\"},{\\"role\\":\\"assistant\\",\\"content\\":\\"Be kind. Don\'t mock me\\"}]"},{"role":"user"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Conversaton Length 1', async () => {

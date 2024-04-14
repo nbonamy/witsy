@@ -1,13 +1,14 @@
 
 import { Command } from '../index.d'
 import { Configuration } from '../config.d'
-import { App, BrowserWindow, clipboard, Notification } from 'electron'
+import { App, BrowserWindow, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../main/config'
 import * as window from '../main/window'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
+import LlmEngine from '../services/engine'
 
 const buildLLm = (config: Configuration, engine: string) => {
 
@@ -22,10 +23,7 @@ const buildLLm = (config: Configuration, engine: string) => {
 
 }
 
-const promptLlm = (config: Configuration, engine: string, model: string, prompt: string) => {
-
-  // get llm
-  const llm = buildLLm(config, engine)
+const promptLlm = (llm: LlmEngine, model: string, prompt: string) => {
 
   // build messages
   const messages: Message[]  = [
@@ -61,7 +59,7 @@ const finalizeCommand = async (command: Command, text: string, engine: string, m
 
   } else if (command.action === 'clipboard_copy') {
 
-    await clipboard.writeText(text)
+    await automator.copyToClipboard(text)
 
   }
 
@@ -101,7 +99,7 @@ export const prepareCommand = async () => {
 
 }
 
-export const runCommand = async (app: App, text: string, command: Command) => {
+export const runCommand = async (app: App, llm: LlmEngine, text: string, command: Command) => {
 
   //
   const result = {
@@ -137,9 +135,17 @@ export const runCommand = async (app: App, text: string, command: Command) => {
       // open waiting panel
       window.openWaitingPanel();
 
+      // we need an llm
+      if (!llm) {
+        llm = buildLLm(config, engine);
+        if (!llm) {
+          throw new Error(`Invalid LLM engine: ${engine}`)
+        }
+      }
+
       // now prompt llm
       console.debug(`Prompting with ${result.prompt.slice(0, 50)}...`);
-      const response = await promptLlm(config, engine, model, result.prompt);
+      const response = await promptLlm(llm, model, result.prompt);
       result.response = response.content;
 
       // done

@@ -30,7 +30,10 @@ export default class LlmMock extends LlmEngine {
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
     return {
       type: 'text',
-      content: 'Be kind. Don\'t mock me'
+      content: JSON.stringify([
+        ...thread.map(m => { return { role: m.role, content: m.content }}),
+        { role: 'assistant', content: 'Be kind. Don\'t mock me' }
+      ])
     }
   }
 
