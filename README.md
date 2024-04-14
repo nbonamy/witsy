@@ -53,14 +53,15 @@ Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assist
 
 ## TODO
 
-- [ ] LLM tools (web-search...)
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
-- [ ] Execute generated code (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] Tavily Internet search plugin
+- [x] Python code execution plugin
+- [x] LLM Tools supprt (OpenAI only)
 - [x] Mistral AI API integration
 - [x] Latex rendering
 - [x] Anthropic API integration
