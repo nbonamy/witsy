@@ -5429,6 +5429,11 @@ pupa@^2.0.1:
   dependencies:
     escape-goat "^2.0.0"
 
+python-shell@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/python-shell/-/python-shell-5.0.0.tgz"
+  integrity sha512-RUOOOjHLhgR1MIQrCtnEqz/HJ1RMZBIN+REnpSUrfft2bXqXy69fwJASVziWExfFXsR1bCY0TznnHooNsCo0/w==
+
 qs@6.11.0:
   version "6.11.0"
   resolved "https://registry.npmjs.org/qs/-/qs-6.11.0.tgz"

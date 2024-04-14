@@ -10,6 +10,7 @@ type LlmRole = 'system'|'user'|'assistant'
 //
 // model stuff
 //
+
 interface Chat {
   uuid: string
   title: string
@@ -115,6 +116,8 @@ interface LLmCompletionPayload {
   role: llmRole
   content: sring|LlmContentPayload[]
   images?: string[]
+  tool_call_id?: string
+  name?: string
 }
 
 interface LlmContentPayload {
@@ -135,6 +138,26 @@ interface LlmContentPayload {
 interface LlmChunk {
   text: string
   done: boolean
+  stream?: any
+}
+
+interface LlmToolCall {
+  id: string
+  message: any
+  function: string
+  args: string
+}
+
+//
+// plugins stuff
+//
+
+interface PluginParameter {
+  name: string
+  description: string
+  type: string
+  enum?: string[]
+  required?: boolean
 }
 
 //

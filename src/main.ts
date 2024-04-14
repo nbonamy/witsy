@@ -2,6 +2,7 @@
 import process from 'node:process';
 import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import { PythonShell } from 'python-shell';
 import log from 'electron-log/main';
 import { wait } from './main/utils';
 
@@ -217,3 +218,14 @@ ipcMain.on('run-command', async (event, payload) => {
     });
   }
 });
+
+ipcMain.on('run-python-code', async (event, payload) => {
+  try {
+    console.log('Running Python code:', payload);
+    const result = await PythonShell.runString(payload);
+    event.returnValue = result;
+  } catch (error) {
+    console.error(error);
+    event.returnValue = null;
+  }
+})

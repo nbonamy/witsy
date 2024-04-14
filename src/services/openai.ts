@@ -1,5 +1,5 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
@@ -15,6 +15,9 @@ export const isOpenAIReady = (engineConfig: EngineConfig): boolean => {
 export default class extends LlmEngine {
 
   client: OpenAI
+  currentModel: string
+  currentThread: Array<any>
+  toolCalls: LlmToolCall[]
 
   constructor(config: Configuration) {
     super(config)
@@ -36,7 +39,7 @@ export default class extends LlmEngine {
     return this.getVisionModels().includes(model) || model.includes('vision')
   }
 
-  getRountingModel(): string|null {
+  getRountingModel(): string | null {
     return 'gpt-3.5-turbo'
   }
 
@@ -69,14 +72,27 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    const model = this.selectModel(thread, opts?.model || this.getChatModel())
+    this.currentModel = this.selectModel(thread, opts?.model || this.getChatModel())
+
+    // save the message thread
+    this.currentThread = this.buildPayload(thread, this.currentModel)
+    return await this.doStream()
+
+  }
+
+  async doStream(): Promise<LlmStream> {
+
+    // reset
+    this.toolCalls = []
 
     // call
-    console.log(`[openai] prompting model ${model}`)
+    console.log(`[openai] prompting model ${this.currentModel}`)
     const stream = this.client.chat.completions.create({
-      model: model,
-      messages: this.buildPayload(thread, model) as Array<any>,
+      model: this.currentModel,
+      messages: this.currentThread,
       stream: true,
+      tools: this.getAvailableTools(),
+      tool_choice: 'auto',
     })
 
     // done
@@ -88,7 +104,70 @@ export default class extends LlmEngine {
     await stream?.controller?.abort()
   }
 
-  streamChunkToLlmChunk(chunk: ChatCompletionChunk): LlmChunk {
+  async streamChunkToLlmChunk(chunk: ChatCompletionChunk): Promise<LlmChunk|null> {
+
+    // tool calls
+    if (chunk.choices[0]?.delta?.tool_calls) {
+
+      // arguments or new tool?
+      if (chunk.choices[0].delta.tool_calls[0].id) {
+
+        // debug
+        //console.log('[openai] tool call start:', chunk)
+
+        // record the tool call
+        const toolCall: LlmToolCall = {
+          id: chunk.choices[0].delta.tool_calls[0].id,
+          message: chunk.choices[0].delta.tool_calls.map((tc: any) => {
+            delete tc.index
+            return tc
+          }),
+          function: chunk.choices[0].delta.tool_calls[0].function.name,
+          args: chunk.choices[0].delta.tool_calls[0].function.arguments,
+        }
+        this.toolCalls.push(toolCall)
+        return null
+      
+      } else {
+
+        const toolCall = this.toolCalls[this.toolCalls.length-1]
+        toolCall.args += chunk.choices[0].delta.tool_calls[0].function.arguments
+        return null
+
+      }
+
+    }
+
+    // tool calls again
+    if (chunk.choices[0]?.finish_reason === 'tool_calls') {
+
+      // add tools
+      for (const toolCall of this.toolCalls) {
+        const args = JSON.parse(toolCall.args)
+        const content = await this.callTool(toolCall.function, args)
+        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content)}`)
+        this.currentThread.push({
+          role: 'assistant',
+          tool_calls: toolCall.message
+        })
+        this.currentThread.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolCall.function,
+          content: JSON.stringify(content)
+        })
+      }
+
+      // switch to new stream
+      return {
+        text: null,
+        done: false,
+        stream: await this.doStream()
+      }
+      
+    }
+
+    // text chunk
     return {
       text: chunk.choices[0]?.delta?.content || '',
       done: chunk.choices[0]?.finish_reason === 'stop'
@@ -98,15 +177,17 @@ export default class extends LlmEngine {
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     payload.content = [
       { type: 'text', text: message.content },
-      { type: 'image_url', image_url: {
-        url: 'data:image/jpeg;base64,' + message.attachment.contents,
-      }}
+      {
+        type: 'image_url', image_url: {
+          url: 'data:image/jpeg;base64,' + message.attachment.contents,
+        }
+      }
     ]
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
-    
+
     // call
     const model = this.config.engines.openai.model.image
     console.log(`[openai] prompting model ${model}`)

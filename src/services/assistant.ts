@@ -160,10 +160,18 @@ export default class {
     try {
 
       this.stream = await llm.stream(this.getRelevantChatMessages(), opts)
-      for await (const streamChunk of this.stream) {
-        const chunk: LlmChunk = llm.streamChunkToLlmChunk(streamChunk)
-        message.appendText(chunk)
-        callback?.call(null, chunk)
+      while (this.stream) {
+        let newStream = null
+        for await (const streamChunk of this.stream) {
+          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk)
+          if (chunk?.stream) {
+            newStream = chunk.stream
+          } else {
+            message.appendText(chunk)
+            callback?.call(null, chunk)
+          }
+        }
+        this.stream = newStream
       }
 
     } catch (error) {
