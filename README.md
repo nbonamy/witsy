@@ -26,7 +26,8 @@ You can also create custom commands with the prompt of your liking!
 
 <p align="center">
   <img src="doc/commands1.jpg" height="200" />&nbsp;>&nbsp;
-  <img src="doc/commands2.jpg" height="200" />
+  <img src="doc/commands2.jpg" height="200" />&nbsp;>&nbsp;
+  <img src="doc/commands3.jpg" height="200" />
 </p>
 
 
