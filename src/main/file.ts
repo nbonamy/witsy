@@ -45,13 +45,23 @@ export const deleteFile = (app: App, payload: anyDict) => {
 export const pickFile = (app: App, payload: anyDict) => {
 
   try {
+    
+    // build dialog propertis
+    const dialogProperties: ("openFile" | "treatPackageAsDirectory" | "noResolveAliases")[] = [ 'openFile', 'treatPackageAsDirectory' ];
+    if (payload.location) dialogProperties.push('noResolveAliases');
+    
+    // show it and pick
     const fileURL = dialog.showOpenDialogSync({
-      filters: payload?.filters
+      properties: dialogProperties,
+      filters: payload?.filters || [ { name: 'All Files', extensions: ['*'] } ]
     });
+
+    // return
     if (fileURL) {
       if (payload.location) return fileURL[0];
       else return getFileContents(app, fileURL[0]);
     }
+    
   } catch (error) {
     console.error('Error while picking file', error);
   }
