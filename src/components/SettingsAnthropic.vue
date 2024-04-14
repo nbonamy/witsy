@@ -5,7 +5,7 @@
       <label>API key</label>
       <div class="subgroup">
         <input type="text" v-model="apiKey" @blur="onKeyChange" /><br />
-        <a href="https://console.mistral.ai/api-keys/" target="_blank">Get your API key</a>
+        <a href="https://console.anthropic.com/settings/keys" target="_blank">Get your API key</a>
       </div>
     </div>
     <div class="group">
