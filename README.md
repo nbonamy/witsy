@@ -30,6 +30,9 @@ You can also create custom commands with the prompt of your liking!
   <img src="doc/commands3.jpg" height="200" />
 </p>
 
+Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170](https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170).
+
+
 
 ## Setup
 
@@ -41,17 +44,20 @@ npm start
 
 ## Prerequisites
 
-To use OpenAI models, you need to enter your [API key](https://platform.openai.com/api-keys).
+To use OpenAI, Anthropic or Mistral AI models, you need to enter your API key:
+- [OpenAI](https://platform.openai.com/api-keys)
+- [Anthropic](https://console.anthropic.com/settings/keys)
+- [MistralAI](https://console.mistral.ai/api-keys/)
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
+
+To use text-to-speech, you need an [OpenAI API key](https://platform.openai.com/api-keys).
+
+To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 <p align="center">
   <img src="doc/settings.jpg" height="250" />&nbsp;>&nbsp;
 </p>
-
-## Credits
-
-Commands by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170](https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170).
 
 ## TODO
 
