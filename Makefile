@@ -11,6 +11,9 @@ CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sig
 
 default: mac-arm64
 
+test:
+	npx vitest --run
+
 clean:
 	-rm -rf out
 
@@ -44,5 +47,5 @@ linux: linux-x64
 
 all: clean mac win linux
 
-publish:
+publish: test
 	gh release create v$(VERSION) --title $(VERSION) --generate-notes ./out/*.zip
