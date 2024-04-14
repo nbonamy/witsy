@@ -75,5 +75,9 @@
         "chat": "llama2"
       }
     }
+  },
+  "plugins": {
+    "weather": {},
+    "python": {}
   }
 }

@@ -8,6 +8,7 @@ interface Configuration {
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
   engines: {[key: string]: EngineConfig}
+  plugins: {[key: string]: PluginConfig}
   getActiveModel: () => string
 }
 
@@ -70,3 +71,4 @@ interface TTSConfig {
   model: string
   voice: string
 }
+type PluginConfig = anyDict

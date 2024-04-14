@@ -88,7 +88,7 @@ export default class extends LlmEngine {
     stream.controller.abort()
   }
 
-  streamChunkToLlmChunk(chunk: MessageStreamEvent): LlmChunk|null {
+  async streamChunkToLlmChunk(chunk: MessageStreamEvent): Promise<LlmChunk|null> {
     if (chunk.type == 'message_stop') {
       return { text: '', done: true }
     } else if (chunk.type == 'content_block_delta') {

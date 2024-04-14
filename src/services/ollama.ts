@@ -82,7 +82,7 @@ export default class extends LlmEngine {
     await ollama.abort()
   }
 
-  streamChunkToLlmChunk(chunk: ChatResponse): LlmChunk {
+  async streamChunkToLlmChunk(chunk: ChatResponse): Promise<LlmChunk|null> {
     return {
       text: chunk.message.content,
       done: chunk.done

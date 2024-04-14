@@ -85,7 +85,7 @@ export default class extends LlmEngine {
   async stop() {
   }
 
-  streamChunkToLlmChunk(chunk: any): LlmChunk {
+  async streamChunkToLlmChunk(chunk: any): Promise<LlmChunk|null> {
     return {
       text: chunk.choices[0].delta.content,
       done: chunk.choices[0].finish_reason != null

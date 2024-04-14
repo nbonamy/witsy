@@ -1,14 +1,24 @@
 
-import { Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk } from '../index.d'
+import { anyDict, Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk } from '../index.d'
 import { Configuration, Model } from '../config.d'
 import { getFileContents } from './download'
+import Plugin from '../plugins/plugin'
+import WeatherPlugin from '../plugins/weather'
+import PythonPlugin from '../plugins/python'
+
+const availablePlugins: anyDict = {
+  weather: WeatherPlugin,
+  python:  PythonPlugin
+}
 
 export default class LlmEngine {
 
   config: Configuration
+  plugins: { [key: string]: Plugin }
 
   constructor(config: Configuration) {
     this.config = config
+    this.loadPlugins()
   }
 
   getName(): string {
@@ -58,7 +68,7 @@ export default class LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  streamChunkToLlmChunk(chunk: any): LlmChunk {
+  async streamChunkToLlmChunk(chunk: any): Promise<LlmChunk|null> {
     throw new Error('Not implemented')
   }
 
@@ -138,6 +148,30 @@ export default class LlmEngine {
         }
         return payload
       }).reverse()
+    }
+  }
+
+  loadPlugins() {
+    this.plugins = {}
+    for (const pluginName in availablePlugins) {
+      const pluginClass = availablePlugins[pluginName]
+      const instance = new pluginClass(this.config.plugins[pluginName])
+      if (instance.isEnabled()) {
+        this.plugins[instance.getName()] = instance
+      }
+    }
+  }
+
+  getAvailableTools(): any[] {
+    return Object.values(this.plugins).map((plugin: Plugin) => plugin.getDefinition())
+  }
+
+  async callTool(tool: string, args: any): Promise<any> {
+    const plugin = this.plugins[tool]
+    if (plugin) {
+      return await plugin.execute(args)
+    } else {
+      throw new Error(`Tool ${tool} not found`)
     }
   }
 
