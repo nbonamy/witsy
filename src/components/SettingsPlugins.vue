@@ -1,0 +1,125 @@
+
+<template>
+  <div class="content">
+    <div class="tools">
+      <div class="plugins">
+        <div class="plugin" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" @click="selectPlugin(plugin)">
+          <img class="logo" :src="plugin.logo" />
+          {{ plugin.label }}
+        </div>
+      </div>
+      <component :is="currentView" class="settings" ref="pluginSettings" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+import { ref, computed, nextTick } from 'vue'
+import { availablePlugins } from '../services/engine'
+import SettingsWeather from './SettingsWeather.vue'
+import SettingsPython from './SettingsPython.vue'
+import logoWeather from '../../assets/openweather.svg'
+import logoPython from '../../assets/python.svg'
+
+const currentPlugin = ref(Object.keys(availablePlugins)[0])
+const pluginSettings = ref(null)
+
+const plugins = computed(() => {
+  return Object.keys(availablePlugins).map(plugin => {
+    return {
+      id: plugin,
+      label: {
+        weather: 'Weather',
+        python: 'Python',
+      }[plugin],
+      logo: {
+        weather: logoWeather,
+        python: logoPython,
+      }[plugin],
+    }
+  })
+})
+
+const currentView = computed(() => {
+  if (currentPlugin.value == 'weather') return SettingsWeather
+  if (currentPlugin.value == 'python') return SettingsPython
+})
+
+const selectPlugin = (plugin) => {
+  currentPlugin.value = plugin.id
+  nextTick(() => pluginSettings.value.load())
+}
+
+const load = () => {
+  pluginSettings.value.load()
+}
+
+const save = () => {
+}
+
+defineExpose({ load })
+
+</script>
+
+<style scoped>
+@import '../../css/dialog.css';
+@import '../../css/tabs.css';
+@import '../../css/form.css';
+</style>
+
+<style scoped>
+
+dialog.settings .content {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+}
+
+.tools {
+  
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  .plugins {
+    background-color: white;
+    border-right: 1px solid #ccc;
+    width: 140px;
+    padding: 10px;
+
+    .plugin {
+
+      flex-direction: row;
+      align-items: center;
+      height: 24px;
+      padding: 0px 8px;
+      margin: 2px 0px;
+      display: flex;
+      border-radius: 4px;
+      font-size: 10.5pt;
+
+      .logo {
+        height: 10pt;
+        margin-right: 4px;
+      }
+
+      &.selected {
+        background-color: var(--highlight-color);
+        color: white;
+        .logo {
+          filter: invert(1);
+        }
+      }
+    }
+  }
+
+}
+
+.settings {
+  flex: 1;
+  min-height: 200px;
+  padding: 16px 16px 16px 0px !important;
+}
+
+</style>

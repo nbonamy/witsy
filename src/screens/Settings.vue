@@ -20,6 +20,7 @@
             <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+            <SettingsTab title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
             <SettingsTab title="TTS" :checked="initialTab == 'tts'"><BIconMegaphone class="icon" /></SettingsTab>
             <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
@@ -28,6 +29,7 @@
           <SettingsCommands ref="settingsCommands" />
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsLLM ref="settingsLLM" />
+          <SettingsPlugins ref="settingsPlugins" />
           <SettingsTTS ref="settingsTTS" />
           <SettingsAdvanced ref="settingsAdvanced" />
         </div>
@@ -46,6 +48,7 @@ import SettingsAppearance from '../components/SettingsAppearance.vue'
 import SettingsCommands from '../components/SettingsCommands.vue'
 import SettingsShortcuts from '../components/SettingsShortcuts.vue'
 import SettingsLLM from '../components/SettingsLLM.vue'
+import SettingsPlugins from '../components/SettingsPlugins.vue'
 import SettingsTTS from '../components/SettingsTTS.vue'
 import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 
@@ -64,6 +67,7 @@ const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
 const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
+const settingsPlugins = ref(null)
 const settingsTTS = ref(null)
 const settingsAdvanced = ref(null)
 
@@ -79,6 +83,7 @@ const onOpenSettings = () => {
   settingsShortcuts.value.load()
   settingsCommands.value.load()
   settingsLLM.value.load()
+  settingsPlugins.value.load()
   settingsTTS.value.load()
   settingsAdvanced.value.load()
   document.querySelector('#settings').showModal()
