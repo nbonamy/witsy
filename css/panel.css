@@ -1,0 +1,8 @@
+
+.settings form .group label {
+  min-width: 100px;
+}
+
+.settings .subgroup {
+  width: 100%;
+}

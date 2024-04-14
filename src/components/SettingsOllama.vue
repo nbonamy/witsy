@@ -69,4 +69,5 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
+@import '../../css/panel.css';
 </style>
