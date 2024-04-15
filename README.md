@@ -61,6 +61,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] User feedback when running a plugin
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)

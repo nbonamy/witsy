@@ -12,7 +12,9 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "test": "npm run tests",
-    "tests": "vitest"
+    "tests": "vitest",
+    "coverage": "run --coverage",
+    "testui": "vitest --ui --coverage.enabled=true"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",

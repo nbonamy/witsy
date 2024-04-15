@@ -237,7 +237,7 @@ export default class {
   async attach(file: Attachment) {
 
     // make sure last message is from user else create it
-    if (this.chat.lastMessage().role !== 'user') {
+    if (this.chat.lastMessage()?.role !== 'user') {
       this.chat.addMessage(new Message('user'))
     }
 

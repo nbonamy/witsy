@@ -35,7 +35,7 @@ export default class {
       type: 'function',
       function: {
         name: this.getName(),
-        description: this.getDescription,
+        description: this.getDescription(),
         parameters: {
           type: 'object',
           properties: this.getParameters().reduce((obj: anyDict, param: PluginParameter) => {
