@@ -85,14 +85,17 @@ export default class extends LlmEngine {
     // reset
     this.toolCalls = []
 
+    // tools
+    const tools = this.getAvailableTools()
+
     // call
     console.log(`[openai] prompting model ${this.currentModel}`)
     const stream = this.client.chat.completions.create({
       model: this.currentModel,
       messages: this.currentThread,
       stream: true,
-      tools: this.getAvailableTools(),
-      tool_choice: 'auto',
+      tools: tools.length ? tools : null,
+      tool_choice: tools.length ? 'auto' : null,
     })
 
     // done
@@ -145,7 +148,7 @@ export default class extends LlmEngine {
       for (const toolCall of this.toolCalls) {
         const args = JSON.parse(toolCall.args)
         const content = await this.callTool(toolCall.function, args)
-        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content)}`)
+        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
         this.currentThread.push({
           role: 'assistant',
           tool_calls: toolCall.message
