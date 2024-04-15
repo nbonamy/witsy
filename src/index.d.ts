@@ -82,6 +82,7 @@ interface ShortcutCallbacks {
 }
 
 interface Automator {
+  selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>
   pasteText(): Promise<void>

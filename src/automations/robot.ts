@@ -5,6 +5,11 @@ import { Automator } from '../index.d'
 
 export default class RobotAutomator implements Automator {
   
+  async selectAll() {
+    // keyTap("a", process.platform === "darwin" ? "command" : "control");
+    // await wait();
+  }
+
   async moveCaretBelow() {
     // keyTap("right");
     // keyTap("enter");

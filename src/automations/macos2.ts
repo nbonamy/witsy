@@ -11,6 +11,18 @@ export default class implements Automator {
     this.findMenus()
   }
 
+  async selectAll(){
+    
+    const script = `
+      tell application "System Events" to keystroke "a" using command down      
+      delay 0.1
+    `
+
+    // run it
+    await this.runScript(script);
+
+  }  
+
   async moveCaretBelow() {
 
     const script = `
