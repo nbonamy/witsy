@@ -4,6 +4,18 @@ import applescript from 'applescript';
 
 export default class implements Automator {
 
+  async selectAll(){
+    
+    const script = `
+      tell application "System Events" to keystroke "a" using command down      
+      delay 0.1
+    `
+
+    // run it
+    await this.runScript(script);
+
+  }
+
   async moveCaretBelow() {
 
     const script = `
@@ -46,7 +58,6 @@ export default class implements Automator {
     await this.runScript(script);
     
   }
-
 
   runScript(script: string) {
     return new Promise((resolve, reject) => {

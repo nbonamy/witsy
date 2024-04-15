@@ -19,6 +19,14 @@ export default class {
     }
   }
 
+  async selectAll() {
+    try {
+      await this.automator.selectAll();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async moveCaretBelow() {
     try {
       await this.automator.moveCaretBelow();

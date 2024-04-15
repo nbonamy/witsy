@@ -76,6 +76,12 @@ export const prepareCommand = async () => {
   const text = await automator.getSelectedText();
   //console.log('Text grabbed', text);
 
+  // // select all
+  // if (text == null || text.trim() === '') {
+  //   await automator.selectAll();
+  //   text = await automator.getSelectedText();
+  // }
+
   // notify if no text
   if (text == null || text.trim() === '') {
     try {
