@@ -22,6 +22,10 @@ export default class extends Plugin {
     return 'Execute Python code and return the result'
   }
 
+  getRunningDescription(): string {
+    return 'Executing code……'
+  }
+
   getParameters(): PluginParameter[] {
     return [
       {

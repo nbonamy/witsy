@@ -1,5 +1,5 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
@@ -114,7 +114,7 @@ export default class extends LlmEngine {
     await stream?.controller?.abort()
   }
 
-  async streamChunkToLlmChunk(chunk: ChatCompletionChunk): Promise<LlmChunk|null> {
+  async streamChunkToLlmChunk(chunk: ChatCompletionChunk, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
 
     // tool calls
     if (chunk.choices[0]?.delta?.tool_calls) {
@@ -148,18 +148,30 @@ export default class extends LlmEngine {
 
     }
 
-    // tool calls again
+    // now tool calling
     if (chunk.choices[0]?.finish_reason === 'tool_calls') {
 
       // add tools
       for (const toolCall of this.toolCalls) {
+
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolRunningDescription(toolCall.function)
+        })
+
+        // now execute
         const args = JSON.parse(toolCall.args)
         const content = await this.callTool(toolCall.function, args)
         console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+
+        // add tool call message
         this.currentThread.push({
           role: 'assistant',
           tool_calls: toolCall.message
         })
+
+        // add tool response message
         this.currentThread.push({
           role: 'tool',
           tool_call_id: toolCall.id,
@@ -168,12 +180,20 @@ export default class extends LlmEngine {
         })
       }
 
+      // clear
+      eventCallback?.call(this, {
+        type: 'tool',
+        content: null,
+      })
+
       // switch to new stream
-      return {
-        text: null,
-        done: false,
-        stream: await this.doStream()
-      }
+      eventCallback?.call(this, {
+        type: 'stream',
+        content: await this.doStream(),
+      })
+
+      // done
+      return null
       
     }
 
@@ -187,11 +207,7 @@ export default class extends LlmEngine {
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     payload.content = [
       { type: 'text', text: message.content },
-      {
-        type: 'image_url', image_url: {
-          url: 'data:image/jpeg;base64,' + message.attachment.contents,
-        }
-      }
+      { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + message.attachment.contents, } }
     ]
   }
 

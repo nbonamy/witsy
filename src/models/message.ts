@@ -11,6 +11,7 @@ export default class implements Message {
   content: string
   attachment: Attachment
   transient: boolean
+  toolCall?: string
 
   constructor(role: LlmRole, obj?: any) {
 
@@ -27,6 +28,7 @@ export default class implements Message {
     this.attachment = null
     this.type = 'unknown'
     this.transient = false
+    this.toolCall = null
     if (typeof obj === 'string') {
       this.setText(obj)
     }
@@ -65,6 +67,10 @@ export default class implements Message {
 
   attachFile(file: Attachment) {
     this.attachment = file
+  }
+
+  setToolCall(toolCall: string|null) {
+    this.toolCall = toolCall
   }
 
 }

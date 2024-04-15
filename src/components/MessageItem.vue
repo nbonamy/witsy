@@ -6,17 +6,29 @@
       <div class="name">{{ authorName }}</div>
     </div>
     <div class="body" :class="'size' + store.config.appearance.chat.fontSize">
+
+      <!-- attachment -->
       <div v-if="message.attachment">
         <img :src="attachmentUrl" class="attachment" @click="onFullscreen(attachmentUrl)"/>
       </div>
-      <div v-if="message.type == 'text'">
-        <vue-markdown v-if="message.content !== null" class="text" :source="mdPreprocess(message.content)" :options="mdOptions" :plugins="mdPlugins"/>
-        <Loader v-if="message.transient" />
-      </div>
+
+      <!-- image -->
       <div v-if="message.type == 'image'" class="image-container">
         <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)" @load="onImageLoaded(message)"/>
         <BIconDownload class="download" @click="onDownload(message)" />
       </div>
+
+      <!-- text -->
+      <div v-if="message.type == 'text'">
+        <vue-markdown v-if="message.content !== null" class="text" :source="mdPreprocess(message.content)" :options="mdOptions" :plugins="mdPlugins"/>
+      </div>
+
+      <!-- transient information -->
+      <div v-if="message.transient" class="transient">
+        <Loader />
+        <span v-if="message.toolCall" class="tool-call">{{ message.toolCall }}</span>
+      </div>
+
     </div>
     <div class="actions">
       <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
@@ -316,7 +328,18 @@ const mdPlugins = [MarkdownItKatex]
     }
   }
 
+}
 
+.transient {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .tool-call {
+    margin-left: 8px;
+    font-size: 10.5pt;
+    color: #888;
+  }
 }
 
 </style>

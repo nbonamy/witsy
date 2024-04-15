@@ -139,7 +139,6 @@ interface LlmContentPayload {
 interface LlmChunk {
   text: string
   done: boolean
-  stream?: any
 }
 
 interface LlmToolCall {
@@ -148,6 +147,13 @@ interface LlmToolCall {
   function: string
   args: string
 }
+
+interface LlmEvent {
+  type: 'stream' | 'tool'
+  content: any
+}
+
+type LlmEventCallback = (event: LlmEvent) => void
 
 //
 // plugins stuff

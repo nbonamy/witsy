@@ -21,6 +21,10 @@ export default class {
     throw new Error('Not implemented')
   }
 
+  getRunningDescription(): string {
+    throw new Error('Not implemented')
+  }
+
   getParameters(): PluginParameter[] {
     throw new Error('Not implemented')
   }

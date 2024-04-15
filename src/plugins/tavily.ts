@@ -22,6 +22,10 @@ export default class extends Plugin {
     return 'This tool allows you to search the web for information on a given topic'
   }
 
+  getRunningDescription(): string {
+    return 'Searching the internet……'
+  }
+
   getParameters(): PluginParameter[] {
     return [
       {

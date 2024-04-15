@@ -166,13 +166,15 @@ export default class {
       while (this.stream) {
         let newStream = null
         for await (const streamChunk of this.stream) {
-          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk)
-          if (chunk?.stream) {
-            newStream = chunk.stream
-          } else {
-            message.appendText(chunk)
-            callback?.call(null, chunk)
-          }
+          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event) => {
+            if (event.type === 'stream') {
+              newStream = event.content
+            } else  if (event.type === 'tool') {
+              message.setToolCall(event.content)
+            }
+          })
+          message.appendText(chunk)
+          callback?.call(null, chunk)
         }
         this.stream = newStream
       }

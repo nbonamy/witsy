@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 
@@ -92,7 +92,8 @@ export default class extends LlmEngine {
   async stop() {
   }
 
-  async streamChunkToLlmChunk(chunk: any): Promise<LlmChunk|null> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async streamChunkToLlmChunk(chunk: any, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     return {
       text: chunk.choices[0].delta.content,
       done: chunk.choices[0].finish_reason != null

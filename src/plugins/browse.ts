@@ -22,6 +22,10 @@ export default class extends Plugin {
     return 'Download an HTML page and return the text content'
   }
 
+  getRunningDescription(): string {
+    return 'Downloading content……'
+  }
+
   getParameters(): PluginParameter[] {
     return [
       {
