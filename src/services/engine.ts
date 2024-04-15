@@ -3,10 +3,12 @@ import { anyDict, Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload,
 import { Configuration, Model } from '../config.d'
 import { getFileContents } from './download'
 import Plugin from '../plugins/plugin'
+import BrowsePlugin from '../plugins/browse'
 import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'
 
 export const availablePlugins: anyDict = {
+  browse: BrowsePlugin, 
   python:  PythonPlugin,
   tavily: TavilyPlugin,
 }

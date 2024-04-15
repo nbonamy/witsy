@@ -1,4 +1,12 @@
 
+
+.settings .description {
+  font-size: 10pt;
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-bottom: 24px;
+}
+
 .settings form .group label {
   min-width: 100px;
 }
