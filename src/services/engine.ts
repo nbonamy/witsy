@@ -168,6 +168,11 @@ export default class LlmEngine {
     return Object.values(this.plugins).map((plugin: Plugin) => plugin.getDefinition())
   }
 
+  getToolPreparationDescription(tool: string): string {
+    const plugin = this.plugins[tool]
+    return plugin?.getPreparationDescription()
+  }
+  
   getToolRunningDescription(tool: string): string {
     const plugin = this.plugins[tool]
     return plugin?.getRunningDescription()

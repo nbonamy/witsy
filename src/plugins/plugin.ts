@@ -21,6 +21,10 @@ export default class {
     throw new Error('Not implemented')
   }
 
+  getPreparationDescription(): string {
+    return null
+  }
+
   getRunningDescription(): string {
     throw new Error('Not implemented')
   }

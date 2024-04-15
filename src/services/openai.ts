@@ -136,6 +136,14 @@ export default class extends LlmEngine {
           args: chunk.choices[0].delta.tool_calls[0].function.arguments,
         }
         this.toolCalls.push(toolCall)
+
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolPreparationDescription(toolCall.function)
+        })
+
+        // done
         return null
       
       } else {
