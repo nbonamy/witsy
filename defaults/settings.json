@@ -77,7 +77,8 @@
     }
   },
   "plugins": {
-    "tavily": {},
-    "python": {}
+    "browse": {},
+    "python": {},
+    "tavily": {}
   }
 }

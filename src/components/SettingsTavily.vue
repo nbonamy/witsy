@@ -1,12 +1,9 @@
 
 <template>
   <div>
-    <div class="group">
-      <label></label>
-      <span>
-        Tavily is a plugin that allows you to use the Tavily API to allow LLM engines to search
-        the Internet.
-      </span>
+    <div class="description">
+      Tavily is a plugin that allows you to use the Tavily API to allow LLM engines to search
+      the Internet.
     </div>
     <div class="group">
       <label>Enabled</label>

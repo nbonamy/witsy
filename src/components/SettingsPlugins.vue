@@ -18,8 +18,9 @@
 
 import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../services/engine'
-import SettingsTavily from './SettingsTavily.vue'
+import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
+import SettingsTavily from './SettingsTavily.vue'
 import logoPython from '../../assets/python.svg'
 import logoTavily from '../../assets/tavily.svg'
 
@@ -31,10 +32,12 @@ const plugins = computed(() => {
     return {
       id: plugin,
       label: {
+        browse: 'Browse',
         tavily: 'Tavily Search',
         python: 'Python',
       }[plugin],
       logo: {
+        browse: { image: logoTavily },
         tavily: { image: logoTavily },
         python: { image: logoPython },
       }[plugin],
@@ -43,8 +46,9 @@ const plugins = computed(() => {
 })
 
 const currentView = computed(() => {
-  if (currentPlugin.value == 'tavily') return SettingsTavily
+  if (currentPlugin.value == 'browse') return SettingsBrowse
   if (currentPlugin.value == 'python') return SettingsPython
+  if (currentPlugin.value == 'tavily') return SettingsTavily
 })
 
 const selectPlugin = (plugin) => {

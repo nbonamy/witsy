@@ -1,6 +1,11 @@
 
 <template>
   <div>
+    <div class="description">
+      <b>Warning!</b> Enabling this plugin will allow LLM engines to run arbitray code on your computer.
+      There is no way to predict if the code that LLM engines will generate is safe or not.
+      <b>Use at your own risk</b>!
+    </div>
     <div class="group">
       <label>Enabled</label>
       <input type="checkbox" v-model="enabled" :disabled="!binpath" @change="save" />
@@ -14,14 +19,6 @@
           <button @click.prevent="search" class="search">Search</button>
         </div>
       </div>
-    </div>
-    <div class="group">
-      <label></label>
-      <span>
-        Warning! Enabling this plugin will allow LLM engines to run arbitray code on your computer.
-        There is no way to predict if the code that LLM engines will generate is safe or not.<br/>
-        Use at your own risk!
-      </span>
     </div>
   </div>
 </template>
