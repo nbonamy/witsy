@@ -1,25 +1,79 @@
 
 import { LLmCompletionPayload } from '../src/index.d'
-import { beforeEach, expect, test } from 'vitest'
+import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../src/services/store'
 import defaults from '../defaults/settings.json'
 import Message from '../src/models/message'
 import Ollama from '../src/services/ollama'
+import * as _ollama from 'ollama'
+
+vi.mock('ollama', async() => {
+  return { default : {
+    list: vi.fn(() => {
+      return { models: [{ id: 'model', name: 'model' }] }
+    }),
+    chat: vi.fn((opts) => {
+      if (opts.stream) {
+        return {
+          controller: {
+            abort: vi.fn()
+          }
+        }
+      }
+      else {
+        return { message: { content: 'response' } }
+      }
+    }),
+    abort: vi.fn(),
+  }}
+})
 
 beforeEach(() => {
   store.config = defaults
   store.config.engines.ollama.apiKey = '123'
 })
 
-test('ollama.Basic', () => {
+test('Ollama Basic', async () => {
   const ollama = new Ollama(store.config)
   expect(ollama.getName()).toBe('ollama')
+  expect(await ollama.getModels()).toStrictEqual([{ id: 'model', name: 'model' }])
   expect(ollama.isVisionModel('llava:latest')).toBe(true)
   expect(ollama.isVisionModel('llama2:latest')).toBe(false)
   expect(ollama.getRountingModel()).toBeNull()
 })
 
-test('ollama.addImageToPayload', async () => {
+test('Ollama completion', async () => {
+  const ollama = new Ollama(store.config)
+  const response = await ollama.complete([
+    new Message('system', 'instruction'),
+    new Message('user', 'prompt'),
+  ], null)
+  expect(_ollama.default.chat).toHaveBeenCalled()
+  expect(response).toStrictEqual({
+    type: 'text',
+    content: 'response'
+  })
+})
+
+test('Ollama stream', async () => {
+  const ollama = new Ollama(store.config)
+  const response = await ollama.stream([
+    new Message('system', 'instruction'),
+    new Message('user', 'prompt'),
+  ], null)
+  expect(_ollama.default.chat).toHaveBeenCalled()
+  expect(response.controller).toBeDefined()
+  await ollama.stop()
+  expect(_ollama.default.abort).toHaveBeenCalled()
+})
+
+test('Ollama image', async () => {
+  const ollama = new Ollama(store.config)
+  const response = await ollama.image('image', null)
+  expect(response).toBeNull()
+})
+
+test('Ollama addImageToPayload', async () => {
   const ollama = new Ollama(store.config)
   const message = new Message('user', 'text')
   message.attachFile({ type: 'image', url: '', format:'png', contents: 'image', downloaded: true })
@@ -28,7 +82,7 @@ test('ollama.addImageToPayload', async () => {
   expect(payload.images).toStrictEqual([ 'image' ])
 })
 
-test('ollama.streamChunkToLlmChunk Text', async () => {
+test('Ollama streamChunkToLlmChunk Text', async () => {
   const ollama = new Ollama(store.config)
   const streamChunk: any = {
     message: { content: 'response'},
