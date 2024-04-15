@@ -38,6 +38,13 @@ export default class extends LlmEngine {
   }
 
   async getModels(): Promise<any[]> {
+
+    // need an api key
+    if (!this.client.apiKey) {
+      return null
+    }
+
+    // do it
     return [
       { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' },
       { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet' },

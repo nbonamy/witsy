@@ -37,6 +37,13 @@ export default class extends LlmEngine {
   }
 
   async getModels(): Promise<any[]> {
+
+    // need an api key
+    if (!this.client.apiKey) {
+      return null
+    }
+
+    // do it
     try {
       const response = await this.client.listModels()
       return response.data
