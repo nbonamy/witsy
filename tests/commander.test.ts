@@ -144,3 +144,4 @@ test('Copy to clipboard command', async () => {
   //expect(clipboard.readText()).toBe('[{"role":"user","content":"Explain this:\\n\\"\\"\\"Grabbed text\\"\\"\\""},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 
 })
+  
