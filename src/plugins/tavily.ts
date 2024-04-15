@@ -42,7 +42,7 @@ export default class extends Plugin {
       const tavily = new Tavily(this.config.apiKey)
       const response = await tavily.search(parameters.query, {
         include_answer: true,
-        include_raw_content: true,
+        //include_raw_content: true,
       })
       return response
     } catch (error) {
