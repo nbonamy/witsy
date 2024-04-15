@@ -52,7 +52,7 @@ export default class extends Plugin {
     // now run it
     const output = ipcRenderer.sendSync('run-python-code', script)
     if (output.error) return output
-    else return { result: output?.join('\n') }
+    else return { result: output.result.join('\n') }
   }  
 
 }
