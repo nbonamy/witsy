@@ -1,4 +1,4 @@
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
@@ -95,7 +95,8 @@ export default class extends LlmEngine {
     stream.controller.abort()
   }
 
-  async streamChunkToLlmChunk(chunk: MessageStreamEvent): Promise<LlmChunk|null> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async streamChunkToLlmChunk(chunk: MessageStreamEvent, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     if (chunk.type == 'message_stop') {
       return { text: '', done: true }
     } else if (chunk.type == 'content_block_delta') {

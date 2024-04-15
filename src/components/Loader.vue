@@ -7,8 +7,9 @@
 </script>
 
 <style scoped>
-/* HTML: <div class="loader"></div> */
+
 .loader {
+  display: inline-block;
   margin: 16px 0px;
   width: 8px;
   height: 8px;
@@ -17,10 +18,9 @@
   animation: glow 1s infinite;
 }
 
-  /* Définition de l'animation */
-  @keyframes glow {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.5); }
-  }
+@keyframes glow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
 
 </style>

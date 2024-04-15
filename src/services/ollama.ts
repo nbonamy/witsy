@@ -1,5 +1,5 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import ollama, { ChatResponse } from 'ollama'
@@ -82,7 +82,8 @@ export default class extends LlmEngine {
     await ollama.abort()
   }
 
-  async streamChunkToLlmChunk(chunk: ChatResponse): Promise<LlmChunk|null> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async streamChunkToLlmChunk(chunk: ChatResponse, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     return {
       text: chunk.message.content,
       done: chunk.done

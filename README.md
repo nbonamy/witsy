@@ -61,13 +61,14 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] User feedback when running a plugin
 - [ ] Specialized/customized assistants (??)
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] User feedback when running a tool
+- [x] Download internet content plugin
 - [x] Tavily Internet search plugin
 - [x] Python code execution plugin
 - [x] LLM Tools supprt (OpenAI only)

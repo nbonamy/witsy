@@ -1,5 +1,5 @@
 
-import { anyDict, Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk } from '../index.d'
+import { anyDict, Message, LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk, LlmEventCallback } from '../index.d'
 import { Configuration, Model } from '../config.d'
 import { getFileContents } from './download'
 import Plugin from '../plugins/plugin'
@@ -70,7 +70,7 @@ export default class LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async streamChunkToLlmChunk(chunk: any): Promise<LlmChunk|null> {
+  async streamChunkToLlmChunk(chunk: any, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     throw new Error('Not implemented')
   }
 
@@ -166,6 +166,11 @@ export default class LlmEngine {
 
   getAvailableTools(): any[] {
     return Object.values(this.plugins).map((plugin: Plugin) => plugin.getDefinition())
+  }
+
+  getToolRunningDescription(tool: string): string {
+    const plugin = this.plugins[tool]
+    return plugin?.getRunningDescription()
   }
 
   async callTool(tool: string, args: any): Promise<any> {
