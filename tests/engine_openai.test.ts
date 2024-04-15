@@ -1,4 +1,5 @@
 
+import { LLmCompletionPayload } from '../src/index.d'
 import { beforeEach, expect, test } from 'vitest'
 import { store } from '../src/services/store'
 import defaults from '../defaults/settings.json'
@@ -26,7 +27,7 @@ test('OpenAI addImageToPayload', async () => {
   const openAI = new OpenAI(store.config)
   const message = new Message('user', 'text')
   message.attachFile({ type: 'image', url: '', format:'png', contents: 'image', downloaded: true })
-  const payload = { role: 'user', content: message }
+  const payload: LLmCompletionPayload = { role: 'user', content: message }
   openAI.addImageToPayload(message, payload)
   expect(payload.content).toStrictEqual([
     { type: 'text', text: 'text' },
