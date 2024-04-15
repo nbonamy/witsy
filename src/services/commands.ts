@@ -11,7 +11,7 @@ const commandsFilePath = () => {
   return path.join(userDataPath, 'commands.json')
 }
 
-  export const installCommands = () => {
+export const installCommands = () => {
 
   // read file
   let commands = []
