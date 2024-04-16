@@ -52,6 +52,8 @@ import SettingsPlugins from '../components/SettingsPlugins.vue'
 import SettingsTTS from '../components/SettingsTTS.vue'
 import SettingsAdvanced from '../components/SettingsAdvanced.vue'
 
+import { installTabs, showActiveTab } from '../composables/tabs'
+
 // bus
 import useEventBus from '../composables/useEventBus'
 const { onEvent } = useEventBus()

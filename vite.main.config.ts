@@ -19,6 +19,10 @@ export default defineConfig((env) => {
         external,
       },
     },
+    test: {
+      globals: true,
+      environment: 'happy-dom',
+    },
     plugins: [pluginHotRestart('restart')],
     define,
     resolve: {
