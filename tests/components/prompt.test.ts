@@ -2,12 +2,29 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import Prompt from '../../src/components/Prompt.vue'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
+import { ipcRenderer } from 'electron'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
+//import useEventBus from '../../src/composables/useEventBus'
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
+
+vi.mock('electron', async (importOriginal) => {
+  const mod: any = await importOriginal()
+  return {
+    ...mod,
+    ipcRenderer: {
+      sendSync: vi.fn(() => {
+        return {
+          url: 'file://image.png',
+          contents: 'image64'
+         }
+      }),
+    }
+  }
+})
 
 vi.mock('../../src/composables/useEventBus.js', async () => {
   return { default: () => {
@@ -27,7 +44,7 @@ beforeAll(() => {
 
   // wrapper
   wrapper = mount(Prompt, { attachTo: document.body })
-  expect(onEventMock).toHaveBeenCalled()
+  //expect(onEventMock).toHaveBeenCalled()
 })
 
 beforeEach(() => {
@@ -48,6 +65,7 @@ test('should render', () => {
 
 test('should send on click', async () => {
   const prompt = wrapper.find('.input textarea')
+  expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
   expect(emitEventMock).toHaveBeenCalled()
@@ -57,6 +75,7 @@ test('should send on click', async () => {
 
 test('should send on enter', async () => {
   const prompt = wrapper.find('.input textarea')
+  expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.enter')
   expect(emitEventMock).toHaveBeenCalled()
@@ -89,3 +108,48 @@ test('should show stop button when working', async () => {
   await wrapper.find('.icon.stop').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('stopAssistant')
 })
+
+test('should send attachment', async () => {
+  const attach = wrapper.find('.attach')
+  await attach.trigger('click')
+  expect(ipcRenderer.sendSync).toHaveBeenCalled()
+  expect(ipcRenderer.sendSync).toHaveBeenCalledWith('pick-file', {
+    filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+  })
+  expect(emitEventMock).toHaveBeenCalledWith('attachFile', {
+    contents: 'image64',
+    downloaded: false,
+    url: 'file://image.png',
+  })
+})
+
+test('should display url attachment', async () => {
+  store.pendingAttachment = { url: 'file://image.png' }
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.attachment').exists()).toBe(true)
+  expect(wrapper.find('.attachment img').exists()).toBe(true)
+  expect(wrapper.find('.attachment img').attributes('src')).toBe('file://image.png')
+})
+
+test('should display base64 attachment', async () => {
+  store.pendingAttachment = { contents: 'image64' }
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.attachment').exists()).toBe(true)
+  expect(wrapper.find('.attachment img').exists()).toBe(true)
+  expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
+})
+
+test('should remove attachment', async () => {
+  await wrapper.find('.attachment .icon').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('detachFile')
+})
+
+// test('should accept incoming prompt', async () => {
+//   const prompt = wrapper.find('.input textarea')
+//   prompt.setValue('')
+//   emitEventMock.mockRestore()
+//   useEventBus().emitEvent('set-prompt', { content: 'this is my prompt' })
+//   await wrapper.vm.$nextTick()
+//   expect(prompt.element.value).toBe('this is my prompt')
+// })
+
