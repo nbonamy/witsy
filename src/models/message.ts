@@ -42,6 +42,7 @@ export default class implements Message {
     this.content = obj.content
     this.attachment = obj.attachment
     this.transient = false
+    this.toolCall = null
   }
 
   setText(text: string|null) {
