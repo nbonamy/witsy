@@ -73,10 +73,10 @@ test('Prepare command', async () => {
 
   await commander.prepareCommand()
 
-  expect(window.hideActiveWindows).toHaveBeenCalled()
-  expect(window.releaseFocus).toHaveBeenCalled()
-  expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(window.openCommandPalette).toHaveBeenCalled()
+  expect(window.hideActiveWindows).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
+  expect(window.openCommandPalette).toHaveBeenCalledOnce()
   expect(window.openCommandPalette).toHaveBeenCalledWith('Grabbed text')
 
 })
@@ -86,9 +86,9 @@ test('Chat Window command', async () => {
   const command = buildCommand('chat_window')
   await commander.runCommand(null, new LlmMock(store.config), 'Grabbed text', command)
 
-  expect(window.openChatWindow).toHaveBeenCalled()
-  expect(window.closeWaitingPanel).toHaveBeenCalled()
-  expect(window.releaseFocus).toHaveBeenCalled()
+  expect(window.openChatWindow).toHaveBeenCalledOnce()
+  expect(window.closeWaitingPanel).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
@@ -109,7 +109,7 @@ test('Paste in-place command', async () => {
 
   expect(window.openChatWindow).not.toHaveBeenCalled()
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
-  expect(Automator.prototype.pasteText).toHaveBeenCalled()
+  expect(Automator.prototype.pasteText).toHaveBeenCalledOnce()
   expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
   expect(Automator.prototype.pasteText).toHaveBeenCalledWith('[{"role":"user","content":"Explain this:\\n\\"\\"\\"Grabbed text\\"\\"\\""},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
@@ -122,8 +122,8 @@ test('Paste below command', async () => {
   await commander.runCommand(null, new LlmMock(store.config), 'Grabbed text', command)
 
   expect(window.openChatWindow).not.toHaveBeenCalled()
-  expect(Automator.prototype.moveCaretBelow).toHaveBeenCalled()
-  expect(Automator.prototype.pasteText).toHaveBeenCalled()
+  expect(Automator.prototype.moveCaretBelow).toHaveBeenCalledOnce()
+  expect(Automator.prototype.pasteText).toHaveBeenCalledOnce()
   expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
   expect(Automator.prototype.pasteText).toHaveBeenCalledWith('[{"role":"user","content":"Explain this:\\n\\"\\"\\"Grabbed text\\"\\"\\""},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
@@ -138,7 +138,7 @@ test('Copy to clipboard command', async () => {
   expect(window.openChatWindow).not.toHaveBeenCalled()
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
-  expect(Automator.prototype.copyToClipboard).toHaveBeenCalled()
+  expect(Automator.prototype.copyToClipboard).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.copyToClipboard).toHaveBeenCalledWith('[{"role":"user","content":"Explain this:\\n\\"\\"\\"Grabbed text\\"\\"\\""},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   //expect(clipboard.readText()).toBe('[{"role":"user","content":"Explain this:\\n\\"\\"\\"Grabbed text\\"\\"\\""},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')

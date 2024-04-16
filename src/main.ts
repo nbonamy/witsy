@@ -13,10 +13,12 @@ import * as window from './main/window';
 import * as commander from './automations/commander';
 
 // first-thing: single instance
-const gotTheLock = app.requestSingleInstanceLock();
-if (!gotTheLock) {
-  app.quit();
-  process.exit(0);
+if (!process.env.TEST) {
+  const gotTheLock = app.requestSingleInstanceLock();
+  if (!gotTheLock) {
+    app.quit();
+    process.exit(0);
+  }
 }
 
 // set up logging
@@ -126,7 +128,7 @@ app.on('window-all-closed', () => {
 app.on('before-quit', (ev) => {
 
   // if force quit
-  if (process.env.DEBUG || quitAnyway) {
+  if (process.env.DEBUG || process.env.TEST || quitAnyway) {
     return;
   }
 

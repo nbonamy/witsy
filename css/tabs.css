@@ -1,5 +1,5 @@
 
-.tabs, .tabs *:not(button) {
+.tabs, .tabs ul {
   margin: 0;
   padding: 0;
 }

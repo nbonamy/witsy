@@ -8,23 +8,5 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/renderer.ts"></script>
-    <script>
-      function installTabs() {
-        const tabs = document.querySelectorAll('.tabs ul li')
-        tabs.forEach((tab, index) => {
-          tab.addEventListener('click', (e) => {
-            tab.querySelector('input').checked = true
-            showActiveTab()
-          })
-        })
-      }
-      function showActiveTab() {
-        const tabs = document.querySelectorAll('.tabs input[name="tabs"]')
-        const contents = document.querySelectorAll('.tabs .content')
-        tabs.forEach((tab, index) => {
-          contents[index].style.display = tab.checked ? 'block' : 'none'
-        })
-      }
-    </script>
   </body>
 </html>
