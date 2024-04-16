@@ -74,6 +74,11 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getPluginAsTool(plugin: Plugin): anyDict {
+    throw new Error('Not implemented')
+  }
+
   getChatModel(): string {
     return this.config.engines[this.getName()].model.chat
   }
@@ -165,7 +170,7 @@ export default class LlmEngine {
   }
 
   getAvailableTools(): any[] {
-    return Object.values(this.plugins).map((plugin: Plugin) => plugin.getDefinition())
+    return Object.values(this.plugins).map((plugin: Plugin) => this.getPluginAsTool(plugin))
   }
 
   getToolPreparationDescription(tool: string): string {
