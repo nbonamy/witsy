@@ -65,7 +65,7 @@ interface Store {
   commands: Command[]
   config: Configuration
   chats: Chat[]
-  pendingAttachment: string
+  pendingAttachment: any
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>

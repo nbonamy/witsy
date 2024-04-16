@@ -47,6 +47,7 @@ onMounted(() => {
 })
 
 const onSetPrompt = (message) => {
+  console.log('Prompt', message)
   store.pendingAttachment = message.attachment
   prompt.value = message.content
   nextTick(() => {
