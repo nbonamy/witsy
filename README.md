@@ -56,7 +56,7 @@ To use text-to-speech, you need an [OpenAI API key](https://platform.openai.com/
 To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 <p align="center">
-  <img src="doc/settings.jpg" height="250" />&nbsp;>&nbsp;
+  <img src="doc/settings.jpg" height="250" />&nbsp;&nbsp;
 </p>
 
 ## TODO
