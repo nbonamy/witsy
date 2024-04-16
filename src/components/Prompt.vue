@@ -7,8 +7,8 @@
       </div>
       <textarea v-model="prompt" @keydown.enter="onEnter" @keyup="onKeyUp" ref="input" autofocus />
     </div>
-    <BIconStopCircleFill class="icon" @click="onStopAssistant" v-if="working" />
-    <BIconSendFill class="icon" @click="onSendPrompt" v-else />
+    <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
+    <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
   </div>
 </template>
 
