@@ -55,7 +55,7 @@ afterAll(() => {
   wrapper.unmount()
 })
 
-test('should render', () => {
+test('Render', () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.input textarea').exists()).toBe(true)
   expect(wrapper.find('.attach').exists()).toBe(true)
@@ -63,7 +63,7 @@ test('should render', () => {
   expect(wrapper.find('.stop').exists()).toBe(false)
 })
 
-test('should send on click', async () => {
+test('Send on click', async () => {
   const prompt = wrapper.find('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
@@ -73,7 +73,7 @@ test('should send on click', async () => {
   expect(prompt.element.value).toBe('')
 })
 
-test('should send on enter', async () => {
+test('Send on enter', async () => {
   const prompt = wrapper.find('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
@@ -83,14 +83,14 @@ test('should send on enter', async () => {
   expect(prompt.element.value).toBe('')
 })
 
-test('should not send on shift enter', async () => {
+test('Not send on shift enter', async () => {
   const prompt = wrapper.find('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.enter.shift')
   expect(emitEventMock).not.toHaveBeenCalled()
 })
 
-// test('should autogrow', async () => {
+// test('Autogrow', async () => {
 //   const prompt = wrapper.find('.input textarea')
 //   for (const char of 'this is my prompt') {
 //     await prompt.trigger(`keyup.${char}`)
@@ -99,7 +99,7 @@ test('should not send on shift enter', async () => {
 //   expect(prompt.element.style.height).toBe('150px')
 // })
 
-test('should show stop button when working', async () => {
+test('Show stop button when working', async () => {
   const chat = new Chat({ messages: [ {} ] })
   chat.messages[0].transient = true
   await wrapper.setProps({ chat: chat })
@@ -109,7 +109,7 @@ test('should show stop button when working', async () => {
   expect(emitEventMock).toHaveBeenCalledWith('stopAssistant')
 })
 
-test('should send attachment', async () => {
+test('Send attachment', async () => {
   const attach = wrapper.find('.attach')
   await attach.trigger('click')
   expect(ipcRenderer.sendSync).toHaveBeenCalled()
@@ -123,7 +123,7 @@ test('should send attachment', async () => {
   })
 })
 
-test('should display url attachment', async () => {
+test('Display url attachment', async () => {
   store.pendingAttachment = { url: 'file://image.png' }
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
@@ -131,7 +131,7 @@ test('should display url attachment', async () => {
   expect(wrapper.find('.attachment img').attributes('src')).toBe('file://image.png')
 })
 
-test('should display base64 attachment', async () => {
+test('Display base64 attachment', async () => {
   store.pendingAttachment = { contents: 'image64' }
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
@@ -139,12 +139,12 @@ test('should display base64 attachment', async () => {
   expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
 })
 
-test('should remove attachment', async () => {
+test('Remove attachment', async () => {
   await wrapper.find('.attachment .icon').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('detachFile')
 })
 
-// test('should accept incoming prompt', async () => {
+// test('Accept incoming prompt', async () => {
 //   const prompt = wrapper.find('.input textarea')
 //   prompt.setValue('')
 //   emitEventMock.mockRestore()
