@@ -48,4 +48,4 @@ linux: linux-x64
 all: clean mac win linux
 
 publish: test
-	gh release create v$(VERSION) --title $(VERSION) --generate-notes ./out/*.zip
+	gh release create v$(VERSION) --title $(VERSION) --generate-notes ./out/*.zip --repo https://github.com/nbonamy/witty-ai-releases
