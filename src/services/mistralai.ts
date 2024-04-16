@@ -54,8 +54,6 @@ export default class extends LlmEngine {
 
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
-    console.log(JSON.parse(JSON.stringify(thread)))
-    
     // call
     const model = opts?.model || this.config.engines.mistralai.model.chat
     console.log(`[mistralai] prompting model ${model}`)
