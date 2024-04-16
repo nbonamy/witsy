@@ -2,7 +2,7 @@
 import { beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import LlmMock from '../mocks/llm'
+import OpenAI from '../../src/services/openai'
 
 beforeEach(() => {
   store.config = defaults
@@ -20,8 +20,8 @@ beforeEach(() => {
   }
 })
 
-test('Plugins', () => {
-  const llm = new LlmMock(store.config)
+test('OpenAI Functions', () => {
+  const llm = new OpenAI(store.config)
   expect(llm.getAvailableTools()).toStrictEqual([
     {
       type: 'function',
