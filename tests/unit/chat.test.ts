@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
-import Chat from '../src/models/chat'
-import Message from '../src/models/message'
+import Chat from '../../src/models/chat'
+import Message from '../../src/models/message'
 
 test('Build from title', () => {
   const chat = new Chat('The chat title')

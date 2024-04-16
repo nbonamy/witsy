@@ -1,13 +1,13 @@
 <template>
   <div class="content">
-    <div class="group">
+    <div class="group theme">
       <label>Chat theme</label>
       <select v-model="theme" @change="save">
         <option value="openai">OpenAI</option>
         <option value="conversation">Conversation</option>
       </select>
     </div>
-    <div class="group">
+    <div class="group font-size">
       <label>Chat font size</label>
       <span class="fontsize small">A</span>
       <div class="slidergroup">

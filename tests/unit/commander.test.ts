@@ -1,15 +1,15 @@
 
+import { Command } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import { Command } from '../src/index.d'
-import defaults from '../defaults/settings.json'
-import * as commander from '../src/automations/commander'
-import * as window from '../src/main/window'
-import Automator from '../src/automations/automator'
-import LlmMock from './mocks/llm'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import * as commander from '../../src/automations/commander'
+import * as window from '../../src/main/window'
+import Automator from '../../src/automations/automator'
+import LlmMock from '../mocks/llm'
 
 // mock config
-vi.mock('../src/main/config.ts', async () => {
+vi.mock('../../src/main/config.ts', async () => {
   return {
     settingsFilePath: () => '',
     loadSettings: () => defaults,
@@ -17,7 +17,7 @@ vi.mock('../src/main/config.ts', async () => {
 })  
 
 // mock windows
-vi.mock('../src/main/window.ts', async () => {
+vi.mock('../../src/main/window.ts', async () => {
   return {
     openCommandPalette: vi.fn(),
     openWaitingPanel: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock('../src/main/window.ts', async () => {
 })
 
 // mock automator
-vi.mock('../src/automations/automator.ts', async () => {
+vi.mock('../../src/automations/automator.ts', async () => {
   const Automator = vi.fn()
   Automator.prototype.moveCaretBelow =  vi.fn()
   Automator.prototype.getSelectedText = vi.fn(() => 'Grabbed text')
