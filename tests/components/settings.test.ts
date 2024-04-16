@@ -53,8 +53,8 @@ const tabs = [
   'settingsAdvanced',
 ]
 
-const switchToTab = (i: number): Omit<VueWrapper<any, any>, 'exists'> => {
-  wrapper.find(`.tabs .tab:nth-child(${i+1})`).trigger('click')
+const switchToTab = async (i: number): Omit<VueWrapper<any, any>, 'exists'> => {
+  await wrapper.find(`.tabs .tab:nth-child(${i+1})`).trigger('click')
   return getTab(i)
 }
 
@@ -78,6 +78,7 @@ beforeAll(() => {
   document.body.innerHTML = `<dialog id="settings"></dialog>`
   wrapper = mount(Settings, { attachTo: '#settings' })
   emitEvent('openSettings')
+  expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledOnce()
 })
 
 beforeEach(() => {
@@ -90,7 +91,6 @@ afterAll(() => {
 
 test('Settings renders correctly', () => {
   expect(wrapper.exists()).toBe(true)
-  //expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledOnce()
   expect(wrapper.props('initialTab')).toBe('general')
   checkVisibility(0)
 })
@@ -110,7 +110,7 @@ test('Settings close', async () => {
 
 test('Settings General', async () => {
   
-  const tab = switchToTab(0)
+  const tab = await switchToTab(0)
   expect(tab.findAll('.group')).toHaveLength(4)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
@@ -147,7 +147,7 @@ test('Settings General', async () => {
 
 test('Settings Appearance', async () => {
   
-  const tab = switchToTab(1)
+  const tab = await switchToTab(1)
   expect(tab.findAll('.group')).toHaveLength(2)
 
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
@@ -166,7 +166,7 @@ test('Settings Appearance', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = switchToTab(7)
+  const tab = await switchToTab(7)
   expect(tab.findAll('.group')).toHaveLength(3)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)
