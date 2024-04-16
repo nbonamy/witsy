@@ -1,17 +1,17 @@
 
 <template>
   <div class="content">
-    <div class="group top">
+    <div class="group vision top">
       <label>Automatically switch<br/>to vision model</label>
       <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
     </div>
-    <div class="group">
+    <div class="group length">
       <label>Conversation length</label>
       <select v-model="conversationLength" @change="save">
         <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
       </select>
     </div>
-    <div class="group">
+    <div class="group instruction">
       <label>Default instructions</label>
       <div class="subgroup">
         <textarea v-model="defaultInstructions" @change="save" />
