@@ -1,13 +1,13 @@
 
-import { LLmCompletionPayload } from '../src/index.d'
+import { LLmCompletionPayload } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import Message from '../src/models/message'
-import MistralAI from '../src/services/mistralai'
-import MistralClient from '../src/vendor/mistralai'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import Message from '../../src/models/message'
+import MistralAI from '../../src/services/mistralai'
+import MistralClient from '../../src/vendor/mistralai'
 
-vi.mock('../src/vendor/mistralai', async() => {
+vi.mock('../../src/vendor/mistralai', async() => {
   const MistralClient = vi.fn()
   MistralClient.prototype.apiKey = '123'
   MistralClient.prototype.listModels = vi.fn(() => {

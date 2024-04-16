@@ -1,10 +1,10 @@
 
-import { LLmCompletionPayload } from '../src/index.d'
+import { LLmCompletionPayload } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import Message from '../src/models/message'
-import Anthropic from '../src/services/anthropic'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import Message from '../../src/models/message'
+import Anthropic from '../../src/services/anthropic'
 import * as _Anthropic from '@anthropic-ai/sdk'
 
 vi.mock('@anthropic-ai/sdk', async() => {

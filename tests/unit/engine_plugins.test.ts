@@ -1,8 +1,8 @@
 
 import { beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import LlmMock from './mocks/llm'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import LlmMock from '../mocks/llm'
 
 beforeEach(() => {
   store.config = defaults

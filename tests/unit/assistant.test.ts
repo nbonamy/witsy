@@ -1,22 +1,22 @@
 
+import { LlmStream, LlmCompletionOpts, Message } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { LlmStream, LlmCompletionOpts, Message } from '../src/index.d'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import Assistant from '../src/services/assistant'
-import Chat from '../src/models/chat'
-import LlmMock from './mocks/llm'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import Assistant from '../../src/services/assistant'
+import Chat from '../../src/models/chat'
+import LlmMock from '../mocks/llm'
 
 // mock config
-vi.mock('../src/main/config.ts', async () => {
+vi.mock('../../src/main/config.ts', async () => {
   return {
     settingsFilePath: () => '',
     loadSettings: () => defaults,
   }
-})  
+})
 
 // mock download
-vi.mock('../src/services/download.ts', async () => {
+vi.mock('../../src/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }

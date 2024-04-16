@@ -1,8 +1,8 @@
 
 import { beforeEach, expect, test } from 'vitest'
-import { isEngineReady } from '../src/services/llm'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
+import { isEngineReady } from '../../src/services/llm'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
 
 const model = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
 

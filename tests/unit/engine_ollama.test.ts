@@ -1,10 +1,10 @@
 
-import { LLmCompletionPayload } from '../src/index.d'
+import { LLmCompletionPayload } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import Message from '../src/models/message'
-import Ollama from '../src/services/ollama'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import Message from '../../src/models/message'
+import Ollama from '../../src/services/ollama'
 import * as _ollama from 'ollama'
 
 vi.mock('ollama', async() => {

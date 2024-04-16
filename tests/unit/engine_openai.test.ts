@@ -1,10 +1,10 @@
 
-import { LLmCompletionPayload } from '../src/index.d'
+import { LLmCompletionPayload } from '../../src/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
-import { store } from '../src/services/store'
-import defaults from '../defaults/settings.json'
-import Message from '../src/models/message'
-import OpenAI from '../src/services/openai'
+import { store } from '../../src/services/store'
+import defaults from '../../defaults/settings.json'
+import Message from '../../src/models/message'
+import OpenAI from '../../src/services/openai'
 import * as _OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
 
