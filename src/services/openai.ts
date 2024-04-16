@@ -1,8 +1,9 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../index.d'
+import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback, PluginParameter, anyDict } from '../index.d'
 import { EngineConfig, Configuration } from '../config.d'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
+import Plugin from '../plugins/plugin'
 import { ChatCompletionChunk } from 'openai/resources'
 import { Stream } from 'openai/streaming'
 
@@ -245,4 +246,25 @@ export default class extends LlmEngine {
 
   }
 
+  getPluginAsTool(plugin: Plugin): anyDict {
+    return {
+      type: 'function',
+      function: {
+        name: plugin.getName(),
+        description: plugin.getDescription(),
+        parameters: {
+          type: 'object',
+          properties: plugin.getParameters().reduce((obj: anyDict, param: PluginParameter) => {
+            obj[param.name] = {
+              type: param.type,
+              enum: param.enum,
+              description: param.description,
+            }
+            return obj
+          }, {}),
+          required: plugin.getParameters().filter(param => param.required).map(param => param.name),
+        },
+      },
+    }
+  }
 }

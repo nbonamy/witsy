@@ -38,26 +38,4 @@ export default class {
     throw new Error('Not implemented')
   }
 
-  getDefinition(): anyDict {
-    return {
-      type: 'function',
-      function: {
-        name: this.getName(),
-        description: this.getDescription(),
-        parameters: {
-          type: 'object',
-          properties: this.getParameters().reduce((obj: anyDict, param: PluginParameter) => {
-            obj[param.name] = {
-              type: param.type,
-              enum: param.enum,
-              description: param.description,
-            }
-            return obj
-          }, {}),
-          required: this.getParameters().filter(param => param.required).map(param => param.name),
-        },
-      },
-    }
-  }
-
 }
