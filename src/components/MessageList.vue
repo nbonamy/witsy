@@ -2,7 +2,7 @@
   <div class="container">
     <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat.messages" :key="message.uuid">
-        <MessageItem :chat="chat" :message="message" @image-loaded="onImageLoaded" />
+        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" />
       </div>
     </div>
     <div v-if="overflown" class="overflow" @click="scrollDown">
@@ -19,7 +19,6 @@ import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '../composables/useEventBus'
-import { BIconArrowDown } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 const divScroller = ref(null)
