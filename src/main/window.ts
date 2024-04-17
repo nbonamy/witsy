@@ -50,7 +50,9 @@ const createWindow = (opts: CreateWindowOpts = {}) => {
     }
 
     // load url
-    window.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${queryParams}#${opts.hash||''}`);
+    const url = `${MAIN_WINDOW_VITE_DEV_SERVER_URL}${queryParams}#${opts.hash||''}`;
+    console.log(url);
+    window.loadURL(url);
   
   } else {
 
@@ -226,7 +228,7 @@ export const closeCommandPalette = async () => {
   }
 };
 
-export const openCommandPalette = async (text: string) => {
+export const openCommandPalette = async (textId: string) => {
 
   // try to show existig one
   closeCommandPalette();
@@ -248,7 +250,7 @@ export const openCommandPalette = async (text: string) => {
     alwaysOnTop: true,
     hiddenInMissionControl: true,
     queryParams: {
-      text: text,
+      textId: textId,
     }
   });
 

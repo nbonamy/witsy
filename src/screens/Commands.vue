@@ -77,7 +77,7 @@ const onRunCommand = (event, command) => {
 
   // now run it
   ipcRenderer.send('run-command', JSON.stringify({
-    text: props.extra.text,
+    textId: props.extra.textId,
     command: command
   }))
 }

@@ -27,6 +27,7 @@ const { onEvent, emitEvent } = useEventBus()
 
 // assistant
 import Assistant from '../services/assistant'
+import { ipcRenderer } from 'electron'
 const assistant = ref(new Assistant(store.config))
 
 const settingsInitialTab = ref('general')
@@ -58,20 +59,24 @@ onMounted(() => {
   onEvent('stopAssistant', onStopAssistant)
 
   // load extra from props
-  prompt.value = props.extra?.prompt || null
-  engine.value = props.extra?.engine || null
-  model.value = props.extra?.model || null
+  if (props.extra?.promptId) {
 
-  // init assistant
-  if (prompt.value !== null) {
-    assistant.value.prompt(prompt.value, {
-      engine: engine.value,
-      model: model.value,
-      route: false,
-      save: false,
-    }, (chunk) => {
-     emitEvent('newChunk', chunk)
-    })
+    prompt.value = ipcRenderer.sendSync('get-command-prompt', props.extra?.promptId) || null
+    engine.value = props.extra?.engine || null
+    model.value = props.extra?.model || null
+
+    // init assistant
+    if (prompt.value !== null) {
+      assistant.value.prompt(prompt.value, {
+        engine: engine.value,
+        model: model.value,
+        route: false,
+        save: false,
+      }, (chunk) => {
+      emitEvent('newChunk', chunk)
+      })
+    }
+
   }
 
 })
