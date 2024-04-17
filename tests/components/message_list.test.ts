@@ -1,11 +1,13 @@
 
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import MessageList from '../../src/components/MessageList.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+
+enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
@@ -33,10 +35,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-})
-
-afterAll(() => {
-  wrapper.unmount()
 })
 
 test('Render', () => {

@@ -1,5 +1,5 @@
 
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { ipcRenderer } from 'electron'
 import { store } from '../../src/services/store'
@@ -7,6 +7,8 @@ import Prompt from '../../src/components/Prompt.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 //import useEventBus from '../../src/composables/useEventBus'
+
+enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
@@ -49,10 +51,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-})
-
-afterAll(() => {
-  wrapper.unmount()
 })
 
 test('Render', () => {
