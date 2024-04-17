@@ -1,27 +1,23 @@
 
 import { mount, VueWrapper } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { ipcRenderer } from 'electron'
 import { store } from '../../src/services/store'
 import MessageList from '../../src/components/MessageList.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 
-import useEventBus from '../../src/composables/useEventBus'
-const { emitEvent } = useEventBus()
+const onEventMock = vi.fn()
+const emitEventMock = vi.fn()
 
-// const onEventMock = vi.fn()
-// const emitEventMock = vi.fn()
-
-// vi.mock('../../src/composables/useEventBus.js', async () => {
-//   return { default: () => {
-//     return {
-//       onEvent: onEventMock,
-//       emitEvent: emitEventMock
-//     }
-//   }}
-// })
+vi.mock('../../src/composables/useEventBus.js', async () => {
+  return { default: () => {
+    return {
+      onEvent: onEventMock,
+      emitEvent: emitEventMock
+    }
+  }}
+})
 
 let wrapper: VueWrapper<any>
 
@@ -32,7 +28,7 @@ beforeAll(() => {
 
   // wrapper
   wrapper = mount(MessageList)
-  //expect(onEventMock).toHaveBeenCalled()
+  expect(onEventMock).toHaveBeenCalled()
 })
 
 beforeEach(() => {
@@ -56,6 +52,17 @@ test('Theme support', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.messages').attributes('class')).toContain('conversation')
 })
+
+//
+// It is normal for the the wrapper not be updated
+// if you add messages to the chat and hope for new messages to appear
+// chat is a prop so in a normal app, the parent will detect the change,
+// and repaint the whole component with the new value of the prop
+// you can simulate this by calling setProps but you can't call it
+// with the same chat object, you need to create a new one by cloning
+// the old one and adding the new message and then call setProps
+// but from a testing standpoint this really brings no value...
+//
 
 test('Does not show system messages', async () => {
   const chat: Chat = new Chat('MessageList test')

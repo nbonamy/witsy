@@ -43,12 +43,12 @@
   border-radius: 8px;
 }
 
-.messages.openai .message.text:hover .actions {
+.messages.openai .message.text .actions {
   position: relative;
   top: -16px;
 }
 
-.messages.openai .message.image:hover .actions {
+.messages.openai .message.image .actions {
   position: relative;
   top: -4px;
 }

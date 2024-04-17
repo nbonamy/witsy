@@ -53,18 +53,14 @@
 }
 
 .message .actions {
-  display: none;
-}
-
-.message:hover {
-  margin-bottom: 0px !important;
-}
-
-.message:hover .actions {
   height: 32px;
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.message:hover {
+  margin-bottom: 0px !important;
 }
 
 .message .action {
