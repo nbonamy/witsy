@@ -45,6 +45,10 @@
           <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
           <input type="text" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
         </div>
+        <div class="group">
+          <label>Shortcut</label>
+          <input type="text" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
+        </div>
       </main>
       <footer>
         <button @click="onSave" class="default">Save</button>
@@ -69,6 +73,7 @@ const icon = ref(null)
 const label = ref(null)
 const template = ref(null)
 const action = ref(null)
+const shortcut = ref(null)
 const engine = ref(null)
 const model = ref(null)
 
@@ -83,6 +88,7 @@ const load = () => {
   label.value = props.command?.label || ''
   template.value = props.command?.template || ''
   action.value = props.command?.action || 'chat_window'
+  shortcut.value = props.command?.shortcut
   engine.value = props.command?.engine
   model.value = props.command?.model
 }
@@ -109,6 +115,21 @@ const onIconKeyUp = () => {
   }
 }
 
+const onShortcutKeyDown = (event) => {
+  shortcut.value = null
+}
+
+const onShortcutKeyUp = (event) => {
+
+  // must be a normal character
+  if (event.keyCode < 32) {
+    return
+  }
+
+  shortcut.value = event.key.toUpperCase()
+
+}
+
 const onCancel = () => {
   load()
 }
@@ -129,6 +150,7 @@ const onSave = (event) => {
     label: label.value,
     template: template.value,
     action: action.value,
+    shortcut: shortcut.value.toUpperCase(),
     engine: engine.value,
     model: model.value
   })
@@ -185,6 +207,12 @@ dialog.command textarea {
 dialog.command form .group input.icon {
   flex: 0 0 32px;
   text-align: center;
+}
+
+dialog.command form .group input.shortcut {
+  flex: 0 0 32px;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .windows dialog.command .icon {

@@ -15,6 +15,7 @@
             <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
             <td class="label">{{ command.label }}</td>
+            <td class="shortcut">{{ command.shortcut }}</td>
             <td class="action">{{ action(command.action) }}</td>
           </tr>
         </tbody>
@@ -48,6 +49,7 @@ const columns = [
   { field: 'enabled', title: '' },
   { field: 'icon', title: 'Icon' },
   { field: 'label', title: 'Name', },
+  { field: 'shortcut', title: 'Shortcut', },
   { field: 'action', title: 'Action', },
 ]
 
@@ -113,10 +115,22 @@ const onCommandModified = (payload) => {
 
   // update
   if (command) {
+
+    // single shortcut
+    if (payload.shortcut) {
+      for (const c of commands.value) {
+        if (c.id != command.id && c.shortcut == payload.shortcut) {
+          c.shortcut = null
+        }
+      }
+    }
+
+    // now update
     command.label = payload.label
     command.icon = payload.icon
     command.action = payload.action
     command.template = payload.template
+    command.shortcut = payload.shortcut
     command.engine = payload.engine
     command.model = payload.model
   }
@@ -195,7 +209,7 @@ th, td {
   border: 0.5px solid rgba(192, 192, 192, 0.5);
   background-color: white;
   white-space: nowrap;
-  font-size: 10pt;
+  font-size: 9.5pt;
   padding: 2px 4px;
 }
 
@@ -213,7 +227,7 @@ th {
   z-index: 1;
 }
 
-td.icon {
+td.icon, td.shortcut {
   text-align: center;
 }
 

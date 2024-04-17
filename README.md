@@ -61,8 +61,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Shortcuts for AI commands
-- [ ] Switch AI command behavior (?)
+- [ ] Fix when long text is highlighted
 - [ ] Auto-update
 - [ ] Specialized/customized assistants (https://github.com/f/awesome-chatgpt-prompts) (??)
 - [ ] File upload for retrieval (??)
@@ -70,6 +69,8 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Shortcuts for AI commands
+- [x] Shift to switch AI command behavior
 - [x] User feedback when running a tool
 - [x] Download internet content plugin
 - [x] Tavily Internet search plugin
