@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
-      <div v-for="message in chat.messages" :key="message.uuid">
+      <div v-for="message in chat?.messages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" />
       </div>
     </div>
