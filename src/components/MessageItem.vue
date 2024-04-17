@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="[ message.role, message.type ]">
+  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role">
       <EngineLogo :engine="chat.engine" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
@@ -30,8 +30,8 @@
       </div>
 
     </div>
-    <div class="actions">
-      <div class="action" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
+    <div class="actions" v-if="hovered">
+      <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
         <BIconClipboard /> {{ copyLabel }}
       </div>
       <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
@@ -40,7 +40,7 @@
         <span v-else><BIconPlayCircle /> Read</span>
         <audio/>
       </div>
-      <div class="action" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
+      <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
         <BIconPencil /> Edit
       </div>
     </div>
@@ -76,6 +76,7 @@ const props = defineProps({
 
 const emits = defineEmits(['image-loaded'])
 
+const hovered = ref(false)
 const fullScreenImageUrl = ref(null)
 const copyLabel = ref('Copy')
 const audioState = ref({
@@ -125,6 +126,13 @@ const imageUrl = computed(() => {
     return 'data:image/png;base64,' + props.message.content
   }
 })
+
+// using simple css :hover
+// was not working from a testing perspective
+// so we fallback to that...
+const onHover = (value) => {
+  hovered.value = value
+}
 
 const onImageLoaded = (message) => {
   emits('image-loaded', message)
@@ -260,7 +268,7 @@ const mdPlugins = [MarkdownItKatex]
 
 </script>
 
-<style>
+<style scoped>
 @import '../../css/highlight.css';
 @import '../../css/themes/base.css';
 @import '../../css/themes/openai.css';
