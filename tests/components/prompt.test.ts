@@ -1,9 +1,9 @@
 
 import { mount, VueWrapper } from '@vue/test-utils'
-import Prompt from '../../src/components/Prompt.vue'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { ipcRenderer } from 'electron'
 import { store } from '../../src/services/store'
+import Prompt from '../../src/components/Prompt.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 //import useEventBus from '../../src/composables/useEventBus'
@@ -43,7 +43,7 @@ beforeAll(() => {
   store.config = defaults
 
   // wrapper
-  wrapper = mount(Prompt, { attachTo: document.body })
+  wrapper = mount(Prompt)
   //expect(onEventMock).toHaveBeenCalled()
 })
 
@@ -152,4 +152,3 @@ test('Remove attachment', async () => {
 //   await wrapper.vm.$nextTick()
 //   expect(prompt.element.value).toBe('this is my prompt')
 // })
-
