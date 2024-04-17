@@ -202,6 +202,10 @@ ipcMain.on('download', async (event, payload) => {
   event.returnValue = await file.downloadFile(app, payload);
 });
 
+ipcMain.on('get-command-prompt', (event, payload) => {
+  event.returnValue = commander.getCachedText(payload);
+})
+
 ipcMain.on('close-command-palette', async () => {
   window.closeCommandPalette();
   window.restoreWindows();
@@ -211,7 +215,7 @@ ipcMain.on('run-command', async (event, payload) => {
   const args = JSON.parse(payload);
   await window.closeCommandPalette();
   await window.releaseFocus();
-  const result = await commander.runCommand(app, null, args.text, args.command);
+  const result = await commander.runCommand(app, null, args.textId, args.command);
   window.restoreWindows();
   if (result?.chatWindow) {
     await wait();

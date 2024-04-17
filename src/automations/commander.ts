@@ -1,5 +1,5 @@
 
-import { Command } from '../types/index.d'
+import { Command, strDict } from '../types/index.d'
 import { Configuration } from '../types/config.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../main/config'
@@ -9,6 +9,15 @@ import Ollama from '../services/ollama'
 import Message from '../models/message'
 import Automator from './automator'
 import LlmEngine from '../services/engine'
+import { v4 as uuidv4 } from 'uuid'
+
+const textCache: strDict = {}
+
+export const getCachedText = (id: string) => {
+  const prompt = textCache[id]
+  delete textCache[id]
+  return prompt
+}
 
 const buildLLm = (config: Configuration, engine: string) => {
 
@@ -42,8 +51,12 @@ const finalizeCommand = async (command: Command, text: string, engine: string, m
 
   if (command.action === 'chat_window') {
 
+    // store the prompt in cache
+    const promptId = uuidv4();
+    textCache[promptId] = text;
+
     return window.openChatWindow({
-      prompt: text,
+      promptId: promptId,
       engine: engine || command.engine,
       model: model || command.model
     })
@@ -100,23 +113,31 @@ export const prepareCommand = async () => {
   // log
   console.debug('Text grabbed:', `${text.slice(0, 50)}...`);
 
+  // store the text
+  const id = uuidv4();
+  textCache[id] = text;
+
   // go on
-  await window.openCommandPalette(text)
+  await window.openCommandPalette(id)
 
 }
 
-export const runCommand = async (app: App, llm: LlmEngine, text: string, command: Command) => {
+export const runCommand = async (app: App, llm: LlmEngine, textId: string, command: Command) => {
 
   //
   const result = {
-    text: text,
+    text: getCachedText(textId),
     prompt: null as string | null,
     response: null as string | null,
     chatWindow: null as BrowserWindow | null,
   };
 
-
   try {
+
+    // check
+    if (!result.text) {
+      throw new Error('No text to process');
+    }
 
     // config
     const config: Configuration = loadSettings(settingsFilePath(app));
