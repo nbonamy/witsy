@@ -29,6 +29,10 @@ export const installCommands = () => {
     const c = commands.find((cmd: Command) => cmd.id === command.id)
     if (c == null) {
       commands.push(command)
+    } else {
+      if (c.shortcut === undefined) {
+        c.shortcut = command.shortcut || ''
+      }
     }
   }
 
@@ -46,6 +50,7 @@ export const newCommand = (): Command => {
     label: 'New Command',
     action: 'chat_window',
     template: null,
+    shortcut: '',
     engine: '',
     model: '',
     state: 'enabled'

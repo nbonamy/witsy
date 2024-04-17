@@ -6,6 +6,7 @@
     "label": "Explain this",
     "action": "chat_window",
     "template": "Explain the text in triple quotes below:\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the explanation. Do not wrap responses in quotes.",
+    "shortcut": "E",
     "state": "enabled",
     "engine": "",
     "model": ""
@@ -17,6 +18,7 @@
     "label": "Fix spelling and grammar",
     "action": "paste_in_place",
     "template": "Correct the text in triple quotes below into standard English and fix the grammar. Make your best effort.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the corrected text. Do not wrap responses in quotes.",
+    "shortcut": "F",
     "state": "enabled",
     "engine": "",
     "model": ""
@@ -61,6 +63,7 @@
     "label": "List key takeaways",
     "action": "chat_window",
     "template": "My notes are below in triple quotes:\n\n\"\"\"\n{input}\n\"\"\"\n\nWrite a markdown list (using dashes) of key takeaways from my notes. Write at least 10 items. Do not wrap responses in quotes.",
+    "shortcut": "K",
     "state": "enabled",
     "engine": "",
     "model": ""
@@ -72,6 +75,7 @@
     "label": "Write a short summary",
     "action": "chat_window",
     "template": "Summarize the text in triple quotes but keep it concise. Summarize using plain and simple language and keep the same tense.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the summary. Do not wrap responses in quotes.",
+    "shortcut": "S",
     "state": "enabled",
     "engine": "",
     "model": ""
@@ -193,6 +197,7 @@
     "label": "Translate to English",
     "action": "paste_below",
     "template": "Translate the text in triple quotes below to English.\n\n\"\"\"\n{input}\n\"\"\"\n\nDo not return anything other than the translated text. Do not wrap responses in quotes.",
+    "shortcut": "X",
     "state": "enabled",
     "engine": "",
     "model": ""

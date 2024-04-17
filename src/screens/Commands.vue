@@ -1,8 +1,9 @@
 <template>
   <div class="commands">
-    <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand(command)">
+    <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand($event, command)">
       <div class="icon">{{ command.icon }}</div>
       <div class="label">{{ command.label }}</div>
+      <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
       <div class="action"><component :is="action(command)"></component></div>
     </div>
   </div>
@@ -11,7 +12,7 @@
 <script setup>
 
 import { ipcRenderer } from 'electron'
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import {
   BIconBoxArrowInUpRight,
   BIconArrowReturnLeft,
@@ -24,26 +25,57 @@ const props = defineProps({
   extra: Object
 })
 
+const overrideAction = ref(false)
+
 onMounted(() => {
+  document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('keyup', onKeyUp)
 })
 
 const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
 const action = (command) => {
+  if (overrideAction.value) return BIconBoxArrowInUpRight
   if (command.action == 'chat_window') return BIconBoxArrowInUpRight
   if (command.action == 'paste_below') return BIconArrowReturnLeft
   if (command.action == 'paste_in_place') return BIconInputCursor
   if (command.action == 'clipboard_copy') return BIconClipboard
 }
 
-const onKeyUp = (event) => {
-  if (event.key == 'Escape') {
-    ipcRenderer.send('close-command-palette')
+const onKeyDown = (event) => {
+  console.log(event)
+  if (event.key == 'Shift') {
+    overrideAction.value = true
   }
 }
 
-const onRunCommand = (command) => {
+const onKeyUp = (event) => {
+  overrideAction.value = false
+  if (event.key == 'Escape') {
+    ipcRenderer.send('close-command-palette')
+  } else {
+    for (const command of enabledCommands.value) {
+      if (command.shortcut?.toLowerCase() === event.key.toLowerCase()) {
+        onRunCommand(event, command)
+        break
+      }
+    }
+  }
+}
+
+const onRunCommand = (event, command) => {
+  
+  // if shift key is pressed, run the command in a new window
+  if (event.shiftKey) {
+    command.action = 'chat_window'
+  }
+
+  // now run it
   ipcRenderer.send('run-command', JSON.stringify({
     text: props.extra.text,
     command: command
@@ -99,6 +131,21 @@ const onRunCommand = (command) => {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.shortcut {
+  margin-top: -3px;
+  display: inline-block;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 8pt;
+  text-transform: capitalize;
+  padding: 0px 4px;
+  margin-right: 8px
+}
+
+.command:hover .shortcut {
+  border-color: white;
 }
 
 </style>

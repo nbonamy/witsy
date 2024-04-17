@@ -47,6 +47,7 @@ interface Command {
   label: string,
   action: 'chat_window' | 'paste_below' | 'paste_in_place' | 'clipboard_copy',
   template: string,
+  shortcut: string,
   state: 'enabled' | 'disabled' | 'deleted',
   engine: string,
   model: string,
