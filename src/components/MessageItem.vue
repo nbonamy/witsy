@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="[ message.role, message.type ]" v-if="message.role != 'system'">
+  <div class="message" :class="[ message.role, message.type ]">
     <div class="role" :class="message.role">
       <EngineLogo :engine="chat.engine" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
