@@ -1,5 +1,5 @@
 
-import { LlmStream, LlmCompletionOpts, Message } from '../../src/index.d'
+import { LlmStream, LlmCompletionOpts, Message } from '../../src/types/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'

@@ -1,5 +1,6 @@
 
-import { Message, Attachment, LlmRole, LlmChunk } from '../index.d'
+import { Message, Attachment } from '../types/index.d'
+import { LlmRole, LlmChunk } from '../types/llm.d';
 import { v4 as uuidv4 } from 'uuid'
 
 export default class implements Message {

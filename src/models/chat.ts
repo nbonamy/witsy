@@ -1,5 +1,5 @@
 
-import { Chat } from '../index.d'
+import { Chat } from '../types/index.d'
 import { ipcRenderer } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'

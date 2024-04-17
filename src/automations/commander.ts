@@ -1,6 +1,6 @@
 
-import { Command } from '../index.d'
-import { Configuration } from '../config.d'
+import { Command } from '../types/index.d'
+import { Configuration } from '../types/config.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../main/config'
 import * as window from '../main/window'
@@ -119,7 +119,7 @@ export const runCommand = async (app: App, llm: LlmEngine, text: string, command
   try {
 
     // config
-    const config = loadSettings(settingsFilePath(app));
+    const config: Configuration = loadSettings(settingsFilePath(app));
 
     // extract what we need
     const template = command.template;

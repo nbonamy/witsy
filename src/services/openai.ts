@@ -1,6 +1,8 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback, PluginParameter, anyDict } from '../index.d'
-import { EngineConfig, Configuration } from '../config.d'
+import { Message, anyDict } from '../types/index.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../types/llm.d'
+import { EngineConfig, Configuration } from '../types/config.d'
+import { PluginParameter } from '../types/plugin.d'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
 import Plugin from '../plugins/plugin'

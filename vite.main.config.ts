@@ -2,6 +2,7 @@
 import type { ConfigEnv, UserConfig } from 'vite';
 import { defineConfig, mergeConfig } from 'vite';
 import { getBuildConfig, getBuildDefine, external, pluginHotRestart } from './vite.base.config';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -23,7 +24,7 @@ export default defineConfig((env) => {
       globals: true,
       environment: 'happy-dom',
     },
-    plugins: [pluginHotRestart('restart')],
+    plugins: [tsconfigPaths(), pluginHotRestart('restart')],
     define,
     resolve: {
       // Load the Node.js entry.
