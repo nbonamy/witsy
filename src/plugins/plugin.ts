@@ -1,5 +1,5 @@
-import { PluginParameter, anyDict } from '../index.d'
-import { PluginConfig } from '../config.d'
+import { anyDict } from '../types/index.d'
+import { PluginParameter, PluginConfig } from '../types/plugin.d'
 
 export default class {
 

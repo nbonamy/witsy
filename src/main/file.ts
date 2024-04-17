@@ -1,5 +1,5 @@
 
-import { anyDict } from '../index.d';
+import { anyDict } from '../types/index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { execSync } from 'child_process';
 import { download } from 'electron-dl';

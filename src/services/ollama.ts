@@ -1,6 +1,7 @@
 
-import { Message, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../index.d'
-import { EngineConfig, Configuration } from '../config.d'
+import { Message } from '../types/index.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../types/llm.d'
+import { EngineConfig, Configuration } from '../types/config.d'
 import LlmEngine from './engine'
 import ollama, { ChatResponse } from 'ollama'
 

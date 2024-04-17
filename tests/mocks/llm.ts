@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmEventCallback, LlmResponse, LlmStream, Message } from '../../src/index.d'
-import { Configuration } from '../../src/config.d'
+import { Message } from '../../src/types/index.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmEventCallback, LlmResponse, LlmStream } from '../../src/types/llm.d'
+import { Configuration } from '../../src/types/config.d'
 import LlmEngine from '../../src/services/engine'
 import RandomChunkStream from './stream'
 

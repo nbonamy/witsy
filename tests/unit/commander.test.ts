@@ -1,5 +1,5 @@
 
-import { Command } from '../../src/index.d'
+import { Command } from '../../src/types/index.d'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'

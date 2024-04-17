@@ -48,6 +48,7 @@
     "typescript": "~4.5.4",
     "vite": "^5.0.12",
     "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.5.0",
     "vue-jest": "^5.0.0-alpha.10"
   },

@@ -1,5 +1,5 @@
 
-import { anyDict } from '../index.d'
+import { anyDict } from '../types/index.d';
 import { App } from 'electron'
 import defaultSettings from '../../defaults/settings.json'
 import path from 'path'

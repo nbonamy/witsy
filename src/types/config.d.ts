@@ -1,7 +1,7 @@
 
 import { Shortcut } from './index.d'
 
-interface Configuration {
+export interface Configuration {
   general: GeneralConfig
   llm: LLMConfig
   instructions: InstructionsConfig
@@ -71,4 +71,3 @@ interface TTSConfig {
   model: string
   voice: string
 }
-type PluginConfig = anyDict

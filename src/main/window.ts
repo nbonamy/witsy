@@ -1,5 +1,6 @@
 
-import { CreateWindowOpts, strDict } from '../index.d';
+import { strDict } from '../types/index.d';
+import { CreateWindowOpts } from '../types/window.d';
 import path from 'node:path';
 import process from 'node:process';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, screen, shell } from 'electron';

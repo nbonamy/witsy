@@ -1,6 +1,6 @@
 
-import { PluginParameter, anyDict } from '../index.d'
-import { PluginConfig } from '../config.d'
+import { anyDict } from '../types/index.d'
+import { PluginConfig, PluginParameter } from '../types/plugin.d'
 import { ipcRenderer } from 'electron'
 import Plugin from './plugin'
 

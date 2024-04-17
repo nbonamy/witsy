@@ -1,5 +1,5 @@
 
-import { Store } from '../index.d'
+import { Store } from '../types/index.d'
 import { reactive } from 'vue'
 import { ipcRenderer } from 'electron'
 import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../main/config'

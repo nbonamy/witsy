@@ -1,5 +1,5 @@
 
-import { Model, EngineConfig } from '../config.d'
+import { Model, EngineConfig } from '../types/config.d'
 import { store } from './store'
 import OpenAI, { isOpenAIReady } from './openai'
 import Ollama, { isOllamaReady } from './ollama'

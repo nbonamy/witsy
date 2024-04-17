@@ -1,6 +1,7 @@
 
-import { Attachment, LlmChunk, LlmCompletionOpts } from '../index.d'
-import { Configuration } from '../config.d'
+import { Attachment } from '../types/index.d'
+import { LlmCompletionOpts, LlmChunk, LlmEvent } from '../types/llm.d'
+import { Configuration } from '../types/config.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
@@ -166,7 +167,7 @@ export default class {
       while (this.stream) {
         let newStream = null
         for await (const streamChunk of this.stream) {
-          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event) => {
+          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event: LlmEvent) => {
             if (event.type === 'stream') {
               newStream = event.content
             } else  if (event.type === 'tool') {

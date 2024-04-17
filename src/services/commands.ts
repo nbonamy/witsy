@@ -1,5 +1,5 @@
 
-import { Command } from '../index.d'
+import { Command } from '../types/index.d'
 import { store } from './store'
 import path from 'path'
 import fs from 'fs'
