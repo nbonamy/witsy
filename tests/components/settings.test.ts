@@ -1,5 +1,5 @@
 
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import Settings from '../../src/screens/Settings.vue'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { ipcRenderer } from 'electron'
@@ -8,6 +8,8 @@ import defaults from '../../defaults/settings.json'
 
 import useEventBus from '../../src/composables/useEventBus'
 const { emitEvent } = useEventBus()
+
+enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
@@ -83,10 +85,6 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-})
-
-afterAll(() => {
-  wrapper.unmount()
 })
 
 test('Settings renders correctly', () => {

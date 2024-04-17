@@ -200,20 +200,20 @@ test('Run assistant image actions', async () => {
 
 })
 
-test('Formats code', async () => {
+test('Format code', async () => {
   botMessageText.setText('```javascript\nconsole.log(variable)\n```')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body pre[class=hljs] code[class=hljs]').exists()).toBe(true)
   expect(wrapper.find('.body .copy').exists()).toBe(true)
 })
 
-test('Formats math equations katex', async () => {
+test('Format math equations katex', async () => {
   botMessageText.setText('$$\n\\frac{1}{2}\n$$')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
 })
 
-test('Formats math equations OpenAI', async () => {
+test('Format math equations OpenAI', async () => {
   botMessageText.setText('\\[\n\\frac{1}{2}\n\\]')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
