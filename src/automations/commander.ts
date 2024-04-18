@@ -103,7 +103,7 @@ export const prepareCommand = async (): Promise<void> => {
   if (text == null || text.trim() === '') {
     try {
       new Notification({
-        title: 'Witty AI',
+        title: 'WittyAI',
         body: 'Please highlight the text you want to analyze'
       }).show()
       console.log('No text selected');
