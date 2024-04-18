@@ -62,7 +62,6 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 ## TODO
 
 - [ ] Auto-update
-- [ ] macOS notarization
 - [ ] Windows certificate
 - [ ] Specialized/customized assistants (https://github.com/f/awesome-chatgpt-prompts) (??)
 - [ ] File upload for retrieval (??)
@@ -70,6 +69,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] macOS notarization
 - [x] Fix when long text is highlighted
 - [x] Shortcuts for AI commands
 - [x] Shift to switch AI command behavior
