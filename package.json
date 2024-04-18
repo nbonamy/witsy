@@ -1,8 +1,8 @@
 {
   "name": "witty-ai",
-  "productName": "Witty AI",
+  "productName": "WittyAI",
   "version": "1.4.0",
-  "description": "Witty AI: desktop AI assistant",
+  "description": "WittyAI: desktop AI assistant",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "cross-env DEBUG=1 electron-forge start",

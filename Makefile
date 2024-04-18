@@ -20,28 +20,28 @@ clean:
 mac-arm64:
 	-rm -rf out/*darwin-arm64*
 	npx electron-forge package -p darwin -a arm64
-	source .env ; codesign $(CODESIGN_OPTS) "out/Witty AI-darwin-arm64/Witty AI.app"
-	cd out ; zip -r Witty_AI-darwin-arm64.zip "Witty AI-darwin-arm64/"
+	source .env ; codesign $(CODESIGN_OPTS) "out/WittyAI-darwin-arm64/WittyAI.app"
+	cd out ; zip -r Witty_AI-darwin-arm64.zip "WittyAI-darwin-arm64/"
 
 mac-x64:
 	-rm -rf out/*darwin-x64*
 	npx electron-forge package -p darwin -a x64
-	source .env ; codesign $(CODESIGN_OPTS) "out/Witty AI-darwin-x64/Witty AI.app"
-	cd out ; zip -r Witty_AI-darwin-x64.zip "Witty AI-darwin-x64/"
+	source .env ; codesign $(CODESIGN_OPTS) "out/WittyAI-darwin-x64/WittyAI.app"
+	cd out ; zip -r Witty_AI-darwin-x64.zip "WittyAI-darwin-x64/"
 
 mac: mac-arm64 mac-x64
 
 win-x64:
 	-rm -rf out/*win32-x64*
 	npx electron-forge package -p win32 -a x64
-	cd out ; zip -r Witty_AI-win32-x64.zip "Witty AI-win32-x64"
+	cd out ; zip -r Witty_AI-win32-x64.zip "WittyAI-win32-x64"
 
 win: win-x64
 
 linux-x64:
 	-rm -rf out/*linux-arm64*
 	npx electron-forge package -p linux -a x64
-	cd out ; zip -r Witty_AI-linux-x64.zip "Witty AI-linux-x64/"
+	cd out ; zip -r Witty_AI-linux-x64.zip "WittyAI-linux-x64/"
 
 linux: linux-x64
 
