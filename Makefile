@@ -2,8 +2,11 @@
 # This Makefile is used to build the electron app for different platforms.
 # On MacOS, you need to have the codesigning identity in the .env file.
 # Check available identities with `security find-identity -v -p codesigning`
-# The .env file should have the following line:
+# The .env file should have the following lines:
 # IDENTITY="Developer ID Application: Your Name (XXXXXXXXXX)"
+# APPLE_ID=""
+# APPLE_TEAM_ID=""
+# APPLE_PASSWORD="app-specific-password"
 
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
@@ -18,34 +21,33 @@ clean:
 	-rm -rf out
 
 mac-arm64:
-	-rm -rf out/*darwin-arm64*
-	npx electron-forge package -p darwin -a arm64
-	source .env ; codesign $(CODESIGN_OPTS) "out/WittyAI-darwin-arm64/WittyAI.app"
-	cd out ; zip -r Witty_AI-darwin-arm64.zip "WittyAI-darwin-arm64/"
+	-rm -rf out/*darwin-arm64* out/make/zip/darwin/arm64/*
+	npx electron-forge make -p darwin -a arm64
 
 mac-x64:
-	-rm -rf out/*darwin-x64*
-	npx electron-forge package -p darwin -a x64
-	source .env ; codesign $(CODESIGN_OPTS) "out/WittyAI-darwin-x64/WittyAI.app"
-	cd out ; zip -r Witty_AI-darwin-x64.zip "WittyAI-darwin-x64/"
+	-rm -rf out/*darwin-x64* out/make/zip/darwin/x64/*
+	npx electron-forge make -p darwin -a x64
 
 mac: mac-arm64 mac-x64
 
 win-x64:
-	-rm -rf out/*win32-x64*
+	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
 	npx electron-forge package -p win32 -a x64
-	cd out ; zip -r Witty_AI-win32-x64.zip "WittyAI-win32-x64"
+	mkdir -p out/make/zip/win32/x64
+	cd out ; zip -r make/zip/win32/x64/WittyAI-win32-x64-$(VERSION).zip "WittyAI-win32-x64"
 
 win: win-x64
 
 linux-x64:
-	-rm -rf out/*linux-arm64*
+	-rm -rf out/*linux-x64* out/make/zip/linux/x64/*
 	npx electron-forge package -p linux -a x64
-	cd out ; zip -r Witty_AI-linux-x64.zip "WittyAI-linux-x64/"
+	mkdir -p out/make/zip/linux/x64
+	cd out ; zip -r make/zip/linux/x64/WittyAI-linux-x64-$(VERSION).zip "WittyAI-linux-x64/"
 
 linux: linux-x64
 
 all: clean mac win linux
 
 publish:
-	gh release create v$(VERSION) --title $(VERSION) --generate-notes ./out/*.zip --repo https://github.com/nbonamy/witty-ai-releases
+	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witty-ai-releases --title $(VERSION) $(RELEASES)

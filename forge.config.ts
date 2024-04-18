@@ -9,6 +9,9 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import fs from 'fs';
 import path from 'path';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
@@ -17,15 +20,17 @@ const config: ForgeConfig = {
     appBundleId: 'fr.bonamy.witty-ai',
     extendInfo: './assets/Info.plist',
     osxSign: {
-      identity: 'Developer ID Application: Nicolas Bonamy (TP8BYQ64C4)',
-      optionsForFile: () => { return { entitlements: './Entitlements.plist' }; },
+      identity: process.env.IDENTITY,
+      optionsForFile: () => { return {
+        hardenedRuntime: true,
+        entitlements: './assets/Entitlements.plist'
+      }; },
     },
-    // osxNotarize: {
-    //   tool: 'notarytool',
-    // appleId: process.env.APPLE_ID,
-    // appleIdPassword: process.env.APPLE_PASSWORD,
-    // teamId: process.env.APPLE_TEAM_ID
-    // }
+    osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID
+    }
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
