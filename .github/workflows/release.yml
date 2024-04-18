@@ -28,14 +28,13 @@ jobs:
           path: ./package-lock.json
       - name: Install Dependencies
         run: npm i
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
-        with:
-          envkey_IDENTITY: ${{ secrets.IDENTITY }}
-          envkey_APPLE_ID: ${{ secrets.APPLE_ID }}
-          envkey_APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          envkey_APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          file_name: .env
+      - name: 'Create env file'
+        run: |
+          touch .env
+          echo IDENTITY="${{ secrets.IDENTITY }}" >> .env
+          echo APPLE_ID="${{ secrets.APPLE_ID }}" >> .env
+          echo APPLE_TEAM_ID="${{ secrets.APPLE_TEAM_ID }}" >> .env
+          echo APPLE_PASSWORD="${{ secrets.APPLE_PASSWORD }}" >> .env
       - name: Build application
         run: make all
       # - name: Publish application
