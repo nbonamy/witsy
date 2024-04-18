@@ -1,17 +1,18 @@
 
 import { anyDict } from '../types/index.d';
+import { Configuration } from '../types/config.d';
 import { App } from 'electron'
 import defaultSettings from '../../defaults/settings.json'
 import path from 'path'
 import fs from 'fs'
 
-export const settingsFilePath = (app: App) => {
+export const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
 }
 
-const mergeConfig = (defaults: anyDict, overrides: anyDict) => {
+const mergeConfig = (defaults: anyDict, overrides: anyDict): anyDict => {
 
   const result = JSON.parse(JSON.stringify(defaults))
   
@@ -29,7 +30,7 @@ const mergeConfig = (defaults: anyDict, overrides: anyDict) => {
   return result
 }
 
-const buildConfig = (defaults: anyDict, overrides: anyDict) => {
+const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
   // 1st merge
   const config = mergeConfig(defaults, overrides)
@@ -50,14 +51,15 @@ const buildConfig = (defaults: anyDict, overrides: anyDict) => {
   }
 
   // done
-  return config
+  return config as Configuration
 
 }
 
-export const loadSettings = (filepath: string) => {
+export const loadSettings = (filepath: string): Configuration => {
   let data = '{}'
   try {
     data = fs.readFileSync(filepath, 'utf-8')
+    console.log('Settings data loaded from', filepath, data)
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving settings data', error)
