@@ -4,16 +4,17 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          [
-            { name: 'linux', image: 'ubuntu-latest' },
-            { name: 'windows', image: 'windows-latest' },
-            { name: 'macos', image: 'macos-latest' },
-          ]
-    runs-on: ${{ matrix.os.image }}
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     os:
+    #       [
+    #         { name: 'linux', image: 'ubuntu-latest' },
+    #         { name: 'windows', image: 'windows-latest' },
+    #         { name: 'macos', image: 'macos-latest' },
+    #       ]
+    # runs-on: ${{ matrix.os.image }}
+    runs-on: macos-latest
     steps:
       - name: Github checkout
         uses: actions/checkout@v4
