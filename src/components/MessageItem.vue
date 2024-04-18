@@ -53,11 +53,10 @@
 
 <script setup>
 
-import { SpeechPlayer } from 'openai-speech-stream-player'
 import { ipcRenderer, clipboard, nativeImage } from 'electron'
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import Tts from '../services/tts'
+import useAudioPlayer from '../composables/audio'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Loader from './Loader.vue'
@@ -81,7 +80,7 @@ const fullScreenImageUrl = ref(null)
 const copyLabel = ref('Copy')
 const audioState = ref({
   state: 'idle',
-  message: null,
+  messageId: null,
 })
 
 // onUpdated is not called for an unknown reason
@@ -93,13 +92,15 @@ onMounted(() => {
       link.target = "_blank"
     })
   }, 599)
+  useAudioPlayer().addListener(onAudioPlayerStatus)
 })
 onUnmounted(() => {
   clearInterval(updateLinkInterval)
+  useAudioPlayer().removeListener(onAudioPlayerStatus)
 })
 
 const mgsAudioState = (message) => {
-  return message == audioState.value.message ? audioState.value.state : 'idle'
+  return message.uuid == audioState.value.messageId ? audioState.value.state : 'idle'
 }
 
 const authorName = computed(() => {
@@ -149,74 +150,12 @@ const onCopy = (message) => {
   setTimeout(() => copyLabel.value = 'Copy', 1000)
 }
 
-let player = null
-const onToggleRead = async (message) => {
-  
-  // if same message is playing, stop
-  if (message == audioState.value.message && audioState.value.state != 'idle') {
-    stopAudio()
-    return
-  }
-
-  // if not same message 1st thing is to stop
-  if (audioState.value.state != 'idle' && message != audioState.value.message) {
-    stopAudio()
-  }
-
-  // set status
-  audioState.value = {
-    state: 'loading',
-    message: message,
-  }
-
-  // give it a chance to appear
-  nextTick(async () => {
-      
-    try {
-  
-      // get the stream
-      const tts = new Tts(store.config)
-      const response = await tts.synthetize(message.content)
-
-      // stream it
-      const audioEl = document.querySelector('.read audio')
-      player = new SpeechPlayer({
-        audio: audioEl,
-        onPlaying: () => {
-          audioState.value = {
-            state: 'playing',
-            message: message,
-          }
-        },
-        onPause: () => {},
-        onChunkEnd: () => {
-          stopAudio()
-        },
-        mimeType: 'audio/mpeg',
-      })
-      await player.init()
-      player.feedWithResponse(response.content)
-
-    } catch (e) {
-      console.error(e)
-    }
-
-  })
-
+const onAudioPlayerStatus = (status) => {
+  audioState.value = { state: status.state, messageId: status.uuid }
 }
 
-const stopAudio = () => {
-  try {
-    player?.pause()
-    player?.destroy()
-  } catch (e) {
-    //console.error(e)
-  }
-  player = null
-  audioState.value = {
-    state: 'idle',
-    message: null,
-  }
+const onToggleRead = async (message) => {
+  await useAudioPlayer().play(document.querySelector('.read audio'),message.uuid, message.content)
 }
 
 const onEdit = (message) => {

@@ -15,7 +15,7 @@ export default class {
     })
   }
 
-  async synthetize(text: string, opts: { model?: string, voice?: string}) {
+  async synthetize(text: string, opts?: { model?: string, voice?: string}) {
     
     // call
     const response = await this.client.audio.speech.create({
