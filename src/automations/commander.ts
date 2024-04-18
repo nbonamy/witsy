@@ -1,6 +1,8 @@
 
 import { Command, strDict } from '../types/index.d'
 import { Configuration } from '../types/config.d'
+import { RunCommandResponse } from '../types/automation.d'
+import { LlmResponse } from '../types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { settingsFilePath, loadSettings } from '../main/config'
 import * as window from '../main/window'
@@ -13,13 +15,19 @@ import { v4 as uuidv4 } from 'uuid'
 
 const textCache: strDict = {}
 
-export const getCachedText = (id: string) => {
+export const putCachedText = (text: string): string => {
+  const id = uuidv4()
+  textCache[id] = text
+  return id
+}
+
+export const getCachedText = (id: string): string => {
   const prompt = textCache[id]
   delete textCache[id]
   return prompt
 }
 
-const buildLLm = (config: Configuration, engine: string) => {
+const buildLLm = (config: Configuration, engine: string): LlmEngine|null => {
 
   // build llm
   if (engine === 'ollama') {
@@ -32,7 +40,7 @@ const buildLLm = (config: Configuration, engine: string) => {
 
 }
 
-const promptLlm = (llm: LlmEngine, model: string, prompt: string) => {
+const promptLlm = (llm: LlmEngine, model: string, prompt: string): Promise<LlmResponse> => {
 
   // build messages
   const messages: Message[]  = [
@@ -44,19 +52,15 @@ const promptLlm = (llm: LlmEngine, model: string, prompt: string) => {
 
 }
 
-const finalizeCommand = async (command: Command, text: string, engine: string, model: string) => {
+const finalizeCommand = async (command: Command, text: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
   
   // we need an automator
   const automator = new Automator();
 
   if (command.action === 'chat_window') {
 
-    // store the prompt in cache
-    const promptId = uuidv4();
-    textCache[promptId] = text;
-
     return window.openChatWindow({
-      promptId: promptId,
+      promptId: putCachedText(text),
       engine: engine || command.engine,
       model: model || command.model
     })
@@ -78,7 +82,7 @@ const finalizeCommand = async (command: Command, text: string, engine: string, m
 
 }
 
-export const prepareCommand = async () => {
+export const prepareCommand = async (): Promise<void> => {
 
   // hide active windows
   window.hideActiveWindows();
@@ -113,19 +117,16 @@ export const prepareCommand = async () => {
   // log
   console.debug('Text grabbed:', `${text.slice(0, 50)}...`);
 
-  // store the text
-  const id = uuidv4();
-  textCache[id] = text;
-
-  // go on
-  await window.openCommandPalette(id)
+  // go on with a cached text id
+  const textId = putCachedText(text);
+  await window.openCommandPalette(textId)
 
 }
 
-export const runCommand = async (app: App, llm: LlmEngine, textId: string, command: Command) => {
+export const runCommand = async (app: App, llm: LlmEngine, textId: string, command: Command): Promise<RunCommandResponse> => {
 
   //
-  const result = {
+  const result: RunCommandResponse = {
     text: getCachedText(textId),
     prompt: null as string | null,
     response: null as string | null,
