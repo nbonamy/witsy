@@ -59,7 +59,6 @@ export const loadSettings = (filepath: string): Configuration => {
   let data = '{}'
   try {
     data = fs.readFileSync(filepath, 'utf-8')
-    console.log('Settings data loaded from', filepath, data)
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving settings data', error)
