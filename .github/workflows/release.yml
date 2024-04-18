@@ -27,7 +27,17 @@ jobs:
           path: ./package-lock.json
       - name: Install Dependencies
         run: npm i
-      - name: Publish application
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run publish
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_IDENTITY: ${{ secrets.IDENTITY }}
+          envkey_APPLE_ID: ${{ secrets.APPLE_ID }}
+          envkey_APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          envkey_APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          file_name: .env
+      - name: Build application
+        run: make all
+      # - name: Publish application
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: make publish
