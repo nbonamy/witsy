@@ -1,4 +1,4 @@
-# Witty AI
+# WittyAI
 
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic and MistralAI models supported
