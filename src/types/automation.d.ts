@@ -12,3 +12,10 @@ export interface Automator {
   copySelectedText(): Promise<void>
   pasteText(): Promise<void>
 }
+
+export interface RunCommandResponse {
+  text: string
+  prompt: string|null
+  response: string|null
+  chatWindow: BrowserWindow | null
+}
