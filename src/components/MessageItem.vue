@@ -207,7 +207,7 @@ const mdPlugins = [MarkdownItKatex]
 
 </script>
 
-<style scoped>
+<style>
 @import '../../css/highlight.css';
 @import '../../css/themes/base.css';
 @import '../../css/themes/openai.css';
