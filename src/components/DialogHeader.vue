@@ -117,7 +117,6 @@ dialog header .windows .close {
   cursor: pointer;
 }
 
-
 dialog header .title {
   flex: 1;
 }
