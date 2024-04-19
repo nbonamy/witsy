@@ -1,3 +1,6 @@
+
+<img src="https://github.com/nbonamy/witty-ai/actions/workflows/test.yml/badge.svg">
+
 # WittyAI
 
 Generative AI desktop application:
