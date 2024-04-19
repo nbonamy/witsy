@@ -3,11 +3,19 @@ import { Message } from '../types/index.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../types/llm.d'
 import { EngineConfig, Configuration } from '../types/config.d'
 import LlmEngine from './engine'
-import ollama, { ChatResponse } from 'ollama'
+import ollama, { ChatResponse, ProgressResponse } from 'ollama'
 
 export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
   return engineConfig.models.chat.length > 0
 }
+
+export const getPullableModels = [
+  { id: 'llama3:latest', name: 'MetaAI - Llama3' },
+  { id: 'llama2:latest', name: 'MetaAI - Llama2' },
+  { id: 'mistral:latest', name: 'MistralAI - Mistral' },
+  { id: 'mixtral:latest', name: 'MistralAI - Mixtral' },
+  { id: 'llava:latest', name: 'Llava' }
+]
 
 export default class extends LlmEngine {
 
@@ -40,6 +48,18 @@ export default class extends LlmEngine {
       return response.models
     } catch (error) {
       console.error('Error listing models:', error);
+    }
+  }
+
+  async pullModel(model: string): Promise<AsyncGenerator<ProgressResponse>> {
+    try {
+      return this.client.pull({
+        model: model,
+        stream: true
+      })
+    } catch (error) {
+      console.error('Error pulling models:', error);
+      return null
     }
   }
 
