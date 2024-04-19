@@ -64,6 +64,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] Application Menu
 - [ ] Auto-update
 - [ ] Windows certificate
 - [ ] Specialized/customized assistants (https://github.com/f/awesome-chatgpt-prompts) (??)
