@@ -79,6 +79,11 @@ onMounted(() => {
 
   }
 
+  // open settings
+  if (props.extra?.settings) {
+    emitEvent('openSettings')
+  }
+
 })
 
 const onNewChat = () => {

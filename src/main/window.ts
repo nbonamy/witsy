@@ -99,7 +99,7 @@ export const releaseFocus = async () => {
 };
 
 export let mainWindow: BrowserWindow = null;
-export const openMainWindow = () => {
+export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   // try to show existig one
   if (mainWindow) {
@@ -120,6 +120,7 @@ export const openMainWindow = () => {
     width: 1400,
     height: 800,
     ...titleBarOptions,
+    ...opts,
     show: false,
   });
 
@@ -296,4 +297,17 @@ export const openWaitingPanel = () => {
     hasShadow: false,
   });
 
+}
+
+export const openSettingsWindow = () => {
+
+  // if no window we need to open one
+  if (mainWindow == null || mainWindow.isDestroyed()) {
+    openMainWindow({ queryParams: { settings: true }});
+    return;
+  }
+
+  // send signal to current window
+  console.log('Sending signal to current window')
+  mainWindow.webContents.send('show-settings');
 }
