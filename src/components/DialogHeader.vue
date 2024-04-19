@@ -7,7 +7,7 @@
     </div>
     <div class="title">{{ title }}</div>
     <div class="windows" @click="onClose">
-      <BIconXLg />
+      <BIconXLg class="close" />
     </div>
   </header>
 </template>
@@ -112,6 +112,11 @@ dialog header .windows {
 .macos dialog header .windows {
   display: none;
 }
+
+dialog header .windows .close {
+  cursor: pointer;
+}
+
 
 dialog header .title {
   flex: 1;
