@@ -69,6 +69,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Ollama model pull
 - [x] macOS notarization
 - [x] Fix when long text is highlighted
 - [x] Shortcuts for AI commands
