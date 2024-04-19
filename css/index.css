@@ -30,6 +30,7 @@
 body {
   margin: auto;
   user-select: none;
+  overflow: hidden;
 }
 
 code, pre, code * {

@@ -1,17 +1,7 @@
 <template>
   <dialog class="settings">
     <form method="dialog">
-      <header>
-        <div class="macos">
-          <div class="close" @click="onClose"><BIconX/></div>
-          <div class="minimize"></div>
-          <div class="zoom"></div>
-        </div>
-        <div class="title">Settings</div>
-        <div class="windows" @click="onClose">
-          <BIconXLg />
-        </div>
-      </header>
+      <DialogHeader title="Settings" @close="onClose" />
       <main>
         <div class="tabs">
           <ul>
@@ -42,6 +32,7 @@
 
 import { ref, onMounted } from 'vue'
 
+import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../components/SettingsTab.vue'
 import SettingsGeneral from '../components/SettingsGeneral.vue'
 import SettingsAppearance from '../components/SettingsAppearance.vue'
@@ -108,63 +99,6 @@ const onClose = () => {
 
 dialog.settings {
   width: 600px;
-}
-
-dialog.settings header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-dialog.settings header .title {
-  flex: 1;
-}
-
-dialog.settings header .macos {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-left: 3px;
-}
-
-dialog.settings header .macos > * {
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
-  border-radius: 6px;
-  background-color: #D5D4D3;
-  border: 0.5px solid #B2B3B0;
-}
-
-dialog.settings header .macos svg {
-  font-weight: bold;
-  font-size: 10pt;
-  position: relative;
-  top: -1px;
-  left: -1px;
-}
-
-dialog.settings header .macos .close {
-  color: #FF5F56;
-  background-color: #FF5F56;
-  border-color: #E14138;
-}
-
-dialog.settings header .macos:hover .close {
-  color: #730000;
-}
-
-.windows dialog.settings header .macos {
-  display: none;
-}
-
-dialog.settings header .windows {
-  margin-right: 4px;
-}
-
-.macos dialog.settings header .windows {
-  display: none;
 }
 
 dialog.settings .content {
