@@ -59,6 +59,9 @@ const buildTrayMenu = () => {
   return [
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
+    { type: 'separator'},
+    { label: 'Settings...', click: window.openSettingsWindow },
+    { type: 'separator'},
     { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
   ];
 };
@@ -82,7 +85,10 @@ app.whenReady().then(() => {
   }
 
   // install the menu
-  menu.installMenu();
+  menu.installMenu(app, {
+    quit: quitApp,
+    settings: window.openSettingsWindow,
+  });
 
   // register shortcuts
   registerShortcuts();
@@ -107,8 +113,18 @@ app.whenReady().then(() => {
 
   // create tray
   tray = new Tray(nativeImage.createFromDataURL(trayIcon));
-  const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
-  tray.setContextMenu(contextMenu);
+  tray.on('click', () => {
+    if (window.mainWindow == null || window.mainWindow.isDestroyed()) {
+      window.openMainWindow();
+    } else {
+      const contextMenu = Menu.buildFromTemplate(buildTrayMenu() as Array<any>);
+      tray.popUpContextMenu(contextMenu);
+      }
+  });
+  tray.on('right-click', () => {
+    const contextMenu = Menu.buildFromTemplate(buildTrayMenu() as Array<any>);
+    tray.popUpContextMenu(contextMenu);
+  })
 
 });
 
@@ -171,7 +187,6 @@ ipcMain.on('set-run-at-login', (_, value) => {
 
 ipcMain.on('register-shortcuts', () => {
   registerShortcuts();
-  tray.setContextMenu(Menu.buildFromTemplate(buildTrayMenu()));
 });
 
 ipcMain.on('unregister-shortcuts', () => {

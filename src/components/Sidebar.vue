@@ -7,7 +7,7 @@
     </div>
     <ChatList :chat="chat" />
     <div class="footer">
-      <div class="icon-text" @click="onSettings">
+      <div class="icon-text" id="open-settings" @click="onSettings">
         <BIconGearFill />
         <span>Settings</span>
       </div>

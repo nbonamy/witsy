@@ -1,8 +1,9 @@
-import { app, Menu, shell } from 'electron'
+import { anyDict } from '../types/index.d'
+import { App , Menu, shell } from 'electron'
 
 const isMac = process.platform === 'darwin'
 
-const template = [
+const template = (app: App, callbacks: anyDict) => [
   // { role: 'appMenu' }
   ...(isMac
     ? [{
@@ -10,13 +11,23 @@ const template = [
         submenu: [
           { role: 'about' },
           { type: 'separator' },
+          {
+            label: 'Settings...',
+            accelerator: 'CmdOrCtrl+,',
+            click: async () => callbacks.settings()
+          },
+          { type: 'separator' },
           { role: 'services' },
           { type: 'separator' },
           { role: 'hide' },
           { role: 'hideOthers' },
           { role: 'unhide' },
           { type: 'separator' },
-          { role: 'quit' }
+          {
+            label: 'Quit WittyAI',
+            accelerator: 'CmdOrCtrl+Q',
+            click: () => callbacks.quit()
+          }
         ]
       }]
     : []),
@@ -106,7 +117,7 @@ const template = [
   }
 ]
 
-export const installMenu = () => {
-  const menu = Menu.buildFromTemplate(template)
+export const installMenu = (app: App, callbacks: anyDict) => {
+  const menu = Menu.buildFromTemplate(template(app, callbacks) as Array<any>)
   Menu.setApplicationMenu(menu)
 }
