@@ -87,6 +87,7 @@ app.whenReady().then(() => {
   // install the menu
   menu.installMenu(app, {
     quit: quitApp,
+    newChat: window.openMainWindow,
     settings: window.openSettingsWindow,
   });
 
