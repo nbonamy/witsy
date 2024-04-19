@@ -11,6 +11,7 @@ import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as commander from './automations/commander';
+import * as menu from './main/menu';
 
 // first-thing: single instance
 if (!process.env.TEST) {
@@ -79,7 +80,10 @@ app.whenReady().then(() => {
       .then((name) => console.log(`Added Extension:  ${name}`))
       .catch((err) => console.log('An error while installing Extension: ', err));
   }
-  
+
+  // install the menu
+  menu.installMenu();
+
   // register shortcuts
   registerShortcuts();
 
