@@ -64,7 +64,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Application Menu
+- [ ] i18n
 - [ ] Auto-update
 - [ ] Windows certificate
 - [ ] Specialized/customized assistants (https://github.com/f/awesome-chatgpt-prompts) (??)
@@ -73,6 +73,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Application Menu
 - [x] Prompt history navigation
 - [x] Ollama model pull
 - [x] macOS notarization
