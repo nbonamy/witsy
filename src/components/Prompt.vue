@@ -103,7 +103,45 @@ const onPaste = (event) => {
 }
 
 const onKeyUp = (event) => {
-  autoGrow(event.target)
+
+  // history
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    
+    // get messages
+    let userMessages = props.chat.messages.filter(m => m.role === 'user')
+    if (event.shiftKey) {
+      userMessages = store.chats.reduce((acc, chat) => {
+        return acc.concat(chat.messages.filter(m => m.role === 'user'))
+      }, [])
+      userMessages.sort((a, b) => a.createdAt - b.createdAt)
+    }
+
+    // now navigate
+    const index = userMessages.findIndex(m => m.content === prompt.value)
+    if (event.key === 'ArrowUp') {
+      if (index === -1) {
+        prompt.value = userMessages[userMessages.length - 1].content
+      } else if (index > 0) {
+        prompt.value = userMessages[index - 1].content
+      } else {
+        // keydown moved caret at beginning
+        // so move it back to the end
+        const length = prompt.value.length;
+        input.value.setSelectionRange(length, length);
+      }
+    } else {
+      if (index >= 0 && index < userMessages.length - 1) {
+        prompt.value = userMessages[index + 1].content
+      } else if (index != -1) {
+        prompt.value = ''
+      }
+    }
+  }
+
+  // auto-grow
+  nextTick(() => {
+    autoGrow(event.target)
+  })
 }
 
 const onEnter = (event) => {

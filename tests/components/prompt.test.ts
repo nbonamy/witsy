@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
+import Message from '../../src/models/message'
 //import useEventBus from '../../src/composables/useEventBus'
 
 enableAutoUnmount(afterAll)
@@ -150,3 +151,28 @@ test('Remove attachment', async () => {
 //   await wrapper.vm.$nextTick()
 //   expect(prompt.element.value).toBe('this is my prompt')
 // })
+
+test('History navigation', async () => {
+  
+  await wrapper.setProps({ chat: new Chat({ messages: [ 
+    new Message('system', 'I am an assistant'),
+    new Message('user', 'Hello'),
+    new Message('assistant', 'Hi'),
+    new Message('user', 'Bonjour'),
+    new Message('assistant', 'Ciao'),
+  ]})})
+
+  const prompt = wrapper.find('.input textarea')
+  await prompt.setValue('')
+  await prompt.trigger('keyup.ArrowUp')
+  expect(prompt.element.value).toBe('Bonjour')
+  await prompt.trigger('keyup.ArrowUp')
+  expect(prompt.element.value).toBe('Hello')
+  await prompt.trigger('keyup.ArrowUp')
+  expect(prompt.element.value).toBe('Hello')
+  await prompt.trigger('keyup.ArrowDown')
+  expect(prompt.element.value).toBe('Bonjour')
+  await prompt.trigger('keyup.ArrowDown')
+  expect(prompt.element.value).toBe('')
+
+})
