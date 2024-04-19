@@ -35,6 +35,10 @@ const template = (app: App, callbacks: anyDict) => [
   {
     label: 'File',
     submenu: [
+      {
+        label: 'New Chat',
+        click: () => callbacks.newChat()
+      },
       isMac ? { role: 'close' } : { role: 'quit' }
     ]
   },
