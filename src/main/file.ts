@@ -1,5 +1,5 @@
 
-import { anyDict } from '../types/index.d';
+import { anyDict, strDict } from '../types/index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { execSync } from 'child_process';
 import { download } from 'electron-dl';
@@ -7,7 +7,7 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
-export const getFileContents = (app: App, filepath: string) => {
+export const getFileContents = (app: App, filepath: string): strDict => {
 
   try {
     const fileContents = fs.readFileSync(filepath);
@@ -42,7 +42,7 @@ export const deleteFile = (app: App, filepath: string) => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict) => {
+export const pickFile = (app: App, payload: anyDict): string|strDict => {
 
   try {
     

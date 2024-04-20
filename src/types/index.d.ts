@@ -76,12 +76,16 @@ declare global {
         get(): boolean
         set(state: boolean): void
       }
+      store: {
+        get(key: string, fallback: any): any
+        set(key: string, value: any): void
+      }
       base64?: {
         encode(data: string): string
         decode(data: string): string
       }
       file?: {
-        read?(filepath: string): boolean
+        read?(filepath: string): string
         save?(opts: {
           contents: string,
           properties: anyDict
@@ -90,7 +94,7 @@ declare global {
           url: string,
           properties: anyDict
         }): string
-        pick?(opts: anyDict): anyDict
+        pick?(opts: anyDict): string|strDict
         delete?(filepath: string): void
         find?(name: string): string
       }
@@ -116,6 +120,7 @@ declare global {
         save(commands: Command[]): void
         closePalette(): void
         run(command: Command): void
+        getPrompt(id: string): string
       }
       clipboard?: {
         writeText(text: string): void
