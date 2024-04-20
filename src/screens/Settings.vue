@@ -65,6 +65,7 @@ const settingsTTS = ref(null)
 const settingsAdvanced = ref(null)
 
 onMounted(async () => {
+  window.api.on.showSettings(onOpenSettings)
   onEvent('openSettings', onOpenSettings)
   showActiveTab()
   installTabs()

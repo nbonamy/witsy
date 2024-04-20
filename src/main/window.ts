@@ -103,7 +103,7 @@ export let mainWindow: BrowserWindow = null;
 export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   // try to show existig one
-  if (mainWindow) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
     try {
       mainWindow.show();
       if (mainWindow.isMinimized()) {
@@ -302,13 +302,19 @@ export const openWaitingPanel = () => {
 
 export const openSettingsWindow = () => {
 
-  // if no window we need to open one
-  if (mainWindow == null || mainWindow.isDestroyed()) {
-    openMainWindow({ queryParams: { settings: true }});
+  try {
+    // send signal to current window
+    mainWindow.webContents.send('show-settings');
     return;
+  } catch (error) {
+    console.error('Error while sending show-settings signal', error);
   }
 
-  // send signal to current window
-  console.log('Sending signal to current window')
-  mainWindow.webContents.send('show-settings');
+  try {
+    openMainWindow({ queryParams: { settings: true }});
+    return;
+  } catch (error) {
+    console.error('Error while opening main window to show settings', error);
+  }
+
 }
