@@ -61,6 +61,9 @@ beforeAll(() => {
   // window
   window.api = {
     platform: 'darwin',
+    on: {
+      showSettings: vi.fn(),
+    },
     runAtLogin: {
       get: () => runAtLogin,
       set: vi.fn((state) => {
