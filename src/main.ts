@@ -200,10 +200,6 @@ ipcMain.on('save-config', (event, payload) => {
   event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
-ipcMain.on('history-size', (event) => {
-  event.returnValue = history.historySize(app);
-});
-
 ipcMain.on('load-history', (event) => {
   event.returnValue = JSON.stringify(history.loadHistory(app));
 });

@@ -3,8 +3,11 @@ import { anyDict } from '../types/index.d';
 import { Configuration } from '../types/config.d';
 import defaultSettings from '../../defaults/settings.json'
 import { App } from 'electron'
+import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
+
+const monitor: Monitor = new Monitor('settings')
 
 const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -59,6 +62,7 @@ export const loadSettings = (source: App|string): Configuration => {
   let data = '{}'
   try {
     const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
+    monitor.start(settingsFile)
     data = fs.readFileSync(settingsFile, 'utf-8')
   } catch (error) {
     if (error.code !== 'ENOENT') {

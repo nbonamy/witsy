@@ -5,13 +5,6 @@ import { loadCommands } from './commands'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
-// a standalone chat window can modify the store and save it
-// but it is a separate vuejs application so we will not detecte it
-// therefore we need to go back to monitoring the file
-const historyMonitorInterval = 1000
-let historyLoadedSize: number = null
-let historyMonitor: NodeJS.Timeout = null
-
 export const store: Store = reactive({
   userDataPath: null,
   commands: [], 
@@ -26,9 +19,7 @@ store.load = async () => {
   store.userDataPath = window.api.userDataPath
   loadSettings()
   loadHistory()
-
-  // load commands
-  store.commands = loadCommands()
+  loadCommands()
 
   // load models
   // and select valid engine
@@ -42,10 +33,31 @@ store.load = async () => {
       }
     }
   }
+
+  // subscribe to file changes
+  window.api.on('file-modified', (signal) => {
+    if (signal === 'settings') {
+      loadSettings()
+    } else if (signal === 'history') {
+      mergeHistory(window.api.history.load())
+    }
+  })
+
 }
 
 store.dump = () => {
   console.dir(JSON.parse(JSON.stringify(store.config)))
+}
+
+const loadSettings = () => {
+  store.config = window.api.config.load()
+  store.config.getActiveModel = () => {
+    return store.config.engines[store.config.llm.engine].model.chat
+  }
+}
+
+store.saveSettings = () => {
+  window.api.config.save(JSON.parse(JSON.stringify(store.config)))
 }
 
 const loadHistory = () => {
@@ -53,7 +65,6 @@ const loadHistory = () => {
   try {
     store.chats = []
     const history = window.api.history.load()
-    historyLoadedSize = window.api.history.size()
     for (const jsonChat of history) {
       const chat = new Chat(jsonChat)
       store.chats.push(chat)
@@ -64,16 +75,10 @@ const loadHistory = () => {
     }
   }
 
-  // start monitoring
-  monitorHistory()
-
 }
 
 store.saveHistory = () => {
 
-  // avoid infinite loop
-  clearInterval(historyMonitor)
-  
   try {
 
     // we need to srip attchment contents
@@ -93,30 +98,10 @@ store.saveHistory = () => {
     console.log('Error saving history data', error)
   }
 
-  // restart monitoring
-  monitorHistory()
-}
-
-const monitorHistory = () => {
-  clearInterval(historyMonitor)
-  historyMonitor = setInterval(() => {
-    try {
-      const size = window.api.history.size()
-      if (size != historyLoadedSize) {
-        const history = window.api.history.load()
-        patchHistory(history)
-        historyLoadedSize = size
-      }
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        console.log('Error monitoring history data', error)
-      }
-    }
-  }, historyMonitorInterval)
 }
 
 // 
-const patchHistory = (jsonChats: any[]) => {
+const mergeHistory = (jsonChats: any[]) => {
 
   // need to know
   let patched = false
@@ -148,15 +133,4 @@ const patchHistory = (jsonChats: any[]) => {
     store.saveHistory()
   }
 
-}
-
-const loadSettings = () => {
-  store.config = window.api.config.load()
-  store.config.getActiveModel = () => {
-    return store.config.engines[store.config.llm.engine].model.chat
-  }
-}
-
-store.saveSettings = () => {
-  window.api.config.save(JSON.parse(JSON.stringify(store.config)))
 }
