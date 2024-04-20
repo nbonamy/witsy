@@ -1,15 +1,19 @@
 
-import { vi, expect, test } from 'vitest'
+import { vi, beforeAll, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import * as commands from '../../src/services/commands'
 import defaultCommands from '../../defaults/commands.json'
-import fs from 'fs'
 
-vi.mock('fs', async () => {
-  return { default: {
-    readFileSync: vi.fn(() => '{}'),
-    writeFileSync: vi.fn(),
-  }}
+beforeAll(() => {
+
+  // api
+  window.api = {
+    commands: {
+      load: vi.fn(() => []),
+      save: vi.fn(),
+    }
+  }
+
 })
 
 test('New command', () => {
@@ -30,11 +34,11 @@ test('New command', () => {
 
 test('Install commands', () => {
   commands.installCommands()
+  expect(window.api.commands.load).toHaveBeenCalled()
   expect(store.commands).toStrictEqual(defaultCommands)
 })
 
 test('Save commands', () => {
   commands.saveCommands()
-  //TODO
-  //expect(fs.writeFileSync).toHaveBeenCalled()
+  expect(window.api.commands.save).toHaveBeenCalled()
 })
