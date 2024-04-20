@@ -70,6 +70,9 @@ declare global {
     api: {
       platform?: string
       userDataPath?: string
+      on?: {
+        showSettings?(): void
+      }
       fullscreen?(state: boolean): void
       runAtLogin?: {
         get(): boolean
