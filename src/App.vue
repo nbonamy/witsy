@@ -13,10 +13,6 @@ import Commands from './screens/Commands.vue'
 import { store } from './services/store'
 store.load()
 
-// install commands
-import { installCommands } from './services/commands'
-installCommands();
-
 // add platform name
 onMounted(() => {
 

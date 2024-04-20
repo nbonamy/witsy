@@ -1,7 +1,7 @@
 
 import { Store } from '../types/index.d'
 import { reactive } from 'vue'
-//import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../main/config'
+import { loadCommands } from './commands'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
@@ -26,6 +26,9 @@ store.load = async () => {
   store.userDataPath = window.api.userDataPath
   loadSettings()
   loadHistory()
+
+  // load commands
+  store.commands = loadCommands()
 
   // load models
   // and select valid engine
