@@ -8,8 +8,6 @@
 
 <script setup>
 
-import process from 'process'
-import { ipcRenderer } from 'electron'
 import { computed } from 'vue'
 
 const value = defineModel()
@@ -17,10 +15,10 @@ const value = defineModel()
 const emit = defineEmits(['change']);
 
 const modifiers = {
-  'ctrl': process.platform === 'darwin' ? '⌃' : 'Ctrl+',
-  'alt': process.platform === 'darwin' ? '⌥' : 'Alt+',
-  'shift': process.platform === 'darwin' ? '⇧' : 'Shift+',
-  'meta': process.platform === 'darwin' ? '⌘' : 'Win+',
+  'ctrl': window.api.platform === 'darwin' ? '⌃' : 'Ctrl+',
+  'alt': window.api.platform === 'darwin' ? '⌥' : 'Alt+',
+  'shift': window.api.platform === 'darwin' ? '⇧' : 'Shift+',
+  'meta': window.api.platform === 'darwin' ? '⌘' : 'Win+',
 }
 
 const display = computed(() => {
@@ -37,11 +35,11 @@ const display = computed(() => {
 })
 
 const onFocus = () => {
-  ipcRenderer.send('unregister-shortcuts')
+  window.api.shortcuts.unregister()
 }
 
 const onBlur = () => {
-  ipcRenderer.send('register-shortcuts')
+  window.api.shortcuts.register()
 }
 
 const onDelete = () => {

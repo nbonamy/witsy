@@ -17,7 +17,6 @@
 <script setup>
 
 import { ref } from 'vue'
-import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
 import InputShortcut from './InputShortcut.vue'
 

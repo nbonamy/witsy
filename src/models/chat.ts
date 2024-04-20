@@ -1,6 +1,5 @@
 
 import { Chat } from '../types/index.d'
-import { ipcRenderer } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
@@ -99,10 +98,10 @@ export default class implements Chat {
   delete() {
     for (const message of this.messages) {
       if (message.type === 'image' && typeof message.content === 'string') {
-        ipcRenderer.send('delete', { path: message.content })
+        window.api.file.delete(message.content)
       }
       if (message.attachment?.downloaded) {
-        ipcRenderer.send('delete', { path: message.attachment.url })
+        window.api.file.delete(message.attachment.url)
       }
     }
   }

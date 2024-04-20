@@ -1,16 +1,15 @@
 
-import { ipcRenderer } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 
 export const getFileContents = (url: string) => {
-  return ipcRenderer.sendSync('get-contents', url.replace('file://', ''))
+  return window.api.file.read(url.replace('file://', ''))
 }
 
 export const saveFileContents = (extension: string, contents: string) => {
 
   // call main
   let filename = `${uuidv4()}.${extension}`
-  filename = ipcRenderer.sendSync('write-contents', JSON.stringify({
+  filename = window.api.file.save({
     contents: contents,
     properties: {
       filename: filename,
@@ -18,7 +17,7 @@ export const saveFileContents = (extension: string, contents: string) => {
       subdir: 'images',
       prompt: false
     }
-  }))
+  })
 
   // done
   return filename
@@ -34,7 +33,7 @@ export const download = (url: string) => {
 
   // call main
   let filename = `${uuidv4()}.${extension}`
-  filename = ipcRenderer.sendSync('download', {
+  filename = window.api.file.download({
     url: url,
     properties: {
       filename: filename,

@@ -10,7 +10,6 @@ import LlmMock from '../mocks/llm'
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
   return {
-    settingsFilePath: () => '',
     loadSettings: () => defaults,
   }
 })

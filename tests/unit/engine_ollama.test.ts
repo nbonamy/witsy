@@ -1,13 +1,13 @@
 
-import { LLmCompletionPayload } from '../../src/types/index.d'
+import { LLmCompletionPayload } from '../../src/types/llm.d'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Ollama from '../../src/services/ollama'
-import * as _ollama from 'ollama'
+import * as _ollama from 'ollama/dist/browser.mjs'
 
-vi.mock('ollama', async() => {
+vi.mock('ollama/browser', async() => {
   return { default : {
     list: vi.fn(() => {
       return { models: [{ id: 'model', name: 'model' }] }

@@ -25,11 +25,12 @@ const createWindow = (opts: CreateWindowOpts = {}) => {
     ...opts,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
       webSecurity: false,
       defaultEncoding: 'UTF-8',
       devTools: process.env.DEBUG ? true : false,
+      sandbox: true,
     },
   });
 

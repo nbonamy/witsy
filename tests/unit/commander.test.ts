@@ -13,7 +13,6 @@ let cachedTextId: string = null
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
   return {
-    settingsFilePath: () => '',
     loadSettings: () => defaults,
   }
 })  
