@@ -19,7 +19,7 @@ export default class {
     }
   }
 
-  async selectAll() {
+  async selectAll(): Promise<void> {
     try {
       await this.automator.selectAll();
     } catch (error) {
@@ -27,7 +27,7 @@ export default class {
     }
   }
 
-  async moveCaretBelow() {
+  async moveCaretBelow(): Promise<void> {
     try {
       await this.automator.moveCaretBelow();
     } catch (error) {
@@ -35,7 +35,7 @@ export default class {
     }
   }
 
-  async getSelectedText() {
+  async getSelectedText(): Promise<string> {
 
     try {
 
@@ -53,12 +53,12 @@ export default class {
 
     } catch (error) {
       console.error(error);
-      return '';
+      return null;
     }
   
   }
 
-  async pasteText(textToPaste: string) {
+  async pasteText(textToPaste: string): Promise<void> {
 
     try {
 
@@ -78,7 +78,7 @@ export default class {
 
   }
 
-  async copyToClipboard(text: string) {
+  async copyToClipboard(text: string): Promise<void> {
     await clipboard.writeText(text)
   }
 

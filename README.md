@@ -73,7 +73,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
-- [x] Sandbox
+- [x] Sandbox & contextIsolation
 - [x] Application Menu
 - [x] Prompt history navigation
 - [x] Ollama model pull
