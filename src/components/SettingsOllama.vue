@@ -55,7 +55,7 @@ const load = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing...'
+  refreshLabel.value = 'Refreshing…'
   setTimeout(() => getModels(), 500)
 }
 
@@ -89,7 +89,7 @@ const onSelectPullModel = () => {
 
 const onPull = () => {
   if (!pull_model.value) return
-  pull_progress.value = '...'
+  pull_progress.value = '…'
   nextTick(async () => {
 
     // start pulling
@@ -105,8 +105,9 @@ const onPull = () => {
     // report progress
     try {
       for await (const progress of progressStream) {
-        if (progress.total) {
-          pull_progress.value = Math.floor(progress.completed / progress.total * 100) + '%'
+        const percent = Math.floor(progress.completed / progress.total * 100)
+        if (!isNaN(percent)) {
+          pull_progress.value = percent + '%'
         }
       }
     } catch {}
@@ -149,7 +150,7 @@ defineExpose({ load })
 .progress {
   padding: 10px 4px;
   text-align: center;
-  font-variant-numeric: normal;
+  font-variant-numeric: tabular-nums;
   font-size: 9.5pt;
   color: #666;
 }

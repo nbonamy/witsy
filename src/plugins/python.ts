@@ -26,7 +26,7 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return 'Executing code……'
+    return 'Executing code…'
   }
 
   getParameters(): PluginParameter[] {

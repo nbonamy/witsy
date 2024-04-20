@@ -11,11 +11,11 @@ export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
 }
 
 export const getPullableModels = [
-  { id: 'llama3:latest', name: 'MetaAI - Llama3' },
-  { id: 'llama2:latest', name: 'MetaAI - Llama2' },
-  { id: 'mistral:latest', name: 'MistralAI - Mistral' },
-  { id: 'mixtral:latest', name: 'MistralAI - Mixtral' },
-  { id: 'llava:latest', name: 'Llava' }
+  { id: 'llama3:latest', name: 'Meta Llama 3' },
+  { id: 'llama2:latest', name: 'Meta Llama 2' },
+  { id: 'mistral:latest', name: 'MistralAI Mistral' },
+  { id: 'mixtral:latest', name: 'MistralAI Mixtral' },
+  { id: 'llava:latest', name: 'LLaVa' }
 ]
 
 export default class extends LlmEngine {

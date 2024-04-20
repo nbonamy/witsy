@@ -53,7 +53,7 @@ const load = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing...'
+  refreshLabel.value = 'Refreshing…'
   setTimeout(() => getModels(), 500)
 }
 

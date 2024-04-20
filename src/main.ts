@@ -66,7 +66,7 @@ const buildTrayMenu = () => {
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
     { type: 'separator'},
-    { label: 'Settings...', click: window.openSettingsWindow },
+    { label: 'Settings…', click: window.openSettingsWindow },
     { type: 'separator'},
     { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
   ];

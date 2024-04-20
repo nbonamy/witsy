@@ -24,7 +24,7 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return 'Searching the internet……'
+    return 'Searching the internet…'
   }
 
   getParameters(): PluginParameter[] {

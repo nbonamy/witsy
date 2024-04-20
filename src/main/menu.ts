@@ -12,7 +12,7 @@ const template = (app: App, callbacks: anyDict) => [
           { role: 'about' },
           { type: 'separator' },
           {
-            label: 'Settings...',
+            label: 'Settings…',
             accelerator: 'CmdOrCtrl+,',
             click: async () => callbacks.settings()
           },
