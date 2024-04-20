@@ -99,8 +99,22 @@ export const prepareCommand = async (): Promise<void> => {
   //   text = await automator.getSelectedText();
   // }
 
+  // error
+  if (text == null) {
+    try {
+      new Notification({
+        title: 'WittyAI',
+        body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
+      }).show()
+      window.restoreWindows();
+    } catch (error) {
+      console.error('Error showing notification', error);
+    }
+    return;
+  }
+
   // notify if no text
-  if (text == null || text.trim() === '') {
+  if (text.trim() === '') {
     try {
       new Notification({
         title: 'WittyAI',
