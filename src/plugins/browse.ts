@@ -24,7 +24,7 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return 'Downloading content……'
+    return 'Downloading content…'
   }
 
   getParameters(): PluginParameter[] {

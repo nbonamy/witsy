@@ -135,7 +135,7 @@ export default class implements Automator {
     `
 
     // now run
-    console.log('Finding menus...')
+    console.log('Finding menus…')
     const result = await this.runScript(script);
     editCopy = [ result[0], result[1] ]
     editPaste = [ result[0], result[2] ]

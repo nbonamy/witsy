@@ -115,7 +115,7 @@ export const prepareCommand = async (): Promise<void> => {
   }
 
   // log
-  console.debug('Text grabbed:', `${text.slice(0, 50)}...`);
+  console.debug('Text grabbed:', `${text.slice(0, 50)}…`);
 
   // go on with a cached text id
   const textId = putCachedText(text);
@@ -172,7 +172,7 @@ export const runCommand = async (app: App, llm: LlmEngine, textId: string, comma
       }
 
       // now prompt llm
-      console.debug(`Prompting with ${result.prompt.slice(0, 50)}...`);
+      console.debug(`Prompting with ${result.prompt.slice(0, 50)}…`);
       const response = await promptLlm(llm, model, result.prompt);
       result.response = response.content;
 
@@ -181,7 +181,7 @@ export const runCommand = async (app: App, llm: LlmEngine, textId: string, comma
       await window.releaseFocus();
 
       // now paste
-      console.debug(`Processing LLM output: ${result.response.slice(0, 50)}...`);
+      console.debug(`Processing LLM output: ${result.response.slice(0, 50)}…`);
       await finalizeCommand(command, result.response, engine, model);
 
     }

@@ -211,6 +211,7 @@ test('Format code', async () => {
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body pre[class=hljs] code[class=hljs]').exists()).toBe(true)
   expect(wrapper.find('.body .copy').exists()).toBe(true)
+  expect(wrapper.find('.body .copy').text()).toBe('Copy code')
 })
 
 test('Format math equations katex', async () => {

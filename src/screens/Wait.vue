@@ -1,6 +1,6 @@
 <template>
   <div class="wait">
-    <Loader /> Thinking...
+    <Loader /> Thinking…
   </div>
 </template>
 
