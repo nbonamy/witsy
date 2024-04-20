@@ -9,9 +9,7 @@ contextBridge.exposeInMainWorld(
   'api', {
     platform: process.platform,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
-    on: {
-      showSettings: (callback: (value: any) => void): void => { ipcRenderer.on('show-settings', (_event, value) => callback(value)) },
-    },
+    on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
     store: {
       get(key: string, fallback: any): any { return ipcRenderer.sendSync('get-store-value', { key, fallback }) },
       set(key: string, value: any): void { return ipcRenderer.send('set-store-value', { key, value }) },
