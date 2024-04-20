@@ -26,6 +26,9 @@ beforeAll(() => {
 
   // api
   window.api = {
+    history: {
+      save: vi.fn()
+    },
     markdown: {
       render: renderMarkdown
     }
