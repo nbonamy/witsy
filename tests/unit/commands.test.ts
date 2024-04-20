@@ -1,8 +1,7 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { store } from '../../src/services/store'
 import * as commands from '../../src/services/commands'
-import defaultCommands from '../../defaults/commands.json'
+import { store } from '../../src/services/store'
 
 beforeAll(() => {
 
@@ -33,9 +32,9 @@ test('New command', () => {
 })
 
 test('Install commands', () => {
-  commands.installCommands()
+  commands.loadCommands()
   expect(window.api.commands.load).toHaveBeenCalled()
-  expect(store.commands).toStrictEqual(defaultCommands)
+  expect(store.commands).toStrictEqual([])
 })
 
 test('Save commands', () => {

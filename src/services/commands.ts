@@ -18,16 +18,16 @@ export const newCommand = (): Command => {
   }
 }
 
-export const loadCommands = () => {
+export const loadCommands = (): void => {
   try {
-    return window.api.commands.load()
+    store.commands = window.api.commands.load()
   } catch (error) {
     console.log('Error loading commands data', error)
     return JSON.parse(JSON.stringify(defaultCommands))
   }
 }
 
-export const saveCommands = () => {
+export const saveCommands = (): void => {
   try {
     window.api.commands.save(JSON.parse(JSON.stringify(store.commands)))
   } catch (error) {

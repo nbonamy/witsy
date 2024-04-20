@@ -1,7 +1,10 @@
 import { Chat } from '../types/index.d'
 import { App } from 'electron'
+import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
+
+const monitor: Monitor = new Monitor('history')
 
 const historyFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -9,17 +12,10 @@ const historyFilePath = (app: App): string => {
   return historyFilePath
 }
 
-export const historySize = (app: App): number => {
-  try {
-    return fs.statSync(historyFilePath(app)).size
-  } catch (error) {
-    return 0
-  }
-}
-
 export const loadHistory = (app: App): Chat[] => {
 
   try {
+    monitor.start(historyFilePath(app))
     return JSON.parse(fs.readFileSync(historyFilePath(app), 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {

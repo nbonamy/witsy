@@ -44,7 +44,6 @@ contextBridge.exposeInMainWorld(
       save: (data: Configuration) => { return ipcRenderer.send('save-config', JSON.stringify(data)) },
     },
     history: {
-      size: (): number => { return ipcRenderer.sendSync('history-size') },
       load: (): Chat[] => { return JSON.parse(ipcRenderer.sendSync('load-history')) },
       save: (data: Chat[]) => { return ipcRenderer.send('save-history', JSON.stringify(data)) },
     },
