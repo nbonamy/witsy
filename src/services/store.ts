@@ -1,12 +1,9 @@
 
 import { Store } from '../types/index.d'
 import { reactive } from 'vue'
-import { ipcRenderer } from 'electron'
-import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../main/config'
+//import { loadSettings as _loadSettings , saveSettings as _saveSettings } from '../main/config'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
-import path from 'path'
-import fs from 'fs'
 
 // a standalone chat window can modify the store and save it
 // but it is a separate vuejs application so we will not detecte it
@@ -26,7 +23,7 @@ export const store: Store = reactive({
 store.load = async () => {
 
   // load data
-  store.userDataPath = ipcRenderer.sendSync('get-app-path')
+  store.userDataPath = window.api.userDataPath
   loadSettings()
   loadHistory()
 
@@ -48,22 +45,13 @@ store.dump = () => {
   console.dir(JSON.parse(JSON.stringify(store.config)))
 }
 
-const historyFilePath = () => {
-  return path.join(store.userDataPath, 'history.json')
-}
-
-const settingsFilePath = () => {
-  return path.join(store.userDataPath, 'settings.json')
-}
-
 const loadHistory = () => {
 
   try {
     store.chats = []
-    historyLoadedSize = fs.statSync(historyFilePath()).size
-    const data = fs.readFileSync(historyFilePath(), 'utf-8')
-    const jsonChats = JSON.parse(data)
-    for (const jsonChat of jsonChats) {
+    const history = window.api.history.load()
+    historyLoadedSize = window.api.history.size()
+    for (const jsonChat of history) {
       const chat = new Chat(jsonChat)
       store.chats.push(chat)
     }
@@ -96,7 +84,7 @@ store.saveHistory = () => {
     }
     
     // save
-    fs.writeFileSync(historyFilePath(), JSON.stringify(chats, null, 2))
+    window.api.history.save(chats)
 
   } catch (error) {
     console.log('Error saving history data', error)
@@ -110,11 +98,11 @@ const monitorHistory = () => {
   clearInterval(historyMonitor)
   historyMonitor = setInterval(() => {
     try {
-      const stats = fs.statSync(historyFilePath())
-      if (stats.size != historyLoadedSize) {
-        const data = fs.readFileSync(historyFilePath(), 'utf-8')
-        patchHistory(JSON.parse(data))
-        historyLoadedSize = stats.size
+      const size = window.api.history.size()
+      if (size != historyLoadedSize) {
+        const history = window.api.history.load()
+        patchHistory(history)
+        historyLoadedSize = size
       }
     } catch (error) {
       if (error.code !== 'ENOENT') {
@@ -160,9 +148,12 @@ const patchHistory = (jsonChats: any[]) => {
 }
 
 const loadSettings = () => {
-  store.config = _loadSettings(settingsFilePath())
+  store.config = window.api.config.load()
+  store.config.getActiveModel = () => {
+    return store.config.engines[store.config.llm.engine].model.chat
+  }
 }
 
 store.saveSettings = () => {
-  _saveSettings(settingsFilePath(), store.config)
+  window.api.config.save(JSON.parse(JSON.stringify(store.config)))
 }

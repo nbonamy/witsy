@@ -1,15 +1,21 @@
 
+import { Chat, Command } from './types/index.d';
+import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
+import Store from 'electron-store';
 import log from 'electron-log/main';
 import { wait } from './main/utils';
 
 import * as config from './main/config';
+import * as history from './main/history';
+import * as commands from './main/commands';
 import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
+import * as markdown from './main/markdown';
 import * as commander from './automations/commander';
 import * as menu from './main/menu';
 
@@ -54,7 +60,7 @@ let tray: Tray = null;
 const buildTrayMenu = () => {
 
   // load the config
-  const configShortcuts = config.loadSettings(config.settingsFilePath(app)).shortcuts;
+  const configShortcuts = config.loadSettings(app).shortcuts;
 
   return [
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
@@ -86,7 +92,7 @@ app.whenReady().then(() => {
 
   // install the menu
   menu.installMenu(app, {
-    quit: quitApp,
+    quit: app.quit,
     newChat: window.openMainWindow,
     settings: window.openSettingsWindow,
   });
@@ -115,18 +121,12 @@ app.whenReady().then(() => {
   // create tray
   tray = new Tray(nativeImage.createFromDataURL(trayIcon));
   tray.on('click', () => {
-    if (window.mainWindow == null || window.mainWindow.isDestroyed()) {
-      window.openMainWindow();
-    } else {
-      const contextMenu = Menu.buildFromTemplate(buildTrayMenu() as Array<any>);
-      tray.popUpContextMenu(contextMenu);
-      }
-  });
-  tray.on('right-click', () => {
     const contextMenu = Menu.buildFromTemplate(buildTrayMenu() as Array<any>);
     tray.popUpContextMenu(contextMenu);
+  });
+  tray.on('right-click', () => {
+    window.openMainWindow();
   })
-
 });
 
 // called when the app is already running
@@ -154,7 +154,7 @@ app.on('before-quit', (ev) => {
   }
 
   // check settings
-  const settings = config.loadSettings(config.settingsFilePath(app));
+  const settings = config.loadSettings(app);
   if (!settings.general.keepRunning) {
     return;
   }
@@ -173,6 +173,51 @@ app.on('before-quit', (ev) => {
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
+});
+
+ipcMain.on('get-store-value', (event, payload) => {
+  event.returnValue = new Store().get(payload.key, payload.fallback);
+});
+
+ipcMain.on('set-store-value', (event, payload) => {
+  new Store().set(payload.key, payload.value);
+});
+
+ipcMain.on('clipboard-write-text', (event, payload) => {
+  clipboard.writeText(payload);
+});
+
+ipcMain.on('clipboard-write-image', (event, payload) => {
+  const image = nativeImage.createFromPath(payload.replace('file://', ''))
+  clipboard.writeImage(image);
+});
+
+ipcMain.on('load-config', (event) => {
+  event.returnValue = JSON.stringify(config.loadSettings(app));
+});
+
+ipcMain.on('save-config', (event, payload) => {
+  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
+});
+
+ipcMain.on('history-size', (event) => {
+  event.returnValue = history.historySize(app);
+});
+
+ipcMain.on('load-history', (event) => {
+  event.returnValue = JSON.stringify(history.loadHistory(app));
+});
+
+ipcMain.on('save-history', (event, payload) => {
+  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[]);
+});
+
+ipcMain.on('load-commands', (event) => {
+  event.returnValue = JSON.stringify(commands.loadCommands(app));
+});
+
+ipcMain.on('save-commands', (event, payload) => {
+  event.returnValue = commands.saveCommands(app, JSON.parse(payload) as Command[]);
 });
 
 ipcMain.on('get-run-at-login', (event) => {
@@ -198,28 +243,32 @@ ipcMain.on('fullscreen', (_, flag) => {
   window.mainWindow.setFullScreen(flag);
 });
 
-ipcMain.on('delete', (event, payload) => {
+ipcMain.on('delete-file', (event, payload) => {
   event.returnValue = file.deleteFile(app, payload);
 });
 
 ipcMain.on('pick-file', (event, payload) => {
-  event.returnValue = file.pickFile(app, payload);
+  event.returnValue = file.pickFile(app, JSON.parse(payload));
 });
 
 ipcMain.on('find-program', (event, payload) => {
   event.returnValue = file.findProgram(app, payload);
 });
 
-ipcMain.on('get-contents', (event, payload) => {
+ipcMain.on('read-file', (event, payload) => {
   event.returnValue = file.getFileContents(app, payload);
 });
 
-ipcMain.on('write-contents', (event, payload) => {
+ipcMain.on('save-file', (event, payload) => {
   event.returnValue = file.writeFileContents(app, JSON.parse(payload));
 });
 
 ipcMain.on('download', async (event, payload) => {
-  event.returnValue = await file.downloadFile(app, payload);
+  event.returnValue = await file.downloadFile(app, JSON.parse(payload));
+});
+
+ipcMain.on('render-markdown', (event, payload) => {
+  event.returnValue = markdown.renderMarkdown(payload);
 });
 
 ipcMain.on('get-command-prompt', (event, payload) => {
@@ -251,7 +300,6 @@ ipcMain.on('run-command', async (event, payload) => {
 
 ipcMain.on('run-python-code', async (event, payload) => {
   try {
-    console.log('Running Python code:', payload);
     const result = await PythonShell.runString(payload);
     event.returnValue = {
       result: result

@@ -11,15 +11,14 @@
 
 <script setup>
 
-import { ipcRenderer } from 'electron'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { store } from '../services/store'
 import {
   BIconBoxArrowInUpRight,
   BIconArrowReturnLeft,
   BIconInputCursor,
   BIconClipboard
 } from 'bootstrap-icons-vue'
-import { store } from '../services/store'
 
 const props = defineProps({
   extra: Object
@@ -57,7 +56,7 @@ const onKeyDown = (event) => {
 const onKeyUp = (event) => {
   overrideAction.value = false
   if (event.key == 'Escape') {
-    ipcRenderer.send('close-command-palette')
+    window.api.commands.closePalette()
   } else {
     for (const command of enabledCommands.value) {
       if (command.shortcut?.toLowerCase() === event.key.toLowerCase()) {
@@ -76,10 +75,10 @@ const onRunCommand = (event, command) => {
   }
 
   // now run it
-  ipcRenderer.send('run-command', JSON.stringify({
+  window.api.commands.run({
     textId: props.extra.textId,
-    command: command
-  }))
+    command: JSON.parse(JSON.stringify(command))
+  })
 }
 
 </script>

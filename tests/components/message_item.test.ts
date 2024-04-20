@@ -2,11 +2,11 @@
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
-import { clipboard, ipcRenderer } from 'electron'
 import MessageItem from '../../src/components/MessageItem.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+import { renderMarkdown } from '../../src/main/markdown'
 import { wait } from '../../src/main/utils';
 
 enableAutoUnmount(afterAll)
@@ -23,23 +23,6 @@ vi.mock('../../src/composables/useEventBus.js', async () => {
   }}
 })
 
-vi.mock('electron', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    ipcRenderer: {
-      send: vi.fn(),
-    },
-    nativeImage: {
-      createFromPath: vi.fn(),
-    },
-    clipboard: {
-      writeText: vi.fn(),
-      writeImage: vi.fn(),
-    }
-  }
-})
-
 let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
@@ -48,6 +31,29 @@ const botMessageTransient: Message = new Message('assistant', { role: 'assistant
 
 beforeAll(() => {
 
+  // api
+  window.api = {
+    base64: {
+      encode: (data: string) => { return Buffer.from(data).toString('base64') },
+      decode: (data: string) => { return Buffer.from(data, 'base64').toString() },
+    },
+    fullscreen: vi.fn(),
+    file: {
+      download: vi.fn(),
+    },
+    ipcRenderer: {
+      send: vi.fn(),
+      sendSync: vi.fn(),
+    },
+    clipboard: {
+      writeText: vi.fn(),
+      writeImage: vi.fn(),
+    },
+    markdown: {
+      render: renderMarkdown
+    }
+  }
+  
   // init store
   store.config = defaults
 
@@ -176,7 +182,7 @@ test('Run user actions', async () => {
 test('Run assistant text actions', async () => {
   const wrapper = await mount(botMessageText)
   await wrapper.find('.actions .copy').trigger('click')
-  expect(clipboard.writeText).toHaveBeenCalledWith('Hi')
+  expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hi')
   expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
   // await wait(1500)
   // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
@@ -185,13 +191,13 @@ test('Run assistant text actions', async () => {
 test('Run assistant image actions', async () => {
   const wrapper = await mount(botMessageImage)
   await wrapper.find('.actions .copy').trigger('click')
-  expect(clipboard.writeImage).toHaveBeenCalled()
+  expect(window.api.clipboard.writeImage).toHaveBeenCalled()
   expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
   // await wait(1500)
   // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
 
   await wrapper.find('.body .download').trigger('click')
-  expect(ipcRenderer.send).toHaveBeenCalledWith('download', {
+  expect(window.api.file.download).toHaveBeenCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
       filename: 'image.png',
@@ -223,8 +229,8 @@ test('Fullscreen image', async () => {
   const wrapper = await mount(botMessageImage)
   await wrapper.find('.body img.image').trigger('click')
   expect(wrapper.find('.fullscreen').exists()).toBe(true)
-  expect(ipcRenderer.send).toHaveBeenCalledWith('fullscreen', true)
+  expect(window.api.fullscreen).toHaveBeenCalledWith(true)
   await wrapper.find('.fullscreen').trigger('click')
   expect(wrapper.find('.fullscreen').exists()).toBe(false)
-  expect(ipcRenderer.send).toHaveBeenCalledWith('fullscreen', false)
+  expect(window.api.fullscreen).toHaveBeenCalledWith(false)
 })

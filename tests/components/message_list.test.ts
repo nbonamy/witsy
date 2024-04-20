@@ -6,6 +6,7 @@ import MessageList from '../../src/components/MessageList.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+import { renderMarkdown } from '../../src/main/markdown'
 
 enableAutoUnmount(afterAll)
 
@@ -25,6 +26,13 @@ let wrapper: VueWrapper<any>
 
 beforeAll(() => {
 
+  // api
+  window.api = {
+    markdown: {
+      render: renderMarkdown
+    }
+  }
+  
   // init store
   store.config = defaults
 

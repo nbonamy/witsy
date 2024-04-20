@@ -3,7 +3,6 @@ import { Configuration } from '../../src/types/config.d'
 import { vi, expect, test } from 'vitest'
 import * as config from '../../src/main/config'
 import defaultSettings from '../../defaults/settings.json'
-import { App } from 'electron'
 import fs from 'fs'
 
 vi.mock('fs', async (importOriginal) => {
@@ -12,12 +11,6 @@ vi.mock('fs', async (importOriginal) => {
     ...mod,
     writeFileSync: vi.fn(),
   }}
-})
-
-test('Configuration path', () => {
-  expect(config.settingsFilePath({
-    getPath: (name: string) => name 
-  } as App)).toBe('userData/settings.json')
 })
 
 test('Load default settings', () => {

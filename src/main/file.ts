@@ -7,13 +7,13 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
-export const getFileContents = (app: App, payload: string) => {
+export const getFileContents = (app: App, filepath: string) => {
 
   try {
-    const fileContents = fs.readFileSync(payload);
+    const fileContents = fs.readFileSync(filepath);
     if (fileContents) {
       return {
-        url: `file://${payload}`,
+        url: `file://${filepath}`,
         contents: fileContents.toString('base64')
       };
     }
@@ -26,10 +26,10 @@ export const getFileContents = (app: App, payload: string) => {
 
 }
 
-export const deleteFile = (app: App, payload: anyDict) => {
+export const deleteFile = (app: App, filepath: string) => {
 
   try {
-    let path = payload.path;
+    let path = filepath;
     if (path.startsWith('file://')) {
       path = path.slice(7);
     }

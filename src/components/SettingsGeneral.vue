@@ -28,7 +28,6 @@
 <script setup>
 
 import { ref } from 'vue'
-import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
 import LangSelect from './LangSelect.vue'
 
@@ -40,14 +39,14 @@ const keepRunning = ref(false)
 const load = () => {
   llmEngine.value = store.config.llm.engine || 'openai'
   language.value = store.config.general.language
-  runAtLogin.value = ipcRenderer.sendSync('get-run-at-login').openAtLogin
+  runAtLogin.value = window.api.runAtLogin.get()
   keepRunning.value = store.config.general.keepRunning
 }
 
 const save = () => {
   store.config.llm.engine = llmEngine.value
   store.config.general.language = language.value
-  ipcRenderer.send('set-run-at-login', runAtLogin.value)
+  window.api.runAtLogin.set(runAtLogin.value)
   store.config.general.keepRunning = keepRunning.value
   store.saveSettings()
 }

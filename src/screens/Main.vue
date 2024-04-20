@@ -18,16 +18,12 @@ import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import Settings from './Settings.vue'
 
-// store
-import Store from 'electron-store'
-
 // bus
 import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
 // assistant
 import Assistant from '../services/assistant'
-import { ipcRenderer } from 'electron'
 const assistant = ref(new Assistant(store.config))
 
 const settingsInitialTab = ref('general')
@@ -46,7 +42,7 @@ const isStandaloneChat = computed(() => {
 onMounted(() => {
 
   // geometry
-  sidebarWidth.value = new Store().get('sidebarWidth', '250px')
+  sidebarWidth.value = window.api.store.get('sidebarWidth', '250px')
 
   // events
   onEvent('newChat', onNewChat)
@@ -61,7 +57,7 @@ onMounted(() => {
   // load extra from props
   if (props.extra?.promptId) {
 
-    prompt.value = ipcRenderer.sendSync('get-command-prompt', props.extra?.promptId) || null
+    prompt.value = window.api.commands.getPrompt(props.extra?.promptId) || null
     engine.value = props.extra?.engine || null
     model.value = props.extra?.model || null
 
@@ -211,7 +207,7 @@ const onResizeSidebarMove = (event) => {
 const onResizeSidebarEnd = () => {
   window.removeEventListener('mousemove', onResizeSidebarMove)
   window.removeEventListener('mouseup', onResizeSidebarEnd)
-  new Store().set('sidebarWidth', sidebarWidth.value)
+  window.api.store.set('sidebarWidth', sidebarWidth.value)
 }
 
 </script>

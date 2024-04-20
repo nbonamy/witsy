@@ -1,12 +1,12 @@
 
 import { anyDict } from '../types/index.d';
 import { Configuration } from '../types/config.d';
-import { App } from 'electron'
 import defaultSettings from '../../defaults/settings.json'
+import { App } from 'electron'
 import path from 'path'
 import fs from 'fs'
 
-export const settingsFilePath = (app: App): string => {
+const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
@@ -55,10 +55,11 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
 }
 
-export const loadSettings = (filepath: string): Configuration => {
+export const loadSettings = (source: App|string): Configuration => {
   let data = '{}'
   try {
-    data = fs.readFileSync(filepath, 'utf-8')
+    const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
+    data = fs.readFileSync(settingsFile, 'utf-8')
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving settings data', error)
@@ -67,7 +68,7 @@ export const loadSettings = (filepath: string): Configuration => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (filepath: string, config: anyDict) => {
+export const saveSettings = (dest: App|string, config: anyDict) => {
   try {
 
     // remove instructions that are the same as the default
@@ -79,7 +80,8 @@ export const saveSettings = (filepath: string, config: anyDict) => {
     }
 
     // save
-    fs.writeFileSync(filepath, JSON.stringify(settings, null, 2))
+    const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
+    fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2))
 
   } catch (error) {
     console.log('Error saving settings data', error)

@@ -55,6 +55,7 @@ export default class implements Message {
   setImage(url: string) {
     this.type = 'image'
     this.content = url
+    this.transient = false
   }
 
   appendText(chunk: LlmChunk) {

@@ -20,7 +20,7 @@
 
       <!-- text -->
       <div v-if="message.type == 'text'">
-        <vue-markdown v-if="message.content !== null" class="text" :source="mdPreprocess(message.content)" :options="mdOptions" :plugins="mdPlugins"/>
+        <div v-if="message.content !== null" v-html="mdRender(message.content)" class="text"></div>
       </div>
 
       <!-- transient information -->
@@ -53,17 +53,13 @@
 
 <script setup>
 
-import { ipcRenderer, clipboard, nativeImage } from 'electron'
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import useAudioPlayer from '../composables/audio'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Loader from './Loader.vue'
 import EngineLogo from './EngineLogo.vue'
-import VueMarkdown from 'vue-markdown-render'
-import MarkdownItKatex from '@iktakahiro/markdown-it-katex'
-import hljs from 'highlight.js'
 
 import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
@@ -141,10 +137,9 @@ const onImageLoaded = (message) => {
 
 const onCopy = (message) => {
   if (message.type == 'text') {
-    clipboard.writeText(message.content)
+    window.api.clipboard.writeText(message.content)
   } else if (message.type == 'image') {
-    let image = nativeImage.createFromPath(props.message.content.replace('file://', ''))
-    clipboard.writeImage(image)
+    window.api.clipboard.writeImage(message.content)
   }
   copyLabel.value = 'Copied!'
   setTimeout(() => copyLabel.value = 'Copy', 1000)
@@ -164,16 +159,16 @@ const onEdit = (message) => {
 
 const onFullscreen = (url) => {
   fullScreenImageUrl.value = url
-  ipcRenderer.send('fullscreen', true)
+  window.api.fullscreen(true)
 }
 
 const onCloseFullscreen = () => {
   fullScreenImageUrl.value = null
-  ipcRenderer.send('fullscreen', false)
+  window.api.fullscreen(false)
 }
 
 const onDownload = (message) => {
-  ipcRenderer.send('download', {
+  window.api.file.download({
     url: message.content,
     properties: {
       filename: 'image.png',
@@ -181,29 +176,9 @@ const onDownload = (message) => {
   })
 }
 
-const mdPreprocess = (content) => {
-  // for katex processing, we need to replace \[ and \] with $$ to trigger processing
-  // until https://github.com/iktakahiro/markdown-it-katex/pull/13 is merged
-  return content.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
+const mdRender = (content) => {
+  return window.api.markdown.render(content)
 }
-
-const mdOptions = {
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        let code = '<pre class="hljs"><code class="hljs">';
-        code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
-        code += '</code></pre>';
-        code += '<p><a href="#" onclick="navigator.clipboard.writeText(Buffer.from(\'' + Buffer.from(str).toString('base64') + '\', \'base64\').toString());';
-        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000)" class="copy">Copy code</a></p>';
-        return code;
-      } catch (__) {}
-    }
-    return '' // use external default escaping
-  }
-}
-
-const mdPlugins = [MarkdownItKatex]
 
 </script>
 

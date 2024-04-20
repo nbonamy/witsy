@@ -2,7 +2,7 @@
 import { Shortcut } from '../types/index.d';
 import { ShortcutCallbacks } from '../types/automation.d';
 import { App, globalShortcut } from 'electron';
-import { settingsFilePath, loadSettings } from './config';
+import { loadSettings } from './config';
 
 export const unregisterShortcuts = () => {
   console.info('Unregistering shortcuts')
@@ -15,7 +15,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
   unregisterShortcuts();
 
   // load the config
-  const config = loadSettings(settingsFilePath(app));
+  const config = loadSettings(app);
 
   // now register
   console.info('Registering shortcuts')

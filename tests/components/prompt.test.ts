@@ -1,33 +1,16 @@
 
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { ipcRenderer } from 'electron'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
-//import useEventBus from '../../src/composables/useEventBus'
 
 enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
-
-vi.mock('electron', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    ipcRenderer: {
-      sendSync: vi.fn(() => {
-        return {
-          url: 'file://image.png',
-          contents: 'image64'
-         }
-      }),
-    }
-  }
-})
 
 vi.mock('../../src/composables/useEventBus.js', async () => {
   return { default: () => {
@@ -41,6 +24,19 @@ vi.mock('../../src/composables/useEventBus.js', async () => {
 let wrapper: VueWrapper<any>
 
 beforeAll(() => {
+
+  // api
+  window.api = {
+    file: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      pick: vi.fn(({ opts: anyDict}) => {
+        return {
+          url: 'file://image.png',
+          contents: 'image64'
+         }
+      }),
+    }
+  }
 
   // init store
   store.config = defaults
@@ -76,7 +72,7 @@ test('Send on enter', async () => {
   const prompt = wrapper.find('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
-  await prompt.trigger('keydown.enter')
+  await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenCalled()
   expect(emitEventMock).toHaveBeenCalledWith('sendPrompt', 'this is my prompt')
   expect(prompt.element.value).toBe('')
@@ -111,8 +107,8 @@ test('Show stop button when working', async () => {
 test('Send attachment', async () => {
   const attach = wrapper.find('.attach')
   await attach.trigger('click')
-  expect(ipcRenderer.sendSync).toHaveBeenCalled()
-  expect(ipcRenderer.sendSync).toHaveBeenCalledWith('pick-file', {
+  expect(window.api.file.pick).toHaveBeenCalled()
+  expect(window.api.file.pick).toHaveBeenCalledWith({
     filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
   expect(emitEventMock).toHaveBeenCalledWith('attachFile', {

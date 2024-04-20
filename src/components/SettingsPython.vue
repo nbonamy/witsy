@@ -27,7 +27,6 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { ipcRenderer } from 'electron'
 
 const enabled = ref(false)
 const binpath = ref(null)
@@ -38,7 +37,7 @@ const load = () => {
 }
 
 const search = () => {
-  const path = ipcRenderer.sendSync('find-program', 'python3')
+  const path = window.api.file.find('python3')
   if (path) {
     binpath.value = path
     save()
@@ -46,7 +45,7 @@ const search = () => {
 }
 
 const pick = () => {
-  const path = ipcRenderer.sendSync('pick-file', { location: true })
+  const path = window.api.file.pick({ location: true })
   if (path) {
     binpath.value = path
     save()

@@ -50,7 +50,7 @@ export const loadOpenAIModels = async () => {
     const openAI = new OpenAI(store.config)
     models = await openAI.getModels()
   } catch (error) {
-    console.error('Error listing Ollama models:', error);
+    console.error('Error listing OpenAI models:', error);
   }
   if (!models) {
     store.config.engines.openai.models = { chat: [], image: [], }
@@ -89,7 +89,7 @@ export const loadOllamaModels = async () => {
     const ollama = new Ollama(store.config)
     models = await ollama.getModels()
   } catch (error) {
-    console.error('Error listing OpenAI models:', error);
+    console.error('Error listing Ollama models:', error);
   }
   if (!models) {
     store.config.engines.ollama.models = { chat: [], image: [], }
@@ -123,7 +123,7 @@ export const loadMistralAIModels = async () => {
     const mistralai = new MistralAI(store.config)
     models = await mistralai.getModels()
   } catch (error) {
-    console.error('Error listing OpenAI models:', error);
+    console.error('Error listing MistralAI models:', error);
   }
   if (!models) {
     store.config.engines.mistralai.models = { chat: [], image: [], }
@@ -157,7 +157,7 @@ export const loadAnthropicModels = async () => {
     const anthropic = new Anthropic(store.config)
     models = await anthropic.getModels()
   } catch (error) {
-    console.error('Error listing OpenAI models:', error);
+    console.error('Error listing Anthropic models:', error);
   }
   if (!models) {
     store.config.engines.anthropic.models = { chat: [], image: [], }

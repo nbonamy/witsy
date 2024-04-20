@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+import { renderMarkdown } from '../../src/main/markdown'
 
 enableAutoUnmount(afterAll)
 
@@ -22,6 +23,15 @@ vi.mock('../../src/composables/useEventBus.js', async () => {
 })
 
 beforeAll(() => {
+
+  // api
+  window.api = {
+    markdown: {
+      render: renderMarkdown
+    }
+  }
+  
+  // init store
   store.config = defaults
 })
 

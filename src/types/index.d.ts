@@ -64,3 +64,68 @@ interface Store {
   load?(): Promise<void>
   dump?(): void
 }
+
+declare global {
+  interface Window {
+    api: {
+      platform?: string
+      userDataPath?: string
+      fullscreen?(state: boolean): void
+      runAtLogin?: {
+        get(): boolean
+        set(state: boolean): void
+      }
+      base64?: {
+        encode(data: string): string
+        decode(data: string): string
+      }
+      file?: {
+        read?(filepath: string): boolean
+        save?(opts: {
+          contents: string,
+          properties: anyDict
+        }): string
+        download?(opts: {
+          url: string,
+          properties: anyDict
+        }): string
+        pick?(opts: anyDict): anyDict
+        delete?(filepath: string): void
+        find?(name: string): string
+      }
+      shortcuts?: {
+        register(): void
+        unregister(): void
+      }
+      ipcRenderer?: {
+        send?(event: string, payload: any): void
+        sendSync?(event: string, payload: any): any
+      }
+      config?: {
+        load(): Configuration
+        save(config: Configuration): void
+      }
+      history?: {
+        size(): number
+        load(): Chat[]
+        save(chats: Chat[]): void
+      }
+      commands?: {
+        load(): Command[]
+        save(commands: Command[]): void
+        closePalette(): void
+        run(command: Command): void
+      }
+      clipboard?: {
+        writeText(text: string): void
+        writeImage(path: string): void
+      },
+      markdown?: {
+        render(markdown: string): string
+      }
+      interpreter?: {
+        python(code: string): any
+      }
+    }
+  }
+}

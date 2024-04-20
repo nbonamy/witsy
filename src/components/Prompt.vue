@@ -5,7 +5,7 @@
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <img :src="attachmentUrl" class="icon" />
       </div>
-      <textarea v-model="prompt" @keydown.enter="onEnter" @keyup="onKeyUp" ref="input" autofocus />
+      <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus />
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
@@ -15,7 +15,6 @@
 <script setup>
 
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { ipcRenderer } from 'electron'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 
@@ -69,7 +68,7 @@ const onStopAssistant = () => {
 }
 
 const onAttach = () => {
-  let file = ipcRenderer.sendSync('pick-file', { filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }] })
+  let file = window.api.file.pick({ filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }] })
   if (file) {
     emitEvent('attachFile', {...file, downloaded: false })
   }
@@ -102,13 +101,33 @@ const onPaste = (event) => {
   }
 }
 
+const onKeyDown = (event) => {
+
+  if (event.key === 'Enter') {
+    if (event.shiftKey) {
+
+    } else {
+      onSendPrompt()
+      event.preventDefault()
+      event.stopPropagation()
+      return false
+    }
+  } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault()
+    event.stopPropagation()
+    return false
+  }
+}
+
+
+
 const onKeyUp = (event) => {
 
   // history
   if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
     
     // get messages
-    let userMessages = props.chat.messages.filter(m => m.role === 'user')
+    let userMessages = props.chat?.messages.filter(m => m.role === 'user')
     if (event.shiftKey) {
       userMessages = store.chats.reduce((acc, chat) => {
         return acc.concat(chat.messages.filter(m => m.role === 'user'))
@@ -117,23 +136,25 @@ const onKeyUp = (event) => {
     }
 
     // now navigate
-    const index = userMessages.findIndex(m => m.content === prompt.value)
-    if (event.key === 'ArrowUp') {
-      if (index === -1) {
-        prompt.value = userMessages[userMessages.length - 1].content
-      } else if (index > 0) {
-        prompt.value = userMessages[index - 1].content
+    if (userMessages?.length) {
+      const index = userMessages.findIndex(m => m.content === prompt.value)
+      if (event.key === 'ArrowUp') {
+        if (index === -1) {
+          prompt.value = userMessages[userMessages.length - 1].content
+        } else if (index > 0) {
+          prompt.value = userMessages[index - 1].content
+        } else {
+          // keydown moved caret at beginning
+          // so move it back to the end
+          // const length = prompt.value.length;
+          // input.value.setSelectionRange(length, length);
+        }
       } else {
-        // keydown moved caret at beginning
-        // so move it back to the end
-        const length = prompt.value.length;
-        input.value.setSelectionRange(length, length);
-      }
-    } else {
-      if (index >= 0 && index < userMessages.length - 1) {
-        prompt.value = userMessages[index + 1].content
-      } else if (index != -1) {
-        prompt.value = ''
+        if (index >= 0 && index < userMessages.length - 1) {
+          prompt.value = userMessages[index + 1].content
+        } else if (index != -1) {
+          prompt.value = ''
+        }
       }
     }
   }
@@ -142,17 +163,6 @@ const onKeyUp = (event) => {
   nextTick(() => {
     autoGrow(event.target)
   })
-}
-
-const onEnter = (event) => {
-  if (event.shiftKey) {
-
-  } else {
-    onSendPrompt()
-    event.preventDefault()
-    event.stopPropagation()
-    return false
-  }
 }
 
 const autoGrow = (element) => {

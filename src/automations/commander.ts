@@ -4,7 +4,7 @@ import { Configuration } from '../types/config.d'
 import { RunCommandResponse } from '../types/automation.d'
 import { LlmResponse } from '../types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
-import { settingsFilePath, loadSettings } from '../main/config'
+import { loadSettings } from '../main/config'
 import * as window from '../main/window'
 import OpenAI from '../services/openai'
 import Ollama from '../services/ollama'
@@ -141,7 +141,7 @@ export const runCommand = async (app: App, llm: LlmEngine, textId: string, comma
     }
 
     // config
-    const config: Configuration = loadSettings(settingsFilePath(app));
+    const config: Configuration = loadSettings(app);
 
     // extract what we need
     const template = command.template;

@@ -4,7 +4,6 @@
 
 <script setup>
 
-import process from 'process'
 import { ref, computed, onMounted } from 'vue'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
@@ -25,7 +24,7 @@ onMounted(() => {
   let platform = {
     'win32': 'windows',
     'darwin': 'macos',
-  }[process.platform]||''
+  }[window.api.platform]||''
 
   // add it everywhere
   window.platform = platform
