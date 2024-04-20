@@ -94,6 +94,8 @@ const onPull = () => {
 
     // start pulling
     const progressStream = await ollama.pullModel(pull_model.value)
+
+    // TODO: handle error (this is not working)
     if (!progressStream) {
       alert('Error pulling model')
       pull_progress.value = null
