@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld(
   'api', {
     platform: process.platform,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
+    on: {
+      showSettings: (callback: (value: any) => void): void => { ipcRenderer.on('show-settings', (_event, value) => callback(value)) },
+    },
     store: {
       get(key: string, fallback: any): any { return ipcRenderer.sendSync('get-store-value', { key, fallback }) },
       set(key: string, value: any): void { return ipcRenderer.send('set-store-value', { key, value }) },
@@ -62,10 +65,3 @@ contextBridge.exposeInMainWorld(
     }
   },
 );
-
-window.addEventListener('DOMContentLoaded', () => {
-  ipcRenderer.on('show-settings', () => {
-    // not super nice but enough for the moment!
-    document.querySelector('#open-settings').click()
-  })
-})
