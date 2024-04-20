@@ -150,7 +150,7 @@ const onSave = (event) => {
     label: label.value,
     template: template.value,
     action: action.value,
-    shortcut: shortcut.value.toUpperCase(),
+    shortcut: shortcut.value?.toUpperCase(),
     engine: engine.value,
     model: model.value
   })
