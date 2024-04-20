@@ -1,7 +1,7 @@
 {
   "name": "witty-ai",
   "productName": "WittyAI",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "WittyAI: desktop AI assistant",
   "main": ".vite/build/main.js",
   "scripts": {
