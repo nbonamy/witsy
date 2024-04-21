@@ -2,13 +2,14 @@
 import { Store } from '../types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
+import { loadPrompts } from './prompts'
 import { isEngineReady, loadAllModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
 export const store: Store = reactive({
-  userDataPath: null,
-  commands: [], 
   config: null,
+  commands: [], 
+  prompts: [],
   chats: [],
   pendingAttachment: null,
 })
@@ -16,10 +17,10 @@ export const store: Store = reactive({
 store.load = async () => {
 
   // load data
-  store.userDataPath = window.api.userDataPath
   loadSettings()
   loadHistory()
   loadCommands()
+  loadPrompts()
 
   // load models
   // and select valid engine

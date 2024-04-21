@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, strDict } from './types/index.d';
+import { Chat, Command, Prompt, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
 import { contextBridge, ipcRenderer } from 'electron'
 
@@ -53,6 +53,10 @@ contextBridge.exposeInMainWorld(
       run: (command: Command): void => { return ipcRenderer.send('run-command', JSON.stringify(command)) },
       closePalette: (): void => { return ipcRenderer.send('close-command-palette') },
       getPrompt: (id: string): string => { return ipcRenderer.sendSync('get-command-prompt', id) },
+    },
+    prompts: {
+      load: (): Prompt[] => { return JSON.parse(ipcRenderer.sendSync('load-prompts')) },
+      save: (data: Prompt[]) => { return ipcRenderer.send('save-prompts', JSON.stringify(data)) },
     },
     markdown: {
       render: (markdown: string): string => { return ipcRenderer.sendSync('render-markdown', markdown) },

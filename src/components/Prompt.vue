@@ -1,6 +1,7 @@
 <template>
   <div class="prompt">
     <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
+    <BIconJournalMedical class="icon prompt" @click="onCustomPrompt"/>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <img :src="attachmentUrl" class="icon" />
@@ -9,6 +10,8 @@
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
+    <Overlay v-if="showCustomPrompts" @click="closeCustomPrompts" />
+    <ContextMenu v-if="showCustomPrompts" :show-filter="true" :actions="customPrompts" @action-clicked="handleCustomPromptClick" :x="menuX" :y="menuY" align="bottom" />
   </div>
 </template>
 
@@ -16,6 +19,9 @@
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import { BIconStars } from 'bootstrap-icons-vue'
+import ContextMenu from './ContextMenu.vue'
+import Overlay from './Overlay.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/useEventBus'
@@ -27,6 +33,9 @@ const props = defineProps({
 
 const prompt = ref('')
 const input = ref(null)
+const showCustomPrompts = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
 
 const working = computed(() => {
   return props.chat?.lastMessage().transient
@@ -38,6 +47,12 @@ const attachmentUrl = computed(() => {
   } else {
     return store.pendingAttachment?.url
   }
+})
+
+const customPrompts = computed(() => {
+  return store.prompts.map(p => {
+    return { label: p.actor, action: p.actor, icon: BIconStars }
+  })
 })
 
 onMounted(() => {
@@ -101,6 +116,42 @@ const onPaste = (event) => {
   }
 }
 
+const onCustomPrompt = () => {
+  showCustomPrompts.value = true
+  const textarea = document.querySelector('.prompt textarea')
+  const rect = textarea?.getBoundingClientRect()
+  menuX.value = rect?.left - 12
+  menuY.value = rect?.height + 32
+}
+
+const closeCustomPrompts = () => {
+  showCustomPrompts.value = false
+}
+
+const handleCustomPromptClick = (action) => {
+  closeCustomPrompts()
+  const customPrompt = store.prompts.find(p => p.actor === action)
+  prompt.value = customPrompt.prompt
+  nextTick(() => {
+
+    // grow
+    autoGrow(input.value)
+
+    // select variable text
+    const start = prompt.value.indexOf('"')
+    if (start > 0) {
+      const end = prompt.value.indexOf('"', start + 1)
+      if (end > 0) {
+        input.value.setSelectionRange(start + 1, end)
+      }
+    }
+
+    // focus
+    input.value.focus()
+
+  })
+}
+
 const onKeyDown = (event) => {
 
   if (event.key === 'Enter') {
@@ -118,8 +169,6 @@ const onKeyDown = (event) => {
     return false
   }
 }
-
-
 
 const onKeyUp = (event) => {
 

@@ -54,8 +54,8 @@ interface Shortcut {
 }
 
 interface Store {
-  userDataPath: string
   commands: Command[]
+  prompts: Prompt[]
   config: Configuration
   chats: Chat[]
   pendingAttachment: any
@@ -63,6 +63,11 @@ interface Store {
   saveSettings?(): void
   load?(): Promise<void>
   dump?(): void
+}
+
+interface Prompt {
+  actor: string
+  prompt: string
 }
 
 declare global {
@@ -111,7 +116,6 @@ declare global {
         save?(config: Configuration): void
       }
       history?: {
-        size?(): number
         load?(): Chat[]
         save?(chats: Chat[]): void
       }
@@ -121,6 +125,10 @@ declare global {
         closePalette?(): void
         run?(command: Command): void
         getPrompt?(id: string): string
+      }
+      prompts?: {
+        load?(): Prompt[]
+        save?(prompts: Prompt[]): void
       }
       clipboard?: {
         writeText?(text: string): void
