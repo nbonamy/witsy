@@ -7,6 +7,7 @@ Generative AI desktop application:
 - OpenAI, Ollama, Anthropic and MistralAI models supported
 - Chat completion and image generation with Vision models support
 - AI commands runnable on highlighted text in almost any application
+- Special prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
 - Read aloud of assistant messages (requires OpenAI API key)
 - Local history of conversations (with automatic titles)
