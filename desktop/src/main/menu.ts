@@ -24,7 +24,7 @@ const template = (app: App, callbacks: anyDict) => [
           { role: 'unhide' },
           { type: 'separator' },
           {
-            label: 'Quit WittyAI',
+            label: 'Quit Maiestro',
             accelerator: 'CmdOrCtrl+Q',
             click: () => callbacks.quit()
           }
@@ -114,7 +114,7 @@ const template = (app: App, callbacks: anyDict) => [
       {
         label: 'Learn More',
         click: async () => {
-          await shell.openExternal('https://github.com/nbonamy/witty-ai-releases')
+          await shell.openExternal('https://github.com/nbonamy/maiestro-releases')
         }
       }
     ]

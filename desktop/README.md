@@ -1,7 +1,7 @@
 
-<img src="https://github.com/nbonamy/witty-ai/actions/workflows/test.yml/badge.svg">
+<img src="https://github.com/nbonamy/maiestro/actions/workflows/test.yml/badge.svg">
 
-# WittyAI
+# Maiestro
 
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic and MistralAI models supported

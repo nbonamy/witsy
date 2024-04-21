@@ -1,8 +1,8 @@
 {
-  "name": "witty-ai",
-  "productName": "WittyAI",
+  "name": "maiestro",
+  "productName": "Maiestro",
   "version": "1.5.0",
-  "description": "WittyAI: desktop AI assistant",
+  "description": "Maiestro: desktop AI assistant",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "cross-env DEBUG=1 electron-forge start",
@@ -83,7 +83,7 @@
     "vue": "^3.4.21"
   },
   "build": {
-    "appId": "fr.bonamy.witty-ai",
+    "appId": "com.nabocorp.maiestro",
     "mac": {
       "icon": "assets/icon.icns",
       "category": "public.app-category.productivity"
