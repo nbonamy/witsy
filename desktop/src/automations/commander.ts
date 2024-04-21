@@ -103,7 +103,7 @@ export const prepareCommand = async (): Promise<void> => {
   if (text == null) {
     try {
       new Notification({
-        title: 'Maiestro',
+        title: 'Witsy',
         body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
       }).show()
       window.restoreWindows();
@@ -117,7 +117,7 @@ export const prepareCommand = async (): Promise<void> => {
   if (text.trim() === '') {
     try {
       new Notification({
-        title: 'Maiestro',
+        title: 'Witsy',
         body: 'Please highlight the text you want to analyze'
       }).show()
       console.log('No text selected');

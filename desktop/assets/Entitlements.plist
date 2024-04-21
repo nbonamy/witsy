@@ -24,7 +24,7 @@
   <!-- from https://www.electronjs.org/docs/latest/tutorial/mac-app-store-submission-guide -->
   <key>com.apple.security.application-groups</key>
   <array>
-    <string>TP8BYQ64C4.com.nabocorp.maiestro</string>
+    <string>TP8BYQ64C4.com.nabocorp.witsy</string>
   </array>
   <key>com.apple.security.inherit</key>
   <true/>
