@@ -12,7 +12,7 @@
 
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps(['actions', 'align', 'x', 'y', 'showFilter'])
 
@@ -44,6 +44,13 @@ const position = computed(() => {
       top: props.y + 'px',
       left: props.x + 'px'
     }
+  }
+});
+
+onMounted(() => {
+  if (props.showFilter) {
+    const input = document.querySelector('.context-menu input');
+    input?.focus();
   }
 });
 
