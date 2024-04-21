@@ -199,6 +199,9 @@ export default class {
     const llm = this.llm
     const message = this.chat.lastMessage()
 
+    // inform
+    message.setToolCall('Painting pixels…')    
+
     try {
 
       // generate 
