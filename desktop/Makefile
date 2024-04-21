@@ -29,8 +29,8 @@ mac-x64:
 	npx electron-forge make -p darwin -a x64
 
 mac-universal:
-	-rm -rf out/*darwin-universal* out/make/zip/darwin/universal/*
-	npx electron-forge make -p darwin -a universal
+	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
+	npx electron-forge make -p mas -a universal
 
 mac: mac-universal
 
@@ -50,7 +50,7 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean mac win linux
+all: clean mac mac-arm64 mac-x64 win linux
 
 #publish:
 #	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
