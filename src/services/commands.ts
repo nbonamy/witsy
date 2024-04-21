@@ -23,7 +23,7 @@ export const loadCommands = (): void => {
     store.commands = window.api.commands.load()
   } catch (error) {
     console.log('Error loading commands data', error)
-    return JSON.parse(JSON.stringify(defaultCommands))
+    store.commands = JSON.parse(JSON.stringify(defaultCommands))
   }
 }
 

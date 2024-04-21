@@ -35,11 +35,16 @@ beforeAll(() => {
           contents: 'image64'
          }
       }),
-    }
+    },
   }
 
   // init store
   store.config = defaults
+  store.prompts = [
+    { actor: 'actor1', prompt: 'prompt1' },
+    { actor: 'actor2', prompt: 'prompt2' },
+    { actor: 'actor3', prompt: 'prompt3' }
+  ]
 
   // wrapper
   wrapper = mount(Prompt)
@@ -171,4 +176,14 @@ test('History navigation', async () => {
   await prompt.trigger('keyup.ArrowDown')
   expect(prompt.element.value).toBe('')
 
+})
+
+test('Custom prompts', async () => {
+  const trigger = wrapper.find('.icon.prompt')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.item').length).toBe(3)
+  await menu.findAll('.item')[1].trigger('click')
+  expect(wrapper.find('.input textarea').element.value).toBe('prompt2')
 })

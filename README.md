@@ -35,7 +35,9 @@ You can also create custom commands with the prompt of your liking!
 
 Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170](https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170).
 
+## Prompts
 
+From [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 
 ## Setup
 
@@ -67,12 +69,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 - [ ] i18n
 - [ ] Auto-update
 - [ ] Windows certificate
-- [ ] Specialized/customized assistants (https://github.com/f/awesome-chatgpt-prompts) (??)
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] Custom prompts
 - [x] Sandbox & contextIsolation
 - [x] Application Menu
 - [x] Prompt history navigation

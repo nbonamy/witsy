@@ -1,5 +1,5 @@
 
-import { Chat, Command } from './types/index.d';
+import { Chat, Command, Prompt } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
 import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
@@ -12,6 +12,7 @@ import { wait } from './main/utils';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
+import * as prompts from './main/prompts';
 import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
@@ -214,6 +215,14 @@ ipcMain.on('load-commands', (event) => {
 
 ipcMain.on('save-commands', (event, payload) => {
   event.returnValue = commands.saveCommands(app, JSON.parse(payload) as Command[]);
+});
+
+ipcMain.on('load-prompts', (event) => {
+  event.returnValue = JSON.stringify(prompts.loadPrompts(app));
+});
+
+ipcMain.on('save-prompts', (event, payload) => {
+  event.returnValue = prompts.savePrompts(app, JSON.parse(payload) as Prompt[]);
 });
 
 ipcMain.on('get-run-at-login', (event) => {
