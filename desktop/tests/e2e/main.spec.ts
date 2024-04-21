@@ -20,7 +20,7 @@ test('Start application', async () => {
   const appName = await electronApp.evaluate(async ({ app }) => app.getName())
   const isReady = await electronApp.evaluate(async ({ app }) => app.isReady())
   expect(isReady).toBeTruthy()
-  expect(appName).toBe('Maiestro')
+  expect(appName).toBe('Witsy')
 })
 
 test('Open settings', async () => {

@@ -1,7 +1,7 @@
 
-<img src="https://github.com/nbonamy/maiestro/actions/workflows/test.yml/badge.svg">
+<!--img src="https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg"-->
 
-# Maiestro
+# Witsy
 
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic and MistralAI models supported

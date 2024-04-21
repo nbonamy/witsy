@@ -1,6 +1,6 @@
 
 import { inAppPurchase } from 'electron'
-const PRODUCT_IDS = ['com.nabocorp.maiestro.full_version', 'full_version']
+const PRODUCT_IDS = ['com.nabocorp.witsy.full_version', 'full_version']
 
 export default class {
 

@@ -17,8 +17,8 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'assets/icon',
-    executableName: 'Maiestro',
-    appBundleId: 'com.nabocorp.maiestro',
+    executableName: 'Witsy',
+    appBundleId: 'com.nabocorp.witsy',
     extendInfo: './assets/Info.plist',
     osxUniversal: {
     },
