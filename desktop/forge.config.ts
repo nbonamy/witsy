@@ -16,8 +16,8 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'assets/icon',
-    executableName: 'witty-ai',
-    appBundleId: 'fr.bonamy.witty-ai',
+    executableName: 'Maiestro',
+    appBundleId: 'com.nabocorp.maiestro',
     extendInfo: './assets/Info.plist',
     osxSign: {
       identity: process.env.IDENTITY,

@@ -34,7 +34,7 @@ win-x64:
 	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
 	npx electron-forge package -p win32 -a x64
 	mkdir -p out/make/zip/win32/x64
-	cd out ; zip -r make/zip/win32/x64/WittyAI-win32-x64-$(VERSION).zip "WittyAI-win32-x64"
+	cd out ; zip -r make/zip/win32/x64/Maiestro-win32-x64-$(VERSION).zip "Maiestro-win32-x64"
 
 win: win-x64
 
@@ -42,12 +42,12 @@ linux-x64:
 	-rm -rf out/*linux-x64* out/make/zip/linux/x64/*
 	npx electron-forge package -p linux -a x64
 	mkdir -p out/make/zip/linux/x64
-	cd out ; zip -r make/zip/linux/x64/WittyAI-linux-x64-$(VERSION).zip "WittyAI-linux-x64/"
+	cd out ; zip -r make/zip/linux/x64/Maiestro-linux-x64-$(VERSION).zip "Maiestro-linux-x64/"
 
 linux: linux-x64
 
 all: clean mac win linux
 
-publish:
-	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
-	gh release create v$(VERSION) --repo https://github.com/nbonamy/witty-ai-releases --title $(VERSION) $(RELEASES)
+#publish:
+#	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
+#	gh release create v$(VERSION) --repo https://github.com/nbonamy/witty-ai-releases --title $(VERSION) $(RELEASES)

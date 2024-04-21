@@ -1,6 +1,6 @@
 <template>
   <div class="context-menu" :style="position">
-    <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search……" autofocus="true" /></div></form>
+    <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
     <div class="actions">
       <div v-for="action in visibleActions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
         <component :is="action.icon" v-if="action.icon" class="icon" />
