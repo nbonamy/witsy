@@ -13,32 +13,57 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const isDarwin = process.platform == 'darwin';
+const isMas = isDarwin && process.argv.includes('mas');
+let osxPackagerConfig = {}
+let osxMaker = null
+
+if (isDarwin) {
+  if (!isMas) {
+    osxMaker = new MakerZIP({}, ['darwin'])
+    osxPackagerConfig = {
+      osxSign: {
+        identity: process.env.IDENTIFY_DARWIN_CODE,
+        provisioningProfile: './build/Witsy_Darwin.provisionprofile',
+        optionsForFile: () => { return {
+          hardenedRuntime: true,
+          entitlements: './build/Entitlements.darwin.plist'
+        }; },
+      },
+      // osxNotarize: {
+      //   appleId: process.env.APPLE_ID,
+      //   appleIdPassword: process.env.APPLE_PASSWORD,
+      //   teamId: process.env.APPLE_TEAM_ID
+      // }
+    }
+  } else {
+    osxMaker = new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, })
+    osxPackagerConfig = {
+      osxUniversal: {
+      },
+      osxSign: {
+        identity: process.env.IDENTITY_MAS_CODE,
+        provisioningProfile: './build/Witsy_MAS.provisionprofile',
+        optionsForFile: () => { return {
+          hardenedRuntime: true,
+          entitlements: './build/Entitlements.mas.plist'
+        }; },
+      },
+    }
+  }
+}
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'assets/icon',
     executableName: 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
-    extendInfo: './assets/Info.plist',
-    osxUniversal: {
-    },
-    osxSign: {
-      identity: process.env.IDENTITY,
-      optionsForFile: () => { return {
-        hardenedRuntime: true,
-        entitlements: './assets/Entitlements.plist'
-      }; },
-    },
-    osxNotarize: {
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID
-    }
+    extendInfo: './build/Info.plist',
+    ...osxPackagerConfig,
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerPKG({
-    identity: process.env.IDENTITY2,
-  }, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [new MakerSquirrel({}), osxMaker, new MakerRpm({}), new MakerDeb({})],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
