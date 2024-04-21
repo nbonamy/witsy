@@ -2,23 +2,36 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <!-- coming from https://github.com/electron/osx-sign/blob/main/entitlements/default.darwin.plist -->
   <key>com.apple.security.cs.allow-jit</key>
   <true/>
-  <key>com.apple.security.device.audio-input</key>
+  <!-- coming from https://github.com/electron/osx-sign/blob/main/entitlements/default.mas.plist -->
+  <!--key>com.apple.security.app-sandbox</key>
+  <true/-->
+  <key>com.apple.security.files.user-selected.read-write</key>
   <true/>
-  <key>com.apple.security.device.bluetooth</key>
+  <key>com.apple.security.files.bookmarks.app-scope</key>
+  <true/>
+  <key>com.apple.security.network.client</key>
+  <true/>
+  <key>com.apple.security.print</key>
   <true/>
   <key>com.apple.security.device.camera</key>
   <true/>
-  <key>com.apple.security.device.print</key>
+  <key>com.apple.security.device.microphone</key>
   <true/>
   <key>com.apple.security.device.usb</key>
   <true/>
-  <key>com.apple.security.personal-information.location</key>
+  <!-- from https://www.electronjs.org/docs/latest/tutorial/mac-app-store-submission-guide -->
+  <key>com.apple.security.application-groups</key>
+  <array>
+    <string>TP8BYQ64C4.com.nabocorp.maiestro</string>
+  </array>
+  <key>com.apple.security.inherit</key>
   <true/>
   <!-- Our specific stuff -->
   <key>com.apple.security.automation.apple-events</key>
+  <true/>
+  <key>com.apple.security.files.user-selected.read-only</key>
   <true/>
 </dict>
 </plist>

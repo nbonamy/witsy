@@ -28,7 +28,11 @@ mac-x64:
 	-rm -rf out/*darwin-x64* out/make/zip/darwin/x64/*
 	npx electron-forge make -p darwin -a x64
 
-mac: mac-arm64 mac-x64
+mac-universal:
+	-rm -rf out/*darwin-universal* out/make/zip/darwin/universal/*
+	npx electron-forge make -p darwin -a universal
+
+mac: mac-universal
 
 win-x64:
 	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
