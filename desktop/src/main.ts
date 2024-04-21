@@ -20,6 +20,8 @@ import * as markdown from './main/markdown';
 import * as commander from './automations/commander';
 import * as menu from './main/menu';
 
+//import Iap from './main/iap';
+
 // first-thing: single instance
 if (!process.env.TEST) {
   const gotTheLock = app.requestSingleInstanceLock();
@@ -32,14 +34,18 @@ if (!process.env.TEST) {
 // set up logging
 Object.assign(console, log.functions);
 
-// // look for menus as soon as possible
-// import MacosAutomator from './automations/macos2';
-// new MacosAutomator();
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+// // look for menus as soon as possible
+// import MacosAutomator from './automations/macos2';
+// new MacosAutomator();
+
+// init iap as soon as possible
+// const iap = new Iap();
+// iap.install();
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -100,6 +106,9 @@ app.whenReady().then(() => {
 
   // register shortcuts
   registerShortcuts();
+
+  //console.log(iap.getProducts())
+
 
   // create the main window
   // TODO detect when lauched from login item
