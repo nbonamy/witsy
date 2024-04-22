@@ -4,7 +4,7 @@
     <div class="llm">
       <div class="engines">
         <div class="engine" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
-          <EngineLogo :engine="engine.id" />
+          <EngineLogo :engine="engine.id" :grayscale="true" />
           {{ engine.label }}
         </div>
       </div>
