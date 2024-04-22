@@ -1,8 +1,8 @@
 
 <template>
   <div class="content" :class="{ standalone: standalone }">
-    <div class="toolbar" v-if="chat?.messages.length > 1">
-      <div class="title">{{ chat?.title }}</div>
+    <div class="toolbar">
+      <div class="title" v-if="chat?.messages.length">{{ chat?.title }}</div>
       <div class="menu" @click="onMenu" v-if="chat"></div>
     </div>
     <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
@@ -94,6 +94,9 @@ const onSave = () => {
   -webkit-app-region: drag;
   display: grid;
   grid-template-columns: auto 16px;
+}
+
+.toolbar:has(.title) {
   background-color: #F4F4F2;
 }
 
