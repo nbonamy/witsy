@@ -60,6 +60,7 @@ const config: ForgeConfig = {
     executableName: 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
     extendInfo: './build/Info.plist',
+    buildVersion: `${process.env.BUILD_NUMBER}`,
     ...osxPackagerConfig,
   },
   rebuildConfig: {},
