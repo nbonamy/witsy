@@ -1,6 +1,6 @@
 <template>
   <div class="prompt">
-    <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
+    <BIconFileEarmarkPlus v-if="canAttachImages" class="icon attach" @click="onAttach"/>
     <BIconJournalMedical class="icon prompt" @click="onCustomPrompt"/>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
@@ -20,6 +20,7 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
+import { hasVisionModels, isVisionModel } from '../services/llm'
 import ContextMenu from './ContextMenu.vue'
 import Overlay from './Overlay.vue'
 import Chat from '../models/chat'
@@ -36,6 +37,17 @@ const input = ref(null)
 const showCustomPrompts = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
+
+const canAttachImages = computed(() => {
+  const engine = props.chat?.engine || store.config.llm.engine
+  const model = props.chat?.model || store.config.getActiveModel(engine)
+  const autoSwitch = store.config.llm.autoVisionSwitch
+  if (autoSwitch) {
+    return hasVisionModels(engine) || isVisionModel(engine, model)
+  } else {
+    return isVisionModel(engine, model)
+  }
+})
 
 const working = computed(() => {
   return props.chat?.lastMessage().transient
@@ -215,8 +227,11 @@ const onKeyUp = (event) => {
 }
 
 const autoGrow = (element) => {
-  element.style.height = '5px'
-  element.style.height = Math.min(150, element.scrollHeight) + 'px'
+  if (element) {
+    // reset before calculating
+    element.style.height = '0px'
+    element.style.height = Math.min(150, element.scrollHeight) + 'px'
+  }
 }
 
 </script>

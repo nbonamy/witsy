@@ -52,8 +52,8 @@ store.dump = () => {
 
 const loadSettings = () => {
   store.config = window.api.config.load()
-  store.config.getActiveModel = () => {
-    return store.config.engines[store.config.llm.engine].model.chat
+  store.config.getActiveModel = (engine: string) => {
+    return store.config.engines[engine || store.config.llm.engine].model.chat
   }
 }
 

@@ -31,6 +31,9 @@
             <option value="">Default</option>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="mistralai">MistralAI</option>
+            <option value="groq">Groq</option>
           </select>
         </div>
         <div class="group">
@@ -80,7 +83,7 @@ const model = ref(null)
 const models = computed(() => {
   if (!engine.value) return []
   if (engine.value == '_default') return []
-  return store.config.providers[engine.value].models.chat
+  return store.config.engines[engine.value].models.chat
 })
 
 const load = () => {

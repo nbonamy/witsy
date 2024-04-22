@@ -1,11 +1,12 @@
 
-import { Model, EngineConfig } from '../types/config.d'
+import { Model, EngineConfig, Configuration } from '../types/config.d'
 import { store } from './store'
 import OpenAI, { isOpenAIReady } from './openai'
 import Ollama, { isOllamaReady } from './ollama'
 import MistralAI, { isMistrailAIReady } from './mistralai'
 import Anthropic, { isAnthropicReady } from './anthropic'
 import Groq, { isGroqReady } from './groq'
+import LlmEngine from './engine'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'groq']
 
@@ -16,6 +17,26 @@ export const isEngineReady = (engine: string) => {
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
   if (engine === 'groq') return isGroqReady(store.config.engines.groq)
   return false
+}
+
+export const igniteEngine = (engine: string, config: Configuration, fallback = 'openai'): LlmEngine => {
+  if (engine === 'openai') return new OpenAI(config)
+  if (engine === 'ollama') return new Ollama(config)
+  if (engine === 'mistralai') return new MistralAI(config)
+  if (engine === 'anthropic') return new Anthropic(config)
+  if (engine === 'groq') return new Groq(config)
+  if (isEngineReady(fallback)) return igniteEngine(fallback, config)
+    return null
+}
+
+export const hasVisionModels = (engine: string) => {
+  const instance = igniteEngine(engine, store.config)
+  return instance.getVisionModels().length > 0
+}
+
+export const isVisionModel = (engine: string, model: string) => {
+  const instance = igniteEngine(engine, store.config)
+  return instance.isVisionModel(model)
 }
 
 export const loadAllModels = async () => {

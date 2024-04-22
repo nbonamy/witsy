@@ -40,6 +40,9 @@ beforeAll(() => {
 
   // init store
   store.config = defaults
+  store.config.getActiveModel = () => {
+    return 'chat'
+  }
   store.prompts = [
     { actor: 'actor1', prompt: 'prompt1' },
     { actor: 'actor2', prompt: 'prompt2' },
@@ -47,7 +50,7 @@ beforeAll(() => {
   ]
 
   // wrapper
-  wrapper = mount(Prompt)
+  wrapper = mount(Prompt, { global: { stubs: { teleport: true } } } )
   //expect(onEventMock).toHaveBeenCalled()
 })
 

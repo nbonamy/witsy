@@ -39,8 +39,8 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   const config = mergeConfig(defaults, overrides)
 
   // add some methods
-  config.getActiveModel = () => {
-    return config.engines[config.llm.engine].model.chat
+  config.getActiveModel = (engine: string) => {
+    return config.engines[engine || config.llm.engine].model.chat
   }
 
   // backwards compatibility

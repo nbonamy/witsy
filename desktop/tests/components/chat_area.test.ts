@@ -13,6 +13,8 @@ enableAutoUnmount(afterAll)
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 
+const stubTeleport = { global: { stubs: { teleport: true } } }
+
 vi.mock('../../src/composables/useEventBus.js', async () => {
   return { default: () => {
     return {
@@ -36,6 +38,9 @@ beforeAll(() => {
   
   // init store
   store.config = defaults
+  store.config.getActiveModel = () => {
+    return 'chat'
+  }
 })
 
 let chat: Chat = null
@@ -54,7 +59,7 @@ test('No chat', async () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.content').classes()).not.toContain('standalone')
   expect(wrapper.find('.toolbar').exists()).toBe(true)
-  expect(wrapper.find('.toolbar .title').text()).toBe('')
+  expect(wrapper.find('.toolbar .title').exists()).toBe(false)
   expect(wrapper.find('.toolbar .menu').exists()).toBe(false)
   expect(wrapper.find('.messages').exists()).toBe(false)
   expect(wrapper.find('.empty').exists()).toBe(true)
@@ -101,7 +106,7 @@ test('Context menu Normal', async () => {
 
 test('Context menu Standalone', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat, standalone: true } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat, standalone: true } })
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'mock chat', disabled: true },
@@ -113,7 +118,7 @@ test('Context menu Standalone', async () => {
 
 test('Context menu rename', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.findAll('.context-menu .item')[1].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('renameChat', chat)
@@ -121,7 +126,7 @@ test('Context menu rename', async () => {
 
 test('Context menu delete', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.findAll('.context-menu .item')[2].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('deleteChat', chat)
@@ -129,7 +134,7 @@ test('Context menu delete', async () => {
 
 test('Context menu save', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat, standalone: true } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat, standalone: true } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.findAll('.context-menu .item')[1].trigger('click')
   expect(store.chats).toHaveLength(1)
