@@ -109,7 +109,7 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(4)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
-  expect(tab.findAll('.group.engine select option')).toHaveLength(4)
+  expect(tab.findAll('.group.engine select option')).toHaveLength(5)
   tab.find('.group.engine select').setValue('anthropic')
   expect(store.config.llm.engine).toBe('anthropic')
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()

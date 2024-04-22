@@ -5,9 +5,9 @@ import { RunCommandResponse } from '../types/automation.d'
 import { LlmResponse } from '../types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
+import { igniteEngine } from '../services/llm' 
 import * as window from '../main/window'
-import OpenAI from '../services/openai'
-import Ollama from '../services/ollama'
+
 import Message from '../models/message'
 import Automator from './automator'
 import LlmEngine from '../services/engine'
@@ -25,19 +25,6 @@ export const getCachedText = (id: string): string => {
   const prompt = textCache[id]
   delete textCache[id]
   return prompt
-}
-
-const buildLLm = (config: Configuration, engine: string): LlmEngine|null => {
-
-  // build llm
-  if (engine === 'ollama') {
-    return new Ollama(config)
-  } else if (config.engines.openai.apiKey) {
-    return new OpenAI(config)
-  } else {
-    return null
-  }
-
 }
 
 const promptLlm = (llm: LlmEngine, model: string, prompt: string): Promise<LlmResponse> => {
@@ -179,7 +166,7 @@ export const runCommand = async (app: App, llm: LlmEngine, textId: string, comma
 
       // we need an llm
       if (!llm) {
-        llm = buildLLm(config, engine);
+        llm = igniteEngine(engine, config);
         if (!llm) {
           throw new Error(`Invalid LLM engine: ${engine}`)
         }

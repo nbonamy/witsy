@@ -5,12 +5,8 @@ import { Configuration } from '../types/config.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
-import OpenAI from './openai'
-import Ollama from './ollama'
-import MistralAI from './mistralai'
-import Anthropic from './anthropic'
-import Groq from './groq'
 import { store } from './store'
+import { igniteEngine } from './llm'
 import { download, saveFileContents } from './download'
 import { countryCodeToName } from './i18n'
 
@@ -42,19 +38,8 @@ export default class {
     }
 
     // switch
-    if (engine === 'ollama') {
-      this.setLlm(engine, new Ollama(this.config))
-    } else if (engine === 'anthropic') {
-      this.setLlm(engine, new Anthropic(this.config))
-    } else if (engine === 'mistralai') {
-      this.setLlm(engine, new MistralAI(this.config))
-    } else if (engine === 'groq') {
-      this.setLlm(engine, new Groq(this.config))
-    } else if (store.config.engines.openai.apiKey) {
-      this.setLlm(engine, new OpenAI(this.config))
-    } else {
-      this.setLlm(null, null)
-    }
+    const llm = igniteEngine(engine, this.config)
+    this.setLlm(llm ? engine : null, llm)
   }
 
   setLlm(engine: string, llm: LlmEngine) {
