@@ -11,6 +11,12 @@
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
 CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
+BUILD_NUMBER_FILE := ./build/build_number.txt
+
+increment-build-number:
+	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
+	$(eval NEW_BUILD_NUMBER=$(shell echo $$(( $(CURRENT_BUILD_NUMBER) + 1 ))))
+	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
 default: mac-arm64
 
@@ -30,9 +36,9 @@ mac-x64:
 
 mac-universal:
 	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
-	npx electron-forge make -p mas -a universal
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p mas -a universal
 
-mac: mac-universal
+mac: increment-build-number mac-universal
 
 win-x64:
 	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
