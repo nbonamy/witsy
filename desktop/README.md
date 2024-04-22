@@ -67,6 +67,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] Search
 - [ ] i18n
 - [ ] Auto-update
 - [ ] Windows certificate
