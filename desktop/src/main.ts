@@ -23,7 +23,8 @@ import * as menu from './main/menu';
 //import Iap from './main/iap';
 
 // first-thing: single instance
-if (!process.env.TEST) {
+// on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
+if (process.platform !== 'darwin' && !process.env.TEST) {
   const gotTheLock = app.requestSingleInstanceLock();
   if (!gotTheLock) {
     app.quit();
