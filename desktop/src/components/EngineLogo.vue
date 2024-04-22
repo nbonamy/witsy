@@ -44,6 +44,10 @@ const logo = computed(() => logos[props.engine])
   padding: 4px;
 }
 
+.logo.groq {
+  filter: invert(1);
+}
+
 .logo.colored.openai {
   filter: invert(1);
 }
@@ -65,7 +69,8 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.background.groq {
-  background-color: white;
+  background-color: #F55036;
+  filter: none;
 }
 
 </style>
