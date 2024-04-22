@@ -66,6 +66,8 @@ const createWindow = (opts: CreateWindowOpts = {}) => {
     }
 
     // load file
+    console.log('Loading file:', path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    console.log('With options:', opts.hash||'', queryParams);
     window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`), { hash: opts.hash||'', query: queryParams });
   
   }
