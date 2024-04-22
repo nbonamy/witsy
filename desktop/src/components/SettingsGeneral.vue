@@ -8,6 +8,7 @@
         <option value="ollama">Ollama</option>
         <option value="mistralai">MistralAI</option>
         <option value="anthropic">Anthropic</option>
+        <option value="groq">Groq</option>
       </select>
     </div>
     <div class="group language">

@@ -57,6 +57,15 @@
         "chat": ""
       }
     },
+    "groq": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "mistralai": {
       "models": {
         "chat": [],

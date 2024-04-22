@@ -9,6 +9,7 @@ import OpenAI from './openai'
 import Ollama from './ollama'
 import MistralAI from './mistralai'
 import Anthropic from './anthropic'
+import Groq from './groq'
 import { store } from './store'
 import { download, saveFileContents } from './download'
 import { countryCodeToName } from './i18n'
@@ -47,6 +48,8 @@ export default class {
       this.setLlm(engine, new Anthropic(this.config))
     } else if (engine === 'mistralai') {
       this.setLlm(engine, new MistralAI(this.config))
+    } else if (engine === 'groq') {
+      this.setLlm(engine, new Groq(this.config))
     } else if (store.config.engines.openai.apiKey) {
       this.setLlm(engine, new OpenAI(this.config))
     } else {
