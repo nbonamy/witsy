@@ -1,7 +1,7 @@
 <template>
 	<div class="empty">
 		<div class="engines">
-			<EngineLogo v-for="engine in engines" :engine="engine"
+			<EngineLogo v-for="engine in engines" :engine="engine" :grayscale="true"
 				:class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }"
 				@click="onEngine(engine)"
 			/>
