@@ -5,14 +5,16 @@ import OpenAI, { isOpenAIReady } from './openai'
 import Ollama, { isOllamaReady } from './ollama'
 import MistralAI, { isMistrailAIReady } from './mistralai'
 import Anthropic, { isAnthropicReady } from './anthropic'
+import Groq, { isGroqReady } from './groq'
 
-export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai']
+export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'groq']
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
   if (engine === 'ollama') return isOllamaReady(store.config.engines.ollama)
   if (engine === 'mistralai') return isMistrailAIReady(store.config.engines.mistralai)
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
+  if (engine === 'groq') return isGroqReady(store.config.engines.groq)
   return false
 }
 
@@ -21,6 +23,7 @@ export const loadAllModels = async () => {
   await loadModels('ollama')
   await loadModels('mistralai')
   await loadModels('anthropic')
+  await loadModels('groq')
 }
 
 export const loadModels = async (engine: string) => {
@@ -32,6 +35,8 @@ export const loadModels = async (engine: string) => {
     await loadMistralAIModels()
   } else if (engine === 'anthropic') {
     await loadAnthropicModels()
+  } else if (engine === 'groq') {
+    await loadGroqModels()
   }
 }
 
@@ -177,6 +182,39 @@ export const loadAnthropicModels = async () => {
 
   // select valid model
   store.config.engines.anthropic.model.chat = getValidModelId('anthropic', 'chat', store.config.engines.anthropic.model.chat)
+
+  // done
+  return true
+}
+
+export const loadGroqModels = async () => {
+  
+  let models = []
+
+  try {
+    const groq = new Groq(store.config)
+    models = await groq.getModels()
+  } catch (error) {
+    console.error('Error listing Groq models:', error);
+  }
+  if (!models) {
+    store.config.engines.groq.models = { chat: [], image: [], }
+    return false
+  }
+
+  // store
+  store.config.engines.groq.models = {
+    chat: models
+    .map(model => { return {
+      id: model.id,
+      name: model.name,
+      meta: model
+    }})
+    .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.groq.model.chat = getValidModelId('groq', 'chat', store.config.engines.groq.model.chat)
 
   // done
   return true

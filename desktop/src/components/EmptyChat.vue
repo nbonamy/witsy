@@ -90,7 +90,7 @@ const onSelectModel = (ev) => {
   outline: none;
   margin-top: 16px;
   padding: 0px;
-  font-size: 12pt;
+  font-size: 11pt;
   text-align: center;
   cursor: pointer;
 }
