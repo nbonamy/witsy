@@ -209,7 +209,7 @@ const mdRender = (content) => {
   bottom: 0;
   background-color: black;
   padding: 8px;
-  z-index: 1000;
+  z-index: 100;
   cursor: pointer;
   -webkit-app-region: no-drag;
 }

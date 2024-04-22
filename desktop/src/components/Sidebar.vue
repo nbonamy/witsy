@@ -102,7 +102,6 @@ const onResizeSidebarEnd = () => {
   width: 10px;
   height: 100%;
   cursor: ew-resize;
-  z-index: 1000;
 }
 
 </style>

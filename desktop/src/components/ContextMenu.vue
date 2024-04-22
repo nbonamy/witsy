@@ -1,13 +1,15 @@
 <template>
-  <div class="context-menu" :style="position">
-    <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
-    <div class="actions">
-      <div v-for="action in visibleActions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
-        <component :is="action.icon" v-if="action.icon" class="icon" />
-        {{ action.label }}
+  <Teleport to="body">
+    <div class="context-menu" :style="position">
+      <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
+      <div class="actions">
+        <div v-for="action in visibleActions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
+          <component :is="action.icon" v-if="action.icon" class="icon" />
+          {{ action.label }}
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -75,8 +77,9 @@ const onAction = (action) => {
   border: 1px solid #B9B9B9;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   max-height: 400px;
+  max-width: 270px;
   border-radius: 6px;
-  overflow-y: hidden;
+  overflow: hidden;
   z-index: 50;
   padding: 5px;
   display: flex;
@@ -85,7 +88,9 @@ const onAction = (action) => {
 
 .context-menu .actions {
   flex: 1;
-  overflow-y: scroll;
+  width: 100%;
+  overflow-y: auto;
+  padding-right: 20px;
 }
 
 .context-menu .item {
@@ -93,6 +98,8 @@ const onAction = (action) => {
   cursor: pointer;
   font-size: 10pt;
   white-space: nowrap;
+  overflow-x: clip;
+  text-overflow: ellipsis;
 }
 
 .context-menu .item .icon {
