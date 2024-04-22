@@ -1,7 +1,7 @@
 
 <template>
   <div class="content" :class="{ standalone: standalone }">
-    <div class="toolbar">
+    <div class="toolbar" v-if="chat?.messages.length > 1">
       <div class="title">{{ chat?.title }}</div>
       <div class="menu" @click="onMenu" v-if="chat"></div>
     </div>
@@ -89,10 +89,12 @@ const onSave = () => {
 }
 
 .toolbar {
-  padding: 15px 16px 24px;
+  padding: 16px;
+  margin-bottom: 16px;
   -webkit-app-region: drag;
   display: grid;
   grid-template-columns: auto 16px;
+  background-color: #F4F4F2;
 }
 
 .toolbar .title {

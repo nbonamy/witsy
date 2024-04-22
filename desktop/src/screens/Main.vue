@@ -1,7 +1,6 @@
 <template>
   <div class="main">
-    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" :style="`width: ${sidebarWidth}` "/>
-    <div class="resizer" @mousedown="onResizeSidebarStart">&nbsp;</div>
+    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" :initial-tab="settingsInitialTab"/>
   </div>
@@ -27,7 +26,6 @@ import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
 
 const settingsInitialTab = ref('general')
-const sidebarWidth = ref('250px')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -40,9 +38,6 @@ const isStandaloneChat = computed(() => {
 })
 
 onMounted(() => {
-
-  // geometry
-  sidebarWidth.value = window.api.store.get('sidebarWidth', '250px')
 
   // events
   onEvent('newChat', onNewChat)
@@ -193,23 +188,6 @@ const onStopAssistant = async () => {
   await assistant.value.stop()
 }
 
-const onResizeSidebarStart = (event) => {
-  window.addEventListener('mousemove', onResizeSidebarMove)
-  window.addEventListener('mouseup', onResizeSidebarEnd)
-
-}
-
-const onResizeSidebarMove = (event) => {
-  let width = Math.max(150, Math.min(400, event.clientX))
-  sidebarWidth.value = `${width}px`
-}
-
-const onResizeSidebarEnd = () => {
-  window.removeEventListener('mousemove', onResizeSidebarMove)
-  window.removeEventListener('mouseup', onResizeSidebarEnd)
-  window.api.store.set('sidebarWidth', sidebarWidth.value)
-}
-
 </script>
 
 <style>
@@ -223,13 +201,6 @@ const onResizeSidebarEnd = () => {
   display: flex;
   flex-direction: row;
   height: 100vh;
-}
-
-.resizer {
-  position: relative;
-  left: -5px;
-  width: 10px;
-  cursor: ew-resize;
 }
 
 </style>

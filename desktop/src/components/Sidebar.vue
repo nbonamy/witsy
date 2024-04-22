@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar" :style="`width: ${sidebarWidth}px`">
     <div class="toolbar">
       <div class="icon-text" @click="onNewChat">
         <BIconPencilSquare />
@@ -13,10 +13,12 @@
       </div>
     </div>
   </div>
+  <div class="resizer" :style="`left: ${sidebarWidth-5}px`" @mousedown="onResizeSidebarStart">&nbsp;</div>
 </template>
 
 <script setup>
 
+import { ref } from 'vue'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
 
@@ -27,12 +29,30 @@ const props = defineProps({
   chat: Chat
 })
 
+const sidebarWidth = ref('250')
+
 const onSettings = () => {
   emitEvent('openSettings')
 }
 
 const onNewChat = () => {
   emitEvent('newChat')
+}
+
+const onResizeSidebarStart = (event) => {
+  window.addEventListener('mousemove', onResizeSidebarMove)
+  window.addEventListener('mouseup', onResizeSidebarEnd)
+}
+
+const onResizeSidebarMove = (event) => {
+  let width = Math.max(150, Math.min(400, event.clientX))
+  sidebarWidth.value = width
+}
+
+const onResizeSidebarEnd = () => {
+  window.removeEventListener('mousemove', onResizeSidebarMove)
+  window.removeEventListener('mouseup', onResizeSidebarEnd)
+  window.api.store.set('sidebarWidth', sidebarWidth.value)
 }
 
 </script>
@@ -47,6 +67,7 @@ const onNewChat = () => {
   background-color: var(--sidebar-bg-color);
   border-right: 1px solid #d0cfce;
   overflow-x: hidden;
+  position: relative;
 }
 
 .toolbar {
@@ -67,6 +88,7 @@ const onNewChat = () => {
 .icon-text {
   color: #5b5a59;
   cursor: pointer;
+  display: inline-block;
 }
 
 .icon-text span {
@@ -75,5 +97,12 @@ const onNewChat = () => {
   top: -2px;
 }
 
+.resizer {
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 1000;
+}
 
 </style>
