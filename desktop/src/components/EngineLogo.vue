@@ -1,6 +1,6 @@
 
 <template>
-  <img :src="logo" class="logo" :class="[ engine, grayscale ? 'grayscale' : 'colored' ]" />
+  <img :src="logo" class="logo" :class="[ engine, grayscale ? 'grayscale' : 'colored', background ? 'background' : '' ]" />
 </template>
 
 <script setup>
@@ -23,6 +23,10 @@ const props = defineProps({
   grayscale: {
     type: Boolean,
     default: false
+  },
+  background: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -39,8 +43,11 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.colored.openai {
-  background-color: #865563;
   filter: invert(1);
+}
+
+.logo.background.openai {
+  background-color: #865563;
 }
 
 .logo.colored.ollama {
@@ -51,7 +58,7 @@ const logo = computed(() => logos[props.engine])
   filter: grayscale()
 }
 
-.logo.colored.anthropic {
+.logo.background.anthropic {
   background-color: #f0f0ea;
 }
 
