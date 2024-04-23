@@ -90,6 +90,17 @@ const onResizeSidebarEnd = () => {
   position: relative;
 }
 
+.sidebar .icon-text {
+  color: #5b5a59;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0px 8px;
+}
+
+.sidebar .icon-text:has(span) svg {
+  margin-right: 4px;
+}
+
 .toolbar {
   padding: 16px;
   text-align: right;
@@ -129,14 +140,7 @@ const onResizeSidebarEnd = () => {
   -webkit-app-region: no-drag;
 }
 
-.icon-text {
-  color: #5b5a59;
-  cursor: pointer;
-  display: inline-block;
-  margin: 0px 8px;
-}
-
-.icon-text:last-child {
+.toolbar .icon-text:last-child {
   margin-right: 0px;
 }
 

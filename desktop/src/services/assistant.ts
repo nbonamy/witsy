@@ -53,21 +53,29 @@ export default class {
 
   async route(prompt: string) {
     
-    // check if routing possibble
-    const routingModel = this.llm.getRountingModel()
-    if (routingModel === null) {
+    try {
+    
+      // check if routing possibble
+      const routingModel = this.llm.getRountingModel()
+      if (routingModel === null) {
+        return null
+      }
+      
+      // build messages
+      const messages = [
+        new Message('system', this.config.instructions.routing),
+        new Message('user', prompt)
+      ]
+
+      // now get it
+      const route = await this.llm.complete(messages, { model: routingModel })
+      return route.content
+
+    } catch (error) {
+      console.error('Error while trying to route query', error)
       return null
     }
-    
-    // build messages
-    const messages = [
-      new Message('system', this.config.instructions.routing),
-      new Message('user', prompt)
-    ]
 
-    // now get it
-    const route = await this.llm.complete(messages, { model: routingModel })
-    return route.content
   }
 
   async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
@@ -152,9 +160,11 @@ export default class {
     try {
 
       this.stream = await llm.stream(this.getRelevantChatMessages(), opts)
+      console.log(this.stream)
       while (this.stream) {
         let newStream = null
         for await (const streamChunk of this.stream) {
+          console.log(streamChunk)
           const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event: LlmEvent) => {
             if (event.type === 'stream') {
               newStream = event.content
@@ -170,8 +180,13 @@ export default class {
 
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.error(error)
-        message.setText('Sorry, I could not generate text for that prompt.')
+        if (error.status === 401) {
+          message.setText('You need to enter your API key in the <a href="#settings">Settings</a> in order to chat.')
+        } else if (message.content === '') {
+          message.setText('Sorry, I could not generate text for that prompt.')
+        } else {
+          message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
+        }
       }
     }
 

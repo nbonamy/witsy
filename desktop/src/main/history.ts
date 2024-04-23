@@ -14,6 +14,11 @@ const historyFilePath = (app: App): string => {
 
 export const loadHistory = (app: App): Chat[] => {
 
+  // check existence
+  if (!fs.existsSync(historyFilePath(app))) {
+    return []
+  }
+
   try {
     monitor.start(historyFilePath(app))
     return JSON.parse(fs.readFileSync(historyFilePath(app), 'utf-8'))
@@ -29,6 +34,7 @@ export const loadHistory = (app: App): Chat[] => {
 export const saveHistory = (app: App, content: Chat[]) => {
   try {
     fs.writeFileSync(historyFilePath(app), JSON.stringify(content, null, 2))
+    monitor.start(historyFilePath(app))
   } catch (error) {
     console.log('Error saving history data', error)
   }
