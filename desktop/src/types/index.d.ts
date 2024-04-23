@@ -74,6 +74,7 @@ interface Prompt {
 declare global {
   interface Window {
     api: {
+      licensed?: boolean
       platform?: string
       userDataPath?: string
       on?: (signal: string, callback: (value: any) => void) => void
