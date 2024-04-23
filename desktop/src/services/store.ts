@@ -84,7 +84,7 @@ store.saveHistory = () => {
   try {
 
     // we need to srip attchment contents
-    const chats = JSON.parse(JSON.stringify(store.chats))
+    const chats = JSON.parse(JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
     for (const chat of chats) {
       for (const message of chat.messages) {
         if (message.attachment) {
