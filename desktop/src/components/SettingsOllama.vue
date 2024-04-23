@@ -23,7 +23,7 @@
         <a href="https://ollama.com/library" target="_blank">Browse models</a>
       </div>
       <div>
-        <button @click.prevent="onStop" v-if="pull_progress">Stop</button>
+        <button @click.prevent="onStop" v-if="pullStream">Stop</button>
         <button @click.prevent="onPull" v-else>Pull</button>
         <div class="progress" v-if="pull_progress">{{  pull_progress }}</div>
       </div>
@@ -45,6 +45,7 @@ const pull_model = ref(null)
 const pull_model_select = ref('')
 const pull_models = ref([])
 const pull_progress = ref(null)
+const pullStream = ref(null)
 
 let ollama = new Ollama(store.config)
 
@@ -88,15 +89,19 @@ const onSelectPullModel = () => {
 }
 
 const onPull = () => {
+  // need a model and can pull only one at a time
   if (!pull_model.value) return
+  if (pullStream.value) return
   pull_progress.value = '…'
+  
+  // do it
   nextTick(async () => {
 
     // start pulling
-    const progressStream = await ollama.pullModel(pull_model.value)
+    pullStream.value = await ollama.pullModel(pull_model.value)
 
     // TODO: handle error (this is not working)
-    if (!progressStream) {
+    if (!pullStream.value) {
       alert('Error pulling model')
       pull_progress.value = null
       return
@@ -104,7 +109,7 @@ const onPull = () => {
 
     // report progress
     try {
-      for await (const progress of progressStream) {
+      for await (const progress of pullStream.value) {
         const percent = Math.floor(progress.completed / progress.total * 100)
         if (!isNaN(percent)) {
           pull_progress.value = percent + '%'
@@ -115,6 +120,7 @@ const onPull = () => {
     // done
     pull_progress.value = null
     pull_model.value = null
+    pullStream.value = null
     onRefresh()
   })
 }
@@ -122,6 +128,7 @@ const onPull = () => {
 const onStop = async () => {
   ollama.stop()
   pull_progress.value = null
+  pullStream.value = null
 }
 
 const save = () => {
