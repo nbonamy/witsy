@@ -181,7 +181,7 @@ export default class {
     } catch (error) {
       if (error.name !== 'AbortError') {
         if (error.status === 401) {
-          message.setText('You need to enter your API key in the <a href="#settings">Settings</a> in order to chat.')
+          message.setText('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
         } else {
