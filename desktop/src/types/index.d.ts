@@ -58,6 +58,7 @@ interface Store {
   prompts: Prompt[]
   config: Configuration
   chats: Chat[]
+  chatFilter: string|null
   pendingAttachment: any
   saveHistory?(): void
   saveSettings?(): void

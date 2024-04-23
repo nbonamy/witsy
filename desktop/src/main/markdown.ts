@@ -2,9 +2,11 @@
 
 import MarkdownIt from 'markdown-it';
 import MarkdownItKatex from '@iktakahiro/markdown-it-katex'
+import MarkdownItMark from 'markdown-it-mark'
 import hljs from 'highlight.js'
 
-const mdOptions = {
+const mdOptions: MarkdownIt.Options = {
+  html: true,
   highlight: function (str: string, lang: string) {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -31,5 +33,6 @@ const mdPreprocess = (markdown: string) => {
 export const renderMarkdown = (markdown: string): string => {
   const md = new MarkdownIt(mdOptions)
   md.use(MarkdownItKatex)
+  md.use(MarkdownItMark)
   return md.render(mdPreprocess(markdown))
 }

@@ -11,6 +11,7 @@ export const store: Store = reactive({
   commands: [], 
   prompts: [],
   chats: [],
+  chatFilter: null,
   pendingAttachment: null,
 })
 
