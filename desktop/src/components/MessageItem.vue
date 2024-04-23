@@ -90,6 +90,7 @@ onMounted(() => {
   }, 599)
   useAudioPlayer().addListener(onAudioPlayerStatus)
 })
+
 onUnmounted(() => {
   clearInterval(updateLinkInterval)
   useAudioPlayer().removeListener(onAudioPlayerStatus)
@@ -177,6 +178,10 @@ const onDownload = (message) => {
 }
 
 const mdRender = (content) => {
+  if (store.chatFilter) {
+    const regex = new RegExp(store.chatFilter, 'gi')
+    content = content.replace(regex, (match) => `==${match}==`);
+  }
   return window.api.markdown.render(content)
 }
 

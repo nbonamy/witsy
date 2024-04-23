@@ -1,6 +1,6 @@
 <template>
   <div class="chats" ref="divChats">
-    <div v-for="c in chatsReversed" :key="c.uuid" class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+    <div v-for="c in visibleChats" :key="c.uuid" class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
       <EngineLogo :engine="engine(c)" :background="true" />
       <div class="info">
         <div class="title">{{ c.title }}</div>
@@ -24,13 +24,19 @@ import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat
+  chat: Chat,
+  filter: String
 })
 
 const engine = (chat) => chat.engine || store.config.llm.engine
 
 const divChats = ref(null)
-const chatsReversed = computed(() => store.chats.toSorted((a,b) => b.lastModified - a.lastModified))
+
+const visibleChats = computed(() => store.chats.filter((c) => {
+  if (c.title.toLowerCase().includes(props.filter.toLowerCase())) return true
+  if (c.messages.some(m => m.content.toLowerCase().includes(props.filter.toLowerCase()))) return true
+  return false
+}).toSorted((a,b) => b.lastModified - a.lastModified))
 
 const showMenu = ref(false)
 const menuX = ref(0)
