@@ -141,7 +141,7 @@ export default class {
 
     // check if we need to update title
     if (this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
-      this.chat.title = await this.getTitle();
+      this.chat.title = await this.getTitle() || this.chat.title
     }
   
     // save
@@ -257,32 +257,40 @@ export default class {
 
   async getTitle() {
 
-    // build messages
-    const messages = [
-      new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
-      this.chat.messages[1],
-      this.chat.messages[2],
-      new Message('user', this.config.instructions.titling_user)
-    ]
+    try {
 
-    // now get it
-    this.initLlm(this.chat.engine)
-    const response = await this.llm.complete(messages, { model: this.chat.model })
-    let title = response.content.trim()
-    if (title === '') {
-      return this.chat.messages[1].content
+      // build messages
+      const messages = [
+        new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
+        this.chat.messages[1],
+        this.chat.messages[2],
+        new Message('user', this.config.instructions.titling_user)
+      ]
+
+      // now get it
+      this.initLlm(this.chat.engine)
+      const response = await this.llm.complete(messages, { model: this.chat.model })
+      let title = response.content.trim()
+      if (title === '') {
+        return this.chat.messages[1].content
+      }
+
+      // now clean up
+      if (title.startsWith('Title:')) {
+        title = title.substring(6)
+      }
+
+      // remove quotes
+      title = title.trim().replace(/^"|"$/g, '').trim()
+
+      // done
+      return title
+
+    } catch (error) {
+      console.error('Error while trying to get title', error)
+      return null
     }
-
-    // now clean up
-    if (title.startsWith('Title:')) {
-      title = title.substring(6)
-    }
-
-    // remove quotes
-    title = title.trim().replace(/^"|"$/g, '').trim()
-
-    // done
-    return title
+  
   }
 
   getRelevantChatMessages() {
