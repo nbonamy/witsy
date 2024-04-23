@@ -2,7 +2,7 @@
   <div class="sidebar" :style="`width: ${sidebarWidth}px`">
     <div class="toolbar">
       <form><div class="group search">
-        <input v-model="filter" placeholder="Search…" autofocus="true" @keyup="onFilterChange" />
+        <input v-model="filter" placeholder="Search…" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></form>
       <div class="icon-text" @click="onNewChat">

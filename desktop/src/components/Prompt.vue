@@ -6,7 +6,7 @@
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <img :src="attachmentUrl" class="icon" />
       </div>
-      <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus />
+      <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
