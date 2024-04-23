@@ -7,6 +7,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld(
   'api', {
+    licensed: true,
     platform: process.platform,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
