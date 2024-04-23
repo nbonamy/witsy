@@ -75,6 +75,17 @@ onMounted(() => {
     emitEvent('openSettings')
   }
 
+  // intercept links
+  document.addEventListener('click', (e) => {
+    const target = e.target || e.srcElement
+    const href = target.getAttribute('href')
+    if (href === '#settings') {
+      emitEvent('openSettings')
+      e.preventDefault()
+      return false
+    }
+  })
+
 })
 
 const onNewChat = () => {

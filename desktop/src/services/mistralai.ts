@@ -18,7 +18,7 @@ export default class extends LlmEngine {
 
   constructor(config: Configuration) {
     super(config)
-    this.client = new MistralClient(config.engines.mistralai?.apiKey)
+    this.client = new MistralClient(config.engines.mistralai?.apiKey || '')
   }
 
   getName(): string {
