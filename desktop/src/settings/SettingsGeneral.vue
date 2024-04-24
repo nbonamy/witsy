@@ -30,7 +30,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import LangSelect from './LangSelect.vue'
+import LangSelect from '../components/LangSelect.vue'
 
 const llmEngine = ref(null)
 const language = ref(null)

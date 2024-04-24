@@ -17,7 +17,7 @@
 
 import { ref, computed, nextTick } from 'vue'
 import { availableEngines } from '../services/llm'
-import EngineLogo from './EngineLogo.vue'
+import EngineLogo from '../components/EngineLogo.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
