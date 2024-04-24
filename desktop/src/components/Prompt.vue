@@ -294,6 +294,11 @@ const autoGrow = (element) => {
 .input div:has(textarea) {
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+
+.input div:has(textarea) .icon {
+  margin-top: -4px;
 }
 
 .input textarea {
