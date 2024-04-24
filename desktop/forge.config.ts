@@ -42,7 +42,6 @@ if (isDarwin) {
       osxUniversal: {
       },
       osxSign: {
-        preAutoEntitlements: true,
         identity: process.env.IDENTITY_MAS_CODE,
         provisioningProfile: './build/Witsy_MAS.provisionprofile',
         optionsForFile: () => { return {
