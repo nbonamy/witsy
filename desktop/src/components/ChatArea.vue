@@ -90,7 +90,6 @@ const onSave = () => {
 
 .toolbar {
   padding: 16px;
-  margin-bottom: 16px;
   -webkit-app-region: drag;
   display: grid;
   grid-template-columns: auto 16px;

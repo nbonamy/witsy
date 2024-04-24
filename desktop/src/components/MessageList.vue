@@ -83,6 +83,7 @@ const onScroll = () => {
   width: 100%;
   padding: 16px;
   overflow-y: auto;
+  padding-top: 32px;
 }
 
 .overflow {
