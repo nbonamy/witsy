@@ -280,9 +280,9 @@ const autoGrow = (element) => {
 
 .input {
   border: 1px solid #bbbbbb;
-  border-radius: 8px;
+  border-radius: 16px;
   margin: 0px 8px;
-  padding: 4px 12px 1px;
+  overflow: hidden;
   flex: 1;
 }
 
@@ -295,34 +295,63 @@ const autoGrow = (element) => {
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .input div:has(textarea) .icon {
-  margin-top: -4px;
+  position: absolute;
+  border-radius: 16px;
+  margin-top: -2px;
+  margin-left: 8px;
+  right: 12px;
 }
 
 .input textarea {
   border: none;
   resize: none;
+  box-sizing: border-box;
+  border-radius: 16px;
   overflow-x: hidden;
   overflow-y: auto;
   font-size: 11.5pt;
+  padding-left: 16px;
+  padding-right: 36px;
+  padding-top: 5px;
+  padding-bottom: 7px;
   flex: 1;
 } 
+
+.input .attachment img {
+  height: 36pt !important;
+  width: 36pt !important;
+  object-fit: cover;
+}
 
 .input textarea:focus {
   outline: none;
   flex: 1;
 }
 
-.input .icon {
-  margin-left: 8px;
+::-webkit-scrollbar {
+  height: 1rem;
+  width: .5rem;
 }
 
-.input .attachment img {
-  height: 36pt !important;
-  width: 36pt !important;
-  object-fit: cover;
+::-webkit-scrollbar-thumb {
+  background-color: #e1e1e1;
+  border-color: rgba(255,255,255,var(--tw-border-opacity));
+  border-radius: 9999px;
+  border-width: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(227,227,227,var(--tw-bg-opacity));
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 9999px;
 }
 
 </style>
