@@ -18,7 +18,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import InputShortcut from './InputShortcut.vue'
+import InputShortcut from '../components/InputShortcut.vue'
 
 const chat = ref(null)
 const command = ref(null)
