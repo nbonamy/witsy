@@ -177,8 +177,9 @@ export default class {
       }
 
     } catch (error) {
+      console.dir(error)
       if (error.name !== 'AbortError') {
-        if (error.status === 401) {
+        if (error.status === 401 || error.message.includes('401') || error.message.toLowerCase().includes('apikey')) {
           message.setText('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
