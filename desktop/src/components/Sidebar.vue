@@ -9,11 +9,18 @@
         <BIconPencilSquare />
       </div>
     </div>
-    <ChatList :chat="chat" :filter="filter" />
-    <div class="footer">
+    <ChatList :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
+    <div class="footer actions" v-if="deleteMode">
+      <button @click="onCancelDelete">Cancel</button>
+      <button @click="onDelete" class="destructive">Delete</button>
+    </div>
+    <div class="footer" v-else>
       <div class="icon-text" id="open-settings" @click="onSettings">
         <BIconGearFill />
         <span>Settings</span>
+      </div>
+      <div class="icon-text" v-if="store.chats.length">
+        <BIconTrash @click="onStartDelete" />
       </div>
     </div>
   </div>
@@ -22,20 +29,25 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
 
 import useEventBus from '../composables/useEventBus'
+import { BIconTrash } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat
 })
 
+const chatList = ref(null)
 const sidebarWidth = ref('250')
 const filter = ref('')
+const deleteMode = ref(false)
+
+const selectMode = computed(() => deleteMode.value)
 
 const onSettings = () => {
   emitEvent('openSettings')
@@ -53,6 +65,23 @@ const onFilterChange = () => {
 const onClearFilter = () => {
   filter.value = ''
   store.chatFilter = null
+}
+
+const onStartDelete = () => {
+  deleteMode.value = true
+}
+
+const onCancelDelete = () => {
+  deleteMode.value = false
+}
+
+const onDelete = () => {
+  const selection = chatList.value.getSelection()
+  if (selection.length) {
+    emitEvent('deleteChat', selection)
+    chatList.value.clearSelection()
+  }
+  deleteMode.value = false
 }
 
 const onResizeSidebarStart = (event) => {
@@ -159,6 +188,16 @@ const onResizeSidebarEnd = () => {
 .footer {
   padding: 16px;
   font-size: 11pt;
+  display: flex;
+  flex-direction: row;
+}
+
+.footer.actions {
+  justify-content: flex-end;
+}
+
+.footer #open-settings {
+  flex: 1;
 }
 
 </style>

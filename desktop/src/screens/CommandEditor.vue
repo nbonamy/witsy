@@ -55,7 +55,7 @@
       </main>
       <footer>
         <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate class="destructive">Cancel</button>
+        <button @click="onCancel" formnovalidate>Cancel</button>
       </footer>
     </form>
   </dialog>
