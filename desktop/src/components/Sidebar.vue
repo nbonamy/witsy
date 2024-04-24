@@ -73,6 +73,7 @@ const onStartDelete = () => {
 
 const onCancelDelete = () => {
   deleteMode.value = false
+  chatList.value.clearSelection()
 }
 
 const onDelete = () => {
