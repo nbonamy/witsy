@@ -160,11 +160,9 @@ export default class {
     try {
 
       this.stream = await llm.stream(this.getRelevantChatMessages(), opts)
-      console.log(this.stream)
       while (this.stream) {
         let newStream = null
         for await (const streamChunk of this.stream) {
-          console.log(streamChunk)
           const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event: LlmEvent) => {
             if (event.type === 'stream') {
               newStream = event.content

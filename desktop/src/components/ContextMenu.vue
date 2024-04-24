@@ -4,7 +4,8 @@
       <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
         <div v-for="action in visibleActions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
-          <component :is="action.icon" v-if="action.icon" class="icon" />
+          <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
+          <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
           {{ action.label }}
         </div>
       </div>
@@ -104,6 +105,10 @@ const onAction = (action) => {
 
 .context-menu .item .icon {
   margin-right: 4px;
+}
+
+.context-menu .item .icon.text {
+  font-size: 11pt;
 }
 
 .context-menu .item.disabled {

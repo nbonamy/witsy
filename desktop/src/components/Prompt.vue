@@ -6,12 +6,16 @@
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <img :src="attachmentUrl" class="icon" />
       </div>
-      <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
+      <div>
+        <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
+        <BIconMagic class="icon command" @click="onCommands" v-if="prompt" />
+      </div>
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
-    <Overlay v-if="showCustomPrompts" @click="closeCustomPrompts" />
+    <Overlay v-if="showCustomPrompts || showCommands" @click="closeContextMenu" />
     <ContextMenu v-if="showCustomPrompts" :show-filter="true" :actions="customPrompts" @action-clicked="handleCustomPromptClick" :x="menuX" :y="menuY" align="bottom" />
+    <ContextMenu v-if="showCommands" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" align="bottom" />
   </div>
 </template>
 
@@ -35,6 +39,7 @@ const props = defineProps({
 const prompt = ref('')
 const input = ref(null)
 const showCustomPrompts = ref(false)
+const showCommands = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
@@ -64,6 +69,12 @@ const attachmentUrl = computed(() => {
 const customPrompts = computed(() => {
   return store.prompts.map(p => {
     return { label: p.actor, action: p.actor, icon: BIconStars }
+  })
+})
+
+const commands = computed(() => {
+  return store.commands.filter((c) => c.state == 'enabled').map(c => {
+    return { label: c.label, action: c.id, icon: c.icon }
   })
 })
 
@@ -136,12 +147,13 @@ const onCustomPrompt = () => {
   menuY.value = rect?.height + 32
 }
 
-const closeCustomPrompts = () => {
+const closeContextMenu = () => {
   showCustomPrompts.value = false
+  showCommands.value = false
 }
 
 const handleCustomPromptClick = (action) => {
-  closeCustomPrompts()
+  closeContextMenu()
   const customPrompt = store.prompts.find(p => p.actor === action)
   prompt.value = customPrompt.prompt
   nextTick(() => {
@@ -162,6 +174,21 @@ const handleCustomPromptClick = (action) => {
     input.value.focus()
 
   })
+}
+
+const onCommands = () => {
+  showCommands.value = true
+  const textarea = document.querySelector('.prompt textarea')
+  const rect = textarea?.getBoundingClientRect()
+  menuX.value = rect?.right - 250
+  menuY.value = rect?.height + 32
+}
+
+const handleCommandClick = (action) => {
+  closeContextMenu()
+  const command = store.commands.find(c => c.id === action)
+  prompt.value = command.template.replace('{input}', prompt.value)
+  onSendPrompt()
 }
 
 const onKeyDown = (event) => {
@@ -264,13 +291,18 @@ const autoGrow = (element) => {
   margin-right: 2px;
 }
 
+.input div:has(textarea) {
+  display: flex;
+  flex-direction: row;
+}
+
 .input textarea {
   border: none;
   resize: none;
   overflow-x: hidden;
   overflow-y: auto;
   font-size: 11.5pt;
-  width: 100%;
+  flex: 1;
 } 
 
 .input textarea:focus {
