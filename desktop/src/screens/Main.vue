@@ -118,9 +118,14 @@ const onRenameChat = async (chat) => {
 
 const onDeleteChat = async (chat) => {
 
+  const chats = Array.isArray(chat) ? chat : [chat]
+  const title = chats.length > 1
+    ? 'Are you sure you want to delete these conversations? This cannot be undone.'
+    : 'Are you sure you want to delete this conversation? This cannot be undone.'
+
   Swal.fire({
     target: document.querySelector('.main'),
-    title: 'Are you sure you want to delete this conversation? This cannot be undone.',
+    title: title,
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {
@@ -131,14 +136,17 @@ const onDeleteChat = async (chat) => {
         chat.deleted = true
         store.saveHistory()
       } else {
-        let index = store.chats.indexOf(chat)
-        store.chats[index].delete()
-        store.chats.splice(index, 1)
+        for (const chat of chats) {
+          console.log(chat)
+          let index = store.chats.findIndex((c) => c.uuid === chat)
+          store.chats[index].delete()
+          store.chats.splice(index, 1)
+        }
         store.saveHistory()
       }
 
       // if current chat
-      if (chat.uuid == assistant.value.chat?.uuid) {
+      if (chats.includes(assistant.value.chat?.uuid)) {
         emitEvent('newChat')
       }
 

@@ -6,6 +6,10 @@
         <div class="title">{{ c.title }}</div>
         <div class="subtitle">{{ c.subtitle() }}</div>
       </div>
+      <div v-if="selectMode" class="select">
+        <BIconCheckCircleFill v-if="selection.includes(c.uuid)" />
+        <BIconCircle v-else />
+      </div>
     </div>
     <Overlay v-if="showMenu" @click="closeContextMenu" />
     <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
@@ -25,12 +29,19 @@ const { emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
-  filter: String
+  filter: String,
+  selectMode: Boolean,
 })
 
 const engine = (chat) => chat.engine || store.config.llm.engine
 
 const divChats = ref(null)
+const selection = ref([])
+
+defineExpose({
+  getSelection: () => selection.value,
+  clearSelection: () => selection.value = [],
+})
 
 const visibleChats = computed(() => store.chats.filter((c) => {
   if (c.title.toLowerCase().includes(props.filter.toLowerCase())) return true
@@ -59,7 +70,15 @@ onMounted(() => {
 })
 
 const onSelectChat = (chat) => {
-  emitEvent('selectChat', chat)
+  if (props.selectMode) {
+    if (selection.value.includes(chat.uuid)) {
+      selection.value = selection.value.filter((uuid) => uuid !== chat.uuid)
+    } else {
+      selection.value = [...selection.value, chat.uuid]
+    }
+  } else {
+    emitEvent('selectChat', chat)
+  }
 }
 
 const showContextMenu = (event, user) => {
@@ -82,7 +101,7 @@ const handleActionClick = async (action) => {
   if (action === 'rename') {
     emitEvent('renameChat', chat)
   } else if (action === 'delete') {
-    emitEvent('deleteChat', chat)
+    emitEvent('deleteChat', chat.uuid)
   }
 
 }
@@ -111,6 +130,7 @@ const handleActionClick = async (action) => {
   padding: 12px;
   display: flex;
   flex-direction: row;
+  align-items: center;
   border-radius: 8px;
 }
 
@@ -143,6 +163,10 @@ const handleActionClick = async (action) => {
 
 .chat .subtitle {
   font-size: 9pt;
+}
+
+.chat .select {
+  margin-left: 16px;
 }
 
 </style>
