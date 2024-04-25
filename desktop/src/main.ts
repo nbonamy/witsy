@@ -2,7 +2,7 @@
 import { Chat, Command, Prompt } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, autoUpdater } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -40,8 +40,12 @@ if (require('electron-squirrel-startup')) {
 
 // auto-update
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp({})
+const server = 'https://update.electronjs.org'
+const feed = `${server}/nbonamy/witty-ai/${process.platform}-${process.arch}/${app.getVersion()}`
+console.log('Checking for updates at', feed)
+autoUpdater.setFeedURL({ url: feed })
+autoUpdater.on('error', (error) => console.error('Error while checking for updates', error) )
+autoUpdater.checkForUpdates()
 
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
