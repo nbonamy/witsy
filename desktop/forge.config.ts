@@ -44,10 +44,16 @@ if (isDarwin) {
       osxSign: {
         identity: process.env.IDENTITY_MAS_CODE,
         provisioningProfile: './build/Witsy_MAS.provisionprofile',
-        optionsForFile: () => { return {
-          hardenedRuntime: true,
-          entitlements: './build/Entitlements.mas.plist'
-        }; },
+        optionsForFile: (filePath: string) => { 
+          let entitlements = './build/Entitlements.mas.child.plist'
+          if (filePath.endsWith('Witsy.app')) {
+            entitlements = './build/Entitlements.mas.main.plist'
+          }
+          return {
+            hardenedRuntime: true,
+            entitlements: entitlements
+          };
+        },
       },
     }
   }
