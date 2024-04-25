@@ -63,6 +63,7 @@ interface Store {
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>
+  loadCommands?(): Promise<void>
   dump?(): void
 }
 

@@ -21,6 +21,9 @@ import Settings from './Settings.vue'
 import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
+// load store
+store.load()
+
 // assistant
 import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))

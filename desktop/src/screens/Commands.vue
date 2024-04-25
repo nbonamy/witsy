@@ -20,6 +20,9 @@ import {
   BIconClipboard
 } from 'bootstrap-icons-vue'
 
+// load store
+store.loadCommands()
+
 const props = defineProps({
   extra: Object
 })

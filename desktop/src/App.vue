@@ -9,10 +9,6 @@ import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
 
-// store
-import { store } from './services/store'
-store.load()
-
 // add platform name
 onMounted(() => {
 
