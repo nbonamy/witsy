@@ -15,12 +15,11 @@ dotenv.config();
 
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
+let osxMaker: any = new MakerZIP({}, ['darwin'])
 let osxPackagerConfig = {}
-let osxMaker = null
 
 if (isDarwin) {
   if (!isMas) {
-    osxMaker = new MakerZIP({}, ['darwin'])
     osxPackagerConfig = {
       osxSign: {
         identity: process.env.IDENTIFY_DARWIN_CODE,
