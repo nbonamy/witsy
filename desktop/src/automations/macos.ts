@@ -7,6 +7,7 @@ export default class implements Automator {
   async selectAll(){
     
     const script = `
+      tell application "System Events" to activate
       tell application "System Events" to keystroke "a" using command down      
       delay 0.1
     `
@@ -19,7 +20,8 @@ export default class implements Automator {
   async moveCaretBelow() {
 
     const script = `
-      tell application "System Events"
+    tell application "System Events" to activate
+    tell application "System Events"
         key code 124
         key code 36
         key code 36
@@ -34,6 +36,7 @@ export default class implements Automator {
 
     const script = `
       set the clipboard to ""
+      tell application "System Events" to activate
       tell application "System Events" to keystroke "c" using command down      
       repeat 5 times
         delay 0.1
@@ -50,6 +53,7 @@ export default class implements Automator {
   async pasteText() {
 
     const script = `
+      tell application "System Events" to activate
       tell application "System Events" to keystroke "v" using command down      
       delay 0.1
     `

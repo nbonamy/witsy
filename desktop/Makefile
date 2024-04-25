@@ -9,8 +9,8 @@
 # APPLE_PASSWORD="app-specific-password"
 
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
-IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
-CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
+#IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
+#CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
 BUILD_NUMBER_FILE := ./build/build_number.txt
 
 default: mac-arm64
@@ -51,13 +51,12 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean mac mac-arm64 mac-x64 win linux
+all: clean increment-build-number mac mac-arm64 mac-x64 win linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
 	$(eval NEW_BUILD_NUMBER=$(shell echo $$(( $(CURRENT_BUILD_NUMBER) + 1 ))))
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
-
 
 #publish:
 #	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
