@@ -15,12 +15,16 @@ export const store: Store = reactive({
   pendingAttachment: null,
 })
 
+store.loadCommands = async () => {
+  loadSettings()
+  loadCommands()
+}
+
 store.load = async () => {
 
   // load data
-  loadSettings()
+  store.loadCommands()
   loadHistory()
-  loadCommands()
   loadPrompts()
 
   // load models
