@@ -90,7 +90,7 @@ export default class {
     let engine = opts.engine || store.config.llm.engine
     let model = opts.model || store.config.getActiveModel()
 
-    // save histore
+    // save history
     const save = opts.save == null || opts.save !== false
 
     // we need a chat

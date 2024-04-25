@@ -287,8 +287,8 @@ const autoGrow = (element) => {
 }
 
 .input .attachment {
-  margin-top: 2.5px;
-  margin-right: 2px;
+  margin-top: 4px;
+  margin-left: 16px;
 }
 
 .input div:has(textarea) {
