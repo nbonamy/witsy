@@ -20,8 +20,6 @@ import * as markdown from './main/markdown';
 import * as commander from './automations/commander';
 import * as menu from './main/menu';
 
-//import Iap from './main/iap';
-
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
 if (process.platform !== 'darwin' && !process.env.TEST) {
@@ -40,13 +38,14 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// auto-update
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { updateElectronApp } = require('update-electron-app')
+updateElectronApp({})
+
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
 // new MacosAutomator();
-
-// init iap as soon as possible
-// const iap = new Iap();
-// iap.install();
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -62,6 +61,7 @@ const registerShortcuts = () => {
 import trayIconMacos from '../assets/bulbTemplate.png?asset';
 // eslint-disable-next-line import/no-unresolved
 import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
+import { UpdateSourceType } from 'update-electron-app';
 const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
 let tray: Tray = null;
@@ -107,9 +107,6 @@ app.whenReady().then(() => {
 
   // register shortcuts
   registerShortcuts();
-
-  //console.log(iap.getProducts())
-
 
   // create the main window
   // TODO detect when lauched from login item
