@@ -29,11 +29,11 @@ mac-x64:
 	-rm -rf out/*darwin-x64* out/make/zip/darwin/x64/*
 	npx electron-forge make -p darwin -a x64
 
-mac-universal:
+mac-mas:
 	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
 	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p mas -a universal
 
-mac: increment-build-number mac-universal
+mac: increment-build-number mac-mas
 
 win-x64:
 	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
@@ -51,13 +51,13 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean increment-build-number mac mac-arm64 mac-x64 win linux
+all: clean increment-build-number mac-arm64 mac-x64 win linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
 	$(eval NEW_BUILD_NUMBER=$(shell echo $$(( $(CURRENT_BUILD_NUMBER) + 1 ))))
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
-#publish:
-#	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
-#	gh release create v$(VERSION) --repo https://github.com/nbonamy/witty-ai-releases --title $(VERSION) $(RELEASES)
+publish:
+	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witty-ai --title $(VERSION) $(RELEASES) --notes "Release $(VERSION)"
