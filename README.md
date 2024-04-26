@@ -68,13 +68,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 ## TODO
 
 - [ ] i18n
-- [ ] Auto-update
-- [ ] Windows certificate
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] Auto-update
 - [x] History date sections
 - [x] Multiple selection delete
 - [x] Search
