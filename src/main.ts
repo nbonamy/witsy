@@ -41,7 +41,7 @@ if (require('electron-squirrel-startup')) {
 // auto-update
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const server = 'https://update.electronjs.org'
-const feed = `${server}/nbonamy/witty-ai/${process.platform}-${process.arch}/${app.getVersion()}`
+const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${app.getVersion()}`
 console.log('Checking for updates at', feed)
 autoUpdater.setFeedURL({ url: feed })
 autoUpdater.on('error', (error) => console.error('Error while checking for updates', error) )
