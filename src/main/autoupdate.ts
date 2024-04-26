@@ -43,8 +43,9 @@ export default class {
     autoUpdater.on('update-not-available', () => {
       if (this.manualUpdate) {
         dialog.showMessageBox({
-          title: 'Witsy',
-          message: 'You are already using the latest version of Witsy.',
+          type: 'info',
+          message: 'Witsy',
+          detail: 'You are already using the latest version of Witsy.',
         })
       }
     })
