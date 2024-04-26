@@ -2,7 +2,7 @@
 import { Chat, Command, Prompt } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, autoUpdater } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, autoUpdater, dialog } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -45,6 +45,23 @@ const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${app.
 console.log('Checking for updates at', feed)
 autoUpdater.setFeedURL({ url: feed })
 autoUpdater.on('error', (error) => console.error('Error while checking for updates', error) )
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  
+  const dialogOpts: Electron.MessageBoxOptions = {
+    type: 'info',
+    buttons: ['Restart', 'Later'],
+    title: 'Application Update',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+  }
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) {
+      quitAnyway = true;
+      autoUpdater.quitAndInstall()
+    }
+  })
+})
 autoUpdater.checkForUpdates()
 
 // // look for menus as soon as possible

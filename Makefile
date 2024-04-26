@@ -23,11 +23,11 @@ clean:
 
 mac-arm64:
 	-rm -rf out/*darwin-arm64* out/make/zip/darwin/arm64/*
-	npx electron-forge make -p darwin -a arm64
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p darwin -a arm64
 
 mac-x64:
 	-rm -rf out/*darwin-x64* out/make/zip/darwin/x64/*
-	npx electron-forge make -p darwin -a x64
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p darwin -a x64
 
 mac-mas:
 	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
