@@ -10,6 +10,10 @@ const template = (app: App, callbacks: anyDict) => [
         label: app.name,
         submenu: [
           { role: 'about' },
+          {
+            label: 'Check for Updates…',
+            click: async () => callbacks.checkForUpdates()
+          },
           { type: 'separator' },
           {
             label: 'Settings…',

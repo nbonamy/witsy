@@ -2,13 +2,14 @@
 import { Chat, Command, Prompt } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, autoUpdater, dialog } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 import { wait } from './main/utils';
 
+import AutoUpdater from './main/autoupdate';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
@@ -39,30 +40,10 @@ if (require('electron-squirrel-startup')) {
 }
 
 // auto-update
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const server = 'https://update.electronjs.org'
-const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${app.getVersion()}`
-console.log('Checking for updates at', feed)
-autoUpdater.setFeedURL({ url: feed })
-autoUpdater.on('error', (error) => console.error('Error while checking for updates', error) )
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-  
-  const dialogOpts: Electron.MessageBoxOptions = {
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Application Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-  }
+const autoUpdater = new AutoUpdater({
+  preUpdate: () => quitAnyway = true
+});
 
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    if (returnValue.response === 0) {
-      quitAnyway = true;
-      autoUpdater.quitAndInstall()
-    }
-  })
-})
-autoUpdater.checkForUpdates()
 
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
@@ -82,7 +63,6 @@ const registerShortcuts = () => {
 import trayIconMacos from '../assets/bulbTemplate.png?asset';
 // eslint-disable-next-line import/no-unresolved
 import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
-import { UpdateSourceType } from 'update-electron-app';
 const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
 let tray: Tray = null;
@@ -122,6 +102,7 @@ app.whenReady().then(() => {
   // install the menu
   menu.installMenu(app, {
     quit: app.quit,
+    checkForUpdates: autoUpdater.check,
     newChat: window.openMainWindow,
     settings: window.openSettingsWindow,
   });

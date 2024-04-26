@@ -60,4 +60,4 @@ increment-build-number:
 
 publish:
 	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
-	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) $(RELEASES) --notes "Release $(VERSION)"
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) $(RELEASES) --generate-notes
