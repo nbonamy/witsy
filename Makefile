@@ -3,7 +3,7 @@
 # On MacOS, you need to have the codesigning identity in the .env file.
 # Check available identities with `security find-identity -v -p codesigning`
 # The .env file should have the following lines:
-# IDENTITY="Developer ID Application: Your Name (XXXXXXXXXX)"
+# IDENTIFY_DARWIN_CODE="Developer ID Application: Your Name (XXXXXXXXXX)"
 # APPLE_ID=""
 # APPLE_TEAM_ID=""
 # APPLE_PASSWORD="app-specific-password"
