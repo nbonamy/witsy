@@ -1,14 +1,17 @@
 <template>
-  <div class="chats" ref="divChats">
-    <div v-for="c in visibleChats" :key="c.uuid" class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
-      <EngineLogo :engine="engine(c)" :background="true" />
-      <div class="info">
-        <div class="title">{{ c.title }}</div>
-        <div class="subtitle">{{ c.subtitle() }}</div>
-      </div>
-      <div v-if="selectMode" class="select">
-        <BIconCheckCircleFill v-if="selection.includes(c.uuid)" />
-        <BIconCircle v-else />
+  <div class="chats" ref="divChats" :set="day = null">
+    <div v-for="c in visibleChats" :key="c.uuid" :set="chatDay=getDay(c)">
+      <div v-if="chatDay != day" :set="day = chatDay" class="day">{{ chatDay }}</div> 
+      <div class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+        <EngineLogo :engine="engine(c)" :background="true" />
+        <div class="info">
+          <div class="title">{{ c.title }}</div>
+          <div class="subtitle">{{ c.subtitle() }}</div>
+        </div>
+        <div v-if="selectMode" class="select">
+          <BIconCheckCircleFill v-if="selection.includes(c.uuid)" />
+          <BIconCircle v-else />
+        </div>
       </div>
     </div>
     <Overlay v-if="showMenu" @click="closeContextMenu" />
@@ -48,6 +51,20 @@ const visibleChats = computed(() => store.chats.filter((c) => {
   if (c.messages.some(m => m.content.toLowerCase().includes(props.filter.toLowerCase()))) return true
   return false
 }).toSorted((a,b) => b.lastModified - a.lastModified))
+
+const getDay = (chat) => {
+  const now = Date.now()
+  const diff = now - chat.lastModified
+  const oneDay = 24 * 60 * 60 * 1000
+  if (diff < oneDay) return 'Today'
+  if (diff < 2 * oneDay) return 'Yesterday'
+  if (diff < 7 * oneDay) return 'This Week'
+  if (diff < 14 * oneDay) return 'Last Week'
+  if (diff < 30 * oneDay) return 'This Month'
+  // if (diff < 60 * oneDay) return 'Last Month'
+  // if (diff < 365 * oneDay) return 'This Year'
+  return 'Older'
+}
 
 const showMenu = ref(false)
 const menuX = ref(0)
@@ -123,6 +140,19 @@ const handleActionClick = async (action) => {
 
 .chats.scrolling {
   padding-right: 0px;
+}
+
+.chats .day {
+  margin: 12px 0 8px;
+  padding: 0 12px;
+  font-size: 9pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.chats > div:first-child > .day {
+  margin-top: 0;
 }
 
 .chat {
