@@ -55,6 +55,7 @@ const onSettings = () => {
 
 const onNewChat = () => {
   onClearFilter()
+  onCancelDelete()
   emitEvent('newChat')
 }
 

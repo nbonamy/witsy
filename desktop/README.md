@@ -75,6 +75,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] History date sections
 - [x] Multiple selection delete
 - [x] Search
 - [x] Groq API
