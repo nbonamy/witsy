@@ -53,17 +53,19 @@ const visibleChats = computed(() => store.chats.filter((c) => {
 }).toSorted((a,b) => b.lastModified - a.lastModified))
 
 const getDay = (chat) => {
-  const now = Date.now()
-  const diff = now - chat.lastModified
+  const now = new Date()
   const oneDay = 24 * 60 * 60 * 1000
-  if (diff < oneDay) return 'Today'
-  if (diff < 2 * oneDay) return 'Yesterday'
-  if (diff < 7 * oneDay) return 'This Week'
-  if (diff < 14 * oneDay) return 'Last Week'
-  if (diff < 30 * oneDay) return 'This Month'
+  const diff = Date.now() - chat.lastModified
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const yesterdayStart = todayStart - 86400000;
+  if (chat.lastModified >= todayStart) return 'Today'
+  if (chat.lastModified >= yesterdayStart) return 'Yesterday'
+  if (diff < 7 * oneDay) return 'Last 7 days'
+  if (diff < 14 * oneDay) return 'Last 14 days'
+  if (diff < 30 * oneDay) return 'Last 30 days'
   // if (diff < 60 * oneDay) return 'Last Month'
   // if (diff < 365 * oneDay) return 'This Year'
-  return 'Older'
+  return 'Earlier'
 }
 
 const showMenu = ref(false)
