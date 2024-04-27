@@ -252,7 +252,10 @@ const onKeyDown = (event) => {
       nextTick(() => {
         autoGrow(input.value)
         input.value.setSelectionRange(newPrompt.length, newPrompt.length)
-        input.value.scrollTo(0, input.value.scrollHeight)
+        if (input.value.scrollTo) {
+          // no scrollTo while testing
+          input.value.scrollTo(0, input.value.scrollHeight)
+        }
       })
       event.preventDefault()
       event.stopPropagation()
