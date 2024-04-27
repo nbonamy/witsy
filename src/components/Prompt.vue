@@ -191,6 +191,7 @@ const handleCommandClick = (action) => {
   onSendPrompt()
 }
 
+let draftPrompt = ''
 const onKeyDown = (event) => {
 
   if (event.key === 'Enter') {
@@ -203,34 +204,33 @@ const onKeyDown = (event) => {
       return false
     }
   } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-    event.preventDefault()
-    event.stopPropagation()
-    return false
-  }
-}
 
-const onKeyUp = (event) => {
-
-  // history
-  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    // need at list shift
+    if (!event.shiftKey) {
+      return
+    }
     
     // get messages
     let userMessages = props.chat?.messages.filter(m => m.role === 'user')
-    if (event.shiftKey) {
+    if (event.controlKey || event.metaKey) {
       userMessages = store.chats.reduce((acc, chat) => {
         return acc.concat(chat.messages.filter(m => m.role === 'user'))
       }, [])
       userMessages.sort((a, b) => a.createdAt - b.createdAt)
     }
 
+    // new prompt
+    let newPrompt = null
+
     // now navigate
     if (userMessages?.length) {
       const index = userMessages.findIndex(m => m.content === prompt.value)
       if (event.key === 'ArrowUp') {
         if (index === -1) {
-          prompt.value = userMessages[userMessages.length - 1].content
+          draftPrompt = prompt.value
+          newPrompt = userMessages[userMessages.length - 1].content
         } else if (index > 0) {
-          prompt.value = userMessages[index - 1].content
+          newPrompt = userMessages[index - 1].content
         } else {
           // keydown moved caret at beginning
           // so move it back to the end
@@ -239,15 +239,29 @@ const onKeyUp = (event) => {
         }
       } else {
         if (index >= 0 && index < userMessages.length - 1) {
-          prompt.value = userMessages[index + 1].content
+          newPrompt = userMessages[index + 1].content
         } else if (index != -1) {
-          prompt.value = ''
+          newPrompt = draftPrompt
         }
       }
     }
-  }
 
-  // auto-grow
+    // update
+    if (newPrompt) {
+      prompt.value = newPrompt
+      nextTick(() => {
+        autoGrow(input.value)
+        input.value.setSelectionRange(newPrompt.length, newPrompt.length)
+        input.value.scrollTo(0, input.value.scrollHeight)
+      })
+      event.preventDefault()
+      event.stopPropagation()
+      return false
+    }
+  }
+}
+
+const onKeyUp = (event) => {
   nextTick(() => {
     autoGrow(event.target)
   })
