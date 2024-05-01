@@ -8,17 +8,19 @@ import hljs from 'highlight.js'
 const mdOptions: MarkdownIt.Options = {
   html: true,
   highlight: function (str: string, lang: string) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        let code = '<pre class="hljs"><code class="hljs">';
+    try {
+      let code = '<pre class="hljs"><code class="hljs">';
+      if (lang && hljs.getLanguage(lang)) {
         code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
-        code += '</code></pre>';
-        code += '<p><a href="#" onclick="navigator.clipboard.writeText(window.api.base64.decode(\'' + Buffer.from(str).toString('base64') + '\'));';
-        code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000); return false;" class="copy">Copy code</a></p>';
-        return code;
-      } catch (error) {
-        console.log(error)
+      } else {
+        code += hljs.highlightAuto(str).value;
       }
+      code += '</code></pre>';
+      code += '<p><a href="#" onclick="navigator.clipboard.writeText(window.api.base64.decode(\'' + Buffer.from(str).toString('base64') + '\'));';
+      code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000); return false;" class="copy">Copy code</a></p>';
+      return code;
+    } catch (error) {
+      console.log(error)
     }
     return '' // use external default escaping
   }
