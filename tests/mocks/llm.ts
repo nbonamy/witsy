@@ -6,6 +6,20 @@ import { Configuration } from '../../src/types/config.d'
 import LlmEngine from '../../src/services/engine'
 import RandomChunkStream from './stream'
 
+class LlmError extends Error {
+
+  name: string
+  status: number
+  message: string
+
+  constructor(name: string, status: number, message: string) {
+    super()
+    this.name = name
+    this.status = status
+    this.message = message
+  }
+}
+
 export default class LlmMock extends LlmEngine {
 
   constructor(config: Configuration) {
@@ -52,6 +66,14 @@ export default class LlmMock extends LlmEngine {
   }
 
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
+
+    // errors
+    if (thread[thread.length-1].content.includes('no api key')) {
+      throw new LlmError('NoApiKeyError', 401, 'Missing apiKey')
+    }
+    if (thread[thread.length-1].content.includes('no credit')) {
+      throw new LlmError('LowBalanceError', 400, 'Your balance is too low')
+    }
 
     // model: switch to vision if needed
     const model = this.selectModel(thread, opts?.model || this.getChatModel())
