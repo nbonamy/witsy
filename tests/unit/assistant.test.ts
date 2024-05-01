@@ -129,3 +129,15 @@ test('Conversation language', async () => {
   expect(instructions).toMatch(/French/)
 
 })
+
+test('No API Key', async () => {
+  await prompt('no api key')
+  const content = assistant.chat.lastMessage().content
+  expect(content).toBe('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
+})
+
+test('Low balance', async () => {
+  await prompt('no credit left')
+  const content = assistant.chat.lastMessage().content
+  expect(content).toBe('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
+})
