@@ -27,16 +27,14 @@ let assistant: Assistant = null
 const prompt = async (prompt: string, opts: LlmCompletionOpts = {}): Promise<string> => {
 
   // callback
-  let done = false
   let content = ''
   const callback = (chunk: LlmStream) => {
-    done = chunk?.done
     content += chunk?.text || ''
   }
   
   // call and wait
   await assistant.prompt(prompt, { ...opts, save: false }, callback)
-  await vi.waitUntil(async () => done)
+  await vi.waitUntil(async () => !assistant.chat.lastMessage().transient)
 
   // return
   return content

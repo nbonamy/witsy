@@ -180,13 +180,10 @@ export default class {
       if (error.name !== 'AbortError') {
         if (error.status === 401 || error.message.includes('401') || error.message.toLowerCase().includes('apikey')) {
           message.setText('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
-          callback?.call(null, { done: true })
         } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
           message.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
-          callback?.call(null, { done: true })
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
-          callback?.call(null, { done: true })
         } else {
           message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
         }
