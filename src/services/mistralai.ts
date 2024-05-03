@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Message } from '../types/index.d'
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../types/llm.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback, LlmToolCall } from '../types/llm.d'
 import { EngineConfig, Configuration } from '../types/config.d'
 import LlmEngine from './engine'
 
@@ -15,6 +15,9 @@ export const isMistrailAIReady = (engineConfig: EngineConfig): boolean => {
 export default class extends LlmEngine {
 
   client: MistralClient
+  currentModel: string
+  currentThread: Array<any>
+  toolCalls: LlmToolCall[]
 
   constructor(config: Configuration) {
     super(config)
@@ -73,13 +76,29 @@ export default class extends LlmEngine {
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    const model = this.selectModel(thread, opts?.model || this.getChatModel())
+    this.currentModel = this.selectModel(thread, opts?.model || this.getChatModel())
   
+    // save the message thread
+    this.currentThread = this.buildPayload(thread, this.currentModel)
+    return await this.doStream()
+
+  }
+
+  async doStream(): Promise<LlmStream> {
+
+    // reset
+    this.toolCalls = []
+
+    // tools
+    const tools = this.getAvailableToolsForModel(this.currentModel)
+
     // call
-    console.log(`[mistralai] prompting model ${model}`)
+    console.log(`[mistralai] prompting model ${this.currentModel}`)
     const stream = this.client.chatStream({
-      model: model,
-      messages: this.buildPayload(thread, model),
+      model: this.currentModel,
+      messages: this.currentThread,
+      tools: tools.length ? tools : null,
+      tool_choice: tools.length ? 'any' : null,
     })
 
     // done
@@ -93,6 +112,98 @@ export default class extends LlmEngine {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async streamChunkToLlmChunk(chunk: any, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
+    
+    // tool calls
+    if (chunk.choices[0]?.delta?.tool_calls) {
+
+      // arguments or new tool?
+      if (chunk.choices[0].delta.tool_calls[0].id) {
+
+        // debug
+        //console.log('[mistralai] tool call start:', chunk)
+
+        // record the tool call
+        const toolCall: LlmToolCall = {
+          id: chunk.choices[0].delta.tool_calls[0].id,
+          message: chunk.choices[0].delta.tool_calls.map((tc: any) => {
+            delete tc.index
+            return tc
+          }),
+          function: chunk.choices[0].delta.tool_calls[0].function.name,
+          args: chunk.choices[0].delta.tool_calls[0].function.arguments,
+        }
+        console.log('[mistralai] tool call:', toolCall)
+        this.toolCalls.push(toolCall)
+
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolPreparationDescription(toolCall.function)
+        })
+
+      } else {
+
+        const toolCall = this.toolCalls[this.toolCalls.length-1]
+        toolCall.args += chunk.choices[0].delta.tool_calls[0].function.arguments
+        return null
+
+      }
+
+    }
+
+    // now tool calling
+    if (chunk.choices[0]?.finish_reason === 'tool_calls') {
+
+      // debug
+      //console.log('[mistralai] tool calls:', this.toolCalls)
+
+      // add tools
+      for (const toolCall of this.toolCalls) {
+
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolRunningDescription(toolCall.function)
+        })
+
+        // now execute
+        const args = JSON.parse(toolCall.args)
+        const content = await this.callTool(toolCall.function, args)
+        console.log(`[mistralai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+
+        // add tool call message
+        this.currentThread.push({
+          role: 'assistant',
+          tool_calls: toolCall.message
+        })
+
+        // add tool response message
+        this.currentThread.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: toolCall.function,
+          content: JSON.stringify(content)
+        })
+      }
+
+      // clear
+      eventCallback?.call(this, {
+        type: 'tool',
+        content: null,
+      })
+
+      // switch to new stream
+      eventCallback?.call(this, {
+        type: 'stream',
+        content: await this.doStream(),
+      })
+
+      // done
+      return null
+      
+    }
+
+    // default
     return {
       text: chunk.choices[0].delta.content,
       done: chunk.choices[0].finish_reason != null
@@ -106,5 +217,13 @@ export default class extends LlmEngine {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
     return null    
+  }
+
+  getAvailableToolsForModel(model: string): any[] {
+    if (model.includes('mistral-large') || model.includes('mixtral-8x22b')) {
+      return this.getAvailableTools()
+    } else {
+      return null
+    }
   }
 }

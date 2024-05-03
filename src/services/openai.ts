@@ -248,25 +248,4 @@ export default class extends LlmEngine {
 
   }
 
-  getPluginAsTool(plugin: Plugin): anyDict {
-    return {
-      type: 'function',
-      function: {
-        name: plugin.getName(),
-        description: plugin.getDescription(),
-        parameters: {
-          type: 'object',
-          properties: plugin.getParameters().reduce((obj: anyDict, param: PluginParameter) => {
-            obj[param.name] = {
-              type: param.type,
-              enum: param.enum,
-              description: param.description,
-            }
-            return obj
-          }, {}),
-          required: plugin.getParameters().filter(param => param.required).map(param => param.name),
-        },
-      },
-    }
-  }
 }

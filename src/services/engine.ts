@@ -75,11 +75,6 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPluginAsTool(plugin: Plugin): anyDict {
-    throw new Error('Not implemented')
-  }
-
   getChatModel(): string {
     return this.config.engines[this.getName()].model.chat
   }
@@ -172,6 +167,31 @@ export default class LlmEngine {
 
   getAvailableTools(): any[] {
     return Object.values(this.plugins).map((plugin: Plugin) => this.getPluginAsTool(plugin))
+  }
+
+  // this is the default implementation as per OpenAI API
+  // it is now almost a de facto standard and other providers
+  // are following it such as MistralAI
+  getPluginAsTool(plugin: Plugin): anyDict {
+    return {
+      type: 'function',
+      function: {
+        name: plugin.getName(),
+        description: plugin.getDescription(),
+        parameters: {
+          type: 'object',
+          properties: plugin.getParameters().reduce((obj: anyDict, param: PluginParameter) => {
+            obj[param.name] = {
+              type: param.type,
+              enum: param.enum,
+              description: param.description,
+            }
+            return obj
+          }, {}),
+          required: plugin.getParameters().filter(param => param.required).map(param => param.name),
+        },
+      },
+    }
   }
 
   getToolPreparationDescription(tool: string): string {
