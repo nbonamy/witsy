@@ -223,7 +223,7 @@ export default class extends LlmEngine {
     if (model.includes('mistral-large') || model.includes('mixtral-8x22b')) {
       return this.getAvailableTools()
     } else {
-      return null
+      return []
     }
   }
 }
