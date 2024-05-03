@@ -45,6 +45,7 @@ export default class extends Plugin {
         include_answer: true,
         //include_raw_content: true,
       })
+      //console.log('Tavily response:', response)
       return response
     } catch (error) {
       return { error: error.message }
