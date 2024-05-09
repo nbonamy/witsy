@@ -59,7 +59,7 @@ interface Store {
   config: Configuration
   chats: Chat[]
   chatFilter: string|null
-  pendingAttachment: any
+  pendingAttachment: Attachment|null
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>
@@ -70,6 +70,11 @@ interface Store {
 interface Prompt {
   actor: string
   prompt: string
+}
+
+interface File {
+  url: string
+  contents: string
 }
 
 declare global {
@@ -93,7 +98,7 @@ declare global {
         decode?(data: string): string
       }
       file?: {
-        read?(filepath: string): string
+        read?(filepath: string): File
         save?(opts: {
           contents: string,
           properties: anyDict
@@ -102,7 +107,7 @@ declare global {
           url: string,
           properties: anyDict
         }): string
-        pick?(opts: anyDict): string|strDict
+        pick?(opts: anyDict): File
         delete?(filepath: string): void
         find?(name: string): string
       }
@@ -137,6 +142,9 @@ declare global {
         writeText?(text: string): void
         writeImage?(path: string): void
       },
+      pdf?: {
+        getText?(contents: string): string
+      }
       markdown?: {
         render?(markdown: string): string
       }

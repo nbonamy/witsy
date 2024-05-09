@@ -1,10 +1,10 @@
 <template>
   <div class="prompt">
-    <BIconFileEarmarkPlus v-if="canAttachImages" class="icon attach" @click="onAttach"/>
+    <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
     <BIconJournalMedical class="icon prompt" @click="onCustomPrompt"/>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
-        <img :src="attachmentUrl" class="icon" />
+        <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
       </div>
       <div>
         <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
@@ -24,8 +24,10 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
-import { hasVisionModels, isVisionModel } from '../services/llm'
+import { canProcessFormat } from '../services/llm'
 import ContextMenu from './ContextMenu.vue'
+import AttachmentView from './Attachment.vue'
+import Attachment from '../models/attachment'
 import Overlay from './Overlay.vue'
 import Chat from '../models/chat'
 
@@ -43,16 +45,8 @@ const showCommands = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const canAttachImages = computed(() => {
-  const engine = props.chat?.engine || store.config.llm.engine
-  const model = props.chat?.model || store.config.getActiveModel(engine)
-  const autoSwitch = store.config.llm.autoVisionSwitch
-  if (autoSwitch) {
-    return hasVisionModels(engine) || isVisionModel(engine, model)
-  } else {
-    return isVisionModel(engine, model)
-  }
-})
+const engine = () => props.chat?.engine || store.config.llm.engine
+const model = () => props.chat?.model || store.config.getActiveModel(engine())
 
 const working = computed(() => {
   return props.chat?.lastMessage().transient
@@ -106,9 +100,22 @@ const onStopAssistant = () => {
 }
 
 const onAttach = () => {
-  let file = window.api.file.pick({ filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }] })
+  let file = window.api.file.pick({ /*filters: [
+    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+  ]*/ })
   if (file) {
-    emitEvent('attachFile', {...file, downloaded: false })
+    const format = file.url.split('.').pop()
+    if (canProcessFormat(engine(), model(), format)) {
+      emitEvent('attachFile', new Attachment({
+        url: file.url,
+        format: format,
+        contents: file.contents,
+        downloaded: false
+      }))
+    } else {
+      console.error('Cannot attach format', format)
+      alert('This file format is not supported')
+    }
   }
 }
 
@@ -126,12 +133,19 @@ const onPaste = (event) => {
           let result = event.target.result
           let format = result.split(';')[0].split('/')[1]
           let contents = result.split(',')[1]
-          emitEvent('attachFile', {
-            url: 'clipboard://',
-            format: format,
-            contents: contents,
-            downloaded: false 
-          })
+
+          // check before attaching
+          if (canProcessFormat(engine(), model(), format)) {
+            emitEvent('attachFile', new Attachment({
+              url: 'clipboard://',
+              format: format,
+              contents: contents,
+              downloaded: false 
+            }))
+          } else {
+            console.error('Cannot attach format', format)
+            alert('This file format is not supported')
+          }
         }
       }
       reader.readAsDataURL(blob);
@@ -288,11 +302,14 @@ const autoGrow = (element) => {
   align-items: center;
 }
 
-.icon {
+.attachment {
   cursor: pointer;
   color: #5b5a59;
-  height: 14pt !important;
-  width: 14pt !important;
+}
+
+.attachment .icon {
+  height: 18pt !important;
+  width: 18pt !important;
 }
 
 .input {
@@ -305,7 +322,7 @@ const autoGrow = (element) => {
 
 .input .attachment {
   margin-top: 4px;
-  margin-left: 16px;
+  margin-left: 8px;
 }
 
 .input div:has(textarea) {

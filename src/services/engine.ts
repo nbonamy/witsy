@@ -7,6 +7,8 @@ import Plugin from '../plugins/plugin'
 import BrowsePlugin from '../plugins/browse'
 import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'
+import { textFormats, imageFormats } from './llm'
+import { PluginParameter } from '../types/plugin.d'
 
 export const availablePlugins: anyDict = {
   browse: BrowsePlugin, 
@@ -130,26 +132,38 @@ export default class LlmEngine {
       return [{ role: 'user', content: thread }]
     } else {
 
-      // we only want to upload the last attchment
-      // sp build messages in reverse order
+      // we only want to upload the last image attachment
+      // so build messages in reverse order
       // and then rerse the array
 
-      let attached = false
+      let imageAttached = false
       return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg): LLmCompletionPayload => {
         const payload: LLmCompletionPayload = { role: msg.role, content: msg.content }
-        if (!attached && msg.attachment && this.isVisionModel(model)) {
-          
-          // tis can be a loaded chat where contents is not present
-          if (!msg.attachment.contents) {
-            msg.attachment.contents = getFileContents(msg.attachment.url).contents
-          }
+        
+        // if there is no attachment, return
+        if (!msg.attachment) return payload
 
-          // now we can attach
-          this.addImageToPayload(msg, payload)
-          attached = true
-
+        // this can be a loaded chat where contents is not present
+        if (!msg.attachment.contents) {
+          msg.attachment.contents = getFileContents(msg.attachment.url).contents
         }
+
+        // text formats
+        if (textFormats.includes(msg.attachment.format)) {
+          payload.content += `\n\n${msg.attachment.contents}`
+        }
+
+        // image formats
+        if (imageFormats.includes(msg.attachment.format)) {
+          if (!imageAttached && this.isVisionModel(model)) {
+            this.addImageToPayload(msg, payload)
+            imageAttached = true
+          }
+        }
+
+        // done
         return payload
+      
       }).reverse()
     }
   }

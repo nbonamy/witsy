@@ -36,6 +36,9 @@ contextBridge.exposeInMainWorld(
       writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },
       writeImage: (path: string): void => { return ipcRenderer.send('clipboard-write-image', path) },
     },
+    pdf: {
+      getText: (contents: string): string => { return ipcRenderer.sendSync('pdf-get-text', contents) },
+    },
     shortcuts: {
       register: (): void => { return ipcRenderer.send('register-shortcuts') },
       unregister: (): void => { return ipcRenderer.send('unregister-shortcuts') },
