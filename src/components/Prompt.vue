@@ -286,7 +286,7 @@ const autoGrow = (element) => {
   align-items: center;
 }
 
-.attachment {
+.prompt .icon {
   cursor: pointer;
   color: #5b5a59;
 }
