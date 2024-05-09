@@ -1,5 +1,5 @@
 
-<!--img src="https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg"-->
+<img src="https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg">
 
 # Witsy
 
