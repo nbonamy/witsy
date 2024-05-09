@@ -31,13 +31,11 @@ contextBridge.exposeInMainWorld(
       download: (opts: any): string => { return ipcRenderer.sendSync('download', JSON.stringify(opts)) },
       delete: (filepath: string): void => { return ipcRenderer.send('delete-file', filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
+      extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
     },
     clipboard: {
       writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },
       writeImage: (path: string): void => { return ipcRenderer.send('clipboard-write-image', path) },
-    },
-    pdf: {
-      getText: (contents: string): string => { return ipcRenderer.sendSync('pdf-get-text', contents) },
     },
     shortcuts: {
       register: (): void => { return ipcRenderer.send('register-shortcuts') },

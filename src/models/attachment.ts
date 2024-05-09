@@ -15,14 +15,14 @@ export default class Attachment {
     // text formats
     if (format === 'txt') {
       this.contents = window.api.base64.decode(contents)
-    } else if (format === 'pdf') {
-      this.loadPDFRawText()
+    } else {
+      this.extractText()
     }
   }
 
-  loadPDFRawText(): void {
-    const rawText = window.api.pdf.getText(this.contents)
-    //console.log('PDF raw text:', rawText)
+  extractText(): void {
+    const rawText = window.api.file.extractText(this.contents, this.format)
+    //console.log('Raw text:', rawText)
     this.contents = rawText
   }
 
