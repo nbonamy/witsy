@@ -25,6 +25,7 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
+import { mimeTypeToExtension } from '../main/mimetype'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
@@ -50,14 +51,6 @@ const model = () => props.chat?.model || store.config.getActiveModel(engine())
 
 const working = computed(() => {
   return props.chat?.lastMessage().transient
-})
-
-const attachmentUrl = computed(() => {
-  if (store.pendingAttachment?.contents) {
-    return 'data:image/png;base64,' + store.pendingAttachment.contents
-  } else {
-    return store.pendingAttachment?.url
-  }
 })
 
 const customPrompts = computed(() => {
@@ -125,8 +118,9 @@ const onPaste = (event) => {
       let reader = new FileReader();
       reader.onload = (event) => {
         if (event.target.readyState === FileReader.DONE) {
+
           let result = event.target.result
-          let format = result.split(';')[0].split('/')[1]
+          let format = mimeTypeToExtension(result.split(';')[0].split(':')[1])
           let contents = result.split(',')[1]
 
           // check before attaching
