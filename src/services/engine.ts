@@ -93,7 +93,7 @@ export default class LlmEngine {
     }
 
     // check if amy of the messages in the thread have an attachment
-    return thread.some((msg) => msg.attachment)
+    return thread.some((msg) => msg.attachment && imageFormats.includes(msg.attachment.format))
 
   }
 
