@@ -2,6 +2,9 @@
 <template>
   <BIconFilePdf class="icon" v-if="attachment.format === 'pdf'"/>
   <BIconFileText class="icon" v-else-if="attachment.format === 'txt'"/>
+  <BIconFileText class="icon" v-else-if="attachment.format === 'docx'"/>
+  <BIconFileBarGraph class="icon" v-else-if="attachment.format === 'xlsx'"/>
+  <BIconFileRichtext class="icon" v-else-if="attachment.format === 'pptx'"/>
   <img :src="imageSrc" class="image" @click="emit('image-click', imageSrc)" v-else />
 </template>
 
