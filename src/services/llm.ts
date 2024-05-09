@@ -9,6 +9,8 @@ import Groq, { isGroqReady } from './groq'
 import LlmEngine from './engine'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'groq']
+export const textFormats = ['pdf', 'txt']
+export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
@@ -37,6 +39,19 @@ export const hasVisionModels = (engine: string) => {
 export const isVisionModel = (engine: string, model: string) => {
   const instance = igniteEngine(engine, store.config)
   return instance.isVisionModel(model)
+}
+
+export const canProcessFormat = (engine: string, model: string, format: string) => {
+  if (imageFormats.includes(format.toLowerCase())) {
+    const autoSwitch = store.config.llm.autoVisionSwitch
+    if (autoSwitch) {
+      return hasVisionModels(engine) || isVisionModel(engine, model)
+    } else {
+      return isVisionModel(engine, model)
+    }
+  } else {
+    return textFormats.includes(format.toLowerCase())
+  }
 }
 
 export const loadAllModels = async () => {

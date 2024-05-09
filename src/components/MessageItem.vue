@@ -9,7 +9,7 @@
 
       <!-- attachment -->
       <div v-if="message.attachment">
-        <img :src="attachmentUrl" class="attachment" @click="onFullscreen(attachmentUrl)"/>
+        <Attachment :attachment="message.attachment" class="attachment" @image-click="onFullscreen" />
       </div>
 
       <!-- image -->
@@ -59,6 +59,7 @@ import useAudioPlayer from '../composables/audio'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Loader from './Loader.vue'
+import Attachment from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
 
 import useEventBus from '../composables/useEventBus'
@@ -102,14 +103,6 @@ const mgsAudioState = (message) => {
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
-})
-
-const attachmentUrl = computed(() => {
-  if (props.message.attachment?.contents) {
-    return 'data:image/png;base64,' + props.message.attachment.contents
-  } else {
-    return props.message.attachment?.url
-  }
 })
 
 const imageUrl = computed(() => {

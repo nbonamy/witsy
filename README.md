@@ -73,6 +73,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Text attachments
 - [x] MistralAI function calling
 - [x] Auto-update
 - [x] History date sections

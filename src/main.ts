@@ -20,6 +20,7 @@ import * as window from './main/window';
 import * as markdown from './main/markdown';
 import * as commander from './automations/commander';
 import * as menu from './main/menu';
+import * as pdf from './main/pdf';
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -279,6 +280,10 @@ ipcMain.on('save-file', (event, payload) => {
 
 ipcMain.on('download', async (event, payload) => {
   event.returnValue = await file.downloadFile(app, JSON.parse(payload));
+});
+
+ipcMain.on('pdf-get-text', async (event, payload) => {
+  event.returnValue = await pdf.getPDFRawTextContent(payload);
 });
 
 ipcMain.on('render-markdown', (event, payload) => {
