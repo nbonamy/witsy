@@ -106,12 +106,7 @@ const onAttach = () => {
   if (file) {
     const format = file.url.split('.').pop()
     if (canProcessFormat(engine(), model(), format)) {
-      emitEvent('attachFile', new Attachment({
-        url: file.url,
-        format: format,
-        contents: file.contents,
-        downloaded: false
-      }))
+      emitEvent('attachFile', new Attachment( file.url, format, file.contents))
     } else {
       console.error('Cannot attach format', format)
       alert('This file format is not supported')
@@ -136,12 +131,7 @@ const onPaste = (event) => {
 
           // check before attaching
           if (canProcessFormat(engine(), model(), format)) {
-            emitEvent('attachFile', new Attachment({
-              url: 'clipboard://',
-              format: format,
-              contents: contents,
-              downloaded: false 
-            }))
+            emitEvent('attachFile', new Attachment('clipboard://', format, contents))
           } else {
             console.error('Cannot attach format', format)
             alert('This file format is not supported')
