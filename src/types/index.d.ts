@@ -25,7 +25,6 @@ interface Message {
 }
 
 interface Attachment {
-  type: string
   url: string
   format: string
   contents: string

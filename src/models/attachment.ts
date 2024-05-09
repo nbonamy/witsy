@@ -6,7 +6,7 @@ export default class Attachment {
   contents: string
   downloaded: boolean
 
-  constructor({ url, format, contents, downloaded }: Attachment) {
+  constructor(url: string, format = "", contents = "", downloaded = false) {
     this.url = url
     this.format = format.toLowerCase()
     this.contents = contents

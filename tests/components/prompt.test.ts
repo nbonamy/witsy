@@ -6,6 +6,7 @@ import Prompt from '../../src/components/Prompt.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 
 enableAutoUnmount(afterAll)
 
@@ -35,6 +36,10 @@ beforeAll(() => {
           contents: 'image64'
          }
       }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      extractText: vi.fn((contents: string, format: string) => {
+        return contents
+      })
     },
   }
 
@@ -128,7 +133,7 @@ test('Send attachment', async () => {
 })
 
 test('Display url attachment', async () => {
-  store.pendingAttachment = { url: 'file://image.png' }
+  store.pendingAttachment = new Attachment('file://image.png')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
@@ -136,7 +141,7 @@ test('Display url attachment', async () => {
 })
 
 test('Display base64 attachment', async () => {
-  store.pendingAttachment = { contents: 'image64' }
+  store.pendingAttachment = new Attachment('file://image.png', 'png', 'image64')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
