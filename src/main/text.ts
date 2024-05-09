@@ -1,4 +1,5 @@
 
+import { app } from 'electron'
 import PDFParser from 'pdf2json'
 import officeParser from 'officeparser'
 
@@ -16,7 +17,9 @@ function getPDFRawTextContent(contents: string): Promise<string> {
 }
 
 function getOfficeRawTextContent(contents: string): Promise<string> {
-  return officeParser.parseOfficeAsync(Buffer.from(contents, 'base64'))
+  return officeParser.parseOfficeAsync(Buffer.from(contents, 'base64'), {
+    tempFilesLocation: app.getPath('temp'),
+  })
 }
 
 export function getTextContent(contents: string, format: string): Promise<string> {
