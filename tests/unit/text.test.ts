@@ -1,7 +1,15 @@
 
 import { getTextContent } from '../../src/main/text'
-import { expect, test } from 'vitest'
+import { vi, expect, test } from 'vitest'
 import fs from 'fs'
+
+vi.mock('electron', async() => {
+  return {
+    app: {
+      getPath: vi.fn()
+    }
+  }
+})
 
 test('TXT', async () => {
   const contents = fs.readFileSync('./tests/fixtures/sample.txt', 'base64')
