@@ -108,6 +108,7 @@ const config: ForgeConfig = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
       fs.unlinkSync(path.join(buildPath, 'node_modules/@iktakahiro/markdown-it-katex/node_modules/.bin/katex'))
+      fs.unlinkSync(path.join(buildPath, 'node_modules/officeparser/node_modules/.bin/rimraf'))
     }
   }
 };
