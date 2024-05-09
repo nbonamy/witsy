@@ -110,6 +110,7 @@ declare global {
         pick?(opts: anyDict): File
         delete?(filepath: string): void
         find?(name: string): string
+        extractText?(contents: string, format: string): string
       }
       shortcuts?: {
         register?(): void
@@ -142,9 +143,6 @@ declare global {
         writeText?(text: string): void
         writeImage?(path: string): void
       },
-      pdf?: {
-        getText?(contents: string): string
-      }
       markdown?: {
         render?(markdown: string): string
       }
