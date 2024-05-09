@@ -97,3 +97,6 @@ dist/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# office parser
+officeParserTemp
