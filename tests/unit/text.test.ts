@@ -1,0 +1,34 @@
+
+import { getTextContent } from '../../src/main/text'
+import { expect, test } from 'vitest'
+import fs from 'fs'
+
+test('TXT', async () => {
+  const contents = fs.readFileSync('./tests/fixtures/sample.txt', 'base64')
+  const text = await getTextContent(contents, 'txt')
+  expect(text).toContain('Hello from TEXT')
+})
+
+test('PDF', async () => {
+  const contents = fs.readFileSync('./tests/fixtures/sample.pdf', 'base64')
+  const text = await getTextContent(contents, 'pdf')
+  expect(text).toContain('Hello from PDF')
+})
+
+test('Word', async () => {
+  const contents = fs.readFileSync('./tests/fixtures/sample.docx', 'base64')
+  const text = await getTextContent(contents, 'docx')
+  expect(text).toContain('Hello from Word')
+})
+
+test('PowerPoint', async () => {
+  const contents = fs.readFileSync('./tests/fixtures/sample.pptx', 'base64')
+  const text = await getTextContent(contents, 'pptx')
+  expect(text).toContain('Hello from PowerPoint')
+})
+
+test('Excel', async () => {
+  const contents = fs.readFileSync('./tests/fixtures/sample.xlsx', 'base64')
+  const text = await getTextContent(contents, 'xlsx')
+  expect(text).toContain('Hello from Excel')
+})

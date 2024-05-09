@@ -9,7 +9,7 @@ import Groq, { isGroqReady } from './groq'
 import LlmEngine from './engine'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'groq']
-export const textFormats = ['pdf', 'txt']
+export const textFormats = ['pdf', 'txt', 'docx', 'pptx', 'xlsx']
 export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
 
 export const isEngineReady = (engine: string) => {

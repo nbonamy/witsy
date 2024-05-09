@@ -102,7 +102,7 @@ test('OpenAI image', async () => {
 test('OpenAI addImageToPayload', async () => {
   const openAI = new OpenAI(store.config)
   const message = new Message('user', 'text')
-  message.attachFile({ type: 'image', url: '', format:'png', contents: 'image', downloaded: true })
+  message.attachFile({ url: '', format:'png', contents: 'image', downloaded: true })
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   openAI.addImageToPayload(message, payload)
   expect(payload.content).toStrictEqual([
