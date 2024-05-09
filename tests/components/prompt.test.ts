@@ -117,9 +117,10 @@ test('Send attachment', async () => {
   await attach.trigger('click')
   expect(window.api.file.pick).toHaveBeenCalled()
   expect(window.api.file.pick).toHaveBeenCalledWith({
-    filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
+    //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
   expect(emitEventMock).toHaveBeenCalledWith('attachFile', {
+    format: 'png',
     contents: 'image64',
     downloaded: false,
     url: 'file://image.png',
@@ -143,7 +144,7 @@ test('Display base64 attachment', async () => {
 })
 
 test('Remove attachment', async () => {
-  await wrapper.find('.attachment .icon').trigger('click')
+  await wrapper.find('.attachment').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('detachFile')
 })
 
