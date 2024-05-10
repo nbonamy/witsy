@@ -32,12 +32,14 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1).getTime();
   store.chats = []
   for (let i = 0; i < 10; i++) {
     const chat = new Chat()
     chat.title = `Chat ${i}`
     chat.setEngineModel('mock', 'chat')
-    chat.lastModified = Date.now() - i * i/2 * 86400000
+    chat.lastModified = todayStart - i * i/2 * 86400000
     chat.messages.push(new Message('system', 'System Prompt'))
     chat.messages.push(new Message('user', `Question ${i}`))
     chat.messages.push(new Message('assistant', `Subtitle ${i}`))
