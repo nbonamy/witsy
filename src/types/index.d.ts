@@ -11,7 +11,13 @@ interface Chat {
   engine: string
   model: string
   messages: Message[]
+  fromJson(jsonChat: any): void
   patchFromJson(jsonChat: any): boolean
+  setEngineModel(engine: string, model: string): void
+  addMessage(message: Message): void
+  lastMessage(): Message
+  subtitle(): string
+  delete(): void
 }
 
 interface Message {
@@ -22,6 +28,12 @@ interface Message {
   content: string
   attachment: Attachment
   transient: boolean
+  fromJson(jsonMessage: any): void
+  setText(text: string|null): void
+  setImage(url: string): void
+  appendText(chunk: LlmChunk): void
+  attachFile(file: Attachment): void
+  setToolCall(toolCall: string|null): void
 }
 
 interface Attachment {

@@ -1,15 +1,15 @@
 <template>
-  <div class="chats" ref="divChats" :set="day = null">
+  <div class="chats" ref="divChats" :set="currDay = null">
     <div v-for="c in visibleChats" :key="c.uuid" :set="chatDay=getDay(c)">
-      <div v-if="chatDay != day" :set="day = chatDay" class="day">{{ chatDay }}</div> 
-      <div class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)">
+      <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div> 
+      <div class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay">
         <EngineLogo :engine="engine(c)" :background="true" />
         <div class="info">
           <div class="title">{{ c.title }}</div>
           <div class="subtitle">{{ c.subtitle() }}</div>
         </div>
         <div v-if="selectMode" class="select">
-          <BIconCheckCircleFill v-if="selection.includes(c.uuid)" />
+          <BIconCheckCircleFill v-if="selection.includes(c.uuid)" class="selected"/>
           <BIconCircle v-else />
         </div>
       </div>
@@ -79,7 +79,7 @@ const contextMenuActions = [
 
 let scrollEndTimeout = null
 onMounted(() => {
-  divChats.value.addEventListener('scroll', (ev) => {
+  divChats.value?.addEventListener('scroll', (ev) => {
     ev.target.classList.add('scrolling')
     clearTimeout(scrollEndTimeout)
     scrollEndTimeout = setTimeout(() => {
