@@ -48,7 +48,7 @@ defineExpose({
 
 const visibleChats = computed(() => store.chats.filter((c) => {
   if (c.title.toLowerCase().includes(props.filter.toLowerCase())) return true
-  if (c.messages.some(m => m.content.toLowerCase().includes(props.filter.toLowerCase()))) return true
+  if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.toLowerCase()))) return true
   return false
 }).toSorted((a,b) => b.lastModified - a.lastModified))
 
