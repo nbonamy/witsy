@@ -1,8 +1,8 @@
 
-import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import Settings from '../../src/screens/Settings.vue'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
+import Settings from '../../src/screens/Settings.vue'
 import defaults from '../../defaults/settings.json'
 
 import useEventBus from '../../src/composables/useEventBus'

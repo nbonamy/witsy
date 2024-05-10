@@ -1,13 +1,12 @@
 
-import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
+import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
 import defaults from '../../defaults/settings.json'
-import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
-import { renderMarkdown } from '../../src/main/markdown'
-import { wait } from '../../src/main/utils';
+import Chat from '../../src/models/chat'
 
 enableAutoUnmount(afterAll)
 
