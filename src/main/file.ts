@@ -83,7 +83,7 @@ export const findProgram = (app: App, program: string) => {
   return null;
 }
 
-export const writeFileContents = (app: App, payload: anyDict) => {
+export const writeFileContents = (app: App, payload: anyDict): string => {
 
   // parse properties
   const properties = payload.properties ? { ...payload.properties } : {};
