@@ -1,12 +1,11 @@
 
-import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import ChatList from '../../src/components/ChatList.vue'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
+import ChatList from '../../src/components/ChatList.vue'
 import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
-import { renderMarkdown } from '../../src/main/markdown'
 
 enableAutoUnmount(afterAll)
 
@@ -25,17 +24,6 @@ vi.mock('../../src/composables/useEventBus.js', async () => {
 })
 
 beforeAll(() => {
-
-  // api
-  window.api = {
-    history: {
-      save: vi.fn()
-    },
-    markdown: {
-      render: renderMarkdown
-    }
-  }
-  
   // init store
   store.config = defaults
   store.config.getActiveModel = () => {

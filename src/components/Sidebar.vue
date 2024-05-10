@@ -2,25 +2,25 @@
   <div class="sidebar" :style="`width: ${sidebarWidth}px`">
     <div class="toolbar">
       <form><div class="group search">
-        <input v-model="filter" placeholder="Search…" @keyup="onFilterChange" />
+        <input id="filter" v-model="filter" placeholder="Search…" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></form>
-      <div class="icon-text" @click="onNewChat">
+      <div id="new-chat" class="icon-text" @click="onNewChat">
         <BIconPencilSquare />
       </div>
     </div>
     <ChatList :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
     <div class="footer actions" v-if="deleteMode">
-      <button @click="onCancelDelete">Cancel</button>
-      <button @click="onDelete" class="destructive">Delete</button>
+      <button id="cancel-delete" @click="onCancelDelete">Cancel</button>
+      <button id="delete" @click="onDelete" class="destructive">Delete</button>
     </div>
     <div class="footer" v-else>
       <div class="icon-text" id="open-settings" @click="onSettings">
         <BIconGearFill />
         <span>Settings</span>
       </div>
-      <div class="icon-text" v-if="store.chats.length">
-        <BIconTrash @click="onStartDelete" />
+      <div id="start-delete" class="icon-text" v-if="store.chats.length" @click="onStartDelete">
+        <BIconTrash />
       </div>
     </div>
   </div>
