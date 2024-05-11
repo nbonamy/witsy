@@ -1,7 +1,7 @@
 
 export function mimeTypeToExtension(mimeType: string): string {
 
-  console.log('mimeTypeToExtension', mimeType)
+  //console.log('mimeTypeToExtension', mimeType)
   switch (mimeType) {
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
       return 'docx'
