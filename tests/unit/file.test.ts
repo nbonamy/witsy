@@ -11,6 +11,30 @@ vi.mock('electron', async() => {
     app: {
       getPath: () => os.tmpdir()
     },
+    BrowserWindow: {
+      getFocusedWindow: () => {
+        return {
+          webContents: {
+            session: {
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+vi.mock('electron-dl', async() => {
+  return {
+    download: async (win: any, url: string, options: any) => {
+      const response = await fetch(url)
+      const contents = await response.text()
+      options.onProgress(0)
+      fs.writeFileSync(path.join(options.directory, options.filename), contents)
+      options.onProgress(100)
+      options.onCompleted()
+      return path.join(options.directory, options.filename)
+    }
   }
 })
 
@@ -55,7 +79,24 @@ test('Write file contents', async () => {
 test('Download local file', async () => {
   const tempFile = path.join(os.tmpdir(), 'vitest')
   const fileURL = await file.downloadFile(app, {
-    url: `file://./tests/fixtures/sample.txt`,
+    url: 'file://./tests/fixtures/sample.txt',
+    properties: {
+      filename: 'vitest',
+      prompt: false,
+    }
+  })
+  expect(fileURL).toBe(tempFile)
+  expect(fs.existsSync(tempFile)).toBeTruthy()
+  expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
+  file.deleteFile(null, `file://${tempFile}`)
+  expect(fs.existsSync(tempFile)).toBeFalsy()
+})
+
+
+test('Download remote file', async () => {
+  const tempFile = path.join(os.tmpdir(), 'vitest')
+  const fileURL = await file.downloadFile(app, {
+    url: 'https://raw.githubusercontent.com/nbonamy/witsy/main/tests/fixtures/sample.txt',
     properties: {
       filename: 'vitest',
       prompt: false,
