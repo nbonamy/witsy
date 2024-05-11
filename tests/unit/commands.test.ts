@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import * as commands from '../../src/services/commands'
 import { store } from '../../src/services/store'
+import * as commands from '../../src/services/commands'
 
 beforeAll(() => {
 

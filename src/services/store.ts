@@ -27,8 +27,16 @@ store.load = async () => {
   loadHistory()
   loadPrompts()
 
-  // load models
-  // and select valid engine
+  // subscribe to file changes
+  window.api.on('file-modified', (signal) => {
+    if (signal === 'settings') {
+      loadSettings()
+    } else if (signal === 'history') {
+      mergeHistory(window.api.history.load())
+    }
+  })
+  
+  // load models and select valid engine
   await loadAllModels()
   if (!isEngineReady(store.config.llm.engine)) {
     for (const engine of availableEngines) {
@@ -39,15 +47,6 @@ store.load = async () => {
       }
     }
   }
-
-  // subscribe to file changes
-  window.api.on('file-modified', (signal) => {
-    if (signal === 'settings') {
-      loadSettings()
-    } else if (signal === 'history') {
-      mergeHistory(window.api.history.load())
-    }
-  })
 
 }
 
