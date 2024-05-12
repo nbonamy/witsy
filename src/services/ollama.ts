@@ -32,7 +32,7 @@ export default class extends LlmEngine {
   }
 
   getVisionModels(): string[] {
-    return ['llava:latest', '*llava']
+    return ['llava-llama3:latest', 'llava:latest', '*llava*']
   }
 
   isVisionModel(model: string): boolean {
