@@ -12,7 +12,7 @@
     <div class="group">
       <label>Tavily API Key</label>
       <div class="subgroup">
-        <input type="text" v-model="apiKey" @change="save">
+        <InputObfuscated v-model="apiKey" @change="save" />
         <a href="https://app.tavily.com/home" target="_blank">Get your API key</a>
       </div>
     </div>
@@ -23,6 +23,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)
 const apiKey = ref(null)
