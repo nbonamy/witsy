@@ -9,6 +9,7 @@ import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'
 import { textFormats, imageFormats } from './llm'
 import { PluginParameter } from '../types/plugin.d'
+import { minimatch } from 'minimatch'
 
 export const availablePlugins: anyDict = {
   browse: BrowsePlugin, 
@@ -99,12 +100,10 @@ export default class LlmEngine {
 
   findModel(models: Model[], filters: string[]): Model|null {
     for (const filter of filters) {
-      if (filter.startsWith('*')) {
-        const matches = models.filter((m) => !m.id.includes(filter.substring(1)))
-        if (matches.length > 0) return matches[0]
-      } else {
-        const model = models.find((m) => m.id == filter)
-        if (model) return model
+      for (const model of models) {
+        if (minimatch(model.id, filter)) {
+          return model
+        }
       }
     }
     return null
