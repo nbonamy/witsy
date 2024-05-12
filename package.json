@@ -42,7 +42,7 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitest/coverage-v8": "^1.5.0",
     "@vitest/ui": "^1.5.0",
-    "@vue/test-utils": "^2.4.5",
+    "@vue/test-utils": "github:nbonamy/test-utils#keyboardevent-code",
     "dotenv": "^16.4.5",
     "electron": "29.1.6",
     "electron-devtools-installer": "^3.2.0",
