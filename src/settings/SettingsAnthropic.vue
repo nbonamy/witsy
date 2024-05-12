@@ -4,7 +4,7 @@
     <div class="group">
       <label>API key</label>
       <div class="subgroup">
-        <input type="text" v-model="apiKey" @blur="onKeyChange" /><br />
+        <InputObfuscated v-model="apiKey" @blur="onKeyChange" /><br />
         <a href="https://console.anthropic.com/settings/keys" target="_blank">Get your API key</a>
       </div>
     </div>
@@ -25,6 +25,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { loadAnthropicModels } from '../services/llm'
+import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
 const refreshLabel = ref('Refresh')
