@@ -33,7 +33,7 @@ export default class extends LlmEngine {
   }
 
   getVisionModels(): string[] {
-    return ['gpt-4-turbo', 'gpt-4-vision', 'gpt-4-vision-preview', '*vision']
+    return [/*'*4o*', */ 'gpt-4-turbo', 'gpt-4-vision', '*vision*']
   }
 
   isVisionModel(model: string): boolean {
