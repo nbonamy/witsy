@@ -4,6 +4,7 @@ import { Shortcut } from './index.d'
 export interface Configuration {
   general: GeneralConfig
   llm: LLMConfig
+  commands: CommandsConfig
   instructions: InstructionsConfig
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
@@ -32,6 +33,11 @@ interface InstructionsConfig {
 
 interface AppearanceConfig {
   chat: ChatAppearance
+}
+
+interface CommandsConfig {
+  engine: string
+  model: string
 }
 
 interface ChatAppearance {

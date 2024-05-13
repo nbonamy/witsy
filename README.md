@@ -73,6 +73,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Different default engine/model for commands
 - [x] Text attachments (TXT, PDF, DOCX, PPTX, XLSX)
 - [x] MistralAI function calling
 - [x] Auto-update

@@ -25,7 +25,11 @@
       <button @click.prevent="onNew">New</button>
       <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
       <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
+      <div class="right">
+        <button @click.prevent="onDefaults">Defaults</button>
+      </div>
     </div>
+    <CommandDefaults id="defaults" ref="defaults" @command-defaults-modified="onCommandModified"/>
     <CommandEditor id="editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
 </template>
@@ -37,11 +41,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { newCommand, saveCommands } from '../services/commands'
+import CommandDefaults from '../screens/CommandDefaults.vue'
 import CommandEditor from '../screens/CommandEditor.vue'
 
 const commands = ref(null)
 const selected = ref(null)
 const edited = ref(null)
+const defaults = ref(null)
 
 const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
 
@@ -58,6 +64,11 @@ const action = (action) => {
   if (action == 'paste_below') return 'Insert Below'
   if (action == 'paste_in_place') return 'Replace Selection'
   if (action == 'clipboard_copy') return 'Copy to Clipboard'
+}
+
+const onDefaults = () => {
+  defaults.value.load()
+  document.getElementById('defaults').showModal()
 }
 
 const onSelect = (command) => {
@@ -243,10 +254,16 @@ input[type=checkbox] {
 
 .actions {
   margin-top: 8px;
+  display: flex;
 }
 
 .actions button:first-child {
   margin-left: 0px;
+}
+
+.actions .right {
+  flex: 1;
+  text-align: right;
 }
 
 </style>
