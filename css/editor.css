@@ -1,0 +1,39 @@
+
+dialog.editor header, dialog.editor main, dialog.editor footer {
+  background-color: white;
+  border: none;
+}
+
+dialog.editor header {
+  font-size: 10pt;
+}
+
+dialog.editor main {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+dialog.editor footer {
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+}
+
+dialog.editor footer button {
+  margin: 0px 4px;
+  font-size: 9.5pt;
+}
+
+dialog.editor form .group label,
+dialog.editor form .group input,
+dialog.editor form .group textarea,
+dialog.editor form .group select {
+  font-size: 9.5pt;
+}
+
+dialog.editor form .group label {
+  min-width: 100px;
+}
+
+dialog.editor textarea {
+  height: 120px;
+}

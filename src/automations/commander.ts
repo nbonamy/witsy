@@ -147,8 +147,8 @@ export const runCommand = async (app: App, llm: LlmEngine, textId: string, comma
     // extract what we need
     const template = command.template;
     const action = command.action;
-    const engine = command.engine || config.llm.engine;
-    const model = command.model || config.getActiveModel();
+    const engine = command.engine || config.commands.engine || config.llm.engine;
+    const model = command.model || config.commands.model || config.getActiveModel();
     // const temperature = command.temperature;
 
     // build prompt

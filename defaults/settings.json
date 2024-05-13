@@ -21,6 +21,10 @@
       "fontSize": 3
     }
   },
+  "commands": {
+    "engine": "",
+    "model": ""
+  },
   "shortcuts": {
     "chat": {
       "key": "Space",

@@ -1,5 +1,5 @@
 <template>
-  <dialog class="command">
+  <dialog class="editor">
     <form method="dialog">
       <header>
         <div class="title">Command details</div>
@@ -28,7 +28,7 @@
         <div class="group">
           <label>LLM Provider</label>
           <select v-model="engine" @change="onChangeEngine">
-            <option value="">Default</option>
+            <option value="">Use commands default</option>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
             <option value="anthropic">Anthropic</option>
@@ -39,7 +39,7 @@
         <div class="group">
           <label>LLM Model</label>
           <select v-model="model">
-            <option value="" v-if="!models.length">Default</option>
+            <option value="" v-if="!models.length">Use commands default</option>
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
         </div>
@@ -81,8 +81,7 @@ const engine = ref(null)
 const model = ref(null)
 
 const models = computed(() => {
-  if (!engine.value) return []
-  if (engine.value == '_default') return []
+  if (!engine.value || engine.value == '') return []
   return store.config.engines[engine.value].models.chat
 })
 
@@ -164,61 +163,23 @@ const onSave = (event) => {
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
+@import '../../css/editor.css';
 </style>
 
 <style scoped>
 
-dialog.command header, dialog.command main, dialog.command footer {
-  background-color: white;
-  border: none;
-}
-
-dialog.command header {
-  font-size: 10pt;
-}
-
-dialog.command main {
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-
-dialog.command footer {
-  justify-content: flex-start;
-  flex-direction: row-reverse;
-}
-
-dialog.command footer button {
-  margin: 0px 4px;
-  font-size: 10pt;
-}
-
-dialog.command form .group label,
-dialog.command form .group input,
-dialog.command form .group textarea,
-dialog.command form .group select {
-  font-size: 10pt;
-}
-
-dialog.command form .group label {
-  min-width: 100px;
-}
-
-dialog.command textarea {
-  height: 120px;
-}
-
-dialog.command form .group input.icon {
+dialog.editor form .group input.icon {
   flex: 0 0 32px;
   text-align: center;
 }
 
-dialog.command form .group input.shortcut {
+dialog.editor form .group input.shortcut {
   flex: 0 0 32px;
   text-align: center;
   text-transform: uppercase;
 }
 
-.windows dialog.command .icon {
+.windows dialog.editor .icon {
   font-family: 'NotoColorEmojiLimited';
   font-size: 9pt;
 }
