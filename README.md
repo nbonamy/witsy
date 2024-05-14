@@ -73,6 +73,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Cancel commands
 - [x] GPT-4o support
 - [x] Different default engine/model for commands
 - [x] Text attachments (TXT, PDF, DOCX, PPTX, XLSX)

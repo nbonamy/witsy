@@ -1,10 +1,10 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import * as commander from '../../src/automations/commander'
 import * as window from '../../src/main/window'
+import Commander from '../../src/automations/commander'
 import Automator from '../../src/automations/automator'
 import LlmMock from '../mocks/llm'
 
@@ -39,7 +39,7 @@ vi.mock('../../src/automations/automator.ts', async () => {
   return { default: Automator }
 })
 
-beforeEach(() => {
+beforeAll(() => {
 
   // init store
   store.config = defaults
@@ -51,11 +51,15 @@ beforeEach(() => {
   }
   store.config.getActiveModel = () => 'chat'
 
-  // reset mocks call history
+})
+
+beforeEach(() => {
+
+  // clear mocks
   vi.clearAllMocks()
 
   // store some text
-  cachedTextId = commander.putCachedText('Grabbed text')
+  cachedTextId = Commander.putCachedText('Grabbed text')
 
 })
 
@@ -76,7 +80,7 @@ const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' |
 
 test('Prepare command', async () => {
 
-  await commander.prepareCommand()
+  await Commander.initCommand()
 
   expect(window.hideActiveWindows).toHaveBeenCalledOnce()
   expect(window.releaseFocus).toHaveBeenCalledOnce()
@@ -84,14 +88,15 @@ test('Prepare command', async () => {
   expect(window.openCommandPalette).toHaveBeenCalledOnce()
 
   const textId = window.openCommandPalette.mock.calls[0][0]
-  expect(commander.getCachedText(textId)).toBe('Grabbed text')
+  expect(Commander.getCachedText(textId)).toBe('Grabbed text')
 
 })
 
 test('Chat Window command', async () => {
 
+  const commander = new Commander(new LlmMock(store.config))
   const command = buildCommand('chat_window')
-  await commander.runCommand(null, new LlmMock(store.config), cachedTextId, command)
+  await commander.execCommand(null, cachedTextId, command)
 
   expect(window.openChatWindow).toHaveBeenCalledOnce()
   expect(window.closeWaitingPanel).toHaveBeenCalledOnce()
@@ -102,7 +107,7 @@ test('Chat Window command', async () => {
   expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
   const args = window.openChatWindow.mock.calls[0][0]
-  const prompt = commander.getCachedText(args.promptId)
+  const prompt = Commander.getCachedText(args.promptId)
   expect(prompt).toBe('Explain this:\n"""Grabbed text"""')
   expect(args.engine).toBe('mock')
   expect(args.model).toBe('chat')
@@ -111,8 +116,9 @@ test('Chat Window command', async () => {
 
 test('Paste in-place command', async () => {
 
+  const commander = new Commander(new LlmMock(store.config))
   const command = buildCommand('paste_in_place')
-  await commander.runCommand(null, new LlmMock(store.config), cachedTextId, command)
+  await commander.execCommand(null, cachedTextId, command)
 
   expect(window.openChatWindow).not.toHaveBeenCalled()
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
@@ -125,8 +131,9 @@ test('Paste in-place command', async () => {
 
 test('Paste below command', async () => {
 
+  const commander = new Commander(new LlmMock(store.config))
   const command = buildCommand('paste_below')
-  await commander.runCommand(null, new LlmMock(store.config), cachedTextId, command)
+  await commander.execCommand(null, cachedTextId, command)
 
   expect(window.openChatWindow).not.toHaveBeenCalled()
   expect(Automator.prototype.moveCaretBelow).toHaveBeenCalledOnce()
@@ -139,8 +146,9 @@ test('Paste below command', async () => {
 
 test('Copy to clipboard command', async () => {
 
+  const commander = new Commander(new LlmMock(store.config))
   const command = buildCommand('clipboard_copy')
-  await commander.runCommand(null, new LlmMock(store.config), cachedTextId, command)
+  await commander.execCommand(null, cachedTextId, command)
 
   expect(window.openChatWindow).not.toHaveBeenCalled()
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()

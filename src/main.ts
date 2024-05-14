@@ -10,6 +10,7 @@ import log from 'electron-log/main';
 import { wait } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
+import Commander from './automations/commander';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
@@ -18,9 +19,10 @@ import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as markdown from './main/markdown';
-import * as commander from './automations/commander';
 import * as menu from './main/menu';
 import * as text from './main/text';
+
+let commander: Commander = null
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -54,7 +56,7 @@ const autoUpdater = new AutoUpdater({
 const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     chat: window.openMainWindow,
-    command: commander.prepareCommand,
+    command: Commander.initCommand,
   });
 }
 
@@ -74,7 +76,7 @@ const buildTrayMenu = () => {
 
   return [
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-    { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: commander.prepareCommand },
+    { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
     { type: 'separator'},
     { label: 'Settings…', click: window.openSettingsWindow },
     { type: 'separator'},
@@ -291,7 +293,7 @@ ipcMain.on('render-markdown', (event, payload) => {
 });
 
 ipcMain.on('get-command-prompt', (event, payload) => {
-  event.returnValue = commander.getCachedText(payload);
+  event.returnValue = Commander.getCachedText(payload);
 })
 
 ipcMain.on('close-command-palette', async () => {
@@ -300,10 +302,26 @@ ipcMain.on('close-command-palette', async () => {
 });
 
 ipcMain.on('run-command', async (event, payload) => {
+
+  // cancel any running command
+  if (commander !== null) {
+    commander.cancelCommand();
+  }
+
+  // prepare
   const args = JSON.parse(payload);
   await window.closeCommandPalette();
   await window.releaseFocus();
-  const result = await commander.runCommand(app, null, args.textId, args.command);
+
+  // now run
+  commander = new Commander();
+  const result = await commander.execCommand(app, args.textId, args.command);
+  commander = null;
+  
+  // cancelled
+  if (result.cancelled) return;
+
+  // show chat window
   window.restoreWindows();
   if (result?.chatWindow) {
     await wait();
@@ -315,6 +333,15 @@ ipcMain.on('run-command', async (event, payload) => {
       steal: true,
     });
   }
+});
+
+ipcMain.on('stop-command', async () => {
+
+  if (commander !== null) {
+    commander.cancelCommand();
+    commander = null;
+  }
+
 });
 
 ipcMain.on('run-python-code', async (event, payload) => {
