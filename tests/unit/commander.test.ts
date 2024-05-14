@@ -25,6 +25,7 @@ vi.mock('../../src/main/window.ts', async () => {
     closeWaitingPanel: vi.fn(),
     openChatWindow: vi.fn(),
     hideWindows: vi.fn(),
+    restoreWindows: vi.fn(),
     releaseFocus: vi.fn()
   }
 })
@@ -100,6 +101,7 @@ test('Chat Window command', async () => {
 
   expect(window.openChatWindow).toHaveBeenCalledOnce()
   expect(window.closeWaitingPanel).toHaveBeenCalledOnce()
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
   expect(window.releaseFocus).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
