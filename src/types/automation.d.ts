@@ -18,4 +18,5 @@ export interface RunCommandResponse {
   prompt: string|null
   response: string|null
   chatWindow: BrowserWindow | null
+  cancelled: boolean
 }

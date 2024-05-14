@@ -53,6 +53,7 @@ contextBridge.exposeInMainWorld(
       load: (): Command[] => { return JSON.parse(ipcRenderer.sendSync('load-commands')) },
       save: (data: Command[]) => { return ipcRenderer.send('save-commands', JSON.stringify(data)) },
       run: (command: Command): void => { return ipcRenderer.send('run-command', JSON.stringify(command)) },
+      cancel: (): void => { return ipcRenderer.send('stop-command') },
       closePalette: (): void => { return ipcRenderer.send('close-command-palette') },
       getPrompt: (id: string): string => { return ipcRenderer.sendSync('get-command-prompt', id) },
     },

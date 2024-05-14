@@ -1,12 +1,18 @@
 <template>
   <div class="wait">
-    <Loader /> Thinking…
+    <Loader />
+    <BIconXCircleFill class="cancel" @click="onCancel" />
+    Thinking…
   </div>
 </template>
 
 <script setup>
 
 import Loader from '../components/Loader.vue'
+
+const onCancel = () => {
+  window.api.commands.cancel()
+}
 
 </script>
 
@@ -34,5 +40,19 @@ import Loader from '../components/Loader.vue'
   display: inline-block;
 }
 
+.cancel {
+  margin: 4px;
+  width: 10px;
+  height: 10px;
+  display: none;
+}
+
+.wait:hover .cancel {
+  display: inline-block;
+}
+
+.wait:hover .loader {
+  display: none;
+}
 
 </style>
