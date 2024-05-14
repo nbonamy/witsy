@@ -297,8 +297,9 @@ ipcMain.on('get-command-prompt', (event, payload) => {
 })
 
 ipcMain.on('close-command-palette', async () => {
-  window.closeCommandPalette();
-  window.restoreWindows();
+  await window.closeCommandPalette();
+  await window.restoreWindows();
+  await window.releaseFocus();
 });
 
 ipcMain.on('run-command', async (event, payload) => {
@@ -319,7 +320,6 @@ ipcMain.on('run-command', async (event, payload) => {
   commander = null;
   
   // cancelled
-  window.restoreWindows();
   if (result.cancelled) return;
 
   // show chat window
@@ -342,10 +342,6 @@ ipcMain.on('stop-command', async () => {
     await commander.cancelCommand();
     commander = null;
   }
-
-  // restore windows
-  await window.restoreWindows();
-  await window.releaseFocus();
 
 });
 

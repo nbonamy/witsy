@@ -29,6 +29,7 @@ export default class Commander {
 
     // close stuff
     await window.closeWaitingPanel();
+    await window.restoreWindows();
     await window.releaseFocus();
 
     // record
@@ -154,11 +155,15 @@ export default class Commander {
 
         // done
         await window.closeWaitingPanel();
+        await window.restoreWindows();
         await window.releaseFocus();
 
         // now paste
         console.debug(`Processing LLM output: ${result.response.slice(0, 50)}…`);
         await this.finishCommand(command, result.response, engine, model);
+
+        // done
+        return result;
 
       }
 
@@ -167,9 +172,9 @@ export default class Commander {
     }
 
     // done waiting
-    console.log('Destroying waiting panel')
     await window.closeWaitingPanel(true);
-    window.releaseFocus();
+    await window.restoreWindows();
+    await window.releaseFocus();
 
     // done
     return result;
@@ -190,6 +195,9 @@ export default class Commander {
 
   private finishCommand = async (command: Command, text: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
     
+    // log
+    console.log('Finishing command', command, text, engine, model);
+
     // we need an automator
     const automator = new Automator();
 
