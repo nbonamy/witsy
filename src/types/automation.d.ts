@@ -4,6 +4,7 @@ declare module 'applescript'
 export interface ShortcutCallbacks {
   chat: () => void
   command: () => void
+  anywhere: () => void
 }
 
 export interface Automator {
