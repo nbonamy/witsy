@@ -24,7 +24,7 @@ vi.mock('../../src/main/window.ts', async () => {
     openWaitingPanel: vi.fn(),
     closeWaitingPanel: vi.fn(),
     openChatWindow: vi.fn(),
-    hideActiveWindows: vi.fn(),
+    hideWindows: vi.fn(),
     releaseFocus: vi.fn()
   }
 })
@@ -82,7 +82,7 @@ test('Prepare command', async () => {
 
   await Commander.initCommand()
 
-  expect(window.hideActiveWindows).toHaveBeenCalledOnce()
+  expect(window.hideWindows).toHaveBeenCalledOnce()
   expect(window.releaseFocus).toHaveBeenCalledOnce()
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPalette).toHaveBeenCalledOnce()

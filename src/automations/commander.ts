@@ -39,7 +39,7 @@ export default class Commander {
   static initCommand = async (): Promise<void> => {
 
     // hide active windows
-    window.hideActiveWindows();
+    await window.hideWindows();
     await window.releaseFocus();
 
     // grab text

@@ -319,10 +319,10 @@ ipcMain.on('run-command', async (event, payload) => {
   commander = null;
   
   // cancelled
+  window.restoreWindows();
   if (result.cancelled) return;
 
   // show chat window
-  window.restoreWindows();
   if (result?.chatWindow) {
     await wait();
     result.chatWindow.show();
@@ -337,10 +337,15 @@ ipcMain.on('run-command', async (event, payload) => {
 
 ipcMain.on('stop-command', async () => {
 
+  // cancel any running command
   if (commander !== null) {
-    commander.cancelCommand();
+    await commander.cancelCommand();
     commander = null;
   }
+
+  // restore windows
+  await window.restoreWindows();
+  await window.releaseFocus();
 
 });
 
