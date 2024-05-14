@@ -48,6 +48,7 @@ interface ChatAppearance {
 interface ShortcutsConfig {
   chat: Shortcut
   command: Shortcut
+  anywhere: Shortcut
 }
 
 interface EngineConfig {

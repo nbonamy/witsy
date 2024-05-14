@@ -8,6 +8,7 @@ import { ref, computed, onMounted } from 'vue'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
+import PromptAnywhere from './screens/PromptAnywhere.vue'
 
 // add platform name
 onMounted(() => {
@@ -30,7 +31,8 @@ const routes = {
   '/': Main,
   '/chat': Main,
   '/wait': Wait,
-  '/command': Commands
+  '/command': Commands,
+  '/prompt': PromptAnywhere,
 }
 
 const currentPath = ref(window.location.hash)

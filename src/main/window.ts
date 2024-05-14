@@ -279,9 +279,9 @@ export const closeWaitingPanel = async (destroy?: boolean) => {
     if (waitingPanel && !waitingPanel.isDestroyed()) {
       if (destroy) waitingPanel?.destroy()
       else waitingPanel?.close()
-      waitingPanel = null;
       await wait();
     }
+    waitingPanel = null;
   } catch (error) {
     console.error('Error while closing waiting panel', error);
   }
@@ -328,4 +328,56 @@ export const openSettingsWindow = () => {
     console.error('Error while opening main window to show settings', error);
   }
 
+}
+
+let promptAnywhereWindow: BrowserWindow = null;
+export const openPromptAnywhere = () => {
+
+    // try to show existig one
+    closePromptAnywhere();
+
+    // get bounds
+    const width = 500;
+    const height = 48;
+    const { x, y } = screen.getCursorScreenPoint();
+  
+    // open a new one
+    promptAnywhereWindow = createWindow({
+      hash: '/prompt',
+      x: x - width/2,
+      y: y - 24,
+      width: width,
+      height: height,
+      frame: false,
+      skipTaskbar: true,
+      alwaysOnTop: true,
+      hiddenInMissionControl: true,
+    });
+  
+    promptAnywhereWindow.on('blur', () => {
+      closePromptAnywhere();
+      restoreWindows();
+    });
+
+};
+
+export const closePromptAnywhere = async () => {
+  try {
+    if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
+      promptAnywhereWindow?.close()
+      await wait();
+    }
+    promptAnywhereWindow = null;
+  } catch (error) {
+    console.error('Error while closing prompt anywhere window', error);
+  }
+}
+
+export const resizePromptAnywhere = (height: number) => {
+  try {
+    const size = promptAnywhereWindow.getSize()
+    promptAnywhereWindow?.setSize(size[0], height);
+  } catch (error) {
+    console.error('Error while resizing prompt anywhere window', error);
+  }
 }

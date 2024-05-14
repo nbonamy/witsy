@@ -57,6 +57,11 @@ contextBridge.exposeInMainWorld(
       closePalette: (): void => { return ipcRenderer.send('close-command-palette') },
       getPrompt: (id: string): string => { return ipcRenderer.sendSync('get-command-prompt', id) },
     },
+    anywhere: {
+      prompt: (text: string): void => { return ipcRenderer.sendSync('prompt-anywhere', JSON.stringify(text)) },
+      resize: (height: number): void => { return ipcRenderer.send('resize-anywhere', height) },
+      cancel: (): void => { return ipcRenderer.send('cancel-anywhere') },
+    },
     prompts: {
       load: (): Prompt[] => { return JSON.parse(ipcRenderer.sendSync('load-prompts')) },
       save: (data: Prompt[]) => { return ipcRenderer.send('save-prompts', JSON.stringify(data)) },

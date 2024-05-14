@@ -5,13 +5,13 @@ import { RunCommandResponse } from '../types/automation.d'
 import { LlmResponse } from '../types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
-import { igniteEngine } from '../services/llm' 
-import * as window from '../main/window'
-
+import { igniteEngine } from '../services/llm'
+import removeMarkdown from 'markdown-to-text'
 import Message from '../models/message'
 import Automator from './automator'
 import LlmEngine from '../services/engine'
 import { v4 as uuidv4 } from 'uuid'
+import * as window from '../main/window'
 
 const textCache: strDict = {}
 
@@ -144,7 +144,10 @@ export default class Commander {
         // now prompt llm
         console.debug(`Prompting with ${result.prompt.slice(0, 50)}…`);
         const response = await this.promptLlm(model, result.prompt);
-        result.response = response.content;
+        result.response = removeMarkdown(response.content, {
+          stripListLeaders: false,
+          listUnicodeChar: ''
+        });
 
         // if cancelled
         if (this.cancelled) {

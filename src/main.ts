@@ -11,6 +11,7 @@ import { wait } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
+import PromptAnywhere from './automations/anywhere';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
@@ -23,6 +24,7 @@ import * as menu from './main/menu';
 import * as text from './main/text';
 
 let commander: Commander = null
+let anywhere: PromptAnywhere = null
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -57,6 +59,7 @@ const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     chat: window.openMainWindow,
     command: Commander.initCommand,
+    anywhere: window.openPromptAnywhere,
   });
 }
 
@@ -76,6 +79,7 @@ const buildTrayMenu = () => {
 
   return [
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
+    { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: window.openPromptAnywhere },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
     { type: 'separator'},
     { label: 'Settings…', click: window.openSettingsWindow },
@@ -306,7 +310,7 @@ ipcMain.on('run-command', async (event, payload) => {
 
   // cancel any running command
   if (commander !== null) {
-    commander.cancelCommand();
+    await commander.cancelCommand();
   }
 
   // prepare
@@ -356,5 +360,36 @@ ipcMain.on('run-python-code', async (event, payload) => {
     event.returnValue = {
       error: error
     }
+  }
+})
+
+ipcMain.on('prompt-anywhere', async (event, payload) => {
+
+  // cancel previous
+  if (anywhere != null) {
+    await anywhere.cancel();
+  }
+
+  // do it
+  anywhere = new PromptAnywhere();
+  anywhere.execPrompt(app, JSON.parse(payload));
+
+})
+
+ipcMain.on('resize-anywhere', (event, height) => {
+  window.resizePromptAnywhere(height);
+})
+
+ipcMain.on('cancel-anywhere', async () => {
+
+  // if cancel on prompt window
+  await window.closePromptAnywhere();
+  await window.releaseFocus();
+  
+  // if cancel on waiting panel
+  if (anywhere != null) {
+    console.log('Cancelling anywhere')
+    await anywhere.cancel();
+    anywhere = null;
   }
 })

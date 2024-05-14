@@ -147,6 +147,10 @@ declare global {
         run?(command: Command): void
         getPrompt?(id: string): string
       }
+      anywhere?: {
+        prompt?(text: string): void
+        cancel?(): void
+      }
       prompts?: {
         load?(): Prompt[]
         save?(prompts: Prompt[]): void

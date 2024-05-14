@@ -34,6 +34,11 @@
       "key": "Space",
       "alt": true,
       "ctrl": true
+    },
+    "anywhere": {
+      "key": "Space",
+      "shift": true,
+      "ctrl": true
     }
   },
   "engines": {

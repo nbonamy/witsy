@@ -1,14 +1,14 @@
 <template>
   <div class="prompt">
-    <BIconFileEarmarkPlus class="icon attach" @click="onAttach"/>
-    <BIconJournalMedical class="icon prompt" @click="onCustomPrompt"/>
+    <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
+    <BIconJournalMedical class="icon prompt" @click="onCustomPrompt" v-if="enableCustomPrompts" />
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
       </div>
       <div>
         <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
-        <BIconMagic class="icon command" @click="onCommands" v-if="prompt" />
+        <BIconMagic class="icon command" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
@@ -36,7 +36,19 @@ import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat
+  chat: Chat,
+  enableAttachments: {
+    type: Boolean,
+    default: true
+  },
+  enableCustomPrompts: {
+    type: Boolean,
+    default: true
+  },
+  enableCommands: {
+    type: Boolean,
+    default: true
+  }
 })
 
 const prompt = ref('')
@@ -273,6 +285,7 @@ const autoGrow = (element) => {
     // reset before calculating
     element.style.height = '0px'
     element.style.height = Math.min(150, element.scrollHeight) + 'px'
+    emitEvent('promptResize', element.style.height)
   }
 }
 

@@ -21,6 +21,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
   console.info('Registering shortcuts')
   registerShortcut(config.shortcuts.chat, callbacks.chat);
   registerShortcut(config.shortcuts.command, callbacks.command);
+  registerShortcut(config.shortcuts.anywhere, callbacks.anywhere);
 
 }
 
