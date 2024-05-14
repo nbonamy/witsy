@@ -202,28 +202,30 @@ export const hideWindows = async () => {
 }
 
 export const restoreWindows = () => {
-  if (windowsToRestore.length) {
-    console.log(`Restoring ${windowsToRestore.length} windows`)
 
-    // restore main window first
-    windowsToRestore.sort((a, b) => {
-      if (a === mainWindow) return -1;
-      if (b === mainWindow) return 1;
-      return 0;
-    })
+  // log
+  console.log(`Restoring ${windowsToRestore.length} windows`)
 
-    // now restore
-    for (const window of windowsToRestore) {
-      try {
-        window.showInactive();
-      } catch (error) {
-        console.error('Error while restoring window', error);
-      }
+  // restore main window first
+  windowsToRestore.sort((a, b) => {
+    if (a === mainWindow) return -1;
+    if (b === mainWindow) return 1;
+    return 0;
+  })
+
+  // now restore
+  for (const window of windowsToRestore) {
+    try {
+      window.restore();
+      //window.showInactive();
+    } catch (error) {
+      console.error('Error while restoring window', error);
     }
-
-    // done
-    windowsToRestore = [];
   }
+
+  // done
+  windowsToRestore = [];
+
 };
 
 let commandPalette: BrowserWindow = null;
@@ -277,6 +279,7 @@ export const closeWaitingPanel = async (destroy?: boolean) => {
     if (waitingPanel && !waitingPanel.isDestroyed()) {
       if (destroy) waitingPanel?.destroy()
       else waitingPanel?.close()
+      waitingPanel = null;
       await wait();
     }
   } catch (error) {
