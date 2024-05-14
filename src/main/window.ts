@@ -181,15 +181,15 @@ export const openChatWindow = (params: strDict) => {
 };
 
 let windowsToRestore: BrowserWindow[] = [];
-export const hideActiveWindows = async () => {
+export const hideWindows = async () => {
 
   // remember to restore all windows
   windowsToRestore = [];
   try {
-    console.log('Hiding active windows');
+    console.log('Hiding windows');
     const windows = BrowserWindow.getAllWindows();
     for (const window of windows) {
-      if (!window.isDestroyed() && window.isVisible() && !window.isFocused() && !window.isMinimized()) {
+      if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
         windowsToRestore.push(window);
         window.hide();
       }
@@ -203,19 +203,25 @@ export const hideActiveWindows = async () => {
 
 export const restoreWindows = () => {
   if (windowsToRestore.length) {
-    console.log('Restoring active windows')
-    if (windowsToRestore.includes(mainWindow)) {
-      mainWindow.showInactive();
-    }
+    console.log(`Restoring ${windowsToRestore.length} windows`)
+
+    // restore main window first
+    windowsToRestore.sort((a, b) => {
+      if (a === mainWindow) return -1;
+      if (b === mainWindow) return 1;
+      return 0;
+    })
+
+    // now restore
     for (const window of windowsToRestore) {
       try {
-        if (window != mainWindow) {
-          window.showInactive();
-        }
+        window.showInactive();
       } catch (error) {
         console.error('Error while restoring window', error);
       }
     }
+
+    // done
     windowsToRestore = [];
   }
 };
