@@ -186,7 +186,7 @@ export const hideWindows = async () => {
   // remember to restore all windows
   windowsToRestore = [];
   try {
-    console.log('Hiding windows');
+    // console.log('Hiding windows');
     const windows = BrowserWindow.getAllWindows();
     for (const window of windows) {
       if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
@@ -194,7 +194,6 @@ export const hideWindows = async () => {
         window.hide();
       }
     }
-    await releaseFocus();
   } catch (error) {
     console.error('Error while hiding active windows', error);
   }
@@ -204,7 +203,7 @@ export const hideWindows = async () => {
 export const restoreWindows = () => {
 
   // log
-  console.log(`Restoring ${windowsToRestore.length} windows`)
+  // console.log(`Restoring ${windowsToRestore.length} windows`)
 
   // restore main window first
   windowsToRestore.sort((a, b) => {
@@ -232,9 +231,11 @@ let commandPalette: BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
     if (commandPalette && !commandPalette.isDestroyed()) {
+      // console.log('Closing command palette')
       commandPalette?.close()
       await wait();
     }
+    commandPalette = null;
   } catch (error) {
     console.error('Error while closing command palette', error);
   }
@@ -274,11 +275,11 @@ export const openCommandPalette = async (textId: string) => {
 }
 
 let waitingPanel: BrowserWindow = null;
-export const closeWaitingPanel = async (destroy?: boolean) => {
+export const closeWaitingPanel = async () => {
   try {
     if (waitingPanel && !waitingPanel.isDestroyed()) {
-      if (destroy) waitingPanel?.destroy()
-      else waitingPanel?.close()
+      // console.log('Closing waiting panel')
+      waitingPanel?.close()
       await wait();
     }
     waitingPanel = null;
@@ -289,7 +290,8 @@ export const closeWaitingPanel = async (destroy?: boolean) => {
 
 export const openWaitingPanel = () => {
 
-  // try to show existig one
+  // try to close existig one
+  // console.log('Opening waiting panel')
   closeWaitingPanel();
 
   // get bounds
@@ -297,15 +299,17 @@ export const openWaitingPanel = () => {
   const height = 20;
   const { x, y } = screen.getCursorScreenPoint();
 
-  // else open a new one
+  // open a new one
   waitingPanel = createWindow({
     hash: '/wait',
     x: x - width/2,
-    y: y - height*2,
+    y: y - height*1.5,
     width: width,
     height: height,
     frame: false,
+    skipTaskbar: true,
     alwaysOnTop: true,
+    hiddenInMissionControl: true,
     hasShadow: false,
   });
 
@@ -333,37 +337,38 @@ export const openSettingsWindow = () => {
 let promptAnywhereWindow: BrowserWindow = null;
 export const openPromptAnywhere = () => {
 
-    // try to show existig one
-    closePromptAnywhere();
+  // try to close existig one
+  closePromptAnywhere();
 
-    // get bounds
-    const width = 500;
-    const height = 48;
-    const { x, y } = screen.getCursorScreenPoint();
-  
-    // open a new one
-    promptAnywhereWindow = createWindow({
-      hash: '/prompt',
-      x: x - width/2,
-      y: y - 24,
-      width: width,
-      height: height,
-      frame: false,
-      skipTaskbar: true,
-      alwaysOnTop: true,
-      hiddenInMissionControl: true,
-    });
-  
-    promptAnywhereWindow.on('blur', () => {
-      closePromptAnywhere();
-      restoreWindows();
-    });
+  // get bounds
+  const width = 500;
+  const height = 48;
+  const { x, y } = screen.getCursorScreenPoint();
+
+  // open a new one
+  promptAnywhereWindow = createWindow({
+    hash: '/prompt',
+    x: x - width/2,
+    y: y - 24,
+    width: width,
+    height: height,
+    frame: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    hiddenInMissionControl: true,
+  });
+
+  promptAnywhereWindow.on('blur', () => {
+    closePromptAnywhere();
+    restoreWindows();
+  });
 
 };
 
 export const closePromptAnywhere = async () => {
   try {
     if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
+      // console.log('Closing prompt anywhere window')
       promptAnywhereWindow?.close()
       await wait();
     }
