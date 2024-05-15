@@ -5,10 +5,11 @@ import OpenAI, { isOpenAIReady } from './openai'
 import Ollama, { isOllamaReady } from './ollama'
 import MistralAI, { isMistrailAIReady } from './mistralai'
 import Anthropic, { isAnthropicReady } from './anthropic'
+import Google, { isGoogleReady } from './google'
 import Groq, { isGroqReady } from './groq'
 import LlmEngine from './engine'
 
-export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'groq']
+export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq']
 export const textFormats = ['pdf', 'txt', 'docx', 'pptx', 'xlsx']
 export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
 
@@ -17,6 +18,7 @@ export const isEngineReady = (engine: string) => {
   if (engine === 'ollama') return isOllamaReady(store.config.engines.ollama)
   if (engine === 'mistralai') return isMistrailAIReady(store.config.engines.mistralai)
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
+  if (engine === 'google') return isGoogleReady(store.config.engines.google)
   if (engine === 'groq') return isGroqReady(store.config.engines.groq)
   return false
 }
@@ -26,6 +28,7 @@ export const igniteEngine = (engine: string, config: Configuration, fallback = '
   if (engine === 'ollama') return new Ollama(config)
   if (engine === 'mistralai') return new MistralAI(config)
   if (engine === 'anthropic') return new Anthropic(config)
+  if (engine === 'google') return new Google(config)
   if (engine === 'groq') return new Groq(config)
   if (isEngineReady(fallback)) return igniteEngine(fallback, config)
     return null
@@ -218,6 +221,39 @@ export const loadAnthropicModels = async () => {
 
   // select valid model
   store.config.engines.anthropic.model.chat = getValidModelId('anthropic', 'chat', store.config.engines.anthropic.model.chat)
+
+  // done
+  return true
+}
+
+export const loadGoogleModels = async () => {
+  
+  let models = []
+
+  try {
+    const google = new Google(store.config)
+    models = await google.getModels()
+  } catch (error) {
+    console.error('Error listing Google models:', error);
+  }
+  if (!models) {
+    store.config.engines.google.models = { chat: [], image: [], }
+    return false
+  }
+
+  // store
+  store.config.engines.google.models = {
+    chat: models
+    .map(model => { return {
+      id: model.id,
+      name: model.name,
+      meta: model
+    }})
+    //.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.google.model.chat = getValidModelId('google', 'chat', store.config.engines.google.model.chat)
 
   // done
   return true

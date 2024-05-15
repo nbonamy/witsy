@@ -66,6 +66,15 @@
         "chat": ""
       }
     },
+    "google": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "groq": {
       "models": {
         "chat": [],
