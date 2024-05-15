@@ -130,7 +130,7 @@ export default class LlmEngine {
 
   }
 
-  buildPayload(thread: Message[], model: string): LLmCompletionPayload[] {
+  buildPayload(thread: Message[] | string, model: string): LLmCompletionPayload[] {
     if (typeof thread === 'string') {
       return [{ role: 'user', content: thread }]
     } else {
