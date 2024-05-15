@@ -37,7 +37,7 @@ export default class extends LlmEngine {
   }
 
   isVisionModel(model: string): boolean {
-    return this.getVisionModels().includes(model) || model.includes('vision')
+    return this.getVisionModels().includes(model)
   }
 
   getRountingModel(): string | null {
