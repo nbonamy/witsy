@@ -22,6 +22,7 @@ import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
 import SettingsAnthropic from './SettingsAnthropic.vue'
+import SettingsGoogle from './SettingsGoogle.vue'
 import SettingsGroq from './SettingsGroq.vue'
 
 const currentEngine = ref(availableEngines[0])
@@ -36,6 +37,7 @@ const engines = computed(() => {
         ollama: 'Ollama',
         anthropic: 'Anthropic',
         mistralai: 'Mistral AI',
+        google: 'Google',
         groq: 'Groq'
       }[engine],
     }
@@ -47,6 +49,7 @@ const currentView = computed(() => {
   if (currentEngine.value == 'ollama') return SettingsOllama
   if (currentEngine.value == 'anthropic') return SettingsAnthropic
   if (currentEngine.value == 'mistralai') return SettingsMistralAI
+  if (currentEngine.value == 'google') return SettingsGoogle
   if (currentEngine.value == 'groq') return SettingsGroq
 })
 

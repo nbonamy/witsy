@@ -67,6 +67,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] Google Gemini API
 - [ ] i18n
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)

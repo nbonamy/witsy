@@ -19,6 +19,7 @@ test('Default Configuration', () => {
 })
 
 test('OpenAI Configuration', () => {
+  expect(isEngineReady('openai')).toBe(true)
   store.config.engines.openai.apiKey = '123'
   expect(isEngineReady('openai')).toBe(true)
   store.config.engines.openai.models.chat = [model]
@@ -42,22 +43,19 @@ test('MistralAI Configuration', () => {
 })
 
 test('Anthropic Configuration', () => {
-  store.config.engines.anthropic.models.image = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
+  store.config.engines.anthropic.models.image = [model]
   expect(isEngineReady('anthropic')).toBe(false)
-  store.config.engines.anthropic.models.chat = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
+  store.config.engines.anthropic.models.chat = [model]
   expect(isEngineReady('anthropic')).toBe(false)
   store.config.engines.anthropic.apiKey = '123'
   expect(isEngineReady('anthropic')).toBe(true)
 })
 
 test('Google Configuration', () => {
+  store.config.engines.google.models.image = [model]
   expect(isEngineReady('google')).toBe(false)
-  store.config.engines.google = {
-    apiKey: '123',
-    models: {
-      chat: [model],
-      image: [model]
-    }
-  }
+  store.config.engines.google.models.chat = [model]
   expect(isEngineReady('google')).toBe(false)
+  store.config.engines.google.apiKey = '123'
+  expect(isEngineReady('google')).toBe(true)
 })

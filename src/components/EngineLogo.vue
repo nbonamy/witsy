@@ -10,6 +10,7 @@ import logoOpenAI from '../../assets/openai.svg'
 import logoOllama from '../../assets/ollama.svg'
 import logoAnthropic from '../../assets/anthropic.svg'
 import logoMistralAI from '../../assets/mistralai.svg'
+import logoGoogle from '../../assets/google.svg'
 import logoGroq from '../../assets/groq.svg'
 
 const logos = {
@@ -17,6 +18,7 @@ const logos = {
   ollama: logoOllama,
   anthropic: logoAnthropic,
   mistralai: logoMistralAI,
+  google: logoGoogle,
   groq: logoGroq
 }
 
@@ -71,6 +73,10 @@ const logo = computed(() => logos[props.engine])
 .logo.background.groq {
   background-color: #F55036;
   filter: none;
+}
+
+.logo.grayscale.google {
+  filter: grayscale()
 }
 
 </style>
