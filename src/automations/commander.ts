@@ -6,7 +6,7 @@ import { LlmResponse } from '../types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
 import { igniteEngine } from '../services/llm'
-import removeMarkdown from 'markdown-to-text'
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import Message from '../models/message'
 import Automator from './automator'
 import LlmEngine from '../services/engine'
@@ -158,7 +158,6 @@ export default class Commander {
 
         // done
         await window.closeWaitingPanel();
-        await window.restoreWindows();
         await window.releaseFocus();
 
         // now paste
@@ -166,6 +165,8 @@ export default class Commander {
         await this.finishCommand(command, result.response, engine, model);
 
         // done
+        await window.restoreWindows();
+        await window.releaseFocus();
         return result;
 
       }
@@ -175,7 +176,7 @@ export default class Commander {
     }
 
     // done waiting
-    await window.closeWaitingPanel(true);
+    await window.closeWaitingPanel();
     await window.restoreWindows();
     await window.releaseFocus();
 

@@ -59,7 +59,7 @@ const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     chat: window.openMainWindow,
     command: Commander.initCommand,
-    anywhere: window.openPromptAnywhere,
+    anywhere: PromptAnywhere.initPrompt,
   });
 }
 
@@ -79,7 +79,7 @@ const buildTrayMenu = () => {
 
   return [
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-    { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: window.openPromptAnywhere },
+    { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
     { type: 'separator'},
     { label: 'Settings…', click: window.openSettingsWindow },
@@ -365,6 +365,9 @@ ipcMain.on('run-python-code', async (event, payload) => {
 
 ipcMain.on('prompt-anywhere', async (event, payload) => {
 
+  // if cancel on prompt window
+  await window.closePromptAnywhere();
+
   // cancel previous
   if (anywhere != null) {
     await anywhere.cancel();
@@ -384,7 +387,6 @@ ipcMain.on('cancel-anywhere', async () => {
 
   // if cancel on prompt window
   await window.closePromptAnywhere();
-  await window.releaseFocus();
   
   // if cancel on waiting panel
   if (anywhere != null) {

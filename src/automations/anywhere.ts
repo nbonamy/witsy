@@ -4,7 +4,7 @@ import { App } from 'electron'
 import { loadSettings } from '../main/config'
 import { igniteEngine } from '../services/llm' 
 import { LlmResponse } from '../types/llm.d'
-import removeMarkdown from 'markdown-to-text'
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import LlmEngine from '../services/engine'
 import Automator from './automator'
 import Message from '../models/message'
@@ -20,7 +20,7 @@ export default class PromptAnywhere {
     this.cancelled = false
   }
 
-  cancel = async () => {
+  cancel = async (): Promise<void> => {
 
     // close stuff
     await window.closeWaitingPanel();
@@ -30,6 +30,11 @@ export default class PromptAnywhere {
     // record
     this.cancelled = true;
 
+  }
+
+  static initPrompt = async (): Promise<void> => {
+    await window.hideWindows();
+    await window.openPromptAnywhere();
   }
 
   execPrompt = async (app: App, prompt: string): Promise<void> => {
@@ -68,7 +73,6 @@ export default class PromptAnywhere {
 
       // done
       await window.closeWaitingPanel();
-      await window.restoreWindows();
       await window.releaseFocus();
 
       // now paste
@@ -78,13 +82,17 @@ export default class PromptAnywhere {
       const automator = new Automator();
       await automator.pasteText(result)
 
+      // done
+      await window.restoreWindows();
+      await window.releaseFocus();
+      return;
 
     } catch (error) {
       console.error('Error while testing', error);
     }
 
     // done waiting
-    await window.closeWaitingPanel(true);
+    await window.closeWaitingPanel();
     await window.restoreWindows();
     await window.releaseFocus();
 
