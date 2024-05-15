@@ -41,6 +41,8 @@ interface Attachment {
   format: string
   contents: string
   downloaded: boolean
+  isText(): boolean
+  isImage(): boolean
 }
 
 interface Command {
