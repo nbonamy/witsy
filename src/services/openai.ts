@@ -36,10 +36,6 @@ export default class extends LlmEngine {
     return [/*'*4o*', */ 'gpt-4-turbo', 'gpt-4-vision', '*vision*']
   }
 
-  isVisionModel(model: string): boolean {
-    return this.getVisionModels().includes(model)
-  }
-
   getRountingModel(): string | null {
     return 'gpt-3.5-turbo'
   }

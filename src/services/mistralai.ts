@@ -32,10 +32,6 @@ export default class extends LlmEngine {
     return []
   }
 
-  isVisionModel(model: string): boolean {
-    return this.getVisionModels().includes(model)
-  }
-
   getRountingModel(): string|null {
     return null
   }
