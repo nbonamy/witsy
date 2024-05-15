@@ -199,6 +199,8 @@ const handleActionClick = async (action) => {
 
 .chat .select {
   margin-left: 16px;
+  text-align: right;
+  flex: 1;
 }
 
 </style>
