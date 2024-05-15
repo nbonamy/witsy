@@ -173,60 +173,60 @@ export default class extends LlmEngine {
 
     //console.log('[google] chunk:', chunk)
 
-    // tool calls
-    const toolCalls = chunk.functionCalls()
-    if (toolCalls?.length) {
+    // // tool calls
+    // const toolCalls = chunk.functionCalls()
+    // if (toolCalls?.length) {
 
-      // save
-      this.toolCalls = toolCalls.map((tc) => {
-        return {
-          id: tc.name,
-          message: '',
-          function: tc.name,
-          args: JSON.stringify(tc.args),
-        }
-      })
+    //   // save
+    //   this.toolCalls = toolCalls.map((tc) => {
+    //     return {
+    //       id: tc.name,
+    //       message: '',
+    //       function: tc.name,
+    //       args: JSON.stringify(tc.args),
+    //     }
+    //   })
 
-      // call
-      for (const toolCall of this.toolCalls) {
+    //   // call
+    //   for (const toolCall of this.toolCalls) {
 
-        // first notify
-        eventCallback?.call(this, {
-          type: 'tool',
-          content: this.getToolPreparationDescription(toolCall.function)
-        })
+    //     // first notify
+    //     eventCallback?.call(this, {
+    //       type: 'tool',
+    //       content: this.getToolPreparationDescription(toolCall.function)
+    //     })
 
-        // first notify
-        eventCallback?.call(this, {
-          type: 'tool',
-          content: this.getToolRunningDescription(toolCall.function)
-        })
+    //     // first notify
+    //     eventCallback?.call(this, {
+    //       type: 'tool',
+    //       content: this.getToolRunningDescription(toolCall.function)
+    //     })
 
-        // now execute
-        const args = JSON.parse(toolCall.args)
-        const content = await this.callTool(toolCall.function, args)
-        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+    //     // now execute
+    //     const args = JSON.parse(toolCall.args)
+    //     const content = await this.callTool(toolCall.function, args)
+    //     console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
 
-        // send
-        this.currentChat.sendMessageStream([
-          { functionResponse: {
-            name: toolCall.function,
-            response: content
-          }}
-        ])
+    //     // send
+    //     this.currentChat.sendMessageStream([
+    //       { functionResponse: {
+    //         name: toolCall.function,
+    //         response: content
+    //       }}
+    //     ])
 
-        // clear
-        eventCallback?.call(this, {
-          type: 'tool',
-          content: null,
-        })
+    //     // clear
+    //     eventCallback?.call(this, {
+    //       type: 'tool',
+    //       content: null,
+    //     })
 
-      }
+    //   }
 
-      // done
-      return null
+    //   // done
+    //   return null
       
-    }
+    // }
 
     // text chunk
     return {
