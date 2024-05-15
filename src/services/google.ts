@@ -4,6 +4,7 @@ import { EngineConfig, Configuration } from '../types/config.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../types/llm.d'
 import { ChatSession, Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part } from '@google/generative-ai'
 import { getFileContents } from './download'
+import Attachment from '../models/attachment'
 import LlmEngine from './engine'
 
 export const isGoogleReady = (engineConfig: EngineConfig): boolean => {
@@ -59,7 +60,7 @@ export default class extends LlmEngine {
     console.log(`[openai] prompting model ${modelName}`)
     const model = this.getModel(modelName, thread[0].content)
     const chat = model.startChat({
-      history: thread.slice(1, -1).map((message) => this.messageToContent(message))
+      history: this.threadToHistory(thread, modelName)
     })
 
     // done
@@ -78,14 +79,11 @@ export default class extends LlmEngine {
     // reset
     this.toolCalls = []
 
-    // save the message thread
-    const payload = this.buildPayload(thread, modelName)
-
     // call
     console.log(`[openai] prompting model ${modelName}`)
-    const model = this.getModel(modelName, payload[0].content)
+    const model = this.getModel(modelName, thread[0].content)
     this.currentChat = model.startChat({
-      history: payload.slice(1, -1).map((message) => this.messageToContent(message))
+      history: this.threadToHistory(thread, modelName)
     })
 
     // done
@@ -135,37 +133,55 @@ export default class extends LlmEngine {
     // content
     prompt.push(lastMessage.content)
 
-    // image
+    // attachment
     if (lastMessage.attachment) {
-
-      // load if no contents
-      if (!lastMessage.attachment.contents) {
-        lastMessage.attachment.contents = getFileContents(lastMessage.attachment.url).contents
-      }
-    
-      // add inline
-      if (lastMessage.attachment.isImage()) {
-        prompt.push({
-          inlineData: {
-            mimeType: 'image/png',
-            data: lastMessage.attachment.contents,
-          }
-        })
-      } else if (lastMessage.attachment.isText()) {
-        prompt.push(lastMessage.attachment.contents)
-      }
-
+      this.addAttachment(prompt, lastMessage.attachment)
     }
 
     // done
     return prompt
   } 
 
-  messageToContent(message: any): Content {
-    return {
-      role: message.role == 'assistant' ? 'model' : message.role,
-      parts: [ { text: message.content } ]
+  threadToHistory(thread: Message[], modelName: string): Content[] {
+    const payload = this.buildPayload(thread, modelName)
+    return payload.slice(1, -1).map((message) => this.messageToContent(message))
+  }
+
+  messageToContent(payload: LLmCompletionPayload): Content {
+    const content: Content = {
+      role: payload.role == 'assistant' ? 'model' : payload.role,
+      parts: [ { text: payload.content } ]
     }
+    for (const index in payload.images) {
+      content.parts.push({
+        inlineData: {
+          mimeType: 'image/png',
+          data: payload.images[index],
+        }
+      })
+    }
+    return content
+  }
+
+  addAttachment(parts: Array<string | Part>, attachment: Attachment) {
+
+    // load if no contents
+    if (!attachment.contents) {
+      attachment.contents = getFileContents(attachment.url).contents
+    }
+  
+    // add inline
+    if (attachment.isImage()) {
+      parts.push({
+        inlineData: {
+          mimeType: 'image/png',
+          data: attachment.contents,
+        }
+      })
+    } else if (attachment.isText()) {
+      parts.push(attachment.contents)
+    }
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -173,6 +189,7 @@ export default class extends LlmEngine {
     //await stream?.controller?.abort()
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async streamChunkToLlmChunk(chunk: EnhancedGenerateContentResponse, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
 
     //console.log('[google] chunk:', chunk)
@@ -241,7 +258,7 @@ export default class extends LlmEngine {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
-    //TODO
+    payload.images = [message.attachment.contents]
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,16 +1,25 @@
 
+import { Attachment } from '../types/index.d'
+
 export const textFormats = ['pdf', 'txt', 'docx', 'pptx', 'xlsx']
 export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
 
-export default class Attachment {
+export default class implements Attachment {
 
   url: string
   format: string
   contents: string
   downloaded: boolean
 
-  constructor(url: string, format = "", contents = "", downloaded = false) {
-    this.url = url
+  constructor(url: string|object, format = "", contents = "", downloaded = false) {
+
+    if (url != null && typeof url === 'object') {
+      this.fromJson(url)
+      return
+    }
+
+    // default
+    this.url = url as string
     this.format = format.toLowerCase()
     this.contents = contents
     this.downloaded = downloaded
@@ -21,6 +30,13 @@ export default class Attachment {
     } else {
       this.extractText()
     }
+  }
+
+  fromJson(obj: any) {
+    this.url = obj.url
+    this.format = obj.format
+    this.contents = obj.contents
+    this.downloaded = obj.downloaded
   }
 
   isText(): boolean {

@@ -12,6 +12,7 @@ export default class implements Chat {
   engine: string
   model: string
   messages: Message[]
+  deleted: boolean
 
   constructor(obj?: any) {
 
@@ -29,6 +30,7 @@ export default class implements Chat {
     this.engine = null
     this.model = null
     this.messages = []
+    this.deleted = false
   
   }
 
@@ -40,6 +42,7 @@ export default class implements Chat {
     this.engine = obj.engine || 'openai'
     this.model = obj.model
     this.messages = []
+    this.deleted = false
     for (const msg of obj.messages) {
       const message = new Message(msg.role, msg)
       this.messages.push(message)

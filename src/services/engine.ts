@@ -136,7 +136,7 @@ export default class LlmEngine {
 
       // we only want to upload the last image attachment
       // so build messages in reverse order
-      // and then rerse the array
+      // and then reverse the array
 
       let imageAttached = false
       return thread.toReversed().filter((msg) => msg.type === 'text' && msg.content !== null).map((msg): LLmCompletionPayload => {

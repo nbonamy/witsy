@@ -1,7 +1,8 @@
 
-import { Message, Attachment } from '../types/index.d'
-import { LlmRole, LlmChunk } from '../types/llm.d';
+import { Message } from '../types/index.d'
+import { LlmRole, LlmChunk } from '../types/llm.d'
 import { v4 as uuidv4 } from 'uuid'
+import Attachment from './attachment'
 
 export default class implements Message {
 
@@ -41,7 +42,7 @@ export default class implements Message {
     this.role = obj.role
     this.type = obj.type
     this.content = obj.content
-    this.attachment = obj.attachment
+    this.attachment = obj.attachment ? new Attachment(obj.attachment) : null
     this.transient = false
     this.toolCall = null
   }
