@@ -5,7 +5,7 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Google from '../../src/services/google'
 import { loadGoogleModels } from '../../src/services/llm'
-import { EnhancedGenerateContentResponse } from '@google/generative-ai'
+import { EnhancedGenerateContentResponse, FinishReason } from '@google/generative-ai'
 import { Model } from '../../src/types/config.d'
 
 vi.mock('@google/generative-ai', async() => {
@@ -102,7 +102,7 @@ test('Google streamChunkToLlmChunk Text', async () => {
   expect(streamChunk.text).toHaveBeenCalled()
   //expect(streamChunk.functionCalls).toHaveBeenCalled()
   expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
-  streamChunk.candidates[0].finishReason = 'STOP'
+  streamChunk.candidates[0].finishReason = 'STOP' as FinishReason
   streamChunk.text = vi.fn(() => '')
   const llmChunk2 = await google.streamChunkToLlmChunk(streamChunk, null)
   expect(streamChunk.text).toHaveBeenCalled()

@@ -1,5 +1,6 @@
 
 import { vi, expect, test, beforeEach } from 'vitest'
+import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
@@ -28,7 +29,7 @@ window.api = {
     save: vi.fn(),
   },
   commands: {
-    load: vi.fn(() => defaultCommands),
+    load: vi.fn(() => defaultCommands as Command[]),
   },
   prompts: {
     load: vi.fn(() => defaultPrompts),
@@ -95,9 +96,10 @@ test('Save history', async () => {
     uuid: '123',
     engine: 'engine',
     model: 'model',
+    deleted: false,
     messages: [
-      { uuid: 1, role: 'system', content: 'Hi', toolCall: null, transient: false },
-      { uuid: 2, role: 'user', content: 'Hello', toolCall: null, transient: false }
+      { uuid: 1, role: 'system', content: 'Hi', toolCall: null, attachment: null, transient: false },
+      { uuid: 2, role: 'user', content: 'Hello', toolCall: null, attachment: null, transient: false }
     ]
   }])
 })

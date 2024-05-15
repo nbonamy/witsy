@@ -11,7 +11,8 @@ interface Chat {
   engine: string
   model: string
   messages: Message[]
-  fromJson(jsonChat: any): void
+  deleted: boolean
+  fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void
   addMessage(message: Message): void
@@ -28,7 +29,7 @@ interface Message {
   content: string
   attachment: Attachment
   transient: boolean
-  fromJson(jsonMessage: any): void
+  fromJson(json: any): void
   setText(text: string|null): void
   setImage(url: string): void
   appendText(chunk: LlmChunk): void
@@ -41,8 +42,10 @@ interface Attachment {
   format: string
   contents: string
   downloaded: boolean
+  fromJson(json: any): void
   isText(): boolean
   isImage(): boolean
+  extractText(): void
 }
 
 interface Command {

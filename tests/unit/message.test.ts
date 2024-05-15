@@ -1,6 +1,15 @@
 import { expect, test } from 'vitest'
 import Message from '../../src/models/message'
 
+window.api = {
+  base64: {
+    decode: (data: string) => data
+  },
+  file: {
+    extractText: (contents) => contents
+  }
+}
+
 test('Build from role and text', () => {
   const message = new Message('user', 'content')
   expect(message.uuid).not.toBe(null)
