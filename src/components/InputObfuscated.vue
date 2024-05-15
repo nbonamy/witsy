@@ -1,7 +1,7 @@
 
 <template>
   <div class="wrapper">
-    <input :type="type" v-model="value" @keyup="onKeyUp" />
+    <input :type="type" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')"/>
     <component :is="icon" class="icon" @click="onToggleView" />
   </div>
 </template>
@@ -14,7 +14,7 @@ const type = ref('password')
 
 const value = defineModel()
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['blur', 'change']);
 
 const icon = computed(() => {
   return type.value === 'password' ? 'BIconEye' : 'BIconEyeSlash'
