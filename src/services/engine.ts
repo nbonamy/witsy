@@ -35,11 +35,6 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isVisionModel(model: string): boolean {
-    return false
-  }
-
   async getModels(): Promise<any[]> {
     throw new Error('Not implemented')
   }
@@ -84,6 +79,15 @@ export default class LlmEngine {
 
   getChatModels(): Model[] {
     return this.config.engines[this.getName()].models.chat
+  }
+
+  isVisionModel(model: string): boolean {
+    for (const filter of this.getVisionModels()) {
+      if (minimatch(model, filter)) {
+        return true
+      }
+    }
+    return false
   }
 
   requiresVisionModelSwitch(thread: Message[], currentModel: string): boolean {

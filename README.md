@@ -4,7 +4,7 @@
 # Witsy
 
 Generative AI desktop application:
-- OpenAI, Ollama, Anthropic, MistralAI and Groq models supported
+- OpenAI, Ollama, Anthropic, MistralAI, Google and Groq models supported
 - Chat completion and image generation with Vision models support
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
@@ -59,10 +59,11 @@ npm start
 
 ## Prerequisites
 
-To use OpenAI, Anthropic or Mistral AI models, you need to enter your API key:
+To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
 - [OpenAI](https://platform.openai.com/api-keys)
 - [Anthropic](https://console.anthropic.com/settings/keys)
 - [MistralAI](https://console.mistral.ai/api-keys/)
+- [Google](https://aistudio.google.com/app/apikey)
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
 
@@ -76,13 +77,13 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Google Gemini API
 - [ ] i18n
 - [ ] File upload for retrieval (??)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## DONE
 
+- [x] Google Gemini API
 - [x] Prompt anywhere
 - [x] Cancel commands
 - [x] GPT-4o support

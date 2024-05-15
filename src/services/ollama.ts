@@ -35,10 +35,6 @@ export default class extends LlmEngine {
     return ['llava-llama3:latest', 'llava:latest', '*llava*']
   }
 
-  isVisionModel(model: string): boolean {
-    return this.getVisionModels().includes(model) || model.includes('llava')
-  }
-
   getRountingModel(): string|null {
     return null
   }

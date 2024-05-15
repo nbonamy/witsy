@@ -31,10 +31,6 @@ export default class extends LlmEngine {
     return ['gemini-1.5-flash-latest', 'models/gemini-1.5-pro-latest', 'models/gemini-pro-vision', '*vision*']
   }
 
-  isVisionModel(model: string): boolean {
-    return this.getVisionModels().includes(model)
-  }
-
   getRountingModel(): string | null {
     return null
   }
