@@ -86,14 +86,12 @@ test('Assistant Image', async () => {
 test('Assistant Attachment', async () => {
   assistant.setChat(new Chat())
   await assistant.attach({
-    type: 'image',
     url: 'clipboard://',
     format: 'png',
     contents: 'image_content',
     downloaded: false 
   })
   expect(assistant.chat.lastMessage().attachment).toStrictEqual({
-    type: 'image',
     url: 'clipboard://',
     format: 'png',
     contents: 'image_content',
