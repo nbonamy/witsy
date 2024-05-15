@@ -58,11 +58,9 @@ export const canProcessFormat = (engine: string, model: string, format: string) 
 }
 
 export const loadAllModels = async () => {
-  await loadModels('openai')
-  await loadModels('ollama')
-  await loadModels('mistralai')
-  await loadModels('anthropic')
-  await loadModels('groq')
+  for (const engine in availableEngines) {
+    await loadModels(engine)
+  }
 }
 
 export const loadModels = async (engine: string) => {
@@ -74,6 +72,8 @@ export const loadModels = async (engine: string) => {
     await loadMistralAIModels()
   } else if (engine === 'anthropic') {
     await loadAnthropicModels()
+  } else if (engine === 'google') {
+    await loadGoogleModels()
   } else if (engine === 'groq') {
     await loadGroqModels()
   }
