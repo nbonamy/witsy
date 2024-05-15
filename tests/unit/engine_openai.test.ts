@@ -7,13 +7,20 @@ import Message from '../../src/models/message'
 import OpenAI from '../../src/services/openai'
 import * as _OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
+import { loadOpenAIModels } from '../../src/services/llm'
+import { Model } from '../../src/types/config.d'
 
 vi.mock('openai', async() => {
   const OpenAI = vi.fn()
   OpenAI.prototype.apiKey = '123'
   OpenAI.prototype.models = {
     list: vi.fn(() => {
-      return { data: [{ id: 'model', name: 'model' }] }
+      return { data: [
+        { id: 'gpt-model2', name: 'model2' },
+        { id: 'gpt-model1', name: 'model1' },
+        { id: 'dall-e-model2', name: 'model2' },
+        { id: 'dall-e-model1', name: 'model1' },
+      ] }
     })
   }
   OpenAI.prototype.chat = {
@@ -47,11 +54,31 @@ beforeEach(() => {
   store.config.engines.openai.apiKey = '123'
 })
 
+test('OpenAI Load Chat Models', async () => {
+  expect(await loadOpenAIModels()).toBe(true)
+  const models = store.config.engines.openai.models.chat
+  expect(_OpenAI.default.prototype.models.list).toHaveBeenCalled()
+  expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'gpt-model1', name: 'gpt-model1' },
+    { id: 'gpt-model2', name: 'gpt-model2' },
+  ])
+  expect(store.config.engines.openai.model.chat).toStrictEqual(models[0].id)
+})
+
+test('OpenAI Load Image Models', async () => {
+  expect(await loadOpenAIModels()).toBe(true)
+  const models = store.config.engines.openai.models.image
+  expect(_OpenAI.default.prototype.models.list).toHaveBeenCalled()
+  expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'dall-e-model1', name: 'dall-e-model1' },
+    { id: 'dall-e-model2', name: 'dall-e-model2' },
+  ])
+  expect(store.config.engines.openai.model.image).toStrictEqual(models[0].id)
+})
+
 test('OpenAI Basic', async () => {
   const openAI = new OpenAI(store.config)
   expect(openAI.getName()).toBe('openai')
-  expect(await openAI.getModels()).toStrictEqual([{ id: 'model', name: 'model' }])
-  expect(_OpenAI.default.prototype.models.list).toHaveBeenCalled()
   expect(openAI.isVisionModel('gpt-3.5')).toBe(false)
   expect(openAI.isVisionModel('gpt-3.5-turbo')).toBe(false)
   expect(openAI.isVisionModel('gpt-4')).toBe(false)

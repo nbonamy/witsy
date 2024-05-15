@@ -6,11 +6,16 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Ollama from '../../src/services/ollama'
 import * as _ollama from 'ollama/dist/browser.mjs'
+import { loadOllamaModels } from '../../src/services/llm'
+import { Model } from '../../src/types/config.d'
 
 vi.mock('ollama/browser', async() => {
   return { default : {
     list: vi.fn(() => {
-      return { models: [{ id: 'model', name: 'model' }] }
+      return { models: [
+        { model: 'model2', name: 'model2' },
+        { model: 'model1', name: 'model1' },
+      ] }
     }),
     chat: vi.fn((opts) => {
       if (opts.stream) {
@@ -33,10 +38,20 @@ beforeEach(() => {
   store.config.engines.ollama.apiKey = '123'
 })
 
+test('Ollama Load Models', async () => {
+  expect(await loadOllamaModels()).toBe(true)
+  const models = store.config.engines.ollama.models.chat
+  console.log(models)
+  expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'model1', name: 'model1' },
+    { id: 'model2', name: 'model2' },
+  ])
+  expect(store.config.engines.ollama.model.chat).toStrictEqual(models[0].name)
+})
+
 test('Ollama Basic', async () => {
   const ollama = new Ollama(store.config)
   expect(ollama.getName()).toBe('ollama')
-  expect(await ollama.getModels()).toStrictEqual([{ id: 'model', name: 'model' }])
   expect(ollama.isVisionModel('llava:latest')).toBe(true)
   expect(ollama.isVisionModel('llama2:latest')).toBe(false)
   expect(ollama.getRountingModel()).toBeNull()

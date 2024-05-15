@@ -4,7 +4,9 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Google from '../../src/services/google'
+import { loadGoogleModels } from '../../src/services/llm'
 import { EnhancedGenerateContentResponse } from '@google/generative-ai'
+import { Model } from '../../src/types/config.d'
 
 vi.mock('@google/generative-ai', async() => {
   return {
@@ -41,15 +43,20 @@ beforeEach(() => {
   store.config.engines.google.apiKey = '123'
 })
 
-test('Google Basic', async () => {
-  const google = new Google(store.config)
-  expect(google.getName()).toBe('google')
-  expect(await google.getModels()).toStrictEqual([
+test('Google Load Models', async () => {
+  expect(await loadGoogleModels()).toBe(true)
+  const models = store.config.engines.google.models.chat
+  expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
     { id: 'models/gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro' },
     { id: 'gemini-1.5-flash-latest', name: 'Gemini  1.5 Flash' },
     { id: 'models/gemini-pro', name: 'Gemini 1.0 Pro' },
-])
-  //expect(_Google.default.prototype.models.list).toHaveBeenCalled()
+  ])
+  expect(store.config.engines.google.model.chat).toStrictEqual(models[0].id)
+})
+
+test('Google Basic', async () => {
+  const google = new Google(store.config)
+  expect(google.getName()).toBe('google')
   expect(google.isVisionModel('models/gemini-pro')).toBe(false)
   expect(google.isVisionModel('gemini-1.5-flash-latest')).toBe(true)
   expect(google.isVisionModel('models/gemini-1.5-pro-latest')).toBe(true)

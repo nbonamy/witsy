@@ -6,12 +6,17 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import MistralAI from '../../src/services/mistralai'
 import MistralClient from '../../src/vendor/mistralai'
+import { loadMistralAIModels } from '../../src/services/llm'
+import { Model } from '../../src/types/config.d'
 
 vi.mock('../../src/vendor/mistralai', async() => {
   const MistralClient = vi.fn()
   MistralClient.prototype.apiKey = '123'
   MistralClient.prototype.listModels = vi.fn(() => {
-    return { data: [{ id: 'model', name: 'model' }] }
+    return { data: [
+      { id: 'model2', name: 'model2' },
+      { id: 'model1', name: 'model1' },
+    ] }
   })
   MistralClient.prototype.chat = vi.fn(() => {
     return { choices: [ { message: { content: 'response' } } ] }
@@ -31,10 +36,19 @@ beforeEach(() => {
   store.config.engines.mistralai.apiKey = '123'
 })
 
+test('MistralAI Load Models', async () => {
+  expect(await loadMistralAIModels()).toBe(true)
+  const models = store.config.engines.mistralai.models.chat
+  expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'model1', name: 'model1' },
+    { id: 'model2', name: 'model2' },
+  ])
+  expect(store.config.engines.mistralai.model.chat).toStrictEqual(models[0].id)
+})
+
 test('MistralAI Basic', async () => {
   const mistralai = new MistralAI(store.config)
   expect(mistralai.getName()).toBe('mistralai')
-  expect(await mistralai.getModels()).toStrictEqual([{ id: 'model', name: 'model' }])
   expect(mistralai.isVisionModel('mistral-medium')).toBe(false)
   expect(mistralai.isVisionModel('mistral-large')).toBe(false)
   expect(mistralai.getRountingModel()).toBeNull()
