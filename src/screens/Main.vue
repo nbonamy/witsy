@@ -140,7 +140,6 @@ const onDeleteChat = async (chat) => {
         store.saveHistory()
       } else {
         for (const chat of chats) {
-          console.log(chat)
           let index = store.chats.findIndex((c) => c.uuid === chat)
           store.chats[index].delete()
           store.chats.splice(index, 1)
