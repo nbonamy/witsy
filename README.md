@@ -6,6 +6,7 @@
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic, MistralAI and Groq models supported
 - Chat completion and image generation with Vision models support
+- Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
 - Special prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
@@ -18,6 +19,14 @@ Generative AI desktop application:
   <img src="doc/main1.jpg" height="250" />&nbsp;&nbsp;
   <img src="doc/main2.jpg" height="250" />
 </p>
+
+## Prompt Anywhere
+
+Generate content in any application:
+- From any editable content in any application
+- Hit the Prompt anywhere shortcut (Shift+Control+Space / ^⇧Space)
+- Enter your prompt in the window that pops up
+- Watch Witsy enter the text directly in your application!
 
 ## AI Commands
 
