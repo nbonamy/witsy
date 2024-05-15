@@ -3,7 +3,7 @@
     <div class="group">
       <label>API key</label>
       <div class="subgroup">
-        <InputObfuscated v-model="apiKey" @blur="onKeyChange" /><br />
+        <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
         <a href="https://platform.openai.com/api-keys" target="_blank">Get your API key</a>
       </div>
     </div>
