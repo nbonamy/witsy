@@ -4,6 +4,7 @@ import { isEngineReady, igniteEngine, hasVisionModels, isVisionModel, loadOpenAI
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 import OpenAI from '../../src/services/openai'
 import Ollama from '../../src/services/ollama'
 import MistralAI from '../../src/services/mistralai'
@@ -11,7 +12,6 @@ import Anthropic from '../../src/services/anthropic'
 import Google from '../../src/services/google'
 import Groq from '../../src/services/groq'
 import { Model } from '../../src/types/config.d'
-import { text } from 'stream/consumers'
 
 const model = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
 
@@ -30,6 +30,15 @@ vi.mock('openai', async() => {
   }
   return { default: OpenAI }
 })
+
+window.api = {
+  base64: {
+    decode: (data: string) => data
+  },
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 beforeEach(() => {
   store.config = defaults
@@ -166,7 +175,7 @@ test('Build payload with text attachment', async () => {
     new Message('system', { role: 'system', type: 'text', content: 'instructions' }),
     new Message('user', { role: 'user', type: 'text', content: 'prompt1' }),
   ]
-  messages[1].attachFile({ format: 'txt', contents: 'attachment', downloaded: true, url: '' })
+  messages[1].attachFile(new Attachment('', 'txt', 'attachment', true))
   expect(openai.buildPayload(messages, 'gpt-model1')).toStrictEqual([
     { role: 'system', content: 'instructions' },
     { role: 'user', content: 'prompt1\n\nattachment' },
@@ -179,7 +188,7 @@ test('Build payload with image attachment', async () => {
     new Message('system', { role: 'system', type: 'text', content: 'instructions' }),
     new Message('user', { role: 'user', type: 'text', content: 'prompt1' }),
   ]
-  messages[1].attachFile({ format: 'png', contents: 'attachment', downloaded: true, url: '' })
+  messages[1].attachFile(new Attachment('', 'png', 'attachment', true))
   expect(openai.buildPayload(messages, 'gpt-model1')).toStrictEqual([
     { role: 'system', content: 'instructions' },
     { role: 'user', content: 'prompt1' },

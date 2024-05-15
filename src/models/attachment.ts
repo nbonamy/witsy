@@ -1,4 +1,7 @@
 
+export const textFormats = ['pdf', 'txt', 'docx', 'pptx', 'xlsx']
+export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
+
 export default class Attachment {
 
   url: string
@@ -18,6 +21,14 @@ export default class Attachment {
     } else {
       this.extractText()
     }
+  }
+
+  isText(): boolean {
+    return textFormats.includes(this.format)
+  }
+
+  isImage(): boolean {
+    return imageFormats.includes(this.format)
   }
 
   extractText(): void {

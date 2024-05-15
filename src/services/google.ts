@@ -144,12 +144,16 @@ export default class extends LlmEngine {
       }
     
       // add inline
-      prompt.push({
-        inlineData: {
-          mimeType: 'image/png',
-          data: lastMessage.attachment.contents,
-        }
-      })
+      if (lastMessage.attachment.isImage()) {
+        prompt.push({
+          inlineData: {
+            mimeType: 'image/png',
+            data: lastMessage.attachment.contents,
+          }
+        })
+      } else if (lastMessage.attachment.isText()) {
+        prompt.push(lastMessage.attachment.contents)
+      }
 
     }
 

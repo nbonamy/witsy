@@ -1,5 +1,6 @@
 
 import { Model, EngineConfig, Configuration } from '../types/config.d'
+import { imageFormats, textFormats } from '../models/attachment'
 import { store } from './store'
 import OpenAI, { isOpenAIReady } from './openai'
 import Ollama, { isOllamaReady } from './ollama'
@@ -10,8 +11,6 @@ import Groq, { isGroqReady } from './groq'
 import LlmEngine from './engine'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq']
-export const textFormats = ['pdf', 'txt', 'docx', 'pptx', 'xlsx']
-export const imageFormats = ['jpeg', 'jpg', 'png', 'webp']
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)

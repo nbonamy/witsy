@@ -7,7 +7,6 @@ import Plugin from '../plugins/plugin'
 import BrowsePlugin from '../plugins/browse'
 import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'
-import { textFormats, imageFormats } from './llm'
 import { PluginParameter } from '../types/plugin.d'
 import { minimatch } from 'minimatch'
 
@@ -98,7 +97,7 @@ export default class LlmEngine {
     }
 
     // check if amy of the messages in the thread have an attachment
-    return thread.some((msg) => msg.attachment && imageFormats.includes(msg.attachment.format))
+    return thread.some((msg) => msg.attachment && msg.attachment.isImage())
 
   }
 
@@ -152,12 +151,12 @@ export default class LlmEngine {
         }
 
         // text formats
-        if (textFormats.includes(msg.attachment.format)) {
+        if (msg.attachment.isText()) {
           payload.content += `\n\n${msg.attachment.contents}`
         }
 
         // image formats
-        if (imageFormats.includes(msg.attachment.format)) {
+        if (msg.attachment.isImage()) {
           if (!imageAttached && this.isVisionModel(model)) {
             this.addImageToPayload(msg, payload)
             imageAttached = true
