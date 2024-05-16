@@ -41,7 +41,6 @@ beforeEach(() => {
 test('Ollama Load Models', async () => {
   expect(await loadOllamaModels()).toBe(true)
   const models = store.config.engines.ollama.models.chat
-  console.log(models)
   expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
     { id: 'model1', name: 'model1' },
     { id: 'model2', name: 'model2' },

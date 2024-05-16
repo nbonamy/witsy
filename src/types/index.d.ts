@@ -148,6 +148,7 @@ declare global {
       commands?: {
         load?(): Command[]
         save?(commands: Command[]): void
+        cancel?(): void
         closePalette?(): void
         run?(command: Command): void
         getPrompt?(id: string): string
@@ -155,6 +156,7 @@ declare global {
       anywhere?: {
         prompt?(text: string): void
         cancel?(): void
+        resize?(width: number, height: number): void
       }
       prompts?: {
         load?(): Prompt[]
