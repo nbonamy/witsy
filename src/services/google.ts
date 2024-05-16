@@ -56,8 +56,8 @@ export default class extends LlmEngine {
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call
-    const modelName = opts?.model || this.config.engines.openai.model.chat
-    console.log(`[openai] prompting model ${modelName}`)
+    const modelName = opts?.model || this.config.engines.google.model.chat
+    console.log(`[google] prompting model ${modelName}`)
     const model = this.getModel(modelName, thread[0].content)
     const chat = model.startChat({
       history: this.threadToHistory(thread, modelName)
@@ -80,7 +80,7 @@ export default class extends LlmEngine {
     this.toolCalls = []
 
     // call
-    console.log(`[openai] prompting model ${modelName}`)
+    console.log(`[google] prompting model ${modelName}`)
     const model = this.getModel(modelName, thread[0].content)
     this.currentChat = model.startChat({
       history: this.threadToHistory(thread, modelName)
@@ -143,8 +143,8 @@ export default class extends LlmEngine {
   } 
 
   threadToHistory(thread: Message[], modelName: string): Content[] {
-    const payload = this.buildPayload(thread, modelName)
-    return payload.slice(1, -1).map((message) => this.messageToContent(message))
+    const payload = this.buildPayload(thread.slice(1, -1), modelName)
+    return payload.map((message) => this.messageToContent(message))
   }
 
   messageToContent(payload: LLmCompletionPayload): Content {
@@ -226,7 +226,7 @@ export default class extends LlmEngine {
     //     // now execute
     //     const args = JSON.parse(toolCall.args)
     //     const content = await this.callTool(toolCall.function, args)
-    //     console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+    //     console.log(`[google] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
 
     //     // send
     //     this.currentChat.sendMessageStream([
