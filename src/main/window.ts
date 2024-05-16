@@ -155,6 +155,19 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
 };
 
+export const closeMainWindow = async () => {
+  try {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      // console.log('Closing main window')
+      mainWindow?.close()
+      await wait();
+    }
+  } catch (error) {
+    console.error('Error while closing main window', error);
+  }
+  mainWindow = null;
+}
+
 export const openChatWindow = (params: strDict) => {
 
   // always open
@@ -227,7 +240,7 @@ export const restoreWindows = () => {
 
 };
 
-let commandPalette: BrowserWindow = null;
+export let commandPalette: BrowserWindow = null;
 export const closeCommandPalette = async () => {
   try {
     if (commandPalette && !commandPalette.isDestroyed()) {
@@ -235,10 +248,10 @@ export const closeCommandPalette = async () => {
       commandPalette?.close()
       await wait();
     }
-    commandPalette = null;
   } catch (error) {
     console.error('Error while closing command palette', error);
   }
+  commandPalette = null;
 };
 
 export const openCommandPalette = async (textId: string) => {
@@ -274,7 +287,7 @@ export const openCommandPalette = async (textId: string) => {
 
 }
 
-let waitingPanel: BrowserWindow = null;
+export let waitingPanel: BrowserWindow = null;
 export const closeWaitingPanel = async () => {
   try {
     if (waitingPanel && !waitingPanel.isDestroyed()) {
@@ -282,10 +295,10 @@ export const closeWaitingPanel = async () => {
       waitingPanel?.close()
       await wait();
     }
-    waitingPanel = null;
   } catch (error) {
     console.error('Error while closing waiting panel', error);
   }
+  waitingPanel = null;
 }
 
 export const openWaitingPanel = () => {
@@ -319,8 +332,10 @@ export const openSettingsWindow = () => {
 
   try {
     // send signal to current window
-    mainWindow.webContents.send('show-settings');
-    return;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('show-settings');
+      return;
+    }
   } catch (error) {
     console.error('Error while sending show-settings signal', error);
   }
@@ -334,7 +349,7 @@ export const openSettingsWindow = () => {
 
 }
 
-let promptAnywhereWindow: BrowserWindow = null;
+export let promptAnywhereWindow: BrowserWindow = null;
 export const openPromptAnywhere = () => {
 
   // try to close existig one
@@ -372,10 +387,10 @@ export const closePromptAnywhere = async () => {
       promptAnywhereWindow?.close()
       await wait();
     }
-    promptAnywhereWindow = null;
   } catch (error) {
     console.error('Error while closing prompt anywhere window', error);
   }
+  promptAnywhereWindow = null;
 }
 
 export const resizePromptAnywhere = (height: number) => {
