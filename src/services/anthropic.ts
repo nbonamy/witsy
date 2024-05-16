@@ -26,12 +26,7 @@ export default class extends LlmEngine {
   }
 
   getVisionModels(): string[] {
-    return []
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isVisionModel(model: string): boolean {
-    return true
+    return ['*']
   }
 
   getRountingModel(): string|null {

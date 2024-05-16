@@ -60,7 +60,6 @@ test('Anthropic Load Models', async () => {
 test('Anthropic Basic', async () => {
   const anthropic = new Anthropic(store.config)
   expect(anthropic.getName()).toBe('anthropic')
-  expect(anthropic.getVisionModels()).toStrictEqual([])
   expect(anthropic.isVisionModel('claude-3-haiku-20240307')).toBe(true)
   expect(anthropic.isVisionModel('claude-3-sonnet-20240229')).toBe(true)
   expect(anthropic.isVisionModel('claude-3-opus-2024022')).toBe(true)
