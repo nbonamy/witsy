@@ -118,7 +118,11 @@ test('Ignite Engine', async () => {
 
 test('Has Vision Models', async () => {
   expect(hasVisionModels('openai')).toBe(true)
-  expect(hasVisionModels('anthropic')).toBe(false)
+  expect(hasVisionModels('ollana')).toBe(true)
+  expect(hasVisionModels('mistralai')).toBe(false)
+  expect(hasVisionModels('anthropic')).toBe(true)
+  expect(hasVisionModels('google')).toBe(true)
+  expect(hasVisionModels('groq')).toBe(false)
 })
 
 test('Is Vision Model', async () => {
