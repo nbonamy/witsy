@@ -14,7 +14,6 @@ export const isGoogleReady = (engineConfig: EngineConfig): boolean => {
 export default class extends LlmEngine {
 
   client: GoogleGenerativeAI
-  currentChat: ChatSession
   toolCalls: LlmToolCall[]
 
   constructor(config: Configuration) {
@@ -59,12 +58,12 @@ export default class extends LlmEngine {
     const modelName = opts?.model || this.config.engines.google.model.chat
     console.log(`[google] prompting model ${modelName}`)
     const model = this.getModel(modelName, thread[0].content)
-    const chat = model.startChat({
+    const chatSession = model.startChat({
       history: this.threadToHistory(thread, modelName)
     })
 
     // done
-    const result = await chat.sendMessage(this.getPrompt(thread))
+    const result = await chatSession.sendMessage(this.getPrompt(thread))
     return {
       type: 'text',
       content: result.response.text()
@@ -82,12 +81,12 @@ export default class extends LlmEngine {
     // call
     console.log(`[google] prompting model ${modelName}`)
     const model = this.getModel(modelName, thread[0].content)
-    this.currentChat = model.startChat({
+    const chatSession = model.startChat({
       history: this.threadToHistory(thread, modelName)
     })
 
     // done
-    const result = await this.currentChat.sendMessageStream(this.getPrompt(thread))
+    const result = await chatSession.sendMessageStream(this.getPrompt(thread))
     return result.stream
 
   }
