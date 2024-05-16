@@ -4,6 +4,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import Settings from '../../src/screens/Settings.vue'
 import defaults from '../../defaults/settings.json'
+import { availableEngines } from '../../src/services/llm'
 
 import useEventBus from '../../src/composables/useEventBus'
 const { emitEvent } = useEventBus()
@@ -109,7 +110,7 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(4)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
-  expect(tab.findAll('.group.engine select option')).toHaveLength(5)
+  expect(tab.findAll('.group.engine select option')).toHaveLength(availableEngines.length)
   tab.find('.group.engine select').setValue('anthropic')
   expect(store.config.llm.engine).toBe('anthropic')
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
