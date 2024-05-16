@@ -10,7 +10,7 @@ import { ChatCompletionChunk } from 'openai/resources'
 import { loadOpenAIModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
-vi.mock('openai', async() => {
+vi.mock('openai', async () => {
   const OpenAI = vi.fn()
   OpenAI.prototype.apiKey = '123'
   OpenAI.prototype.models = {

@@ -55,21 +55,20 @@ const checkVisibility = (visible: number) => {
   }
 }
 
+// window
 let runAtLogin = false
+window.api = {
+  platform: 'darwin',
+  on: vi.fn(),
+  runAtLogin: {
+    get: () => runAtLogin,
+    set: vi.fn((state) => {
+      runAtLogin = state
+    })
+  },
+}
 
 beforeAll(() => {
-
-  // window
-  window.api = {
-    platform: 'darwin',
-    on: vi.fn(),
-    runAtLogin: {
-      get: () => runAtLogin,
-      set: vi.fn((state) => {
-        runAtLogin = state
-      })
-    },
-  }
 
   // init store
   store.config = defaults

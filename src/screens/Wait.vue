@@ -1,17 +1,21 @@
 <template>
-  <div class="wait">
-    <Loader />
-    <BIconXCircleFill class="cancel" @click="onCancel" />
+  <div class="wait" @mouseenter="hover=true" @mouseleave="hover=false">
+    <Loader v-show="!hover"/>
+    <BIconXCircleFill v-show="hover" class="cancel" @click="onCancel" />
     Thinking…
   </div>
 </template>
 
 <script setup>
 
+import { ref } from 'vue'
 import Loader from '../components/Loader.vue'
+
+const hover = ref(false)
 
 const onCancel = () => {
   window.api.commands.cancel()
+  window.api.anywhere.cancel()
 }
 
 </script>
@@ -44,15 +48,7 @@ const onCancel = () => {
   margin: 4px;
   width: 10px;
   height: 10px;
-  display: none;
-}
-
-.wait:hover .cancel {
   display: inline-block;
-}
-
-.wait:hover .loader {
-  display: none;
 }
 
 </style>
