@@ -13,6 +13,7 @@
             <option value="ollama">Ollama</option>
             <option value="anthropic">Anthropic</option>
             <option value="mistralai">MistralAI</option>
+            <option value="google">Google</option>
             <option value="groq">Groq</option>
           </select>
         </div>
