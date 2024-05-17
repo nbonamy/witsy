@@ -4,17 +4,9 @@ import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChu
 import { Configuration, Model } from '../types/config.d'
 import { getFileContents } from './download'
 import Plugin from '../plugins/plugin'
-import BrowsePlugin from '../plugins/browse'
-import TavilyPlugin from '../plugins/tavily'
-import PythonPlugin from '../plugins/python'
+import { availablePlugins } from '../plugins/plugins'
 import { PluginParameter } from '../types/plugin.d'
 import { minimatch } from 'minimatch'
-
-export const availablePlugins: anyDict = {
-  browse: BrowsePlugin, 
-  python:  PythonPlugin,
-  tavily: TavilyPlugin,
-}
 
 export default class LlmEngine {
 

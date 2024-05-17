@@ -17,7 +17,7 @@
 <script setup>
 
 import { ref, computed, nextTick } from 'vue'
-import { availablePlugins } from '../services/engine'
+import { availablePlugins } from '../plugins/plugins'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
