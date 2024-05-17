@@ -1,6 +1,6 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { vi, beforeEach, expect, test, afterAll } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
@@ -11,6 +11,8 @@ import * as _Assistant from '../../src/services/assistant'
 
 import useEventBus  from '../../src/composables/useEventBus'
 const { emitEvent } = useEventBus()
+
+enableAutoUnmount(afterAll)
 
 window.api = {
   config: {
