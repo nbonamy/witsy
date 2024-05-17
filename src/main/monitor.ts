@@ -4,13 +4,15 @@ import fs from 'fs'
 
 export default class {
 
+  delay: number
   filepath: string
   filesize: number
   signal: string
   timer: NodeJS.Timeout
   
-  constructor(signal: string) {
+  constructor(signal: string, delay = 1000) {
     this.signal = signal
+    this.delay = delay
   }
 
   start(filepath: string): void {
@@ -29,7 +31,7 @@ export default class {
         this.filesize = size
         this.notify()
       }
-    }, 1000)
+    }, this.delay)
   }
 
   stop(): void {
@@ -43,6 +45,7 @@ export default class {
     try {
       return fs.statSync(this.filepath).size
     } catch (error) {
+      //console.error('Error while getting file size', error)
       return 0
     }
   }
