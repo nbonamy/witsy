@@ -10,7 +10,7 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return this.config.enabled && this.config.binpath
+    return this.config.enabled && this.config.binpath != null
   }
 
   getName(): string {
