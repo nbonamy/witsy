@@ -20,9 +20,11 @@ onMounted(() => {
   }[window.api.platform]||''
 
   // add it everywhere
-  window.platform = platform
-  document.platform = platform
-  document.querySelector('body').classList.add(platform)
+  if (platform) {
+    window.platform = platform
+    document.platform = platform
+    document.querySelector('body').classList.add(platform)
+  }
 
 })
 
@@ -38,7 +40,7 @@ const routes = {
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
-  //console.log(currentPath.value)
+  //console.log(currentPath.value.slice(1) || '/')
   return routes[currentPath.value.slice(1) || '/']
 })
 
