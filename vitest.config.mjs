@@ -24,6 +24,10 @@ export default defineConfig({
     coverage: {
       exclude: [
         ...coverageConfigDefaults.exclude,
+        'src/*.ts',
+        'src/automations/macos*.ts',
+        'src/automations/robot.ts',
+        'src/automations/windows.ts',
         'src/vendor/**/*',
       ]
     },
