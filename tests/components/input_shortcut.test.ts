@@ -1,7 +1,9 @@
 
-import { vi, expect, test, beforeEach } from 'vitest'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { vi, expect, test, beforeEach, afterAll } from 'vitest'
+import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import InputShortcut from '../../src/components/InputShortcut.vue'
+
+enableAutoUnmount(afterAll)
 
 let wrapper: VueWrapper<any>
 

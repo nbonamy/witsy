@@ -1,7 +1,9 @@
 
-import { vi, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { vi, expect, test, afterAll } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import Wait from '../../src/screens/Wait.vue'
+
+enableAutoUnmount(afterAll)
 
 window.api = {
   commands: {

@@ -1,12 +1,14 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { vi, beforeEach, expect, test, afterAll } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import Prompt from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import defaults from '../../defaults/settings.json'
 
 import useEventBus  from '../../src/composables/useEventBus'
 const { emitEvent } = useEventBus()
+
+enableAutoUnmount(afterAll)
 
 window.api = {
   config: {

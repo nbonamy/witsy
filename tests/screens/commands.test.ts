@@ -1,8 +1,10 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { vi, beforeEach, expect, test, afterAll } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import Commands from '../../src/screens/Commands.vue'
 import defaults from '../../defaults/settings.json'
+
+enableAutoUnmount(afterAll)
 
 window.api = {
   config: {
