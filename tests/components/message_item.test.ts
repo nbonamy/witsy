@@ -36,7 +36,6 @@ beforeAll(() => {
       encode: (data: string) => { return Buffer.from(data).toString('base64') },
       decode: (data: string) => { return Buffer.from(data, 'base64').toString() },
     },
-    fullscreen: vi.fn(),
     file: {
       download: vi.fn(),
     },
@@ -223,14 +222,4 @@ test('Format math equations OpenAI', async () => {
   botMessageText.setText('\\[\n\\frac{1}{2}\n\\]')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
-})
-
-test('Fullscreen image', async () => {
-  const wrapper = await mount(botMessageImage)
-  await wrapper.find('.body img.image').trigger('click')
-  expect(wrapper.find('.fullscreen').exists()).toBe(true)
-  expect(window.api.fullscreen).toHaveBeenCalledWith(true)
-  await wrapper.find('.fullscreen').trigger('click')
-  expect(wrapper.find('.fullscreen').exists()).toBe(false)
-  expect(window.api.fullscreen).toHaveBeenCalledWith(false)
 })

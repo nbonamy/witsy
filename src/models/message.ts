@@ -9,7 +9,7 @@ export default class implements Message {
   uuid: string
   createdAt: number
   role: LlmRole
-  type: string
+  type: string // backwards compatibility: everything is text now
   content: string
   attachment: Attachment
   transient: boolean

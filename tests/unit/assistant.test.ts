@@ -48,7 +48,6 @@ beforeEach(() => {
   store.config.llm.engine = 'mock'
   store.config.instructions = {
     default: 'You are a chat assistant',
-    routing: 'You are a routing assistant',
     titling: 'You are a titling assistant'
   }
   store.config.engines.mock = {
@@ -73,14 +72,6 @@ test('Assistant Chat', async () => {
   expect(assistant.chat.lastMessage().content).toBe(content)
   expect(assistant.chat.messages.length).toBe(3)
   expect(assistant.chat.title).toBe('[{"role":"system","content":"You are a titling assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\\"role\\":\\"system\\",\\"content\\":\\"You are a chat assistant\\"},{\\"role\\":\\"user\\",\\"content\\":\\"Hello LLM\\"},{\\"role\\":\\"assistant\\",\\"content\\":\\"Be kind. Don\'t mock me\\"}]"},{"role":"user"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-})
-
-test('Assistant Image', async () => {
-  const content = await prompt('Create an image of a dragon')
-  expect(content).toBe('local_file.png')
-  expect(assistant.chat.lastMessage().type).toBe('image')
-  expect(assistant.chat.lastMessage().content).toBe('file://local_file.png')
-  expect(assistant.chat.messages.length).toBe(3)
 })
 
 test('Assistant Attachment', async () => {

@@ -9,27 +9,18 @@
     </div>
     <div class="group">
       <label>Chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
-        </option>
-      </select>
-      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-    </div>
-    <div class="group">
-      <label>Image model</label>
       <div class="subgroup">
-        <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
-          <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
+        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+          <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
-        </select><br />
+        </select>
         <a href="https://platform.openai.com/docs/models/continuous-model-upgrades" target="_blank">More about OpenAI models</a>
         <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
       </div>
-      <button style="visibility: hidden">{{ refreshLabel }}</button>
+      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>  
 </template>
-
 
 <script setup>
 
@@ -41,16 +32,12 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 const apiKey = ref(null)
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
-const image_model = ref(null)
 const chat_models = ref([])
-const image_models = ref([])
 
 const load = () => {
   apiKey.value = store.config.engines.openai?.apiKey || ''
   chat_models.value = store.config.engines.openai?.models?.chat || []
-  image_models.value = store.config.engines.openai?.models?.image || []
   chat_model.value = store.config.engines.openai?.model?.chat || ''
-  image_model.value = store.config.engines.openai?.model?.image || ''
 }
 
 const onRefresh = async () => {
@@ -69,7 +56,6 @@ const getModels = async () => {
   let success = await loadOpenAIModels()
   if (!success) {
     chat_models.value = []
-    image_models.value = []
     setEphemeralRefreshLabel('Error!')
     return
   }
@@ -92,10 +78,7 @@ const onKeyChange = () => {
 
 const save = () => {
   store.config.engines.openai.apiKey = apiKey.value
-  store.config.engines.openai.model = {
-    chat: chat_model.value,
-    image: image_model.value
-  }
+  store.config.engines.openai.model.chat = chat_model.value
   store.saveSettings()
 }
 

@@ -44,7 +44,6 @@ beforeAll(() => {
   store.config.llm.engine = 'mock'
   store.config.instructions = {
     default: 'You are a chat assistant',
-    routing: 'You are a routing assistant',
     titling: 'You are a titling assistant'
   }
   store.config.getActiveModel = () => 'chat'

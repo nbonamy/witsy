@@ -59,7 +59,6 @@ test('Groq Basic', async () => {
   expect(groq.getName()).toBe('groq')
   expect(groq.isVisionModel('llama2-70b-4096')).toBe(false)
   expect(groq.isVisionModel('llama3-70b-8192')).toBe(false)
-  expect(groq.getRountingModel()).toBeNull()
 })
 
 test('Groq  completion', async () => {

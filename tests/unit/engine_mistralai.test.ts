@@ -51,7 +51,6 @@ test('MistralAI Basic', async () => {
   expect(mistralai.getName()).toBe('mistralai')
   expect(mistralai.isVisionModel('mistral-medium')).toBe(false)
   expect(mistralai.isVisionModel('mistral-large')).toBe(false)
-  expect(mistralai.getRountingModel()).toBeNull()
 })
 
 test('MistralAI  completion', async () => {

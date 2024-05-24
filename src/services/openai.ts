@@ -36,10 +36,6 @@ export default class extends LlmEngine {
     return [/*'*4o*', */ 'gpt-4-turbo', 'gpt-4-vision', '*vision*']
   }
 
-  getRountingModel(): string | null {
-    return 'gpt-3.5-turbo'
-  }
-
   async getModels(): Promise<any[]> {
 
     // need an api key
@@ -156,7 +152,7 @@ export default class extends LlmEngine {
     // now tool calling
     if (chunk.choices[0]?.finish_reason === 'tool_calls') {
 
-      // add tools
+      // iterate on tools
       for (const toolCall of this.toolCalls) {
 
         // first notify
@@ -167,8 +163,9 @@ export default class extends LlmEngine {
 
         // now execute
         const args = JSON.parse(toolCall.args)
+        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)}`)
         const content = await this.callTool(toolCall.function, args)
-        console.log(`[openai] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+        console.log(`[openai] tool call ${toolCall.function} => ${JSON.stringify(content).substring(0, 128)}`)
 
         // add tool call message
         this.currentThread.push({

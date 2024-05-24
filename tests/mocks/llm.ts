@@ -34,10 +34,6 @@ export default class LlmMock extends LlmEngine {
     return model == 'vision'
   }
 
-  getRountingModel(): string|null {
-    return 'chat'
-  }
-
   async getModels(): Promise<any[]> {
     return [
       { id: 'chat', name: 'Chat' },
@@ -47,15 +43,6 @@ export default class LlmMock extends LlmEngine {
   }
 
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
-
-    // routing
-    if (thread[0].content.includes('routing')) {
-      if (thread[1].content.includes('image')) {
-        return { type: 'text', content: 'IMAGE' }
-      }
-      return { type: 'text', content: 'TEXT' }
-    }
-
     return {
       type: 'text',
       content: JSON.stringify([

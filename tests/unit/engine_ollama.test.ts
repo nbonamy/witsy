@@ -53,7 +53,6 @@ test('Ollama Basic', async () => {
   expect(ollama.getName()).toBe('ollama')
   expect(ollama.isVisionModel('llava:latest')).toBe(true)
   expect(ollama.isVisionModel('llama2:latest')).toBe(false)
-  expect(ollama.getRountingModel()).toBeNull()
 })
 
 test('Ollama completion', async () => {

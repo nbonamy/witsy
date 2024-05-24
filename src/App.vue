@@ -17,14 +17,12 @@ onMounted(() => {
   let platform = {
     'win32': 'windows',
     'darwin': 'macos',
-  }[window.api.platform]||''
+  }[window.api.platform]||'generic'
 
   // add it everywhere
-  if (platform) {
-    window.platform = platform
-    document.platform = platform
-    document.querySelector('body').classList.add(platform)
-  }
+  window.platform = platform
+  document.platform = platform
+  document.querySelector('body').classList.add(platform)
 
 })
 

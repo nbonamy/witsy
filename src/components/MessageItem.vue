@@ -9,18 +9,15 @@
 
       <!-- attachment -->
       <div v-if="message.attachment">
-        <Attachment :attachment="message.attachment" class="attachment" @image-click="onFullscreen" />
+        <Attachment :attachment="message.attachment" class="attachment" @image-click="onClickAttachment(message.attachment)" />
       </div>
 
-      <!-- image -->
-      <div v-if="message.type == 'image'" class="image-container">
-        <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)" @load="onImageLoaded(message)"/>
-        <BIconDownload class="download" @click="onDownload(message)" />
-      </div>
+      <!-- image for backwards compatibility -->
+      <MessageItemImage :image-url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image'" />
 
       <!-- text -->
-      <div v-if="message.type == 'text'">
-        <div v-if="message.content !== null" v-html="mdRender(message.content)" class="text"></div>
+      <div v-if="message.type == 'text' && message.content !== null">
+        <MessageItemBody :message="message" @image-loaded="onImageLoaded" />
       </div>
 
       <!-- transient information -->
@@ -30,24 +27,7 @@
       </div>
 
     </div>
-    <div class="actions" v-if="hovered">
-      <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
-        <BIconClipboard /> {{ copyLabel }}
-      </div>
-      <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
-        <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
-        <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
-        <span v-else><BIconPlayCircle /> Read</span>
-        <audio/>
-      </div>
-      <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
-        <BIconPencil /> Edit
-      </div>
-    </div>
-    <div class="fullscreen" v-if="fullScreenImageUrl" @click="onCloseFullscreen">
-      <img :src="fullScreenImageUrl"/>
-      <BIconXLg class="close" />
-    </div>
+    <MessageItemActions :message="message" v-if="hovered" />
   </div>
 </template>
 
@@ -55,7 +35,9 @@
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer from '../composables/audio'
+import MessageItemBody from './MessageItemBody.vue'
+import MessageItemImage from './MessageItemImage.vue'
+import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Loader from './Loader.vue'
@@ -73,12 +55,7 @@ const props = defineProps({
 const emits = defineEmits(['image-loaded'])
 
 const hovered = ref(false)
-const fullScreenImageUrl = ref(null)
 const copyLabel = ref('Copy')
-const audioState = ref({
-  state: 'idle',
-  messageId: null,
-})
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
@@ -89,23 +66,18 @@ onMounted(() => {
       link.target = "_blank"
     })
   }, 599)
-  useAudioPlayer().addListener(onAudioPlayerStatus)
 })
 
 onUnmounted(() => {
   clearInterval(updateLinkInterval)
-  useAudioPlayer().removeListener(onAudioPlayerStatus)
 })
-
-const mgsAudioState = (message) => {
-  return message.uuid == audioState.value.messageId ? audioState.value.state : 'idle'
-}
 
 const authorName = computed(() => {
   return props.message.role === 'assistant' ? 'Assistant' : 'You'
 })
 
 const imageUrl = computed(() => {
+
   if (props.message.type !== 'image' || typeof props.message.content !== 'string') {
     return null
   } else if (props.message.content.startsWith('http')) {
@@ -116,6 +88,7 @@ const imageUrl = computed(() => {
   } else {
     return 'data:image/png;base64,' + props.message.content
   }
+
 })
 
 // using simple css :hover
@@ -125,57 +98,12 @@ const onHover = (value) => {
   hovered.value = value
 }
 
+const onClickAttachment = (attachment) => {
+  emitEvent('fullScreen', attachment.url)
+}
+
 const onImageLoaded = (message) => {
   emits('image-loaded', message)
-}
-
-const onCopy = (message) => {
-  if (message.type == 'text') {
-    window.api.clipboard.writeText(message.content)
-  } else if (message.type == 'image') {
-    window.api.clipboard.writeImage(message.content)
-  }
-  copyLabel.value = 'Copied!'
-  setTimeout(() => copyLabel.value = 'Copy', 1000)
-}
-
-const onAudioPlayerStatus = (status) => {
-  audioState.value = { state: status.state, messageId: status.uuid }
-}
-
-const onToggleRead = async (message) => {
-  await useAudioPlayer().play(document.querySelector('.read audio'),message.uuid, message.content)
-}
-
-const onEdit = (message) => {
-  emitEvent('set-prompt', message)
-}
-
-const onFullscreen = (url) => {
-  fullScreenImageUrl.value = url
-  window.api.fullscreen(true)
-}
-
-const onCloseFullscreen = () => {
-  fullScreenImageUrl.value = null
-  window.api.fullscreen(false)
-}
-
-const onDownload = (message) => {
-  window.api.file.download({
-    url: message.content,
-    properties: {
-      filename: 'image.png',
-    }
-  })
-}
-
-const mdRender = (content) => {
-  if (store.chatFilter) {
-    const regex = new RegExp(store.chatFilter, 'gi')
-    content = content.replace(regex, (match) => `==${match}==`);
-  }
-  return window.api.markdown.render(content)
 }
 
 </script>
@@ -195,59 +123,8 @@ const mdRender = (content) => {
 
 <style scoped>
 
-.message .body img {
+img {
   cursor: pointer;
-}
-
-.fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: black;
-  padding: 8px;
-  z-index: 100;
-  cursor: pointer;
-  -webkit-app-region: no-drag;
-}
-
-.fullscreen img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-}
-
-.fullscreen .close {
-  color: white;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-size: 14pt;
-}
-
-.actions {
-
-  .action {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: 8px;
-
-    &:first-child {
-      margin-left: 0px;
-    }
-
-    svg {
-      margin-right: 4px;
-    }
-
-    &.read svg {
-      position: relative;
-      top: 1.5px;
-    }
-  }
-
 }
 
 .transient {

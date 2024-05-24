@@ -64,7 +64,6 @@ onMounted(() => {
       assistant.value.prompt(prompt.value, {
         engine: engine.value,
         model: model.value,
-        route: false,
         save: false,
       }, (chunk) => {
       emitEvent('newChunk', chunk)
