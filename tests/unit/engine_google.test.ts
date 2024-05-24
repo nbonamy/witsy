@@ -47,7 +47,6 @@ test('Google Basic', async () => {
   expect(google.isVisionModel('models/gemini-pro')).toBe(false)
   expect(google.isVisionModel('gemini-1.5-flash-latest')).toBe(true)
   expect(google.isVisionModel('models/gemini-1.5-pro-latest')).toBe(true)
-  expect(google.getRountingModel()).toBeNull()
 })
 
 test('Google completion', async () => {

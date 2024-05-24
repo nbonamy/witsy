@@ -9,6 +9,10 @@
       <BIconArrowDown />
     </div>
   </div>
+  <div class="fullscreen" v-if="fullScreenImageUrl" @click="onCloseFullScreen">
+    <img :src="fullScreenImageUrl"/>
+    <BIconXLg class="close" />
+  </div>
 </template>
 
 <script setup>
@@ -23,6 +27,7 @@ const { onEvent } = useEventBus()
 
 const divScroller = ref(null)
 const overflown = ref(false)
+const fullScreenImageUrl = ref(null)
 
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 
@@ -32,8 +37,19 @@ defineProps({
 
 onMounted(() => {
   onEvent('newChunk', onNewChunk)
+  onEvent('fullScreen', onFullscreen)
   scrollDown()
 })
+
+const onFullscreen = (imageUrl) => {
+  fullScreenImageUrl.value = imageUrl
+  window.api.fullscreen(true)
+}
+
+const onCloseFullScreen = () => {
+  fullScreenImageUrl.value = null
+  window.api.fullscreen(false)
+}
 
 const onImageLoaded = (message) => {
   if (!overflown.value) {
@@ -102,6 +118,33 @@ const onScroll = () => {
   font-size: 14pt;
   font-weight: bold;
   cursor: pointer;
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  padding: 8px;
+  z-index: 100;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.fullscreen img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.fullscreen .close {
+  color: white;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 14pt;
 }
 
 </style>

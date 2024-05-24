@@ -35,10 +35,6 @@ export default class extends LlmEngine {
     return ['llava-llama3:latest', 'llava:latest', '*llava*']
   }
 
-  getRountingModel(): string|null {
-    return null
-  }
-
   async getModels(): Promise<any[]> {
     try {
       const response = await this.client.list()

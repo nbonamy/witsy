@@ -85,7 +85,6 @@ test('OpenAI Basic', async () => {
   expect(openAI.isVisionModel('gpt-4-turbo')).toBe(true)
   expect(openAI.isVisionModel('gpt-4-vision')).toBe(true)
   expect(openAI.isVisionModel('gpt-4-vision-preview')).toBe(true)
-  expect(openAI.getRountingModel()).toMatch(/3.5/)
 })
 
 test('OpenAI completion', async () => {

@@ -29,10 +29,6 @@ export default class extends LlmEngine {
     return ['*']
   }
 
-  getRountingModel(): string|null {
-    return null
-  }
-
   async getModels(): Promise<any[]> {
 
     // need an api key

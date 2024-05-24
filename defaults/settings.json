@@ -11,7 +11,6 @@
   },
   "instructions": {
     "default": "You are a helpful assistant. You are here to help the user with any questions they have.",
-    "routing": "Your role is to determine if the following request is a text or an image generation request. You just reply TEXT or IMAGE.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
     "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
   },
@@ -106,6 +105,9 @@
   "plugins": {
     "browse": {},
     "python": {},
-    "tavily": {}
+    "tavily": {},
+    "dalle": {
+      "enabled": true
+    }
   }
 }

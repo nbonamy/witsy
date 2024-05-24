@@ -30,10 +30,6 @@ export default class LlmEngine {
     throw new Error('Not implemented')
   }
   
-  getRountingModel(): string|null {
-    throw new Error('Not implemented')
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
     throw new Error('Not implemented')

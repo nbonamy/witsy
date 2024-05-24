@@ -7,7 +7,6 @@ import Message from '../models/message'
 import LlmEngine from './engine'
 import { store } from './store'
 import { igniteEngine } from './llm'
-import { download, saveFileContents } from './download'
 import { countryCodeToName } from './i18n'
 
 export default class {
@@ -51,32 +50,6 @@ export default class {
     return this.llm !== null
   }
 
-  async route(prompt: string) {
-    
-    try {
-    
-      // check if routing possibble
-      const routingModel = this.llm.getRountingModel()
-      if (routingModel === null) {
-        return null
-      }
-      
-      // build messages
-      const messages = [
-        new Message('system', this.config.instructions.routing),
-        new Message('user', prompt)
-      ]
-
-      // now get it
-      const route = await this.llm.complete(messages, { model: routingModel })
-      return route.content
-
-    } catch (error) {
-      console.error('Error while trying to route query', error)
-      return null
-    }
-
-  }
 
   async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
@@ -128,16 +101,8 @@ export default class {
     this.chat.lastMessage().setText(null)
     callback?.call(null, null)
 
-    // route
-    let route = null
-    if (opts.route == null || opts.route !== false) {
-      route = await this.route(prompt)
-    }
-    if (route === 'IMAGE') {
-      await this.generateImage(prompt, opts, callback)
-    } else {
-      await this.generateText(opts, callback)
-    }
+    // generate text
+    await this.generateText(opts, callback)
 
     // check if we need to update title
     if (this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
@@ -195,46 +160,6 @@ export default class {
     this.stream = null
     //callback?.call(null, null)
   
-  }
-
-  async generateImage(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
-
-    // we need this to be const during generation
-    const llm = this.llm
-    const message = this.chat.lastMessage()
-
-    // inform
-    message.setToolCall('Painting pixels…')    
-
-    try {
-
-      // generate 
-      const response = await llm.image(prompt, opts)
-
-      // we need to download/write it locally
-      let filename = null
-      if (response.url) {
-        filename = download(response.url)
-      } else if (response.content) {
-        filename = saveFileContents('png', response.content)
-      }
-      if (!filename) {
-        throw new Error('Could not save image')
-      }
-
-      // save
-      message.setImage(`file://${filename}`)
-      callback?.call(null, {
-        text: filename,
-        done: true
-      })
-
-    } catch (error) {
-      console.error(error)
-      message.setText('Sorry, I could not generate an image for that prompt.')
-      callback?.call(null, null)
-    }
-
   }
 
   async stop() {

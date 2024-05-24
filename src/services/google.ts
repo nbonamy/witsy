@@ -31,10 +31,6 @@ export default class extends LlmEngine {
     return ['gemini-1.5-flash-latest', 'models/gemini-1.5-pro-latest', 'models/gemini-pro-vision', '*vision*']
   }
 
-  getRountingModel(): string | null {
-    return null
-  }
-
   async getModels(): Promise<any[]> {
 
     // need an api key

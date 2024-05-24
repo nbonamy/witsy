@@ -4,6 +4,10 @@
   margin-bottom: 32px;
 }
 
+.message .image-container {
+  margin-bottom: 12px;
+}
+
 .message .body, .message .actions {
   margin: 0px 32px; 
 }
@@ -108,4 +112,9 @@
 
 .message .image-container:hover .download {
   display: block;
+}
+
+.message.assistant .actions {
+  position: relative;
+  top: -16px;
 }

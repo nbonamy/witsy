@@ -26,7 +26,6 @@ interface LLMConfig {
 
 interface InstructionsConfig {
   default: string
-  routing: string
   titling: string
   titling_user: string
 }

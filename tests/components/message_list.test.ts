@@ -8,19 +8,10 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
+import useEventBus from '../../src/composables/useEventBus'
+const { emitEvent } = useEventBus()
+
 enableAutoUnmount(afterAll)
-
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
-
-vi.mock('../../src/composables/useEventBus.js', async () => {
-  return { default: () => {
-    return {
-      onEvent: onEventMock,
-      emitEvent: emitEventMock
-    }
-  }}
-})
 
 let wrapper: VueWrapper<any>
 
@@ -28,6 +19,7 @@ beforeAll(() => {
 
   // api
   window.api = {
+    fullscreen: vi.fn(),
     markdown: {
       render: renderMarkdown
     }
@@ -38,7 +30,6 @@ beforeAll(() => {
 
   // wrapper
   wrapper = mount(MessageList)
-  expect(onEventMock).toHaveBeenCalled()
 })
 
 beforeEach(() => {
@@ -51,6 +42,7 @@ test('Render', () => {
   expect(wrapper.find('.overflow').exists()).toBe(false)
   expect(wrapper.findAll('.message')).toHaveLength(0)
   expect(wrapper.find('.messages').attributes('class')).toContain('openai')
+  expect(wrapper.find('.fullscreen').exists()).toBe(false)
 })
 
 test('Theme support', async () => {
@@ -84,4 +76,14 @@ test('Shows user and assistant messages', async () => {
   chat.addMessage(new Message('assistant', 'Hola'))
   await wrapper.setProps({ chat: chat })
   expect(wrapper.findAll('.message')).toHaveLength(2)
+})
+
+test('Fullscreen image', async () => {
+  emitEvent('fullScreen', 'https://example.com/image.jpg')
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.fullscreen').exists()).toBe(true)
+  expect(window.api.fullscreen).toHaveBeenCalledWith(true)
+  await wrapper.find('.fullscreen').trigger('click')
+  expect(wrapper.find('.fullscreen').exists()).toBe(false)
+  expect(window.api.fullscreen).toHaveBeenCalledWith(false)
 })
