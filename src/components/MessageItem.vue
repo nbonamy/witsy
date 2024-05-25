@@ -13,7 +13,7 @@
       </div>
 
       <!-- image for backwards compatibility -->
-      <MessageItemImage :image-url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image'" />
+      <MessageItemImage :url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image'" />
 
       <!-- text -->
       <div v-if="message.type == 'text' && message.content !== null">

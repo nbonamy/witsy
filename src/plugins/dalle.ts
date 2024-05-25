@@ -21,7 +21,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Generate an image based on a prompt. Returns the path of the image saved on disk.'
+    return 'Generate an image based on a prompt. Returns the path of the image saved on disk and a description of the image.'
   }
 
   getPreparationDescription(): string {
@@ -33,32 +33,58 @@ export default class extends Plugin {
   }
 
   getParameters(): PluginParameter[] {
-    return [
+
+    const parameters: PluginParameter[] = [
       {
         name: 'prompt',
         type: 'string',
         description: 'The description of the image',
         required: true
-      },
-      // {
-      //   name: 'size',
-      //   type: 'string',
-      //   description: 'The size of the image',
-      //   required: false
-      // },
-      // {
-      //   name: 'style',
-      //   type: 'string',
-      //   description: 'The style of the image',
-      //   required: false
-      // },
-      // {
-      //   name: 'n',
-      //   type: 'number',
-      //   description: 'Number of images to generate',
-      //   required: false
-      // },
+      }
     ]
+
+    // rest depends on model
+    if (store.config.engines.openai.model.image === 'dall-e-2') {
+
+      parameters.push({
+        name: 'size',
+        type: 'string',
+        enum: [ '256x256', '512x512', '1024x1024' ],
+        description: 'The size of the image',
+        required: false
+      })
+
+    } else if (store.config.engines.openai.model.image === 'dall-e-3') {
+
+      parameters.push({
+        name: 'quality',
+        type: 'string',
+        enum: [ 'standard', 'hd' ],
+        description: 'The quality of the image',
+        required: false
+      })
+
+      parameters.push({
+        name: 'size',
+        type: 'string',
+        enum: [ '1024x1024', '1792x1024', '1024x1792' ],
+        description: 'The size of the image',
+        required: false
+      })
+
+      parameters.push({
+        name: 'style',
+        type: 'string',
+        enum: ['vivid', 'natural'],
+        description: 'The style of the image',
+        required: false
+      })
+
+    }
+
+    // done
+    return parameters
+  
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -79,16 +105,17 @@ export default class extends Plugin {
       response_format: 'b64_json',
       size: parameters?.size,
       style: parameters?.style,
+      quality: parameters?.quality,
       n: parameters?.n || 1,
     })
 
     // save the content on disk
     const filename = saveFileContents('png', response.data[0].b64_json)
 
-
     // return an object
     return {
-      path: `file://${filename}`
+      path: `file://${filename}`,
+      description: parameters?.prompt
     }
 
   }  

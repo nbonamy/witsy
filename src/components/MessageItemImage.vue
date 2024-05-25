@@ -1,6 +1,6 @@
 <template>
   <div class="image-container">
-    <img :src="imageUrl" class="image" @click="onFullscreen(imageUrl)" @load="onImageLoaded()"/>
+    <img :src="url" :alt="desc" class="image" @click="onFullscreen" @load="onImageLoaded"/>
     <BIconDownload class="download" @click="onDownload()" />
   </div>
 </template>
@@ -13,7 +13,8 @@ import useEventBus from '../composables/useEventBus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  imageUrl: String,
+  url: String,
+  desc: String
 })
 
 const emits = defineEmits(['image-loaded'])
@@ -23,13 +24,12 @@ const onImageLoaded = () => {
 }
 
 const onFullscreen = (url) => {
-  emitEvent('fullScreen', url)
+  emitEvent('fullScreen', props.url)
 }
 
 const onDownload = () => {
-  console.log('download', props.imageUrl)
   window.api.file.download({
-    url: props.imageUrl,
+    url: props.url,
     properties: {
       filename: 'image.png',
     }

@@ -2,7 +2,7 @@
   <div v-if="message.type == 'text'">
     <div v-for="block in blocks">
       <div v-if="block.type == 'text'" v-html="mdRender(block.content)" class="text"></div>
-      <MessageItemImage :image-url="block.content" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
+      <MessageItemImage :url="block.url" :desc="block.desc" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
     </div>
   </div>
 </template>
@@ -37,16 +37,19 @@ const blocks = computed(() => {
     if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
       imageUrl = `file://${imageUrl}`
     }
-    blocks.push({ type: 'image', content: imageUrl })
+    blocks.push({ type: 'image', url: imageUrl, desc: match[1]})
 
     // continue
     lastIndex = regex.lastIndex
   }
 
   // add last block
-  blocks.push({ type: 'text', content: props.message.content.substring(lastIndex) })
+  if (lastIndex != props.message.content.length) {
+    blocks.push({ type: 'text', content: props.message.content.substring(lastIndex) })
+  }
 
   // done
+  //console.log(blocks)
   return blocks
 
 })
