@@ -13,7 +13,7 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return store.config.engines.openai.apiKey != null
+    return store.config?.engines.openai.apiKey != null
   }
 
   getName(): string {

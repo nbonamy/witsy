@@ -12,7 +12,7 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return this.config.enabled && this.config.apiKey != null
+    return this.config?.enabled && this.config?.apiKey != null
   }
 
   getName(): string {
