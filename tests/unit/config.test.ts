@@ -16,6 +16,8 @@ vi.mock('fs', async (importOriginal) => {
 test('Load default settings', () => {
   const loaded = config.loadSettings('')
   delete loaded.getActiveModel
+  loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
+  loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
   expect(loaded.general.language).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])

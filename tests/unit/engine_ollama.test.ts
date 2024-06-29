@@ -10,27 +10,27 @@ import { loadOllamaModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
 vi.mock('ollama/browser', async() => {
-  return { default : {
-    list: vi.fn(() => {
-      return { models: [
-        { model: 'model2', name: 'model2' },
-        { model: 'model1', name: 'model1' },
-      ] }
-    }),
-    chat: vi.fn((opts) => {
-      if (opts.stream) {
-        return {
-          controller: {
-            abort: vi.fn()
-          }
+  const Ollama = vi.fn()
+  Ollama.prototype.list = vi.fn(() => {
+    return { models: [
+      { model: 'model2', name: 'model2' },
+      { model: 'model1', name: 'model1' },
+    ] }
+  })
+  Ollama.prototype.chat = vi.fn((opts) => {
+    if (opts.stream) {
+      return {
+        controller: {
+          abort: vi.fn()
         }
       }
-      else {
-        return { message: { content: 'response' } }
-      }
-    }),
-    abort: vi.fn(),
-  }}
+    }
+    else {
+      return { message: { content: 'response' } }
+    }
+  })
+  Ollama.prototype.abort = vi.fn()
+  return { Ollama: Ollama }
 })
 
 beforeEach(() => {
@@ -61,7 +61,7 @@ test('Ollama completion', async () => {
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
-  expect(_ollama.default.chat).toHaveBeenCalled()
+  expect(_ollama.Ollama.prototype.chat).toHaveBeenCalled()
   expect(response).toStrictEqual({
     type: 'text',
     content: 'response'
@@ -74,10 +74,10 @@ test('Ollama stream', async () => {
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
-  expect(_ollama.default.chat).toHaveBeenCalled()
+  expect(_ollama.Ollama.prototype.chat).toHaveBeenCalled()
   expect(response.controller).toBeDefined()
   await ollama.stop()
-  expect(_ollama.default.abort).toHaveBeenCalled()
+  expect(_ollama.Ollama.prototype.abort).toHaveBeenCalled()
 })
 
 test('Ollama image', async () => {
