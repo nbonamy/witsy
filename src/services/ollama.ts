@@ -95,7 +95,7 @@ export default class extends LlmEngine {
   }
 
   async stop() {
-    await ollama.abort()
+    await this.client.abort()
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
