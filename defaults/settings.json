@@ -94,7 +94,7 @@
       }
     },
     "ollama": {
-      "baseURL": "https://api.ollama.com",
+      "baseURL": "http://127.0.0.1:11434",
       "models": {
         "chat": [],
         "image": []

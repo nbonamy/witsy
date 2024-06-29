@@ -83,6 +83,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Ollama base URL as settings
 - [x] OpenAI base URL as settings
 - [x] DALL-E as tool
 - [x] Google Gemini API
