@@ -19,6 +19,10 @@
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
+    <div class="group">
+      <label>API Base URL</label>
+      <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
+    </div>
   </div>  
 </template>
 
@@ -27,15 +31,18 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { loadOpenAIModels } from '../services/llm'
+import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
+const baseURL = ref(null)
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
 
 const load = () => {
   apiKey.value = store.config.engines.openai?.apiKey || ''
+  baseURL.value = store.config.engines.openai?.baseURL || ''
   chat_models.value = store.config.engines.openai?.models?.chat || []
   chat_model.value = store.config.engines.openai?.model?.chat || ''
 }
@@ -78,6 +85,7 @@ const onKeyChange = () => {
 
 const save = () => {
   store.config.engines.openai.apiKey = apiKey.value
+  store.config.engines.openai.baseURL = baseURL.value
   store.config.engines.openai.model.chat = chat_model.value
   store.saveSettings()
 }

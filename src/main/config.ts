@@ -53,6 +53,9 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.ollama
   }
 
+  // nullify defaults
+  nullifyDefaults(config)
+
   // done
   return config as Configuration
 
@@ -75,6 +78,9 @@ export const loadSettings = (source: App|string): Configuration => {
 export const saveSettings = (dest: App|string, config: anyDict) => {
   try {
 
+    // nullify defaults
+    nullifyDefaults(config)
+
     // remove instructions that are the same as the default
     const settings = JSON.parse(JSON.stringify(config))
     for (const instr in settings.instructions) {
@@ -89,5 +95,14 @@ export const saveSettings = (dest: App|string, config: anyDict) => {
 
   } catch (error) {
     console.log('Error saving settings data', error)
+  }
+}
+
+const nullifyDefaults = (settings: anyDict) => {
+  if (settings.engines.openai.baseURL == '' || settings.engines.openai.baseURL === defaultSettings.engines.openai.baseURL) {
+    delete settings.engines.openai.baseURL
+  }
+  if (settings.engines.ollama.baseURL == '' || settings.engines.ollama.baseURL === defaultSettings.engines.ollama.baseURL) {
+    delete settings.engines.ollama.baseURL
   }
 }

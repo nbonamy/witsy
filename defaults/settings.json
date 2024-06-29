@@ -43,6 +43,7 @@
   "engines": {
     "openai": {
       "apiKey": "",
+      "baseURL": "https://api.openai.com/v1",
       "models": {
         "chat": [],
         "image": []
@@ -93,6 +94,7 @@
       }
     },
     "ollama": {
+      "baseURL": "https://api.ollama.com",
       "models": {
         "chat": [],
         "image": []

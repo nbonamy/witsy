@@ -2,6 +2,7 @@
 import { Message } from '../types/index.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../types/llm.d'
 import { EngineConfig, Configuration } from '../types/config.d'
+import defaults from '../../defaults/settings.json'
 import LlmEngine from './engine'
 import OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
@@ -24,6 +25,7 @@ export default class extends LlmEngine {
     super(config)
     this.client = new OpenAI({
       apiKey: config.engines.openai.apiKey,
+      baseURL: config.engines.openai.baseURL || defaults.engines.openai.baseURL,
       dangerouslyAllowBrowser: true
     })
   }
@@ -52,7 +54,16 @@ export default class extends LlmEngine {
     }
   }
 
+  private setBaseURL() {
+    if (this.client) {
+      this.client.baseURL = this.config.engines.openai.baseURL || defaults.engines.openai.baseURL
+    }
+  }
+
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
+
+    // set baseURL on client
+    this.setBaseURL()
 
     // call
     const model = opts?.model || this.config.engines.openai.model.chat
@@ -70,6 +81,9 @@ export default class extends LlmEngine {
   }
 
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
+
+    // set baseURL on client
+    this.setBaseURL()
 
     // model: switch to vision if needed
     this.currentModel = this.selectModel(thread, opts?.model || this.getChatModel())
