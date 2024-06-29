@@ -52,6 +52,7 @@ interface ShortcutsConfig {
 
 interface EngineConfig {
   apiKey?: string
+  baseURL?: string
   models: ModelsConfig
   model: ModelConfig
   tts?: TTSConfig
