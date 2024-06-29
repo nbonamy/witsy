@@ -28,6 +28,10 @@
         <div class="progress" v-if="pull_progress">{{  pull_progress }}</div>
       </div>
     </div>
+    <div class="group">
+      <label>API Base URL</label>
+      <input v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>
+    </div>
   </div>
 </template>
 
@@ -37,7 +41,9 @@ import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import { loadOllamaModels } from '../services/llm'
 import Ollama, { getPullableModels } from '../services/ollama'
+import defaults from '../../defaults/settings.json'
 
+const baseURL = ref(null)
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
@@ -50,7 +56,8 @@ const pullStream = ref(null)
 let ollama = new Ollama(store.config)
 
 const load = () => {
-  chat_models.value = store.config.engines.ollama.models.chat || []
+  baseURL.value = store.config.engines.ollama?.baseURL || ''
+  chat_models.value = store.config.engines.ollama?.models.chat || []
   chat_model.value = store.config.engines.ollama?.model?.chat || ''
   pull_models.value = getPullableModels
 }
@@ -132,6 +139,7 @@ const onStop = async () => {
 }
 
 const save = () => {
+  store.config.engines.ollama.baseURL = baseURL.value
   store.config.engines.ollama.model.chat = chat_model.value
   store.saveSettings()
 }

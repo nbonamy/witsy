@@ -3,7 +3,7 @@ import { Message } from '../types/index.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback } from '../types/llm.d'
 import { EngineConfig, Configuration } from '../types/config.d'
 import LlmEngine from './engine'
-import ollama from 'ollama/dist/browser.mjs'
+import { Ollama } from 'ollama/dist/browser.mjs'
 import { ChatResponse, ProgressResponse } from 'ollama'
 
 export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
@@ -24,7 +24,9 @@ export default class extends LlmEngine {
 
   constructor(config: Configuration) {
     super(config)
-    this.client = ollama
+    this.client = new Ollama({
+      host: config.engines.ollama.baseURL,
+    })
   }
 
   getName(): string {
