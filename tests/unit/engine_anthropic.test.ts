@@ -53,6 +53,7 @@ test('Anthropic Load Models', async () => {
     { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' },
     { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus' },
     { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet' },
+    { id: 'claude-3-5-sonnet-20240620', name: 'Claude 3.5 Sonnet' },
   ])
   expect(store.config.engines.anthropic.model.chat).toStrictEqual(models[0].id)
 })
@@ -63,6 +64,7 @@ test('Anthropic Basic', async () => {
   expect(anthropic.isVisionModel('claude-3-haiku-20240307')).toBe(true)
   expect(anthropic.isVisionModel('claude-3-sonnet-20240229')).toBe(true)
   expect(anthropic.isVisionModel('claude-3-opus-2024022')).toBe(true)
+  expect(anthropic.isVisionModel('claude-3-5-sonnet-20240620')).toBe(true)
 })
 
 test('Anthropic completion', async () => {

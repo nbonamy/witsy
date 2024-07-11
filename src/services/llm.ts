@@ -11,6 +11,7 @@ import Groq, { isGroqReady } from './groq'
 import LlmEngine from './engine'
 
 export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq']
+export const staticModelsEngines = [ 'anthropic', 'google', 'groq']
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
@@ -56,13 +57,16 @@ export const canProcessFormat = (engine: string, model: string, format: string) 
   }
 }
 
-export const loadAllModels = async () => {
-  for (const engine in availableEngines) {
-    await loadModels(engine)
+export const initModels = async () => {
+  for (const engine of staticModelsEngines) {
+    if (isEngineReady(engine)) {
+      await loadModels(engine)
+    }
   }
 }
 
 export const loadModels = async (engine: string) => {
+  console.log('Loading models for', engine)
   if (engine === 'openai') {
     await loadOpenAIModels()
   } else if (engine === 'ollama') {
