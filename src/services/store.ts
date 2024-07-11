@@ -3,7 +3,7 @@ import { Store } from '../types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadPrompts } from './prompts'
-import { isEngineReady, loadAllModels, availableEngines } from './llm'
+import { isEngineReady, initModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
 export const store: Store = reactive({
@@ -37,7 +37,7 @@ store.load = async () => {
   })
   
   // load models and select valid engine
-  await loadAllModels()
+  initModels()
   if (!isEngineReady(store.config.llm.engine)) {
     for (const engine of availableEngines) {
       if (isEngineReady(engine)) {
