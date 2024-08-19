@@ -1,6 +1,6 @@
 
 <template>
-  <div class="content">
+  <div class="content" @click="closeContextMenu">
     <div class="commands">
       <table>
         <thead>
@@ -26,9 +26,10 @@
       <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
       <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
       <div class="right">
-        <button @click.prevent="onDefaults">Defaults</button>
+        <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
+    <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom-right" :teleport="false" />
     <CommandDefaults id="defaults" ref="defaults" @command-defaults-modified="onCommandModified"/>
     <CommandEditor id="editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
@@ -43,11 +44,23 @@ import { store } from '../services/store'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
 import CommandEditor from '../screens/CommandEditor.vue'
+import ContextMenu from '../components/ContextMenu.vue'
 
 const commands = ref(null)
 const selected = ref(null)
 const edited = ref(null)
 const defaults = ref(null)
+
+const moreButton = ref(null)
+const showMenu = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+
+const contextMenuActions = [
+  { label: 'Defaults', action: 'defaults' },
+  { label: 'Export', action: 'export' },
+  { label: 'Import', action: 'import' },
+]
 
 const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
 
@@ -66,9 +79,63 @@ const action = (action) => {
   if (action == 'clipboard_copy') return 'Copy to Clipboard'
 }
 
+const onMore = (event) => {
+  if (showMenu.value) {
+    closeContextMenu()
+  } else {
+    showContextMenu(event)
+  }
+}
+
+const showContextMenu = () => {
+  showMenu.value = true
+  const rcButton = moreButton.value.getBoundingClientRect()
+  const rcDialog = document.getElementsByTagName('dialog')[0].getBoundingClientRect()
+  menuX.value = rcDialog.right - rcButton.right
+  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false;
+}
+
+const handleActionClick = async (action) => {
+
+  // close
+  closeContextMenu()
+
+  // process
+  if (action === 'defaults') {
+    onDefaults()
+  } else if (action === 'import') {
+    onImport()
+  } else if (action === 'export') {
+    onExport()
+  }
+
+}
+
 const onDefaults = () => {
   defaults.value.load()
   document.getElementById('defaults').showModal()
+}
+
+const onImport = () => {
+  if (window.api.commands.import()) {
+    store.loadCommands()
+    load()
+    alert('Commands file imported successfully')
+  } else {
+    alert('Failed to import commands file')
+  }
+}
+
+const onExport = () => {
+  if (window.api.commands.export()) {
+    alert('Commands file exported successfully')
+  } else {
+    alert('Failed to export commands file')
+  }
 }
 
 const onSelect = (command) => {

@@ -1,5 +1,5 @@
 <template>
-  <Teleport to="body">
+  <Teleport to="body" :disabled="!teleport">
     <div class="context-menu" :style="position">
       <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
@@ -17,7 +17,20 @@
 
 import { ref, computed, onMounted } from 'vue'
 
-const props = defineProps(['actions', 'align', 'x', 'y', 'showFilter'])
+const props = defineProps({
+  actions: Object,
+  align: String,
+  x: Number,
+  y: Number,
+  showFilter: {
+    type: Boolean,
+    default: false
+  },
+  teleport: {
+    type: Boolean,
+    default: true
+  }
+})
 
 const emit = defineEmits(['action-clicked'])
 
@@ -40,6 +53,11 @@ const position = computed(() => {
   } else if (props.align === 'bottom') {
     return {
       left: props.x + 'px',
+      bottom: props.y + 'px'
+    }
+  } else if (props.align === 'bottom-right') {
+    return {
+      right: props.x + 'px',
       bottom: props.y + 'px'
     }
   } else {

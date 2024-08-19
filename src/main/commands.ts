@@ -1,6 +1,7 @@
 import { Command } from '../types/index.d'
 import defaultCommands from '../../defaults/commands.json'
 import { App } from 'electron'
+import * as file from './file';
 import path from 'path'
 import fs from 'fs'
 
@@ -55,4 +56,41 @@ export const saveCommands = (app: App, content: Command[]) => {
   } catch (error) {
     console.log('Error saving history data', error)
   }
+}
+
+export const exportCommands = (app: App) => {
+
+  // pick a directory
+  const filepath = file.pickDirectory(app)
+  if (!filepath) {
+    return false
+  }
+
+  // load defaults file content
+  const contents = fs.readFileSync(commandsFilePath(app), 'utf-8')
+
+  // write
+  const target = path.join(filepath, 'commands.json')
+  fs.writeFileSync(target, contents)
+  
+  // done
+  return true
+
+}
+
+export const importCommands = (app: App) => {
+
+  // pick the file
+  const filename = file.pickFile(app, { location: true, filters: [{ name: 'JSON', extensions: ['json'] }] })
+  if (!filename) {
+    return false
+  }
+
+  // read and write
+  const contents = fs.readFileSync(filename as string, 'utf-8')
+  fs.writeFileSync(commandsFilePath(app), contents)
+
+  // done
+  return true
+
 }

@@ -48,7 +48,9 @@ export const pickFile = (app: App, payload: anyDict): string|strDict => {
     
     // build dialog propertis
     const dialogProperties: ("openFile" | "treatPackageAsDirectory" | "noResolveAliases")[] = [ 'openFile', 'treatPackageAsDirectory' ];
-    if (payload.location) dialogProperties.push('noResolveAliases');
+    if (payload.location) {
+      dialogProperties.push('noResolveAliases');
+    }
     
     // show it and pick
     const fileURL = dialog.showOpenDialogSync({
@@ -64,6 +66,32 @@ export const pickFile = (app: App, payload: anyDict): string|strDict => {
     
   } catch (error) {
     console.error('Error while picking file', error);
+  }
+
+  // default
+  return null;
+
+}
+
+export const pickDirectory = (app: App): string => {
+
+  try {
+    
+    // build dialog propertis
+    const dialogProperties: ("openDirectory" | "treatPackageAsDirectory")[] = [ 'openDirectory', 'treatPackageAsDirectory' ];
+    
+    // show it and pick
+    const fileURL = dialog.showOpenDialogSync({
+      properties: dialogProperties,
+    });
+
+    // return
+    if (fileURL) {
+      return fileURL[0];
+    }
+    
+  } catch (error) {
+    console.error('Error while picking directory', error);
   }
 
   // default
