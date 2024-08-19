@@ -60,7 +60,11 @@ const closeChatMenu = () => {
 }
 
 const handleActionClick = async (action) => {
+
+  // close
   closeChatMenu()
+
+  // process
   if (action === 'rename') {
     emitEvent('renameChat', props.chat)
   } else if (action === 'delete') {

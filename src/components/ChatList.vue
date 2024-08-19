@@ -113,10 +113,13 @@ const closeContextMenu = () => {
 
 const handleActionClick = async (action) => {
 
-  // init
+  // close
   closeContextMenu()
+
+  // init
   let chat = targetRow.value
 
+  // process
   if (action === 'rename') {
     emitEvent('renameChat', chat)
   } else if (action === 'delete') {

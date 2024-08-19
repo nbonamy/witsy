@@ -235,6 +235,14 @@ ipcMain.on('save-commands', (event, payload) => {
   event.returnValue = commands.saveCommands(app, JSON.parse(payload) as Command[]);
 });
 
+ipcMain.on('export-commands', (event) => {
+  event.returnValue = commands.exportCommands(app);
+});
+
+ipcMain.on('import-commands', (event) => {
+  event.returnValue = commands.importCommands(app);
+});
+
 ipcMain.on('load-prompts', (event) => {
   event.returnValue = JSON.stringify(prompts.loadPrompts(app));
 });
