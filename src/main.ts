@@ -78,6 +78,8 @@ const buildTrayMenu = () => {
   const configShortcuts = config.loadSettings(app).shortcuts;
 
   return [
+    { role: 'about', visible: process.platform !== 'darwin' },
+    { type: 'separator', visible: process.platform !== 'darwin' },
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
     { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },

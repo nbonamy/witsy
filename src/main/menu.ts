@@ -118,7 +118,7 @@ const template = (app: App, callbacks: anyDict) => [
       {
         label: 'Learn More',
         click: async () => {
-          await shell.openExternal('https://github.com/nbonamy/witsy-releases')
+          await shell.openExternal('https://github.com/nbonamy/witsy')
         }
       }
     ]
