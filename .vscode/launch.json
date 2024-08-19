@@ -10,7 +10,8 @@
       },
       "runtimeArgs": [ ],
       "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "env": { "DEBUG": "1" },
     },
     {
       "type": "node",
