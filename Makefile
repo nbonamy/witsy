@@ -41,7 +41,13 @@ win-x64:
 	mkdir -p out/make/zip/win32/x64
 	cd out ; zip -r make/zip/win32/x64/Witsy-win32-x64-$(VERSION).zip "Witsy-win32-x64"
 
-win: win-x64
+win-arm64:
+	-rm -rf out/*win32-arm64* out/make/zip/win32/arm64/*
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge package -p win32 -a arm64
+	mkdir -p out/make/zip/win32/arm64
+	cd out ; zip -r make/zip/win32/arm64/Witsy-win32-arm64-$(VERSION).zip "Witsy-win32-arm64"
+
+win: win-x64 win-arm64
 
 linux-x64:
 	-rm -rf out/*linux-x64* out/make/zip/linux/x64/*
