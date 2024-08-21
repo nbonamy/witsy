@@ -13,8 +13,8 @@ export const loadPrompts = (): void => {
 
 export const savePrompts = (): void => {
   try {
-    window.api.commands.save(JSON.parse(JSON.stringify(store.commands)))
+    window.api.prompts.save(JSON.parse(JSON.stringify(store.prompts)))
   } catch (error) {
-    console.log('Error saving commands data', error)
+    console.log('Error saving prompts data', error)
   }
 }
