@@ -9,6 +9,7 @@ import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
+import ReadAloud from './screens/ReadAloud.vue'
 
 // add platform name
 onMounted(() => {
@@ -33,6 +34,7 @@ const routes = {
   '/wait': Wait,
   '/command': Commands,
   '/prompt': PromptAnywhere,
+  '/readaloud': ReadAloud,
 }
 
 const currentPath = ref(window.location.hash)

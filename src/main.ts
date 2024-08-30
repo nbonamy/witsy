@@ -12,6 +12,7 @@ import { wait } from './main/utils';
 import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
+import ReadAloud from 'automations/readaloud';
 //import Dropbox from './main/dropbox';
 import * as config from './main/config';
 import * as history from './main/history';
@@ -61,6 +62,7 @@ const registerShortcuts = () => {
     chat: window.openMainWindow,
     command: Commander.initCommand,
     anywhere: PromptAnywhere.initPrompt,
+    readaloud: ReadAloud.read,
   });
 }
 
@@ -84,6 +86,7 @@ const buildTrayMenu = () => {
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
     { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
+    { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
     { type: 'separator'},
     { label: 'Settings…', click: window.openSettingsWindow },
     { type: 'separator'},
@@ -220,8 +223,8 @@ ipcMain.on('save-config', (event, payload) => {
   event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
-ipcMain.on('load-history', (event) => {
-  event.returnValue = JSON.stringify(history.loadHistory(app));
+ipcMain.on('load-history', async (event) => {
+  event.returnValue = JSON.stringify(await history.loadHistory(app));
 });
 
 ipcMain.on('save-history', (event, payload) => {
@@ -406,6 +409,14 @@ ipcMain.on('cancel-anywhere', async () => {
     anywhere = null;
   }
 })
+
+ipcMain.on('get-readaloud-text', (event, payload) => {
+  event.returnValue = ReadAloud.getCachedText(payload);
+})
+
+ipcMain.on('close-readaloud-palette', async () => {
+  await window.closeReadAloudPalette();
+});
 
 ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
   const dropbox = new Dropbox(app, '', '')

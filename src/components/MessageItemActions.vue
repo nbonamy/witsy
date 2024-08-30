@@ -61,7 +61,7 @@ const onAudioPlayerStatus = (status) => {
 }
 
 const onToggleRead = async (message) => {
-  await useAudioPlayer().play(document.querySelector('.read audio'),message.uuid, message.content)
+  await useAudioPlayer().play(document.querySelector('.read audio'), message.uuid, message.content)
 }
 
 const onEdit = (message) => {

@@ -68,6 +68,10 @@ contextBridge.exposeInMainWorld(
       load: (): Prompt[] => { return JSON.parse(ipcRenderer.sendSync('load-prompts')) },
       save: (data: Prompt[]) => { return ipcRenderer.send('save-prompts', JSON.stringify(data)) },
     },
+    readaloud: {
+      getText: (id: string): string => { return ipcRenderer.sendSync('get-readaloud-text', id) },
+      closePalette: (): void => { return ipcRenderer.send('close-readaloud-palette') },
+    },
     markdown: {
       render: (markdown: string): string => { return ipcRenderer.sendSync('render-markdown', markdown) },
     },
