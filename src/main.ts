@@ -12,6 +12,7 @@ import { wait } from './main/utils';
 import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
+//import Dropbox from './main/dropbox';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
@@ -404,4 +405,15 @@ ipcMain.on('cancel-anywhere', async () => {
     await anywhere.cancel();
     anywhere = null;
   }
+})
+
+ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
+  const dropbox = new Dropbox(app, '', '')
+  event.returnValue = await dropbox.getOAuthUrl()
+})
+
+ipcMain.on('dropbox-authenticate-with-code', async (event, payload) => {
+  const dropbox = new Dropbox(app, '', '')
+  const accessToken = await dropbox.getAccessTokenFromCode(payload)
+  event.returnValue = (accessToken != null)
 })

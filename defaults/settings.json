@@ -111,5 +111,7 @@
     "dalle": {
       "enabled": true
     }
+  },
+  "dropbox": {
   }
 }
