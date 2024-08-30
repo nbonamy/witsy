@@ -5,6 +5,7 @@ export interface ShortcutCallbacks {
   chat: () => void
   command: () => void
   anywhere: () => void
+  readaloud: () => void
 }
 
 export interface Automator {

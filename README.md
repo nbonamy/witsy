@@ -83,6 +83,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Read aloud
 - [x] Import/Export commands
 - [x] Anthropic Sonnet 3.5
 - [x] Ollama base URL as settings

@@ -49,6 +49,7 @@ interface ShortcutsConfig {
   chat: Shortcut
   command: Shortcut
   anywhere: Shortcut
+  readaloud: Shortcut
 }
 
 interface EngineConfig {

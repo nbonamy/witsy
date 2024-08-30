@@ -5,7 +5,7 @@ import { SpeechPlayer } from 'openai-speech-stream-player'
 import { store } from '../services/store'
 import Tts from '../services/tts'
 
-export type AudioState = 'idle'|'loading'|'playing'
+export type AudioState = 'idle'|'loading'|'playing'|'paused'
 export type AudioStatus = { state: AudioState, uuid: string }
 export type AudioStatusListener = (status: AudioStatus) => void
 
@@ -65,7 +65,10 @@ class AudioPlayer {
           this.state = 'playing'
           this.emitStatus()
         },
-        //onPause: () => {},
+        onPause: () => {
+          this.state = 'paused'
+          this.emitStatus()
+        },
         onChunkEnd: () => {
           this.stop()
         },
@@ -78,6 +81,16 @@ class AudioPlayer {
       console.error(e)
     }
   
+  }
+
+  playpause(uuid: string) {
+    if (this.uuid == uuid) {
+      if (this.player?.playing) {
+        this.player?.pause()
+      } else {
+        this.player?.play()
+      }
+    }
   }
   
   stop() {

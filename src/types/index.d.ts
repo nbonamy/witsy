@@ -79,6 +79,7 @@ interface Store {
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>
+  loadSettings?(): Promise<void>
   loadCommands?(): Promise<void>
   mergeHistory?(chats: any[]): void
   dump?(): void
