@@ -10,6 +10,7 @@ export interface Configuration {
   shortcuts: ShortcutsConfig
   engines: {[key: string]: EngineConfig}
   plugins: {[key: string]: PluginConfig}
+  dropbox: DropboxConfig
   getActiveModel: () => string
 }
 
@@ -77,4 +78,8 @@ interface ModelConfig {
 interface TTSConfig {
   model: string
   voice: string
+}
+
+interface DropboxConfig {
+  accessToken: string
 }

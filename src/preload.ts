@@ -73,6 +73,10 @@ contextBridge.exposeInMainWorld(
     },
     interpreter: {
       python: (code: string): string => { return ipcRenderer.sendSync('run-python-code', code) },
+    },
+    dropbox: {
+      getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
+      authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },
     }
   },
 );

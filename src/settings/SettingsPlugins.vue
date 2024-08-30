@@ -22,15 +22,17 @@ import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
 import SettingsDallE from './SettingsDall-E.vue'
+//import SettingsDropbox from './SettingsDropbox.vue'
 import logoPython from '../../assets/python.svg'
 import logoTavily from '../../assets/tavily.svg'
 import logoOpenAI from '../../assets/openai.svg'
+//import logoDropbox from '../../assets/dropbox.svg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
 
 const plugins = computed(() => {
-  return Object.keys(availablePlugins).map(plugin => {
+  let res = Object.keys(availablePlugins).map(plugin => {
     return {
       id: plugin,
       label: {
@@ -47,6 +49,12 @@ const plugins = computed(() => {
       }[plugin],
     }
   })
+  // res.push({
+  //   id: 'dropbox',
+  //   label: 'Dropbox',
+  //   logo: { image: logoDropbox },
+  // })
+  return res
 })
 
 const currentView = computed(() => {
@@ -54,6 +62,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'python') return SettingsPython
   if (currentPlugin.value == 'tavily') return SettingsTavily
   if (currentPlugin.value == 'dalle') return SettingsDallE
+  //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
 
 const selectPlugin = (plugin) => {
