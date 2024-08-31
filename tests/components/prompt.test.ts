@@ -125,7 +125,7 @@ test('Send attachment', async () => {
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
   expect(emitEventMock).toHaveBeenCalledWith('attachFile', {
-    format: 'png',
+    mimeType: 'image/png',
     contents: 'image64',
     downloaded: false,
     url: 'file://image.png',
@@ -141,7 +141,7 @@ test('Display url attachment', async () => {
 })
 
 test('Display base64 attachment', async () => {
-  store.pendingAttachment = new Attachment('file://image.png', 'png', 'image64')
+  store.pendingAttachment = new Attachment('file://image.png', 'image/png', 'image64')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)

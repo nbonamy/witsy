@@ -5,8 +5,15 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Assistant from '../../src/services/assistant'
+import Attachment from '../../src/models/attachment'
 import Chat from '../../src/models/chat'
 import LlmMock from '../mocks/llm'
+
+window.api = {
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -76,18 +83,11 @@ test('Assistant Chat', async () => {
 
 test('Assistant Attachment', async () => {
   assistant.setChat(new Chat())
-  await assistant.attach({
-    url: 'clipboard://',
-    format: 'png',
-    contents: 'image_content',
-    downloaded: false 
-  })
-  expect(assistant.chat.lastMessage().attachment).toStrictEqual({
-    url: 'clipboard://',
-    format: 'png',
-    contents: 'image_content',
-    downloaded: false 
-  })
+  await assistant.attach(new Attachment('clipboard://', 'image/png', 'image_content', false))
+  expect(assistant.chat.lastMessage().attachment.contents).toStrictEqual('image_content')
+  expect(assistant.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
+  expect(assistant.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
+  expect(assistant.chat.lastMessage().attachment.downloaded).toStrictEqual(false)
 })
 
 test('Conversaton Length 1', async () => {

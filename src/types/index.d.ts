@@ -39,10 +39,11 @@ interface Message {
 
 interface Attachment {
   url: string
-  format: string
+  mimeType: string
   contents: string
   downloaded: boolean
   fromJson(json: any): void
+  format(): string
   isText(): boolean
   isImage(): boolean
   extractText(): void

@@ -169,7 +169,7 @@ export default class extends LlmEngine {
     if (attachment.isImage()) {
       parts.push({
         inlineData: {
-          mimeType: 'image/png',
+          mimeType: attachment.mimeType,
           data: attachment.contents,
         }
       })
@@ -253,7 +253,7 @@ export default class extends LlmEngine {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
-    payload.images = [message.attachment.contents]
+    payload.images = [ message.attachment.contents ]
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

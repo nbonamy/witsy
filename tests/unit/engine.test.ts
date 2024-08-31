@@ -179,7 +179,7 @@ test('Build payload with text attachment', async () => {
     new Message('system', { role: 'system', type: 'text', content: 'instructions' }),
     new Message('user', { role: 'user', type: 'text', content: 'prompt1' }),
   ]
-  messages[1].attachFile(new Attachment('', 'txt', 'attachment', true))
+  messages[1].attachFile(new Attachment('', 'text/plain', 'attachment', true))
   expect(openai.buildPayload(messages, 'gpt-model1')).toStrictEqual([
     { role: 'system', content: 'instructions' },
     { role: 'user', content: 'prompt1\n\nattachment' },
@@ -192,7 +192,7 @@ test('Build payload with image attachment', async () => {
     new Message('system', { role: 'system', type: 'text', content: 'instructions' }),
     new Message('user', { role: 'user', type: 'text', content: 'prompt1' }),
   ]
-  messages[1].attachFile(new Attachment('', 'png', 'attachment', true))
+  messages[1].attachFile(new Attachment('', 'image/png', 'attachment', true))
   expect(openai.buildPayload(messages, 'gpt-model1')).toStrictEqual([
     { role: 'system', content: 'instructions' },
     { role: 'user', content: 'prompt1' },
@@ -201,7 +201,7 @@ test('Build payload with image attachment', async () => {
     { role: 'system', content: 'instructions' },
     { role: 'user', content: [
       { type: 'text', text: 'prompt1' },
-      { 'type': 'image_url', 'image_url': { 'url': 'data:image/jpeg;base64,attachment' } },
+      { 'type': 'image_url', 'image_url': { 'url': 'data:image/png;base64,attachment' } },
     ]},
   ])
 })

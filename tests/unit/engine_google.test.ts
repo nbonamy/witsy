@@ -145,9 +145,9 @@ test('Google Text Attachments', async () => {
   const google = new Google(store.config)
   await google.stream([
     new Message('system', 'instruction'),
-    new Message('user', { role: 'user', type: 'text', content: 'prompt1', attachment: { url: '', format: 'txt', contents: 'text1', downloaded: true } } ),
+    new Message('user', { role: 'user', type: 'text', content: 'prompt1', attachment: { url: '', mimeType: 'text/plain', contents: 'text1', downloaded: true } } ),
     new Message('assistant', 'response1'),
-    new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', format: 'txt', contents: 'text2', downloaded: true } } ),
+    new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'text/plain', contents: 'text2', downloaded: true } } ),
   ], null)
   expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
     { role: 'user', parts: [ { text: 'prompt1\n\ntext1' } ] },
@@ -160,9 +160,9 @@ test('Google Image Attachments', async () => {
   const google = new Google(store.config)
   await google.stream([
     new Message('system', 'instruction'),
-    new Message('user', { role: 'user', type: 'text', content: 'prompt1', attachment: { url: '', format: 'png', contents: 'image', downloaded: true } } ),
+    new Message('user', { role: 'user', type: 'text', content: 'prompt1', attachment: { url: '', mimeType: 'image/png', contents: 'image', downloaded: true } } ),
     new Message('assistant', 'response1'),
-    new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', format: 'png', contents: 'image', downloaded: true } } ),
+    new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'image/png', contents: 'image', downloaded: true } } ),
   ], null)
   expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
     { role: 'user', parts: [ { text: 'prompt1' }, { inlineData: { data: 'image', mimeType: 'image/png' }} ] },

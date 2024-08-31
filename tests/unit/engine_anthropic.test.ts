@@ -4,10 +4,17 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 import Anthropic from '../../src/services/anthropic'
 import * as _Anthropic from '@anthropic-ai/sdk'
 import { loadAnthropicModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
+
+window.api = {
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 vi.mock('@anthropic-ai/sdk', async() => {
   const Anthropic = vi.fn()
@@ -101,14 +108,14 @@ test('Anthropic image', async () => {
 test('Anthropic addImageToPayload', async () => {
   const anthropic = new Anthropic(store.config)
   const message = new Message('user', 'text')
-  message.attachFile({ type: 'image', url: '', format:'png', contents: 'image', downloaded: true })
+  message.attachFile(new Attachment('', 'image/png', 'image', true ))
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   anthropic.addImageToPayload(message, payload)
   expect(payload.content).toStrictEqual([
     { type: 'text', text: 'text' },
     { type: 'image', source: {
       type: 'base64',
-      media_type: 'image/jpeg',
+      media_type: 'image/png',
       data: 'image',
     }}
   ])
