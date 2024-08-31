@@ -11,6 +11,7 @@ Generative AI desktop application:
 - Special prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
 - Read aloud of assistant messages (requires OpenAI API key)
+- Read aloud of any text in other applications (requires OpenAI API key)
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
 - Image copy and download
