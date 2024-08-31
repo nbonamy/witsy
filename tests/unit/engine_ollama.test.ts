@@ -4,10 +4,17 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 import Ollama from '../../src/services/ollama'
 import * as _ollama from 'ollama/dist/browser.mjs'
 import { loadOllamaModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
+
+window.api = {
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 vi.mock('ollama/browser', async() => {
   const Ollama = vi.fn()
@@ -89,7 +96,7 @@ test('Ollama image', async () => {
 test('Ollama addImageToPayload', async () => {
   const ollama = new Ollama(store.config)
   const message = new Message('user', 'text')
-  message.attachFile({ type: 'image', url: '', format:'png', contents: 'image', downloaded: true })
+  message.attachFile(new Attachment('', 'image/png', 'image', true ))
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   ollama.addImageToPayload(message, payload)
   expect(payload.images).toStrictEqual([ 'image' ])

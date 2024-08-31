@@ -16,3 +16,37 @@ export function mimeTypeToExtension(mimeType: string): string {
       return mimeType.split('/')[1]
   }
 }
+
+export function extensionToMimeType(extension: string): string {
+  switch (extension.toLowerCase()) {
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    case 'pptx':
+      return 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    case 'xlsx':
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    case 'txt':
+      return 'text/plain'
+    case 'pdf':
+      return 'application/pdf'
+    case 'jpg':
+      return 'image/jpeg'
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'webp':
+      return `image/${extension.toLowerCase()}`
+    case 'svg':
+      return 'image/svg+xml'
+    case 'json':
+      return 'application/json'
+    case 'html':
+      return 'text/html'
+    case 'css':
+      return 'text/css'
+    case 'js':
+      return 'application/javascript'
+    default:
+      return 'application/octet-stream'
+  }
+}

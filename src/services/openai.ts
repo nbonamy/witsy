@@ -223,7 +223,7 @@ export default class extends LlmEngine {
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     payload.content = [
       { type: 'text', text: message.content },
-      { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + message.attachment.contents, } }
+      { type: 'image_url', image_url: { url: `data:${message.attachment.mimeType};base64,${message.attachment.contents}` } }
     ]
   }
 

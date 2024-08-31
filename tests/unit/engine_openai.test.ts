@@ -4,11 +4,18 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 import OpenAI from '../../src/services/openai'
 import * as _OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
 import { loadOpenAIModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
+
+window.api = {
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
@@ -128,12 +135,12 @@ test('OpenAI image', async () => {
 test('OpenAI addImageToPayload', async () => {
   const openAI = new OpenAI(store.config)
   const message = new Message('user', 'text')
-  message.attachFile({ url: '', format:'png', contents: 'image', downloaded: true })
+  message.attachFile(new Attachment('', 'image/png', 'image', true ))
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   openAI.addImageToPayload(message, payload)
   expect(payload.content).toStrictEqual([
     { type: 'text', text: 'text' },
-    { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,image' } }
+    { type: 'image_url', image_url: { url: 'data:image/png;base64,image' } }
   ])
 })
 

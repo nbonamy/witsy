@@ -25,7 +25,7 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
-import { mimeTypeToExtension } from '../main/mimetype'
+import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
@@ -111,7 +111,8 @@ const onAttach = () => {
   if (file) {
     const format = file.url.split('.').pop()
     if (canProcessFormat(engine(), model(), format)) {
-      emitEvent('attachFile', new Attachment( file.url, format, file.contents))
+      const mimeType = extensionToMimeType(format)
+      emitEvent('attachFile', new Attachment(file.url, mimeType, file.contents))
     } else {
       console.error('Cannot attach format', format)
       alert('This file format is not supported')
@@ -132,12 +133,13 @@ const onPaste = (event) => {
         if (event.target.readyState === FileReader.DONE) {
 
           let result = event.target.result
-          let format = mimeTypeToExtension(result.split(';')[0].split(':')[1])
+          let mimeType = result.split(';')[0].split(':')[1]
+          let format = mimeTypeToExtension(mimeType)
           let contents = result.split(',')[1]
 
           // check before attaching
           if (canProcessFormat(engine(), model(), format)) {
-            emitEvent('attachFile', new Attachment('clipboard://', format, contents))
+            emitEvent('attachFile', new Attachment('clipboard://', mimeType, contents))
           } else {
             console.error('Cannot attach format', format)
             alert('This file format is not supported')

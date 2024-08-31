@@ -4,10 +4,17 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
+import Attachment from '../../src/models/attachment'
 import MistralAI from '../../src/services/mistralai'
 import MistralClient from '../../src/vendor/mistralai'
 import { loadMistralAIModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
+
+window.api = {
+  file: {
+    extractText: (contents) => contents
+  }
+}
 
 vi.mock('../../src/vendor/mistralai', async() => {
   const MistralClient = vi.fn()
@@ -87,7 +94,7 @@ test('MistralAI  image', async () => {
 test('MistralAI addImageToPayload', async () => {
   const mistralai = new MistralAI(store.config)
   const message = new Message('user', 'text')
-  message.attachFile({ url: '', format:'png', contents: 'image', downloaded: true })
+  message.attachFile(new Attachment('', 'image/png', 'image', true ))
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   mistralai.addImageToPayload(message, payload)
   expect(payload.images).toStrictEqual([ 'image' ])
