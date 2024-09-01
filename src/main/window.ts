@@ -378,6 +378,7 @@ export const openPromptAnywhere = () => {
   });
 
   promptAnywhereWindow.on('blur', () => {
+    closeAnywhereCustomPalette();
     closePromptAnywhere();
     restoreWindows();
   });
@@ -385,6 +386,11 @@ export const openPromptAnywhere = () => {
 };
 
 export const closePromptAnywhere = async () => {
+
+  // close palette too
+  closeAnywhereCustomPalette();
+
+  // now close window itself
   try {
     if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
       // console.log('Closing prompt anywhere window')
@@ -403,6 +409,80 @@ export const resizePromptAnywhere = (height: number) => {
     promptAnywhereWindow?.setSize(size[0], height);
   } catch (error) {
     console.error('Error while resizing prompt anywhere window', error);
+  }
+}
+
+export const setPromptAnywherePrompt = (prompt: string) =>  {
+  try {
+    if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
+      promptAnywhereWindow.webContents.send('set-prompt', prompt);
+    }
+  } catch (error) {
+    console.error('Error while settings prompt anywhere prompt]', error);
+  }
+}
+
+export let anywhereCustomPalette: BrowserWindow = null;
+export const showAnywhereCustomPalette = () => {
+
+  // try to close existig one
+  closeAnywhereCustomPalette();
+
+  // get bounds
+  const width = 282;
+  const height = 412;
+  const position = promptAnywhereWindow.getPosition();
+  const x = position[0];
+  const y = position[1] + promptAnywhereWindow.getBounds().height + 8;
+
+  // open a new one
+  anywhereCustomPalette = createWindow({
+    hash: '/custom',
+    x: x,
+    y: y,
+    width: width,
+    height: height,
+    frame: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    hiddenInMissionControl: true,
+  });
+
+  anywhereCustomPalette.on('blur', () => {
+    closeAnywhereCustomPalette();
+  });
+  
+}
+
+export const closeAnywhereCustomPalette = async () => {
+
+  // close it
+  try {
+    if (anywhereCustomPalette && !anywhereCustomPalette.isDestroyed()) {
+      // console.log('Closing prompt anywhere window')
+      anywhereCustomPalette?.close()
+      await wait();
+    }
+  } catch (error) {
+    console.error('Error while closing anywhere custom prompt palette', error)
+  }
+  anywhereCustomPalette = null;
+
+  // focus prompt anywhere
+  try {
+    if (promptAnywhereWindow) {
+      promptAnywhereWindow.focus();
+    }
+  } catch (error) {
+    console.error('Error while focusing prompt anywhere window', error)
+  }
+}
+
+export const toggleAnywhereCustomPalette = async () => {
+  if (anywhereCustomPalette && !anywhereCustomPalette.isDestroyed()) {
+    closeAnywhereCustomPalette();
+  } else {
+    showAnywhereCustomPalette();
   }
 }
 
