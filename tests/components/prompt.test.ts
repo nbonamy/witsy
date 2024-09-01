@@ -188,7 +188,7 @@ test('History navigation', async () => {
 })
 
 test('Custom prompts', async () => {
-  const trigger = wrapper.find('.icon.prompt')
+  const trigger = wrapper.find('.icon.custom')
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)

@@ -24,6 +24,10 @@ store.loadCommands = async () => {
   loadCommands()
 }
 
+store.loadPrompts = async () => {
+  loadPrompts()
+}
+
 store.load = async () => {
 
   // load data

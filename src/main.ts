@@ -393,11 +393,20 @@ ipcMain.on('prompt-anywhere', async (event, payload) => {
 
 })
 
-ipcMain.on('resize-anywhere', (event, height) => {
+ipcMain.on('anywhere-resize', (event, height) => {
   window.resizePromptAnywhere(height);
 })
 
-ipcMain.on('cancel-anywhere', async () => {
+ipcMain.on('anywhere-toggle-custom-prompt', (event) => {
+  window.toggleAnywhereCustomPalette();
+})
+
+ipcMain.on('anywhere-set-prompt', async (event, prompt) => {
+  await window.setPromptAnywherePrompt(JSON.parse(prompt));
+  await window.closeAnywhereCustomPalette();
+})
+
+ipcMain.on('anywhere-cancel', async () => {
 
   // if cancel on prompt window
   await window.closePromptAnywhere();
@@ -419,12 +428,12 @@ ipcMain.on('close-readaloud-palette', async () => {
 });
 
 ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
-  const dropbox = new Dropbox(app, '', '')
-  event.returnValue = await dropbox.getOAuthUrl()
+  // const dropbox = new Dropbox(app, '', '')
+  // event.returnValue = await dropbox.getOAuthUrl()
 })
 
 ipcMain.on('dropbox-authenticate-with-code', async (event, payload) => {
-  const dropbox = new Dropbox(app, '', '')
-  const accessToken = await dropbox.getAccessTokenFromCode(payload)
-  event.returnValue = (accessToken != null)
+  // const dropbox = new Dropbox(app, '', '')
+  // const accessToken = await dropbox.getAccessTokenFromCode(payload)
+  // event.returnValue = (accessToken != null)
 })

@@ -82,6 +82,7 @@ interface Store {
   load?(): Promise<void>
   loadSettings?(): Promise<void>
   loadCommands?(): Promise<void>
+  loadPrompts?(): Promise<void>
   mergeHistory?(chats: any[]): void
   dump?(): void
 }
@@ -157,8 +158,10 @@ declare global {
       }
       anywhere?: {
         prompt?(text: string): void
-        cancel?(): void
         resize?(width: number, height: number): void
+        toggleCustom?(): void
+        onCustom(prompt: string): void
+        cancel?(): void
       }
       prompts?: {
         load?(): Prompt[]

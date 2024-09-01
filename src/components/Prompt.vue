@@ -1,7 +1,9 @@
 <template>
   <div class="prompt">
-    <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
-    <BIconJournalMedical class="icon prompt" @click="onCustomPrompt" v-if="enableCustomPrompts" />
+    <div class="icons-left" :class="iconsLeftCount">
+      <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      <BIconJournalMedical class="icon custom" @click="onCustomPrompt" v-if="enableCustomPrompts" />
+    </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
@@ -45,6 +47,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  inlineCustomPrompts: {
+    type: Boolean,
+    default: true
+  },
   enableCommands: {
     type: Boolean,
     default: true
@@ -60,6 +66,11 @@ const menuY = ref(0)
 
 const engine = () => props.chat?.engine || store.config.llm.engine
 const model = () => props.chat?.model || store.config.getActiveModel(engine())
+
+const iconsLeftCount = computed(() => {
+  const count = (props.enableAttachments ? 1 : 0) + (props.enableCustomPrompts ? 1 : 0)
+  return `icons-left-${count}`
+})
 
 const working = computed(() => {
   return props.chat?.lastMessage().transient
@@ -79,6 +90,7 @@ const commands = computed(() => {
 
 onMounted(() => {
   onEvent('set-prompt', onSetPrompt)
+  onEvent('set-custom-prompt', onSetCustomPrompt)
   autoGrow(input.value)
 })
 
@@ -87,6 +99,16 @@ const onSetPrompt = (message) => {
   prompt.value = message.content
   nextTick(() => {
     autoGrow(input.value)
+    input.value.focus()
+  })
+}
+
+const onSetCustomPrompt = (message) => {
+  store.pendingAttachment = null
+  prompt.value = message
+  nextTick(() => {
+    autoGrow(input.value)
+    selectPromptVariablePart()
     input.value.focus()
   })
 }
@@ -152,11 +174,15 @@ const onPaste = (event) => {
 }
 
 const onCustomPrompt = () => {
-  showCustomPrompts.value = true
-  const textarea = document.querySelector('.prompt textarea')
-  const rect = textarea?.getBoundingClientRect()
-  menuX.value = rect?.left - 12
-  menuY.value = rect?.height + 32
+  if (props.inlineCustomPrompts) {
+    showCustomPrompts.value = true
+    const textarea = document.querySelector('.prompt textarea')
+    const rect = textarea?.getBoundingClientRect()
+    menuX.value = rect?.left
+    menuY.value = rect?.height + 32
+  } else {
+    emitEvent('customPrompt')
+  }
 }
 
 const closeContextMenu = () => {
@@ -167,25 +193,17 @@ const closeContextMenu = () => {
 const handleCustomPromptClick = (action) => {
   closeContextMenu()
   const customPrompt = store.prompts.find(p => p.actor === action)
-  prompt.value = customPrompt.prompt
-  nextTick(() => {
+  onSetCustomPrompt(customPrompt.prompt)
+}
 
-    // grow
-    autoGrow(input.value)
-
-    // select variable text
-    const start = prompt.value.indexOf('"')
-    if (start > 0) {
-      const end = prompt.value.indexOf('"', start + 1)
-      if (end > 0) {
-        input.value.setSelectionRange(start + 1, end)
-      }
+const selectPromptVariablePart = () => {
+  const start = prompt.value.indexOf('"')
+  if (start > 0) {
+    const end = prompt.value.indexOf('"', start + 1)
+    if (end > 0) {
+      input.value.setSelectionRange(start + 1, end)
     }
-
-    // focus
-    input.value.focus()
-
-  })
+  }
 }
 
 const onCommands = () => {
@@ -304,6 +322,11 @@ const autoGrow = (element) => {
 .prompt .icon {
   cursor: pointer;
   color: #5b5a59;
+}
+
+.prompt .icons-left-2 .icon {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .attachment .icon {

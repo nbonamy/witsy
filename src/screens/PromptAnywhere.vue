@@ -1,7 +1,7 @@
 
 <template>
   <div class="anywhere">
-    <Prompt :enable-attachments="false" :enable-custom-prompts="false" :enable-commands="false" />
+    <Prompt :enable-attachments="false" :enable-custom-prompts="true" :inline-custom-prompts="false" :enable-commands="false" />
   </div>
 </template>
 
@@ -11,11 +11,13 @@ import { onMounted, onUnmounted } from 'vue'
 import Prompt from '../components/Prompt.vue'
 
 import useEventBus from '../composables/useEventBus'
-const { onEvent } = useEventBus()
+const { onEvent, emitEvent } = useEventBus()
 
 onMounted(() => {
   onEvent('sendPrompt', onPrompt)
   onEvent('promptResize', onResize)
+  onEvent('customPrompt', onCustom)
+  window.api.on('set-prompt', onSetPrompt)
   document.addEventListener('keyup', onKeyUp)
 })
 
@@ -23,9 +25,17 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
 })
 
+const onSetPrompt = (prompt) => {
+  emitEvent('set-custom-prompt', prompt)
+}
+
 const onResize = (data) => {
   const height = parseInt(data) + 18
   window.api.anywhere.resize(height)
+}
+
+const onCustom = () => {
+  window.api.anywhere.toggleCustom()
 }
 
 const onKeyUp = (event) => {
