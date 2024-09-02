@@ -2,14 +2,14 @@
 import { Store } from '../types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
-import { loadPrompts } from './prompts'
+import { loadExperts } from './experts'
 import { isEngineReady, initModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
 export const store: Store = reactive({
   config: null,
   commands: [], 
-  prompts: [],
+  experts: [],
   chats: [],
   chatFilter: null,
   pendingAttachment: null,
@@ -24,8 +24,8 @@ store.loadCommands = async () => {
   loadCommands()
 }
 
-store.loadPrompts = async () => {
-  loadPrompts()
+store.loadExperts = async () => {
+  loadExperts()
 }
 
 store.load = async () => {
@@ -33,7 +33,7 @@ store.load = async () => {
   // load data
   store.loadCommands()
   loadHistory()
-  loadPrompts()
+  loadExperts()
 
   // subscribe to file changes
   window.api.on('file-modified', (signal) => {

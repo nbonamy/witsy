@@ -1,7 +1,7 @@
 
 <template>
   <div class="anywhere">
-    <Prompt :enable-attachments="false" :enable-custom-prompts="true" :inline-custom-prompts="false" :enable-commands="false" />
+    <Prompt :enable-attachments="false" :enable-experts="true" :inline-experts="false" :enable-commands="false" />
   </div>
 </template>
 
@@ -15,13 +15,13 @@ import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store
-store.loadPrompts()
+store.loadExperts()
 
 onMounted(() => {
   onEvent('sendPrompt', onPrompt)
   onEvent('promptResize', onResize)
-  onEvent('customPrompt', onCustom)
-  window.api.on('set-prompt', onSetPrompt)
+  onEvent('show-experts', onExperts)
+  window.api.on('set-expert-prompt', onSetExpertPrompt)
   document.addEventListener('keyup', onKeyUp)
 })
 
@@ -29,9 +29,9 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
 })
 
-const onSetPrompt = (id) => {
-  const prompt = store.prompts.find((p) => p.id == id)
-  emitEvent('set-custom-prompt', prompt.prompt)
+const onSetExpertPrompt = (id) => {
+  const prompt = store.experts.find((p) => p.id == id)
+  emitEvent('set-expert-prompt', prompt.prompt)
 }
 
 const onResize = (data) => {
@@ -39,9 +39,9 @@ const onResize = (data) => {
   window.api.anywhere.resize(height)
 }
 
-const onCustom = () => {
-  if (!window.api.anywhere.isCustomOpen()) {
-    window.api.anywhere.showCustom()
+const onExperts = () => {
+  if (!window.api.anywhere.isExpertsOpen()) {
+    window.api.anywhere.showExperts()
   }
 }
 

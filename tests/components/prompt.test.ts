@@ -48,10 +48,10 @@ beforeAll(() => {
   store.config.getActiveModel = () => {
     return 'chat'
   }
-  store.prompts = [
-    { id: 'uuid1', type: 'system', actor: 'actor1', prompt: 'prompt1', state: 'enabled' },
-    { id: 'uuid2', type: 'system', actor: 'actor2', prompt: 'prompt2', state: 'disabled' },
-    { id: 'uuid3', type: 'user', actor: 'actor3', prompt: 'prompt3', state: 'enabled' }
+  store.experts = [
+    { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
+    { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
+    { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
 ]
 
   // wrapper
@@ -187,8 +187,8 @@ test('History navigation', async () => {
 
 })
 
-test('Custom prompts', async () => {
-  const trigger = wrapper.find('.icon.custom')
+test('Experts', async () => {
+  const trigger = wrapper.find('.icon.experts')
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)

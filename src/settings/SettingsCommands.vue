@@ -156,7 +156,7 @@ const onEdit = (command) => {
 
 const onDelete = () => {
   Swal.fire({
-    target: document.querySelector('.commands'),
+    target: document.querySelector('.settings .commands'),
     title: 'Are you sure you want to delete this command? This cannot be undone.',
     confirmButtonText: 'Delete',
     showCancelButton: true,

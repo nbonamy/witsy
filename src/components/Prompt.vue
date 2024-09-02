@@ -2,7 +2,7 @@
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
       <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
-      <BIconJournalMedical class="icon custom" @click="onCustomPrompt" v-if="enableCustomPrompts" />
+      <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
     </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
@@ -15,8 +15,8 @@
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
-    <Overlay v-if="showCustomPrompts || showCommands" @click="closeContextMenu" />
-    <ContextMenu v-if="showCustomPrompts" :show-filter="true" :actions="customPrompts" @action-clicked="handleCustomPromptClick" :x="menuX" :y="menuY" align="bottom" />
+    <Overlay v-if="showExperts || showCommands" @click="closeContextMenu" />
+    <ContextMenu v-if="showExperts" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" align="bottom" />
     <ContextMenu v-if="showCommands" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" align="bottom" />
   </div>
 </template>
@@ -43,11 +43,11 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  enableCustomPrompts: {
+  enableExperts: {
     type: Boolean,
     default: true
   },
-  inlineCustomPrompts: {
+  inlineExperts: {
     type: Boolean,
     default: true
   },
@@ -59,7 +59,7 @@ const props = defineProps({
 
 const prompt = ref('')
 const input = ref(null)
-const showCustomPrompts = ref(false)
+const showExperts = ref(false)
 const showCommands = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -68,7 +68,7 @@ const engine = () => props.chat?.engine || store.config.llm.engine
 const model = () => props.chat?.model || store.config.getActiveModel(engine())
 
 const iconsLeftCount = computed(() => {
-  const count = (props.enableAttachments ? 1 : 0) + (props.enableCustomPrompts ? 1 : 0)
+  const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0)
   return `icons-left-${count}`
 })
 
@@ -76,9 +76,9 @@ const working = computed(() => {
   return props.chat?.lastMessage().transient
 })
 
-const customPrompts = computed(() => {
-  return store.prompts.filter(p => p.state == 'enabled').map(p => {
-    return { label: p.actor, action: p.actor, icon: BIconStars }
+const experts = computed(() => {
+  return store.experts.filter(p => p.state == 'enabled').map(p => {
+    return { label: p.name, action: p.name, icon: BIconStars }
   })
 })
 
@@ -90,7 +90,7 @@ const commands = computed(() => {
 
 onMounted(() => {
   onEvent('set-prompt', onSetPrompt)
-  onEvent('set-custom-prompt', onSetCustomPrompt)
+  onEvent('set-expert-prompt', onSetExpertPrompt)
   autoGrow(input.value)
 })
 
@@ -103,12 +103,12 @@ const onSetPrompt = (message) => {
   })
 }
 
-const onSetCustomPrompt = (message) => {
+const onSetExpertPrompt = (message) => {
   store.pendingAttachment = null
   prompt.value = message
   nextTick(() => {
     autoGrow(input.value)
-    selectPromptVariablePart()
+    selectPromptQuotedPart()
     input.value.focus()
   })
 }
@@ -173,30 +173,30 @@ const onPaste = (event) => {
   }
 }
 
-const onCustomPrompt = () => {
-  if (props.inlineCustomPrompts) {
-    showCustomPrompts.value = true
+const onExperts = () => {
+  if (props.inlineExperts) {
+    showExperts.value = true
     const textarea = document.querySelector('.prompt textarea')
     const rect = textarea?.getBoundingClientRect()
     menuX.value = rect?.left
     menuY.value = rect?.height + 32
   } else {
-    emitEvent('customPrompt')
+    emitEvent('show-experts')
   }
 }
 
 const closeContextMenu = () => {
-  showCustomPrompts.value = false
+  showExperts.value = false
   showCommands.value = false
 }
 
-const handleCustomPromptClick = (action) => {
+const handleExpertClick = (action) => {
   closeContextMenu()
-  const customPrompt = store.prompts.find(p => p.actor === action)
-  onSetCustomPrompt(customPrompt.prompt)
+  const expert = store.experts.find(p => p.name === action)
+  onSetExpertPrompt(expert.prompt)
 }
 
-const selectPromptVariablePart = () => {
+const selectPromptQuotedPart = () => {
   const start = prompt.value.indexOf('"')
   if (start > 0) {
     const end = prompt.value.indexOf('"', start + 1)

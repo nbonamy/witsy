@@ -1,12 +1,12 @@
 
 import { vi, expect, test, beforeEach } from 'vitest'
-import { Command } from '../../src/types/index.d'
+import { Command, Expert } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import defaultSettings from '../../defaults/settings.json'
 import defaultCommands from '../../defaults/commands.json'
-import defaultPrompts from '../../defaults/prompts.json'
+import defaultExperts from '../../defaults/experts.json'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -31,8 +31,8 @@ window.api = {
   commands: {
     load: vi.fn(() => defaultCommands as Command[]),
   },
-  prompts: {
-    load: vi.fn(() => defaultPrompts),
+  experts: {
+    load: vi.fn(() => defaultExperts as Expert[]),
   },
   history: {
     load: vi.fn(() => chats),
@@ -51,7 +51,7 @@ beforeEach(() => {
 test('Check atributtes', async () => {
   expect(store.config).toBe(null)
   expect(store.commands).toEqual([])
-  expect(store.prompts).toEqual([])
+  expect(store.experts).toEqual([])
   expect(store.chats).toEqual([])
   expect(store.chatFilter).toBe(null)
   expect(store.pendingAttachment).toBe(null)
@@ -60,13 +60,13 @@ test('Check atributtes', async () => {
 test('Load', async () => {
   store.load()
   expect(window.api.config.load).toHaveBeenCalled()
-  expect(window.api.prompts.load).toHaveBeenCalled()
+  expect(window.api.experts.load).toHaveBeenCalled()
   expect(window.api.commands.load).toHaveBeenCalled()
   expect(window.api.history.load).toHaveBeenCalled()
   expect(store.config).toStrictEqual(defaultSettings)
   expect(store.config.getActiveModel).toBeDefined()
   expect(store.commands).toStrictEqual(defaultCommands)
-  expect(store.prompts).toStrictEqual(defaultPrompts)
+  expect(store.experts).toStrictEqual(defaultExperts)
 })
 
 test('Save settings', async () => {
