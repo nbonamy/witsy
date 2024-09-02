@@ -26,7 +26,10 @@ beforeAll(() => {
     anywhere: {
       prompt: vi.fn(),
       resize: vi.fn(),
+      showCustom: vi.fn(),
+      closeCustom: vi.fn(),
       toggleCustom: vi.fn(),
+      isCustomOpen: vi.fn(() => false),
       onCustom: vi.fn(),
       cancel: vi.fn(),
     },
@@ -60,7 +63,7 @@ test('Show custom prompts', async () => {
   const wrapper = mount(PromptAnywhere)
   const trigger = wrapper.find('.icon.custom')
   await trigger.trigger('click')
-  expect(window.api.anywhere.toggleCustom).toHaveBeenCalled()
+  expect(window.api.anywhere.showCustom).toHaveBeenCalled()
 })
 
 test('Custom Prompts renders', async () => {
