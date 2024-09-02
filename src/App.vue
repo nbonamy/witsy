@@ -9,7 +9,7 @@ import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
-import CustomPrompt from './screens/CustomPrompt.vue'
+import Experts from './screens/Experts.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 
 // add platform name
@@ -35,7 +35,7 @@ const routes = {
   '/wait': Wait,
   '/command': Commands,
   '/prompt': PromptAnywhere,
-  '/custom': CustomPrompt,
+  '/experts': Experts,
   '/readaloud': ReadAloud,
 }
 

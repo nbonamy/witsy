@@ -378,14 +378,14 @@ export const openPromptAnywhere = () => {
   });
 
   promptAnywhereWindow.on('focus', () => {
-    closeAnywhereCustomPalette();
+    closeExpertsPalette();
   })
 
   promptAnywhereWindow.on('blur', () => {
-    const paletteNotHere = anywhereCustomPalette == null || anywhereCustomPalette.isDestroyed()
-    const paletteNotFocused = anywhereCustomPalette != null && !anywhereCustomPalette.isFocused()
+    const paletteNotHere = expertsPalette == null || expertsPalette.isDestroyed()
+    const paletteNotFocused = expertsPalette != null && !expertsPalette.isFocused()
     if (paletteNotHere || paletteNotFocused) {
-      closeAnywhereCustomPalette();
+      closeExpertsPalette();
       closePromptAnywhere();
       restoreWindows();
     }
@@ -396,7 +396,7 @@ export const openPromptAnywhere = () => {
 export const closePromptAnywhere = async () => {
 
   // close palette too
-  closeAnywhereCustomPalette();
+  closeExpertsPalette();
 
   // now close window itself
   try {
@@ -420,21 +420,21 @@ export const resizePromptAnywhere = (height: number) => {
   }
 }
 
-export const setPromptAnywherePrompt = (prompt: string) =>  {
+export const setPromptAnywhereExpertPrompt = (expertId: string) =>  {
   try {
     if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
-      promptAnywhereWindow.webContents.send('set-prompt', prompt);
+      promptAnywhereWindow.webContents.send('set-expert-prompt', expertId);
     }
   } catch (error) {
     console.error('Error while settings prompt anywhere prompt]', error);
   }
 }
 
-export let anywhereCustomPalette: BrowserWindow = null;
-export const showAnywhereCustomPalette = () => {
+export let expertsPalette: BrowserWindow = null;
+export const showExpertsPalette = () => {
 
   // try to close existig one
-  closeAnywhereCustomPalette();
+  closeExpertsPalette();
 
   // get bounds
   const width = 282;
@@ -444,8 +444,8 @@ export const showAnywhereCustomPalette = () => {
   const y = position[1] + promptAnywhereWindow.getBounds().height + 8;
 
   // open a new one
-  anywhereCustomPalette = createWindow({
-    hash: '/custom',
+  expertsPalette = createWindow({
+    hash: '/experts',
     x: x,
     y: y,
     width: width,
@@ -456,22 +456,22 @@ export const showAnywhereCustomPalette = () => {
     hiddenInMissionControl: true,
   });
 
-  anywhereCustomPalette.on('blur', () => {
-    closeAnywhereCustomPalette();
+  expertsPalette.on('blur', () => {
+    closeExpertsPalette();
   });
   
 } 
 
-export const closeAnywhereCustomPalette = async () => {
+export const closeExpertsPalette = async () => {
 
   // close it
   try {
 
-    if (anywhereCustomPalette && !anywhereCustomPalette.isDestroyed()) {
+    if (expertsPalette && !expertsPalette.isDestroyed()) {
 
-      // console.log('Closing custom prompt anywhere window')
-      anywhereCustomPalette?.close()
-      anywhereCustomPalette = null;
+      // console.log('Closing experts palette')
+      expertsPalette?.close()
+      expertsPalette = null;
       await wait();
 
       // focus prompt anywhere
@@ -482,21 +482,21 @@ export const closeAnywhereCustomPalette = async () => {
     }
 
   } catch (error) {
-    console.error('Error while closing anywhere custom prompt palette', error)
+    console.error('Error while closing experts palette', error)
   }
 
   // reset it here to be sure
-  //console.log('Done closing custom prompt palette')
-  anywhereCustomPalette = null;
+  //console.log('Done closing experts palette')
+  expertsPalette = null;
 
 }
 
-export const isAnywhereCustomPaletteOpen = () => {
-  return (anywhereCustomPalette != null && !anywhereCustomPalette.isDestroyed());
+export const isExpertsPaletteOpen = () => {
+  return (expertsPalette != null && !expertsPalette.isDestroyed());
 }
 
-export const toggleAnywhereCustomPalette = async () => {
-  showAnywhereCustomPalette();
+export const toggleExpertsPalette = async () => {
+  showExpertsPalette();
 }
 
 export let readAloudPalette: BrowserWindow = null;

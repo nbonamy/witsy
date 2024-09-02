@@ -1,5 +1,5 @@
 
-import { Chat, Command, Prompt } from './types/index.d';
+import { Chat, Command, Expert } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
 import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
@@ -17,7 +17,7 @@ import ReadAloud from 'automations/readaloud';
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
-import * as prompts from './main/prompts';
+import * as experts from './main/experts';
 import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
@@ -247,12 +247,20 @@ ipcMain.on('import-commands', (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
-ipcMain.on('load-prompts', (event) => {
-  event.returnValue = JSON.stringify(prompts.loadPrompts(app));
+ipcMain.on('load-experts', (event) => {
+  event.returnValue = JSON.stringify(experts.loadExperts(app));
 });
 
-ipcMain.on('save-prompts', (event, payload) => {
-  event.returnValue = prompts.savePrompts(app, JSON.parse(payload) as Prompt[]);
+ipcMain.on('save-experts', (event, payload) => {
+  event.returnValue = experts.saveExperts(app, JSON.parse(payload) as Expert[]);
+});
+
+ipcMain.on('export-experts', (event) => {
+  event.returnValue = experts.exportExperts(app);
+});
+
+ipcMain.on('import-experts', (event) => {
+  event.returnValue = experts.importExperts(app);
 });
 
 ipcMain.on('get-run-at-login', (event) => {
@@ -397,25 +405,25 @@ ipcMain.on('anywhere-resize', (event, height) => {
   window.resizePromptAnywhere(height);
 })
 
-ipcMain.on('anywhere-show-custom-prompt', async (event) => {
-  await window.showAnywhereCustomPalette();
+ipcMain.on('anywhere-show-experts', async (event) => {
+  await window.showExpertsPalette();
 })
 
-ipcMain.on('anywhere-close-custom-prompt', async (event) => {
-  await window.closeAnywhereCustomPalette();
+ipcMain.on('anywhere-close-experts', async (event) => {
+  await window.closeExpertsPalette();
 })
 
-ipcMain.on('anywhere-toggle-custom-prompt', async (event) => {
-  await window.toggleAnywhereCustomPalette();
+ipcMain.on('anywhere-toggle-experts', async (event) => {
+  await window.toggleExpertsPalette();
 })
 
-ipcMain.on('anywhere-is-custom-prompt-open', (event) => {
-  event.returnValue = window.isAnywhereCustomPaletteOpen();
+ipcMain.on('anywhere-is-experts-open', (event) => {
+  event.returnValue = window.isExpertsPaletteOpen();
 })
 
-ipcMain.on('anywhere-set-prompt', async (event, prompt) => {
-  await window.setPromptAnywherePrompt(JSON.parse(prompt));
-  await window.closeAnywhereCustomPalette();
+ipcMain.on('anywhere-on-expert', async (event, expertId) => {
+  await window.setPromptAnywhereExpertPrompt(JSON.parse(expertId));
+  await window.closeExpertsPalette();
 })
 
 ipcMain.on('anywhere-cancel', async () => {

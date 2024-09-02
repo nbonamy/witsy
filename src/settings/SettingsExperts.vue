@@ -1,6 +1,6 @@
 <template>
   <div class="content" @click="closeContextMenu">
-    <div class="prompts">
+    <div class="experts">
       <table>
         <thead>
           <tr>
@@ -8,11 +8,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="prompt in visiblePrompts" :key="prompt.id" :data-id="prompt.id" class="prompt" :class="selected?.id == prompt.id ? 'selected' : ''"
-              @click="onSelect(prompt)" @dblclick="onEdit(prompt)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
+          <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
+              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
           >
-            <td class="enabled"><input type="checkbox" :checked="prompt.state=='enabled'" @click="onEnabled(prompt)" /></td>
-            <td class="actor">{{ prompt.actor }}</td>
+            <td class="enabled"><input type="checkbox" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
+            <td class="name">{{ expert.name }}</td>
           </tr>
         </tbody>
       </table>
@@ -26,7 +26,7 @@
       </div>
     </div>
     <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom-right" :teleport="false" />
-    <PromptEditor id="prompt-editor" :prompt="edited" @prompt-modified="onPromptModified"/>
+    <ExpertEditor id="expert-editor" :expert="edited" @expert-modified="onExpertModified"/>
   </div>
 </template>
 
@@ -36,14 +36,13 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { newPrompt, savePrompts } from '../services/prompts'
-import PromptEditor from '../screens/PromptEditor.vue'
+import { newExpert, saveExperts } from '../services/experts'
+import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 
-const prompts = ref(null)
+const experts = ref(null)
 const selected = ref(null)
 const edited = ref(null)
-const defaults = ref(null)
 
 const moreButton = ref(null)
 const showMenu = ref(false)
@@ -55,11 +54,11 @@ const contextMenuActions = [
   { label: 'Import', action: 'import' },
 ]
 
-const visiblePrompts = computed(() => prompts.value?.filter(prompt => prompt.state != 'deleted'))
+const visibleExperts = computed(() => experts.value?.filter(expert => expert.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
-  { field: 'actor', title: 'Expert' },
+  { field: 'name', title: 'Name' },
 ]
 
 const onMore = (event) => {
@@ -97,43 +96,43 @@ const handleActionClick = async (action) => {
 }
 
 const onImport = () => {
-  if (window.api.prompts.import()) {
-    store.loadPrompts()
+  if (window.api.experts.import()) {
+    store.loadExperts()
     load()
-    alert('Prompts file imported successfully')
+    alert('Experts file imported successfully')
   } else {
-    alert('Failed to import prompts file')
+    alert('Failed to import experts file')
   }
 }
 
 const onExport = () => {
-  if (window.api.prompts.export()) {
-    alert('Prompts file exported successfully')
+  if (window.api.experts.export()) {
+    alert('Experts file exported successfully')
   } else {
-    alert('Failed to export prompts file')
+    alert('Failed to export experts file')
   }
 }
 
-const onSelect = (prompt) => {
-  selected.value = prompt
+const onSelect = (expert) => {
+  selected.value = expert
 }
 
 const onNew = () => {
   //selected.value = null
-  edited.value = newPrompt()
-  document.getElementById('prompt-editor').showModal()
+  edited.value =  newExpert()
+  document.getElementById('expert-editor').showModal()
 }
 
-const onEdit = (prompt) => {
-  edited.value = prompt
-  selected.value = prompt
-  document.getElementById('prompt-editor').showModal()
+const onEdit = (expert) => {
+  edited.value = expert
+  selected.value = expert
+  document.getElementById('expert-editor').showModal()
 }
 
 const onDelete = () => {
   Swal.fire({
-    target: document.querySelector('.prompts'),
-    title: 'Are you sure you want to delete this prompt? This cannot be undone.',
+    target: document.querySelector('.settings .experts'),
+    title: 'Are you sure you want to delete this expert? This cannot be undone.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {
@@ -141,8 +140,8 @@ const onDelete = () => {
       if (selected.value.type == 'system') {
         selected.value.state = 'deleted'
       } else {
-        const index = prompts.value.indexOf(selected.value)
-        prompts.value.splice(index, 1)
+        const index = experts.value.indexOf(selected.value)
+        experts.value.splice(index, 1)
       }
       selected.value = null
       save()
@@ -150,40 +149,40 @@ const onDelete = () => {
   })
 }
 
-const onEnabled = (prompt) => {
-  prompt.state = (prompt.state == 'enabled' ? 'disabled' : 'enabled')
+const onEnabled = (expert) => {
+  expert.state = (expert.state == 'enabled' ? 'disabled' : 'enabled')
   save()
 }
 
-const onPromptModified = (payload) => {
-  // new prompt?
-  let prompt = null
+const onExpertModified = (payload) => {
+  // new expert?
+  let expert = null
   if (payload.id == null) {
 
     // create a new ome
-    prompt = newPrompt()
-    prompt.id = uuidv4()
+    expert = newExpert()
+    expert.id = uuidv4()
     
     // dind the index of the currently selected
-    const selectedIndex = prompts.value.findIndex(p => p.id === selected.value?.id)
+    const selectedIndex = experts.value.findIndex(p => p.id === selected.value?.id)
     if (selectedIndex !== -1) {
-      prompts.value.splice(selectedIndex, 0, prompt)
+      experts.value.splice(selectedIndex, 0, expert)
     } else {
-      prompts.value.push(prompt)
+      experts.value.push(expert)
     }
   } else {
-    prompt = prompts.value.find(prompt => prompt.id == payload.id)
+    expert = experts.value.find(expert => expert.id == payload.id)
   }
 
   // update
-  if (prompt) {
+  if (expert) {
     // now update
-    prompt.actor = payload.actor
-    prompt.prompt = payload.prompt
+    expert.name = payload.name
+    expert.prompt = payload.prompt
   }
 
   // done
-  selected.value = prompt
+  selected.value = expert
   save()
 }
 
@@ -210,7 +209,7 @@ const onDragOver = (event) => {
   // reorder array
   const rows = document.querySelectorAll('tr[data-id]');
   const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
-  prompts.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+  experts.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
 
 }
 
@@ -219,12 +218,12 @@ const onDragEnd = () => {
 }
 
 const load = () => {
-  prompts.value = JSON.parse(JSON.stringify(store.prompts))
+  experts.value = JSON.parse(JSON.stringify(store.experts))
 }
 
 const save = () => {
-  store.prompts = prompts.value
-  savePrompts()
+  store.experts = experts.value
+  saveExperts()
 }
 
 defineExpose({ load })
@@ -241,7 +240,7 @@ defineExpose({ load })
   width: 540px !important;
 }
 
-.prompts {
+.experts {
   height: 200px;
   overflow-y: auto;
 }

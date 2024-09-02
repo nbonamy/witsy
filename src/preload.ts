@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, Prompt, strDict } from './types/index.d';
+import { Chat, Command, Expert, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
 import { contextBridge, ipcRenderer } from 'electron'
 
@@ -62,16 +62,18 @@ contextBridge.exposeInMainWorld(
     anywhere: {
       prompt: (text: string): void => { return ipcRenderer.sendSync('prompt-anywhere', JSON.stringify(text)) },
       resize: (height: number): void => { return ipcRenderer.send('anywhere-resize', height) },
-      showCustom: (): void => { return ipcRenderer.send('anywhere-show-custom-prompt') },
-      closeCustom: (): void => { return ipcRenderer.send('anywhere-close-custom-prompt') },
-      toggleCustom: (): void => { return ipcRenderer.send('anywhere-toggle-custom-prompt') },
-      isCustomOpen: (): boolean => { return ipcRenderer.sendSync('anywhere-is-custom-prompt-open') },
-      onCustom: (prompt: string): void => { return ipcRenderer.sendSync('anywhere-set-prompt', JSON.stringify(prompt)) },
+      showExperts: (): void => { return ipcRenderer.send('anywhere-show-experts') },
+      closeExperts: (): void => { return ipcRenderer.send('anywhere-close-experts') },
+      toggleExperts: (): void => { return ipcRenderer.send('anywhere-toggle-experts') },
+      isExpertsOpen: (): boolean => { return ipcRenderer.sendSync('anywhere-is-experts-open') },
+      onExpert: (expertId: string): void => { return ipcRenderer.sendSync('anywhere-on-expert', JSON.stringify(expertId)) },
       cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
     },
-    prompts: {
-      load: (): Prompt[] => { return JSON.parse(ipcRenderer.sendSync('load-prompts')) },
-      save: (data: Prompt[]) => { return ipcRenderer.send('save-prompts', JSON.stringify(data)) },
+    experts: {
+      load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync('load-experts')) },
+      save: (data: Expert[]) => { return ipcRenderer.send('save-experts', JSON.stringify(data)) },
+      export: (): void => { return ipcRenderer.sendSync('export-experts') },
+      import: (): void => { return ipcRenderer.sendSync('import-experts') },
     },
     readaloud: {
       getText: (id: string): string => { return ipcRenderer.sendSync('get-readaloud-text', id) },

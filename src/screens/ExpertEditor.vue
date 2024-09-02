@@ -6,13 +6,13 @@
       </header>
       <main>
         <div class="group">
-          <label>Expert</label>
-          <input type="text" v-model="actor" required />
+          <label>Name</label>
+          <input type="text" v-model="name" required />
         </div>
         <div class="group">
           <label>Prompt</label>
           <div class="subgroup">
-            <textarea v-model="prompt" required></textarea>
+            <textarea v-model="expert" required></textarea>
             <span v-pre>Text between quotes will be automatically selected to be easily modified</span>
           </div>
         </div>
@@ -27,26 +27,25 @@
 
 <script setup>
 
-import { ref, computed, watch } from 'vue'
-import { store } from '../services/store'
+import { ref, watch } from 'vue'
 
-const emit = defineEmits(['prompt-modified']);
+const emit = defineEmits(['expert-modified']);
 
 const props = defineProps({
-  prompt: Object
+  expert: Object
 })
 
-const actor = ref(null)
-const prompt = ref(null)
+const name = ref(null)
+const expert = ref(null)
 
 const load = () => {
-  actor.value = props.prompt?.actor || ''
-  prompt.value = props.prompt?.prompt || ''
+  name.value = props.expert?.name || ''
+  expert.value = props.expert?.prompt || ''
 }
 
 // not really sure this is how it supposed to be done
 // but at least it works!
-watch(() => props.prompt || {}, load, { immediate: true })
+watch(() => props.expert || {}, load, { immediate: true })
 
 const onCancel = () => {
   load()
@@ -55,17 +54,17 @@ const onCancel = () => {
 const onSave = (event) => {
 
   // check
-  if (!actor.value || !prompt.value) {
+  if (!name.value || !expert.value) {
     event.preventDefault()
     alert('All fields marked with * are required.')
     return
   }
 
   // save it
-  emit('prompt-modified', {
-    id: props.prompt.id,
-    actor: actor.value,
-    prompt: prompt.value,
+  emit('expert-modified', {
+    id: props.expert.id,
+    name: name.value,
+    prompt: expert.value,
   })
 }
 

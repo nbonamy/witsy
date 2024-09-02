@@ -72,7 +72,7 @@ interface Shortcut {
 
 interface Store {
   commands: Command[]
-  prompts: Prompt[]
+  experts: Expert[]
   config: Configuration
   chats: Chat[]
   chatFilter: string|null
@@ -82,15 +82,15 @@ interface Store {
   load?(): Promise<void>
   loadSettings?(): Promise<void>
   loadCommands?(): Promise<void>
-  loadPrompts?(): Promise<void>
+  loadExperts?(): Promise<void>
   mergeHistory?(chats: any[]): void
   dump?(): void
 }
 
-interface Prompt {
+interface Expert {
   id: string,
   type: 'system' | 'user',
-  actor: string
+  name: string
   prompt: string
   state: 'enabled' | 'disabled' | 'deleted',
 }
@@ -162,16 +162,16 @@ declare global {
       anywhere?: {
         prompt?(text: string): void
         resize?(width: number, height: number): void
-        showCustom?(): void
-        closeCustom?(): void
-        toggleCustom?(): void
-        isCustomOpen?(): boolean
-        onCustom(prompt: string): void
+        showExperts?(): void
+        closeExperts?(): void
+        toggleExperts?(): void
+        isExpertsOpen?(): boolean
+        onExpert(prompt: string): void
         cancel?(): void
       }
-      prompts?: {
-        load?(): Prompt[]
-        save?(prompts: Prompt[]): void
+      experts?: {
+        load?(): Expert[]
+        save?(experts: Expert[]): void
       }
       clipboard?: {
         writeText?(text: string): void
