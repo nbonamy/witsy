@@ -377,10 +377,18 @@ export const openPromptAnywhere = () => {
     hiddenInMissionControl: true,
   });
 
-  promptAnywhereWindow.on('blur', () => {
+  promptAnywhereWindow.on('focus', () => {
     closeAnywhereCustomPalette();
-    closePromptAnywhere();
-    restoreWindows();
+  })
+
+  promptAnywhereWindow.on('blur', () => {
+    const paletteNotHere = anywhereCustomPalette == null || anywhereCustomPalette.isDestroyed()
+    const paletteNotFocused = anywhereCustomPalette != null && !anywhereCustomPalette.isFocused()
+    if (paletteNotHere || paletteNotFocused) {
+      closeAnywhereCustomPalette();
+      closePromptAnywhere();
+      restoreWindows();
+    }
   });
 
 };
@@ -452,38 +460,43 @@ export const showAnywhereCustomPalette = () => {
     closeAnywhereCustomPalette();
   });
   
-}
+} 
 
 export const closeAnywhereCustomPalette = async () => {
 
   // close it
   try {
+
     if (anywhereCustomPalette && !anywhereCustomPalette.isDestroyed()) {
-      // console.log('Closing prompt anywhere window')
+
+      // console.log('Closing custom prompt anywhere window')
       anywhereCustomPalette?.close()
+      anywhereCustomPalette = null;
       await wait();
+
+      // focus prompt anywhere
+      //console.log('Focusing prompt anywhere window')
+      promptAnywhereWindow.focus();
+      await wait();
+
     }
+
   } catch (error) {
     console.error('Error while closing anywhere custom prompt palette', error)
   }
+
+  // reset it here to be sure
+  //console.log('Done closing custom prompt palette')
   anywhereCustomPalette = null;
 
-  // focus prompt anywhere
-  try {
-    if (promptAnywhereWindow) {
-      promptAnywhereWindow.focus();
-    }
-  } catch (error) {
-    console.error('Error while focusing prompt anywhere window', error)
-  }
+}
+
+export const isAnywhereCustomPaletteOpen = () => {
+  return (anywhereCustomPalette != null && !anywhereCustomPalette.isDestroyed());
 }
 
 export const toggleAnywhereCustomPalette = async () => {
-  if (anywhereCustomPalette && !anywhereCustomPalette.isDestroyed()) {
-    closeAnywhereCustomPalette();
-  } else {
-    showAnywhereCustomPalette();
-  }
+  showAnywhereCustomPalette();
 }
 
 export let readAloudPalette: BrowserWindow = null;

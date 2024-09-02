@@ -159,7 +159,10 @@ declare global {
       anywhere?: {
         prompt?(text: string): void
         resize?(width: number, height: number): void
+        showCustom?(): void
+        closeCustom?(): void
         toggleCustom?(): void
+        isCustomOpen?(): boolean
         onCustom(prompt: string): void
         cancel?(): void
       }

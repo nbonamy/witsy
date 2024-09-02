@@ -397,8 +397,20 @@ ipcMain.on('anywhere-resize', (event, height) => {
   window.resizePromptAnywhere(height);
 })
 
-ipcMain.on('anywhere-toggle-custom-prompt', (event) => {
-  window.toggleAnywhereCustomPalette();
+ipcMain.on('anywhere-show-custom-prompt', async (event) => {
+  await window.showAnywhereCustomPalette();
+})
+
+ipcMain.on('anywhere-close-custom-prompt', async (event) => {
+  await window.closeAnywhereCustomPalette();
+})
+
+ipcMain.on('anywhere-toggle-custom-prompt', async (event) => {
+  await window.toggleAnywhereCustomPalette();
+})
+
+ipcMain.on('anywhere-is-custom-prompt-open', (event) => {
+  event.returnValue = window.isAnywhereCustomPaletteOpen();
 })
 
 ipcMain.on('anywhere-set-prompt', async (event, prompt) => {

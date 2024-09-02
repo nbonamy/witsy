@@ -62,8 +62,11 @@ contextBridge.exposeInMainWorld(
     anywhere: {
       prompt: (text: string): void => { return ipcRenderer.sendSync('prompt-anywhere', JSON.stringify(text)) },
       resize: (height: number): void => { return ipcRenderer.send('anywhere-resize', height) },
+      showCustom: (): void => { return ipcRenderer.send('anywhere-show-custom-prompt') },
+      closeCustom: (): void => { return ipcRenderer.send('anywhere-close-custom-prompt') },
       toggleCustom: (): void => { return ipcRenderer.send('anywhere-toggle-custom-prompt') },
-      onCustom: (prompt: string): void => { return ipcRenderer.send('anywhere-set-prompt', JSON.stringify(prompt)) },
+      isCustomOpen: (): boolean => { return ipcRenderer.sendSync('anywhere-is-custom-prompt-open') },
+      onCustom: (prompt: string): void => { return ipcRenderer.sendSync('anywhere-set-prompt', JSON.stringify(prompt)) },
       cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
     },
     prompts: {

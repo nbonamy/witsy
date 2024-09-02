@@ -35,7 +35,9 @@ const onResize = (data) => {
 }
 
 const onCustom = () => {
-  window.api.anywhere.toggleCustom()
+  if (!window.api.anywhere.isCustomOpen()) {
+    window.api.anywhere.showCustom()
+  }
 }
 
 const onKeyUp = (event) => {

@@ -31,7 +31,7 @@ onUnmounted(() => {
 
 const onKeyUp = (event) => {
   if (event.key === 'Escape') {
-    window.api.anywhere.toggleCustom()
+    window.api.anywhere.closeCustom()
   }
 }
 
