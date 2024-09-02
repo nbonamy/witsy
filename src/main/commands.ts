@@ -11,14 +11,15 @@ const commandsFilePath = (app: App): string => {
   return commandsFilePath
 }
 
-export const loadCommands = (app: App): Command[] => {
+export const loadCommands = (source: App|string): Command[] => {
 
   // init
   let commands: Command[] = []
 
   // read
   try {
-    commands = JSON.parse(fs.readFileSync(commandsFilePath(app), 'utf-8'))
+    const commandsFile = typeof source === 'string' ? source : commandsFilePath(source)
+    commands = JSON.parse(fs.readFileSync(commandsFile, 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving commands', error)
@@ -42,7 +43,7 @@ export const loadCommands = (app: App): Command[] => {
 
   // save if needed
   if (updated) {
-    saveCommands(app, commands)
+    saveCommands(source, commands)
   }
 
   // done
@@ -50,9 +51,10 @@ export const loadCommands = (app: App): Command[] => {
 
 }
 
-export const saveCommands = (app: App, content: Command[]) => {
+export const saveCommands = (dest: App|string, content: Command[]) => {
   try {
-    fs.writeFileSync(commandsFilePath(app), JSON.stringify(content, null, 2))
+    const commandsFile = typeof dest === 'string' ? dest : commandsFilePath(dest)
+    fs.writeFileSync(commandsFile, JSON.stringify(content, null, 2))
   } catch (error) {
     console.log('Error saving commands', error)
   }

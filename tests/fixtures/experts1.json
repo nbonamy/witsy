@@ -1,0 +1,20 @@
+[
+  {
+    "id": "user-expert-1",
+    "type": "user",
+    "name": "User Expert 1",
+    "prompt": "User Prompt 1",
+    "state": "enabled"
+  },
+  {
+    "id": "3d2d822d-98e5-4f1f-a197-c6f787402ac2",
+    "type": "system",
+    "label": "System Command 1",
+    "state": "disabled"
+  },
+  {
+    "id": "866aa938-9974-4867-ba5e-4d5939351890",
+    "type": "system",
+    "state": "deleted"
+  }
+]

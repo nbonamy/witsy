@@ -1,0 +1,25 @@
+[
+  {
+    "id": "user-command-1",
+    "type": "user",
+    "icon": "❓",
+    "label": "User Command 1",
+    "action": "chat_window",
+    "template": "User Template 1",
+    "shortcut": "E",
+    "state": "enabled",
+    "engine": "",
+    "model": ""
+  },
+  {
+    "id": "90dd1cd3-903a-4f60-bccf-0542fa78d8ef",
+    "type": "system",
+    "label": "System Command 1",
+    "state": "disabled"
+  },
+  {
+    "id": "3e629079-6a0b-4096-9e5d-e2dd39268fa7",
+    "type": "system",
+    "state": "deleted"
+  }
+]
