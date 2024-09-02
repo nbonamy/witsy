@@ -44,7 +44,7 @@ const handleExpertClick = (action) => {
 
 <style>
 
-.anywhere-expert .context-menu {
+.anywhere-experts .context-menu {
   min-width: calc(100% - 10px);
   min-height: calc(100% - 10px);
 }
