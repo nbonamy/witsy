@@ -77,7 +77,7 @@ const working = computed(() => {
 })
 
 const customPrompts = computed(() => {
-  return store.prompts.map(p => {
+  return store.prompts.filter(p => p.state == 'enabled').map(p => {
     return { label: p.actor, action: p.actor, icon: BIconStars }
   })
 })

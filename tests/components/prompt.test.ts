@@ -49,10 +49,10 @@ beforeAll(() => {
     return 'chat'
   }
   store.prompts = [
-    { actor: 'actor1', prompt: 'prompt1' },
-    { actor: 'actor2', prompt: 'prompt2' },
-    { actor: 'actor3', prompt: 'prompt3' }
-  ]
+    { id: 'uuid1', type: 'system', actor: 'actor1', prompt: 'prompt1', state: 'enabled' },
+    { id: 'uuid2', type: 'system', actor: 'actor2', prompt: 'prompt2', state: 'disabled' },
+    { id: 'uuid3', type: 'user', actor: 'actor3', prompt: 'prompt3', state: 'enabled' }
+]
 
   // wrapper
   wrapper = mount(Prompt, { global: { stubs: { teleport: true } } } )
@@ -192,7 +192,7 @@ test('Custom prompts', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
+  expect(menu.findAll('.item').length).toBe(2)
   await menu.findAll('.item')[1].trigger('click')
-  expect(wrapper.find('.input textarea').element.value).toBe('prompt2')
+  expect(wrapper.find('.input textarea').element.value).toBe('prompt3')
 })

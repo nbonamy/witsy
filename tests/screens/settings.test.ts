@@ -32,6 +32,7 @@ const tabs = [
   'settingsGeneral',
   'settingsAppearance',
   'settingsCommands',
+  'settingsPrompts',
   'settingsShortcuts',
   'settingsLLM',
   'settingsPlugins',
@@ -161,7 +162,7 @@ test('Settings Appearance', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = await switchToTab(7)
+  const tab = await switchToTab(8)
   expect(tab.findAll('.group')).toHaveLength(3)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)

@@ -1,7 +1,7 @@
 import { Command } from '../types/index.d'
-import defaultCommands from '../../defaults/commands.json'
 import { App } from 'electron'
-import * as file from './file';
+import defaultCommands from '../../defaults/commands.json'
+import * as file from './file'
 import path from 'path'
 import fs from 'fs'
 
@@ -21,7 +21,7 @@ export const loadCommands = (app: App): Command[] => {
     commands = JSON.parse(fs.readFileSync(commandsFilePath(app), 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
-      console.log('Error retrieving history data', error)
+      console.log('Error retrieving commands', error)
     }
   }
 
@@ -54,7 +54,7 @@ export const saveCommands = (app: App, content: Command[]) => {
   try {
     fs.writeFileSync(commandsFilePath(app), JSON.stringify(content, null, 2))
   } catch (error) {
-    console.log('Error saving history data', error)
+    console.log('Error saving commands', error)
   }
 }
 

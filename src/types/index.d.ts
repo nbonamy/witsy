@@ -88,8 +88,11 @@ interface Store {
 }
 
 interface Prompt {
+  id: string,
+  type: 'system' | 'user',
   actor: string
   prompt: string
+  state: 'enabled' | 'disabled' | 'deleted',
 }
 
 interface File {

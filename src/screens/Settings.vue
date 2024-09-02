@@ -8,6 +8,7 @@
             <SettingsTab title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
             <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
             <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
+            <SettingsTab title="Experts"><BIconPersonVcard class="icon" /></SettingsTab>
             <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
             <SettingsTab title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
@@ -17,6 +18,7 @@
           <SettingsGeneral ref="settingsGeneral" />
           <SettingsAppearance ref="settingsAppearance" />
           <SettingsCommands ref="settingsCommands" />
+          <SettingsPrompts ref="settingsPrompts" />
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsLLM ref="settingsLLM" />
           <SettingsPlugins ref="settingsPlugins" />
@@ -37,6 +39,7 @@ import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsAppearance from '../settings/SettingsAppearance.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
+import SettingsPrompts from '../settings/SettingsPrompts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
@@ -58,6 +61,7 @@ const props = defineProps({
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
+const settingsPrompts = ref(null)
 const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
 const settingsPlugins = ref(null)
@@ -76,6 +80,7 @@ const onOpenSettings = () => {
   settingsAppearance.value.load()
   settingsShortcuts.value.load()
   settingsCommands.value.load()
+  settingsPrompts.value.load()
   settingsLLM.value.load()
   settingsPlugins.value.load()
   settingsTTS.value.load()
@@ -99,7 +104,7 @@ const onClose = () => {
 <style>
 
 dialog.settings {
-  width: 600px;
+  width: 640px;
 }
 
 dialog.settings .content {

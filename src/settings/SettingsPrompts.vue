@@ -1,7 +1,6 @@
-
 <template>
   <div class="content" @click="closeContextMenu">
-    <div class="commands">
+    <div class="prompts">
       <table>
         <thead>
           <tr>
@@ -9,14 +8,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
-              @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
+          <tr v-for="prompt in visiblePrompts" :key="prompt.id" :data-id="prompt.id" class="prompt" :class="selected?.id == prompt.id ? 'selected' : ''"
+              @click="onSelect(prompt)" @dblclick="onEdit(prompt)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
           >
-            <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
-            <td class="icon">{{ command.icon }}</td>
-            <td class="label">{{ command.label }}</td>
-            <td class="shortcut">{{ command.shortcut }}</td>
-            <td class="action">{{ action(command.action) }}</td>
+            <td class="enabled"><input type="checkbox" :checked="prompt.state=='enabled'" @click="onEnabled(prompt)" /></td>
+            <td class="actor">{{ prompt.actor }}</td>
           </tr>
         </tbody>
       </table>
@@ -30,8 +26,7 @@
       </div>
     </div>
     <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom-right" :teleport="false" />
-    <CommandDefaults id="defaults" ref="defaults" @command-defaults-modified="onCommandModified"/>
-    <CommandEditor id="command-editor" :command="edited" @command-modified="onCommandModified"/>
+    <PromptEditor id="prompt-editor" :prompt="edited" @prompt-modified="onPromptModified"/>
   </div>
 </template>
 
@@ -41,12 +36,11 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { newCommand, saveCommands } from '../services/commands'
-import CommandDefaults from '../screens/CommandDefaults.vue'
-import CommandEditor from '../screens/CommandEditor.vue'
+import { newPrompt, savePrompts } from '../services/prompts'
+import PromptEditor from '../screens/PromptEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 
-const commands = ref(null)
+const prompts = ref(null)
 const selected = ref(null)
 const edited = ref(null)
 const defaults = ref(null)
@@ -57,27 +51,16 @@ const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Defaults', action: 'defaults' },
   { label: 'Export', action: 'export' },
   { label: 'Import', action: 'import' },
 ]
 
-const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
+const visiblePrompts = computed(() => prompts.value?.filter(prompt => prompt.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
-  { field: 'icon', title: 'Icon' },
-  { field: 'label', title: 'Name', },
-  { field: 'shortcut', title: 'Shortcut', },
-  { field: 'action', title: 'Action', },
+  { field: 'actor', title: 'Expert' },
 ]
-
-const action = (action) => {
-  if (action == 'chat_window') return 'Chat Window'
-  if (action == 'paste_below') return 'Insert Below'
-  if (action == 'paste_in_place') return 'Replace Selection'
-  if (action == 'clipboard_copy') return 'Copy to Clipboard'
-}
 
 const onMore = (event) => {
   if (showMenu.value) {
@@ -105,9 +88,7 @@ const handleActionClick = async (action) => {
   closeContextMenu()
 
   // process
-  if (action === 'defaults') {
-    onDefaults()
-  } else if (action === 'import') {
+  if (action === 'import') {
     onImport()
   } else if (action === 'export') {
     onExport()
@@ -115,49 +96,44 @@ const handleActionClick = async (action) => {
 
 }
 
-const onDefaults = () => {
-  defaults.value.load()
-  document.getElementById('defaults').showModal()
-}
-
 const onImport = () => {
-  if (window.api.commands.import()) {
-    store.loadCommands()
+  if (window.api.prompts.import()) {
+    store.loadPrompts()
     load()
-    alert('Commands file imported successfully')
+    alert('Prompts file imported successfully')
   } else {
-    alert('Failed to import commands file')
+    alert('Failed to import prompts file')
   }
 }
 
 const onExport = () => {
-  if (window.api.commands.export()) {
-    alert('Commands file exported successfully')
+  if (window.api.prompts.export()) {
+    alert('Prompts file exported successfully')
   } else {
-    alert('Failed to export commands file')
+    alert('Failed to export prompts file')
   }
 }
 
-const onSelect = (command) => {
-  selected.value = command
+const onSelect = (prompt) => {
+  selected.value = prompt
 }
 
 const onNew = () => {
-  selected.value = null
-  edited.value = newCommand()
-  document.getElementById('command-editor').showModal()
+  //selected.value = null
+  edited.value = newPrompt()
+  document.getElementById('prompt-editor').showModal()
 }
 
-const onEdit = (command) => {
-  edited.value = command
-  selected.value = command
-  document.getElementById('command-editor').showModal()
+const onEdit = (prompt) => {
+  edited.value = prompt
+  selected.value = prompt
+  document.getElementById('prompt-editor').showModal()
 }
 
 const onDelete = () => {
   Swal.fire({
-    target: document.querySelector('.commands'),
-    title: 'Are you sure you want to delete this command? This cannot be undone.',
+    target: document.querySelector('.prompts'),
+    title: 'Are you sure you want to delete this prompt? This cannot be undone.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {
@@ -165,8 +141,8 @@ const onDelete = () => {
       if (selected.value.type == 'system') {
         selected.value.state = 'deleted'
       } else {
-        const index = commands.value.indexOf(selected.value)
-        commands.value.splice(index, 1)
+        const index = prompts.value.indexOf(selected.value)
+        prompts.value.splice(index, 1)
       }
       selected.value = null
       save()
@@ -174,49 +150,41 @@ const onDelete = () => {
   })
 }
 
-const onEnabled = (command) => {
-  command.state = (command.state == 'enabled' ? 'disabled' : 'enabled')
+const onEnabled = (prompt) => {
+  prompt.state = (prompt.state == 'enabled' ? 'disabled' : 'enabled')
   save()
 }
 
-const onCommandModified = (payload) => {
-
-  // new command?
-  let command = null
+const onPromptModified = (payload) => {
+  // new prompt?
+  let prompt = null
   if (payload.id == null) {
-    command = newCommand()
-    command.id = uuidv4()
-    commands.value.push(command)
+
+    // create a new ome
+    prompt = newPrompt()
+    prompt.id = uuidv4()
+    
+    // dind the index of the currently selected
+    const selectedIndex = prompts.value.findIndex(p => p.id === selected.value?.id)
+    if (selectedIndex !== -1) {
+      prompts.value.splice(selectedIndex, 0, prompt)
+    } else {
+      prompts.value.push(prompt)
+    }
   } else {
-    command = commands.value.find(command => command.id == payload.id)
+    prompt = prompts.value.find(prompt => prompt.id == payload.id)
   }
 
   // update
-  if (command) {
-
-    // single shortcut
-    if (payload.shortcut) {
-      for (const c of commands.value) {
-        if (c.id != command.id && c.shortcut == payload.shortcut) {
-          c.shortcut = null
-        }
-      }
-    }
-
+  if (prompt) {
     // now update
-    command.label = payload.label
-    command.icon = payload.icon
-    command.action = payload.action
-    command.template = payload.template
-    command.shortcut = payload.shortcut
-    command.engine = payload.engine
-    command.model = payload.model
+    prompt.actor = payload.actor
+    prompt.prompt = payload.prompt
   }
 
   // done
-  selected.value = command
+  selected.value = prompt
   save()
-
 }
 
 var draggedRow
@@ -242,7 +210,7 @@ const onDragOver = (event) => {
   // reorder array
   const rows = document.querySelectorAll('tr[data-id]');
   const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
-  commands.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+  prompts.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
 
 }
 
@@ -251,12 +219,12 @@ const onDragEnd = () => {
 }
 
 const load = () => {
-  commands.value = JSON.parse(JSON.stringify(store.commands))
+  prompts.value = JSON.parse(JSON.stringify(store.prompts))
 }
 
 const save = () => {
-  store.commands = commands.value
-  saveCommands()
+  store.prompts = prompts.value
+  savePrompts()
 }
 
 defineExpose({ load })
@@ -273,7 +241,7 @@ defineExpose({ load })
   width: 540px !important;
 }
 
-.commands {
+.prompts {
   height: 200px;
   overflow-y: auto;
 }
