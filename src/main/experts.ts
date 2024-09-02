@@ -12,14 +12,15 @@ const expertsFilePath = (app: App): string => {
   return expertsFilePath
 }
 
-export const loadExperts = (app: App): Expert[] => {
+export const loadExperts = (source: App|string): Expert[] => {
 
   // init
   let experts: Expert[] = []
 
   // read
   try {
-    experts = JSON.parse(fs.readFileSync(expertsFilePath(app), 'utf-8'))
+    const expertsFile = typeof source === 'string' ? source : expertsFilePath(source)
+    experts = JSON.parse(fs.readFileSync(expertsFile, 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving experts', error)
@@ -38,7 +39,7 @@ export const loadExperts = (app: App): Expert[] => {
 
   // save if needed
   if (updated) {
-    saveExperts(app, experts)
+    saveExperts(source, experts)
   }
 
   // done
@@ -46,10 +47,10 @@ export const loadExperts = (app: App): Expert[] => {
 
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-export const saveExperts = (app: App, content: Expert[]): void => {
+export const saveExperts = (dest: App|string, content: Expert[]): void => {
   try {
-    fs.writeFileSync(expertsFilePath(app), JSON.stringify(content, null, 2))
+    const expertsFile = typeof dest === 'string' ? dest : expertsFilePath(dest)
+    fs.writeFileSync(expertsFile, JSON.stringify(content, null, 2))
   } catch (error) {
     console.log('Error saving experts', error)
   }
