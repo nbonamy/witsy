@@ -46,7 +46,7 @@ You can also create custom commands with the prompt of your liking!
 
 Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170](https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/AI-Assistant-via-ChatGPT-API-170).
 
-## Prompts
+## Experts
 
 From [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 
@@ -84,6 +84,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Prompts renamed to Experts. Now editable.
 - [x] Read aloud
 - [x] Import/Export commands
 - [x] Anthropic Sonnet 3.5
