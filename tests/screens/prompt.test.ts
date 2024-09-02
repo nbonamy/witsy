@@ -17,9 +17,9 @@ beforeAll(() => {
     prompts: {
       load: vi.fn(() => {
         return [
-          { actor: 'actor1', prompt: 'prompt1' },
-          { actor: 'actor2', prompt: 'prompt2' },
-          { actor: 'actor3', prompt: 'prompt3' }
+          { id: 'uuid1', type: 'system', actor: 'actor1', prompt: 'prompt1', state: 'enabled' },
+          { id: 'uuid2', type: 'system', actor: 'actor2', prompt: 'prompt2', state: 'disabled' },
+          { id: 'uuid3', type: 'user', actor: 'actor3', prompt: 'prompt3', state: 'enabled' }
         ]
       })
     },
@@ -70,6 +70,7 @@ test('Custom Prompts renders', async () => {
   const wrapper = mount(CustomPrompt)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.context-menu').exists()).toBe(true)
+  expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(2)
   expect(window.api.prompts.load).toHaveBeenCalled()
 })
 
@@ -77,5 +78,5 @@ test('Custom Prompts sends', async () => {
   const wrapper = mount(CustomPrompt)
   const trigger = wrapper.find('.context-menu .actions :nth-child(2)')
   await trigger.trigger('click')
-  expect(window.api.anywhere.onCustom).toHaveBeenCalledWith('prompt2')
+  expect(window.api.anywhere.onCustom).toHaveBeenCalledWith('uuid3')
 })

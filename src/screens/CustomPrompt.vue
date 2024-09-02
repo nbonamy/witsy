@@ -16,7 +16,7 @@ import { BIconStars } from 'bootstrap-icons-vue'
 store.loadPrompts()
 
 const customPrompts = computed(() => {
-  return store.prompts.map(p => {
+  return store.prompts.filter(p => p.state == 'enabled').map(p => {
     return { label: p.actor, action: p.actor, icon: BIconStars }
   })
 })
@@ -37,7 +37,7 @@ const onKeyUp = (event) => {
 
 const handleCustomPromptClick = (action) => {
   const customPrompt = store.prompts.find(p => p.actor === action)
-  window.api.anywhere.onCustom(customPrompt.prompt)
+  window.api.anywhere.onCustom(customPrompt.id)
 }
 
 </script>

@@ -1,6 +1,17 @@
 
+import { Prompt } from '../types/index.d'
 import { store } from './store'
 import defaultPrompts from '../../defaults/prompts.json'
+
+export const newPrompt = (): Prompt => {
+  return {
+    id: null,
+    type: 'user',
+    actor: 'New prompt',
+    prompt: '',
+    state: 'enabled'
+  }
+}
 
 export const loadPrompts = (): void => {
   try {

@@ -8,10 +8,14 @@
 <script setup>
 
 import { onMounted, onUnmounted } from 'vue'
+import { store } from '../services/store'
 import Prompt from '../components/Prompt.vue'
 
 import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
+
+// load store
+store.loadPrompts()
 
 onMounted(() => {
   onEvent('sendPrompt', onPrompt)
@@ -25,8 +29,9 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
 })
 
-const onSetPrompt = (prompt) => {
-  emitEvent('set-custom-prompt', prompt)
+const onSetPrompt = (id) => {
+  const prompt = store.prompts.find((p) => p.id == id)
+  emitEvent('set-custom-prompt', prompt.prompt)
 }
 
 const onResize = (data) => {
