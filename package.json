@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -78,6 +78,7 @@
     "groq-sdk": "^0.3.2",
     "highlight.js": "^11.9.0",
     "html-to-text": "^9.0.5",
+    "html2pdf.js": "github:ssamilg/html2pdf.js#fix/update-html2canvas",
     "katex": "^0.16.10",
     "markdown-it": "^14.1.0",
     "markdown-it-mark": "^4.0.0",
