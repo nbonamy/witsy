@@ -1,6 +1,7 @@
 
 import { anyDict, strDict } from '../types/index.d';
 import { App, BrowserWindow, dialog } from 'electron';
+import { extensionToMimeType } from './mimetype';
 import { execSync } from 'child_process';
 import { download } from 'electron-dl';
 import process from 'process'
@@ -14,6 +15,7 @@ export const getFileContents = (app: App, filepath: string): strDict => {
     if (fileContents) {
       return {
         url: `file://${filepath}`,
+        mimeType: extensionToMimeType(path.extname(filepath)),
         contents: fileContents.toString('base64')
       };
     }

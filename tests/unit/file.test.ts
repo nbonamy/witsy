@@ -48,6 +48,7 @@ test('Get file contents', async () => {
   const text = Buffer.from(contents.contents, 'base64').toString()
   expect(contents).toStrictEqual({
     url: 'file://./tests/fixtures/sample.txt',
+    mimeType: 'text/plain',
     contents: 'SGVsbG8gZnJvbSBURVhU',
   })
   expect(text).toContain('Hello from TEXT')
