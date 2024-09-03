@@ -51,7 +51,7 @@ export default class {
     autoUpdater.on('update-not-available', (event: any) => {
       if (!this.downloading) {
         console.log('Update not available', event)
-        if (!this.manualUpdate) {
+        if (this.manualUpdate) {
           dialog.showMessageBox({
             type: 'info',
             message: 'Witsy',
@@ -100,6 +100,7 @@ export default class {
   }
 
   check = () => {
+    console.log('check')
     if (this.downloading) {
       dialog.showMessageBox({
         type: 'info',
