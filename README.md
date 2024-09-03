@@ -84,6 +84,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] PDF Export of chats
 - [x] Prompts renamed to Experts. Now editable.
 - [x] Read aloud
 - [x] Import/Export commands

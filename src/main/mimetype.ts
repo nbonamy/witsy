@@ -18,6 +18,9 @@ export function mimeTypeToExtension(mimeType: string): string {
 }
 
 export function extensionToMimeType(extension: string): string {
+  if (extension.startsWith('.')) {
+    extension = extension.slice(1)
+  }
   switch (extension.toLowerCase()) {
     case 'docx':
       return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'

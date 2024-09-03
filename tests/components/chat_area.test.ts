@@ -100,6 +100,7 @@ test('Context menu Normal', async () => {
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'mock chat', disabled: true },
     { label: 'Rename Chat', action: 'rename', disabled: false },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: false }
   ])
 })
@@ -112,6 +113,7 @@ test('Context menu Standalone', async () => {
     { label: 'mock chat', disabled: true },
     { label: 'Save', action: 'save', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: true }
   ])
 })
@@ -124,11 +126,19 @@ test('Context menu rename', async () => {
   expect(emitEventMock).toHaveBeenCalledWith('renameChat', chat)
 })
 
+test('Context menu export', async () => {
+  addMessagesToChat()
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  //await wrapper.findAll('.context-menu .item')[2].trigger('click')
+  //expect(emitEventMock).toHaveBeenCalledWith('deleteChat', chat)
+})
+
 test('Context menu delete', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[2].trigger('click')
+  await wrapper.findAll('.context-menu .item')[3].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('deleteChat', chat)
 })
 

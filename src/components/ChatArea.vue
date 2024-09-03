@@ -24,6 +24,7 @@ import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
 import useEventBus from '../composables/useEventBus'
 import EmptyChat from './EmptyChat.vue'
+import html2pdf from 'html2pdf.js'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
@@ -40,6 +41,7 @@ const chatMenuActions = computed(() => {
     props.chat.engine ? { label: `${props.chat.engine} ${props.chat.model}`, disabled: true } : null,
     props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
     { label: 'Rename Chat', action: 'rename', disabled: false },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: props.standalone && !saved.value },
   ].filter((a) => a != null)
 })
@@ -71,6 +73,8 @@ const handleActionClick = async (action) => {
     emitEvent('deleteChat', props.chat)
   } else if (action == 'save') {
     onSave()
+  } else if (action == 'exportPdf') {
+    onExportPdf()
   }
 }
 
@@ -81,6 +85,52 @@ const onSave = () => {
   saved.value = true
 }
 
+const onExportPdf = async () => {
+  // copy and clean-up
+  const content = document.querySelector('.content').cloneNode(true)
+  content.querySelector('.toolbar .menu')?.remove()
+  content.querySelector('.message .actions')?.remove()
+  content.querySelector('.overflow')?.remove()
+  content.querySelector('.prompt')?.remove()
+
+  // now remove scroll
+  content.style.height = 'auto'
+  content.querySelector('.container').style.height = 'auto'
+  content.querySelector('.container').style.overflow = 'visible'
+
+  // render svg logos as png (for some of them)
+  // this is not nice but it works for now
+  content.querySelectorAll('.message .logo').forEach(async (logo) => {
+    let src = logo.getAttribute('src')
+    src = src.replace('openai.svg', 'openai.png')
+    src = src.replace('ollama.svg', 'ollama.png')
+    src = src.replace('groq.svg', 'groq.png')
+    logo.setAttribute('src', src)
+  })
+
+  // replace images with their b64 version
+  content.querySelectorAll('.message .body img').forEach((img) => {
+    const src = img.src
+    if (src.startsWith('file://')) {
+      const path = decodeURIComponent(src.replace('file://', ''))
+      const data = window.api.file.read(path)
+      if (data) {
+        img.src = `data:${data.mimeType};base64,${data.contents}`
+      }
+    }
+  })
+
+  // now render
+  const opt = {
+    margin: 4,
+    filename: `${props.chat.title}.pdf`,
+    image: { type: 'jpeg', quality: 1.0 },
+    html2canvas: { scale: 2 },
+    pagebreak: { mode: 'avoid-all' },
+    jsPDF: { compress: true, putOnlyUsedFonts: true }
+  }
+  html2pdf().from(content).set(opt).save()
+}
 </script>
 
 <style scoped>
