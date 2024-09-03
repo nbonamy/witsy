@@ -4,6 +4,7 @@ import { app, autoUpdater, dialog } from 'electron';
 export default class {
 
   manualUpdate = false
+  downloading = false
 
   constructor(public hooks: {
     preUpdate?: () => void;
@@ -22,14 +23,21 @@ export default class {
     // error
     autoUpdater.on('error', (error) => {
       console.error('Error while checking for updates', error)
+      this.downloading = false
       if (this.manualUpdate) {
         dialog.showErrorBox('Witsy', 'Error while checking for updates. Please try again later.')
       } 
     })
 
+    // checking
+    autoUpdater.on('checking-for-update', (event: any) => {
+      console.log('Checking for updates', event)
+    })
+
     // available
-    autoUpdater.on('update-available', () => {
-      console.log('Update available. Downloading…')
+    autoUpdater.on('update-available', (event: any) => {
+      console.log('Update available. Downloading…', event)
+      this.downloading = true
       if (this.manualUpdate) {
         dialog.showMessageBox({
           type: 'info',
@@ -40,19 +48,27 @@ export default class {
     })
 
     // not available
-    autoUpdater.on('update-not-available', () => {
-      if (this.manualUpdate) {
-        dialog.showMessageBox({
-          type: 'info',
-          message: 'Witsy',
-          detail: 'You are already using the latest version of Witsy.',
-        })
+    autoUpdater.on('update-not-available', (event: any) => {
+      if (!this.downloading) {
+        console.log('Update not available', event)
+        if (!this.manualUpdate) {
+          dialog.showMessageBox({
+            type: 'info',
+            message: 'Witsy',
+            detail: 'You are already using the latest version of Witsy.',
+          })
+        }
       }
     })
 
     // downloaded
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+
+      // done
+      console.log('Update downloaded', event, releaseNotes, releaseName)
+      this.downloading = false
       
+      // dialog
       const dialogOpts: Electron.MessageBoxOptions = {
         type: 'info',
         buttons: ['Restart', 'Later'],
@@ -61,6 +77,7 @@ export default class {
         detail: 'A new version has been downloaded. Restart the application to apply the updates.'
       }
 
+      // show dialog
       dialog.showMessageBox(dialogOpts).then((returnValue) => {
         if (returnValue.response === 0) {
           autoUpdater.quitAndInstall()
@@ -70,7 +87,6 @@ export default class {
 
     // before quit for update
     autoUpdater.on('before-quit-for-update', () => {
-      this.hooks.preUpdate?.()
     })
 
     // check now and schedule
@@ -84,8 +100,15 @@ export default class {
   }
 
   check = () => {
-    this.manualUpdate = true;
-    autoUpdater.checkForUpdates()
+    if (this.downloading) {
+      dialog.showMessageBox({
+        type: 'info',
+        message: 'Witsy',
+        detail: 'An update is in progress. Please wait for it to complete.',
+      })
+    } else {
+      this.manualUpdate = true;
+      autoUpdater.checkForUpdates()
+    }
   }
-
 }
