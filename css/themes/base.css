@@ -12,6 +12,10 @@
   margin: 0px 32px; 
 }
 
+.message .body {
+  overflow-wrap: anywhere;
+}
+
 .message .text {
   user-select: text;
 }
