@@ -26,6 +26,7 @@ export default defineConfig({
         ...coverageConfigDefaults.exclude,
         '*.config.ts',
         'src/*.ts',
+        'src/main/dropbox.ts',
         'src/automations/macos*.ts',
         'src/automations/robot.ts',
         'src/automations/windows.ts',
