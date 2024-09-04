@@ -98,6 +98,11 @@ const onExportPdf = async () => {
   content.querySelector('.container').style.height = 'auto'
   content.querySelector('.container').style.overflow = 'visible'
 
+  // adjust title
+  //content.querySelector('.toolbar').style.marginTop = '-12px'
+  content.querySelector('.toolbar').style.marginLeft = '12px'
+  content.querySelector('.toolbar').style.marginRight = '12px'
+
   // render svg logos as png (for some of them)
   // this is not nice but it works for now
   content.querySelectorAll('.message .logo').forEach(async (logo) => {
@@ -122,7 +127,7 @@ const onExportPdf = async () => {
 
   // now render
   const opt = {
-    margin: 4,
+    margin: [ 12, 4, 8, 4 ],
     filename: `${props.chat.title}.pdf`,
     image: { type: 'jpeg', quality: 1.0 },
     html2canvas: { scale: 2 },
