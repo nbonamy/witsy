@@ -12,7 +12,7 @@ import { wait } from './main/utils';
 import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
-import ReadAloud from 'automations/readaloud';
+import ReadAloud from './automations/readaloud';
 //import Dropbox from './main/dropbox';
 import * as config from './main/config';
 import * as history from './main/history';
@@ -401,27 +401,27 @@ ipcMain.on('prompt-anywhere', async (event, payload) => {
 
 })
 
-ipcMain.on('anywhere-resize', (event, height) => {
+ipcMain.on('anywhere-resize', (_, height) => {
   window.resizePromptAnywhere(height);
 })
 
-ipcMain.on('anywhere-show-experts', async (event) => {
+ipcMain.on('anywhere-show-experts', async () => {
   await window.showExpertsPalette();
 })
 
-ipcMain.on('anywhere-close-experts', async (event) => {
+ipcMain.on('anywhere-close-experts', async () => {
   await window.closeExpertsPalette();
 })
 
-ipcMain.on('anywhere-toggle-experts', async (event) => {
+ipcMain.on('anywhere-toggle-experts', async () => {
   await window.toggleExpertsPalette();
 })
 
-ipcMain.on('anywhere-is-experts-open', (event) => {
+ipcMain.on('anywhere-is-experts-open', () => {
   event.returnValue = window.isExpertsPaletteOpen();
 })
 
-ipcMain.on('anywhere-on-expert', async (event, expertId) => {
+ipcMain.on('anywhere-on-expert', async (_, expertId) => {
   await window.setPromptAnywhereExpertPrompt(JSON.parse(expertId));
   await window.closeExpertsPalette();
 })
@@ -447,13 +447,13 @@ ipcMain.on('close-readaloud-palette', async () => {
   await window.closeReadAloudPalette();
 });
 
-ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
-  // const dropbox = new Dropbox(app, '', '')
-  // event.returnValue = await dropbox.getOAuthUrl()
-})
+// ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
+//   const dropbox = new Dropbox(app, '', '')
+//   event.returnValue = await dropbox.getOAuthUrl()
+// })
 
-ipcMain.on('dropbox-authenticate-with-code', async (event, payload) => {
-  // const dropbox = new Dropbox(app, '', '')
-  // const accessToken = await dropbox.getAccessTokenFromCode(payload)
-  // event.returnValue = (accessToken != null)
-})
+// ipcMain.on('dropbox-authenticate-with-code', async (event, payload) => {
+//   const dropbox = new Dropbox(app, '', '')
+//   const accessToken = await dropbox.getAccessTokenFromCode(payload)
+//   event.returnValue = (accessToken != null)
+// })

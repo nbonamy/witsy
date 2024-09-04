@@ -460,7 +460,7 @@ export const showExpertsPalette = () => {
     closeExpertsPalette();
   });
   
-} 
+}
 
 export const closeExpertsPalette = async () => {
 

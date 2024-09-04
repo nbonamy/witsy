@@ -23,6 +23,7 @@ export class Plugin1 extends Plugin {
     return []
   }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   async execute(parameters: any): Promise<any> {
     return 'result1'
   }

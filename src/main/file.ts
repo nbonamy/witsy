@@ -8,6 +8,7 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getFileContents = (app: App, filepath: string): strDict => {
 
   try {
@@ -75,6 +76,7 @@ export const pickFile = (app: App, payload: anyDict): string|strDict => {
 
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const pickDirectory = (app: App): string => {
 
   try {

@@ -9,9 +9,6 @@ const textCache: strDict = {}
 
 export default class ReadAloud {
 
-  constructor() {
-  }
-
   static read = async (): Promise<void> => {
 
     // hide active windows

@@ -2,7 +2,7 @@
 import { Message } from '../types/index.d'
 import { EngineConfig, Configuration } from '../types/config.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from '../types/llm.d'
-import { ChatSession, Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part } from '@google/generative-ai'
+import { Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part } from '@google/generative-ai'
 import { getFileContents } from './download'
 import Attachment from '../models/attachment'
 import LlmEngine from './engine'

@@ -1,5 +1,5 @@
 
-import { vi, beforeEach, expect, test, afterAll } from 'vitest'
+import { vi, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
@@ -17,7 +17,7 @@ window.api = {
   commands: {
     load: vi.fn(() => []),
   },
-  prompts: {
+  experts: {
     load: vi.fn(() => []),
   },
   history: {
