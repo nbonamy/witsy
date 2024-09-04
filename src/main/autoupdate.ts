@@ -87,6 +87,7 @@ export default class {
 
     // before quit for update
     autoUpdater.on('before-quit-for-update', () => {
+      this.hooks.preUpdate?.()
     })
 
     // check now and schedule
