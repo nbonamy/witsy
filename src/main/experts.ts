@@ -1,5 +1,5 @@
 
-import { Expert } from '../types'
+import { Expert } from '../types/index.d'
 import { App } from 'electron'
 import defaultExperts from '../../defaults/experts.json'
 import * as file from './file'

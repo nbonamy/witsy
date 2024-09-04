@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { Expert } from 'types'
+import { Expert } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import * as main from '../../src/main/experts'
 import * as service from '../../src/services/experts'

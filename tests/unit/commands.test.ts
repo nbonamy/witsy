@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { Command } from 'types'
+import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import * as main from '../../src/main/commands'
 import * as service from '../../src/services/commands'

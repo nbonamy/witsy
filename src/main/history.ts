@@ -1,14 +1,14 @@
 import { Chat } from '../types/index.d'
 import { App } from 'electron'
-import Dropbox from './dropbox'
+// import Dropbox from './dropbox'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
-const DROPBOX_PATH = '/history.json'
+// const DROPBOX_PATH = '/history.json'
 
 const monitor: Monitor = new Monitor('history')
-let dropbox: Dropbox|null = null
+// const dropbox: Dropbox|null = null
 
 const historyFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -147,7 +147,7 @@ export const extractAttachmentsFromHistory = (history: Chat[], imagesPath: strin
       for (const regex of regexes) {
         const matches = message.content?.matchAll(regex)
         for (const match of matches || []) {
-          let filename = match[1]
+          const filename = match[1]
           attachments.push(filename)
         }
       }

@@ -1,6 +1,5 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import * as window from '../../src/main/window'
