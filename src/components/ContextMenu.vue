@@ -3,11 +3,16 @@
     <div class="context-menu" :style="position">
       <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
-        <div v-for="action in visibleActions" :key="action.action" :class="{ item: true, disabled: action.disabled }" @click="onAction(action)">
-          <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
-          <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
-          {{ action.label }}
-        </div>
+        <template v-for="action in visibleActions" :key="action.action">
+          <div class="item separator disabled" v-if="action.separator">
+            <hr  />
+          </div>
+          <div :class="{ item: true, disabled: action.disabled }" @click="onAction(action)" v-else>
+            <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
+            <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
+            {{ action.label }}
+          </div>
+        </template>
       </div>
     </div>
   </Teleport>
@@ -119,6 +124,11 @@ const onAction = (action) => {
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
+}
+
+.context-menu .item.separator {
+  cursor: default;
+  padding: 2px 0px 2px 8px;
 }
 
 .context-menu .item .icon {
