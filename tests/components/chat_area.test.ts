@@ -139,7 +139,7 @@ test('Context menu delete', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.findAll('.context-menu .item')[3].trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('deleteChat', chat)
+  expect(emitEventMock).toHaveBeenCalledWith('deleteChat', chat.uuid)
 })
 
 test('Context menu save', async () => {
