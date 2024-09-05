@@ -70,7 +70,7 @@ const handleActionClick = async (action) => {
   if (action === 'rename') {
     emitEvent('renameChat', props.chat)
   } else if (action === 'delete') {
-    emitEvent('deleteChat', props.chat)
+    emitEvent('deleteChat', props.chat.uuid)
   } else if (action == 'save') {
     onSave()
   } else if (action == 'exportPdf') {
