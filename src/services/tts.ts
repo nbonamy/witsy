@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config.d'
+import { Configuration, TTSModel, TTSVoice } from '../types/config.d'
 import OpenAI from 'openai'
 
 export default class {
@@ -15,7 +15,7 @@ export default class {
     })
   }
 
-  async synthetize(text: string, opts?: { model?: string, voice?: string}) {
+  async synthetize(text: string, opts?: { model?: TTSModel, voice?: TTSVoice}) {
     
     // call
     const response = await this.client.audio.speech.create({

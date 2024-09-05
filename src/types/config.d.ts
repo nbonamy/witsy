@@ -76,9 +76,13 @@ interface ModelConfig {
   image: string
 }
 
+export type TTSModel = 'tts-1' | 'tts-1-hd'
+export type TTSVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+
 interface TTSConfig {
-  model: string
-  voice: string
+  model: TTSModel
+  voice: TTSVoice
+}
 }
 
 interface DropboxConfig {

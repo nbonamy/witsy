@@ -21,7 +21,7 @@ window.api = {
   commands: {
     load: vi.fn(() => []),
   },
-  prompts: {
+  experts: {
     load: vi.fn(() => []),
   },
   history: {
