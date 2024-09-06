@@ -118,7 +118,7 @@ export class DocumentBaseImpl {
     const db = await VectorDB.connect(databasePath(this.app, this.uuid))
     for (const document of documents) {
       await db.insert(source.uuid, document.content, document.vector, {
-        id: source.uuid,
+        uuid: source.uuid,
         type: source.type,
         title: source.getTitle(),
         url: source.url
@@ -339,14 +339,11 @@ export default class DocumentRepository {
     
     // done
     return results
-      .filter((entry) => entry.id !== 'sample')
       .map((result) => {
-        const metadata = JSON.parse(<string>result.metadata);
-        const vector = JSON.parse(<string>result.vectorString);
         return {
-          content: <string>result.content,
-          score: embedder.similarity(query, vector),
-          metadata: metadata,
+          content: result.item.metadata.content as string,
+          score: result.score,
+          metadata: result.item.metadata.metadata as any,
         };
       })
       .filter((result) => result.score > 0.0)

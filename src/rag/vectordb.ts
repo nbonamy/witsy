@@ -1,8 +1,5 @@
 
-import * as lancedb from '@lancedb/lancedb'
-import { v4 as uuidv4 } from 'uuid'
-
-const DB_TABLE_NAME = 'vectors'
+import { LocalIndex } from 'vectra'
 
 export default class VectorDB{
 
@@ -20,8 +17,7 @@ export default class VectorDB{
 
   path: string
   dimensions: number
-  db: lancedb.Connection
-  table: lancedb.Table
+  index: LocalIndex
   
   constructor(path: string) {
     this.path = path
@@ -29,47 +25,35 @@ export default class VectorDB{
 
   async create(dimensions: number): Promise<void> {
     this.dimensions = dimensions
-    this.db = await lancedb.connect(this.path)
-    await this.db.createTable(DB_TABLE_NAME, [{
-      id: 'sample',
-      docid: 'sample',
-      content: 'sample',
-      vector: Array(dimensions).fill(0.0),
-      vectorString: 'sample',
-      metadata: 'sample',
-    }])
-    this.table = await this.db.openTable(DB_TABLE_NAME)
+    this.index = new LocalIndex(this.path)
+    await this.index.createIndex()
   }
 
   async connect(): Promise<void> {
-    this.db = await lancedb.connect(this.path)
-    const tables = await this.db.tableNames()
-    const index = tables.indexOf(DB_TABLE_NAME)
-    if (index === -1) {
-      throw new Error('Table not found')
-    }
-    this.table = await this.db.openTable(DB_TABLE_NAME)
+    this.index = new LocalIndex(this.path)
   }
 
   async insert(docid: string, content: string, vector: number[], metadata: any): Promise<string> {
-    const id = uuidv4()
-    await this.table.add([{
-      id: id,
-      docid: docid,
-      content: content,
+    const item = await this.index.insertItem({
+      metadata: {
+        docId: docid,
+        content: content,
+        metadata: metadata
+      },
       vector:vector,
-      vectorString: JSON.stringify(vector),
-      metadata: JSON.stringify(metadata),
-    }])
-    return id
+    })
+    return item.id
   }
 
   async delete(docId: string): Promise<void> {
-    await this.table.delete(`docid == "${docId}"`)
+    const items = await this.index.listItemsByMetadata({ docId: docId })
+    for (const item of items) {
+      await this.index.deleteItem(item.id)
+    }
   }
 
   async query(query: number[], searchResultCount: number) {
-    return this.table.search(query).limit(searchResultCount).toArray()
+    return await this.index.queryItems(query, searchResultCount)
   }
 
 }
