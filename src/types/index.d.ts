@@ -77,6 +77,7 @@ interface Store {
   chats: Chat[]
   chatFilter: string|null
   pendingAttachment: Attachment|null
+  pendingDocRepo: string|null
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>
@@ -173,7 +174,16 @@ declare global {
         load?(): Expert[]
         save?(experts: Expert[]): void
       }
-      clipboard?: {
+      docrepo?: {
+        list?(): strDict[]
+        create?(title: string, embeddingEngine: string, embeddingModel: string): string
+        rename?(id: string, title: string): void
+        delete?(id: string): void
+        addDocument?(id: string, type: string, url: string): void
+        removeDocument?(id: string, docId: string): void
+        query?(id: string, text: string): DocRepoQueryResponseItem[]
+      },
+        clipboard?: {
         writeText?(text: string): void
         writeImage?(path: string): void
       },

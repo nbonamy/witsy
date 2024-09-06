@@ -3,7 +3,7 @@ import { app } from 'electron'
 import PDFParser from 'pdf2json'
 import officeParser from 'officeparser'
 
-function getPDFRawTextContent(contents: string): Promise<string> {
+export function getPDFRawTextContent(contents: Buffer): Promise<string> {
   const pdfParser = new PDFParser(undefined, 1)
   return new Promise((resolve, reject) => {
     pdfParser.on('pdfParser_dataError', (errData: {parserError: any}) =>
@@ -12,27 +12,27 @@ function getPDFRawTextContent(contents: string): Promise<string> {
     pdfParser.on('pdfParser_dataReady', () => {
       resolve(pdfParser.getRawTextContent())
     })
-    pdfParser.parseBuffer(Buffer.from(contents, 'base64'))
+    pdfParser.parseBuffer(contents)
   })
 }
 
-function getOfficeRawTextContent(contents: string): Promise<string> {
-  return officeParser.parseOfficeAsync(Buffer.from(contents, 'base64'), {
+export function getOfficeRawTextContent(contents: Buffer): Promise<string> {
+  return officeParser.parseOfficeAsync(contents, {
     tempFilesLocation: app.getPath('temp'),
   })
 }
 
-export function getTextContent(contents: string, format: string): Promise<string> {
+export function getTextContent(b64contents: string, format: string): Promise<string> {
   switch (format) {
     case 'txt':
-      return Promise.resolve(Buffer.from(contents, 'base64').toString('utf-8'))
+      return Promise.resolve(Buffer.from(b64contents, 'base64').toString('utf-8'))
     case 'pdf':
-      return getPDFRawTextContent(contents)
+      return getPDFRawTextContent(Buffer.from(b64contents, 'base64'))
     case 'docx':
     case 'pptx':
     case 'xlsx':
-      return getOfficeRawTextContent(contents)
+      return getOfficeRawTextContent(Buffer.from(b64contents, 'base64'))
     default:
-      return Promise.resolve(contents)
+      return Promise.resolve(b64contents)
   }
 }

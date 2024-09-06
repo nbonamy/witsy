@@ -28,8 +28,12 @@ beforeAll(() => {
 
   // api
   window.api = {
+    on: vi.fn(),
     history: {
       save: vi.fn()
+    },
+    docrepo: {
+      list: vi.fn(() => []),
     },
     markdown: {
       render: renderMarkdown

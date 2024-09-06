@@ -12,7 +12,8 @@
   "instructions": {
     "default": "You are a helpful assistant. You are here to help the user with any questions they have.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
-    "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
+    "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes.",
+    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{context}\n\nQUERY: {query}"
   },
   "appearance": {
     "chat": {

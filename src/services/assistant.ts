@@ -1,7 +1,7 @@
-
 import { Attachment } from '../types/index.d'
 import { LlmCompletionOpts, LlmChunk, LlmEvent } from '../types/llm.d'
 import { Configuration } from '../types/config.d'
+import { DocRepoQueryResponseItem } from '../types/rag.d'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
@@ -69,6 +69,7 @@ export default class {
     // we need a chat
     if (this.chat === null) {
       this.chat = new Chat()
+      this.chat.docrepo = opts.docrepo
       this.chat.setEngineModel(engine, model)
       this.chat.addMessage(new Message('system', this.getLocalizedInstructions(this.config.instructions.default)))
       if (save) {
@@ -120,11 +121,28 @@ export default class {
 
     // we need this to be const during generation
     const llm = this.llm
-    const message = this.chat.lastMessage()
+    const message: Message = this.chat.lastMessage()
 
     try {
 
-      this.stream = await llm.stream(this.getRelevantChatMessages(), opts)
+      // get messages
+      const messages = this.getRelevantChatMessages()
+
+      // rag?
+      let sources: DocRepoQueryResponseItem[] = [];
+      if (this.chat.docrepo) {
+        const userMessage = messages[messages.length - 1];
+        sources = window.api.docrepo.query(this.chat.docrepo, userMessage.content);
+        //console.log('Sources', JSON.stringify(sources, null, 2));
+        if (sources.length > 0) {
+          const context = sources.map((source) => source.content).join('\n\n');
+          const prompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', userMessage.content);
+          messages[messages.length - 1] = new Message('user', prompt);
+        }
+      }
+
+      // now stream
+      this.stream = await llm.stream(messages, opts)
       while (this.stream) {
         let newStream = null
         for await (const streamChunk of this.stream) {
@@ -135,10 +153,30 @@ export default class {
               message.setToolCall(event.content)
             }
           })
+          if (sources && sources.length > 0) {
+            chunk.done = false
+          }
           message.appendText(chunk)
           callback?.call(null, chunk)
         }
         this.stream = newStream
+      }
+
+      // append sources
+      if (sources && sources.length > 0) {
+        
+        // reduce to unique sources based on metadata.id
+        const uniqueSourcesMap = new Map();
+        sources.forEach(source => {
+          uniqueSourcesMap.set(source.metadata.uuid, source);
+        })
+        sources = Array.from(uniqueSourcesMap.values());
+
+        // now add them
+        let sourcesText = '\n\nSources:\n\n'
+        sourcesText += sources.map((source) => `- [${source.metadata.title}](${source.metadata.url})`).join('\n')
+        message.appendText({ text: sourcesText, done: true })
+        callback?.call(null, { text: sourcesText, done: true })
       }
 
     } catch (error) {

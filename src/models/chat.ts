@@ -11,6 +11,7 @@ export default class implements Chat {
   lastModified: number
   engine: string
   model: string
+  docrepo: string
   messages: Message[]
   deleted: boolean
 
@@ -29,6 +30,7 @@ export default class implements Chat {
     this.lastModified = Date.now()
     this.engine = null
     this.model = null
+    this.docrepo = null
     this.messages = []
     this.deleted = false
   
@@ -41,6 +43,7 @@ export default class implements Chat {
     this.lastModified = obj.lastModified || obj.createdAt
     this.engine = obj.engine || 'openai'
     this.model = obj.model
+    this.docrepo = obj.docrepo
     this.messages = []
     this.deleted = false
     for (const msg of obj.messages) {
@@ -60,6 +63,7 @@ export default class implements Chat {
     // header
     this.title = obj.title
     this.lastModified = obj.lastModified
+    this.docrepo = obj.docrepo
 
     // messages
     if (this.messages.length < obj.messages.length) {

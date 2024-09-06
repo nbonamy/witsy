@@ -1,8 +1,9 @@
 <template>
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
-      <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
+      <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
     </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
@@ -16,6 +17,7 @@
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <Overlay v-if="showExperts || showCommands" @click="closeContextMenu" />
+    <ContextMenu v-if="showDocRepo" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" align="bottom" />
     <ContextMenu v-if="showExperts" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" align="bottom" />
     <ContextMenu v-if="showCommands" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" align="bottom" />
   </div>
@@ -39,6 +41,10 @@ const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
+  enableDocRepo: {
+    type: Boolean,
+    default: true
+  },
   enableAttachments: {
     type: Boolean,
     default: true
@@ -59,6 +65,8 @@ const props = defineProps({
 
 const prompt = ref('')
 const input = ref(null)
+const docRepos = ref([])
+const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showCommands = ref(false)
 const menuX = ref(0)
@@ -76,6 +84,24 @@ const working = computed(() => {
   return props.chat?.lastMessage().transient
 })
 
+const docRepoActive = computed(() => {
+  return props.chat?.docrepo || store.pendingDocRepo
+})
+
+const docReposMenuItems = computed(() => {
+  const menus = docRepos.value.map(d => {
+    return { label: d.name, action: d.uuid }
+  })
+  if (menus.length > 0) {
+    menus.push({ separator: true })
+  }
+  if (docRepoActive.value) {
+    menus.push({ label: 'Disconnect', action: 'disconnect' })
+  }
+  menus.push({ label: 'Manage...', action: 'manage' })
+  return menus
+})
+
 const experts = computed(() => {
   return store.experts.filter(p => p.state == 'enabled').map(p => {
     return { label: p.name, action: p.name, icon: BIconStars }
@@ -91,8 +117,16 @@ const commands = computed(() => {
 onMounted(() => {
   onEvent('set-prompt', onSetPrompt)
   onEvent('set-expert-prompt', onSetExpertPrompt)
+  window.api.on('docrepo-modified', loadDocRepos)
   autoGrow(input.value)
+  loadDocRepos()
 })
+
+const loadDocRepos = () => {
+  if (props.enableDocRepo) {
+    docRepos.value = window.api.docrepo.list()
+  }
+}
 
 const onSetPrompt = (message) => {
   store.pendingAttachment = message.attachment
@@ -176,8 +210,8 @@ const onPaste = (event) => {
 const onExperts = () => {
   if (props.inlineExperts) {
     showExperts.value = true
-    const textarea = document.querySelector('.prompt textarea')
-    const rect = textarea?.getBoundingClientRect()
+    const icon = document.querySelector('.prompt .experts')
+    const rect = icon?.getBoundingClientRect()
     menuX.value = rect?.left
     menuY.value = rect?.height + 32
   } else {
@@ -185,7 +219,34 @@ const onExperts = () => {
   }
 }
 
+const onDocRepo = (event) => {
+  showDocRepo.value = true
+  const icon = document.querySelector('.prompt .docrepo')
+  const rect = icon?.getBoundingClientRect()
+  menuX.value = rect?.left
+  menuY.value = rect?.height + 32
+}
+
+const handleDocRepoClick = (action) => {
+  closeContextMenu()
+  if (action === 'manage') {
+    emitEvent('openDocRepos')
+  } else if (action === 'disconnect') {
+    if (props.chat) {
+      props.chat.docrepo = null
+    }
+    store.pendingDocRepo = null
+  } else {
+    if (props.chat) {
+      props.chat.docrepo = action
+    } else {
+      store.pendingDocRepo = action
+    }
+  }
+}
+
 const closeContextMenu = () => {
+  showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
 }
@@ -322,6 +383,10 @@ const autoGrow = (element) => {
 .prompt .icon {
   cursor: pointer;
   color: #5b5a59;
+}
+
+.prompt .icon.active {
+  color: var(--highlight-color);
 }
 
 .prompt .icons-left-2 .icon {

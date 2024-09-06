@@ -28,6 +28,7 @@ beforeAll(() => {
 
   // api
   window.api = {
+    on: vi.fn(),
     file: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       pick: vi.fn(({ opts: anyDict}) => {
@@ -40,6 +41,9 @@ beforeAll(() => {
       extractText: vi.fn((contents: string, format: string) => {
         return contents
       })
+    },
+    docrepo: {
+      list: vi.fn(() => []),
     },
   }
 

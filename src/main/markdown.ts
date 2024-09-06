@@ -34,6 +34,8 @@ const mdPreprocess = (markdown: string) => {
 
 export const renderMarkdown = (markdown: string): string => {
   const md = new MarkdownIt(mdOptions)
+  const validateLink = md.validateLink
+  md.validateLink = (url) =>  url.startsWith('file://') ? true : validateLink(url)
   md.use(MarkdownItKatex)
   md.use(MarkdownItMark)
   return md.render(mdPreprocess(markdown))
