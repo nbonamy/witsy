@@ -545,3 +545,20 @@ export const openReadAloudPalette = async (textId: string) => {
   });
 
 }
+
+export const notifyBrowserWindows = (event: string, ...args: any[]) => {
+  try {
+    const windows = BrowserWindow.getAllWindows();
+    for (const window of windows) {
+      try {
+        if (!window.isDestroyed()) {
+          window.webContents.send(event, ...args);
+        }
+      } catch (error) {
+        console.error('Error while notifying browser windows', error)
+      }
+    }
+  } catch (error) {
+    console.error('Error while notifying browser windows', error)
+  }
+}

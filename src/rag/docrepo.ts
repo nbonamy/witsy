@@ -1,6 +1,7 @@
-import { App, BrowserWindow } from 'electron'
+import { App } from 'electron'
 import { Configuration } from '../types/config.d'
 import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
+import { notifyBrowserWindows } from '../main/window'
 import Embedder from './embedder'
 import Loader from './loader'
 import Splitter from './splitter'
@@ -223,10 +224,7 @@ export default class DocumentRepository {
       }), null, 2))
 
       // notify
-      const windows = BrowserWindow.getAllWindows()
-      for (const window of windows) {
-        window.webContents.send('docrepo-modified')
-      }
+      notifyBrowserWindows('docrepo-modified')
       
     } catch (error) {
       console.log('Error saving docrepo', error)

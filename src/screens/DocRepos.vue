@@ -26,7 +26,10 @@
             <input type="text" :value="selectedRepo.embeddingEngine + ' / ' + selectedRepo.embeddingModel" disabled />
           </div>
           <div class="group documents">
-            <label>Documents</label>
+            <div class="header">
+              <label>Documents</label>
+              <Loader v-if="loading" />
+            </div>
             <div class="list">
               <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
                 <div :class="{ item: true, selected: doc.uuid == selectedDoc?.uuid }" @click="selectedDoc = doc">
@@ -59,7 +62,7 @@ import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import DialogHeader from '../components/DialogHeader.vue'
 import DocRepoCreate from './DocRepoCreate.vue'
-import { BIconFileText } from 'bootstrap-icons-vue'
+import Loader from '../components/Loader.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
@@ -68,9 +71,11 @@ const { onEvent } = useEventBus()
 const docRepos = ref([])
 const selectedRepo = ref(null)
 const selectedDoc = ref(null)
+const loading = ref(false)
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
+  window.api.on('docrepo-add-document-error', onAddDocError)
   onEvent('openDocRepos', onOpenDocRepos)
   await loadDocRepos()
 })
@@ -91,6 +96,7 @@ const onClose = () => {
 }
 
 const loadDocRepos = async () => {
+  loading.value = false
   const selectedRepoId = selectedRepo.value?.uuid
   const repos = await window.api.docrepo?.list()
   //console.log(JSON.stringify(repos, null, 2))
@@ -153,6 +159,12 @@ const onAddDoc = () => {
   if (!selectedRepo.value) return
   const file = window.api.file.pick({ location: true })
   window.api.docrepo.addDocument(selectedRepo.value.uuid, 'file', file)
+  loading.value = true
+}
+
+const onAddDocError = (error) => {
+  loading.value = false
+  alert(error)
 }
 
 const onDelDoc = () => {
@@ -285,14 +297,29 @@ main {
     margin: 8px 6px 8px 6px;
     flex-grow: 1;
 
-    label {
-      align-self: start;
-      text-align: left;
-      margin-bottom: 8px;
+    .header {
+      align-self: stretch;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-right: 4px;
 
-      &::after {
-        content: '';
+      label {
+        align-self: start;
+        text-align: left;
+        margin-bottom: 8px;
+
+        &::after {
+          content: '';
+        }
       }
+
+      .loader {
+        height: 6px;
+        width: 6px;
+        margin: 4px;
+      }
+
     }
 
     .list {

@@ -494,6 +494,7 @@ ipcMain.on('docrepo-add-document', async (_, payload) => {
     await docRepo.addDocument(baseId, type, url);
   } catch (error) {
     console.error(error);
+    window.notifyBrowserWindows('docrepo-add-document-error', error);
   }
 });
 
