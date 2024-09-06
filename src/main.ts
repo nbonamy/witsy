@@ -77,14 +77,24 @@ import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
 const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
 
 let tray: Tray = null;
-const buildTrayMenu = () => {
+const buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
 
   // load the config
   const configShortcuts = config.loadSettings(app).shortcuts;
 
+  // visible does not seem to work for role 'about' and type 'separator' so we need to add them manually
+  let menuItems: Array<Electron.MenuItemConstructorOptions> = []
+  if (process.platform !== 'darwin') {
+    menuItems = [
+      ...menuItems,
+      { role: 'about' },
+      { type: 'separator' },
+    ]
+  }
+
+  // add common stuff
   return [
-    { role: 'about', visible: process.platform !== 'darwin' },
-    { type: 'separator', visible: process.platform !== 'darwin' },
+    ...menuItems,
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
     { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
@@ -146,7 +156,7 @@ app.whenReady().then(() => {
   // create tray
   tray = new Tray(nativeImage.createFromDataURL(trayIcon));
   tray.on('click', () => {
-    const contextMenu = Menu.buildFromTemplate(buildTrayMenu() as Array<any>);
+    const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
     tray.popUpContextMenu(contextMenu);
   });
   tray.on('right-click', () => {
