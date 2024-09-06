@@ -3,6 +3,7 @@
 
 import { Chat, Command, Expert, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
+import { DocRepoQueryResponseItem } from './types/rag.d';
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld(
@@ -71,9 +72,18 @@ contextBridge.exposeInMainWorld(
     },
     experts: {
       load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync('load-experts')) },
-      save: (data: Expert[]) => { return ipcRenderer.send('save-experts', JSON.stringify(data)) },
+      save: (data: Expert[]): void => { return ipcRenderer.send('save-experts', JSON.stringify(data)) },
       export: (): void => { return ipcRenderer.sendSync('export-experts') },
       import: (): void => { return ipcRenderer.sendSync('import-experts') },
+    },
+    docrepo: {
+      list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },
+      create(title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync('docrepo-create', { title, embeddingEngine, embeddingModel }) },
+      rename(baseId: string, title: string): void { return ipcRenderer.sendSync('docrepo-rename', { baseId, title }) },
+      delete(baseId: string): void { return ipcRenderer.sendSync('docrepo-delete', baseId) },
+      addDocument(baseId: string, type: string, url: string): void { return ipcRenderer.send('docrepo-add-document', { baseId, type, url }) },
+      removeDocument(baseId: string, docId: string): void { return ipcRenderer.sendSync('docrepo-remove-document', { baseId, docId }) },
+      query(baseId: string, text: string): DocRepoQueryResponseItem[] { return ipcRenderer.sendSync('docrepo-query', { baseId, text }) },
     },
     readaloud: {
       getText: (id: string): string => { return ipcRenderer.sendSync('get-readaloud-text', id) },

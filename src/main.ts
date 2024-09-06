@@ -13,7 +13,9 @@ import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
+import DocumentRepository from './rag/docrepo';
 //import Dropbox from './main/dropbox';
+
 import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
@@ -27,6 +29,7 @@ import * as text from './main/text';
 
 let commander: Commander = null
 let anywhere: PromptAnywhere = null
+let docRepo: DocumentRepository = null
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -50,7 +53,6 @@ if (require('electron-squirrel-startup')) {
 const autoUpdater = new AutoUpdater({
   preUpdate: () => quitAnyway = true
 });
-
 
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
@@ -150,6 +152,10 @@ app.whenReady().then(() => {
   tray.on('right-click', () => {
     window.openMainWindow();
   })
+
+  // create the document repository
+  docRepo = new DocumentRepository(app);
+
 });
 
 // called when the app is already running
@@ -445,6 +451,74 @@ ipcMain.on('get-readaloud-text', (event, payload) => {
 
 ipcMain.on('close-readaloud-palette', async () => {
   await window.closeReadAloudPalette();
+});
+
+ipcMain.on('docrepo-list', (event) => {
+  event.returnValue = JSON.stringify(docRepo.list());
+});
+
+ipcMain.on('docrepo-create', async (event, payload) => {
+  try {
+    const { title, embeddingEngine, embeddingModel } = payload;
+    event.returnValue = await docRepo.create(title, embeddingEngine, embeddingModel);
+  } catch (error) {
+    console.error(error);
+    event.returnValue = null
+  }
+});
+
+ipcMain.on('docrepo-rename', async (event, payload) => {
+  try {
+    const { baseId, title } = payload;
+    await docRepo.rename(baseId, title);
+    event.returnValue = true
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
+  }
+});
+
+ipcMain.on('docrepo-delete', async (event, baseId) => {
+  try {
+    await docRepo.delete(baseId);
+    event.returnValue = true
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
+  }
+});
+
+ipcMain.on('docrepo-add-document', async (_, payload) => {
+  try {
+    const { baseId, type, url } = payload;
+    await docRepo.addDocument(baseId, type, url);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+ipcMain.on('docrepo-remove-document', async (event, payload) => {
+  try {
+    const { baseId, docId } = payload;
+    console.log('docrepo-remove-document', baseId, docId);
+    await docRepo.removeDocument(baseId, docId);
+    event.returnValue = true
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
+  }
+});
+
+ipcMain.on('docrepo-query', async(event, payload) => {
+  try {
+    const { baseId, text } = payload;
+    console.log('docrepo-query', baseId, text);
+    const results = await docRepo.query(baseId, text);
+    event.returnValue = results
+  } catch (error) {
+    console.error(error);
+    event.returnValue = []
+  }
 });
 
 // ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {

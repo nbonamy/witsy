@@ -3,6 +3,7 @@
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" :initial-tab="settingsInitialTab"/>
+    <DocRepos id="docrepos" />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
+import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
 
 // bus
@@ -66,7 +68,7 @@ onMounted(() => {
         model: model.value,
         save: false,
       }, (chunk) => {
-      emitEvent('newChunk', chunk)
+        emitEvent('newChunk', chunk)
       })
     }
 
@@ -97,6 +99,7 @@ const onNewChat = () => {
 const onSelectChat = (chat) => {
   // create a new assistant to allow parallel querying
   // this will be garbage collected anyway
+  store.pendingDocRepo = null
   assistant.value = new Assistant(store.config)
   assistant.value.setChat(chat)
   nextTick(() => {
@@ -187,12 +190,14 @@ const onSendPrompt = async (prompt) => {
   // prompt
   assistant.value.prompt(prompt, {
     attachment: store.pendingAttachment,
+    docrepo: store.pendingDocRepo,
   }, (chunk) => {
     emitEvent('newChunk', chunk)
   })
 
   // clear stuff
   store.pendingAttachment = null
+  store.pendingDocRepo = null
 
 }
 

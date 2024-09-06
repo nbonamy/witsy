@@ -10,6 +10,7 @@ export interface Configuration {
   shortcuts: ShortcutsConfig
   engines: {[key: string]: EngineConfig}
   plugins: {[key: string]: PluginConfig}
+  rag: RagConfig
   dropbox: DropboxConfig
   getActiveModel: () => string
 }
@@ -29,6 +30,7 @@ interface InstructionsConfig {
   default: string
   titling: string
   titling_user: string
+  docquery: string
 }
 
 interface AppearanceConfig {
@@ -83,6 +85,11 @@ interface TTSConfig {
   model: TTSModel
   voice: TTSVoice
 }
+
+interface RagConfig {
+  chunkSize: number
+  chunkOverlap: number
+  searchResultCount: number
 }
 
 interface DropboxConfig {

@@ -11,6 +11,7 @@ import defaults from '../../defaults/settings.json'
 enableAutoUnmount(afterAll)
 
 window.api = {
+  on: vi.fn(),
   config: {
     load: vi.fn(() => defaults),
   },
@@ -23,7 +24,9 @@ window.api = {
   history: {
     load: vi.fn(() => []),
   },
-  on: vi.fn(),
+  docrepo: {
+    list: vi.fn(() => []),
+  }
 }
 
 test('Renders correctly', () => {

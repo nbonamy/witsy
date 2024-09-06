@@ -15,6 +15,7 @@ const { emitEvent } = useEventBus()
 enableAutoUnmount(afterAll)
 
 window.api = {
+  on: vi.fn(),
   config: {
     load: vi.fn(() => defaults),
   },
@@ -27,7 +28,9 @@ window.api = {
   history: {
     load: vi.fn(() => []),
   },
-  on: vi.fn(),
+  docrepo: {
+    list: vi.fn(() => []),
+  },
 }
 
 vi.mock('../../src/services/assistant', async () => {
@@ -72,7 +75,7 @@ test('Sends prompt', async () => {
   mount(Main)
   emitEvent('sendPrompt', 'prompt')
   expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
-  expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null }, expect.any(Function))
+  expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null }, expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
@@ -81,7 +84,15 @@ test('Sends prompt with attachment', async () => {
   expect(store.pendingAttachment).toBe('file')
   emitEvent('sendPrompt', 'prompt')
   expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
-  expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file' }, expect.any(Function))
+  expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file', docrepo: null }, expect.any(Function))
+})
+
+test('Sends prompt with doc repo', async () => {
+  mount(Main)
+  store.pendingDocRepo = 'docrepo'
+  emitEvent('sendPrompt', 'prompt')
+  expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
+  expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: 'docrepo' }, expect.any(Function))
 })
 
 test('Stop assistant', async () => {

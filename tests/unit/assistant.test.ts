@@ -12,6 +12,20 @@ import LlmMock from '../mocks/llm'
 window.api = {
   file: {
     extractText: (contents) => contents
+  },
+  docrepo: {
+    query: vi.fn(() => [
+      {
+        content: 'content',
+        score: 1,
+        metadata: {
+          uuid: 1,
+          type: 'type',
+          title: 'title',
+          url: 'url'
+        }
+      }
+    ])
   }
 }
 
@@ -55,7 +69,8 @@ beforeEach(() => {
   store.config.llm.engine = 'mock'
   store.config.instructions = {
     default: 'You are a chat assistant',
-    titling: 'You are a titling assistant'
+    titling: 'You are a titling assistant',
+    docquery: '{context} / {query}'
   }
   store.config.engines.mock = {
     model: { chat: 'chat'  }
@@ -88,6 +103,16 @@ test('Assistant Attachment', async () => {
   expect(assistant.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
   expect(assistant.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
   expect(assistant.chat.lastMessage().attachment.downloaded).toStrictEqual(false)
+})
+
+test('Asistant DocRepo', async () => {
+  const content = await prompt('Hello LLM', { docrepo: 'docrepo' })
+  expect(window.api.docrepo.query).toHaveBeenCalledWith('docrepo', 'Hello LLM')
+  expect(content).toBe('[{"role":"system","content":"You are a chat assistant"},{"role":"user","content":"content / Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+  expect(assistant.chat.lastMessage().type).toBe('text')
+  expect(assistant.chat.lastMessage().content).toBe(content)
+  expect(assistant.chat.messages.length).toBe(3)
+  expect(assistant.chat.title).toBe('[{"role":"system","content":"You are a titling assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\\"role\\":\\"system\\",\\"content\\":\\"You are a chat assistant\\"},{\\"role\\":\\"user\\",\\"content\\":\\"content / Hello LLM\\"},{\\"role\\":\\"assistant\\",\\"content\\":\\"Be kind. Don\'t mock me\\"}]\\n\\nSources:\\n\\n- [title](url)"},{"role":"user"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Conversaton Length 1', async () => {

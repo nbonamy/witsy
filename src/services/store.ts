@@ -13,6 +13,7 @@ export const store: Store = reactive({
   chats: [],
   chatFilter: null,
   pendingAttachment: null,
+  pendingDocRepo: null,
 })
 
 store.loadSettings = async () => {
