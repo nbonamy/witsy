@@ -153,7 +153,7 @@ export default class {
               message.setToolCall(event.content)
             }
           })
-          if (sources && sources.length > 0) {
+          if (chunk && sources && sources.length > 0) {
             chunk.done = false
           }
           message.appendText(chunk)

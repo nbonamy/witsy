@@ -349,7 +349,8 @@ main {
   flex-direction: column;
   justify-content: center;
   padding: 16px;
-  font-size: 11.5pt;
+  font-size: 11pt;
+  line-height: 1.5;
   text-align: center;
 }
 
