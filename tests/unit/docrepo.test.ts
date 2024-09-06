@@ -9,6 +9,9 @@ import os from 'os'
 
 vi.mock('electron', async() => {
   return {
+    BrowserWindow: {
+      getAllWindows: vi.fn(() => []),
+    },
     app: {
       getPath: vi.fn(() => os.tmpdir())
     },

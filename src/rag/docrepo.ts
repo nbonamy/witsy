@@ -2,16 +2,14 @@ import { App } from 'electron'
 import { Configuration } from '../types/config.d'
 import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
 import { notifyBrowserWindows } from '../main/window'
+import VectorDB from './vectordb'
 import Embedder from './embedder'
 import Loader from './loader'
 import Splitter from './splitter'
-import * as lancedb from '@lancedb/lancedb'
 import * as config from '../main/config'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import fs from 'fs'
-
-const DB_TABLE_NAME = 'vectors'
 
 const docrepoFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -116,31 +114,15 @@ export class DocumentBaseImpl {
     // debug
     //console.log('Documents:', documents)
     
-    // connect to the database
-    const db = await lancedb.connect(databasePath(this.app, this.uuid))
-    const tables = await db.tableNames()
-    const index = tables.indexOf(DB_TABLE_NAME)
-    if (index === -1) {
-      throw new Error('Table not found')
-    }
-
     // now store each document
-    const table = await db.openTable(DB_TABLE_NAME)
+    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
     for (const document of documents) {
-
-      await table.add([{
-        id: uuidv4(),
-        docid: source.uuid,
-        content: document.content,
-        vector: document.vector,
-        vectorString: JSON.stringify(document.vector),
-        metadata: JSON.stringify({
-          id: source.uuid,
-          type: source.type,
-          title: source.getTitle(),
-          url: source.url
-        }),
-      }])
+      await db.insert(source.uuid, document.content, document.vector, {
+        id: source.uuid,
+        type: source.type,
+        title: source.getTitle(),
+        url: source.url
+      })
     }
     
     // now store
@@ -240,15 +222,7 @@ export default class DocumentRepository {
     const dbPath = databasePath(this.app, id)
     const embedder = new Embedder(this.config, embeddingEngine, embeddingModel)
     fs.mkdirSync(dbPath, { recursive: true })
-    const db = await lancedb.connect(dbPath)
-    await db.createTable(DB_TABLE_NAME, [{
-      id: 'sample',
-      docid: 'sample',
-      content: 'sample',
-      vector: Array(embedder.dimensions()).fill(0.0),
-      vectorString: 'sample',
-      metadata: 'sample',
-    }])
+    await VectorDB.create(dbPath, embedder.dimensions())
 
     // log
     console.log('Created document database', databasePath(this.app, id))
@@ -331,9 +305,8 @@ export default class DocumentRepository {
     }
 
     // delete from the database
-    const db = await lancedb.connect(databasePath(this.app, baseId))
-    const table = await db.openTable(DB_TABLE_NAME)
-    await table.delete(`docid == "${docId}"`)
+    const db = await VectorDB.connect(databasePath(this.app, baseId))
+    await db.delete(docId)
 
     // remove it
     base.documents.splice(index, 1)
@@ -360,9 +333,8 @@ export default class DocumentRepository {
     //console.log('query', query)
 
     // now query
-    const db = await lancedb.connect(databasePath(this.app, baseId))
-    const table = await db.openTable(DB_TABLE_NAME)
-    const results = await table.search(query).limit(searchResultCount+10).toArray()
+    const db = await VectorDB.connect(databasePath(this.app, baseId))
+    const results = await db.query(query, searchResultCount+10)
     //console.log('results', results)
     
     // done
