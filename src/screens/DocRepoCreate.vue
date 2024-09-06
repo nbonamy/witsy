@@ -35,8 +35,7 @@
 
 <script setup>
 
-import { ref, computed, watch } from 'vue'
-import { store } from '../services/store'
+import { ref, computed } from 'vue'
 
 const name = ref('Document Repository')
 const engine = ref('openai')
@@ -53,6 +52,10 @@ const models = computed(() => {
     return []
   }
 })
+
+const onChangeEngine = (event) => {
+  model.value = models.value[0].id
+}
 
 const onSave = (event) => {
   window.api.docrepo.create(name.value, engine.value, model.value)

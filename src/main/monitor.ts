@@ -1,5 +1,5 @@
 
-import { BrowserWindow } from 'electron'
+import { notifyBrowserWindows } from './window'
 import fs from 'fs'
 
 export default class {
@@ -56,20 +56,8 @@ export default class {
     console.log(`File modified. Sending ${this.signal} signal`)
 
     // notify all active windows
-    try {
-      const windows = BrowserWindow.getAllWindows()
-      for (const window of windows) {
-        try {
-          if (!window.isDestroyed()) {
-            window.webContents.send('file-modified', this.signal)
-          }
-        } catch (error) {
-          console.error('Error while notifying file modification', error)
-        }
-      }
-    } catch (error) {
-      console.error('Error while notifying file modification', error)
-    }
+    notifyBrowserWindows('file-modified', this.signal)
+
   }
 
 }
