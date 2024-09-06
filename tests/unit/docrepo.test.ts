@@ -1,8 +1,8 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { app } from 'electron'
 import DocumentRepository from '../../src/rag/docrepo'
-import * as lancedb from '@lancedb/lancedb'
+import { LocalIndex } from 'vectra'
+import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
@@ -59,13 +59,10 @@ test('Docrepo create', async () => {
   expect(fs.existsSync(path.join(os.tmpdir(), 'docrepo', docbase))).toBe(true)
 
   // check the database
-  const db = await lancedb.connect(path.join(os.tmpdir(), 'docrepo', docbase))
-  const tables = await db.tableNames()
-  expect(tables).toHaveLength(1)
-  expect(tables[0]).toBe('vectors')
-  const table = await db.openTable('vectors')
-  const count = await table.countRows()
-  expect(count).toBe(1)
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  expect(await db.isIndexCreated()).toBe(true)
+  expect(await db.listItems()).toHaveLength(0)
+
 })
 
 test('Docrepo delete', async () => {
@@ -90,17 +87,10 @@ test('Docrepo add document', async () => {
   expect(list[0].documents[0].url).toBe('file://' + path.join(os.tmpdir(), 'docrepo.json'))
 
   // check the database
-  const db = await lancedb.connect(path.join(os.tmpdir(), 'docrepo', docbase))
-  const table = await db.openTable('vectors')
-  const count = await table.countRows()
-  expect(count).toBe(2)
-
-  // check the documents ids
-  const docids = []
-  for await (const batch of table.query().select(["docid"])) {
-    docids.push(String.fromCharCode(...new Uint8Array(batch.data.children[0].values)))
-  }
-  expect(docids).toStrictEqual(['sample', docid])
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(1)
+  expect(items[0].metadata.docId).toBe(docid)
 
 })
 
@@ -113,16 +103,24 @@ test('Docrepo delete document', async () => {
   expect(list[0].documents).toHaveLength(0)
 
   // check the database
-  const db = await lancedb.connect(path.join(os.tmpdir(), 'docrepo', docbase))
-  const table = await db.openTable('vectors')
-  const count = await table.countRows()
-  expect(count).toBe(1)
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(0)
 
-  // check the documents ids
-  const docids = []
-  for await (const batch of table.query().select(["docid"])) {
-    docids.push(String.fromCharCode(...new Uint8Array(batch.data.children[0].values)))
-  }
-  expect(docids).toStrictEqual(['sample'])
+})
 
+test('Docrepo query', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const docid = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const query = await docrepo.query(docbase, 'whatever')
+  expect(query).toBeDefined()
+  expect(query.length).toBe(1)
+  expect(query[0].content).toBeDefined()
+  expect(query[0].score).toBeDefined()
+  expect(query[0].metadata).toBeDefined()
+  expect(query[0].metadata.uuid).toBe(docid)
+  expect(query[0].metadata.type).toBe('file')
+  expect(query[0].metadata.title).toBe('docrepo.json')
+  expect(query[0].metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
 })
