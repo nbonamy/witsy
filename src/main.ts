@@ -525,6 +525,7 @@ ipcMain.on('docrepo-query', async(event, payload) => {
     const { baseId, text } = payload;
     console.log('docrepo-query', baseId, text);
     const results = await docRepo.query(baseId, text);
+    console.log('docrepo-query results returned = ', results.length);
     event.returnValue = results
   } catch (error) {
     console.error(error);
