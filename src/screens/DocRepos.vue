@@ -52,7 +52,7 @@
 
       </main>
     </form>
-    <DocRepoCreate id="create" ref="create" />
+    <DocRepoCreate />
   </dialog>
 </template>
 
@@ -66,7 +66,7 @@ import Loader from '../components/Loader.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
-const { onEvent } = useEventBus()
+const { onEvent, emitEvent } = useEventBus()
 
 const docRepos = ref([])
 const selectedRepo = ref(null)
@@ -118,20 +118,7 @@ const selectRepo = (repo) => {
 }
 
 const onCreate = async () => {
-  document.querySelector('#create').showModal()
-  // // prompt
-  // const { value: name } = await Swal.fire({
-  //   target: document.querySelector('.docrepos'),
-  //   title: 'Create Document Repository',
-  //   input: 'text',
-  //   inputValue: 'Repository Name',
-  //   showCancelButton: true,
-  // });
-  // if (name) {
-  //   window.api.docrepo.create(name, 'openai', 'text-embedding-3-small')
-  //   loadDocRepos()
-  // }
-
+  emitEvent('openDocRepoCreate')
 }
 
 const onDelete = () => {

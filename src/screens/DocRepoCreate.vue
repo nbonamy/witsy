@@ -1,5 +1,5 @@
 <template>
-  <dialog class="editor">
+  <dialog class="editor" id="docrepocreate">
     <form method="dialog">
       <header>
         <div class="title">Create Document Repository</div>
@@ -7,7 +7,7 @@
       <main>
         <div class="group name">
             <label>Name</label>
-            <input type="text" v-model="name" />
+            <input type="text" ref="nameInput" v-model="name" />
           </div>
         <div class="group">
           <label>Embedding Provider</label>
@@ -35,9 +35,14 @@
 
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 
-const name = ref('Document Repository')
+// bus
+import useEventBus from '../composables/useEventBus'
+const { onEvent } = useEventBus()
+
+const nameInput = ref(null)
+const name = ref('')
 const engine = ref('openai')
 const model = ref('text-embedding-ada-002')
 
@@ -52,6 +57,19 @@ const models = computed(() => {
     return []
   }
 })
+
+onMounted(() => {
+  onEvent('openDocRepoCreate', onOpen)
+})
+
+const onOpen = () => {
+  document.querySelector('#docrepocreate').showModal()
+  name.value = 'Document Repository'
+  nextTick(() => {
+    nameInput.value.focus()
+    nameInput.value.select()
+  })
+}
 
 const onChangeEngine = (event) => {
   model.value = models.value[0].id
@@ -70,7 +88,7 @@ const onSave = (event) => {
 </style>
 
 <style scoped>
-#create .group label {
+#docrepocreate .group label {
   min-width: 150px;
 }
 </style>
