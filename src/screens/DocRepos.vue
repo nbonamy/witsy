@@ -28,7 +28,7 @@
           <div class="group documents">
             <div class="header">
               <label>Documents</label>
-              <Loader v-if="loading" />
+              <Spinner v-if="loading" />
             </div>
             <div class="list">
               <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
@@ -62,7 +62,7 @@ import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import DialogHeader from '../components/DialogHeader.vue'
 import DocRepoCreate from './DocRepoCreate.vue'
-import Loader from '../components/Loader.vue'
+import Spinner from '../components/Spinner.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
