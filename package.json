@@ -77,7 +77,6 @@
     "electron-log": "^5.1.2",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.2.0",
-    "fastembed": "^1.14.1",
     "groq-sdk": "^0.3.2",
     "highlight.js": "^11.9.0",
     "html-to-text": "^9.0.5",

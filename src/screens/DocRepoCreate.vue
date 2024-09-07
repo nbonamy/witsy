@@ -13,7 +13,7 @@
           <label>Embedding Provider</label>
           <select v-model="engine" @change="onChangeEngine">
             <option value="openai">OpenAI</option>
-            <option value="fastembed">FastEmbed-js</option>
+            <!--option value="fastembed">FastEmbed-js</option-->
           </select>
         </div>
         <div class="group">
@@ -54,13 +54,13 @@ const models = computed(() => {
       { id: 'text-embedding-3-small', name: 'text-embedding-3-small' },
       { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
     ]
-  } else if (engine.value === 'fastembed') {
-    return [
-      { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
-      { id: 'bge-small-en-v1.5', name: 'bge-small-en-v1.5' },
-      { id: 'bge-base-en-v1.5', name: 'bge-base-en-v1.5' },
-      //{ id: 'multilingual-e5-large', name: 'multilingual-e5-large' },
-    ]
+  // } else if (engine.value === 'fastembed') {
+  //   return [
+  //     { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
+  //     { id: 'bge-small-en-v1.5', name: 'bge-small-en-v1.5' },
+  //     { id: 'bge-base-en-v1.5', name: 'bge-base-en-v1.5' },
+  //     //{ id: 'multilingual-e5-large', name: 'multilingual-e5-large' },
+  //   ]
   } else {
     return []
   }
