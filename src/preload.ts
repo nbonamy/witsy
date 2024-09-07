@@ -85,6 +85,7 @@ contextBridge.exposeInMainWorld(
       addDocument(baseId: string, type: string, url: string): void { return ipcRenderer.send('docrepo-add-document', { baseId, type, url }) },
       removeDocument(baseId: string, docId: string): void { return ipcRenderer.sendSync('docrepo-remove-document', { baseId, docId }) },
       query(baseId: string, text: string): DocRepoQueryResponseItem[] { return ipcRenderer.sendSync('docrepo-query', { baseId, text }) },
+      isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync('docrepo-is-embedding-available', { engine, model }) },
     },
     readaloud: {
       getText: (id: string): string => { return ipcRenderer.sendSync('get-readaloud-text', id) },

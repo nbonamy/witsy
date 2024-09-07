@@ -20,7 +20,8 @@ vi.mock('electron', async() => {
 
 vi.mock('../../src/rag/embedder', async() => {
   const Embedder = vi.fn()
-  Embedder.prototype.dimensions = vi.fn(() => 128)
+  Embedder.init = vi.fn(() => new Embedder())
+  Embedder.dimensions = vi.fn(() => 128)
   Embedder.prototype.embed = vi.fn(() => Array(128).fill(1.0))
   return { default: Embedder }
 })

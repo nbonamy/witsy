@@ -13,12 +13,13 @@
           <label>Embedding Provider</label>
           <select v-model="engine" @change="onChangeEngine">
             <option value="openai">OpenAI</option>
+            <option value="fastembed">FastEmbed-js</option>
           </select>
         </div>
         <div class="group">
           <label>Embedding Model</label>
           <div class="subgroup">
-            <select v-model="model">
+            <select v-model="model" @change="onChangeModel">
               <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
             </select>
             <span>Warning: embedding model cannot be changed once repository is created</span>
@@ -49,9 +50,16 @@ const model = ref('text-embedding-ada-002')
 const models = computed(() => {
   if (engine.value === 'openai') {
     return [
-    { id: 'text-embedding-ada-002', name: 'text-embedding-ada-002' },
-    { id: 'text-embedding-3-small', name: 'text-embedding-3-small' },
-    { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
+      { id: 'text-embedding-ada-002', name: 'text-embedding-ada-002' },
+      { id: 'text-embedding-3-small', name: 'text-embedding-3-small' },
+      { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
+    ]
+  } else if (engine.value === 'fastembed') {
+    return [
+      { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
+      { id: 'bge-small-en-v1.5', name: 'bge-small-en-v1.5' },
+      { id: 'bge-base-en-v1.5', name: 'bge-base-en-v1.5' },
+      //{ id: 'multilingual-e5-large', name: 'multilingual-e5-large' },
     ]
   } else {
     return []
@@ -73,6 +81,16 @@ const onOpen = () => {
 
 const onChangeEngine = (event) => {
   model.value = models.value[0].id
+  nextTick(() => {
+    onChangeModel()
+  })
+}
+
+const onChangeModel = (event) => {
+  const downloaded = window.api.docrepo.isEmbeddingAvailable(engine.value, model.value)
+  if (!downloaded) {
+    alert('This model will be downloaded from the internet when adding first document and may take a while.')
+  }
 }
 
 const onSave = (event) => {
