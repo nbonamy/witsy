@@ -7,6 +7,7 @@ import Embedder from './embedder'
 import Loader from './loader'
 import Splitter from './splitter'
 import * as config from '../main/config'
+import * as file from '../main/file'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import fs from 'fs'
@@ -31,17 +32,19 @@ export class DocumentSourceImpl {
   type: SourceType
   origin: string
   url: string
+  items: DocumentSourceImpl[]
 
   constructor(id: string, type: SourceType, origin: string) {
     this.uuid = id
     this.type = type
     this.origin = origin
-    if (this.type === 'file') {
+    if (this.type === 'file' || this.type === 'folder') {
       this.url = `file://${encodeURI(origin)}`
     } else {
       this.url = origin
     }
     this.title = this.getTitle()
+    this.items = []
   }
 
   getTitle(): string {
@@ -81,15 +84,33 @@ export class DocumentBaseImpl {
     // get a new id
     const source = new DocumentSourceImpl(uuid, type, url)
 
+    // add if
+    if (type === 'folder') {
+      await this.addFolder(source)
+    } else {
+      await this.addFile(source)
+    }
+
+    // now store
+    this.documents.push(source)
+    console.log(`Added document "${source.url}" to database "${this.name}"`)
+
+    // done
+    return source.uuid
+
+  }
+
+  async addFile(source: DocumentSourceImpl): Promise<void> {
+
     // load the content
     const loader = new Loader(this.config)
-    const text = await loader.load(type, url)
+    const text = await loader.load(source.type, source.origin)
     if (!text) {
       throw new Error('Unsupported document type')
     }
 
     // set title if web page
-    if (type === 'url') {
+    if (source.type === 'url') {
       const titleMatch = text.match(/<title>(.*?)<\/title>/i)
       if (titleMatch && titleMatch[1]) {
         source.title = titleMatch[1].trim()
@@ -125,14 +146,24 @@ export class DocumentBaseImpl {
       })
     }
     
-    // now store
-    this.documents.push(source)
-    console.log(`Embedded document "${source.url}" to database "${this.name}"`)
-
-    // done
-    return source.uuid
-
   }
+
+  async addFolder(source: DocumentSourceImpl): Promise<void> {
+
+    // list files in folder recursively
+    const files = file.listFilesRecursively(source.origin)
+    for (const file of files) {
+      try {
+        const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
+        await this.addFile(doc)
+        source.items.push(doc)
+      } catch (error) {
+        //console.error('Error adding file', file, error)
+      }
+    }
+  
+  }
+
 }
 
 export interface DocumentQueueItem {
@@ -240,7 +271,7 @@ export default class DocumentRepository {
     await VectorDB.create(dbPath, embedder.dimensions())
 
     // log
-    console.log('Created document database', databasePath(this.app, id))
+    //console.log('Created document database', databasePath(this.app, id))
 
     // now create the base
     const base = new DocumentBaseImpl(this.app, this.config, id, title, embeddingEngine, embeddingModel)
@@ -326,7 +357,7 @@ export default class DocumentRepository {
       if (!base) continue
 
       // log
-      console.log('Processing document', JSON.stringify(queueItem))
+      console.log('Processing document', queueItem.url)
 
       // add the document
       let error = null
@@ -378,9 +409,18 @@ export default class DocumentRepository {
       throw new Error('Document not found')
     }
 
+    // list the database documents
+    let docIds = [ docId ]
+    const document = base.documents[index]
+    if (document.items.length > 0) {
+      docIds = document.items.map((item) => item.uuid)
+    }
+
     // delete from the database
     const db = await VectorDB.connect(databasePath(this.app, baseId))
-    await db.delete(docId)
+    for (const docId of docIds) {
+      await db.delete(docId)
+    }
 
     // remove it
     base.documents.splice(index, 1)

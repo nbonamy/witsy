@@ -3,7 +3,7 @@
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" :initial-tab="settingsInitialTab"/>
-    <DocRepos id="docrepos" />
+    <DocRepos />
   </div>
 </template>
 
