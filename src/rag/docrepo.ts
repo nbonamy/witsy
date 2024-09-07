@@ -123,7 +123,7 @@ export class DocumentBaseImpl {
 
     // now embeds
     const documents = []
-    const embedder = new Embedder(this.config, this.embeddingEngine, this.embeddingModel)
+    const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
     for (const chunk of chunks) {
       const embedding = await embedder.embed(chunk)
       documents.push({
@@ -266,9 +266,8 @@ export default class DocumentRepository {
 
     // create the database
     const dbPath = databasePath(this.app, id)
-    const embedder = new Embedder(this.config, embeddingEngine, embeddingModel)
     fs.mkdirSync(dbPath, { recursive: true })
-    await VectorDB.create(dbPath, embedder.dimensions())
+    await VectorDB.create(dbPath, Embedder.dimensions(embeddingEngine, embeddingModel))
 
     // log
     //console.log('Created document database', databasePath(this.app, id))
@@ -442,7 +441,7 @@ export default class DocumentRepository {
     }
 
     // now embed
-    const embedder = new Embedder(this.config, base.embeddingEngine, base.embeddingModel)
+    const embedder = await Embedder.init(this.app, this.config, base.embeddingEngine, base.embeddingModel)
     const query = await embedder.embed(text)
     //console.log('query', query)
 

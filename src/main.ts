@@ -14,6 +14,7 @@ import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import DocumentRepository from './rag/docrepo';
+import Embedder from './rag/embedder';
 //import Dropbox from './main/dropbox';
 
 import * as config from './main/config';
@@ -533,6 +534,16 @@ ipcMain.on('docrepo-query', async(event, payload) => {
   } catch (error) {
     console.error(error);
     event.returnValue = []
+  }
+});
+
+ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
+  try {
+    const { engine, model } = payload;
+    event.returnValue = Embedder.isModelReady(app, engine, model);
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
   }
 });
 

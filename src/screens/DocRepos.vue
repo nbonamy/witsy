@@ -24,6 +24,7 @@
           <div class="group embeddings">
             <label>Embeddings</label>
             <input type="text" :value="selectedRepo.embeddingEngine + ' / ' + selectedRepo.embeddingModel" disabled />
+            <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
           <div class="group documents">
             <div class="header">
@@ -73,6 +74,7 @@ const docRepos = ref([])
 const plusButton = ref(null)
 const selectedRepo = ref(null)
 const selectedDoc = ref(null)
+const modelReady = ref(true)
 const showMenu = ref(false)
 const loading = ref(false)
 const menuX = ref(0)
@@ -83,14 +85,6 @@ const contextMenuActions = [
   { label: 'Add Folder...', action: 'addFolder' },
 ]
 
-onMounted(async () => {
-  window.api.on('docrepo-modified', loadDocRepos)
-  window.api.on('docrepo-add-document-error', onAddDocError)
-  window.api.on('docrepo-add-document-done', onAddDocDone)
-  onEvent('openDocRepos', onOpenDocRepos)
-  await loadDocRepos()
-})
-
 const docIcon = (doc) => {
   if (doc.type === 'file') {
     return 'BIconFileText'
@@ -98,6 +92,19 @@ const docIcon = (doc) => {
     return 'BIconArchive'
   }
   return 'BIconFile'
+}
+
+onMounted(async () => {
+  window.api.on('docrepo-modified', loadDocRepos)
+  window.api.on('docrepo-add-document-error', onAddDocError)
+  window.api.on('docrepo-add-document-done', onAddDocDone)
+  window.api.on('docrepo-model-downloaded', onModelReady)
+  onEvent('openDocRepos', onOpenDocRepos)
+  await loadDocRepos()
+})
+
+const onModelReady = () => {
+  selectRepo(selectedRepo.value)
 }
 
 const onOpenDocRepos = () => {
@@ -124,6 +131,7 @@ const loadDocRepos = async () => {
 const selectRepo = (repo) => {
   selectedRepo.value = repo
   selectedDoc.value = null
+  modelReady.value = window.api.docrepo.isEmbeddingAvailable(selectedRepo.value?.embeddingEngine, selectedRepo.value?.embeddingModel)
   if (selectedRepo.value.documents.length) {
     selectedDoc.value = selectedRepo.value.documents[0]
   }
@@ -339,6 +347,10 @@ main {
     margin-top: 0px;
     input {
       background-color: #f5f5f5;
+    }
+    .embedding-warning {
+      color: red;
+      margin-left: 4px;
     }
   }
 
