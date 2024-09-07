@@ -33,7 +33,7 @@
             </div>
             <div class="list">
               <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
-                <div :class="{ item: true, selected: doc.uuid == selectedDoc?.uuid }" @click="selectedDoc = doc">
+                <div :class="{ item: true, selected: selectedDocs.includes(doc.uuid) }" @click="selectDoc($event, doc)">
                   <div class="icon"><Component :is="docIcon(doc)" /></div>
                   <div class="name"><span class="filename">{{ doc.filename }}</span> ({{ doc.origin }})</div>
                 </div>
@@ -73,7 +73,7 @@ const { onEvent, emitEvent } = useEventBus()
 const docRepos = ref([])
 const plusButton = ref(null)
 const selectedRepo = ref(null)
-const selectedDoc = ref(null)
+const selectedDocs = ref([])
 const modelReady = ref(true)
 const showMenu = ref(false)
 const loading = ref(false)
@@ -81,7 +81,7 @@ const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Add File...', action: 'addFile' },
+  { label: 'Add Files...', action: 'addFiles' },
   { label: 'Add Folder...', action: 'addFolder' },
 ]
 
@@ -130,11 +130,25 @@ const loadDocRepos = async () => {
 
 const selectRepo = (repo) => {
   selectedRepo.value = repo
-  selectedDoc.value = null
+  selectedDocs.value = []
   modelReady.value = window.api.docrepo.isEmbeddingAvailable(selectedRepo.value?.embeddingEngine, selectedRepo.value?.embeddingModel)
   if (selectedRepo.value.documents.length) {
-    selectedDoc.value = selectedRepo.value.documents[0]
+    selectedDocs.value = [selectedRepo.value.documents[0].uuid]
   }
+}
+
+const selectDoc = (event, doc) => {
+  console.log('selectDoc', event, doc)
+  if (event.metaKey) {
+    if (selectedDocs.value.includes(doc.uuid)) {
+      selectedDocs.value = selectedDocs.value.filter((d) => d !== doc.uuid)
+    } else {
+      selectedDocs.value.push(doc.uuid)
+    }
+  } else {
+    selectedDocs.value = [doc.uuid]
+  }
+  console.log(JSON.stringify(selectedDocs.value))
 }
 
 const onCreate = async () => {
@@ -188,15 +202,15 @@ const handleActionClick = async (action) => {
   closeContextMenu()
 
   // process
-  if (action === 'addFile') {
-    onAddDoc()
+  if (action === 'addFiles') {
+    onAddDocs()
   } else if (action === 'addFolder') {
     onAddFolder()
   }
 
 }
 
-const onAddDoc = () => {
+const onAddDocs = () => {
   if (!selectedRepo.value) return
   const files = window.api.file.pick({ multiselection: true })
   if (!files) return
@@ -228,7 +242,7 @@ const onAddDocError = (payload) => {
 }
 
 const onDelDoc = () => {
-  if (!selectedRepo.value || !selectedDoc.value) return
+  if (selectedDocs.value.length == 0) return
   Swal.fire({
     target: document.querySelector('.docrepos'),
     title: 'Are you sure you want to delete this document? This cannot be undone.',
@@ -236,9 +250,11 @@ const onDelDoc = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      const docId = selectedDoc.value.uuid
-      selectedDoc.value = null
-      window.api.docrepo.removeDocument(selectedRepo.value.uuid, docId)
+      const docIds = selectedDocs.value
+      selectedDocs.value = []
+      for (const docId of docIds) {
+        window.api.docrepo.removeDocument(selectedRepo.value.uuid, docId)
+      }
     }
   })
 }
