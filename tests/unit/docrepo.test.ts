@@ -30,6 +30,13 @@ const cleanup = () => {
   fs.rmSync(path.join(os.tmpdir(), 'docrepo'), { recursive: true, force: true })
 }
 
+const createTempDir = () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docrepotest'))
+  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.json'))
+  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo2.json'))
+  return tempDir
+}
+
 beforeEach(() => {
   cleanup()
 })
@@ -65,6 +72,16 @@ test('Docrepo create', async () => {
 
 })
 
+test('Docrepo rename', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const list = docrepo.list()
+  expect(list[0].name).toBe('name')
+  docrepo.rename(docbase, 'newname')
+  const list2 = docrepo.list()
+  expect(list2[0].name).toBe('newname')
+})
+
 test('Docrepo delete', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
@@ -90,7 +107,13 @@ test('Docrepo add document', async () => {
   const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
   const items = await db.listItems()
   expect(items).toHaveLength(1)
-  //expect(items[0].metadata.docId).toBe(docid)
+
+  // check item
+  expect(items[0].metadata.docId).toBe(docid)
+  expect(items[0].metadata.metadata.type).toBe('file')
+  expect(items[0].metadata.metadata.title).toBe('docrepo.json')
+  expect(items[0].metadata.metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
+  
 
 })
 
@@ -99,6 +122,53 @@ test('Docrepo delete document', async () => {
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
+  await docrepo.removeDocument(docbase, docid)
+  const list = docrepo.list()
+  expect(list[0].documents).toHaveLength(0)
+
+  // check the database
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(0)
+
+})
+
+test('Docrepo add folder', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const tempdir = createTempDir()
+  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  fs.rmSync(tempdir, { recursive: true, force: true })
+  const list = docrepo.list()
+  expect(list[0].documents).toHaveLength(1)
+  expect(list[0].documents[0].uuid).toBe(docid)
+  expect(list[0].documents[0].type).toBe('folder')
+  expect(list[0].documents[0].origin).toBe(tempdir)
+  expect(list[0].documents[0].url).toBe('file://' + tempdir)
+
+  // check the database
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(2)
+
+  // check items
+  expect(items[0].metadata.metadata.type).toBe('file')
+  expect(items[0].metadata.metadata.title).toBe('docrepo.json')
+  expect(items[0].metadata.metadata.url).toBe(`file://${path.join(tempdir, 'docrepo.json')}`)
+  expect(items[1].metadata.metadata.type).toBe('file')
+  expect(items[1].metadata.metadata.title).toBe('docrepo2.json')
+  expect(items[1].metadata.metadata.url).toBe(`file://${path.join(tempdir, 'docrepo2.json')}`)
+
+})
+
+test('Docrepo delete folder', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const tempdir = createTempDir()
+  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  fs.rmSync(tempdir, { recursive: true, force: true })
   await docrepo.removeDocument(docbase, docid)
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(0)

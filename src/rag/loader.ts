@@ -37,6 +37,7 @@ export default class {
 
       const extension = url.split('.').pop()
       const mimeType = extensionToMimeType(extension)
+      //console.log('Loading file:', url, extension, mimeType)
       switch (mimeType) {
 
         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':

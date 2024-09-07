@@ -310,6 +310,10 @@ ipcMain.on('pick-file', (event, payload) => {
   event.returnValue = file.pickFile(app, JSON.parse(payload));
 });
 
+ipcMain.on('pick-directory', (event) => {
+  event.returnValue = file.pickDirectory(app);
+});
+
 ipcMain.on('find-program', (event, payload) => {
   event.returnValue = file.findProgram(app, payload);
 });

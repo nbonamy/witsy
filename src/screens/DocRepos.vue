@@ -1,5 +1,5 @@
 <template>
-  <dialog class="docrepos">
+  <dialog class="docrepos" id="docrepos">
     <form method="dialog">
       <DialogHeader title="Document Repositories" @close="onClose" />
       <main>
@@ -39,17 +39,17 @@
               </template>
             </div>
             <div class="actions">
-              <button class="button" @click.prevent="onAddDoc"><BIconPlus /></button>
+              <button ref="plusButton" class="button" @click.prevent="showContextMenu"><BIconPlus /></button>
               <button class="button" @click.prevent="onDelDoc"><BIconDash /></button>
             </div>
           </div>
+          <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom" :teleport="false" />
         </div>
         <div class="empty" v-else>
           <div>
             You don't have any repositories yet.<br />Click on the <span class="button">+</span> button to create one.
           </div>
         </div>
-
       </main>
     </form>
     <DocRepoCreate />
@@ -61,6 +61,7 @@
 import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import DialogHeader from '../components/DialogHeader.vue'
+import ContextMenu from '../components/ContextMenu.vue'
 import DocRepoCreate from './DocRepoCreate.vue'
 import Spinner from '../components/Spinner.vue'
 
@@ -69,9 +70,18 @@ import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
 const docRepos = ref([])
+const plusButton = ref(null)
 const selectedRepo = ref(null)
 const selectedDoc = ref(null)
+const showMenu = ref(false)
 const loading = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
+
+const contextMenuActions = [
+  { label: 'Add File...', action: 'addFile' },
+  { label: 'Add Folder...', action: 'addFolder' },
+]
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
@@ -82,8 +92,10 @@ onMounted(async () => {
 })
 
 const docIcon = (doc) => {
-  if (doc.type == 'file') {
+  if (doc.type === 'file') {
     return 'BIconFileText'
+  } else if (doc.type === 'folder') {
+    return 'BIconArchive'
   }
   return 'BIconFile'
 }
@@ -142,12 +154,55 @@ const onChangeRepoName = (event) => {
   window.api.docrepo.rename(selectedRepo.value.uuid, event.target.value)
 }
 
+const onMore = (event) => {
+  if (showMenu.value) {
+    closeContextMenu()
+  } else {
+    showContextMenu(event)
+  }
+}
+
+const showContextMenu = () => {
+  showMenu.value = true
+  const rcButton = plusButton.value.getBoundingClientRect()
+  const rcDialog = document.getElementById('docrepos').getBoundingClientRect()
+  menuX.value = rcButton.left - rcDialog.left + 4
+  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 4
+}
+
+const closeContextMenu = () => {
+  showMenu.value = false;
+}
+
+const handleActionClick = async (action) => {
+
+  // close
+  closeContextMenu()
+
+  // process
+  if (action === 'addFile') {
+    onAddDoc()
+  } else if (action === 'addFolder') {
+    onAddFolder()
+  }
+
+}
+
 const onAddDoc = () => {
   if (!selectedRepo.value) return
   const files = window.api.file.pick({ multiselection: true })
+  if (!files) return
   for (const file of files) {
     window.api.docrepo.addDocument(selectedRepo.value.uuid, 'file', file)
   }
+  loading.value = true
+}
+
+const onAddFolder = () => {
+  if (!selectedRepo.value) return
+  const folder = window.api.file.pickDir()
+  if (!folder) return
+  window.api.docrepo.addDocument(selectedRepo.value.uuid, 'folder', folder)
   loading.value = true
 }
 
