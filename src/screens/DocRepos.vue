@@ -76,6 +76,7 @@ const loading = ref(false)
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
   window.api.on('docrepo-add-document-error', onAddDocError)
+  window.api.on('docrepo-add-document-done', onAddDocDone)
   onEvent('openDocRepos', onOpenDocRepos)
   await loadDocRepos()
 })
@@ -96,7 +97,6 @@ const onClose = () => {
 }
 
 const loadDocRepos = async () => {
-  loading.value = false
   const selectedRepoId = selectedRepo.value?.uuid
   const repos = await window.api.docrepo?.list()
   //console.log(JSON.stringify(repos, null, 2))
@@ -144,14 +144,24 @@ const onChangeRepoName = (event) => {
 
 const onAddDoc = () => {
   if (!selectedRepo.value) return
-  const file = window.api.file.pick({ location: true })
-  window.api.docrepo.addDocument(selectedRepo.value.uuid, 'file', file)
+  const files = window.api.file.pick({ multiselection: true })
+  for (const file of files) {
+    window.api.docrepo.addDocument(selectedRepo.value.uuid, 'file', file)
+  }
   loading.value = true
 }
 
-const onAddDocError = (error) => {
-  loading.value = false
-  alert(error)
+const onAddDocDone = (payload) => {
+  console.log('onAddDocDone', JSON.stringify(payload))
+  const queueLength = payload.queueLength
+  loading.value = queueLength > 0
+}
+
+const onAddDocError = (payload) => {
+  console.log('onAddDocError', JSON.stringify(payload))
+  const queueLength = payload.queueLength
+  loading.value = queueLength > 0
+  alert(payload.error)
 }
 
 const onDelDoc = () => {

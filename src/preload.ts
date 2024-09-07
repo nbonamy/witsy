@@ -28,7 +28,7 @@ contextBridge.exposeInMainWorld(
     file: {
       read: (filepath: string): string => { return ipcRenderer.sendSync('read-file', filepath) },
       save: (opts: any): string => { return ipcRenderer.sendSync('save-file', JSON.stringify(opts)) },
-      pick: (opts: any): string|strDict => { return ipcRenderer.sendSync('pick-file', JSON.stringify(opts)) },
+      pick: (opts: any): string|strDict|string[] => { return ipcRenderer.sendSync('pick-file', JSON.stringify(opts)) },
       download: (opts: any): string => { return ipcRenderer.sendSync('download', JSON.stringify(opts)) },
       delete: (filepath: string): void => { return ipcRenderer.send('delete-file', filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },

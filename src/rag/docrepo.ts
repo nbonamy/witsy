@@ -76,10 +76,10 @@ export class DocumentBaseImpl {
     this.documents = []
   }
 
-  async add(type: SourceType, url: string): Promise<string> {
+  async add(uuid: string, type: SourceType, url: string): Promise<string> {
 
     // get a new id
-    const source = new DocumentSourceImpl(uuidv4(), type, url)
+    const source = new DocumentSourceImpl(uuid, type, url)
 
     // load the content
     const loader = new Loader(this.config)
@@ -135,15 +135,26 @@ export class DocumentBaseImpl {
   }
 }
 
+export interface DocumentQueueItem {
+  uuid: string
+  baseId: string
+  type: SourceType
+  url: string
+}
+
 export default class DocumentRepository {
 
   app: App
   config: Configuration
   contents: DocumentBaseImpl[] = []
+  queue: DocumentQueueItem[] = []
+  processing: boolean = false
 
   constructor(app: App) {
     this.app = app
     this.config = config.loadSettings(app)
+    this.processing = false
+    this.queue = []
     this.load()
   }
 
@@ -166,6 +177,10 @@ export default class DocumentRepository {
         })
       }
     })
+  }
+
+  queueLength(): number {
+    return this.queue.length
   }
 
   load(): void {
@@ -273,20 +288,79 @@ export default class DocumentRepository {
 
   }
 
-  async addDocument(baseId: string, type: SourceType, url: string): Promise<string> {
+  addDocument(baseId: string, type: SourceType, url: string): string {
 
-    // get the base
+    // make sure the base is valid
     const base = this.contents.find(b => b.uuid == baseId)
     if (!base) {
       throw new Error('Database not found')
     }
 
-    // add the document
-    const id = await base.add(type, url)
+    // add to queue
+    const uuid = uuidv4()
+    this.queue.push({ uuid, baseId, type, url })
+
+    // process
+    if (!this.processing) {
+      this.processQueue()
+    }
 
     // done
-    this.save()
-    return id
+    return uuid
+
+  }
+
+  async processQueue(): Promise<void> {
+
+    // set the flag
+    this.processing = true
+
+    // empty the queue
+    while (this.queue.length > 0) {
+    
+      // get the first item
+      const queueItem = this.queue[0]
+
+      // get the base
+      const base = this.contents.find(b => b.uuid == queueItem.baseId)
+      if (!base) continue
+
+      // log
+      console.log('Processing document', JSON.stringify(queueItem))
+
+      // add the document
+      let error = null
+      try {
+        await base.add(queueItem.uuid, queueItem.type, queueItem.url)
+      } catch (e) {
+        console.error('Error adding document', e)
+        error = e
+      }
+
+      // now remove it from the queue
+      this.queue.shift()
+
+      // done
+      this.save()
+      
+      // notify
+      if (error) {
+        notifyBrowserWindows('docrepo-add-document-error', {
+          ...queueItem,
+          error: error.message,
+          queueLength: this.queueLength()
+        })
+      } else {
+        notifyBrowserWindows('docrepo-add-document-done', {
+          ...queueItem,
+          queueLength: this.queueLength()
+        })
+      }
+
+    }
+
+    // done
+    this.processing = false
 
   }
 

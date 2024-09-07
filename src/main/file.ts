@@ -45,14 +45,17 @@ export const deleteFile = (app: App, filepath: string) => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict): string|strDict => {
+export const pickFile = (app: App, payload: anyDict): string|strDict|string[] => {
 
   try {
     
     // build dialog propertis
-    const dialogProperties: ("openFile" | "treatPackageAsDirectory" | "noResolveAliases")[] = [ 'openFile', 'treatPackageAsDirectory' ];
+    const dialogProperties: ('openFile' | 'treatPackageAsDirectory' | 'noResolveAliases' | 'multiSelections')[] = [ 'openFile', 'treatPackageAsDirectory' ];
     if (payload.location) {
       dialogProperties.push('noResolveAliases');
+    }
+    if (payload.multiselection) {
+      dialogProperties.push('multiSelections');
     }
     
     // show it and pick
@@ -63,7 +66,8 @@ export const pickFile = (app: App, payload: anyDict): string|strDict => {
 
     // return
     if (fileURL) {
-      if (payload.location) return fileURL[0];
+      if (payload.multiselection) return fileURL;
+      else if (payload.location) return fileURL[0];
       else return getFileContents(app, fileURL[0]);
     }
     
@@ -82,7 +86,7 @@ export const pickDirectory = (app: App): string => {
   try {
     
     // build dialog propertis
-    const dialogProperties: ("openDirectory" | "treatPackageAsDirectory")[] = [ 'openDirectory', 'treatPackageAsDirectory' ];
+    const dialogProperties: ('openDirectory' | 'treatPackageAsDirectory')[] = [ 'openDirectory', 'treatPackageAsDirectory' ];
     
     // show it and pick
     const fileURL = dialog.showOpenDialogSync({
