@@ -83,6 +83,7 @@ const getModels = async () => {
   }
 
   // reload
+  store.saveSettings()
   load()
 
   // done

@@ -4,9 +4,10 @@ import { App } from 'electron'
 import defaults from '../../defaults/settings.json'
 import similarity from 'compute-cosine-similarity'
 //import { FlagEmbedding, EmbeddingModel } from 'fastembed'
+import { Ollama } from 'ollama/dist/browser.mjs'
 import OpenAI from 'openai'
-import path from 'path'
-import fs from 'fs'
+// import path from 'path'
+// import fs from 'fs'
 
 // const fastEmbedRoot = (app: App): string => {
 //   return path.join(app.getPath('userData'), 'fastembed')
@@ -25,6 +26,7 @@ export default class Embedder {
   engine: string
   model: string
   openai: OpenAI
+  ollama: Ollama
   //fastembed: FlagEmbedding
 
   static async init(app: App, config: Configuration, engine: string, model: string): Promise<Embedder> {
@@ -48,7 +50,13 @@ export default class Embedder {
         baseURL: this.config.engines.openai.baseURL || defaults.engines.openai.baseURL,
         dangerouslyAllowBrowser: true
       })
-    
+
+    } else if (this.engine === 'ollama') {
+
+      this.ollama = new Ollama({
+        host: this.config.engines.ollama.baseURL,
+      })
+
     // } else if (this.engine === 'fastembed') {
 
     //   // fastembed models
@@ -78,13 +86,24 @@ export default class Embedder {
     }
   }
 
-  static dimensions(engine: string, model: string): number {
+  static async dimensions(config: Configuration, engine: string, model: string): Promise<number> {
 
     // open ai
     if (engine === 'openai') {
       if (model === 'text-embedding-ada-002') return 1536
       if (model === 'text-embedding-3-small') return 1536
       if (model === 'text-embedding-3-large') return 3072
+    }
+
+    // ollama
+    if (engine === 'ollama') {
+      const ollama = new Ollama({ host: config.engines.ollama.baseURL, })
+      const info = await ollama.show({ model: model })
+      for (const item in info.model_info) {
+        if (item.includes('embedding_length')) {
+          return info.model_info[item] as number
+        }
+      }
     }
 
     // // fast embed
@@ -108,16 +127,24 @@ export default class Embedder {
     // for testing purposes
     //return Array(Embedder.dimensions(this.engine, this.model)).fill(0)
 
-    // based on engine
+    // openai
     if (this.openai) {
-      const embeddings = await this.openai.embeddings.create({ input: text, model: this.model, })
-      return embeddings.data[0].embedding
-    // } else if (this.fastembed) {
-    //   const embeddings = this.fastembed.embed([text])
-    //   for await (const batch of embeddings) {
-    //     return Object.values(batch[0])
-    //   }
+      const response = await this.openai.embeddings.create({ input: text, model: this.model, })
+      return response.data[0].embedding
     }
+
+    // ollama
+    if (this.ollama) {
+      const response = await this.ollama.embed({ model: this.model, input: text, })
+      return response.embeddings[0]
+    }
+
+    // // fast embed
+    // if (this.fastembed) {
+    //   const response = this.fastembed.embed([text])
+    //   for await (const batch of response) {
+    //     return Object.values(batch[0])
+    // }
 
     // too bad
     return null
@@ -129,12 +156,11 @@ export default class Embedder {
   }
 
   static isModelReady(app: App, engine: string, model: string): boolean {
-    if (engine === 'openai') return true
     // if (engine === 'fastembed') {
     //   const modelFile = fastEmbedModelFile(app, model)
     //   return fs.existsSync(modelFile)
     // }
-    return false
+    return true
   }
 
 }

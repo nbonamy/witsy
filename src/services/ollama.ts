@@ -46,6 +46,15 @@ export default class extends LlmEngine {
     }
   }
 
+  async getModelInfo(model: string): Promise<any> {
+    try {
+      return await this.client.show({ model: model })
+    } catch (error) {
+      console.error('Error listing models:', error);
+      return
+    }
+  }
+
   async pullModel(model: string): Promise<AsyncGenerator<ProgressResponse>> {
     try {
       return this.client.pull({

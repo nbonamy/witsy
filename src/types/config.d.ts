@@ -71,6 +71,7 @@ interface Model {
 interface ModelsConfig {
   chat: Model[]
   image?: Model[]
+  embedding?: Model[]
 }
 
 interface ModelConfig {
