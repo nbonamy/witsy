@@ -81,8 +81,13 @@ export class DocumentBaseImpl {
 
   async add(uuid: string, type: SourceType, url: string): Promise<string> {
 
-    // get a new id
-    const source = new DocumentSourceImpl(uuid, type, url)
+    // check existing
+    let source = this.documents.find(d => d.uuid === uuid)
+    if (source) {
+      await this.delete(uuid)
+    } else {
+      source = new DocumentSourceImpl(uuid, type, url)
+    }
 
     // add if
     if (type === 'folder') {
@@ -144,6 +149,7 @@ export class DocumentBaseImpl {
         title: source.getTitle(),
         url: source.url
       })
+
     }
     
   }
@@ -154,6 +160,7 @@ export class DocumentBaseImpl {
     const files = file.listFilesRecursively(source.origin)
     for (const file of files) {
       try {
+        console.log('Processing file', file)
         const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
         await this.addFile(doc)
         source.items.push(doc)
@@ -164,13 +171,39 @@ export class DocumentBaseImpl {
   
   }
 
+  async delete(docId: string): Promise<void> {
+
+    // find the document
+    const index = this.documents.findIndex(d => d.uuid == docId)
+    if (index === -1) {
+      throw new Error('Document not found')
+    }
+
+    // list the database documents
+    let docIds = [ docId ]
+    const document = this.documents[index]
+    if (document.items.length > 0) {
+      docIds = document.items.map((item) => item.uuid)
+    }
+
+    // delete from the database
+    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
+    for (const docId of docIds) {
+      await db.delete(docId)
+    }
+
+    // remove it
+    this.documents.splice(index, 1)
+
+  }  
+
 }
 
 export interface DocumentQueueItem {
   uuid: string
   baseId: string
   type: SourceType
-  url: string
+  origin: string
 }
 
 export default class DocumentRepository {
@@ -318,7 +351,7 @@ export default class DocumentRepository {
 
   }
 
-  addDocument(baseId: string, type: SourceType, url: string): string {
+  addDocument(baseId: string, type: SourceType, origin: string): string {
 
     // make sure the base is valid
     const base = this.contents.find(b => b.uuid == baseId)
@@ -326,9 +359,15 @@ export default class DocumentRepository {
       throw new Error('Database not found')
     }
 
+    // check if it exists
+    console.log('Adding document', origin)
+    let existing: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
+    if (!existing) {
+      existing = new DocumentSourceImpl(uuidv4(), type, origin)
+    }
+
     // add to queue
-    const uuid = uuidv4()
-    this.queue.push({ uuid, baseId, type, url })
+    this.queue.push({ uuid: existing.uuid, baseId, type, origin })
 
     // process
     if (!this.processing) {
@@ -336,7 +375,7 @@ export default class DocumentRepository {
     }
 
     // done
-    return uuid
+    return existing.uuid
 
   }
 
@@ -356,12 +395,12 @@ export default class DocumentRepository {
       if (!base) continue
 
       // log
-      console.log('Processing document', queueItem.url)
+      console.log('Processing document', queueItem.origin)
 
       // add the document
       let error = null
       try {
-        await base.add(queueItem.uuid, queueItem.type, queueItem.url)
+        await base.add(queueItem.uuid, queueItem.type, queueItem.origin)
       } catch (e) {
         console.error('Error adding document', e)
         error = e
@@ -402,27 +441,8 @@ export default class DocumentRepository {
       throw new Error('Database not found')
     }
 
-    // find the document
-    const index = base.documents.findIndex(d => d.uuid == docId)
-    if (index === -1) {
-      throw new Error('Document not found')
-    }
-
-    // list the database documents
-    let docIds = [ docId ]
-    const document = base.documents[index]
-    if (document.items.length > 0) {
-      docIds = document.items.map((item) => item.uuid)
-    }
-
-    // delete from the database
-    const db = await VectorDB.connect(databasePath(this.app, baseId))
-    for (const docId of docIds) {
-      await db.delete(docId)
-    }
-
-    // remove it
-    base.documents.splice(index, 1)
+    // do it
+    await base.delete(docId)
 
     // done
     this.save()
