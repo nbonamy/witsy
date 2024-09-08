@@ -83,7 +83,7 @@ contextBridge.exposeInMainWorld(
       rename(baseId: string, title: string): void { return ipcRenderer.sendSync('docrepo-rename', { baseId, title }) },
       delete(baseId: string): void { return ipcRenderer.sendSync('docrepo-delete', baseId) },
       addDocument(baseId: string, type: string, url: string): void { return ipcRenderer.send('docrepo-add-document', { baseId, type, url }) },
-      removeDocument(baseId: string, docId: string): void { return ipcRenderer.sendSync('docrepo-remove-document', { baseId, docId }) },
+      removeDocument(baseId: string, docId: string): void { return ipcRenderer.send('docrepo-remove-document', { baseId, docId }) },
       query(baseId: string, text: string): DocRepoQueryResponseItem[] { return ipcRenderer.sendSync('docrepo-query', { baseId, text }) },
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync('docrepo-is-embedding-available', { engine, model }) },
     },

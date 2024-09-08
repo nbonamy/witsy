@@ -35,7 +35,7 @@
               <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
                 <div :class="{ item: true, selected: selectedDocs.includes(doc.uuid) }" @click="selectDoc($event, doc)">
                   <div class="icon"><Component :is="docIcon(doc)" /></div>
-                  <div class="name"><span class="filename">{{ doc.filename }}</span> ({{ doc.origin }})</div>
+                  <div class="name"><span class="filename">{{ docLabel(doc) }}</span> ({{ doc.origin }})</div>
                 </div>
               </template>
             </div>
@@ -94,10 +94,19 @@ const docIcon = (doc) => {
   return 'BIconFile'
 }
 
+const docLabel = (doc) => {
+  if (doc.type === 'folder') {
+    return `${doc.filename} (${doc.items.length} files)`
+  } else {
+    return doc.filename
+  }
+}
+
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)
-  window.api.on('docrepo-add-document-error', onAddDocError)
   window.api.on('docrepo-add-document-done', onAddDocDone)
+  window.api.on('docrepo-add-document-error', onAddDocError)
+  window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
   onEvent('openDocRepos', onOpenDocRepos)
   await loadDocRepos()
@@ -138,7 +147,6 @@ const selectRepo = (repo) => {
 }
 
 const selectDoc = (event, doc) => {
-  console.log('selectDoc', event, doc)
   if (event.metaKey) {
     if (selectedDocs.value.includes(doc.uuid)) {
       selectedDocs.value = selectedDocs.value.filter((d) => d !== doc.uuid)
@@ -148,7 +156,6 @@ const selectDoc = (event, doc) => {
   } else {
     selectedDocs.value = [doc.uuid]
   }
-  console.log(JSON.stringify(selectedDocs.value))
 }
 
 const onCreate = async () => {
@@ -253,10 +260,15 @@ const onDelDoc = () => {
       const docIds = selectedDocs.value
       selectedDocs.value = []
       for (const docId of docIds) {
+        loading.value = true
         window.api.docrepo.removeDocument(selectedRepo.value.uuid, docId)
       }
     }
   })
+}
+
+const onDelDocDone = (payload) => {
+  loading.value = false
 }
 
 </script>

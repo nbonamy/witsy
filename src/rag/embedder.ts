@@ -105,6 +105,9 @@ export default class Embedder {
 
   async embed(text: string): Promise<any> {
 
+    // for testing purposes
+    //return Array(Embedder.dimensions(this.engine, this.model)).fill(0)
+
     // based on engine
     if (this.openai) {
       const embeddings = await this.openai.embeddings.create({ input: text, model: this.model, })
