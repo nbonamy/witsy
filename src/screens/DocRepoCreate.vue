@@ -5,13 +5,17 @@
         <div class="title">Create Document Repository</div>
       </header>
       <main>
+        <div class="group" style="margin-bottom: 16px">
+          <label></label>
+          <span><b>Warning</b>: embedding model cannot be changed once repository is created</span>
+        </div>
         <div class="group name">
             <label>Name</label>
-            <input type="text" ref="nameInput" v-model="name" />
+            <input type="text" ref="nameInput" v-model="name" required />
           </div>
         <div class="group">
           <label>Embedding Provider</label>
-          <select v-model="engine" @change="onChangeEngine">
+          <select v-model="engine" @change="onChangeEngine" required>
             <option value="openai">OpenAI</option>
             <option value="ollama">Ollama</option>
             <!--option value="fastembed">FastEmbed-js</option-->
@@ -19,22 +23,19 @@
         </div>
         <div class="group">
           <label>Embedding Model</label>
-          <select v-model="model" @change="onChangeModel">
+          <select v-model="model" @change="onChangeModel" required>
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
           <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
         </div>
-        <div class="group subgroup" v-if="engine === 'ollama'">
+        <div class="group" style="margin-top: -8px" v-if="engine === 'openai'">
           <label></label>
-          <a href="https://ollama.com/blog/embedding-models" target="_blank">Ollama Embedding models information</a>
+          <span>Make sure you enter your OpenAI API key in the Models pane of Witsy Settings.</span>
         </div>
-        <div class="group subgroup">
-          <label></label>
-          <span>Warning: embedding model cannot be changed once repository is created</span>
-        </div>
+        <OllamaModelPull v-if="engine === 'ollama'" :pullable-models="getEmbeddingModels" info-url="https://ollama.com/blog/embedding-models" info-text="Browse models"/>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
+        <button @click="onCreate" class="default">Create</button>
         <button @click="onCancel" formnovalidate>Cancel</button>
       </footer>
     </form>
@@ -46,6 +47,8 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { loadOllamaModels } from '../services/llm'
+import { getEmbeddingModels } from '../services/ollama'
+import OllamaModelPull from '../components/OllamaModelPull.vue'
 
 // bus
 import useEventBus from '../composables/useEventBus'
@@ -82,6 +85,7 @@ const canRefresh = computed(() => engine.value === 'ollama')
 
 onMounted(() => {
   onEvent('openDocRepoCreate', onOpen)
+  onEvent('ollamaPullDone', onRefresh)
 })
 
 const onOpen = () => {
@@ -138,7 +142,16 @@ const getModels = async () => {
 
 }
 
-const onSave = (event) => {
+const onCreate = (event) => {
+
+  // check
+  if (!name.value || !engine.value || !model.value) {
+    event.preventDefault()
+    alert('All fields marked with * are required.')
+    return
+  } 
+
+  // create
   window.api.docrepo.create(name.value, engine.value, model.value)
 }
 

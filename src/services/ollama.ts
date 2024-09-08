@@ -10,12 +10,17 @@ export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
   return engineConfig.models.chat.length > 0
 }
 
-export const getPullableModels = [
-  { id: 'llama3:latest', name: 'Meta Llama 3' },
-  { id: 'llama2:latest', name: 'Meta Llama 2' },
-  { id: 'mistral:latest', name: 'MistralAI Mistral' },
-  { id: 'mixtral:latest', name: 'MistralAI Mixtral' },
-  { id: 'llava:latest', name: 'LLaVa' }
+export const getChatModels = [
+  { id: 'llama3.1:latest', name: 'Llama 3.1' },
+  { id: 'mistral-large:latest', name: 'Mistral Large 2' },
+  { id: 'phi3.5:latest', name: 'Phi 3.5' },
+  { id: 'llava-llama3:latest', name: 'LLaVa Llama 3' }
+]
+
+export const getEmbeddingModels = [
+  { id: 'all-minilm', name: 'all-minilm' },
+  { id: 'nomic-embed-text', name: 'nomic-embed-text' },
+  { id: 'mxbai-embed-large', name: 'mxbai-embed-large' },
 ]
 
 export default class extends LlmEngine {
