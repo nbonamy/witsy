@@ -79,7 +79,7 @@ export class DocumentBaseImpl {
     this.documents = []
   }
 
-  async add(uuid: string, type: SourceType, url: string): Promise<string> {
+  async add(uuid: string, type: SourceType, url: string, callback: Function): Promise<string> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
@@ -91,13 +91,20 @@ export class DocumentBaseImpl {
 
     // add if
     if (type === 'folder') {
-      await this.addFolder(source)
+
+      // we add first so container is visible
+      this.documents.push(source)
+      await this.addFolder(source, callback)
+
     } else {
-      await this.addFile(source)
+
+      // we add only when it's done
+      await this.addFile(source, callback)
+      this.documents.push(source)
+
     }
 
     // now store
-    this.documents.push(source)
     console.log(`Added document "${source.url}" to database "${this.name}"`)
 
     // done
@@ -105,7 +112,7 @@ export class DocumentBaseImpl {
 
   }
 
-  async addFile(source: DocumentSourceImpl): Promise<void> {
+  async addFile(source: DocumentSourceImpl, callback?: Function): Promise<void> {
 
     // load the content
     const loader = new Loader(this.config)
@@ -151,10 +158,13 @@ export class DocumentBaseImpl {
       })
 
     }
+
+    // done
+    callback?.()
     
   }
 
-  async addFolder(source: DocumentSourceImpl): Promise<void> {
+  async addFolder(source: DocumentSourceImpl, callback: Function): Promise<void> {
 
     // list files in folder recursively
     const files = file.listFilesRecursively(source.origin)
@@ -164,6 +174,7 @@ export class DocumentBaseImpl {
         const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
         await this.addFile(doc)
         source.items.push(doc)
+        callback?.()
       } catch (error) {
         //console.error('Error adding file', file, error)
       }
@@ -236,7 +247,17 @@ export default class DocumentRepository {
             title: doc.title,
             origin: doc.origin,
             filename: path.basename(doc.origin),
-            url: doc.url
+            url: doc.url,
+            items: doc.items.map((item) => {
+              return {
+                uuid: item.uuid,
+                type: item.type,
+                title: item.title,
+                origin: item.origin,
+                filename: path.basename(item.origin),
+                url: item.url,
+              }
+            })
           }
         })
       }
@@ -249,14 +270,21 @@ export default class DocumentRepository {
 
   load(): void {
 
+    // clear
+    this.contents = []
+
     const docrepoFile = docrepoFilePath(this.app)
     try {
 
       const repoJson = fs.readFileSync(docrepoFile, 'utf-8')
-      for (const db of JSON.parse(repoJson)) {
-        const base = new DocumentBaseImpl(this.app, this.config, db.uuid, db.title, db.embeddingEngine, db.embeddingModel)
-        for (const doc of db.documents) {
-          base.documents.push(new DocumentSourceImpl(doc.uuid, doc.type, doc.origin))
+      for (const jsonDb of JSON.parse(repoJson)) {
+        const base = new DocumentBaseImpl(this.app, this.config, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
+        for (const jsonDoc of jsonDb.documents) {
+          const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
+          base.documents.push(doc)
+          for (const jsonItem of jsonDoc.items) {
+            doc.items.push(new DocumentSourceImpl(jsonItem.uuid, jsonItem.type, jsonItem.origin))
+          }
         }
         this.contents.push(base)
       }
@@ -400,7 +428,7 @@ export default class DocumentRepository {
       // add the document
       let error = null
       try {
-        await base.add(queueItem.uuid, queueItem.type, queueItem.origin)
+        await base.add(queueItem.uuid, queueItem.type, queueItem.origin, () => this.save())
       } catch (e) {
         console.error('Error adding document', e)
         error = e
@@ -443,6 +471,9 @@ export default class DocumentRepository {
 
     // do it
     await base.delete(docId)
+
+    // notify
+    notifyBrowserWindows('docrepo-del-document-done')
 
     // done
     this.save()

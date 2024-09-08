@@ -8,6 +8,7 @@ export interface DocumentSource {
   origin: string
   filename: string
   url: string
+  items?: DocumentSource[]
 }
 
 export interface DocumentBase {

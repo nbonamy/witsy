@@ -239,3 +239,28 @@ test('Docrepo query', async () => {
   expect(query[0].metadata.title).toBe('docrepo.json')
   expect(query[0].metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
 })
+
+test('Docrepo load', async () => {
+
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const tempdir = createTempDir()
+  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  fs.rmSync(tempdir, { recursive: true, force: true })
+
+  // reload
+  docrepo.load()
+
+  // check the list
+  const list = docrepo.list()
+  expect(list[0].documents).toHaveLength(1)
+  expect(list[0].documents[0].uuid).toBe(docid)
+  expect(list[0].documents[0].type).toBe('folder')
+  expect(list[0].documents[0].origin).toBe(tempdir)
+  expect(list[0].documents[0].url).toBe('file://' + tempdir)
+  expect(list[0].documents[0].items).toHaveLength(2)
+  expect(list[0].documents[0].items[0].filename).toBe('docrepo.json')
+  expect(list[0].documents[0].items[1].filename).toBe('docrepo2.json')
+
+})
