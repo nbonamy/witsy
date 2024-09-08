@@ -328,7 +328,7 @@ export default class DocumentRepository {
     // create the database
     const dbPath = databasePath(this.app, id)
     fs.mkdirSync(dbPath, { recursive: true })
-    await VectorDB.create(dbPath, Embedder.dimensions(embeddingEngine, embeddingModel))
+    await VectorDB.create(dbPath, await Embedder.dimensions(this.config, embeddingEngine, embeddingModel))
 
     // log
     //console.log('Created document database', databasePath(this.app, id))

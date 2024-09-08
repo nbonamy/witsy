@@ -24,6 +24,12 @@ vi.mock('ollama/browser', async() => {
       { model: 'model1', name: 'model1' },
     ] }
   })
+  Ollama.prototype.show = vi.fn((opts) => {
+    return {
+      details: { family: 'llm' },
+      model_info: {}
+    }
+  })
   Ollama.prototype.chat = vi.fn((opts) => {
     if (opts.stream) {
       return {

@@ -1,4 +1,5 @@
 
+import { anyDict } from '../types/index.d'
 import { Model, EngineConfig, Configuration } from '../types/config.d'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from './store'
@@ -130,10 +131,12 @@ export const loadOpenAIModels = async () => {
 
 export const loadOllamaModels = async () => {
 
+  // needed
+  const ollama = new Ollama(store.config)
+
   // load
   let models: any[] = null
   try {
-    const ollama = new Ollama(store.config)
     models = await ollama.getModels()
   } catch (error) {
     console.error('Error listing Ollama models:', error);
@@ -143,15 +146,35 @@ export const loadOllamaModels = async () => {
     return false
   }
 
-  // store
-  store.config.engines.ollama.models = {
-    chat: models
-    .map(model => { return {
+  // get info
+  const modelInfo: anyDict = {}
+  for (const model of models) {
+    const info = await ollama.getModelInfo(model.model)
+    modelInfo[model.model] = {
+      ...info.details,
+      ...info.model_info,
+    }
+  }
+
+  // needed
+  const ollamaModelMapper = (model: any) => {
+    return {
       id: model.model,
       name: model.name,
       meta: model
-    }})
-    .sort((a, b) => a.name.localeCompare(b.name))
+    }
+  }
+
+  // store
+  store.config.engines.ollama.models = {
+    chat: models
+      .filter(model => modelInfo[model.model].family.includes('bert') === false)
+      .map(ollamaModelMapper)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    embedding: models
+      .filter(model => modelInfo[model.model].family.includes('bert') === true)
+      .map(ollamaModelMapper)
+      .sort((a, b) => a.name.localeCompare(b.name)),
   }
 
   // select valid model
