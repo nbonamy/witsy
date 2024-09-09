@@ -244,7 +244,7 @@ test('Docrepo query', async () => {
   expect(query[0].metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
 })
 
-test('Docrepo query sort', async () => {
+test('Docrepo query score', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid1 = docrepo.addDocument(docbase, 'text', 'Angela was born in 1980')
