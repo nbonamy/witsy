@@ -1,5 +1,6 @@
 <template>
   <Teleport to="body" :disabled="!teleport">
+    <Overlay @click="onClose" />
     <div class="context-menu" :style="position">
       <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
@@ -21,9 +22,11 @@
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
+import Overlay from './Overlay.vue'
 
 const props = defineProps({
   actions: Object,
+  onClose: Function,
   align: String,
   x: Number,
   y: Number,

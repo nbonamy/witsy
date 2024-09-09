@@ -14,8 +14,7 @@
         </div>
       </div>
     </div>
-    <Overlay v-if="showMenu" @click="closeContextMenu" />
-    <ContextMenu v-if="showMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
   </div>
 </template>
 
@@ -24,7 +23,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
-import Overlay from './Overlay.vue'
 import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
 import useEventBus from '../composables/useEventBus'
