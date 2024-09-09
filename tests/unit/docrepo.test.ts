@@ -264,6 +264,7 @@ test('Docrepo query score', async () => {
   docrepo.config.rag = { relevanceCutOff: query1[1].score * 1.1 }
   const query2 = await docrepo.query(docbase, 'tell me about squash')
   expect(query2.length).toBe(1)
+  expect(query2[0].metadata.uuid).toBe(docid2)
 })
 
 test('Docrepo load', async () => {
