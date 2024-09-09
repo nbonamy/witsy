@@ -23,11 +23,12 @@
         </div>
         <div class="group">
           <label>Search relevance cut-off</label>
-          <input v-model="relevanceCutOff" />
+          <input v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
         </div>
       </main>
       <footer>
         <button @click="onSave" class="default">Save</button>
+        <button @click.prevent="onReset" formnovalidate>Reset</button>
         <button @click="onCancel" formnovalidate>Cancel</button>
       </footer>
     </form>
@@ -38,6 +39,7 @@
 
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
+import defaultSettings from '../../defaults/settings.json'
 
 // bus
 import useEventBus from '../composables/useEventBus'
@@ -60,6 +62,14 @@ const onOpen = () => {
   chunkOverlap.value = store.config.rag.chunkOverlap
   searchResultCount.value = store.config.rag.searchResultCount
   relevanceCutOff.value = store.config.rag.relevanceCutOff
+}
+
+const onReset = () => {
+  maxDocumentSizeMB.value = defaultSettings.rag.maxDocumentSizeMB
+  chunkSize.value = defaultSettings.rag.chunkSize
+  chunkOverlap.value = defaultSettings.rag.chunkOverlap
+  searchResultCount.value = defaultSettings.rag.searchResultCount
+  relevanceCutOff.value = defaultSettings.rag.relevanceCutOff
 }
 
 const onSave = () => {
