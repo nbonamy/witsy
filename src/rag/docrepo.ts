@@ -234,6 +234,7 @@ export class DocumentBaseImpl {
           document.items.splice(index2, 1)
           if ((++deleted) % 10 === 0) {
             callback?.()
+          }
         }
       }
     }
@@ -245,7 +246,7 @@ export class DocumentBaseImpl {
 
 }
 
-export interface DocumentQueueItem {
+interface DocumentQueueItem {
   uuid: string
   baseId: string
   type: SourceType
