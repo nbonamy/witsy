@@ -49,6 +49,8 @@ export function extensionToMimeType(extension: string): string {
       return 'text/css'
     case 'js':
       return 'application/javascript'
+    case 'csv':
+      return 'text/csv'
     default:
       return 'application/octet-stream'
   }
