@@ -52,6 +52,8 @@ export class DocumentSourceImpl {
       return path.basename(decodeURI(this.url))
     } else if (this.title) {
       return this.title
+    } else if (this.type === 'text') {
+      return 'Text'
     } else {
       return this.url
     }
@@ -132,6 +134,7 @@ export class DocumentBaseImpl {
     // now split
     const splitter = new Splitter(this.config)
     const chunks = await splitter.split(text)
+    //console.log(`Split into ${chunks.length} chunks`)
 
     // now embeds
     const documents = []

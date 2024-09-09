@@ -6,12 +6,15 @@ import officeParser from 'officeparser'
 export function getPDFRawTextContent(contents: Buffer): Promise<string> {
   const pdfParser = new PDFParser(undefined, 1)
   return new Promise((resolve, reject) => {
-    pdfParser.on('pdfParser_dataError', (errData: {parserError: any}) =>
+    pdfParser.on('pdfParser_dataError', (errData: {parserError: any}) => {
+      //console.log('PDF parser error:', errData.parserError)
       reject(errData.parserError)
-    )
+    })
     pdfParser.on('pdfParser_dataReady', () => {
+      //console.log('PDF parsing done')
       resolve(pdfParser.getRawTextContent())
     })
+    //console.log('Parsing PDF contents...')
     pdfParser.parseBuffer(contents)
   })
 }
