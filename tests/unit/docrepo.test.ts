@@ -1,12 +1,14 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import DocumentRepository from '../../src/rag/docrepo'
+import DocumentRepository, { DocumentBaseImpl, DocumentSourceImpl } from '../../src/rag/docrepo'
 import embeddings from '../fixtures/embedder.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
+
+const EMPTY_PDF = '----------------Page (0) Break----------------'
 
 vi.mock('electron', async() => {
   return {
@@ -104,6 +106,8 @@ test('Docrepo add document', async () => {
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(1)
   expect(list[0].documents[0].uuid).toBe(docid)
@@ -124,6 +128,14 @@ test('Docrepo add document', async () => {
   
 })
 
+test('Doc base invalid documents', async () => {
+  const docbase = new DocumentBaseImpl(app, null, '1', 'name', 'openai', 'text-embedding-ada-002')
+  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.jpg'))).rejects.toThrowError(/^Unsupported document type$/)
+  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.png'))).rejects.toThrowError(/^Unsupported document type$/)
+  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.docx'))).rejects.toThrowError(/^Unable to load document$/)
+  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'text', EMPTY_PDF))).rejects.toThrowError(/^Empty PDF$/)
+})
+
 test('Docrepo invalid documents', async () => {
   
   const docrepo = new DocumentRepository(app)
@@ -132,8 +144,10 @@ test('Docrepo invalid documents', async () => {
   docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.png'))
   docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.mov'))
   docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.docx'))
-  docrepo.addDocument(docbase, 'text', '----------------Page (0) Break----------------')
+  docrepo.addDocument(docbase, 'text', EMPTY_PDF)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(0)
 
@@ -151,6 +165,8 @@ test('Docrepo large document', async () => {
   docrepo.config.rag = { maxDocumentSizeMB: 0.0001 }
   docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(0)
 
@@ -170,6 +186,8 @@ test('Docrepo update document', async () => {
   const docid2 = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   expect(docid1).toBe(docid2)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(1)
 
@@ -187,6 +205,8 @@ test('Docrepo delete document', async () => {
   const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   await docrepo.removeDocument(docbase, docid)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(0)
 
@@ -205,6 +225,8 @@ test('Docrepo add folder', async () => {
   const docid = docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(1)
   expect(list[0].documents[0].uuid).toBe(docid)
@@ -254,6 +276,8 @@ test('Docrepo delete folder', async () => {
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
   await docrepo.removeDocument(docbase, docid)
+
+  // check docrepo
   const list = docrepo.list()
   expect(list[0].documents).toHaveLength(0)
 
