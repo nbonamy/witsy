@@ -117,16 +117,33 @@ export class DocumentBaseImpl {
 
   async addDocument(source: DocumentSourceImpl, callback?: VoidFunction): Promise<void> {
 
-    // load the content
+    // needed
     const loader = new Loader(this.config)
+    if (!loader.isParseable(source.type, source.origin)) {
+      throw new Error('Unsupported document type')
+    }
+
+    // log
+    console.log(`Processing document [${source.type}] ${source.origin}`)
+    
+    // load the content
     const text = await loader.load(source.type, source.origin)
     if (!text) {
-      throw new Error('Unsupported document type')
+      console.log('Unable to load document', source.origin)
+      throw new Error('Unable to load document')
+    }
+
+    // special case for empty pdf (or image only
+    // ----------------Page (0) Break----------------
+    if (/^-+Page \(\d+\) Break-+$/.test(text.trim())) {
+      console.log('Empty PDF', source.origin)
+      throw new Error('Empty PDF')
     }
 
     // check the size
     const maxDocumentSizeMB = this.config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {
+      console.log(`Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
       throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
     }
 
@@ -180,7 +197,6 @@ export class DocumentBaseImpl {
     const files = file.listFilesRecursively(source.origin)
     for (const file of files) {
       try {
-        console.log('Processing file', file)
         const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
         await this.addDocument(doc)
         source.items.push(doc)
@@ -192,7 +208,7 @@ export class DocumentBaseImpl {
   
   }
 
-  async delete(docId: string): Promise<void> {
+  async delete(docId: string, callback?: VoidFunction): Promise<void> {
 
     // find the document
     const index = this.documents.findIndex(d => d.uuid == docId)
@@ -208,9 +224,18 @@ export class DocumentBaseImpl {
     }
 
     // delete from the database
+    let deleted = 0
     const db = await VectorDB.connect(databasePath(this.app, this.uuid))
     for (const docId of docIds) {
       await db.delete(docId)
+      if (document.items.length > 0) {
+        const index2 = document.items.findIndex(d => d.uuid == docId)
+        if (index2 !== -1) {
+          document.items.splice(index2, 1)
+          if ((++deleted) % 10 === 0) {
+            callback?.()
+        }
+      }
     }
 
     // remove it
@@ -480,7 +505,7 @@ export default class DocumentRepository {
     }
 
     // do it
-    await base.delete(docId)
+    await base.delete(docId, () => this.save())
 
     // notify
     notifyBrowserWindows('docrepo-del-document-done')
