@@ -79,7 +79,7 @@ export class DocumentBaseImpl {
     this.documents = []
   }
 
-  async add(uuid: string, type: SourceType, url: string, callback: Function): Promise<string> {
+  async add(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
 
     // check existing
     let source = this.documents.find(d => d.uuid === uuid)
@@ -99,7 +99,7 @@ export class DocumentBaseImpl {
     } else {
 
       // we add only when it's done
-      await this.addFile(source, callback)
+      await this.addDocument(source, callback)
       this.documents.push(source)
 
     }
@@ -112,7 +112,7 @@ export class DocumentBaseImpl {
 
   }
 
-  async addFile(source: DocumentSourceImpl, callback?: Function): Promise<void> {
+  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction): Promise<void> {
 
     // load the content
     const loader = new Loader(this.config)
@@ -164,7 +164,7 @@ export class DocumentBaseImpl {
     
   }
 
-  async addFolder(source: DocumentSourceImpl, callback: Function): Promise<void> {
+  async addFolder(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
 
     // list files in folder recursively
     const files = file.listFilesRecursively(source.origin)
@@ -172,7 +172,7 @@ export class DocumentBaseImpl {
       try {
         console.log('Processing file', file)
         const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
-        await this.addFile(doc)
+        await this.addDocument(doc)
         source.items.push(doc)
         callback?.()
       } catch (error) {
@@ -223,7 +223,7 @@ export default class DocumentRepository {
   config: Configuration
   contents: DocumentBaseImpl[] = []
   queue: DocumentQueueItem[] = []
-  processing: boolean = false
+  processing = false
 
   constructor(app: App) {
     this.app = app
@@ -484,6 +484,7 @@ export default class DocumentRepository {
 
     // needed
     const searchResultCount = this.config.rag?.searchResultCount ?? 7
+    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? 0.35
 
     // get the base
     const base = this.contents.find(b => b.uuid == baseId)
@@ -510,7 +511,7 @@ export default class DocumentRepository {
           metadata: result.item.metadata.metadata as any,
         };
       })
-      .filter((result) => result.score > 0.0)
+      .filter((result) => result.score > relevanceCutOff)
       .sort((a, b) => b.score - a.score)
       .slice(0, searchResultCount);
 

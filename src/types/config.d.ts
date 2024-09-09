@@ -88,9 +88,10 @@ interface TTSConfig {
 }
 
 interface RagConfig {
-  chunkSize: number
-  chunkOverlap: number
-  searchResultCount: number
+  chunkSize?: number
+  chunkOverlap?: number
+  searchResultCount?: number
+  relevanceCutOff?: number
 }
 
 interface DropboxConfig {

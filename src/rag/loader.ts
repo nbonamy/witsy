@@ -13,15 +13,15 @@ export default class {
     this.config = config
   }
 
-  load(type: SourceType, url: string): Promise<string> {
+  load(type: SourceType, origin: string): Promise<string> {
   
     switch (type) {
       case 'file':
-        return this.loadFile(url)
-      case 'folder':
-        return this.loadFolder(url)
+        return this.loadFile(origin)
       case 'url':
-        return this.loadUrl(url)
+        return this.loadUrl(origin)
+      case 'text':
+        return Promise.resolve(origin)
     }
 
   }
@@ -31,11 +31,11 @@ export default class {
     return response.text()
   }
 
-  async loadFile(url: string): Promise<string> {
+  async loadFile(filepath: string): Promise<string> {
 
     try {
 
-      const extension = url.split('.').pop()
+      const extension = filepath.split('.').pop()
       const mimeType = extensionToMimeType(extension)
       //console.log('Loading file:', url, extension, mimeType)
       switch (mimeType) {
@@ -43,27 +43,22 @@ export default class {
         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
         case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-          return await getOfficeRawTextContent(fs.readFileSync(url))
+          return await getOfficeRawTextContent(fs.readFileSync(filepath))
         
         case 'application/pdf':
-          return await getPDFRawTextContent(fs.readFileSync(url))
+          return await getPDFRawTextContent(fs.readFileSync(filepath))
         
         case 'application/octet-stream':
           return null
 
         default:
-          return fs.readFileSync(url, 'utf8')
+          return fs.readFileSync(filepath, 'utf8')
 
       }
 
     } catch (error) {
       console.error('Error loading file:', error)
     }
-  }
-
-  async loadFolder(url: string): Promise<string> {
-    const response = await fetch(url)
-    return response.text()
   }
 
 }
