@@ -8,8 +8,9 @@ Generative AI desktop application:
 - Chat completion and image generation with Vision models support
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
-- Special prompts to specialize your bot on a specific topic
+- Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
+- <b>[BETA]</b> Chat with your local files and documents (RAG) 
 - Read aloud of assistant messages (requires OpenAI API key)
 - Read aloud of any text in other applications (requires OpenAI API key)
 - Local history of conversations (with automatic titles)
@@ -50,6 +51,16 @@ Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/
 
 From [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 
+## [BETA] Chat with your documents (RAG)
+
+You can connect each chat with a document repository: Witsy will first search for relevant documents in your local files and provide this info to the LLM. To do so:
+
+- Click on the database icon on the left of the prompt
+- Click Manage and then create a document repository
+- OpenAI Embedding require on API key, Ollama requires an embedding model
+- Add documents by clicking the + button on the right hand side of the window
+- Once your document repository is created, click on the database icon once more and select the document repository you want to use. The icon should turn blue
+
 ## Setup
 
 You can download a binary from the Releases page or build yourself:
@@ -84,6 +95,8 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Local files RAG
+- [x] Groq model update (8-Sep-2024)
 - [x] PDF Export of chats
 - [x] Prompts renamed to Experts. Now editable.
 - [x] Read aloud
