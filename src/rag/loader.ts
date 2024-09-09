@@ -38,23 +38,29 @@ export default class {
       const extension = filepath.split('.').pop()
       const mimeType = extensionToMimeType(extension)
       //console.log('Loading file:', url, extension, mimeType)
-      switch (mimeType) {
 
-        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      if ([
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ].includes(mimeType)) {
           return await getOfficeRawTextContent(fs.readFileSync(filepath))
-        
-        case 'application/pdf':
-          return await getPDFRawTextContent(fs.readFileSync(filepath))
-        
-        case 'application/octet-stream':
-          return null
-
-        default:
-          return fs.readFileSync(filepath, 'utf8')
-
       }
+        
+      if (mimeType === 'application/pdf') {
+        return await getPDFRawTextContent(fs.readFileSync(filepath))
+      }
+
+      if (mimeType.startsWith('text/') || [
+        'application/json',
+        'application/javascript'
+      ].includes(mimeType)) {
+        return fs.readFileSync(filepath, 'utf8')
+      }
+
+      // too bad
+      return null
+
 
     } catch (error) {
       console.error('Error loading file:', error)
