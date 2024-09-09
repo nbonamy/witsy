@@ -14,6 +14,7 @@
           <div class="actions">
             <button class="button" @click.prevent="onCreate"><BIconPlus /></button>
             <button class="button" @click.prevent="onDelete"><BIconDash /></button>
+            <button class="button right lighter" @click.prevent="onConfig"><BIconGearFill /></button>
           </div>
         </div>
         <div class="details" v-if="selectedRepo">
@@ -53,6 +54,7 @@
         </div>
       </main>
     </form>
+    <DocRepoConfig />
     <DocRepoCreate />
   </dialog>
 </template>
@@ -63,6 +65,7 @@ import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import DialogHeader from '../components/DialogHeader.vue'
 import ContextMenu from '../components/ContextMenu.vue'
+import DocRepoConfig from './DocRepoConfig.vue'
 import DocRepoCreate from './DocRepoCreate.vue'
 import Spinner from '../components/Spinner.vue'
 
@@ -176,6 +179,10 @@ const onDelete = () => {
       window.api.docrepo.delete(id)
     }
   })
+}
+
+const onConfig = () => {
+  emitEvent('openDocRepoConfig')
 }
 
 const onChangeRepoName = (event) => {
@@ -332,6 +339,16 @@ main {
     margin: 0px;
     font-size: 10pt;
     padding-bottom: 2px;
+
+    &.right {
+      border-left: 0.8px solid #b4b4b4;
+      border-right: none;
+      margin-left: auto;
+    }
+
+    &.lighter {
+      color: #7b7b7b;
+    }
 
     &:active {
       background: linear-gradient(to bottom, #c0c0c0, #b5b5b5);

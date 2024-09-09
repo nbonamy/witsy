@@ -88,6 +88,7 @@ interface TTSConfig {
 }
 
 interface RagConfig {
+  maxDocumentSizeMB?: number
   chunkSize?: number
   chunkOverlap?: number
   searchResultCount?: number

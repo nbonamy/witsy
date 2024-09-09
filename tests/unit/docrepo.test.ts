@@ -124,6 +124,23 @@ test('Docrepo add document', async () => {
   
 })
 
+test('Docrepo large document', async () => {
+  
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  docrepo.config.rag = { maxDocumentSizeMB: 0.0001 }
+  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+  const list = docrepo.list()
+  expect(list[0].documents).toHaveLength(0)
+
+  // check the database
+  const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
+  const items = await db.listItems()
+  expect(items).toHaveLength(0)
+  
+})
+
 test('Docrepo update document', async () => {
   
   const docrepo = new DocumentRepository(app)
