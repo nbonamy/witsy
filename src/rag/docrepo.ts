@@ -1,6 +1,7 @@
 import { App } from 'electron'
 import { Configuration } from '../types/config.d'
 import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
+import defaultSettings from '../../defaults/settings.json'
 import { notifyBrowserWindows } from '../main/window'
 import VectorDB from './vectordb'
 import Embedder from './embedder'
@@ -121,6 +122,12 @@ export class DocumentBaseImpl {
     const text = await loader.load(source.type, source.origin)
     if (!text) {
       throw new Error('Unsupported document type')
+    }
+
+    // check the size
+    const maxDocumentSizeMB = this.config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
+    if (text.length > maxDocumentSizeMB * 1024 * 1024) {
+      throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
     }
 
     // set title if web page
@@ -486,8 +493,8 @@ export default class DocumentRepository {
   async query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> {
 
     // needed
-    const searchResultCount = this.config.rag?.searchResultCount ?? 7
-    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? 0.35
+    const searchResultCount = this.config.rag?.searchResultCount ?? defaultSettings.rag.searchResultCount
+    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? defaultSettings.rag.relevanceCutOff
 
     // get the base
     const base = this.contents.find(b => b.uuid == baseId)
