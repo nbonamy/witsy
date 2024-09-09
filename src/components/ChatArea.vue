@@ -8,8 +8,7 @@
     <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
     <EmptyChat v-else />
     <Prompt :chat="chat" class="prompt" />
-    <Overlay v-if="showChatMenu" @click="closeChatMenu" />
-    <ContextMenu v-if="showChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :align="chatMenuAlign"/>
+    <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :align="chatMenuAlign"/>
   </div>
 </template>
 
@@ -18,7 +17,6 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
-import Overlay from './Overlay.vue'
 import Chat from '../models/chat'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
