@@ -308,7 +308,7 @@ export const loadGroqModels = async () => {
       name: model.name,
       meta: model
     }})
-    .sort((a, b) => a.name.localeCompare(b.name))
+    //.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   // select valid model
