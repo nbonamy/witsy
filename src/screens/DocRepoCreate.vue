@@ -68,7 +68,7 @@ const models = computed(() => {
       { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
     ]
   } else if (engine.value === 'ollama') {
-    return store.config.engines.ollama.models.embedding.map(m => ({ id: m.id, name: m.name }))
+    return store.config?.engines?.ollama?.models?.embedding?.map(m => ({ id: m.id, name: m.name }))
   // } else if (engine.value === 'fastembed') {
   //   return [
   //     { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
