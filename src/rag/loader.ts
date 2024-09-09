@@ -13,6 +13,43 @@ export default class {
     this.config = config
   }
 
+  isParseable(type: SourceType, origin: string): boolean {
+
+    // easy one
+    if (['url', 'text'].includes(type)) {
+      return true
+    }
+
+    // files
+    if (type === 'file') {
+
+      // needed
+      const extension = origin.split('.').pop()
+      const mimeType = extensionToMimeType(extension)
+
+      // text files
+      if (mimeType.startsWith('text/')) {
+        return true
+      }
+
+      // others
+      return [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/pdf',
+        'application/json',
+        'application/javascript',
+      ].includes(mimeType)
+
+    }
+
+    // too bad
+    return false
+
+  }
+
+
   load(type: SourceType, origin: string): Promise<string> {
   
     switch (type) {
