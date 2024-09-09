@@ -1,6 +1,7 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
 import DocumentRepository from '../../src/rag/docrepo'
+import embeddings from '../fixtures/embedder.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
@@ -20,9 +21,13 @@ vi.mock('electron', async() => {
 
 vi.mock('../../src/rag/embedder', async() => {
   const Embedder = vi.fn()
+  Embedder.dimensions = vi.fn(() => 384)
+  Embedder.prototype.embed = vi.fn((text:string) => {
+    if (text.includes('squash') && text.includes('tennis')) return embeddings['squashtennis']
+    else if (text.includes('squash')) return embeddings['squash']
+    else return embeddings['other']
+  })
   Embedder.init = vi.fn(() => new Embedder())
-  Embedder.dimensions = vi.fn(() => 128)
-  Embedder.prototype.embed = vi.fn(() => Array(128).fill(1.0))
   return { default: Embedder }
 })
 
@@ -191,7 +196,6 @@ test('Docrepo update folder', async () => {
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const tempdir = createTempDir()
   const docid1 = docrepo.addDocument(docbase, 'folder', tempdir)
-  await vi.waitUntil(() => docrepo.queueLength() == 0)
   const docid2 = docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
@@ -238,6 +242,28 @@ test('Docrepo query', async () => {
   expect(query[0].metadata.type).toBe('file')
   expect(query[0].metadata.title).toBe('docrepo.json')
   expect(query[0].metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
+})
+
+test('Docrepo query sort', async () => {
+  const docrepo = new DocumentRepository(app)
+  const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
+  const docid1 = docrepo.addDocument(docbase, 'text', 'Angela was born in 1980')
+  const docid2 = docrepo.addDocument(docbase, 'text', 'squash is more fun than tennis')
+  await vi.waitUntil(() => docrepo.queueLength() == 0)
+
+  // with zero relevance cut off to check sorting
+  docrepo.config.rag = { relevanceCutOff: 0.0 }
+  const query1 = await docrepo.query(docbase, 'tell me about squash')
+  expect(query1).toBeDefined()
+  expect(query1.length).toBe(2)
+  expect(query1[0].metadata.uuid).toBe(docid2)
+  expect(query1[1].metadata.uuid).toBe(docid1)
+  expect(query1[0].score).toBeGreaterThan(query1[1].score)
+
+  // with relevance cut off to check filtering
+  docrepo.config.rag = { relevanceCutOff: query1[1].score * 1.1 }
+  const query2 = await docrepo.query(docbase, 'tell me about squash')
+  expect(query2.length).toBe(1)
 })
 
 test('Docrepo load', async () => {

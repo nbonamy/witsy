@@ -1,5 +1,5 @@
 
-export type SourceType = 'file'|'folder'|'url'
+export type SourceType = 'file'|'folder'|'url'|'text'
 
 export interface DocumentSource {
   uuid: string
