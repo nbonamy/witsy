@@ -42,6 +42,8 @@ const createTempDir = () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docrepotest'))
   fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.json'))
   fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo2.json'))
+  fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.png'))
+  fs.writeFileSync(path.join(tempDir, 'docrepo.pdf'), EMPTY_PDF)
   return tempDir
 }
 
@@ -233,6 +235,9 @@ test('Docrepo add folder', async () => {
   expect(list[0].documents[0].type).toBe('folder')
   expect(list[0].documents[0].origin).toBe(tempdir)
   expect(list[0].documents[0].url).toBe('file://' + tempdir)
+  expect(list[0].documents[0].items).toHaveLength(2)
+  expect(list[0].documents[0].items[0].filename).toBe('docrepo.json')
+  expect(list[0].documents[0].items[1].filename).toBe('docrepo2.json')
 
   // check the database
   const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
@@ -259,6 +264,10 @@ test('Docrepo update folder', async () => {
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
   expect(docid1).toBe(docid2)
+
+  // check docrepo
+  const list = docrepo.list()
+  expect(list[0].documents).toHaveLength(1)
 
   // check the database
   const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
