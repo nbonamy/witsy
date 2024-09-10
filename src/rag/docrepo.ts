@@ -1,250 +1,18 @@
+
 import { App } from 'electron'
 import { Configuration } from '../types/config.d'
 import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
 import defaultSettings from '../../defaults/settings.json'
 import { notifyBrowserWindows } from '../main/window'
+import { docrepoFilePath, databasePath } from './utils'
+import DocumentBaseImpl from './docbase'
+import DocumentSourceImpl from './docsource'
 import VectorDB from './vectordb'
 import Embedder from './embedder'
-import Loader from './loader'
-import Splitter from './splitter'
 import * as config from '../main/config'
-import * as file from '../main/file'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import fs from 'fs'
-
-const docrepoFilePath = (app: App): string => {
-  const userDataPath = app.getPath('userData')
-  const commandsFilePath = path.join(userDataPath, 'docrepo.json')
-  return commandsFilePath
-}
-
-const databasePath = (app: App, id: string): string => {
-  const userDataPath = app.getPath('userData')
-  const docRepoFolder = path.join(userDataPath, 'docrepo')
-  const databasePath = path.join(docRepoFolder, id)
-  return databasePath
-}
-
-export class DocumentSourceImpl {
-  
-  uuid: string
-  title: string
-  type: SourceType
-  origin: string
-  url: string
-  items: DocumentSourceImpl[]
-
-  constructor(id: string, type: SourceType, origin: string) {
-    this.uuid = id
-    this.type = type
-    this.origin = origin
-    if (this.type === 'file' || this.type === 'folder') {
-      this.url = `file://${encodeURI(origin)}`
-    } else {
-      this.url = origin
-    }
-    this.title = this.getTitle()
-    this.items = []
-  }
-
-  getTitle(): string {
-    if (this.type === 'file') {
-      return path.basename(decodeURI(this.url))
-    } else if (this.title) {
-      return this.title
-    } else if (this.type === 'text') {
-      return 'Text'
-    } else {
-      return this.url
-    }
-  }
-}
-
-export class DocumentBaseImpl {
-  
-  app: App
-  config: Configuration
-
-  uuid: string
-  name: string
-  embeddingEngine: string
-  embeddingModel: string
-  documents: DocumentSourceImpl[]
-
-  constructor(app: App, config: Configuration, uuid: string, name: string, embeddingEngine: string, embeddingModel: string) {
-    this.app = app
-    this.config = config
-    this.uuid = uuid
-    this.name = name
-    this.embeddingEngine = embeddingEngine
-    this.embeddingModel = embeddingModel
-    this.documents = []
-  }
-
-  async add(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
-
-    // check existing
-    let source = this.documents.find(d => d.uuid === uuid)
-    if (source) {
-      await this.delete(uuid)
-    } else {
-      source = new DocumentSourceImpl(uuid, type, url)
-    }
-
-    // add if
-    if (type === 'folder') {
-
-      // we add first so container is visible
-      this.documents.push(source)
-      await this.addFolder(source, callback)
-
-    } else {
-
-      // we add only when it's done
-      await this.addDocument(source, callback)
-      this.documents.push(source)
-
-    }
-
-    // now store
-    console.log(`Added document "${source.url}" to database "${this.name}"`)
-
-    // done
-    return source.uuid
-
-  }
-
-  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction): Promise<void> {
-
-    // needed
-    const loader = new Loader(this.config)
-    if (!loader.isParseable(source.type, source.origin)) {
-      throw new Error('Unsupported document type')
-    }
-
-    // log
-    console.log(`Processing document [${source.type}] ${source.origin}`)
-    
-    // load the content
-    const text = await loader.load(source.type, source.origin)
-    if (!text) {
-      console.log('Unable to load document', source.origin)
-      throw new Error('Unable to load document')
-    }
-
-    // special case for empty pdf (or image only
-    // ----------------Page (0) Break----------------
-    if (/^-+Page \(\d+\) Break-+$/.test(text.trim())) {
-      console.log('Empty PDF', source.origin)
-      throw new Error('Empty PDF')
-    }
-
-    // check the size
-    const maxDocumentSizeMB = this.config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
-    if (text.length > maxDocumentSizeMB * 1024 * 1024) {
-      console.log(`Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
-      throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
-    }
-
-    // set title if web page
-    if (source.type === 'url') {
-      const titleMatch = text.match(/<title>(.*?)<\/title>/i)
-      if (titleMatch && titleMatch[1]) {
-        source.title = titleMatch[1].trim()
-      }
-    }
-
-    // now split
-    const splitter = new Splitter(this.config)
-    const chunks = await splitter.split(text)
-    //console.log(`Split into ${chunks.length} chunks`)
-
-    // now embeds
-    const documents = []
-    const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
-    for (const chunk of chunks) {
-      const embedding = await embedder.embed(chunk)
-      documents.push({
-        content: chunk,
-        vector: embedding,
-      })
-    }
-    
-    // debug
-    //console.log('Documents:', documents)
-    
-    // now store each document
-    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
-    for (const document of documents) {
-      await db.insert(source.uuid, document.content, document.vector, {
-        uuid: source.uuid,
-        type: source.type,
-        title: source.getTitle(),
-        url: source.url
-      })
-
-    }
-
-    // done
-    callback?.()
-    
-  }
-
-  async addFolder(source: DocumentSourceImpl, callback: VoidFunction): Promise<void> {
-
-    // list files in folder recursively
-    const files = file.listFilesRecursively(source.origin)
-    for (const file of files) {
-      try {
-        const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
-        await this.addDocument(doc)
-        source.items.push(doc)
-        callback?.()
-      } catch (error) {
-        //console.error('Error adding file', file, error)
-      }
-    }
-  
-  }
-
-  async delete(docId: string, callback?: VoidFunction): Promise<void> {
-
-    // find the document
-    const index = this.documents.findIndex(d => d.uuid == docId)
-    if (index === -1) {
-      throw new Error('Document not found')
-    }
-
-    // list the database documents
-    let docIds = [ docId ]
-    const document = this.documents[index]
-    if (document.items.length > 0) {
-      docIds = document.items.map((item) => item.uuid)
-    }
-
-    // delete from the database
-    let deleted = 0
-    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
-    for (const docId of docIds) {
-      await db.delete(docId)
-      if (document.items.length > 0) {
-        const index2 = document.items.findIndex(d => d.uuid == docId)
-        if (index2 !== -1) {
-          document.items.splice(index2, 1)
-          if ((++deleted) % 10 === 0) {
-            callback?.()
-          }
-        }
-      }
-    }
-
-    // remove it
-    this.documents.splice(index, 1)
-
-  }  
-
-}
 
 interface DocumentQueueItem {
   uuid: string
@@ -545,11 +313,11 @@ export default class DocumentRepository {
           content: result.item.metadata.content as string,
           score: result.score,
           metadata: result.item.metadata.metadata as any,
-        };
+        }
       })
       .filter((result) => result.score > relevanceCutOff)
       .sort((a, b) => b.score - a.score)
-      .slice(0, searchResultCount);
+      .slice(0, searchResultCount)
 
   }
 

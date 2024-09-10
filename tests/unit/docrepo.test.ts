@@ -1,6 +1,8 @@
 
 import { test, expect, vi, beforeEach, afterEach } from 'vitest'
-import DocumentRepository, { DocumentBaseImpl, DocumentSourceImpl } from '../../src/rag/docrepo'
+import DocumentRepository from '../../src/rag/docrepo'
+import DocumentSourceImpl from '../../src/rag/docsource'
+import DocumentBaseImpl from '../../src/rag/docbase'
 import embeddings from '../fixtures/embedder.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'

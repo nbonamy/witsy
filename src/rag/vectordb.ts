@@ -33,6 +33,18 @@ export default class VectorDB{
     this.index = new LocalIndex(this.path)
   }
 
+  beginTransaction(): Promise<void> {
+    return this.index.beginUpdate()
+  }
+
+  cancelTransaction(): void {
+    return this.index.cancelUpdate()
+  }
+
+  commitTransaction(): Promise<void> {
+    return this.index.endUpdate()
+  }
+
   async insert(docid: string, content: string, vector: number[], metadata: any): Promise<string> {
     const item = await this.index.insertItem({
       metadata: {
