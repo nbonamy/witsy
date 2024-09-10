@@ -10,9 +10,9 @@ vi.mock('openai', async () => {
   const OpenAI = vi.fn()
   OpenAI.prototype.embeddings = {
     create: vi.fn((params: any) => {
-      return { data: [{
-        embedding: [params.input, params.model]
-      }]}
+      return { data: params.input.map((i: string) => {
+        return { embedding: i.split('').reverse().map((c) => c.charCodeAt(0)) }
+      })}
     })
   }
   return { default : OpenAI }
@@ -24,7 +24,7 @@ vi.mock('ollama/browser', async() => {
     return { model_info: { embedding_length: 384 } }
   })
   Ollama.prototype.embed = vi.fn((opts) => {
-    return { embeddings: [[opts.input, opts.model]] }
+    return { embeddings: opts.input.map((i: string) => i.split('').reverse().map((c) => c.charCodeAt(0))) }
   })
   return { Ollama: Ollama }
 })
@@ -54,10 +54,10 @@ test('Create OpenAI', async () => {
 
 test('Embed OpenAI', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'openai', 'text-embedding-ada-002')
-  const embeddings = await embedder.embed('hello')
+  const embeddings = await embedder.embed(['hello'])
   expect(_OpenAI.default.prototype.embeddings.create).toHaveBeenCalled()
   expect(_ollama.Ollama.prototype.embed).not.toHaveBeenCalled()
-  expect(embeddings).toStrictEqual(['hello', 'text-embedding-ada-002'])
+  expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 
 test('Create Ollama', async () => {
@@ -69,9 +69,9 @@ test('Create Ollama', async () => {
 
 test('Embed Ollama', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'ollama', 'all-minilm')
-  const embeddings = await embedder.embed('hello')
+  const embeddings = await embedder.embed(['hello'])
   expect(_ollama.Ollama.prototype.embed).toHaveBeenCalled()
   expect(_OpenAI.default.prototype.embeddings.create).not.toHaveBeenCalled()
-  expect(embeddings).toStrictEqual(['hello', 'all-minilm'])
+  expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 

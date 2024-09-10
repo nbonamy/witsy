@@ -298,12 +298,12 @@ export default class DocumentRepository {
 
     // now embed
     const embedder = await Embedder.init(this.app, this.config, base.embeddingEngine, base.embeddingModel)
-    const query = await embedder.embed(text)
+    const query = await embedder.embed([text])
     //console.log('query', query)
 
     // now query
     const db = await VectorDB.connect(databasePath(this.app, baseId))
-    const results = await db.query(query, searchResultCount+10)
+    const results = await db.query(query[0], searchResultCount+10)
     //console.log('results', results)
     
     // done
