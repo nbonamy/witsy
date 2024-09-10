@@ -234,7 +234,9 @@ const handleDocRepoClick = (action) => {
       props.chat.docrepo = null
     }
     store.pendingDocRepo = null
+    window.api.docrepo.disconnect()
   } else {
+    window.api.docrepo.connect(action)
     if (props.chat) {
       props.chat.docrepo = action
     } else {

@@ -2,13 +2,10 @@
 import { App } from 'electron'
 import { Configuration } from '../types/config.d'
 import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
-import defaultSettings from '../../defaults/settings.json'
 import { notifyBrowserWindows } from '../main/window'
-import { docrepoFilePath, databasePath } from './utils'
+import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
 import DocumentSourceImpl from './docsource'
-import VectorDB from './vectordb'
-import Embedder from './embedder'
 import * as config from '../main/config'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
@@ -25,6 +22,7 @@ export default class DocumentRepository {
 
   app: App
   config: Configuration
+  activeDb: DocumentBaseImpl | null = null
   contents: DocumentBaseImpl[] = []
   queue: DocumentQueueItem[] = []
   processing = false
@@ -32,6 +30,7 @@ export default class DocumentRepository {
   constructor(app: App) {
     this.app = app
     this.config = config.loadSettings(app)
+    this.activeDb = null
     this.processing = false
     this.queue = []
     this.load()
@@ -70,6 +69,38 @@ export default class DocumentRepository {
 
   queueLength(): number {
     return this.queue.length
+  }
+
+  async connect(baseId: string, replaceActive = false): Promise<DocumentBaseImpl> {
+
+    // if already connected, do nothing
+    if (this.activeDb && this.activeDb.uuid == baseId) {
+      return this.activeDb
+    }
+
+    // check the base
+    const base = this.contents.find(b => b.uuid == baseId)
+    if (!base) {
+      throw new Error('Database not found')
+    }
+
+    // connext
+    await base.connect()
+
+    // set it
+    if (replaceActive) {
+      this.activeDb = base
+    }
+
+    // done
+    return base
+
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.activeDb) {
+      this.activeDb = null
+    }
   }
 
   load(): void {
@@ -126,23 +157,17 @@ export default class DocumentRepository {
 
   async create(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
-    // we need a new id
-    const id = uuidv4()
-
-    // create the database
-    const dbPath = databasePath(this.app, id)
-    fs.mkdirSync(dbPath, { recursive: true })
-    await VectorDB.create(dbPath, await Embedder.dimensions(this.config, embeddingEngine, embeddingModel))
+    // now create the base
+    const base = new DocumentBaseImpl(this.app, this.config, uuidv4(), title, embeddingEngine, embeddingModel)
+    await base.create()
+    this.contents.push(base)
 
     // log
     //console.log('Created document database', databasePath(this.app, id))
 
-    // now create the base
-    const base = new DocumentBaseImpl(this.app, this.config, id, title, embeddingEngine, embeddingModel)
-    this.contents.push(base)
-
     // save and done
     this.save()
+    this.activeDb = base
     return base.uuid
   
   }
@@ -165,41 +190,43 @@ export default class DocumentRepository {
 
   async delete(baseId: string): Promise<void> {
 
-    // find in the list
+    // check (we need the index anyway)
     const index = this.contents.findIndex(b => b.uuid == baseId)
     if (index === -1) {
       throw new Error('Database not found')
     }
 
-    // delete the database
-    const dbPath = databasePath(this.app, baseId)
-    fs.rmSync(dbPath, { recursive: true, force: true })
+    // connect and delete
+    const base = await this.connect(baseId)
+    base.destroy()
 
     // now remove from the list
     this.contents.splice(index, 1)
+
+    // update activeDb
+    if (this.activeDb?.uuid == baseId) {
+      this.activeDb = null
+    }
 
     // done
     this.save()
 
   }
 
-  addDocument(baseId: string, type: SourceType, origin: string): string {
+  async addDocument(baseId: string, type: SourceType, origin: string): Promise<string> {
 
-    // make sure the base is valid
-    const base = this.contents.find(b => b.uuid == baseId)
-    if (!base) {
-      throw new Error('Database not found')
-    }
-
+    // connect
+    const base = await this.connect(baseId)
+    
     // check if it exists
     console.log('Adding document', origin)
-    let existing: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
-    if (!existing) {
-      existing = new DocumentSourceImpl(uuidv4(), type, origin)
+    let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
+    if (!document) {
+      document = new DocumentSourceImpl(uuidv4(), type, origin)
     }
 
     // add to queue
-    this.queue.push({ uuid: existing.uuid, baseId, type, origin })
+    this.queue.push({ uuid: document.uuid, baseId, type, origin })
 
     // process
     if (!this.processing) {
@@ -207,7 +234,7 @@ export default class DocumentRepository {
     }
 
     // done
-    return existing.uuid
+    return document.uuid
 
   }
 
@@ -223,8 +250,10 @@ export default class DocumentRepository {
       const queueItem = this.queue[0]
 
       // get the base
-      const base = this.contents.find(b => b.uuid == queueItem.baseId)
-      if (!base) continue
+      const base = await this.connect(queueItem.baseId)
+      if (!base) {
+        continue
+      }
 
       // log
       console.log('Processing document', queueItem.origin)
@@ -267,11 +296,8 @@ export default class DocumentRepository {
 
   async removeDocument(baseId: string, docId: string): Promise<void> {
 
-    // find in the list
-    const base = this.contents.find(b => b.uuid == baseId)
-    if (!base) {
-      throw new Error('Database not found')
-    }
+    // get the base
+    const base = await this.connect(baseId)
 
     // do it
     await base.delete(docId, () => this.save())
@@ -286,38 +312,11 @@ export default class DocumentRepository {
 
   async query(baseId: string, text: string): Promise<DocRepoQueryResponseItem[]> {
 
-    // needed
-    const searchResultCount = this.config.rag?.searchResultCount ?? defaultSettings.rag.searchResultCount
-    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? defaultSettings.rag.relevanceCutOff
-
     // get the base
-    const base = this.contents.find(b => b.uuid == baseId)
-    if (!base) {
-      throw new Error('Database not found')
-    }
+    const base = await this.connect(baseId, true)
 
-    // now embed
-    const embedder = await Embedder.init(this.app, this.config, base.embeddingEngine, base.embeddingModel)
-    const query = await embedder.embed([text])
-    //console.log('query', query)
-
-    // now query
-    const db = await VectorDB.connect(databasePath(this.app, baseId))
-    const results = await db.query(query[0], searchResultCount+10)
-    //console.log('results', results)
-    
-    // done
-    return results
-      .map((result) => {
-        return {
-          content: result.item.metadata.content as string,
-          score: result.score,
-          metadata: result.item.metadata.metadata as any,
-        }
-      })
-      .filter((result) => result.score > relevanceCutOff)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, searchResultCount)
+    // query
+    return await base.query(text)
 
   }
 

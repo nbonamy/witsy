@@ -11,7 +11,12 @@ import Attachment from '../../src/models/attachment'
 enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
+const emitEventMock = vi.fn((event, ...args) => {
+  // this is called when mounting so discard it
+  if (event === 'promptResize' && args[0] === '0px') {
+    emitEventMock.mockClear()
+  }
+})
 
 vi.mock('../../src/composables/useEventBus.js', async () => {
   return { default: () => {
@@ -31,19 +36,23 @@ beforeAll(() => {
     on: vi.fn(),
     file: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      pick: vi.fn(({ opts: anyDict}) => {
+      pick: vi.fn(() => {
         return {
           url: 'file://image.png',
           contents: 'image64'
          }
       }),
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      extractText: vi.fn((contents: string, format: string) => {
+      extractText: vi.fn((contents: string) => {
         return contents
       })
     },
     docrepo: {
-      list: vi.fn(() => []),
+      list: vi.fn(() => [
+        { uuid: 'uuid1', name: 'doc1', embeddingEngine: 'mock', embeddingModel: 'chat', documents: [] }
+      ]),
+      connect: vi.fn(() => true),
+      disconnect: vi.fn(() => true)
     },
   }
 
@@ -57,22 +66,22 @@ beforeAll(() => {
     { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
     { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
 ]
-
-  // wrapper
-  wrapper = mount(Prompt, { global: { stubs: { teleport: true } } } )
-  //expect(onEventMock).toHaveBeenCalled()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
+  wrapper = mount(Prompt, { global: { stubs: { teleport: true } } } )
 })
 
 test('Render', () => {
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.input textarea').exists()).toBe(true)
-  expect(wrapper.find('.attach').exists()).toBe(true)
+  expect(wrapper.find('.icon.attach').exists()).toBe(true)
+  expect(wrapper.find('.icon.docrepo').exists()).toBe(true)
+  expect(wrapper.find('.icon.experts').exists()).toBe(true)
   expect(wrapper.find('.send').exists()).toBe(true)
   expect(wrapper.find('.stop').exists()).toBe(false)
+  expect(window.api.docrepo.list).toHaveBeenCalled()
 })
 
 test('Send on click', async () => {
@@ -80,7 +89,6 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenCalled()
   expect(emitEventMock).toHaveBeenCalledWith('sendPrompt', 'this is my prompt')
   expect(prompt.element.value).toBe('')
 })
@@ -90,7 +98,6 @@ test('Send on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalled()
   expect(emitEventMock).toHaveBeenCalledWith('sendPrompt', 'this is my prompt')
   expect(prompt.element.value).toBe('')
 })
@@ -197,6 +204,40 @@ test('Experts', async () => {
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
   expect(menu.findAll('.item').length).toBe(2)
-  await menu.findAll('.item')[1].trigger('click')
+  await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.find('.input textarea').element.value).toBe('prompt3')
+})
+
+test('Document repository', async () => {
+
+  // trigger
+  const trigger = wrapper.find('.icon.docrepo')
+  await trigger.trigger('click')
+  let menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.item').length).toBe(3)
+  expect(menu.find('.item:nth-child(1)').text()).toBe('doc1')
+  expect(menu.find('.item:nth-child(2) hr')).toBeTruthy()
+  expect(menu.find('.item:nth-child(3)').text()).toBe('Manage...')
+
+  // manage
+  await menu.find('.item:nth-child(3)').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('openDocRepos')
+
+  // connect
+  await trigger.trigger('click')
+  menu = wrapper.find('.context-menu')
+  await menu.find('.item:nth-child(1)').trigger('click')
+  expect(window.api.docrepo.connect).toHaveBeenCalledWith('uuid1')
+
+  // trigger again
+  await trigger.trigger('click')
+  menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.find('.item:nth-child(3)').text()).toBe('Disconnect')
+
+  // disconnect
+  await menu.find('.item:nth-child(3)').trigger('click')
+  expect(window.api.docrepo.disconnect).toHaveBeenCalledWith()
 })
