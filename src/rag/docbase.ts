@@ -279,10 +279,10 @@ export default class DocumentBaseImpl {
     // now query
     await this.connect()
     const results = await this.db.query(query[0], searchResultCount+10)
-    //console.log('results', results)
     
-    // done
-    return results
+    // filter and transform
+    const filtered = results
+      .filter((result) => result.score > relevanceCutOff)
       .map((result) => {
         return {
           content: result.item.metadata.content as string,
@@ -290,10 +290,15 @@ export default class DocumentBaseImpl {
           metadata: result.item.metadata.metadata as any,
         }
       })
-      .filter((result) => result.score > relevanceCutOff)
       //.sort((a, b) => b.score - a.score)
       .slice(0, searchResultCount)
 
+    // log
+    console.log('results', JSON.stringify(filtered, null, 2))
+
+    // done
+    return filtered
+     
   }
 
 }
