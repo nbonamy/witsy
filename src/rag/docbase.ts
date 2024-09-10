@@ -294,7 +294,7 @@ export default class DocumentBaseImpl {
       .slice(0, searchResultCount)
 
     // log
-    console.log('results', JSON.stringify(filtered, null, 2))
+    //console.log('results', JSON.stringify(filtered, null, 2))
 
     // done
     return filtered
