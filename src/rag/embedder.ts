@@ -6,6 +6,7 @@ import similarity from 'compute-cosine-similarity'
 //import { FlagEmbedding, EmbeddingModel } from 'fastembed'
 import { Ollama } from 'ollama/dist/browser.mjs'
 import OpenAI from 'openai'
+import { Embedding } from 'openai/resources'
 // import path from 'path'
 // import fs from 'fs'
 
@@ -122,21 +123,21 @@ export default class Embedder {
 
   }
 
-  async embed(text: string): Promise<any> {
+  async embed(texts: string[]): Promise<number[][]> {
 
     // for testing purposes
     //return Array(Embedder.dimensions(this.engine, this.model)).fill(0)
 
     // openai
     if (this.openai) {
-      const response = await this.openai.embeddings.create({ input: text, model: this.model, })
-      return response.data[0].embedding
+      const response = await this.openai.embeddings.create({ input: texts, model: this.model, })
+      return response.data.map((item: Embedding) => item.embedding)
     }
 
     // ollama
     if (this.ollama) {
-      const response = await this.ollama.embed({ model: this.model, input: text, })
-      return response.embeddings[0]
+      const response = await this.ollama.embed({ model: this.model, input: texts, })
+      return response.embeddings
     }
 
     // // fast embed

@@ -12,8 +12,9 @@ import { databasePath } from './utils'
 import * as file from '../main/file'
 import { v4 as uuidv4 } from 'uuid'
 
-export const ADD_COMMIT_EVERY = 5
-export const DELETE_COMMIT_EVERY = 10
+const ADD_COMMIT_EVERY = 5
+const DELETE_COMMIT_EVERY = 10
+const EMBED_BATCH_SIZE = 20
 
 export default class DocumentBaseImpl {
 
@@ -115,19 +116,29 @@ export default class DocumentBaseImpl {
     const splitter = new Splitter(this.config)
     const chunks = await splitter.split(text)
     //console.log(`Split into ${chunks.length} chunks`)
-    // now embeds
+
+    // loose estimate of the batch size based on:
+    // 1 token = 4 bytes
+    // max tokens = 8192 (apply a 75% contingency)
+    const batchSize = Math.min(EMBED_BATCH_SIZE, Math.floor(8192 * .75 / (splitter.chunkSize / 4)))
+    
+    // now embed
     const documents = []
     const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
-    for (const chunk of chunks) {
-      const embedding = await embedder.embed(chunk)
-      documents.push({
-        content: chunk,
-        vector: embedding,
-      })
+    while (chunks.length > 0) {
+      const batch = chunks.splice(0, batchSize)
+      const embeddings = await embedder.embed(batch)
+      for (let i = 0; i < batch.length; i++) {
+        documents.push({
+          content: batch[i],
+          vector: embeddings[i],
+        })
+      }
     }
 
     // debug
     //console.log('Documents:', documents)
+    
     // now store each document
     db = db ?? await VectorDB.connect(databasePath(this.app, this.uuid))
     for (const document of documents) {
