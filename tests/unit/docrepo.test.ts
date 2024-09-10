@@ -108,7 +108,7 @@ test('Docrepo add document', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const docid = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -134,6 +134,7 @@ test('Docrepo add document', async () => {
 
 test('Doc base invalid documents', async () => {
   const docbase = new DocumentBaseImpl(app, null, '1', 'name', 'openai', 'text-embedding-ada-002')
+  await docbase.create()
   expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.jpg'))).rejects.toThrowError(/^Unsupported document type$/)
   expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.png'))).rejects.toThrowError(/^Unsupported document type$/)
   expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.docx'))).rejects.toThrowError(/^Unable to load document$/)
@@ -144,11 +145,11 @@ test('Docrepo invalid documents', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.jpg'))
-  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.png'))
-  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.mov'))
-  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.docx'))
-  docrepo.addDocument(docbase, 'text', EMPTY_PDF)
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.jpg'))
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.png'))
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.mov'))
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.docx'))
+  await docrepo.addDocument(docbase, 'text', EMPTY_PDF)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -167,7 +168,7 @@ test('Docrepo large document', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   docrepo.config.rag = { maxDocumentSizeMB: 0.0001 }
-  docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo
@@ -185,9 +186,9 @@ test('Docrepo update document', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  const docid1 = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const docid1 = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
-  const docid2 = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const docid2 = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   expect(docid1).toBe(docid2)
 
@@ -206,7 +207,7 @@ test('Docrepo delete document', async () => {
   
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const docid = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   await docrepo.removeDocument(docbase, docid)
 
@@ -226,7 +227,7 @@ test('Docrepo add folder', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const tempdir = createTempDir()
-  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  const docid = await docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
 
@@ -261,8 +262,8 @@ test('Docrepo update folder', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const tempdir = createTempDir()
-  const docid1 = docrepo.addDocument(docbase, 'folder', tempdir)
-  const docid2 = docrepo.addDocument(docbase, 'folder', tempdir)
+  const docid1 = await docrepo.addDocument(docbase, 'folder', tempdir)
+  const docid2 = await docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
   expect(docid1).toBe(docid2)
@@ -283,7 +284,7 @@ test('Docrepo delete folder', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const tempdir = createTempDir()
-  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  const docid = await docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
   await docrepo.removeDocument(docbase, docid)
@@ -302,7 +303,7 @@ test('Docrepo delete folder', async () => {
 test('Docrepo query', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  const docid = docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
+  const docid = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   const query = await docrepo.query(docbase, 'whatever')
   expect(query).toBeDefined()
@@ -319,8 +320,8 @@ test('Docrepo query', async () => {
 test('Docrepo query score', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  const docid1 = docrepo.addDocument(docbase, 'text', 'Angela was born in 1980')
-  const docid2 = docrepo.addDocument(docbase, 'text', 'squash is more fun than tennis')
+  const docid1 = await docrepo.addDocument(docbase, 'text', 'Angela was born in 1980')
+  const docid2 = await docrepo.addDocument(docbase, 'text', 'squash is more fun than tennis')
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // with zero relevance cut off to check sorting
@@ -344,7 +345,7 @@ test('Docrepo load', async () => {
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const tempdir = createTempDir()
-  const docid = docrepo.addDocument(docbase, 'folder', tempdir)
+  const docid = await docrepo.addDocument(docbase, 'folder', tempdir)
   await vi.waitUntil(() => docrepo.queueLength() == 0)
   fs.rmSync(tempdir, { recursive: true, force: true })
 

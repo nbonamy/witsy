@@ -31,6 +31,8 @@ export default class VectorDB{
 
   async connect(): Promise<void> {
     this.index = new LocalIndex(this.path)
+    await this.beginTransaction()
+    await this.cancelTransaction()
   }
 
   beginTransaction(): Promise<void> {

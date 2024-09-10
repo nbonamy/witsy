@@ -175,7 +175,9 @@ declare global {
         save?(experts: Expert[]): void
       }
       docrepo?: {
-        list?(): strDict[]
+        list?(): DocumentBase[]
+        connect?(baseId: string): void
+        disconnect?(): void
         create?(title: string, embeddingEngine: string, embeddingModel: string): string
         rename?(id: string, title: string): void
         delete?(id: string): void

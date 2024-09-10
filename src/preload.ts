@@ -79,6 +79,8 @@ contextBridge.exposeInMainWorld(
     },
     docrepo: {
       list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },
+      connect(baseId: string): void { return ipcRenderer.send('docrepo-connect', baseId) },
+      disconnect(): void { return ipcRenderer.send('docrepo-disconnect') },
       create(title: string, embeddingEngine: string, embeddingModel: string): string { return ipcRenderer.sendSync('docrepo-create', { title, embeddingEngine, embeddingModel }) },
       rename(baseId: string, title: string): void { return ipcRenderer.sendSync('docrepo-rename', { baseId, title }) },
       delete(baseId: string): void { return ipcRenderer.sendSync('docrepo-delete', baseId) },

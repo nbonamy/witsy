@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
 import { Configuration } from '../types/config.d'
-import { SourceType } from '../types/rag.d'
+import { SourceType, DocRepoQueryResponseItem } from '../types/rag.d'
 import defaultSettings from '../../defaults/settings.json'
 import DocumentSourceImpl from './docsource'
 import VectorDB from './vectordb'
@@ -11,6 +11,7 @@ import Splitter from './splitter'
 import { databasePath } from './utils'
 import * as file from '../main/file'
 import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
 
 const ADD_COMMIT_EVERY = 5
 const DELETE_COMMIT_EVERY = 10
@@ -38,6 +39,24 @@ export default class DocumentBaseImpl {
     this.documents = []
   }
 
+  async create() {
+    const dbPath = databasePath(this.app, this.uuid)
+    fs.mkdirSync(dbPath, { recursive: true })
+    await VectorDB.create(dbPath, await Embedder.dimensions(this.config, this.embeddingEngine, this.embeddingModel))
+  }
+
+  async connect(): Promise<void> {
+    if (!this.db) {
+      this.db = await VectorDB.connect(databasePath(this.app, this.uuid))
+      console.log('Connected to database', this.name)
+    }
+  }
+
+  async destroy(): Promise<void> {
+    const dbPath = databasePath(this.app, this.uuid)
+    fs.rmSync(dbPath, { recursive: true, force: true })
+  }
+
   async add(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
 
     // check existing
@@ -59,7 +78,7 @@ export default class DocumentBaseImpl {
     } else {
 
       // we add only when it's done
-      await this.addDocument(source, null, callback)
+      await this.addDocument(source, callback)
       this.documents.push(source)
 
     }
@@ -72,7 +91,10 @@ export default class DocumentBaseImpl {
 
   }
 
-  async addDocument(source: DocumentSourceImpl, db?: VectorDB, callback?: VoidFunction): Promise<void> {
+  async addDocument(source: DocumentSourceImpl, callback?: VoidFunction): Promise<void> {
+
+    // make sure we are connected
+    await this.connect()
 
     // needed
     const loader = new Loader(this.config)
@@ -140,9 +162,8 @@ export default class DocumentBaseImpl {
     //console.log('Documents:', documents)
     
     // now store each document
-    db = db ?? await VectorDB.connect(databasePath(this.app, this.uuid))
     for (const document of documents) {
-      await db.insert(source.uuid, document.content, document.vector, {
+      await this.db.insert(source.uuid, document.content, document.vector, {
         uuid: source.uuid,
         type: source.type,
         title: source.getTitle(),
@@ -162,8 +183,8 @@ export default class DocumentBaseImpl {
     const files = file.listFilesRecursively(source.origin)
 
     // add to the database using transaction
-    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
-    await db.beginTransaction()
+    await this.connect()
+    await this.db.beginTransaction()
 
     // iterate
     let added = 0
@@ -172,14 +193,14 @@ export default class DocumentBaseImpl {
 
         // do it
         const doc = new DocumentSourceImpl(uuidv4(), 'file', file)
-        await this.addDocument(doc, db)
+        await this.addDocument(doc)
         source.items.push(doc)
 
         // commit?
         if ((++added) % ADD_COMMIT_EVERY === 0) {
-          await db.commitTransaction()
+          await this.db.commitTransaction()
           callback?.()
-          await db.beginTransaction()
+          await this.db.beginTransaction()
         }
 
       } catch (error) {
@@ -188,7 +209,7 @@ export default class DocumentBaseImpl {
     }
 
     // done
-    await db.commitTransaction()
+    await this.db.commitTransaction()
     callback?.()
 
   }
@@ -209,15 +230,15 @@ export default class DocumentBaseImpl {
     }
 
     // delete from the database using transaction
-    const db = await VectorDB.connect(databasePath(this.app, this.uuid))
-    await db.beginTransaction()
+    await this.connect()
+    await this.db.beginTransaction()
 
     // iterate
     let deleted = 0
     for (const docId of docIds) {
 
       // delete
-      await db.delete(docId)
+      await this.db.delete(docId)
 
       // remove from doc list
       if (document.items.length > 0) {
@@ -227,9 +248,9 @@ export default class DocumentBaseImpl {
 
           // commit?
           if ((++deleted) % DELETE_COMMIT_EVERY === 0) {
-            await db.commitTransaction()
+            await this.db.commitTransaction()
             callback?.()
-            await db.beginTransaction()
+            await this.db.beginTransaction()
           }
         }
       }
@@ -239,8 +260,39 @@ export default class DocumentBaseImpl {
     this.documents.splice(index, 1)
 
     // done
-    await db.commitTransaction()
+    await this.db.commitTransaction()
     callback?.()
+
+  }
+
+  async query(text: string): Promise<DocRepoQueryResponseItem[]> {
+
+    // needed
+    const searchResultCount = this.config.rag?.searchResultCount ?? defaultSettings.rag.searchResultCount
+    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? defaultSettings.rag.relevanceCutOff
+
+    // now embed
+    const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
+    const query = await embedder.embed([text])
+    //console.log('query', query)
+
+    // now query
+    await this.connect()
+    const results = await this.db.query(query[0], searchResultCount+10)
+    //console.log('results', results)
+    
+    // done
+    return results
+      .map((result) => {
+        return {
+          content: result.item.metadata.content as string,
+          score: result.score,
+          metadata: result.item.metadata.metadata as any,
+        }
+      })
+      .filter((result) => result.score > relevanceCutOff)
+      //.sort((a, b) => b.score - a.score)
+      .slice(0, searchResultCount)
 
   }
 
