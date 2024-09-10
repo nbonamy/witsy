@@ -131,7 +131,8 @@ declare global {
           url: string,
           properties: anyDict
         }): string
-        pick?(opts: anyDict): File
+        pick?(opts: anyDict): string|strDict|string[]
+        pickDir?(): string
         delete?(filepath: string): void
         find?(name: string): string
         extractText?(contents: string, format: string): string
@@ -167,7 +168,7 @@ declare global {
         closeExperts?(): void
         toggleExperts?(): void
         isExpertsOpen?(): boolean
-        onExpert(prompt: string): void
+        onExpert?(prompt: string): void
         cancel?(): void
       }
       experts?: {
@@ -184,6 +185,7 @@ declare global {
         addDocument?(id: string, type: string, url: string): void
         removeDocument?(id: string, docId: string): void
         query?(id: string, text: string): DocRepoQueryResponseItem[]
+        isEmbeddingAvailable?(engine: string, model: string): boolean
       },
         clipboard?: {
         writeText?(text: string): void

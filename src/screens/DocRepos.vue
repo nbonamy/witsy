@@ -12,9 +12,9 @@
             </template>
           </div>
           <div class="actions">
-            <button class="button" @click.prevent="onCreate"><BIconPlus /></button>
-            <button class="button" @click.prevent="onDelete"><BIconDash /></button>
-            <button class="button right lighter" @click.prevent="onConfig"><BIconGearFill /></button>
+            <button class="button create" @click.prevent="onCreate"><BIconPlus /></button>
+            <button class="button delete" @click.prevent="onDelete"><BIconDash /></button>
+            <button class="button config right lighter" @click.prevent="onConfig"><BIconGearFill /></button>
           </div>
         </div>
         <div class="details" v-if="selectedRepo">
@@ -41,8 +41,8 @@
               </template>
             </div>
             <div class="actions">
-              <button ref="plusButton" class="button" @click.prevent="showContextMenu"><BIconPlus /></button>
-              <button class="button" @click.prevent="onDelDoc"><BIconDash /></button>
+              <button ref="plusButton" class="button add" @click.prevent="showContextMenu"><BIconPlus /></button>
+              <button class="button remove" @click.prevent="onDelDoc"><BIconDash /></button>
             </div>
           </div>
           <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom" :teleport="false" />
@@ -73,7 +73,7 @@ import Spinner from '../components/Spinner.vue'
 import useEventBus from '../composables/useEventBus'
 const { onEvent, emitEvent } = useEventBus()
 
-const docRepos = ref([])
+const docRepos = ref(null)
 const plusButton = ref(null)
 const selectedRepo = ref(null)
 const selectedDocs = ref([])
@@ -130,7 +130,6 @@ const onClose = () => {
 const loadDocRepos = async () => {
   const selectedRepoId = selectedRepo.value?.uuid
   const repos = await window.api.docrepo?.list()
-  //console.log(JSON.stringify(repos, null, 2))
   docRepos.value = repos ?? []
   if (selectedRepoId) {
     selectRepo(docRepos.value.find((repo) => repo.uuid == selectedRepoId))
@@ -201,9 +200,9 @@ const onMore = (event) => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = plusButton.value.getBoundingClientRect()
-  const rcDialog = document.getElementById('docrepos').getBoundingClientRect()
-  menuX.value = rcButton.left - rcDialog.left + 4
-  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 4
+  const rcDialog = document.getElementById('docrepos')?.getBoundingClientRect()
+  menuX.value = rcButton.left - rcDialog?.left + 4
+  menuY.value = rcDialog?.bottom - rcButton.bottom + rcButton.height + 4
 }
 
 const closeContextMenu = () => {
