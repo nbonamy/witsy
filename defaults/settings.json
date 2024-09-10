@@ -46,7 +46,7 @@
     "chunkSize": 1000,
     "chunkOverlap": 100,
     "searchResultCount": 5,
-    "relevanceCutOff": 0.35
+    "relevanceCutOff": 0.2
   },
   "engines": {
     "openai": {
