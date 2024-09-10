@@ -137,20 +137,26 @@ export default class DocumentBaseImpl {
     // now split
     const splitter = new Splitter(this.config)
     const chunks = await splitter.split(text)
-    //console.log(`Split into ${chunks.length} chunks`)
 
     // loose estimate of the batch size based on:
     // 1 token = 4 bytes
     // max tokens = 8192 (apply a 75% contingency)
-    const batchSize = Math.min(EMBED_BATCH_SIZE, Math.floor(8192 * .75 / (splitter.chunkSize / 4)))
+    const batchSize = Math.min(EMBED_BATCH_SIZE, Math.floor(8192.0 * .75 / (splitter.chunkSize / 4.0)))
+    //console.log(`Batch size: ${batchSize}`)
     
     // now embed
     const documents = []
     const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
     while (chunks.length > 0) {
       const batch = chunks.splice(0, batchSize)
+      //console.log(`Embedding ${batch.length} chunks`)
       const embeddings = await embedder.embed(batch)
+      //console.log('Embeddings', JSON.stringify(embeddings, null, 2))
       for (let i = 0; i < batch.length; i++) {
+        // console.log(JSON.stringify({
+        //   content: batch[i],
+        //   vector: embeddings[i]
+        // }))
         documents.push({
           content: batch[i],
           vector: embeddings[i],

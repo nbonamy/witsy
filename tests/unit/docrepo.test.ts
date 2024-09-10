@@ -27,9 +27,9 @@ vi.mock('../../src/rag/embedder', async() => {
   const Embedder = vi.fn()
   Embedder.dimensions = vi.fn(() => 384)
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
-    if (texts[0].includes('squash') && texts[0].includes('tennis')) return [embeddings['squashtennis']]
-    else if (texts[0].includes('squash')) return [embeddings['squash']]
-    else return [embeddings['other']]
+    if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])
+    else if (texts[0].includes('squash')) return Array(texts.length).fill(embeddings['squash'])
+    else return Array(texts.length).fill(embeddings['other'])
   })
   Embedder.init = vi.fn(() => new Embedder())
   return { default: Embedder }
@@ -185,6 +185,7 @@ test('Docrepo large document', async () => {
 test('Docrepo update document', async () => {
   
   const docrepo = new DocumentRepository(app)
+  docrepo.config.rag = { chunkSize: 500 }
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid1 = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
@@ -199,7 +200,7 @@ test('Docrepo update document', async () => {
   // check the database
   const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
   const items = await db.listItems()
-  expect(items).toHaveLength(1)
+  expect(items).toHaveLength(2)
 
 })
 
