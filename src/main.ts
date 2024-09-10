@@ -438,7 +438,7 @@ ipcMain.on('anywhere-toggle-experts', async () => {
   await window.toggleExpertsPalette();
 })
 
-ipcMain.on('anywhere-is-experts-open', () => {
+ipcMain.on('anywhere-is-experts-open', (event) => {
   event.returnValue = window.isExpertsPaletteOpen();
 })
 
@@ -470,6 +470,26 @@ ipcMain.on('close-readaloud-palette', async () => {
 
 ipcMain.on('docrepo-list', (event) => {
   event.returnValue = JSON.stringify(docRepo.list());
+});
+
+ipcMain.on('docrepo-connect', async (event, baseId) => {
+  try {
+    await docRepo.connect(baseId, true);
+    event.returnValue = true
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
+  }
+});
+
+ipcMain.on('docrepo-disconnect', async (event) => {
+  try {
+    await docRepo.disconnect();
+    event.returnValue = true
+  } catch (error) {
+    console.error(error);
+    event.returnValue = false
+  }
 });
 
 ipcMain.on('docrepo-create', async (event, payload) => {
