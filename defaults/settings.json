@@ -43,8 +43,8 @@
   },
   "rag": {
     "maxDocumentSizeMB": 1,
-    "chunkSize": 1000,
-    "chunkOverlap": 100,
+    "chunkSize": 500,
+    "chunkOverlap": 50,
     "searchResultCount": 5,
     "relevanceCutOff": 0.2
   },
