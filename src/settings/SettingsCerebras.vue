@@ -10,11 +10,14 @@
     </div>
     <div class="group">
       <label>Chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">
-          {{ model.name }}
-        </option>
-      </select>
+      <div class="subgroup">
+        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+          <option v-for="model in chat_models" :key="model.id" :value="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+        <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">More about Cerebras models</a>
+      </div>
       <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>

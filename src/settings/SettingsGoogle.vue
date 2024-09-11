@@ -15,7 +15,7 @@
           </option>
         </select>
         <br />
-        <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">More about Google models</a>
+        <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">More about Google models</a><br/>
         <a href="https://ai.google.dev/pricing" target="_blank">Google pricing</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
