@@ -107,7 +107,7 @@ test('Settings close', async () => {
 test('Settings General', async () => {
   
   const tab = await switchToTab(0)
-  expect(tab.findAll('.group')).toHaveLength(4)
+  expect(tab.findAll('.group')).toHaveLength(5)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
   expect(tab.findAll('.group.engine select option')).toHaveLength(availableEngines.length)

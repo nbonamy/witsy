@@ -1,8 +1,8 @@
 
 <template>
 	<div class="empty">
-    <div class="hint" v-if="store.config.general.hints.engineSelector && !showAllEngines && engines.length>1">
-      Click here to switch to a different LLM!<br/>
+    <div class="tip engine" v-if="showEngineTip()">
+      Click here to switch to a different chat bot provider!<br/>
       <img src="/assets/arrow_dashed.svg" />
     </div>
 		<div class="engines">
@@ -14,6 +14,10 @@
 		<select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel">
 			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
 		</select>
+    <div class="tip model" v-if="showModelTip()">
+      <img src="/assets/arrow_dashed.svg" /><br/>
+      Click here to switch to a different chat bot model!
+    </div>
 	</div>
 </template>
 
@@ -43,6 +47,14 @@ const isCurrentEngine = (engine) => {
   return store.config.llm.engine === engine
 }
 
+const showEngineTip = () => {
+  return store.config.general.tips.engineSelector && !showAllEngines.value && engines.value.length > 1
+}
+
+const showModelTip = () => {
+  return !store.config.general.tips.engineSelector && store.config.general.tips.modelSelector && !showAllEngines.value && models.value.length > 1
+}
+
 const onEngine = (engine) => {
 
   if (showAllEngines.value === false) {
@@ -66,11 +78,11 @@ const onEngine = (engine) => {
       return
     }
 
-    // close and disable hint
+    // close and disable tip
     showAllEngines.value = false
-    store.config.general.hints.engineSelector = false
+    store.config.general.tips.engineSelector = false
 
-    // now select the engine
+    // select the engine
     store.config.llm.engine = engine
     store.saveSettings()
 
@@ -79,6 +91,13 @@ const onEngine = (engine) => {
 }
 
 const onSelectModel = (ev) => {
+
+  // disable tip
+  if (showModelTip()) {
+    store.config.general.tips.modelSelector = false
+  }
+
+  // select the model
   let model = ev.target.value
   store.config.engines[store.config.llm.engine].model.chat = model
   store.saveSettings()
@@ -97,7 +116,7 @@ const onSelectModel = (ev) => {
   align-items: center;
 }
 
-.empty .hint {
+.empty .tip {
   font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
   text-align: center;
   font-style: italic;
@@ -110,6 +129,12 @@ const onSelectModel = (ev) => {
     width: 32px;
     rotate: 90deg;
     stroke: #888;
+  }
+
+  &.model {
+    img {
+      rotate: 270deg;
+    }
   }
 }
 
