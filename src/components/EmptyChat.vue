@@ -44,27 +44,38 @@ const isCurrentEngine = (engine) => {
 }
 
 const onEngine = (engine) => {
-  if (engines.value.length < 2) return
-  if (!isEngineReady(engine) || !hasChatModels(engine)) {
-    Swal.fire({
-      title: 'This engine needs to be configured first! Do you want to open the Settings?',
-      confirmButtonText: 'Configure',
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        emitEvent('openSettings', { initialTab: 'models', engine: engine })
-      }
-    })
-    return
-  }
-  store.config.general.hints.engineSelector = false
+
   if (showAllEngines.value === false) {
+
+    // show all always
     showAllEngines.value = true
+  
   } else {
+
+    // check if the engine is ready
+    if (!isEngineReady(engine) || !hasChatModels(engine)) {
+      Swal.fire({
+        title: 'This engine needs to be configured first! Do you want to open the Settings?',
+        confirmButtonText: 'Configure',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          emitEvent('openSettings', { initialTab: 'models', engine: engine })
+        }
+      })
+      return
+    }
+
+    // close and disable hint
     showAllEngines.value = false
+    store.config.general.hints.engineSelector = false
+
+    // now select the engine
     store.config.llm.engine = engine
     store.saveSettings()
+
   }
+
 }
 
 const onSelectModel = (ev) => {
