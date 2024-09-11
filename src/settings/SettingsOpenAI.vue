@@ -14,7 +14,7 @@
           <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select>
-        <a href="https://platform.openai.com/docs/models/continuous-model-upgrades" target="_blank">More about OpenAI models</a>
+        <a href="https://platform.openai.com/docs/models/continuous-model-upgrades" target="_blank">More about OpenAI models</a><br/>
         <a href="https://openai.com/pricing" target="_blank">OpenAI pricing</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>

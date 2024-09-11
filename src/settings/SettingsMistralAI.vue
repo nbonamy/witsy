@@ -10,11 +10,15 @@
     </div>
     <div class="group">
       <label>Chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">
-          {{ model.name }}
-        </option>
-      </select>
+      <div class="subgroup">
+        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+          <option v-for="model in chat_models" :key="model.id" :value="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+        <a href="https://docs.mistral.ai/docs/models" target="_blank">More about MistralAI models</a><br/>
+        <a href="https://mistral.ai/technology/#pricing" target="_blank">MistralAI pricing</a>
+      </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>

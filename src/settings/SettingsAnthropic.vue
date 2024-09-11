@@ -10,11 +10,15 @@
     </div>
     <div class="group">
       <label>Chat model</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">
-          {{ model.name }}
-        </option>
-      </select>
+      <div class="subgroup">
+        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+          <option v-for="model in chat_models" :key="model.id" :value="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+        <a href="https://docs.anthropic.com/en/docs/about-claude/models" target="_blank">More about Anthropic models</a><br/>
+        <a href="https://www.anthropic.com/pricing#anthropic-api" target="_blank">Anthropic pricing</a>
+      </div>
       <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>
