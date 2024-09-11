@@ -54,7 +54,7 @@ export default class extends LlmEngine {
     }
   }
 
-  private setBaseURL() {
+  protected setBaseURL() {
     if (this.client) {
       this.client.baseURL = this.config.engines.openai.baseURL || defaults.engines.openai.baseURL
     }

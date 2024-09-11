@@ -92,6 +92,15 @@
         "chat": ""
       }
     },
+    "cerebras": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "mistralai": {
       "models": {
         "chat": [],
