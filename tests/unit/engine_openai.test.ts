@@ -18,8 +18,10 @@ window.api = {
 }
 
 vi.mock('openai', async () => {
-  const OpenAI = vi.fn()
-  OpenAI.prototype.apiKey = '123'
+  const OpenAI = vi.fn((opts: _OpenAI.ClientOptions) => {
+    OpenAI.prototype.apiKey = opts.apiKey
+    OpenAI.prototype.baseURL = opts.baseURL
+  })
   OpenAI.prototype.models = {
     list: vi.fn(() => {
       return { data: [
