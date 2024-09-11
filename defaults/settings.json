@@ -2,7 +2,10 @@
 {
   "general": {
     "keepRunning": true,
-    "language": ""
+    "language": "",
+    "hints": {
+      "engineSelector": true
+    }
   },
   "llm": {
     "engine": "openai",
