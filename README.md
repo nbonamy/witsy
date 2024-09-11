@@ -4,7 +4,7 @@
 # Witsy
 
 Generative AI desktop application:
-- OpenAI, Ollama, Anthropic, MistralAI, Google and Groq models supported
+- OpenAI, Ollama, Anthropic, MistralAI, Google, Groq and Cerebras models supported
 - Chat completion and image generation with Vision models support
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
@@ -95,6 +95,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Cerebras support
 - [x] Local files RAG
 - [x] Groq model update (8-Sep-2024)
 - [x] PDF Export of chats
