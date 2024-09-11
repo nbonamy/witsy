@@ -12,6 +12,7 @@ import logoAnthropic from '../../assets/anthropic.svg'
 import logoMistralAI from '../../assets/mistralai.svg'
 import logoGoogle from '../../assets/google.svg'
 import logoGroq from '../../assets/groq.svg'
+import logoCerberas from '../../assets/cerebras.svg'
 
 const logos = {
   openai: logoOpenAI,
@@ -19,7 +20,8 @@ const logos = {
   anthropic: logoAnthropic,
   mistralai: logoMistralAI,
   google: logoGoogle,
-  groq: logoGroq
+  groq: logoGroq,
+  cerebras: logoCerberas,
 }
 
 const props = defineProps({
@@ -77,6 +79,15 @@ const logo = computed(() => logos[props.engine])
 
 .logo.grayscale.google {
   filter: grayscale()
+}
+
+.logo.grayscale.cerebras {
+  filter: grayscale()
+}
+
+.logo.background.cerebras {
+  background-color: white;
+  filter: none;
 }
 
 </style>

@@ -9,10 +9,11 @@ import MistralAI, { isMistrailAIReady } from './mistralai'
 import Anthropic, { isAnthropicReady } from './anthropic'
 import Google, { isGoogleReady } from './google'
 import Groq, { isGroqReady } from './groq'
+import Cerebreas,{ isCerebeasReady } from './cerebras'
 import LlmEngine from './engine'
 
-export const availableEngines = ['openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq']
-export const staticModelsEngines = [ 'anthropic', 'google', 'groq']
+export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq', 'cerebras' ]
+export const staticModelsEngines = [ 'anthropic', 'google', 'groq', 'cerebras' ]
 
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
@@ -21,6 +22,7 @@ export const isEngineReady = (engine: string) => {
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
   if (engine === 'google') return isGoogleReady(store.config.engines.google)
   if (engine === 'groq') return isGroqReady(store.config.engines.groq)
+  if (engine === 'cerebras') return isCerebeasReady(store.config.engines.cerebras)
   return false
 }
 
@@ -31,8 +33,12 @@ export const igniteEngine = (engine: string, config: Configuration, fallback = '
   if (engine === 'anthropic') return new Anthropic(config)
   if (engine === 'google') return new Google(config)
   if (engine === 'groq') return new Groq(config)
-  if (isEngineReady(fallback)) return igniteEngine(fallback, config)
-    return null
+  if (engine === 'cerebras') return new Cerebreas(config)
+  if (isEngineReady(fallback)) {
+    console.log(`Engine ${engine} unknown. Falling back to ${fallback}`)
+    return igniteEngine(fallback, config)
+  }
+  return null
 }
 
 export const hasVisionModels = (engine: string) => {
@@ -80,6 +86,8 @@ export const loadModels = async (engine: string) => {
     await loadGoogleModels()
   } else if (engine === 'groq') {
     await loadGroqModels()
+  } else if (engine === 'cerebras') {
+    await loadCerebrasModels()
   }
 }
 
@@ -313,6 +321,39 @@ export const loadGroqModels = async () => {
 
   // select valid model
   store.config.engines.groq.model.chat = getValidModelId('groq', 'chat', store.config.engines.groq.model.chat)
+
+  // done
+  return true
+}
+
+export const loadCerebrasModels = async () => {
+  
+  let models = []
+
+  try {
+    const cerebras = new Cerebreas(store.config)
+    models = await cerebras.getModels()
+  } catch (error) {
+    console.error('Error listing Cerebras models:', error);
+  }
+  if (!models) {
+    store.config.engines.cerebras.models = { chat: [], image: [], }
+    return false
+  }
+
+  // store
+  store.config.engines.cerebras.models = {
+    chat: models
+    .map(model => { return {
+      id: model.id,
+      name: model.name,
+      meta: model
+    }})
+    //.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.cerebras.model.chat = getValidModelId('cerebras', 'chat', store.config.engines.cerebras.model.chat)
 
   // done
   return true
