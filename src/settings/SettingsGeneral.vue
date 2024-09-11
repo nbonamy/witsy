@@ -17,6 +17,10 @@
       <label>Answer in</label>
       <LangSelect v-model="language" @change="save" />
     </div>
+    <div class="group reset-tips">
+      <label>Reset tips</label>
+      <button @click.prevent="onResetTips">Reset</button>
+    </div>
     <div class="group run-at-login">
       <label>Run at login</label>
       <input type="checkbox" v-model="runAtLogin" @change="save" />
@@ -44,6 +48,11 @@ const load = () => {
   language.value = store.config.general.language
   runAtLogin.value = window.api.runAtLogin.get()
   keepRunning.value = store.config.general.keepRunning
+}
+
+const onResetTips = () => {
+  store.config.general.tips = {}
+  store.saveSettings()
 }
 
 const save = () => {

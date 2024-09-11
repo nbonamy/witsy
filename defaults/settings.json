@@ -3,8 +3,9 @@
   "general": {
     "keepRunning": true,
     "language": "",
-    "hints": {
-      "engineSelector": true
+    "tips": {
+      "engineSelector": true,
+      "modelSelector": true
     }
   },
   "llm": {

@@ -26,7 +26,7 @@ beforeEach(() => {
   // store
   store.config = {
     general: {
-      hints: {
+      tips: {
         engineSelector: true
       }
     },
@@ -76,7 +76,7 @@ test('Renders correctly', async () => {
   const wrapper = mount(EmptyChat)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.empty').exists()).toBe(true)
-  expect(wrapper.find('.empty .hint').exists()).toBe(true)
+  expect(wrapper.find('.empty .tip').exists()).toBe(true)
   expect(wrapper.find('.empty .engines').exists()).toBe(true)
   expect(wrapper.find('.empty select').exists()).toBe(true)
   expect(wrapper.vm.showAllEngines).toBe(false)
@@ -92,10 +92,10 @@ test('Selects engine', async () => {
   const wrapper = mount(EmptyChat)
   await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
-  expect(wrapper.find('.empty .hint').exists()).toBe(false)
+  expect(wrapper.find('.empty .tip').exists()).toBe(false)
   await wrapper.find('.empty .engines :nth-child(2)').trigger('click')
   expect(store.config.llm.engine).toBe(availableEngines[1])
-  expect(wrapper.find('.empty .hint').exists()).toBe(false)
+  expect(wrapper.find('.empty .tip').exists()).toBe(false)
 })
 
 test('Selects model', async () => {

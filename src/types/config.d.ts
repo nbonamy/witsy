@@ -18,7 +18,7 @@ export interface Configuration {
 interface GeneralConfig {
   keepRunning: boolean
   language: string
-  hints: {[key: string]: boolean}
+  tips: {[key: string]: boolean}
 }
 
 interface LLMConfig {
