@@ -1,22 +1,24 @@
 
-import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
+import { vi, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 import EngineLogo from '../../src/components/EngineLogo.vue'
 import { availableEngines } from '../../src/services/llm'
+import _Swal from 'sweetalert2/dist/sweetalert2.js'
 
 enableAutoUnmount(afterAll)
 
-beforeAll(() => {
+window.api = {
+  config: {
+    save: vi.fn()
+  },
+}
 
-  // api
-  window.api = {
-    config: {
-      save: vi.fn()
-    },
-  }
-
+vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
+  return { default: {
+    fire: vi.fn(() => Promise.resolve({ isConfirmed: false }))
+  }}
 })
 
 beforeEach(() => {
@@ -25,7 +27,7 @@ beforeEach(() => {
   store.config = {
     general: {
       hints: {
-        engineSelect: true
+        engineSelector: true
       }
     },
     llm: {
@@ -51,8 +53,18 @@ beforeEach(() => {
             { id: 'llama3-8b', name: 'llama3-70b' }
           ]
         }
+      },
+      anthropic: {
+        apiKey: 'test',
+      },
+      mistralai: {
+        models: {
+          chat: [
+            { id: 'llama3-8b', name: 'llama3-70b' },
+            { id: 'llama3-8b', name: 'llama3-70b' }
+          ]
+        }
       }
-    
     }
   }
   store.config.getActiveModel = () => {
@@ -64,6 +76,7 @@ test('Renders correctly', async () => {
   const wrapper = mount(EmptyChat)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.empty').exists()).toBe(true)
+  expect(wrapper.find('.empty .hint').exists()).toBe(true)
   expect(wrapper.find('.empty .engines').exists()).toBe(true)
   expect(wrapper.find('.empty select').exists()).toBe(true)
   expect(wrapper.vm.showAllEngines).toBe(false)
@@ -79,8 +92,10 @@ test('Selects engine', async () => {
   const wrapper = mount(EmptyChat)
   await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
+  expect(wrapper.find('.empty .hint').exists()).toBe(false)
   await wrapper.find('.empty .engines :nth-child(2)').trigger('click')
   expect(store.config.llm.engine).toBe(availableEngines[1])
+  expect(wrapper.find('.empty .hint').exists()).toBe(false)
 })
 
 test('Selects model', async () => {
@@ -88,4 +103,18 @@ test('Selects model', async () => {
   expect(store.config.engines.openai.model.chat).toBe('gpt-4-turbo')
   await wrapper.find('.empty select').setValue('gpt-4o')
   expect(store.config.engines.openai.model.chat).toBe('gpt-4o')
+})
+
+test('Prompts when selecting not ready engine', async () => {
+  const wrapper = mount(EmptyChat)
+  await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
+  await wrapper.find('.empty .engines :nth-child(3)').trigger('click')
+  expect(_Swal.fire).toHaveBeenCalledTimes(1)
+  expect(store.config.llm.engine).toBe(availableEngines[0])
+  await wrapper.find('.empty .engines :nth-child(4)').trigger('click')
+  expect(_Swal.fire).toHaveBeenCalledTimes(2)
+  expect(store.config.llm.engine).toBe(availableEngines[0])
+  await wrapper.find('.empty .engines :nth-child(5)').trigger('click')
+  expect(_Swal.fire).toHaveBeenCalledTimes(3)
+  expect(store.config.llm.engine).toBe(availableEngines[0])
 })
