@@ -50,7 +50,7 @@ const deleteMode = ref(false)
 const selectMode = computed(() => deleteMode.value)
 
 const onSettings = () => {
-  emitEvent('openSettings')
+  emitEvent('openSettings', { initialTab: 'general' })
 }
 
 const onNewChat = () => {

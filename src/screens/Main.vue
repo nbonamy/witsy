@@ -2,7 +2,7 @@
   <div class="main">
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
-    <Settings id="settings" :initial-tab="settingsInitialTab"/>
+    <Settings id="settings" />
     <DocRepos />
   </div>
 </template>
@@ -30,7 +30,6 @@ store.load()
 import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
 
-const settingsInitialTab = ref('general')
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -168,8 +167,7 @@ const onSendPrompt = async (prompt) => {
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
-    settingsInitialTab.value = 'models'
-    nextTick(() => emitEvent('openSettings'))
+    nextTick(() => emitEvent('openSettings', { initialTab: 'models' }))
     return
   }
 

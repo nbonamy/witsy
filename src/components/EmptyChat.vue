@@ -22,7 +22,11 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { availableEngines, isEngineReady, hasChatModels } from '../services/llm'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 import EngineLogo from './EngineLogo.vue'
+
+import useEventBus from '../composables/useEventBus'
+const { emitEvent } = useEventBus()
 
 const showAllEngines = ref(false)
 
@@ -31,7 +35,7 @@ const showAllEngines = ref(false)
 // because we will lose reactivity :-(
 //
 
-const engines = computed(() => availableEngines.filter((engine) => hasChatModels(engine)))
+const engines = computed(() => availableEngines)
 const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
 const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
 
@@ -41,6 +45,18 @@ const isCurrentEngine = (engine) => {
 
 const onEngine = (engine) => {
   if (engines.value.length < 2) return
+  if (!isEngineReady(engine) || !hasChatModels(engine)) {
+    Swal.fire({
+      title: 'This engine needs to be configured first! Do you want to open the Settings?',
+      confirmButtonText: 'Configure',
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        emitEvent('openSettings', { initialTab: 'models', engine: engine })
+      }
+    })
+    return
+  }
   store.config.general.hints.engineSelector = false
   if (showAllEngines.value === false) {
     showAllEngines.value = true

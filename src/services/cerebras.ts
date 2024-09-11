@@ -2,7 +2,7 @@ import { EngineConfig, Configuration } from '../types/config.d'
 import OpenAI from './openai'
 
 export const isCerebeasReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig.apiKey?.length > 0
+  return engineConfig?.apiKey?.length > 0 && engineConfig?.models?.chat?.length > 0
 }
 
 export default class extends OpenAI {

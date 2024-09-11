@@ -8,6 +8,12 @@ import * as _OpenAI from 'openai'
 import { loadCerebrasModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
+window.api = {
+  config: {
+    save: vi.fn()
+  },
+}
+
 vi.mock('openai', async () => {
   const OpenAI = vi.fn((opts: _OpenAI.ClientOptions) => {
     OpenAI.prototype.apiKey = opts.apiKey

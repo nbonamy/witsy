@@ -29,6 +29,7 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
+  vi.clearAllMocks()
   const chat = new Chat()
   chat.setEngineModel('mock', 'chat')
   store.chats = [chat]
@@ -54,7 +55,7 @@ test('New Chat', async () => {
 test('Open Settings', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .footer #open-settings').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('openSettings')
+  expect(emitEventMock).toHaveBeenCalledWith('openSettings', { initialTab: 'general'})
 })
 
 test('Start and Cancel Delete', async () => {
