@@ -1,5 +1,10 @@
+
 <template>
 	<div class="empty">
+    <div class="hint" v-if="store.config.general.hints.engineSelector && !showAllEngines && engines.length>1">
+      Click here to switch to a different LLM!<br/>
+      <img src="/assets/arrow_dashed.svg" />
+    </div>
 		<div class="engines">
 			<EngineLogo v-for="engine in engines" :engine="engine" :grayscale="true"
 				:class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }"
@@ -36,6 +41,7 @@ const isCurrentEngine = (engine) => {
 
 const onEngine = (engine) => {
   if (engines.value.length < 2) return
+  store.config.general.hints.engineSelector = false
   if (showAllEngines.value === false) {
     showAllEngines.value = true
   } else {
@@ -62,6 +68,22 @@ const onSelectModel = (ev) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.empty .hint {
+  font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+  text-align: center;
+  font-style: italic;
+  font-size: 11pt;
+  color: #888;
+  margin-bottom: 16px;
+
+  img {
+    margin-top: 4px;
+    width: 32px;
+    rotate: 90deg;
+    stroke: #888;
+  }
 }
 
 .empty .engines {

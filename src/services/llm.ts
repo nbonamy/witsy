@@ -364,7 +364,6 @@ export const loadCerebrasModels = async () => {
   }
 
   // store
-  console.log(JSON.stringify(models))
   store.config.engines.cerebras.models = {
     chat: models
     .map(model => { return {
