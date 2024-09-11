@@ -8,6 +8,12 @@ import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext'
 import { loadGroqModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
+window.api = {
+  config: {
+    save: vi.fn()
+  },
+}
+
 vi.mock('groq-sdk', async() => {
   const Groq = vi.fn()
   Groq.prototype.apiKey = '123'

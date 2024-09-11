@@ -8,6 +8,12 @@ import { loadGoogleModels } from '../../src/services/llm'
 import { EnhancedGenerateContentResponse, FunctionCall, FinishReason } from '@google/generative-ai'
 import * as _Google from '@google/generative-ai'
 
+window.api = {
+  config: {
+    save: vi.fn()
+  },
+}
+
 vi.mock('@google/generative-ai', async() => {
   const GoogleChat = vi.fn()
   GoogleChat.prototype.sendMessage = vi.fn(() => { return { response: { text: () => 'response' } } })

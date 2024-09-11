@@ -23,6 +23,11 @@ beforeEach(() => {
 
   // store
   store.config = {
+    general: {
+      hints: {
+        engineSelect: true
+      }
+    },
     llm: {
       engine: 'openai',
     },
@@ -30,22 +35,24 @@ beforeEach(() => {
       openai: {
         models: {
           chat: [
-          {
-            id: 'gpt-3.5-turbo',
-            name: 'gpt-3.5-turbo'
-           }, {
-            id: 'gpt-4-turbo',
-            name: 'gpt-4-turbo'
-           }, {
-            id: 'gpt-4o',
-            name: 'gpt-4o'
-           }
+            { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo' },
+            { id: 'gpt-4-turbo', name: 'gpt-4-turbo' },
+            { id: 'gpt-4o', name: 'gpt-4o' }
           ]
         },
         model: {
           chat: 'gpt-4-turbo'
         }
+      },
+      ollama: {
+        models: {
+          chat: [
+            { id: 'llama3-8b', name: 'llama3-70b' },
+            { id: 'llama3-8b', name: 'llama3-70b' }
+          ]
+        }
       }
+    
     }
   }
   store.config.getActiveModel = () => {

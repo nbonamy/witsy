@@ -61,7 +61,10 @@ const selectEngine = (engine) => {
   nextTick(() => engineSettings.value.load())
 }
 
-const load = () => {
+const load = (payload) => {
+  if (payload?.engine) {
+    currentEngine.value = payload.engine
+  }
   engineSettings.value.load()
 }
 

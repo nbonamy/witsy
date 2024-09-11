@@ -7,7 +7,7 @@ import { Ollama } from 'ollama/dist/browser.mjs'
 import { ChatResponse, ProgressResponse } from 'ollama'
 
 export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig.models.chat.length > 0
+  return engineConfig?.models?.chat?.length > 0
 }
 
 export const getChatModels = [

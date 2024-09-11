@@ -11,6 +11,9 @@ import { loadMistralAIModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {
+  config: {
+    save: vi.fn()
+  },
   file: {
     extractText: (contents) => contents
   }

@@ -32,6 +32,9 @@ vi.mock('openai', async() => {
 })
 
 window.api = {
+  config: {
+    save: vi.fn()
+  },
   base64: {
     decode: (data: string) => data
   },

@@ -5,15 +5,15 @@
       <main>
         <div class="tabs">
           <ul>
-            <SettingsTab title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-            <SettingsTab title="Appearance"><BIconPalette class="icon" /></SettingsTab>
-            <SettingsTab title="Commands"><BIconMagic class="icon" /></SettingsTab>
-            <SettingsTab title="Experts"><BIconPersonVcard class="icon" /></SettingsTab>
-            <SettingsTab title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-            <SettingsTab title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-            <SettingsTab title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-            <SettingsTab title="TTS" :checked="initialTab == 'tts'"><BIconMegaphone class="icon" /></SettingsTab>
-            <SettingsTab title="Advanced"><BIconTools class="icon" /></SettingsTab>
+            <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
+            <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
+            <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
+            <SettingsTab class="experts" title="Experts"><BIconPersonVcard class="icon" /></SettingsTab>
+            <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
+            <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+            <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
+            <SettingsTab class="tts" title="TTS" :checked="initialTab == 'tts'"><BIconMegaphone class="icon" /></SettingsTab>
+            <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
           <SettingsAppearance ref="settingsAppearance" />
@@ -46,6 +46,7 @@ import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsTTS from '../settings/SettingsTTS.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 
+import { nextTick } from 'vue'
 import { installTabs, showActiveTab } from '../composables/tabs'
 
 // bus
@@ -75,18 +76,27 @@ onMounted(async () => {
   installTabs()
 })
 
-const onOpenSettings = () => {
-  settingsGeneral.value.load()
-  settingsAppearance.value.load()
-  settingsShortcuts.value.load()
-  settingsCommands.value.load()
-  settingsPrompts.value.load()
-  settingsLLM.value.load()
-  settingsPlugins.value.load()
-  settingsTTS.value.load()
-  settingsAdvanced.value.load()
+const onOpenSettings = (payload) => {
+
+  // load all panels
+  settingsGeneral.value.load(payload)
+  settingsAppearance.value.load(payload)
+  settingsShortcuts.value.load(payload)
+  settingsCommands.value.load(payload)
+  settingsPrompts.value.load(payload)
+  settingsLLM.value.load(payload)
+  settingsPlugins.value.load(payload)
+  settingsTTS.value.load(payload)
+  settingsAdvanced.value.load(payload)
   document.querySelector('#settings').showModal()
   showActiveTab()
+
+  // show initial tab
+  if (payload?.initialTab) {
+    nextTick(() => {
+      document.querySelector(`.settings .tab.${payload.initialTab} input`)?.click()
+    })
+  }
 }
 
 const onClose = () => {
