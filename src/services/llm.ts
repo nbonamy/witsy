@@ -41,6 +41,10 @@ export const igniteEngine = (engine: string, config: Configuration, fallback = '
   return null
 }
 
+export const hasChatModels = (engine: string) => {
+  return store.config.engines[engine].models.chat.length > 0
+}
+
 export const hasVisionModels = (engine: string) => {
   const instance = igniteEngine(engine, store.config)
   return instance.getVisionModels().length > 0
@@ -132,6 +136,9 @@ export const loadOpenAIModels = async () => {
   store.config.engines.openai.model.chat = getValidModelId('openai', 'chat', store.config.engines.openai.model.chat)
   store.config.engines.openai.model.image = getValidModelId('openai', 'image', store.config.engines.openai.model.image)
 
+  // save
+  store.saveSettings()
+
   // done
   return true
 
@@ -188,6 +195,9 @@ export const loadOllamaModels = async () => {
   // select valid model
   store.config.engines.ollama.model.chat = getValidModelId('ollama', 'chat', store.config.engines.ollama.model.chat)
 
+  // save
+  store.saveSettings()
+
   // done
   return true
 
@@ -221,6 +231,9 @@ export const loadMistralAIModels = async () => {
 
   // select valid model
   store.config.engines.mistralai.model.chat = getValidModelId('mistralai', 'chat', store.config.engines.mistralai.model.chat)
+
+  // save
+  store.saveSettings()
 
   // done
   return true
@@ -256,6 +269,9 @@ export const loadAnthropicModels = async () => {
   // select valid model
   store.config.engines.anthropic.model.chat = getValidModelId('anthropic', 'chat', store.config.engines.anthropic.model.chat)
 
+  // save
+  store.saveSettings()
+
   // done
   return true
 }
@@ -288,6 +304,9 @@ export const loadGoogleModels = async () => {
 
   // select valid model
   store.config.engines.google.model.chat = getValidModelId('google', 'chat', store.config.engines.google.model.chat)
+
+  // save
+  store.saveSettings()
 
   // done
   return true
@@ -322,6 +341,9 @@ export const loadGroqModels = async () => {
   // select valid model
   store.config.engines.groq.model.chat = getValidModelId('groq', 'chat', store.config.engines.groq.model.chat)
 
+  // save
+  store.saveSettings()
+
   // done
   return true
 }
@@ -342,6 +364,7 @@ export const loadCerebrasModels = async () => {
   }
 
   // store
+  console.log(JSON.stringify(models))
   store.config.engines.cerebras.models = {
     chat: models
     .map(model => { return {
@@ -354,6 +377,9 @@ export const loadCerebrasModels = async () => {
 
   // select valid model
   store.config.engines.cerebras.model.chat = getValidModelId('cerebras', 'chat', store.config.engines.cerebras.model.chat)
+
+  // save
+  store.saveSettings()
 
   // done
   return true

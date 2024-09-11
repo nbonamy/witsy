@@ -9,7 +9,7 @@ import LlmEngine from './engine'
 import MistralClient from '../vendor/mistralai'
 
 export const isMistrailAIReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig.models.chat.length > 0
+  return engineConfig.apiKey?.length > 0
 }
 
 export default class extends LlmEngine {

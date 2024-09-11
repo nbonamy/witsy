@@ -4,7 +4,7 @@ import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStre
 import { EngineConfig, Configuration } from '../types/config.d'
 import defaults from '../../defaults/settings.json'
 import LlmEngine from './engine'
-import OpenAI from 'openai'
+import OpenAI, { ClientOptions } from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
 import { Stream } from 'openai/streaming'
 
@@ -21,11 +21,11 @@ export default class extends LlmEngine {
   currentThread: Array<any>
   toolCalls: LlmToolCall[]
 
-  constructor(config: Configuration) {
+  constructor(config: Configuration, opts?: ClientOptions) {
     super(config)
     this.client = new OpenAI({
-      apiKey: config.engines.openai.apiKey,
-      baseURL: config.engines.openai.baseURL || defaults.engines.openai.baseURL,
+      apiKey: opts?.apiKey || config.engines.openai.apiKey,
+      baseURL: opts?.baseURL || config.engines.openai.baseURL || defaults.engines.openai.baseURL,
       dangerouslyAllowBrowser: true
     })
   }

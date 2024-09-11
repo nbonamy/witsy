@@ -1,19 +1,16 @@
 import { EngineConfig, Configuration } from '../types/config.d'
-import _OpenAI from './openai'
-import OpenAI from 'openai'
+import OpenAI from './openai'
 
 export const isCerebeasReady = (engineConfig: EngineConfig): boolean => {
   return engineConfig.apiKey?.length > 0
 }
 
-export default class extends _OpenAI {
+export default class extends OpenAI {
 
   constructor(config: Configuration) {
-    super(config)
-    this.client = new OpenAI({
+    super(config, {
       apiKey: config.engines.cerebras.apiKey,
       baseURL: 'https://api.cerebras.ai/v1',
-      dangerouslyAllowBrowser: true
     })
   }
 
@@ -40,7 +37,7 @@ export default class extends _OpenAI {
   }
 
   protected setBaseURL() {
-    // avoid override by openai
+    // avoid override by super
   }
 
   getAvailableTools(): any[] {
