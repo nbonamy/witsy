@@ -16,7 +16,7 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { availableEngines, isEngineReady } from '../services/llm'
+import { availableEngines, isEngineReady, hasChatModels } from '../services/llm'
 import EngineLogo from './EngineLogo.vue'
 
 const showAllEngines = ref(false)
@@ -26,7 +26,7 @@ const showAllEngines = ref(false)
 // because we will lose reactivity :-(
 //
 
-const engines = computed(() => availableEngines)
+const engines = computed(() => availableEngines.filter((engine) => hasChatModels(engine)))
 const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
 const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
 
