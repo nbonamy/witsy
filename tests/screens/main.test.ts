@@ -19,6 +19,9 @@ window.api = {
   config: {
     load: vi.fn(() => defaults),
   },
+  store: {
+    get: vi.fn(() => null),
+  },
   commands: {
     load: vi.fn(() => []),
   },
