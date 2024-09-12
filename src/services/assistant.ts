@@ -132,7 +132,7 @@ export default class {
       let sources: DocRepoQueryResponseItem[] = [];
       if (this.chat.docrepo) {
         const userMessage = messages[messages.length - 1];
-        sources = window.api.docrepo.query(this.chat.docrepo, userMessage.content);
+        sources = await window.api.docrepo.query(this.chat.docrepo, userMessage.content);
         //console.log('Sources', JSON.stringify(sources, null, 2));
         if (sources.length > 0) {
           const context = sources.map((source) => source.content).join('\n\n');

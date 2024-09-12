@@ -544,16 +544,16 @@ ipcMain.on('docrepo-remove-document', async (event, payload) => {
   }
 });
 
-ipcMain.on('docrepo-query', async(event, payload) => {
+ipcMain.handle('docrepo-query', async(_, payload) => {
   try {
     const { baseId, text } = payload;
     console.log('docrepo-query', baseId, text);
     const results = await docRepo.query(baseId, text);
     console.log('docrepo-query results returned = ', results.length);
-    event.returnValue = results
+    return results
   } catch (error) {
     console.error(error);
-    event.returnValue = []
+    return []
   }
 });
 
