@@ -29,7 +29,7 @@
 
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
@@ -43,11 +43,15 @@ const props = defineProps({
 })
 
 const chatList = ref(null)
-const sidebarWidth = ref('250')
+const sidebarWidth = ref(null)
 const filter = ref('')
 const deleteMode = ref(false)
 
 const selectMode = computed(() => deleteMode.value)
+
+onMounted(() => {
+  sidebarWidth.value = window.api.store.get('sidebarWidth') || 250
+})
 
 const onSettings = () => {
   emitEvent('openSettings', { initialTab: 'general' })
