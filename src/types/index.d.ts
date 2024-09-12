@@ -184,7 +184,7 @@ declare global {
         delete?(id: string): void
         addDocument?(id: string, type: string, url: string): void
         removeDocument?(id: string, docId: string): void
-        query?(id: string, text: string): DocRepoQueryResponseItem[]
+        query?(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         isEmbeddingAvailable?(engine: string, model: string): boolean
       },
         clipboard?: {
