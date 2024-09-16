@@ -66,6 +66,10 @@ const config: ForgeConfig = {
     appBundleId: 'com.nabocorp.witsy',
     extendInfo: './build/Info.plist',
     buildVersion: `${process.env.BUILD_NUMBER}`,
+    extraResource: [
+      'assets/bulbTemplate.png',
+      'assets/bulbTemplate@2x.png',
+    ],
     ...osxPackagerConfig,
   },
   rebuildConfig: {},
