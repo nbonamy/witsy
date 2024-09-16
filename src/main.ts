@@ -8,6 +8,7 @@ import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 import { wait } from './main/utils';
+import path from 'node:path';
 
 import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
@@ -69,14 +70,7 @@ const registerShortcuts = () => {
   });
 }
 
-//  Tray icon 
-
-// eslint-disable-next-line import/no-unresolved
-import trayIconMacos from '../assets/bulbTemplate.png?asset';
-// eslint-disable-next-line import/no-unresolved
-import trayIconWindows from '../assets/bulbTemplate@2x.png?asset';
-const trayIcon = process.platform === 'darwin' ? trayIconMacos : trayIconWindows;
-
+//  tray icon 
 let tray: Tray = null;
 const buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
 
@@ -154,8 +148,15 @@ app.whenReady().then(() => {
     }
   });
 
+  // tray icon
+  const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
+  const trayIconPath = path.join(assetsFolder, 'bulbTemplate@2x.png');
+  //console.log('trayIconPath', trayIconPath);
+  const trayIcon = nativeImage.createFromPath(trayIconPath);
+  trayIcon.setTemplateImage(true);
+
   // create tray
-  tray = new Tray(nativeImage.createFromDataURL(trayIcon));
+  tray = new Tray(trayIcon);
   tray.on('click', () => {
     const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
     tray.popUpContextMenu(contextMenu);
