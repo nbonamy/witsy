@@ -124,7 +124,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
   }
 
   // get bounds from here
-  const bounds: Electron.Rectangle = store.get('bounds') as Electron.Rectangle;
+  const bounds: Electron.Rectangle = store?.get('bounds') as Electron.Rectangle;
 
   // else open a new one
   mainWindow = createWindow({
