@@ -56,6 +56,10 @@ const autoUpdater = new AutoUpdater({
   preUpdate: () => quitAnyway = true
 });
 
+// open store
+const store = new Store({ name: 'window' });
+window.setStore(store);
+
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
 // new MacosAutomator();
@@ -217,11 +221,11 @@ ipcMain.on('get-app-path', (event) => {
 });
 
 ipcMain.on('get-store-value', (event, payload) => {
-  event.returnValue = new Store().get(payload.key, payload.fallback);
+  event.returnValue = store.get(payload.key, payload.fallback);
 });
 
 ipcMain.on('set-store-value', (event, payload) => {
-  new Store().set(payload.key, payload.value);
+  store.set(payload.key, payload.value);
 });
 
 ipcMain.on('clipboard-write-text', (event, payload) => {

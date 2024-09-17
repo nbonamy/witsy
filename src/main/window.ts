@@ -16,8 +16,13 @@ const titleBarOptions: BrowserWindowConstructorOptions = {
   trafficLightPosition: { x: 16, y: 16 },
 }
 
+// store
+let store: Store|null = null
+export const setStore = (aStore: Store): void => {
+  store = aStore
+}
+
 // create window
-const store = new Store()
 const createWindow = (opts: CreateWindowOpts = {}) => {
   
   // Create the browser window
@@ -118,10 +123,15 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     }
   }
 
+  // get bounds from here
+  const bounds: Electron.Rectangle = store.get('bounds') as Electron.Rectangle;
+
   // else open a new one
   mainWindow = createWindow({
-    width: 1400,
-    height: 800,
+    x: bounds?.x,
+    y: bounds?.y,
+    width: bounds?.width ?? 1400,
+    height: bounds?.height ?? 800,
     ...titleBarOptions,
     ...opts,
     show: false,
@@ -131,8 +141,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     mainWindow.show();
   });
 
-  // restore and save state
-  mainWindow.setBounds(store.get('bounds'))
+  // save state
   mainWindow.on('close', () => {
     store.set('bounds', mainWindow.getBounds())
   })
