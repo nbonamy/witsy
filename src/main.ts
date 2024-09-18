@@ -135,9 +135,8 @@ app.whenReady().then(() => {
   registerShortcuts();
 
   // create the main window
-  // TODO detect when lauched from login item
-  const hidden = false;//app.getLoginItemSettings().wasOpenedAtLogin();
-  if (!hidden) {
+  const settings = config.loadSettings(app);
+  if (!settings.general.hideOnStartup || process.env.DEBUG) {
     log.info('Creating initial main window');
     window.openMainWindow();
   } else {
