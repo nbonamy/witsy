@@ -2,6 +2,7 @@
 {
   "general": {
     "keepRunning": true,
+    "hideOnStartup": false,
     "language": "",
     "tips": {
       "engineSelector": true,

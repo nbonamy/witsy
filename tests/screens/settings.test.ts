@@ -107,7 +107,7 @@ test('Settings close', async () => {
 test('Settings General', async () => {
   
   const tab = await switchToTab(0)
-  expect(tab.findAll('.group')).toHaveLength(5)
+  expect(tab.findAll('.group')).toHaveLength(6)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
   expect(tab.findAll('.group.engine select option')).toHaveLength(availableEngines.length)
@@ -128,6 +128,13 @@ test('Settings General', async () => {
   expect(window.api.runAtLogin.get()).not.toBe(true)
   tab.find('.group.run-at-login input').setValue('true')
   expect(window.api.runAtLogin.get()).toBe(true)
+  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.general.hideOnStartup).not.toBe(true)
+  tab.find('.group.hide-on-startup input').setValue(true)
+  expect(store.config.general.hideOnStartup).toBe(true)
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()

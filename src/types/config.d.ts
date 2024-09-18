@@ -16,6 +16,7 @@ export interface Configuration {
 }
 
 interface GeneralConfig {
+  hideOnStartup: boolean
   keepRunning: boolean
   language: string
   tips: {[key: string]: boolean}

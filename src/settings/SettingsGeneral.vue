@@ -25,6 +25,10 @@
       <label>Run at login</label>
       <input type="checkbox" v-model="runAtLogin" @change="save" />
     </div>
+    <div class="group hide-on-startup">
+      <label>Hide chat on start</label>
+      <input type="checkbox" v-model="hideOnStartup" @change="save" />
+    </div>
     <div class="group keep-running">
       <label>Keep in Status Bar</label>
       <input type="checkbox" v-model="keepRunning" @change="save" />
@@ -41,12 +45,14 @@ import LangSelect from '../components/LangSelect.vue'
 const llmEngine = ref(null)
 const language = ref(null)
 const runAtLogin = ref(false)
+const hideOnStartup = ref(false)
 const keepRunning = ref(false)
 
 const load = () => {
   llmEngine.value = store.config.llm.engine || 'openai'
   language.value = store.config.general.language
   runAtLogin.value = window.api.runAtLogin.get()
+  hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
 }
 
@@ -59,6 +65,7 @@ const save = () => {
   store.config.llm.engine = llmEngine.value
   store.config.general.language = language.value
   window.api.runAtLogin.set(runAtLogin.value)
+  store.config.general.hideOnStartup = hideOnStartup.value
   store.config.general.keepRunning = keepRunning.value
   store.saveSettings()
 }
