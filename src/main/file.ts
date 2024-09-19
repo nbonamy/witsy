@@ -1,15 +1,17 @@
-
-import { anyDict, strDict } from '../types/index.d';
+  
+import { ExternalApp, FileContents, anyDict, strDict } from '../types/index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { extensionToMimeType } from './mimetype';
 import { execSync } from 'child_process';
 import { download } from 'electron-dl';
+import icns from 'icns-lib';
+import plist from 'plist';
 import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getFileContents = (app: App, filepath: string): strDict => {
+export const getFileContents = (app: App, filepath: string): FileContents => {
 
   try {
     const fileContents = fs.readFileSync(filepath);
@@ -29,6 +31,33 @@ export const getFileContents = (app: App, filepath: string): strDict => {
 
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getIconContents = (app: App, filepath: string): FileContents => {
+
+  try {
+
+    // check extension
+    const extension = path.extname(filepath);
+    if (extension === '.icns') {
+      const buffer = fs.readFileSync(filepath);
+      const icons = icns.parse(buffer);
+      const icon = icons[Object.keys(icons)[0]]
+      return {
+        url: `file://${filepath}`,
+        mimeType: extensionToMimeType('png'),
+        contents: icon.toString('base64')
+      };
+    }
+  } catch (error) {
+    console.error('Error while reading icon', error);
+  }
+
+  // default
+  return null;
+
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const deleteFile = (app: App, filepath: string) => {
 
   try {
@@ -50,7 +79,10 @@ export const pickFile = (app: App, payload: anyDict): string|strDict|string[] =>
   try {
     
     // build dialog propertis
-    const dialogProperties: ('openFile' | 'treatPackageAsDirectory' | 'noResolveAliases' | 'multiSelections')[] = [ 'openFile', 'treatPackageAsDirectory' ];
+    const dialogProperties: ('openFile' | 'treatPackageAsDirectory' | 'noResolveAliases' | 'multiSelections')[] = [ 'openFile' ];
+    if (!payload.packages) {
+      dialogProperties.push('treatPackageAsDirectory');
+    }
     if (payload.location) {
       dialogProperties.push('noResolveAliases');
     }
@@ -135,6 +167,7 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
   return fileList;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const findProgram = (app: App, program: string) => {
   if (process.platform !== 'win32') {
     try {
@@ -238,5 +271,32 @@ export const downloadFile = async (app: App, payload: anyDict) => {
     console.error('Error while downloading file', error);
     return null
   }
+
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getAppInfo = (app: App, filepath: string): ExternalApp | null => {
+
+  // for macos
+  if (process.platform == 'darwin') {
+    try {
+      const plistPath = path.join(filepath, 'Contents', 'Info.plist');
+      const plistInfo = plist.parse(fs.readFileSync(plistPath, 'utf-8'));
+      let plistIcon = plistInfo.CFBundleIconFile || 'AppIcon';
+      if (!plistIcon.endsWith('.icns')) {
+        plistIcon = `${plistIcon}.icns`;
+      }
+      return {
+        name: plistInfo.CFBundleName,
+        identifier: plistInfo.CFBundleIdentifier,
+        icon: path.join(filepath, 'Contents', 'Resources', plistIcon)
+      };
+    } catch (err) {
+      console.log('Error while getting app info', err);
+    }
+  }
+
+  // too bad
+  return null
 
 }

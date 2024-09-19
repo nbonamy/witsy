@@ -5,6 +5,10 @@ import { Automator } from '../types/automation.d';
 
 export default class RobotAutomator implements Automator {
   
+  async getForemostApp(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+
   async selectAll() {
     // keyTap("a", process.platform === "darwin" ? "command" : "control");
     // await wait();

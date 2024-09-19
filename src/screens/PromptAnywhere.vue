@@ -17,12 +17,26 @@ const { onEvent, emitEvent } = useEventBus()
 // load store
 store.loadExperts()
 
+const props = defineProps({
+  extra: Object
+})
+
 onMounted(() => {
   onEvent('sendPrompt', onPrompt)
   onEvent('promptResize', onResize)
   onEvent('show-experts', onExperts)
   window.api.on('set-expert-prompt', onSetExpertPrompt)
   document.addEventListener('keyup', onKeyUp)
+
+  // auto-fill
+  if (props.extra?.foremostApp) {
+    const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == props.extra.foremostApp))
+    if (expert) {
+      console.log(`Tiggered on ${props.extra.foremostApp}: filling prompt with expert ${expert.name}`)
+      onSetExpertPrompt(expert.id)
+    }
+  }
+
 })
 
 onUnmounted(() => {

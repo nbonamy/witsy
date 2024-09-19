@@ -4,6 +4,21 @@ import applescript from 'applescript';
 
 export default class implements Automator {
 
+  async getForemostApp(): Promise<string> {
+
+    const script = `
+      tell application "System Events"
+        set bundleID to bundle identifier of first application process whose frontmost is true
+      end tell
+      return bundleID
+    `
+
+    // run it
+    const app = await this.runScript(script);
+    return app as string;
+
+  }
+
   async selectAll(){
     
     const script = `

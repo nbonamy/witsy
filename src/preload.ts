@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, Expert, strDict } from './types/index.d';
+import { Chat, Command, Expert, ExternalApp, FileContents, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
 import { DocRepoQueryResponseItem } from './types/rag.d';
 import { contextBridge, ipcRenderer } from 'electron'
@@ -26,7 +26,8 @@ contextBridge.exposeInMainWorld(
       decode: (data: string): string => { return Buffer.from(data, 'base64').toString() },
     },
     file: {
-      read: (filepath: string): string => { return ipcRenderer.sendSync('read-file', filepath) },
+      read: (filepath: string): FileContents => { return ipcRenderer.sendSync('read-file', filepath) },
+      readIcon: (filepath: string): FileContents => { return ipcRenderer.sendSync('read-icon', filepath) },
       save: (opts: any): string => { return ipcRenderer.sendSync('save-file', JSON.stringify(opts)) },
       pick: (opts: any): string|strDict|string[] => { return ipcRenderer.sendSync('pick-file', JSON.stringify(opts)) },
       pickDir: (): string => { return ipcRenderer.sendSync('pick-directory') },
@@ -34,6 +35,7 @@ contextBridge.exposeInMainWorld(
       delete: (filepath: string): void => { return ipcRenderer.send('delete-file', filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
+      getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync('get-app-info', filepath) },
     },
     clipboard: {
       writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },

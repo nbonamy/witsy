@@ -88,16 +88,24 @@ interface Store {
   dump?(): void
 }
 
+interface ExternalApp {
+  name: string
+  identifier: string
+  icon: string
+}
+
 interface Expert {
   id: string,
   type: 'system' | 'user',
   name: string
   prompt: string
   state: 'enabled' | 'disabled' | 'deleted',
+  triggerApps: ExternalApp[]
 }
 
-interface File {
+interface FileContents {
   url: string
+  mimeType: string
   contents: string
 }
 
@@ -122,7 +130,8 @@ declare global {
         decode?(data: string): string
       }
       file?: {
-        read?(filepath: string): File
+        read?(filepath: string): FileContents
+        readIcon?(filepath: string): FileContents
         save?(opts: {
           contents: string,
           properties: anyDict
@@ -136,6 +145,7 @@ declare global {
         delete?(filepath: string): void
         find?(name: string): string
         extractText?(contents: string, format: string): string
+        getAppInfo?(filepath: string): ExternalApp
       }
       shortcuts?: {
         register?(): void
