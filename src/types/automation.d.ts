@@ -9,6 +9,7 @@ export interface ShortcutCallbacks {
 }
 
 export interface Automator {
+  getForemostApp(): Promise<string>
   selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>

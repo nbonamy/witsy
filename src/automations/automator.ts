@@ -19,6 +19,15 @@ export default class {
     }
   }
 
+  async getForemostApp(): Promise<string> {
+    try {
+      return await this.automator.getForemostApp();
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
   async selectAll(): Promise<void> {
     try {
       await this.automator.selectAll();

@@ -9,6 +9,7 @@ import LlmEngine from '../services/engine'
 import Automator from './automator'
 import Message from '../models/message'
 import * as window from '../main/window'
+import process from 'process'
 
 export default class PromptAnywhere {
 
@@ -33,8 +34,19 @@ export default class PromptAnywhere {
   }
 
   static initPrompt = async (): Promise<void> => {
+
+    // get foremost app
+    let foremostApp = '';
+    if (process.platform === 'darwin') {
+      const automator = new Automator();
+      foremostApp = await automator.getForemostApp();
+    }
+
+    // open prompt
     await window.hideWindows();
-    await window.openPromptAnywhere();
+    await window.openPromptAnywhere({
+      foremostApp: foremostApp
+    });
   }
 
   execPrompt = async (app: App, prompt: string): Promise<void> => {

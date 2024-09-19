@@ -327,6 +327,10 @@ ipcMain.on('read-file', (event, payload) => {
   event.returnValue = file.getFileContents(app, payload);
 });
 
+ipcMain.on('read-icon', async (event, payload) => {
+  event.returnValue = await file.getIconContents(app, payload);
+});
+
 ipcMain.on('save-file', (event, payload) => {
   event.returnValue = file.writeFileContents(app, JSON.parse(payload));
 });
@@ -337,6 +341,10 @@ ipcMain.on('download', async (event, payload) => {
 
 ipcMain.on('get-text-content', async (event, contents, format) => {
   event.returnValue = await text.getTextContent(contents, format);
+});
+
+ipcMain.on('get-app-info', (event, payload) => {
+  event.returnValue = file.getAppInfo(app, payload);
 });
 
 ipcMain.on('render-markdown', (event, payload) => {

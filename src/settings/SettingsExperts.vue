@@ -179,6 +179,7 @@ const onExpertModified = (payload) => {
     // now update
     expert.name = payload.name
     expert.prompt = payload.prompt
+    expert.triggerApps = payload.triggerApps
   }
 
   // done

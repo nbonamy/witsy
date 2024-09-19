@@ -363,7 +363,7 @@ export const openSettingsWindow = () => {
 }
 
 export let promptAnywhereWindow: BrowserWindow = null;
-export const openPromptAnywhere = () => {
+export const openPromptAnywhere = (params: strDict) => {
 
   // try to close existig one
   closePromptAnywhere();
@@ -384,6 +384,7 @@ export const openPromptAnywhere = () => {
     skipTaskbar: true,
     alwaysOnTop: true,
     hiddenInMissionControl: true,
+    queryParams: params,
   });
 
   promptAnywhereWindow.on('focus', () => {

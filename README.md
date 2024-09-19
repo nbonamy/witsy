@@ -30,6 +30,8 @@ Generate content in any application:
 - Enter your prompt in the window that pops up
 - Watch Witsy enter the text directly in your application!
 
+On Mac, you can define an expert that will automatically be triggered depending on the foreground application. For instance, if you have an expert used to generate linux commands, you can have it selected if you trigger Prompt Anywhere from the Terminal application!
+
 ## AI Commands
 
 AI commands are quick helpers accessible from a shortcut that leverage LLM to boost your productivity:
@@ -96,6 +98,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Auto-select expert based on foremost app (Mac only)
 - [x] Cerebras support
 - [x] Local files RAG
 - [x] Groq model update (8-Sep-2024)
