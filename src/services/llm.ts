@@ -128,7 +128,7 @@ export const loadOpenAIModels = async () => {
 
   // store
   store.config.engines.openai.models = {
-    chat: models.filter(model => model.id.startsWith('gpt-')),
+    chat: models.filter(model => model.id.startsWith('gpt-') || model.id.startsWith('o1-')),
     image: models.filter(model => model.id.startsWith('dall-e-'))
   }
 
