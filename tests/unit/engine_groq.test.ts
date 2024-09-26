@@ -51,6 +51,10 @@ test('Groq Load Models', async () => {
   expect(await loadGroqModels()).toBe(true)
   const models = store.config.engines.groq.models.chat
   expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'llama-3.2-1b-preview', name: 'Llama 3.2 1B Text (Preview)' },
+    { id: 'llama-3.2-3b-preview', name: 'Llama 3.2 3B Text (Preview)' },
+    { id: 'llama-3.2-11b-text-preview', name: 'Llama 3.2 11B Text (Preview)' },
+    { id: 'llama-3.2-90b-text-preview', name: 'Llama 3.2 90B Text (Preview)' },
     { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8b', },
     { id: 'llama-3.1-70b-versatile', name: 'Llama 3.1 70b', },
     { id: 'llama3-8b-8192', name: 'Llama 3 8b', },
