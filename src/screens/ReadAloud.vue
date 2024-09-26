@@ -10,9 +10,10 @@
 
 <script setup>
 
+import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer from '../composables/audio'
+import useAudioPlayer, { textMaxLength} from '../composables/audio'
 import Loader from '../components/Loader.vue'
 
 // load store
@@ -23,6 +24,9 @@ const props = defineProps({
 })
 
 const state = ref('idle')
+
+let chunks = []
+let index = 0
 
 onMounted(async () => {
   useAudioPlayer().addListener(onAudioPlayerStatus)
@@ -38,12 +42,14 @@ const onAudioPlayerStatus = (status) => {
   state.value = status.state
   console.log(state.value)
   if (state.value == 'idle') {
-    window.api.readaloud.closePalette()
+    if (!nextChunk()) {
+      window.api.readaloud.closePalette()
+    }
   }
 }
 
 const onPlayPause = () => {
-  useAudioPlayer().playpause('readaloud')
+  useAudioPlayer().playpause(`readaloud-${index}`)
 }
 
 const onStop = () => {
@@ -51,8 +57,37 @@ const onStop = () => {
   window.api.readaloud.closePalette()
 }
 
-const play = (message) => {
-  useAudioPlayer().play(document.querySelector('.readaloud audio'), 'readaloud', message)
+const play = async (message) => {
+
+  // build chunks
+  const textSplitter = new RecursiveCharacterTextSplitter({
+    separators: [ '\n\n', '\n', '.', ',', ' '],
+    keepSeparator: true,
+    chunkSize: Math.floor(textMaxLength * .8),
+    chunkOverlap: 0,
+  })
+  chunks = await textSplitter.splitText(message)
+
+  // play first chunk
+  playChunk(0)
+
+}
+
+const nextChunk = () => {
+  if (index == chunks.length - 1) {
+    return false
+  } else {
+    playChunk(index + 1)
+    return true
+  }
+}
+
+const playChunk = (i) => {
+  index = i
+  state.value = 'loading'
+  const chunk = chunks[index]
+  console.log(`Playing chunk ${index+1} of ${chunks.length}: [${chunk.length}] ${chunk.substring(0, 64)}...${chunk.substring(chunk.length-128)}`) 
+  useAudioPlayer().play(document.querySelector('.readaloud audio'), `readaloud-${index}`, chunks[index])
 }
 
 </script>

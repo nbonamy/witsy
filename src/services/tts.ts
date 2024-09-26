@@ -7,6 +7,10 @@ export default class {
   config: Configuration
   client: OpenAI
 
+  static get textMaxLength() {
+    return 4096
+  }
+
   constructor(config: Configuration) {
     this.config = config
     this.client = new OpenAI({

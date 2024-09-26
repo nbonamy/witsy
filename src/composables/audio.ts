@@ -16,7 +16,7 @@ class AudioPlayer {
   player: SpeechPlayer
   state: AudioState
   uuid: string
-  
+
   constructor(config: Configuration) {
     this.config = config
     this.listeners = []
@@ -126,3 +126,6 @@ export default function useAudioPlayer() {
   }
   return instance
 }
+
+export const textMaxLength = Tts.textMaxLength
+
