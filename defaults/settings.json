@@ -132,7 +132,8 @@
     "tavily": {},
     "dalle": {
       "enabled": true
-    }
+    },
+    "nestor": {}
   },
   "dropbox": {
   }

@@ -22,6 +22,7 @@ import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
 import SettingsDallE from './SettingsDall-E.vue'
+import SettingsNestor from './SettingsNestor.vue'
 //import SettingsDropbox from './SettingsDropbox.vue'
 import logoPython from '../../assets/python.svg'
 import logoTavily from '../../assets/tavily.svg'
@@ -40,12 +41,14 @@ const plugins = computed(() => {
         tavily: 'Tavily Search',
         python: 'Python',
         dalle: 'DALL-E',
+        nestor: 'Nestor',
       }[plugin],
       logo: {
         browse: { image: logoTavily },
         tavily: { image: logoTavily },
         python: { image: logoPython },
         dalle: { image: logoOpenAI },
+        nestor: { image: logoOpenAI },
       }[plugin],
     }
   })
@@ -62,6 +65,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'python') return SettingsPython
   if (currentPlugin.value == 'tavily') return SettingsTavily
   if (currentPlugin.value == 'dalle') return SettingsDallE
+  if (currentPlugin.value == 'nestor') return SettingsNestor
   //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
 

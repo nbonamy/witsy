@@ -100,7 +100,7 @@ export default class extends LlmEngine {
     this.toolCalls = []
 
     // tools
-    const tools = this.getAvailableTools()
+    const tools = await this.getAvailableTools()
 
     // call
     console.log(`[openai] prompting model ${this.currentModel}`)

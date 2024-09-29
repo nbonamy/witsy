@@ -13,6 +13,10 @@ export default class {
     return false
   }
 
+  isMultiTool(): boolean {
+    return false
+  }
+
   getName(): string {
     throw new Error('Not implemented')
   }
@@ -31,6 +35,14 @@ export default class {
 
   getParameters(): PluginParameter[] {
     throw new Error('Not implemented')
+  }
+
+  async getTools(): Promise<anyDict|Array<anyDict>> {
+    throw new Error('Not implemented')
+  }
+
+  handlesTool(name: string): boolean {
+    return false
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

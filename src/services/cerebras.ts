@@ -40,7 +40,7 @@ export default class extends OpenAI {
     // avoid override by super
   }
 
-  getAvailableTools(): any[] {
+  async getAvailableTools(): Promise<any[]> {
     return []
   }
 
