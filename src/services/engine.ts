@@ -164,13 +164,28 @@ export default class LlmEngine {
       const pluginClass = availablePlugins[pluginName]
       const instance = new pluginClass(this.config.plugins[pluginName])
       if (instance.isEnabled()) {
+        console.log(`Loading plugin ${instance.getName()}`)
         this.plugins[instance.getName()] = instance
       }
     }
   }
 
-  getAvailableTools(): any[] {
-    return Object.values(this.plugins).map((plugin: Plugin) => this.getPluginAsTool(plugin))
+  async getAvailableTools(): Promise<any[]> {
+    const tools = []
+    for (const pluginName in this.plugins) {
+      const plugin = this.plugins[pluginName]
+      if (plugin.isMultiTool()) {
+        const pluginAsTool = await plugin.getTools()
+        if (Array.isArray(pluginAsTool)) {
+          tools.push(...pluginAsTool)
+        } else if (pluginAsTool) {
+          tools.push(pluginAsTool)
+        }
+      } else {
+        tools.push(this.getPluginAsTool(plugin))
+      }
+    }
+    return tools
   }
 
   // this is the default implementation as per OpenAI API
@@ -209,12 +224,22 @@ export default class LlmEngine {
   }
 
   async callTool(tool: string, args: any): Promise<any> {
-    const plugin = this.plugins[tool]
+
+    // get the plugin
+    const plugin: Plugin = this.plugins[tool]
     if (plugin) {
       return await plugin.execute(args)
-    } else {
-      throw new Error(`Tool ${tool} not found`)
     }
+
+    // try multi-tools
+    for (const plugin of Object.values(this.plugins)) {
+      if (plugin.isMultiTool() && plugin.handlesTool(tool)) {
+        return await plugin.execute({ tool: tool, parameters: args })
+      }
+    }
+
+    // too bad
+    throw new Error(`Tool ${tool} not found`)
   }
 
 }

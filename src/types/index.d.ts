@@ -207,6 +207,10 @@ declare global {
       interpreter?: {
         python?(code: string): any
       }
+      nestor?: {
+        getTools?(): any
+        callTool?(name: string, parameters: anyDict): any
+      }
     }
   }
 }

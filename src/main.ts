@@ -16,6 +16,7 @@ import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
+import Nestor from './main/nestor';
 //import Dropbox from './main/dropbox';
 
 import * as config from './main/config';
@@ -32,6 +33,7 @@ import * as text from './main/text';
 let commander: Commander = null
 let anywhere: PromptAnywhere = null
 let docRepo: DocumentRepository = null
+let nestor: Nestor = null
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -63,6 +65,9 @@ window.setStore(store);
 // // look for menus as soon as possible
 // import MacosAutomator from './automations/macos2';
 // new MacosAutomator();
+
+// start nestor
+nestor = new Nestor();
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -578,6 +583,14 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
     event.returnValue = false
   }
 });
+
+ipcMain.handle('nestor-get-tools', async (_) => {
+  return await nestor.getTools();
+})
+
+ipcMain.handle('nestor-call-tool', async (_, payload) => {
+  return await nestor.callTool(payload.name, payload.parameters);
+})
 
 // ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
 //   const dropbox = new Dropbox(app, '', '')

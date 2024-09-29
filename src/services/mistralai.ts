@@ -82,7 +82,7 @@ export default class extends LlmEngine {
     this.toolCalls = []
 
     // tools
-    const tools = this.getAvailableToolsForModel(this.currentModel)
+    const tools = await this.getAvailableToolsForModel(this.currentModel)
 
     // call
     console.log(`[mistralai] prompting model ${this.currentModel}`)
@@ -211,9 +211,9 @@ export default class extends LlmEngine {
     return null    
   }
 
-  getAvailableToolsForModel(model: string): any[] {
+  async getAvailableToolsForModel(model: string): Promise<any[]> {
     if (model.includes('mistral-large') || model.includes('mixtral-8x22b')) {
-      return this.getAvailableTools()
+      return await this.getAvailableTools()
     } else {
       return []
     }

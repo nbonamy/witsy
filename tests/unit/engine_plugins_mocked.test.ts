@@ -34,9 +34,9 @@ test('Engine plugin execution', async () => {
   expect(await llm.callTool('plugin2', { param1: 'a', param2: 1 })).toStrictEqual({ param1: 'a', param2: 1 })
 })
 
-test('OpenAI Functions', () => {
+test('OpenAI Functions', async () => {
   const llm = new OpenAI(store.config)
-  expect(llm.getAvailableTools()).toStrictEqual([
+  expect(await llm.getAvailableTools()).toStrictEqual([
     {
       type: 'function',
       function: {

@@ -53,7 +53,7 @@ export default class extends LlmEngine {
     // call
     const modelName = opts?.model || this.config.engines.google.model.chat
     console.log(`[google] prompting model ${modelName}`)
-    const model = this.getModel(modelName, thread[0].content)
+    const model = await this.getModel(modelName, thread[0].content)
     const chatSession = model.startChat({
       history: this.threadToHistory(thread, modelName)
     })
@@ -76,7 +76,7 @@ export default class extends LlmEngine {
 
     // call
     console.log(`[google] prompting model ${modelName}`)
-    const model = this.getModel(modelName, thread[0].content)
+    const model = await this.getModel(modelName, thread[0].content)
     const chatSession = model.startChat({
       history: this.threadToHistory(thread, modelName)
     })
@@ -88,7 +88,7 @@ export default class extends LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getModel(model: string, instructions: string): GenerativeModel {
+  async getModel(model: string, instructions: string): Promise<GenerativeModel> {
 
     // not all models have all features
     const hasInstructions = !(['models/gemini-pro', 'gemini-1.5-flash'].includes(model))
@@ -107,7 +107,7 @@ export default class extends LlmEngine {
     // add tools
     if (hasTools) {
       modelParams.tools = [{
-        functionDeclarations: this.getAvailableTools().map((tool) => {
+        functionDeclarations: (await this.getAvailableTools()).map((tool) => {
           return tool.function
         })
       }]

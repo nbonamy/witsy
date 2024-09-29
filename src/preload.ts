@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, Expert, ExternalApp, FileContents, strDict } from './types/index.d';
+import { Chat, Command, Expert, ExternalApp, FileContents, anyDict, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
 import { DocRepoQueryResponseItem } from './types/rag.d';
 import { contextBridge, ipcRenderer } from 'electron'
@@ -100,6 +100,10 @@ contextBridge.exposeInMainWorld(
     },
     interpreter: {
       python: (code: string): string => { return ipcRenderer.sendSync('run-python-code', code) },
+    },
+    nestor: {
+      getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
+      callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
     },
     dropbox: {
       getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
