@@ -27,6 +27,7 @@ import SettingsNestor from './SettingsNestor.vue'
 import logoPython from '../../assets/python.svg'
 import logoTavily from '../../assets/tavily.svg'
 import logoOpenAI from '../../assets/openai.svg'
+import logoNestor from '../../assets/nestor.jpg'
 //import logoDropbox from '../../assets/dropbox.svg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
@@ -48,7 +49,7 @@ const plugins = computed(() => {
         tavily: { image: logoTavily },
         python: { image: logoPython },
         dalle: { image: logoOpenAI },
-        nestor: { image: logoOpenAI },
+        nestor: { image: logoNestor },
       }[plugin],
     }
   })
