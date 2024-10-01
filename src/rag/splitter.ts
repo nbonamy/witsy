@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config.d'
+import { Configuration } from 'types/config.d'
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import defaultSettings from '../../defaults/settings.json'
 

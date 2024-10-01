@@ -1,7 +1,7 @@
 
-import { anyDict } from '../types/index.d'
-import { Configuration } from '../types/config.d'
-import { PluginParameter } from '../types/plugin.d';
+import { anyDict } from 'types/index.d'
+import { Configuration } from 'types/config.d'
+import { PluginParameter } from 'types/plugin.d';
 import Plugin from './plugin'
 import { convert } from 'html-to-text'
 

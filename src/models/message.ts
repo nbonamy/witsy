@@ -1,6 +1,6 @@
 
-import { Message } from '../types/index.d'
-import { LlmRole, LlmChunk } from '../types/llm.d'
+import { Message } from 'types/index.d'
+import { LlmRole, LlmChunk } from 'types/llm.d'
 import { v4 as uuidv4 } from 'uuid'
 import Attachment from './attachment'
 

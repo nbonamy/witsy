@@ -1,6 +1,6 @@
 
-import { anyDict } from '../types/index.d'
-import { Model, EngineConfig, Configuration } from '../types/config.d'
+import { anyDict } from 'types/index.d'
+import { Model, EngineConfig, Configuration } from 'types/config.d'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from './store'
 import OpenAI, { isOpenAIReady } from './openai'

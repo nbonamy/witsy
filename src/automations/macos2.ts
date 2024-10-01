@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator } from 'types/automation.d';
 import applescript from 'applescript';
 
 let editCopy: [string,string] = null

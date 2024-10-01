@@ -1,6 +1,6 @@
 
 
-import { Configuration } from '../types/config.d'
+import { Configuration } from 'types/config.d'
 import { SpeechPlayer } from 'openai-speech-stream-player'
 import { store } from '../services/store'
 import Tts from '../services/tts'

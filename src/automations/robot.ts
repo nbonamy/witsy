@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator } from 'types/automation.d';
 //import { keyTap } from 'robotjs';
 //import { wait } from './utils';
 

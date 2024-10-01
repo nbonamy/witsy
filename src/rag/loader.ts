@@ -1,6 +1,6 @@
 
-import { Configuration } from '../types/config.d'
-import { SourceType } from '../types/rag.d'
+import { Configuration } from 'types/config.d'
+import { SourceType } from 'types/rag.d'
 import { extensionToMimeType } from '../main/mimetype'
 import { getPDFRawTextContent, getOfficeRawTextContent } from '../main/text'
 import fs from 'fs'

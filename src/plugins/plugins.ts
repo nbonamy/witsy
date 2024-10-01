@@ -1,5 +1,5 @@
 
-import { anyDict } from '../types/index.d'
+import { anyDict } from 'types/index.d'
 import BrowsePlugin from '../plugins/browse'
 import TavilyPlugin from '../plugins/tavily'
 import PythonPlugin from '../plugins/python'

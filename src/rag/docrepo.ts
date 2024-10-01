@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
-import { Configuration } from '../types/config.d'
-import { SourceType, DocumentBase, DocRepoQueryResponseItem } from '../types/rag.d'
+import { Configuration } from 'types/config.d'
+import { SourceType, DocumentBase, DocRepoQueryResponseItem } from 'types/rag.d'
 import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'

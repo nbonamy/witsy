@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config.d'
+import { Configuration } from 'types/config.d'
 import { App } from 'electron'
 import defaults from '../../defaults/settings.json'
 import similarity from 'compute-cosine-similarity'

@@ -1,4 +1,4 @@
-import { anyDict } from '../types/index.d'
+import { anyDict } from 'types/index.d'
 import { App , Menu, shell } from 'electron'
 
 const isMac = process.platform === 'darwin'

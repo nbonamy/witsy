@@ -1,9 +1,9 @@
 
-import { app, BrowserWindow, BrowserWindowConstructorOptions, shell } from 'electron';
 import { CreateWindowOpts } from 'types/window';
+import { strDict } from 'types';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, shell } from 'electron';
 import { store, createWindow } from './index';
 import { wait } from '../utils';
-import { strDict } from 'types';
 
 // titlebarOptions
 const titleBarOptions: BrowserWindowConstructorOptions = {

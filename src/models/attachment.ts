@@ -1,5 +1,5 @@
 
-import { Attachment } from '../types/index.d'
+import { Attachment } from 'types/index.d'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 
 export const textFormats = [ 'pdf', 'txt', 'docx', 'pptx', 'xlsx' ]

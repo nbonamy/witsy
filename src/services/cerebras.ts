@@ -1,4 +1,4 @@
-import { EngineConfig, Configuration } from '../types/config.d'
+import { EngineConfig, Configuration } from 'types/config.d'
 import OpenAI from './openai'
 
 export const isCerebeasReady = (engineConfig: EngineConfig): boolean => {

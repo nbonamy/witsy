@@ -1,5 +1,5 @@
   
-import { ExternalApp, FileContents, anyDict, strDict } from '../types/index.d';
+import { ExternalApp, FileContents, anyDict, strDict } from 'types/index.d';
 import { App, BrowserWindow, dialog } from 'electron';
 import { extensionToMimeType } from './mimetype';
 import { execSync } from 'child_process';

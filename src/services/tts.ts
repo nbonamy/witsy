@@ -1,5 +1,5 @@
 
-import { Configuration, TTSModel, TTSVoice } from '../types/config.d'
+import { Configuration, TTSModel, TTSVoice } from 'types/config.d'
 import OpenAI from 'openai'
 
 export default class {

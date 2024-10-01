@@ -1,5 +1,5 @@
 
-import { strDict } from '../types/index.d'
+import { strDict } from 'types/index.d'
 import { Notification } from 'electron'
 import Automator from './automator'
 import { v4 as uuidv4 } from 'uuid'

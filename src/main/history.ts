@@ -1,4 +1,4 @@
-import { Chat } from '../types/index.d'
+import { Chat } from 'types/index.d'
 import { App } from 'electron'
 // import Dropbox from './dropbox'
 import Monitor from './monitor'
