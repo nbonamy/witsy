@@ -164,7 +164,6 @@ export default class LlmEngine {
       const pluginClass = availablePlugins[pluginName]
       const instance = new pluginClass(this.config.plugins[pluginName])
       if (instance.isEnabled()) {
-        console.log(`Loading plugin ${instance.getName()}`)
         this.plugins[instance.getName()] = instance
       }
     }

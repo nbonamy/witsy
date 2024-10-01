@@ -3,22 +3,33 @@ import { anyDict } from 'types/index.d'
 import { Model, EngineConfig, Configuration } from 'types/config.d'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from './store'
-import OpenAI, { isOpenAIReady } from './openai'
-import Ollama, { isOllamaReady } from './ollama'
-import MistralAI, { isMistrailAIReady } from './mistralai'
-import Anthropic, { isAnthropicReady } from './anthropic'
-import Google, { isGoogleReady } from './google'
-import Groq, { isGroqReady } from './groq'
-import Cerebreas,{ isCerebeasReady } from './cerebras'
+import OpenAI, { isOpenAIConfigured, isOpenAIReady } from './openai'
+import Ollama, { isOllamaConfigured, isOllamaReady } from './ollama'
+import MistralAI, { isMistralAIReady, isMistralAIConfigured } from './mistralai'
+import Anthropic, { isAnthropicConfigured, isAnthropicReady } from './anthropic'
+import Google, { isGoogleConfigured, isGoogleReady } from './google'
+import Groq, { isGroqConfigured, isGroqReady } from './groq'
+import Cerebreas,{ isCerebeasReady, isCerebrasConfigured } from './cerebras'
 import LlmEngine from './engine'
 
 export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'groq', 'cerebras' ]
 
+export const isEngineConfigured = (engine: string) => {
+  if (engine === 'openai') return isOpenAIConfigured(store.config.engines.openai)
+    if (engine === 'ollama') return isOllamaConfigured(store.config.engines.ollama)
+    if (engine === 'mistralai') return isMistralAIConfigured(store.config.engines.mistralai)
+    if (engine === 'anthropic') return isAnthropicConfigured(store.config.engines.anthropic)
+    if (engine === 'google') return isGoogleConfigured(store.config.engines.google)
+    if (engine === 'groq') return isGroqConfigured(store.config.engines.groq)
+    if (engine === 'cerebras') return isCerebrasConfigured(store.config.engines.cerebras)
+    return false
+}  
+
 export const isEngineReady = (engine: string) => {
   if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
   if (engine === 'ollama') return isOllamaReady(store.config.engines.ollama)
-  if (engine === 'mistralai') return isMistrailAIReady(store.config.engines.mistralai)
+  if (engine === 'mistralai') return isMistralAIReady(store.config.engines.mistralai)
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
   if (engine === 'google') return isGoogleReady(store.config.engines.google)
   if (engine === 'groq') return isGroqReady(store.config.engines.groq)
@@ -70,7 +81,7 @@ export const canProcessFormat = (engine: string, model: string, format: string) 
 
 export const initModels = async () => {
   for (const engine of staticModelsEngines) {
-    if (isEngineReady(engine)) {
+    if (isEngineConfigured(engine)) {
       await loadModels(engine)
     }
   }
@@ -383,3 +394,7 @@ export const loadCerebrasModels = async () => {
   // done
   return true
 }
+function isCerebeasConfigured(cerebras: any) {
+  throw new Error('Function not implemented.')
+}
+

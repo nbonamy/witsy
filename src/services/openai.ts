@@ -9,9 +9,14 @@ import { ChatCompletionChunk } from 'openai/resources'
 import { Stream } from 'openai/streaming'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const isOpenAIReady = (engineConfig: EngineConfig): boolean => {
+export const isOpenAIConfigured = (engineConfig: EngineConfig): boolean => {
   // this is the default so pretend it is always ready
   return true
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const isOpenAIReady = (engineConfig: EngineConfig): boolean => {
+  return isOpenAIConfigured(engineConfig)
 }
 
 export default class extends LlmEngine {

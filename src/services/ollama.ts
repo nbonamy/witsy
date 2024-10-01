@@ -6,8 +6,13 @@ import LlmEngine from './engine'
 import { Ollama } from 'ollama/dist/browser.mjs'
 import { ChatResponse, ProgressResponse } from 'ollama'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const isOllamaConfigured = (engineConfig: EngineConfig): boolean => {
+  return true
+}
+
 export const isOllamaReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig?.models?.chat?.length > 0
+  return isOllamaConfigured(engineConfig) && engineConfig?.models?.chat?.length > 0
 }
 
 export const getChatModels = [
