@@ -7,8 +7,12 @@ import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext'
 import { CompletionCreateParams } from 'groq-sdk/resources/chat'
 import { Stream } from 'groq-sdk/lib/streaming'
 
+export const isGroqConfigured = (engineConfig: EngineConfig): boolean => {
+  return engineConfig?.apiKey?.length > 0
+}
+
 export const isGroqReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig?.apiKey?.length > 0 && engineConfig?.models?.chat?.length > 0
+  return isGroqConfigured(engineConfig) && engineConfig?.models?.chat?.length > 0
 }
 
 export default class extends LlmEngine {

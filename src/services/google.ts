@@ -7,8 +7,12 @@ import { getFileContents } from './download'
 import Attachment from '../models/attachment'
 import LlmEngine from './engine'
 
+export const isGoogleConfigured = (engineConfig: EngineConfig): boolean => {
+  return engineConfig?.apiKey?.length > 0
+}
+
 export const isGoogleReady = (engineConfig: EngineConfig): boolean => {
-  return engineConfig?.apiKey?.length > 0 && engineConfig?.models?.chat?.length > 0
+  return isGoogleConfigured(engineConfig) && engineConfig?.models?.chat?.length > 0
 }
 
 export default class extends LlmEngine {
