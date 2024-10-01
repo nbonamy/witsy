@@ -13,12 +13,12 @@ contextBridge.exposeInMainWorld(
     userDataPath: ipcRenderer.sendSync('get-app-path'),
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
     store: {
-      get(key: string, fallback: any): any { return ipcRenderer.sendSync('get-store-value', { key, fallback }) },
-      set(key: string, value: any): void { return ipcRenderer.send('set-store-value', { key, value }) },
+      get(key: string, fallback: any): any { return ipcRenderer.sendSync('store-get-value', { key, fallback }) },
+      set(key: string, value: any): void { return ipcRenderer.send('store-set-value', { key, value }) },
     },
     runAtLogin: {
-      get: (): boolean => { return ipcRenderer.sendSync('get-run-at-login').openAtLogin },
-      set: (state: boolean): void => { return ipcRenderer.send('set-run-at-login', state) }
+      get: (): boolean => { return ipcRenderer.sendSync('run-at-login-get').openAtLogin },
+      set: (state: boolean): void => { return ipcRenderer.send('run-at-login-set', state) }
     },
     fullscreen: (state: boolean): void => { return ipcRenderer.send('fullscreen', state) },
     base64: {
@@ -42,29 +42,29 @@ contextBridge.exposeInMainWorld(
       writeImage: (path: string): void => { return ipcRenderer.send('clipboard-write-image', path) },
     },
     shortcuts: {
-      register: (): void => { return ipcRenderer.send('register-shortcuts') },
-      unregister: (): void => { return ipcRenderer.send('unregister-shortcuts') },
+      register: (): void => { return ipcRenderer.send('shortcuts-register') },
+      unregister: (): void => { return ipcRenderer.send('shortcuts-unregister') },
     },
     config: {
-      load: (): Configuration => { return JSON.parse(ipcRenderer.sendSync('load-config')) },
-      save: (data: Configuration) => { return ipcRenderer.send('save-config', JSON.stringify(data)) },
+      load: (): Configuration => { return JSON.parse(ipcRenderer.sendSync('config-load')) },
+      save: (data: Configuration) => { return ipcRenderer.send('config-save', JSON.stringify(data)) },
     },
     history: {
-      load: (): Chat[] => { return JSON.parse(ipcRenderer.sendSync('load-history')) },
-      save: (data: Chat[]) => { return ipcRenderer.send('save-history', JSON.stringify(data)) },
+      load: (): Chat[] => { return JSON.parse(ipcRenderer.sendSync('history-load')) },
+      save: (data: Chat[]) => { return ipcRenderer.send('history-save', JSON.stringify(data)) },
     },
     commands: {
-      load: (): Command[] => { return JSON.parse(ipcRenderer.sendSync('load-commands')) },
-      save: (data: Command[]) => { return ipcRenderer.send('save-commands', JSON.stringify(data)) },
-      run: (command: Command): void => { return ipcRenderer.send('run-command', JSON.stringify(command)) },
-      cancel: (): void => { return ipcRenderer.send('stop-command') },
-      closePalette: (): void => { return ipcRenderer.send('close-command-palette') },
-      getPrompt: (id: string): string => { return ipcRenderer.sendSync('get-command-prompt', id) },
-      export: (): void => { return ipcRenderer.sendSync('export-commands') },
-      import: (): void => { return ipcRenderer.sendSync('import-commands') },
+      load: (): Command[] => { return JSON.parse(ipcRenderer.sendSync('commands-load')) },
+      save: (data: Command[]) => { return ipcRenderer.send('commands-save', JSON.stringify(data)) },
+      export: (): void => { return ipcRenderer.sendSync('commands-export') },
+      import: (): void => { return ipcRenderer.sendSync('commands-import') },
+      run: (command: Command): void => { return ipcRenderer.send('command-run', JSON.stringify(command)) },
+      closePalette: (): void => { return ipcRenderer.send('command-palette-close') },
+      getPrompt: (id: string): string => { return ipcRenderer.sendSync('command-get-prompt', id) },
+      cancel: (): void => { return ipcRenderer.send('command-stop') },
     },
     anywhere: {
-      prompt: (text: string): void => { return ipcRenderer.sendSync('prompt-anywhere', JSON.stringify(text)) },
+      prompt: (text: string): void => { return ipcRenderer.sendSync('anywhere-prompt', JSON.stringify(text)) },
       resize: (height: number): void => { return ipcRenderer.send('anywhere-resize', height) },
       showExperts: (): void => { return ipcRenderer.send('anywhere-show-experts') },
       closeExperts: (): void => { return ipcRenderer.send('anywhere-close-experts') },
@@ -74,10 +74,10 @@ contextBridge.exposeInMainWorld(
       cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
     },
     experts: {
-      load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync('load-experts')) },
-      save: (data: Expert[]): void => { return ipcRenderer.send('save-experts', JSON.stringify(data)) },
-      export: (): void => { return ipcRenderer.sendSync('export-experts') },
-      import: (): void => { return ipcRenderer.sendSync('import-experts') },
+      load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync('experts-load')) },
+      save: (data: Expert[]): void => { return ipcRenderer.send('experts-save', JSON.stringify(data)) },
+      export: (): void => { return ipcRenderer.sendSync('experts-export') },
+      import: (): void => { return ipcRenderer.sendSync('experts-import') },
     },
     docrepo: {
       list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },
@@ -92,14 +92,14 @@ contextBridge.exposeInMainWorld(
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync('docrepo-is-embedding-available', { engine, model }) },
     },
     readaloud: {
-      getText: (id: string): string => { return ipcRenderer.sendSync('get-readaloud-text', id) },
-      closePalette: (): void => { return ipcRenderer.send('close-readaloud-palette') },
+      getText: (id: string): string => { return ipcRenderer.sendSync('readaloud-get-text', id) },
+      closePalette: (): void => { return ipcRenderer.send('readaloud-close-palette') },
     },
     markdown: {
-      render: (markdown: string): string => { return ipcRenderer.sendSync('render-markdown', markdown) },
+      render: (markdown: string): string => { return ipcRenderer.sendSync('markdown-render', markdown) },
     },
     interpreter: {
-      python: (code: string): string => { return ipcRenderer.sendSync('run-python-code', code) },
+      python: (code: string): string => { return ipcRenderer.sendSync('code-python-run', code) },
     },
     nestor: {
       getStatus: (): Promise<any> => { return ipcRenderer.invoke('nestor-get-status') },

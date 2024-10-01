@@ -224,11 +224,11 @@ ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
 });
 
-ipcMain.on('get-store-value', (event, payload) => {
+ipcMain.on('store-get-value', (event, payload) => {
   event.returnValue = store.get(payload.key, payload.fallback);
 });
 
-ipcMain.on('set-store-value', (event, payload) => {
+ipcMain.on('store-set-value', (event, payload) => {
   store.set(payload.key, payload.value);
 });
 
@@ -241,70 +241,70 @@ ipcMain.on('clipboard-write-image', (event, payload) => {
   clipboard.writeImage(image);
 });
 
-ipcMain.on('load-config', (event) => {
+ipcMain.on('config-load', (event) => {
   event.returnValue = JSON.stringify(config.loadSettings(app));
 });
 
-ipcMain.on('save-config', (event, payload) => {
+ipcMain.on('config-save', (event, payload) => {
   event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
-ipcMain.on('load-history', async (event) => {
+ipcMain.on('history-load', async (event) => {
   event.returnValue = JSON.stringify(await history.loadHistory(app));
 });
 
-ipcMain.on('save-history', (event, payload) => {
+ipcMain.on('history-save', (event, payload) => {
   event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[]);
 });
 
-ipcMain.on('load-commands', (event) => {
+ipcMain.on('commands-load', (event) => {
   event.returnValue = JSON.stringify(commands.loadCommands(app));
 });
 
-ipcMain.on('save-commands', (event, payload) => {
+ipcMain.on('commands-save', (event, payload) => {
   event.returnValue = commands.saveCommands(app, JSON.parse(payload) as Command[]);
 });
 
-ipcMain.on('export-commands', (event) => {
+ipcMain.on('commands-export', (event) => {
   event.returnValue = commands.exportCommands(app);
 });
 
-ipcMain.on('import-commands', (event) => {
+ipcMain.on('commands-import', (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
-ipcMain.on('load-experts', (event) => {
+ipcMain.on('experts-load', (event) => {
   event.returnValue = JSON.stringify(experts.loadExperts(app));
 });
 
-ipcMain.on('save-experts', (event, payload) => {
+ipcMain.on('experts-save', (event, payload) => {
   event.returnValue = experts.saveExperts(app, JSON.parse(payload) as Expert[]);
 });
 
-ipcMain.on('export-experts', (event) => {
+ipcMain.on('experts-export', (event) => {
   event.returnValue = experts.exportExperts(app);
 });
 
-ipcMain.on('import-experts', (event) => {
+ipcMain.on('experts-import', (event) => {
   event.returnValue = experts.importExperts(app);
 });
 
-ipcMain.on('get-run-at-login', (event) => {
+ipcMain.on('run-at-login-get', (event) => {
   event.returnValue = app.getLoginItemSettings();
 });
 
-ipcMain.on('set-run-at-login', (_, value) => {
+ipcMain.on('run-at-login-set', (_, value) => {
   app.setLoginItemSettings({
     openAtLogin: value,
     openAsHidden: true,
   });
 });
 
-ipcMain.on('register-shortcuts', () => {
+ipcMain.on('shortcuts-register', () => {
   registerShortcuts();
 });
 
-ipcMain.on('unregister-shortcuts', () => {
+ipcMain.on('shortcuts-unregister', () => {
   shortcuts.unregisterShortcuts();
 });
 
@@ -352,21 +352,21 @@ ipcMain.on('get-app-info', (event, payload) => {
   event.returnValue = file.getAppInfo(app, payload);
 });
 
-ipcMain.on('render-markdown', (event, payload) => {
+ipcMain.on('markdown-render', (event, payload) => {
   event.returnValue = markdown.renderMarkdown(payload);
 });
 
-ipcMain.on('get-command-prompt', (event, payload) => {
+ipcMain.on('command-get-prompt', (event, payload) => {
   event.returnValue = Commander.getCachedText(payload);
 })
 
-ipcMain.on('close-command-palette', async () => {
+ipcMain.on('command-palette-close', async () => {
   await window.closeCommandPalette();
   await window.restoreWindows();
   await window.releaseFocus();
 });
 
-ipcMain.on('run-command', async (event, payload) => {
+ipcMain.on('command-run', async (event, payload) => {
 
   // cancel any running command
   if (commander !== null) {
@@ -399,7 +399,7 @@ ipcMain.on('run-command', async (event, payload) => {
   }
 });
 
-ipcMain.on('stop-command', async () => {
+ipcMain.on('command-stop', async () => {
 
   // cancel any running command
   if (commander !== null) {
@@ -409,7 +409,7 @@ ipcMain.on('stop-command', async () => {
 
 });
 
-ipcMain.on('run-python-code', async (event, payload) => {
+ipcMain.on('code-python-run', async (event, payload) => {
   try {
     const result = await PythonShell.runString(payload);
     event.returnValue = {
@@ -423,7 +423,7 @@ ipcMain.on('run-python-code', async (event, payload) => {
   }
 })
 
-ipcMain.on('prompt-anywhere', async (event, payload) => {
+ipcMain.on('anywhere-prompt', async (event, payload) => {
 
   // if cancel on prompt window
   await window.closePromptAnywhere();
@@ -477,11 +477,11 @@ ipcMain.on('anywhere-cancel', async () => {
   }
 })
 
-ipcMain.on('get-readaloud-text', (event, payload) => {
+ipcMain.on('readaloud-get-text', (event, payload) => {
   event.returnValue = ReadAloud.getCachedText(payload);
 })
 
-ipcMain.on('close-readaloud-palette', async () => {
+ipcMain.on('readaloud-close-palette', async () => {
   await window.closeReadAloudPalette();
 });
 

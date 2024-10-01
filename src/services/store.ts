@@ -1,5 +1,5 @@
 
-import { Store } from '../types/index.d'
+import { Store } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'

@@ -1,6 +1,6 @@
 
-import { anyDict } from '../types/index.d'
-import { PluginConfig, PluginParameter } from '../types/plugin.d'
+import { anyDict } from 'types/index.d'
+import { PluginConfig, PluginParameter } from 'types/plugin.d'
 import { store } from '../services/store'
 import { saveFileContents } from '../services/download'
 import Plugin from './plugin'

@@ -1,5 +1,5 @@
 
-import { SourceType } from '../types/rag.d'
+import { SourceType } from 'types/rag.d'
 import path from 'path'
 
 export default class DocumentSourceImpl {

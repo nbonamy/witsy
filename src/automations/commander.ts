@@ -1,8 +1,8 @@
 
-import { Command, strDict } from '../types/index.d'
-import { Configuration } from '../types/config.d'
-import { RunCommandResponse } from '../types/automation.d'
-import { LlmResponse } from '../types/llm.d'
+import { Command, strDict } from 'types/index.d'
+import { Configuration } from 'types/config.d'
+import { RunCommandResponse } from 'types/automation.d'
+import { LlmResponse } from 'types/llm.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
 import { igniteEngine } from '../services/llm'

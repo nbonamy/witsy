@@ -1,6 +1,6 @@
 
-import { anyDict } from '../types/index.d';
-import { Configuration } from '../types/config.d';
+import { anyDict } from 'types/index.d';
+import { Configuration } from 'types/config.d';
 import defaultSettings from '../../defaults/settings.json'
 import { App } from 'electron'
 import Monitor from './monitor'

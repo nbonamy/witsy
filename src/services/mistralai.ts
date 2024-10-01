@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Message } from '../types/index.d'
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback, LlmToolCall } from '../types/llm.d'
-import { EngineConfig, Configuration } from '../types/config.d'
+import { Message } from 'types/index.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback, LlmToolCall } from 'types/llm.d'
+import { EngineConfig, Configuration } from 'types/config.d'
 import LlmEngine from './engine'
 
 // until https://github.com/mistralai/client-js/issues/59 is fixed

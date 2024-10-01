@@ -1,9 +1,9 @@
 
-import { Configuration } from '../types/config.d'
+import { Configuration } from 'types/config.d'
+import { LlmResponse } from 'types/llm.d'
 import { App } from 'electron'
 import { loadSettings } from '../main/config'
 import { igniteEngine } from '../services/llm' 
-import { LlmResponse } from '../types/llm.d'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import LlmEngine from '../services/engine'
 import Automator from './automator'

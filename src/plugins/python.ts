@@ -1,6 +1,6 @@
 
-import { anyDict } from '../types/index.d'
-import { PluginConfig, PluginParameter } from '../types/plugin.d'
+import { anyDict } from 'types/index.d'
+import { PluginConfig, PluginParameter } from 'types/plugin.d'
 import Plugin from './plugin'
 
 export default class extends Plugin {
