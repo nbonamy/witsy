@@ -103,6 +103,11 @@ const playChunk = (i) => {
   background-color: #e7e6e5;
   font-size: 18pt;
   padding: 0px 8px;
+  -webkit-app-region: drag;
+}
+
+.readaloud * {
+  -webkit-app-region: no-drag;
 }
 
 .loader {
