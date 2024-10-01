@@ -102,6 +102,7 @@ contextBridge.exposeInMainWorld(
       python: (code: string): string => { return ipcRenderer.sendSync('run-python-code', code) },
     },
     nestor: {
+      getStatus: (): Promise<any> => { return ipcRenderer.invoke('nestor-get-status') },
       getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
     },

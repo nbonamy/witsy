@@ -11,6 +11,15 @@ export default class {
     this.nestor = new NestorClient()
   }
 
+  async getStatus(): Promise<anyDict> {
+    try {
+      return await this.nestor.status()
+    } catch (error) {
+      console.error(error)
+      return []
+    }
+  }
+
   async getTools(): Promise<anyDict|Array<anyDict>> {
     try {
       return await this.nestor.list()
