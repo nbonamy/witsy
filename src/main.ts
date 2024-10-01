@@ -584,6 +584,10 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
   }
 });
 
+ipcMain.handle('nestor-get-status', async (_) => {
+  return await nestor.getStatus();
+});
+
 ipcMain.handle('nestor-get-tools', async (_) => {
   return await nestor.getTools();
 })

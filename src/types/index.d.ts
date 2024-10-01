@@ -208,6 +208,7 @@ declare global {
         python?(code: string): any
       }
       nestor?: {
+        getStatus?(): any
         getTools?(): any
         callTool?(name: string, parameters: anyDict): any
       }
