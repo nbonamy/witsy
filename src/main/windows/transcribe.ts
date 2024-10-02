@@ -26,19 +26,16 @@ export const openTranscribePalette = async () => {
   // get bounds
   const width = 400;
   const height = 300;
-  const { x, y } = screen.getCursorScreenPoint();
 
   // open a new one
   transcribePalette = createWindow({
     hash: '/transcribe',
-    x: x - width/2,
-    y: y - height/2,
     width: width,
     height: height,
+    center: true,
     frame: false,
     skipTaskbar: true,
-    alwaysOnTop: true,
-    resizable: true,
+    resizable: false,
     hiddenInMissionControl: true,
   });
 
