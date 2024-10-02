@@ -39,6 +39,7 @@ onMounted(() => {
 
 // recording stuff
 let mediaRecorder
+const silenceThreshold = 0.03
 
 const initializeAudio = async () => {
 
@@ -102,7 +103,7 @@ const onStop = () => {
 // drawing constants
 const bufferIncrement = 2
 const horizontalScale = 1
-const verticalScale = 4.5
+const verticalScale = 4.0
 const sampleIntervalMs = 100
 
 // interpolation between samples
@@ -177,7 +178,7 @@ const draw = (analyser, bufferLength, dataArray) => {
     }
 
     // measure silence
-    if (Math.abs(v - 1.0) > 0.05) {
+    if (Math.abs(v - 1.0) > silenceThreshold) {
       silent = false
     }
 
