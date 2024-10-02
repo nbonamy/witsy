@@ -25,6 +25,10 @@
         <span>Usage: Highlight your text, press keyboard shortcut</span>
       </div>
     </div>
+    <div class="group">
+      <label>Dictation</label>
+      <InputShortcut v-model="transcribe" @change="save" />
+    </div>
   </div>
 </template>
 
@@ -38,12 +42,14 @@ const chat = ref(null)
 const command = ref(null)
 const anywhere = ref(null)
 const readaloud = ref(null)
+const transcribe = ref(null)
 
 const load = () => {
   chat.value = store.config.shortcuts.chat
   command.value = store.config.shortcuts.command
   anywhere.value = store.config.shortcuts.anywhere
   readaloud.value = store.config.shortcuts.readaloud
+  transcribe.value = store.config.shortcuts.transcribe
 }
 
 const save = () => {
@@ -51,6 +57,7 @@ const save = () => {
   store.config.shortcuts.command = command.value
   store.config.shortcuts.anywhere = anywhere.value
   store.config.shortcuts.readaloud = readaloud.value
+  store.config.shortcuts.transcribe = transcribe.value
   store.saveSettings()
 }
 

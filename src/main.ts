@@ -14,6 +14,7 @@ import AutoUpdater from './main/autoupdate';
 import Commander from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
+import Transcriber from 'automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
@@ -76,6 +77,7 @@ const registerShortcuts = () => {
     command: Commander.initCommand,
     anywhere: PromptAnywhere.initPrompt,
     readaloud: ReadAloud.read,
+    transcribe: Transcriber.initTranscription,
   });
 }
 
@@ -103,6 +105,7 @@ const buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
     { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
     { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
+    { label: 'Start Dictation', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },
     { type: 'separator'},
     { label: 'Settings…', click: window.openSettingsWindow },
     { type: 'separator'},
@@ -483,6 +486,14 @@ ipcMain.on('readaloud-get-text', (event, payload) => {
 
 ipcMain.on('readaloud-close-palette', async () => {
   await window.closeReadAloudPalette();
+});
+
+ipcMain.on('transcribe-insert', async (_, payload) => {
+  await Transcriber.insertTranscription(payload);
+});
+
+ipcMain.on('transcribe-cancel', async () => {
+  await window.closeTranscribePalette();
 });
 
 ipcMain.on('docrepo-list', (event) => {

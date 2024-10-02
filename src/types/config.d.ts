@@ -10,6 +10,7 @@ export interface Configuration {
   shortcuts: ShortcutsConfig
   engines: {[key: string]: EngineConfig}
   plugins: {[key: string]: PluginConfig}
+  stt: STTConfig
   rag: RagConfig
   dropbox: DropboxConfig
   getActiveModel: () => string
@@ -54,6 +55,12 @@ interface ShortcutsConfig {
   command: Shortcut
   anywhere: Shortcut
   readaloud: Shortcut
+  transcribe: Shortcut
+}
+
+interface STTConfig {
+  silenceDetection: boolean
+  silenceDuration: number
 }
 
 interface EngineConfig {

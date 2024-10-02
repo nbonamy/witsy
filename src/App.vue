@@ -11,6 +11,7 @@ import Commands from './screens/Commands.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
 import Experts from './screens/Experts.vue'
 import ReadAloud from './screens/ReadAloud.vue'
+import Transcribe from './screens/Transcribe.vue'
 
 // add platform name
 onMounted(() => {
@@ -37,6 +38,7 @@ const routes = {
   '/prompt': PromptAnywhere,
   '/experts': Experts,
   '/readaloud': ReadAloud,
+  '/transcribe': Transcribe
 }
 
 const currentPath = ref(window.location.hash)

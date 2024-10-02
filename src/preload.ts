@@ -95,6 +95,10 @@ contextBridge.exposeInMainWorld(
       getText: (id: string): string => { return ipcRenderer.sendSync('readaloud-get-text', id) },
       closePalette: (): void => { return ipcRenderer.send('readaloud-close-palette') },
     },
+    transcribe: {
+      insert(text: string): void { return ipcRenderer.send('transcribe-insert', text) },
+      cancel: (): void => { return ipcRenderer.send('transcribe-cancel') },
+    },
     markdown: {
       render: (markdown: string): string => { return ipcRenderer.sendSync('markdown-render', markdown) },
     },
