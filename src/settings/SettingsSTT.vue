@@ -10,11 +10,14 @@
       </select>
     </div>
     <div class="group">
-      <label>OpenAI Voice</label>
-      <select v-model="voice" @change="save">
-        <option v-for="voice in voices" :key="voice.id" :value="voice.id">
-          {{ voice.label }}
-        </option>
+      <label>Silence Detection</label>
+      <select v-model="duration" @change="save">
+        <option value="0">Disabled</option>
+        <option value="1000">1 second</option>
+        <option value="2000">2 seconds</option>
+        <option value="3000">3 seconds</option>
+        <option value="4000">4 seconds</option>
+        <option value="5000">5 seconds</option>
       </select>
     </div>
     <div class="group">
@@ -29,31 +32,21 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 
-const voice = ref(null)
-const model = ref(null)
+const model = ref('whisper-1')
+const duration = ref(null)
 
 const models = [
-  { id: 'tts-1', label: 'TTS 1' },
-  { id: 'tts-1-hd', label: 'TTS 1 HD' },
-]
-
-const voices = [
-  { id: 'alloy', label: 'Alloy' },
-  { id: 'echo', label: 'Echo' },
-  { id: 'fable', label: 'Fable' },
-  { id: 'onyx', label: 'Onyx' },
-  { id: 'nova', label: 'Nova' },
-  { id: 'shimmer', label: 'Shimmer' },
+  { id: 'whisper-1', label: 'Whisper V2' },
 ]
 
 const load = () => {
-  voice.value = store.config.engines.openai.tts?.voice || 'tts-1'
-  model.value = store.config.engines.openai.tts?.model || 'alloy'
+  const detection = store.config.stt.silenceDetection
+  duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
 }
 
 const save = () => {
-  store.config.engines.openai.tts.voice = voice.value
-  store.config.engines.openai.tts.model = model.value
+  store.config.stt.silenceDetection = (duration.value != 0)
+  store.config.stt.silenceDuration = parseInt(duration.value)
   store.saveSettings()
 }
 

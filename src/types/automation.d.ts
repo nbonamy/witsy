@@ -6,6 +6,7 @@ export interface ShortcutCallbacks {
   command: () => void
   anywhere: () => void
   readaloud: () => void
+  transcribe: () => void
 }
 
 export interface Automator {

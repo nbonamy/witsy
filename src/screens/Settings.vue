@@ -12,7 +12,7 @@
             <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
             <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-            <SettingsTab class="tts" title="TTS" :checked="initialTab == 'tts'"><BIconMegaphone class="icon" /></SettingsTab>
+            <SettingsTab class="voice" title="Voice" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
             <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
           </ul>
           <SettingsGeneral ref="settingsGeneral" />
@@ -22,7 +22,7 @@
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsLLM ref="settingsLLM" />
           <SettingsPlugins ref="settingsPlugins" />
-          <SettingsTTS ref="settingsTTS" />
+          <SettingsVoice ref="settingsVoice" />
           <SettingsAdvanced ref="settingsAdvanced" />
         </div>
       </main>
@@ -43,7 +43,7 @@ import SettingsPrompts from '../settings/SettingsExperts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
-import SettingsTTS from '../settings/SettingsTTS.vue'
+import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 
 import { nextTick } from 'vue'
@@ -66,7 +66,7 @@ const settingsPrompts = ref(null)
 const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
 const settingsPlugins = ref(null)
-const settingsTTS = ref(null)
+const settingsVoice = ref(null)
 const settingsAdvanced = ref(null)
 
 onMounted(async () => {
@@ -86,7 +86,7 @@ const onOpenSettings = (payload) => {
   settingsPrompts.value.load(payload)
   settingsLLM.value.load(payload)
   settingsPlugins.value.load(payload)
-  settingsTTS.value.load(payload)
+  settingsVoice.value.load(payload)
   settingsAdvanced.value.load(payload)
   document.querySelector('#settings').showModal()
   showActiveTab()
@@ -122,7 +122,6 @@ dialog.settings .content {
   margin: 0 auto;
   padding: 24px 0px;
   min-height: 160px;
-  max-height: 250px;
 }
 
 dialog.settings .tabs .tab>label {

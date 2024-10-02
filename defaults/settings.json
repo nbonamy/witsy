@@ -44,6 +44,12 @@
       "key": "Space",
       "shift": true,
       "ctrl": true
+    },
+    "transcribe": {
+      "key": "Space",
+      "shift": true,
+      "ctrl": true,
+      "alt": true
     }
   },
   "rag": {
@@ -52,6 +58,10 @@
     "chunkOverlap": 50,
     "searchResultCount": 5,
     "relevanceCutOff": 0.2
+  },
+  "stt": {
+    "silenceDetection": true,
+    "silenceDuration": 2000
   },
   "engines": {
     "openai": {

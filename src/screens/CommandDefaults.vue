@@ -15,6 +15,7 @@
             <option value="mistralai">MistralAI</option>
             <option value="google">Google</option>
             <option value="groq">Groq</option>
+            <option value="cerebras">Cerebras</option>
           </select>
         </div>
         <div class="group">

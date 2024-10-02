@@ -36,7 +36,7 @@ const tabs = [
   'settingsShortcuts',
   'settingsLLM',
   'settingsPlugins',
-  'settingsTTS',
+  'settingsVoice',
   'settingsAdvanced',
 ]
 
