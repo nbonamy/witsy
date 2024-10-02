@@ -4,6 +4,7 @@
     <div class="tools">
       <div class="select">
         <div class="item" v-for="item in available" :key="item.id" :class="{ selected: current == item.id }" @click="select(item)">
+          <component :is="item.icon" class="logo" />
           {{ item.label }}
         </div>
       </div>
@@ -15,6 +16,7 @@
 <script setup>
 
 import { ref, computed, nextTick } from 'vue'
+import { BIconMicFill, BIconVolumeUpFill } from 'bootstrap-icons-vue'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'
 
@@ -23,8 +25,8 @@ const settings = ref(null)
 
 const available = computed(() => {
   return [
-    { id: 'tts', label: 'Text to Speech', icon: 'mdi-speaker' },
-    { id: 'stt', label: 'Speech to Text', icon: 'mdi-microphone' },
+    { id: 'tts', label: 'Text-to-Speech', icon: BIconVolumeUpFill },
+    { id: 'stt', label: 'Speech-to-Text', icon: BIconMicFill },
   ]
 })
 

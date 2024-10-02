@@ -39,6 +39,7 @@ onMounted(() => {
 
 // recording stuff
 let mediaRecorder
+let audioChunks = []
 const silenceThreshold = 0.03
 
 const initializeAudio = async () => {
@@ -49,7 +50,10 @@ const initializeAudio = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     mediaRecorder = new MediaRecorder(stream)
     mediaRecorder.ondataavailable = (event) => {
-      transcribe(event.data)
+      audioChunks.push(event.data)
+    }
+    mediaRecorder.onstop = (event) => {
+      transcribe(audioChunks)
     }
     
     // now connect the microphone
@@ -64,7 +68,11 @@ const initializeAudio = async () => {
     const dataArray = new Uint8Array(bufferLength)
 
     // now draw the waveform
-    draw(analyser, bufferLength, dataArray)
+    draw(analyser, bufferLength, dataArray, (silence) => {
+      if (silence && state.value === 'recording') {
+        onStop()
+      }
+    })
 
   } catch (err) {
     console.error('Error accessing microphone:', err)
@@ -76,6 +84,9 @@ const initializeAudio = async () => {
 const onRecord = async () => {
 
   try {
+
+    // reset
+    audioChunks = []
 
     // start the recording
     mediaRecorder.start()
@@ -115,10 +126,10 @@ let lastSampleTime = 0
 // silence detection
 let lastNoise = null
 
-const draw = (analyser, bufferLength, dataArray) => {
+const draw = (analyser, bufferLength, dataArray, silenceCallback) => {
 
   // request next animation
-  requestAnimationFrame(() => draw(analyser, bufferLength, dataArray))
+  requestAnimationFrame(() => draw(analyser, bufferLength, dataArray, silenceCallback))
 
   // we need a canvas
   const canvas = waveForm.value
@@ -201,19 +212,19 @@ const draw = (analyser, bufferLength, dataArray) => {
     if (lastNoise == null) {
       lastNoise = now
     } else if (now - lastNoise > store.config.stt.silenceDuration) {
-      onStop()
+      silenceCallback(true)
     }
   } else {
     lastNoise = null
   }
 }
 
-const transcribe = async (audioChunk) => {
+const transcribe = async (audioChunks) => {
 
   try {
 
     // get the chunks as audio/webm
-    const audioBlob = new Blob([audioChunk], { type: 'audio/webm' })
+    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' })
 
     // now transcribe
     const stt = new SpeechToText(store.config)
