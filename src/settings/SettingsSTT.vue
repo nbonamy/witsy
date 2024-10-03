@@ -45,7 +45,7 @@ const model = ref('openai/whisper-1')
 const duration = ref(null)
 const progress = ref(null)
 
-let previoousModel = null
+let previousModel = null
 
 const models = [
   { id: 'openai/whisper-1', label: 'OpenAI Whisper V2 (online)' },
@@ -72,6 +72,7 @@ const progressText = computed(() => {
 const load = () => {
   const detection = store.config.stt.silenceDetection
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
+  model.value = store.config.stt.model || 'openai/whisper-1'
 }
 
 const save = () => {
@@ -81,7 +82,7 @@ const save = () => {
 }
 
 const onChangeModel = () => {
-  previoousModel = `${store.config.stt.model}`
+  previousModel = `${store.config.stt.model}`
   store.config.stt.model = model.value
   const engine = getSTTEngine(store.config)
   if (engine.requiresDownload()) {
@@ -94,8 +95,8 @@ const onChangeModel = () => {
       if (result.isConfirmed) {
         initializeEngine(engine)
       } else {
-        store.config.stt.model = previoousModel
-        model.value = previoousModel
+        store.config.stt.model = previousModel
+        model.value = previousModel
       }
     })
   } else {
@@ -115,8 +116,8 @@ const initializeEngine = async (engine) => {
     if (data.status === 'error') {
       alert('An error occured during initialization. Please try again.')
       engine.deleteModel(model.value)
-      store.config.stt.model = previoousModel
-      model.value = previoousModel
+      store.config.stt.model = previousModel
+      model.value = previousModel
       progress.value = null
     }
 
