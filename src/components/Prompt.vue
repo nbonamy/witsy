@@ -4,6 +4,7 @@
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
       <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" v-if="enableDictation"/>
     </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
@@ -29,6 +30,8 @@ import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
+import useAudioRecorder from '../composables/audio_recorder'
+import useTranscriber from '../composables/transcriber'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
@@ -58,8 +61,15 @@ const props = defineProps({
   enableCommands: {
     type: Boolean,
     default: true
+  },
+  enableDictation: {
+    type: Boolean,
+    default: true
   }
 })
+
+const audioRecorder = useAudioRecorder()
+const transcriber = useTranscriber()
 
 const prompt = ref('')
 const input = ref(null)
@@ -67,6 +77,7 @@ const docRepos = ref([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showCommands = ref(false)
+const dictating = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
@@ -74,7 +85,7 @@ const engine = () => props.chat?.engine || store.config.llm.engine
 const model = () => props.chat?.model || store.config.getActiveModel(engine())
 
 const iconsLeftCount = computed(() => {
-  const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0)
+  const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
   return `icons-left-${count}`
 })
 
@@ -113,11 +124,32 @@ const commands = computed(() => {
 })
 
 onMounted(() => {
+
+  // event
   onEvent('set-prompt', onSetPrompt)
   onEvent('set-expert-prompt', onSetExpertPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
   autoGrow(input.value)
+
+  // doc repo
   loadDocRepos()
+
+  // transcriber
+  transcriber.initialize()
+
+  // audio recorder
+  audioRecorder.initialize({
+    onSilenceDetected: () => {
+      onDictate()
+    },
+    onRecordingComplete: async (audioChunks) => {
+      const response = await transcriber.transcribe(audioChunks)
+      if (response) {
+        prompt.value = response.text
+      }
+    },
+  })
+
 })
 
 const loadDocRepos = () => {
@@ -214,6 +246,16 @@ const onExperts = () => {
     menuY.value = rect?.height + 32
   } else {
     emitEvent('show-experts')
+  }
+}
+
+const onDictate = () => {
+  if (dictating.value) {
+    audioRecorder.stop()
+    dictating.value = false
+  } else {
+    dictating.value = true
+    audioRecorder.start()
   }
 }
 
@@ -387,6 +429,10 @@ const autoGrow = (element) => {
 
 .prompt .icon.active {
   color: var(--highlight-color);
+}
+
+.prompt .icon.dictate.active {
+  color: red;
 }
 
 .prompt .icons-left-2 .icon {

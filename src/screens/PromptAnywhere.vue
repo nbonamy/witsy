@@ -15,6 +15,7 @@ import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store
+store.loadSettings()
 store.loadExperts()
 
 const props = defineProps({
