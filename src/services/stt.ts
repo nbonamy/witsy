@@ -38,7 +38,7 @@ export interface STTEngine {
   isReady(): boolean
   requiresDownload(): boolean
   initialize(callback?: ProgressCallback): Promise<void>
-  transcribe(audioBlob: Blob, opts?: { }): Promise<TranscribeResponse>
+  transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse>
   deleteModel(model: string): Promise<void>
   deleteAllModels(): Promise<void>
 }

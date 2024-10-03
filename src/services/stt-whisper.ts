@@ -9,7 +9,7 @@ export default class implements STTEngine {
 
   config: Configuration
   transcriber?: any
-  ready: boolean = false
+  ready = false
 
   constructor(config: Configuration) {
     this.config = config
@@ -50,7 +50,8 @@ export default class implements STTEngine {
 
   }
 
-  async transcribe(audioBlob: Blob, opts?: {}): Promise<TranscribeResponse> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
 
     return new Promise((resolve, reject) => {
 
