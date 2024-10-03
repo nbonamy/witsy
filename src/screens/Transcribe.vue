@@ -23,7 +23,7 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import Loader from '../components/Loader.vue'
-import SpeechToText from '../services/stt'
+import getSTTEngine from '../services/stt'
 
 // load store
 store.loadSettings()
@@ -34,8 +34,17 @@ const waveForm = ref(null)
 
 onMounted(() => {
   document.addEventListener('keydown', onKeyDown)
+  initializeEngine()
   initializeAudio()
 })
+
+// stt engine
+let sttEngine = null
+
+const initializeEngine = async () => {
+  sttEngine = getSTTEngine(store.config)
+  await sttEngine.initialize()
+}
 
 // recording stuff
 let mediaRecorder
@@ -84,6 +93,12 @@ const initializeAudio = async () => {
 const onRecord = async () => {
 
   try {
+
+    // check
+    if (sttEngine === null || sttEngine.isReady() === false) {
+      alert('Speech-to-text engine not ready')
+      return
+    }
 
     // reset
     audioChunks = []
@@ -227,8 +242,7 @@ const transcribe = async (audioChunks) => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' })
 
     // now transcribe
-    const stt = new SpeechToText(store.config)
-    const response = await stt.transcribe(audioBlob)
+    const response = await sttEngine.transcribe(audioBlob)
 
     // add a space if needed
     if (transcription.value.length && ',;.?!'.indexOf(transcription.value[transcription.value.length - 1]) !== -1) {

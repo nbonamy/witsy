@@ -197,7 +197,19 @@ declare global {
         query?(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
         isEmbeddingAvailable?(engine: string, model: string): boolean
       },
-        clipboard?: {
+      readaloud?: {
+        getText?(id: string): string
+        closePalette?(): void
+      },
+      whisper?: {
+        initialize?(): void
+        transcribe?(audioBlob: Blob): Promise<{ text: string }>
+      },
+      transcribe?: {
+        insert?(text: string): void
+        cancel?(): void
+      },
+      clipboard?: {
         writeText?(text: string): void
         writeImage?(path: string): void
       },

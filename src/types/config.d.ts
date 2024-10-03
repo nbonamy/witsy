@@ -59,6 +59,7 @@ interface ShortcutsConfig {
 }
 
 interface STTConfig {
+  model: string
   silenceDetection: boolean
   silenceDuration: number
 }

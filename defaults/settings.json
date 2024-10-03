@@ -60,6 +60,7 @@
     "relevanceCutOff": 0.2
   },
   "stt": {
+    "model": "openai/whisper-1",
     "silenceDetection": true,
     "silenceDuration": 2000
   },
