@@ -42,7 +42,7 @@ import { store } from '../services/store'
 import defaultSettings from '../../defaults/settings.json'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const maxDocumentSizeMB = ref(null)

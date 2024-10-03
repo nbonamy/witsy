@@ -8,7 +8,7 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
-import useEventBus from '../../src/composables/useEventBus'
+import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)

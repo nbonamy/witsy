@@ -21,7 +21,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import useAudioPlayer from '../composables/audio'
 import Message from '../models/message'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

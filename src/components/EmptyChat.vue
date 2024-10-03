@@ -29,7 +29,7 @@ import { availableEngines, isEngineReady, hasChatModels } from '../services/llm'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import EngineLogo from './EngineLogo.vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const showAllEngines = ref(false)

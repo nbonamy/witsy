@@ -25,7 +25,7 @@ import { store } from '../services/store'
 import Chat from '../models/chat'
 import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

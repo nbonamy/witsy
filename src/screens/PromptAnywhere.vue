@@ -11,7 +11,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import Prompt from '../components/Prompt.vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store

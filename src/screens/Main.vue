@@ -20,7 +20,7 @@ import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 // load store

@@ -28,7 +28,7 @@ import { loadOllamaModels } from '../services/llm'
 import Ollama from '../services/ollama'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

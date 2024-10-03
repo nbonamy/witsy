@@ -22,7 +22,7 @@ import { store } from '../services/store'
 import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const divScroller = ref(null)

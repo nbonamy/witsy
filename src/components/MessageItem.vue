@@ -44,7 +44,7 @@ import Loader from './Loader.vue'
 import Attachment from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

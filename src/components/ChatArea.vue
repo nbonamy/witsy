@@ -20,7 +20,7 @@ import ContextMenu from './ContextMenu.vue'
 import Chat from '../models/chat'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 import EmptyChat from './EmptyChat.vue'
 import html2pdf from 'html2pdf.js'
 const { emitEvent } = useEventBus()
