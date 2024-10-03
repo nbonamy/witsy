@@ -8,12 +8,25 @@ export interface AudioRecorderListener {
   onRecordingComplete: (audioChunks: any[]) => void
 }
 
+const closeStream = (stream: MediaStream) => {
+  stream?.getTracks().forEach(function(track) {
+    track.stop();
+  });
+}
+
+export const isAudioRecordingSupported = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+  closeStream(stream)
+  return stream != null
+}
+
 class AudioRecorder {
 
   readonly silenceThreshold = 2
 
   config: Configuration
   listener: AudioRecorderListener
+  stream: MediaStream
   mediaRecorder: MediaRecorder
   audioChunks: any[]
   analyser: AnalyserNode
@@ -41,9 +54,14 @@ class AudioRecorder {
     // save the listener
     this.listener = listener
 
+    // we need an audio stream
+    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    if (!this.stream) {
+      throw new Error('Failed to get audio stream')
+    }
+
     // the media recorder
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    this.mediaRecorder = new MediaRecorder(stream)
+    this.mediaRecorder = new MediaRecorder(this.stream)
     this.mediaRecorder.ondataavailable = (event) => {
       this.audioChunks.push(event.data)
     }
@@ -53,7 +71,7 @@ class AudioRecorder {
 
     // now connect the microphone
     const audioContext = new window.AudioContext()
-    const microphone = audioContext.createMediaStreamSource(stream)
+    const microphone = audioContext.createMediaStreamSource(this.stream)
     this.analyser = audioContext.createAnalyser()
     microphone.connect(this.analyser)
 
@@ -78,6 +96,12 @@ class AudioRecorder {
       clearInterval(this.sampler)
       this.mediaRecorder.stop()
     }
+  }
+
+  release(): void {
+    closeStream(this.stream)
+    this.mediaRecorder = null
+    this.analyser = null
   }
 
   private detectSilence(): void {

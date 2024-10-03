@@ -4,6 +4,7 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import Prompt from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import Experts from '../../src/screens/Experts.vue'
+import defaultSettings from '../../defaults/settings.json'
 
 import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -12,8 +13,17 @@ enableAutoUnmount(afterAll)
 
 beforeAll(() => {
 
+  navigator = {
+    mediaDevices: {
+      getUserMedia: vi.fn()
+    }
+  }
+  
   window.api = {
     on: vi.fn(),
+    config: {
+      load: vi.fn(() => defaultSettings)
+    },
     experts: {
       load: vi.fn(() => {
         return [

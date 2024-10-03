@@ -26,6 +26,12 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 
 beforeAll(() => {
 
+  navigator = {
+    mediaDevices: {
+      getUserMedia: vi.fn()
+    }
+  }
+  
   // api
   window.api = {
     on: vi.fn(),
