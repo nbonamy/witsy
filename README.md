@@ -10,9 +10,10 @@ Generative AI desktop application:
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
-- <b>[BETA]</b> Chat with your local files and documents (RAG) 
 - Read aloud of assistant messages (requires OpenAI API key)
 - Read aloud of any text in other applications (requires OpenAI API key)
+- <b>[BETA]</b> Chat with your local files and documents (RAG)
+- <b>[BETA]</b> Transcription/Dictation (Speech-to-Text)
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
 - Image copy and download
@@ -63,6 +64,14 @@ You can connect each chat with a document repository: Witsy will first search fo
 - Add documents by clicking the + button on the right hand side of the window
 - Once your document repository is created, click on the database icon once more and select the document repository you want to use. The icon should turn blue
 
+## [BETA] Transcription / Dictation (Speech-to-Text)
+
+You can transcribe audio recorded on the microphone to text. Transcription can be done using OpenAI Whisper online model (requires API key) or using local Whisper model (requires download of large files). Once the text is transcribed you can:
+
+- Copy it to your clipboard
+- Insert it in the application that was running before you activated the dictation
+
+
 ## Setup
 
 You can download a binary from the Releases page or build yourself:
@@ -98,7 +107,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
-- [x] OpenAI Whisper Dictation
+- [x] Dictation: OpenAI Whisper + Whisper WebGPU 
 - [x] Auto-select expert based on foremost app (Mac only)
 - [x] Cerebras support
 - [x] Local files RAG

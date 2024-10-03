@@ -113,6 +113,6 @@ contextBridge.exposeInMainWorld(
     dropbox: {
       getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
       authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },
-    }
+    },
   },
 );
