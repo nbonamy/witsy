@@ -4,15 +4,16 @@
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
       <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
-      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" v-if="enableDictation"/>
+      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" v-if="hasDictation"/>
     </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
         <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
       </div>
-      <div>
+      <div class="textarea-wrapper">
+        <BIconHourglassSplit class="icon transcribing left" v-if="transcribing" />
         <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
-        <BIconMagic class="icon command" @click="onCommands" v-if="enableCommands && prompt" />
+        <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
@@ -30,7 +31,7 @@ import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
-import useAudioRecorder from '../composables/audio_recorder'
+import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTranscriber from '../composables/transcriber'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
@@ -77,6 +78,8 @@ const docRepos = ref([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showCommands = ref(false)
+const hasDictation = ref(false)
+const transcribing = ref(false)
 const dictating = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -86,7 +89,7 @@ const model = () => props.chat?.model || store.config.getActiveModel(engine())
 
 const iconsLeftCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
-  return `icons-left-${count}`
+  return `icons-left-${count > 1 ? 'many' : count}`
 })
 
 const working = computed(() => {
@@ -131,26 +134,29 @@ onMounted(() => {
   window.api.on('docrepo-modified', loadDocRepos)
   autoGrow(input.value)
 
-  // doc repo
+  // other stuff
   loadDocRepos()
-
-  // transcriber
-  transcriber.initialize()
-
-  // audio recorder
-  audioRecorder.initialize({
-    onSilenceDetected: () => {
-      onDictate()
-    },
-    onRecordingComplete: async (audioChunks) => {
-      const response = await transcriber.transcribe(audioChunks)
-      if (response) {
-        prompt.value = response.text
-      }
-    },
-  })
+  initDictation()
 
 })
+
+const initDictation = async () => {
+
+  // needed?
+  if (!props.enableDictation) {
+    return
+  }
+
+  // check
+  const supported = await isAudioRecordingSupported()
+  if (!supported) {
+    return
+  }
+
+  // this should be good enough
+  hasDictation.value = true
+
+}
 
 const loadDocRepos = () => {
   if (props.enableDocRepo) {
@@ -249,14 +255,58 @@ const onExperts = () => {
   }
 }
 
-const onDictate = () => {
+const onDictate = async () => {
+  
   if (dictating.value) {
+  
     audioRecorder.stop()
     dictating.value = false
+  
   } else {
+
+    // transcriber
+    transcriber.initialize()
+
+    // audio recorder
+    await audioRecorder.initialize({
+      
+      onSilenceDetected: () => {
+        onDictate()
+      },
+      
+      onRecordingComplete: async (audioChunks) => {
+
+        try {
+
+          // do that always
+          audioRecorder.release()
+
+          // update
+          prompt.value = ''
+          transcribing.value = true
+
+          // transcribe
+          const response = await transcriber.transcribe(audioChunks)
+          if (response) {
+            prompt.value = response.text
+          }
+
+        } catch (error) {
+          alert('Error transcribing audio')
+        }
+
+        // update
+        transcribing.value = false
+
+      },
+    })
+
+    // start
     dictating.value = true
     audioRecorder.start()
+
   }
+
 }
 
 const onDocRepo = (event) => {
@@ -435,7 +485,7 @@ const autoGrow = (element) => {
   color: red;
 }
 
-.prompt .icons-left-2 .icon {
+.prompt .icons-left-many .icon {
   padding-left: 4px;
   padding-right: 4px;
 }
@@ -458,7 +508,7 @@ const autoGrow = (element) => {
   margin-left: 8px;
 }
 
-.input div:has(textarea) {
+.textarea-wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -466,7 +516,19 @@ const autoGrow = (element) => {
   overflow: hidden;
 }
 
-.input div:has(textarea) .icon {
+.textarea-wrapper .icon.left {
+  position: absolute;
+  border-radius: 16px;
+  margin-top: -2px;
+  margin-left: 8px;
+  left: 4px;
+}
+
+.textarea-wrapper .icon.left + textarea {
+  padding-left: 36px;
+}
+
+.textarea-wrapper .icon.right {
   position: absolute;
   border-radius: 16px;
   margin-top: -2px;
@@ -474,7 +536,7 @@ const autoGrow = (element) => {
   right: 12px;
 }
 
-.input textarea {
+.textarea-wrapper textarea {
   border: none;
   resize: none;
   box-sizing: border-box;

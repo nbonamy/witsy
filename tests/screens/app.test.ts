@@ -1,5 +1,5 @@
 
-import { vi, expect, test, afterAll } from 'vitest'
+import { vi, expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
@@ -10,27 +10,37 @@ import defaults from '../../defaults/settings.json'
 
 enableAutoUnmount(afterAll)
 
-window.api = {
-  on: vi.fn(),
-  config: {
-    load: vi.fn(() => defaults),
-  },
-  store: {
-    get: vi.fn(() => null),
-  },
-  commands: {
-    load: vi.fn(() => []),
-  },
-  experts: {
-    load: vi.fn(() => []),
-  },
-  history: {
-    load: vi.fn(() => []),
-  },
-  docrepo: {
-    list: vi.fn(() => []),
+beforeAll(() => {
+
+  navigator = {
+    mediaDevices: {
+      getUserMedia: vi.fn()
+    }
   }
-}
+  
+  window.api = {
+    on: vi.fn(),
+    config: {
+      load: vi.fn(() => defaults),
+    },
+    store: {
+      get: vi.fn(() => null),
+    },
+    commands: {
+      load: vi.fn(() => []),
+    },
+    experts: {
+      load: vi.fn(() => []),
+    },
+    history: {
+      load: vi.fn(() => []),
+    },
+    docrepo: {
+      list: vi.fn(() => []),
+    }
+  }
+
+})
 
 test('Renders correctly', () => {
   window.location = new URL('http://localhost/')

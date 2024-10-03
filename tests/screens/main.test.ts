@@ -1,5 +1,5 @@
 
-import { vi, beforeEach, expect, test, afterAll } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import Main from '../../src/screens/Main.vue'
@@ -14,27 +14,37 @@ const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)
 
-window.api = {
-  on: vi.fn(),
-  config: {
-    load: vi.fn(() => defaults),
-  },
-  store: {
-    get: vi.fn(() => null),
-  },
-  commands: {
-    load: vi.fn(() => []),
-  },
-  experts: {
-    load: vi.fn(() => []),
-  },
-  history: {
-    load: vi.fn(() => []),
-  },
-  docrepo: {
-    list: vi.fn(() => []),
-  },
-}
+beforeAll(() => {
+
+  navigator = {
+    mediaDevices: {
+      getUserMedia: vi.fn()
+    }
+  }
+
+  window.api = {
+    on: vi.fn(),
+    config: {
+      load: vi.fn(() => defaults),
+    },
+    store: {
+      get: vi.fn(() => null),
+    },
+    commands: {
+      load: vi.fn(() => []),
+    },
+    experts: {
+      load: vi.fn(() => []),
+    },
+    history: {
+      load: vi.fn(() => []),
+    },
+    docrepo: {
+      list: vi.fn(() => []),
+    },
+  }
+
+})
 
 vi.mock('../../src/services/assistant', async () => {
   const Assistant = vi.fn()

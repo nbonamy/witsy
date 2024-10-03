@@ -31,6 +31,12 @@ let wrapper: VueWrapper<any>
 
 beforeAll(() => {
 
+  navigator = {
+    mediaDevices: {
+      getUserMedia: vi.fn()
+    }
+  }
+  
   // api
   window.api = {
     on: vi.fn(),
