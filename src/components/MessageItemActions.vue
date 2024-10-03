@@ -18,7 +18,7 @@
 <script setup>
 
 import { ref, onMounted, onUnmounted } from 'vue'
-import useAudioPlayer from '../composables/audio'
+import useAudioPlayer from '../composables/audio_player'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
