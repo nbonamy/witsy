@@ -18,7 +18,7 @@ const emitEventMock = vi.fn((event, ...args) => {
   }
 })
 
-vi.mock('../../src/composables/useEventBus.js', async () => {
+vi.mock('../../src/composables/event_bus.js', async () => {
   return { default: () => {
     return {
       onEvent: onEventMock,
