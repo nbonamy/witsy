@@ -25,10 +25,11 @@ export default class implements STTEngine {
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {
-    callback({ status: 'ready', task: 'openai', model: this.config.stt.model })
+    callback?.({ status: 'ready', task: 'openai', model: this.config.stt.model })
   }
 
-  async transcribe(audioBlob: Blob, opts?: { } ): Promise<TranscribeResponse> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
 
     // call
     const response = await this.client.audio.transcriptions.create({
@@ -40,6 +41,7 @@ export default class implements STTEngine {
     return response
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteModel(model: string): Promise<void> {
     return
   }
