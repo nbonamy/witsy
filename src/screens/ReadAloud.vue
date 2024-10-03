@@ -13,7 +13,7 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer, { textMaxLength} from '../composables/audio'
+import useAudioPlayer, { textMaxLength} from '../composables/audio_player'
 import Loader from '../components/Loader.vue'
 
 // load store
