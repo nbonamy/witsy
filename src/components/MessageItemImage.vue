@@ -9,7 +9,7 @@
 
 import { ref, computed } from 'vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({

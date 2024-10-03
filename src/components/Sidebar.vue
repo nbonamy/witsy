@@ -34,7 +34,7 @@ import { store } from '../services/store'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 import { BIconTrash } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 

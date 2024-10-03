@@ -6,7 +6,7 @@ import Settings from '../../src/screens/Settings.vue'
 import defaults from '../../defaults/settings.json'
 import { availableEngines } from '../../src/services/llm'
 
-import useEventBus from '../../src/composables/useEventBus'
+import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)

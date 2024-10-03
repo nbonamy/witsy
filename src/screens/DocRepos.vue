@@ -70,7 +70,7 @@ import DocRepoCreate from './DocRepoCreate.vue'
 import Spinner from '../components/Spinner.vue'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 const docRepos = ref(null)

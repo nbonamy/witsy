@@ -5,7 +5,7 @@ import Prompt from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import Experts from '../../src/screens/Experts.vue'
 
-import useEventBus  from '../../src/composables/useEventBus'
+import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterAll)

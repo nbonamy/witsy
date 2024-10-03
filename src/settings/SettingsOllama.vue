@@ -28,7 +28,7 @@ import OllamaModelPull from '../components/OllamaModelPull.vue'
 import { getChatModels } from '../services/ollama'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const baseURL = ref(null)

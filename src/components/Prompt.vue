@@ -34,7 +34,7 @@ import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({

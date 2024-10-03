@@ -50,7 +50,7 @@ import { nextTick } from 'vue'
 import { installTabs, showActiveTab } from '../composables/tabs'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const props = defineProps({

@@ -51,7 +51,7 @@ import { getEmbeddingModels } from '../services/ollama'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 
 // bus
-import useEventBus from '../composables/useEventBus'
+import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const nameInput = ref(null)
