@@ -98,11 +98,11 @@ export default class implements Chat {
     this.lastModified = Date.now()
   }
 
-  lastMessage() {
+  lastMessage(): Message {
     return this.messages[this.messages.length - 1]
   }
 
-  delete() {
+  delete(): void {
     for (const message of this.messages) {
       if (message.type === 'image' && typeof message.content === 'string') {
         window.api.file.delete(message.content)
