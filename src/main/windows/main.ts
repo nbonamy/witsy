@@ -1,18 +1,9 @@
 
 import { CreateWindowOpts } from 'types/window';
 import { strDict } from 'types';
-import { app, BrowserWindow, BrowserWindowConstructorOptions, shell } from 'electron';
-import { store, createWindow } from './index';
+import { app, BrowserWindow, shell } from 'electron';
+import { store, createWindow, titleBarOptions } from './index';
 import { wait } from '../utils';
-
-// titlebarOptions
-const titleBarOptions: BrowserWindowConstructorOptions = {
-  titleBarStyle: 'hidden',
-  titleBarOverlay: {
-    color: '#ffffff',
-  },
-  trafficLightPosition: { x: 16, y: 16 },
-}
 
 export let mainWindow: BrowserWindow = null;
 

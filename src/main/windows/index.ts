@@ -1,7 +1,7 @@
 
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
-import { BrowserWindow, Menu, } from 'electron';
+import { BrowserWindow, BrowserWindowConstructorOptions, Menu, } from 'electron';
 import { mainWindow } from './main';
 import { wait } from '../utils';
 import Store from 'electron-store';
@@ -12,6 +12,15 @@ import path from 'node:path';
 export let store: Store|null = null
 export const setStore = (aStore: Store): void => {
   store = aStore
+}
+
+// titlebarOptions
+export const titleBarOptions: BrowserWindowConstructorOptions = {
+  titleBarStyle: 'hidden',
+  titleBarOverlay: {
+    color: '#ffffff',
+  },
+  trafficLightPosition: { x: 16, y: 16 },
 }
 
 // create window
