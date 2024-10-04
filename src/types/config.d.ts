@@ -56,6 +56,7 @@ interface ShortcutsConfig {
   anywhere: Shortcut
   readaloud: Shortcut
   transcribe: Shortcut
+  scratchpad: Shortcut
 }
 
 interface STTConfig {
