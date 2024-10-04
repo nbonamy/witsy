@@ -7,3 +7,4 @@ export * from './windows/commands';
 export * from './windows/wait';
 export * from './windows/readaloud';
 export * from './windows/transcribe';
+export * from './windows/scratchpad';

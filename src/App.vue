@@ -12,6 +12,7 @@ import PromptAnywhere from './screens/PromptAnywhere.vue'
 import Experts from './screens/Experts.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
+import ScratchPad from './screens/ScratchPad.vue'
 
 // add platform name
 onMounted(() => {
@@ -38,7 +39,8 @@ const routes = {
   '/prompt': PromptAnywhere,
   '/experts': Experts,
   '/readaloud': ReadAloud,
-  '/transcribe': Transcribe
+  '/transcribe': Transcribe,
+  '/scratchpad': ScratchPad,
 }
 
 const currentPath = ref(window.location.hash)

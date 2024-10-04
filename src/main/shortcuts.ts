@@ -24,6 +24,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
   registerShortcut(config.shortcuts.anywhere, callbacks.anywhere);
   registerShortcut(config.shortcuts.readaloud, callbacks.readaloud);
   registerShortcut(config.shortcuts.transcribe, callbacks.transcribe);
+  registerShortcut(config.shortcuts.scratchpad, callbacks.scratchpad);
 
 }
 

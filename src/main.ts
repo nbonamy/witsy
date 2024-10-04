@@ -78,6 +78,7 @@ const registerShortcuts = () => {
     anywhere: PromptAnywhere.initPrompt,
     readaloud: ReadAloud.read,
     transcribe: Transcriber.initTranscription,
+    scratchpad: window.openScratchPad,
   });
 }
 
@@ -102,6 +103,7 @@ const buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
   return [
     ...menuItems,
     { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
+    { label: 'Scratch Pad', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: window.openScratchPad },
     { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
     { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
     { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
