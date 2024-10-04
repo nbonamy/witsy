@@ -54,7 +54,12 @@ button {
   font-size: 9pt;
 }
 
-button:active {
+button:disabled {
+  background-color: #f2f2f2;
+  color: #c6c6c5;
+}
+
+button:active:enabled {
   background-color: #f2f2f2;
 }
 
@@ -64,7 +69,7 @@ button.default {
   color: white;
 }
 
-button.default:active {
+button.default:active:enabled {
   background: linear-gradient(#2280e4, #0469dc);
   color: #e2e2e2;
 }
