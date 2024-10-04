@@ -3,15 +3,7 @@
   <div class="content">
     <div class="group engine">
       <label>LLM engine</label>
-      <select v-model="llmEngine" @change="save">
-        <option value="openai">OpenAI</option>
-        <option value="ollama">Ollama</option>
-        <option value="mistralai">MistralAI</option>
-        <option value="anthropic">Anthropic</option>
-        <option value="google">Google</option>
-        <option value="groq">Groq</option>
-        <option value="cerebras">Cerebras</option>
-      </select>
+      <EngineSelect v-model="llmEngine" @change="save" />
     </div>
     <div class="group language">
       <label>Answer in</label>
@@ -40,7 +32,9 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import EngineSelect from '../components/EngineSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
+
 
 const llmEngine = ref(null)
 const language = ref(null)

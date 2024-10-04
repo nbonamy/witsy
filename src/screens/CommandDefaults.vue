@@ -7,23 +7,11 @@
       <main>
         <div class="group">
           <label>LLM Provider</label>
-          <select v-model="engine" @change="onChangeEngine">
-            <option value="">Use global default</option>
-            <option value="openai">OpenAI</option>
-            <option value="ollama">Ollama</option>
-            <option value="anthropic">Anthropic</option>
-            <option value="mistralai">MistralAI</option>
-            <option value="google">Google</option>
-            <option value="groq">Groq</option>
-            <option value="cerebras">Cerebras</option>
-          </select>
+          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Use global default" />
         </div>
         <div class="group">
           <label>LLM Model</label>
-          <select v-model="model">
-            <option value="" v-if="!models.length">Use global default</option>
-            <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-          </select>
+          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Use global default' : ''" />
         </div>
       </main>
       <footer>
@@ -38,6 +26,8 @@
 
 import { ref, computed, watch } from 'vue'
 import { store } from '../services/store'
+import EngineSelect from '../components/EngineSelect.vue'
+import ModelSelect from '../components/ModelSelect.vue'
 
 const engine = ref(null)
 const model = ref(null)
