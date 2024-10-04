@@ -84,7 +84,9 @@ export const saveSettings = (dest: App|string, config: anyDict) => {
     // remove instructions that are the same as the default
     const settings = JSON.parse(JSON.stringify(config))
     for (const instr in settings.instructions) {
-      if (settings.instructions[instr as keyof typeof settings.instructions] === defaultSettings.instructions[instr as keyof typeof defaultSettings.instructions]) {
+      const standard = JSON.stringify(defaultSettings.instructions[instr as keyof typeof defaultSettings.instructions])
+      const current = JSON.stringify(settings.instructions[instr as keyof typeof settings.instructions])
+      if (standard === current) {
         delete settings.instructions[instr]
       }
     }
