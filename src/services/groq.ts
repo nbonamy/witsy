@@ -116,7 +116,7 @@ export default class extends LlmEngine {
 
   buildPayload(thread: Message[], model: string): Array<CompletionCreateParams.Message> {
     const payload: LLmCompletionPayload[] = super.buildPayload(thread, model)
-    return payload.filter((payload) => payload.role != 'system').map((payload): CompletionCreateParams.Message => {
+    return payload.map((payload): CompletionCreateParams.Message => {
       return {
         role: payload.role,
         content: payload.content
