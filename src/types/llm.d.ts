@@ -13,9 +13,12 @@ interface LlmResponse {
 type LlmStream = AsyncGenerator|Stream
 
 interface LlmCompletionOpts {
+  save?: boolean
+  titling?: boolean
   engine?: string
   model?: string
-  save?: boolean
+  overwriteEngineModel?: boolean
+  systemInstructions?: string
   attachment?: Attachment
   docrepo?: string
   size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792' | null

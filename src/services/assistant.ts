@@ -59,32 +59,43 @@ export default class {
       return null
     }
 
-    // engine and model
-    let engine = opts.engine || store.config.llm.engine
-    let model = opts.model || store.config.getActiveModel()
-
-    // save history
-    const save = opts.save == null || opts.save !== false
+    // merge with defaults
+    const defaults: LlmCompletionOpts = {
+      save: true,
+      titling: true,
+      engine: store.config.llm.engine,
+      model: store.config.getActiveModel(),
+      overwriteEngineModel: false,
+      systemInstructions: this.config.instructions.default,
+    }
+    opts = {...defaults, ...opts }
 
     // we need a chat
     if (this.chat === null) {
+
+      // system instructions
+      const systemPrompt = opts.systemInstructions || this.config.instructions.default
+
+      // initialize the chat
       this.chat = new Chat()
       this.chat.docrepo = opts.docrepo
-      this.chat.setEngineModel(engine, model)
-      this.chat.addMessage(new Message('system', this.getLocalizedInstructions(this.config.instructions.default)))
-      if (save) {
+      this.chat.setEngineModel(opts.engine, opts.model)
+      this.chat.addMessage(new Message('system', this.getLocalizedInstructions(systemPrompt)))
+      
+      // save
+      if (opts.save) {
         store.chats.push(this.chat)
         store.saveHistory()
       }
-    } else {
+    
+    } else if (!opts.overwriteEngineModel) {
       // make sure we have the right engine and model
-      engine = this.chat.engine
-      model = this.chat.model
-      opts.model = model
+      opts.engine = this.chat.engine
+      opts.model = this.chat.model
     }
 
     // we need an llm
-    this.initLlm(engine)
+    this.initLlm(opts.engine)
     if (this.llm === null) {
       return null
     }
@@ -106,12 +117,12 @@ export default class {
     await this.generateText(opts, callback)
 
     // check if we need to update title
-    if (this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
+    if (opts.titling && this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
       this.chat.title = await this.getTitle() || this.chat.title
     }
   
     // save
-    if (save) {
+    if (opts.save) {
       store.saveHistory()
     }
 
@@ -203,7 +214,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().appendText({ text: null, done: true})
+      this.chat.lastMessage().appendText({ text: null, done: true })
     }
   }
 
