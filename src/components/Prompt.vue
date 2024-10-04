@@ -11,7 +11,7 @@
         <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
       </div>
       <div class="textarea-wrapper">
-        <BIconHourglassSplit class="icon transcribing left" v-if="transcribing" />
+        <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
@@ -36,6 +36,7 @@ import useTranscriber from '../composables/transcriber'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
+import Loader from './Loader.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
@@ -66,6 +67,10 @@ const props = defineProps({
   enableDictation: {
     type: Boolean,
     default: true
+  },
+  processing: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -79,8 +84,8 @@ const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showCommands = ref(false)
 const hasDictation = ref(false)
-const transcribing = ref(false)
 const dictating = ref(false)
+const processing = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
@@ -90,6 +95,10 @@ const model = () => props.chat?.model || store.config.getActiveModel(engine())
 const iconsLeftCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
   return `icons-left-${count > 1 ? 'many' : count}`
+})
+
+const isProcessing = computed(() => {
+  return processing.value || props.processing
 })
 
 const working = computed(() => {
@@ -283,7 +292,7 @@ const onDictate = async () => {
 
           // update
           prompt.value = ''
-          transcribing.value = true
+          processing.value = true
 
           // transcribe
           const response = await transcriber.transcribe(audioChunks)
@@ -296,7 +305,7 @@ const onDictate = async () => {
         }
 
         // update
-        transcribing.value = false
+        processing.value = false
 
       },
     })
@@ -462,6 +471,12 @@ const autoGrow = (element) => {
   }
 }
 
+defineExpose({
+  setWorking: (value) => {
+    working.value = value
+  }
+})
+
 </script>
 
 <style scoped>
@@ -520,12 +535,24 @@ const autoGrow = (element) => {
   position: absolute;
   border-radius: 16px;
   margin-top: -2px;
-  margin-left: 8px;
   left: 4px;
 }
 
 .textarea-wrapper .icon.left + textarea {
   padding-left: 36px;
+}
+
+.textarea-wrapper .loader-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  transform: scale(0.5);
+  :nth-child(1), :nth-child(3) {
+    animation-delay: 250ms;
+  }
+  .loader {
+    background-color: #888;
+  }
 }
 
 .textarea-wrapper .icon.right {
