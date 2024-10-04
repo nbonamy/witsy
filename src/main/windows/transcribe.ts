@@ -1,5 +1,5 @@
 
-import { BrowserWindow, screen } from 'electron';
+import { BrowserWindow } from 'electron';
 import { createWindow, restoreWindows } from './index';
 import { wait } from '../utils';
 
