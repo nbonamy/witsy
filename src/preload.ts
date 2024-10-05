@@ -110,6 +110,9 @@ contextBridge.exposeInMainWorld(
       getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
     },
+    scratchpad: {
+      open: (): void => { return ipcRenderer.send('scratchpad-open') },
+    },
     dropbox: {
       getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
       authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },

@@ -603,11 +603,15 @@ ipcMain.handle('nestor-get-status', async (_) => {
 
 ipcMain.handle('nestor-get-tools', async (_) => {
   return await nestor.getTools();
-})
+});
 
 ipcMain.handle('nestor-call-tool', async (_, payload) => {
   return await nestor.callTool(payload.name, payload.parameters);
-})
+});
+
+ipcMain.on('scratchpad-open', async () => {
+  await window.openScratchPad();
+});
 
 // ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
 //   const dropbox = new Dropbox(app, '', '')
