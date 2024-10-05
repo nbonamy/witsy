@@ -20,8 +20,14 @@
     "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes.",
     "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{context}\n\nQUERY: {query}",
     "scratchpad": {
-      "system": "You are helping someone write a document. You need to answer to the ask below on the document below. Just reply with the updated document based on the ask. Preserve empty lines. Do not include the initial version of the document. Do not include DOCUMENT. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the...'",
-      "prompt": "DOCUMENT:\n{document}\n\nASK: {ask}"
+      "system": "You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the...'",
+      "prompt": "EXTRACT:\n{document}\n\nASK: {ask}",
+      "spellcheck": "Correct the EXTRACT into standard language and fix the grammar. Make sure all spelling errors are fixed. Do not list the corrections you made.",
+      "improve": "Improve the EXTRACT in your own words. Make it more clear, concise, and engaging. Do not explain the changes you made.",
+      "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
+      "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT.",
+      "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
+      "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made."
     }
   },
   "appearance": {

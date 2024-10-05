@@ -539,7 +539,7 @@ defineExpose({
 }
 
 .textarea-wrapper .icon.left + textarea {
-  padding-left: 36px;
+  padding-left: 44px;
 }
 
 .textarea-wrapper .loader-wrapper {
