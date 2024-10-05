@@ -224,6 +224,9 @@ declare global {
         getTools?(): any
         callTool?(name: string, parameters: anyDict): any
       }
+      scratchpad?: {
+        open?(): void
+      }
     }
   }
 }

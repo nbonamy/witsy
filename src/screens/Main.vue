@@ -14,6 +14,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
+import useTipsManager from '../composables/tips_manager'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import DocRepos from './DocRepos.vue'
@@ -23,8 +24,9 @@ import Settings from './Settings.vue'
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
-// load store
+// init stuff
 store.load()
+const tipsManager = useTipsManager(store)
 
 // assistant
 import Assistant from '../services/assistant'
@@ -88,6 +90,9 @@ onMounted(() => {
       return false
     }
   })
+
+  // show tips
+  tipsManager.showNextTip()
 
 })
 

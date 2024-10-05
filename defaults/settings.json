@@ -6,7 +6,8 @@
     "language": "",
     "tips": {
       "engineSelector": true,
-      "modelSelector": true
+      "modelSelector": true,
+      "scratchpad": true
     }
   },
   "llm": {
