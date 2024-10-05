@@ -2,7 +2,7 @@
 <template>
   <div class="container">
     <div class="placeholder" ref="pholder" v-if="showPlaceholder" v-html="placeholder" />
-    <div class="content" contenteditable="true" ref="text" @blur="onBlur" @focus="onFocus" autofocus="true">
+    <div class="content" contenteditable="true" ref="text" @blur="onBlur" @focus="onFocus" @paste.prevent="onPaste" autofocus="true">
     </div>
   </div>
 </template>
@@ -71,20 +71,35 @@ onMounted(() => {
 
 const getContent = () => {
 
+  //
   let result = {
     content: '',
     selection: null,
-    start: 0,
-    end: 0,
+    cursor: null,
+    start: null,
+    end: null,
   }
 
+  // in case there is no selection, we may want the cursor position
+  let cursorIndex = -1
+  let cursorOffset = -1
+  if (!textSelection) {
+    const selection = window.getSelection()
+    if (selection.isCollapsed) {
+      cursorIndex = indexInNodeList(text.value.childNodes, selection.anchorNode)
+      cursorOffset = selection.anchorOffset
+    }
+  }
+
+  // now loop
+  let cursorFound = false
   let startFound = false
   let endFound = false
   for (const index in [...text.value.childNodes]) {
 
     // is this the start element?
     let isStart = false
-    if (startFound == false && textSelection) {
+    if (!startFound && textSelection) {
       if (index == textSelection.startIndex) {
         startFound = true
         isStart = true
@@ -93,11 +108,17 @@ const getContent = () => {
 
     // is this the end element?
     let isEnd = false
-    if (endFound == false && textSelection) {
+    if (!endFound && textSelection) {
       if (index == textSelection.endIndex) {
         endFound = true
         isEnd = true
       }
+    }
+
+    // is this the cursor element
+    if (!cursorFound && index == cursorIndex) {
+      cursorFound = true
+      result.cursor = result.content.length + cursorOffset
     }
 
     // now the position
@@ -126,7 +147,7 @@ const getContent = () => {
   result.content = result.content.substring(0, result.content.length - 1)
 
   // calc selection
-  if (result.start && result.end) {
+  if (result.start !== null && result.end !== null) {
     result.selection = result.content.substring(result.start, result.end)
   }
 
@@ -349,6 +370,9 @@ const checkSelection = (ev) => {
     }
   }
 
+  // log
+  //console.log(textSelection)
+
 }
 
 const onBlur = () => {
@@ -498,6 +522,27 @@ const onFocus = () => {
   // //console.log(startNode, startOffset, endNode, endOffset)
   // selection.setBaseAndExtent(startNode, startOffset, endNode, endOffset || 1)
   // checkSelection()
+
+}
+
+const onPaste = (ev) => {
+
+  // we only accept text
+  const text = ev.clipboardData.getData('text/plain')
+  if (!text || !text.length) {
+    return
+  }
+
+  // now we need to insert the text, replacing if there is selection
+  const content = getContent()
+  if (content.selection == null && content.cursor != -1) {
+    content.start = content.cursor
+    content.end = content.cursor
+  }
+  const before = content.content.substring(0, content.start)
+  const after = content.content.substring(content.end)
+  const updated = before + text + after
+  setContent({ content: updated, start: 0, end: 0 })
 
 }
 

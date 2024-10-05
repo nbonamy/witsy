@@ -32,7 +32,7 @@ test('Can get content', async () => {
   const wrapper = mount(EditableText)
   wrapper.vm.setContent({ content: 'Hello\nBonjour\n\nAdios', start: 0, end: 0 })
   await wrapper.vm.$nextTick()
-  expect(wrapper.vm.getContent()).toStrictEqual({ content: 'Hello\nBonjour\n\nAdios', selection: null, start: 0, end: 0 })
+  expect(wrapper.vm.getContent()).toStrictEqual({ content: 'Hello\nBonjour\n\nAdios', selection: null, cursor: null, start: null, end: null })
 })
 
 test('Can set selection', async () => {
@@ -56,7 +56,7 @@ test('Can transform selection', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.content').element.innerHTML).toBe('<div><span>H</span><span style="background-color: rgb(180, 215, 255);">ello&nbsp;</span></div><div><span style="background-color: rgb(180, 215, 255);">&nbsp;&nbsp;</span></div><div><span style="background-color: rgb(180, 215, 255);">Bo</span><span>njour</span></div>')
   //console.log(wrapper.vm.getContent().content.split('').map(c => `${c} = ${c.charCodeAt(0)}`))
-  expect(wrapper.vm.getContent()).toStrictEqual({ content: 'Hello\n\nBonjour', selection: 'ello\n\nBo', start: 1, end: 9 })
+  expect(wrapper.vm.getContent()).toStrictEqual({ content: 'Hello\n\nBonjour', selection: 'ello\n\nBo', start: 1, end: 9, cursor: null })
 })
 
 test('Cleans up on focus', async () => {
