@@ -2,8 +2,8 @@
   <div class="scratchpad">
     <div class="toolbar">
       <button class="tool" @click="onClear"><BIconFileEarmark /><span>New</span></button>
-      <button class="tool" @click="onUndo" :disabled="!undoStack.length"><BIconArrowLeft /><span>Undo</span></button>
-      <button class="tool" @click="onRedo" :disabled="!redoStack.length"><BIconArrowRight /><span>Redo</span></button>
+      <!-- <button class="tool" @click="onUndo" :disabled="!undoStack.length"><BIconArrowLeft /><span>Undo</span></button>
+      <button class="tool" @click="onRedo" :disabled="!redoStack.length"><BIconArrowRight /><span>Redo</span></button> -->
       <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
       <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/>
       <select class="tool" v-model="fontFamily">
@@ -20,9 +20,55 @@
       </select>
     </div>
     <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
-      <EditableText ref="document" :placeholder="placeholder"/>
+      <EditableText ref="doc" :placeholder="placeholder"/>
+    </div>
+    <div class="actionbar-wrapper">
+      <div class="actionbar" v-if="activeBar == 'standard'">
+        <div class="action" @click="onUndo" v-tooltip="'Undo'" :class="{ disabled: !undoStack.length }">
+          <BIconReplyFill />
+        </div>
+        <div class="action" @click="onRedo" v-tooltip="'Redo'" :class="{ disabled: !undoStack.length }">
+          <BIconReplyFill style="transform: scaleX(-1)"/>
+        </div>
+        <div class="action" @click="onCopy" v-tooltip="'Copy to clipboard'">
+          <BIconClipboard v-if="copyState == 'idle'"/>
+          <BIconClipboardCheck v-else/>
+        </div>
+        <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="'Spellcheck'">
+          <BIconSpellcheck />
+        </div>
+        <div class="action" @click="onMagicBar" v-tooltip="'Writing assistant'">
+          <BIconStars />
+        </div>
+        <div :class="{ action: true, active: audioState == 'playing' }" @click="onReadAloud" v-tooltip="'Read aloud'">
+          <span v-if="audioState == 'playing'"><BIconStopCircle/></span>
+          <span v-else-if="audioState == 'loading'"><BIconXCircle/></span>
+          <span v-else><BIconVolumeUp /></span>
+        </div>
+      </div>
+      <div class="actionbar" v-if="activeBar == 'magic'">
+        <div class="action" @click="onStandardBar" v-tooltip="'Back'">
+          <BIconArrowLeft />
+        </div>
+        <div class="action" @click="onMagicAction($event, 'improve')" v-tooltip="'Improve writing'">
+          <BIconMortarboard />
+        </div>
+        <div class="action" @click="onMagicAction($event, 'takeaways')" v-tooltip="'List key takeaways'">
+          <BIconListUl />
+        </div>
+        <div class="action" @click="onMagicAction($event, 'title')" v-tooltip="'Suggest a title'">
+          <BIconFonts />
+        </div>
+        <div class="action" @click="onMagicAction($event, 'simplify')" v-tooltip="'Simplify writing'">
+          <BIconChevronBarContract />
+        </div>
+        <div class="action" @click="onMagicAction($event, 'expand')" v-tooltip="'Expand writing'">
+          <BIconChevronBarExpand />
+        </div>
+      </div>
     </div>
     <Prompt :processing="processing" :enable-doc-repo="false" :enable-commands="false"/>
+    <audio/>
   </div>
 </template>
 
@@ -32,10 +78,13 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
+import { BIconFileEarmark } from 'bootstrap-icons-vue'
+import FloatingVue, { vTooltip } from 'floating-vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
+import useAudioPlayer from '../composables/audio_player'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -46,7 +95,6 @@ store.load()
 
 // assistant
 import Assistant from '../services/assistant'
-import { BIconFileEarmark } from 'bootstrap-icons-vue'
 const assistant = ref(new Assistant(store.config))
 
 const placeholder = ref(`Start typing your document or
@@ -59,14 +107,19 @@ Witsy will only update this portion.
 
 Give it a go!`.replaceAll('\n', '<br/>'))
 
+const doc = ref(null)
 const engine = ref(null)
 const model = ref(null)
-const document = ref(null)
 const processing = ref(false)
 const fontFamily = ref(null)
 const fontSize = ref(null)
 const undoStack = ref([])
 const redoStack = ref([])
+const audioState = ref('idle')
+const copyState = ref('idle')
+const activeBar = ref('standard')
+
+const audioPlayer = useAudioPlayer()
 
 let attachment = null
 
@@ -77,6 +130,7 @@ onMounted(() => {
   onEvent('stopAssistant', onStopAssistant)
   onEvent('attachFile', onAttachFile)
   onEvent('detachFile', onDetachFile)
+  useAudioPlayer().addListener(onAudioPlayerStatus)
 
   // init
   engine.value = store.config.scratchpad.engine || store.config.llm.engine
@@ -84,21 +138,17 @@ onMounted(() => {
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
 
-  // intercept links
-  // document.addEventListener('click', (e) => {
-  //   const target = e.target || e.srcElement
-  //   const href = target.getAttribute('href')
-  //   if (href === '#settings') {
-  //     emitEvent('openSettings')
-  //     e.preventDefault()
-  //     return false
-  //   }
-  // })
+  // configure
+  FloatingVue.options.distance = 16
+  FloatingVue.options.instantMove = true
+  FloatingVue.options.autoHideOnMousedown = true
+  FloatingVue.options.themes.tooltip.placement = 'left'
+  FloatingVue.options.themes.tooltip.delay.show = 0
 
 })
 
 const onClear = () => {
-  document.value.setContent({ content: '' })
+  doc.value.setContent({ content: '' })
   assistant.value.setChat(null)
   undoStack.value = []
   redoStack.value = []
@@ -107,7 +157,7 @@ const onClear = () => {
 const onChangeEngine = () => {
   store.config.scratchpad.engine = engine.value
   model.value = store.config.getActiveModel(engine.value)
-  store.saveSettings()
+  onChangeModel()
 }
 
 const onChangeModel = () => {
@@ -131,7 +181,7 @@ const onSendPrompt = async (userPrompt) => {
   }
   
   // get text and selection
-  const contents = document.value.getContent()
+  const contents = doc.value.getContent()
 
   // what are we working with?
   let selection = contents.selection != null
@@ -203,7 +253,7 @@ const onSendPrompt = async (userPrompt) => {
       redoStack.value = []
 
       // now do it
-      document.value.setContent(action)
+      doc.value.setContent(action)
 
       // done
       processing.value = false
@@ -225,7 +275,7 @@ const onUndo = () => {
   if (undoStack.value.length > 0) {
     const action = undoStack.value.pop()
     redoStack.value.push(action)
-    document.value.setContent(action.before)
+    doc.value.setContent(action.before)
     assistant.value.chat.messages.splice(-2, 2)
   }
 }
@@ -234,12 +284,47 @@ const onRedo = () => {
   if (redoStack.value.length > 0) {
     const action = redoStack.value.pop()
     undoStack.value.push(action)
-    document.value.setContent(action.after)
+    doc.value.setContent(action.after)
     assistant.value.chat.messages.push(...action.messages)
   }
 }
 
+const onCopy = () => {
+  window.api.clipboard.writeText(doc.value.getContent().content)
+  copyState.value = 'copied'
+  setTimeout(() => copyState.value = 'idle', 1000)
+}
+
+const onReadAloud = async () => {
+  audioState.value = 'loading'
+  const text = doc.value.getContent().content
+  await audioPlayer.play(document.querySelector('.scratchpad audio'), 'scratchpad', text)
+}
+
+const onAudioPlayerStatus = (status) => {
+  audioState.value = status.state
+}
+
+const onMagicBar = () => {
+  activeBar.value = 'magic'
+}
+
+const onStandardBar = () => {
+  activeBar.value = 'standard'
+}
+
+const onMagicAction = (event, action) => {
+  event.target.closest('.action').classList.add('active')
+  const prompt = store.config.instructions.scratchpad[action]
+  onSendPrompt(prompt)
+  setTimeout(() => event.target.closest('.action').classList.remove('active'), 1000)
+}
+
 </script>
+
+<style>
+@import 'floating-vue/dist/style.css'
+</style>
 
 <style scoped>
 
@@ -296,12 +381,13 @@ const onRedo = () => {
     flex-direction: column;
   }
 
-  .document >>> .container {
+  .document :deep(.container) {
     flex: 1;
   }
 
-  .document >>> .content {
+  .document :deep(.content) {
     padding: 32px;
+    padding-right: 100px;
   }
 
   .document, .document * {
@@ -335,6 +421,40 @@ const onRedo = () => {
 
   .document.size-5, .document.size-5 * {
     font-size: 19pt;
+  }
+
+  .actionbar-wrapper {
+    position: absolute;
+    right: 20px;
+    bottom: 64px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 16px 12px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    transition: height 0.15s linear;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 10;
+
+    &:hover {
+      border-color: #aaa;
+    }
+
+    .actionbar {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+    
+    .action {
+      color: #aaa;
+      font-size: 14pt;
+      cursor: pointer;
+
+      &.active {
+        color: #2991FF;
+      }
+
+    }
   }
 
   .prompt {
