@@ -123,7 +123,9 @@ const audioState = ref('idle')
 const copyState = ref('idle')
 const activeBar = ref('standard')
 
-const audioPlayer = useAudioPlayer()
+// init stuff
+store.loadSettings()
+const audioPlayer = useAudioPlayer(store.config)
 
 let attachment = null
 
@@ -134,7 +136,7 @@ onMounted(() => {
   onEvent('stopAssistant', onStopAssistant)
   onEvent('attachFile', onAttachFile)
   onEvent('detachFile', onDetachFile)
-  useAudioPlayer().addListener(onAudioPlayerStatus)
+  audioPlayer.addListener(onAudioPlayerStatus)
 
   // init
   engine.value = store.config.scratchpad.engine || store.config.llm.engine

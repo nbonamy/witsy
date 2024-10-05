@@ -22,6 +22,7 @@ beforeAll(() => {
     on: vi.fn(),
     config: {
       load: vi.fn(() => defaults),
+      save: vi.fn(),
     },
     store: {
       get: vi.fn(() => null),

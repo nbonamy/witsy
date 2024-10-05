@@ -16,8 +16,9 @@ import { store } from '../services/store'
 import useAudioPlayer, { textMaxLength} from '../composables/audio_player'
 import Loader from '../components/Loader.vue'
 
-// load store
+// init stuff
 store.loadSettings()
+const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   extra: Object
@@ -29,13 +30,13 @@ let chunks = []
 let index = 0
 
 onMounted(async () => {
-  useAudioPlayer().addListener(onAudioPlayerStatus)
+  audioPlayer.addListener(onAudioPlayerStatus)
   const text = window.api.readaloud.getText(props.extra.textId) 
   play(text)
 })
 
 onUnmounted(() => {
-  useAudioPlayer().removeListener(onAudioPlayerStatus)
+  audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
 const onAudioPlayerStatus = (status) => {
@@ -49,11 +50,11 @@ const onAudioPlayerStatus = (status) => {
 }
 
 const onPlayPause = () => {
-  useAudioPlayer().playpause(`readaloud-${index}`)
+  audioPlayer.playpause(`readaloud-${index}`)
 }
 
 const onStop = () => {
-  useAudioPlayer().stop()
+  audioPlayer.stop()
   window.api.readaloud.closePalette()
 }
 
@@ -87,7 +88,7 @@ const playChunk = (i) => {
   state.value = 'loading'
   const chunk = chunks[index]
   console.log(`Playing chunk ${index+1} of ${chunks.length}: [${chunk.length}] ${chunk.substring(0, 64)}...${chunk.substring(chunk.length-128)}`) 
-  useAudioPlayer().play(document.querySelector('.readaloud audio'), `readaloud-${index}`, chunks[index])
+  audioPlayer.play(document.querySelector('.readaloud audio'), `readaloud-${index}`, chunks[index])
 }
 
 </script>

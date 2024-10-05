@@ -1,7 +1,6 @@
 
 import { Configuration } from 'types/config.d'
 import getSTTEngine, { STTEngine, TranscribeResponse } from '../services/stt'
-import { store } from '../services/store'
 
 class Transcriber {
 
@@ -34,6 +33,6 @@ class Transcriber {
 
 }
 
-export default function useTranscriber() {
-  return new Transcriber(store.config)
+export default function useTranscriber(config: Configuration) {
+  return new Transcriber(config)
 }
