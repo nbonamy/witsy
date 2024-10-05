@@ -6,7 +6,7 @@
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, Groq and Cerebras models supported
 - Chat completion and image generation with Vision models support
-- Scratchpad to interactively create the best content with any model!
+- <b>[BETA]</b> Scratchpad to interactively create the best content with any model!
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
