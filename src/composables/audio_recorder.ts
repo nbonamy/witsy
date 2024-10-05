@@ -1,7 +1,6 @@
 
 
 import { Configuration } from 'types/config.d'
-import { store } from '../services/store'
 
 export interface AudioRecorderListener {
   onSilenceDetected: () => void
@@ -134,6 +133,6 @@ class AudioRecorder {
 
 }
 
-export default function useAudioRecorder() {
-  return new AudioRecorder(store.config)
+export default function useAudioRecorder(config: Configuration) {
+  return new AudioRecorder(config)
 }

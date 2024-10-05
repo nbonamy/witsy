@@ -74,8 +74,10 @@ const props = defineProps({
   }
 })
 
-const audioRecorder = useAudioRecorder()
-const transcriber = useTranscriber()
+// init stuff
+store.loadSettings()
+const audioRecorder = useAudioRecorder(store.config)
+const transcriber = useTranscriber(store.config)
 
 const prompt = ref('')
 const input = ref(null)

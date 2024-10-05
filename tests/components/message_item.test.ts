@@ -4,7 +4,7 @@ import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-util
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
-import defaults from '../../defaults/settings.json'
+import defaultSettings from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
@@ -53,7 +53,8 @@ beforeAll(() => {
   }
   
   // init store
-  store.config = defaults
+  store.loadSettings = vi.fn()
+  store.config = defaultSettings
 
   // init chat
   chat = new Chat('MessageList test')

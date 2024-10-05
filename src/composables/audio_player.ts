@@ -2,7 +2,6 @@
 
 import { Configuration } from 'types/config.d'
 import { SpeechPlayer } from 'openai-speech-stream-player'
-import { store } from '../services/store'
 import Tts from '../services/tts'
 
 export type AudioState = 'idle'|'loading'|'playing'|'paused'
@@ -120,9 +119,9 @@ class AudioPlayer {
 }
 
 let instance: AudioPlayer = null
-export default function useAudioPlayer() {
+export default function useAudioPlayer(config: Configuration) {
   if (!instance) {
-    instance = new AudioPlayer(store.config)
+    instance = new AudioPlayer(config)
   }
   return instance
 }

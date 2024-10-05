@@ -18,11 +18,16 @@
 <script setup>
 
 import { ref, onMounted, onUnmounted } from 'vue'
+import { store } from '../services/store'
 import useAudioPlayer from '../composables/audio_player'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+// init stuff
+store.loadSettings()
+const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   message: Message
@@ -35,11 +40,11 @@ const audioState = ref({
 })
 
 onMounted(() => {
-  useAudioPlayer().addListener(onAudioPlayerStatus)
+  audioPlayer.addListener(onAudioPlayerStatus)
 })
 
 onUnmounted(() => {
-  useAudioPlayer().removeListener(onAudioPlayerStatus)
+  audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
 const mgsAudioState = (message) => {
@@ -61,7 +66,7 @@ const onAudioPlayerStatus = (status) => {
 }
 
 const onToggleRead = async (message) => {
-  await useAudioPlayer().play(document.querySelector('.read audio'), message.uuid, message.content)
+  await audioPlayer.play(document.querySelector('.read audio'), message.uuid, message.content)
 }
 
 const onEdit = (message) => {

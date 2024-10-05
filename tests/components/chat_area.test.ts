@@ -4,7 +4,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
-import defaults from '../../defaults/settings.json'
+import defaultSettings from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
@@ -47,7 +47,8 @@ beforeAll(() => {
   }
   
   // init store
-  store.config = defaults
+  store.loadSettings = vi.fn()
+  store.config = defaultSettings
   store.config.getActiveModel = () => {
     return 'chat'
   }

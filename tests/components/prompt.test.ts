@@ -64,6 +64,7 @@ beforeAll(() => {
 
   // init store
   store.config = defaults
+  store.loadSettings = vi.fn()
   store.config.getActiveModel = () => {
     return 'chat'
   }

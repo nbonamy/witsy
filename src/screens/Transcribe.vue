@@ -27,12 +27,10 @@ import Loader from '../components/Loader.vue'
 import useTranscriber from '../composables/transcriber'
 import useAudioRecorder from '../composables/audio_recorder'
 
-// load store
+// init stuff
 store.loadSettings()
-
-// transcription stuff
-const transcriber = useTranscriber()
-const audioRecorder = useAudioRecorder()
+const transcriber = useTranscriber(store.config)
+const audioRecorder = useAudioRecorder(store.config)
 
 const state = ref('idle')
 const transcription = ref('')
