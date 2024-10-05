@@ -202,6 +202,8 @@ export default class {
         } else {
           message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
         }
+      } else {
+        callback?.call(null, { text: null, done: true })
       }
     }
 

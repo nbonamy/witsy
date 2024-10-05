@@ -471,12 +471,6 @@ const autoGrow = (element) => {
   }
 }
 
-defineExpose({
-  setWorking: (value) => {
-    working.value = value
-  }
-})
-
 </script>
 
 <style scoped>
@@ -511,6 +505,7 @@ defineExpose({
 }
 
 .input {
+  background-color: white;
   border: 1px solid #bbbbbb;
   border-radius: 16px;
   margin: 0px 8px;

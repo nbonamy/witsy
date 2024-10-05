@@ -20,7 +20,7 @@
       </select>
     </div>
     <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
-      <EditableText ref="doc" :placeholder="placeholder"/>
+      <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <div class="actionbar-wrapper">
       <div class="actionbar" v-if="activeBar == 'standard'">
@@ -67,7 +67,7 @@
         </div>
       </div>
     </div>
-    <Prompt :processing="processing" :enable-doc-repo="false" :enable-commands="false"/>
+    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false"/>
     <audio/>
   </div>
 </template>
@@ -100,14 +100,18 @@ const assistant = ref(new Assistant(store.config))
 const placeholder = ref(`Start typing your document or
 ask Witsy to write something for you!
 
-Once you started you can ask Witsy to make modification on your document.
+Once you started you can ask Witsy
+to make modification on your document.
 
 If you highligh a portion of your text,
 Witsy will only update this portion.
 
+Also check out the Writing Assistant
+in the action bar in the lower right corner!
+
 Give it a go!`.replaceAll('\n', '<br/>'))
 
-const doc = ref(null)
+const editor = ref(null)
 const engine = ref(null)
 const model = ref(null)
 const processing = ref(false)
@@ -148,7 +152,7 @@ onMounted(() => {
 })
 
 const onClear = () => {
-  doc.value.setContent({ content: '' })
+  editor.value.setContent({ content: '' })
   assistant.value.setChat(null)
   undoStack.value = []
   redoStack.value = []
@@ -181,7 +185,7 @@ const onSendPrompt = async (userPrompt) => {
   }
   
   // get text and selection
-  const contents = doc.value.getContent()
+  const contents = editor.value.getContent()
 
   // what are we working with?
   let selection = contents.selection != null
@@ -189,15 +193,15 @@ const onSendPrompt = async (userPrompt) => {
   subject = subject.trim()
 
   // now build the prompt
-  let prompt = userPrompt
+  let finalPrompt = userPrompt
   if (subject.length > 0) {
     const template = store.config.instructions.scratchpad.prompt
-    prompt = template.replace('{ask}', userPrompt).replace('{document}', subject)
+    finalPrompt = template.replace('{ask}', userPrompt).replace('{document}', subject)
   }
 
   // log
   processing.value = true
-  console.log(prompt)
+  console.log(finalPrompt)
 
   // // save the attachment
   // if (store.pendingAttachment?.downloaded === false) {
@@ -214,7 +218,7 @@ const onSendPrompt = async (userPrompt) => {
   // }
 
   // prompt
-  assistant.value.prompt(prompt, {
+  assistant.value.prompt(finalPrompt, {
     save: false,
     titling: false,
     overwriteEngineModel: true,
@@ -226,6 +230,12 @@ const onSendPrompt = async (userPrompt) => {
 
     // if done
     if (chunk?.done) {
+
+      // if chunk text is null it means we had an error
+      if (chunk.text == null) {
+        processing.value = false
+        return
+      }
 
       // default to all response
       const response = assistant.value.chat.lastMessage().content
@@ -253,11 +263,10 @@ const onSendPrompt = async (userPrompt) => {
       redoStack.value = []
 
       // now do it
-      doc.value.setContent(action)
+      editor.value.setContent(action)
 
       // done
       processing.value = false
-
     
     }
   })
@@ -275,7 +284,7 @@ const onUndo = () => {
   if (undoStack.value.length > 0) {
     const action = undoStack.value.pop()
     redoStack.value.push(action)
-    doc.value.setContent(action.before)
+    editor.value.setContent(action.before)
     assistant.value.chat.messages.splice(-2, 2)
   }
 }
@@ -284,20 +293,20 @@ const onRedo = () => {
   if (redoStack.value.length > 0) {
     const action = redoStack.value.pop()
     undoStack.value.push(action)
-    doc.value.setContent(action.after)
+    editor.value.setContent(action.after)
     assistant.value.chat.messages.push(...action.messages)
   }
 }
 
 const onCopy = () => {
-  window.api.clipboard.writeText(doc.value.getContent().content)
+  window.api.clipboard.writeText(editor.value.getContent().content)
   copyState.value = 'copied'
   setTimeout(() => copyState.value = 'idle', 1000)
 }
 
 const onReadAloud = async () => {
   audioState.value = 'loading'
-  const text = doc.value.getContent().content
+  const text = editor.value.getContent().content
   await audioPlayer.play(document.querySelector('.scratchpad audio'), 'scratchpad', text)
 }
 
@@ -315,8 +324,7 @@ const onStandardBar = () => {
 
 const onMagicAction = (event, action) => {
   event.target.closest('.action').classList.add('active')
-  const prompt = store.config.instructions.scratchpad[action]
-  onSendPrompt(prompt)
+  onSendPrompt(store.config.instructions.scratchpad[action])
   setTimeout(() => event.target.closest('.action').classList.remove('active'), 1000)
 }
 
@@ -369,7 +377,6 @@ const onMagicAction = (event, action) => {
       border-radius: 6px;
       font-size: 10pt;
       padding-right: 0px;
-      color: #666;
     }
 
   }

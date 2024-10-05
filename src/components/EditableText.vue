@@ -566,6 +566,7 @@ defineExpose({ getContent, setContent })
   color: #888 !important;
   text-align: center;
   font-style: italic;
+  white-space: nowrap;
   z-index: -10;
 }
 
