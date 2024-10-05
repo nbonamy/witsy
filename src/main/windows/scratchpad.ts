@@ -1,4 +1,5 @@
 
+import { app } from 'electron';
 import { createWindow, titleBarOptions } from './index';
 
 export const openScratchPad = async () => {
@@ -8,7 +9,7 @@ export const openScratchPad = async () => {
   const height = 600;
 
   // open a new one
-  createWindow({
+  const scratchpadWindow = createWindow({
     hash: '/scratchpad',
     width: width,
     height: height,
@@ -16,5 +17,15 @@ export const openScratchPad = async () => {
     ...titleBarOptions,
   });
 
+  // open the DevTools
+  if (process.env.DEBUG) {
+    scratchpadWindow.webContents.openDevTools();
+  }
+
+  // show in dock
+  if (process.platform === 'darwin') {
+    app.dock.show();
+  }
+  
 
 }
