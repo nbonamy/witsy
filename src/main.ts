@@ -138,6 +138,7 @@ app.whenReady().then(() => {
     quit: app.quit,
     checkForUpdates: autoUpdater.check,
     newChat: window.openMainWindow,
+    newScratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
   });
 

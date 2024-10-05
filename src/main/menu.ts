@@ -43,6 +43,10 @@ const template = (app: App, callbacks: anyDict) => [
         label: 'New Chat',
         click: () => callbacks.newChat()
       },
+      {
+        label: 'New Scratchpad',
+        click: () => callbacks.newScratchpad()
+      },
       isMac ? { role: 'close' } : { role: 'quit' }
     ]
   },
