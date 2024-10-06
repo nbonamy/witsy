@@ -1,9 +1,13 @@
-import { anyDict } from 'types/index.d'
+
+import { ShortcutsConfig } from 'types/config'
 import { App , Menu, shell } from 'electron'
+import { shortcutAccelerator } from './shortcuts'
+
+export type MenuCallbacks = { [key: string]: () => void }
 
 const isMac = process.platform === 'darwin'
 
-const template = (app: App, callbacks: anyDict) => [
+const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig) => [
   // { role: 'appMenu' }
   ...(isMac
     ? [{
@@ -41,12 +45,15 @@ const template = (app: App, callbacks: anyDict) => [
     submenu: [
       {
         label: 'New Chat',
+        accelerator: shortcutAccelerator(shortcuts.chat),
         click: () => callbacks.newChat()
       },
       {
-        label: 'New Scratchpad',
+        label: 'Scratch Pad',
+        accelerator: shortcutAccelerator(shortcuts.scratchpad),
         click: () => callbacks.newScratchpad()
       },
+      { type: 'separator' },
       isMac ? { role: 'close' } : { role: 'quit' }
     ]
   },
@@ -65,14 +72,6 @@ const template = (app: App, callbacks: anyDict) => [
             { role: 'pasteAndMatchStyle' },
             { role: 'delete' },
             { role: 'selectAll' },
-            { type: 'separator' },
-            {
-              label: 'Speech',
-              submenu: [
-                { role: 'startSpeaking' },
-                { role: 'stopSpeaking' }
-              ]
-            }
           ]
         : [
             { role: 'delete' },
@@ -129,7 +128,7 @@ const template = (app: App, callbacks: anyDict) => [
   }
 ]
 
-export const installMenu = (app: App, callbacks: anyDict) => {
-  const menu = Menu.buildFromTemplate(template(app, callbacks) as Array<any>)
+export const installMenu = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig) => {
+  const menu = Menu.buildFromTemplate(template(app, callbacks, shortcuts) as Array<any>)
   Menu.setApplicationMenu(menu)
 }
