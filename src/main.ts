@@ -127,6 +127,7 @@ const quitApp = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   
+  // debugging
   if (process.env.DEBUG) {
     installExtension(VUEJS_DEVTOOLS)
       .then((name) => console.log(`Added Extension:  ${name}`))

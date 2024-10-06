@@ -24,7 +24,7 @@
         <BIconStars />
       </div>
       
-      <div :class="{ action: true, active: audioState == 'playing' }" @click="emitEvent('action', 'read')" v-tooltip="'Read aloud'">
+      <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="'Read aloud'">
         <span v-if="audioState == 'playing'"><BIconStopCircle/></span>
         <span v-else-if="audioState == 'loading'"><BIconXCircle/></span>
         <span v-else><BIconVolumeUp /></span>
@@ -151,6 +151,10 @@ const onMagicAction = (event, action) => {
     }
 
     &.active {
+      color: #2991ff;
+    }
+
+    &.active:not(.static) {
       animation: active 750ms ease-in-out infinite alternate;
     }
   }
