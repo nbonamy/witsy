@@ -24,20 +24,6 @@ vi.mock('electron', async() => {
   }
 })
 
-vi.mock('electron-dl', async() => {
-  return {
-    download: async (win: any, url: string, options: any) => {
-      const response = await fetch(url)
-      const contents = await response.text()
-      options.onProgress(0)
-      fs.writeFileSync(path.join(options.directory, options.filename), contents)
-      options.onProgress(100)
-      options.onCompleted()
-      return path.join(options.directory, options.filename)
-    }
-  }
-})
-
 test('Find program', async () => {
   expect(file.findProgram(null, 'sh')).toBe('/bin/sh')
   expect(file.findProgram(null, 'sh2')).toBeNull()
@@ -51,7 +37,7 @@ test('Get file contents', async () => {
     mimeType: 'text/plain',
     contents: 'SGVsbG8gZnJvbSBURVhU',
   })
-  expect(text).toContain('Hello from TEXT')
+  expect(text).toBe('Hello from TEXT')
 })
 
 test('Delete file', async () => {
@@ -70,7 +56,7 @@ test('Write file contents', async () => {
       filename: 'vitest'
     }
   })
-  expect(fileURL).toBe(tempFile)
+  expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
   file.deleteFile(null, `file://${tempFile}`)
@@ -86,13 +72,12 @@ test('Download local file', async () => {
       prompt: false,
     }
   })
-  expect(fileURL).toBe(tempFile)
+  expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
   file.deleteFile(null, `file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeFalsy()
 })
-
 
 test('Download remote file', async () => {
   const tempFile = path.join(os.tmpdir(), 'vitest')
@@ -103,7 +88,7 @@ test('Download remote file', async () => {
       prompt: false,
     }
   })
-  expect(fileURL).toBe(tempFile)
+  expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
   file.deleteFile(null, `file://${tempFile}`)

@@ -110,11 +110,11 @@ export default class extends Plugin {
     })
 
     // save the content on disk
-    const filename = saveFileContents('png', response.data[0].b64_json)
+    const fileUrl = saveFileContents('png', response.data[0].b64_json)
 
     // return an object
     return {
-      path: `file://${filename}`,
+      path: fileUrl,
       description: parameters?.prompt
     }
 

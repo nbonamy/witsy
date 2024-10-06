@@ -8,11 +8,10 @@ export const getFileContents = (url: string) => {
 export const saveFileContents = (extension: string, contents: string) => {
 
   // call main
-  let filename = `${uuidv4()}.${extension}`
-  filename = window.api.file.save({
+  const fileUrl = window.api.file.save({
     contents: contents,
     properties: {
-      filename: filename,
+      filename: `${uuidv4()}.${extension}`,
       directory: 'userData',
       subdir: 'images',
       prompt: false
@@ -20,7 +19,7 @@ export const saveFileContents = (extension: string, contents: string) => {
   })
 
   // done
-  return filename
+  return fileUrl
 }
   
 export const download = (url: string) => {
@@ -32,11 +31,10 @@ export const download = (url: string) => {
   }
 
   // call main
-  let filename = `${uuidv4()}.${extension}`
-  filename = window.api.file.download({
+  const fileUrl = window.api.file.download({
     url: url,
     properties: {
-      filename: filename,
+      filename: `${uuidv4()}.${extension}`,
       directory: 'userData',
       subdir: 'images',
       prompt: false
@@ -44,7 +42,7 @@ export const download = (url: string) => {
   })
 
   // done
-  return filename
+  return fileUrl
 
 }
 
