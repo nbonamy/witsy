@@ -1,3 +1,4 @@
+
 <template>
   <div class="scratchpad">
     <ScratchPadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
@@ -21,6 +22,7 @@ import ScratchPadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
 import useAudioPlayer from '../composables/audio_player'
+import Chat from '../models/chat'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -85,23 +87,23 @@ onMounted(() => {
 const onAction = (action) => {
 
   // basic actions
-  switch (action) {
-    case 'clear':
-      onClear()
-      return
-    case 'undo':
-      onUndo()
-      return
-    case 'redo':
-      onRedo()
-      return
-    case 'copy':
-      onCopy()
-      return
-    case 'read-aloud':
-      onReadAloud()
-      return
+  const actions = {
+    'clear': onClear,
+    'load': onLoad,
+    'save': onSave,
+    'undo': onUndo,
+    'redo': onRedo,
+    'copy': onCopy,
+    'read': onReadAloud
   }
+
+  // find
+  const callback = actions[action]
+  if (callback) {
+    callback()
+    return
+  }
+
 
   // advanced actions
   switch (action.type) {
@@ -144,6 +146,54 @@ const onClear = () => {
   assistant.value.setChat(null)
   undoStack.value = []
   redoStack.value = []
+}
+
+const onLoad = () => {
+
+  try {
+
+    // pick
+    const file = window.api.file.pick({
+      filters: [ { name: 'Scratchpad', extensions: ['*.json'] }]
+    })
+    if (!file) return
+
+    // parse
+    const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
+    if (!scratchpad || !scratchpad.contents || !scratchpad.chat || !scratchpad.undoStack || !scratchpad.redoStack) {
+      alert('This file is not a scratchpad file. Please try again with another file.')
+    }
+
+    // easy load
+    editor.value.setContent(scratchpad.contents)
+    undoStack.value = scratchpad.undoStack
+    redoStack.value = scratchpad.redoStack
+
+    // chat
+    const chat = new Chat(scratchpad.chat)
+    assistant.value.setChat(chat)
+
+  } catch (err) {
+    console.error(err)
+    alert('Error while loading scratchpad file')
+  }
+
+}
+
+const onSave = () => {
+  const scratchpad = {
+    contents: editor.value.getContent(),
+    chat: assistant.value.chat,
+    undoStack: undoStack.value,
+    redoStack: redoStack.value
+  }
+  window.api.file.download({
+    contents: JSON.stringify(scratchpad),
+    properties: {
+      directory: 'documents',
+      filename: 'scratchpad.json'
+    }
+  })
 }
 
 const onUndo = () => {
