@@ -160,7 +160,7 @@ const onLoad = () => {
 
     // parse
     const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
-    if (!scratchpad || !scratchpad.contents || !scratchpad.chat || !scratchpad.undoStack || !scratchpad.redoStack) {
+    if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
       alert('This file is not a scratchpad file. Please try again with another file.')
     }
 
@@ -170,8 +170,10 @@ const onLoad = () => {
     redoStack.value = scratchpad.redoStack
 
     // chat
-    const chat = new Chat(scratchpad.chat)
-    assistant.value.setChat(chat)
+    if (scratchpad.chat) {
+      const chat = new Chat(scratchpad.chat)
+      assistant.value.setChat(chat)
+    }
 
   } catch (err) {
     console.error(err)
