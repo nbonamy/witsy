@@ -9,7 +9,7 @@ export const unregisterShortcuts = () => {
   globalShortcut.unregisterAll();
 }
 
-export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
+export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void => {
 
   // unregister
   unregisterShortcuts();
@@ -28,7 +28,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks) => {
 
 }
 
-const keyToAccelerator = (key: string) => {
+const keyToAccelerator = (key: string): string => {
   if (key === '+') return 'Plus'
   if (key === '↑') return 'Up'
   if (key === '↓') return 'Down'
@@ -37,10 +37,10 @@ const keyToAccelerator = (key: string) => {
   return key
 }
 
-export const shortcutAccelerator = (shortcut: Shortcut) => {
+export const shortcutAccelerator = (shortcut: Shortcut): string => {
 
   // null check
-  if (shortcut == null) {
+  if (shortcut == null) { 
     return null
   }
 
@@ -59,7 +59,7 @@ export const shortcutAccelerator = (shortcut: Shortcut) => {
 
 }
 
-const registerShortcut = (shortcut: Shortcut, callback: () => void) => {
+const registerShortcut = (shortcut: Shortcut, callback: () => void): void => {
 
   // check
   if (!shortcut || !callback) {

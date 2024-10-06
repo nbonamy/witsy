@@ -126,7 +126,10 @@ const quitApp = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  
+
+  // we need settings
+  const settings = config.loadSettings(app);
+
   // debugging
   if (process.env.DEBUG) {
     installExtension(VUEJS_DEVTOOLS)
@@ -141,13 +144,12 @@ app.whenReady().then(() => {
     newChat: window.openMainWindow,
     newScratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
-  });
+  }, settings.shortcuts);
 
   // register shortcuts
   registerShortcuts();
 
   // create the main window
-  const settings = config.loadSettings(app);
   if (!settings.general.hideOnStartup || process.env.DEBUG) {
     log.info('Creating initial main window');
     window.openMainWindow();
