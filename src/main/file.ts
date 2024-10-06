@@ -233,6 +233,17 @@ export const downloadFile = async (app: App, payload: anyDict) => {
     return null;
   }
 
+  // if has contents simply write
+  if (payload.contents) {
+    try {
+      fs.writeFileSync(destinationURL, payload.contents)
+      return destinationURL
+    } catch (err) {
+      console.error('Error while saving contents', err);
+      return null;
+    }
+  }
+
   // if file to file, copy
   if (payload.url.startsWith('file://')) {
     try {

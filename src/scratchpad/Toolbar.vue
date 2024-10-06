@@ -3,6 +3,10 @@
     
     <button class="tool" @click="emitEvent('action', 'clear')"><BIconFileEarmark /><span>New</span></button>
     
+    <button class="tool" @click="emitEvent('action', 'load')"><BIconFileArrowUp /><span>Load</span></button>
+    
+    <button class="tool" @click="emitEvent('action', 'save')"><BIconFileArrowDown /><span>Save</span></button>
+    
     <!-- <button class="tool" @click="emitEvent('action', 'undo')" :disabled="!undoStack.length"><BIconArrowLeft /><span>Undo</span></button>
     <button class="tool" @click="emitEvent('action', 'redo')" :disabled="!redoStack.length"><BIconArrowRight /><span>Redo</span></button> -->
     
