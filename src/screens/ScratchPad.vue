@@ -23,6 +23,7 @@ import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
 import useAudioPlayer from '../composables/audio_player'
 import Chat from '../models/chat'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -59,11 +60,13 @@ const undoStack = ref([])
 const redoStack = ref([])
 const audioState = ref('idle')
 const copyState = ref('idle')
+const modified = ref(false)
 
 // init stuff
 store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
-
+const modifiedCheckDelay = 1000
+let modifiedCheckTimeout = null
 let attachment = null
 
 onMounted(() => {
@@ -82,7 +85,85 @@ onMounted(() => {
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
 
+  // confirm close
+  window.onbeforeunload = (e) => {
+    if (modified.value) {
+      Swal.fire({
+        title: 'You have unsaved changes. You will lose your work if you close this window.',
+        showCancelButton: true,
+        confirmButtonText: 'Do not close',
+        cancelButtonText: 'Close anyway',
+        reverseButtons: true
+      }).then((result) => {
+        if (!result.isConfirmed) {
+          modified.value = false
+          window.close()
+        }
+      })
+      e.returnValue = false
+    }
+  }
+
+  // for undo/redo
+  editor.value.$el.addEventListener('keydown', (e) => {
+    if (!e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'z') {
+      e.preventDefault()
+      onUndo()
+    } else if (!e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'y') {
+      e.preventDefault()
+      onRedo()
+    } else if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'z') {
+      e.preventDefault()
+      onRedo()
+    }
+  })
+
+  // for undo/redo
+  document.addEventListener('keyup', (e) => {
+    resetModifiedCheckTimeout()
+  })
+
 })
+
+const resetModifiedCheckTimeout = () => {
+  clearTimeout(modifiedCheckTimeout)
+  modifiedCheckTimeout = setTimeout(() => {
+    checkIfModified()
+  }, modifiedCheckDelay)
+}
+
+const checkIfModified = () => {
+  
+  const contents = editor.value.getContent()
+  if (!undoStack.value.length) {
+
+    // if no undo then only if there is content 
+    if (contents.content.trim().length) {
+      undoStack.value.push({
+        before: { content: '', start: null, end: null },
+        after: contents,
+        messages: assistant.value.chat?.messages.slice(-2)
+      })
+      redoStack.value = []
+    }
+
+  } else {
+
+    // check if the last action is different
+    const lastState = undoStack.value[undoStack.value.length - 1]
+    const lastContent = lastState.after.content
+    if (contents.content !== lastContent) {
+      undoStack.value.push({
+        before: lastState.after,
+        after: contents,
+        messages: assistant.value.chat?.messages.slice(-2)
+      })
+      redoStack.value = []
+    }
+
+  }
+
+}
 
 const onAction = (action) => {
 
@@ -144,6 +225,7 @@ const onAction = (action) => {
 const onClear = () => {
   editor.value.setContent({ content: '' })
   assistant.value.setChat(null)
+  modified.value = false
   undoStack.value = []
   redoStack.value = []
 }
@@ -175,6 +257,10 @@ const onLoad = () => {
       assistant.value.setChat(chat)
     }
 
+    // reset
+    modified.value = false
+
+
   } catch (err) {
     console.error(err)
     alert('Error while loading scratchpad file')
@@ -196,6 +282,7 @@ const onSave = () => {
       filename: 'scratchpad.json'
     }
   })
+  modified.value = false
 }
 
 const onUndo = () => {
@@ -203,7 +290,8 @@ const onUndo = () => {
     const action = undoStack.value.pop()
     redoStack.value.push(action)
     editor.value.setContent(action.before)
-    assistant.value.chat.messages.splice(-2, 2)
+    assistant.value.chat?.messages?.splice(-2, 2)
+    modified.value = true
   }
 }
 
@@ -212,7 +300,8 @@ const onRedo = () => {
     const action = redoStack.value.pop()
     undoStack.value.push(action)
     editor.value.setContent(action.after)
-    assistant.value.chat.messages.push(...action.messages)
+    assistant.value.chat?.messages?.push(...action.messages)
+    modified.value = true
   }
 }
 
@@ -309,6 +398,9 @@ const onSendPrompt = async (userPrompt) => {
         processing.value = false
         return
       }
+
+      // modified
+      modified.value = true
 
       // default to all response
       const response = assistant.value.chat.lastMessage().content

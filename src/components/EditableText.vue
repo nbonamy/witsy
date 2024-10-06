@@ -163,6 +163,16 @@ const setContent = ({ content, start, end }) => {
     hidePlaceholder()
   }
 
+  // clear the content
+  text.value.innerHTML = ''
+
+  // quick exit
+  if (!content.length) {
+    textSelection = null
+    showPlaceholder.value = true
+    return
+  }
+
   // init
   textSelection = {
     startIndex: -1,
@@ -172,14 +182,11 @@ const setContent = ({ content, start, end }) => {
   }
 
   // needed
-  const select = (start !== 0 || end !== 0)
+  const select = ((start !== null && start !== 0) || (end !== null && end !== 0))
 
   // split by newlines
   const lines = content.split('\n')
   // console.log(lines)
-
-  // clear the content
-  text.value.innerHTML = ''
 
   // add one div per line
   let characters = 0
