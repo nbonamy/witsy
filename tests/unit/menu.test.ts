@@ -17,8 +17,7 @@ test('installMenu', () => {
     checkForUpdates: vi.fn(),
     newChat: vi.fn(),
     settings: vi.fn(),
-
-  })
+  }, null)
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
   expect(Menu.setApplicationMenu).toHaveBeenCalledWith({})
 })

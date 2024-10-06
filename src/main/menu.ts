@@ -45,12 +45,12 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     submenu: [
       {
         label: 'New Chat',
-        accelerator: shortcutAccelerator(shortcuts.chat),
+        accelerator: shortcutAccelerator(shortcuts?.chat),
         click: () => callbacks.newChat()
       },
       {
         label: 'Scratch Pad',
-        accelerator: shortcutAccelerator(shortcuts.scratchpad),
+        accelerator: shortcutAccelerator(shortcuts?.scratchpad),
         click: () => callbacks.newScratchpad()
       },
       { type: 'separator' },
