@@ -178,15 +178,15 @@ const onSendPrompt = async (prompt) => {
 
   // save the attachment
   if (store.pendingAttachment?.downloaded === false) {
-    let filename = null
+    let fileUrl = null
     if (store.pendingAttachment.url === 'clipboard://') {
-      filename = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.contents)
+      fileUrl = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.contents)
     } else {
-      filename = download(store.pendingAttachment.url)
+      fileUrl = download(store.pendingAttachment.url)
     }
-    if (filename) {
+    if (fileUrl) {
       store.pendingAttachment.downloaded = true
-      store.pendingAttachment.url = `file://${filename}`
+      store.pendingAttachment.url = fileUrl
     }
   }
 

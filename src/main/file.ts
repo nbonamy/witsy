@@ -1,9 +1,8 @@
   
 import { ExternalApp, FileContents, anyDict, strDict } from 'types/index.d';
-import { App, BrowserWindow, dialog } from 'electron';
+import { App, dialog } from 'electron';
 import { extensionToMimeType } from './mimetype';
 import { execSync } from 'child_process';
-import { download } from 'electron-dl';
 import icns from 'icns-lib';
 import plist from 'plist';
 import process from 'process'
@@ -74,7 +73,7 @@ export const deleteFile = (app: App, filepath: string) => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict): string|strDict|string[] => {
+export const pickFile = (app: App, payload: anyDict): string|string[]|FileContents => {
 
   try {
     
@@ -182,9 +181,19 @@ export const findProgram = (app: App, program: string) => {
 
 export const writeFileContents = (app: App, payload: anyDict): string => {
 
+  // defaults
+  const defaults = {
+    properties: {
+      directory: 'downloads',
+      prompt: false,
+      subdir: false,
+    }
+  }
+  payload = {...defaults, ...payload }
+
   // parse properties
-  const properties = payload.properties ? { ...payload.properties } : {};
-  let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
+  const properties = payload.properties;
+  let defaultPath = app.getPath(properties.directory);
   const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
   if (properties.subdir) {
     defaultPath = path.join(defaultPath, properties.subdir);
@@ -194,12 +203,21 @@ export const writeFileContents = (app: App, payload: anyDict): string => {
   }
 
   // destination
-  const destinationURL = path.join(defaultPath, defaultFileName);
+  let destinationURL = path.join(defaultPath, defaultFileName);
+  if (payload.url?.startsWith('file://')) {
+    destinationURL = payload.url.slice(7);
+  }
+  if (properties.prompt) {
+    destinationURL = dialog.showSaveDialogSync({
+      defaultPath: destinationURL
+    });
+    if (!destinationURL) return null;
+  }
 
   // try
   try {
     fs.writeFileSync(destinationURL, Buffer.from(payload.contents, 'base64'));
-    return destinationURL;
+    return `file://${destinationURL}`;
   } catch (error) {
     console.error('Error while writing file', error);
     return null
@@ -209,74 +227,22 @@ export const writeFileContents = (app: App, payload: anyDict): string => {
 
 export const downloadFile = async (app: App, payload: anyDict) => {
 
-  // parse properties
-  let properties = payload.properties ? { ...payload.properties } : {};
-  let defaultPath = app.getPath(properties.directory ? properties.directory : 'downloads');
-  const defaultFileName = properties.filename ? properties.filename : payload.url.split('?')[0].split(path.sep).pop();
-  if (properties.subdir) {
-    defaultPath = path.join(defaultPath, properties.subdir);
-    if (!fs.existsSync(defaultPath)) {
-      fs.mkdirSync(defaultPath, { recursive: true })
-    }
-  }
-
-  // now prompt or not
-  let destinationURL: string|undefined = path.join(defaultPath, defaultFileName);
-  if (properties.prompt !== false) {
-    destinationURL = dialog.showSaveDialogSync({
-      defaultPath: destinationURL
-    });
-  }
-
-  // cancelled
-  if (!destinationURL) {
-    return null;
-  }
-
-  // if has contents simply write
-  if (payload.contents) {
-    try {
-      fs.writeFileSync(destinationURL, payload.contents)
-      return destinationURL
-    } catch (err) {
-      console.error('Error while saving contents', err);
-      return null;
-    }
-  }
-
-  // if file to file, copy
-  if (payload.url.startsWith('file://')) {
-    try {
-      const src = payload.url.slice(7);
-      //console.log(`copying ${src} to ${destinationURL}`)
-      fs.copyFileSync(src, destinationURL);
-      return destinationURL;
-    } catch (err) {
-      console.error('Error while copying file', err);
-      return null;
-    }
-  }
-  
-  // download
-  const filePath = destinationURL.split(path.sep);
-  const filename = `${filePath.pop()}`;
-  const directory = filePath.join(path.sep);
-  properties = { ...properties, directory, filename };
-  //console.log(`downloading ${payload.url} to ${JSON.stringify(properties)}`)
-
   try {
-    await download(BrowserWindow.getFocusedWindow(),
-      payload.url, {
-      ...properties,
-      onProgress: () => {
-        //console.log(status);
-      },
-      onCompleted: () => {
-        //console.log(status);
-      },
+  
+    // get contents
+    let contents = null
+    if (payload.url.startsWith('file://')) {
+      contents = fs.readFileSync(payload.url.slice(7));
+      payload.filename = payload.url.split('?')[0].split(path.sep).pop();
+      payload.url = null
+    } else {
+      const response = await fetch(payload.url);
+      contents = await response.text();
+    }
 
-    });
-    return destinationURL;
+    // now just save
+    payload.contents = Buffer.from(contents).toString('base64')
+    return await writeFileContents(app, payload);
 
   } catch (error) {
     console.error('Error while downloading file', error);
@@ -303,7 +269,7 @@ export const getAppInfo = (app: App, filepath: string): ExternalApp | null => {
         icon: path.join(filepath, 'Contents', 'Resources', plistIcon)
       };
     } catch (err) {
-      console.log('Error while getting app info', err);
+      console.error('Error while getting app info', err);
     }
   }
 

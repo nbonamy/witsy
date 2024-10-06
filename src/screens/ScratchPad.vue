@@ -16,7 +16,6 @@
 // components
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
-import { download, saveFileContents } from '../services/download'
 import ScratchPadToolbar from '../scratchpad/Toolbar.vue'
 import ScratchPadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
@@ -68,6 +67,7 @@ const audioPlayer = useAudioPlayer(store.config)
 const modifiedCheckDelay = 1000
 let modifiedCheckTimeout = null
 let attachment = null
+let fileUrl = null
 
 onMounted(() => {
 
@@ -145,6 +145,7 @@ const checkIfModified = () => {
         messages: assistant.value.chat?.messages.slice(-2)
       })
       redoStack.value = []
+      modified.value = true
     }
 
   } else {
@@ -159,6 +160,7 @@ const checkIfModified = () => {
         messages: assistant.value.chat?.messages.slice(-2)
       })
       redoStack.value = []
+      modified.value = true
     }
 
   }
@@ -228,6 +230,7 @@ const onClear = () => {
   modified.value = false
   undoStack.value = []
   redoStack.value = []
+  fileUrl = null
 }
 
 const onLoad = () => {
@@ -239,6 +242,9 @@ const onLoad = () => {
       filters: [ { name: 'Scratchpad', extensions: ['*.json'] }]
     })
     if (!file) return
+
+    // save name
+    fileUrl = file.url
 
     // parse
     const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
@@ -275,14 +281,18 @@ const onSave = () => {
     undoStack: undoStack.value,
     redoStack: redoStack.value
   }
-  window.api.file.download({
-    contents: JSON.stringify(scratchpad),
+  const url = window.api.file.save({
+    contents: window.api.base64.encode(JSON.stringify(scratchpad)),
+    url: fileUrl ?? 'scratchpad.json',
     properties: {
       directory: 'documents',
-      filename: 'scratchpad.json'
+      prompt: true,
     }
   })
-  modified.value = false
+  if (url) {
+    fileUrl = url
+    modified.value = false
+  }
 }
 
 const onUndo = () => {
@@ -361,20 +371,6 @@ const onSendPrompt = async (userPrompt) => {
   // log
   processing.value = true
   console.log(finalPrompt)
-
-  // // save the attachment
-  // if (store.pendingAttachment?.downloaded === false) {
-  //   let filename = null
-  //   if (store.pendingAttachment.url === 'clipboard://') {
-  //     filename = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.contents)
-  //   } else {
-  //     filename = download(store.pendingAttachment.url)
-  //   }
-  //   if (filename) {
-  //     store.pendingAttachment.downloaded = true
-  //     store.pendingAttachment.url = `file://${filename}`
-  //   }
-  // }
 
   // prompt
   assistant.value.prompt(finalPrompt, {
