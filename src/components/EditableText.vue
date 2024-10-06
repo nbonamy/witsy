@@ -469,11 +469,13 @@ const onFocus = () => {
 
     // remove the ending nbsp we have added
     const html = child.innerHTML
-    if (html.endsWith('&nbsp;')) {
-      child.innerHTML = html.substring(0, html.length - 6)
-    } else if (html.endsWith('&nbsp;</span>')) {
-      child.innerHTML = html.substring(0, html.length - 13) + '</span>'
-    }
+    if (html) {
+      if (html.endsWith('&nbsp;')) {
+        child.innerHTML = html.substring(0, html.length - 6)
+      } else if (html.endsWith('&nbsp;</span>')) {
+        child.innerHTML = html.substring(0, html.length - 13) + '</span>'
+      }
+    } 
 
     // now remove the highlights
     const textContent = child.textContent

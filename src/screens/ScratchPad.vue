@@ -69,6 +69,17 @@ let modifiedCheckTimeout = null
 let attachment = null
 let fileUrl = null
 
+const resetState = () => {
+  assistant.value.stop()
+  editor.value.setContent({ content: '' })
+  assistant.value.setChat(null)
+  modified.value = false
+  processing.value = false
+  undoStack.value = []
+  redoStack.value = []
+  fileUrl = null
+}
+
 onMounted(() => {
 
   // events
@@ -104,19 +115,33 @@ onMounted(() => {
     }
   }
 
-  // for undo/redo
+  // override some system shortcuts
   editor.value.$el.addEventListener('keydown', (e) => {
-    if (!e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'z') {
+
+    const isCommand = !e.shift && (e.metaKey || e.ctrlKey)
+    const isShiftCommand = e.shift && (e.metaKey || e.ctrlKey)
+
+    if (isCommand && e.key == 'n') {
+      e.preventDefault()
+      onClear()
+    } else if (isCommand && e.key == 'o') {
+      e.preventDefault()
+      onLoad()
+    } else if (isCommand && e.key == 's') {
+      e.preventDefault()
+      onSave()
+    } else if (isCommand && e.key == 'z') {
       e.preventDefault()
       onUndo()
-    } else if (!e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'y') {
+    } else if ((isCommand && e.key == 'y') && (isShiftCommand && e.key == 'z')) {
       e.preventDefault()
       onRedo()
-    } else if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key === 'z') {
+    } else if (isCommand && e.key == 'r') {
       e.preventDefault()
-      onRedo()
+      onReadAloud()
     }
-  })
+
+  })  
 
   // for undo/redo
   document.addEventListener('keyup', (e) => {
@@ -134,7 +159,8 @@ const resetModifiedCheckTimeout = () => {
 
 const checkIfModified = () => {
   
-  const contents = editor.value.getContent()
+  const contents = editor.value?.getContent()
+  if (!contents) return
   if (!undoStack.value.length) {
 
     // if no undo then only if there is content 
@@ -224,53 +250,69 @@ const onAction = (action) => {
 
 }
 
+const confirmOverwrite = (callback) => {
+
+  if (!modified.value) {
+    callback()
+    return
+  }
+
+  Swal.fire({
+    title: 'You have unsaved changes. You will lose your work if you continue.',
+    showCancelButton: true,
+    confirmButtonText: 'Cancel',
+    cancelButtonText: 'Continue',
+    reverseButtons: true
+  }).then((result) => {
+    if (!result.isConfirmed) {
+      callback()
+    }
+  })
+}
+
 const onClear = () => {
-  editor.value.setContent({ content: '' })
-  assistant.value.setChat(null)
-  modified.value = false
-  undoStack.value = []
-  redoStack.value = []
-  fileUrl = null
+  confirmOverwrite(() => {
+    resetState()
+  })
 }
 
 const onLoad = () => {
 
-  try {
+  confirmOverwrite(() => {
+    try {
 
-    // pick
-    const file = window.api.file.pick({
-      filters: [ { name: 'Scratchpad', extensions: ['*.json'] }]
-    })
-    if (!file) return
+      // pick
+      const file = window.api.file.pick({
+        filters: [ { name: 'Scratchpad', extensions: ['*.json'] }]
+      })
+      if (!file) return
 
-    // save name
-    fileUrl = file.url
+      // parse
+      const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
+      if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
+        alert('This file is not a scratchpad file. Please try again with another file.')
+      }
 
-    // parse
-    const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
-    if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
-      alert('This file is not a scratchpad file. Please try again with another file.')
+      // reset
+      resetState()
+
+      // update stuff
+      fileUrl = file.url
+      editor.value.setContent(scratchpad.contents)
+      undoStack.value = scratchpad.undoStack
+      redoStack.value = scratchpad.redoStack
+
+      // chat
+      if (scratchpad.chat) {
+        const chat = new Chat(scratchpad.chat)
+        assistant.value.setChat(chat)
+      }
+
+    } catch (err) {
+      console.error(err)
+      alert('Error while loading scratchpad file')
     }
-
-    // easy load
-    editor.value.setContent(scratchpad.contents)
-    undoStack.value = scratchpad.undoStack
-    redoStack.value = scratchpad.redoStack
-
-    // chat
-    if (scratchpad.chat) {
-      const chat = new Chat(scratchpad.chat)
-      assistant.value.setChat(chat)
-    }
-
-    // reset
-    modified.value = false
-
-
-  } catch (err) {
-    console.error(err)
-    alert('Error while loading scratchpad file')
-  }
+  })
 
 }
 
