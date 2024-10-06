@@ -540,6 +540,7 @@ const autoGrow = (element) => {
 }
 
 .textarea-wrapper .loader-wrapper {
+  margin-top: 1px;
   display: flex;
   justify-content: center;
   gap: 8px;
