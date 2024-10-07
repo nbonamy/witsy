@@ -114,6 +114,7 @@ const config: ForgeConfig = {
       fs.unlinkSync(path.join(buildPath, 'node_modules/@iktakahiro/markdown-it-katex/node_modules/.bin/katex'))
       fs.unlinkSync(path.join(buildPath, 'node_modules/officeparser/node_modules/.bin/rimraf'))
       fs.unlinkSync(path.join(buildPath, 'node_modules/@langchain/core/node_modules/.bin/uuid'))
+      fs.unlinkSync(path.join(buildPath, 'node_modules/portfinder/node_modules/.bin/mkdirp'))
     }
   }
 };
