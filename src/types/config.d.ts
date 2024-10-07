@@ -1,5 +1,5 @@
 
-import { Shortcut } from './index.d'
+import { Shortcut, anyDict } from './index.d'
 
 export interface Configuration {
   general: GeneralConfig
@@ -13,6 +13,7 @@ export interface Configuration {
   stt: STTConfig
   rag: RagConfig
   dropbox: DropboxConfig
+  gdrive: GDriveConfig
   getActiveModel: () => string
 }
 
@@ -108,4 +109,9 @@ interface RagConfig {
 
 interface DropboxConfig {
   accessToken: string
+}
+
+interface GDriveConfig {
+  tokens: anyDict
+  fileIds: strDict
 }

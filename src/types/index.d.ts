@@ -109,6 +109,13 @@ interface FileContents {
   contents: string
 }
 
+interface OnlineStorageProvider {
+  initialize: () => Promise<void>
+  monitor: (filepath: string) => void
+  download: (filepath: string) => Promise<string>
+  upload: (filepath: string) => Promise<boolean>
+}
+
 declare global {
   interface Window {
     api: {

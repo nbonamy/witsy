@@ -176,5 +176,9 @@
     "nestor": {}
   },
   "dropbox": {
+  },
+  "gdrive": {
+    "tokens": null,
+    "fileIds": {}
   }
 }

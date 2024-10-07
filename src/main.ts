@@ -18,7 +18,7 @@ import Transcriber from 'automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
-//import Dropbox from './main/dropbox';
+import OnlineStorage from './main/online';
 
 import * as config from './main/config';
 import * as history from './main/history';
@@ -34,6 +34,7 @@ import * as text from './main/text';
 let commander: Commander = null
 let anywhere: PromptAnywhere = null
 let docRepo: DocumentRepository = null
+let onlineStorage: OnlineStorage = null
 let nestor: Nestor = null
 
 // first-thing: single instance
@@ -69,6 +70,10 @@ window.setStore(store);
 
 // start nestor
 nestor = new Nestor();
+
+// start online storage
+// onlineStorage = new OnlineStorage(app);
+// onlineStorage.initialize();
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -255,7 +260,7 @@ ipcMain.on('config-load', (event) => {
 });
 
 ipcMain.on('config-save', (event, payload) => {
-  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
+  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration, onlineStorage);
 });
 
 ipcMain.on('history-load', async (event) => {
@@ -263,7 +268,7 @@ ipcMain.on('history-load', async (event) => {
 });
 
 ipcMain.on('history-save', (event, payload) => {
-  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[]);
+  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[], onlineStorage);
 });
 
 ipcMain.on('commands-load', (event) => {
