@@ -55,6 +55,10 @@ Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/
 
 From [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 
+## [BETA] Scratchpad
+
+https://www.youtube.com/watch?v=czcSbG2H-wg&ab_channel=NicolasBonamy
+
 ## [BETA] Chat with your documents (RAG)
 
 You can connect each chat with a document repository: Witsy will first search for relevant documents in your local files and provide this info to the LLM. To do so:
