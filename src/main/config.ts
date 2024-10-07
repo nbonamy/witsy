@@ -1,15 +1,16 @@
 
 import { anyDict } from 'types/index.d';
 import { Configuration } from 'types/config.d';
-import defaultSettings from '../../defaults/settings.json'
 import { App } from 'electron'
+import defaultSettings from '../../defaults/settings.json'
+import OnlineStorage from './online';
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
 const monitor: Monitor = new Monitor('settings')
 
-const settingsFilePath = (app: App): string => {
+export const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
@@ -75,7 +76,7 @@ export const loadSettings = (source: App|string): Configuration => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (dest: App|string, config: anyDict) => {
+export const saveSettings = (dest: App|string, config: anyDict, onlineStorage: OnlineStorage) => {
   try {
 
     // nullify defaults
@@ -94,6 +95,9 @@ export const saveSettings = (dest: App|string, config: anyDict) => {
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
     fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2))
+
+    // online
+    onlineStorage?.upload(settingsFile)
 
   } catch (error) {
     console.log('Error saving settings data', error)

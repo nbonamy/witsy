@@ -1,14 +1,11 @@
 import { Chat } from 'types/index.d'
 import { App } from 'electron'
-// import Dropbox from './dropbox'
+import OnlineStorage from './online'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
-// const DROPBOX_PATH = '/history.json'
-
 const monitor: Monitor = new Monitor('history')
-// const dropbox: Dropbox|null = null
 
 const historyFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -57,16 +54,15 @@ export const loadHistory = async (app: App): Promise<Chat[]> => {
 
 }
 
-export const saveHistory = (app: App, content: Chat[]) => {
+export const saveHistory = (app: App, content: Chat[], onlineStorage: OnlineStorage) => {
   try {
 
     // local
     fs.writeFileSync(historyFilePath(app), JSON.stringify(content, null, 2))
     monitor.start(historyFilePath(app))
 
-    // // dropbox
-    // const dropbox = new Dropbox(app, historyFilePath(app), DROPBOX_PATH)
-    // dropbox.upload()
+    // online
+    onlineStorage?.upload(historyFilePath(app))
   
   } catch (error) {
     console.log('Error saving history data', error)

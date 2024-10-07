@@ -100,3 +100,6 @@ dist/
 
 # office parser
 officeParserTemp
+
+# google drive settings
+gdrive.json
