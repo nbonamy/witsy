@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.17.0",
+  "version": "1.17.1",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -63,7 +63,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.4",
+    "@anthropic-ai/sdk": "^0.28.0",
     "@el3um4s/run-vbs": "^1.1.2",
     "@excalidraw/markdown-to-text": "^0.1.2",
     "@google/generative-ai": "^0.11.1",

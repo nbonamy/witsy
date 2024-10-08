@@ -1,10 +1,10 @@
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback } from 'types/llm.d'
+import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback, LlmToolCall } from 'types/llm.d'
 import { EngineConfig, Configuration } from 'types/config.d'
 import { Message } from 'types/index.d'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
 import { Stream } from '@anthropic-ai/sdk/streaming'
-import { ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam } from '@anthropic-ai/sdk/resources'
+import { Tool, ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam, TextBlock, ToolUseBlock, TextDelta, InputJSONDelta } from '@anthropic-ai/sdk/resources'
 
 export const isAnthropicConfigured = (engineConfig: EngineConfig): boolean => {
   return engineConfig?.apiKey?.length > 0
@@ -17,11 +17,16 @@ export const isAnthropicReady = (engineConfig: EngineConfig): boolean => {
 export default class extends LlmEngine {
 
   client: Anthropic
-
-  constructor(config: Configuration) {
+  currentModel: string
+  currentSystem: string
+  currentThread: Array<MessageParam>
+  toolCall: LlmToolCall|null
+  
+ constructor(config: Configuration) {
     super(config)
     this.client = new Anthropic({
-      apiKey: config.engines.anthropic?.apiKey
+      apiKey: config.engines.anthropic?.apiKey,
+      dangerouslyAllowBrowser: true,
     })
   }
 
@@ -49,6 +54,11 @@ export default class extends LlmEngine {
     ]
   }
 
+  getMaxTokens(model: string): number {
+    if (model.includes('claude-3-5-sonnet')) return 8192
+    else return 4096
+  }
+
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call
@@ -57,29 +67,56 @@ export default class extends LlmEngine {
     const response = await this.client.messages.create({
       model: model,
       system: thread[0].content,
-      max_tokens: opts?.maxTokens || 4096,
+      max_tokens: this.getMaxTokens(model),
       messages: this.buildPayload(thread, model),
     });
 
     // return an object
+    const content = response.content[0] as TextBlock
     return {
       type: 'text',
-      content: response.content[0].text
+      content: content.text
     }
   }
 
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // model: switch to vision if needed
-    const model = this.selectModel(thread, opts?.model || this.getChatModel())
+    this.currentModel = this.selectModel(thread, opts?.model || this.getChatModel())
   
+    // save the message thread
+    this.currentSystem = thread[0].content
+    this.currentThread = this.buildPayload(thread, this.currentModel)
+    return await this.doStream()
+
+  }
+
+  async doStream(): Promise<LlmStream> {
+
+    // reset
+    this.toolCall = null
+
+    // tools in anthropic format
+    const tools: Tool[] = (await this.getAvailableTools()).map((tool) => {
+      return {
+        name: tool.function.name,
+        description: tool.function.description,
+        input_schema: {
+          type: 'object',
+          properties: tool.function.parameters.properties,
+          required: tool.function.parameters.required,
+        }
+      }
+    })
+
     // call
-    console.log(`[anthropic] prompting model ${model}`)
+    console.log(`[anthropic] prompting model ${this.currentModel}`)
     const stream = this.client.messages.create({
-      model: model,
-      system: thread[0].content,
-      max_tokens: opts?.maxTokens || 4096,
-      messages: this.buildPayload(thread, model),
+      model: this.currentModel,
+      system: this.currentSystem,
+      max_tokens: this.getMaxTokens(this.currentModel),
+      messages: this.currentThread,
+      tools: tools,
       stream: true,
     })
 
@@ -94,16 +131,102 @@ export default class extends LlmEngine {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async streamChunkToLlmChunk(chunk: MessageStreamEvent, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
+    
+    // log
+    //console.log('[anthropic] received chunk', chunk)
+
+    // done
     if (chunk.type == 'message_stop') {
       return { text: '', done: true }
-    } else if (chunk.type == 'content_block_delta') {
-      return {
-        text: chunk.delta.text,
-        done: false
-      }
-    } else {
-      return null
     }
+
+    // block start
+    if (chunk.type == 'content_block_start') {
+      if (chunk.content_block.type == 'tool_use') {
+        this.toolCall = {
+          id: chunk.content_block.id,
+          message: '',
+          function: chunk.content_block.name,
+          args: ''
+        }
+      } else {
+        this.toolCall = null
+      }
+    }
+
+    // block delta
+    if (chunk.type == 'content_block_delta') {
+
+      // text
+      if (this.toolCall === null) {
+        const textDelta = chunk.delta as TextDelta
+        return { text: textDelta.text, done: false }
+      }
+
+      // tool us
+      if (this.toolCall !== null) {
+        const toolDelta = chunk.delta as InputJSONDelta
+        this.toolCall.args += toolDelta.partial_json
+      }
+
+    }
+
+    // tool call?
+    if (chunk.type == 'message_delta') {
+      if (chunk.delta.stop_reason == 'tool_use' && this.toolCall !== null) {
+
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolRunningDescription(this.toolCall.function)
+        })
+
+        // now execute
+        const args = JSON.parse(this.toolCall.args)
+        console.log(`[openai] tool call ${this.toolCall.function} with ${JSON.stringify(args)}`)
+        const content = await this.callTool(this.toolCall.function, args)
+        console.log(`[openai] tool call ${this.toolCall.function} => ${JSON.stringify(content).substring(0, 128)}`)
+
+        // add tool call message
+        this.currentThread.push({
+          role: 'assistant',
+          content: [{
+            type: 'tool_use',
+            id: this.toolCall.id,
+            name: this.toolCall.function,
+            input: args,
+          }]
+        })
+
+        // add tool response message
+        this.currentThread.push({
+          role: 'user',
+          content: [{
+            type: 'tool_result',
+            tool_use_id: this.toolCall.id,
+            content: JSON.stringify(content)
+          }]
+        })
+
+        // clear
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: null,
+        })
+
+        // switch to new stream
+        eventCallback?.call(this, {
+          type: 'stream',
+          content: await this.doStream(),
+        })
+
+      }
+
+    }
+
+    // unknown
+    return null
+
   }
 
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
