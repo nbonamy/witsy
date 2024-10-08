@@ -199,12 +199,12 @@ const onSendPrompt = () => {
   prompt.value = ''
   nextTick(() => {
     autoGrow(input.value)
-    emitEvent('sendPrompt', message)
+    emitEvent('send-prompt', message)
   })
 }
 
 const onStopAssistant = () => {
-  emitEvent('stopAssistant')
+  emitEvent('stop-assistant')
 }
 
 const onAttach = () => {
@@ -215,7 +215,7 @@ const onAttach = () => {
     const format = file.url.split('.').pop()
     if (canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
-      emitEvent('attachFile', new Attachment(file.url, mimeType, file.contents))
+      emitEvent('attach-file', new Attachment(file.url, mimeType, file.contents))
     } else {
       console.error('Cannot attach format', format)
       alert('This file format is not supported')
@@ -224,7 +224,7 @@ const onAttach = () => {
 }
 
 const onDetach = () => {
-  emitEvent('detachFile')
+  emitEvent('detach-file')
 }
 
 const onPaste = (event) => {
@@ -242,7 +242,7 @@ const onPaste = (event) => {
 
           // check before attaching
           if (canProcessFormat(engine(), model(), format)) {
-            emitEvent('attachFile', new Attachment('clipboard://', mimeType, contents))
+            emitEvent('attach-file', new Attachment('clipboard://', mimeType, contents))
           } else {
             console.error('Cannot attach format', format)
             alert('This file format is not supported')
@@ -331,7 +331,7 @@ const onDocRepo = (event) => {
 const handleDocRepoClick = (action) => {
   closeContextMenu()
   if (action === 'manage') {
-    emitEvent('openDocRepos')
+    emitEvent('open-doc-repos')
   } else if (action === 'disconnect') {
     if (props.chat) {
       props.chat.docrepo = null
@@ -469,7 +469,7 @@ const autoGrow = (element) => {
     // reset before calculating
     element.style.height = '0px'
     element.style.height = Math.min(150, element.scrollHeight) + 'px'
-    emitEvent('promptResize', element.style.height)
+    emitEvent('prompt-resize', element.style.height)
   }
 }
 

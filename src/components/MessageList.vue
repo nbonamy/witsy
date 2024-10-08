@@ -36,8 +36,8 @@ defineProps({
 })
 
 onMounted(() => {
-  onEvent('newChunk', onNewChunk)
-  onEvent('fullScreen', onFullscreen)
+  onEvent('new-llm-chunk', onNewChunk)
+  onEvent('fullscreen', onFullscreen)
   scrollDown()
 })
 

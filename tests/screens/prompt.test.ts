@@ -65,7 +65,7 @@ test('Renders correctly', () => {
 
 test('Prompts on Enter', async () => {
   /*const wrapper = */mount(PromptAnywhere)
-  emitEvent('sendPrompt', 'prompt')
+  emitEvent('send-prompt', 'prompt')
   expect(window.api.anywhere.prompt).toHaveBeenCalled()
 })
 

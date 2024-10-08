@@ -84,8 +84,8 @@ const models = computed(() => {
 const canRefresh = computed(() => engine.value === 'ollama')
 
 onMounted(() => {
-  onEvent('openDocRepoCreate', onOpen)
-  onEvent('ollamaPullDone', onRefresh)
+  onEvent('open-docrepo-create', onOpen)
+  onEvent('ollama-pull-done', onRefresh)
 })
 
 const onOpen = () => {

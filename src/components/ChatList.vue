@@ -94,7 +94,7 @@ const onSelectChat = (chat) => {
       selection.value = [...selection.value, chat.uuid]
     }
   } else {
-    emitEvent('selectChat', chat)
+    emitEvent('select-chat', chat)
   }
 }
 
@@ -119,9 +119,9 @@ const handleActionClick = async (action) => {
 
   // process
   if (action === 'rename') {
-    emitEvent('renameChat', chat)
+    emitEvent('rename-chat', chat)
   } else if (action === 'delete') {
-    emitEvent('deleteChat', chat.uuid)
+    emitEvent('delete-chat', chat.uuid)
   }
 
 }

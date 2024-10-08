@@ -82,7 +82,7 @@ const onPull = () => {
     pull_progress.value = null
     pull_model.value = null
     pullStream.value = null
-    emitEvent('ollamaPullDone')
+    emitEvent('ollama-pull-done')
 
   })
 }

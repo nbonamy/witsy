@@ -86,7 +86,7 @@ test('Select chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { chat: null, filter: '' } } )
   expect(wrapper.findAll('.selected')).toHaveLength(0)
   await wrapper.findAll('.chat').at(3).trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('selectChat', store.chats[3])
+  expect(emitEventMock).toHaveBeenCalledWith('select-chat', store.chats[3])
 })
 
 test('Shows selection', async () => {
@@ -133,12 +133,12 @@ test('Rename Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { chat: null, filter: '' } } )
   await wrapper.findAll('.chat').at(3).trigger('contextmenu')
   await wrapper.findAll('.context-menu .item')[0].trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('renameChat', store.chats[3])
+  expect(emitEventMock).toHaveBeenCalledWith('rename-chat', store.chats[3])
 })
 
 test('Delete Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { ...stubTeleport, props: { chat: null, filter: '' } } )
   await wrapper.findAll('.chat').at(3).trigger('contextmenu')
   await wrapper.findAll('.context-menu .item')[1].trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('deleteChat', store.chats[3].uuid)
+  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', store.chats[3].uuid)
 })

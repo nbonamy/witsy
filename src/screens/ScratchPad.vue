@@ -83,10 +83,10 @@ const resetState = () => {
 onMounted(() => {
 
   // events
-  onEvent('sendPrompt', onSendPrompt)
-  onEvent('stopAssistant', onStopAssistant)
-  onEvent('attachFile', onAttachFile)
-  onEvent('detachFile', onDetachFile)
+  onEvent('send-prompt', onSendPrompt)
+  onEvent('stop-assistant', onStopAssistant)
+  onEvent('attach-file', onAttachFile)
+  onEvent('detach-file', onDetachFile)
   onEvent('action', onAction)
   audioPlayer.addListener(onAudioPlayerStatus)
 
@@ -243,7 +243,7 @@ const onAction = (action) => {
         const prompt = store.config.instructions.scratchpad[action.action]
         onSendPrompt(prompt)
       } else {
-        emitEvent('done')
+        emitEvent('llm-done')
       }
       return
   }
@@ -429,7 +429,7 @@ const onSendPrompt = async (userPrompt) => {
     if (chunk?.done) {
 
       // done
-      emitEvent('done')
+      emitEvent('llm-done')
 
       // if chunk text is null it means we had an error
       if (chunk.text == null) {
