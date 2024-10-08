@@ -260,7 +260,7 @@ ipcMain.on('config-load', (event) => {
 });
 
 ipcMain.on('config-save', (event, payload) => {
-  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration, onlineStorage);
+  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
 ipcMain.on('history-load', async (event) => {
@@ -268,7 +268,7 @@ ipcMain.on('history-load', async (event) => {
 });
 
 ipcMain.on('history-save', (event, payload) => {
-  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[], onlineStorage);
+  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[]);
 });
 
 ipcMain.on('commands-load', (event) => {

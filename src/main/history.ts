@@ -1,13 +1,13 @@
 import { Chat } from 'types/index.d'
 import { App } from 'electron'
-import OnlineStorage from './online'
+import { notifyBrowserWindows } from './windows'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
-const monitor: Monitor = new Monitor('history')
+const monitor: Monitor = new Monitor(() => notifyBrowserWindows('file-modified', 'history'))
 
-const historyFilePath = (app: App): string => {
+export const historyFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const historyFilePath = path.join(userDataPath, 'history.json')
   return historyFilePath
@@ -54,16 +54,13 @@ export const loadHistory = async (app: App): Promise<Chat[]> => {
 
 }
 
-export const saveHistory = (app: App, content: Chat[], onlineStorage: OnlineStorage) => {
+export const saveHistory = (app: App, content: Chat[]) => {
   try {
 
     // local
     fs.writeFileSync(historyFilePath(app), JSON.stringify(content, null, 2))
     monitor.start(historyFilePath(app))
 
-    // online
-    onlineStorage?.upload(historyFilePath(app))
-  
   } catch (error) {
     console.log('Error saving history data', error)
   }
