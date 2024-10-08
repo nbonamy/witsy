@@ -53,7 +53,7 @@ test('New command', () => {
 
 test('Load default commands', () => {
   const commands = main.loadCommands(app)
-  expect(commands).toHaveLength(39)
+  expect(commands).toHaveLength(40)
   commands.forEach((command) => {
     expect(command).toHaveProperty('id')
     expect(command.type).toEqual('system')
@@ -63,9 +63,9 @@ test('Load default commands', () => {
 
 test('Load custom commands', () => {
   const commands = main.loadCommands('./tests/fixtures/commands1.json')
-  expect(commands).toHaveLength(40)
+  expect(commands).toHaveLength(41)
   expect(commands.filter(c => c.type === 'user')).toHaveLength(1)
-  expect(commands.filter(c => c.type === 'system')).toHaveLength(39)
+  expect(commands.filter(c => c.type === 'system')).toHaveLength(40)
   expect(commands.filter(c => c.state === 'deleted')).toHaveLength(1)
   expect(commands.filter(c => c.state === 'disabled')).toHaveLength(1)
 })
@@ -73,7 +73,7 @@ test('Load custom commands', () => {
 test('Service Install commands', () => {
   service.loadCommands()
   expect(window.api.commands.load).toHaveBeenCalled()
-  expect(store.commands).toHaveLength(39)
+  expect(store.commands).toHaveLength(40)
 })
 
 test('Service Save commands', () => {

@@ -184,6 +184,7 @@ declare global {
         closePalette?(): void
         run?(command: Command): void
         getPrompt?(id: string): string
+        isPromptEditable?(id: string): boolean
       }
       anywhere?: {
         prompt?(text: string): void
