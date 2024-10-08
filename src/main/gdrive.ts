@@ -4,7 +4,6 @@ import { App } from 'electron'
 import { google } from 'googleapis'
 import portfinder from 'portfinder'
 import * as config from './config'
-import creds from '../../gdrive.json'
 import path from 'path'
 import http from 'http'
 import url from 'url'
@@ -13,17 +12,29 @@ import fs from 'fs'
 export default class implements OnlineStorageProvider {
 
   app: App
+  credentials: any
   oauth2Client: any
   gdrive: any
+
   timers: { [key: string]: NodeJS.Timeout }
 
   constructor(app: App) {
     this.app = app
+    this.credentials = null
     this.timers = null
   }
 
   isSetup(): boolean {
-    return !!this.getTokens()
+
+    // load credentials
+    const assetsFolder = process.env.DEBUG ? path.resolve('./') : process.resourcesPath
+    const credentialsFile = path.join(assetsFolder, 'gdrive.json')
+    if (fs.existsSync(credentialsFile)) {
+      this.credentials = JSON.parse(fs.readFileSync(credentialsFile, 'utf8'))
+    }
+
+    // all we need
+    return this.credentials !== null && !!this.getTokens()
   }
 
   async initialize(): Promise<void> {
@@ -52,8 +63,8 @@ export default class implements OnlineStorageProvider {
 
     // now create the OAuth2 client
     this.oauth2Client = new google.auth.OAuth2(
-      creds.installed.client_id,
-      creds.installed.client_secret,
+      this.credentials.installed.client_id,
+      this.credentials.installed.client_secret,
       `http://localhost:${port}`
     )
 
@@ -100,13 +111,6 @@ export default class implements OnlineStorageProvider {
       const filename = path.basename(filepath)
       const settings = config.loadSettings(this.app)
 
-      // we need a fileId
-      const fileId = settings.gdrive.fileIds[filename]
-      if (!fileId) {
-        console.error('File does not exist in Gdrive:', filename)
-        return null
-      }
-
       // get the file
       const res = await this.gdrive.files.list({
         spaces: 'appDataFolder',
@@ -119,6 +123,12 @@ export default class implements OnlineStorageProvider {
       const file = res.data.files[0]
       if (!file) {
         return null
+      }
+
+      // save the fileId if needed
+      if (settings.gdrive.fileIds[filename] !== file.id) {
+        settings.gdrive.fileIds[filename] = file.id
+        config.saveSettings(this.app, settings)
       }
 
       // done
