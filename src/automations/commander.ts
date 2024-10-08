@@ -15,6 +15,12 @@ import * as window from '../main/window'
 
 const textCache: strDict = {}
 
+const askMeAnythingId = '00000000-0000-0000-0000-000000000000'
+
+export const notEditablePrompts = [
+  askMeAnythingId
+]
+
 export default class Commander {
 
   private llm: LlmEngine
@@ -209,6 +215,7 @@ export default class Commander {
 
       return window.openChatWindow({
         promptId: Commander.putCachedText(text),
+        execute: this.shouldExecutePrompt(command),
         engine: engine || command.engine,
         model: model || command.model
       })
@@ -228,6 +235,10 @@ export default class Commander {
 
     }
 
+  }
+
+  private shouldExecutePrompt = (command: Command): boolean => {
+    return !([askMeAnythingId].includes(command.id))
   }
 
   static getCachedText = (id: string): string => {

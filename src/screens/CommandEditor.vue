@@ -12,13 +12,14 @@
         <div class="group">
           <label>Prompt</label>
           <div class="subgroup">
-            <textarea v-model="template" required></textarea>
+            <textarea v-model="template" v-if="isEditable"></textarea>
+            <textarea v-else disabled="true">This command is not editable. The content captured will be available in the prompt for you to ask anything about it!</textarea>
             <span v-pre>{input} will be subsituted with highlighted text</span>
           </div>
         </div>
         <div class="group">
           <label>Action</label>
-          <select v-model="action" required>
+          <select v-model="action" required :disabled="!isEditable">
             <option value="chat_window">Chat Window</option>
             <option value="paste_below">Insert Below</option>
             <option value="paste_in_place">Replace Selection</option>
@@ -75,6 +76,10 @@ const model = ref(null)
 const models = computed(() => {
   if (!engine.value || engine.value == '') return []
   return store.config.engines[engine.value].models.chat
+})
+
+const isEditable = computed(() => {
+  return window.api.commands.isPromptEditable(props.command?.id)
 })
 
 const load = () => {

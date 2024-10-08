@@ -1,6 +1,6 @@
 
 import { CreateWindowOpts } from 'types/window';
-import { strDict } from 'types';
+import { anyDict } from 'types';
 import { app, BrowserWindow, shell } from 'electron';
 import { store, createWindow, titleBarOptions } from './index';
 import { wait } from '../utils';
@@ -81,7 +81,7 @@ export const isMainWindowFocused = () => {
   return mainWindow && !mainWindow.isDestroyed() && mainWindow.isFocused();
 }
 
-export const openChatWindow = (params: strDict) => {
+export const openChatWindow = (params: anyDict) => {
 
   // always open
   const chatWindow = createWindow({
