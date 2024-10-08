@@ -67,6 +67,9 @@ window.api = {
       runAtLogin = state
     })
   },
+  commands: {
+    isPromptEditable: vi.fn(() => true)
+  }
 }
 
 beforeAll(() => {

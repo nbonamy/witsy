@@ -33,6 +33,7 @@ beforeAll(() => {
     },
     commands: {
       load: vi.fn(() => []),
+      isPromptEditable: vi.fn(() => true)
     },
     experts: {
       load: vi.fn(() => []),

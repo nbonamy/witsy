@@ -20,7 +20,7 @@ export default class extends LlmEngine {
   currentModel: string
   currentSystem: string
   currentThread: Array<MessageParam>
-  toolCall: LlmToolCall|null
+  toolCall: LlmToolCall|null = null
   
  constructor(config: Configuration) {
     super(config)
