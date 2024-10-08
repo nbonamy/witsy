@@ -70,6 +70,10 @@ interface Shortcut {
   key: string
 }
 
+export interface StoreListener {
+  onStoreUpdated: (domain: string) => void
+}
+
 interface Store {
   commands: Command[]
   experts: Expert[]
@@ -78,6 +82,9 @@ interface Store {
   chatFilter: string|null
   pendingAttachment: Attachment|null
   pendingDocRepo: string|null
+  listeners: StoreListener[]
+  addListener?(listener: StoreListener): void
+  notifyListeners?(domain: string): void
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>

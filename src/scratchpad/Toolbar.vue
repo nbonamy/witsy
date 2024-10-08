@@ -42,9 +42,6 @@ import ModelSelect from '../components/ModelSelect.vue'
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
-// load store
-store.load()
-
 const props = defineProps({
   engine: String,
   model: String,

@@ -145,7 +145,7 @@ test('Conversation language', async () => {
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant.chat.lastMessage().content
-  expect(content).toBe('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
+  expect(content).toBe('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
 })
 
 test('Low balance', async () => {
