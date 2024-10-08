@@ -11,7 +11,7 @@ import { wait } from './main/utils';
 import path from 'node:path';
 
 import AutoUpdater from './main/autoupdate';
-import Commander from './automations/commander';
+import Commander, { notEditablePrompts } from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from 'automations/transcriber';
@@ -287,6 +287,63 @@ ipcMain.on('commands-import', (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
+ipcMain.on('command-get-prompt', (event, payload) => {
+  event.returnValue = Commander.getCachedText(payload);
+})
+
+ipcMain.on('command-palette-close', async () => {
+  await window.closeCommandPalette();
+  await window.restoreWindows();
+  await window.releaseFocus();
+});
+
+ipcMain.on('command-is-prompt-editable', (event, payload) => {
+  event.returnValue = !notEditablePrompts.includes(payload);
+});
+
+ipcMain.on('command-run', async (event, payload) => {
+
+  // cancel any running command
+  if (commander !== null) {
+    await commander.cancelCommand();
+  }
+
+  // prepare
+  const args = JSON.parse(payload);
+  await window.closeCommandPalette();
+  await window.releaseFocus();
+
+  // now run
+  commander = new Commander();
+  const result = await commander.execCommand(app, args.textId, args.command);
+  commander = null;
+  
+  // cancelled
+  if (result.cancelled) return;
+
+  // show chat window
+  if (result?.chatWindow) {
+    await wait();
+    result.chatWindow.show();
+    result.chatWindow.moveTop();
+    await wait();
+    app.show();
+    app.focus({
+      steal: true,
+    });
+  }
+});
+
+ipcMain.on('command-stop', async () => {
+
+  // cancel any running command
+  if (commander !== null) {
+    await commander.cancelCommand();
+    commander = null;
+  }
+
+});
+
 ipcMain.on('experts-load', (event) => {
   event.returnValue = JSON.stringify(experts.loadExperts(app));
 });
@@ -368,59 +425,6 @@ ipcMain.on('get-app-info', (event, payload) => {
 
 ipcMain.on('markdown-render', (event, payload) => {
   event.returnValue = markdown.renderMarkdown(payload);
-});
-
-ipcMain.on('command-get-prompt', (event, payload) => {
-  event.returnValue = Commander.getCachedText(payload);
-})
-
-ipcMain.on('command-palette-close', async () => {
-  await window.closeCommandPalette();
-  await window.restoreWindows();
-  await window.releaseFocus();
-});
-
-ipcMain.on('command-run', async (event, payload) => {
-
-  // cancel any running command
-  if (commander !== null) {
-    await commander.cancelCommand();
-  }
-
-  // prepare
-  const args = JSON.parse(payload);
-  await window.closeCommandPalette();
-  await window.releaseFocus();
-
-  // now run
-  commander = new Commander();
-  const result = await commander.execCommand(app, args.textId, args.command);
-  commander = null;
-  
-  // cancelled
-  if (result.cancelled) return;
-
-  // show chat window
-  if (result?.chatWindow) {
-    await wait();
-    result.chatWindow.show();
-    result.chatWindow.moveTop();
-    await wait();
-    app.show();
-    app.focus({
-      steal: true,
-    });
-  }
-});
-
-ipcMain.on('command-stop', async () => {
-
-  // cancel any running command
-  if (commander !== null) {
-    await commander.cancelCommand();
-    commander = null;
-  }
-
 });
 
 ipcMain.on('code-python-run', async (event, payload) => {

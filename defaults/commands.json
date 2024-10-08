@@ -1,5 +1,17 @@
 [
   {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "system",
+    "icon": "⌨️",
+    "label": "Ask me anything",
+    "action": "chat_window",
+    "template": "Based on the text in triple quotes below:\n\n\"\"\"\n{input}\n\"\"\"\n\nAnswer the following: ",
+    "shortcut": "A",
+    "state": "enabled",
+    "engine": "",
+    "model": ""
+  },
+  {
     "id": "90dd1cd3-903a-4f60-bccf-0542fa78d8ef",
     "type": "system",
     "icon": "❓",

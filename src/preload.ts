@@ -58,6 +58,7 @@ contextBridge.exposeInMainWorld(
       save: (data: Command[]) => { return ipcRenderer.send('commands-save', JSON.stringify(data)) },
       export: (): void => { return ipcRenderer.sendSync('commands-export') },
       import: (): void => { return ipcRenderer.sendSync('commands-import') },
+      isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
       run: (command: Command): void => { return ipcRenderer.send('command-run', JSON.stringify(command)) },
       closePalette: (): void => { return ipcRenderer.send('command-palette-close') },
       getPrompt: (id: string): string => { return ipcRenderer.sendSync('command-get-prompt', id) },

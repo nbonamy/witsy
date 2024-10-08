@@ -58,19 +58,27 @@ onMounted(() => {
   // load extra from props
   if (props.extra?.promptId) {
 
+    // load extra
     prompt.value = window.api.commands.getPrompt(props.extra?.promptId) || null
     engine.value = props.extra?.engine || null
     model.value = props.extra?.model || null
 
-    // init assistant
+    // special commands are not executed
+    const execute = !(props.extra?.execute === false || props.extra?.execute === 'false')
+
+    // execute or not
     if (prompt.value !== null) {
-      assistant.value.prompt(prompt.value, {
-        engine: engine.value,
-        model: model.value,
-        save: false,
-      }, (chunk) => {
-        emitEvent('newChunk', chunk)
-      })
+      if (execute) {
+        assistant.value.prompt(prompt.value, {
+          engine: engine.value,
+          model: model.value,
+          save: false,
+        }, (chunk) => {
+          emitEvent('newChunk', chunk)
+        })
+      } else {
+        emitEvent('set-prompt', { content: prompt.value })
+      }
     }
 
   }
@@ -192,6 +200,8 @@ const onSendPrompt = async (prompt) => {
 
   // prompt
   assistant.value.prompt(prompt, {
+    engine: engine.value,
+    model: model.value,
     attachment: store.pendingAttachment,
     docrepo: store.pendingDocRepo,
   }, (chunk) => {
