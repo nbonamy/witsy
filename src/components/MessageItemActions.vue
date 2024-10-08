@@ -26,7 +26,6 @@ import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 // init stuff
-store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({

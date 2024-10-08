@@ -12,6 +12,13 @@ class TipsManager {
 
   showNextTip = () => {
 
+    // not on 1st run
+    if (this.store.config.general.firstRun) {
+      this.store.config.general.firstRun = false
+      this.store.saveSettings()
+      return
+    }
+
     const tipsToShow = [ 'scratchpad' ]
 
     for (const tip of tipsToShow) {

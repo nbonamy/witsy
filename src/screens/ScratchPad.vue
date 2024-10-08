@@ -148,6 +148,10 @@ onMounted(() => {
     resetModifiedCheckTimeout()
   })
 
+  // no need to show the tip
+  store.config.general.tips.scratchpad = false
+  store.saveSettings()
+
 })
 
 const resetModifiedCheckTimeout = () => {

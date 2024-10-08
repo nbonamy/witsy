@@ -55,6 +55,15 @@ onMounted(() => {
   onEvent('detach-file', onDetachFile)
   onEvent('stop-assistant', onStopAssistant)
 
+  // other
+  store.addListener({
+    onStoreUpdated(domain) {
+      if (domain === 'config') {
+        onConfigUpdated()
+      }
+    }
+  })
+
   // load extra from props
   if (props.extra?.promptId) {
 
@@ -92,8 +101,8 @@ onMounted(() => {
   document.addEventListener('click', (e) => {
     const target = e.target || e.srcElement
     const href = target.getAttribute('href')
-    if (href === '#settings') {
-      emitEvent('open-settings')
+    if (href?.startsWith('#settings')) {
+      emitEvent('open-settings', { initialTab: href.split('_')[1] })
       e.preventDefault()
       return false
     }
@@ -224,6 +233,10 @@ const onDetachFile = async () => {
 
 const onStopAssistant = async () => {
   await assistant.value.stop()
+}
+
+const onConfigUpdated = async () => {
+  assistant.value.setConfig(store.config)
 }
 
 </script>

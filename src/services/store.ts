@@ -1,5 +1,5 @@
 
-import { Store } from 'types/index.d'
+import { Store, StoreListener } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
@@ -14,7 +14,18 @@ export const store: Store = reactive({
   chatFilter: null,
   pendingAttachment: null,
   pendingDocRepo: null,
+  listeners: [],
 })
+
+store.addListener = (listener: StoreListener) : void => {
+  store.listeners.push(listener)
+}
+
+store.notifyListeners = (domain: string) : void => {
+  store.listeners.forEach((listener) => {
+    listener.onStoreUpdated(domain)
+  })
+}
 
 store.loadSettings = async () => {
   loadSettings()
@@ -68,6 +79,7 @@ const loadSettings = () => {
   store.config.getActiveModel = (engine: string) => {
     return store.config.engines[engine || store.config.llm.engine].model.chat
   }
+  store.notifyListeners('config')
 }
 
 store.saveSettings = () => {
@@ -83,6 +95,7 @@ const loadHistory = () => {
       const chat = new Chat(jsonChat)
       store.chats.push(chat)
     }
+    store.notifyListeners('history')
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving history data', error)

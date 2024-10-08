@@ -25,8 +25,17 @@ export default class {
     this.stream = null
   }
 
+  setConfig(config: Configuration) {
+    this.config = config
+  }
+
   setChat(chat: Chat) {
     this.chat = chat
+  }
+
+  resetLlm() {
+    this.engine = null
+    this.llm = null
   }
 
   initLlm(engine: string): void {
@@ -49,7 +58,6 @@ export default class {
   hasLlm() {
     return this.llm !== null
   }
-
 
   async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
@@ -90,8 +98,10 @@ export default class {
     
     } else if (!opts.overwriteEngineModel) {
       // make sure we have the right engine and model
-      opts.engine = this.chat.engine
-      opts.model = this.chat.model
+      // special case: chat was started without an apiKey
+      // so engine and model are null so we need to keep opts ones...
+      opts.engine = this.chat.engine || opts.engine
+      opts.model = this.chat.model || opts.model
     }
 
     // we need an llm
@@ -194,13 +204,19 @@ export default class {
       console.error('Error while generating text', error)
       if (error.name !== 'AbortError') {
         if (error.status === 401 || error.message.includes('401') || error.message.toLowerCase().includes('apikey')) {
-          message.setText('You need to enter your API key in the Models tab of <a href="#settings">Settings</a> in order to chat.')
+          message.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
+          opts.titling = false
+          this.chat.setEngineModel(null, null)
+          this.resetLlm()
         } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
           message.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
+          opts.titling = false
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
+          opts.titling = false
         } else {
           message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
+          opts.titling = false
         }
       } else {
         callback?.call(null, { text: null, done: true })

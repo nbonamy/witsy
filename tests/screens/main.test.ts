@@ -50,6 +50,7 @@ beforeAll(() => {
 
 vi.mock('../../src/services/assistant', async () => {
   const Assistant = vi.fn()
+  Assistant.prototype.setConfig = vi.fn()
   Assistant.prototype.setChat = vi.fn()
   Assistant.prototype.initLlm = vi.fn()
   Assistant.prototype.hasLlm = vi.fn(() => true)
