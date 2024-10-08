@@ -23,7 +23,7 @@ interface LlmCompletionOpts {
   docrepo?: string
   size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792' | null
   style?: 'vivid' | 'natural' | null
-  maxTokens?: number
+  //maxTokens?: number
   n?: number
 }
 

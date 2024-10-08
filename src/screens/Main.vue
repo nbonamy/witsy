@@ -200,8 +200,8 @@ const onSendPrompt = async (prompt) => {
 
   // prompt
   assistant.value.prompt(prompt, {
-    engine: engine.value,
-    model: model.value,
+    engine: engine.value || store.config.llm.engine,
+    model: model.value || store.config.getActiveModel(),
     attachment: store.pendingAttachment,
     docrepo: store.pendingDocRepo,
   }, (chunk) => {

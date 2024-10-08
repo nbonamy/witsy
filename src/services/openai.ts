@@ -112,9 +112,9 @@ export default class extends LlmEngine {
     const stream = this.client.chat.completions.create({
       model: this.currentModel,
       messages: this.currentThread,
-      stream: true,
       tools: tools.length ? tools : null,
       tool_choice: tools.length ? 'auto' : null,
+      stream: true,
     })
 
     // done
