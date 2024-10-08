@@ -1,5 +1,5 @@
 
-import { notifyBrowserWindows } from './window'
+import path from 'path'
 import fs from 'fs'
 
 export default class {
@@ -7,11 +7,11 @@ export default class {
   delay: number
   filepath: string
   filesize: number
-  signal: string
+  callback: CallableFunction
   timer: NodeJS.Timeout
   
-  constructor(signal: string, delay = 1000) {
-    this.signal = signal
+  constructor(callback: CallableFunction, delay = 1000) {
+    this.callback = callback
     this.delay = delay
   }
 
@@ -29,7 +29,7 @@ export default class {
       const size = this.size()
       if (size !== this.filesize) {
         this.filesize = size
-        this.notify()
+        this.notify(filepath)
       }
     }, this.delay)
   }
@@ -50,13 +50,14 @@ export default class {
     }
   }
 
-  notify(): void {
+  notify(filepath: string): void {
 
     // log
-    console.log(`File modified. Sending ${this.signal} signal`)
+    const filename = path.basename(filepath)
+    console.log(`File ${filename} modified. Notifying`)
 
-    // notify all active windows
-    notifyBrowserWindows('file-modified', this.signal)
+    // callback
+    this.callback()
 
   }
 

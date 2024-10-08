@@ -109,11 +109,18 @@ interface FileContents {
   contents: string
 }
 
+interface OnlineFileMetadata {
+  id: string
+  size: number
+  createdTime: Date
+  modifiedTime: Date
+}
+
 interface OnlineStorageProvider {
   initialize: () => Promise<void>
-  monitor: (filepath: string) => void
+  metadata: (filepath: string) => Promise<OnlineFileMetadata>
   download: (filepath: string) => Promise<string>
-  upload: (filepath: string) => Promise<boolean>
+  upload: (filepath: string, modifiedTime, Date) => Promise<boolean>
 }
 
 declare global {

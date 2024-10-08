@@ -1,5 +1,5 @@
 
-import { OnlineStorageProvider, anyDict } from 'types'
+import { OnlineFileMetadata, OnlineStorageProvider, anyDict } from 'types'
 import { App } from 'electron'
 import { google } from 'googleapis'
 import portfinder from 'portfinder'
@@ -14,6 +14,7 @@ export default class implements OnlineStorageProvider {
 
   app: App
   oauth2Client: any
+  gdrive: any
   timers: { [key: string]: NodeJS.Timeout }
 
   constructor(app: App) {
@@ -65,7 +66,10 @@ export default class implements OnlineStorageProvider {
     if (tokens) {
       this.oauth2Client.setCredentials(tokens)
     }
-    
+
+    // init service
+    this.gdrive = google.drive({ version: 'v3', auth: this.oauth2Client })
+
   }
 
   getOAuthUrl(): string {
@@ -88,27 +92,13 @@ export default class implements OnlineStorageProvider {
 
   }
 
-  private saveTokens(tokens: any): void {
-    const settings = config.loadSettings(this.app)
-    tokens = {...settings.gdrive.tokens ?? {}, ...tokens}
-    settings.gdrive.tokens = tokens
-    config.saveSettings(this.app, settings)
-  }
-
-  private getTokens(): anyDict {
-    const settings = config.loadSettings(this.app)
-    const tokens = settings.gdrive.tokens
-    return tokens
-  }
-
-  async getMetadata(filepath: string): Promise<any> {
+  async metadata(filepath: string): Promise<OnlineFileMetadata> {
 
     try {
 
       // needed
       const filename = path.basename(filepath)
       const settings = config.loadSettings(this.app)
-      const service = google.drive({ version: 'v3', auth: this.oauth2Client })
 
       // we need a fileId
       const fileId = settings.gdrive.fileIds[filename]
@@ -118,9 +108,9 @@ export default class implements OnlineStorageProvider {
       }
 
       // get the file
-      const res = await service.files.list({
+      const res = await this.gdrive.files.list({
         spaces: 'appDataFolder',
-        q: `fileId = '${fileId}'`,
+        q: `name = '${filename}'`,
         fields: 'files(id, name, mimeType, size, createdTime, modifiedTime)',
         pageSize: 1,
       });
@@ -132,7 +122,12 @@ export default class implements OnlineStorageProvider {
       }
 
       // done
-      return file
+      return {
+        id: file.id,
+        size: parseInt(file.size),
+        createdTime: new Date(file.createdTime),
+        modifiedTime: new Date(file.modifiedTime),
+      }
 
     } catch (error) {
       console.error('Error getting file metadata from Gdrive:', error)
@@ -141,85 +136,11 @@ export default class implements OnlineStorageProvider {
 
   }
 
-  monitor(filepath: string): void {
-
-    // do not monitor more than once
-    const timer = this.timers[filepath]
-    if (timer) {
-      return
-    }
-
-    // create the timer
-    this.timers[filepath] = setInterval(() => {
-      this.downloadIfNeeded(filepath)
-    }, 1000*60*5)
-  }
-
-  async downloadIfNeeded(filepath: string): Promise<boolean> {
-  
-    try {
-
-      // do we need to download
-      let needDownload = false
-
-      // check if it exists
-      const existsLocal = fs.existsSync(filepath)
-      const metadata = await this.getMetadata(filepath)
-
-      // if it does not exist remotely then...
-      if (!metadata) {
-        return false
-      }
-
-      if (!existsLocal) {
-        needDownload = true
-      } else {
-
-        // get the local stats
-        const local = await fs.promises.stat(filepath)
-
-        // needed
-        const remoteSize = metadata.size
-        const remoteModifiedTime = new Date(metadata.modifiedTime)
-
-        // we need to compare
-        const localSize = local.size
-        const localModifiedTime = local.mtime
-
-        // console.log('localSize = ', localSize)
-        // console.log('remoteSize = ', remoteSize)
-        // console.log('localModifiedTime = ', localModifiedTime)
-        // console.log('remoteModifiedTime = ', remoteModifiedTime)
-
-        needDownload = localSize !== remoteSize || localModifiedTime.getTime() !== remoteModifiedTime.getTime()
-        //console.log('Dropbox metadata comparison implies download = ', needDownload)
-      }
-
-      // exit if no need to download
-      if (!needDownload) {
-        return false
-      }
-
-      // download
-      const content = await this.download(metadata.id)
-
-      // wite
-      fs.promises.writeFile(filepath, content)
-      return true
-
-    } catch (error) {
-      console.error(`Error downloading ${filepath} from Dropbox:`, error)
-      return false
-    }
-
-  }
-
-  async download(filePath: string): Promise<any> {
+  async download(filePath: string): Promise<string> {
     
     // needed
     const filename = path.basename(filePath)
     const settings = config.loadSettings(this.app)
-    const service = google.drive({ version: 'v3', auth: this.oauth2Client })
 
     // we need a fileId
     const fileId = settings.gdrive.fileIds[filename]
@@ -229,7 +150,7 @@ export default class implements OnlineStorageProvider {
     }
 
     // get it
-    const file = await service.files.get({
+    const file = await this.gdrive.files.get({
       fileId: fileId,
       alt: 'media',
     });
@@ -241,25 +162,11 @@ export default class implements OnlineStorageProvider {
     }
 
     // get what we need
-    const contents = file.data
-
-    console.log(file);
-
-    // const res = await service.files.list({
-    //   spaces: 'appDataFolder',
-    //   fields: 'nextPageToken, files(id, name, headRevisionId, size, modifiedTime)',
-    //   pageSize: 100,
-    // });
-    // res.data.files.forEach(async function(file) {
-    //   console.log('Found file:', file.name, file.id, file.headRevisionId, file.size, file.modifiedTime);
-    //   await service.files.delete({
-    //     fileId: file.id
-    //   })
-    // });
+    return file.data
 
   }
 
-  async upload(filePath: string): Promise<boolean> {
+  async upload(filePath: string, modifiedTime: Date): Promise<boolean> {
 
     // needed
     const filename = path.basename(filePath)
@@ -268,25 +175,25 @@ export default class implements OnlineStorageProvider {
     // check if we have already uploaded this file
     const fileId = settings.gdrive.fileIds[filename]
     if (fileId) {
-      return await this.update(fileId, filePath)
+      return await this.update(fileId, filePath, modifiedTime)
     } else {
-      return await this.create(filePath)
+      return await this.create(filePath, modifiedTime)
     }
 
   }
 
-  async create(filePath: string): Promise<boolean> {
+  private async create(filePath: string, modifiedTime: Date): Promise<boolean> {
 
     try {
 
       // needed
       const filename = path.basename(filePath)
       const settings = config.loadSettings(this.app)
-      const service = google.drive({ version: 'v3', auth: this.oauth2Client })
 
       // metadata
       const fileMetadata = {
         name: filename,
+        modifiedTime: modifiedTime.toISOString(),
         parents: ['appDataFolder'],
       }
       
@@ -297,7 +204,7 @@ export default class implements OnlineStorageProvider {
       }
 
       // create
-      const file = await service.files.create({
+      const file = await this.gdrive.files.create({
         requestBody: fileMetadata,
         media: media,
         fields: 'id',
@@ -318,12 +225,14 @@ export default class implements OnlineStorageProvider {
 
   }
 
-  async update(fileId: string, filePath: string): Promise<boolean> {
+  private async update(fileId: string, filePath: string, modifiedTime: Date): Promise<boolean> {
 
     try {
 
-      // needed
-      const service = google.drive({ version: 'v3', auth: this.oauth2Client })
+      // metadata
+      const fileMetadata = {
+        modifiedTime: modifiedTime.toISOString(),
+      }
 
       // content
       const media = {
@@ -332,7 +241,8 @@ export default class implements OnlineStorageProvider {
       }
 
       // update
-      await service.files.update({
+      await this.gdrive.files.update({
+        requestBody: fileMetadata,
         fileId: fileId,
         media: media,
       });
@@ -345,7 +255,7 @@ export default class implements OnlineStorageProvider {
       // our file id may be obsolete
       if (err instanceof Error && err.message.includes('File not found')) {
         console.warn('File not found in Gdrive, creating it instead:', err.message)
-        return await this.create(filePath)
+        return await this.create(filePath, modifiedTime)
       }
 
       // error
@@ -353,6 +263,19 @@ export default class implements OnlineStorageProvider {
       return false
     }
 
+  }
+
+  private saveTokens(tokens: any): void {
+    const settings = config.loadSettings(this.app)
+    tokens = {...settings.gdrive.tokens ?? {}, ...tokens}
+    settings.gdrive.tokens = tokens
+    config.saveSettings(this.app, settings)
+  }
+
+  private getTokens(): anyDict {
+    const settings = config.loadSettings(this.app)
+    const tokens = settings.gdrive.tokens
+    return tokens
   }
 
 }
