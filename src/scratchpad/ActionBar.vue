@@ -89,7 +89,7 @@ FloatingVue.options.themes.tooltip.placement = 'left'
 FloatingVue.options.themes.tooltip.delay.show = 0
 
 onMounted(() => {
-  onEvent('done', () => {
+  onEvent('llm-done', () => {
     document.querySelectorAll('.action.active').forEach(el => el.classList.remove('active'))
   })
 })

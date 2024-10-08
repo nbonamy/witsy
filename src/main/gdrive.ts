@@ -30,6 +30,7 @@ export default class implements OnlineStorageProvider {
     const assetsFolder = process.env.DEBUG ? path.resolve('./') : process.resourcesPath
     const credentialsFile = path.join(assetsFolder, 'gdrive.json')
     if (fs.existsSync(credentialsFile)) {
+      console.log('Gdrive credentials found')
       this.credentials = JSON.parse(fs.readFileSync(credentialsFile, 'utf8'))
     }
 

@@ -73,31 +73,31 @@ test('Renders correctly', () => {
 
 test('Resets assistant', async () => {
   mount(Main)
-  emitEvent('newChat')
+  emitEvent('new-chat')
   expect(_Assistant.default.prototype.setChat).toHaveBeenCalledWith(null)
 })
 
 test('Attach/Detach file', async () => {
   mount(Main)
   expect(store.pendingAttachment).toBeNull()
-  emitEvent('attachFile', 'file')
+  emitEvent('attach-file', 'file')
   expect(store.pendingAttachment).toBe('file')
-  emitEvent('detachFile')
+  emitEvent('detach-file')
   expect(store.pendingAttachment).toBeNull()
 })
 
 test('Sends prompt', async () => {
   mount(Main)
-  emitEvent('sendPrompt', 'prompt')
+  emitEvent('send-prompt', 'prompt')
   expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
   expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null }, expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
   mount(Main)
-  emitEvent('attachFile', 'file')
+  emitEvent('attach-file', 'file')
   expect(store.pendingAttachment).toBe('file')
-  emitEvent('sendPrompt', 'prompt')
+  emitEvent('send-prompt', 'prompt')
   expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
   expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file', docrepo: null }, expect.any(Function))
 })
@@ -105,14 +105,14 @@ test('Sends prompt with attachment', async () => {
 test('Sends prompt with doc repo', async () => {
   mount(Main)
   store.pendingDocRepo = 'docrepo'
-  emitEvent('sendPrompt', 'prompt')
+  emitEvent('send-prompt', 'prompt')
   expect(_Assistant.default.prototype.initLlm).toHaveBeenCalled()
   expect(_Assistant.default.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: 'docrepo' }, expect.any(Function))
 })
 
 test('Stop assistant', async () => {
   mount(Main)
-  emitEvent('stopAssistant')
+  emitEvent('stop-assistant')
   expect(_Assistant.default.prototype.stop).toHaveBeenCalled()
 })
 

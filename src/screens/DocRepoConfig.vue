@@ -52,7 +52,7 @@ const searchResultCount = ref(null)
 const relevanceCutOff = ref(null)
 
 onMounted(() => {
-  onEvent('openDocRepoConfig', onOpen)
+  onEvent('open-docrepo-config', onOpen)
 })
 
 const onOpen = () => {

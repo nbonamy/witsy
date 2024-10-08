@@ -23,8 +23,8 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  onEvent('sendPrompt', onPrompt)
-  onEvent('promptResize', onResize)
+  onEvent('send-prompt', onPrompt)
+  onEvent('prompt-resize', onResize)
   onEvent('show-experts', onExperts)
   window.api.on('set-expert-prompt', onSetExpertPrompt)
   document.addEventListener('keyup', onKeyUp)

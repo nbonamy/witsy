@@ -71,7 +71,7 @@ const settingsAdvanced = ref(null)
 
 onMounted(async () => {
   window.api.on('show-settings', onOpenSettings)
-  onEvent('openSettings', onOpenSettings)
+  onEvent('open-settings', onOpenSettings)
   showActiveTab()
   installTabs()
 })

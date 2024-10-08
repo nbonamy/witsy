@@ -99,7 +99,7 @@ const onHover = (value) => {
 }
 
 const onClickAttachment = (attachment) => {
-  emitEvent('fullScreen', attachment.url)
+  emitEvent('fullscreen', attachment.url)
 }
 
 const onImageLoaded = (message) => {

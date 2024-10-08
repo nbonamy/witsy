@@ -54,13 +54,13 @@ onMounted(() => {
 })
 
 const onSettings = () => {
-  emitEvent('openSettings', { initialTab: 'general' })
+  emitEvent('open-settings', { initialTab: 'general' })
 }
 
 const onNewChat = () => {
   onClearFilter()
   onCancelDelete()
-  emitEvent('newChat')
+  emitEvent('new-chat')
 }
 
 const onFilterChange = () => {
@@ -84,7 +84,7 @@ const onCancelDelete = () => {
 const onDelete = () => {
   const selection = chatList.value.getSelection()
   if (selection.length) {
-    emitEvent('deleteChat', selection)
+    emitEvent('delete-chat', selection)
     chatList.value.clearSelection()
   }
   deleteMode.value = false

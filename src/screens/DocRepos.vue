@@ -111,7 +111,7 @@ onMounted(async () => {
   window.api.on('docrepo-add-document-error', onAddDocError)
   window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
-  onEvent('openDocRepos', onOpenDocRepos)
+  onEvent('open-doc-repos', onOpenDocRepos)
   await loadDocRepos()
 })
 
@@ -161,7 +161,7 @@ const selectDoc = (event, doc) => {
 }
 
 const onCreate = async () => {
-  emitEvent('openDocRepoCreate')
+  emitEvent('open-docrepo-create')
 }
 
 const onDelete = () => {
@@ -181,7 +181,7 @@ const onDelete = () => {
 }
 
 const onConfig = () => {
-  emitEvent('openDocRepoConfig')
+  emitEvent('open-docrepo-config')
 }
 
 const onChangeRepoName = (event) => {

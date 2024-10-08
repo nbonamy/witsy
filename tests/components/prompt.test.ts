@@ -13,7 +13,7 @@ enableAutoUnmount(afterAll)
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn((event, ...args) => {
   // this is called when mounting so discard it
-  if (event === 'promptResize' && args[0] === '0px') {
+  if (event === 'prompt-resize' && args[0] === '0px') {
     emitEventMock.mockClear()
   }
 })
@@ -96,7 +96,7 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('sendPrompt', 'this is my prompt')
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', 'this is my prompt')
   expect(prompt.element.value).toBe('')
 })
 
@@ -105,7 +105,7 @@ test('Send on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalledWith('sendPrompt', 'this is my prompt')
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', 'this is my prompt')
   expect(prompt.element.value).toBe('')
 })
 
@@ -132,7 +132,7 @@ test('Show stop button when working', async () => {
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
   await wrapper.find('.icon.stop').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('stopAssistant')
+  expect(emitEventMock).toHaveBeenCalledWith('stop-assistant')
 })
 
 test('Send attachment', async () => {
@@ -142,7 +142,7 @@ test('Send attachment', async () => {
   expect(window.api.file.pick).toHaveBeenCalledWith({
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
-  expect(emitEventMock).toHaveBeenCalledWith('attachFile', {
+  expect(emitEventMock).toHaveBeenCalledWith('attach-file', {
     mimeType: 'image/png',
     contents: 'image64',
     downloaded: false,
@@ -168,7 +168,7 @@ test('Display base64 attachment', async () => {
 
 test('Remove attachment', async () => {
   await wrapper.find('.attachment').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('detachFile')
+  expect(emitEventMock).toHaveBeenCalledWith('detach-file')
 })
 
 // test('Accept incoming prompt', async () => {
@@ -229,7 +229,7 @@ test('Document repository', async () => {
 
   // manage
   await menu.find('.item:nth-child(3)').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('openDocRepos')
+  expect(emitEventMock).toHaveBeenCalledWith('open-doc-repos')
 
   // connect
   await trigger.trigger('click')

@@ -72,7 +72,7 @@ const onEngine = (engine) => {
         showCancelButton: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          emitEvent('openSettings', { initialTab: 'models', engine: engine })
+          emitEvent('open-settings', { initialTab: 'models', engine: engine })
         }
       })
       return

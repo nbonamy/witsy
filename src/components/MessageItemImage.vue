@@ -24,7 +24,7 @@ const onImageLoaded = () => {
 }
 
 const onFullscreen = (url) => {
-  emitEvent('fullScreen', props.url)
+  emitEvent('fullscreen', props.url)
 }
 
 const onDownload = () => {

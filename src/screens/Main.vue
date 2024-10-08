@@ -46,14 +46,14 @@ const isStandaloneChat = computed(() => {
 onMounted(() => {
 
   // events
-  onEvent('newChat', onNewChat)
-  onEvent('renameChat', onRenameChat)
-  onEvent('deleteChat', onDeleteChat)
-  onEvent('selectChat', onSelectChat)
-  onEvent('sendPrompt', onSendPrompt)
-  onEvent('attachFile', onAttachFile)
-  onEvent('detachFile', onDetachFile)
-  onEvent('stopAssistant', onStopAssistant)
+  onEvent('new-chat', onNewChat)
+  onEvent('rename-chat', onRenameChat)
+  onEvent('delete-chat', onDeleteChat)
+  onEvent('select-chat', onSelectChat)
+  onEvent('send-prompt', onSendPrompt)
+  onEvent('attach-file', onAttachFile)
+  onEvent('detach-file', onDetachFile)
+  onEvent('stop-assistant', onStopAssistant)
 
   // load extra from props
   if (props.extra?.promptId) {
@@ -74,7 +74,7 @@ onMounted(() => {
           model: model.value,
           save: false,
         }, (chunk) => {
-          emitEvent('newChunk', chunk)
+          emitEvent('new-llm-chunk', chunk)
         })
       } else {
         emitEvent('set-prompt', { content: prompt.value })
@@ -85,7 +85,7 @@ onMounted(() => {
 
   // open settings
   if (props.extra?.settings) {
-    emitEvent('openSettings')
+    emitEvent('open-settings')
   }
 
   // intercept links
@@ -93,7 +93,7 @@ onMounted(() => {
     const target = e.target || e.srcElement
     const href = target.getAttribute('href')
     if (href === '#settings') {
-      emitEvent('openSettings')
+      emitEvent('open-settings')
       e.preventDefault()
       return false
     }
@@ -115,7 +115,7 @@ const onSelectChat = (chat) => {
   assistant.value = new Assistant(store.config)
   assistant.value.setChat(chat)
   nextTick(() => {
-    emitEvent('newChunk')
+    emitEvent('new-llm-chunk')
   })
 }
 
@@ -163,7 +163,7 @@ const onDeleteChat = async (chat) => {
 
       // if current chat
       if (chats.includes(assistant.value.chat?.uuid)) {
-        emitEvent('newChat')
+        emitEvent('new-chat')
       }
 
       // close window if standalone
@@ -180,7 +180,7 @@ const onSendPrompt = async (prompt) => {
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
-    nextTick(() => emitEvent('openSettings', { initialTab: 'models' }))
+    nextTick(() => emitEvent('open-settings', { initialTab: 'models' }))
     return
   }
 
@@ -205,7 +205,7 @@ const onSendPrompt = async (prompt) => {
     attachment: store.pendingAttachment,
     docrepo: store.pendingDocRepo,
   }, (chunk) => {
-    emitEvent('newChunk', chunk)
+    emitEvent('new-llm-chunk', chunk)
   })
 
   // clear stuff

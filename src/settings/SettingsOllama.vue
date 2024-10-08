@@ -37,7 +37,7 @@ const chat_model = ref(null)
 const chat_models = ref([])
 
 onMounted(() => {
-  onEvent('ollamaPullDone', onRefresh)
+  onEvent('ollama-pull-done', onRefresh)
 })
 
 const load = () => {

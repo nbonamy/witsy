@@ -79,7 +79,7 @@ test('Shows user and assistant messages', async () => {
 })
 
 test('Fullscreen image', async () => {
-  emitEvent('fullScreen', 'https://example.com/image.jpg')
+  emitEvent('fullscreen', 'https://example.com/image.jpg')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.fullscreen').exists()).toBe(true)
   expect(window.api.fullscreen).toHaveBeenCalledWith(true)

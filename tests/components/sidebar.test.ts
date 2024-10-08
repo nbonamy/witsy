@@ -55,13 +55,13 @@ test('No chat', async () => {
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .toolbar #new-chat').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('newChat')
+  expect(emitEventMock).toHaveBeenCalledWith('new-chat')
 })
 
 test('Open Settings', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .footer #open-settings').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('openSettings', { initialTab: 'general'})
+  expect(emitEventMock).toHaveBeenCalledWith('open-settings', { initialTab: 'general'})
 })
 
 test('Start and Cancel Delete', async () => {
@@ -79,7 +79,7 @@ test('Delete Chat', async () => {
   await wrapper.find('.sidebar .footer #start-delete').trigger('click')
   await wrapper.findAll('.sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sidebar .footer.actions #delete').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('deleteChat', [store.chats[0].uuid])
+  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', [store.chats[0].uuid])
   expect(wrapper.vm.deleteMode).toBe(false)
   expect(wrapper.find('.sidebar .footer.actions').exists()).toBe(false)
 })
