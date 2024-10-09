@@ -133,35 +133,39 @@ export default class extends LlmEngine {
     if (this.supportsTools(model)) {
 
       const tools = await this.getAvailableTools();
-      const functionDeclarations: FunctionDeclaration[] = [];
+      if (tools.length) {
+      
+        const functionDeclarations: FunctionDeclaration[] = [];
 
-      for (const tool of tools) {
+        for (const tool of tools) {
 
-        const googleProps: { [k: string]: FunctionDeclarationSchemaProperty } = {};
-        for (const name of Object.keys(tool.function.parameters.properties)) {
-          const props = tool.function.parameters.properties[name]
-          const type = props.type === 'string' ? SchemaType.STRING : props.type === 'number' ? SchemaType.NUMBER : SchemaType.OBJECT
-          googleProps[name] = {
-            type: type,
-            enum: props.enum,
-            description: props.description,
+          const googleProps: { [k: string]: FunctionDeclarationSchemaProperty } = {};
+          for (const name of Object.keys(tool.function.parameters.properties)) {
+            const props = tool.function.parameters.properties[name]
+            const type = props.type === 'string' ? SchemaType.STRING : props.type === 'number' ? SchemaType.NUMBER : SchemaType.OBJECT
+            googleProps[name] = {
+              type: type,
+              enum: props.enum,
+              description: props.description,
+            }
           }
+
+          functionDeclarations.push({
+            name: tool.function.name,
+            description: tool.function.description,
+            parameters: {
+              type: SchemaType.OBJECT,
+              properties: googleProps,
+              required: tool.function.parameters.required,
+            }
+          })
         }
 
-        functionDeclarations.push({
-          name: tool.function.name,
-          description: tool.function.description,
-          parameters: {
-            type: SchemaType.OBJECT,
-            properties: googleProps,
-            required: tool.function.parameters.required,
-          }
-        })
-      }
+        // done
+        modelParams.toolConfig = { functionCallingConfig: { mode: FunctionCallingMode.AUTO } }
+        modelParams.tools = [{ functionDeclarations: functionDeclarations }]
 
-      // done
-      modelParams.toolConfig = { functionCallingConfig: { mode: FunctionCallingMode.AUTO } }
-      modelParams.tools = [{ functionDeclarations: functionDeclarations }]
+      }
     }
 
     // call
