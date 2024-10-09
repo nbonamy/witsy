@@ -60,7 +60,7 @@
     "name": "Nicolas Bonamy",
     "email": "nicolas@bonamy.fr"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.28.0",
     "@el3um4s/run-vbs": "^1.1.2",
