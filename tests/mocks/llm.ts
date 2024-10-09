@@ -61,6 +61,9 @@ export default class LlmMock extends LlmEngine {
     if (thread[thread.length-1].content.includes('no credit')) {
       throw new LlmError('LowBalanceError', 400, 'Your balance is too low')
     }
+    if (thread[thread.length-1].content.includes('quota')) {
+      throw new LlmError('QuotaExceededError', 429, 'You have exceeded your quota')
+    }
 
     // model: switch to vision if needed
     const model = this.selectModel(thread, opts?.model || this.getChatModel())
