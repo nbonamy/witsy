@@ -61,6 +61,7 @@ interface ShortcutsConfig {
 }
 
 interface STTConfig {
+  engine: string
   model: string
   silenceDetection: boolean
   silenceDuration: number

@@ -11,6 +11,13 @@ export default class implements STTEngine {
   transcriber?: any
   ready = false
 
+  static readonly models: any[] = [
+    { id: 'Xenova/whisper-tiny', label: 'Whisper Turbo Tiny (requires download)' },
+    { id: 'Xenova/whisper-base', label: 'Whisper Turbo Base (requires download)' },
+    { id: 'Xenova/whisper-small', label: 'Whisper Turbo Small (requires download)' },
+    { id: 'Xenova/whisper-medium', label: 'Whisper Turbo Medium (requires download)' },
+  ]
+
   constructor(config: Configuration) {
     this.config = config
     env.allowLocalModels = false

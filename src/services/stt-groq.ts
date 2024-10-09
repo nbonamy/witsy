@@ -1,22 +1,24 @@
 
 import { Configuration } from 'types/config.d'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
-import OpenAI from 'openai'
+import Groq from 'groq-sdk'
 
 export default class implements STTEngine {
 
   config: Configuration
-  client: OpenAI
+  client: Groq
 
   static readonly models: any[] = [
-    { id: 'whisper-1', label: 'OpenAI Whisper V2 (online)' },
+    { id: 'whisper-large-v3-turbo', label: 'Groq OpenAI Whisper Large V3 Turbo Multilingual (online)' },
+    { id: 'distil-whisper-large-v3-en', label: 'Groq OpenAI Whisper Large V3 English (online)' },
+    { id: 'whisper-large-v3', label: 'Groq OpenAI Whisper Large V3 Multilingual (online)' },
   ]
 
   constructor(config: Configuration) {
     this.config = config
-    this.client = new OpenAI({
-      apiKey: config.engines.openai.apiKey,
-      dangerouslyAllowBrowser: true
+    this.client = new Groq({
+      apiKey: config.engines.groq?.apiKey || '',
+      dangerouslyAllowBrowser: true,
     })
   }
 
@@ -29,7 +31,7 @@ export default class implements STTEngine {
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {
-    callback?.({ status: 'ready', task: 'openai', model: this.config.stt.model })
+    callback?.({ status: 'ready', task: 'groq', model: this.config.stt.model })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
