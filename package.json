@@ -32,7 +32,6 @@
     "@electron-forge/publisher-github": "^7.4.0",
     "@electron/fuses": "^1.7.0",
     "@playwright/test": "^1.43.1",
-    "@types/electron": "^1.6.10",
     "@types/markdown-it": "^14.0.1",
     "@types/node": "^20.12.7",
     "@types/plist": "^3.0.5",
