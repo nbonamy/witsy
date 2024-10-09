@@ -211,6 +211,9 @@ export default class {
         } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
           message.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           opts.titling = false
+        } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota'))) {
+          message.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+          opts.titling = false
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
           opts.titling = false
