@@ -1,12 +1,8 @@
 
 declare module 'html-to-text'
 
+import { LlmToolParameterOpenAI } from './llm'
+
 export type PluginConfig = anyDict
 
-export interface PluginParameter {
-  name: string
-  description: string
-  type: string
-  enum?: string[]
-  required?: boolean
-}
+export type PluginParameter = LlmToolParameterOpenAI

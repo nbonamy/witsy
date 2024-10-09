@@ -2,7 +2,8 @@
 import { Message } from 'types/index.d'
 import { EngineConfig, Configuration } from 'types/config.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from 'types/llm.d'
-import { Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part } from '@google/generative-ai'
+import { Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part, FunctionResponsePart, SchemaType, FunctionDeclarationSchemaProperty, FunctionCallingMode } from '@google/generative-ai'
+import type { FunctionDeclaration } from '@google/generative-ai/dist/types'
 import { getFileContents } from './download'
 import Attachment from '../models/attachment'
 import LlmEngine from './engine'
@@ -18,6 +19,8 @@ export const isGoogleReady = (engineConfig: EngineConfig): boolean => {
 export default class extends LlmEngine {
 
   client: GoogleGenerativeAI
+  currentModel: GenerativeModel
+  currentContent: Content[]
   toolCalls: LlmToolCall[]
 
   constructor(config: Configuration) {
@@ -58,15 +61,14 @@ export default class extends LlmEngine {
     const modelName = opts?.model || this.config.engines.google.model.chat
     console.log(`[google] prompting model ${modelName}`)
     const model = await this.getModel(modelName, thread[0].content)
-    const chatSession = model.startChat({
-      history: this.threadToHistory(thread, modelName)
+    const response = await model.generateContent({
+      contents: this.threadToHistory(thread, modelName),
     })
 
     // done
-    const result = await chatSession.sendMessage(this.getPrompt(thread))
     return {
       type: 'text',
-      content: result.response.text()
+      content: response.response.text()
     }
   }
 
@@ -75,28 +77,47 @@ export default class extends LlmEngine {
     // model: switch to vision if needed
     const modelName = this.selectModel(thread, opts?.model || this.getChatModel())
 
+    // call
+    this.currentModel = await this.getModel(modelName, thread[0].content)
+    this.currentContent = this.threadToHistory(thread, modelName)
+    return await this.doStream()
+
+  }
+
+  async doStream(): Promise<LlmStream> {
+
     // reset
     this.toolCalls = []
 
-    // call
-    console.log(`[google] prompting model ${modelName}`)
-    const model = await this.getModel(modelName, thread[0].content)
-    const chatSession = model.startChat({
-      history: this.threadToHistory(thread, modelName)
+    console.log(`[google] prompting model ${this.currentModel.model}`)
+    const response = await this.currentModel.generateContentStream({
+      contents: this.currentContent
     })
 
     // done
-    const result = await chatSession.sendMessageStream(this.getPrompt(thread))
-    return result.stream
+    return response.stream
 
+  }
+
+  private modelStartsWith(model: string, prefix: string[]): boolean {
+    for (const p of prefix) {
+      if (model.startsWith(p)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  private supportsInstructions(model: string): boolean {
+    return this.modelStartsWith(model, ['models/gemini-pro']) == false
+  }
+
+  private supportsTools(model: string): boolean {
+    return this.modelStartsWith(model, ['gemini-1.5-flash']) == false
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getModel(model: string, instructions: string): Promise<GenerativeModel> {
-
-    // not all models have all features
-    const hasInstructions = !(['models/gemini-pro', 'gemini-1.5-flash'].includes(model))
-    const hasTools = false
 
     // model params
     const modelParams: ModelParams = {
@@ -104,17 +125,43 @@ export default class extends LlmEngine {
     }
 
     // add instructions
-    if (hasInstructions) {
+    if (this.supportsInstructions(model)) {
       modelParams.systemInstruction = instructions
     }
 
     // add tools
-    if (hasTools) {
-      modelParams.tools = [{
-        functionDeclarations: (await this.getAvailableTools()).map((tool) => {
-          return tool.function
+    if (this.supportsTools(model)) {
+
+      const tools = await this.getAvailableTools();
+      const functionDeclarations: FunctionDeclaration[] = [];
+
+      for (const tool of tools) {
+
+        const googleProps: { [k: string]: FunctionDeclarationSchemaProperty } = {};
+        for (const name of Object.keys(tool.function.parameters.properties)) {
+          const props = tool.function.parameters.properties[name]
+          const type = props.type === 'string' ? SchemaType.STRING : props.type === 'number' ? SchemaType.NUMBER : SchemaType.OBJECT
+          googleProps[name] = {
+            type: type,
+            enum: props.enum,
+            description: props.description,
+          }
+        }
+
+        functionDeclarations.push({
+          name: tool.function.name,
+          description: tool.function.description,
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: googleProps,
+            required: tool.function.parameters.required,
+          }
         })
-      }]
+      }
+
+      // done
+      modelParams.toolConfig = { functionCallingConfig: { mode: FunctionCallingMode.AUTO } }
+      modelParams.tools = [{ functionDeclarations: functionDeclarations }]
     }
 
     // call
@@ -142,7 +189,11 @@ export default class extends LlmEngine {
   } 
 
   threadToHistory(thread: Message[], modelName: string): Content[] {
-    const payload = this.buildPayload(thread.slice(1, -1), modelName)
+    const hasInstructions = this.supportsInstructions(modelName)
+    const payload = this.buildPayload(thread.slice(hasInstructions ? 1 : 0), modelName).map((p) => {
+      if (p.role === 'system') p.role = 'user'
+      return p
+    })
     return payload.map((message) => this.messageToContent(message))
   }
 
@@ -191,62 +242,73 @@ export default class extends LlmEngine {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async streamChunkToLlmChunk(chunk: EnhancedGenerateContentResponse, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
 
-    //console.log('[google] chunk:', chunk)
+    // tool calls
+    const toolCalls = chunk.functionCalls()
+    if (toolCalls?.length) {
 
-    // // tool calls
-    // const toolCalls = chunk.functionCalls()
-    // if (toolCalls?.length) {
+      // save
+      this.toolCalls = toolCalls.map((tc) => {
+        return {
+          id: tc.name,
+          message: '',
+          function: tc.name,
+          args: JSON.stringify(tc.args),
+        }
+      })
 
-    //   // save
-    //   this.toolCalls = toolCalls.map((tc) => {
-    //     return {
-    //       id: tc.name,
-    //       message: '',
-    //       function: tc.name,
-    //       args: JSON.stringify(tc.args),
-    //     }
-    //   })
+      // results
+      const results: FunctionResponsePart[] = []
 
-    //   // call
-    //   for (const toolCall of this.toolCalls) {
+      // call
+      for (const toolCall of this.toolCalls) {
 
-    //     // first notify
-    //     eventCallback?.call(this, {
-    //       type: 'tool',
-    //       content: this.getToolPreparationDescription(toolCall.function)
-    //     })
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolPreparationDescription(toolCall.function)
+        })
 
-    //     // first notify
-    //     eventCallback?.call(this, {
-    //       type: 'tool',
-    //       content: this.getToolRunningDescription(toolCall.function)
-    //     })
+        // first notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolRunningDescription(toolCall.function)
+        })
 
-    //     // now execute
-    //     const args = JSON.parse(toolCall.args)
-    //     const content = await this.callTool(toolCall.function, args)
-    //     console.log(`[google] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
+        // now execute
+        const args = JSON.parse(toolCall.args)
+        const content = await this.callTool(toolCall.function, args)
+        console.log(`[google] tool call ${toolCall.function} with ${JSON.stringify(args)} => ${JSON.stringify(content).substring(0, 128)}`)
 
-    //     // send
-    //     this.currentChat.sendMessageStream([
-    //       { functionResponse: {
-    //         name: toolCall.function,
-    //         response: content
-    //       }}
-    //     ])
+        // send
+        results.push({ functionResponse: {
+          name: toolCall.function,
+          response: content
+        }})
 
-    //     // clear
-    //     eventCallback?.call(this, {
-    //       type: 'tool',
-    //       content: null,
-    //     })
+        // clear
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: null,
+        })
 
-    //   }
+      }
 
-    //   // done
-    //   return null
+      // send
+      this.currentContent.push({
+        role: 'tool',
+        parts: results
+      })
+
+      // switch to new stream
+      eventCallback?.call(this, {
+        type: 'stream',
+        content: await this.doStream(),
+      })
       
-    // }
+      // done
+      return null
+
+    }
 
     // text chunk
     return {

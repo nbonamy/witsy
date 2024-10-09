@@ -2,7 +2,7 @@ import { Attachment } from 'types/index.d'
 import { LlmCompletionOpts, LlmChunk, LlmEvent } from 'types/llm.d'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
-import Chat from '../models/chat'
+import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
 import LlmEngine from './engine'
 import { store } from './store'
@@ -127,7 +127,7 @@ export default class {
     await this.generateText(opts, callback)
 
     // check if we need to update title
-    if (opts.titling && this.chat.messages.filter((msg) => msg.role === 'assistant').length === 1) {
+    if (opts.titling && this.chat.title === defaultTitle) {
       this.chat.title = await this.getTitle() || this.chat.title
     }
   

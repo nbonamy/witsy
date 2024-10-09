@@ -3,6 +3,8 @@ import { Chat } from 'types/index.d'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
+export const defaultTitle = 'New Chat'
+
 export default class implements Chat {
 
   uuid: string
@@ -25,7 +27,7 @@ export default class implements Chat {
 
     // default
     this.uuid = uuidv4()
-    this.title = obj || 'New Chat'
+    this.title = obj || defaultTitle
     this.createdAt = Date.now()
     this.lastModified = Date.now()
     this.engine = null
