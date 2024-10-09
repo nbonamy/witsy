@@ -15,21 +15,22 @@ window.api = {
 }
 
 vi.mock('@google/generative-ai', async() => {
-  const GoogleChat = vi.fn()
-  GoogleChat.prototype.sendMessage = vi.fn(() => { return { response: { text: () => 'response' } } })
-  GoogleChat.prototype.sendMessageStream = vi.fn(() => { return { stream: vi.fn() } })
   const GoogleModel = vi.fn()
-  GoogleModel.prototype.startChat = vi.fn(() => new GoogleChat())
+  GoogleModel.prototype.generateContent = vi.fn(() => { return { response: { text: () => 'response' } } })
+  GoogleModel.prototype.generateContentStream = vi.fn(() => { return { stream: vi.fn() } })
   const GoogleGenerativeAI = vi.fn()
   GoogleGenerativeAI.prototype.apiKey = '123'
   GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => new GoogleModel())
-  return { GoogleGenerativeAI, GoogleModel, GoogleChat, default: GoogleGenerativeAI }
+  const SchemaType = { STRING: 'string', NUMBER: 'number', OBJECT: 'object'}
+  const FunctionCallingMode = { AUTO: 'auto' }
+  return { GoogleGenerativeAI, GoogleModel, default: GoogleGenerativeAI, SchemaType, FunctionCallingMode }
 })
 
 beforeAll(() => {
   store.config = defaults
   store.config.engines.google.apiKey = '123'
   store.config.engines.google.model.chat = 'models/gemini-1.5-pro-latest'
+  store.config.plugins.dalle.enabled = false
 })
 
 beforeEach(() => {
@@ -63,8 +64,10 @@ test('Google completion', async () => {
   ], null)
   expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
   expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: []})
-  expect(_Google.GoogleChat.prototype.sendMessage).toHaveBeenCalledWith(['prompt'])
+  expect(_Google.GoogleModel.prototype.generateContent).toHaveBeenCalledWith({ contents: [{
+    role: 'user',
+    parts: [ { text: 'prompt' } ]
+  }]})
   expect(response).toStrictEqual({
     type: 'text',
     content: 'response'
@@ -79,8 +82,10 @@ test('Google stream', async () => {
   ], null)
   expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
   expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: []})
-  expect(_Google.GoogleChat.prototype.sendMessageStream).toHaveBeenCalledWith(['prompt'])
+  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [{
+    role: 'user',
+    parts: [ { text: 'prompt' } ]
+  }]})
   await google.stop(response)
   //expect(response.controller.abort).toHaveBeenCalled()
 })
@@ -121,11 +126,11 @@ test('Google History Complete', async () => {
     model: 'models/gemini-1.5-pro-latest',
     systemInstruction: 'instruction',
   }, { apiVersion: 'v1beta' })
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
+  expect(_Google.GoogleModel.prototype.generateContent).toHaveBeenCalledWith({ contents: [
     { role: 'user', parts: [ { text: 'prompt1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
+    { role: 'user', parts: [ { text: 'prompt2' } ] },
   ]})
-  expect(_Google.GoogleChat.prototype.sendMessage).toHaveBeenCalledWith(['prompt2'])
 })
 
 test('Google History Stream', async () => {
@@ -140,11 +145,11 @@ test('Google History Stream', async () => {
     model: 'models/gemini-1.5-pro-latest',
     systemInstruction: 'instruction',
   }, { apiVersion: 'v1beta' })
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
+  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
     { role: 'user', parts: [ { text: 'prompt1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
+    { role: 'user', parts: [ { text: 'prompt2' } ] },
   ]})
-  expect(_Google.GoogleChat.prototype.sendMessageStream).toHaveBeenCalledWith(['prompt2'])
 })
 
 test('Google Text Attachments', async () => {
@@ -155,11 +160,11 @@ test('Google Text Attachments', async () => {
     new Message('assistant', 'response1'),
     new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'text/plain', contents: 'text2', downloaded: true } } ),
   ], null)
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
+  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
     { role: 'user', parts: [ { text: 'prompt1\n\ntext1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
+    { role: 'user', parts: [ { text: 'prompt2\n\ntext2' } ] },
   ]})
-  expect(_Google.GoogleChat.prototype.sendMessageStream).toHaveBeenCalledWith(['prompt2', 'text2'])
 })
 
 test('Google Image Attachments', async () => {
@@ -170,9 +175,9 @@ test('Google Image Attachments', async () => {
     new Message('assistant', 'response1'),
     new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'image/png', contents: 'image', downloaded: true } } ),
   ], null)
-  expect(_Google.GoogleModel.prototype.startChat).toHaveBeenCalledWith({ history: [
-    { role: 'user', parts: [ { text: 'prompt1' }, { inlineData: { data: 'image', mimeType: 'image/png' }} ] },
+  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
+    { role: 'user', parts: [ { text: 'prompt1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
+    { role: 'user', parts: [ { text: 'prompt2' }, { inlineData: { data: 'image', mimeType: 'image/png' }} ] },
   ]})
-  expect(_Google.GoogleChat.prototype.sendMessageStream).toHaveBeenCalledWith(['prompt2', { inlineData: { data: 'image', mimeType: 'image/png' }}])
 })
