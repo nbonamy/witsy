@@ -153,3 +153,9 @@ test('Low balance', async () => {
   const content = assistant.chat.lastMessage().content
   expect(content).toBe('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
 })
+
+test('Quota exceeded', async () => {
+  await prompt('quota exceeded')
+  const content = assistant.chat.lastMessage().content
+  expect(content).toBe('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+})
