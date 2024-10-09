@@ -55,6 +55,27 @@ interface LlmChunk {
   done: boolean
 }
 
+export interface LlmToolParameterOpenAI {
+  name: string
+  description: string
+  type: string
+  enum?: string[]
+  required?: boolean
+}
+
+interface LlmToolOpenAI {
+  type: 'function'
+  function: {
+    name: string
+    description: string
+    parameters: {
+      type: 'object'
+      properties: { [key: string]: LlmToolParameterOpenAI }
+      required: string[]
+    }
+  }
+}
+
 interface LlmToolCall {
   id: string
   message: any

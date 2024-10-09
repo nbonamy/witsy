@@ -1,6 +1,6 @@
 
 import { anyDict, Message } from 'types/index.d'
-import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk, LlmEventCallback } from 'types/llm.d'
+import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk, LlmEventCallback, LlmToolOpenAI } from 'types/llm.d'
 import { Configuration, Model } from 'types/config.d'
 import { getFileContents } from './download'
 import Plugin from '../plugins/plugin'
@@ -169,7 +169,7 @@ export default class LlmEngine {
     }
   }
 
-  async getAvailableTools(): Promise<any[]> {
+  async getAvailableTools(): Promise<LlmToolOpenAI[]> {
     const tools = []
     for (const pluginName in this.plugins) {
       const plugin = this.plugins[pluginName]
@@ -190,7 +190,7 @@ export default class LlmEngine {
   // this is the default implementation as per OpenAI API
   // it is now almost a de facto standard and other providers
   // are following it such as MistralAI
-  getPluginAsTool(plugin: Plugin): anyDict {
+  getPluginAsTool(plugin: Plugin): LlmToolOpenAI {
     return {
       type: 'function',
       function: {

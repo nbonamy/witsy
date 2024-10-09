@@ -66,7 +66,7 @@
     "@anthropic-ai/sdk": "^0.28.0",
     "@el3um4s/run-vbs": "^1.1.2",
     "@excalidraw/markdown-to-text": "^0.1.2",
-    "@google/generative-ai": "^0.11.1",
+    "@google/generative-ai": "^0.21.0",
     "@googleapis/drive": "^8.14.0",
     "@iktakahiro/markdown-it-katex": "^3.0.4",
     "@langchain/textsplitters": "^0.0.3",
