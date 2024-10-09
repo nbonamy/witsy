@@ -112,6 +112,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Google function calling
 - [x] Anthropic function calling
 - [x] Scratchpad
 - [x] Dictation: OpenAI Whisper + Whisper WebGPU 
