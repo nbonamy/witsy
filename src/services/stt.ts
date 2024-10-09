@@ -1,6 +1,7 @@
 
 import { Configuration } from 'types/config.d'
 import STTOpenAI from './stt-openai'
+import STTGroq from './stt-groq'
 import STTWhisper from './stt-whisper'
 
 export type DownloadStatus = {
@@ -44,13 +45,15 @@ export interface STTEngine {
 }
 
 const getSTTEngine = (config: Configuration): STTEngine => {
-  const model = config.stt.model || 'Xenova/whisper-tiny'
-  if (model.startsWith('openai')) {
+  const engine = config.stt.engine || 'whisper'
+  if (engine === 'openai') {
     return new STTOpenAI(config)
-  } else if (model.startsWith('Xenova/')) {
+  } else if (engine === 'groq') {
+    return new STTGroq(config)
+  } else if (engine === 'whisper') {
     return new STTWhisper(config)
   } else {
-    throw new Error(`Unknown STT model ${model}`)
+    throw new Error(`Unknown STT engine ${engine}`)
   }
 }
 

@@ -10,6 +10,8 @@
       <textarea v-model="transcription" placeholder="Click the record button when you are ready!" />
     </div>
     <div class="actions">
+      <button class="button" v-if="state == 'recording'" @click="onStop()">Stop</button>
+      <button class="button" v-else @click="onRecord()">Record</button>
       <button class="button" @click="onClear()">Clear</button>
       <button class="button push" @click="onCancel()">Cancel</button>
       <button class="button" @click="onInsert()">Insert</button>

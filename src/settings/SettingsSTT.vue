@@ -1,6 +1,14 @@
 <template>
   <div>
     <div class="group">
+      <label>Engine</label>
+      <select v-model="engine" @change="onChangeEngine">
+        <option v-for="engine in engines" :key="engine.id" :value="engine.id">
+          {{ engine.label }}
+        </option>
+      </select>
+    </div>
+    <div class="group">
       <label>Model</label>
       <div class="subgroup">
         <select v-model="model" @change="onChangeModel">
@@ -27,9 +35,13 @@
       <label></label>
       <button @click.prevent="deleteLocalModels">Delete all models stored locally</button>
     </div>
-    <div class="group" v-if="model.startsWith('openai')">
+    <div class="group" v-if="engine === 'openai'">
       <label></label>
       <span>Make sure you enter your OpenAI API key in the Models pane.</span>
+    </div>
+    <div class="group" v-if="engine === 'groq'">
+      <label></label>
+      <span>Make sure you enter your Groq API key in the Models pane.</span>
     </div>
   </div>
 </template>
@@ -40,20 +52,33 @@ import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import getSTTEngine from '../services/stt'
+import STTOpenAI from '../services/stt-openai'
+import STTGroq from '../services/stt-groq'
+import STTWhisper from '../services/stt-whisper'
 
-const model = ref('openai/whisper-1')
+const engine = ref('openai')
+const model = ref('whisper-1')
 const duration = ref(null)
 const progress = ref(null)
 
+let previousEngine = null
 let previousModel = null
 
-const models = [
-  { id: 'openai/whisper-1', label: 'OpenAI Whisper V2 (online)' },
-  { id: 'Xenova/whisper-tiny', label: 'Whisper Turbo Tiny (requires download)' },
-  { id: 'Xenova/whisper-base', label: 'Whisper Turbo Base (requires download)' },
-  { id: 'Xenova/whisper-small', label: 'Whisper Turbo Small (requires download)' },
-  { id: 'Xenova/whisper-medium', label: 'Whisper Turbo Medium (requires download)' },
+const engines = [
+  { id: 'openai', label: 'OpenAI' },
+  { id: 'groq', label: 'Groq' },
+  { id: 'whisper', label: 'Whisper' },
 ]
+
+const models = computed(() => {
+  if (engine.value === 'openai') {
+    return STTOpenAI.models
+  } else if (engine.value === 'groq') {
+    return STTGroq.models
+  } else if (engine.value === 'whisper') {
+    return STTWhisper.models
+  }
+})
 
 const progressText = computed(() => {
   if (Object.keys(progress.value).length === 0) {
@@ -72,7 +97,8 @@ const progressText = computed(() => {
 const load = () => {
   const detection = store.config.stt.silenceDetection
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
-  model.value = store.config.stt.model || 'openai/whisper-1'
+  engine.value = store.config.stt.engine || 'openai'
+  model.value = store.config.stt.model || 'whisper-1'
 }
 
 const save = () => {
@@ -81,11 +107,18 @@ const save = () => {
   store.saveSettings()
 }
 
+const onChangeEngine = () => {
+  previousEngine = `${store.config.stt.engine}`
+  model.value = models.value[0].id
+  onChangeModel()
+}
+
 const onChangeModel = () => {
   previousModel = `${store.config.stt.model}`
+  store.config.stt.engine = engine.value
   store.config.stt.model = model.value
-  const engine = getSTTEngine(store.config)
-  if (engine.requiresDownload()) {
+  const sttEngine = getSTTEngine(store.config)
+  if (sttEngine.requiresDownload()) {
     Swal.fire({
       target: document.querySelector('.settings .voice'),
       title: 'This engine needs to be configured first! Do you want to open the Settings?',
@@ -93,14 +126,16 @@ const onChangeModel = () => {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        initializeEngine(engine)
+        initializeEngine(sttEngine)
       } else {
+        store.config.stt.engine = previousEngine
         store.config.stt.model = previousModel
+        engine.value = previousEngine
         model.value = previousModel
       }
     })
   } else {
-    initializeEngine(engine)
+    initializeEngine(sttEngine)
   }
 }
 
@@ -116,7 +151,9 @@ const initializeEngine = async (engine) => {
     if (data.status === 'error') {
       alert('An error occured during initialization. Please try again.')
       engine.deleteModel(model.value)
+      store.config.stt.engine = previousEngine
       store.config.stt.model = previousModel
+      engine.value = previousEngine
       model.value = previousModel
       progress.value = null
     }
