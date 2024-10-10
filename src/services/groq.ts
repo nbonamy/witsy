@@ -3,8 +3,7 @@ import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStre
 import { EngineConfig, Configuration } from 'types/config.d'
 import LlmEngine from './engine'
 import Groq from 'groq-sdk'
-import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext'
-import { CompletionCreateParams } from 'groq-sdk/resources/chat'
+import { ChatCompletionMessageParam, ChatCompletionChunk } from 'groq-sdk/resources/chat'
 import { Stream } from 'groq-sdk/lib/streaming'
 
 export const isGroqConfigured = (engineConfig: EngineConfig): boolean => {
@@ -114,9 +113,9 @@ export default class extends LlmEngine {
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
   }
 
-  buildPayload(thread: Message[], model: string): Array<CompletionCreateParams.Message> {
+  buildPayload(thread: Message[], model: string): Array<ChatCompletionMessageParam> {
     const payload: LLmCompletionPayload[] = super.buildPayload(thread, model)
-    return payload.map((payload): CompletionCreateParams.Message => {
+    return payload.map((payload): ChatCompletionMessageParam => {
       return {
         role: payload.role,
         content: payload.content

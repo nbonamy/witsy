@@ -29,7 +29,7 @@ interface LlmCompletionOpts {
 
 interface LLmCompletionPayload {
   role: llmRole
-  content: sring|LlmContentPayload[]
+  content?: sring|LlmContentPayload[]
   images?: string[]
   tool_call_id?: string
   name?: string
