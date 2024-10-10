@@ -6,7 +6,8 @@ import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
 import MistralAI from '../../src/services/mistralai'
-import MistralClient from '../../src/vendor/mistralai'
+import { Mistral } from '@mistralai/mistralai'
+import { CompletionEvent } from '@mistralai/mistralai/models/components'
 import { loadMistralAIModels } from '../../src/services/llm'
 import { Model } from '../../src/types/config.d'
 
@@ -19,26 +20,32 @@ window.api = {
   }
 }
 
-vi.mock('../../src/vendor/mistralai', async() => {
-  const MistralClient = vi.fn()
-  MistralClient.prototype.apiKey = '123'
-  MistralClient.prototype.listModels = vi.fn(() => {
-    return { data: [
-      { id: 'model2', name: 'model2' },
-      { id: 'model1', name: 'model1' },
-    ] }
-  })
-  MistralClient.prototype.chat = vi.fn(() => {
-    return { choices: [ { message: { content: 'response' } } ] }
-  })
-  MistralClient.prototype.chatStream = vi.fn(() => {
-    return {
-      controller: {
-        abort: vi.fn()
+vi.mock('@mistralai/mistralai', async() => {
+  const Mistral = vi.fn()
+  Mistral.prototype.options$ = {
+    apiKey: '123'
+  }
+  Mistral.prototype.models = {
+    list: vi.fn(() => {
+      return { data: [
+        { id: 'model2', name: 'model2' },
+        { id: 'model1', name: 'model1' },
+      ] }
+    })
+  }
+  Mistral.prototype.chat = {
+    complete: vi.fn(() => {
+      return { choices: [ { message: { content: 'response' } } ] }
+    }),
+    stream: vi.fn(() => {
+      return {
+        controller: {
+          abort: vi.fn()
+        }
       }
-    }
-  })
-  return { default : MistralClient }
+    })
+  }
+  return { Mistral }
 })
 
 beforeEach(() => {
@@ -69,7 +76,7 @@ test('MistralAI  completion', async () => {
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
-  expect(MistralClient.prototype.chat).toHaveBeenCalled()
+  expect(Mistral.prototype.chat.complete).toHaveBeenCalled()
   expect(response).toStrictEqual({
     type: 'text',
     content: 'response'
@@ -82,10 +89,10 @@ test('MistralAI  stream', async () => {
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
-  expect(MistralClient.prototype.chat).toHaveBeenCalled()
+  expect(Mistral.prototype.chat.stream).toHaveBeenCalled()
   expect(response.controller).toBeDefined()
   await mistralai.stop()
-  //expect(MistralClient.prototype.abort).toHaveBeenCalled()
+  //expect(Mistral.prototype.abort).toHaveBeenCalled()
 })
 
 test('MistralAI  image', async () => {
@@ -105,12 +112,15 @@ test('MistralAI addImageToPayload', async () => {
 
 test('MistralAI streamChunkToLlmChunk Text', async () => {
   const mistralai = new MistralAI(store.config)
-  const streamChunk = {
-    choices: [{ index: 0, delta: { content: 'response' }, finish_reason: null as string }],
-  }
+  const streamChunk: CompletionEvent = { data: {
+    id: '1', model: '',
+    choices: [{
+      index: 0, delta: { content: 'response' }, finishReason: null
+    }],
+  }}
   const llmChunk1 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
   expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
-  streamChunk.choices[0].finish_reason = 'stop'
+  streamChunk.data.choices[0].finishReason = 'stop'
   const llmChunk2 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
   expect(llmChunk2).toStrictEqual({ text: 'response', done: true })
 })
