@@ -1,4 +1,5 @@
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback, LlmToolCall } from 'types/llm.d'
+
+import { LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback, LlmToolCall, LLmCompletionPayload } from 'types/llm.d'
 import { EngineConfig, Configuration } from 'types/config.d'
 import { Message } from 'types/index.d'
 import LlmEngine from './engine'
@@ -116,6 +117,7 @@ export default class extends LlmEngine {
       system: this.currentSystem,
       max_tokens: this.getMaxTokens(this.currentModel),
       messages: this.currentThread,
+      tool_choice: { type: 'auto' },
       tools: tools,
       stream: true,
     })
@@ -229,12 +231,12 @@ export default class extends LlmEngine {
 
   }
 
-  addImageToPayload(message: Message, payload: LLmCompletionPayload) {
+  addImageToPayload(message: Message, payload: MessageParam) {
     payload.content = [
       { type: 'text', text: message.content },
       { type: 'image', source: {
         type: 'base64',
-        media_type: message.attachment.mimeType,
+        media_type: message.attachment.mimeType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
         data: message.attachment.contents,
       }}
     ]
