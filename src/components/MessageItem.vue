@@ -27,7 +27,7 @@
       </div>
 
     </div>
-    <MessageItemActions ref="actions" :message="message" :style="{ display: hovered ? 'flex' : 'none' }" />
+    <MessageItemActions ref="actions" :message="message" v-if="hovered" :style="{ display: hovered ? 'flex' : 'none' }" />
   </div>
 </template>
 
