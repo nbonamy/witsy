@@ -1,7 +1,7 @@
 
 <template>
   <div class="anywhere">
-    <Prompt :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :inline-menus="false" :enable-commands="false" />
+    <Prompt :inline-menus="false" :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
   </div>
 </template>
 
