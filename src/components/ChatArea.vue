@@ -5,16 +5,16 @@
       <div class="title" v-if="chat?.messages.length">{{ chat?.title }}</div>
       <div class="menu" @click="onMenu" v-if="chat"></div>
     </div>
-    <MessageList :chat="chat" v-if="chat?.messages.length > 1"/>
+    <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.messages.length > 1"/>
     <EmptyChat v-else />
-    <Prompt :chat="chat" class="prompt" />
+    <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
     <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :align="chatMenuAlign"/>
   </div>
 </template>
 
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
 import Chat from '../models/chat'
@@ -23,7 +23,7 @@ import Prompt from './Prompt.vue'
 import useEventBus from '../composables/event_bus'
 import EmptyChat from './EmptyChat.vue'
 import html2pdf from 'html2pdf.js'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
@@ -44,10 +44,15 @@ const chatMenuActions = computed(() => {
   ].filter((a) => a != null)
 })
 
+const conversationMode = ref(null)
 const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const saved = ref(false)
+
+onMounted(() => {
+  onEvent('conversation-mode', (mode) => conversationMode.value = mode)
+})
 
 const onMenu = () => {
   showChatMenu.value = true

@@ -4,7 +4,7 @@
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
       <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
-      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" v-if="hasDictation"/>
+      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
     <div class="input" @paste="onPaste">
       <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
@@ -12,7 +12,7 @@
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
-        <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" />
+        <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
@@ -21,12 +21,13 @@
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" align="bottom" />
     <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" align="bottom" />
     <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" align="bottom" />
+    <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" align="bottom" />
   </div>
 </template>
 
 <script setup>
 
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
@@ -44,6 +45,7 @@ const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: Chat,
+  conversationMode: String,
   enableDocRepo: {
     type: Boolean,
     default: true
@@ -56,7 +58,7 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  inlineExperts: {
+  inlineMenus: {
     type: Boolean,
     default: true
   },
@@ -85,6 +87,7 @@ const docRepos = ref([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showCommands = ref(false)
+const showConversationMenu = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
@@ -137,6 +140,19 @@ const commands = computed(() => {
   })
 })
 
+const conversationMenu = computed(() => {
+  if (props.conversationMode) {
+    return [
+      { label: 'Stop conversation', action: null }
+    ]
+  } else {
+    return [
+      { label: 'Start automatic conversation', action: 'auto' },
+      { label: 'Start push-to-talk conversation', action: 'ptt' },
+    ]
+  }
+})
+
 onMounted(() => {
 
   // event
@@ -150,6 +166,16 @@ onMounted(() => {
   initDictation()
 
 })
+
+const defaultPrompt = (conversationMode) => {
+  if (conversationMode === 'auto') {
+    return 'You can start talking now...'
+  } else if (conversationMode === 'ptt') {
+    return 'Press and hold space to talk...'
+  } else {
+    return ''
+  }
+}
 
 const initDictation = async () => {
 
@@ -166,6 +192,20 @@ const initDictation = async () => {
 
   // this should be good enough
   hasDictation.value = true
+
+  // push-to-talk stuff
+  const onKeyUpPTT = () => {
+    //console.log('Stopping push-to-talk dictation')
+    document.removeEventListener('keyup', onKeyUpPTT)
+    stopDictation(false)
+  }
+  document.addEventListener('keydown', (event) => {
+    if (props.conversationMode == 'ptt' && event.code === 'Space' && dictating.value === false) {
+      //console.log('Starting push-to-talk dictation')
+      document.addEventListener('keyup', onKeyUpPTT)
+      startDictation()
+    }
+  })
 
 }
 
@@ -196,7 +236,7 @@ const onSetExpertPrompt = (message) => {
 
 const onSendPrompt = () => {
   let message = prompt.value.trim()
-  prompt.value = ''
+  prompt.value = defaultPrompt(props.conversationMode)
   nextTick(() => {
     autoGrow(input.value)
     emitEvent('send-prompt', message)
@@ -255,7 +295,7 @@ const onPaste = (event) => {
 }
 
 const onExperts = () => {
-  if (props.inlineExperts) {
+  if (props.inlineMenus) {
     showExperts.value = true
     const icon = document.querySelector('.prompt .experts')
     const rect = icon?.getBoundingClientRect()
@@ -269,6 +309,7 @@ const onExperts = () => {
 const onDictate = async () => {
   if (dictating.value) {
     stopDictation(true)
+    stopConversation()
   } else {
     startDictation()
   }
@@ -298,6 +339,11 @@ const startDictation = async () => {
         return
       }
 
+      // no silence in ptt conversation
+      if (props.conversationMode === 'ptt') {
+        return
+      }
+
       // we dictate anyway
       stopDictation(false)
 
@@ -311,7 +357,7 @@ const startDictation = async () => {
         audioRecorder.release()
 
         // update
-        prompt.value = ''
+        prompt.value = defaultPrompt(props.conversationMode)
         dictating.value = false
 
         // if no noise stop everything
@@ -327,13 +373,13 @@ const startDictation = async () => {
         }
 
         // execute?
-        if (store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue') {
+        if (props.conversationMode || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue') {
 
           // send prompt
           onSendPrompt()
 
           // record again?
-          if (userStoppedDictation === false && store.config.stt.silenceAction === 'execute_continue') {
+          if (userStoppedDictation === false && (props.conversationMode === 'auto' || store.config.stt.silenceAction === 'execute_continue')) {
             startDictation()
           }
         
@@ -354,6 +400,37 @@ const startDictation = async () => {
   dictating.value = true
   audioRecorder.start()
 
+}
+
+const onConversationMenu = (event) => {
+  if (props.inlineMenus) {
+    showConversationMenu.value = true
+    const icon = document.querySelector('.prompt .dictate')
+    const rect = icon?.getBoundingClientRect()
+    menuX.value = rect?.left
+    menuY.value = rect?.height + 32
+  } else {
+    emitEvent('show-conversation-menu')
+  }
+}
+
+const handleConversationClick = (action) => {
+  closeContextMenu()
+  emitEvent('conversation-mode', action)
+  prompt.value = defaultPrompt(action)
+  if (action === 'auto') {
+    startDictation()
+  } else if (action === 'ptt') {
+    // nothing to do
+  } else {
+    stopDictation(true)
+    stopConversation()
+  }
+}
+
+const stopConversation = () => {
+  emitEvent('audio-noise-detected')
+  emitEvent('conversation-mode', null)
 }
 
 const onDocRepo = (event) => {
@@ -388,6 +465,7 @@ const closeContextMenu = () => {
   showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
+  showConversationMenu.value = false
 }
 
 const handleExpertClick = (action) => {
@@ -610,7 +688,11 @@ const autoGrow = (element) => {
   padding-top: 5px;
   padding-bottom: 7px;
   flex: 1;
-} 
+}
+
+.textarea-wrapper textarea:disabled {
+  color: #888;
+}
 
 .input .attachment img {
   height: 36pt !important;
