@@ -33,8 +33,9 @@ const itemRefs = []
 
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 
-defineProps({
-  chat: Chat
+const props = defineProps({
+  chat: Chat,
+  conversationMode: String
 })
 
 onMounted(() => {
@@ -85,9 +86,10 @@ const onNewChunk = (chunk) => {
     scrollDown()
   }
 
-  // if (chunk?.done) {
-  //   itemRefs[itemRefs.length - 1].readAloud()
-  // }
+  // auto-read
+  if (chunk?.done && props.conversationMode) {
+    itemRefs[itemRefs.length - 1].readAloud()
+  }
 
 }
 

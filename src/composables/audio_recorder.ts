@@ -110,6 +110,12 @@ class AudioRecorder {
 
   private detectSilence(): void {
     
+    // check
+    if (!this.analyser) {
+      clearInterval(this.sampler)
+      return
+    }
+    
     // get the data
     let silence = true
     const now = new Date().getTime()

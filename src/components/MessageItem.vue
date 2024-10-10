@@ -27,7 +27,8 @@
       </div>
 
     </div>
-    <MessageItemActions ref="actions" :message="message" v-if="hovered" :style="{ display: hovered ? 'flex' : 'none' }" />
+    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" v-if="hovered" />
+    <audio ref="audio" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
+import useAudioPlayer from '../composables/audio_player'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemImage from './MessageItemImage.vue'
 import MessageItemActions from './MessageItemActions.vue'
@@ -45,7 +47,10 @@ import Attachment from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
+
+// init stuff
+const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   chat: Chat,
@@ -56,7 +61,11 @@ const emits = defineEmits(['image-loaded'])
 
 const hovered = ref(false)
 const copyLabel = ref('Copy')
-const actions = ref(null)
+const audio = ref(null)
+const audioState = ref({
+  state: 'idle',
+  messageId: null,
+})
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
@@ -67,10 +76,15 @@ onMounted(() => {
       link.target = "_blank"
     })
   }, 599)
+  audioPlayer.addListener(onAudioPlayerStatus)
+  onEvent('audio-noise-detected', () => {
+    audioPlayer.stop()
+  })
 })
 
 onUnmounted(() => {
   clearInterval(updateLinkInterval)
+  audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
 const authorName = computed(() => {
@@ -107,9 +121,17 @@ const onImageLoaded = (message) => {
   emits('image-loaded', message)
 }
 
+const onAudioPlayerStatus = (status) => {
+  audioState.value = { state: status.state, messageId: status.uuid }
+}
+
+const onReadAloud = async (message) => {
+  await audioPlayer.play(audio.value.$el, message.uuid, message.content)
+}
+
 defineExpose({
   readAloud: () => {
-    actions.value.readAloud()
+    onReadAloud(props.message)
   }
 })
 

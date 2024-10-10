@@ -7,7 +7,6 @@
       <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
       <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
       <span v-else><BIconPlayCircle /> Read</span>
-      <audio/>
     </div>
     <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
       <BIconPencil /> Edit
@@ -17,40 +16,23 @@
 
 <script setup>
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer from '../composables/audio_player'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
-// init stuff
-const audioPlayer = useAudioPlayer(store.config)
-
 const props = defineProps({
-  message: Message
+  message: Message,
+  audioState: Object,
+  readAloud: Function
 })
 
 const copyLabel = ref('Copy')
-const audioState = ref({
-  state: 'idle',
-  messageId: null,
-})
-
-onMounted(() => {
-  audioPlayer.addListener(onAudioPlayerStatus)
-  onEvent('audio-noise-detected', () => {
-    audioPlayer.stop()
-  })
-})
-
-onUnmounted(() => {
-  audioPlayer.removeListener(onAudioPlayerStatus)
-})
 
 const mgsAudioState = (message) => {
-  return message.uuid == audioState.value.messageId ? audioState.value.state : 'idle'
+  return message.uuid == props.audioState.messageId ? props.audioState.state : 'idle'
 }
 
 const onCopy = (message) => {
@@ -63,23 +45,13 @@ const onCopy = (message) => {
   setTimeout(() => copyLabel.value = 'Copy', 1000)
 }
 
-const onAudioPlayerStatus = (status) => {
-  audioState.value = { state: status.state, messageId: status.uuid }
-}
-
 const onToggleRead = async (message) => {
-  await audioPlayer.play(document.querySelector('.read audio'), message.uuid, message.content)
+  props.readAloud(message)
 }
 
 const onEdit = (message) => {
   emitEvent('set-prompt', message)
 }
-
-defineExpose({
-  readAloud: () => {
-    onToggleRead(props.message)
-  }
-})
 
 </script>
 
