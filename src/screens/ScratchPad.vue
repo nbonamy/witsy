@@ -6,7 +6,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchPadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false"/>
+    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :enable-conversation="false" />
     <audio/>
   </div>
 </template>

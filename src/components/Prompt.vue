@@ -70,6 +70,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  enableConversation: {
+    type: Boolean,
+    default: true
+  },
   processing: {
     type: Boolean,
     default: false
@@ -403,6 +407,7 @@ const startDictation = async () => {
 }
 
 const onConversationMenu = (event) => {
+  if (!props.enableConversation) return
   if (props.inlineMenus) {
     showConversationMenu.value = true
     const icon = document.querySelector('.prompt .dictate')
