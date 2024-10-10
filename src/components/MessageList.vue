@@ -2,7 +2,7 @@
   <div class="container">
     <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
-        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" />
+        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" :ref="saveItemRef" />
       </div>
     </div>
     <div v-if="overflown" class="overflow" @click="scrollDown">
@@ -29,6 +29,8 @@ const divScroller = ref(null)
 const overflown = ref(false)
 const fullScreenImageUrl = ref(null)
 
+const itemRefs = []
+
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 
 defineProps({
@@ -40,6 +42,12 @@ onMounted(() => {
   onEvent('fullscreen', onFullscreen)
   scrollDown()
 })
+
+const saveItemRef = (el) => {
+  if (el) {
+    itemRefs.push(el)
+  }
+}
 
 const onFullscreen = (imageUrl) => {
   fullScreenImageUrl.value = imageUrl
@@ -76,6 +84,10 @@ const onNewChunk = (chunk) => {
   if (scrollOnChunk && !chunk?.done) {
     scrollDown()
   }
+
+  // if (chunk?.done) {
+  //   itemRefs[itemRefs.length - 1].readAloud()
+  // }
 
 }
 

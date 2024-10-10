@@ -3,8 +3,9 @@
 import { Configuration } from 'types/config.d'
 
 export interface AudioRecorderListener {
+  onNoiseDetected: () => void
   onSilenceDetected: () => void
-  onRecordingComplete: (audioChunks: any[]) => void
+  onRecordingComplete: (audioChunks: any[], noiseDetected: boolean) => void
 }
 
 const closeStream = (stream: MediaStream) => {
@@ -22,6 +23,7 @@ export const isAudioRecordingSupported = async () => {
 class AudioRecorder {
 
   readonly silenceThreshold = 2
+  readonly waitForNoise = 10000
 
   config: Configuration
   listener: AudioRecorderListener
@@ -32,6 +34,7 @@ class AudioRecorder {
   bufferLength: number
   dataArray: Uint8Array
   sampler: NodeJS.Timeout
+  startRecordingTime: number
   lastNoise: number
 
   constructor(config: Configuration) {
@@ -65,7 +68,7 @@ class AudioRecorder {
       this.audioChunks.push(event.data)
     }
     this.mediaRecorder.onstop = () => {
-      this.listener.onRecordingComplete(this.audioChunks)
+      this.listener.onRecordingComplete(this.audioChunks, this.lastNoise != null)
     }
 
     // now connect the microphone
@@ -85,7 +88,8 @@ class AudioRecorder {
     if (this.mediaRecorder) {
       this.audioChunks = []
       this.mediaRecorder.start()
-      this.lastNoise = new Date().getTime()
+      this.lastNoise = null
+      this.startRecordingTime = new Date().getTime()
       this.sampler = setInterval(() => this.detectSilence(), 250)
     }
   }
@@ -98,6 +102,7 @@ class AudioRecorder {
   }
 
   release(): void {
+    clearInterval(this.sampler)
     closeStream(this.stream)
     this.mediaRecorder = null
     this.analyser = null
@@ -120,14 +125,22 @@ class AudioRecorder {
 
     // not silence
     if (!silence) {
+      if (this.lastNoise === null) {
+        this.listener.onNoiseDetected()
+      }
       this.lastNoise = now
       return
     }
 
     // if silence detected
-    if (now - this.lastNoise > this.config.stt.silenceDuration) {
+    if (this.lastNoise && now - this.lastNoise > this.config.stt.silenceDuration) {
       this.listener.onSilenceDetected()
     }
+
+    // // if we have been waiting for too long
+    // if (this.lastNoise === null && now - this.startRecordingTime > this.waitForNoise) {
+    //   this.listener.onRecordingComplete(this.audioChunks, false)
+    // }
 
   }
 

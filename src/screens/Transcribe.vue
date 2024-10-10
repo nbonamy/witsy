@@ -33,6 +33,7 @@ import useAudioRecorder from '../composables/audio_recorder'
 store.loadSettings()
 const transcriber = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
+let userStoppedDictation = false
 
 const state = ref('idle')
 const transcription = ref('')
@@ -51,11 +52,32 @@ const initializeAudio = async () => {
     // init our recorder
     await audioRecorder.initialize({
       onSilenceDetected: () => {
-        onStop()
+
+        // depends on configuration
+        if (store.config.stt.silenceAction === 'nothing') {
+          return
+        }
+
+        // stop
+        stopDictation(false)
+
       },
-      onRecordingComplete: (audioChunks) => {
-        transcribe(audioChunks)
+      onRecordingComplete: async (audioChunks, noiseDetected) => {
+
+        // if no noise stop everything
+        if (!noiseDetected) {
+          return
+        }
+
+        // transcribe
+        await transcribe(audioChunks)
+
+        // execute?
+        if (userStoppedDictation === false && store.config.stt.silenceAction === 'execute_continue') {
+          onRecord()
+        }
       }
+
     })
     
   } catch (err) {
@@ -89,13 +111,13 @@ const onRecord = async () => {
 }
 
 const onStop = () => {
+  stopDictation(true)
+}
 
-  // update state now
+const stopDictation = async (userStopped) => {
+  userStoppedDictation = userStopped
   state.value = 'processing'
-
-  // now we can stop
   audioRecorder.stop()
-
 }
 
 const transcribe = async (audioChunks) => {

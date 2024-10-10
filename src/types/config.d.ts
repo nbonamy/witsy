@@ -60,11 +60,14 @@ interface ShortcutsConfig {
   scratchpad: Shortcut
 }
 
+export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
+
 interface STTConfig {
   engine: string
   model: string
   silenceDetection: boolean
   silenceDuration: number
+  silenceAction: SilenceAction
 }
 
 interface EngineConfig {
