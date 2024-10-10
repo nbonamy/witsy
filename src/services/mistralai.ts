@@ -2,11 +2,16 @@
 import { Message } from 'types/index.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmEventCallback, LlmToolCall } from 'types/llm.d'
 import { EngineConfig, Configuration } from 'types/config.d'
+import { Mistral } from '@mistralai/mistralai'
+import { AssistantMessage, CompletionEvent, SystemMessage, ToolMessage, UserMessage } from '@mistralai/mistralai/models/components'
 import LlmEngine from './engine'
 
-// until https://github.com/mistralai/client-js/issues/59 is fixed
-//import MistralClient from '@mistralai/mistralai'
-import MistralClient from '../vendor/mistralai'
+type MistralNessages = Array<
+| (SystemMessage & { role: "system" })
+| (UserMessage & { role: "user" })
+| (AssistantMessage & { role: "assistant" })
+| (ToolMessage & { role: "tool" })
+>
 
 export const isMistralAIConfigured = (engineConfig: EngineConfig): boolean => {
   return engineConfig?.apiKey?.length > 0
@@ -18,14 +23,16 @@ export const isMistralAIReady = (engineConfig: EngineConfig): boolean => {
 
 export default class extends LlmEngine {
 
-  client: MistralClient
+  client: Mistral
   currentModel: string
-  currentThread: Array<any>
+  currentThread: MistralNessages
   toolCalls: LlmToolCall[]
 
   constructor(config: Configuration) {
     super(config)
-    this.client = new MistralClient(config.engines.mistralai?.apiKey || '')
+    this.client = new Mistral({
+      apiKey: config.engines.mistralai?.apiKey || ''
+    })
   }
 
   getName(): string {
@@ -39,13 +46,13 @@ export default class extends LlmEngine {
   async getModels(): Promise<any[]> {
 
     // need an api key
-    if (!this.client.apiKey) {
+    if (!this.client.options$.apiKey) {
       return null
     }
 
     // do it
     try {
-      const response = await this.client.listModels()
+      const response = await this.client.models.list()
       return response.data
     } catch (error) {
       console.error('Error listing models:', error);
@@ -57,7 +64,7 @@ export default class extends LlmEngine {
     // call
     const model = opts?.model || this.config.engines.mistralai.model.chat
     console.log(`[mistralai] prompting model ${model}`)
-    const response = await this.client.chat({
+    const response = await this.client.chat.complete({
       model: model,
       messages: this.buildPayload(thread, model),
     });
@@ -90,11 +97,13 @@ export default class extends LlmEngine {
 
     // call
     console.log(`[mistralai] prompting model ${this.currentModel}`)
-    const stream = this.client.chatStream({
+    const stream = this.client.chat.stream({
       model: this.currentModel,
       messages: this.currentThread,
-      tools: tools.length ? tools : null,
-      tool_choice: tools.length ? 'any' : null,
+      ...(tools && {
+        tools: tools,
+        toolChoice: 'auto',
+      }),
     })
 
     // done
@@ -107,26 +116,26 @@ export default class extends LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async streamChunkToLlmChunk(chunk: any, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
+  async streamChunkToLlmChunk(chunk: CompletionEvent, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     
     // tool calls
-    if (chunk.choices[0]?.delta?.tool_calls) {
+    if (chunk.data.choices[0]?.delta?.toolCalls) {
 
       // arguments or new tool?
-      if (chunk.choices[0].delta.tool_calls[0].id) {
+      if (chunk.data.choices[0].delta.toolCalls[0].id) {
 
         // debug
         //console.log('[mistralai] tool call start:', chunk)
 
         // record the tool call
         const toolCall: LlmToolCall = {
-          id: chunk.choices[0].delta.tool_calls[0].id,
-          message: chunk.choices[0].delta.tool_calls.map((tc: any) => {
+          id: chunk.data.choices[0].delta.toolCalls[0].id,
+          message: chunk.data.choices[0].delta.toolCalls.map((tc: any) => {
             delete tc.index
             return tc
           }),
-          function: chunk.choices[0].delta.tool_calls[0].function.name,
-          args: chunk.choices[0].delta.tool_calls[0].function.arguments,
+          function: chunk.data.choices[0].delta.toolCalls[0].function.name,
+          args: chunk.data.choices[0].delta.toolCalls[0].function.arguments as string,
         }
         console.log('[mistralai] tool call:', toolCall)
         this.toolCalls.push(toolCall)
@@ -140,7 +149,7 @@ export default class extends LlmEngine {
       } else {
 
         const toolCall = this.toolCalls[this.toolCalls.length-1]
-        toolCall.args += chunk.choices[0].delta.tool_calls[0].function.arguments
+        toolCall.args += chunk.data.choices[0].delta.toolCalls[0].function.arguments
         return null
 
       }
@@ -148,7 +157,7 @@ export default class extends LlmEngine {
     }
 
     // now tool calling
-    if (chunk.choices[0]?.finish_reason === 'tool_calls') {
+    if (chunk.data.choices[0]?.finishReason === 'tool_calls') {
 
       // debug
       //console.log('[mistralai] tool calls:', this.toolCalls)
@@ -170,13 +179,13 @@ export default class extends LlmEngine {
         // add tool call message
         this.currentThread.push({
           role: 'assistant',
-          tool_calls: toolCall.message
+          toolCalls: toolCall.message
         })
 
         // add tool response message
         this.currentThread.push({
           role: 'tool',
-          tool_call_id: toolCall.id,
+          toolCallId: toolCall.id,
           name: toolCall.function,
           content: JSON.stringify(content)
         })
@@ -201,8 +210,8 @@ export default class extends LlmEngine {
 
     // default
     return {
-      text: chunk.choices[0].delta.content,
-      done: chunk.choices[0].finish_reason != null
+      text: chunk.data.choices[0].delta.content,
+      done: chunk.data.choices[0].finishReason != null
     }
   }
 
