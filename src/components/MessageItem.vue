@@ -27,7 +27,7 @@
       </div>
 
     </div>
-    <MessageItemActions :message="message" v-if="hovered" />
+    <MessageItemActions ref="actions" :message="message" :style="{ display: hovered ? 'flex' : 'none' }" />
   </div>
 </template>
 
@@ -56,6 +56,7 @@ const emits = defineEmits(['image-loaded'])
 
 const hovered = ref(false)
 const copyLabel = ref('Copy')
+const actions = ref(null)
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
@@ -105,6 +106,12 @@ const onClickAttachment = (attachment) => {
 const onImageLoaded = (message) => {
   emits('image-loaded', message)
 }
+
+defineExpose({
+  readAloud: () => {
+    actions.value.readAloud()
+  }
+})
 
 </script>
 

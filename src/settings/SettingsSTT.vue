@@ -32,6 +32,15 @@
       </select>
     </div>
     <div class="group">
+      <label>Silence Action<br/>(depends on context)</label>
+      <select v-model="action" @change="save">
+        <option value="nothing">Continue recording</option>
+        <option value="stop_transcribe">Stop recording and transcribe</option>
+        <option value="stop_execute">Stop recording and execute</option>
+        <option value="execute_continue">Execute and continue recording</option>
+      </select>
+    </div>
+    <div class="group">
       <label></label>
       <button @click.prevent="deleteLocalModels">Delete all models stored locally</button>
     </div>
@@ -60,6 +69,7 @@ const engine = ref('openai')
 const model = ref('whisper-1')
 const duration = ref(null)
 const progress = ref(null)
+const action = ref(null)
 
 let previousEngine = null
 let previousModel = null
@@ -99,11 +109,13 @@ const load = () => {
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
+  action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
 const save = () => {
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
+  store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
 

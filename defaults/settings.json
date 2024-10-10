@@ -93,7 +93,8 @@
     "engine": "openai",
     "model": "whisper-1",
     "silenceDetection": true,
-    "silenceDuration": 2000
+    "silenceDuration": 2000,
+    "silenceAction": "stop_transcribe"
   },
   "engines": {
     "openai": {

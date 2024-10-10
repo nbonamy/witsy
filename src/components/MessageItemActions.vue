@@ -23,7 +23,7 @@ import useAudioPlayer from '../composables/audio_player'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
@@ -40,6 +40,9 @@ const audioState = ref({
 
 onMounted(() => {
   audioPlayer.addListener(onAudioPlayerStatus)
+  onEvent('audio-noise-detected', () => {
+    audioPlayer.stop()
+  })
 })
 
 onUnmounted(() => {
@@ -71,6 +74,12 @@ const onToggleRead = async (message) => {
 const onEdit = (message) => {
   emitEvent('set-prompt', message)
 }
+
+defineExpose({
+  readAloud: () => {
+    onToggleRead(props.message)
+  }
+})
 
 </script>
 

@@ -77,6 +77,7 @@ const props = defineProps({
 // init stuff
 const audioRecorder = useAudioRecorder(store.config)
 const transcriber = useTranscriber(store.config)
+let userStoppedDictation = false
 
 const prompt = ref('')
 const input = ref(null)
@@ -266,56 +267,92 @@ const onExperts = () => {
 }
 
 const onDictate = async () => {
-  
   if (dictating.value) {
-  
-    audioRecorder.stop()
-    dictating.value = false
-  
+    stopDictation(true)
   } else {
+    startDictation()
+  }
+}
 
-    // transcriber
-    transcriber.initialize()
+const stopDictation = async (userStopped = false) => {
+  userStoppedDictation = userStopped
+  audioRecorder.stop()
+}
 
-    // audio recorder
-    await audioRecorder.initialize({
-      
-      onSilenceDetected: () => {
-        onDictate()
-      },
-      
-      onRecordingComplete: async (audioChunks) => {
+const startDictation = async () => {
 
-        try {
+  // transcriber
+  transcriber.initialize()
 
-          // do that always
-          audioRecorder.release()
+  // audio recorder
+  await audioRecorder.initialize({
 
-          // update
-          prompt.value = ''
-          processing.value = true
+    onNoiseDetected: () => {
+      emitEvent('audio-noise-detected')
+    },
+    
+    onSilenceDetected: () => {
 
-          // transcribe
-          const response = await transcriber.transcribe(audioChunks)
-          if (response) {
-            prompt.value = response.text
-          }
+      // depends on configuration
+      if (store.config.stt.silenceAction === 'nothing') {
+        return
+      }
 
-        } catch (error) {
-          alert('Error transcribing audio')
-        }
+      // we dictate anyway
+      stopDictation(false)
+
+    },
+    
+    onRecordingComplete: async (audioChunks, noiseDetected) => {
+
+      try {
+
+        // do that always
+        audioRecorder.release()
 
         // update
-        processing.value = false
+        prompt.value = ''
+        dictating.value = false
 
-      },
-    })
+        // if no noise stop everything
+        if (!noiseDetected) {
+          return
+        }
 
-    // start
-    dictating.value = true
-    audioRecorder.start()
+        // transcribe
+        processing.value = true
+        const response = await transcriber.transcribe(audioChunks)
+        if (response) {
+          prompt.value = response.text
+        }
 
-  }
+        // execute?
+        if (store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue') {
+
+          // send prompt
+          onSendPrompt()
+
+          // record again?
+          if (userStoppedDictation === false && store.config.stt.silenceAction === 'execute_continue') {
+            startDictation()
+          }
+        
+        }
+
+      } catch (error) {
+        console.error(error)
+        alert('Error transcribing audio')
+      }
+
+      // update
+      processing.value = false
+
+    },
+  })
+
+  // start
+  dictating.value = true
+  audioRecorder.start()
 
 }
 
