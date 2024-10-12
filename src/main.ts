@@ -224,7 +224,7 @@ app.on('before-quit', (ev) => {
 
   // close all windows but do not quit
   BrowserWindow.getAllWindows().forEach((win) => {
-    win.removeAllListeners('close');
+    //win.removeAllListeners('close');
     win.close();
   });
   ev.preventDefault();
