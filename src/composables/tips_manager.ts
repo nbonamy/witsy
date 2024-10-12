@@ -34,7 +34,6 @@ class TipsManager {
       const shouldShow = this.store.config.general.tips[tip]
       if (shouldShow) {
         this.showTip(tip)
-        this.setTipShown(tip)
         return
       }
     }
@@ -42,11 +41,25 @@ class TipsManager {
   }
 
   showTip = (tip: string) => {
-    if (tip == 'scratchpad') {
-      this.showScratchpadTip()
-    } else {
-      console.error(`Unknown tip: ${tip}`)
+
+    // callbacks
+    const callbacks: { [key: string]: CallableFunction } = {
+      'scratchpad': this.showScratchpadTip,
+      'trayIcon': this.showTrayIconTip,
+      'conversation': this.showConversationTip,
     }
+
+    // get the callback
+    const callback = callbacks[tip]
+    if (!callback) {
+      console.error(`Unknown tip: ${tip}`)
+      return
+    }
+
+    // call and done
+    this.setTipShown(tip)
+    callback()
+
   }
 
   showScratchpadTip = () => {
@@ -63,6 +76,21 @@ class TipsManager {
   
   }
 
+  showTrayIconTip = () => {
+    const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
+    const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
+    Swal.fire({
+      title: title
+    }).then(() => {
+      window.close()
+    })
+  }
+
+  showConversationTip = () => {
+    Swal.fire({
+      title: 'Check the conversation options by right-clicking on the microphone icon in the chat window.',
+    })
+  }
 }
 
 export default function useTipsManager(store: Store) {
