@@ -51,6 +51,10 @@ const initializeAudio = async () => {
 
     // init our recorder
     await audioRecorder.initialize({
+
+      onNoiseDetected: () => {
+      },
+
       onSilenceDetected: () => {
 
         // // depends on configuration
@@ -127,7 +131,7 @@ const transcribe = async (audioChunks) => {
     const response = await transcriber.transcribe(audioChunks)
 
     // add a space if needed
-    if (transcription.value.length && ',;.?!'.indexOf(transcription.value[transcription.value.length - 1]) !== -1) {
+    if (transcription.value.length && ',;.?!'.indexOf(transcription.value[transcription.value.length - 1]) !== -1 && response.text[0] !== ' ') {
       transcription.value += ' '
     }
     transcription.value += response.text
