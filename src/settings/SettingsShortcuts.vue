@@ -5,6 +5,10 @@
       <InputShortcut v-model="chat" @change="save "/>
     </div>
     <div class="group">
+      <label>Scratchpad</label>
+      <InputShortcut v-model="scratchpad" @change="save "/>
+    </div>
+    <div class="group">
       <label>AI Commands</label>
       <div class="subgroup">
         <InputShortcut v-model="command" @change="save" />
@@ -39,6 +43,7 @@ import { store } from '../services/store'
 import InputShortcut from '../components/InputShortcut.vue'
 
 const chat = ref(null)
+const scratchpad = ref(null)
 const command = ref(null)
 const anywhere = ref(null)
 const readaloud = ref(null)
@@ -46,6 +51,7 @@ const transcribe = ref(null)
 
 const load = () => {
   chat.value = store.config.shortcuts.chat
+  scratchpad.value = store.config.shortcuts.scratchpad
   command.value = store.config.shortcuts.command
   anywhere.value = store.config.shortcuts.anywhere
   readaloud.value = store.config.shortcuts.readaloud
@@ -54,6 +60,7 @@ const load = () => {
 
 const save = () => {
   store.config.shortcuts.chat = chat.value
+  store.config.shortcuts.scratchpad = scratchpad.value
   store.config.shortcuts.command = command.value
   store.config.shortcuts.anywhere = anywhere.value
   store.config.shortcuts.readaloud = readaloud.value
