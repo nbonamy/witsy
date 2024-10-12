@@ -10,6 +10,15 @@ class TipsManager {
     this.store = store
   }
 
+  isTipAvailable = (tip: string) => {
+    return this.store.config.general.tips[tip]
+  }
+
+  setTipShown = (tip: string) => {
+    this.store.config.general.tips[tip] = false
+    this.store.saveSettings()
+  }
+
   showNextTip = () => {
 
     // not on 1st run
@@ -25,8 +34,7 @@ class TipsManager {
       const shouldShow = this.store.config.general.tips[tip]
       if (shouldShow) {
         this.showTip(tip)
-        this.store.config.general.tips[tip] = false
-        this.store.saveSettings()
+        this.setTipShown(tip)
         return
       }
     }

@@ -6,6 +6,7 @@
     "hideOnStartup": false,
     "language": "",
     "tips": {
+      "trayIcon": true,
       "engineSelector": true,
       "modelSelector": true,
       "scratchpad": true

@@ -111,6 +111,21 @@ onMounted(() => {
   // show tips
   tipsManager.showNextTip()
 
+  // confirm close
+  window.onbeforeunload = (e) => {
+    if (tipsManager.isTipAvailable('trayIcon') && store.config.general.keepRunning) {
+      const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
+      const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
+      Swal.fire({
+        title: title
+      }).then((result) => {
+        tipsManager.setTipShown('trayIcon')
+        window.close()
+      })
+      e.returnValue = false
+    }
+  }
+
 })
 
 const onNewChat = () => {
