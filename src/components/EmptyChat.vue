@@ -11,7 +11,7 @@
 				@click="onEngine(engine)"
 			/>
 		</div>
-		<select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel">
+		<select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
 			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
 		</select>
     <div class="tip model" v-if="showModelTip()">
@@ -90,14 +90,12 @@ const onEngine = (engine) => {
 
 }
 
+const onClickModel = () => {
+  store.config.general.tips.modelSelector = false
+  store.saveSettings()
+}
+
 const onSelectModel = (ev) => {
-
-  // disable tip
-  if (showModelTip()) {
-    store.config.general.tips.modelSelector = false
-  }
-
-  // select the model
   let model = ev.target.value
   store.config.engines[store.config.llm.engine].model.chat = model
   store.saveSettings()
