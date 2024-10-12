@@ -33,6 +33,7 @@ import { BIconStars } from 'bootstrap-icons-vue'
 import { canProcessFormat } from '../services/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
+import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
@@ -83,6 +84,7 @@ const props = defineProps({
 // init stuff
 const audioRecorder = useAudioRecorder(store.config)
 const transcriber = useTranscriber(store.config)
+const tipsManager = useTipsManager(store)
 let userStoppedDictation = false
 
 const prompt = ref('')
@@ -387,6 +389,14 @@ const startDictation = async () => {
             startDictation()
           }
         
+        } else {
+
+          // conversation tip
+          if (tipsManager.isTipAvailable('conversation')) {
+            tipsManager.showTip('conversation')
+          }
+
+
         }
 
       } catch (error) {

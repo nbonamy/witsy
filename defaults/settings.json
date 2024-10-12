@@ -9,7 +9,8 @@
       "trayIcon": true,
       "engineSelector": true,
       "modelSelector": true,
-      "scratchpad": true
+      "scratchpad": true,
+      "conversation": true
     }
   },
   "llm": {
