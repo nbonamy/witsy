@@ -391,6 +391,9 @@ const startDictation = async () => {
         
         } else {
 
+          // focus
+          input.value.focus()
+
           // conversation tip
           if (tipsManager.isTipAvailable('conversation')) {
             tipsManager.showTip('conversation')
