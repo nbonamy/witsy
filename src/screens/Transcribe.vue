@@ -53,10 +53,10 @@ const initializeAudio = async () => {
     await audioRecorder.initialize({
       onSilenceDetected: () => {
 
-        // depends on configuration
-        if (store.config.stt.silenceAction === 'nothing') {
-          return
-        }
+        // // depends on configuration
+        // if (store.config.stt.silenceAction === 'nothing') {
+        //   return
+        // }
 
         // stop
         stopDictation(false)
@@ -73,7 +73,7 @@ const initializeAudio = async () => {
         await transcribe(audioChunks)
 
         // execute?
-        if (userStoppedDictation === false && store.config.stt.silenceAction === 'execute_continue') {
+        if (userStoppedDictation === false/* && store.config.stt.silenceAction === 'execute_continue'*/) {
           onRecord()
         }
       }

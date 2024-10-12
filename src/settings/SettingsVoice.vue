@@ -25,8 +25,8 @@ const settings = ref(null)
 
 const available = computed(() => {
   return [
-    { id: 'tts', label: 'Text-to-Speech', icon: BIconVolumeUpFill },
     { id: 'stt', label: 'Speech-to-Text', icon: BIconMicFill },
+    { id: 'tts', label: 'Text-to-Speech', icon: BIconVolumeUpFill },
   ]
 })
 

@@ -338,10 +338,10 @@ const startDictation = async () => {
     
     onSilenceDetected: () => {
 
-      // depends on configuration
-      if (store.config.stt.silenceAction === 'nothing') {
-        return
-      }
+      // // depends on configuration
+      // if (store.config.stt.silenceAction === 'nothing') {
+      //   return
+      // }
 
       // no silence in ptt conversation
       if (props.conversationMode === 'ptt') {
@@ -377,13 +377,13 @@ const startDictation = async () => {
         }
 
         // execute?
-        if (props.conversationMode || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue') {
+        if (props.conversationMode/* || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue'*/) {
 
           // send prompt
           onSendPrompt()
 
           // record again?
-          if (userStoppedDictation === false && (props.conversationMode === 'auto' || store.config.stt.silenceAction === 'execute_continue')) {
+          if (userStoppedDictation === false && (props.conversationMode === 'auto'/* || store.config.stt.silenceAction === 'execute_continue'*/)) {
             startDictation()
           }
         

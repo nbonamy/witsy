@@ -6,7 +6,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchPadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :enable-conversation="false" />
+    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :conversation-mode="conversationMode" />
     <audio/>
   </div>
 </template>
@@ -60,6 +60,7 @@ const redoStack = ref([])
 const audioState = ref('idle')
 const copyState = ref('idle')
 const modified = ref(false)
+const conversationMode = ref(null)
 
 // init stuff
 store.loadSettings()
@@ -88,6 +89,7 @@ onMounted(() => {
   onEvent('attach-file', onAttachFile)
   onEvent('detach-file', onDetachFile)
   onEvent('action', onAction)
+  onEvent('conversation-mode', (mode) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)
 
   // load settings
