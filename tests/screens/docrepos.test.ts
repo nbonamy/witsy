@@ -3,7 +3,6 @@ import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import DocRepos from '../../src/screens/DocRepos.vue'
 import { DocumentBase } from '../../src/types/rag.d'
-import _Swal from 'sweetalert2/dist/sweetalert2.js'
 
 enableAutoUnmount(afterAll)
 
@@ -19,16 +18,11 @@ vi.mock('../../src/composables/event_bus.js', async () => {
   }}
 })
 
-vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  return { default: {
-    fire: vi.fn(() => Promise.resolve({ isConfirmed: true }))
-  }}
-})
-
 beforeAll(() => {
 
   window.api = {
     on: vi.fn(),
+    showDialog: vi.fn(() => 1),
     file: {
       pick: vi.fn(() => [ 'file4', 'file5' ]),
       pickDir: vi.fn(() => 'folder2'),
@@ -118,7 +112,7 @@ test('Deletes base', async () => {
   const wrapper = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .actions button.delete').trigger('click')
-  expect(_Swal.fire).toHaveBeenCalled()
+  expect(window.api.showDialog).toHaveBeenCalled()
   expect(window.api.docrepo.delete).toHaveBeenCalledWith('uuid1')
 })
 
@@ -152,6 +146,6 @@ test('Deletes documents', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .item:nth-child(2)').trigger('click')
   await wrapper.find('.details .actions button.remove').trigger('click')
-  expect(_Swal.fire).toHaveBeenCalled()
+  expect(window.api.showDialog).toHaveBeenCalled()
   expect(window.api.docrepo.removeDocument).toHaveBeenCalledWith('uuid2', 'uuid3')
 })

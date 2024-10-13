@@ -5,21 +5,15 @@ import { store } from '../../src/services/store'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 import EngineLogo from '../../src/components/EngineLogo.vue'
 import { availableEngines } from '../../src/services/llm'
-import _Swal from 'sweetalert2/dist/sweetalert2.js'
 
 enableAutoUnmount(afterAll)
 
 window.api = {
+  showDialog: vi.fn(),
   config: {
     save: vi.fn()
   },
 }
-
-vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  return { default: {
-    fire: vi.fn(() => Promise.resolve({ isConfirmed: false }))
-  }}
-})
 
 beforeEach(() => {
 
@@ -109,12 +103,12 @@ test('Prompts when selecting not ready engine', async () => {
   const wrapper = mount(EmptyChat)
   await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
   await wrapper.find('.empty .engines :nth-child(3)').trigger('click')
-  expect(_Swal.fire).toHaveBeenCalledTimes(1)
+  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
   expect(store.config.llm.engine).toBe(availableEngines[0])
   await wrapper.find('.empty .engines :nth-child(4)').trigger('click')
-  expect(_Swal.fire).toHaveBeenCalledTimes(2)
+  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
   expect(store.config.llm.engine).toBe(availableEngines[0])
   await wrapper.find('.empty .engines :nth-child(5)').trigger('click')
-  expect(_Swal.fire).toHaveBeenCalledTimes(3)
+  expect(window.api.showDialog).toHaveBeenCalledTimes(3)
   expect(store.config.llm.engine).toBe(availableEngines[0])
 })
