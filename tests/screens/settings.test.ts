@@ -32,7 +32,7 @@ const tabs = [
   'settingsGeneral',
   'settingsAppearance',
   'settingsCommands',
-  'settingsPrompts',
+  'settingsExperts',
   'settingsShortcuts',
   'settingsLLM',
   'settingsPlugins',

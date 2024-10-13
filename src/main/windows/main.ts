@@ -4,7 +4,7 @@ import { anyDict } from 'types';
 import { app, BrowserWindow, shell, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions } from './index';
 import { wait } from '../utils';
-import { loadSettings, saveSettings } from 'main/config';
+import { loadSettings, saveSettings } from '../config';
 
 export let mainWindow: BrowserWindow = null;
 
