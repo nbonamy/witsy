@@ -81,6 +81,7 @@ class TipsManager {
     const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
     const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
     Dialog.show({
+      iconHtml: false,
       title: title
     }).then(() => {
       window.close()
