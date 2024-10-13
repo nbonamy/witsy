@@ -22,7 +22,7 @@ beforeAll(() => {
 
   window.api = {
     on: vi.fn(),
-    showDialog: vi.fn(() => 1),
+    showDialog: vi.fn(async () => { return { response: 1, checkboxChecked: false }}),
     file: {
       pick: vi.fn(() => [ 'file4', 'file5' ]),
       pickDir: vi.fn(() => 'folder2'),

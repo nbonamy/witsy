@@ -9,7 +9,7 @@ import { availableEngines } from '../../src/services/llm'
 enableAutoUnmount(afterAll)
 
 window.api = {
-  showDialog: vi.fn(),
+  showDialog: vi.fn(async () => { return { response: 0, checkboxChecked: false }}),
   config: {
     save: vi.fn()
   },

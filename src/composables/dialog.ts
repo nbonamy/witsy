@@ -62,7 +62,7 @@ const Dialog = {
     })
   },
 
-  system: (opts: any): Promise<DialogResult> => {
+  system: async (opts: any): Promise<DialogResult> => {
 
     const buttons  = [ ]
     let indices = { 'confirm': -1, 'deny': -1, 'cancel': -1 }
@@ -88,13 +88,13 @@ const Dialog = {
       defaultId: indices.confirm,
     }
 
-    const response = window.api.showDialog(sysopts)
+    const value: Electron.MessageBoxReturnValue = await window.api.showDialog(sysopts)
 
-    return Promise.resolve({
-      isConfirmed: response === indices.confirm,
-      isDenied: response === indices.deny,
-      isDismissed: response === indices.cancel,
-    })
+    return {
+      isConfirmed: value.response === indices.confirm,
+      isDenied: value.response === indices.deny,
+      isDismissed: value.response === indices.cancel,
+    }
 
   }
 

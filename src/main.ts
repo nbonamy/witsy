@@ -234,8 +234,8 @@ app.on('before-quit', (ev) => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.on('dialog-show', (event, payload) => {
-  event.returnValue = dialog.showMessageBoxSync(payload);
+ipcMain.handle('dialog-show', (event, payload): Promise<Electron.MessageBoxReturnValue> => {
+  return dialog.showMessageBox(payload);
 });
 
 ipcMain.on('get-app-path', (event) => {
