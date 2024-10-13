@@ -28,6 +28,7 @@ import Waveform from '../components/Waveform.vue'
 import Loader from '../components/Loader.vue'
 import useTranscriber from '../composables/transcriber'
 import useAudioRecorder from '../composables/audio_recorder'
+import Dialog from '../composables/dialog'
 
 // init stuff
 store.loadSettings()
@@ -86,7 +87,7 @@ const initializeAudio = async () => {
     
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    alert('Error accessing microphone')
+    Dialog.alert('Error accessing microphone')
   }
 
 }
@@ -97,7 +98,7 @@ const onRecord = async () => {
 
     // check
     if (transcriber.isReady() === false) {
-      alert('Speech-to-text engine not ready')
+      Dialog.alert('Speech-to-text engine not ready')
       return
     }
 
@@ -109,7 +110,7 @@ const onRecord = async () => {
 
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    alert('Error accessing microphone')
+    Dialog.alert('Error accessing microphone')
   }
 
 }
@@ -141,7 +142,7 @@ const transcribe = async (audioChunks) => {
 
   } catch (error) {
     console.error('Error:', error)
-    alert('Error occurred during transcription')
+    Dialog.alert('Error occurred during transcription')
   }
 
 }

@@ -59,11 +59,11 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import Dialog from '../composables/dialog'
 import getSTTEngine from '../services/stt'
 import STTOpenAI from '../services/stt-openai'
 import STTGroq from '../services/stt-groq'
 import STTWhisper from '../services/stt-whisper'
+import Dialog from '../composables/dialog'
 
 const engine = ref('openai')
 const model = ref('whisper-1')
@@ -161,7 +161,7 @@ const initializeEngine = async (engine) => {
 
     // error
     if (data.status === 'error') {
-      alert('An error occured during initialization. Please try again.')
+      Dialog.alert('An error occured during initialization. Please try again.')
       engine.deleteModel(model.value)
       store.config.stt.engine = previousEngine
       store.config.stt.model = previousModel

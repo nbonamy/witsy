@@ -25,6 +25,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { loadOllamaModels } from '../services/llm'
+import Dialog from '../composables/dialog'
 import Ollama from '../services/ollama'
 
 // bus
@@ -63,7 +64,7 @@ const onPull = () => {
 
     // TODO: handle error (this is not working)
     if (!pullStream.value) {
-      alert('Error pulling model')
+      Dialog.alert('Error pulling model')
       pull_progress.value = null
       return
     }

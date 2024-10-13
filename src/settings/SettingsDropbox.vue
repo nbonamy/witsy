@@ -24,6 +24,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import Dialog from '../composables/dialog'
 
 const linked = ref(false)
 const oauthUrl = ref('')
@@ -49,7 +50,7 @@ const link = async () => {
     linked.value = true
     accessCode.value = ''
   } else {
-    alert('Failed to link your account. Try again.')
+    Dialog.alert('Failed to link your account. Try again.')
     accessCode.value = ''
   }
 }

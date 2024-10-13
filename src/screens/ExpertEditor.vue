@@ -46,6 +46,7 @@
 <script setup>
 
 import { ref, computed, watch } from 'vue'
+import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
 
@@ -99,7 +100,7 @@ const onSave = (event) => {
   // check
   if (!name.value || !expert.value) {
     event.preventDefault()
-    alert('All fields marked with * are required.')
+    Dialog.alert('All fields marked with * are required.')
     return
   }
 

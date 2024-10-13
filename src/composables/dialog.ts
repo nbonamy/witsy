@@ -1,11 +1,20 @@
 
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 
-
-
-export default {
+const Dialog = {
 
   show: (opts: any): Promise<any> => {
+
+    // automatic target for dialogs
+    if (!opts.target) {
+      const dialogs = document.querySelectorAll('dialog')
+      for (const dialog of dialogs) {
+        if (dialog.attributes.getNamedItem('open')) {
+          // do not break as there could be multiple dialogs open
+          opts.target = dialog
+        }
+      }
+    }
 
     // add the icon
     opts.iconHtml = opts.iconHtml ?? '<img src="">'
@@ -33,4 +42,12 @@ export default {
     return Swal.fire(opts)
   },
 
+  alert: (title: string): Promise<any> => {
+    return Dialog.show({
+      title: title,
+    })
+  }
+
 }
+
+export default Dialog

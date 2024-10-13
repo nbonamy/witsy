@@ -58,6 +58,7 @@ import { ref, computed, watch } from 'vue'
 import { store } from '../services/store'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
+import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['command-modified']);
 
@@ -138,7 +139,7 @@ const onSave = (event) => {
   // check
   if (!label.value || !template.value || !action.value) {
     event.preventDefault()
-    alert('All fields marked with * are required.')
+    Dialog.alert('All fields marked with * are required.')
     return
   }
 

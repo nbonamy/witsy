@@ -37,7 +37,6 @@
 
 <script setup>
 
-import Dialog from '../composables/dialog'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
@@ -45,6 +44,7 @@ import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
 import CommandEditor from '../screens/CommandEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
+import Dialog from '../composables/dialog'
 
 const commands = ref(null)
 const selected = ref(null)
@@ -124,17 +124,17 @@ const onImport = () => {
   if (window.api.commands.import()) {
     store.loadCommands()
     load()
-    alert('Commands file imported successfully')
+    Dialog.alert('Commands file imported successfully')
   } else {
-    alert('Failed to import commands file')
+    Dialog.alert('Failed to import commands file')
   }
 }
 
 const onExport = () => {
   if (window.api.commands.export()) {
-    alert('Commands file exported successfully')
+    Dialog.alert('Commands file exported successfully')
   } else {
-    alert('Failed to export commands file')
+    Dialog.alert('Failed to export commands file')
   }
 }
 

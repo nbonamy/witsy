@@ -18,7 +18,7 @@
           <SettingsGeneral ref="settingsGeneral" />
           <SettingsAppearance ref="settingsAppearance" />
           <SettingsCommands ref="settingsCommands" />
-          <SettingsPrompts ref="settingsPrompts" />
+          <SettingsExperts ref="settingsExperts" />
           <SettingsShortcuts ref="settingsShortcuts" />
           <SettingsLLM ref="settingsLLM" />
           <SettingsPlugins ref="settingsPlugins" />
@@ -39,7 +39,7 @@ import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsAppearance from '../settings/SettingsAppearance.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
-import SettingsPrompts from '../settings/SettingsExperts.vue'
+import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
@@ -62,7 +62,7 @@ const props = defineProps({
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
-const settingsPrompts = ref(null)
+const settingsExperts = ref(null)
 const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
 const settingsPlugins = ref(null)
@@ -83,7 +83,7 @@ const onOpenSettings = (payload) => {
   settingsAppearance.value.load(payload)
   settingsShortcuts.value.load(payload)
   settingsCommands.value.load(payload)
-  settingsPrompts.value.load(payload)
+  settingsExperts.value.load(payload)
   settingsLLM.value.load(payload)
   settingsPlugins.value.load(payload)
   settingsVoice.value.load(payload)
