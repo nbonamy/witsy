@@ -1,21 +1,32 @@
 
 div:where(.swal2-container) div:where(.swal2-popup) {
-  background-color: rgb(221, 221, 221);
+  background-color: rgb(234, 235, 237);
   border-radius: 8px;
   max-width: 260px;
   padding: 20px 16px 16px 16px;
+  box-shadow: 
+    0 1px  1px  1px  rgba(0,0,0,0.06), 
+    0 2px  2px  2px  rgba(0,0,0,0.06), 
+    0 4px  4px  4px  rgba(0,0,0,0.06), 
+    0 8px  8px  8px  rgba(0,0,0,0.06), 
+    0 16px 16px 16px rgba(0,0,0,0.06),
+    0 24px 24px 24px rgba(0,0,0,0.06);
+}
+
+div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
+  background-color: transparent;
 }
 
 div:where(.swal2-container) div:where(.swal2-icon) {
   border: none;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   margin: 0 auto;
 }
 
 div:where(.swal2-container) .swal2-icon-content img {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
 }
 
 div:where(.swal2-container) h2:where(.swal2-title) {
@@ -24,7 +35,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
   font-size: 10pt;
   line-height: 150%;
   font-weight: bold;
-  padding-top: 12px;
+  margin-top: 16px;
 }
 
 div:where(.swal2-container) .swal2-html-container {
@@ -62,7 +73,7 @@ div:where(.swal2-container) div:where(.swal2-actions) {
   gap: 8px;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> :last-child:nth-child(4)) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) {
   flex-direction: column;
 }
 
@@ -79,11 +90,11 @@ div:where(.swal2-container) button:where(.swal2-styled) {
   flex: 1;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> :last-child:nth-child(4)) button:where(.swal2-styled) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) button:where(.swal2-styled) {
   width: 100% !important;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions) button:where(.swal2-styled):nth-child(4) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"])  button:where(.swal2-styled):nth-child(4) {
   margin-top: 12px !important;
 }
 
@@ -103,12 +114,12 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
 }
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
-  background-color: rgb(196, 196, 196);
+  background-color: rgb(203, 207, 208);
   color: black;
 }
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel:active {
-  background-color: rgb(180, 180, 180);
+  background-color: rgb(193, 197, 198);
 }
 
 div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover {
