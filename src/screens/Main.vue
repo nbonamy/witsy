@@ -53,6 +53,7 @@ onMounted(() => {
   onEvent('send-prompt', onSendPrompt)
   onEvent('attach-file', onAttachFile)
   onEvent('detach-file', onDetachFile)
+  onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-assistant', onStopAssistant)
 
   // other
@@ -229,6 +230,25 @@ const onSendPrompt = async (prompt) => {
   // clear stuff
   store.pendingAttachment = null
   store.pendingDocRepo = null
+
+}
+
+const onRetryGeneration = async (message) => {
+
+  // find the message in the chat
+  const index = assistant.value.chat.messages.findIndex((m) => m.uuid === message.uuid)
+  if (index === -1) {
+    return
+  }
+
+  // now remove all messages after this one
+  assistant.value.chat.messages.splice(index)
+
+  // now pop the last message
+  const lastMessage = assistant.value.chat.messages.pop()
+
+  // and retry
+  onSendPrompt(lastMessage.content)
 
 }
 
