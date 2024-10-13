@@ -83,6 +83,10 @@ div:where(.swal2-container) div:where(.swal2-actions):has(> :last-child:nth-chil
   width: 100% !important;
 }
 
+div:where(.swal2-container) div:where(.swal2-actions) button:where(.swal2-styled):nth-child(4) {
+  margin-top: 12px !important;
+}
+
 div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
   border: 1px solid transparent !important;
   background-image: linear-gradient(#2991FF, #057AFF);
@@ -99,12 +103,12 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
 }
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
-  background-color: rgb(205, 206, 207);
+  background-color: rgb(196, 196, 196);
   color: black;
 }
 
 div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel:active {
-  background-color: rgb(189, 189, 189);
+  background-color: rgb(180, 180, 180);
 }
 
 div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover {
