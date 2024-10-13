@@ -31,11 +31,14 @@ const Dialog = {
     // of getting base64 from file through preload and all of this!
     // also tried with a hardcoded base64 but it was ugly
     opts.willOpen = (e: any) => {
-      const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
-      const logo: Element = document.querySelector('#logo').cloneNode() as Element
-      logo.removeAttribute('id')
-      logo.removeAttribute('style')
-      icon?.replaceChildren(logo)
+      try {
+        const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
+        const logo: Element = document.querySelector('#logo').cloneNode() as Element
+        logo.removeAttribute('id')
+        logo.removeAttribute('style')
+        icon?.replaceChildren(logo)
+      } catch (_) {
+      }
     }
 
     // now do it
