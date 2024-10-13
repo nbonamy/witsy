@@ -9,9 +9,9 @@ import process from 'node:process';
 import path from 'node:path';
 
 // store
-export let store: Store|null = null
+export let electronStore: Store|null = null
 export const setStore = (aStore: Store): void => {
-  store = aStore
+  electronStore = aStore
 }
 
 // titlebarOptions

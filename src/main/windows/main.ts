@@ -1,9 +1,10 @@
 
 import { CreateWindowOpts } from 'types/window';
 import { anyDict } from 'types';
-import { app, BrowserWindow, shell } from 'electron';
-import { store, createWindow, titleBarOptions } from './index';
+import { app, BrowserWindow, shell, dialog } from 'electron';
+import { electronStore, createWindow, titleBarOptions } from './index';
 import { wait } from '../utils';
+import { loadSettings, saveSettings } from 'main/config';
 
 export let mainWindow: BrowserWindow = null;
 
@@ -24,7 +25,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
   }
 
   // get bounds from here
-  const bounds: Electron.Rectangle = store?.get('bounds') as Electron.Rectangle;
+  const bounds: Electron.Rectangle = electronStore?.get('bounds') as Electron.Rectangle;
 
   // else open a new one
   mainWindow = createWindow({
@@ -41,9 +42,31 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     mainWindow.show();
   });
 
-  // save state
+  // show a tip
   mainWindow.on('close', () => {
-    store.set('bounds', mainWindow.getBounds())
+
+    // check
+    const config = loadSettings(app);
+    if (config.general.tips.trayIcon) {
+      const systemTray = process.platform === 'darwin' ? 'menu bar' : 'system tray';
+      const message = `You can activate Witsy from the light bulb icon in the ${systemTray}.`;
+      const options = {
+        buttons: ['OK'],
+        message: message,
+      };
+
+      // show
+      dialog.showMessageBoxSync(null, options);
+
+      // save
+      config.general.tips.trayIcon = false;
+      saveSettings(app, config);
+
+    }
+
+    // save bounds    
+    electronStore.set('bounds', mainWindow.getBounds());
+
   })
 
   // open links in default browser
