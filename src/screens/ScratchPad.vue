@@ -100,19 +100,22 @@ onMounted(() => {
 
   // confirm close
   window.onbeforeunload = (e) => {
-    console.log('before unload')
     if (modified.value) {
-      Dialog.show({
-        title: 'You have unsaved changes. You will lose your work if you close this window.',
-        showCancelButton: true,
-        confirmButtonText: 'Do not close',
-        cancelButtonText: 'Close anyway',
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          e.returnValue = false
-        }
-      })
+      e.returnValue = false
+      setTimeout(() => {
+        Dialog.show({
+          title: 'You have unsaved changes. You will lose your work if you close this window.',
+          showCancelButton: true,
+          confirmButtonText: 'Do not close',
+          cancelButtonText: 'Close anyway',
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isDismissed) {
+            window.onbeforeunload = null
+            setTimeout(() => window.close(), 100)
+          }
+        })
+      }, 100)
     }
   }
 
@@ -269,7 +272,7 @@ const confirmOverwrite = (callback) => {
     cancelButtonText: 'Continue',
     reverseButtons: true
   }).then((result) => {
-    if (!result.isConfirmed) {
+    if (result.isDismissed) {
       callback()
     }
   })
