@@ -32,7 +32,7 @@
 
 <script setup>
 
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
@@ -130,9 +130,10 @@ const onEdit = (expert) => {
 }
 
 const onDelete = () => {
-  Swal.fire({
+  Dialog.show({
     target: document.querySelector('.settings .experts'),
-    title: 'Are you sure you want to delete this expert? This cannot be undone.',
+    title: 'Are you sure you want to delete this expert?',
+    text: 'You can\'t undo this action.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {

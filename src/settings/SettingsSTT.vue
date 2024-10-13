@@ -59,7 +59,7 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 import getSTTEngine from '../services/stt'
 import STTOpenAI from '../services/stt-openai'
 import STTGroq from '../services/stt-groq'
@@ -131,7 +131,7 @@ const onChangeModel = () => {
   store.config.stt.model = model.value
   const sttEngine = getSTTEngine(store.config)
   if (sttEngine.requiresDownload()) {
-    Swal.fire({
+    Dialog.show({
       target: document.querySelector('.settings .voice'),
       title: 'This engine needs to be configured first! Do you want to open the Settings?',
       confirmButtonText: 'Configure',
@@ -196,9 +196,10 @@ const initializeEngine = async (engine) => {
 }
 
 const deleteLocalModels = async () => {
-  Swal.fire({
+  Dialog.show({
     target: document.querySelector('.settings .voice'),
-    title: 'You will have to download all local models again.',
+    title: 'Are you sure you want to delete all local models?',
+    text: 'You will have to download all local models again.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {

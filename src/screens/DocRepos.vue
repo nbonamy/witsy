@@ -62,7 +62,7 @@
 <script setup>
 
 import { ref, onMounted } from 'vue'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 import DialogHeader from '../components/DialogHeader.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import DocRepoConfig from './DocRepoConfig.vue'
@@ -166,9 +166,10 @@ const onCreate = async () => {
 
 const onDelete = () => {
   if (!selectedRepo.value) return
-  Swal.fire({
+  Dialog.show({
     target: document.querySelector('.docrepos'),
-    title: 'Are you sure you want to delete this repository? This cannot be undone.',
+    title: 'Are you sure you want to delete this repository?',
+    text: 'You can\'t undo this action.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {
@@ -256,9 +257,10 @@ const onAddDocError = (payload) => {
 
 const onDelDoc = () => {
   if (selectedDocs.value.length == 0) return
-  Swal.fire({
+  Dialog.show({
     target: document.querySelector('.docrepos'),
-    title: 'Are you sure you want to delete this document? This cannot be undone.',
+    title: 'Are you sure you want to delete this document?',
+    text: 'You can\'t undo this action.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {

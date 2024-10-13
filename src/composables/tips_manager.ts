@@ -1,6 +1,6 @@
 
 import { Store } from 'types'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from './dialog'
 
 class TipsManager {
 
@@ -63,8 +63,9 @@ class TipsManager {
   }
 
   showScratchpadTip = () => {
-    Swal.fire({
-      title: 'Witsy now includes an interactive scratchpad leveraging Generative AI to help you write the best content! It is available in the Witsy menu when you need it! Do you want to check it now?',
+    Dialog.show({
+      title: 'Witsy now includes an interactive scratchpad leveraging Generative AI to help you write the best content!',
+      text: 'Do you want to check it now? It is available in the Witsy menu when you need it!',
       confirmButtonText: 'Yes!',
       cancelButtonText: 'Later',
       showCancelButton: true,
@@ -79,7 +80,7 @@ class TipsManager {
   showTrayIconTip = () => {
     const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
     const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
-    Swal.fire({
+    Dialog.show({
       title: title
     }).then(() => {
       window.close()
@@ -87,7 +88,7 @@ class TipsManager {
   }
 
   showConversationTip = () => {
-    Swal.fire({
+    Dialog.show({
       title: 'Check the conversation options by right-clicking on the microphone icon in the chat window.',
     })
   }
