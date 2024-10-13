@@ -137,6 +137,7 @@ declare global {
       platform?: string
       userDataPath?: string
       on?: (signal: string, callback: (value: any) => void) => void
+      showDialog?(opts: any): number
       fullscreen?(state: boolean): void
       runAtLogin?: {
         get?(): boolean

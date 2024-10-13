@@ -100,6 +100,7 @@ onMounted(() => {
 
   // confirm close
   window.onbeforeunload = (e) => {
+    console.log('before unload')
     if (modified.value) {
       Dialog.show({
         title: 'You have unsaved changes. You will lose your work if you close this window.',
@@ -108,12 +109,10 @@ onMounted(() => {
         cancelButtonText: 'Close anyway',
         reverseButtons: true
       }).then((result) => {
-        if (!result.isConfirmed) {
-          modified.value = false
-          window.close()
+        if (result.isConfirmed) {
+          e.returnValue = false
         }
       })
-      e.returnValue = false
     }
   }
 

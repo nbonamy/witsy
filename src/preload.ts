@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld(
     platform: process.platform,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
+    showDialog: (opts: any): number => { return ipcRenderer.sendSync('dialog-show', opts) },
     store: {
       get(key: string, fallback: any): any { return ipcRenderer.sendSync('store-get-value', { key, fallback }) },
       set(key: string, value: any): void { return ipcRenderer.send('store-set-value', { key, value }) },

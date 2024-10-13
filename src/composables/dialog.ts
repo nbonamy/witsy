@@ -5,6 +5,11 @@ const Dialog = {
 
   show: (opts: any): Promise<any> => {
 
+    // if no input we rely on system dialogs
+    if (!opts.input) {
+      return Dialog.system(opts)
+    }
+
     // automatic target for dialogs
     if (!opts.target) {
       const dialogs = document.querySelectorAll('dialog')
@@ -49,6 +54,42 @@ const Dialog = {
     return Dialog.show({
       title: title,
     })
+  },
+
+  system: (opts: any): Promise<any> => {
+
+    const buttons  = [ ]
+    let indices = { 'confirm': -1, 'deny': -1, 'cancel': -1 }
+    if (opts.showDenyButton) {
+      buttons.push(opts.confirmButtonText ?? 'OK')
+      buttons.push(opts.denyButtonText)
+      buttons.push(opts.cancelButtonText ?? 'Cancel')
+      indices = { 'confirm': 0, 'deny': 1, 'cancel': 2 }
+    } else if (opts.showCancelButton) {
+      buttons.push(opts.cancelButtonText ?? 'Cancel')
+      buttons.push(opts.confirmButtonText ?? 'OK')
+      indices = { 'confirm': 1, 'deny': -1, 'cancel': 0 }
+    } else {
+      buttons.push(opts.confirmButtonText ?? 'OK')
+      indices = { 'confirm': 0, 'deny': -1, 'cancel': -2 }
+    }
+
+    const sysopts = {
+      type: 'none',
+      message: opts.title,
+      detail: opts.text,
+      buttons: buttons,
+      defaultId: indices.confirm,
+    }
+
+    const response = window.api.showDialog(sysopts)
+
+    return Promise.resolve({
+      isConfirmed: response === indices.confirm,
+      isDenied: response === indices.deny,
+      isDismissed: response === indices.cancel,
+    })
+
   }
 
 }

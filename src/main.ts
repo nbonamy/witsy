@@ -2,7 +2,7 @@
 import { Chat, Command, Expert } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, dialog } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -233,6 +233,10 @@ app.on('before-quit', (ev) => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+ipcMain.on('dialog-show', (event, payload) => {
+  event.returnValue = dialog.showMessageBoxSync(payload);
+});
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
