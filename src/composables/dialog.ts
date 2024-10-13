@@ -8,10 +8,20 @@ const icon = 'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEw
 export default {
 
   show: (opts: any): Promise<any> => {
-    return Swal.fire({
-      iconHtml: `<img src="data:image/png;base64,${icon}">`,
-      ...opts
-    })
+
+    // add the icon
+    opts.iconHtml = `<img src="data:image/png;base64,${icon}">`
+
+    // add custom classes
+    opts.customClass = {
+      confirmButton: opts.showCancelButton ? 'alert-confirm' : 'alert-neutral',
+      cancelButton: 'alert-neutral',
+      denyButton: 'alert-danger',
+      ...opts.customClass
+    }
+
+    // now do it
+    return Swal.fire(opts)
   },
 
 }

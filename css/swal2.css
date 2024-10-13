@@ -1,4 +1,47 @@
 
+.alert-confirm {
+  border: 1px solid transparent !important;
+  background-image: linear-gradient(#2991FF, #057AFF) !important;
+  color: white !important;
+}
+
+.alert-confirm:active {
+  background-image: linear-gradient(#2280e4, #0469dc) !important;
+  color: #e2e2e2 !important;
+}
+
+.alert-neutral {
+  border: 1px solid transparent !important;
+  background-color: rgb(203, 207, 208) !important;
+  color: black !important;
+}
+
+.alert-neutral:hover {
+  background-image: none !important;
+  background-color: rgb(203, 207, 208) !important;
+}
+
+.alert-neutral:active {
+  background-image: none !important;
+  background-color: rgb(193, 197, 198) !important;
+}
+
+.alert-danger {
+  border: 1px solid transparent !important;
+  background-color: rgb(203, 207, 208) !important;
+  color: red !important;
+}
+
+.alert-danger:hover {
+  background-image: none !important;
+  background-color: rgb(203, 207, 208) !important;
+}
+
+.alert-danger:active {
+  background-image: none !important;
+  background-color: rgb(193, 197, 198) !important;
+}
+
 div:where(.swal2-container) div:where(.swal2-popup) {
   background-color: rgb(234, 235, 237);
   border-radius: 8px;
@@ -97,38 +140,3 @@ div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="d
 div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"])  button:where(.swal2-styled):nth-child(4) {
   margin-top: 12px !important;
 }
-
-div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
-  border: 1px solid transparent !important;
-  background-image: linear-gradient(#2991FF, #057AFF);
-  color: white;
-}
-
-div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm:active {
-  background-image: linear-gradient(#2280e4, #0469dc) !important;
-  color: #e2e2e2 !important;
-}
-
-div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
-  border: 1px solid transparent !important;
-}
-
-div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
-  background-color: rgb(203, 207, 208);
-  color: black;
-}
-
-div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel:active {
-  background-color: rgb(193, 197, 198);
-}
-
-div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover {
-  background-image: none;
-}
-
-div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled.swal2-confirm:hover {
-  border: 1px solid transparent !important;
-  background: linear-gradient(#2991FF, #057AFF);
-  color: white;
-}
-

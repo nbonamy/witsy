@@ -65,8 +65,8 @@ const onRetry = (message) => {
   Dialog.show({
     title: 'Are you sure you want to generate this messaage again?',
     text: 'Current version will be lost.',
-    customClass: { denyButton: 'swal2-cancel' },
-    confirmButtonText: 'OK. Don\'t ask again',
+    customClass: { denyButton: 'alert-neutral' },
+    confirmButtonText: 'OK. Don\'t ask again.',
     denyButtonText: 'OK',
     showCancelButton: true,
     showDenyButton: true,
