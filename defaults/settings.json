@@ -11,6 +11,9 @@
       "modelSelector": true,
       "scratchpad": true,
       "conversation": true
+    },
+    "confirm": {
+      "retryGeneration": true
     }
   },
   "llm": {

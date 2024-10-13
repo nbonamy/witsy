@@ -8,6 +8,9 @@
       <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
       <span v-else><BIconPlayCircle /> Read</span>
     </div>
+    <div class="action retry" v-if="message.role == 'assistant' && !message.transient" @click="onRetry(message)">
+      <BIconArrowCounterclockwise /> Retry
+    </div>
     <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
       <BIconPencil /> Edit
     </div>
@@ -19,6 +22,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import Message from '../models/message'
+import Dialog from '../composables/dialog'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
@@ -47,6 +51,38 @@ const onCopy = (message) => {
 
 const onToggleRead = async (message) => {
   props.readAloud(message)
+}
+
+const onRetry = (message) => {
+
+  // if already confirmed
+  if (!store.config.general.confirm.retryGeneration) {
+    emitEvent('retry-generation', message)
+    return
+  }
+
+  // ask
+  Dialog.show({
+    title: 'Are you sure you want to generate this messaage again?',
+    text: 'Current version will be lost.',
+    customClass: { denyButton: 'swal2-cancel' },
+    confirmButtonText: 'OK. Don\'t ask again',
+    denyButtonText: 'OK',
+    showCancelButton: true,
+    showDenyButton: true,
+  }).then((result) => {
+    
+    // don't ask again
+    if (result.isConfirmed) {
+      store.config.general.confirm.retryGeneration = false
+      store.saveSettings()
+    }
+
+    // do it
+    if (result.isConfirmed || result.isDenied) {
+      emitEvent('retry-generation', message)
+    }
+  })
 }
 
 const onEdit = (message) => {
