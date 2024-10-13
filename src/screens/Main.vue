@@ -110,7 +110,9 @@ onMounted(() => {
   })
 
   // show tips
-  tipsManager.showNextTip()
+  setTimeout(() => {
+    tipsManager.showNextTip()
+  }, 500)
 
 })
 
