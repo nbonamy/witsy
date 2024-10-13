@@ -10,7 +10,7 @@
 <script setup>
 
 // components
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
@@ -138,7 +138,7 @@ const onSelectChat = (chat) => {
 
 const onRenameChat = async (chat) => {
   // prompt
-  const { value: title } = await Swal.fire({
+  const { value: title } = await Dialog.show({
     title: 'Rename Chat',
     input: 'text',
     inputValue: chat.title,
@@ -154,12 +154,13 @@ const onDeleteChat = async (chat) => {
 
   const chats = Array.isArray(chat) ? chat : [chat]
   const title = chats.length > 1
-    ? 'Are you sure you want to delete these conversations? This cannot be undone.'
-    : 'Are you sure you want to delete this conversation? This cannot be undone.'
+    ? 'Are you sure you want to delete these conversations?'
+    : 'Are you sure you want to delete this conversation?'
 
-  Swal.fire({
+  Dialog.show({
     target: document.querySelector('.main'),
     title: title,
+    text: 'You can\'t undo this action.',
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {

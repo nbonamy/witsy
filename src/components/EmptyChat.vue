@@ -26,7 +26,7 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { availableEngines, isEngineReady, hasChatModels } from '../services/llm'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 import EngineLogo from './EngineLogo.vue'
 
 import useEventBus from '../composables/event_bus'
@@ -66,7 +66,7 @@ const onEngine = (engine) => {
 
     // check if the engine is ready
     if (!isEngineReady(engine) || !hasChatModels(engine)) {
-      Swal.fire({
+      Dialog.show({
         title: 'This engine needs to be configured first! Do you want to open the Settings?',
         confirmButtonText: 'Configure',
         showCancelButton: true,

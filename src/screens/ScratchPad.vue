@@ -22,7 +22,7 @@ import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
 import useAudioPlayer from '../composables/audio_player'
 import Chat from '../models/chat'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../composables/dialog'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -101,7 +101,7 @@ onMounted(() => {
   // confirm close
   window.onbeforeunload = (e) => {
     if (modified.value) {
-      Swal.fire({
+      Dialog.show({
         title: 'You have unsaved changes. You will lose your work if you close this window.',
         showCancelButton: true,
         confirmButtonText: 'Do not close',
@@ -263,7 +263,7 @@ const confirmOverwrite = (callback) => {
     return
   }
 
-  Swal.fire({
+  Dialog.show({
     title: 'You have unsaved changes. You will lose your work if you continue.',
     showCancelButton: true,
     confirmButtonText: 'Cancel',
