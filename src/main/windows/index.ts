@@ -42,7 +42,7 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
   // web console to here
   window.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    if (!message.includes('Electron Security Warning') && !message.includes('Third-party cookie will be blocked')){
+    if (!message.includes('Electron Security Warning') && !message.includes('Third-party cookie will be blocked')) {
       console.log(`${message} ${sourceId}:${line}`);
     }
   });

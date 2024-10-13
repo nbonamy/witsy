@@ -1,9 +1,15 @@
 
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 
+export type DialogResult = {
+  isConfirmed: boolean,
+  isDenied: boolean,
+  isDismissed: boolean,
+}
+
 const Dialog = {
 
-  show: (opts: any): Promise<any> => {
+  show: (opts: any): Promise<DialogResult> => {
 
     // if no input we rely on system dialogs
     if (!opts.input) {
@@ -50,13 +56,13 @@ const Dialog = {
     return Swal.fire(opts)
   },
 
-  alert: (title: string): Promise<any> => {
+  alert: (title: string): Promise<DialogResult> => {
     return Dialog.show({
       title: title,
     })
   },
 
-  system: (opts: any): Promise<any> => {
+  system: (opts: any): Promise<DialogResult> => {
 
     const buttons  = [ ]
     let indices = { 'confirm': -1, 'deny': -1, 'cancel': -1 }
