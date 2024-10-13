@@ -3,7 +3,7 @@ div:where(.swal2-container) div:where(.swal2-popup) {
   background-color: rgb(234, 235, 237);
   border-radius: 8px;
   max-width: 260px;
-  padding: 20px 16px 16px 16px;
+  padding: 26px 16px 16px 16px;
   box-shadow: 
     0 1px  1px  1px  rgba(0,0,0,0.06), 
     0 2px  2px  2px  rgba(0,0,0,0.06), 
@@ -35,7 +35,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
   font-size: 10pt;
   line-height: 150%;
   font-weight: bold;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 div:where(.swal2-container) .swal2-html-container {
