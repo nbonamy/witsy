@@ -296,7 +296,7 @@ const onLoad = () => {
       // parse
       const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
       if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
-        alert('This file is not a scratchpad file. Please try again with another file.')
+        Dialog.alert('This file is not a scratchpad file. Please try again with another file.')
       }
 
       // reset
@@ -316,7 +316,7 @@ const onLoad = () => {
 
     } catch (err) {
       console.error(err)
-      alert('Error while loading scratchpad file')
+      Dialog.alert('Error while loading scratchpad file')
     }
   })
 

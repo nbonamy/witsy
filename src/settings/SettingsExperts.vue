@@ -1,3 +1,4 @@
+
 <template>
   <div class="content" @click="closeContextMenu">
     <div class="experts">
@@ -25,20 +26,20 @@
         <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
-    <ContextMenu v-if="showMenu" on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom-right" :teleport="false" />
+    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom-right" :teleport="false" />
     <ExpertEditor id="expert-editor" :expert="edited" @expert-modified="onExpertModified"/>
   </div>
 </template>
 
 <script setup>
 
-import Dialog from '../composables/dialog'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { newExpert, saveExperts } from '../services/experts'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
+import Dialog from '../composables/dialog'
 
 const experts = ref(null)
 const selected = ref(null)
@@ -99,17 +100,17 @@ const onImport = () => {
   if (window.api.experts.import()) {
     store.loadExperts()
     load()
-    alert('Experts file imported successfully')
+    Dialog.alert('Experts file imported successfully')
   } else {
-    alert('Failed to import experts file')
+    Dialog.alert('Failed to import experts file')
   }
 }
 
 const onExport = () => {
   if (window.api.experts.export()) {
-    alert('Experts file exported successfully')
+    Dialog.alert('Experts file exported successfully')
   } else {
-    alert('Failed to export experts file')
+    Dialog.alert('Failed to export experts file')
   }
 }
 

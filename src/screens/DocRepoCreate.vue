@@ -49,6 +49,7 @@ import { store } from '../services/store'
 import { loadOllamaModels } from '../services/llm'
 import { getEmbeddingModels } from '../services/ollama'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
+import Dialog from '../composables/dialog'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -107,7 +108,7 @@ const onChangeEngine = (event) => {
 const onChangeModel = (event) => {
   const downloaded = window.api.docrepo.isEmbeddingAvailable(engine.value, model.value)
   if (!downloaded) {
-    alert('This model will be downloaded from the internet when adding first document and may take a while.')
+    Dialog.alert('This model will be downloaded from the internet when adding first document and may take a while.')
   }
 }
 
@@ -147,7 +148,7 @@ const onCreate = (event) => {
   // check
   if (!name.value || !engine.value || !model.value) {
     event.preventDefault()
-    alert('All fields marked with * are required.')
+    Dialog.alert('All fields marked with * are required.')
     return
   } 
 

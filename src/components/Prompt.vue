@@ -35,6 +35,7 @@ import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
+import Dialog from '../composables/dialog'
 import ContextMenu from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
@@ -264,7 +265,7 @@ const onAttach = () => {
       emitEvent('attach-file', new Attachment(file.url, mimeType, file.contents))
     } else {
       console.error('Cannot attach format', format)
-      alert('This file format is not supported')
+      Dialog.alert('This file format is not supported')
     }
   }
 }
@@ -291,7 +292,7 @@ const onPaste = (event) => {
             emitEvent('attach-file', new Attachment('clipboard://', mimeType, contents))
           } else {
             console.error('Cannot attach format', format)
-            alert('This file format is not supported')
+            Dialog.alert('This file format is not supported')
           }
         }
       }
@@ -404,7 +405,7 @@ const startDictation = async () => {
 
       } catch (error) {
         console.error(error)
-        alert('Error transcribing audio')
+        Dialog.alert('Error transcribing audio')
       }
 
       // update

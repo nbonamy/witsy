@@ -252,7 +252,7 @@ const onAddDocError = (payload) => {
   console.log('onAddDocError', JSON.stringify(payload))
   const queueLength = payload.queueLength
   loading.value = queueLength > 0
-  alert(payload.error)
+  Dialog.alert(payload.error)
 }
 
 const onDelDoc = () => {
