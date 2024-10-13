@@ -2,6 +2,8 @@
 import { Store } from 'types'
 import Dialog from './dialog'
 
+export type TipId = 'scratchpad' |/* 'trayIcon' |*/ 'conversation'
+
 class TipsManager {
 
   store: Store
@@ -10,11 +12,11 @@ class TipsManager {
     this.store = store
   }
 
-  isTipAvailable = (tip: string) => {
+  isTipAvailable = (tip: TipId) => {
     return this.store.config.general.tips[tip]
   }
 
-  setTipShown = (tip: string) => {
+  setTipShown = (tip: TipId) => {
     this.store.config.general.tips[tip] = false
     this.store.saveSettings()
   }
@@ -28,7 +30,7 @@ class TipsManager {
       return
     }
 
-    const tipsToShow = [ 'scratchpad' ]
+    const tipsToShow: TipId[] = [ 'scratchpad' ]
 
     for (const tip of tipsToShow) {
       const shouldShow = this.store.config.general.tips[tip]
@@ -40,12 +42,12 @@ class TipsManager {
 
   }
 
-  showTip = (tip: string) => {
+  showTip = (tip: TipId) => {
 
     // callbacks
     const callbacks: { [key: string]: CallableFunction } = {
       'scratchpad': this.showScratchpadTip,
-      'trayIcon': this.showTrayIconTip,
+      //'trayIcon': this.showTrayIconTip,
       'conversation': this.showConversationTip,
     }
 
@@ -77,16 +79,16 @@ class TipsManager {
   
   }
 
-  showTrayIconTip = () => {
-    const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
-    const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
-    Dialog.show({
-      iconHtml: false,
-      title: title
-    }).then(() => {
-      window.close()
-    })
-  }
+  // showTrayIconTip = () => {
+  //   const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
+  //   const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
+  //   Dialog.show({
+  //     iconHtml: false,
+  //     title: title
+  //   }).then(() => {
+  //     window.close()
+  //   })
+  // }
 
   showConversationTip = () => {
     Dialog.show({
