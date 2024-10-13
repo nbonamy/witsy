@@ -20,7 +20,7 @@ import { BIconMicFill, BIconVolumeUpFill } from 'bootstrap-icons-vue'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'
 
-const current = ref('tts')
+const current = ref('stt')
 const settings = ref(null)
 
 const available = computed(() => {
