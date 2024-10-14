@@ -120,13 +120,14 @@ const onResizeSidebarEnd = () => {
   flex-shrink: 0;
   height: 100vh;
   background-color: var(--sidebar-bg-color);
+  color: var(--sidebar-text-color);
   border-right: 1px solid #d0cfce;
   overflow-x: hidden;
   position: relative;
 }
 
 .sidebar .icon-text {
-  color: #5b5a59;
+  color: var(--sidebar-icon-color);
   cursor: pointer;
   display: inline-block;
   margin: 0px 8px;
@@ -155,7 +156,8 @@ const onResizeSidebarEnd = () => {
 }
 
 .toolbar .search input {
-  background-color: #ccc;
+  background-color: var(--sidebar-search-bg-color);
+  border: 0.5px solid var(--sidebar-search-border-color);
   border-radius: 6px;
   padding-right: 24px;
 }
@@ -168,7 +170,7 @@ const onResizeSidebarEnd = () => {
   position: relative;
   left: -20px;
   font-size: 9pt;
-  color: #888;
+  color: var(--sidebar-search-icon-color);
 }
 
 .toolbar .icon-text {
@@ -186,9 +188,11 @@ const onResizeSidebarEnd = () => {
 
 .resizer {
   position: absolute;
-  width: 10px;
+  width: 6px;
   height: 100%;
   cursor: ew-resize;
+  background-color: var(--sidebar-bg-color);
+  z-index: 2;
 }
 
 .footer {

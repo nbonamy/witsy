@@ -101,7 +101,8 @@ const playChunk = (i) => {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background-color: #e7e6e5;
+  background-color: var(--window-bg-color);
+  color: var(--text-color);
   font-size: 18pt;
   padding: 0px 8px;
   -webkit-app-region: drag;

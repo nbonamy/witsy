@@ -112,6 +112,8 @@ const onSelectModel = (ev) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: var(--message-list-bg-color);
+  color: var(--message-list-text-color);
 }
 
 .empty .tip {
@@ -119,14 +121,14 @@ const onSelectModel = (ev) => {
   text-align: center;
   font-style: italic;
   font-size: 11pt;
-  color: #888;
+  color: var(--message-list-tip-text-color);
   margin-bottom: 16px;
 
   img {
     margin-top: 4px;
     width: 32px;
     rotate: 90deg;
-    stroke: #888;
+    stroke: var(--message-list-tip-text-color);
   }
 
   &.model {
@@ -165,6 +167,8 @@ const onSelectModel = (ev) => {
   font-size: 11pt;
   text-align: center;
   cursor: pointer;
+  background-color: var(--message-list-bg-color);
+  color: var(--message-list-text-color);
 }
 
 .empty .select-model.hidden {

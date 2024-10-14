@@ -61,6 +61,7 @@ let runAtLogin = false
 window.api = {
   platform: 'darwin',
   on: vi.fn(),
+  setAppearanceTheme: vi.fn(),
   runAtLogin: {
     get: () => runAtLogin,
     set: vi.fn((state) => {
@@ -154,7 +155,14 @@ test('Settings General', async () => {
 test('Settings Appearance', async () => {
   
   const tab = await switchToTab(1)
-  expect(tab.findAll('.group')).toHaveLength(2)
+  expect(tab.findAll('.group')).toHaveLength(3)
+
+  expect(store.config.appearance.theme).toBe('system')
+  await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')
+  expect(store.config.appearance.theme).toBe('dark')
+  expect(window.api.setAppearanceTheme).toHaveBeenCalledWith('dark')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
 
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
   tab.find('.group.theme select').setValue('conversation')

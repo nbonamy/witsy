@@ -1,19 +1,179 @@
 
 :root {
 
+  --background-color: #fff;
+  --background-color-light: var(--background-color);
+  --window-bg-color: #e1e0df;
+  --text-color: #000;
+  --icon-color: #5b5a59;
   --highlight-color: #0366eb;
+  --highlighted-color: #fff;
+  --link-color: #0000ee;
+
+  --control-bg-color: var(--background-color);
+  --control-border-color: #dad9d9;
+  --control-border-radius: 6px;
+  --control-text-color: var(--text-color);
+  --control-button-border-color: #cacaca;
+  --control-button-border-radius: var(--control-border-radius);
+  --control-button-active-bg-color: #f2f2f2;
+  --control-button-disabled-bg-color: #f2f2f2;
+  --control-button-disabled-text-color: #c6c6c6;
+  --control-button-disabled-border-color: var(--control-button-border-color);
+  --control-textarea-bg-color: var(--background-color);
+  --control-placeholder-text-color: rgb(117, 117, 117);
+  --control-list-bg-color: var(--background-color);
+  --control-list-border-color: #D5D4D3;
+  --control-checkbox-bg-color: var(--background-color);
 
   --sidebar-width: 300px;
-  --sidebar-bg-color: #e1e0df;
+  --sidebar-bg-color: var(--window-bg-color);
+  --sidebar-scroll-thumb-color: #888;
+  --sidebar-text-color: var(--text-color);
   --sidebar-selected-color: #c9c9c8;
+  --sidebar-icon-color: var(--icon-color);
+  --sidebar-search-bg-color: #ccc;
+  --sidebar-search-border-color: #ccc;
+  --sidebar-search-icon-color: #888;
+  --sidebar-section-title-color: #888;
   --sidebar-logo-size: 32px;
 
-  --dialog-header-bg-color: #f2f3f3;
-  --dialog-body-bg-color: #ececeb;
-  --dialog-separator-color: #c6c6c5;
+  --scrollbar-bg-color: var(--background-color-light);
+  --scrollbar-thumb-color: #c2c2c2;
 
-  --tabs-header-normal-color: #6d6c6b;
-  --tabs-header-selected-color: var(--highlight-color);
+  --chatarea-toolbar-bg-color: #F4F4F2;
+  --chatarea-toolbar-text-color: var(--text-color);
+  --chatarea-toolbar-icon-color: var(--text-color);
+
+  --message-list-bg-color: var(--background-color);
+  --message-list-text-color: var(--text-color);
+  --message-list-tip-text-color: #888;
+  --message-list-overflow-bg-color: var(--background-color);
+  --message-list-overflow-border-color: #ccc;
+
+  --prompt-icon-color: var(--icon-color);
+  --prompt-input-bg-color: var(--message-list-bg-color);
+  --prompt-input-border-color: #bbb;
+  --prompt-input-text-color: var(--text-color);
+
+  --dialog-border-color: #a8a8a8;
+  --dialog-header-bg-color: #f3f3f3;
+  --dialog-header-text-color: #474747;
+  --dialog-body-bg-color: #ececec;
+  --dialog-body-text-color: var(--text-color);
+  --dialog-separator-color: #c6c6c6;
+
+  --editor-border-color: var(--dialog-border-color);
+  --editor-header-bg-color: var(--background-color);
+  --editor-body-bg-color: var(--background-color);
+
+  --tabs-header-normal-text-color: #6c6c6c;
+  --tabs-header-selected-bg-color: #e6e6e6;
+  --tabs-header-selected-text-color: var(--highlight-color);
+
+  --context-menu-bg-color: rgba(229, 229, 229, 96%);
+  --context-menu-border-color: #b9b9b9;
+  --context-menu-text-color: var(--text-color);
+  --context-menu-selected-bg-color: #57a1ff;
+  --context-menu-filter-bg-color: #dddbda;
+  --context-menu-filter-text-color: var(--text-color);
+
+  --actions-bar-bg-color: linear-gradient(to bottom, #fafafa, #f5f5f5);
+  --actions-bar-border-color: #b4b4b4;
+  --actions-bar-button-border-color: var(--actions-bar-border-color);
+  --actions-bar-button-active-bg-color: linear-gradient(to bottom, #c0c0c0, #b5b5b5);
+
+  --scratchpad-bars-border-color: #ccc;
+  --scratchpad-text-color: #444;
+  --scratchpad-placeholder-text-color: #888;
+  --scratchpad-actionbar-bg-color: rgba(255, 255, 255, 0.95);
+  --scratchpad-actionbar-border-color: #ccc;
+  --scratchpad-actionbar-shadow-color: rgba(0, 0, 0, 0.1);
+  --scratchpad-actionbbar-active-border-color: #aaa;
+  --scratchpad-actionbar-normal-icon-color: #aaa;
+  --scratchpad-actionbar-disabled-icon-color: #ddd;
+  --scratchpad-actionbar-hover-icon-color: #888;
+  --scratchpad-actionbar-active-icon-color: #2991ff;
+  --scratchpad-actionbar-active-icon-color2: #0469dc;
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+
+    --background-color: rgb(32, 32, 32);
+    --background-color-light: rgb(48, 48, 48);
+    --window-bg-color: var(--background-color-light);
+    --text-color: rgb(224, 224, 224);
+    --icon-color: rgb(154, 154, 154);
+    --highlight-color: rgb(11, 132, 255);
+    --link-color: rgb(65, 156, 255);
+
+    --control-bg-color: rgb(100, 100, 100);
+    --control-border-color: var(--control-bg-color);
+    --control-text-color: rgb(224, 224, 224);
+    --control-button-border-color: var(--control-bg-color);
+    --control-button-active-bg-color: rgb(122, 122, 122);
+    --control-button-disabled-bg-color: rgb(68, 68, 68);
+    --control-button-disabled-border-color: var(--control-button-disabled-bg-color);
+    --control-button-disabled-text-color: rgb(112, 112, 112);
+    --control-placeholder-text-color: var(--icon-color);
+    --control-list-border-color: rgb(110, 110, 110);
+    --control-checkbox-bg-color: rgb(84, 84, 84);
+
+    --sidebar-selected-color: var(--highlight-color);
+    --sidebar-search-bg-color: rgb(64, 64, 64);
+    --sidebar-search-border-color: rgb(96, 96, 96);
+    --sidebar-section-title-color: var(--icon-color);
+
+    --scrollbar-thumb-color: rgb(120, 120, 120);
+
+    --chatarea-toolbar-bg-color: rgb(48, 48, 48);
+    --chatarea-toolbar-icon-color: var(--icon-color);
+
+    --message-list-tip-text-color: var(--text-color);
+    --message-list-overflow-bg-color: rgb(0, 0, 0);
+
+    --prompt-input-border-color: rgb(60, 60, 61);
+    --prompt-input-text-color: var(--sidebar-text-color);
+
+    --dialog-border-color: rgb(96, 96, 96);
+    --dialog-header-bg-color: rgb(56, 56, 56);
+    --dialog-header-text-color: rgb(179, 180, 180);
+    --dialog-body-bg-color: var(--background-color-light);
+    --dialog-separator-color: rgb(0, 0, 0);
+
+    --editor-header-bg-color: var(--dialog-body-bg-color);
+    --editor-body-bg-color: var(--dialog-body-bg-color);
+
+    --tabs-header-normal-text-color: rgb(180, 180, 180);
+    --tabs-header-selected-bg-color: rgb(68, 69, 69);
+    --tabs-header-selected-text-color: rgb(17, 136, 255);
+
+    --context-menu-bg-color: rgb(41, 41, 41, 0.96);
+    --context-menu-border-color: rgb(82, 81, 81);
+    --context-menu-selected-bg-color: var(--highlight-color);
+    --context-menu-filter-bg-color: var(--sidebar-search-bg-color);
+    --context-menu-filter-text-color: var(--sidebar-text-color);
+
+    --actions-bar-bg-color: linear-gradient(to bottom, rgb(71, 72, 73), rgb(65, 66, 67));
+    --actions-bar-border-color: rgb(110, 110, 110);
+    --actions-bar-button-border-color: var(--actions-bar-border-color);
+    --actions-bar-button-active-bg-color: linear-gradient(to bottom, rgb(93, 94, 95), rgb(83, 84, 85));
+
+    --scratchpad-bars-border-color: #555;
+    --scratchpad-text-color: var(--text-color);
+    --scratchpad-placeholder-text-color: var(--control-placeholder-text-color);
+    --scratchpad-actionbar-bg-color: rgba(56, 56, 56, 0.95);
+    --scratchpad-actionbar-border-color: #888;
+    --scratchpad-actionbar-shadow-color: rgba(255, 255, 255, 0.0);
+    --scratchpad-actionbbar-active-border-color: #bbb;
+    --scratchpad-actionbar-normal-icon-color: #bbb;
+    --scratchpad-actionbar-disabled-icon-color: #666;
+    --scratchpad-actionbar-hover-icon-color: #eee;
+  
+  }
+  
 }
 
 * {
@@ -39,7 +199,7 @@ code, pre, code * {
 }
 
 a, a:visited, a:active, a:focus {
-  color: #0000ee;
+  color: var(--link-color);
 }
 
 button {
@@ -47,20 +207,22 @@ button {
   width: auto;
   margin: 0 4px;
   padding: 4px 8px;
-  border-radius: .3rem;
-  background-color: white;
-  border: 1px solid #cacaca;
+  border-radius: var(--control-button-border-radius);
+  background-color: var(--control-bg-color);
+  border: 1px solid var(--control-button-border-color);
+  color: var(--control-text-color);
   box-shadow: 0px 2px 1.5px -2px rgba(0,0,0,.3);
   font-size: 9pt;
 }
 
 button:disabled {
-  background-color: #f2f2f2;
-  color: #c6c6c5;
+  background-color: var(--control-button-disabled-bg-color);
+  border: 1px solid var(--control-button-disabled-border-color);
+  color: var(--control-button-disabled-text-color);
 }
 
 button:active:enabled {
-  background-color: #f2f2f2;
+  background-color: var(--control-button-active-bg-color);
 }
 
 button.default {

@@ -97,7 +97,8 @@ const onRunCommand = (event, command) => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #e7e6e5;
+  background-color: var(--window-bg-color);
+  color: var(--text-color);
   overflow: auto;
   padding: 10px;
 }
@@ -113,8 +114,8 @@ const onRunCommand = (event, command) => {
 
 .command:hover {
   background-color: var(--highlight-color);
+  color: var(--highlighted-color);
   border-radius: 6px;
-  color: white;
 }
 
 .icon {
@@ -138,7 +139,8 @@ const onRunCommand = (event, command) => {
 .shortcut {
   margin-top: -3px;
   display: inline-block;
-  border: 1px solid black;
+  border: 1px solid var(--icon-color);
+  color: var(--icon-color);
   border-radius: 4px;
   font-size: 8pt;
   text-transform: capitalize;
@@ -146,8 +148,17 @@ const onRunCommand = (event, command) => {
   margin-right: 8px
 }
 
-.command:hover .shortcut {
-  border-color: white;
+.action {
+  color: var(--icon-color);
+}
+
+.command:hover {
+  .shortcut, .action {
+    color: var(--highlighted-color);
+  }
+  .shortcut {
+    border-color: var(--highlighted-color);
+  }
 }
 
 </style>

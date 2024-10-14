@@ -107,6 +107,8 @@ const onScroll = () => {
   display: flex;
   position: relative;
   overflow: hidden;
+  background-color: var(--message-list-bg-color);
+  color: var(--message-list-text-color);
 }
 
 .messages {
@@ -114,6 +116,7 @@ const onScroll = () => {
   padding: 16px;
   overflow-y: auto;
   padding-top: 32px;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-bg-color);
 }
 
 .overflow {
@@ -127,7 +130,7 @@ const onScroll = () => {
   height: 22pt;
   margin-left: -11pt;
   border-radius: 11pt;
-  background-color: white;
+  background-color: var(--message-list-overflow-bg-color);
   border: 1px solid #ccc;
   font-size: 14pt;
   font-weight: bold;

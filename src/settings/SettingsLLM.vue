@@ -96,8 +96,8 @@ dialog.settings .content {
   align-items: stretch;
 
   .engines {
-    background-color: white;
-    border-right: 1px solid #ccc;
+    background-color: var(--sidebar-bg-color);
+    border-right: 0.5px solid var(--dialog-separator-color);
     width: 140px;
     padding: 10px;
 
@@ -119,7 +119,7 @@ dialog.settings .content {
 
       &.selected {
         background-color: var(--highlight-color);
-        color: white;
+        color: var(--highlighted-color);
         .logo {
           filter: invert(1);
         }

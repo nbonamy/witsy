@@ -12,38 +12,38 @@
 
 .alert-neutral {
   border: 1px solid transparent !important;
-  background-color: rgb(203, 207, 208) !important;
-  color: black !important;
+  background-color: var(--control-bg-color) !important;
+  color: var(--control-text-color) !important;
 }
 
 .alert-neutral:hover {
   background-image: none !important;
-  background-color: rgb(203, 207, 208) !important;
+  background-color: var(--control-bg-color) !important;
 }
 
 .alert-neutral:active {
   background-image: none !important;
-  background-color: rgb(193, 197, 198) !important;
+  background-color: var(--control-button-active-bg-color) !important;
 }
 
 .alert-danger {
   border: 1px solid transparent !important;
-  background-color: rgb(203, 207, 208) !important;
+  background-color: var(--control-bg-color) !important;
   color: red !important;
 }
 
 .alert-danger:hover {
   background-image: none !important;
-  background-color: rgb(203, 207, 208) !important;
+  background-color: var(--control-bg-color) !important;
 }
 
 .alert-danger:active {
   background-image: none !important;
-  background-color: rgb(193, 197, 198) !important;
+  background-color: var(--control-button-active-bg-color) !important;
 }
 
 div:where(.swal2-container) div:where(.swal2-popup) {
-  background-color: rgb(234, 235, 237);
+  background-color: var(--window-bg-color);
   border-radius: 8px;
   max-width: 260px;
   padding: 26px 16px 16px 16px;
@@ -74,7 +74,7 @@ div:where(.swal2-container) .swal2-icon-content img {
 
 div:where(.swal2-container) h2:where(.swal2-title) {
   text-align: center;
-  color: rgb(52, 53, 54);
+  color: var(--text-color);
   font-size: 10pt;
   line-height: 150%;
   font-weight: bold;
@@ -83,7 +83,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
 
 div:where(.swal2-container) .swal2-html-container {
   text-align: center;
-  color: rgb(52, 53, 54);
+  color: var(--window-bg-color);
   font-size: 9pt;
   line-height: 150%;
 }
@@ -91,11 +91,12 @@ div:where(.swal2-container) .swal2-html-container {
 div:where(.swal2-container) input:where(.swal2-input), div:where(.swal2-container) input:where(.swal2-file), div:where(.swal2-container) textarea:where(.swal2-textarea) {
   margin-left: 4px;
   margin-right: 4px;
-  background-color: white;
+  background-color: var(--control-bg-color) !important;
+  border: 1px solid var(--control-border-color) !important;
+  border-radius: var(--control-border-radius) !important;
+  color: var(--control-text-color) !important;
   font-size: 10pt;
   box-shadow: none;
-  border-radius: 0px;
-  border: 0.5px solid #dad9d9;
 }
 
 div:where(.swal2-container) input:where(.swal2-input):focus, div:where(.swal2-container) input:where(.swal2-file):focus, div:where(.swal2-container) textarea:where(.swal2-textarea):focus {

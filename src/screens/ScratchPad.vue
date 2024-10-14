@@ -496,55 +496,18 @@ const onStopAssistant = async () => {
 <style scoped>
 
 .scratchpad {
+  
   display: flex;
   flex-direction: column;
   height: 100vh;
-
-  .toolbar {
-    display: flex;
-    flex-direction: row;
-    height: 32px;
-    padding: 8px 16px 8px 100px;
-    align-items: center;
-    background-color: #e7e6e5;
-    border-bottom: 1px solid #ccc;
-    -webkit-app-region: drag;
-    gap: 8px;
-
-    .tool {
-
-      max-width: 128px;
-      white-space: nowrap;
-      padding: 6px 8px;
-      font-size: 11pt;
-      margin: 0;
-
-      &:enabled {
-        -webkit-app-region: no-drag;
-      }
-
-      svg {
-        position: relative;
-        margin-right: 8px;
-        top: 2px;
-      }
-
-    }
-
-    select.tool {
-      border: 1px solid #cacaca;
-      border-radius: 6px;
-      font-size: 10pt;
-      padding-right: 0px;
-    }
-
-  }
 
   .document {
     flex: 1;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
+    background-color: var(--background-color);
+    scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
   }
 
   .document :deep(.container) {
@@ -558,7 +521,7 @@ const onStopAssistant = async () => {
 
   .document, .document * {
     outline: none;
-    color: #444;
+    color: var(--scratchpad-text-color);
   }
 
   .document.serif, .document.serif * {
@@ -590,8 +553,8 @@ const onStopAssistant = async () => {
   }
 
   .prompt {
-    border-top: 1px solid #ccc;
-    background-color: #e7e6e5;
+    border-top: 1px solid var(--scratchpad-bars-border-color);
+    background-color: var(--dialog-header-bg-color);
   }
 }
 

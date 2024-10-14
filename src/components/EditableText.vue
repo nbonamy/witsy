@@ -1,7 +1,7 @@
 
 <template>
   <div class="container">
-    <div class="placeholder" ref="pholder" v-if="showPlaceholder" v-html="placeholder" />
+    <div class="placeholder" ref="pholder" v-if="showPlaceholder" v-html="placeholder" @click="onClickPlaceholder" />
     <div class="content" contenteditable="true" ref="text" @blur="onBlur" @focus="onFocus" @paste.prevent="onPaste" autofocus="true">
     </div>
   </div>
@@ -382,6 +382,10 @@ const checkSelection = (ev) => {
 
 }
 
+const onClickPlaceholder = () => {
+  text.value.focus()
+}
+
 const onBlur = () => {
 
   if (!textSelection) {
@@ -572,11 +576,10 @@ defineExpose({ getContent, setContent })
   width: 60%;
   left: 20%;
   padding-top: 64px;
-  color: #888 !important;
+  color: var(--scratchpad-placeholder-text-color) !important;
   text-align: center;
   font-style: italic;
   white-space: nowrap;
-  z-index: -10;
 }
 
 .content {

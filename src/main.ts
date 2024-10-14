@@ -2,7 +2,7 @@
 import { Chat, Command, Expert } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, dialog } from 'electron';
+import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -142,6 +142,9 @@ app.whenReady().then(() => {
       .catch((err) => console.log('An error while installing Extension: ', err));
   }
 
+  // set theme
+  nativeTheme.themeSource = settings.appearance.theme;
+
   // install the menu
   menu.installMenu(app, {
     quit: app.quit,
@@ -233,6 +236,11 @@ app.on('before-quit', (ev) => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+ipcMain.on('set-appearance-theme', (event, theme) => {
+  nativeTheme.themeSource = theme;
+  event.returnValue = theme;
+});
 
 ipcMain.handle('dialog-show', (event, payload): Promise<Electron.MessageBoxReturnValue> => {
   return dialog.showMessageBox(payload);

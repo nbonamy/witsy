@@ -31,3 +31,7 @@
   padding: 0px;
   background-color: transparent;
 }
+
+.message.assistant .actions {
+  top: 0px;
+}

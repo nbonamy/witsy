@@ -75,7 +75,7 @@ const onPrompt = (data) => {
 <style scoped>
 
 .anywhere {
-  background-color: #e7e6e5;
+  background-color: var(--window-bg-color);
 }
 
 </style>

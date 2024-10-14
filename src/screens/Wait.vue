@@ -29,7 +29,8 @@ const onCancel = () => {
 .wait {
   box-sizing: border-box;
   height: 100vh;
-  background-color: #e7e6e5;
+  background-color: var(--window-bg-color);
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   align-items: center;

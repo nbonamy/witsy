@@ -1,7 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role">
-      <EngineLogo :engine="chat.engine" class="avatar" v-if="message.role == 'assistant'" />
+      <EngineLogo :engine="chat.engine" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
       <div class="name">{{ authorName }}</div>
     </div>
@@ -37,6 +37,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import useAudioPlayer from '../composables/audio_player'
+import useAppearanceTheme from '../composables/appearance_theme'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemImage from './MessageItemImage.vue'
 import MessageItemActions from './MessageItemActions.vue'
@@ -50,6 +51,7 @@ import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
 // init stuff
+const appearanceTheme = useAppearanceTheme()
 const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
@@ -59,8 +61,8 @@ const props = defineProps({
 
 const emits = defineEmits(['image-loaded'])
 
+const theme = ref('light')
 const hovered = ref(false)
-const copyLabel = ref('Copy')
 const audio = ref(null)
 const audioState = ref({
   state: 'idle',
@@ -71,14 +73,22 @@ const audioState = ref({
 // so let's hack it
 let updateLinkInterval = null 
 onMounted(() => {
+
+  // make sure links are going outside
   updateLinkInterval = setInterval(() => {
     document.querySelectorAll('.messages a').forEach(link => {
       link.target = "_blank"
     })
   }, 599)
+
+  // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
-  onEvent('audio-noise-detected', () => {
-    audioPlayer.stop()
+  onEvent('audio-noise-detected', () =>  audioPlayer.stop)
+
+  // dark mode stuff  
+  theme.value = appearanceTheme.getTheme()
+  onEvent('appearance-theme-change', (th) => {
+    theme.value = th
   })
 })
 
@@ -164,7 +174,7 @@ img {
   .tool-call {
     margin-left: 8px;
     font-size: 10.5pt;
-    color: #888;
+    color: var(--message-list-tip-text-color);
   }
 }
 

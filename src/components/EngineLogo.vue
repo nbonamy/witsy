@@ -73,8 +73,8 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.background.groq {
-  background-color: #F55036;
-  filter: none;
+  background-color: #0aafc9;
+  filter: invert(1) brightness(1.3);
 }
 
 .logo.grayscale.google {
@@ -88,6 +88,27 @@ const logo = computed(() => logos[props.engine])
 .logo.background.cerebras {
   background-color: white;
   filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo.openai {
+    filter: invert(1) brightness(0.7);
+  }
+  .logo.ollama {
+    filter: invert(1) brightness(0.7);
+  }
+  .logo.colored.ollama {
+    filter: invert(0);
+  }
+  .logo.anthropic {
+    filter: invert(1) brightness(0.7);
+  }
+  .logo.colored.anthropic {
+    filter: invert(0)
+  }
+  .logo.groq {
+    filter: invert(1) brightness(0.6);
+  }
 }
 
 </style>
