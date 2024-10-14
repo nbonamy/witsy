@@ -27,6 +27,12 @@
   filter: invert(67%) sepia(23%) saturate(433%) hue-rotate(115deg) brightness(90%) contrast(86%);
 }
 
+@media (prefers-color-scheme: dark) {
+  .messages.openai .message .role.user .avatar {
+    filter: invert(1) brightness(80%);
+  }
+}  
+
 .messages.openai .message .body {
   flex: 1;
 }

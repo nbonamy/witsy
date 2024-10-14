@@ -1,5 +1,20 @@
 <template>
   <div class="content">
+    <div class="group appearance">
+      <label>Appearance</label>
+      <div @click="setAppearanceTheme('light')" :class="{ selected: appearance == 'light' }">
+        <img src="/assets/appearance-light.png" />
+        Light
+      </div>
+      <div @click="setAppearanceTheme('dark')" :class="{ selected: appearance == 'dark' }">
+        <img src="/assets/appearance-dark.png" />
+        Dark
+      </div>
+      <div @click="setAppearanceTheme('system')" :class="{ selected: appearance == 'system' }">
+        <img src="/assets/appearance-system.png" />
+        System
+      </div>
+    </div>
     <div class="group theme">
       <label>Chat theme</label>
       <select v-model="theme" @change="save">
@@ -30,15 +45,24 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 
+const appearance = ref(null)
 const theme = ref(null)
 const fontSize = ref(null)
 
 const load = () => {
+  appearance.value = store.config.appearance.theme || 'system'
   theme.value = store.config.appearance.chat.theme || 'openai'
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
 
+const setAppearanceTheme = (value) => {
+  appearance.value = value
+  window.api.setAppearanceTheme(value)
+  save()
+}
+
 const save = () => {
+  store.config.appearance.theme = appearance.value
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontSize = fontSize.value
   store.saveSettings()
@@ -55,6 +79,28 @@ defineExpose({ load })
 </style>
 
 <style scoped>
+
+.appearance {
+  padding-bottom: 8px;
+  margin-top: 0px;
+}
+
+.appearance img {
+  height: auto;
+  width: 64px;
+  object-fit: contain;
+  padding: 1px;
+  border: 3px solid transparent;
+}
+
+.appearance div {
+  text-align: center;
+}
+
+.appearance div.selected img {
+  border: 3px solid var(--highlight-color);
+  border-radius: 8px;
+}
 
 .fontsize {
   display: inline-block;

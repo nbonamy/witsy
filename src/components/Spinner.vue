@@ -102,12 +102,12 @@
 }
 
 @-webkit-keyframes spinner-fade {
-  0% { background-color: #000000; }
+  0% { background-color: var(--text-color); }
   100% { background-color: transparent; }
 }
 
 @keyframes spinner-fade {
-  0% { background-color: #000000; }
+  0% { background-color: var(--text-color); }
   100% { background-color: transparent; }
 }
 

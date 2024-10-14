@@ -100,8 +100,8 @@ const onAction = (action) => {
 .context-menu {
   -webkit-app-region: no-drag;
   position: absolute;
-  background: rgba(229, 229, 229, 96%);
-  border: 1px solid #B9B9B9;
+  background: var(--context-menu-bg-color);
+  border: 1px solid var(--context-menu-border-color);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   max-height: 400px;
   max-width: 270px;
@@ -127,11 +127,17 @@ const onAction = (action) => {
   white-space: nowrap;
   overflow-x: clip;
   text-overflow: ellipsis;
+  color: var(--context-menu-text-color);
 }
 
 .context-menu .item.separator {
   cursor: default;
   padding: 2px 0px 2px 8px;
+}
+
+.context-menu .item.separator hr {
+  border-top-width: 0.5px;
+  border-bottom-width: 0.5px;
 }
 
 .context-menu .item .icon {
@@ -147,9 +153,9 @@ const onAction = (action) => {
 }
 
 .context-menu .item:not(.disabled):hover {
-  background-color: #57A1FF;
+  background-color: var(--context-menu-selected-bg-color);
+  color: var(--highlighted-color);
   border-radius: 4px;
-  color: white;
 }
 
 form {
@@ -157,13 +163,14 @@ form {
 }
 
 form .group input {
-  background-color: #DDDBDA;
+  background-color: var(--context-menu-filter-bg-color);
+  color: var(--context-menu-filter-text-color);
   border-radius: 6px;
 
 }
 
 form .group input:focus {
-  outline-width: 4px; 
+  outline-width: 1px; 
 }
 
 </style>

@@ -22,9 +22,8 @@
 
 <script setup>
 
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../services/llm'
 import Dialog from '../composables/dialog'
 import Ollama from '../services/ollama'
 
@@ -107,7 +106,7 @@ const onStop = async () => {
 
 .pull .subgroup select {
   margin-top: 4px;
-  color: #757575;
+  color: var(--control-placeholder-text-color);
 }
 
 .progress {
@@ -115,7 +114,7 @@ const onStop = async () => {
   text-align: center;
   font-variant-numeric: tabular-nums;
   font-size: 9.5pt;
-  color: #666;
+  color: var(--icon-color);
 }
 
 </style>

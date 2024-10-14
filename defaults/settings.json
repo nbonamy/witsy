@@ -38,6 +38,7 @@
     }
   },
   "appearance": {
+    "theme": "system",
     "chat": {
       "theme": "openai",
       "fontSize": 3

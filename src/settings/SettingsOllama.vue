@@ -91,20 +91,3 @@ defineExpose({ load })
 @import '../../css/form.css';
 @import '../../css/panel.css';
 </style>
-
-<style scoped>
-
-.pull .subgroup select {
-  margin-top: 4px;
-  color: #757575;
-}
-
-.progress {
-  padding: 10px 4px;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  font-size: 9.5pt;
-  color: #666;
-}
-
-</style>

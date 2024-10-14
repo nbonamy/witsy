@@ -3,7 +3,11 @@
   <div class="content" :class="{ standalone: standalone }">
     <div class="toolbar">
       <div class="title" v-if="chat?.messages.length">{{ chat?.title }}</div>
-      <div class="menu" @click="onMenu" v-if="chat"></div>
+      <div class="menu" @click="onMenu" v-if="chat">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
     <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.messages.length > 1"/>
     <EmptyChat v-else />
@@ -155,10 +159,11 @@ const onExportPdf = async () => {
   -webkit-app-region: drag;
   display: grid;
   grid-template-columns: auto 16px;
+  background-color: var(--message-list-bg-color);
 }
 
 .toolbar:has(.title) {
-  background-color: #F4F4F2;
+  background-color: var(--chatarea-toolbar-bg-color);
 }
 
 .toolbar .title {
@@ -167,6 +172,7 @@ const onExportPdf = async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--chatarea-toolbar-text-color);
 }
 
 .toolbar .menu {
@@ -176,9 +182,20 @@ const onExportPdf = async () => {
   text-align: right;
   width: 16px;
   height: 16px;
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iMzJweCIgaWQ9IkxheWVyXzEiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDMyIDMyOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHdpZHRoPSIzMnB4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cGF0aCBkPSJNNCwxMGgyNGMxLjEwNCwwLDItMC44OTYsMi0ycy0wLjg5Ni0yLTItMkg0QzIuODk2LDYsMiw2Ljg5NiwyLDhTMi44OTYsMTAsNCwxMHogTTI4LDE0SDRjLTEuMTA0LDAtMiwwLjg5Ni0yLDIgIHMwLjg5NiwyLDIsMmgyNGMxLjEwNCwwLDItMC44OTYsMi0yUzI5LjEwNCwxNCwyOCwxNHogTTI4LDIySDRjLTEuMTA0LDAtMiwwLjg5Ni0yLDJzMC44OTYsMiwyLDJoMjRjMS4xMDQsMCwyLTAuODk2LDItMiAgUzI5LjEwNCwyMiwyOCwyMnoiLz48L3N2Zz4=');
-  background-position: 0px -1px;
-  background-size: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.toolbar .menu div {
+  width: 16px;
+  height: 1.5px;
+  background-color: var(--chatarea-toolbar-icon-color);
+}
+
+.prompt {
+  background-color: var(--message-list-bg-color);
 }
 
 .windows .toolbar {

@@ -136,9 +136,9 @@ const handleActionClick = async (action) => {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  width: 100%;
-  padding-right: 20px;
-  scrollbar-color: #888 var(--sidebar-bg-color);
+  width: calc(100% - 3px);
+  padding-right: 0px;
+  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 }
 
 .chats.scrolling {
@@ -151,7 +151,7 @@ const handleActionClick = async (action) => {
   font-size: 9pt;
   font-weight: bold;
   text-transform: uppercase;
-  color: #888;
+  color: var(--sidebar-section-title-color);
 }
 
 .chats > div:first-child > .day {
@@ -160,6 +160,7 @@ const handleActionClick = async (action) => {
 
 .chat {
   margin: 2px 8px;
+  margin-right: 16px;
   padding: 12px;
   display: flex;
   flex-direction: row;

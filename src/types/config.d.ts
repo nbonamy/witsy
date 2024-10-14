@@ -38,6 +38,7 @@ interface InstructionsConfig {
 }
 
 interface AppearanceConfig {
+  theme: 'light' | 'dark' | 'system'
   chat: ChatAppearance
 }
 

@@ -120,17 +120,19 @@ dialog.settings {
 dialog.settings .content {
   width: 440px;
   margin: 0 auto;
-  padding: 24px 0px;
+  padding: 16px 0px;
   min-height: 160px;
 }
 
 dialog.settings .tabs .tab>label {
   padding: 8px;
   margin: 0px 2px;
+  color: var(--tabs-header-normal-text-color);
 }
 
 dialog.settings .tabs .tab>[name="tabs"]:checked+label {
-  background-color: #e5e6e6;
+  background-color: var(--tabs-header-selected-bg-color);
+  color: var(--tabs-header-selected-text-color);
   border-radius: 8px;
 }
 
@@ -139,12 +141,18 @@ dialog.settings .tabs label .icon {
   margin: 0 auto;
   width: 15pt;
   height: 15pt;
-  color: var(--tabs-header-normal-color);
+  color: var(--tabs-header-normal-text-color);
   filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
 }
 
+@media (prefers-color-scheme: dark) {
+  dialog.settings .tabs label .icon {
+    filter: invert(81%) sepia(0%) saturate(0%) hue-rotate(323deg) brightness(167%) contrast(170%);
+  }
+}
+
 dialog.settings .tabs .tab>[name="tabs"]:checked+label .icon {
-  color: var(--tabs-header-selected-color);
+  color: var(--tabs-header-selected-text-color);
   /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
   filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);
 }

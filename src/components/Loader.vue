@@ -13,7 +13,7 @@
   margin: 16px 0px;
   width: 8px;
   height: 8px;
-  background-color: #444;
+  background-color: var(--text-color);
   border-radius: 50%;
   animation: glow 1s infinite;
 }

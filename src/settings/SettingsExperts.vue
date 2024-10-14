@@ -240,12 +240,14 @@ defineExpose({ load })
 <style scoped>
 
 .content {
+  padding-top: 24px !important;
   width: 540px !important;
 }
 
 .experts {
   height: 200px;
   overflow-y: auto;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
 }
 
 table {
@@ -255,7 +257,7 @@ table {
 
 th, td {
   border: 0.5px solid rgba(192, 192, 192, 0.5);
-  background-color: white;
+  background-color: var(--background-color);
   white-space: nowrap;
   font-size: 9.5pt;
   padding: 2px 4px;
@@ -263,7 +265,7 @@ th, td {
 
 tr.selected td {
   background-color: var(--highlight-color);
-  color: white;
+  color: var(--highlighted-color);
 }
 
 th {

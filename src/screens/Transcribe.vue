@@ -4,7 +4,7 @@
       <BIconRecordCircle v-if="state == 'recording'" color="red" @click="onStop()" />
       <Loader class="loader" v-else-if="state == 'processing'" />
       <BIconRecordCircle v-else @click="onRecord()" />
-      <Waveform :width="310" :height="32" :audioRecorder="audioRecorder" :is-recording="state == 'recording'"/>
+      <Waveform :width="310" :height="32" :background-color="backgroundColor" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
       <textarea v-model="transcription" placeholder="Click the record button when you are ready!" />
@@ -38,12 +38,24 @@ let userStoppedDictation = false
 
 const state = ref('idle')
 const transcription = ref('')
-const waveForm = ref(null)
+const backgroundColor = ref(null)
+const foregroundColorActive = ref(null)
+const foregroundColorInactive = ref(null)
 
 onMounted(() => {
+  // events
   document.addEventListener('keydown', onKeyDown)
+
+  // init
   transcriber.initialize()
   initializeAudio()
+
+  // get window color
+  backgroundColor.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('background-color')
+  foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
+  foregroundColorActive.value = window.getComputedStyle(document.querySelector('.controls')).getPropertyValue('color')
+
+  console.log(backgroundColor.value, foregroundColorActive.value, foregroundColorInactive.value)
 })
 
 const initializeAudio = async () => {
@@ -185,7 +197,8 @@ const onCancel = () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #e7e6e5;
+  background-color: var(--window-bg-color);
+  color: var(--control-placeholder-text-color);
   font-size: 18pt;
   padding: 16px 24px;
   -webkit-app-region: drag;
@@ -195,6 +208,7 @@ const onCancel = () => {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    color: var(--text-color);
   }
 
   .result {
@@ -203,6 +217,8 @@ const onCancel = () => {
     margin-top: 16px;
     textarea {
       flex: 1;
+      background-color: var(--control-textarea-bg-color);
+      color: var(--text-color);
       border-radius: 6px;
       font-size: 11.5pt;
       padding: 8px;

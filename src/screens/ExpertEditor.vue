@@ -141,8 +141,9 @@ dialog.editor form .group input.shortcut {
 
 .list {
 
-  background-color: white;
-  border: 1px solid #D5D4D3;
+  background-color: var(--control-list-bg-color);
+  border: 1px solid var(--control-list-border-color);
+  scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
   border-bottom: 0px;
   flex-grow: 1;
   display: flex;
@@ -168,7 +169,7 @@ dialog.editor form .group input.shortcut {
 
     &.selected {
       background-color: var(--highlight-color);
-      color: white;
+      color: var(--highlighted-color);
     }
   }
 }
@@ -178,12 +179,12 @@ dialog.editor form .group input.shortcut {
   flex-direction: row;
   justify-content: start;
   align-self: stretch;
-  background: linear-gradient(to bottom, #fafafa, #f5f5f5);
-  border: 0.8px solid #b4b4b4;
+  background: var(--actions-bar-bg-color);
+  border: 1px solid var(--actions-bar-border-color);
 
   button {
     border: 0px;
-    border-right: 0.8px solid #b4b4b4;
+    border-right: 1px solid var(--actions-bar-button-border-color);
     border-radius: 0px;
     background-color: transparent;
     margin: 0px;
@@ -191,7 +192,7 @@ dialog.editor form .group input.shortcut {
     padding-bottom: 2px;
 
     &:active {
-      background: linear-gradient(to bottom, #c0c0c0, #b5b5b5);
+      background: var(--actions-bar-button-active-bg-color);
     }
   }
 }

@@ -618,7 +618,7 @@ const autoGrow = (element) => {
 
 .prompt .icon {
   cursor: pointer;
-  color: #5b5a59;
+  color: var(--prompt-icon-color);
 }
 
 .prompt .icon.active {
@@ -640,8 +640,8 @@ const autoGrow = (element) => {
 }
 
 .input {
-  background-color: white;
-  border: 1px solid #bbbbbb;
+  background-color: var(--prompt-input-bg-color);
+  border: 1px solid var(--prompt-input-border-color);
   border-radius: 16px;
   margin: 0px 8px;
   overflow: hidden;
@@ -682,7 +682,7 @@ const autoGrow = (element) => {
     animation-delay: 250ms;
   }
   .loader {
-    background-color: #888;
+    background-color: var(--control-placeholder-text-color);
   }
 }
 
@@ -695,6 +695,8 @@ const autoGrow = (element) => {
 }
 
 .textarea-wrapper textarea {
+  background-color: var(--prompt-input-bg-color);
+  color: var(--prompt-input-text-color);
   border: none;
   resize: none;
   box-sizing: border-box;
@@ -710,7 +712,7 @@ const autoGrow = (element) => {
 }
 
 .textarea-wrapper textarea:disabled {
-  color: #888;
+  color: var(--control-placeholder-text-color);
 }
 
 .input .attachment img {
@@ -730,14 +732,14 @@ const autoGrow = (element) => {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #e1e1e1;
-  border-color: rgba(255,255,255,var(--tw-border-opacity));
+  background-color: var(--scrollbar-thumb-color);
+  border-color: var(--prompt-input-bg-color);
   border-radius: 9999px;
   border-width: 1px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(227,227,227,var(--tw-bg-opacity));
+  background-color: var(--scrollbar-thumb-color);
 }
 
 ::-webkit-scrollbar-track {

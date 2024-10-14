@@ -1,4 +1,8 @@
 
+::placeholder {
+  color: var(--control-placeholder-text-color);
+}
+
 form {
   --form-font-size: 9.5pt;
 }
@@ -50,13 +54,21 @@ form .group:has(.subgroup) label {
 form .group input, form .group select, form .group textarea {
   flex: 1;
   padding: 4px;
-  border: 1px solid #dad9d9;
+  border-radius: var(--control-border-radius);
+  border: 1px solid var(--control-border-color);
+  background-color: var(--control-bg-color);
+  color: var(--control-text-color);
   font-size: var(--form-font-size);
   width: 100%;
 }
 
 form .group input, form .group textarea {
   width: calc(100% - 10px);
+}
+
+form .group textarea {
+  background-color: var(--control-textarea-bg-color);
+  scrollbar-color: var(--scrollbar-thumb-color) var(--control-textarea-bg-color);
 }
 
 form .group input:focus, form .group select:focus, form .group textarea:focus {
@@ -73,7 +85,7 @@ form .group input[type=checkbox] {
   appearance: none;
   padding: 0;
   border-radius: 4px;
-  background: white;
+  background: var(--control-checkbox-bg-color);
 }
 
 .macos form .group input[type=checkbox]:checked {

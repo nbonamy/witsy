@@ -1,7 +1,7 @@
 
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
-import { BrowserWindow, BrowserWindowConstructorOptions, Menu, } from 'electron';
+import { BrowserWindow, BrowserWindowConstructorOptions, Menu } from 'electron';
 import { mainWindow } from './main';
 import { wait } from '../utils';
 import Store from 'electron-store';
@@ -25,7 +25,7 @@ export const titleBarOptions: BrowserWindowConstructorOptions = {
 
 // create window
 export const createWindow = (opts: CreateWindowOpts = {}) => {
-  
+
   // Create the browser window
   const window = new BrowserWindow({
     ...opts,

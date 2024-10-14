@@ -1,6 +1,11 @@
 
-dialog.editor header, dialog.editor main, dialog.editor footer {
-  background-color: white;
+dialog.editor {
+  background-color: var(--editor-body-bg-color);
+  border: 1px solid var(--editor-border-color);
+}
+
+dialog.editor header {
+  background-color: var(--editor-header-bg-color);
   border: none;
 }
 
@@ -9,11 +14,14 @@ dialog.editor header {
 }
 
 dialog.editor main {
+  background-color: var(--editor-body-bg-color);
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
 dialog.editor footer {
+  background-color: var(--editor-body-bg-color);
+  border-top: none;
   justify-content: flex-start;
   flex-direction: row-reverse;
 }

@@ -13,7 +13,7 @@
       
       <div class="action" @click="emitEvent('action', 'copy')" v-tooltip="'Copy to clipboard'">
         <BIconClipboard v-if="copyState == 'idle'"/>
-        <BIconClipboardCheck style="color: #2991FF" v-else/>
+        <BIconClipboardCheck style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
       </div>
       
       <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="'Spellcheck'">
@@ -116,19 +116,20 @@ const onMagicAction = (event, action) => {
 <style scoped>
 
 .actionbar-wrapper {
+  
   position: absolute;
   right: 20px;
   bottom: 64px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--scratchpad-actionbar-border-color);
   border-radius: 20px;
   padding: 16px 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 8px var(--scratchpad-actionbar-shadow-color);
   transition: height 0.15s linear;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--scratchpad-actionbar-bg-color);
   z-index: 10;
 
   &:hover {
-    border-color: #aaa;
+    border-color: var(--scratchpad-actionbbar-active-border-color);
   }
 
   .actionbar {
@@ -138,20 +139,20 @@ const onMagicAction = (event, action) => {
   }
   
   .action {
-    color: #aaa;
+    color: var(--scratchpad-actionbar-normal-icon-color);
     font-size: 14pt;
     cursor: pointer;
 
     &.disabled {
-      color: #ddd;
+      color: var(--scratchpad-actionbar-disabled-icon-color);
     }
 
     &:not(.disabled):hover {
-      color: #888;
+      color: var(--scratchpad-actionbar-hover-icon-color);
     }
 
     &.active {
-      color: #2991ff;
+      color: var(--scratchpad-actionbar-active-icon-color);
     }
 
     &.active:not(.static) {
@@ -161,8 +162,8 @@ const onMagicAction = (event, action) => {
 }
 
 @keyframes active {
-  0% { color: #2991ff; transform: scale(0.9);  }
-  100% { color: #0469dc; transform: scale(1.1); }
+  0% { color: var(--scratchpad-actionbar-active-icon-color); transform: scale(0.9);  }
+  100% { color: var(--scratchpad-actionbar-active-icon-color2); transform: scale(1.1); }
 }
 
 </style>

@@ -14,6 +14,10 @@ import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
 
+import useEventBus from './composables/event_bus'
+const { emitEvent } = useEventBus()
+
+
 // add platform name
 onMounted(() => {
 
@@ -27,6 +31,13 @@ onMounted(() => {
   window.platform = platform
   document.platform = platform
   document.querySelector('body').classList.add(platform)
+
+  // watch for theme change
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      emitEvent('appearance-theme-change', event.matches ? 'dark' : 'light')
+    })
+  }
 
 })
 
