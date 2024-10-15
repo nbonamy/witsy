@@ -133,8 +133,8 @@ const onChangeModel = () => {
   if (sttEngine.requiresDownload()) {
     Dialog.show({
       target: document.querySelector('.settings .voice'),
-      title: 'This engine needs to be configured first! Do you want to open the Settings?',
-      confirmButtonText: 'Configure',
+      title: 'This model needs to be downloaded on your computer. Do you want to proceed?',
+      confirmButtonText: 'Continue',
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
