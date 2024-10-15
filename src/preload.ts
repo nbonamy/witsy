@@ -14,6 +14,10 @@ contextBridge.exposeInMainWorld(
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
     showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('dialog-show', opts) },
+    update: {
+      isAvailable: (): boolean => { return ipcRenderer.sendSync('update-is-available') },
+      apply: (): void => { return ipcRenderer.send('update-apply') },
+    },
     store: {
       get(key: string, fallback: any): any { return ipcRenderer.sendSync('store-get-value', { key, fallback }) },
       set(key: string, value: any): void { return ipcRenderer.send('store-set-value', { key, value }) },

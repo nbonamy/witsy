@@ -5,14 +5,16 @@ export default class {
 
   manualUpdate = false
   downloading = false
+  updateAvailable = false
 
   constructor(public hooks: {
-    preUpdate?: () => void;
+    onUpdateAvailable: () => void
+    preInstall: () => void
   }) {
-    this.install();
+    this.initialize();
   }
 
-  install = () => {
+  private initialize = () => {
 
     // basic setup
     const server = 'https://update.electronjs.org'
@@ -63,31 +65,15 @@ export default class {
 
     // downloaded
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-
-      // done
       console.log('Update downloaded', event, releaseNotes, releaseName)
       this.downloading = false
-      
-      // dialog
-      const dialogOpts: Electron.MessageBoxOptions = {
-        type: 'info',
-        buttons: ['Restart', 'Later'],
-        title: 'Application Update',
-        message: process.platform === 'win32' ? releaseNotes : releaseName,
-        detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-      }
-
-      // show dialog
-      dialog.showMessageBox(dialogOpts).then((returnValue) => {
-        if (returnValue.response === 0) {
-          autoUpdater.quitAndInstall()
-        }
-      })
+      this.updateAvailable = true
+      this.hooks.onUpdateAvailable?.()
     })
-
+      
     // before quit for update
     autoUpdater.on('before-quit-for-update', () => {
-      this.hooks.preUpdate?.()
+      this.hooks.preInstall?.()
     })
 
     // check now and schedule
@@ -97,11 +83,16 @@ export default class {
       this.manualUpdate = false;
       autoUpdater.checkForUpdates()
     }, 60*60*1000)
+
+    // debug
+    // setTimeout(() => {
+    //   this.updateAvailable = true;
+    //   this.hooks.onUpdateAvailable?.();
+    // }, 5000)
   
   }
 
   check = () => {
-    console.log('check')
     if (this.downloading) {
       dialog.showMessageBox({
         type: 'info',
@@ -113,4 +104,12 @@ export default class {
       autoUpdater.checkForUpdates()
     }
   }
+
+  install = () => {
+    if (this.updateAvailable) {
+      console.log('Applying update')
+      autoUpdater.quitAndInstall()
+    }
+  }
+
 }
