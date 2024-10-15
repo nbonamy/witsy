@@ -35,11 +35,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     height: bounds?.height ?? 800,
     ...titleBarOptions,
     ...opts,
-    show: false,
-  });
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
   });
 
   // show a tip
@@ -135,6 +130,9 @@ export const openSettingsWindow = () => {
     // send signal to current window
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('show-settings');
+      mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
       return;
     }
   } catch (error) {
