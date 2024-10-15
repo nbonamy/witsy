@@ -2,13 +2,12 @@
 import { Chat, Command, Expert } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
-import { app, Menu, Tray, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 import { wait } from './main/utils';
-import path from 'node:path';
 
 import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
@@ -19,6 +18,7 @@ import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
 import OnlineStorage from './main/online';
+import TrayIconManager from './main/tray';
 
 import * as config from './main/config';
 import * as history from './main/history';
@@ -57,7 +57,11 @@ if (require('electron-squirrel-startup')) {
 
 // auto-update
 const autoUpdater = new AutoUpdater({
-  preUpdate: () => quitAnyway = true
+  preInstall: () => quitAnyway = true,
+  onUpdateAvailable: () => {
+    window.notifyBrowserWindows('update-available');
+    trayIconManager.install();
+  },
 });
 
 // open store
@@ -87,45 +91,15 @@ const registerShortcuts = () => {
   });
 }
 
-//  tray icon 
-let tray: Tray = null;
-const buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
-
-  // load the config
-  const configShortcuts = config.loadSettings(app).shortcuts;
-
-  // visible does not seem to work for role 'about' and type 'separator' so we need to add them manually
-  let menuItems: Array<Electron.MenuItemConstructorOptions> = []
-  if (process.platform !== 'darwin') {
-    menuItems = [
-      ...menuItems,
-      { role: 'about' },
-      { type: 'separator' },
-    ]
-  }
-
-  // add common stuff
-  return [
-    ...menuItems,
-    { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-    { label: 'Scratch Pad', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: window.openScratchPad },
-    { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
-    { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
-    { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
-    { label: 'Start Dictation', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },
-    { type: 'separator'},
-    { label: 'Settings…', click: window.openSettingsWindow },
-    { type: 'separator'},
-    { label: 'Quit', /*accelerator: 'Command+Q', */click: quitApp }
-  ];
-};
-
 // quit at all costs
 let quitAnyway = false;
 const quitApp = () => {
   quitAnyway = true;
   app.exit();
 }
+
+//  tray icon
+const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -174,21 +148,7 @@ app.whenReady().then(() => {
   });
 
   // tray icon
-  const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
-  const trayIconPath = path.join(assetsFolder, 'bulbTemplate@2x.png');
-  //console.log('trayIconPath', trayIconPath);
-  const trayIcon = nativeImage.createFromPath(trayIconPath);
-  trayIcon.setTemplateImage(true);
-
-  // create tray
-  tray = new Tray(trayIcon);
-  tray.on('click', () => {
-    const contextMenu = Menu.buildFromTemplate(buildTrayMenu());
-    tray.popUpContextMenu(contextMenu);
-  });
-  tray.on('right-click', () => {
-    window.openMainWindow();
-  })
+  trayIconManager.install();
 
   // create the document repository
   docRepo = new DocumentRepository(app);
@@ -236,6 +196,14 @@ app.on('before-quit', (ev) => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+ipcMain.on('update-is-available', (event) => {
+  event.returnValue = autoUpdater.updateAvailable;
+});
+
+ipcMain.on('update-apply', (event) => {
+  autoUpdater.install();
+});
 
 ipcMain.on('set-appearance-theme', (event, theme) => {
   nativeTheme.themeSource = theme;

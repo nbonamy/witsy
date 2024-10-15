@@ -69,6 +69,8 @@ const config: ForgeConfig = {
     extraResource: [
       'assets/bulbTemplate.png',
       'assets/bulbTemplate@2x.png',
+      'assets/bulbUpdateTemplate.png',
+      'assets/bulbUpdateTemplate@2x.png',
       //...(fs.existsSync('./gdrive.json') ? ['gdrive.json'] : []),
     ],
     ...osxPackagerConfig,

@@ -10,10 +10,10 @@
 <script setup>
 
 // components
-import Dialog from '../composables/dialog'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { download, saveFileContents } from '../services/download'
+import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
@@ -112,6 +112,14 @@ onMounted(() => {
   // show tips
   setTimeout(() => {
     tipsManager.showNextTip()
+  }, 500)
+
+  // check for updates
+  window.api.on('update-available', onUpdateAvailable)
+  setTimeout(() => {
+    if (window.api.update.isAvailable()) {
+      onUpdateAvailable()
+    }
   }, 500)
 
 })
@@ -260,6 +268,21 @@ const onStopAssistant = async () => {
 
 const onConfigUpdated = async () => {
   assistant.value.setConfig(store.config)
+}
+
+const onUpdateAvailable = () => {
+
+  Dialog.show({
+    title: 'Application Update Available',
+    text: 'A new version has been downloaded. Restart the application to apply the update.',
+    showCancelButton: true,
+    confirmButtonText: 'Restart',
+    cancelButtonText: 'Later',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.api.update.apply()
+    }
+  })
 }
 
 </script>
