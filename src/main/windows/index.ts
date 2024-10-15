@@ -26,9 +26,10 @@ export const titleBarOptions: BrowserWindowConstructorOptions = {
 // create window
 export const createWindow = (opts: CreateWindowOpts = {}) => {
 
-  // Create the browser window
+  // create the browser window
   const window = new BrowserWindow({
     ...opts,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -38,6 +39,11 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
       devTools: process.env.DEBUG ? true : false,
       sandbox: true,
     },
+  });
+
+  // show when ready
+  window.once('ready-to-show', () => {
+    window.show();
   });
 
   // web console to here
