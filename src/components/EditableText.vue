@@ -1,6 +1,6 @@
 
 <template>
-  <div class="container">
+  <div :class="[ 'container', theme ]">
     <div class="placeholder" ref="pholder" v-if="showPlaceholder" v-html="placeholder" @click="onClickPlaceholder" />
     <div class="content" contenteditable="true" ref="text" @blur="onBlur" @focus="onFocus" @paste.prevent="onPaste" autofocus="true">
     </div>
@@ -36,19 +36,25 @@
 
 <script setup>
 
-// components
 import { ref, onMounted } from 'vue'
+import useAppearanceTheme from '../composables/appearance_theme'
+
+// events
+import useEventBus from '../composables/event_bus'
+const { emitEvent, onEvent } = useEventBus()
+
+// init stuff
+const appearanceTheme = useAppearanceTheme()
 
 const props = defineProps({
   placeholder: String,
 })
 
+const theme = ref('light')
 const text = ref(null)
 const pholder = ref(null)
 const showPlaceholder = ref(true)
 let textSelection = null
-
-const hightlightColor = 'rgb(180, 215, 255)'
 
 onMounted(() => {
 
@@ -67,7 +73,17 @@ onMounted(() => {
     window.addEventListener('mouseup', onMouseUp)
   })
 
+  // dark mode stuff  
+  theme.value = appearanceTheme.getTheme()
+  onEvent('appearance-theme-change', (th) => {
+    theme.value = th
+  })
+
 })
+
+const hightlightColor = () => {
+  return theme.value == 'dark' ? 'rgb(91, 126, 165)' : 'rgb(180, 215, 255)'
+}
 
 const getContent = () => {
 
@@ -219,7 +235,7 @@ const setContent = ({ content, start, end }) => {
       const div = document.createElement('div')
       const span = document.createElement('span')
       if (isSelected) {
-        span.style.backgroundColor = hightlightColor
+        span.style.backgroundColor = hightlightColor()
       }
       span.appendChild(document.createTextNode('\u00A0'))
       div.appendChild(span)
@@ -271,7 +287,7 @@ const setContent = ({ content, start, end }) => {
       const isSelected = (textSelection.startIndex !== -1 && (isEnd || textSelection.endIndex === -1))
 
       const elem = document.createElement('span')
-      if (isSelected) elem.style.backgroundColor = hightlightColor
+      if (isSelected) elem.style.backgroundColor = hightlightColor()
       elem.innerHTML = line
       nodes.middle = elem
 
@@ -435,7 +451,7 @@ const onBlur = () => {
     }
 
     // now we have everything
-    let updated = `<span>${left}</span><span style="background-color: ${hightlightColor};">${middle}</span><span>${right}</span>`
+    let updated = `<span>${left}</span><span style="background-color: ${hightlightColor()};">${middle}</span><span>${right}</span>`
     updated = updated.replaceAll('<span></span>', '')
 
     // if we have a text node
