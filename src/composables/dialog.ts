@@ -64,20 +64,15 @@ const Dialog = {
 
   system: async (opts: any): Promise<DialogResult> => {
 
-    const buttons  = [ ]
-    let indices = { 'confirm': -1, 'deny': -1, 'cancel': -1 }
+    const buttons  = [ opts.confirmButtonText ?? 'OK' ]
+    let indices = { 'confirm': 0, 'deny': -1, 'cancel': -1 }
     if (opts.showDenyButton) {
-      buttons.push(opts.confirmButtonText ?? 'OK')
       buttons.push(opts.denyButtonText)
+      indices.deny = buttons.length - 1
+    }
+    if (opts.showCancelButton) {
       buttons.push(opts.cancelButtonText ?? 'Cancel')
-      indices = { 'confirm': 0, 'deny': 1, 'cancel': 2 }
-    } else if (opts.showCancelButton) {
-      buttons.push(opts.cancelButtonText ?? 'Cancel')
-      buttons.push(opts.confirmButtonText ?? 'OK')
-      indices = { 'confirm': 1, 'deny': -1, 'cancel': 0 }
-    } else {
-      buttons.push(opts.confirmButtonText ?? 'OK')
-      indices = { 'confirm': 0, 'deny': -1, 'cancel': -2 }
+      indices.cancel = buttons.length - 1
     }
 
     const sysopts = {
@@ -86,6 +81,7 @@ const Dialog = {
       detail: opts.text,
       buttons: buttons,
       defaultId: indices.confirm,
+      cancelId: indices.cancel,
     }
 
     const value: Electron.MessageBoxReturnValue = await window.api.showDialog(sysopts)
