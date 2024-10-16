@@ -16,6 +16,10 @@
   overflow-wrap: anywhere;
 }
 
+.message .body .text * {
+white-space: pre-wrap !important;  
+}
+
 .message .text {
   user-select: text;
 }
@@ -54,10 +58,6 @@
   padding: 12px;
   padding-bottom: 16px;
   overflow: auto;
-}
-
-.message .body .text pre.hljs code[class=language-plaintext] {
-  white-space: pre-wrap;
 }
 
 .message .actions {
