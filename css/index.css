@@ -151,8 +151,8 @@
     --tabs-header-selected-bg-color: rgb(68, 69, 69);
     --tabs-header-selected-text-color: rgb(17, 136, 255);
 
-    --context-menu-bg-color: rgb(41, 41, 41, 0.96);
-    --context-menu-border-color: rgb(82, 81, 81);
+    --context-menu-bg-color: rgb(36, 46, 60, 0.96);
+    --context-menu-border-color: rgb(82, 92, 102);
     --context-menu-selected-bg-color: var(--highlight-color);
     --context-menu-filter-bg-color: var(--sidebar-search-bg-color);
     --context-menu-filter-text-color: var(--sidebar-text-color);
