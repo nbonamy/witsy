@@ -197,16 +197,22 @@ export default class DocumentRepository {
     }
 
     // connect and delete
-    const base = await this.connect(baseId)
-    base.destroy()
-
-    // now remove from the list
-    this.contents.splice(index, 1)
+    try {
+      const base = await this.connect(baseId)
+      base.destroy()
+    } catch (error: unknown) {
+      if (!(error instanceof Error && error.message.includes('Index does not exist'))) {
+        throw error;
+      }
+    }
 
     // update activeDb
     if (this.activeDb?.uuid == baseId) {
       this.activeDb = null
     }
+
+    // now remove from the list
+    this.contents.splice(index, 1)
 
     // done
     this.save()
