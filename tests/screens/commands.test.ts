@@ -7,6 +7,7 @@ import defaults from '../../defaults/settings.json'
 enableAutoUnmount(afterAll)
 
 window.api = {
+  on: vi.fn(),
   config: {
     load: vi.fn(() => defaults),
   },

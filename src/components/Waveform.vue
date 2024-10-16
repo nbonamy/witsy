@@ -10,7 +10,6 @@ import { ref, onMounted } from 'vue'
 const props = defineProps({
   width: Number,
   height: Number,
-  backgroundColor: String,
   foregroundColorInactive: String,
   foregroundColorActive: String,
   isRecording: Boolean,
@@ -83,8 +82,7 @@ const draw = () => {
 
   // now init the drawing
   const canvasCtx = canvas.getContext('2d')
-  canvasCtx.fillStyle = props.backgroundColor
-  canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+  canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
   canvasCtx.fillStyle = props.isRecording ? props.foregroundColorActive : props.foregroundColorInactive
 
   // some parameters

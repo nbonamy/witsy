@@ -7,6 +7,7 @@ import { isEngineReady, initModels, availableEngines } from './llm'
 import Chat from '../models/chat'
 
 export const store: Store = reactive({
+
   config: null,
   commands: [], 
   experts: [],
@@ -15,64 +16,93 @@ export const store: Store = reactive({
   pendingAttachment: null,
   pendingDocRepo: null,
   listeners: [],
-})
 
-store.addListener = (listener: StoreListener) : void => {
-  store.listeners.push(listener)
-}
+  addListener: (listener: StoreListener) : void => {
+    store.listeners.push(listener)
+  },
 
-store.notifyListeners = (domain: string) : void => {
-  store.listeners.forEach((listener) => {
-    listener.onStoreUpdated(domain)
-  })
-}
+  notifyListeners: (domain: string) : void => {
+    store.listeners.forEach((listener) => {
+      console.log('Notifying listener', listener)
+      listener.onStoreUpdated(domain)
+    })
+  },
 
-store.loadSettings = async () => {
-  loadSettings()
-}
+  loadSettings: async () => {
+    loadSettings()
+  },
 
-store.loadCommands = async () => {
-  loadSettings()
-  loadCommands()
-}
+  loadCommands: async () => {
+    loadCommands()
+  },
 
-store.loadExperts = async () => {
-  loadExperts()
-}
+  loadExperts: async () => {
+    loadExperts()
+  },
 
-store.load = async () => {
+  load: async () => {
 
-  // load data
-  store.loadCommands()
-  loadHistory()
-  loadExperts()
+    // load data
+    store.loadSettings()
+    store.loadCommands()
+    loadHistory()
+    loadExperts()
 
-  // subscribe to file changes
-  window.api.on('file-modified', (signal) => {
-    if (signal === 'settings') {
-      loadSettings()
-    } else if (signal === 'history') {
-      mergeHistory(window.api.history.load())
-    }
-  })
-  
-  // load models and select valid engine
-  initModels()
-  if (!isEngineReady(store.config.llm.engine)) {
-    for (const engine of availableEngines) {
-      if (isEngineReady(engine)) {
-        console.log(`Default engine ready, selecting ${engine} as default`)
-        store.config.llm.engine = engine
-        break
+    // subscribe to file changes
+    window.api.on('file-modified', (signal) => {
+      if (signal === 'settings') {
+        loadSettings()
+      } else if (signal === 'history') {
+        mergeHistory(window.api.history.load())
+      }
+    })
+
+    // load models and select valid engine
+    initModels()
+    if (!isEngineReady(store.config.llm.engine)) {
+      for (const engine of availableEngines) {
+        if (isEngineReady(engine)) {
+          console.log(`Default engine ready, selecting ${engine} as default`)
+          store.config.llm.engine = engine
+          break
+        }
       }
     }
-  }
 
-}
+  },
 
-store.dump = () => {
-  console.dir(JSON.parse(JSON.stringify(store.config)))
-}
+  saveSettings: () => {
+    window.api.config.save(JSON.parse(JSON.stringify(store.config)))
+  },
+  
+  saveHistory: () => {
+
+    try {
+  
+      // we need to srip attchment contents
+      const chats = JSON.parse(JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
+      for (const chat of chats) {
+        for (const message of chat.messages) {
+          if (message.attachment) {
+            message.attachment.contents = null
+          }
+        }
+      }
+      
+      // save
+      window.api.history.save(chats)
+  
+    } catch (error) {
+      console.log('Error saving history data', error)
+    }
+  
+  },
+  
+  dump: () => {
+    console.dir(JSON.parse(JSON.stringify(store.config)))
+  },
+
+})
 
 const loadSettings = () => {
   store.config = window.api.config.load()
@@ -80,10 +110,6 @@ const loadSettings = () => {
     return store.config.engines[engine || store.config.llm.engine].model.chat
   }
   store.notifyListeners('config')
-}
-
-store.saveSettings = () => {
-  window.api.config.save(JSON.parse(JSON.stringify(store.config)))
 }
 
 const loadHistory = () => {
@@ -100,29 +126,6 @@ const loadHistory = () => {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving history data', error)
     }
-  }
-
-}
-
-store.saveHistory = () => {
-
-  try {
-
-    // we need to srip attchment contents
-    const chats = JSON.parse(JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
-    for (const chat of chats) {
-      for (const message of chat.messages) {
-        if (message.attachment) {
-          message.attachment.contents = null
-        }
-      }
-    }
-    
-    // save
-    window.api.history.save(chats)
-
-  } catch (error) {
-    console.log('Error saving history data', error)
   }
 
 }

@@ -15,6 +15,13 @@
         System
       </div>
     </div>
+    <div class="group tint">
+      <label>Dark tint</label>
+      <select v-model="tint" @change="onTintChange">
+        <option value="black">Black</option>
+        <option value="blue">Blue</option>
+      </select>
+    </div>
     <div class="group theme">
       <label>Chat theme</label>
       <select v-model="theme" @change="save">
@@ -45,12 +52,18 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 
+// events
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
+
 const appearance = ref(null)
+const tint = ref(null)
 const theme = ref(null)
 const fontSize = ref(null)
 
 const load = () => {
   appearance.value = store.config.appearance.theme || 'system'
+  tint.value = store.config.appearance.tint || 'black'
   theme.value = store.config.appearance.chat.theme || 'openai'
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
@@ -61,8 +74,14 @@ const setAppearanceTheme = (value) => {
   save()
 }
 
+const onTintChange = () => {
+  emitEvent('appearance-tint-changed', tint.value)
+  save()
+}
+
 const save = () => {
   store.config.appearance.theme = appearance.value
+  store.config.appearance.tint = tint.value
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontSize = fontSize.value
   store.saveSettings()
