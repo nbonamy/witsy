@@ -53,8 +53,12 @@ export default class DocumentBaseImpl {
   }
 
   async destroy(): Promise<void> {
-    const dbPath = databasePath(this.app, this.uuid)
-    fs.rmSync(dbPath, { recursive: true, force: true })
+    try {
+      const dbPath = databasePath(this.app, this.uuid)
+      fs.rmSync(dbPath, { recursive: true, force: true })
+    } catch (err) {
+      console.warn('Error deleting database', this.name, err)
+    }
   }
 
   async add(uuid: string, type: SourceType, url: string, callback: VoidFunction): Promise<string> {
