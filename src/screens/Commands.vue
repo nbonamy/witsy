@@ -21,6 +21,7 @@ import {
 } from 'bootstrap-icons-vue'
 
 // load store
+store.loadSettings()
 store.loadCommands()
 
 const props = defineProps({

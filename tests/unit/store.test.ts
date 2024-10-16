@@ -24,6 +24,7 @@ const chats = [
 ]
 
 window.api = {
+  on: vi.fn(),
   config: {
     load: vi.fn(() => defaultSettings),
     save: vi.fn(),

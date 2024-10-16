@@ -4,7 +4,7 @@
       <BIconRecordCircle v-if="state == 'recording'" color="red" @click="onStop()" />
       <Loader class="loader" v-else-if="state == 'processing'" />
       <BIconRecordCircle v-else @click="onRecord()" />
-      <Waveform :width="310" :height="32" :background-color="backgroundColor" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+      <Waveform :width="310" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
       <textarea v-model="transcription" placeholder="Click the record button when you are ready!" />
@@ -38,24 +38,23 @@ let userStoppedDictation = false
 
 const state = ref('idle')
 const transcription = ref('')
-const backgroundColor = ref(null)
 const foregroundColorActive = ref(null)
 const foregroundColorInactive = ref(null)
 
 onMounted(() => {
+
   // events
   document.addEventListener('keydown', onKeyDown)
 
   // init
   transcriber.initialize()
   initializeAudio()
-
-  // get window color
-  backgroundColor.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('background-color')
+  
+  // grab colors
   foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
   foregroundColorActive.value = window.getComputedStyle(document.querySelector('.controls')).getPropertyValue('color')
 
-  console.log(backgroundColor.value, foregroundColorActive.value, foregroundColorInactive.value)
+
 })
 
 const initializeAudio = async () => {

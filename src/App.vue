@@ -1,10 +1,11 @@
 <template>
-  <component :is="currentView" :extra="queryParams" />
+  <component :is="currentView" :extra="queryParams" :data-tint="tint"/>
 </template>
 
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
+import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
@@ -14,32 +15,12 @@ import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
 
+// events
 import useEventBus from './composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
-
-// add platform name
-onMounted(() => {
-
-  // platform friendly name
-  let platform = {
-    'win32': 'windows',
-    'darwin': 'macos',
-  }[window.api.platform]||'generic'
-
-  // add it everywhere
-  window.platform = platform
-  document.platform = platform
-  document.querySelector('body').classList.add(platform)
-
-  // watch for theme change
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-      emitEvent('appearance-theme-change', event.matches ? 'dark' : 'light')
-    })
-  }
-
-})
+// init
+const appearanceTheme = useAppearanceTheme()
 
 // routing
 const routes = {
@@ -54,6 +35,8 @@ const routes = {
   '/scratchpad': ScratchPad,
 }
 
+const theme = ref('light')
+const tint = ref('black')
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
@@ -68,6 +51,51 @@ const queryParams = computed(() => {
     queryParams[key] = decodeURIComponent(value);
   }
   return queryParams;
+})
+
+const loadTint = () => {
+  const config = window.api.config.load()
+  tint.value = config.appearance.tint || 'black'
+}
+
+// add platform name
+onMounted(() => {
+
+  // events
+  onEvent('appearance-tint-changed', (t) => {
+    tint.value = t
+  })
+
+  // config change may lead to tint change
+  window.api.on('file-modified', (signal) => {
+    if (signal === 'settings') {
+      loadTint()
+    }
+  })  
+
+  // platform friendly name
+  let platform = {
+    'win32': 'windows',
+    'darwin': 'macos',
+  }[window.api.platform]||'generic'
+
+  // add it everywhere
+  window.platform = platform
+  document.platform = platform
+  document.querySelector('body').classList.add(platform)
+
+  // init theme
+  theme.value = appearanceTheme.getTheme()
+  loadTint()
+
+  // watch for theme change
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      theme.value = event.matches ? 'dark' : 'light'
+      emitEvent('appearance-theme-change', theme.value)
+    })
+  }
+
 })
 
 </script>

@@ -155,12 +155,18 @@ test('Settings General', async () => {
 test('Settings Appearance', async () => {
   
   const tab = await switchToTab(1)
-  expect(tab.findAll('.group')).toHaveLength(3)
+  expect(tab.findAll('.group')).toHaveLength(4)
 
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')
   expect(store.config.appearance.theme).toBe('dark')
   expect(window.api.setAppearanceTheme).toHaveBeenCalledWith('dark')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.appearance.tint).not.toBe('blue')
+  tab.find('.group.tint select').setValue('blue')
+  expect(store.config.appearance.tint).toBe('blue')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

@@ -39,6 +39,7 @@
   },
   "appearance": {
     "theme": "system",
+    "tint": "black",
     "chat": {
       "theme": "openai",
       "fontSize": 3
