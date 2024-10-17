@@ -51,9 +51,13 @@ vi.mock('electron', async () => {
   const screen = {
     getCursorScreenPoint: vi.fn(() => ({ x: 0, y: 0 })),
   }
+  const nativeTheme = {
+    shouldUseDarkColors: vi.fn(() => false),
+  }
   return {
     app,
     screen,
+    nativeTheme,
     BrowserWindow,
   }
 })
