@@ -16,7 +16,7 @@
   overflow-wrap: anywhere;
 }
 
-.message .body .text * {
+.message .body .text pre {
   white-space: pre-wrap !important;
 }
 
