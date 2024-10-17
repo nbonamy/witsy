@@ -23,7 +23,6 @@ export const store: Store = reactive({
 
   notifyListeners: (domain: string) : void => {
     store.listeners.forEach((listener) => {
-      console.log('Notifying listener', listener)
       listener.onStoreUpdated(domain)
     })
   },
