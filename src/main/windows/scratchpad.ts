@@ -14,7 +14,12 @@ export const openScratchPad = async () => {
     width: width,
     height: height,
     center: true,
-    ...titleBarOptions,
+    // --dialog-header-bg-color
+    ...titleBarOptions({
+      lightThemeColor: '#f3f3f3',
+      darkBlackThemeColor: 'rgb(56, 56, 56)',
+      darkBlueThemeColor: 'rgb(18, 32, 47)',
+    }),
   });
 
   // open the DevTools
@@ -27,5 +32,4 @@ export const openScratchPad = async () => {
     app.dock.show();
   }
   
-
 }

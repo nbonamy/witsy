@@ -90,13 +90,17 @@ const onChangeModel = () => {
 
 <style scoped>
 
+.macos form .toolbar {
+  padding-left: 100px;
+}
+
 form .toolbar {
   
   display: flex;
   flex-direction: row;
   height: 32px;
   margin: 0px;
-  padding: 8px 16px 8px 100px;
+  padding: 8px 16px;
   align-items: center;
   background-color: var(--dialog-header-bg-color);
   border-bottom: 1px solid var(--scratchpad-bars-border-color);

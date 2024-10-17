@@ -1,11 +1,11 @@
 
 <template>
   <div class="scratchpad">
-    <ScratchPadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
+    <ScratchpadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
     <div class="document" :class="[ fontFamily, `size-${fontSize}` ]">
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
-    <ScratchPadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
+    <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
     <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :conversation-mode="conversationMode" />
     <audio/>
   </div>
@@ -16,8 +16,8 @@
 // components
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
-import ScratchPadToolbar from '../scratchpad/Toolbar.vue'
-import ScratchPadActionBar from '../scratchpad/ActionBar.vue'
+import ScratchpadToolbar from '../scratchpad/Toolbar.vue'
+import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
 import useAudioPlayer from '../composables/audio_player'

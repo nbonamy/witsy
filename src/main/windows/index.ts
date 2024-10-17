@@ -1,8 +1,9 @@
 
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
-import { BrowserWindow, BrowserWindowConstructorOptions, Menu } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme } from 'electron';
 import { mainWindow } from './main';
+import * as config from '../config';
 import { wait } from '../utils';
 import Store from 'electron-store';
 import process from 'node:process';
@@ -15,12 +16,27 @@ export const setStore = (aStore: Store): void => {
 }
 
 // titlebarOptions
-export const titleBarOptions: BrowserWindowConstructorOptions = {
-  titleBarStyle: 'hidden',
-  titleBarOverlay: {
-    color: '#ffffff',
-  },
-  trafficLightPosition: { x: 16, y: 16 },
+export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => {
+
+  const settings = config.loadSettings(app);
+  const isBlueTheme = settings.appearance.tint === 'blue';
+
+  opts = {
+    titleBarStyle: 'hidden',
+    lightThemeColor: '#fff',
+    darkBlackThemeColor: 'rgb(32, 32, 32)',
+    darkBlueThemeColor: 'rgb(18, 32, 47)',
+    ...opts
+  }
+
+  return {
+    titleBarStyle: opts.titleBarStyle,
+    titleBarOverlay: {
+      color: nativeTheme.shouldUseDarkColors ? (isBlueTheme ? opts.darkBlueThemeColor : opts.darkBlackThemeColor) : opts.lightThemeColor,
+      symbolColor: nativeTheme.shouldUseDarkColors ? '#fff' : '#000',
+    },
+    trafficLightPosition: { x: 16, y: 16 },
+  }
 }
 
 // create window

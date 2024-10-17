@@ -33,7 +33,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     y: bounds?.y,
     width: bounds?.width ?? 1400,
     height: bounds?.height ?? 800,
-    ...titleBarOptions,
+    ...titleBarOptions(),
     ...opts,
   });
 
@@ -105,7 +105,7 @@ export const openChatWindow = (params: anyDict) => {
   const chatWindow = createWindow({
     width: 600,
     height: 600,
-    ...titleBarOptions,
+    ...titleBarOptions(),
     queryParams: params,
   });
 
