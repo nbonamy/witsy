@@ -109,6 +109,30 @@ const logo = computed(() => logos[props.engine])
   .logo.groq {
     filter: invert(1) brightness(0.6);
   }
+
+  [data-tint=blue] {
+    .logo.grayscale.openai {
+      filter: invert(1) brightness(0.9);
+    }
+    .logo.grayscale.ollama {
+      filter: invert(1) brightness(0.9);
+    }
+    .logo.grayscale.logo.anthropic {
+      filter: invert(1) brightness(1.0);
+    }
+    .logo.logo.grayscale.mistralai {
+      filter: grayscale() brightness(1.1);
+    }
+    .logo.grayscale.google {
+      filter: grayscale() brightness(1.2);
+    }
+    .logo.grayscale.groq {
+      filter: invert(1) brightness(0.9);
+    }
+    .logo.grayscale.cerebras {
+      filter: grayscale() brightness(1.85);
+    }
+  }
 }
 
 </style>

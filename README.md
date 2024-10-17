@@ -107,7 +107,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Ollama function-calling
+- [ ] Ollama function-calling (pending https://github.com/ollama/ollama-js/issues/123)
 - [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 

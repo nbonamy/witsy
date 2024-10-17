@@ -73,7 +73,7 @@
 
 .message .action {
   cursor: pointer;
-  color: #8e8e93;
+  color: var(--message-list-actions-text-color);
   font-size: 9pt;
 }
 
