@@ -166,4 +166,19 @@ dialog.settings textarea {
   resize: none;
 }
 
+dialog.settings .actions {
+  margin-top: 8px;
+  display: flex;
+}
+
+dialog.settings .actions button:first-child {
+  margin-left: 0px;
+}
+
+dialog.settings .actions .right {
+  flex: 1;
+  text-align: right;
+}
+
+
 </style>

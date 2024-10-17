@@ -1,7 +1,7 @@
 
 <template>
   <div class="content" @click="closeContextMenu">
-    <div class="experts">
+    <div class="experts sticky-table-container">
       <table>
         <thead>
           <tr>
@@ -235,6 +235,7 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
+@import '../../css/sticky-header-table.css';
 </style>
 
 <style scoped>
@@ -244,65 +245,8 @@ defineExpose({ load })
   width: 540px !important;
 }
 
-.experts {
+.sticky-table-container {
   height: 200px;
-  overflow-y: auto;
-  scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 0.5px solid rgba(192, 192, 192, 0.5);
-  background-color: var(--background-color);
-  white-space: nowrap;
-  font-size: 9.5pt;
-  padding: 2px 4px;
-}
-
-tr.selected td {
-  background-color: var(--highlight-color);
-  color: var(--highlighted-color);
-}
-
-th {
-  font-size: 9pt;
-  font-weight: normal;
-  text-align: left;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-td.icon, td.shortcut {
-  text-align: center;
-}
-
-.windows td.icon {
-  font-family: 'NotoColorEmojiLimited';
-  font-size: 9pt;
-}
-
-input[type=checkbox] {
-  width: 12px;
-  height: 12px;
-}
-
-.actions {
-  margin-top: 8px;
-  display: flex;
-}
-
-.actions button:first-child {
-  margin-left: 0px;
-}
-
-.actions .right {
-  flex: 1;
-  text-align: right;
 }
 
 </style>

@@ -5,7 +5,7 @@
   --background-color-light: var(--background-color);
   --window-bg-color: #e1e0df;
   --text-color: #000;
-  --icon-color: #5b5a59;
+  --icon-color: #5b5b5b;
   --highlight-color: #0366eb;
   --highlighted-color: #fff;
   --link-color: #0000ee;
@@ -48,6 +48,7 @@
   --message-list-bg-color: var(--background-color);
   --message-list-text-color: var(--text-color);
   --message-list-tip-text-color: #888;
+  --message-list-actions-text-color: #909090;
   --message-list-overflow-bg-color: var(--background-color);
   --message-list-overflow-border-color: #ccc;
 
@@ -134,6 +135,7 @@
     --chatarea-toolbar-icon-color: var(--icon-color);
 
     --message-list-tip-text-color: var(--text-color);
+    --message-list-actions-text-color: var(--icon-color);
     --message-list-overflow-bg-color: rgb(0, 0, 0);
 
     --prompt-input-border-color: rgb(60, 60, 61);
@@ -181,7 +183,7 @@
     --background-color: rgb(18, 32, 47);
     --background-color-light: rgb(24, 40, 55);
     --window-bg-color: var(--background-color-light);
-    --text-color: rgb(210, 220, 230);
+    --text-color: rgb(230, 230, 235);
     --icon-color: rgb(130, 150, 170);
     --highlight-color: rgb(10, 120, 240);
     --link-color: rgb(60, 140, 230);
@@ -220,19 +222,20 @@
     --message-list-bg-color: var(--background-color);
     --message-list-text-color: var(--text-color);
     --message-list-tip-text-color: var(--text-color);
-    --message-list-overflow-bg-color: rgb(10, 20, 30);
+    --message-list-actions-text-color: var(--icon-color);
+    --message-list-overflow-bg-color: rgb(10, 20, 50);
 
     --prompt-icon-color: var(--icon-color);
     --prompt-input-bg-color: var(--message-list-bg-color);
-    --prompt-input-border-color: rgb(50, 60, 70);
+    --prompt-input-border-color: rgb(60, 70, 90);
     --prompt-input-text-color: var(--sidebar-text-color);
 
     --dialog-border-color: rgb(86, 86, 96);
     --dialog-header-bg-color: rgb(40, 50, 65);
-    --dialog-header-text-color: rgb(180, 180, 180);
+    --dialog-header-text-color: rgb(180, 180, 190);
     --dialog-body-bg-color: var(--background-color-light);
     --dialog-body-text-color: var(--text-color);
-    --dialog-separator-color: rgb(20, 20, 20);
+    --dialog-separator-color: rgb(20, 20, 30);
 
     --editor-border-color: var(--dialog-border-color);
     --editor-header-bg-color: var(--dialog-body-bg-color);
