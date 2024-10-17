@@ -17,7 +17,7 @@
 }
 
 .message .body .text * {
-white-space: pre-wrap !important;  
+  white-space: pre-wrap !important;
 }
 
 .message .text {
