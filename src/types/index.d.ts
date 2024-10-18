@@ -178,6 +178,10 @@ declare global {
         send?(event: string, payload: any): void
         sendSync?(event: string, payload: any): any
       }
+      update?: {
+        isAvailable?(): boolean
+        apply?(): void
+      }
       config?: {
         load?(): Configuration
         save?(config: Configuration): void
