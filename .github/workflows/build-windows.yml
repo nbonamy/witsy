@@ -20,7 +20,6 @@ jobs:
       - name: Build script
         run: ./build.ps1
       - name: Publish Release
-        run: gh release upload -R nbonamy/electron-squirrel-test v${{ steps.package-version.outputs.version}} out/make/squirrel.windows/x64/*
+        run: gh release upload -R nbonamy/electron-squirrel-test v${{ steps.package-version.outputs.version}} "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-x64 Setup.exe" "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-x64-full.nupkg"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
