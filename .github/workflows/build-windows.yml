@@ -1,0 +1,23 @@
+# .github/workflows/release.yml
+name: Build Windows x64
+on:
+  push:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Github checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Remove package-lock.json
+        uses: JesseTG/rm@v1.0.3
+        with:
+          path: ./package-lock.json
+      - name: Install Dependencies
+        run: npm i
+      - name: Build script
+        run: ./build.ps1
+
