@@ -24,6 +24,9 @@ beforeAll(() => {
 
   window.api = {
     on: vi.fn(),
+    update: {
+      isAvailable: vi.fn(() => false),
+    },
     config: {
       load: vi.fn(() => defaults),
       save: vi.fn(),
