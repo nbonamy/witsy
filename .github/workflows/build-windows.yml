@@ -19,6 +19,13 @@ jobs:
         run: npm i
       - name: Build script
         run: ./build.ps1
+      - name: List files
+        id: filelist
+        uses: the-coding-turtle/ga-file-list@v0.1
+        with:
+          directory: "out/make/squirrel.windows/x64"
+      - name: Print files
+        run: echo "${{ steps.filelist.outputs.files }}"
       - name: Publish Release
         run: gh release upload -R nbonamy/electron-squirrel-test v${{ steps.package-version.outputs.version}} "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-x64 Setup.exe" "out/make/squirrel.windows/x64/witsy-${{ steps.package-version.outputs.version}}-x64-full.nupkg"
         env:
