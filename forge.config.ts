@@ -1,6 +1,7 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerPKG } from '@electron-forge/maker-pkg';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -15,7 +16,7 @@ dotenv.config();
 
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
-let osxMaker: any = new MakerZIP({}, ['darwin'])
+let osxMakers: any[] = [ new MakerZIP({}, ['darwin']), new MakerDMG({}, ['darwin']) ]
 let osxPackagerConfig = {}
 
 if (isDarwin) {
@@ -36,7 +37,7 @@ if (isDarwin) {
       }
     }
   } else {
-    osxMaker = new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, })
+    osxMakers = [ new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, }) ]
     osxPackagerConfig = {
       osxUniversal: {
       },
@@ -76,7 +77,7 @@ const config: ForgeConfig = {
     ...osxPackagerConfig,
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), osxMaker, new MakerRpm({}), new MakerDeb({})],
+  makers: [new MakerSquirrel({}), ...osxMakers, new MakerRpm({}), new MakerDeb({})],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
