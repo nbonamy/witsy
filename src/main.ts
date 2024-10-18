@@ -136,7 +136,7 @@ app.whenReady().then(() => {
     log.info('Creating initial main window');
     window.openMainWindow();
   } else {
-    app.dock.hide();
+    app.dock?.hide();
   }
 
   // On OS X it's common to re-create a window in the app when the
@@ -167,7 +167,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   } else {
-    app.dock.hide();
+    app.dock?.hide();
   }
 });
 
