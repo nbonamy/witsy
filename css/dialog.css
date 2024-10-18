@@ -15,6 +15,10 @@ dialog {
   0 24px  24px rgba(0,0,0,0.12);
 }
 
+.windows dialog {
+  border-radius: var(--control-border-radius);
+}	
+
 @media (prefers-color-scheme: dark) {
   dialog {
     box-shadow: 
