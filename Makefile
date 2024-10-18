@@ -66,7 +66,10 @@ increment-build-number:
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
 publish:
-	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
-	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) $(RELEASES) --generate-notes
-	git add $(BUILD_NUMBER_FILE) ; git commit -m "Increment build number" ; git push
+# ifneq ($(shell git status --porcelain),)
+# 	$(error You have uncommitted changes!)
+# endif
+	$(eval PACKAGES := $(shell find out -name '*$(VERSION).zip' -o -name '*$(VERSION)*.dmg' ))
+#gh release upload v$(VERSION) --repo https://github.com/nbonamy/electron-squirrel-test $(PACKAGES)
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes $(PACKAGES)
 	gh workflow run build-windows.yml
