@@ -27,5 +27,5 @@ Write-Host "Version: $version"
 npx electron-forge make -p win32 -a $architecture
 
 # Rename the installer file
-Rename-Item -Path "out\make\squirrel.windows\$architecture\Witsy-$version Setup.exe" -NewName "Witsy-$version-$architecture Setup.exe"
-Rename-Item -Path "out\make\squirrel.windows\$architecture\witsy-$version-full.nupkg" -NewName "witsy-$version-$architecture-full.nupkg"
+Rename-Item -Path "out\make\squirrel.windows\$architecture\Witsy-$version Setup.exe" -NewName "Witsy-$version-win32-$architecture Setup.exe"
+Rename-Item -Path "out\make\squirrel.windows\$architecture\witsy-$version-full.nupkg" -NewName "witsy-$version-win32-$architecture-full.nupkg"
