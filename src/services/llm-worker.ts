@@ -1,5 +1,6 @@
 
 import { Configuration } from 'types/config'
+import { store } from './store'
 import LlmEngine from './engine'
 import { igniteEngine } from './llm'
 import { LlmChunk, LlmEvent } from 'types/llm'
@@ -9,6 +10,7 @@ const worker: Worker = self as unknown as Worker
 let llm: LlmEngine = null
 
 const initEngine = (engine: string, config: Configuration) => {
+  store.config = config
   llm = igniteEngine(engine, config)
   llm.loadPlugins()
 }

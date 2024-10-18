@@ -30,7 +30,7 @@ export default class extends Plugin {
       return tools
     } catch (error) {
       console.error(error)
-      this.toolNames
+      this.toolNames = []
       return []
     }
   }
