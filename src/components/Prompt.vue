@@ -711,6 +711,10 @@ const autoGrow = (element) => {
   flex: 1;
 }
 
+.windows .input, .windows .textarea-wrapper textarea {
+  border-radius: 0px;
+}
+
 .textarea-wrapper textarea:disabled {
   color: var(--control-placeholder-text-color);
 }

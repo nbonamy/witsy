@@ -272,6 +272,10 @@
 
 }
 
+.windows {
+  --control-border-radius: 0px;
+}
+
 * {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }

@@ -138,6 +138,10 @@ const onSelectModel = (ev) => {
   }
 }
 
+.windows .empty .tip {
+  font-size: 14pt;
+}
+
 .empty .engines {
   display: flex;
   justify-content: center;
