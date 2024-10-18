@@ -12,10 +12,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Remove package-lock.json
-        uses: JesseTG/rm@v1.0.3
-        with:
-          path: ./package-lock.json
+      # - name: Remove package-lock.json
+      #   uses: JesseTG/rm@v1.0.3
+      #   with:
+      #     path: ./package-lock.json
       - name: Install Dependencies
         run: npm i
       - name: Build script
