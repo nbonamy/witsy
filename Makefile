@@ -57,7 +57,8 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean increment-build-number mac-arm64 mac-x64 win linux
+#all: clean increment-build-number mac-arm64 mac-x64 win linux
+all: clean increment-build-number mac-arm64 mac-x64 win-arm64 linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
@@ -67,3 +68,5 @@ increment-build-number:
 publish:
 	$(eval RELEASES := $(shell find out -name '*$(VERSION).zip'))
 	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) $(RELEASES) --generate-notes
+	git add $(BUILD_NUMBER_FILE) ; git commit -m "Increment build number" ; git push
+	gh workflow run build-windows.yml
