@@ -12,12 +12,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      # - name: Remove package-lock.json
-      #   uses: JesseTG/rm@v1.0.3
-      #   with:
-      #     path: ./package-lock.json
+      - name: get-package-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: Install Dependencies
         run: npm i
       - name: Build script
         run: ./build.ps1
-
+      - name: Publish Release
+        run: gh release upload -R nbonamy/electron-squirrel-test v${{ steps.package-version.outputs.current-version}} out/make/squirrel.windows/x64/*
