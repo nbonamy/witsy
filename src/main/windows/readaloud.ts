@@ -1,6 +1,6 @@
 
-import { BrowserWindow, screen } from 'electron';
-import { createWindow, restoreWindows } from './index';
+import { BrowserWindow } from 'electron';
+import { createWindow, restoreWindows, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
 
 export let readAloudPalette: BrowserWindow = null;
@@ -26,15 +26,12 @@ export const openReadAloudPalette = async (textId: string) => {
   // get bounds
   const width = 84;
   const height = 48;
-  const { x, y } = screen.getCursorScreenPoint();
+  const { x, y } = getCenteredCoordinates(width, height);
 
   // open a new one
   readAloudPalette = createWindow({
     hash: '/readaloud',
-    x: x - width/2,
-    y: y - height/2,
-    width: width,
-    height: height,
+    x, y, width, height,
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
