@@ -21,3 +21,6 @@ jobs:
         run: ./build.ps1
       - name: Publish Release
         run: gh release upload -R nbonamy/electron-squirrel-test v${{ steps.package-version.outputs.version}} out/make/squirrel.windows/x64/*
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
