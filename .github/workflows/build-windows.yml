@@ -1,10 +1,13 @@
-# .github/workflows/release.yml
-name: Build Windows x64
+
+# .github/workflows/build-windows.yml
+name: Build Windows Releases
 on:
   workflow_dispatch:
 jobs:
-  build:
+  build-win32-x64:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - name: Github checkout
         uses: actions/checkout@v4
