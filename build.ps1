@@ -1,6 +1,7 @@
 
 # Detect the system architecture
 $architecture = $Env:PROCESSOR_ARCHITECTURE.ToLower()
+if ($architecture -eq "amd64") { $architecture = "x64" }
 Write-Host "Detected architecture: $architecture"
 
 # Remove directories based on architecture
