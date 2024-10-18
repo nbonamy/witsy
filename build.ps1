@@ -13,8 +13,12 @@ $architecture = if ([Environment]::Is64BitOperatingSystem) {
 Write-Host "Detected architecture: $architecture"
 
 # Remove directories based on architecture
-Remove-Item -Recurse -Force "out/*win32-$architecture*"
-Remove-Item -Recurse -Force "out/make/zip/win32/$architecture/*"
+If (Test-Path "out/*win32-$architecture*") {
+  Remove-Item -Recurse -Force "out/*win32-$architecture*"
+}
+If (Test-Path "out/make/zip/win32/$architecture/*") {
+  Remove-Item -Recurse -Force "out/make/zip/win32/$architecture/*"
+}
 
 # Read the build number from the file
 $build_number_file = "./build/build_number.txt"
@@ -36,3 +40,6 @@ New-Item -ItemType Directory -Force -Path "out/make/zip/win32/$architecture"
 # Change directory and create a zip file based on architecture
 Set-Location -Path "out"
 Compress-Archive -Path "Witsy-win32-$architecture" -DestinationPath "make/zip/win32/$architecture/Witsy-win32-$architecture-$version.zip" -Force
+
+# Come back
+Set-Location -Path ".."
