@@ -1,7 +1,7 @@
 
 import { strDict } from 'types';
-import { BrowserWindow, screen } from 'electron';
-import { createWindow, restoreWindows } from './index';
+import { BrowserWindow } from 'electron';
+import { createWindow, getCenteredCoordinates, restoreWindows } from './index';
 import { expertsPalette, closeExpertsPalette } from './experts';
 import { wait } from '../utils';
 
@@ -14,19 +14,17 @@ export const openPromptAnywhere = (params: strDict) => {
 
   // get bounds
   const width = 500;
-  const height = 48;
-  const { x, y } = screen.getCursorScreenPoint();
+  const height = 52;
+  const { x, y } = getCenteredCoordinates(width, height);
 
   // open a new one
   promptAnywhereWindow = createWindow({
     hash: '/prompt',
-    x: x - width/2,
-    y: y - 24,
-    width: width,
-    height: height,
+    x, y, width, height,
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
+    opacity: 0.975,
     hiddenInMissionControl: true,
     queryParams: params,
   });

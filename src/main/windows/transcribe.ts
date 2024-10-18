@@ -1,6 +1,6 @@
 
 import { BrowserWindow } from 'electron';
-import { createWindow, restoreWindows } from './index';
+import { createWindow, restoreWindows, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
 
 export let transcribePalette: BrowserWindow = null;
@@ -26,12 +26,12 @@ export const openTranscribePalette = async () => {
   // get bounds
   const width = 400;
   const height = 300;
+  const { x, y } = getCenteredCoordinates(width, height);
 
   // open a new one
   transcribePalette = createWindow({
     hash: '/transcribe',
-    width: width,
-    height: height,
+    x, y, width, height,
     center: true,
     frame: false,
     skipTaskbar: true,

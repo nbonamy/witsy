@@ -610,6 +610,10 @@ const autoGrow = (element) => {
 
 <style scoped>
 
+.prompt, .prompt * {
+  font-size: 12pt;
+}
+
 .prompt {
   padding: 8px 12px;
   display: flex;
@@ -703,7 +707,6 @@ const autoGrow = (element) => {
   border-radius: 16px;
   overflow-x: hidden;
   overflow-y: auto;
-  font-size: 11.5pt;
   padding-left: 16px;
   padding-right: 36px;
   padding-top: 5px;

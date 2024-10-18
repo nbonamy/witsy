@@ -1,7 +1,7 @@
 
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
-import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen } from 'electron';
 import { mainWindow } from './main';
 import * as config from '../config';
 import { wait } from '../utils';
@@ -38,6 +38,23 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
     trafficLightPosition: { x: 16, y: 16 },
   }
 }
+
+export const getCurrentScreen = () => {
+  const cursorPoint = screen.getCursorScreenPoint();
+  return screen.getDisplayNearestPoint(cursorPoint);
+}
+
+// get coordinates for a centered window slightly above the center
+export const getCenteredCoordinates = (w: number, h: number) => {
+  const cursorScreen = getCurrentScreen();
+  const { width, height } = cursorScreen.workAreaSize;
+  console.log(cursorScreen.bounds.x, cursorScreen.bounds.y, width, height, w, h)
+  console.log(height, 0, Math.round(height - h) / 4)
+  return {
+    x: cursorScreen.bounds.x + Math.round((width - w) / 2),
+    y: cursorScreen.bounds.y + Math.round(Math.max(height/5, (height - h) / 3)),
+  };
+};
 
 // create window
 export const createWindow = (opts: CreateWindowOpts = {}) => {

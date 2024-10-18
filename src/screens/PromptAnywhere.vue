@@ -75,7 +75,19 @@ const onPrompt = (data) => {
 <style scoped>
 
 .anywhere {
+  height: 100vh;
   background-color: var(--window-bg-color);
+  display: flex;
+  justify-content: center;
+
+  .prompt {
+    flex: 1;
+  }
+
+  .prompt, .prompt * {
+    font-size: 14pt;
+  }
+
 }
 
 </style>
