@@ -82,7 +82,6 @@ const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<an
 test('Render', async () => {
   const wrapper = await mount(userMessage, false)
   expect(wrapper.exists()).toBe(true)
-  expect (wrapper.find('.message').classes()).toContain('size3')
   expect (wrapper.find('.role').exists()).toBe(true)
   expect (wrapper.find('.body').exists()).toBe(true)
   expect (wrapper.find('.actions').exists()).toBe(false)

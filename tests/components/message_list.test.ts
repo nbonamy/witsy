@@ -41,7 +41,8 @@ test('Render', () => {
   expect(wrapper.find('.messages').exists()).toBe(true)
   expect(wrapper.find('.overflow').exists()).toBe(false)
   expect(wrapper.findAll('.message')).toHaveLength(0)
-  expect(wrapper.find('.messages').attributes('class')).toContain('openai')
+  expect(wrapper.find('.messages').classes()).toContain('openai')
+  expect(wrapper.find('.messages').classes()).toContain('size3')
   expect(wrapper.find('.fullscreen').exists()).toBe(false)
 })
 
