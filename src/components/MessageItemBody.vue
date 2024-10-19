@@ -1,7 +1,7 @@
 <template>
   <div v-if="message.type == 'text'">
     <div v-for="block in blocks">
-      <div v-if="block.type == 'text'" v-html="mdRender(block.content)" class="text"></div>
+      <div v-if="block.type == 'text'" v-html="mdRender(block.content)" class="text variable-font-size"></div>
       <MessageItemImage :url="block.url" :desc="block.desc" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
     </div>
   </div>
