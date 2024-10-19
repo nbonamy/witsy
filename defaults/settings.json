@@ -42,6 +42,7 @@
     "tint": "black",
     "chat": {
       "theme": "openai",
+      "fontFamily": "",
       "fontSize": 3
     }
   },

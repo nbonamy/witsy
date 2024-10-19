@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :style="fontStyle">
     <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" :ref="saveItemRef" />
@@ -30,6 +30,12 @@ const overflown = ref(false)
 const fullScreenImageUrl = ref(null)
 
 const itemRefs = []
+
+const fontStyle = computed(() => {
+  return {
+    '--messages-font': store.config.appearance.chat.fontFamily,
+  }
+})
 
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 

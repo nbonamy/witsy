@@ -2,6 +2,7 @@
 import { Chat, Command, Expert } from './types/index.d';
 import { Configuration } from './types/config.d';
 import process from 'node:process';
+import fontList from 'font-list';
 import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
@@ -216,6 +217,10 @@ ipcMain.handle('dialog-show', (event, payload): Promise<Electron.MessageBoxRetur
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
+});
+
+ipcMain.on('fonts-list', async (event) => {
+  event.returnValue = await fontList.getFonts();
 });
 
 ipcMain.on('store-get-value', (event, payload) => {

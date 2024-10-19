@@ -29,6 +29,13 @@
         <option value="conversation">Conversation</option>
       </select>
     </div>
+    <div class="group font-family">
+      <label>Chat font</label>
+      <select v-model="fontFamily" @change="save">
+        <option value="">Default</option>
+        <option v-for="font in fonts" :value="font">{{ font.replaceAll('"', '') }}</option>
+      </select>
+    </div>
     <div class="group font-size">
       <label>Chat font size</label>
       <span class="fontsize small">A</span>
@@ -60,11 +67,14 @@ const appearance = ref(null)
 const tint = ref(null)
 const theme = ref(null)
 const fontSize = ref(null)
+const fontFamily = ref('')
+const fonts = ref(window.api.listFonts())
 
 const load = () => {
   appearance.value = store.config.appearance.theme || 'system'
   tint.value = store.config.appearance.tint || 'black'
   theme.value = store.config.appearance.chat.theme || 'openai'
+  fontFamily.value = store.config.appearance.chat.fontFamily || ''
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
 
@@ -83,6 +93,7 @@ const save = () => {
   store.config.appearance.theme = appearance.value
   store.config.appearance.tint = tint.value
   store.config.appearance.chat.theme = theme.value
+  store.config.appearance.chat.fontFamily = fontFamily.value
   store.config.appearance.chat.fontSize = fontSize.value
   store.saveSettings()
 }

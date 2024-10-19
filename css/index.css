@@ -294,7 +294,7 @@ body {
 }
 
 code, pre, code * {
-  font-family: Monaco,Andale Mono,Ubuntu Mono,monospace !important;
+  font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
   font-size: 10pt;
 }
 
