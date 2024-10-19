@@ -1,11 +1,11 @@
 <template>
-  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
+  <div class="message" :class="[ message.role, message.type, 'size' + store.config.appearance.chat.fontSize ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role">
       <EngineLogo :engine="chat.engine" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
-      <div class="name">{{ authorName }}</div>
+      <div class="name variable-font-size">{{ authorName }}</div>
     </div>
-    <div class="body" :class="'size' + store.config.appearance.chat.fontSize">
+    <div class="body">
 
       <!-- attachment -->
       <div v-if="message.attachment">

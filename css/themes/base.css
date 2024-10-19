@@ -24,27 +24,27 @@
   user-select: text;
 }
 
-.message .body.size1 .text {
+.message.size1 .variable-font-size, .message.size1 .variable-font-size * {
   font-size: 10pt;
   line-height: 12.5pt;
 }
 
-.message .body.size2 .text {
+.message.size2 .variable-font-size, .message.size2 .variable-font-size * {
   font-size: 11pt;
   line-height: 13.5pt;
 }
 
-.message .body.size3 .text {
+.message.size2 .variable-font-size, .message.size3 .variable-font-size *{
   font-size: 12pt;
   line-height: 15pt;
 }
 
-.message .body.size4 .text {
+.message.size4 .variable-font-size, .message.size4 .variable-font-size * {
   font-size: 13.5pt;
   line-height: 17pt;
 }
 
-.message .body.size5 .text {
+.message.size5 .variable-font-size, .message.size5 .variable-font-size * {
   font-size: 15pt;
   line-height: 20pt;
 }

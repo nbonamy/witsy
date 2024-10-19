@@ -9,7 +9,7 @@ const mdOptions: MarkdownIt.Options = {
   html: true,
   highlight: function (str: string, lang: string) {
     try {
-      let code = '<pre class="hljs"><code class="hljs">';
+      let code = '<pre class="hljs"><code class="hljs variable-font-size">';
       if (lang && hljs.getLanguage(lang)) {
         code += hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
       } else {
