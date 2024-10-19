@@ -129,4 +129,14 @@ dialog header .title {
   padding-left: 16px;
 }
 
+.windows dialog header .close {
+  color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  .windows dialog header .close {
+    color: white;
+  }
+}
+
 </style>
