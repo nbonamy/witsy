@@ -16,6 +16,14 @@
   overflow-wrap: anywhere;
 }
 
+.message .body * {
+  line-height: 1.2;
+}
+
+.message .body pre.hljs {
+  line-height: 1.4;
+}
+
 .message .body .text pre {
   white-space: pre-wrap !important;
 }
@@ -26,52 +34,42 @@
 
 .messages.size1 .variable-font-size, .messages.size1 .variable-font-size * {
   font-size: 10pt;
-  line-height: 12.5pt;
 }
 
 .messages.size1 pre.hljs, .messages.size1 code.variable-font-size, .messages.size1 .variable-font-size code, .messages.size1 code.variable-font-size * {
-  font-size: 8.5pt;
-  line-height: 11pt;
+  font-size: 9.5pt;
 }
 
 .messages.size2 .variable-font-size, .messages.size2 .variable-font-size * {
   font-size: 11pt;
-  line-height: 13.5pt;
 }
 
 .messages.size2 pre.hljs, .messages.size2 code.variable-font-size, .messages.size2 .variable-font-size code, .messages.size2 code.variable-font-size * {
-  font-size: 9.5pt;
-  line-height: 12pt;
+  font-size: 10pt;
 }
 
 .messages.size3 .variable-font-size, .messages.size3 .variable-font-size *{
   font-size: 12pt;
-  line-height: 15pt;
 }
 
 .messages.size3 pre.hljs, .messages.size3 code.variable-font-size, .messages.size3 .variable-font-size code, .messages.size3 code.variable-font-size * {
-  font-size: 10pt;
-  line-height: 12.5pt;
+  font-size: 11pt;
 }
 
 .messages.size4 .variable-font-size, .messages.size4 .variable-font-size * {
   font-size: 13.5pt;
-  line-height: 16pt;
 }
 
 .messages.size4 pre.hljs, .messages.size4 code.variable-font-size, .messages.size4 .variable-font-size code, .messages.size4 code.variable-font-size * {
-  font-size: 11.5pt;
-  line-height: 14pt;
+  font-size: 12.5pt;
 }
 
 .messages.size5 .variable-font-size, .messages.size5 .variable-font-size * {
   font-size: 15pt;
-  line-height: 20pt;
 }
 
 .messages.size5 pre.hljs, messages.size5 code.variable-font-size, .messages.size5 .variable-font-size code, .messages.size5 code.variable-font-size * {
-  font-size: 13pt;
-  line-height: 16.5pt;
+  font-size: 14pt;
 }
 
 .message .body .text pre.hljs code.hljs {
