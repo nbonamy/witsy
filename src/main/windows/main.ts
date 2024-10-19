@@ -72,7 +72,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   // open the DevTools
   if (process.env.DEBUG) {
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools({ mode: 'right' });
   }
 
   // show in dock
@@ -111,7 +111,7 @@ export const openChatWindow = (params: anyDict) => {
 
   // open the DevTools
   if (process.env.DEBUG) {
-    //chatWindow.webContents.openDevTools();
+    //chatWindow.webContents.openDevTools({ mode: 'right' });
   }
 
   // show in dock
