@@ -23,7 +23,7 @@ export const openScratchPad = async () => {
 
   // open the DevTools
   if (process.env.DEBUG) {
-    scratchpadWindow.webContents.openDevTools();
+    scratchpadWindow.webContents.openDevTools({ mode: 'right' });
   }
 
   // show in dock
