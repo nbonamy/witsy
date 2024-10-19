@@ -14,10 +14,19 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// osx special configuration
+let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
-let osxMakers: any[] = [ new MakerZIP({}, ['darwin']), new MakerDMG({}, ['darwin']) ]
-let osxPackagerConfig = {}
+let osxMakers: any[] = [ new MakerZIP({}, ['darwin']), new MakerDMG({
+  background: './assets/dmg_background.png',
+  additionalDMGOptions: {
+    window: {
+      size: { width: 658, height: 492 },
+      position: { x: 500, y: 400 },
+    }
+  }
+}, ['darwin']) ]
 
 if (isDarwin) {
   if (!isMas) {
