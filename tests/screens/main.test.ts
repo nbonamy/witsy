@@ -24,6 +24,7 @@ beforeAll(() => {
 
   window.api = {
     on: vi.fn(),
+    listFonts: vi.fn(() => []),
     update: {
       isAvailable: vi.fn(() => false),
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="[ message.role, message.type, 'size' + store.config.appearance.chat.fontSize ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
+  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role">
       <EngineLogo :engine="chat.engine" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />

@@ -139,6 +139,7 @@ declare global {
       on?: (signal: string, callback: (value: any) => void) => void
       setAppearanceTheme?(theme: string): void
       showDialog?(opts: any): Promise<Electron.MessageBoxReturnValue>
+      listFonts?(): string[]
       fullscreen?(state: boolean): void
       runAtLogin?: {
         get?(): boolean

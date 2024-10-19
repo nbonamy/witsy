@@ -60,6 +60,7 @@ const checkVisibility = (visible: number) => {
 let runAtLogin = false
 window.api = {
   platform: 'darwin',
+  listFonts: vi.fn(() => []),
   on: vi.fn(),
   setAppearanceTheme: vi.fn(),
   runAtLogin: {
@@ -155,7 +156,7 @@ test('Settings General', async () => {
 test('Settings Appearance', async () => {
   
   const tab = await switchToTab(1)
-  expect(tab.findAll('.group')).toHaveLength(4)
+  expect(tab.findAll('.group')).toHaveLength(5)
 
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')

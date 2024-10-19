@@ -20,6 +20,7 @@ beforeAll(() => {
   
   window.api = {
     on: vi.fn(),
+    listFonts: vi.fn(() => []),
     config: {
       load: vi.fn(() => defaults),
       save: vi.fn(),
