@@ -82,9 +82,9 @@ const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<an
 test('Render', async () => {
   const wrapper = await mount(userMessage, false)
   expect(wrapper.exists()).toBe(true)
+  expect (wrapper.find('.message').classes()).toContain('size3')
   expect (wrapper.find('.role').exists()).toBe(true)
   expect (wrapper.find('.body').exists()).toBe(true)
-  expect (wrapper.find('.body').classes()).toContain('size3')
   expect (wrapper.find('.actions').exists()).toBe(false)
 })
 
@@ -208,7 +208,7 @@ test('Run assistant image actions', async () => {
 test('Format code', async () => {
   botMessageText.setText('```javascript\nconsole.log(variable)\n```')
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body pre[class=hljs] code[class=hljs]').exists()).toBe(true)
+  expect(wrapper.find('.body pre[class=hljs] code[class="hljs variable-font-size"]').exists()).toBe(true)
   expect(wrapper.find('.body .copy').exists()).toBe(true)
   expect(wrapper.find('.body .copy').text()).toBe('Copy code')
 })

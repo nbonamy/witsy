@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="fontStyle">
-    <div class="messages" :class="chatTheme" ref="divScroller" @wheel="onScroll">
+    <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" :ref="saveItemRef" />
       </div>
