@@ -82,4 +82,8 @@ const mdRender = (content) => {
 
 <style scoped>
 
+.text, .text * {
+  font-family: var(--messages-font);
+}
+
 </style>

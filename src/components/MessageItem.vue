@@ -163,6 +163,10 @@ defineExpose({
 
 <style scoped>
 
+.name {
+  font-family: var(--messages-font);
+}
+
 img {
   cursor: pointer;
 }
