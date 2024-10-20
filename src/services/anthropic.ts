@@ -145,12 +145,21 @@ export default class extends LlmEngine {
     // block start
     if (chunk.type == 'content_block_start') {
       if (chunk.content_block.type == 'tool_use') {
+
+        // record the tool call
         this.toolCall = {
           id: chunk.content_block.id,
           message: '',
           function: chunk.content_block.name,
           args: ''
         }
+
+        // notify
+        eventCallback?.call(this, {
+          type: 'tool',
+          content: this.getToolPreparationDescription(this.toolCall.function)
+        })
+        
       } else {
         this.toolCall = null
       }

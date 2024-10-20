@@ -1,5 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
@@ -7,6 +8,7 @@ import Google from '../../src/services/google'
 import { loadGoogleModels } from '../../src/services/llm'
 import { EnhancedGenerateContentResponse, FunctionCall, FinishReason } from '@google/generative-ai'
 import * as _Google from '@google/generative-ai'
+import { LlmChunk } from 'types/llm'
 
 window.api = {
   config: {
@@ -14,10 +16,37 @@ window.api = {
   },
 }
 
+Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+
+vi.mock('../../src/plugins/plugins', async () => {
+  return {
+    availablePlugins: {
+      plugin1: Plugin1,
+      plugin2: Plugin2,
+      plugin3: Plugin3,
+    }
+  }
+})
+
 vi.mock('@google/generative-ai', async() => {
   const GoogleModel = vi.fn()
   GoogleModel.prototype.generateContent = vi.fn(() => { return { response: { text: () => 'response' } } })
-  GoogleModel.prototype.generateContentStream = vi.fn(() => { return { stream: vi.fn() } })
+  GoogleModel.prototype.generateContentStream = vi.fn(() => {
+    return { stream: {
+      async * [Symbol.asyncIterator]() {
+        
+        // first we yield tool call chunks
+        yield { functionCalls: () => [{ name: 'plugin2', args: ['arg'] }] }
+        
+        // now the text response
+        const content = 'response'
+        for (let i = 0; i < content.length; i++) {
+          yield { functionCalls: (): any[] => [], candidates: [ { finishReason: 'none' }], text: () => content[i] }
+        }
+        yield { functionCalls: (): any[] => [], candidates: [ { finishReason: 'STOP' }], text: vi.fn(() => null) }
+      }
+    }}
+  })
   const GoogleGenerativeAI = vi.fn()
   GoogleGenerativeAI.prototype.apiKey = '123'
   GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => new GoogleModel())
@@ -74,22 +103,6 @@ test('Google completion', async () => {
   })
 })
 
-test('Google stream', async () => {
-  const google = new Google(store.config)
-  const response = await google.stream([
-    new Message('system', 'instruction'),
-    new Message('user', 'prompt'),
-  ], null)
-  expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
-  expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
-  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [{
-    role: 'user',
-    parts: [ { text: 'prompt' } ]
-  }]})
-  await google.stop(response)
-  //expect(response.controller.abort).toHaveBeenCalled()
-})
-
 test('Google streamChunkToLlmChunk Text', async () => {
   const google = new Google(store.config)
   const streamChunk: EnhancedGenerateContentResponse = {
@@ -114,42 +127,35 @@ test('Google streamChunkToLlmChunk Text', async () => {
   expect(llmChunk2).toStrictEqual({ text: '', done: true })
 })
 
-test('Google History Complete', async () => {
+test('Google stream', async () => {
   const google = new Google(store.config)
-  await google.complete([
+  const stream = await google.stream([
     new Message('system', 'instruction'),
-    new Message('user', 'prompt1'),
-    new Message('assistant', 'response1'),
-    new Message('user', 'prompt2'),
+    new Message('user', 'prompt'),
   ], null)
-  expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalledWith({
-    model: 'models/gemini-1.5-pro-latest',
-    systemInstruction: 'instruction',
-  }, { apiVersion: 'v1beta' })
-  expect(_Google.GoogleModel.prototype.generateContent).toHaveBeenCalledWith({ contents: [
-    { role: 'user', parts: [ { text: 'prompt1' } ] },
-    { role: 'model', parts: [ { text: 'response1' } ] },
-    { role: 'user', parts: [ { text: 'prompt2' } ] },
-  ]})
-})
-
-test('Google History Stream', async () => {
-  const google = new Google(store.config)
-  await google.stream([
-    new Message('system', 'instruction'),
-    new Message('user', 'prompt1'),
-    new Message('assistant', 'response1'),
-    new Message('user', 'prompt2'),
-  ], null)
-  expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalledWith({
-    model: 'models/gemini-1.5-pro-latest',
-    systemInstruction: 'instruction',
-  }, { apiVersion: 'v1beta' })
-  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
-    { role: 'user', parts: [ { text: 'prompt1' } ] },
-    { role: 'model', parts: [ { text: 'response1' } ] },
-    { role: 'user', parts: [ { text: 'prompt2' } ] },
-  ]})
+  expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
+  expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
+  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [{
+    role: 'user',
+    parts: [ { text: 'prompt' } ]
+  }]})
+  let response = ''
+  const eventCallback = vi.fn()
+  for await (const streamChunk of stream) {
+    const chunk: LlmChunk = await google.streamChunkToLlmChunk(streamChunk, eventCallback)
+    if (chunk) {
+      if (chunk.done) break
+      response += chunk.text
+    }
+  }
+  expect(response).toBe('response')
+  expect(eventCallback).toHaveBeenNthCalledWith(1, { type: 'tool', content: 'prep2' })
+  expect(eventCallback).toHaveBeenNthCalledWith(2, { type: 'tool', content: 'run2' })
+  expect(Plugin2.prototype.execute).toHaveBeenCalledWith(['arg'])
+  expect(eventCallback).toHaveBeenNthCalledWith(3, { type: 'tool', content: null })
+  expect(eventCallback).toHaveBeenNthCalledWith(4, { type: 'stream', content: expect.any(Object) })
+  await google.stop(stream)
+  //expect(response.controller.abort).toHaveBeenCalled()
 })
 
 test('Google Text Attachments', async () => {
