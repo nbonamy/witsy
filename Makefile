@@ -61,8 +61,8 @@ linux-x64:
 
 linux: linux-x64
 
-#all: clean increment-build-number mac-arm64 mac-x64 win linux
-all: clean increment-build-number mac-arm64 mac-x64 win-arm64 linux
+all: clean increment-build-number mac-arm64 mac-x64 win linux
+#all: clean increment-build-number mac-arm64 mac-x64 win-arm64 linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
@@ -70,10 +70,9 @@ increment-build-number:
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
 publish:
-# ifneq ($(shell git status --porcelain),)
-# 	$(error You have uncommitted changes!)
-# endif
+	ifneq ($(shell git status --porcelain),)
+		$(error You have uncommitted changes!)
+	endif
 	$(eval PACKAGES := $(shell find out -name '*$(VERSION).zip' -o -name '*$(VERSION)*.dmg' ))
-#gh release upload v$(VERSION) --repo https://github.com/nbonamy/electron-squirrel-test $(PACKAGES)
 	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes $(PACKAGES)
 	gh workflow run build-windows.yml
