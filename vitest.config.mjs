@@ -30,6 +30,7 @@ export default defineConfig({
         'src/automations/macos*.ts',
         'src/automations/robot.ts',
         'src/automations/windows.ts',
+        'src/services/*worker.ts',
         'src/vendor/**/*',
       ]
     },
