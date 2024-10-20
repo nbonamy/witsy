@@ -4,8 +4,37 @@ name: Build Windows Releases
 on:
   workflow_dispatch:
 jobs:
-  build-win32-x64:
-    runs-on: windows-latest
+  # build-win32-x64:
+  #   runs-on: windows-latest
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - name: Github checkout
+  #       uses: actions/checkout@v4
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - name: get-package-version
+  #       id: package-version
+  #       uses: beaconbrigade/package-json-version@v0.3.2
+  #     - name: Install Dependencies
+  #       run: npm i
+  #     - name: Build script
+  #       run: ./build/build.ps1
+  #     - name: List files
+  #       id: filelist
+  #       uses: the-coding-turtle/ga-file-list@v0.1
+  #       with:
+  #         directory: "out/make/squirrel.windows/x64"
+  #     - name: Print files
+  #       run: echo "${{ steps.filelist.outputs.files }}"
+  #     - name: Publish Release
+  #       run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/squirrel.windows/x64/RELEASES" "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-win32-x64 Setup.exe" "out/make/squirrel.windows/x64/witsy-${{ steps.package-version.outputs.version}}-win32-x64-full.nupkg"
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build-win32-arm64:
+    runs-on: linux-latest
     permissions:
       contents: write
     steps:
@@ -21,15 +50,15 @@ jobs:
       - name: Install Dependencies
         run: npm i
       - name: Build script
-        run: ./build/build.ps1
+        run: make win-arm64
       - name: List files
         id: filelist
         uses: the-coding-turtle/ga-file-list@v0.1
         with:
-          directory: "out/make/squirrel.windows/x64"
+          directory: "out/make/zip/win32/arm64"
       - name: Print files
         run: echo "${{ steps.filelist.outputs.files }}"
-      - name: Publish Release
-        run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/squirrel.windows/x64/RELEASES" "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-win32-x64 Setup.exe" "out/make/squirrel.windows/x64/witsy-${{ steps.package-version.outputs.version}}-win32-x64-full.nupkg"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Publish Release
+      #   run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/win32/arm64/Witsy-${{ steps.package-version.outputs.version}}-win32-arm64.zip"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
