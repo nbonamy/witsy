@@ -1,6 +1,7 @@
 
-import { LLmCompletionPayload } from '../../src/types/llm.d'
+import { LLmCompletionPayload, LlmChunk } from '../../src/types/llm.d'
 import { vi, beforeEach, expect, test } from 'vitest'
+import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
@@ -20,6 +21,18 @@ window.api = {
   }
 }
 
+Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+
+vi.mock('../../src/plugins/plugins', async () => {
+  return {
+    availablePlugins: {
+      plugin1: Plugin1,
+      plugin2: Plugin2,
+      plugin3: Plugin3,
+    }
+  }
+})
+
 vi.mock('@mistralai/mistralai', async() => {
   const Mistral = vi.fn()
   Mistral.prototype.options$ = {
@@ -38,7 +51,21 @@ vi.mock('@mistralai/mistralai', async() => {
       return { choices: [ { message: { content: 'response' } } ] }
     }),
     stream: vi.fn(() => {
-      return {
+      return { 
+        async * [Symbol.asyncIterator]() {
+          
+          // first we yield tool call chunks
+          yield { data: { choices: [{ delta: { toolCalls: [ { id: 1, function: { name: 'plugin2', arguments: '[ "ar' }} ] }, finish_reason: 'none' } ] } }
+          yield { data: { choices: [{ delta: { toolCalls: [ { function: { arguments: [ 'g" ]' ] } }] }, finish_reason: 'none' } ] } }
+          yield { data: { choices: [{ finishReason: 'tool_calls' } ] } }
+          
+          // now the text response
+          const content = 'response'
+          for (let i = 0; i < content.length; i++) {
+            yield { data: { choices: [{ delta: { content: content[i], } }] } }
+          }
+          yield { data: { choices: [{ delta: { content: '', finishReason: 'done' } }] } }
+        },
         controller: {
           abort: vi.fn()
         }
@@ -83,14 +110,44 @@ test('MistralAI  completion', async () => {
   })
 })
 
+test('MistralAI streamChunkToLlmChunk Text', async () => {
+  const mistralai = new MistralAI(store.config)
+  const streamChunk: CompletionEvent = { data: {
+    id: '1', model: '',
+    choices: [{
+      index: 0, delta: { content: 'response' }, finishReason: null
+    }],
+  }}
+  const llmChunk1 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
+  expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
+  streamChunk.data.choices[0].finishReason = 'stop'
+  const llmChunk2 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
+  expect(llmChunk2).toStrictEqual({ text: 'response', done: true })
+})
+
 test('MistralAI  stream', async () => {
   const mistralai = new MistralAI(store.config)
-  const response = await mistralai.stream([
+  const stream = await mistralai.stream([
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
   expect(Mistral.prototype.chat.stream).toHaveBeenCalled()
-  expect(response.controller).toBeDefined()
+  expect(stream.controller).toBeDefined()
+  let response = ''
+  const eventCallback = vi.fn()
+  for await (const streamChunk of stream) {
+    const chunk: LlmChunk = await mistralai.streamChunkToLlmChunk(streamChunk, eventCallback)
+    if (chunk) {
+      if (chunk.done) break
+      response += chunk.text
+    }
+  }
+  expect(response).toBe('response')
+  expect(eventCallback).toHaveBeenNthCalledWith(1, { type: 'tool', content: 'prep2' })
+  expect(eventCallback).toHaveBeenNthCalledWith(2, { type: 'tool', content: 'run2' })
+  expect(Plugin2.prototype.execute).toHaveBeenCalledWith(['arg'])
+  expect(eventCallback).toHaveBeenNthCalledWith(3, { type: 'tool', content: null })
+  expect(eventCallback).toHaveBeenNthCalledWith(4, { type: 'stream', content: expect.any(Object) })
   await mistralai.stop()
   //expect(Mistral.prototype.abort).toHaveBeenCalled()
 })
@@ -108,19 +165,4 @@ test('MistralAI addImageToPayload', async () => {
   const payload: LLmCompletionPayload = { role: 'user', content: message }
   mistralai.addImageToPayload(message, payload)
   expect(payload.images).toStrictEqual([ 'image' ])
-})
-
-test('MistralAI streamChunkToLlmChunk Text', async () => {
-  const mistralai = new MistralAI(store.config)
-  const streamChunk: CompletionEvent = { data: {
-    id: '1', model: '',
-    choices: [{
-      index: 0, delta: { content: 'response' }, finishReason: null
-    }],
-  }}
-  const llmChunk1 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
-  expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
-  streamChunk.data.choices[0].finishReason = 'stop'
-  const llmChunk2 = await mistralai.streamChunkToLlmChunk(streamChunk, null)
-  expect(llmChunk2).toStrictEqual({ text: 'response', done: true })
 })

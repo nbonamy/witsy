@@ -146,6 +146,9 @@ export default class extends LlmEngine {
           content: this.getToolPreparationDescription(toolCall.function)
         })
 
+        // done
+        return null
+
       } else {
 
         const toolCall = this.toolCalls[this.toolCalls.length-1]

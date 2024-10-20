@@ -1,6 +1,7 @@
 
-import { LLmCompletionPayload } from '../../src/types/llm.d'
+import { LLmCompletionPayload, LlmChunk } from '../../src/types/llm.d'
 import { vi, beforeEach, expect, test } from 'vitest'
+import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
@@ -19,6 +20,18 @@ window.api = {
   }
 }
 
+Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+
+vi.mock('../../src/plugins/plugins', async () => {
+  return {
+    availablePlugins: {
+      plugin1: Plugin1,
+      plugin2: Plugin2,
+      plugin3: Plugin3,
+    }
+  }
+})
+
 vi.mock('@anthropic-ai/sdk', async() => {
   const Anthropic = vi.fn()
   Anthropic.prototype.apiKey = '123'
@@ -31,6 +44,21 @@ vi.mock('@anthropic-ai/sdk', async() => {
     create: vi.fn((opts) => {
       if (opts.stream) {
         return {
+          async * [Symbol.asyncIterator]() {
+            
+            // first we yield tool call chunks
+            yield { type: 'content_block_start', content_block: { type: 'tool_use', id: 1, name: 'plugin2' } }
+            yield { type: 'content_block_delta', delta: { partial_json: '[ "ar' }  }
+            yield { type: 'content_block_delta', delta: { partial_json: 'g" ]' }  }
+            yield { type: 'message_delta', delta: { stop_reason: 'tool_use' }  }
+            
+            // now the text response
+            const content = 'response'
+            for (let i = 0; i < content.length; i++) {
+              yield { type: 'content_block_delta', delta: { text: content[i] } }
+            }
+            yield { type: 'message_stop' }
+          },
           controller: {
             abort: vi.fn()
           }
@@ -90,16 +118,45 @@ test('Anthropic completion', async () => {
   })
 })
 
+test('Anthropic streamChunkToLlmChunk Text', async () => {
+  const anthropic = new Anthropic(store.config)
+  const streamChunk: any = {
+    index: 0,
+    type: 'content_block_delta',
+    delta: { type: 'text_delta', text: 'response' }
+  }
+  const llmChunk1 = await anthropic.streamChunkToLlmChunk(streamChunk, null)
+  expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
+  streamChunk.type = 'message_stop'
+  const llmChunk2 = await anthropic.streamChunkToLlmChunk(streamChunk, null)
+  expect(llmChunk2).toStrictEqual({ text: '', done: true })
+})
+
 test('Anthropic stream', async () => {
   const anthropic = new Anthropic(store.config)
-  const response = await anthropic.stream([
+  const stream = await anthropic.stream([
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)
   expect(_Anthropic.default.prototype.messages.create).toHaveBeenCalled()
-  expect(response.controller).toBeDefined()
-  await anthropic.stop(response)
-  expect(response.controller.abort).toHaveBeenCalled()
+  expect(stream.controller).toBeDefined()
+  let response = ''
+  const eventCallback = vi.fn()
+  for await (const streamChunk of stream) {
+    const chunk: LlmChunk = await anthropic.streamChunkToLlmChunk(streamChunk, eventCallback)
+    if (chunk) {
+      if (chunk.done) break
+      response += chunk.text
+    }
+  }
+  expect(response).toBe('response')
+  expect(eventCallback).toHaveBeenNthCalledWith(1, { type: 'tool', content: 'prep2' })
+  expect(eventCallback).toHaveBeenNthCalledWith(2, { type: 'tool', content: 'run2' })
+  expect(Plugin2.prototype.execute).toHaveBeenCalledWith(['arg'])
+  expect(eventCallback).toHaveBeenNthCalledWith(3, { type: 'tool', content: null })
+  expect(eventCallback).toHaveBeenNthCalledWith(4, { type: 'stream', content: expect.any(Object) })
+  await anthropic.stop(stream)
+  expect(stream.controller.abort).toHaveBeenCalled()
 })
 
 test('Anthropic image', async () => {
@@ -122,18 +179,4 @@ test('Anthropic addImageToPayload', async () => {
       data: 'image',
     }}
   ])
-})
-
-test('Anthropic streamChunkToLlmChunk Text', async () => {
-  const anthropic = new Anthropic(store.config)
-  const streamChunk: any = {
-    index: 0,
-    type: 'content_block_delta',
-    delta: { type: 'text_delta', text: 'response' }
-  }
-  const llmChunk1 = await anthropic.streamChunkToLlmChunk(streamChunk, null)
-  expect(llmChunk1).toStrictEqual({ text: 'response', done: false })
-  streamChunk.type = 'message_stop'
-  const llmChunk2 = await anthropic.streamChunkToLlmChunk(streamChunk, null)
-  expect(llmChunk2).toStrictEqual({ text: '', done: true })
 })
