@@ -1,0 +1,53 @@
+
+# .github/workflows/build-darwin.yml
+name: Build macOS Releases
+on:
+  workflow_dispatch:
+jobs:
+  build-darwin-all:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - name: Github checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: get-package-version
+        id: package-version
+        uses: beaconbrigade/package-json-version@v0.3.2
+      - name: Install Dependencies
+        run: npm i
+      - name: Build script
+        run: make mac
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          IDENTIFY_DARWIN_CODE: ${{ secrets.IDENTIFY_DARWIN_CODE }}
+      - name: List DMG files
+        id: filelist_dmg
+        uses: the-coding-turtle/ga-file-list@v0.1
+        with:
+          directory: "out/make/"
+      - name: List arm64 files
+        id: filelist_arm64
+        uses: the-coding-turtle/ga-file-list@v0.1
+        with:
+          directory: "out/make/zip/darwin/arm64"
+      - name: List x64 files
+        id: filelist_x64
+        uses: the-coding-turtle/ga-file-list@v0.1
+        with:
+          directory: "out/make/zip/darwin/x64"
+      - name: Print files
+        run: |
+          echo "${{ steps.filelist_dmg.outputs.files }}"
+          echo "${{ steps.filelist_arm64.outputs.files }}"
+          echo "${{ steps.filelist_x64.outputs.files }}"
+      # - name: Publish Release
+      #   run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
