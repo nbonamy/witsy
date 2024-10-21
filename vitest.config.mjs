@@ -25,6 +25,7 @@ export default defineConfig({
       exclude: [
         ...coverageConfigDefaults.exclude,
         '*.config.ts',
+        'build/*',
         'src/*.ts',
         'src/main/online.ts',
         'src/main/dropbox.ts',
