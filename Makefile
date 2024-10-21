@@ -33,11 +33,11 @@ mac-x64:
 	cd out/make/zip/darwin/x64/ ; mv Witsy-darwin-x64-$(VERSION).zip Witsy-$(VERSION)-darwin-x64.zip
 	cd out/make ; mv Witsy-$(VERSION)-x64.dmg Witsy-$(VERSION)-darwin-x64.dmg
 
-mac-mas:
-	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
-	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p mas -a universal
+# mac-mas:
+# 	-rm -rf out/*mas-universal* out/make/zip/mas/universal/*
+# 	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p mas -a universal
 
-mac: increment-build-number mac-mas
+mac: mac-arm64 mac-x64
 
 win-x64:
 	-rm -rf out/*win32-x64* out/make/zip/win32/x64/*
@@ -61,8 +61,9 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean increment-build-number mac-arm64 mac-x64 win linux
-#all: clean increment-build-number mac-arm64 mac-x64 win-arm64 linux
+all: clean increment-build-number mac win linux
+
+build: clean increment-build-number mac
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
@@ -70,9 +71,11 @@ increment-build-number:
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
 publish:
-	ifneq ($(shell git status --porcelain),)
-		$(error You have uncommitted changes!)
-	endif
-	$(eval PACKAGES := $(shell find out -name '*$(VERSION).zip' -o -name '*$(VERSION)*.dmg' ))
-	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes $(PACKAGES)
+# ifneq ($(shell git status --porcelain),)
+# 	$(error You have uncommitted changes!)
+# endif
+	$(eval PACKAGES := $(shell find out -name '*$(VERSION)*.zip' -o -name '*$(VERSION)*.dmg' ))
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes
 	gh workflow run build-windows.yml
+	gh workflow run build-linux.yml
+	gh release upload v$(VERSION) --repo https://github.com/nbonamy/witsy $(PACKAGES)

@@ -1,5 +1,5 @@
 
-# .github/workflows/build-windows.yml
+# .github/workflows/build-linux.yml
 name: Build Linux Releases
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
           directory: "out/make/zip/linux/x64"
       - name: Print files
         run: echo "${{ steps.filelist.outputs.files }}"
-      # - name: Publish Release
-      #   run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Release
+        run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
