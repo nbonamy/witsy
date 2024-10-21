@@ -13,7 +13,7 @@ VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 #CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
 BUILD_NUMBER_FILE := ./build/build_number.txt
 
-default: mac-arm64
+default: increment-build-number mac-arm64
 
 test:
 	npx vitest --run
@@ -61,17 +61,22 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean mac win linux
+all: clean increment-build-number mac win linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
 	$(eval NEW_BUILD_NUMBER=$(shell echo $$(( $(CURRENT_BUILD_NUMBER) + 1 ))))
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
+commit-build-number:
+	@git add $(BUILD_NUMBER_FILE)
+	@git commit -m "increment build number"
+	@git push
+
 publish:
 	@git diff --quiet || (echo "There are uncommitted changes. Stopping." && exit 1)
 	@$(MAKE) increment-build-number
-	git add $(BUILD_NUMBER_FILE) ; git commit -m "Increment build number" ; git push
+	@$(MAKE) commit-build-number
 	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes
 	gh workflow run build-darwin.yml
 	gh workflow run build-windows.yml
