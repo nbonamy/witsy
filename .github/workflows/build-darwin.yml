@@ -20,19 +20,8 @@ jobs:
         uses: beaconbrigade/package-json-version@v0.3.2
       - name: Install Dependencies
         run: npm i
-      - name: Check environment
-        run: |
-          echo "APPLE_ID: ${{ env.APPLE_ID }}"
-          echo "APPLE_PASSWORD: ${{ env.APPLE_PASSWORD }}"
-          echo "APPLE_TEAM_ID: ${{ env.APPLE_TEAM_ID }}"
-          echo "IDENTIFY_DARWIN_CODE: ${{ env.IDENTIFY_DARWIN_CODE }}"
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          IDENTIFY_DARWIN_CODE: ${{ secrets.IDENTIFY_DARWIN_CODE }}
       - name: Build script
-        run: make mac
+        run: DEBUG=* make mac
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
