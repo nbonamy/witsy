@@ -21,7 +21,7 @@ jobs:
       - name: Install Dependencies
         run: npm i
       - name: Build script
-        run: DEBUG=* make mac
+        run: DEBUG="electron-osx-sign electron-notarize" make mac
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
