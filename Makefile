@@ -61,9 +61,7 @@ linux-x64:
 
 linux: linux-x64
 
-all: clean increment-build-number mac win linux
-
-build: clean increment-build-number mac
+all: clean mac win linux
 
 increment-build-number:
 	$(eval CURRENT_BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)))
@@ -71,11 +69,10 @@ increment-build-number:
 	@echo $(NEW_BUILD_NUMBER) > $(BUILD_NUMBER_FILE)
 
 publish:
-# ifneq ($(shell git status --porcelain),)
-# 	$(error You have uncommitted changes!)
-# endif
-	$(eval PACKAGES := $(shell find out -name '*$(VERSION)*.zip' -o -name '*$(VERSION)*.dmg' ))
+	@git diff --quiet || (echo "There are uncommitted changes. Stopping." && exit 1)
+	@$(MAKE) increment-build-number
+	git add $(BUILD_NUMBER_FILE) ; git commit -m "Increment build number" ; git push
 	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes
+	gh workflow run build-darwin.yml
 	gh workflow run build-windows.yml
 	gh workflow run build-linux.yml
-	gh release upload v$(VERSION) --repo https://github.com/nbonamy/witsy $(PACKAGES)

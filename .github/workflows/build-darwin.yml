@@ -60,11 +60,11 @@ jobs:
           echo "${{ steps.filelist_dmg.outputs.files }}"
           echo "${{ steps.filelist_arm64.outputs.files }}"
           echo "${{ steps.filelist_x64.outputs.files }}"
-      # - name: Publish Release
-      #   run: |
-      #     gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.dmg"
-      #     gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.dmg"
-      #     gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/arm64/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.zip"
-      #     gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/x64/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.zip"
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Release
+        run: |
+          gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.dmg"
+          gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.dmg"
+          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/arm64/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.zip"
+          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/x64/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.zip"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
