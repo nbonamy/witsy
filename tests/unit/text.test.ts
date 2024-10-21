@@ -3,7 +3,7 @@ import { vi, expect, test } from 'vitest'
 import { getTextContent } from '../../src/main/text'
 import fs from 'fs'
 
-vi.mock('electron', async() => {
+vi.mock('electron', async () => {
   return {
     app: {
       getPath: vi.fn()
