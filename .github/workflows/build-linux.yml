@@ -30,6 +30,7 @@ jobs:
       - name: Print files
         run: echo "${{ steps.filelist.outputs.files }}"
       - name: Publish Release
-        run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
+        run: |
+          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
