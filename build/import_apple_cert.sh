@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# Export "Developer ID Application" certificate from Keychain Access
+# and save it as "certificate.p12" file in the repository root folder
+# use APPLE_PASSWORD to protect the certificate
+
 KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain-db
 CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
 

@@ -77,7 +77,9 @@ publish:
 	@git diff --quiet || (echo "There are uncommitted changes. Stopping." && exit 1)
 	@$(MAKE) increment-build-number
 	@$(MAKE) commit-build-number
-	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes
+	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes --draft
 	gh workflow run build-darwin.yml
 	gh workflow run build-windows.yml
 	gh workflow run build-linux.yml
+	node build/monitor_gh_builds.mjs
+	gh relese edit v$(VERSION) --draft=false
