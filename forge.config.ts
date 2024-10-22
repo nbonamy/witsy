@@ -18,7 +18,7 @@ dotenv.config();
 let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
-let osxMakers: any[] = [ new MakerZIP({}, ['darwin']), new MakerDMG({
+let osxMaker: any = new MakerDMG({
   background: './assets/dmg_background.png',
   additionalDMGOptions: {
     window: {
@@ -26,7 +26,7 @@ let osxMakers: any[] = [ new MakerZIP({}, ['darwin']), new MakerDMG({
       position: { x: 500, y: 400 },
     }
   }
-}, ['darwin']) ]
+}, ['darwin'])
 
 if (isDarwin) {
   if (!isMas) {
@@ -46,7 +46,7 @@ if (isDarwin) {
       }
     }
   } else {
-    osxMakers = [ new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, }) ]
+    osxMaker = new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, })
     osxPackagerConfig = {
       osxUniversal: {
       },
@@ -86,7 +86,7 @@ const config: ForgeConfig = {
     ...osxPackagerConfig,
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), ...osxMakers, new MakerRpm({}), new MakerDeb({})],
+  makers: [ new MakerZIP({}), new MakerSquirrel({}), osxMaker, new MakerRpm({}), new MakerDeb({})],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.

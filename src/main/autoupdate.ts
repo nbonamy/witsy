@@ -73,6 +73,7 @@ export default class {
       
     // before quit for update
     autoUpdater.on('before-quit-for-update', () => {
+      console.log('Before quit update')
       this.hooks.preInstall?.()
     })
 
@@ -108,6 +109,7 @@ export default class {
   install = () => {
     if (this.updateAvailable) {
       console.log('Applying update')
+      this.hooks.preInstall?.()
       autoUpdater.quitAndInstall()
     }
   }
