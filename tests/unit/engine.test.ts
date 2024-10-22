@@ -10,7 +10,9 @@ import Ollama from '../../src/llms/ollama'
 import MistralAI from '../../src/llms/mistralai'
 import Anthropic from '../../src/llms/anthropic'
 import Google from '../../src/llms/google'
+import XAI from '../../src/llms/xai'
 import Groq from '../../src/llms/groq'
+import Cerebras from '../../src/llms/cerebras'
 import { Model } from '../../src/types/config.d'
 
 const model = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
@@ -53,7 +55,9 @@ test('Default Configuration', () => {
   expect(isEngineReady('mistralai')).toBe(false)
   expect(isEngineReady('anthropic')).toBe(false)
   expect(isEngineReady('google')).toBe(false)
+  expect(isEngineReady('xai')).toBe(false)
   expect(isEngineReady('groq')).toBe(false)
+  expect(isEngineReady('cerebras')).toBe(false)
   expect(isEngineReady('aws')).toBe(false)
 })
 
@@ -99,6 +103,15 @@ test('Google Configuration', () => {
   expect(isEngineReady('google')).toBe(true)
 })
 
+test('xAI Configuration', () => {
+  store.config.engines.xai.models.image = [model]
+  expect(isEngineReady('xai')).toBe(false)
+  store.config.engines.xai.models.chat = [model]
+  expect(isEngineReady('xai')).toBe(false)
+  store.config.engines.xai.apiKey = '123'
+  expect(isEngineReady('xai')).toBe(true)
+})
+
 test('Groq Configuration', () => {
   store.config.engines.groq.models.image = [model]
   expect(isEngineReady('groq')).toBe(false)
@@ -108,13 +121,24 @@ test('Groq Configuration', () => {
   expect(isEngineReady('groq')).toBe(true)
 })
 
+test('Cerebras Configuration', () => {
+  store.config.engines.cerebras.models.image = [model]
+  expect(isEngineReady('cerebras')).toBe(false)
+  store.config.engines.cerebras.models.chat = [model]
+  expect(isEngineReady('cerebras')).toBe(false)
+  store.config.engines.cerebras.apiKey = '123'
+  expect(isEngineReady('cerebras')).toBe(true)
+})
+
 test('Ignite Engine', async () => {
   expect(await igniteEngine('openai', store.config)).toBeInstanceOf(OpenAI)
   expect(await igniteEngine('ollama', store.config)).toBeInstanceOf(Ollama)
   expect(await igniteEngine('mistralai', store.config)).toBeInstanceOf(MistralAI)
   expect(await igniteEngine('anthropic', store.config)).toBeInstanceOf(Anthropic)
   expect(await igniteEngine('google', store.config)).toBeInstanceOf(Google)
+  expect(await igniteEngine('xai', store.config)).toBeInstanceOf(XAI)
   expect(await igniteEngine('groq', store.config)).toBeInstanceOf(Groq)
+  expect(await igniteEngine('cerebras', store.config)).toBeInstanceOf(Cerebras)
   expect(await igniteEngine('aws', store.config)).toBeInstanceOf(OpenAI)
   expect(await igniteEngine('aws', store.config, 'aws')).toBeNull()
 })
@@ -125,13 +149,16 @@ test('Has Vision Models', async () => {
   expect(hasVisionModels('mistralai')).toBe(false)
   expect(hasVisionModels('anthropic')).toBe(true)
   expect(hasVisionModels('google')).toBe(true)
+  expect(hasVisionModels('xai')).toBe(false)
   expect(hasVisionModels('groq')).toBe(false)
+  expect(hasVisionModels('cerebras')).toBe(false)
 })
 
 test('Is Vision Model', async () => {
   expect(isVisionModel('openai', 'gpt-3.5')).toBe(false)
   expect(isVisionModel('openai', 'gpt-4-turbo')).toBe(true)
   expect(isVisionModel('openai', 'gpt-vision')).toBe(true)
+  expect(isVisionModel('anthropic', 'claude-sonnet-35-latest')).toBe(true)
 })
 
 test('Get Chat Models', async () => {

@@ -7,6 +7,7 @@
     <option value="anthropic">Anthropic</option>
     <option value="mistralai">MistralAI</option>
     <option value="google">Google</option>
+    <option value="xai">xAI</option>
     <option value="groq">Groq</option>
     <option value="cerebras">Cerebras</option>
   </select>
