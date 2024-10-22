@@ -2,10 +2,10 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import getSTTEngine from '../../src/services/stt'
-import STTOpenAI from '../../src/services/stt-openai'
-import STTGroq from '../../src/services/stt-groq'
-import STTWhisper from '../../src/services/stt-whisper'
+import getSTTEngine from '../../src/voice/stt'
+import STTOpenAI from '../../src/voice/stt-openai'
+import STTGroq from '../../src/voice/stt-groq'
+import STTWhisper from '../../src/voice/stt-whisper'
 import exp from 'constants'
 
 const initCallback = vi.fn()

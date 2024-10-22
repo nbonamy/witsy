@@ -27,7 +27,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadCerebrasModels } from '../services/llm'
+import { loadCerebrasModels } from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)

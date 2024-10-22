@@ -30,7 +30,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadOpenAIModels } from '../services/llm'
+import { loadOpenAIModels } from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 

@@ -6,7 +6,7 @@ export const isCerebrasConfigured = (engineConfig: EngineConfig): boolean => {
   return engineConfig?.apiKey?.length > 0
 }
 
-export const isCerebeasReady = (engineConfig: EngineConfig): boolean => {
+export const isCerebrasReady = (engineConfig: EngineConfig): boolean => {
   return isCerebrasConfigured(engineConfig) && engineConfig?.models?.chat?.length > 0
 }
 

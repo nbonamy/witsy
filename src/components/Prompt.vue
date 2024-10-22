@@ -30,7 +30,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
-import { canProcessFormat } from '../services/llm'
+import { canProcessFormat } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'

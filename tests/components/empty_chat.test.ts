@@ -4,7 +4,7 @@ import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 import EngineLogo from '../../src/components/EngineLogo.vue'
-import { availableEngines } from '../../src/services/llm'
+import { availableEngines } from '../../src/llms/llm'
 
 enableAutoUnmount(afterAll)
 

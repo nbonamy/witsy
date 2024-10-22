@@ -16,7 +16,7 @@
 <script setup>
 
 import { ref, computed, nextTick } from 'vue'
-import { availableEngines } from '../services/llm'
+import { availableEngines } from '../llms/llm'
 import EngineLogo from '../components/EngineLogo.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'

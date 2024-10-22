@@ -2,28 +2,30 @@
 import { anyDict } from 'types/index.d'
 import { Model, EngineConfig, Configuration } from 'types/config.d'
 import { imageFormats, textFormats } from '../models/attachment'
-import { store } from './store'
+import { store } from '../services/store'
 import OpenAI, { isOpenAIConfigured, isOpenAIReady } from './openai'
 import Ollama, { isOllamaConfigured, isOllamaReady } from './ollama'
 import MistralAI, { isMistralAIReady, isMistralAIConfigured } from './mistralai'
 import Anthropic, { isAnthropicConfigured, isAnthropicReady } from './anthropic'
 import Google, { isGoogleConfigured, isGoogleReady } from './google'
 import Groq, { isGroqConfigured, isGroqReady } from './groq'
-import Cerebreas,{ isCerebeasReady, isCerebrasConfigured } from './cerebras'
+import XAI, { isXAIConfigured, isXAIReady } from './xai'
+import Cerebreas,{ isCerebrasReady, isCerebrasConfigured } from './cerebras'
 import LlmEngine from './engine'
 
-export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'groq', 'cerebras' ]
-export const staticModelsEngines = [ 'anthropic', 'google', 'groq', 'cerebras' ]
+export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
+export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'groq', 'cerebras' ]
 
 export const isEngineConfigured = (engine: string) => {
   if (engine === 'openai') return isOpenAIConfigured(store.config.engines.openai)
-    if (engine === 'ollama') return isOllamaConfigured(store.config.engines.ollama)
-    if (engine === 'mistralai') return isMistralAIConfigured(store.config.engines.mistralai)
-    if (engine === 'anthropic') return isAnthropicConfigured(store.config.engines.anthropic)
-    if (engine === 'google') return isGoogleConfigured(store.config.engines.google)
-    if (engine === 'groq') return isGroqConfigured(store.config.engines.groq)
-    if (engine === 'cerebras') return isCerebrasConfigured(store.config.engines.cerebras)
-    return false
+  if (engine === 'ollama') return isOllamaConfigured(store.config.engines.ollama)
+  if (engine === 'mistralai') return isMistralAIConfigured(store.config.engines.mistralai)
+  if (engine === 'anthropic') return isAnthropicConfigured(store.config.engines.anthropic)
+  if (engine === 'google') return isGoogleConfigured(store.config.engines.google)
+  if (engine === 'groq') return isGroqConfigured(store.config.engines.groq)
+  if (engine === 'cerebras') return isCerebrasConfigured(store.config.engines.cerebras)
+  if (engine === 'xai') return isXAIConfigured(store.config.engines.xai)
+  return false
 }  
 
 export const isEngineReady = (engine: string) => {
@@ -33,7 +35,8 @@ export const isEngineReady = (engine: string) => {
   if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
   if (engine === 'google') return isGoogleReady(store.config.engines.google)
   if (engine === 'groq') return isGroqReady(store.config.engines.groq)
-  if (engine === 'cerebras') return isCerebeasReady(store.config.engines.cerebras)
+  if (engine === 'cerebras') return isCerebrasReady(store.config.engines.cerebras)
+  if (engine === 'xai') return isXAIReady(store.config.engines.xai)
   return false
 }
 
@@ -43,6 +46,7 @@ export const igniteEngine = (engine: string, config: Configuration, fallback = '
   if (engine === 'mistralai') return new MistralAI(config)
   if (engine === 'anthropic') return new Anthropic(config)
   if (engine === 'google') return new Google(config)
+  if (engine === 'xai') return new XAI(config)
   if (engine === 'groq') return new Groq(config)
   if (engine === 'cerebras') return new Cerebreas(config)
   if (isEngineReady(fallback)) {
@@ -103,6 +107,8 @@ export const loadModels = async (engine: string) => {
     await loadGroqModels()
   } else if (engine === 'cerebras') {
     await loadCerebrasModels()
+  } else if (engine === 'xai') {
+    await loadXAIModels()
   }
 }
 
@@ -274,7 +280,7 @@ export const loadAnthropicModels = async () => {
       name: model.name,
       meta: model
     }})
-    .sort((a, b) => a.name.localeCompare(b.name))
+    //.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   // select valid model
@@ -394,7 +400,39 @@ export const loadCerebrasModels = async () => {
   // done
   return true
 }
-function isCerebeasConfigured(cerebras: any) {
-  throw new Error('Function not implemented.')
-}
 
+export const loadXAIModels = async () => {
+  
+  let models = []
+
+  try {
+    const xai = new XAI(store.config)
+    models = await xai.getModels()
+  } catch (error) {
+    console.error('Error listing xAI models:', error);
+  }
+  if (!models) {
+    store.config.engines.xai.models = { chat: [], image: [], }
+    return false
+  }
+
+  // store
+  store.config.engines.xai.models = {
+    chat: models
+    .map(model => { return {
+      id: model.id,
+      name: model.name,
+      meta: model
+    }})
+    //.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  // select valid model
+  store.config.engines.xai.model.chat = getValidModelId('xai', 'chat', store.config.engines.xai.model.chat)
+
+  // save
+  store.saveSettings()
+
+  // done
+  return true
+}

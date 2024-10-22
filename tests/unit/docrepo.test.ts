@@ -185,7 +185,7 @@ test('Docrepo large document', async () => {
 test('Docrepo update document', async () => {
   
   const docrepo = new DocumentRepository(app)
-  docrepo.config.rag = { chunkSize: 500 }
+  docrepo.config.rag = { chunkSize: 500, chunkOverlap: 50 }
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid1 = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
@@ -198,9 +198,10 @@ test('Docrepo update document', async () => {
   expect(list[0].documents).toHaveLength(1)
 
   // check the database
+  const fileSize = fs.statSync(path.join(os.tmpdir(), 'docrepo.json')).size
   const db = new LocalIndex(path.join(os.tmpdir(), 'docrepo', docbase))
   const items = await db.listItems()
-  expect(items).toHaveLength(2)
+  expect(items).toHaveLength(Math.ceil(fileSize * 1.1 / 500))
 
 })
 

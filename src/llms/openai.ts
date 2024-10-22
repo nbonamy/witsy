@@ -128,6 +128,9 @@ export default class extends LlmEngine {
 
   async streamChunkToLlmChunk(chunk: ChatCompletionChunk, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
 
+    // debug
+    //console.log('streamChunkToLlmChunk', chunk)
+
     // tool calls
     if (chunk.choices[0]?.delta?.tool_calls) {
 
@@ -169,7 +172,7 @@ export default class extends LlmEngine {
     }
 
     // now tool calling
-    if (chunk.choices[0]?.finish_reason === 'tool_calls') {
+    if (chunk.choices[0]?.finish_reason === 'tool_calls' || (chunk.choices[0]?.finish_reason === 'stop' && this.toolCalls?.length)) {
 
       // iterate on tools
       for (const toolCall of this.toolCalls) {
@@ -189,6 +192,7 @@ export default class extends LlmEngine {
         // add tool call message
         this.currentThread.push({
           role: 'assistant',
+          content: '',
           tool_calls: toolCall.message
         })
 

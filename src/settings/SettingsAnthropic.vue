@@ -28,7 +28,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadAnthropicModels } from '../services/llm'
+import { loadAnthropicModels } from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)

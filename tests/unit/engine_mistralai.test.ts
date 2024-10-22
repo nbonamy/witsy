@@ -6,10 +6,10 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import MistralAI from '../../src/services/mistralai'
+import MistralAI from '../../src/llms/mistralai'
 import { Mistral } from '@mistralai/mistralai'
 import { CompletionEvent } from '@mistralai/mistralai/models/components'
-import { loadMistralAIModels } from '../../src/services/llm'
+import { loadMistralAIModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {

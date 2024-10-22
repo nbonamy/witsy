@@ -25,7 +25,7 @@
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import Ollama from '../services/ollama'
+import Ollama from '../llms/ollama'
 
 // bus
 import useEventBus from '../composables/event_bus'

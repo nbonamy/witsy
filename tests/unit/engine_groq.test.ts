@@ -3,9 +3,9 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
-import Groq from '../../src/services/groq'
+import Groq from '../../src/llms/groq'
 import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext'
-import { loadGroqModels } from '../../src/services/llm'
+import { loadGroqModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {

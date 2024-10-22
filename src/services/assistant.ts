@@ -4,9 +4,9 @@ import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
-import LlmEngine from './engine'
+import LlmEngine from '../llms/engine'
 import { store } from './store'
-import { igniteEngine } from './llm'
+import { igniteEngine } from '../llms/llm'
 import { countryCodeToName } from './i18n'
 
 export default class {
