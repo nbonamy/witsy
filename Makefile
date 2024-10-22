@@ -82,4 +82,4 @@ publish:
 	gh workflow run build-windows.yml
 	gh workflow run build-linux.yml
 	node build/monitor_gh_builds.mjs
-	gh relese edit v$(VERSION) --draft=false
+	gh release edit v$(VERSION) --draft=false
