@@ -11,6 +11,7 @@ import logoOllama from '../../assets/ollama.svg'
 import logoAnthropic from '../../assets/anthropic.svg'
 import logoMistralAI from '../../assets/mistralai.svg'
 import logoGoogle from '../../assets/google.svg'
+import logoXAI from '../../assets/xai.svg'
 import logoGroq from '../../assets/groq.svg'
 import logoCerberas from '../../assets/cerebras.svg'
 
@@ -20,6 +21,7 @@ const logos = {
   anthropic: logoAnthropic,
   mistralai: logoMistralAI,
   google: logoGoogle,
+  xai: logoXAI,
   groq: logoGroq,
   cerebras: logoCerberas,
 }
@@ -78,7 +80,15 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.grayscale.google {
-  filter: grayscale()
+  filter: grayscale();
+}
+
+.logo.background.xai {
+  background-color: #f0f0ea;
+}
+
+.logo.grayscale.xai {
+  filter: invert(1);
 }
 
 .logo.grayscale.cerebras {
@@ -125,6 +135,9 @@ const logo = computed(() => logos[props.engine])
     }
     .logo.grayscale.google {
       filter: grayscale() brightness(1.2);
+    }
+    .logo.grayscale.xai {
+      filter: invert(1) brightness(0.9);
     }
     .logo.grayscale.groq {
       filter: invert(1) brightness(0.9);
