@@ -30,7 +30,7 @@ jobs:
       - name: Print files
         run: echo "${{ steps.filelist.outputs.files }}"
       - name: Publish Release
-        run: gh release upload v${{ steps.package-version.outputs.version}} "out/make/squirrel.windows/x64/RELEASES" "out/make/squirrel.windows/x64/Witsy-${{ steps.package-version.outputs.version}}-win32-x64 Setup.exe" "out/make/squirrel.windows/x64/witsy-${{ steps.package-version.outputs.version}}-win32-x64-full.nupkg"
+        run: ./build/publish.ps1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-win32-arm64:
