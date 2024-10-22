@@ -25,7 +25,7 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { availableEngines, isEngineReady, hasChatModels } from '../services/llm'
+import { availableEngines, isEngineReady, hasChatModels } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import EngineLogo from './EngineLogo.vue'
 

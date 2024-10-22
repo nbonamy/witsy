@@ -46,8 +46,8 @@
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../services/llm'
-import { getEmbeddingModels } from '../services/ollama'
+import { loadOllamaModels } from '../llms/llm'
+import { getEmbeddingModels } from '../llms/ollama'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import Dialog from '../composables/dialog'
 

@@ -148,6 +148,15 @@
         "chat": ""
       }
     },
+    "xai": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "cerebras": {
       "models": {
         "chat": [],

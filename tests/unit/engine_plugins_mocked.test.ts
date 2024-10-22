@@ -1,7 +1,7 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
-import OpenAI from '../../src/services/openai'
+import OpenAI from '../../src/llms/openai'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 

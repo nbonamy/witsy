@@ -5,9 +5,9 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import Ollama from '../../src/services/ollama'
+import Ollama from '../../src/llms/ollama'
 import * as _ollama from 'ollama/dist/browser.mjs'
-import { loadOllamaModels } from '../../src/services/llm'
+import { loadOllamaModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {

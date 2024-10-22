@@ -59,10 +59,10 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import getSTTEngine from '../services/stt'
-import STTOpenAI from '../services/stt-openai'
-import STTGroq from '../services/stt-groq'
-import STTWhisper from '../services/stt-whisper'
+import getSTTEngine from '../voice/stt'
+import STTOpenAI from '../voice/stt-openai'
+import STTGroq from '../voice/stt-groq'
+import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
 
 const engine = ref('openai')

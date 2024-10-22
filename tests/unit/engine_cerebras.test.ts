@@ -2,10 +2,10 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import Cerebras from '../../src/services/cerebras'
+import Cerebras from '../../src/llms/cerebras'
 import Message from '../../src/models/message'
 import * as _OpenAI from 'openai'
-import { loadCerebrasModels } from '../../src/services/llm'
+import { loadCerebrasModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {
@@ -45,6 +45,7 @@ test('Cerebras Load Chat Models', async () => {
 test('Cerebras Basic', async () => {
   const cerebras = new Cerebras(store.config)
   expect(cerebras.getName()).toBe('cerebras')
+  expect(cerebras.client.apiKey).toBe('123')
   expect(cerebras.client.baseURL).toBe('https://api.cerebras.ai/v1')
   expect(cerebras.isVisionModel('llama3.1-8b')).toBe(false)
   expect(cerebras.isVisionModel('llama3.1-70b')).toBe(false)
@@ -52,7 +53,7 @@ test('Cerebras Basic', async () => {
 
 test('Cerebras stream', async () => {
   const cerebras = new Cerebras(store.config)
-  const response = await cerebras.stream([
+  /*const response = */await cerebras.stream([
     new Message('system', 'instruction'),
     new Message('user', 'prompt'),
   ], null)

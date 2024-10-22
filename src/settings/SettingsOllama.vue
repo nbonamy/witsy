@@ -22,10 +22,10 @@
 
 import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../services/llm'
+import { loadOllamaModels } from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
-import { getChatModels } from '../services/ollama'
+import { getChatModels } from '../llms/ollama'
 
 // bus
 import useEventBus from '../composables/event_bus'

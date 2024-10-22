@@ -48,10 +48,10 @@ export default class extends LlmEngine {
 
     // do it
     return [
+      { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet' },
+      { id: 'claude-3-sonnet-latest', name: 'Claude 3 Sonnet' },
+      { id: 'claude-3-opus-latest', name: 'Claude 3 Opus' },
       { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' },
-      { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet' },
-      { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus' },
-      { id: 'claude-3-5-sonnet-20240620', name: 'Claude 3.5 Sonnet' },
     ]
   }
 

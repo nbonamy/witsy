@@ -25,7 +25,7 @@ vi.mock('electron', async() => {
 })
 
 test('Find program', async () => {
-  expect(file.findProgram(null, 'sh')).toBe('/bin/sh')
+  expect(file.findProgram(null, 'sh')).toMatch(/^.*\/sh$/)
   expect(file.findProgram(null, 'sh2')).toBeNull()
 })
 

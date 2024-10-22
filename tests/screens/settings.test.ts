@@ -4,7 +4,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
 import Settings from '../../src/screens/Settings.vue'
 import defaults from '../../defaults/settings.json'
-import { availableEngines } from '../../src/services/llm'
+import { availableEngines } from '../../src/llms/llm'
 
 import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()

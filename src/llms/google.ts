@@ -4,7 +4,7 @@ import { EngineConfig, Configuration } from 'types/config.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmToolCall, LlmEventCallback } from 'types/llm.d'
 import { Content, EnhancedGenerateContentResponse, GenerativeModel, GoogleGenerativeAI, ModelParams, Part, FunctionResponsePart, SchemaType, FunctionDeclarationSchemaProperty, FunctionCallingMode } from '@google/generative-ai'
 import type { FunctionDeclaration } from '@google/generative-ai/dist/types'
-import { getFileContents } from './download'
+import { getFileContents } from '../services/download'
 import Attachment from '../models/attachment'
 import LlmEngine from './engine'
 

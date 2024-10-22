@@ -25,6 +25,7 @@ beforeAll(() => {
   window.api = {
     on: vi.fn(),
     listFonts: vi.fn(() => []),
+    showDialog: vi.fn(async () => { return { response: 0, checkboxChecked: false }}),
     update: {
       isAvailable: vi.fn(() => false),
     },
@@ -47,6 +48,9 @@ beforeAll(() => {
     },
     docrepo: {
       list: vi.fn(() => []),
+    },
+    scratchpad: {
+      open: vi.fn(),
     },
   }
 

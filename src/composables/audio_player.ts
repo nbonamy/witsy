@@ -2,7 +2,7 @@
 
 import { Configuration } from 'types/config.d'
 import { SpeechPlayer } from 'openai-speech-stream-player'
-import Tts from '../services/tts'
+import Tts from '../voice/tts'
 
 export type AudioState = 'idle'|'loading'|'playing'|'paused'
 export type AudioStatus = { state: AudioState, uuid: string }

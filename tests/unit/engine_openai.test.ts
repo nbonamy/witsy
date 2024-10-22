@@ -6,10 +6,10 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import OpenAI from '../../src/services/openai'
+import OpenAI from '../../src/llms/openai'
 import * as _OpenAI from 'openai'
 import { ChatCompletionChunk } from 'openai/resources'
-import { loadOpenAIModels } from '../../src/services/llm'
+import { loadOpenAIModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {
@@ -93,6 +93,7 @@ vi.mock('openai', async () => {
 beforeEach(() => {
   store.config = defaults
   store.config.engines.openai.apiKey = '123'
+  //store.config.engines.openai.baseURL = 'https://localhost'
 })
 
 test('OpenAI Load Chat Models', async () => {
@@ -120,6 +121,8 @@ test('OpenAI Load Image Models', async () => {
 test('OpenAI Basic', async () => {
   const openAI = new OpenAI(store.config)
   expect(openAI.getName()).toBe('openai')
+  expect(openAI.client.apiKey).toBe('123')
+  expect(openAI.client.baseURL).toBe('https://api.openai.com/v1')
   expect(openAI.isVisionModel('gpt-3.5')).toBe(false)
   expect(openAI.isVisionModel('gpt-3.5-turbo')).toBe(false)
   expect(openAI.isVisionModel('gpt-4')).toBe(false)

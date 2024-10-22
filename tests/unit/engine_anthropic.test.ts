@@ -6,9 +6,9 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import Anthropic from '../../src/services/anthropic'
+import Anthropic from '../../src/llms/anthropic'
 import * as _Anthropic from '@anthropic-ai/sdk'
-import { loadAnthropicModels } from '../../src/services/llm'
+import { loadAnthropicModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
 window.api = {
@@ -88,21 +88,21 @@ test('Anthropic Load Models', async () => {
   expect(await loadAnthropicModels()).toBe(true)
   const models = store.config.engines.anthropic.models.chat
   expect(models.map((m: Model) => { return { id: m.id, name: m.name }})).toStrictEqual([
+    { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet' },
+    { id: 'claude-3-sonnet-latest', name: 'Claude 3 Sonnet' },
+    { id: 'claude-3-opus-latest', name: 'Claude 3 Opus' },
     { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' },
-    { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus' },
-    { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet' },
-    { id: 'claude-3-5-sonnet-20240620', name: 'Claude 3.5 Sonnet' },
-  ])
+])
   expect(store.config.engines.anthropic.model.chat).toStrictEqual(models[0].id)
 })
 
 test('Anthropic Basic', async () => {
   const anthropic = new Anthropic(store.config)
   expect(anthropic.getName()).toBe('anthropic')
+  expect(anthropic.isVisionModel('claude-3-5-sonnet-latest')).toBe(true)
+  expect(anthropic.isVisionModel('claude-3-sonnet-latest')).toBe(true)
+  expect(anthropic.isVisionModel('claude-3-opus-latest')).toBe(true)
   expect(anthropic.isVisionModel('claude-3-haiku-20240307')).toBe(true)
-  expect(anthropic.isVisionModel('claude-3-sonnet-20240229')).toBe(true)
-  expect(anthropic.isVisionModel('claude-3-opus-2024022')).toBe(true)
-  expect(anthropic.isVisionModel('claude-3-5-sonnet-20240620')).toBe(true)
 })
 
 test('Anthropic completion', async () => {

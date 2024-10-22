@@ -2,7 +2,7 @@
 import { anyDict, Message } from 'types/index.d'
 import { LlmResponse, LlmCompletionOpts, LLmCompletionPayload, LlmStream, LlmChunk, LlmEventCallback, LlmToolOpenAI } from 'types/llm.d'
 import { Configuration, Model } from 'types/config.d'
-import { getFileContents } from './download'
+import { getFileContents } from '../services/download'
 import Plugin from '../plugins/plugin'
 import { availablePlugins } from '../plugins/plugins'
 import { PluginParameter } from 'types/plugin.d'

@@ -1,16 +1,16 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { isEngineReady, igniteEngine, hasVisionModels, isVisionModel, loadOpenAIModels } from '../../src/services/llm'
+import { isEngineReady, igniteEngine, hasVisionModels, isVisionModel, loadOpenAIModels } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import OpenAI from '../../src/services/openai'
-import Ollama from '../../src/services/ollama'
-import MistralAI from '../../src/services/mistralai'
-import Anthropic from '../../src/services/anthropic'
-import Google from '../../src/services/google'
-import Groq from '../../src/services/groq'
+import OpenAI from '../../src/llms/openai'
+import Ollama from '../../src/llms/ollama'
+import MistralAI from '../../src/llms/mistralai'
+import Anthropic from '../../src/llms/anthropic'
+import Google from '../../src/llms/google'
+import Groq from '../../src/llms/groq'
 import { Model } from '../../src/types/config.d'
 
 const model = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]

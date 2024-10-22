@@ -2,7 +2,7 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import Tts from '../../src/services/tts'
+import Tts from '../../src/voice/tts'
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()

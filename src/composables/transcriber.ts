@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config.d'
-import getSTTEngine, { STTEngine, TranscribeResponse } from '../services/stt'
+import getSTTEngine, { STTEngine, TranscribeResponse } from '../voice/stt'
 
 class Transcriber {
 

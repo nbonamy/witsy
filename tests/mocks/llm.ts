@@ -3,7 +3,7 @@
 import { Message } from '../../src/types/index.d'
 import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmEventCallback, LlmResponse, LlmStream } from '../../src/types/llm.d'
 import { Configuration } from '../../src/types/config.d'
-import LlmEngine from '../../src/services/engine'
+import LlmEngine from '../../src/llms/engine'
 import RandomChunkStream from './stream'
 
 class LlmError extends Error {
