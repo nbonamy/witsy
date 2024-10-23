@@ -72,7 +72,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'assets/icon',
-    executableName: 'Witsy',
+    executableName: process.platform == 'linux' ? 'witsy' : 'Witsy',
     appBundleId: 'com.nabocorp.witsy',
     extendInfo: './build/Info.plist',
     buildVersion: `${process.env.BUILD_NUMBER}`,
