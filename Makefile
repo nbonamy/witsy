@@ -55,9 +55,8 @@ win: win-x64 win-arm64
 
 linux-x64:
 	-rm -rf out/*linux-x64* out/make/zip/linux/x64/*
-	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge package -p linux -a x64
-	mkdir -p out/make/zip/linux/x64
-	cd out ; zip -r make/zip/linux/x64/Witsy-$(VERSION)-linux-x64.zip "Witsy-linux-x64/"
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p linux -a x64
+	cd out/make/zip/linux/x64 ; mv Witsy-linux-x64-$(VERSION).zip Witsy-$(VERSION)-linux-x64.zip
 
 linux: linux-x64
 

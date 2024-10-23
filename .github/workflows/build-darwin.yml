@@ -40,31 +40,12 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           IDENTIFY_DARWIN_CODE: ${{ secrets.IDENTIFY_DARWIN_CODE }}
-      - name: List DMG files
-        id: filelist_dmg
-        uses: the-coding-turtle/ga-file-list@v0.1
+      - name: List packages
+        uses: mathiasvr/command-output@v2.0.0
+        id: packagelist
         with:
-          directory: "out/make/"
-      - name: List arm64 files
-        id: filelist_arm64
-        uses: the-coding-turtle/ga-file-list@v0.1
-        with:
-          directory: "out/make/zip/darwin/arm64"
-      - name: List x64 files
-        id: filelist_x64
-        uses: the-coding-turtle/ga-file-list@v0.1
-        with:
-          directory: "out/make/zip/darwin/x64"
-      - name: Print files
-        run: |
-          echo "${{ steps.filelist_dmg.outputs.files }}"
-          echo "${{ steps.filelist_arm64.outputs.files }}"
-          echo "${{ steps.filelist_x64.outputs.files }}"
+          run: node ./build/list-packages.mjs
       - name: Publish Release
-        run: |
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.dmg"
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.dmg"
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/arm64/Witsy-${{ steps.package-version.outputs.version}}-darwin-arm64.zip"
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/darwin/x64/Witsy-${{ steps.package-version.outputs.version}}-darwin-x64.zip"
+        run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

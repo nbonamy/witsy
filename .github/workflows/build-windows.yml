@@ -22,15 +22,13 @@ jobs:
         run: npm i
       - name: Build script
         run: ./build/build.ps1
-      - name: List files
-        id: filelist
-        uses: the-coding-turtle/ga-file-list@v0.1
+      - name: List packages
+        uses: mathiasvr/command-output@v2.0.0
+        id: packagelist
         with:
-          directory: "out/make/squirrel.windows/x64"
-      - name: Print files
-        run: echo "${{ steps.filelist.outputs.files }}"
+          run: node ./build/list-packages.mjs
       - name: Publish Release
-        run: ./build/publish.ps1
+        run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-win32-arm64:
@@ -51,15 +49,12 @@ jobs:
         run: npm i
       - name: Build script
         run: make win-arm64
-      - name: List files
-        id: filelist
-        uses: the-coding-turtle/ga-file-list@v0.1
+      - name: List packages
+        uses: mathiasvr/command-output@v2.0.0
+        id: packagelist
         with:
-          directory: "out/make/zip/win32/arm64"
-      - name: Print files
-        run: echo "${{ steps.filelist.outputs.files }}"
+          run: node ./build/list-packages.mjs
       - name: Publish Release
-        run: |
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/win32/arm64/Witsy-${{ steps.package-version.outputs.version}}-win32-arm64.zip"
+        run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

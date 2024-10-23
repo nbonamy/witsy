@@ -9,6 +9,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      -name: Install required packages
+        run: sudo apt-get install -y rpm
       - name: Github checkout
         uses: actions/checkout@v4
       - name: Use Node.js
@@ -22,15 +24,12 @@ jobs:
         run: npm i
       - name: Build script
         run: make linux-x64
-      - name: List files
-        id: filelist
-        uses: the-coding-turtle/ga-file-list@v0.1
+      - name: List packages
+        uses: mathiasvr/command-output@v2.0.0
+        id: packagelist
         with:
-          directory: "out/make/zip/linux/x64"
-      - name: Print files
-        run: echo "${{ steps.filelist.outputs.files }}"
+          run: node ./build/list-packages.mjs
       - name: Publish Release
-        run: |
-          gh release upload v${{ steps.package-version.outputs.version}} "out/make/zip/linux/x64/Witsy-${{ steps.package-version.outputs.version}}-linux-x64.zip"
+        run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
