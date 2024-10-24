@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -63,7 +63,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.29.0",
+    "@anthropic-ai/sdk": "^0.30.0",
     "@el3um4s/run-vbs": "^1.1.2",
     "@excalidraw/markdown-to-text": "^0.1.2",
     "@google/generative-ai": "^0.21.0",
@@ -71,6 +71,7 @@
     "@iktakahiro/markdown-it-katex": "^4.0.1",
     "@langchain/textsplitters": "^0.0.3",
     "@mistralai/mistralai": "^1.1.0",
+    "@nut-tree-fork/nut-js": "^4.2.2",
     "@xenova/transformers": "^2.17.2",
     "applescript": "^1.0.0",
     "bootstrap-icons-vue": "^1.11.3",

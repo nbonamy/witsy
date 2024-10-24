@@ -130,6 +130,12 @@ interface OnlineStorageProvider {
   upload: (filepath: string, modifiedTime, Date) => Promise<boolean>
 }
 
+export type ComputerAction = {
+  action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
+  coordinate?: number[]
+  text?: string
+}
+
 declare global {
   interface Window {
     api: {
@@ -255,6 +261,12 @@ declare global {
       }
       scratchpad?: {
         open?(): void
+      }
+      computer?: {
+        getScaledScreenSize?(): Size
+        getScreenNumber?(): number
+        takeScreenshot?(): string
+        executeAction?(action: ComputerAction): any
       }
     }
   }

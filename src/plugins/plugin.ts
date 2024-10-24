@@ -10,6 +10,10 @@ export default class {
     this.config = config
   }
 
+  sezializeInTools(): boolean {
+    return true
+  }
+
   isEnabled(): boolean {
     return false
   }

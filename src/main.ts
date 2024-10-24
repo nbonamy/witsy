@@ -18,6 +18,7 @@ import Transcriber from 'automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
+import Computer from './main/computer';
 import OnlineStorage from './main/online';
 import TrayIconManager from './main/tray';
 
@@ -609,6 +610,22 @@ ipcMain.handle('nestor-call-tool', async (_, payload) => {
 
 ipcMain.on('scratchpad-open', async () => {
   await window.openScratchPad();
+});
+
+ipcMain.on('computer-get-scaled-screen-size', (event) => {
+  event.returnValue = Computer.getScaledScreenSize();
+});
+
+ipcMain.on('computer-get-screen-number', (event) => {
+  event.returnValue = Computer.getScreenNumber();
+});
+
+ipcMain.on('computer-get-screenshot', async (event) => {
+  event.returnValue = await Computer.takeScreenshot();
+});
+
+ipcMain.on('computer-execute-action', async (event, payload) => {
+  event.returnValue = await Computer.executeAction(payload);
 });
 
 // ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
