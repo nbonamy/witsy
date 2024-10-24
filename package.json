@@ -9,6 +9,7 @@
   },
   "main": ".vite/build/main.js",
   "scripts": {
+    "postinstall": "node ./postinstall.mjs",
     "start": "cross-env DEBUG=1 electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",

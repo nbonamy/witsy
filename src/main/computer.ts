@@ -12,6 +12,10 @@ export type Size = { width: number, height: number }
 
 export default {
 
+  isAvailable(): Promise<boolean> {
+    return nut.isAvailable()
+  },
+
   getActiveDisplay() {
     const cursorPoint = screen.getCursorScreenPoint()
     return screen.getDisplayNearestPoint(cursorPoint)
@@ -94,43 +98,52 @@ export default {
 
       switch (action.action) {
 
-        case 'cursor_position':
+        case 'cursor_position': {
           const cursorPosition = await nut.getCursorPosition()
           return this.realToScaled(cursorPosition.x, cursorPosition.y)
+        }
 
-        case 'mouse_move':
+        case 'mouse_move': {
           const mousePosition = this.scaledToReal(action.coordinate[0], action.coordinate[1])
           await nut.mouseMove(mousePosition.x, mousePosition.y)
           return true
+        }
 
-        case 'left_click':
+        case 'left_click': {
           await nut.leftClick()
           return true
+        }
 
-        case 'left_click_drag':
+        case 'left_click_drag': {
           const dragPosition = this.scaledToReal(action.coordinate[0], action.coordinate[1])
           await nut.leftClickDrag(dragPosition.x, dragPosition.y)
           return true
+        }
 
-        case 'right_click':
+        case 'right_click': {
           await nut.rightClick()
           return true
+        }
 
-        case 'middle_click':
+        case 'middle_click': {
           await nut.middleClick()
           return true
+        }
 
-        case 'double_click':
+        case 'double_click': {
           await nut.doubleClick()
           return true
+        }
 
-        case 'type':
+        case 'type':{
           await nut.type(action.text)
           return true
+        }
 
-        case 'key':
+        case 'key': {
           await nut.key(action.text)
           return true
+        }
 
         default:
           throw new Error(`Unknown computer action ${action.action}`)

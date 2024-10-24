@@ -1,11 +1,12 @@
 
 import { LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback, LlmToolCall, LLmCompletionPayload } from 'types/llm.d'
 import { EngineConfig, Configuration } from 'types/config.d'
-import { Message } from 'types/index.d'
+import { Message } from 'types'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
 import { Stream } from '@anthropic-ai/sdk/streaming'
-import { Tool, ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam, TextBlock, ToolUseBlock, TextDelta, InputJSONDelta } from '@anthropic-ai/sdk/resources'
+import { Tool, ImageBlockParam, MessageParam, MessageStreamEvent, TextBlockParam, TextBlock, TextDelta, InputJSONDelta } from '@anthropic-ai/sdk/resources'
+import { BetaToolUnion } from '@anthropic-ai/sdk/resources/beta/messages/messages'
 import ComputerPlugin from '../plugins/computer'
 
 export const isAnthropicConfigured = (engineConfig: EngineConfig): boolean => {
@@ -15,6 +16,8 @@ export const isAnthropicConfigured = (engineConfig: EngineConfig): boolean => {
 export const isAnthropicReady = (engineConfig: EngineConfig): boolean => {
   return isAnthropicConfigured(engineConfig) && engineConfig?.models?.chat?.length > 0
 }
+
+type AnthropicTool = Tool|BetaToolUnion
 
 export default class extends LlmEngine {
 
@@ -60,9 +63,9 @@ export default class extends LlmEngine {
     ]
 
     // depends on platform
-    //if (window.api.platform === 'darwin') {
+    if (window.api.computer.isAvailable()) {
       models.push({ id: 'computer-use', name: 'Computer Use' })
-    //}
+    }
 
     // done
     return models
@@ -124,7 +127,7 @@ export default class extends LlmEngine {
     this.toolCall = null
 
     // tools in anthropic format
-    const tools: Tool[] = (await this.getAvailableTools()).map((tool) => {
+    const tools: AnthropicTool[] = (await this.getAvailableTools()).map((tool) => {
       return {
         name: tool.function.name,
         description: tool.function.description,
@@ -157,7 +160,7 @@ export default class extends LlmEngine {
 
   }
 
-  async doStreamNormal(tools: Tool[]): Promise<LlmStream> {
+  async doStreamNormal(tools: AnthropicTool[]): Promise<LlmStream> {
 
     console.log(`[anthropic] prompting model ${this.currentModel}`)
     return this.client.messages.create({
@@ -166,13 +169,13 @@ export default class extends LlmEngine {
       max_tokens: this.getMaxTokens(this.currentModel),
       messages: this.currentThread,
       tool_choice: { type: 'auto' },
-      tools: tools,
+      tools: tools as Tool[],
       stream: true,
     })
 
   }
 
-  async doStreamBeta(tools: Tool[]): Promise<LlmStream> {
+  async doStreamBeta(tools: AnthropicTool[]): Promise<LlmStream> {
     console.log(`[anthropic] prompting model ${this.currentModel}`)
     return this.client.beta.messages.create({
       model: this.getComputerUseRealModel(),
@@ -191,7 +194,7 @@ export default class extends LlmEngine {
     stream.controller.abort()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async streamChunkToLlmChunk(chunk: MessageStreamEvent, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     
     // log

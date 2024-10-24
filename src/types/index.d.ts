@@ -263,6 +263,7 @@ declare global {
         open?(): void
       }
       computer?: {
+        isAvailable?(): boolean
         getScaledScreenSize?(): Size
         getScreenNumber?(): number
         takeScreenshot?(): string
