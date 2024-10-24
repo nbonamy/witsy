@@ -26,11 +26,14 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { availableEngines, isEngineReady, hasChatModels } from '../llms/llm'
+import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'
 import EngineLogo from './EngineLogo.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+const tipsManager = useTipsManager(store)
 
 const showAllEngines = ref(false)
 
@@ -96,6 +99,15 @@ const onClickModel = () => {
 }
 
 const onSelectModel = (ev) => {
+
+  // anthropic computer-use warning
+  if (store.config.llm.engine === 'anthropic' && ev.target.value === 'computer-use') {
+    if (tipsManager.isTipAvailable('computerUse')) {
+      tipsManager.showTip('computerUse')
+    }
+  }
+
+  // continue
   let model = ev.target.value
   store.config.engines[store.config.llm.engine].model.chat = model
   store.saveSettings()

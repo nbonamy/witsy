@@ -10,7 +10,8 @@
       "engineSelector": true,
       "modelSelector": true,
       "scratchpad": true,
-      "conversation": true
+      "conversation": true,
+      "computerUse": true
     },
     "confirm": {
       "retryGeneration": true
