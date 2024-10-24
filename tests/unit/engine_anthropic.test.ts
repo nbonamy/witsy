@@ -17,6 +17,9 @@ window.api = {
   },
   file: {
     extractText: (contents) => contents
+  },
+  computer: {
+    isAvailable: vi.fn(() => true),
   }
 }
 

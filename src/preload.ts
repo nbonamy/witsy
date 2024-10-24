@@ -127,6 +127,7 @@ contextBridge.exposeInMainWorld(
       authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },
     },
     computer: {
+      isAvailable: (): boolean => { return ipcRenderer.sendSync('computer-is-available') },
       getScaledScreenSize: (): Size => { return ipcRenderer.sendSync('computer-get-scaled-screen-size') },
       getScreenNumber: (): number => { return ipcRenderer.sendSync('computer-get-screen-number') },
       takeScreenshot: (): string => { return ipcRenderer.sendSync('computer-get-screenshot') },

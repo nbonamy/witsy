@@ -612,6 +612,10 @@ ipcMain.on('scratchpad-open', async () => {
   await window.openScratchPad();
 });
 
+ipcMain.on('computer-is-available', async (event) => {
+  event.returnValue = await Computer.isAvailable();
+});
+
 ipcMain.on('computer-get-scaled-screen-size', (event) => {
   event.returnValue = Computer.getScaledScreenSize();
 });
