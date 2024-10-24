@@ -28,7 +28,7 @@ jobs:
         uses: mathiasvr/command-output@v2.0.0
         id: packagelist
         with:
-          run: node ./build/list-packages.mjs
+          run: node ./build/list_packages.mjs
       - name: Publish Release
         run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
         env:
