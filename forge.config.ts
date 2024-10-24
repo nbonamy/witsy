@@ -8,6 +8,7 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
@@ -19,6 +20,7 @@ let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
 let osxMaker: any = new MakerDMG({
+  icon: './assets/icon.icns',
   background: './assets/dmg_background.png',
   additionalDMGOptions: {
     window: {
@@ -84,6 +86,34 @@ const config: ForgeConfig = {
       //...(fs.existsSync('./gdrive.json') ? ['gdrive.json'] : []),
     ],
     ...osxPackagerConfig,
+    afterCopy: [
+      (buildPath, electronVersion, platform, arch, callback) => {
+        try {
+          // sign native modules
+          if (platform === 'darwin') {
+            const binaries = [
+              'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node'
+            ];
+
+            binaries.forEach((binary) => {
+              const binaryPath = path.join(buildPath, binary);
+              if (fs.existsSync(binaryPath)) {
+                console.log(`Signing binary: ${binaryPath}`);
+                execSync(`codesign --deep --force --verbose --sign "${process.env.IDENTIFY_DARWIN_CODE}" "${binaryPath}"`, {
+                  stdio: 'inherit',
+                });
+              } else {
+                console.error(`Binary not found: ${binaryPath}`);
+              }
+            });
+          }
+
+          callback();
+        } catch (error) {
+          callback(error);
+        }
+      },
+    ],
   },
   rebuildConfig: {},
   makers: [ new MakerZIP({}), new MakerSquirrel({}), osxMaker, new MakerRpm({}), new MakerDeb({})],
@@ -128,6 +158,8 @@ const config: ForgeConfig = {
       fs.unlinkSync(path.join(buildPath, 'node_modules/officeparser/node_modules/.bin/rimraf'))
       fs.unlinkSync(path.join(buildPath, 'node_modules/@langchain/core/node_modules/.bin/uuid'))
       fs.unlinkSync(path.join(buildPath, 'node_modules/portfinder/node_modules/.bin/mkdirp'))
+      fs.unlinkSync(path.join(buildPath, 'node_modules/execa/node_modules/.bin/semver'))
+      fs.unlinkSync(path.join(buildPath, 'node_modules/execa/node_modules/.bin/which'))
     }
   }
 };

@@ -92,6 +92,7 @@ test('Anthropic Load Models', async () => {
     { id: 'claude-3-sonnet-latest', name: 'Claude 3 Sonnet' },
     { id: 'claude-3-opus-latest', name: 'Claude 3 Opus' },
     { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku' },
+    { id: 'computer-use', name: 'Computer Use' },
 ])
   expect(store.config.engines.anthropic.model.chat).toStrictEqual(models[0].id)
 })

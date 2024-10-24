@@ -76,6 +76,8 @@ interface LlmToolOpenAI {
   }
 }
 
+export type LlmTool = LlmToolOpenAI
+
 interface LlmToolCall {
   id: string
   message: any

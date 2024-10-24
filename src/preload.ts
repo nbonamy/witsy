@@ -1,10 +1,11 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, Expert, ExternalApp, FileContents, anyDict, strDict } from './types/index.d';
+import { Chat, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types/index.d';
 import { Configuration } from './types/config.d';
 import { DocRepoQueryResponseItem } from './types/rag.d';
 import { contextBridge, ipcRenderer } from 'electron'
+import { Size } from 'main/computer';
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -125,5 +126,11 @@ contextBridge.exposeInMainWorld(
       getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
       authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },
     },
+    computer: {
+      getScaledScreenSize: (): Size => { return ipcRenderer.sendSync('computer-get-scaled-screen-size') },
+      getScreenNumber: (): number => { return ipcRenderer.sendSync('computer-get-screen-number') },
+      takeScreenshot: (): string => { return ipcRenderer.sendSync('computer-get-screenshot') },
+      executeAction: (action: ComputerAction): anyDict => { return ipcRenderer.sendSync('computer-execute-action', action) },
+    }
   },
 );

@@ -146,4 +146,10 @@ dialog.settings .content {
   padding: 16px 16px 16px 0px !important;
 }
 
+@media (prefers-color-scheme: dark) {
+  .tools .logo {
+    filter: invert(1);
+  }
+}
+
 </style>

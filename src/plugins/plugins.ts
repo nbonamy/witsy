@@ -9,7 +9,7 @@ import NestorPlugin from '../plugins/nestor'
 export const availablePlugins: anyDict = {
   browse: BrowsePlugin, 
   dalle: DallePlugin,
-  python:  PythonPlugin,
   tavily: TavilyPlugin,
+  python:  PythonPlugin,
   nestor: NestorPlugin,
 }
