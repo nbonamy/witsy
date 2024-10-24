@@ -2,7 +2,7 @@
 import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
-export type TipId = 'scratchpad' |/* 'trayIcon' |*/ 'conversation'
+export type TipId = 'scratchpad' | 'conversation' | 'computerUse'
 
 class TipsManager {
 
@@ -47,8 +47,8 @@ class TipsManager {
     // callbacks
     const callbacks: { [key: string]: CallableFunction } = {
       'scratchpad': this.showScratchpadTip,
-      //'trayIcon': this.showTrayIconTip,
       'conversation': this.showConversationTip,
+      'computerUse': this.showComputerUseWarning,
     }
 
     // get the callback
@@ -79,20 +79,16 @@ class TipsManager {
   
   }
 
-  // showTrayIconTip = () => {
-  //   const systemTray = window.api.platform === 'darwin' ? 'menu bar' : 'system tray'
-  //   const title = `You can activate Witsy from the light bulb icon in the ${systemTray}.`
-  //   Dialog.show({
-  //     iconHtml: false,
-  //     title: title
-  //   }).then(() => {
-  //     window.close()
-  //   })
-  // }
-
   showConversationTip = () => {
     Dialog.show({
       title: 'Check the conversation options by right-clicking on the microphone icon in the chat window.',
+    })
+  }
+
+  showComputerUseWarning = () => {
+    Dialog.show({
+      title: 'Computer Use will interact with your computer and perform mouse and keyboard actions. These actions may cause unexpected behavior which could result in data loss.',
+      text: 'Use at your own risk!',
     })
   }
 }
