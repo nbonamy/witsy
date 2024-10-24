@@ -15,12 +15,13 @@ HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
+  const commands = await import('../../defaults/commands.json')
   const mod: any = await importOriginal()
   return {
     clone: mod.clone,
     store: {
       ...mod.store,
-      commands: require('../../defaults/commands.json'),
+      commands: commands.default,
       saveSettings: vi.fn()
     }
   }

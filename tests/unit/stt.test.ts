@@ -6,7 +6,6 @@ import getSTTEngine from '../../src/voice/stt'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTGroq from '../../src/voice/stt-groq'
 import STTWhisper from '../../src/voice/stt-whisper'
-import exp from 'constants'
 
 const initCallback = vi.fn()
 

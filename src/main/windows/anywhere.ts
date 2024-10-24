@@ -1,5 +1,5 @@
 
-import { strDict } from 'types';
+import { strDict } from 'types/index.d';
 import { BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates, restoreWindows } from './index';
 import { expertsPalette, closeExpertsPalette } from './experts';

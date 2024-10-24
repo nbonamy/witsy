@@ -1,5 +1,5 @@
 
-import { OnlineStorageProvider } from 'types'
+import { OnlineStorageProvider } from 'types/index.d'
 import { App } from 'electron'
 import { settingsFilePath } from './config'
 import { historyFilePath } from './history'
@@ -98,13 +98,14 @@ export default class OnlineConfig {
 
   }
 
-  private async download(filepath: string, modifiedTime: Date): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private async download(filepath: string, modifiedTime: Date): Promise<void> {
     try {
       console.log(`Remote version for ${filepath} is newer. Downloading`)
       //const contents = await this.provider.download(filepath)
       //fs.writeFileSync(filepath, contents)
-    } catch (error) {
-
+    } catch (err) {
+      console.error(`Error downloading ${filepath}`, err)
     }
   }
 
@@ -112,7 +113,8 @@ export default class OnlineConfig {
     try {
       console.log(`Local version for ${filepath} is newer. Uploading`)
       await this.provider.upload(filepath, modifiedTime)
-    } catch (error) {
+    } catch (err) {
+      console.error(`Error uploading ${filepath}`, err)
     }
   }
   

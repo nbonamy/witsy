@@ -1,4 +1,6 @@
 
+import { LlmChunk } from 'types/llm'
+import { Model } from 'types/config'
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
@@ -8,7 +10,6 @@ import Google from '../../src/llms/google'
 import { loadGoogleModels } from '../../src/llms/llm'
 import { EnhancedGenerateContentResponse, FunctionCall, FinishReason } from '@google/generative-ai'
 import * as _Google from '@google/generative-ai'
-import { LlmChunk } from 'types/llm'
 
 window.api = {
   config: {
@@ -16,7 +17,7 @@ window.api = {
   },
 }
 
-Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+Plugin2.prototype.execute = vi.fn((): Promise<string> => Promise.resolve('result2'))
 
 vi.mock('../../src/plugins/plugins', async () => {
   return {
@@ -29,9 +30,9 @@ vi.mock('../../src/plugins/plugins', async () => {
 })
 
 vi.mock('@google/generative-ai', async() => {
-  const GoogleModel = vi.fn()
-  GoogleModel.prototype.generateContent = vi.fn(() => { return { response: { text: () => 'response' } } })
-  GoogleModel.prototype.generateContentStream = vi.fn(() => {
+  const GenerativeModel = vi.fn()
+  GenerativeModel.prototype.generateContent = vi.fn(() => { return { response: { text: () => 'response' } } })
+  GenerativeModel.prototype.generateContentStream = vi.fn(() => {
     return { stream: {
       async * [Symbol.asyncIterator]() {
         
@@ -49,10 +50,10 @@ vi.mock('@google/generative-ai', async() => {
   })
   const GoogleGenerativeAI = vi.fn()
   GoogleGenerativeAI.prototype.apiKey = '123'
-  GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => new GoogleModel())
+  GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => new GenerativeModel())
   const SchemaType = { STRING: 'string', NUMBER: 'number', OBJECT: 'object'}
   const FunctionCallingMode = { AUTO: 'auto' }
-  return { GoogleGenerativeAI, GoogleModel, default: GoogleGenerativeAI, SchemaType, FunctionCallingMode }
+  return { GoogleGenerativeAI, GenerativeModel, default: GoogleGenerativeAI, SchemaType, FunctionCallingMode }
 })
 
 beforeAll(() => {
@@ -93,7 +94,7 @@ test('Google completion', async () => {
   ], null)
   expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
   expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
-  expect(_Google.GoogleModel.prototype.generateContent).toHaveBeenCalledWith({ contents: [{
+  expect(_Google.GenerativeModel.prototype.generateContent).toHaveBeenCalledWith({ contents: [{
     role: 'user',
     parts: [ { text: 'prompt' } ]
   }]})
@@ -135,7 +136,7 @@ test('Google stream', async () => {
   ], null)
   expect(_Google.GoogleGenerativeAI).toHaveBeenCalled()
   expect(_Google.GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenCalled()
-  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [{
+  expect(_Google.GenerativeModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [{
     role: 'user',
     parts: [ { text: 'prompt' } ]
   }]})
@@ -166,7 +167,7 @@ test('Google Text Attachments', async () => {
     new Message('assistant', 'response1'),
     new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'text/plain', contents: 'text2', downloaded: true } } ),
   ], null)
-  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
+  expect(_Google.GenerativeModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
     { role: 'user', parts: [ { text: 'prompt1\n\ntext1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
     { role: 'user', parts: [ { text: 'prompt2\n\ntext2' } ] },
@@ -181,7 +182,7 @@ test('Google Image Attachments', async () => {
     new Message('assistant', 'response1'),
     new Message('user', { role: 'user', type: 'text', content: 'prompt2', attachment: { url: '', mimeType: 'image/png', contents: 'image', downloaded: true } } ),
   ], null)
-  expect(_Google.GoogleModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
+  expect(_Google.GenerativeModel.prototype.generateContentStream).toHaveBeenCalledWith({ contents: [
     { role: 'user', parts: [ { text: 'prompt1' } ] },
     { role: 'model', parts: [ { text: 'response1' } ] },
     { role: 'user', parts: [ { text: 'prompt2' }, { inlineData: { data: 'image', mimeType: 'image/png' }} ] },

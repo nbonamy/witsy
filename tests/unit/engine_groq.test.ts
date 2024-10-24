@@ -4,7 +4,7 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Groq from '../../src/llms/groq'
-import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext'
+import { ChatCompletionChunk } from 'groq-sdk/resources/chat'
 import { loadGroqModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
@@ -99,6 +99,7 @@ test('Groq  stream', async () => {
 test('Groq streamChunkToLlmChunk Text', async () => {
   const groq = new Groq(store.config)
   const streamChunk: ChatCompletionChunk = {
+    id: '123', model: 'model1', created: null, object: 'chat.completion.chunk',
     choices: [{ index: 0, delta: { content: 'response' }, finish_reason: null }],
   }
   const llmChunk1 = await groq.streamChunkToLlmChunk(streamChunk, null)

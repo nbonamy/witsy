@@ -1,5 +1,5 @@
 
-import { ComputerAction } from 'types'
+import { ComputerAction } from 'types/index.d'
 import { desktopCapturer, screen } from 'electron'
 import nut from '../automations/nut'
 

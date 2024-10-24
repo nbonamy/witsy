@@ -1,5 +1,5 @@
 
-import { OnlineFileMetadata, OnlineStorageProvider, anyDict } from 'types'
+import { OnlineFileMetadata, OnlineStorageProvider, anyDict } from 'types/index.d'
 import { App } from 'electron'
 import { google } from 'googleapis'
 import portfinder from 'portfinder'

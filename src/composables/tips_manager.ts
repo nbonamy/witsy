@@ -1,5 +1,5 @@
 
-import { Store } from 'types'
+import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
 export type TipId = 'scratchpad' |/* 'trayIcon' |*/ 'conversation'

@@ -5,7 +5,7 @@ import { Chat, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDi
 import { Configuration } from './types/config.d';
 import { DocRepoQueryResponseItem } from './types/rag.d';
 import { contextBridge, ipcRenderer } from 'electron'
-import { Size } from 'main/computer';
+import { Size } from './main/computer';
 
 contextBridge.exposeInMainWorld(
   'api', {

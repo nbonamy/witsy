@@ -109,7 +109,7 @@ export default class extends LlmEngine {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
   }
 

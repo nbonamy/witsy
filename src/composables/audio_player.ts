@@ -95,7 +95,7 @@ class AudioPlayer {
   stop() {
     try {
       this.player?.destroy()
-    } catch (e) {
+    } catch {
       //console.error(e)
     }
 

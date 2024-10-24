@@ -26,6 +26,7 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 
 beforeAll(() => {
 
+  // eslint-disable-next-line no-global-assign
   navigator = {
     mediaDevices: {
       getUserMedia: vi.fn()

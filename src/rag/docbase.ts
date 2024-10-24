@@ -213,7 +213,7 @@ export default class DocumentBaseImpl {
           await this.db.beginTransaction()
         }
 
-      } catch (error) {
+      } catch {
         //console.error('Error adding file', file, error)
       }
     }

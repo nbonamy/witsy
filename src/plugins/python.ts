@@ -40,7 +40,7 @@ export default class extends Plugin {
     ]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async execute(parameters: anyDict): Promise<anyDict> {
 
     // make sure last line is a print

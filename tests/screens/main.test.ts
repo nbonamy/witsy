@@ -16,6 +16,7 @@ enableAutoUnmount(afterAll)
 
 beforeAll(() => {
 
+  // eslint-disable-next-line no-global-assign
   navigator = {
     mediaDevices: {
       getUserMedia: vi.fn()

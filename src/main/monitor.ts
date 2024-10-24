@@ -44,7 +44,7 @@ export default class {
   size(): number {
     try {
       return fs.statSync(this.filepath).size
-    } catch (error) {
+    } catch {
       //console.error('Error while getting file size', error)
       return 0
     }

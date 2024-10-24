@@ -1,5 +1,5 @@
 
-import { LLmCompletionPayload, LlmChunk } from '../../src/types/llm.d'
+import { LlmChunk } from '../../src/types/llm.d'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
@@ -8,6 +8,7 @@ import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
 import Anthropic from '../../src/llms/anthropic'
 import * as _Anthropic from '@anthropic-ai/sdk'
+import { MessageParam } from '@anthropic-ai/sdk/resources'
 import { loadAnthropicModels } from '../../src/llms/llm'
 import { Model } from '../../src/types/config.d'
 
@@ -23,7 +24,7 @@ window.api = {
   }
 }
 
-Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+Plugin2.prototype.execute = vi.fn((): Promise<string> => Promise.resolve('result2'))
 
 vi.mock('../../src/plugins/plugins', async () => {
   return {
@@ -173,7 +174,7 @@ test('Anthropic addImageToPayload', async () => {
   const anthropic = new Anthropic(store.config)
   const message = new Message('user', 'text')
   message.attachFile(new Attachment('', 'image/png', 'image', true ))
-  const payload: LLmCompletionPayload = { role: 'user', content: message }
+  const payload: MessageParam = { role: 'user', content: null }
   anthropic.addImageToPayload(message, payload)
   expect(payload.content).toStrictEqual([
     { type: 'text', text: 'text' },

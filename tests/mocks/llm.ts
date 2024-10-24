@@ -100,7 +100,7 @@ export default class LlmMock extends LlmEngine {
     payload.images = [ message.attachment.contents ]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
     return {
       type: 'image',
@@ -110,4 +110,3 @@ export default class LlmMock extends LlmEngine {
   }
 
 }
-
