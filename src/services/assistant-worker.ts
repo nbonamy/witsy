@@ -1,11 +1,12 @@
 import { Attachment } from 'types/index.d'
-import { LlmCompletionOpts, LlmChunk, LlmEvent } from 'types/llm.d'
+import { LlmCompletionOpts, LlmChunk } from 'types/llm.d'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
+// eslint-disable-next-line import/no-unresolved
 import LlmWorker from './llm-worker?worker'
 
 type ChunkCallback = (chunk: LlmChunk) => void

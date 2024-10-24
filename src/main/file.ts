@@ -1,5 +1,5 @@
   
-import { ExternalApp, FileContents, anyDict, strDict } from 'types/index.d';
+import { ExternalApp, FileContents, anyDict } from 'types/index.d';
 import { App, dialog } from 'electron';
 import { extensionToMimeType } from './mimetype';
 import { execSync } from 'child_process';
@@ -9,7 +9,7 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const getFileContents = (app: App, filepath: string): FileContents => {
 
   try {
@@ -30,7 +30,7 @@ export const getFileContents = (app: App, filepath: string): FileContents => {
 
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const getIconContents = (app: App, filepath: string): FileContents => {
 
   try {
@@ -56,7 +56,7 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
 
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const deleteFile = (app: App, filepath: string) => {
 
   try {
@@ -160,13 +160,14 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
       }
     }
 
-  } catch (error) {
+  } catch (err) {
+    console.error('Error while listing files recursively', err);
   }
 
   return fileList;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const findProgram = (app: App, program: string) => {
   if (process.platform !== 'win32') {
     try {
@@ -251,7 +252,7 @@ export const downloadFile = async (app: App, payload: anyDict) => {
 
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const getAppInfo = (app: App, filepath: string): ExternalApp | null => {
 
   // for macos

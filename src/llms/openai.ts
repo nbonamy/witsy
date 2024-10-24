@@ -14,7 +14,7 @@ export const isOpenAIConfigured = (engineConfig: EngineConfig): boolean => {
   return true
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export const isOpenAIReady = (engineConfig: EngineConfig): boolean => {
   return isOpenAIConfigured(engineConfig)
 }
@@ -236,7 +236,7 @@ export default class extends LlmEngine {
     ]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
 
     // call

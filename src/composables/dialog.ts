@@ -48,7 +48,8 @@ const Dialog = {
         logo.removeAttribute('id')
         logo.removeAttribute('style')
         icon?.replaceChildren(logo)
-      } catch (_) {
+      } catch (err) {
+        console.warn('Could not replace logo', err)
       }
     }
 
@@ -65,7 +66,7 @@ const Dialog = {
   system: async (opts: any): Promise<DialogResult> => {
 
     const buttons  = [ opts.confirmButtonText ?? 'OK' ]
-    let indices = { 'confirm': 0, 'deny': -1, 'cancel': -1 }
+    const indices = { 'confirm': 0, 'deny': -1, 'cancel': -1 }
     if (opts.showDenyButton) {
       buttons.push(opts.denyButtonText)
       indices.deny = buttons.length - 1

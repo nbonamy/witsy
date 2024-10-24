@@ -1,4 +1,6 @@
 
+import { Model } from '../../src/types/config.d'
+import { LlmChunk } from 'types/llm.d'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import { store } from '../../src/services/store'
@@ -7,8 +9,6 @@ import XAI from '../../src/llms/xai'
 import Message from '../../src/models/message'
 import * as _OpenAI from 'openai'
 import { loadXAIModels } from '../../src/llms/llm'
-import { Model } from '../../src/types/config'
-import { LlmChunk } from 'types/llm'
 
 window.api = {
   config: {
@@ -16,7 +16,7 @@ window.api = {
   },
 }
 
-Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+Plugin2.prototype.execute = vi.fn((): Promise<string> => Promise.resolve('result2'))
 
 vi.mock('../../src/plugins/plugins', async () => {
   return {

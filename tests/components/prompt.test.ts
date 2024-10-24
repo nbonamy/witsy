@@ -31,6 +31,7 @@ let wrapper: VueWrapper<any>
 
 beforeAll(() => {
 
+  // eslint-disable-next-line no-global-assign
   navigator = {
     mediaDevices: {
       getUserMedia: vi.fn()
@@ -41,14 +42,14 @@ beforeAll(() => {
   window.api = {
     on: vi.fn(),
     file: {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       pick: vi.fn(() => {
         return {
           url: 'file://image.png',
           contents: 'image64'
          }
       }),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       extractText: vi.fn((contents: string) => {
         return contents
       })

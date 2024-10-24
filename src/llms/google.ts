@@ -116,7 +116,7 @@ export default class extends LlmEngine {
     return this.modelStartsWith(model, ['gemini-1.5-flash']) == false
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async getModel(model: string, instructions: string): Promise<GenerativeModel> {
 
     // model params
@@ -243,7 +243,7 @@ export default class extends LlmEngine {
     //await stream?.controller?.abort()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async streamChunkToLlmChunk(chunk: EnhancedGenerateContentResponse, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
 
     // tool calls
@@ -321,7 +321,7 @@ export default class extends LlmEngine {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
     payload.images = [ message.attachment.contents ]
   }

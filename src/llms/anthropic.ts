@@ -1,7 +1,7 @@
 
 import { LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, LlmContentPayload, LlmEventCallback, LlmToolCall, LLmCompletionPayload } from 'types/llm.d'
 import { EngineConfig, Configuration } from 'types/config.d'
-import { Message } from 'types'
+import { Message } from 'types/index.d'
 import LlmEngine from './engine'
 import Anthropic from '@anthropic-ai/sdk'
 import { Stream } from '@anthropic-ai/sdk/streaming'

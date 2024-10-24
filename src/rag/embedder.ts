@@ -42,6 +42,7 @@ export default class Embedder {
     this.model = model
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async init(app: App): Promise<void> {
     
     if (this.engine === 'openai') {
@@ -156,6 +157,7 @@ export default class Embedder {
     return similarity(a, b)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static isModelReady(app: App, engine: string, model: string): boolean {
     // if (engine === 'fastembed') {
     //   const modelFile = fastEmbedModelFile(app, model)

@@ -127,7 +127,7 @@ interface OnlineStorageProvider {
   initialize: () => Promise<void>
   metadata: (filepath: string) => Promise<OnlineFileMetadata>
   download: (filepath: string) => Promise<string>
-  upload: (filepath: string, modifiedTime, Date) => Promise<boolean>
+  upload: (filepath: string, modifiedTime: Date) => Promise<boolean>
 }
 
 export type ComputerAction = {

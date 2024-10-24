@@ -14,12 +14,12 @@ import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
-import Transcriber from 'automations/transcriber';
+import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
 import Computer from './main/computer';
-import OnlineStorage from './main/online';
+//import OnlineStorage from './main/online';
 import TrayIconManager from './main/tray';
 
 import * as config from './main/config';
@@ -36,7 +36,7 @@ import * as text from './main/text';
 let commander: Commander = null
 let anywhere: PromptAnywhere = null
 let docRepo: DocumentRepository = null
-let onlineStorage: OnlineStorage = null
+//let onlineStorage: OnlineStorage = null
 let nestor: Nestor = null
 
 // first-thing: single instance
@@ -53,6 +53,7 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
 Object.assign(console, log.functions);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -203,7 +204,7 @@ ipcMain.on('update-is-available', (event) => {
   event.returnValue = autoUpdater.updateAvailable;
 });
 
-ipcMain.on('update-apply', (event) => {
+ipcMain.on('update-apply', () => {
   autoUpdater.install();
 });
 
@@ -596,11 +597,11 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
   }
 });
 
-ipcMain.handle('nestor-get-status', async (_) => {
+ipcMain.handle('nestor-get-status', async () => {
   return await nestor.getStatus();
 });
 
-ipcMain.handle('nestor-get-tools', async (_) => {
+ipcMain.handle('nestor-get-tools', async () => {
   return await nestor.getTools();
 });
 

@@ -111,11 +111,11 @@ export default class extends LlmEngine {
 
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+   
   async stop() {
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async streamChunkToLlmChunk(chunk: CompletionEvent, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
     
     // tool calls
@@ -222,7 +222,7 @@ export default class extends LlmEngine {
     payload.images = [ message.attachment.contents ]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
     return null    
   }

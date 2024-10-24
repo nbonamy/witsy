@@ -21,7 +21,7 @@ window.api = {
   }
 }
 
-Plugin2.prototype.execute = vi.fn((parameters: any): Promise<string> => Promise.resolve('result2'))
+Plugin2.prototype.execute = vi.fn((): Promise<string> => Promise.resolve('result2'))
 
 vi.mock('../../src/plugins/plugins', async () => {
   return {

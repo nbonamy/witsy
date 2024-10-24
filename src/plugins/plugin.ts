@@ -46,6 +46,7 @@ export default class {
     throw new Error('Not implemented')
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handlesTool(name: string): boolean {
     return false
   }
