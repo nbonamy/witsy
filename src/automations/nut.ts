@@ -45,7 +45,8 @@ export default {
 
   async isAvailable(): Promise<boolean> {
     try {
-      ({ mouse, keyboard } = await import('@nut-tree-fork/nut-js'));
+      const nutPackage = '@nut-tree-fork/nut-js';
+      ({ mouse, keyboard } = await import(nutPackage));
       return true
     } catch {
       console.log('Error loading nut-js. Disabling computer interaction.');
