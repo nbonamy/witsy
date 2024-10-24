@@ -9,6 +9,7 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { execSync } from 'child_process';
+import prePackage from './prepackage.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -152,6 +153,10 @@ const config: ForgeConfig = {
     }),
   ],
   hooks: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    prePackage: async (forgeConfig, platform, arch) => {
+      prePackage(platform, arch)
+    },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
       const unlink = (bin: string) => {
