@@ -50,10 +50,6 @@ const logo = computed(() => logos[props.engine])
   padding: 4px;
 }
 
-.logo.groq {
-  filter: invert(1);
-}
-
 .logo.colored.openai {
   filter: invert(1);
 }
@@ -88,7 +84,7 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.grayscale.xai {
-  filter: invert(1);
+  filter: grayscale();
 }
 
 .logo.grayscale.cerebras {
@@ -118,6 +114,9 @@ const logo = computed(() => logos[props.engine])
   }
   .logo.groq {
     filter: invert(1) brightness(0.6);
+  }
+  .logo.grayscale.xai {
+    filter: invert(1) brightness(0.7);
   }
 
   [data-tint=blue] {

@@ -29,7 +29,7 @@
         <option value="conversation">Conversation</option>
       </select>
     </div>
-    <div class="group font-family">
+    <div class="group font-family" v-if="!isMas">
       <label>Chat font</label>
       <select v-model="fontFamily" @change="save">
         <option value="">Default</option>
@@ -63,6 +63,7 @@ import { store } from '../services/store'
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
+const isMas = ref(false)
 const appearance = ref(null)
 const tint = ref(null)
 const theme = ref(null)
@@ -71,6 +72,7 @@ const fontFamily = ref('')
 const fonts = ref(window.api.listFonts())
 
 const load = () => {
+  isMas.value = window.api.isMasBuild
   appearance.value = store.config.appearance.theme || 'system'
   tint.value = store.config.appearance.tint || 'black'
   theme.value = store.config.appearance.chat.theme || 'openai'

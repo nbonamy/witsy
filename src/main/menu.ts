@@ -6,40 +6,42 @@ import { shortcutAccelerator } from './shortcuts'
 export type MenuCallbacks = { [key: string]: () => void }
 
 const isMac = process.platform === 'darwin'
+const isMas = process.mas
 
 const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig) => [
   // { role: 'appMenu' }
-  ...(isMac
-    ? [{
-        label: app.name,
-        submenu: [
-          { role: 'about' },
+  ...(isMac ? [
+    {
+      label: app.name,
+      submenu: [
+        { role: 'about' },
+        ...(!isMas ? [
           {
             label: 'Check for Updates…',
             click: async () => callbacks.checkForUpdates()
           },
           { type: 'separator' },
-          {
-            label: 'Settings…',
-            accelerator: 'CmdOrCtrl+,',
-            click: async () => callbacks.settings()
-          },
-          { type: 'separator' },
-          { role: 'services' },
-          { type: 'separator' },
-          { role: 'hide' },
-          { role: 'hideOthers' },
-          { role: 'unhide' },
-          { type: 'separator' },
-          {
-            label: 'Quit Witsy',
-            accelerator: 'CmdOrCtrl+Q',
-            click: () => callbacks.quit()
-          }
-        ]
-      }]
-    : []),
-  // { role: 'fileMenu' }
+        ] : []),
+        {
+          label: 'Settings…',
+          accelerator: 'CmdOrCtrl+,',
+          click: async () => callbacks.settings()
+        },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        {
+          label: 'Quit Witsy',
+          accelerator: 'CmdOrCtrl+Q',
+          click: () => callbacks.quit()
+        }
+      ]
+    }
+  ] : []),
   {
     label: 'File',
     submenu: [

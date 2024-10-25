@@ -11,6 +11,12 @@ export default class ReadAloud {
 
   static read = async (): Promise<void> => {
 
+    // not available in mas
+    if (process.mas) {
+      window.showMasLimitsDialog()
+      return
+    }
+
     // hide active windows
     if (!window.isMainWindowFocused()) {
       await window.hideWindows();

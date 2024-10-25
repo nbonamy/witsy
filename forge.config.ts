@@ -20,7 +20,7 @@ dotenv.config();
 let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
-let osxMaker: any = new MakerDMG({
+const dmgOptions = {
   icon: './assets/icon.icns',
   background: './assets/dmg_background.png',
   additionalDMGOptions: {
@@ -29,7 +29,7 @@ let osxMaker: any = new MakerDMG({
       position: { x: 500, y: 400 },
     }
   }
-}, ['darwin'])
+}
 
 if (isDarwin) {
   if (!isMas) {
@@ -49,7 +49,6 @@ if (isDarwin) {
       }
     }
   } else {
-    osxMaker = new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, })
     osxPackagerConfig = {
       osxUniversal: {
       },
@@ -88,19 +87,21 @@ const config: ForgeConfig = {
     ],
     ...osxPackagerConfig,
     afterCopy: [
+      // sign native modules
       (buildPath, electronVersion, platform, arch, callback) => {
         try {
-          // sign native modules
-          if (platform === 'darwin') {
+          // we sign libnut on mas but feature is disabled anyway
+          if (platform === 'darwin' || platform === 'mas') {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node'
             ];
 
             binaries.forEach((binary) => {
               const binaryPath = path.join(buildPath, binary);
+              const identify = isMas ? process.env.IDENTITY_MAS_CODE : process.env.IDENTIFY_DARWIN_CODE;
               if (fs.existsSync(binaryPath)) {
                 console.log(`Signing binary: ${binaryPath}`);
-                execSync(`codesign --deep --force --verbose --sign "${process.env.IDENTIFY_DARWIN_CODE}" "${binaryPath}"`, {
+                execSync(`codesign --deep --force --verbose --sign "${identify}" "${binaryPath}"`, {
                   stdio: 'inherit',
                 });
               } else {
@@ -117,7 +118,12 @@ const config: ForgeConfig = {
     ],
   },
   rebuildConfig: {},
-  makers: [ new MakerZIP({}), new MakerSquirrel({}), osxMaker, new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
+    /* darwin */ new MakerDMG(dmgOptions, ['darwin']), new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, }, ['mas']),
+    /* win32  */ new MakerSquirrel({}),
+    /* linux  */ new MakerRpm({}), new MakerDeb({})
+  ],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
@@ -153,7 +159,6 @@ const config: ForgeConfig = {
     }),
   ],
   hooks: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     prePackage: async (forgeConfig, platform, arch) => {
       prePackage(platform, arch)
     },

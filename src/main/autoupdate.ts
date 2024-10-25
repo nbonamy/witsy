@@ -16,6 +16,11 @@ export default class {
 
   private initialize = () => {
 
+    // not available on mas
+    if (process.mas) {
+      return
+    }
+
     // basic setup
     const server = 'https://update.electronjs.org'
     const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${app.getVersion()}`

@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld(
   'api', {
     licensed: true,
     platform: process.platform,
+    isMasBuild: process.mas === true,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
@@ -115,6 +116,7 @@ contextBridge.exposeInMainWorld(
       python: (code: string): string => { return ipcRenderer.sendSync('code-python-run', code) },
     },
     nestor: {
+      isAvailable: (): boolean => { return ipcRenderer.sendSync('nestor-is-available') },
       getStatus: (): Promise<any> => { return ipcRenderer.invoke('nestor-get-status') },
       getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
