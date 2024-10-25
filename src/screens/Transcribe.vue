@@ -14,7 +14,7 @@
       <button class="button" v-else @click="onRecord()">Record</button>
       <button class="button" @click="onClear()">Clear</button>
       <button class="button push" @click="onCancel()">Cancel</button>
-      <button class="button" @click="onInsert()">Insert</button>
+      <button class="button" @click="onInsert()" v-if="!isMas">Insert</button>
       <button class="button " @click="onCopy()">Copy</button>
     </div>
   </div>
@@ -36,6 +36,7 @@ const transcriber = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
 
+const isMas = ref(false)
 const state = ref('idle')
 const transcription = ref('')
 const foregroundColorActive = ref(null)
@@ -53,6 +54,9 @@ onMounted(() => {
   // grab colors
   foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
   foregroundColorActive.value = window.getComputedStyle(document.querySelector('.controls')).getPropertyValue('color')
+
+  // other stuff
+  isMas.value = window.api.isMasBuild
 
 
 })

@@ -34,7 +34,15 @@ const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
 
 const plugins = computed(() => {
-  let res = Object.keys(availablePlugins).map(plugin => {
+
+  // nestor is not available everywhere
+  const plugins = availablePlugins
+  if (!window.api.nestor.isAvailable()) {
+    delete plugins['nestor']
+  }
+
+  /// now we can return the plugins
+  let res = Object.keys(plugins).map(plugin => {
     return {
       id: plugin,
       label: {

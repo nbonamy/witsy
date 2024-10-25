@@ -53,6 +53,9 @@ beforeAll(() => {
     scratchpad: {
       open: vi.fn(),
     },
+    nestor: {
+      isAvailable: vi.fn(() => false),
+    }
   }
 
 })

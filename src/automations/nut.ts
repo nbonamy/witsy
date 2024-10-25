@@ -45,6 +45,7 @@ export default {
 
   async isAvailable(): Promise<boolean> {
     try {
+      if (process.mas) return false
       const nutPackage = '@nut-tree-fork/nut-js';
       ({ mouse, keyboard } = await import(nutPackage));
       return true

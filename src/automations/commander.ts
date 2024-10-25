@@ -45,6 +45,12 @@ export default class Commander {
   
   static initCommand = async (): Promise<void> => {
 
+    // not available in mas
+    if (process.mas) {
+      window.showMasLimitsDialog()
+      return
+    }
+
     // hide active windows
     await window.hideWindows();
     await window.releaseFocus();

@@ -41,6 +41,9 @@ beforeAll(() => {
     },
     docrepo: {
       list: vi.fn(() => []),
+    },
+    nestor: {
+      isAvailable: vi.fn(() => false),
     }
   }
 

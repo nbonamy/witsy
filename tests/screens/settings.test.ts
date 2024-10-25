@@ -72,6 +72,9 @@ window.api = {
   },
   commands: {
     isPromptEditable: vi.fn(() => true)
+  },
+  nestor: {
+    isAvailable: vi.fn(() => false),
   }
 }
 

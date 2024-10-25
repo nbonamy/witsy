@@ -222,7 +222,7 @@ ipcMain.on('get-app-path', (event) => {
 });
 
 ipcMain.on('fonts-list', async (event) => {
-  event.returnValue = await fontList.getFonts();
+  event.returnValue = process.mas ? [] : await fontList.getFonts();
 });
 
 ipcMain.on('store-get-value', (event, payload) => {
@@ -597,16 +597,20 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
   }
 });
 
+ipcMain.on('nestor-is-available', (event) => {
+  event.returnValue = nestor !== null;
+});
+
 ipcMain.handle('nestor-get-status', async () => {
-  return await nestor.getStatus();
+  return nestor ? await nestor.getStatus() : {}
 });
 
 ipcMain.handle('nestor-get-tools', async () => {
-  return await nestor.getTools();
+  return nestor ? await nestor.getTools() : []
 });
 
 ipcMain.handle('nestor-call-tool', async (_, payload) => {
-  return await nestor.callTool(payload.name, payload.parameters);
+  return nestor ? await nestor.callTool(payload.name, payload.parameters) : null
 });
 
 ipcMain.on('scratchpad-open', async () => {
