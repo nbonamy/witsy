@@ -14,6 +14,7 @@ console.log(`${chalk.blue('[#]')} Checking jobs for commit hash: ${lastCommitHas
 // now monitor the jobs
 let tries = 0;
 let baseline = -1;
+let writtenLines = 0;
 let lastStatus = null;
 const check = () => {
 
@@ -34,7 +35,7 @@ const check = () => {
   if (baseline === -1) {
     baseline = process.stdout.rows;
   } else {
-    readline.cursorTo(process.stdout, 0, baseline - jobs.length - 1);
+    readline.cursorTo(process.stdout, 0, baseline - writtenLines - 1);
   }
 
   // simulation mode
@@ -44,6 +45,7 @@ const check = () => {
     const firstRun = lastStatus === null;
     if (lastStatus === null) {
       lastStatus = Array(jobs.length).fill(['running', ''], 0, jobs.length);
+      jobs.splice(0, 2);
     }
 
     for (let i = 0; i < jobs.length; i++) {
@@ -70,6 +72,7 @@ const check = () => {
   // wait for all jobs to be completed
   const runningJobs = jobs.filter((job) => job.status !== 'completed');
   if (runningJobs.length > 0) {
+    writtenLines = jobs.length;
     setTimeout(check, refreshDelay);
     return
   }
