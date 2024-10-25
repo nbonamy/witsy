@@ -6,15 +6,16 @@
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, Groq and Cerebras models supported
 - Chat completion and image generation with Vision models support
-- <b>[BETA]</b> Scratchpad to interactively create the best content with any model!
+- Scratchpad to interactively create the best content with any model!
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
 - Read aloud of assistant messages (requires OpenAI API key)
 - Read aloud of any text in other applications (requires OpenAI API key)
-- <b>[BETA]</b> Chat with your local files and documents (RAG)
-- <b>[BETA]</b> Transcription/Dictation (Speech-to-Text)
+- Chat with your local files and documents (RAG)
+- Transcription/Dictation (Speech-to-Text)
+- <b>[BETA]</b> Anthropic Computer Use support
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
 - Image copy and download
@@ -55,11 +56,11 @@ Commands inspired by [https://the.fibery.io/@public/Public_Roadmap/Roadmap_Item/
 
 From [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 
-## [BETA] Scratchpad
+## Scratchpad
 
-https://www.youtube.com/watch?v=czcSbG2H-wg&ab_channel=NicolasBonamy
+https://www.youtube.com/watch?v=czcSbG2H-wg
 
-## [BETA] Chat with your documents (RAG)
+## Chat with your documents (RAG)
 
 You can connect each chat with a document repository: Witsy will first search for relevant documents in your local files and provide this info to the LLM. To do so:
 
@@ -69,12 +70,16 @@ You can connect each chat with a document repository: Witsy will first search fo
 - Add documents by clicking the + button on the right hand side of the window
 - Once your document repository is created, click on the database icon once more and select the document repository you want to use. The icon should turn blue
 
-## [BETA] Transcription / Dictation (Speech-to-Text)
+## Transcription / Dictation (Speech-to-Text)
 
 You can transcribe audio recorded on the microphone to text. Transcription can be done using OpenAI Whisper online model (requires API key) or using local Whisper model (requires download of large files). Once the text is transcribed you can:
 
 - Copy it to your clipboard
 - Insert it in the application that was running before you activated the dictation
+
+## [BETA] Anthropic Computer Use
+
+https://www.youtube.com/watch?v=vixl7I07hBk
 
 
 ## Setup
