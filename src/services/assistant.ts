@@ -1,13 +1,14 @@
-import { Attachment } from 'types/index.d'
-import { LlmCompletionOpts, LlmChunk, LlmEvent } from 'types/llm.d'
+
+import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
+import Attachment from '../models/attachment'
 import Message from '../models/message'
-import LlmEngine from '../llms/engine'
 import { store } from './store'
 import { igniteEngine } from '../llms/llm'
 import { countryCodeToName } from './i18n'
+import { availablePlugins } from '../plugins/plugins'
 
 export default class {
 
@@ -15,7 +16,7 @@ export default class {
   engine: string
   llm: LlmEngine
   chat: Chat
-  stream: any
+  stream: AsyncGenerator<LlmChunk, void, void>
 
   constructor(config: Configuration) {
     this.config = config
@@ -46,7 +47,7 @@ export default class {
     }
 
     // switch
-    const llm = igniteEngine(engine, this.config)
+    const llm = igniteEngine(engine)
     this.setLlm(llm ? engine : null, llm)
   }
 
@@ -111,11 +112,15 @@ export default class {
     }
 
     // make sure llm has latest tools
-    this.llm.loadPlugins()
+    for (const pluginName in availablePlugins) {
+      const pluginClass = availablePlugins[pluginName]
+      const instance = new pluginClass(this.config.plugins[pluginName])
+      this.llm.addPlugin(instance)
+    }
 
     // add message
     const message = new Message('user', prompt)
-    message.attachFile(opts.attachment)
+    message.attach(opts.attachment)
     this.chat.addMessage(message)
 
     // add assistant message
@@ -163,24 +168,17 @@ export default class {
       }
 
       // now stream
-      this.stream = await llm.stream(messages, opts)
-      while (this.stream) {
-        let newStream = null
-        for await (const streamChunk of this.stream) {
-          const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event: LlmEvent) => {
-            if (event.type === 'stream') {
-              newStream = event.content
-            } else  if (event.type === 'tool') {
-              message.setToolCall(event.content)
-            }
-          })
-          if (chunk && sources && sources.length > 0) {
-            chunk.done = false
+      this.stream = await llm.generate(messages, opts)
+      for await (const msg of this.stream) {
+        if (msg.type === 'tool') {
+            message.setToolCall(msg.text)
+        } else if (msg.type === 'content') {
+          if (msg && sources && sources.length > 0) {
+            msg.done = false
           }
-          message.appendText(chunk)
-          callback?.call(null, chunk)
+          message.appendText(msg)
+          callback?.call(null, msg)
         }
-        this.stream = newStream
       }
 
       // append sources
@@ -196,7 +194,7 @@ export default class {
         // now add them
         let sourcesText = '\n\nSources:\n\n'
         sourcesText += sources.map((source) => `- [${source.metadata.title}](${source.metadata.url})`).join('\n')
-        message.appendText({ text: sourcesText, done: true })
+        message.appendText({ type: 'content', text: sourcesText, done: true })
         callback?.call(null, { text: sourcesText, done: true })
       }
 
@@ -218,7 +216,7 @@ export default class {
           message.setText('Sorry, I could not generate text for that prompt.')
           opts.titling = false
         } else {
-          message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
+          message.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
           opts.titling = false
         }
       } else {
@@ -235,7 +233,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().appendText({ text: null, done: true })
+      this.chat.lastMessage().appendText({ type: 'content', text: null, done: true })
     }
   }
 
@@ -247,7 +245,7 @@ export default class {
     }
 
     // now attach
-    this.chat.lastMessage().attachFile(file)
+    this.chat.lastMessage().attach(file)
 
   }
 
@@ -293,6 +291,11 @@ export default class {
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
     const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength*2, -1)]
+    for (const message of messages) {
+      if (message.attachment && !message.attachment.contents) {
+        message.attachment.loadContents()
+      }
+    }
     return messages
   }
 

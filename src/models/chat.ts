@@ -49,7 +49,7 @@ export default class implements Chat {
     this.messages = []
     this.deleted = false
     for (const msg of obj.messages) {
-      const message = new Message(msg.role, msg)
+      const message = Message.fromJson(msg)
       this.messages.push(message)
     }
   }
@@ -72,7 +72,7 @@ export default class implements Chat {
       //console.log(`patching ${obj.messages.length - this.messages.length} messages`)
       const messages = obj.messages.slice(this.messages.length)
       for (const msg of messages) {
-        const message = new Message(msg.role, msg)
+        const message = Message.fromJson(msg)
         this.messages.push(message)
         patched = true
       }
@@ -109,7 +109,7 @@ export default class implements Chat {
       if (message.type === 'image' && typeof message.content === 'string') {
         window.api.file.delete(message.content)
       }
-      if (message.attachment?.downloaded) {
+      if (message.attachment?.saved) {
         window.api.file.delete(message.attachment.url)
       }
     }

@@ -34,6 +34,7 @@ export default defineConfig({
         'src/automations/robot.ts',
         'src/automations/windows.ts',
         'src/services/*worker.ts',
+        'src/llms/*worker.ts',
         'src/vendor/**/*',
       ]
     },

@@ -46,7 +46,7 @@
 
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../llms/llm'
+import { loadModels } from '../llms/llm'
 import { getEmbeddingModels } from '../llms/ollama'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import Dialog from '../composables/dialog'
@@ -125,7 +125,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadOllamaModels()
+  let success = await loadModels('ollama')
   if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')

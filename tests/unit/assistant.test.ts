@@ -1,11 +1,11 @@
 
-import { Message } from '../../src/types/index.d'
-import { LlmStream, LlmCompletionOpts } from '../../src/types/llm.d'
+import { LlmStream, LlmCompletionOpts } from 'multi-llm-ts'
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Assistant from '../../src/services/assistant'
 import Attachment from '../../src/models/attachment'
+import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import LlmMock from '../mocks/llm'
 
@@ -14,7 +14,7 @@ window.api = {
     extractText: (contents) => contents
   },
   docrepo: {
-    query: vi.fn(() => [
+    query: vi.fn(async () => [
       {
         content: 'content',
         score: 1,
@@ -98,11 +98,11 @@ test('Assistant Chat', async () => {
 
 test('Assistant Attachment', async () => {
   assistant.setChat(new Chat())
-  await assistant.attach(new Attachment('clipboard://', 'image/png', 'image_content', false))
+  await assistant.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
   expect(assistant.chat.lastMessage().attachment.contents).toStrictEqual('image_content')
   expect(assistant.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
   expect(assistant.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
-  expect(assistant.chat.lastMessage().attachment.downloaded).toStrictEqual(false)
+  expect(assistant.chat.lastMessage().attachment.saved).toStrictEqual(false)
 })
 
 test('Asistant DocRepo', async () => {

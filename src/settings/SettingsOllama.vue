@@ -22,10 +22,10 @@
 
 import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { loadOllamaModels } from '../llms/llm'
+import { getChatModels } from '../llms/ollama'
+import { loadModels } from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
-import { getChatModels } from '../llms/ollama'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -59,7 +59,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadOllamaModels()
+  let success = await loadModels('ollama')
   if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')

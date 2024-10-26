@@ -146,13 +146,14 @@ test('Send attachment', async () => {
   expect(emitEventMock).toHaveBeenCalledWith('attach-file', {
     mimeType: 'image/png',
     contents: 'image64',
-    downloaded: false,
+    saved: false,
+    extracted: false,
     url: 'file://image.png',
   })
 })
 
 test('Display url attachment', async () => {
-  store.pendingAttachment = new Attachment('file://image.png')
+  store.pendingAttachment = new Attachment('', '', 'file://image.png')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
@@ -160,7 +161,7 @@ test('Display url attachment', async () => {
 })
 
 test('Display base64 attachment', async () => {
-  store.pendingAttachment = new Attachment('file://image.png', 'image/png', 'image64')
+  store.pendingAttachment = new Attachment('image64', 'image/png', 'file://image.png')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)

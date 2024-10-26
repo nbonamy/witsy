@@ -30,7 +30,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadOpenAIModels } from '../llms/llm'
+import { loadModels } from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
@@ -60,7 +60,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadOpenAIModels()
+  let success = await loadModels('openai')
   if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')

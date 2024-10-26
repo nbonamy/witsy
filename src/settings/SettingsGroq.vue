@@ -28,7 +28,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadGroqModels } from '../llms/llm'
+import { loadModels } from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
@@ -55,7 +55,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadGroqModels()
+  let success = await loadModels('groq')
   if (!success) {
     chat_models.value = []
     setEphemeralRefreshLabel('Error!')

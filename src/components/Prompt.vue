@@ -262,7 +262,7 @@ const onAttach = () => {
     const format = file.url.split('.').pop()
     if (canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
-      emitEvent('attach-file', new Attachment(file.url, mimeType, file.contents))
+      emitEvent('attach-file', new Attachment(file.contents, mimeType, file.url))
     } else {
       console.error('Cannot attach format', format)
       Dialog.alert('This file format is not supported')
@@ -289,7 +289,7 @@ const onPaste = (event) => {
 
           // check before attaching
           if (canProcessFormat(engine(), model(), format)) {
-            emitEvent('attach-file', new Attachment('clipboard://', mimeType, contents))
+            emitEvent('attach-file', new Attachment(contents, mimeType, 'clipboard://'))
           } else {
             console.error('Cannot attach format', format)
             Dialog.alert('This file format is not supported')
@@ -297,6 +297,7 @@ const onPaste = (event) => {
         }
       }
       reader.readAsDataURL(blob);
+      event.preventDefault();
     }
   }
 }

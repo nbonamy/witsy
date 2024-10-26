@@ -24,7 +24,6 @@ const chats = [
 ]
 
 window.api = {
-  on: vi.fn(),
   config: {
     load: vi.fn(() => defaultSettings),
     save: vi.fn(),
@@ -99,8 +98,8 @@ test('Save history', async () => {
     model: 'model',
     deleted: false,
     messages: [
-      { uuid: 1, role: 'system', content: 'Hi', toolCall: null, attachment: null, transient: false },
-      { uuid: 2, role: 'user', content: 'Hello', toolCall: null, attachment: null, transient: false }
+      { uuid: 1, role: 'system', type: 'text', content: 'Hi', toolCall: null, attachment: null, transient: false },
+      { uuid: 2, role: 'user', type: 'text', content: 'Hello', toolCall: null, attachment: null, transient: false }
     ]
   }])
 })

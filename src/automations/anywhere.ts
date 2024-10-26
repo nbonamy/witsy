@@ -1,11 +1,10 @@
 
 import { Configuration } from 'types/config.d'
-import { LlmResponse } from 'types/llm.d'
 import { App } from 'electron'
 import { loadSettings } from '../main/config'
 import { igniteEngine } from '../llms/llm' 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import LlmEngine from '../llms/engine'
+import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import Automator from './automator'
 import Message from '../models/message'
 import * as window from '../main/window'

@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
+import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
@@ -46,6 +47,15 @@ beforeAll(() => {
     },
     history: {
       load: vi.fn(() => []),
+    },
+    base64:{
+      decode: (s) => `${s}_decoded`,
+      encode: (s) => `${s}_encoded`,
+    },
+    file: {
+      extractText: (s) => `${s}_extracted`,
+      save: vi.fn(() => 'file_url'),
+      read: (filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } },
     },
     docrepo: {
       list: vi.fn(() => []),
@@ -96,6 +106,50 @@ test('Attach/Detach file', async () => {
   emitEvent('attach-file', 'file')
   expect(store.pendingAttachment).toBe('file')
   emitEvent('detach-file')
+  expect(store.pendingAttachment).toBeNull()
+})
+
+test('Saves text attachment', async () => {
+  mount(Main)
+  const attachment = new Attachment('text', 'text/plain', 'file://text', false)
+  store.pendingAttachment = attachment
+  emitEvent('send-prompt', 'prompt')
+  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
+  expect(attachment.url).toBe('file_url')
+  expect(attachment.saved).toBe(true)
+  expect(store.pendingAttachment).toBeNull()
+})
+
+test('Saves pdf attachment', async () => {
+  mount(Main)
+  const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
+  store.pendingAttachment = attachment
+  emitEvent('send-prompt', 'prompt')
+  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
+  expect(attachment.url).toBe('file_url')
+  expect(attachment.saved).toBe(true)
+  expect(store.pendingAttachment).toBeNull()
+})
+
+test('Saves image attachment', async () => {
+  mount(Main)
+  const attachment = new Attachment('image', 'image/png', 'file://image', false)
+  store.pendingAttachment = attachment
+  emitEvent('send-prompt', 'prompt')
+  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'image', properties: expect.any(Object) })
+  expect(attachment.url).toBe('file_url')
+  expect(attachment.saved).toBe(true)
+  expect(store.pendingAttachment).toBeNull()
+})
+
+test('Does not save twice', async () => {
+  mount(Main)
+  const attachment = new Attachment('text', 'text/plain', 'file://text', true)
+  store.pendingAttachment = attachment
+  emitEvent('send-prompt', 'prompt')
+  expect(window.api.file.save).not.toHaveBeenCalled()
+  expect(attachment.url).toBe('file://text')
+  expect(attachment.saved).toBe(true)
   expect(store.pendingAttachment).toBeNull()
 })
 

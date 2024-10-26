@@ -1,9 +1,9 @@
-import { Attachment } from 'types/index.d'
-import { LlmCompletionOpts, LlmChunk } from 'types/llm.d'
+import { LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
+import Attachment from '../models/attachment'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
 // eslint-disable-next-line import/no-unresolved
@@ -133,7 +133,7 @@ export default class {
 
     // add message
     const message = new Message('user', prompt)
-    message.attachFile(this.opts.attachment)
+    message.attach(this.opts.attachment)
     this.chat.addMessage(message)
 
     // add assistant message
@@ -275,7 +275,7 @@ export default class {
     }
 
     // now attach
-    this.chat.lastMessage().attachFile(file)
+    this.chat.lastMessage().attach(file)
 
   }
 
