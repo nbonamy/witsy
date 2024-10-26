@@ -39,8 +39,6 @@ export default class Attachment extends AttachmentBase {
     if (this.contents) {
       if (this.isText()) {
         this.extractText()
-      } else {
-        this.contents = window.api.base64.decode(this.contents)
       }
     } 
   }

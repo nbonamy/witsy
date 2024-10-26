@@ -66,7 +66,7 @@ test('Load from url', async () => {
   expect(pdf.contents).toBe('pdf_encoded_extracted')
 
   const image = new Attachment(null, 'image/png', 'file://image', false, true)
-  expect(image.contents).toBe('image_encoded_decoded')
+  expect(image.contents).toBe('image_encoded')
 })
 
 test('Base64 contents', async () => {
