@@ -2,6 +2,7 @@
 import { ShortcutsConfig } from 'types/config'
 import { App , Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
+import * as window from './window'
 
 export type MenuCallbacks = { [key: string]: () => void }
 
@@ -72,7 +73,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       ...(isMac
         ? [
             { role: 'pasteAndMatchStyle' },
-            { role: 'delete' },
+            {
+              label: 'Delete Chat',
+              accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
+              click: () => window.notifyBrowserWindows('delete-chat')
+            },
             { role: 'selectAll' },
           ]
         : [
