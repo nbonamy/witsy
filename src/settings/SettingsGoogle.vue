@@ -28,7 +28,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadGoogleModels } from '../llms/llm'
+import { loadModels } from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
@@ -59,7 +59,7 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadGoogleModels()
+  let success = await loadModels('google')
   if (!success) {
     chat_models.value = []
     //image_models.value = []

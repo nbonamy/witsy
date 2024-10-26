@@ -1,61 +1,75 @@
 
-import { Attachment } from 'types/index.d'
-import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
+import { Attachment as AttachmentBase, extensionToMimeType } from 'multi-llm-ts'
 
-export const textFormats = [ 'pdf', 'txt', 'docx', 'pptx', 'xlsx' ]
-export const imageFormats = [ 'jpeg', 'jpg', 'png', 'webp' ]
+export { textFormats } from 'multi-llm-ts'
+export { imageFormats } from 'multi-llm-ts'
 
-export default class implements Attachment {
+export default class Attachment extends AttachmentBase {
 
   url: string
-  mimeType: string
-  contents: string
-  downloaded: boolean
+  extracted: boolean
+  saved: boolean
 
-  constructor(url: string|object, mimeType = '', contents = '', downloaded = false) {
+  constructor(contents: string, mimeType: string, url: string = '', saved: boolean = false, load: boolean = false) {
+    super(contents, mimeType)
+    this.url = url
+    this.saved = saved
+    this.extracted = false
+    if (load) {
+      this.loadContents()
+    }
+  }
 
-    if (url != null && typeof url === 'object') {
-      this.fromJson(url)
+  loadContents(): void {
+
+    // not if we already have
+    if (this.contents) {
+      if (this.isText() && !this.extracted) {
+        this.extractText()
+      }
       return
     }
 
-    // default
-    this.url = url as string
-    this.mimeType = mimeType
-    this.contents = contents
-    this.downloaded = downloaded
+    // get contents
+    if (!this.contents && this.url) {
+      this.contents = window.api.file.read(this.url.replace('file://', '')).contents
+    }
 
     // text formats
-    if (this.format() === 'txt') {
-      this.contents = window.api.base64.decode(contents)
+    if (this.contents) {
+      if (this.isText()) {
+        this.extractText()
+      } else {
+        this.contents = window.api.base64.decode(this.contents)
+      }
+    } 
+  }
+
+  b64Contents(): string {
+    if (this.isText()) {
+      return window.api.base64.encode(this.contents)
     } else {
-      this.extractText()
+      return this.contents
     }
   }
 
-  fromJson(obj: any) {
-    this.url = obj.url
-    this.mimeType = obj.mimeType || extensionToMimeType(obj.format || '')
-    this.contents = obj.contents
-    this.downloaded = obj.downloaded
+  static fromJson(obj: any): Attachment {
+    return new Attachment(obj.contents, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
   }
+  
+  private extractText(): void {
 
-  format(): string {
-    return mimeTypeToExtension(this.mimeType)
-  }
+    // get text
+    if (this.format() === 'txt') {
+      this.contents = window.api.base64.decode(this.contents)
+    } else {
+      const rawText = window.api.file.extractText(this.contents, this.format())
+      this.mimeType = 'text/plain'
+      this.contents = rawText
+    }
 
-  isText(): boolean {
-    return textFormats.includes(this.format())
-  }
-
-  isImage(): boolean {
-    return imageFormats.includes(this.format())
-  }
-
-  extractText(): void {
-    const rawText = window.api.file.extractText(this.contents, this.format())
-    //console.log('Raw text:', rawText)
-    this.contents = rawText
+    // save
+    this.extracted = true
   }
 
 }

@@ -1,9 +1,8 @@
 
 import { Configuration } from 'types/config'
 import { store } from '../services/store'
-import LlmEngine from './engine'
 import { igniteEngine } from './llm'
-import { LlmChunk, LlmEvent } from 'types/llm'
+import { LlmEngine, LlmChunk, LlmEvent } from 'multi-llm-ts'
 
 const worker: Worker = self as unknown as Worker
 

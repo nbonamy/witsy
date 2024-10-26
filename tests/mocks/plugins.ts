@@ -1,5 +1,5 @@
 
-import Plugin from '../../src/plugins/plugin'
+import { Plugin } from 'multi-llm-ts'
 
 export class Plugin1 extends Plugin {
   

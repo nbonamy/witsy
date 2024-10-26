@@ -1,57 +1,48 @@
 
-import { anyDict } from 'types/index.d'
-import { Model, EngineConfig, Configuration } from 'types/config.d'
+import { Ollama, MistralAI, Anthropic, Google, Groq, XAI, Cerebras, LlmEngine , loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel } from 'multi-llm-ts'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
-import OpenAI, { isOpenAIConfigured, isOpenAIReady } from './openai'
-import Ollama, { isOllamaConfigured, isOllamaReady } from './ollama'
-import MistralAI, { isMistralAIReady, isMistralAIConfigured } from './mistralai'
-import Anthropic, { isAnthropicConfigured, isAnthropicReady } from './anthropic'
-import Google, { isGoogleConfigured, isGoogleReady } from './google'
-import Groq, { isGroqConfigured, isGroqReady } from './groq'
-import XAI, { isXAIConfigured, isXAIReady } from './xai'
-import Cerebreas,{ isCerebrasReady, isCerebrasConfigured } from './cerebras'
-import LlmEngine from './engine'
+import OpenAI from './openai'
 
 export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'groq', 'cerebras' ]
 
 export const isEngineConfigured = (engine: string) => {
-  if (engine === 'openai') return isOpenAIConfigured(store.config.engines.openai)
-  if (engine === 'ollama') return isOllamaConfigured(store.config.engines.ollama)
-  if (engine === 'mistralai') return isMistralAIConfigured(store.config.engines.mistralai)
-  if (engine === 'anthropic') return isAnthropicConfigured(store.config.engines.anthropic)
-  if (engine === 'google') return isGoogleConfigured(store.config.engines.google)
-  if (engine === 'groq') return isGroqConfigured(store.config.engines.groq)
-  if (engine === 'cerebras') return isCerebrasConfigured(store.config.engines.cerebras)
-  if (engine === 'xai') return isXAIConfigured(store.config.engines.xai)
+  if (engine === 'anthropic') return Anthropic.isConfigured(store.config.engines.anthropic)
+  if (engine === 'cerebras') return Cerebras.isConfigured(store.config.engines.cerebras)
+  if (engine === 'google') return Google.isConfigured(store.config.engines.google)
+  if (engine === 'groq') return Groq.isConfigured(store.config.engines.groq)
+  if (engine === 'mistralai') return MistralAI.isConfigured(store.config.engines.mistralai)
+  if (engine === 'ollama') return Ollama.isConfigured(store.config.engines.ollama)
+  if (engine === 'openai') return OpenAI.isConfigured(store.config.engines.openai)
+  if (engine === 'xai') return XAI.isConfigured(store.config.engines.xai)
   return false
 }  
 
 export const isEngineReady = (engine: string) => {
-  if (engine === 'openai') return isOpenAIReady(store.config.engines.openai)
-  if (engine === 'ollama') return isOllamaReady(store.config.engines.ollama)
-  if (engine === 'mistralai') return isMistralAIReady(store.config.engines.mistralai)
-  if (engine === 'anthropic') return isAnthropicReady(store.config.engines.anthropic)
-  if (engine === 'google') return isGoogleReady(store.config.engines.google)
-  if (engine === 'groq') return isGroqReady(store.config.engines.groq)
-  if (engine === 'cerebras') return isCerebrasReady(store.config.engines.cerebras)
-  if (engine === 'xai') return isXAIReady(store.config.engines.xai)
+  if (engine === 'anthropic') return Anthropic.isReady(store.config.engines.anthropic)
+  if (engine === 'cerebras') return Cerebras.isReady(store.config.engines.cerebras)
+  if (engine === 'google') return Google.isReady(store.config.engines.google)
+  if (engine === 'groq') return Groq.isReady(store.config.engines.groq)
+  if (engine === 'mistralai') return MistralAI.isReady(store.config.engines.mistralai)
+  if (engine === 'ollama') return Ollama.isReady(store.config.engines.ollama)
+  if (engine === 'openai') return OpenAI.isReady(store.config.engines.openai)
+  if (engine === 'xai') return XAI.isReady(store.config.engines.xai)
   return false
 }
 
-export const igniteEngine = (engine: string, config: Configuration, fallback = 'openai'): LlmEngine => {
-  if (engine === 'openai') return new OpenAI(config)
-  if (engine === 'ollama') return new Ollama(config)
-  if (engine === 'mistralai') return new MistralAI(config)
-  if (engine === 'anthropic') return new Anthropic(config)
-  if (engine === 'google') return new Google(config)
-  if (engine === 'xai') return new XAI(config)
-  if (engine === 'groq') return new Groq(config)
-  if (engine === 'cerebras') return new Cerebreas(config)
+export const igniteEngine = (engine: string, fallback = 'openai'): LlmEngine => {
+  if (engine === 'anthropic') return new Anthropic(store.config.engines.anthropic)
+  if (engine === 'cerebras') return new Cerebras(store.config.engines.cerebras)
+  if (engine === 'google') return new Google(store.config.engines.google)
+  if (engine === 'groq') return new Groq(store.config.engines.groq)
+  if (engine === 'mistralai') return new MistralAI(store.config.engines.mistralai)
+  if (engine === 'ollama') return new Ollama(store.config.engines.ollama)
+  if (engine === 'openai') return new OpenAI(store.config.engines.openai)
+  if (engine === 'xai') return new XAI(store.config.engines.xai)
   if (isEngineReady(fallback)) {
     console.log(`Engine ${engine} unknown. Falling back to ${fallback}`)
-    return igniteEngine(fallback, config)
+    return igniteEngine(fallback, store.config.engines[fallback])
   }
   return null
 }
@@ -61,13 +52,11 @@ export const hasChatModels = (engine: string) => {
 }
 
 export const hasVisionModels = (engine: string) => {
-  const instance = igniteEngine(engine, store.config)
-  return instance.getVisionModels().length > 0
+  return _hasVisionModels(engine, store.config.engines[engine])
 }
 
 export const isVisionModel = (engine: string, model: string) => {
-  const instance = igniteEngine(engine, store.config)
-  return instance.isVisionModel(model)
+  return _isVisionModel(engine, model, store.config.engines[engine])
 }
 
 export const canProcessFormat = (engine: string, model: string, format: string) => {
@@ -91,348 +80,33 @@ export const initModels = async () => {
   }
 }
 
-export const loadModels = async (engine: string) => {
+export const loadModels = async (engine: string): Promise<boolean> => {
+  
   console.log('Loading models for', engine)
+  let rc = false
   if (engine === 'openai') {
-    await loadOpenAIModels()
+    rc = await loadOpenAIModels(store.config.engines.openai)
+    console.log('OpenAI models loaded', rc)
   } else if (engine === 'ollama') {
-    await loadOllamaModels()
+    rc = await loadOllamaModels(store.config.engines.ollama)
   } else if (engine === 'mistralai') {
-    await loadMistralAIModels()
+    rc = await loadMistralAIModels(store.config.engines.mistralai)
   } else if (engine === 'anthropic') {
-    await loadAnthropicModels()
+    rc = await loadAnthropicModels(store.config.engines.anthropic)
   } else if (engine === 'google') {
-    await loadGoogleModels()
+    rc = await loadGoogleModels(store.config.engines.google)
   } else if (engine === 'groq') {
-    await loadGroqModels()
+    rc = await loadGroqModels(store.config.engines.groq)
   } else if (engine === 'cerebras') {
-    await loadCerebrasModels()
+    rc = await loadCerebrasModels(store.config.engines.cerebras)
   } else if (engine === 'xai') {
-    await loadXAIModels()
+    rc = await loadXAIModels(store.config.engines.xai)
   }
-}
-
-const getValidModelId = (engine: string, type: string, modelId: string) => {
-  const engineConfig: EngineConfig = store.config.engines[engine as keyof typeof store.config.engines]
-  const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
-  const m = models?.find(m => m.id == modelId)
-  return m ? modelId : (models?.[0]?.id || null)
-}
-
-export const loadOpenAIModels = async () => {
-
-  // load
-  let models = null
-  try {
-    const openAI = new OpenAI(store.config)
-    models = await openAI.getModels()
-  } catch (error) {
-    console.error('Error listing OpenAI models:', error);
-  }
-  if (!models) {
-    store.config.engines.openai.models = { chat: [], image: [], }
-    return false
-  }
-
-  // xform
-  models = models
-    .map(model => { return {
-      id: model.id,
-      name: model.id,
-      meta: model
-    }})
-    .sort((a, b) => a.name.localeCompare(b.name))
-
-  // store
-  store.config.engines.openai.models = {
-    chat: models.filter(model => model.id.startsWith('gpt-') || model.id.startsWith('o1-')),
-    image: models.filter(model => model.id.startsWith('dall-e-'))
-  }
-
-  // select valid model
-  store.config.engines.openai.model.chat = getValidModelId('openai', 'chat', store.config.engines.openai.model.chat)
-  store.config.engines.openai.model.image = getValidModelId('openai', 'image', store.config.engines.openai.model.image)
 
   // save
   store.saveSettings()
 
   // done
-  return true
+  return rc
 
-}
-
-export const loadOllamaModels = async () => {
-
-  // needed
-  const ollama = new Ollama(store.config)
-
-  // load
-  let models: any[] = null
-  try {
-    models = await ollama.getModels()
-  } catch (error) {
-    console.error('Error listing Ollama models:', error);
-  }
-  if (!models) {
-    store.config.engines.ollama.models = { chat: [], image: [], }
-    return false
-  }
-
-  // get info
-  const modelInfo: anyDict = {}
-  for (const model of models) {
-    const info = await ollama.getModelInfo(model.model)
-    modelInfo[model.model] = {
-      ...info.details,
-      ...info.model_info,
-    }
-  }
-
-  // needed
-  const ollamaModelMapper = (model: any) => {
-    return {
-      id: model.model,
-      name: model.name,
-      meta: model
-    }
-  }
-
-  // store
-  store.config.engines.ollama.models = {
-    chat: models
-      .filter(model => modelInfo[model.model].family.includes('bert') === false)
-      .map(ollamaModelMapper)
-      .sort((a, b) => a.name.localeCompare(b.name)),
-    embedding: models
-      .filter(model => modelInfo[model.model].family.includes('bert') === true)
-      .map(ollamaModelMapper)
-      .sort((a, b) => a.name.localeCompare(b.name)),
-  }
-
-  // select valid model
-  store.config.engines.ollama.model.chat = getValidModelId('ollama', 'chat', store.config.engines.ollama.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-
-}
-
-export const loadMistralAIModels = async () => {
-
-  // load
-  let models: any[] = null
-  try {
-    const mistralai = new MistralAI(store.config)
-    models = await mistralai.getModels()
-  } catch (error) {
-    console.error('Error listing MistralAI models:', error);
-  }
-  if (!models) {
-    store.config.engines.mistralai.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.mistralai.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.id,
-      meta: model
-    }})
-    .sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.mistralai.model.chat = getValidModelId('mistralai', 'chat', store.config.engines.mistralai.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-
-}
-
-export const loadAnthropicModels = async () => {
-  
-  let models = []
-
-  try {
-    const anthropic = new Anthropic(store.config)
-    models = await anthropic.getModels()
-  } catch (error) {
-    console.error('Error listing Anthropic models:', error);
-  }
-  if (!models) {
-    store.config.engines.anthropic.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.anthropic.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.name,
-      meta: model
-    }})
-    //.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.anthropic.model.chat = getValidModelId('anthropic', 'chat', store.config.engines.anthropic.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-}
-
-export const loadGoogleModels = async () => {
-  
-  let models = []
-
-  try {
-    const google = new Google(store.config)
-    models = await google.getModels()
-  } catch (error) {
-    console.error('Error listing Google models:', error);
-  }
-  if (!models) {
-    store.config.engines.google.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.google.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.name,
-      meta: model
-    }})
-    //.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.google.model.chat = getValidModelId('google', 'chat', store.config.engines.google.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-}
-
-export const loadGroqModels = async () => {
-  
-  let models = []
-
-  try {
-    const groq = new Groq(store.config)
-    models = await groq.getModels()
-  } catch (error) {
-    console.error('Error listing Groq models:', error);
-  }
-  if (!models) {
-    store.config.engines.groq.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.groq.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.name,
-      meta: model
-    }})
-    //.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.groq.model.chat = getValidModelId('groq', 'chat', store.config.engines.groq.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-}
-
-export const loadCerebrasModels = async () => {
-  
-  let models = []
-
-  try {
-    const cerebras = new Cerebreas(store.config)
-    models = await cerebras.getModels()
-  } catch (error) {
-    console.error('Error listing Cerebras models:', error);
-  }
-  if (!models) {
-    store.config.engines.cerebras.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.cerebras.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.name,
-      meta: model
-    }})
-    //.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.cerebras.model.chat = getValidModelId('cerebras', 'chat', store.config.engines.cerebras.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
-}
-
-export const loadXAIModels = async () => {
-  
-  let models = []
-
-  try {
-    const xai = new XAI(store.config)
-    models = await xai.getModels()
-  } catch (error) {
-    console.error('Error listing xAI models:', error);
-  }
-  if (!models) {
-    store.config.engines.xai.models = { chat: [], image: [], }
-    return false
-  }
-
-  // store
-  store.config.engines.xai.models = {
-    chat: models
-    .map(model => { return {
-      id: model.id,
-      name: model.name,
-      meta: model
-    }})
-    //.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  // select valid model
-  store.config.engines.xai.model.chat = getValidModelId('xai', 'chat', store.config.engines.xai.model.chat)
-
-  // save
-  store.saveSettings()
-
-  // done
-  return true
 }

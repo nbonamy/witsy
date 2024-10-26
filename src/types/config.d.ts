@@ -72,14 +72,6 @@ interface STTConfig {
   //silenceAction: SilenceAction
 }
 
-interface EngineConfig {
-  apiKey?: string
-  baseURL?: string
-  models: ModelsConfig
-  model: ModelConfig
-  tts?: TTSConfig
-}
-
 interface Model {
   id: string
   name: string

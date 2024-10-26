@@ -1,13 +1,12 @@
 
 import { anyDict } from 'types/index.d'
-import { Configuration } from 'types/config.d'
-import Plugin from './plugin'
+import { Plugin, PluginConfig } from 'multi-llm-ts'
 
 export default class extends Plugin {
 
   toolNames: string[]
   
-  constructor(config: Configuration) {
+  constructor(config: PluginConfig) {
     super(config)
   }
 

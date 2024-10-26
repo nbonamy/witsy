@@ -25,7 +25,7 @@
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import Ollama from '../llms/ollama'
+import { Ollama } from 'multi-llm-ts'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -42,7 +42,7 @@ const pull_model_select = ref('')
 const pull_progress = ref(null)
 const pullStream = ref(null)
 
-let ollama = new Ollama(store.config)
+let ollama = new Ollama(store.config.engines.ollama)
 
 const onSelectPullModel = () => {
   pull_model.value = pull_model_select.value

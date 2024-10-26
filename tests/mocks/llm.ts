@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Message } from '../../src/types/index.d'
-import { LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmEventCallback, LlmResponse, LlmStream } from '../../src/types/llm.d'
-import { Configuration } from '../../src/types/config.d'
-import LlmEngine from '../../src/llms/engine'
+import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineConfig } from 'multi-llm-ts'
+import Message from '../../src/models/message'
 import RandomChunkStream from './stream'
 
 class LlmError extends Error {
@@ -22,7 +20,7 @@ class LlmError extends Error {
 
 export default class LlmMock extends LlmEngine {
 
-  constructor(config: Configuration) {
+  constructor(config: EngineConfig) {
     super(config)
   }
 
@@ -82,14 +80,16 @@ export default class LlmMock extends LlmEngine {
     stream.destroy()
   }
 
-  async streamChunkToLlmChunk(chunk: any, eventCallback: LlmEventCallback): Promise<LlmChunk|null> {
+  async *nativeChunkToLlmChunk(chunk: any): AsyncGenerator<LlmChunk, void, void> {
     if (chunk.toString('utf8') == '<DONE>') {
-      return {
+      yield {
+        type: 'content',
         text: null,
         done: true
       }
     } else {
-      return {
+      yield {
+        type: 'content',
         text: chunk?.toString('utf8'),
         done: chunk == null
       }

@@ -1,55 +1,38 @@
 
-import { Message } from 'types/index.d'
-import { LlmRole, LlmChunk } from 'types/llm.d'
-import { v4 as uuidv4 } from 'uuid'
+import { LlmRole, Message as MessageBase } from 'multi-llm-ts'
 import Attachment from './attachment'
 
-export default class implements Message {
+export default class Message extends MessageBase {
 
   uuid: string
   createdAt: number
-  role: LlmRole
-  type: string // backwards compatibility: everything is text now
-  content: string
-  attachment: Attachment
-  transient: boolean
+  type: string
   toolCall?: string
+  declare attachment: Attachment
 
-  constructor(role: LlmRole, obj?: any) {
-
-    // json
-    if (typeof obj === 'object') {
-      this.fromJson(obj)
-      return
-    }
-
-    // default
-    this.uuid = uuidv4()
+  constructor(role: LlmRole, content?: string) {
+    super(role, content)
+    this.uuid = crypto.randomUUID()
     this.createdAt = Date.now()
-    this.role = role
-    this.attachment = null
-    this.type = 'unknown'
-    this.transient = false
+    this.type = 'text'
     this.toolCall = null
-    if (typeof obj === 'string') {
-      this.setText(obj)
+    if (typeof content === 'string') {
+      this.setText(content)
     }
   }
 
-  fromJson(obj: any) {
-    this.uuid = obj.uuid || uuidv4()
-    this.createdAt = obj.createdAt
-    this.role = obj.role
-    this.type = obj.type
-    this.content = obj.content
-    this.attachment = obj.attachment ? new Attachment(obj.attachment) : null
-    this.transient = false
-    this.toolCall = null
+  static fromJson(obj: any): Message {
+    const message = new Message(obj.role, obj.content)
+    message.uuid = obj.uuid || crypto.randomUUID()
+    message.createdAt = obj.createdAt
+    message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
+    message.transient = false
+    message.toolCall = null
+    return message
   }
 
-  setText(text: string|null) {
-    this.type = 'text'
-    this.content = text
+  setText(text: string) {
+    this.content = text || ''
     this.transient = (text == null)
   }
 
@@ -57,20 +40,6 @@ export default class implements Message {
     this.type = 'image'
     this.content = url
     this.transient = false
-  }
-
-  appendText(chunk: LlmChunk) {
-    if (this.type === 'text' && chunk?.text) {
-      if (!this.content) this.content = ''
-      this.content = this.content + chunk.text
-    }
-    if (chunk?.done) {
-      this.transient = false
-    }
-  }
-
-  attachFile(file: Attachment) {
-    this.attachment = file
   }
 
   setToolCall(toolCall: string|null) {

@@ -56,10 +56,10 @@ export default class Embedder {
     } else if (this.engine === 'ollama') {
 
       this.ollama = new Ollama({
-        host: this.config.engines.ollama.baseURL,
+        baseURL: this.config.engines.ollama.baseURL,
       })
 
-    // } else if (this.engine === 'fastembed') {
+    // } else if (thibas.engine === 'fastembed') {
 
     //   // fastembed models
     //   const fastEmbedModels:{[key: string]: EmbeddingModel} = {
@@ -99,7 +99,7 @@ export default class Embedder {
 
     // ollama
     if (engine === 'ollama') {
-      const ollama = new Ollama({ host: config.engines.ollama.baseURL, })
+      const ollama = new Ollama({ baseURL: config.engines.ollama.baseURL, })
       const info = await ollama.show({ model: model })
       for (const item in info.model_info) {
         if (item.includes('embedding_length')) {

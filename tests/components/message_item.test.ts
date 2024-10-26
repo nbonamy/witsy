@@ -25,8 +25,8 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
-const botMessageImage: Message = new Message('assistant', { role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
-const botMessageTransient: Message = new Message('assistant', { role: 'assistant', type: 'text', content :'Hi' })
+const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
+const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
 
 beforeAll(() => {
 

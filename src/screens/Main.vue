@@ -12,7 +12,7 @@
 // components
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { download, saveFileContents } from '../services/download'
+import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import Sidebar from '../components/Sidebar.vue'
@@ -206,15 +206,11 @@ const onSendPrompt = async (prompt) => {
   }
 
   // save the attachment
-  if (store.pendingAttachment?.downloaded === false) {
-    let fileUrl = null
-    if (store.pendingAttachment.url === 'clipboard://') {
-      fileUrl = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.contents)
-    } else {
-      fileUrl = download(store.pendingAttachment.url)
-    }
+  if (store.pendingAttachment?.saved === false) {
+    store.pendingAttachment.loadContents()
+    const fileUrl = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.b64Contents())
     if (fileUrl) {
-      store.pendingAttachment.downloaded = true
+      store.pendingAttachment.saved = true
       store.pendingAttachment.url = fileUrl
     }
   }
