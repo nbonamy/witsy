@@ -56,6 +56,13 @@ onMounted(() => {
   onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-assistant', onStopAssistant)
 
+  // main event
+  window.api.on('delete-chat', () => {
+    if (assistant.value.chat) {
+      onDeleteChat(assistant.value.chat.uuid)
+    }
+  })
+
   // other
   store.addListener({
     onStoreUpdated(domain) {
