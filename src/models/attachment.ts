@@ -32,7 +32,7 @@ export default class Attachment extends AttachmentBase {
 
     // get contents
     if (!this.contents && this.url) {
-      this.contents = window.api.file.read(this.url.replace('file://', '')).contents
+      this.contents = window.api.file.read(this.url.replace('file://', ''))?.contents
     }
 
     // text formats
