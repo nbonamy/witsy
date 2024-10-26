@@ -22,6 +22,9 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 window.api = {
   config: {
     save: vi.fn()
+  },
+  computer: {
+    isAvailable: () => true,
   }
 }
 
@@ -35,6 +38,9 @@ store.config = {
     ollama: {},
     openai: {},
     xai: {},
+  },
+  plugins: {
+    computer: {}
   }
 }
 
