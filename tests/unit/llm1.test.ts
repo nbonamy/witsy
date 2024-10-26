@@ -1,7 +1,7 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { isEngineReady, igniteEngine, isEngineConfigured } from '../../src/llms/llm'
-import { Ollama, Google, Groq, XAI, Anthropic, Cerebras, MistralAI } from 'multi-llm-ts'
+import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
@@ -17,6 +17,9 @@ window.api = {
   },
   file: {
     extractText: (contents) => contents
+  },
+  computer: {
+    isAvailable: () => true,
   }
 }
 
@@ -136,3 +139,9 @@ test('Ignite Engine', async () => {
   expect(await igniteEngine('aws')).toBeInstanceOf(OpenAI)
   expect(await igniteEngine('aws', 'aws')).toBeNull()
 })
+
+test('Anthropic Computer Use', async () => {
+  const anthropic = await igniteEngine('anthropic')
+  expect(anthropic.computerInfo).not.toBeNull()
+})
+

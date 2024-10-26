@@ -1,7 +1,8 @@
 
-import { Ollama, MistralAI, Anthropic, Google, Groq, XAI, Cerebras, LlmEngine , loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel } from 'multi-llm-ts'
+import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, Cerebras, LlmEngine , loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel } from 'multi-llm-ts'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
+import { getComputerInfo } from './anthropic'
 import OpenAI from './openai'
 
 export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
@@ -32,7 +33,7 @@ export const isEngineReady = (engine: string) => {
 }
 
 export const igniteEngine = (engine: string, fallback = 'openai'): LlmEngine => {
-  if (engine === 'anthropic') return new Anthropic(store.config.engines.anthropic)
+  if (engine === 'anthropic') return new Anthropic(store.config.engines.anthropic, getComputerInfo())
   if (engine === 'cerebras') return new Cerebras(store.config.engines.cerebras)
   if (engine === 'google') return new Google(store.config.engines.google)
   if (engine === 'groq') return new Groq(store.config.engines.groq)
@@ -92,7 +93,7 @@ export const loadModels = async (engine: string): Promise<boolean> => {
   } else if (engine === 'mistralai') {
     rc = await loadMistralAIModels(store.config.engines.mistralai)
   } else if (engine === 'anthropic') {
-    rc = await loadAnthropicModels(store.config.engines.anthropic)
+    rc = await loadAnthropicModels(store.config.engines.anthropic, getComputerInfo())
   } else if (engine === 'google') {
     rc = await loadGoogleModels(store.config.engines.google)
   } else if (engine === 'groq') {
