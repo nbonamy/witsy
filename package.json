@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.21.1",
+  "version": "1.21.2",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -96,7 +96,7 @@
     "markdown-it-mark": "^4.0.0",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^1.1.1",
+    "multi-llm-ts": "^1.1.2",
     "nestor-client": "^0.3.1",
     "officeparser": "^4.1.1",
     "ollama": "^0.5.9",
