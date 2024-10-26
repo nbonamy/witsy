@@ -3,7 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Used to grab highlighted text for AI commands</string>
+	<string>Witsy tries to grab highlighted text in other applications for AI commands.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Witsy searches for Nestor services on your local network</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Witsy uses the microphone to transcribe your voice to text.</string>	
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMultipleInstancesProhibited</key>
@@ -12,7 +16,5 @@
 	<array>
 		<string>_nestor._tcp</string>
 	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Used to search for Nestor services</string>
 </dict>
 </plist>
