@@ -25,6 +25,7 @@ export const openPromptAnywhere = (params: strDict) => {
     alwaysOnTop: true,
     opacity: 0.975,
     resizable: process.env.DEBUG ? true : false,
+    backgroundColor: 'rgba(0, 0, 0, 0)',
     transparent: true,
     hiddenInMissionControl: true,
     queryParams: params,
