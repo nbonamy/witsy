@@ -146,7 +146,7 @@ export default class Commander {
 
         // we need an llm
         if (!this.llm) {
-          this.llm = igniteEngine(engine, config);
+          this.llm = igniteEngine(engine, config.engines[engine]);
           if (!this.llm) {
             throw new Error(`Invalid LLM engine: ${engine}`)
           }
