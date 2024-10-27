@@ -56,7 +56,7 @@ interface ChatAppearance {
 interface ShortcutsConfig {
   chat: Shortcut
   command: Shortcut
-  anywhere: Shortcut
+  prompt: Shortcut
   readaloud: Shortcut
   transcribe: Shortcut
   scratchpad: Shortcut

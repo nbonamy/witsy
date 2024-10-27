@@ -2,9 +2,9 @@
 declare module 'applescript'
 
 export interface ShortcutCallbacks {
+  prompt: () => void
   chat: () => void
   command: () => void
-  anywhere: () => void
   readaloud: () => void
   transcribe: () => void
   scratchpad: () => void

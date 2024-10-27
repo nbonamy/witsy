@@ -4,6 +4,7 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
+    "autoSavePrompt": false,
     "language": "",
     "tips": {
       "trayIcon": true,
@@ -11,7 +12,8 @@
       "modelSelector": true,
       "scratchpad": true,
       "conversation": true,
-      "computerUse": true
+      "computerUse": true,
+      "newPrompt": true
     },
     "confirm": {
       "retryGeneration": true
@@ -67,10 +69,10 @@
       "alt": true,
       "ctrl": true
     },
-    "anywhere": {
-      "key": "Space",
+    "prompt": {
+      "key": "P",
       "shift": true,
-      "ctrl": true
+      "meta": true
     },
     "transcribe": {
       "key": "Space",

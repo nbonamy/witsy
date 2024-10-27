@@ -72,37 +72,12 @@ onMounted(() => {
     }
   })
 
-  // load extra from props
-  if (props.extra?.promptId) {
-
-    // load extra
-    prompt.value = window.api.commands.getPrompt(props.extra?.promptId) || null
-    engine.value = props.extra?.engine || null
-    model.value = props.extra?.model || null
-
-    // special commands are not executed
-    const execute = !(props.extra?.execute === false || props.extra?.execute === 'false')
-
-    // execute or not
-    if (prompt.value !== null) {
-      if (execute) {
-        assistant.value.prompt(prompt.value, {
-          engine: engine.value,
-          model: model.value,
-          save: false,
-        }, (chunk) => {
-          emitEvent('new-llm-chunk', chunk)
-        })
-      } else {
-        emitEvent('set-prompt', { content: prompt.value })
-      }
-    }
-
-  }
-
-  // open settings
-  if (props.extra?.settings) {
-    emitEvent('open-settings')
+  // query params
+  window.api.on('query-params', (params) => {
+    processQueryParams(params)
+  })
+  if (props.extra) {
+    processQueryParams(props.extra)
   }
 
   // intercept links
@@ -130,6 +105,56 @@ onMounted(() => {
   }, 500)
 
 })
+
+const processQueryParams = (params) => {
+
+  // log
+  console.log('Processing query params', JSON.stringify(params))
+  
+  // load extra from props
+  if (params.promptId) {
+
+    // load extra
+    prompt.value = window.api.commands.getPrompt(params.promptId) || null
+    engine.value = params.engine || null
+    model.value = params.model || null
+
+    // special commands are not executed
+    const execute = !(params.execute === false || params.execute === 'false')
+
+    // execute or not
+    if (prompt.value !== null) {
+      if (execute) {
+        assistant.value.prompt(prompt.value, {
+          engine: engine.value,
+          model: model.value,
+          save: false,
+        }, (chunk) => {
+          emitEvent('new-llm-chunk', chunk)
+        })
+      } else {
+        emitEvent('set-prompt', { content: prompt.value })
+      }
+    }
+
+  }
+
+  // load chat
+  if (params.chatId) {
+    store.loadHistory()
+    const chat = store.chats.find((c) => c.uuid === params.chatId)
+    if (chat) {
+      onSelectChat(chat)
+    } else {
+      console.log('Chat not found', params.chatId)
+    }
+  }
+
+  // open settings
+  if (params.settings) {
+    emitEvent('open-settings')
+  }
+}
 
 const onNewChat = () => {
   onSelectChat(null)

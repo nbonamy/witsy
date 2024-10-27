@@ -179,13 +179,9 @@ declare global {
         isPromptEditable?(id: string): boolean
       }
       anywhere?: {
-        prompt?(text: string): void
-        resize?(width: number, height: number): void
-        showExperts?(): void
-        closeExperts?(): void
-        toggleExperts?(): void
-        isExpertsOpen?(): boolean
-        onExpert?(prompt: string): void
+        prompt?(): void
+        insert?(prompt: string): void
+        continue?(chatId: string): void
         cancel?(): void
       }
       experts?: {

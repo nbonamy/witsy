@@ -6,9 +6,6 @@ import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import Experts from '../../src/screens/Experts.vue'
 import defaultSettings from '../../defaults/settings.json'
 
-import useEventBus  from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
-
 enableAutoUnmount(afterAll)
 
 beforeAll(() => {
@@ -64,17 +61,11 @@ test('Renders correctly', () => {
 //   expect(window.api.anywhere.cancel).toHaveBeenCalled()
 // })
 
-test('Prompts on Enter', async () => {
-  /*const wrapper = */mount(PromptAnywhere)
-  emitEvent('send-prompt', 'prompt')
-  expect(window.api.anywhere.prompt).toHaveBeenCalled()
-})
-
 test('Show experts', async () => {
   const wrapper = mount(PromptAnywhere)
   const trigger = wrapper.find('.icon.experts')
   await trigger.trigger('click')
-  expect(window.api.anywhere.showExperts).toHaveBeenCalled()
+  expect(wrapper.find('.experts').exists()).toBe(true)
 })
 
 test('Experts renders', async () => {

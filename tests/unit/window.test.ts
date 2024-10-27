@@ -170,12 +170,6 @@ test('Create prompt anywhere window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
-test('Resize prompt anywhere window', async () => {
-  await window.openPromptAnywhere()
-  await window.resizePromptAnywhere(100)
-  expect(BrowserWindow.prototype.setSize).toHaveBeenCalledWith(0, 100)
-})
-
 test('Close prompt anywhere window', async () => {
   await window.openPromptAnywhere()
   await window.closePromptAnywhere()

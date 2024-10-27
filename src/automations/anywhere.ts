@@ -1,35 +1,12 @@
 
-import { Configuration } from 'types/config.d'
 import { App } from 'electron'
-import { loadSettings } from '../main/config'
-import { igniteEngine } from '../llms/llm' 
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
-import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import Automator from './automator'
-import Message from '../models/message'
 import * as window from '../main/window'
-import process from 'process'
 
 export default class PromptAnywhere {
 
-  private llm: LlmEngine
-  private cancelled: boolean
-
-  constructor(llm?: LlmEngine) {
-    this.llm = llm
-    this.cancelled = false
-  }
-
-  cancel = async (): Promise<void> => {
-
-    // close stuff
-    await window.closeWaitingPanel();
-    await window.restoreWindows();
-    await window.releaseFocus();
-
-    // record
-    this.cancelled = true;
-
+  constructor() {
   }
 
   static initPrompt = async (): Promise<void> => {
@@ -53,43 +30,18 @@ export default class PromptAnywhere {
       foremostApp: foremostApp
     });
   }
-
-  execPrompt = async (app: App, prompt: string): Promise<void> => {
+  
+  static insert = async (app: App, response: string): Promise<void> => {
 
     try {
 
-      // config
-      const config: Configuration = loadSettings(app);
-      const engine = config.llm.engine;
-      const model = config.getActiveModel();
-
-      // open waiting panel
-      window.openWaitingPanel();
-
-      // we need an llm
-      if (!this.llm) {
-        this.llm = igniteEngine(engine, config);
-        if (!this.llm) {
-          throw new Error(`Invalid LLM engine: ${engine}`)
-        }
-      }
-
-      // now prompt llm
-      console.debug(`Prompting with ${prompt.slice(0, 50)}…`);
-      const response = await this.promptLlm(model, prompt);
-      const result = removeMarkdown(response.content, {
+      const result = removeMarkdown(response, {
         stripListLeaders: false,
         listUnicodeChar: ''
       });
 
-      // if cancelled
-      if (this.cancelled) {
-        console.debug('Discarding LLM output as command was cancelled');
-        return
-      }
-
       // done
-      await window.closeWaitingPanel();
+      await window.closePromptAnywhere();
       await window.releaseFocus();
 
       // now paste
@@ -115,17 +67,16 @@ export default class PromptAnywhere {
 
   }
 
-  private promptLlm = (model: string, prompt: string): Promise<LlmResponse> => {
+  static continueAsChat = async (app: App, chatId: string): Promise<void> => {
 
-    // build messages
-    const messages: Message[]  = [
-      new Message('user', prompt)
-    ]
+    // done with this
+    await window.closePromptAnywhere();
+    await window.restoreWindows();
+    await window.releaseFocus();
 
-    // now get it
-    return this.llm.complete(messages, { model: model })
-
+    // now open main
+    await window.openMainWindow({ queryParams: { chatId: chatId } });
+  
   }
-
 
 }

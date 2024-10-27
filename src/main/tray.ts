@@ -81,9 +81,9 @@ export default class {
     // add common stuff
     return [
       ...menuItems,
+      { label: 'New Prompt', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt), click: PromptAnywhere.initPrompt },
       { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-      { label: 'Scratch Pad', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: window.openScratchPad },
-      { label: 'Prompt Anywhere', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.anywhere), click: PromptAnywhere.initPrompt },
+      { label: 'New Scratchpad', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: window.openScratchPad },
       { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
       { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
       { label: 'Start Dictation', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },

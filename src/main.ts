@@ -34,7 +34,6 @@ import * as menu from './main/menu';
 import * as text from './main/text';
 
 let commander: Commander = null
-let anywhere: PromptAnywhere = null
 let docRepo: DocumentRepository = null
 //let onlineStorage: OnlineStorage = null
 let nestor: Nestor = null
@@ -87,9 +86,9 @@ if (!process.mas) {
 // this is going to be called later
 const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
+    prompt: PromptAnywhere.initPrompt,
     chat: window.openMainWindow,
     command: Commander.initCommand,
-    anywhere: PromptAnywhere.initPrompt,
     readaloud: ReadAloud.read,
     transcribe: Transcriber.initTranscription,
     scratchpad: window.openScratchPad,
@@ -128,6 +127,7 @@ app.whenReady().then(() => {
   menu.installMenu(app, {
     quit: app.quit,
     checkForUpdates: autoUpdater.check,
+    newPrompt: PromptAnywhere.initPrompt,
     newChat: window.openMainWindow,
     newScratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
@@ -430,58 +430,20 @@ ipcMain.on('code-python-run', async (event, payload) => {
   }
 })
 
-ipcMain.on('anywhere-prompt', async (event, payload) => {
+ipcMain.on('anywhere-prompt', async () => {
+  await PromptAnywhere.initPrompt();
+});
 
-  // if cancel on prompt window
-  await window.closePromptAnywhere();
-
-  // cancel previous
-  if (anywhere != null) {
-    await anywhere.cancel();
-  }
-
-  // do it
-  anywhere = new PromptAnywhere();
-  anywhere.execPrompt(app, JSON.parse(payload));
-
+ipcMain.on('anywhere-insert', async (event, payload) => {
+  await PromptAnywhere.insert(app, payload);
 })
 
-ipcMain.on('anywhere-resize', (_, height) => {
-  window.resizePromptAnywhere(height);
-})
-
-ipcMain.on('anywhere-show-experts', async () => {
-  await window.showExpertsPalette();
-})
-
-ipcMain.on('anywhere-close-experts', async () => {
-  await window.closeExpertsPalette();
-})
-
-ipcMain.on('anywhere-toggle-experts', async () => {
-  await window.toggleExpertsPalette();
-})
-
-ipcMain.on('anywhere-is-experts-open', (event) => {
-  event.returnValue = window.isExpertsPaletteOpen();
-})
-
-ipcMain.on('anywhere-on-expert', async (_, expertId) => {
-  await window.setPromptAnywhereExpertPrompt(JSON.parse(expertId));
-  await window.closeExpertsPalette();
+ipcMain.on('anywhere-continue-as-chat', async (_, chatId) => {
+  await PromptAnywhere.continueAsChat(app, chatId);
 })
 
 ipcMain.on('anywhere-cancel', async () => {
-
-  // if cancel on prompt window
   await window.closePromptAnywhere();
-  
-  // if cancel on waiting panel
-  if (anywhere != null) {
-    console.log('Cancelling anywhere')
-    await anywhere.cancel();
-    anywhere = null;
-  }
 })
 
 ipcMain.on('readaloud-get-text', (event, payload) => {

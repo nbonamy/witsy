@@ -5,7 +5,6 @@ import defaults from '../../defaults/settings.json'
 import * as window from '../../src/main/window'
 import PromptAnywhere from '../../src/automations/anywhere'
 import Automator from '../../src/automations/automator'
-import LlmMock from '../mocks/llm'
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -18,11 +17,11 @@ vi.mock('../../src/main/config.ts', async () => {
 vi.mock('../../src/main/window.ts', async () => {
   return {
     openPromptAnywhere: vi.fn(),
-    openWaitingPanel: vi.fn(),
-    closeWaitingPanel: vi.fn(),
+    closePromptAnywhere: vi.fn(),
     hideWindows: vi.fn(),
     restoreWindows: vi.fn(),
-    releaseFocus: vi.fn()
+    releaseFocus: vi.fn(),
+    openMainWindow: vi.fn(),
   }
 })
 
@@ -65,28 +64,25 @@ test('Prepare prompt', async () => {
 
 test('Execute Prompt', async () => {
 
-  const anywhere = new PromptAnywhere(new LlmMock(store.config))
-  await anywhere.execPrompt(null, 'Explain this')
+  await PromptAnywhere.insert(null, 'Explain this')
 
-  expect(window.openWaitingPanel).toHaveBeenCalledOnce()
-  expect(window.closeWaitingPanel).toHaveBeenCalledOnce()
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
 
-  expect(Automator.prototype.pasteText).toHaveBeenCalledWith('[{"role":"user","content":"Explain this"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(Automator.prototype.pasteText).toHaveBeenCalledWith('Explain this')
 
 })
 
-test('Cancel Prompt', async () => {
+test('Continue as Chat Prompt', async () => {
 
-  const anywhere = new PromptAnywhere(new LlmMock(store.config))
-  await anywhere.cancel()
+  await PromptAnywhere.continueAsChat(null, '123')
 
-  expect(window.closeWaitingPanel).toHaveBeenCalledOnce()
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
   expect(window.releaseFocus).toHaveBeenCalledOnce()
 
-  await anywhere.execPrompt(null, 'Explain this')
-
-  expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
+  expect(window.openMainWindow).toHaveBeenCalledWith({
+    queryParams: { chatId: '123' }
+  })
 
 })
