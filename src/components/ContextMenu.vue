@@ -27,7 +27,7 @@ import Overlay from './Overlay.vue'
 const props = defineProps({
   actions: Object,
   onClose: Function,
-  align: String,
+  position: String,
   x: Number,
   y: Number,
   showFilter: {
@@ -53,20 +53,26 @@ const visibleActions = computed(() => {
 })
 
 const position = computed(() => {
-  if (props.align === 'right') {
+  console.log(props.position)
+  if (props.position === 'right') {
     return {
       top: props.y + 'px',
       right: props.x + 'px'
     }
-  } else if (props.align === 'bottom') {
+  } else if (props.position === 'above') {
     return {
       left: props.x + 'px',
       bottom: props.y + 'px'
     }
-  } else if (props.align === 'bottom-right') {
+  } else if (props.position === 'above-right') {
     return {
       right: props.x + 'px',
       bottom: props.y + 'px'
+    }
+  } else if (props.position === 'below') {
+    return {
+      left: props.x + 'px',
+      top: props.y + 'px'
     }
   } else {
     return {
@@ -118,6 +124,9 @@ const onAction = (action) => {
   width: 100%;
   overflow-y: auto;
   padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0px;
 }
 
 .context-menu .item {

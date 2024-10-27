@@ -1,7 +1,7 @@
 
 <template>
   <div class="anywhere-experts">
-    <ContextMenu :teleport="false" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="0" :y="0" align="bottom" />
+    <ContextMenu :teleport="false" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="0" :y="0" position="above" />
   </div>
 </template>
 
