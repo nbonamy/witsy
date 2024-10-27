@@ -53,6 +53,8 @@ const menuY = ref(0)
 const contextMenuActions = [
   { label: 'Export', action: 'export' },
   { label: 'Import', action: 'import' },
+  { label: 'Select All', action: 'select' },
+  { label: 'Unselect All', action: 'unselect' },
 ]
 
 const visibleExperts = computed(() => experts.value?.filter(expert => expert.state != 'deleted'))
@@ -75,7 +77,7 @@ const showContextMenu = () => {
   const rcButton = moreButton.value.getBoundingClientRect()
   const rcDialog = document.getElementsByTagName('dialog')[0].getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
-  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height
+  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }
 
 const closeContextMenu = () => {
@@ -88,7 +90,13 @@ const handleActionClick = async (action) => {
   closeContextMenu()
 
   // process
-  if (action === 'import') {
+  if (action === 'select') {
+    experts.value.forEach(expert => expert.state = 'enabled')
+    save()
+  } else if (action === 'unselect') {
+    experts.value.forEach(expert => expert.state = 'disabled')
+    save()
+  } else if (action === 'import') {
     onImport()
   } else if (action === 'export') {
     onExport()
