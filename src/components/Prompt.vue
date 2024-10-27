@@ -311,7 +311,7 @@ const onExperts = () => {
     const icon = document.querySelector('.prompt .experts')
     const rect = icon?.getBoundingClientRect()
     menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
+    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
     showExperts.value = true
   } else {
     emitEvent('show-experts')
