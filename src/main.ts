@@ -76,7 +76,9 @@ window.setStore(store);
 // new MacosAutomator();
 
 // start nestor
-nestor = new Nestor();
+if (!process.mas) {
+  nestor = new Nestor();
+}
 
 // start online storage
 // onlineStorage = new OnlineStorage(app);
