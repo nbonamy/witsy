@@ -10,7 +10,7 @@ let llm: LlmEngine = null
 
 const initEngine = (engine: string, config: Configuration) => {
   store.config = config
-  llm = igniteEngine(engine, config)
+  llm = igniteEngine(engine, config.engines[engine])
   llm.loadPlugins()
 }
 
