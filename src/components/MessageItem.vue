@@ -1,6 +1,6 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
-    <div class="role" :class="message.role">
+    <div class="role" :class="message.role" v-if="showRole">
       <EngineLogo :engine="chat.engine" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
       <div class="name variable-font-size">{{ authorName }}</div>
@@ -57,7 +57,9 @@ const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   chat: Chat,
-  message: Message
+  message: Object,
+  showRole: { type: Boolean, default: true },
+  showActions: { type: Boolean, default: true },
 })
 
 const emits = defineEmits(['image-loaded'])
@@ -121,7 +123,9 @@ const imageUrl = computed(() => {
 // was not working from a testing perspective
 // so we fallback to that...
 const onHover = (value) => {
-  hovered.value = value
+  if (props.showActions) {
+    hovered.value = value
+  }
 }
 
 const onClickAttachment = (attachment) => {

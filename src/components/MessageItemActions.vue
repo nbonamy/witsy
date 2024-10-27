@@ -1,13 +1,7 @@
 <template>
   <div class="actions">
-    <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="onCopy(message)">
-      <BIconClipboard /> {{ copyLabel }}
-    </div>
-    <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
-      <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
-      <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
-      <span v-else><BIconPlayCircle /> Read</span>
-    </div>
+    <MessageItemActionCopy :message="message" />
+    <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
     <div class="action retry" v-if="message.role == 'assistant' && !message.transient" @click="onRetry(message)">
       <BIconArrowCounterclockwise /> Retry
     </div>
@@ -23,12 +17,14 @@ import { ref } from 'vue'
 import { store } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
+import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
+import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
 const props = defineProps({
-  message: Message,
+  message: Object,
   audioState: Object,
   readAloud: Function
 })
@@ -49,7 +45,7 @@ const onCopy = (message) => {
   setTimeout(() => copyLabel.value = 'Copy', 1000)
 }
 
-const onToggleRead = async (message) => {
+const onReadAloud = async (message) => {
   props.readAloud(message)
 }
 
