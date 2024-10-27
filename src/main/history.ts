@@ -58,8 +58,9 @@ export const saveHistory = (app: App, content: Chat[]) => {
   try {
 
     // local
-    fs.writeFileSync(historyFilePath(app), JSON.stringify(content, null, 2))
-    monitor.start(historyFilePath(app))
+    const filepath = historyFilePath(app) 
+    fs.writeFileSync(filepath, JSON.stringify(content, null, 2))
+    monitor.notify(filepath)
 
   } catch (error) {
     console.log('Error saving history data', error)

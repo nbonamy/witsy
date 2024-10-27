@@ -21,7 +21,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
   console.info('Registering shortcuts')
   registerShortcut(config.shortcuts.chat, callbacks.chat);
   registerShortcut(config.shortcuts.command, callbacks.command);
-  registerShortcut(config.shortcuts.anywhere, callbacks.anywhere);
+  registerShortcut(config.shortcuts.prompt, callbacks.prompt);
   registerShortcut(config.shortcuts.readaloud, callbacks.readaloud);
   registerShortcut(config.shortcuts.transcribe, callbacks.transcribe);
   registerShortcut(config.shortcuts.scratchpad, callbacks.scratchpad);

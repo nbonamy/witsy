@@ -74,13 +74,9 @@ contextBridge.exposeInMainWorld(
       cancel: (): void => { return ipcRenderer.send('command-stop') },
     },
     anywhere: {
-      prompt: (text: string): void => { return ipcRenderer.sendSync('anywhere-prompt', JSON.stringify(text)) },
-      resize: (height: number): void => { return ipcRenderer.send('anywhere-resize', height) },
-      showExperts: (): void => { return ipcRenderer.send('anywhere-show-experts') },
-      closeExperts: (): void => { return ipcRenderer.send('anywhere-close-experts') },
-      toggleExperts: (): void => { return ipcRenderer.send('anywhere-toggle-experts') },
-      isExpertsOpen: (): boolean => { return ipcRenderer.sendSync('anywhere-is-experts-open') },
-      onExpert: (expertId: string): void => { return ipcRenderer.sendSync('anywhere-on-expert', JSON.stringify(expertId)) },
+      prompt: () => { return ipcRenderer.send('anywhere-prompt') },
+      insert: (text: string): void => { return ipcRenderer.send('anywhere-insert', text) },
+      continue: (chatid: string): void => { return ipcRenderer.send('anywhere-continue-as-chat', chatid) },
       cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
     },
     experts: {

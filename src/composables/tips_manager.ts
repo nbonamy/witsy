@@ -2,7 +2,7 @@
 import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
-export type TipId = 'scratchpad' | 'conversation' | 'computerUse'
+export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt'
 
 class TipsManager {
 
@@ -30,7 +30,7 @@ class TipsManager {
       return
     }
 
-    const tipsToShow: TipId[] = [ 'scratchpad' ]
+    const tipsToShow: TipId[] = [ 'scratchpad', 'newPrompt' ]
 
     for (const tip of tipsToShow) {
       const shouldShow = this.store.config.general.tips[tip]
@@ -49,6 +49,7 @@ class TipsManager {
       'scratchpad': this.showScratchpadTip,
       'conversation': this.showConversationTip,
       'computerUse': this.showComputerUseWarning,
+      'newPrompt': this.showNewPromptTip,
     }
 
     // get the callback
@@ -91,6 +92,22 @@ class TipsManager {
       text: 'Use at your own risk!',
     })
   }
+
+  showNewPromptTip = () => {
+    Dialog.show({
+      title: 'The Prompt Anywhere feature has been completely redesigned and gives you faster than ever to Generative AI!',
+      text: 'Do you want to check it now? It is available in the Witsy menu when you need it!',
+      confirmButtonText: 'Yes!',
+      cancelButtonText: 'Later',
+      showCancelButton: true,
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        window.api.anywhere.prompt()
+      }
+    })
+  
+  }
+
 }
 
 export default function useTipsManager(store: Store) {

@@ -31,6 +31,10 @@ export const store: Store = reactive({
     loadSettings()
   },
 
+  loadHistory: async () => {
+    loadHistory()
+  },
+
   loadCommands: async () => {
     loadCommands()
   },
@@ -78,7 +82,7 @@ export const store: Store = reactive({
 
     try {
   
-      // we need to srip attchment contents
+      // we need to srip attachment contents
       const chats = JSON.parse(JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
       for (const chat of chats) {
         for (const message of chat.messages) {

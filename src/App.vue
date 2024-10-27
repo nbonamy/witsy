@@ -1,5 +1,5 @@
 <template>
-  <component :is="currentView" :extra="queryParams" :data-tint="tint"/>
+  <component :is="currentView" :extra="queryParams" />
 </template>
 
 <script setup>
@@ -36,7 +36,6 @@ const routes = {
 }
 
 const theme = ref('light')
-const tint = ref('black')
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
@@ -53,23 +52,26 @@ const queryParams = computed(() => {
   return queryParams;
 })
 
-const loadTint = () => {
-  const config = window.api.config.load()
-  tint.value = config.appearance.tint || 'black'
+const setTint = (tint) => {
+  if (!tint) {
+    const config = window.api.config.load()
+    tint = config.appearance.tint || 'black'
+  }
+  document.querySelector('body').setAttribute('data-tint', tint)
 }
 
 // add platform name
 onMounted(() => {
 
   // events
-  onEvent('appearance-tint-changed', (t) => {
-    tint.value = t
+  onEvent('appearance-tint-changed', (tint) => {
+    setTint(tint)
   })
 
   // config change may lead to tint change
   window.api.on('file-modified', (signal) => {
     if (signal === 'settings') {
-      loadTint()
+      setTint()
     }
   })  
 
@@ -86,7 +88,7 @@ onMounted(() => {
 
   // init theme
   theme.value = appearanceTheme.getTheme()
-  loadTint()
+  setTint()
 
   // watch for theme change
   if (window.matchMedia) {

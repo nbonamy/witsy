@@ -47,12 +47,17 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     label: 'File',
     submenu: [
       {
+        label: 'New Prompt',
+        accelerator: shortcutAccelerator(shortcuts?.prompt),
+        click: () => callbacks.newPrompt()
+      },
+      {
         label: 'New Chat',
         accelerator: shortcutAccelerator(shortcuts?.chat),
         click: () => callbacks.newChat()
       },
       {
-        label: 'Scratch Pad',
+        label: 'New Scratchpad',
         accelerator: shortcutAccelerator(shortcuts?.scratchpad),
         click: () => callbacks.newScratchpad()
       },
