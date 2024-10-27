@@ -31,6 +31,8 @@ const onDownload = () => {
   window.api.file.download({
     url: props.url,
     properties: {
+      prompt: true,
+      directory: 'downloads',
       filename: 'image.png',
     }
   })
