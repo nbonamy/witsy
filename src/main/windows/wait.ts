@@ -39,6 +39,7 @@ export const openWaitingPanel = () => {
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
+    resizable: false,
     hiddenInMissionControl: true,
     hasShadow: false,
   });
