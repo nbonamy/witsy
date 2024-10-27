@@ -48,8 +48,6 @@ export const getCurrentScreen = () => {
 export const getCenteredCoordinates = (w: number, h: number) => {
   const cursorScreen = getCurrentScreen();
   const { width, height } = cursorScreen.workAreaSize;
-  console.log(cursorScreen.bounds.x, cursorScreen.bounds.y, width, height, w, h)
-  console.log(height, 0, Math.round(height - h) / 4)
   return {
     x: cursorScreen.bounds.x + Math.round((width - w) / 2),
     y: cursorScreen.bounds.y + Math.round(Math.max(height/5, (height - h) / 3)),
