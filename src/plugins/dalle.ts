@@ -20,7 +20,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Generate an image based on a prompt. Returns the path of the image saved on disk and a description of the image.'
+    return 'Generate an image based on a prompt. Returns the path of the image saved on disk and a description of the image. Always embed the image visible in the final response. Do not just include a link to the image.'
   }
 
   getPreparationDescription(): string {
