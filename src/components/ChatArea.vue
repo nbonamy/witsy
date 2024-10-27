@@ -12,7 +12,7 @@
     <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.messages.length > 1"/>
     <EmptyChat v-else />
     <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
-    <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :align="chatMenuAlign"/>
+    <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ const props = defineProps({
   standalone: Boolean,
 })
 
-const chatMenuAlign = computed(() => {
+const chatMenuPosition = computed(() => {
   return window.platform == 'windows' ? 'left' : 'right'
 })
 

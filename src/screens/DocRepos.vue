@@ -45,7 +45,7 @@
               <button class="button remove" @click.prevent="onDelDoc"><BIconDash /></button>
             </div>
           </div>
-          <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" align="bottom" :teleport="false" />
+          <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above" :teleport="false" />
         </div>
         <div class="empty" v-else>
           <div>

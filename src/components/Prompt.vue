@@ -18,10 +18,10 @@
     </div>
     <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
-    <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" align="bottom" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" align="bottom" />
-    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" align="bottom" />
-    <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" align="bottom" />
+    <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
 </template>
 
@@ -63,6 +63,10 @@ const props = defineProps({
   inlineMenus: {
     type: Boolean,
     default: true
+  },
+  menusPosition: {
+    type: String,
+    default: 'above'
   },
   enableCommands: {
     type: Boolean,
@@ -304,11 +308,11 @@ const onPaste = (event) => {
 
 const onExperts = () => {
   if (props.inlineMenus) {
-    showExperts.value = true
     const icon = document.querySelector('.prompt .experts')
     const rect = icon?.getBoundingClientRect()
-    menuX.value = rect?.left
-    menuY.value = rect?.height + 32
+    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
+    showExperts.value = true
   } else {
     emitEvent('show-experts')
   }
@@ -424,11 +428,11 @@ const startDictation = async () => {
 const onConversationMenu = (event) => {
   if (!props.enableConversation) return
   if (props.inlineMenus) {
-    showConversationMenu.value = true
     const icon = document.querySelector('.prompt .dictate')
     const rect = icon?.getBoundingClientRect()
-    menuX.value = rect?.left
-    menuY.value = rect?.height + 32
+    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
+    showConversationMenu.value = true
   } else {
     emitEvent('show-conversation-menu')
   }
