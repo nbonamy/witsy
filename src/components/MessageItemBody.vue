@@ -15,7 +15,7 @@ import MessageItemImage from './MessageItemImage.vue'
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Message
+  message: Object
 })
 
 const blocks = computed(() => {
