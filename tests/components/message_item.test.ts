@@ -198,6 +198,8 @@ test('Run assistant image actions', async () => {
   expect(window.api.file.download).toHaveBeenCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
+      directory: 'downloads',
+      prompt: true,
       filename: 'image.png',
     }
   })
