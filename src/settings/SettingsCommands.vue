@@ -60,6 +60,8 @@ const contextMenuActions = [
   { label: 'Defaults', action: 'defaults' },
   { label: 'Export', action: 'export' },
   { label: 'Import', action: 'import' },
+  { label: 'Select All', action: 'select' },
+  { label: 'Unselect All', action: 'unselect' },
 ]
 
 const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
@@ -92,7 +94,7 @@ const showContextMenu = () => {
   const rcButton = moreButton.value.getBoundingClientRect()
   const rcDialog = document.getElementsByTagName('dialog')[0].getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
-  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height
+  menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }
 
 const closeContextMenu = () => {
@@ -105,7 +107,13 @@ const handleActionClick = async (action) => {
   closeContextMenu()
 
   // process
-  if (action === 'defaults') {
+  if (action === 'select') {
+    commands.value.forEach(expert => expert.state = 'enabled')
+    save()
+  } else if (action === 'unselect') {
+    commands.value.forEach(expert => expert.state = 'disabled')
+    save()
+  } else if (action === 'defaults') {
     onDefaults()
   } else if (action === 'import') {
     onImport()
