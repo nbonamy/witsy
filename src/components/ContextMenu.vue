@@ -8,7 +8,7 @@
           <div class="item separator disabled" v-if="action.separator">
             <hr  />
           </div>
-          <div :class="{ item: true, disabled: action.disabled }" @click="onAction(action)" v-else>
+          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled }" @click="onAction(action)" v-else>
             <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
             <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
             {{ action.label }}
@@ -82,6 +82,10 @@ const position = computed(() => {
   }
 });
 
+const isRightAligned = computed(() => {
+  return props.position === 'right' || props.position === 'above-right';
+});
+
 onMounted(() => {
   if (props.showFilter) {
     const input = document.querySelector('.context-menu input');
@@ -137,6 +141,10 @@ const onAction = (action) => {
   overflow-x: clip;
   text-overflow: ellipsis;
   color: var(--context-menu-text-color);
+}
+
+.context-menu .item.right {
+  text-align: right;
 }
 
 .context-menu .item.separator {
