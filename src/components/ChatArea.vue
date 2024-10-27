@@ -60,7 +60,7 @@ onMounted(() => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuAlign.value == 'left' ? document.querySelector('.sidebar').offsetWidth : 0) 
+  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector('.sidebar').offsetWidth : 0) 
   menuY.value = 32
 }
 
