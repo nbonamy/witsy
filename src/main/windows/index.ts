@@ -1,7 +1,7 @@
 
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
-import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
 import { mainWindow } from './main';
 import * as config from '../config';
 import { wait } from '../utils';
@@ -82,6 +82,12 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     if (!message.includes('Electron Security Warning') && !message.includes('Third-party cookie will be blocked')) {
       console.log(`${message} ${sourceId}:${line}`);
     }
+  });
+
+  // open links in default browser
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
   });
 
   // and load the index.html of the app.

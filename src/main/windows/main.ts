@@ -1,7 +1,7 @@
 
 import { CreateWindowOpts } from 'types/window';
 import { anyDict } from 'types/index.d';
-import { app, BrowserWindow, shell, dialog } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions } from './index';
 import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
@@ -66,12 +66,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     electronStore.set('bounds', mainWindow.getBounds());
 
   })
-
-  // open links in default browser
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
 
   // open the DevTools
   if (process.env.DEBUG) {
