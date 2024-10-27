@@ -18,6 +18,9 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
         mainWindow.restore();
       }
       mainWindow.focus();
+      if (opts.queryParams) {
+        mainWindow.webContents.send('query-params', opts.queryParams);
+      }
       return
     } catch (error) {
       console.error('Error while showing main window', error);
@@ -125,25 +128,10 @@ export const openChatWindow = (params: anyDict) => {
 };
 
 export const openSettingsWindow = () => {
-
-  try {
-    // send signal to current window
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('show-settings');
-      mainWindow.restore();
-      mainWindow.show();
-      mainWindow.focus();
-      return;
-    }
-  } catch (error) {
-    console.error('Error while sending show-settings signal', error);
-  }
-
   try {
     openMainWindow({ queryParams: { settings: true }});
     return;
   } catch (error) {
     console.error('Error while opening main window to show settings', error);
   }
-
 }
