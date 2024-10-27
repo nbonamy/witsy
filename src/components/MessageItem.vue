@@ -82,7 +82,7 @@ onMounted(() => {
     document.querySelectorAll('.messages a').forEach(link => {
       link.target = "_blank"
     })
-  }, 599)
+  }, 500)
 
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
