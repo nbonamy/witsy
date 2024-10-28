@@ -65,6 +65,9 @@ beforeAll(() => {
     },
     nestor: {
       isAvailable: vi.fn(() => false),
+    },
+    anywhere: {
+      prompt: vi.fn(),
     }
   }
 
