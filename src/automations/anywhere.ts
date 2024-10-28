@@ -11,12 +11,6 @@ export default class PromptAnywhere {
 
   static initPrompt = async (): Promise<void> => {
 
-    // not available in mas
-    if (process.mas) {
-      window.showMasLimitsDialog()
-      return
-    }
-
     // get foremost app
     let foremostApp = '';
     if (process.platform === 'darwin') {
