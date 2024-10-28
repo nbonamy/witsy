@@ -31,14 +31,6 @@ export default class Message extends MessageBase {
     return message
   }
 
-  setDone() {
-    this.transient = false
-  }
-
-  isDone() {
-    return !this.transient
-  }
-
   setText(text: string) {
     this.content = text || ''
     this.transient = (text == null)

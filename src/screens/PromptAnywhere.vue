@@ -62,6 +62,7 @@ const props = defineProps({
 })
 
 let llm = null
+let stopGeneration = false
 let addedToHistory = false
 
 onMounted(() => {
@@ -171,7 +172,7 @@ const onClose = () => {
 }
 
 const onStopGeneration = () => {
-  response.value.setDone()
+  stopGeneration = true
 }
 
 const onPrompt = async (data) => {
@@ -185,9 +186,10 @@ const onPrompt = async (data) => {
   chat.value.addMessage(response.value)
 
   // now generate
-  const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: store.config.getActiveModel() })
+  stopGeneration = false
+  const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
   for await (const msg of stream) {
-    if (response.value.isDone()) {
+    if (stopGeneration) {
       llm.stop(stream)
       break
     }
