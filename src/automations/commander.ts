@@ -22,11 +22,9 @@ export const notEditablePrompts = [
 
 export default class Commander {
 
-  private llm: LlmEngine
   private cancelled: boolean
   
-  constructor(llm?: LlmEngine) {
-    this.llm = llm
+  constructor() {
     this.cancelled = false
   }
 
@@ -148,16 +146,14 @@ export default class Commander {
         window.openWaitingPanel();
 
         // we need an llm
-        if (!this.llm) {
-          this.llm = igniteEngine(engine, config.engines[engine]);
-          if (!this.llm) {
-            throw new Error(`Invalid LLM engine: ${engine}`)
-          }
+        const llm = igniteEngine(engine);
+        if (!llm) {
+          throw new Error(`Invalid LLM engine: ${engine}`)
         }
 
         // now prompt llm
         console.debug(`Prompting with ${result.prompt.slice(0, 50)}…`);
-        const response = await this.promptLlm(model, result.prompt);
+        const response = await this.promptLlm(llm, model, result.prompt);
         result.response = removeMarkdown(response.content, {
           stripListLeaders: false,
           listUnicodeChar: ''
@@ -199,7 +195,7 @@ export default class Commander {
 
   }
 
-  private promptLlm = (model: string, prompt: string): Promise<LlmResponse> => {
+  private promptLlm = (llm: LlmEngine, model: string, prompt: string): Promise<LlmResponse> => {
 
     // build messages
     const messages: Message[]  = [
@@ -207,7 +203,7 @@ export default class Commander {
     ]
 
     // now get it
-    return this.llm.complete(messages, { model: model })
+    return llm.complete(messages, { model: model })
 
   }
 

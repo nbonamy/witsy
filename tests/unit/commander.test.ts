@@ -86,7 +86,7 @@ test('Prepare command', async () => {
 
 test('Chat Window command', async () => {
 
-  const commander = new Commander(new LlmMock(store.config))
+  const commander = new Commander()
   const command = buildCommand('chat_window')
   await commander.execCommand(null, cachedTextId, command)
 
@@ -109,7 +109,7 @@ test('Chat Window command', async () => {
 
 test('Paste in-place command', async () => {
 
-  const commander = new Commander(new LlmMock(store.config))
+  const commander = new Commander()
   const command = buildCommand('paste_in_place')
   await commander.execCommand(null, cachedTextId, command)
 
@@ -124,7 +124,7 @@ test('Paste in-place command', async () => {
 
 test('Paste below command', async () => {
 
-  const commander = new Commander(new LlmMock(store.config))
+  const commander = new Commander()
   const command = buildCommand('paste_below')
   await commander.execCommand(null, cachedTextId, command)
 
@@ -139,7 +139,7 @@ test('Paste below command', async () => {
 
 test('Copy to clipboard command', async () => {
 
-  const commander = new Commander(new LlmMock(store.config))
+  const commander = new Commander()
   const command = buildCommand('clipboard_copy')
   await commander.execCommand(null, cachedTextId, command)
 
