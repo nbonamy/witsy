@@ -16,6 +16,7 @@ export default class {
   engine: string
   llm: LlmEngine
   chat: Chat
+  stopGeneration: boolean
   stream: AsyncGenerator<LlmChunk, void, void>
 
   constructor(config: Configuration) {
@@ -167,9 +168,10 @@ export default class {
       }
 
       // now stream
+      this.stopGeneration = false
       this.stream = await llm.generate(messages, opts)
       for await (const msg of this.stream) {
-        if (message.isDone()) {
+        if (this.stopGeneration) {
           break
         }
         if (msg.type === 'tool') {
@@ -235,7 +237,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().setDone()
+      this.stopGeneration = true
     }
   }
 
