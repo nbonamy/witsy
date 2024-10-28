@@ -8,7 +8,7 @@ export let promptAnywhereWindow: BrowserWindow = null;
 export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = true) => {
 
   // get bounds
-  const width = Math.floor(getCurrentScreen().workAreaSize.width / 2.5);
+  const width = Math.floor(getCurrentScreen().workAreaSize.width / 2);
   const height = getCurrentScreen().workAreaSize.height;
   const { x } = getCenteredCoordinates(width, height);
 
@@ -26,6 +26,7 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
     hiddenInMissionControl: true,
     queryParams: params,
     keepHidden: keepHidden,
+    hasShadow: false,
   });
 
   // notify show
