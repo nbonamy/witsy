@@ -167,6 +167,7 @@ const onClick = (ev) => {
 const onClose = () => {
   audioPlayer.stop()
   window.api.anywhere.cancel()
+  response.value = null
 }
 
 const onPrompt = async (data) => {
@@ -226,6 +227,7 @@ const onContinueConversation = async () => {
 
   // continue
   window.api.anywhere.continue(chat.value.uuid)
+  response.value = null
 
 }
 
