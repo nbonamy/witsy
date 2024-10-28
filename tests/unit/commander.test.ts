@@ -10,13 +10,6 @@ import LlmMock from '../mocks/llm'
 
 let cachedTextId: string = null
 
-// mock config
-vi.mock('../../src/main/config.ts', async () => {
-  return {
-    loadSettings: () => defaults,
-  }
-})  
-
 // mock windows
 vi.mock('../../src/main/window.ts', async () => {
   return {
@@ -40,17 +33,16 @@ vi.mock('../../src/automations/automator.ts', async () => {
   return { default: Automator }
 })
 
+// mock llm
+vi.mock('../../src/llms/llm.ts', async () => {
+	return {
+		getChatEngineModel: () => ({ engine: 'mock', model: 'chat' }),
+    igniteEngine: () => new LlmMock(store.config),
+	}
+})
+
 beforeAll(() => {
-
-  // init store
   store.config = defaults
-  store.config.llm.engine = 'mock'
-  store.config.instructions = {
-    default: 'You are a chat assistant',
-    titling: 'You are a titling assistant'
-  }
-  store.config.getActiveModel = () => 'chat'
-
 })
 
 beforeEach(() => {

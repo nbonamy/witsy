@@ -5,7 +5,7 @@ import { RunCommandResponse } from 'types/automation.d'
 import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
-import { igniteEngine } from '../llms/llm'
+import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import Message from '../models/message'
 import Automator from './automator'
@@ -127,8 +127,11 @@ export default class Commander {
       // extract what we need
       const template = command.template;
       const action = command.action;
-      const engine = command.engine || config.commands.engine || config.llm.engine;
-      const model = command.model || config.commands.model || config.getActiveModel();
+      let engine = command.engine || config.commands.engine;
+      let model = command.model || config.commands.model;
+      if (!engine?.length || !model?.length) {
+        ({ engine, model } = getChatEngineModel(false));
+      }
       // const temperature = command.temperature;
 
       // build prompt

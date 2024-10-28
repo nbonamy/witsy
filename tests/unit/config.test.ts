@@ -15,7 +15,6 @@ vi.mock('fs', async (importOriginal) => {
 
 test('Load default settings', () => {
   const loaded = config.loadSettings('')
-  delete loaded.getActiveModel
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
@@ -30,11 +29,6 @@ test('Load overridden settings', () => {
 
   const loaded2 = config.loadSettings('./tests/fixtures/config2.json')
   expect(loaded2.engines.openai.models.chat).toStrictEqual(['model1', 'model2'])
-})
-
-test('Active model', () => {
-  const loaded = config.loadSettings('./tests/fixtures/config3.json')
-  expect(loaded.getActiveModel()).toBe('model1')
 })
 
 test('Save settings', () => {

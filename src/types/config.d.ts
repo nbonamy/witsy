@@ -14,7 +14,6 @@ export interface Configuration {
   rag: RagConfig
   dropbox: DropboxConfig
   gdrive: GDriveConfig
-  getActiveModel: () => string
 }
 
 interface GeneralConfig {

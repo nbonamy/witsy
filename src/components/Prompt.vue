@@ -30,7 +30,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
-import { canProcessFormat } from '../llms/llm'
+import { canProcessFormat, getChatEngineModel } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'
@@ -105,8 +105,8 @@ const processing = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const engine = () => props.chat?.engine || store.config.llm.engine
-const model = () => props.chat?.model || store.config.getActiveModel(engine())
+const engine = () => props.chat?.engine || getChatEngineModel().engine
+const model = () => props.chat?.model || getChatEngineModel().model
 
 const iconsLeftCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)

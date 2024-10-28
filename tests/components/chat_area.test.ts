@@ -50,9 +50,6 @@ beforeAll(() => {
   // init store
   store.loadSettings = vi.fn()
   store.config = defaultSettings
-  store.config.getActiveModel = () => {
-    return 'chat'
-  }
 })
 
 let chat: Chat = null

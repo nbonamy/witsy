@@ -39,11 +39,6 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   // 1st merge
   const config = mergeConfig(defaults, overrides)
 
-  // add some methods
-  config.getActiveModel = (engine: string) => {
-    return config.engines[engine || config.llm.engine].model.chat
-  }
-
   // backwards compatibility
   if (config.openai || config.ollama) {
     config.engines = {

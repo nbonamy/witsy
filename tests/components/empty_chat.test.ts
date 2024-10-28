@@ -61,9 +61,6 @@ beforeEach(() => {
       }
     }
   }
-  store.config.getActiveModel = () => {
-    return 'gpt-4-turbo'
-  }
 })
 
 test('Renders correctly', async () => {

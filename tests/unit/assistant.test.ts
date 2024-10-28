@@ -75,7 +75,6 @@ beforeEach(() => {
   store.config.engines.mock = {
     model: { chat: 'chat'  }
   }
-  store.config.getActiveModel = () => 'chat'
 
   // init assistant
   assistant = new Assistant(store.config)

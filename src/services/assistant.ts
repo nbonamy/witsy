@@ -2,11 +2,11 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
+import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 import { store } from './store'
-import { igniteEngine } from '../llms/llm'
 import { countryCodeToName } from './i18n'
 import { availablePlugins } from '../plugins/plugins'
 
@@ -72,8 +72,7 @@ export default class {
     const defaults: LlmCompletionOpts = {
       save: true,
       titling: true,
-      engine: store.config.llm.engine,
-      model: store.config.getActiveModel(),
+      ... getChatEngineModel(),
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
     }

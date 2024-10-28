@@ -1,14 +1,44 @@
 
 import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, Cerebras, LlmEngine , loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel } from 'multi-llm-ts'
+import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
-import { getComputerInfo } from './anthropic'
 import OpenAI from './openai'
 
 export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'groq', 'cerebras' ]
 
-export const isEngineConfigured = (engine: string) => {
+export const isSpecializedModel = (engine: string, model: string): boolean => {
+  if (engine === 'anthropic') return isSpecialAnthropicModel(model)
+  return false
+}
+
+export const getFallbackModel = (engine: string): string => {
+  if (engine === 'anthropic') return getAnthropicFallbackModel()
+  return null
+}
+
+export const getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
+  const engine = store.config.llm.engine
+  const model = getChatModel(engine, acceptSpecializedModels)
+  return { engine, model }
+}
+
+export const getChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
+
+  // get from config
+  const model = store.config.engines[engine].model.chat
+
+  // check
+  if (!acceptSpecializedModels && isSpecializedModel(engine, model)) {  
+    return getFallbackModel(engine)
+  } else {
+    return model
+  }
+
+}
+
+export const isEngineConfigured = (engine: string): boolean => {
   if (engine === 'anthropic') return Anthropic.isConfigured(store.config.engines.anthropic)
   if (engine === 'cerebras') return Cerebras.isConfigured(store.config.engines.cerebras)
   if (engine === 'google') return Google.isConfigured(store.config.engines.google)
@@ -20,7 +50,7 @@ export const isEngineConfigured = (engine: string) => {
   return false
 }  
 
-export const isEngineReady = (engine: string) => {
+export const isEngineReady = (engine: string): boolean => {
   if (engine === 'anthropic') return Anthropic.isReady(store.config.engines.anthropic)
   if (engine === 'cerebras') return Cerebras.isReady(store.config.engines.cerebras)
   if (engine === 'google') return Google.isReady(store.config.engines.google)

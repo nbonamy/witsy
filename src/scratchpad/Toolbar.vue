@@ -38,7 +38,7 @@
 
 // components
 import { ref, watch, onMounted } from 'vue'
-import { store } from '../services/store'
+import { getChatModel } from '../llms/llm'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 
@@ -74,7 +74,7 @@ const onChangeFontSize = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = store.config.getActiveModel(engine.value)
+  model.value = getChatModel(engine.value, false)
   onChangeModel()
 }
 

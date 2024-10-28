@@ -29,9 +29,6 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 beforeAll(() => {
   // init store
   store.config = defaults
-  store.config.getActiveModel = () => {
-    return 'chat'
-  }
 })
 
 beforeEach(() => {

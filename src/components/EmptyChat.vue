@@ -38,7 +38,7 @@ const tipsManager = useTipsManager(store)
 const showAllEngines = ref(false)
 
 //
-// we cannot use store.config.getActiveModel here
+// we cannot use llm.getChatEngineModel here
 // because we will lose reactivity :-(
 //
 

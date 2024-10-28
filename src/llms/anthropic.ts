@@ -12,4 +12,12 @@ const getComputerInfo = () =>{
   }
 }
 
-export { getComputerInfo}
+const isSpecializedModel = (model: string): boolean => {
+  return model === 'computer-use'
+}
+
+const getFallbackModel = (): string => {
+  return 'claude-3-5-sonnet-20241022'
+}
+
+export { getComputerInfo, isSpecializedModel, getFallbackModel }

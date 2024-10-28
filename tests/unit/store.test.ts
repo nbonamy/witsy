@@ -64,7 +64,6 @@ test('Load', async () => {
   expect(window.api.commands.load).toHaveBeenCalled()
   expect(window.api.history.load).toHaveBeenCalled()
   expect(store.config).toStrictEqual(defaultSettings)
-  expect(store.config.getActiveModel).toBeDefined()
   expect(store.commands).toStrictEqual(defaultCommands)
   expect(store.experts).toStrictEqual(defaultExperts)
 })
