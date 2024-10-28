@@ -66,9 +66,6 @@ beforeAll(() => {
   // init store
   store.config = defaults
   store.loadSettings = vi.fn()
-  store.config.getActiveModel = () => {
-    return 'chat'
-  }
   store.experts = [
     { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
     { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },

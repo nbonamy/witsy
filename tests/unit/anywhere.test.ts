@@ -45,7 +45,6 @@ beforeAll(() => {
     default: 'You are a chat assistant',
     titling: 'You are a titling assistant'
   }
-  store.config.getActiveModel = () => 'chat'
 
 })
 

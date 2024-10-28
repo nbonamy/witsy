@@ -1,6 +1,7 @@
 import { LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
+import { getChatEngineModel } from '../llms/llm'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
@@ -89,8 +90,7 @@ export default class {
     const defaults: LlmCompletionOpts = {
       save: true,
       titling: true,
-      engine: store.config.llm.engine,
-      model: store.config.getActiveModel(),
+      ... getChatEngineModel(),
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
     }
