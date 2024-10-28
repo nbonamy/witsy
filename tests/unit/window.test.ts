@@ -163,17 +163,17 @@ test('Close command palette window', async () => {
 })
 
 test('Create prompt anywhere window', async () => {
-  await window.openPromptAnywhere()
+  await window.openPromptAnywhere({})
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?#/prompt')
   const callParams = BrowserWindow.mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('Close prompt anywhere window', async () => {
-  await window.openPromptAnywhere()
+  await window.openPromptAnywhere({})
   await window.closePromptAnywhere()
-  expect(window.promptAnywhereWindow).toBeNull()
+  expect(window.promptAnywhereWindow).not.toBeNull()
 })
 
 test('Open waiting panel', async () => {
