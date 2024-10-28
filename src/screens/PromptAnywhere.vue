@@ -2,7 +2,7 @@
 <template>
   <div class="anywhere" @click="onClick">
     <div class="container">
-      <Prompt :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+      <Prompt ref="prompt" :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
       <div class="spacer" />
       <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
@@ -27,20 +27,22 @@
 
 <script setup>
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import { igniteEngine } from '../llms/llm'
+import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import useAudioPlayer from '../composables/audio_player'
 import Prompt from '../components/Prompt.vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import Message from '../models/Message'
-import Chat from '../models/Chat'
+import Message from '../models/message'
+import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
+
+const promptChatTimeout = 1000 * 60 * 1
 
 // load store
 store.load()
@@ -48,6 +50,7 @@ store.load()
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
 
+const prompt = ref(null)
 const isMas = ref(false)
 const chat = ref(null)
 const response = ref(null)
@@ -71,8 +74,9 @@ onMounted(() => {
   onEvent('prompt-resize', onResize)
   onEvent('show-experts', onExperts)
   onEvent('stop-prompting', onStopGeneration)
-  window.api.on('set-expert-prompt', onSetExpertPrompt)
   document.addEventListener('keyup', onKeyUp)
+  window.api.on('set-expert-prompt', onSetExpertPrompt)
+  window.api.on('show', onShow)
 
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
@@ -89,37 +93,61 @@ onMounted(() => {
     processQueryParams(props.extra)
   }
 
-  // init on show
-  window.api.on('show', () => {
-
-    // log
-    console.log('initialize prompt window llm')
-    
-    // init llm with tools
-    llm = igniteEngine(store.config.llm.engine, store.config.engines[store.config.llm.engine])
-    for (const pluginName in availablePlugins) {
-      const pluginClass = availablePlugins[pluginName]
-      const instance = new pluginClass(store.config.plugins[pluginName])
-      llm.addPlugin(instance)
-    }
-
-    // init thread
-    chat.value = new Chat()
-    chat.value.title = null
-    chat.value.setEngineModel(store.config.llm.engine, store.config.engines[store.config.llm.engine])
-    chat.value.addMessage(new Message('system', store.config.instructions.default))
-
-    // reset response
-    response.value = null
-  
-  })
-
 })
 
 onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
   audioPlayer.removeListener(onAudioPlayerStatus)
+  window.api.off('set-expert-prompt', onSetExpertPrompt)
+  window.api.off('show', onShow)
 })
+
+const onShow = () => {
+
+  // log
+  console.log('initialize prompt window llm')
+
+  // get engine and model
+  const { engine, model } = getChatEngineModel(false)
+  
+  // init llm with tools
+  llm = igniteEngine(engine)
+  for (const pluginName in availablePlugins) {
+    const pluginClass = availablePlugins[pluginName]
+    const instance = new pluginClass(store.config.plugins[pluginName])
+    llm.addPlugin(instance)
+  }
+
+  // see if chat is not that old
+  if (chat.value !== null) {
+    if (chat.value.lastModified < Date.now() - promptChatTimeout) {
+      chat.value = null
+    } else {
+      response.value = chat.value.lastMessage()
+    }
+  }
+
+  // should we reinit?
+  if (chat.value === null) {
+
+    // init thread
+    chat.value = new Chat()
+    chat.value.title = null
+    chat.value.setEngineModel(engine, model)
+    chat.value.addMessage(new Message('system', store.config.instructions.default))
+
+    // reset response
+    response.value = null
+  
+  }
+
+  // focus prompt
+  if (prompt.value) {
+    prompt.value.setPrompt()
+    prompt.value.focus()
+  }
+
+}
 
 const processQueryParams = (params) => {
 
@@ -165,10 +193,14 @@ const onClick = (ev) => {
   }
 }
 
-const onClose = () => {
+const cleanUp = () => {
   audioPlayer.stop()
-  window.api.anywhere.cancel()
   response.value = null
+}
+
+const onClose = () => {
+  cleanUp()
+  window.api.anywhere.cancel()
 }
 
 const onStopGeneration = () => {
@@ -236,8 +268,8 @@ const onContinueConversation = async () => {
   await saveChat()
 
   // continue
+  cleanUp()
   window.api.anywhere.continue(chat.value.uuid)
-  response.value = null
 
 }
 

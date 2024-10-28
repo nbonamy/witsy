@@ -19,6 +19,7 @@ beforeAll(() => {
   
   window.api = {
     on: vi.fn(),
+    off: vi.fn(),
     config: {
       load: vi.fn(() => defaultSettings)
     },

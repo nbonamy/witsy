@@ -611,6 +611,22 @@ const autoGrow = (element) => {
   }
 }
 
+defineExpose({
+
+  setPrompt: (message) => {
+    if (message && typeof message === 'object') {
+      onSetPrompt(message)
+    } else {
+      onSetPrompt({ attachment: null, content: message||'' })
+    }
+  },
+    
+  focus: () => {
+    input.value.focus()
+  },
+
+})
+
 </script>
 
 <style scoped>
