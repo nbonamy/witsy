@@ -97,6 +97,16 @@
   --scratchpad-actionbar-active-icon-color: #2991ff;
   --scratchpad-actionbar-active-icon-color2: #0469dc;
 
+  --window-box-shadow:
+    0  1px  1px  rgba(0,0,0,0.12), 
+    0  2px  2px  rgba(0,0,0,0.12), 
+    0  4px  4px  rgba(0,0,0,0.12), 
+    0  8px  8px  rgba(0,0,0,0.12), 
+    0 16px  16px rgba(0,0,0,0.12),
+    0 24px  24px rgba(0,0,0,0.12);
+
+  --dialog-box-shadow: var(--window-box-shadow);
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -175,7 +185,15 @@
     --scratchpad-actionbar-normal-icon-color: #bbb;
     --scratchpad-actionbar-disabled-icon-color: #666;
     --scratchpad-actionbar-hover-icon-color: #eee;
-  
+
+    --dialog-box-shadow:
+      0  1px  1px  rgba(0,0,0,.25),
+      0  2px  2px  rgba(0,0,0,.25),
+      0  4px  4px  rgba(0,0,0,.25),
+      0  8px  8px  rgba(0,0,0,.25),
+      0 16px  16px rgba(0,0,0,.25),
+      0 24px  24px rgba(0,0,0,.25);
+
   }
   
   [data-tint=blue], [data-tint=blue] * {

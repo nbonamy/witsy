@@ -247,6 +247,8 @@ const onReadAloud = async (message) => {
   height: 75vh;
   padding-top: 15vh;
   padding-bottom: 10vh;
+  padding-left: 10vw;
+  padding-right: 10vw;
   overflow: hidden;
   background-color: transparent;
 }
@@ -260,6 +262,7 @@ const onReadAloud = async (message) => {
   align-items: stretch;
 
   .prompt {
+    box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
   }
@@ -275,6 +278,7 @@ const onReadAloud = async (message) => {
   }
 
   .response {
+    box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
     padding: 16px 0px;
