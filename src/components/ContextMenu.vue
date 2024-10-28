@@ -53,7 +53,6 @@ const visibleActions = computed(() => {
 })
 
 const position = computed(() => {
-  console.log(props.position)
   if (props.position === 'right') {
     return {
       top: props.y + 'px',
