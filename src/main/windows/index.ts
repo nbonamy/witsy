@@ -2,6 +2,7 @@
 import { strDict } from '../../types/index.d';
 import { CreateWindowOpts } from '../../types/window.d';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
+import { promptAnywhereWindow } from './anywhere';
 import { mainWindow } from './main';
 import * as config from '../config';
 import { wait } from '../utils';
@@ -76,6 +77,15 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
   window.once('ready-to-show', () => {
     if (!opts.keepHidden) {
       window.show();
+    }
+  });
+
+  // we keep prompt anywhere all the time so we need our own way
+  window.on('closed', () => {
+    const windows = BrowserWindow.getAllWindows();
+    console.log(windows.length);
+    if (windows.length === 1 && windows[0] === promptAnywhereWindow) {
+      app.emit('window-all-closed');
     }
   });
 
