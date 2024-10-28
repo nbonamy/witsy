@@ -83,7 +83,6 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
   // we keep prompt anywhere all the time so we need our own way
   window.on('closed', () => {
     const windows = BrowserWindow.getAllWindows();
-    console.log(windows.length);
     if (windows.length === 1 && windows[0] === promptAnywhereWindow) {
       app.emit('window-all-closed');
     }
