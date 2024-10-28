@@ -74,7 +74,9 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
   // show when ready
   window.once('ready-to-show', () => {
-    window.show();
+    if (!opts.keepHidden) {
+      window.show();
+    }
   });
 
   // web console to here
