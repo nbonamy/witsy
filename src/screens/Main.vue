@@ -54,7 +54,7 @@ onMounted(() => {
   onEvent('attach-file', onAttachFile)
   onEvent('detach-file', onDetachFile)
   onEvent('retry-generation', onRetryGeneration)
-  onEvent('stop-assistant', onStopAssistant)
+  onEvent('stop-prompting', onStopGeneration)
 
   // main event
   window.api.on('delete-chat', () => {
@@ -290,7 +290,7 @@ const onDetachFile = async () => {
   store.pendingAttachment = null
 }
 
-const onStopAssistant = async () => {
+const onStopGeneration = async () => {
   await assistant.value.stop()
 }
 

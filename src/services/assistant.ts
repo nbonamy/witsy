@@ -170,6 +170,9 @@ export default class {
       // now stream
       this.stream = await llm.generate(messages, opts)
       for await (const msg of this.stream) {
+        if (message.isDone()) {
+          break
+        }
         if (msg.type === 'tool') {
             message.setToolCall(msg.text)
         } else if (msg.type === 'content') {
@@ -233,7 +236,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().appendText({ type: 'content', text: null, done: true })
+      this.chat.lastMessage().setDone()
     }
   }
 
