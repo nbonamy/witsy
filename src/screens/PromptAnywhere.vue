@@ -4,7 +4,7 @@
     <div class="container">
       <Prompt :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
       <div class="spacer" />
-      <div class="response messages openai" v-if="response">
+      <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
         <div class="actions">
           <MessageItemActionCopy :message="response" />
