@@ -1,6 +1,7 @@
 
 import { BrowserWindowConstructorOptions } from 'electron'
 interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
-  queryParams?: strDict,
-  hash? : string,
+  keepHidden?: boolean;
+  queryParams?: strDict;
+  hash?: string;
 }

@@ -56,6 +56,11 @@ class AudioPlayer {
       const tts = new Tts(this.config)
       const response = await tts.synthetize(content)
 
+      // have we been cancelled
+      if (this.uuid != uuid) {
+        return
+      }
+
       // stream it
       this.player = new SpeechPlayer({
         audio: audioEl,

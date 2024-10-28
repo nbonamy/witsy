@@ -76,31 +76,41 @@ onMounted(() => {
   audioPlayer.addListener(onAudioPlayerStatus)
   onEvent('audio-noise-detected', () =>  audioPlayer.stop)
 
-  // auto-fill
-  if (props.extra?.foremostApp) {
-    const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == props.extra.foremostApp))
-    if (expert) {
-      console.log(`Tiggered on ${props.extra.foremostApp}: filling prompt with expert ${expert.name}`)
-      onSetExpertPrompt(expert.id)
-    }
-  }
-
-  // init llm with tools
-  llm = igniteEngine(store.config.llm.engine, store.config.engines[store.config.llm.engine])
-  for (const pluginName in availablePlugins) {
-    const pluginClass = availablePlugins[pluginName]
-    const instance = new pluginClass(store.config.plugins[pluginName])
-    llm.addPlugin(instance)
-  }
-
-  // init thread
-  chat.value = new Chat()
-  chat.value.title = null
-  chat.value.setEngineModel(store.config.llm.engine, store.config.engines[store.config.llm.engine])
-  chat.value.addMessage(new Message('system', store.config.instructions.default))
-
   // other stuff
   isMas.value = window.api.isMasBuild
+
+  // query params
+  window.api.on('query-params', (params) => {
+    processQueryParams(params)
+  })
+  if (props.extra) {
+    processQueryParams(props.extra)
+  }
+
+  // init on show
+  window.api.on('show', () => {
+
+    // log
+    console.log('initialize prompt window llm')
+    
+    // init llm with tools
+    llm = igniteEngine(store.config.llm.engine, store.config.engines[store.config.llm.engine])
+    for (const pluginName in availablePlugins) {
+      const pluginClass = availablePlugins[pluginName]
+      const instance = new pluginClass(store.config.plugins[pluginName])
+      llm.addPlugin(instance)
+    }
+
+    // init thread
+    chat.value = new Chat()
+    chat.value.title = null
+    chat.value.setEngineModel(store.config.llm.engine, store.config.engines[store.config.llm.engine])
+    chat.value.addMessage(new Message('system', store.config.instructions.default))
+
+    // reset response
+    response.value = null
+  
+  })
 
 })
 
@@ -108,6 +118,23 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
+
+const processQueryParams = (params) => {
+
+  // log
+  console.log('Processing query params', JSON.stringify(params))
+
+  // auto-fill
+  if (params?.foremostApp) {
+    const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == params.foremostApp))
+    if (expert) {
+      console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
+      onSetExpertPrompt(expert.id)
+    }
+  }
+
+}
+
 
 const onSetExpertPrompt = (id) => {
   const prompt = store.experts.find((p) => p.id == id)
@@ -128,7 +155,6 @@ const onExperts = () => {
 const onKeyUp = (event) => {
   if (event.key === 'Escape') {
     onClose()
-    window.api.anywhere.cancel()
   }
 }
 
@@ -139,6 +165,7 @@ const onClick = (ev) => {
 }
 
 const onClose = () => {
+  audioPlayer.stop()
   window.api.anywhere.cancel()
 }
 

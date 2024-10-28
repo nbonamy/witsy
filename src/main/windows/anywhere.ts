@@ -2,14 +2,10 @@
 import { strDict } from 'types/index.d';
 import { BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index';
-import { wait } from '../utils';
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-export const openPromptAnywhere = (params: strDict) => {
-
-  // try to close existig one
-  closePromptAnywhere();
+export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = true) => {
 
   // get bounds
   const width = Math.floor(getCurrentScreen().workAreaSize.width / 2.5);
@@ -29,21 +25,35 @@ export const openPromptAnywhere = (params: strDict) => {
     transparent: true,
     hiddenInMissionControl: true,
     queryParams: params,
+    keepHidden: keepHidden,
   });
+
+  // notify show
+  if (!keepHidden) {
+    promptAnywhereWindow.webContents.send('show', params);
+  }
+
+}
+
+
+export const openPromptAnywhere = (params: strDict) => {
+
+  // do we have one
+  if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
+    promptAnywhereWindow.webContents.send('query-params', params);
+    promptAnywhereWindow.webContents.send('show', params);
+    promptAnywhereWindow.show();
+    return;
+  }
+
+  // create a new one
+  preparePromptAnywhere(params, false);
 
 };
 
 export const closePromptAnywhere = async () => {
 
-  // now close window itself
-  try {
-    if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
-      // console.log('Closing prompt anywhere window')
-      promptAnywhereWindow?.close()
-      await wait();
-    }
-  } catch (error) {
-    console.error('Error while closing prompt anywhere window', error);
-  }
-  promptAnywhereWindow = null;
+  // just hide so we reuse it
+  promptAnywhereWindow.hide();
+
 }
