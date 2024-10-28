@@ -133,7 +133,7 @@ test('Show stop button when working', async () => {
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
   await wrapper.find('.icon.stop').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('stop-assistant')
+  expect(emitEventMock).toHaveBeenCalledWith('stop-prompting')
 })
 
 test('Send attachment', async () => {

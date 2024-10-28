@@ -69,6 +69,7 @@ onMounted(() => {
   onEvent('send-prompt', onPrompt)
   onEvent('prompt-resize', onResize)
   onEvent('show-experts', onExperts)
+  onEvent('stop-prompting', onStopGeneration)
   window.api.on('set-expert-prompt', onSetExpertPrompt)
   document.addEventListener('keyup', onKeyUp)
 
@@ -135,7 +136,6 @@ const processQueryParams = (params) => {
 
 }
 
-
 const onSetExpertPrompt = (id) => {
   const prompt = store.experts.find((p) => p.id == id)
   emitEvent('set-expert-prompt', prompt.prompt)
@@ -170,6 +170,10 @@ const onClose = () => {
   response.value = null
 }
 
+const onStopGeneration = () => {
+  response.value.setDone()
+}
+
 const onPrompt = async (data) => {
 
   // set response
@@ -183,6 +187,10 @@ const onPrompt = async (data) => {
   // now generate
   const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: store.config.getActiveModel() })
   for await (const msg of stream) {
+    if (response.value.isDone()) {
+      llm.stop(stream)
+      break
+    }
     if (msg.type === 'tool') {
       response.value.setToolCall(msg.text)
     } else if (msg.type === 'content') {

@@ -85,7 +85,7 @@ onMounted(() => {
 
   // events
   onEvent('send-prompt', onSendPrompt)
-  onEvent('stop-assistant', onStopAssistant)
+  onEvent('stop-prompting', onStopPrompting)
   onEvent('attach-file', onAttachFile)
   onEvent('detach-file', onDetachFile)
   onEvent('action', onAction)
@@ -487,7 +487,7 @@ const onSendPrompt = async (userPrompt) => {
 
 }
 
-const onStopAssistant = async () => {
+const onStopPrompting = async () => {
   await assistant.value.stop()
 }
 

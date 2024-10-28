@@ -179,7 +179,7 @@ test('Sends prompt with doc repo', async () => {
 
 test('Stop assistant', async () => {
   mount(Main)
-  emitEvent('stop-assistant')
+  emitEvent('stop-prompting')
   expect(_Assistant.default.prototype.stop).toHaveBeenCalled()
 })
 

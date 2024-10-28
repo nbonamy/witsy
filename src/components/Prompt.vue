@@ -16,7 +16,7 @@
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
-    <BIconStopCircleFill class="icon stop" @click="onStopAssistant" v-if="working" />
+    <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -117,7 +117,7 @@ const isProcessing = computed(() => {
   return processing.value || props.processing
 })
 
-const working = computed(() => {
+const isPrompting = computed(() => {
   return props.chat?.lastMessage().transient
 })
 
@@ -254,8 +254,8 @@ const onSendPrompt = () => {
   })
 }
 
-const onStopAssistant = () => {
-  emitEvent('stop-assistant')
+const onStopPrompting = () => {
+  emitEvent('stop-prompting')
 }
 
 const onAttach = () => {
