@@ -1,5 +1,5 @@
 
-import { Store, StoreListener } from 'types/index.d'
+import { Store } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
@@ -8,24 +8,11 @@ import Chat from '../models/chat'
 
 export const store: Store = reactive({
 
-  config: null,
+  config: {},
   commands: [], 
   experts: [],
   chats: [],
   chatFilter: null,
-  pendingAttachment: null,
-  pendingDocRepo: null,
-  listeners: [],
-
-  addListener: (listener: StoreListener) : void => {
-    store.listeners.push(listener)
-  },
-
-  notifyListeners: (domain: string) : void => {
-    store.listeners.forEach((listener) => {
-      listener.onStoreUpdated(domain)
-    })
-  },
 
   loadSettings: async () => {
     loadSettings()
@@ -109,8 +96,20 @@ export const store: Store = reactive({
 })
 
 const loadSettings = () => {
-  store.config = window.api.config.load()
-  store.notifyListeners('config')
+  // we don't want to reassign store.config
+  // as others are referencing it directly
+  // so we update locally instead
+  // in store.test.ts: expect(store.config).toBe(backup)
+  // checks exactly for that
+  const updated = window.api.config.load()
+  const newKeys = Object.keys(updated)
+  const obsoleteKeys = Object.keys(store.config).filter((key) => !newKeys.includes(key))
+  for (const key of obsoleteKeys) {
+    delete store.config[key]
+  }
+  for (const key of Object.keys(updated)) {
+    store.config[key] = updated[key]
+  }
 }
 
 const loadHistory = () => {
@@ -122,7 +121,6 @@ const loadHistory = () => {
       const chat = new Chat(jsonChat)
       store.chats.push(chat)
     }
-    store.notifyListeners('history')
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving history data', error)

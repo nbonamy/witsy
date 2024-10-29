@@ -8,6 +8,7 @@ import defaults from '../../defaults/settings.json'
 
 window.api = {
   config: {
+    load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
     save: vi.fn()
   },
   base64: {
@@ -21,7 +22,7 @@ window.api = {
   }
 }
 
-store.config = defaults
+store.loadSettings()
 store.config.engines.openai.apiKey = '123'
 
 const llmFactory = new LlmFactory(store.config)
@@ -145,3 +146,8 @@ test('Anthropic Computer Use', async () => {
   expect(anthropic.computerInfo).not.toBeNull()
 })
 
+test('Reflects configuration changes', () => {
+  defaults.engines.openai.apiKey = '345'
+  store.loadSettings()
+  expect(llmFactory.config.engines.openai.apiKey).toBe('345')
+})

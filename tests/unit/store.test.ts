@@ -25,14 +25,14 @@ const chats = [
 
 window.api = {
   config: {
-    load: vi.fn(() => defaultSettings),
+    load: vi.fn(() => JSON.parse(JSON.stringify(defaultSettings))),
     save: vi.fn(),
   },
   commands: {
-    load: vi.fn(() => defaultCommands as Command[]),
+    load: vi.fn(() => JSON.parse(JSON.stringify(defaultCommands)) as Command[]),
   },
   experts: {
-    load: vi.fn(() => defaultExperts as Expert[]),
+    load: vi.fn(() => JSON.parse(JSON.stringify(defaultExperts)) as Expert[]),
   },
   history: {
     load: vi.fn(() => chats),
@@ -49,7 +49,7 @@ beforeEach(() => {
 })
 
 test('Check atributtes', async () => {
-  expect(store.config).toBe(null)
+  expect(store.config).toEqual({})
   expect(store.commands).toEqual([])
   expect(store.experts).toEqual([])
   expect(store.chats).toEqual([])
@@ -73,12 +73,19 @@ test('Save settings', async () => {
   expect(window.api.config.save).toHaveBeenCalled()
 })
 
-test('Reload settings', async () => {
+test('Reload settings without changing reference', async () => {
   store.load()
-  vi.clearAllMocks()
-  expect(window.api.config.load).not.toHaveBeenCalled()
+  expect(window.api.config.load).toHaveBeenCalledTimes(1)
+  const backup = store.config
+  expect(store.config.llm.engine).toBe('openai')
+  expect(store.config.plugins).toBeDefined()
+  defaultSettings.llm.engine = 'xai'
+  delete defaultSettings.plugins
   listeners[0]('settings')
-  expect(window.api.config.load).toHaveBeenCalled()
+  expect(window.api.config.load).toHaveBeenCalledTimes(2)
+  expect(store.config).toBe(backup)
+  expect(store.config.llm.engine).toBe('xai')
+  expect(store.config.plugins).toBeUndefined()
 })
 
 test('Load history', async () => {
@@ -104,6 +111,8 @@ test('Save history', async () => {
 
 test('Merge history', async () => {
   store.load()
+  expect(store.chats).toHaveLength(2)
+  expect(store.chats[1].messages).toHaveLength(2)
   chats.push(new Chat())
   chats[1].messages.push(new Message('user', ''))
   listeners[0]('history')
