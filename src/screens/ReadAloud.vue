@@ -8,12 +8,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer, { textMaxLength} from '../composables/audio_player'
+import useAudioPlayer, { AudioStatus, textMaxLength} from '../composables/audio_player'
 import Loader from '../components/Loader.vue'
 
 // init stuff
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const state = ref('idle')
 
-let chunks = []
+let chunks: string[] = []
 let index = 0
 
 onMounted(async () => {
@@ -39,7 +39,7 @@ onUnmounted(() => {
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
-const onAudioPlayerStatus = (status) => {
+const onAudioPlayerStatus = (status: AudioStatus) => {
   state.value = status.state
   console.log(state.value)
   if (state.value == 'idle') {
@@ -58,7 +58,7 @@ const onStop = () => {
   window.api.readaloud.closePalette()
 }
 
-const play = async (message) => {
+const play = async (message: string) => {
 
   // build chunks
   const textSplitter = new RecursiveCharacterTextSplitter({
@@ -83,7 +83,7 @@ const nextChunk = () => {
   }
 }
 
-const playChunk = (i) => {
+const playChunk = (i: number) => {
   index = i
   state.value = 'loading'
   const chunk = chunks[index]

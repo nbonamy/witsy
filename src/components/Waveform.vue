@@ -3,7 +3,7 @@
   <canvas ref="waveform" :width="width" :height="height" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
 
@@ -30,9 +30,9 @@ const verticalScale = 4.0
 const sampleIntervalMs = 100
 
 // interpolation between samples
-let dataArray = null
-let previousDataArray = null
-let currentDataArray = null
+let dataArray: Uint8Array = null
+let previousDataArray: Uint8Array = null
+let currentDataArray: Uint8Array = null
 let interpolationProgress = 0
 let lastSampleTime = 0
 

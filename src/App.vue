@@ -2,15 +2,15 @@
   <component :is="currentView" :extra="queryParams" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
+import { strDict } from 'types'
 import { ref, computed, onMounted } from 'vue'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
 import Wait from './screens/Wait.vue'
 import Commands from './screens/Commands.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
-import Experts from './screens/Experts.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
@@ -23,13 +23,12 @@ const { emitEvent, onEvent } = useEventBus()
 const appearanceTheme = useAppearanceTheme()
 
 // routing
-const routes = {
+const routes: { [key: string]: any } = {
   '/': Main,
   '/chat': Main,
   '/wait': Wait,
   '/command': Commands,
   '/prompt': PromptAnywhere,
-  '/experts': Experts,
   '/readaloud': ReadAloud,
   '/transcribe': Transcribe,
   '/scratchpad': ScratchPad,
@@ -45,14 +44,14 @@ const currentView = computed(() => {
 
 const queryParams = computed(() => {
   const params = new URLSearchParams(window.location.search);
-  const queryParams = {};
+  const queryParams: strDict = {};
   for (const [key, value] of params) {
     queryParams[key] = decodeURIComponent(value);
   }
   return queryParams;
 })
 
-const setTint = (tint) => {
+const setTint = (tint?: string) => {
   if (!tint) {
     const config = window.api.config.load()
     tint = config.appearance.tint || 'black'
@@ -64,7 +63,7 @@ const setTint = (tint) => {
 onMounted(() => {
 
   // events
-  onEvent('appearance-tint-changed', (tint) => {
+  onEvent('appearance-tint-changed', (tint: string) => {
     setTint(tint)
   })
 
@@ -81,9 +80,7 @@ onMounted(() => {
     'darwin': 'macos',
   }[window.api.platform]||'generic'
 
-  // add it everywhere
-  window.platform = platform
-  document.platform = platform
+  // add it to the body class
   document.querySelector('body').classList.add(platform)
 
   // init theme

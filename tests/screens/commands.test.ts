@@ -1,4 +1,5 @@
 
+import { Command } from 'types'
 import { vi, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import Commands from '../../src/screens/Commands.vue'
@@ -9,7 +10,7 @@ enableAutoUnmount(afterAll)
 window.api = {
   on: vi.fn(),
   config: {
-    load: vi.fn(() => defaults),
+    load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
   },
   commands: {
     load: vi.fn(() => [
@@ -18,7 +19,7 @@ window.api = {
       { id: 3, icon: '3', label: 'Command 3', shortcut: '3', action: 'paste_in_place', state: 'enabled' },
       { id: 4, icon: '4', label: 'Command 4', shortcut: '4', action: 'clipboard_copy', state: 'enabled' },
       { id: 5, icon: '5', label: 'Command 5', shortcut: '5', action: 'chat_window', state: 'disabled' },
-    ]),
+    ] as unknown[] as Command[]),
     run: vi.fn(),
     cancel: vi.fn(),
     closePalette: vi.fn(),

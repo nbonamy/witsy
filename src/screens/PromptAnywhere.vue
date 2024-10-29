@@ -2,7 +2,7 @@
 <template>
   <div class="anywhere" @click="onClick">
     <div class="container">
-      <Prompt ref="prompt" :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+      <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
       <div class="spacer" />
       <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
@@ -28,17 +28,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
+import { anyDict } from 'types'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
-import useAudioPlayer from '../composables/audio_player'
+import { LlmEngine } from 'multi-llm-ts'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
+import Attachment from 'models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
@@ -68,7 +71,7 @@ const props = defineProps({
   extra: Object
 })
 
-let llm = null
+let llm: LlmEngine = null
 let stopGeneration = false
 let addedToHistory = false
 
@@ -175,7 +178,7 @@ const onClear = () => {
 
 }
 
-const processQueryParams = (params) => {
+const processQueryParams = (params: anyDict) => {
 
   // log
   console.log('Processing query params', JSON.stringify(params))
@@ -185,36 +188,41 @@ const processQueryParams = (params) => {
     const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == params.foremostApp))
     if (expert) {
       console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-      onSetExpertPrompt(expert.id)
+      setExpertPrompt(expert.id)
     }
   }
 
 }
 
-const onSetExpertPrompt = (id) => {
+const setExpertPrompt = (id: string) => {
   const prompt = store.experts.find((p) => p.id == id)
   emitEvent('set-expert-prompt', prompt.prompt)
 }
-
-const onResize = (data) => {
+const onResize = (data: string) => {
   const height = parseInt(data) + 18
   //window.api.anywhere.resize(height)
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
-    onClose()
+    if (prompt.value.getPrompt()?.length) {
+      prompt.value.setPrompt('')
+    } else {
+      onClose()
+    }
   }
 }
 
-const onClick = (ev) => {
-  if (ev.target.classList.contains('anywhere') || ev.target.classList.contains('container')) {
+const onClick = (ev: MouseEvent) => {
+  const target = ev.target as HTMLElement;
+  if (target.classList.contains('anywhere') || target.classList.contains('container')) {
     onClose()
   }
 }
 
 const cleanUp = () => {
   audioPlayer.stop()
+  prompt.value.setPrompt()
   response.value = null
 }
 
@@ -227,7 +235,7 @@ const onStopGeneration = () => {
   stopGeneration = true
 }
 
-const onPrompt = async ({ prompt, attachment, docrepo }) => {
+const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: any }) => {
 
   // set response
   response.value = new Message('assistant', '')
@@ -298,16 +306,16 @@ const onContinueConversation = async () => {
   await saveChat()
 
   // continue
-  cleanUp()
   window.api.anywhere.continue(chat.value.uuid)
+  cleanUp()
 
 }
 
-const onAudioPlayerStatus = (status) => {
+const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = { state: status.state, messageId: status.uuid }
 }
 
-const onReadAloud = async (message) => {
+const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value.$el, message.uuid, message.content)
 }
 

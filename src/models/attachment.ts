@@ -55,7 +55,7 @@ export default class Attachment extends AttachmentBase {
     return new Attachment(obj.contents, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
   }
   
-  private extractText(): void {
+  extractText(): void {
 
     // get text
     if (this.format() === 'txt') {

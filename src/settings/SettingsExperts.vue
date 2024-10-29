@@ -31,17 +31,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { v4 as uuidv4 } from 'uuid'
-import { ref, computed } from 'vue'
+import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { newExpert, saveExperts } from '../services/experts'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import { Expert } from 'types'
 
-const experts = ref(null)
+const experts: Ref<Expert[]> = ref(null)
 const selected = ref(null)
 const edited = ref(null)
 
@@ -57,18 +58,18 @@ const contextMenuActions = [
   { label: 'Unselect All', action: 'unselect' },
 ]
 
-const visibleExperts = computed(() => experts.value?.filter(expert => expert.state != 'deleted'))
+const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
   { field: 'name', title: 'Name' },
 ]
 
-const onMore = (event) => {
+const onMore = () => {
   if (showMenu.value) {
     closeContextMenu()
   } else {
-    showContextMenu(event)
+    showContextMenu()
   }
 }
 
@@ -84,17 +85,17 @@ const closeContextMenu = () => {
   showMenu.value = false;
 }
 
-const handleActionClick = async (action) => {
+const handleActionClick = async (action: string) => {
 
   // close
   closeContextMenu()
 
   // process
   if (action === 'select') {
-    experts.value.forEach(expert => expert.state = 'enabled')
+    experts.value.forEach((expert: Expert) => expert.state = 'enabled')
     save()
   } else if (action === 'unselect') {
-    experts.value.forEach(expert => expert.state = 'disabled')
+    experts.value.forEach((expert: Expert) => expert.state = 'disabled')
     save()
   } else if (action === 'import') {
     onImport()
@@ -122,20 +123,20 @@ const onExport = () => {
   }
 }
 
-const onSelect = (expert) => {
+const onSelect = (expert: Expert) => {
   selected.value = expert
 }
 
 const onNew = () => {
   //selected.value = null
   edited.value =  newExpert()
-  document.getElementById('expert-editor').showModal()
+  document.querySelector<HTMLDialogElement>('#expert-editor').showModal()
 }
 
-const onEdit = (expert) => {
+const onEdit = (expert: Expert) => {
   edited.value = expert
   selected.value = expert
-  document.getElementById('expert-editor').showModal()
+  document.querySelector<HTMLDialogElement>('#expert-editor').showModal()
 }
 
 const onDelete = () => {
@@ -159,12 +160,12 @@ const onDelete = () => {
   })
 }
 
-const onEnabled = (expert) => {
+const onEnabled = (expert: Expert) => {
   expert.state = (expert.state == 'enabled' ? 'disabled' : 'enabled')
   save()
 }
 
-const onExpertModified = (payload) => {
+const onExpertModified = (payload: Expert) => {
   // new expert?
   let expert = null
   if (payload.id == null) {
@@ -197,18 +198,18 @@ const onExpertModified = (payload) => {
   save()
 }
 
-var draggedRow
-const onDragStart = (event) => {
-  draggedRow = event.target.closest('tr')
+var draggedRow: HTMLElement
+const onDragStart = (event: MouseEvent) => {
+  draggedRow = (event.target as HTMLElement).closest('tr')
 }
 
-const onDragOver = (event) => {
+const onDragOver = (event: MouseEvent) => {
   
   event.preventDefault();
   
-  let target = event.target.closest('tr')
-  let targetIndex = Array.from(target.parentNode.children).indexOf(target);
-  let draggedRowIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
+  const target = (event.target as HTMLElement).closest('tr')
+  const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+  const draggedRowIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
 
   // Determine where to place the dragged row
   if (targetIndex > draggedRowIndex) {

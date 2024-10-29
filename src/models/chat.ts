@@ -1,11 +1,11 @@
 
-import { Chat } from 'types/index.d'
+import { Chat as ChatBase } from 'types/index.d'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
 export const defaultTitle = 'New Chat'
 
-export default class implements Chat {
+export default class Chat implements ChatBase {
 
   uuid: string
   title: string

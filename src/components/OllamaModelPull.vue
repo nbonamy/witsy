@@ -20,19 +20,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import { Ollama } from 'multi-llm-ts'
+import { Model, Ollama } from 'multi-llm-ts'
 
 // bus
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  pullableModels: Array,
+  pullableModels: Array<Model>,
   infoUrl: String,
   infoText: String,
 })

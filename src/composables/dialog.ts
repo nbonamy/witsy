@@ -1,5 +1,5 @@
 
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Swal, { DialogResult as SwalDialogResult } from 'sweetalert2/dist/sweetalert2.js'
 
 export type DialogResult = {
   isConfirmed: boolean,
@@ -9,7 +9,7 @@ export type DialogResult = {
 
 const Dialog = {
 
-  show: (opts: any): Promise<DialogResult> => {
+  show: (opts: any): Promise<DialogResult|typeof SwalDialogResult> => {
 
     // if no input we rely on system dialogs
     if (!opts.input) {

@@ -57,7 +57,7 @@ const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
   chat: Chat,
-  message: Object,
+  message: Message,
   showRole: { type: Boolean, default: true },
   showActions: { type: Boolean, default: true },
 })

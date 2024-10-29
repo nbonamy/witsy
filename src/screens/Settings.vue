@@ -30,7 +30,7 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
 
@@ -52,6 +52,11 @@ import { installTabs, showActiveTab } from '../composables/tabs'
 // bus
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
+
+export interface OpenSettingsPayload {
+  initialTab: string
+  engine?: string
+}
 
 const props = defineProps({
   initialTab: {
@@ -76,7 +81,7 @@ onMounted(async () => {
   installTabs()
 })
 
-const onOpenSettings = (payload) => {
+const onOpenSettings = (payload: OpenSettingsPayload) => {
 
   // load all panels
   settingsGeneral.value.load(payload)
@@ -88,19 +93,19 @@ const onOpenSettings = (payload) => {
   settingsPlugins.value.load(payload)
   settingsVoice.value.load(payload)
   settingsAdvanced.value.load(payload)
-  document.querySelector('#settings').showModal()
+  document.querySelector<HTMLDialogElement>('#settings').showModal()
   showActiveTab()
 
   // show initial tab
   if (payload?.initialTab) {
     nextTick(() => {
-      document.querySelector(`.settings .tab.${payload.initialTab} input`)?.click()
+      document.querySelector<HTMLElement>(`.settings .tab.${payload.initialTab} input`)?.click()
     })
   }
 }
 
 const onClose = () => {
-  document.querySelector('#settings').close()
+  document.querySelector<HTMLDialogElement>('#settings').close()
 }
 
 </script>

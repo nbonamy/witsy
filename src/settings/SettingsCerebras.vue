@@ -18,12 +18,12 @@
         </select>
         <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">More about Cerebras models</a>
       </div>
-      <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+      <!-- <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button> -->
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -46,7 +46,7 @@ const load = () => {
 //   setTimeout(() => getModels(), 500)
 // }
 
-const setEphemeralRefreshLabel = (text) => {
+const setEphemeralRefreshLabel = (text: string) => {
   // refreshLabel.value = text
   // setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }

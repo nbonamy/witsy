@@ -19,13 +19,21 @@
   </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, onMounted } from 'vue'
 import Overlay from './Overlay.vue'
 
+export type MenuAction = {
+  disabled?: boolean
+  separator?: boolean
+  action?: string
+  label?: string
+  icon?: string | object
+}
+
 const props = defineProps({
-  actions: Object,
+  actions: Array<MenuAction>,
   onClose: Function,
   position: String,
   x: Number,
@@ -87,12 +95,12 @@ const isRightAligned = computed(() => {
 
 onMounted(() => {
   if (props.showFilter) {
-    const input = document.querySelector('.context-menu input');
+    const input = document.querySelector<HTMLElement>('.context-menu input');
     input?.focus();
   }
 });
 
-const onAction = (action) => {
+const onAction = (action: MenuAction) => {
   if (!action.disabled) {  
     emit('action-clicked', action.action)
   }

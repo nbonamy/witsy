@@ -22,9 +22,9 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
@@ -51,7 +51,7 @@ const onCancel = () => {
   load()
 }
 
-const onSave = (event) => {
+const onSave = () => {
   store.config.commands.engine = engine.value
   store.config.commands.model = model.value
   store.saveSettings()

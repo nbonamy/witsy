@@ -1,7 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
-import { store } from '../../src/services/store'
 import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
@@ -19,6 +18,7 @@ beforeAll(() => {
 
   // eslint-disable-next-line no-global-assign
   navigator = {
+    // @ts-expect-error mock
     mediaDevices: {
       getUserMedia: vi.fn()
     }
@@ -32,7 +32,7 @@ beforeAll(() => {
       isAvailable: vi.fn(() => false),
     },
     config: {
-      load: vi.fn(() => defaults),
+      load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
       save: vi.fn(),
     },
     store: {

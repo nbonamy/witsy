@@ -13,7 +13,7 @@
   </select>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 defineProps({
   defaultText: String
@@ -21,4 +21,5 @@ defineProps({
 
 const value = defineModel()
 const emit = defineEmits(['change']);
+
 </script>

@@ -59,9 +59,10 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
+import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from 'types/rag'
 import Dialog from '../composables/dialog'
 import DialogHeader from '../components/DialogHeader.vue'
 import ContextMenu from '../components/ContextMenu.vue'
@@ -88,7 +89,7 @@ const contextMenuActions = [
   { label: 'Add Folder...', action: 'addFolder' },
 ]
 
-const docIcon = (doc) => {
+const docIcon = (doc: DocumentSource) => {
   if (doc.type === 'file') {
     return 'BIconFileText'
   } else if (doc.type === 'folder') {
@@ -97,7 +98,7 @@ const docIcon = (doc) => {
   return 'BIconFile'
 }
 
-const docLabel = (doc) => {
+const docLabel = (doc: DocumentSource) => {
   if (doc.type === 'folder') {
     return `${doc.filename} (${doc.items.length} files)`
   } else {
@@ -120,11 +121,11 @@ const onModelReady = () => {
 }
 
 const onOpenDocRepos = () => {
-  document.querySelector('#docrepos').showModal()
+  document.querySelector<HTMLDialogElement>('#docrepos').showModal()
 }
 
 const onClose = () => {
-  document.querySelector('#docrepos').close()
+  document.querySelector<HTMLDialogElement>('#docrepos').close()
 }
 
 const loadDocRepos = async () => {
@@ -132,14 +133,14 @@ const loadDocRepos = async () => {
   const repos = await window.api.docrepo?.list()
   docRepos.value = repos ?? []
   if (selectedRepoId) {
-    selectRepo(docRepos.value.find((repo) => repo.uuid == selectedRepoId))
+    selectRepo(docRepos.value.find((repo: DocumentBase) => repo.uuid == selectedRepoId))
   }
   if (selectedRepo.value == null && docRepos.value.length > 0) {
     selectRepo(docRepos.value[0])
   }
 }
 
-const selectRepo = (repo) => {
+const selectRepo = (repo: DocumentBase) => {
   selectedRepo.value = repo
   selectedDocs.value = []
   modelReady.value = window.api.docrepo.isEmbeddingAvailable(selectedRepo.value?.embeddingEngine, selectedRepo.value?.embeddingModel)
@@ -148,7 +149,7 @@ const selectRepo = (repo) => {
   }
 }
 
-const selectDoc = (event, doc) => {
+const selectDoc = (event: MouseEvent, doc: DocumentBase) => {
   if (event.metaKey) {
     if (selectedDocs.value.includes(doc.uuid)) {
       selectedDocs.value = selectedDocs.value.filter((d) => d !== doc.uuid)
@@ -185,16 +186,16 @@ const onConfig = () => {
   emitEvent('open-docrepo-config')
 }
 
-const onChangeRepoName = (event) => {
+const onChangeRepoName = (event: Event) => {
   if (!selectedRepo.value) return
-  window.api.docrepo.rename(selectedRepo.value.uuid, event.target.value)
+  window.api.docrepo.rename(selectedRepo.value.uuid, (event.target as HTMLInputElement).value)
 }
 
-const onMore = (event) => {
+const onMore = () => {
   if (showMenu.value) {
     closeContextMenu()
   } else {
-    showContextMenu(event)
+    showContextMenu()
   }
 }
 
@@ -210,7 +211,7 @@ const closeContextMenu = () => {
   showMenu.value = false;
 }
 
-const handleActionClick = async (action) => {
+const handleActionClick = async (action: string) => {
 
   // close
   closeContextMenu()
@@ -226,7 +227,7 @@ const handleActionClick = async (action) => {
 
 const onAddDocs = () => {
   if (!selectedRepo.value) return
-  const files = window.api.file.pick({ multiselection: true })
+  const files = window.api.file.pick({ multiselection: true }) as string[]
   if (!files) return
   for (const file of files) {
     window.api.docrepo.addDocument(selectedRepo.value.uuid, 'file', file)
@@ -242,13 +243,13 @@ const onAddFolder = () => {
   loading.value = true
 }
 
-const onAddDocDone = (payload) => {
+const onAddDocDone = (payload: DocRepoAddDocResponse) => {
   console.log('onAddDocDone', JSON.stringify(payload))
   const queueLength = payload.queueLength
   loading.value = queueLength > 0
 }
 
-const onAddDocError = (payload) => {
+const onAddDocError = (payload: DocRepoAddDocResponse) => {
   console.log('onAddDocError', JSON.stringify(payload))
   const queueLength = payload.queueLength
   loading.value = queueLength > 0
@@ -275,7 +276,7 @@ const onDelDoc = () => {
   })
 }
 
-const onDelDocDone = (payload) => {
+const onDelDocDone = (payload: DocRepoAddDocResponse) => {
   loading.value = false
 }
 

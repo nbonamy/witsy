@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -31,8 +31,8 @@ const oauthUrl = ref('')
 const accessCode = ref('')
 
 const load = () => {
-  linked.value = (store.config.dropbox.accessToken != null)
-  oauthUrl.value = window.api.dropbox.getAuthenticationUrl()
+  // linked.value = (store.config.dropbox.accessToken != null)
+  // oauthUrl.value = window.api.dropbox.getAuthenticationUrl()
   accessCode.value = ''
 }
 
@@ -45,14 +45,14 @@ const unlink = () => {
 }
 
 const link = async () => {
-  const success = window.api.dropbox.authenticateWithCode(accessCode.value)
-  if (success) {
-    linked.value = true
-    accessCode.value = ''
-  } else {
-    Dialog.alert('Failed to link your account. Try again.')
-    accessCode.value = ''
-  }
+  // const success = window.api.dropbox.authenticateWithCode(accessCode.value)
+  // if (success) {
+  //   linked.value = true
+  //   accessCode.value = ''
+  // } else {
+  //   Dialog.alert('Failed to link your account. Try again.')
+  //   accessCode.value = ''
+  // }
 }
 
 const save = () => {

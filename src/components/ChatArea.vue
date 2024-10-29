@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
@@ -35,7 +35,7 @@ const props = defineProps({
 })
 
 const chatMenuPosition = computed(() => {
-  return window.platform == 'windows' ? 'left' : 'right'
+  return window.api.platform == 'windows' ? 'left' : 'right'
 })
 
 const chatMenuActions = computed(() => {
@@ -55,12 +55,12 @@ const menuY = ref(0)
 const saved = ref(false)
 
 onMounted(() => {
-  onEvent('conversation-mode', (mode) => conversationMode.value = mode)
+  onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
 })
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector('.sidebar').offsetWidth : 0) 
+  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar').offsetWidth : 0) 
   menuY.value = 32
 }
 
@@ -68,7 +68,7 @@ const closeChatMenu = () => {
   showChatMenu.value = false
 }
 
-const handleActionClick = async (action) => {
+const handleActionClick = async (action: string) => {
 
   // close
   closeChatMenu()
@@ -94,7 +94,7 @@ const onSave = () => {
 
 const onExportPdf = async () => {
   // copy and clean-up
-  const content = document.querySelector('.content').cloneNode(true)
+  const content: HTMLElement = document.querySelector<HTMLElement>('.content').cloneNode(true) as HTMLElement
   content.querySelector('.toolbar .menu')?.remove()
   content.querySelector('.message .actions')?.remove()
   content.querySelector('.overflow')?.remove()
@@ -102,13 +102,13 @@ const onExportPdf = async () => {
 
   // now remove scroll
   content.style.height = 'auto'
-  content.querySelector('.container').style.height = 'auto'
-  content.querySelector('.container').style.overflow = 'visible'
+  content.querySelector<HTMLElement>('.container').style.height = 'auto'
+  content.querySelector<HTMLElement>('.container').style.overflow = 'visible'
 
   // adjust title
-  //content.querySelector('.toolbar').style.marginTop = '-12px'
-  content.querySelector('.toolbar').style.marginLeft = '12px'
-  content.querySelector('.toolbar').style.marginRight = '12px'
+  //content.querySelector<HTMLElement>('.toolbar').style.marginTop = '-12px'
+  content.querySelector<HTMLElement>('.toolbar').style.marginLeft = '12px'
+  content.querySelector<HTMLElement>('.toolbar').style.marginRight = '12px'
 
   // render svg logos as png (for some of them)
   // this is not nice but it works for now
@@ -121,7 +121,7 @@ const onExportPdf = async () => {
   })
 
   // replace images with their b64 version
-  content.querySelectorAll('.message .body img').forEach((img) => {
+  content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
     const src = img.src
     if (src.startsWith('file://')) {
       const path = decodeURIComponent(src.replace('file://', ''))

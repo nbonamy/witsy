@@ -1,7 +1,7 @@
 
 import { app, autoUpdater, dialog } from 'electron';
 
-export default class {
+export default class AutoUpdater {
 
   manualUpdate = false
   downloading = false

@@ -43,16 +43,17 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
+import { Expert, ExternalApp } from '../types/index.d'
 import { ref, computed, watch } from 'vue'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
 
-const props = defineProps({
-  expert: Object
-})
+const props = defineProps<{
+  expert: Expert
+}>()
 
 const name = ref(null)
 const expert = ref(null)
@@ -61,7 +62,7 @@ const selectedApp = ref(null)
 
 const supportTriggerApps = computed(() => window.api.platform == 'darwin')
 
-const iconData = (app) => {
+const iconData = (app: ExternalApp) => {
   const iconContents = window.api.file.readIcon(app.icon)
   return `data:${iconContents.mimeType};base64,${iconContents.contents}`
 }
@@ -72,18 +73,18 @@ const load = () => {
   triggerApps.value = props.expert?.triggerApps || []
 }
 
-const selectApp = (app) => {
+const selectApp = (app: ExternalApp) => {
   selectedApp.value = app
 }
 
 const onAddApp = () => {
   const app = window.api.file.pick({ packages: true, location: true })
-  const info = window.api.file.getAppInfo(app)
+  const info = window.api.file.getAppInfo(app as string)
   triggerApps.value.push(info)
 }
 
 const onDelApp = () => {
-  triggerApps.value = triggerApps.value.filter(app => app.identifier != selectedApp.value.identifier)
+  triggerApps.value = triggerApps.value.filter((app: ExternalApp) => app.identifier != selectedApp.value.identifier)
   selectedApp.value = null
 }
 
@@ -95,7 +96,7 @@ const onCancel = () => {
   load()
 }
 
-const onSave = (event) => {
+const onSave = (event: Event) => {
 
   // check
   if (!name.value || !expert.value) {

@@ -6,21 +6,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Object,
+  message: Message,
   audioState: Object,
   readAloud: Function
 })
 
-const mgsAudioState = (message) => {
+const mgsAudioState = (message: Message) => {
   return message.uuid == props.audioState.messageId ? props.audioState.state : 'idle'
 }
 
-const onToggleRead = async (message) => {
+const onToggleRead = async (message: Message) => {
   props.readAloud(message)
 }
 

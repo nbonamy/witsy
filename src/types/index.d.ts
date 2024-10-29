@@ -1,9 +1,39 @@
 
+export { strDict, anyDict } from 'multi-llm-ts'
+import { LlmChunk, LlmRole, anyDict } from 'multi-llm-ts'
+import { Configuration } from './config.d'
 
-export type anyDict = {[key: string]: any}
-export type strDict = {[key: string]: string}
+export interface Attachment {
+  contents: string
+  mimeType: string
+  url: string
+  extracted: boolean
+  saved: boolean
+  extractText(): void
+  loadContents(): void
+  b64Contents(): string
+  isText(): boolean
+  isImage(): boolean
+  format(): string
+}
 
-interface Chat {
+export interface Message {
+  uuid: string
+  type: string
+  createdAt: number
+  role: LlmRole
+  content: string
+  transient: boolean
+  toolCall?: string
+  attachment: Attachment
+  setText(text: string): void
+  setImage(url: string): void
+  setToolCall(toolCall: string|null): void
+  attach(attachment: Attachment): void
+  appendText(chunk: LlmChunk): void
+}
+
+export interface Chat {
   uuid: string
   title: string
   createdAt: number
@@ -12,6 +42,7 @@ interface Chat {
   model: string
   messages: Message[]
   deleted: boolean
+  docrepo: string
   fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void
@@ -21,7 +52,7 @@ interface Chat {
   delete(): void
 }
 
-interface Command {
+export interface Command {
   id: string,
   type: 'system' | 'user',
   icon: string,
@@ -34,7 +65,7 @@ interface Command {
   model: string,
 }
 
-interface Shortcut {
+export interface Shortcut {
   alt?: boolean
   ctrl?: boolean
   shift?: boolean
@@ -42,38 +73,30 @@ interface Shortcut {
   key: string
 }
 
-export interface StoreListener {
-  onStoreUpdated: (domain: string) => void
-}
-
-interface Store {
+export interface Store {
   commands: Command[]
   experts: Expert[]
   config: Configuration
   chats: Chat[]
   chatFilter: string|null
-  pendingAttachment: Attachment|null
-  pendingDocRepo: string|null
-  listeners: StoreListener[]
-  addListener?(listener: StoreListener): void
-  notifyListeners?(domain: string): void
   saveHistory?(): void
   saveSettings?(): void
   load?(): Promise<void>
   loadSettings?(): Promise<void>
   loadCommands?(): Promise<void>
   loadExperts?(): Promise<void>
+  loadHistory?(): Promise<void>
   mergeHistory?(chats: any[]): void
   dump?(): void
 }
 
-interface ExternalApp {
+export interface ExternalApp {
   name: string
   identifier: string
   icon: string
 }
 
-interface Expert {
+export interface Expert {
   id: string,
   type: 'system' | 'user',
   name: string
@@ -82,27 +105,27 @@ interface Expert {
   triggerApps: ExternalApp[]
 }
 
-interface FileContents {
+export interface FileContents {
   url: string
   mimeType: string
   contents: string
 }
 
-interface OnlineFileMetadata {
+export interface OnlineFileMetadata {
   id: string
   size: number
   createdTime: Date
   modifiedTime: Date
 }
 
-interface OnlineStorageProvider {
+export interface OnlineStorageProvider {
   initialize: () => Promise<void>
   metadata: (filepath: string) => Promise<OnlineFileMetadata>
   download: (filepath: string) => Promise<string>
   upload: (filepath: string, modifiedTime: Date) => Promise<boolean>
 }
 
-export type ComputerAction = {
+export export type ComputerAction = {
   action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
   coordinate?: number[]
   text?: string
@@ -113,6 +136,7 @@ declare global {
     api: {
       licensed?: boolean
       platform?: string
+      isMasBuild?: boolean
       userDataPath?: string
       on?: (signal: string, callback: (value: any) => void) => void
       off?: (signal: string, callback: (value: any) => void) => void
@@ -125,7 +149,7 @@ declare global {
         set?(state: boolean): void
       }
       store?: {
-        get?(key: string, fallback: any): any
+        get?(key: string, fallback?: any): any
         set?(key: string, value: any): void
       }
       base64?: {
@@ -137,13 +161,14 @@ declare global {
         readIcon?(filepath: string): FileContents
         save?(opts: {
           contents: string,
+          url: string,
           properties: anyDict
         }): string
         download?(opts: {
           url: string,
           properties: anyDict
         }): string
-        pick?(opts: anyDict): string|strDict|string[]
+        pick?(opts: anyDict): string|string[]|FileContents
         pickDir?(): string
         delete?(filepath: string): void
         find?(name: string): string
@@ -175,9 +200,11 @@ declare global {
         save?(commands: Command[]): void
         cancel?(): void
         closePalette?(): void
-        run?(command: Command): void
+        run?({ textId: string, command: Command }): void
         getPrompt?(id: string): string
         isPromptEditable?(id: string): boolean
+        import?(): boolean
+        export?(): boolean
       }
       anywhere?: {
         prompt?(): void
@@ -188,6 +215,8 @@ declare global {
       experts?: {
         load?(): Expert[]
         save?(experts: Expert[]): void
+        import?(): boolean
+        export?(): boolean
       }
       docrepo?: {
         list?(): DocumentBase[]

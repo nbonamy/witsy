@@ -28,7 +28,7 @@ beforeAll(() => {
   // api
   window.api = {
     commands: {
-      load: vi.fn(() => defaultCommands as Command[]),
+      load: vi.fn(() => JSON.parse(JSON.stringify(defaultCommands)) as Command[]),
       save: vi.fn(),
     }
   }

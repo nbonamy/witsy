@@ -12,7 +12,7 @@
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
-        <textarea v-model="prompt" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode" />
+        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
@@ -25,9 +25,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { FileContents, Expert } from 'types/index.d'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
@@ -36,9 +37,10 @@ import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audi
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
 import Dialog from '../composables/dialog'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenu, { MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
+import Message from '../models/message'
 import Loader from './Loader.vue'
 import Chat from '../models/chat'
 
@@ -48,6 +50,7 @@ const { onEvent, emitEvent } = useEventBus()
 const props = defineProps({
   chat: Chat,
   conversationMode: String,
+  placeholder: String,
   enableDocRepo: {
     type: Boolean,
     default: true
@@ -129,7 +132,7 @@ const docRepoActive = computed(() => {
 })
 
 const docReposMenuItems = computed(() => {
-  const menus = docRepos.value.map(d => {
+  const menus: MenuAction[] = docRepos.value.map(d => {
     return { label: d.name, action: d.uuid }
   })
   if (menus.length > 0) {
@@ -143,7 +146,7 @@ const docReposMenuItems = computed(() => {
 })
 
 const experts = computed(() => {
-  return store.experts.filter(p => p.state == 'enabled').map(p => {
+  return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
     return { label: p.name, action: p.name, icon: BIconStars }
   })
 })
@@ -184,7 +187,7 @@ onMounted(() => {
 
 })
 
-const defaultPrompt = (conversationMode) => {
+const defaultPrompt = (conversationMode: string) => {
   if (conversationMode === 'auto') {
     return 'You can start talking now...'
   } else if (conversationMode === 'ptt') {
@@ -232,7 +235,7 @@ const loadDocRepos = () => {
   }
 }
 
-const onSetPrompt = (message) => {
+const onSetPrompt = (message: Message) => {
   prompt.value = message.content
   attachment.value = message.attachment
   nextTick(() => {
@@ -241,7 +244,7 @@ const onSetPrompt = (message) => {
   })
 }
 
-const onSetExpertPrompt = (message) => {
+const onSetExpertPrompt = (message: string) => {
   prompt.value = message
   attachment.value = null
   nextTick(() => {
@@ -274,10 +277,11 @@ const onAttach = () => {
     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
   ]*/ })
   if (file) {
-    const format = file.url.split('.').pop()
+    const fileContents = file as FileContents
+    const format = fileContents.url.split('.').pop()
     if (llmFactory.canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
-      attachment.value = new Attachment(file.contents, mimeType, file.url)
+      attachment.value = new Attachment(fileContents.contents, mimeType, fileContents.url)
     } else {
       console.error('Cannot attach format', format)
       Dialog.alert('This file format is not supported')
@@ -285,7 +289,7 @@ const onAttach = () => {
   }
 }
 
-const onPaste = (event) => {
+const onPaste = (event: ClipboardEvent) => {
   for (let item of event.clipboardData.items) {
     if (item.kind === 'file') {
       let blob = item.getAsFile();
@@ -293,7 +297,7 @@ const onPaste = (event) => {
       reader.onload = (event) => {
         if (event.target.readyState === FileReader.DONE) {
 
-          let result = event.target.result
+          let result = event.target.result as string
           let mimeType = result.split(';')[0].split(':')[1]
           let format = mimeTypeToExtension(mimeType)
           let contents = result.split(',')[1]
@@ -436,7 +440,7 @@ const startDictation = async () => {
 
 }
 
-const onConversationMenu = (event) => {
+const onConversationMenu = () => {
   if (!props.enableConversation) return
   if (props.inlineMenus) {
     const icon = document.querySelector('.prompt .dictate')
@@ -449,7 +453,7 @@ const onConversationMenu = (event) => {
   }
 }
 
-const handleConversationClick = (action) => {
+const handleConversationClick = (action: string) => {
   closeContextMenu()
   emitEvent('conversation-mode', action)
   prompt.value = defaultPrompt(action)
@@ -468,7 +472,7 @@ const stopConversation = () => {
   emitEvent('conversation-mode', null)
 }
 
-const onDocRepo = (event) => {
+const onDocRepo = () => {
   showDocRepo.value = true
   const icon = document.querySelector('.prompt .docrepo')
   const rect = icon?.getBoundingClientRect()
@@ -476,7 +480,7 @@ const onDocRepo = (event) => {
   menuY.value = rect?.height + 32
 }
 
-const handleDocRepoClick = (action) => {
+const handleDocRepoClick = (action: string) => {
   closeContextMenu()
   if (action === 'manage') {
     emitEvent('open-doc-repos')
@@ -503,7 +507,7 @@ const closeContextMenu = () => {
   showConversationMenu.value = false
 }
 
-const handleExpertClick = (action) => {
+const handleExpertClick = (action: string) => {
   closeContextMenu()
   const expert = store.experts.find(p => p.name === action)
   onSetExpertPrompt(expert.prompt)
@@ -527,7 +531,7 @@ const onCommands = () => {
   menuY.value = rect?.height + 32
 }
 
-const handleCommandClick = (action) => {
+const handleCommandClick = (action: string) => {
   closeContextMenu()
   const command = store.commands.find(c => c.id === action)
   prompt.value = command.template.replace('{input}', prompt.value)
@@ -535,7 +539,7 @@ const handleCommandClick = (action) => {
 }
 
 let draftPrompt = ''
-const onKeyDown = (event) => {
+const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.shiftKey) {
@@ -555,7 +559,7 @@ const onKeyDown = (event) => {
     
     // get messages
     let userMessages = props.chat?.messages.filter(m => m.role === 'user')
-    if (event.controlKey || event.metaKey) {
+    if (event.ctrlKey || event.metaKey) {
       userMessages = store.chats.reduce((acc, chat) => {
         return acc.concat(chat.messages.filter(m => m.role === 'user'))
       }, [])
@@ -607,13 +611,13 @@ const onKeyDown = (event) => {
   }
 }
 
-const onKeyUp = (event) => {
+const onKeyUp = (event: KeyboardEvent) => {
   nextTick(() => {
-    autoGrow(event.target)
+    autoGrow(event.target as HTMLElement)
   })
 }
 
-const autoGrow = (element) => {
+const autoGrow = (element: HTMLElement) => {
   if (element) {
     // reset before calculating
     element.style.height = '0px'
@@ -624,11 +628,15 @@ const autoGrow = (element) => {
 
 defineExpose({
 
-  setPrompt: (message) => {
-    if (message && typeof message === 'object') {
+  getPrompt: () => {
+    return prompt.value
+  },
+
+  setPrompt: (message: string|Message) => {
+    if (message instanceof Message) {
       onSetPrompt(message)
     } else {
-      onSetPrompt({ attachment: null, content: message||'' })
+      onSetPrompt(new Message('user', message))
     }
   },
     

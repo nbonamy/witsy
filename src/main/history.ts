@@ -1,3 +1,4 @@
+
 import { Chat } from 'types/index.d'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'

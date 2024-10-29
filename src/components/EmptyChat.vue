@@ -21,7 +21,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
@@ -47,7 +47,7 @@ const engines = computed(() => availableEngines)
 const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
 const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
 
-const isCurrentEngine = (engine) => {
+const isCurrentEngine = (engine: string) => {
   return store.config.llm.engine === engine
 }
 
@@ -59,7 +59,7 @@ const showModelTip = () => {
   return !store.config.general.tips.engineSelector && store.config.general.tips.modelSelector && !showAllEngines.value && models.value.length > 1
 }
 
-const onEngine = (engine) => {
+const onEngine = (engine: string) => {
 
   if (showAllEngines.value === false) {
 
@@ -99,17 +99,20 @@ const onClickModel = () => {
   store.saveSettings()
 }
 
-const onSelectModel = (ev) => {
+const onSelectModel = (ev: InputEvent) => {
+
+  // target
+  const target = ev.target as HTMLSelectElement
 
   // anthropic computer-use warning
-  if (store.config.llm.engine === 'anthropic' && ev.target.value === 'computer-use') {
+  if (store.config.llm.engine === 'anthropic' && target.value === 'computer-use') {
     if (tipsManager.isTipAvailable('computerUse')) {
       tipsManager.showTip('computerUse')
     }
   }
 
   // continue
-  let model = ev.target.value
+  let model = target.value
   store.config.engines[store.config.llm.engine].model.chat = model
   store.saveSettings()
 }

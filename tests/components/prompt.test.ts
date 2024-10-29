@@ -1,4 +1,5 @@
 
+import { Expert } from 'types'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
@@ -33,8 +34,9 @@ beforeAll(() => {
 
   // eslint-disable-next-line no-global-assign
   navigator = {
+    // @ts-expect-error mock
     mediaDevices: {
-      getUserMedia: vi.fn()
+      getUserMedia: vi.fn(),
     }
   }
   
@@ -46,6 +48,7 @@ beforeAll(() => {
       pick: vi.fn(() => {
         return {
           url: 'file://image.png',
+          mimeType: 'image/png',
           contents: 'image64'
          }
       }),
@@ -64,13 +67,14 @@ beforeAll(() => {
   }
 
   // init store
+  // @ts-expect-error no-other-way
   store.config = defaults
   store.loadSettings = vi.fn()
   store.experts = [
     { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
     { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
     { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
-]
+  ] as Expert[]
 })
 
 beforeEach(() => {
@@ -90,7 +94,7 @@ test('Render', () => {
 })
 
 test('Send on click', async () => {
-  const prompt = wrapper.find('.input textarea')
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
@@ -99,7 +103,7 @@ test('Send on click', async () => {
 })
 
 test('Send on enter', async () => {
-  const prompt = wrapper.find('.input textarea')
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
@@ -108,7 +112,7 @@ test('Send on enter', async () => {
 })
 
 test('Not send on shift enter', async () => {
-  const prompt = wrapper.find('.input textarea')
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.enter.shift')
   expect(emitEventMock).not.toHaveBeenCalled()
@@ -191,7 +195,7 @@ test('History navigation', async () => {
     new Message('assistant', 'Ciao'),
   ]})})
 
-  const prompt = wrapper.find('.input textarea')
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('Hola')
   await prompt.trigger('keydown.ArrowUp', { shiftKey: true })
   expect(prompt.element.value).toBe('Bonjour')
@@ -213,7 +217,7 @@ test('Experts', async () => {
   expect(menu.exists()).toBe(true)
   expect(menu.findAll('.item').length).toBe(2)
   await menu.find('.item:nth-child(2)').trigger('click')
-  expect(wrapper.find('.input textarea').element.value).toBe('prompt3')
+  expect(wrapper.find<HTMLInputElement>('.input textarea').element.value).toBe('prompt3')
 })
 
 test('Document repository', async () => {

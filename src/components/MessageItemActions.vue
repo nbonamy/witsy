@@ -11,9 +11,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref } from 'vue'
 import { store } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
@@ -21,35 +20,19 @@ import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  message: Object,
+  message: Message,
   audioState: Object,
   readAloud: Function
 })
 
-const copyLabel = ref('Copy')
-
-const mgsAudioState = (message) => {
-  return message.uuid == props.audioState.messageId ? props.audioState.state : 'idle'
-}
-
-const onCopy = (message) => {
-  if (message.type == 'text') {
-    window.api.clipboard.writeText(message.content)
-  } else if (message.type == 'image') {
-    window.api.clipboard.writeImage(message.content)
-  }
-  copyLabel.value = 'Copied!'
-  setTimeout(() => copyLabel.value = 'Copy', 1000)
-}
-
-const onReadAloud = async (message) => {
+const onReadAloud = async (message: Message) => {
   props.readAloud(message)
 }
 
-const onRetry = (message) => {
+const onRetry = (message: Message) => {
 
   // if already confirmed
   if (!store.config.general.confirm.retryGeneration) {
@@ -81,7 +64,7 @@ const onRetry = (message) => {
   })
 }
 
-const onEdit = (message) => {
+const onEdit = (message: Message) => {
   emitEvent('set-prompt', message)
 }
 

@@ -42,8 +42,9 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
+import { Model } from 'multi-llm-ts'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { getEmbeddingModels } from '../llms/ollama'
@@ -69,7 +70,7 @@ const models = computed(() => {
       { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
     ]
   } else if (engine.value === 'ollama') {
-    return store.config?.engines?.ollama?.models?.embedding?.map(m => ({ id: m.id, name: m.name }))
+    return store.config?.engines?.ollama?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
   // } else if (engine.value === 'fastembed') {
   //   return [
   //     { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
@@ -90,7 +91,7 @@ onMounted(() => {
 })
 
 const onOpen = () => {
-  document.querySelector('#docrepocreate').showModal()
+  document.querySelector<HTMLDialogElement>('#docrepocreate').showModal()
   name.value = 'Document Repository'
   nextTick(() => {
     nameInput.value.focus()
@@ -98,14 +99,14 @@ const onOpen = () => {
   })
 }
 
-const onChangeEngine = (event) => {
+const onChangeEngine = () => {
   model.value = models.value?.[0]?.id
   nextTick(() => {
     onChangeModel()
   })
 }
 
-const onChangeModel = (event) => {
+const onChangeModel = () => {
   const downloaded = window.api.docrepo.isEmbeddingAvailable(engine.value, model.value)
   if (!downloaded) {
     Dialog.alert('This model will be downloaded from the internet when adding first document and may take a while.')
@@ -117,7 +118,7 @@ const onRefresh = async () => {
   setTimeout(() => getModels(), 500)
 }
 
-const setEphemeralRefreshLabel = (text) => {
+const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
   setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }
@@ -128,7 +129,6 @@ const getModels = async () => {
   const llmFactory = new LlmFactory(store.config)
   let success = await llmFactory.loadModels('ollama')
   if (!success) {
-    chat_models.value = []
     setEphemeralRefreshLabel('Error!')
     return
   }
@@ -144,7 +144,7 @@ const getModels = async () => {
 
 }
 
-const onCreate = (event) => {
+const onCreate = (event: Event) => {
 
   // check
   if (!name.value || !engine.value || !model.value) {
@@ -155,6 +155,10 @@ const onCreate = (event) => {
 
   // create
   window.api.docrepo.create(name.value, engine.value, model.value)
+}
+
+const onCancel = () => {
+  document.querySelector<HTMLDialogElement>('#docrepocreate').close()
 }
 
 </script>

@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed } from 'vue'
 
@@ -28,7 +28,7 @@ const onToggleView = () => {
   }
 }
 
-const onKeyUp = (event) => {
+const onKeyUp = () => {
   emit('change')
 }
 

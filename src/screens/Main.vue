@@ -7,10 +7,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // components
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { anyDict } from 'types'
 import { store } from '../services/store'
 import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
@@ -19,6 +20,9 @@ import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
+import Message from '../models/message'
+import Attachment from '../models/attachment'
+import Chat from '../models/chat'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -61,15 +65,6 @@ onMounted(() => {
     }
   })
 
-  // other
-  store.addListener({
-    onStoreUpdated(domain) {
-      if (domain === 'config') {
-        onConfigUpdated()
-      }
-    }
-  })
-
   // query params
   window.api.on('query-params', (params) => {
     processQueryParams(params)
@@ -80,7 +75,7 @@ onMounted(() => {
 
   // intercept links
   document.addEventListener('click', (e) => {
-    const target = e.target || e.srcElement
+    const target = (e.target || e.srcElement) as HTMLElement
     const href = target.getAttribute('href')
     if (href?.startsWith('#settings')) {
       emitEvent('open-settings', { initialTab: href.split('_')[1] })
@@ -104,7 +99,7 @@ onMounted(() => {
 
 })
 
-const processQueryParams = (params) => {
+const processQueryParams = (params: anyDict) => {
 
   // log
   console.log('Processing query params', JSON.stringify(params))
@@ -140,7 +135,7 @@ const processQueryParams = (params) => {
   // load chat
   if (params.chatId) {
     store.loadHistory()
-    const chat = store.chats.find((c) => c.uuid === params.chatId)
+    const chat: Chat = store.chats.find((c) => c.uuid === params.chatId)
     if (chat) {
       onSelectChat(chat)
     } else {
@@ -158,7 +153,7 @@ const onNewChat = () => {
   onSelectChat(null)
 }
 
-const onSelectChat = (chat) => {
+const onSelectChat = (chat: Chat) => {
   // create a new assistant to allow parallel querying
   // this will be garbage collected anyway
   assistant.value = new Assistant(store.config)
@@ -168,7 +163,7 @@ const onSelectChat = (chat) => {
   })
 }
 
-const onRenameChat = async (chat) => {
+const onRenameChat = async (chat: Chat) => {
   // prompt
   const { value: title } = await Dialog.show({
     title: 'Rename Chat',
@@ -182,9 +177,9 @@ const onRenameChat = async (chat) => {
   }
 }
 
-const onDeleteChat = async (chat) => {
+const onDeleteChat = async (chat: string) => {
 
-  const chats = Array.isArray(chat) ? chat : [chat]
+  const chats: string[] = Array.isArray(chat) ? chat : [chat]
   const title = chats.length > 1
     ? 'Are you sure you want to delete these conversations?'
     : 'Are you sure you want to delete this conversation?'
@@ -220,7 +215,7 @@ const onDeleteChat = async (chat) => {
   })
 }
 
-const onSendPrompt = async ({ prompt, attachment, docrepo }) => {
+const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: any }) => {
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -251,7 +246,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }) => {
 
 }
 
-const onRetryGeneration = async (message) => {
+const onRetryGeneration = async (message: Message) => {
 
   // find the message in the chat
   const index = assistant.value.chat.messages.findIndex((m) => m.uuid === message.uuid)
@@ -268,7 +263,7 @@ const onRetryGeneration = async (message) => {
   // and retry
   onSendPrompt({
     prompt: lastMessage.content,
-    attachment: lastMessage.attachment,
+    attachment: lastMessage.attachment as Attachment,
     docrepo: assistant.value.chat.docrepo
   })
 
@@ -276,10 +271,6 @@ const onRetryGeneration = async (message) => {
 
 const onStopGeneration = async () => {
   await assistant.value.stop()
-}
-
-const onConfigUpdated = async () => {
-  assistant.value.setConfig(store.config)
 }
 
 const onUpdateAvailable = () => {

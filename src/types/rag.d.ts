@@ -28,3 +28,9 @@ export interface DocRepoQueryResponseItem {
 export interface DocRepoQueryResponse {
   items: DocRepoQueryResponseItem[]
 }
+
+export interface DocRepoAddDocResponse {
+  queueItem: DocumentQueueItem
+  queueLength: number
+  error?: string
+}

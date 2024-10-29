@@ -28,7 +28,7 @@ beforeAll(() => {
   // api
   window.api = {
     experts: {
-      load: vi.fn(() => defaultExperts as Expert[]),
+      load: vi.fn(() => JSON.parse(JSON.stringify(defaultExperts)) as Expert[]),
       save: vi.fn(),
     }
   }

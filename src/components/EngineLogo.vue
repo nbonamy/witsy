@@ -3,19 +3,27 @@
   <img :src="logo" class="logo" :class="[ engine, grayscale ? 'grayscale' : 'colored', background ? 'background' : '' ]" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { computed } from 'vue'
+// @ts-expect-error svg
 import logoOpenAI from '../../assets/openai.svg'
+// @ts-expect-error svg
 import logoOllama from '../../assets/ollama.svg'
+// @ts-expect-error svg
 import logoAnthropic from '../../assets/anthropic.svg'
+// @ts-expect-error svg
 import logoMistralAI from '../../assets/mistralai.svg'
+// @ts-expect-error svg
 import logoGoogle from '../../assets/google.svg'
+// @ts-expect-error svg
 import logoXAI from '../../assets/xai.svg'
+// @ts-expect-error svg
 import logoGroq from '../../assets/groq.svg'
+// @ts-expect-error svg
 import logoCerberas from '../../assets/cerebras.svg'
 
-const logos = {
+const logos: { [key: string]: any } = {
   openai: logoOpenAI,
   ollama: logoOllama,
   anthropic: logoAnthropic,
