@@ -17,6 +17,10 @@ export default class LlmFactory {
     this.config = config
   }
 
+  setConfig = (config: Configuration) => {
+    this.config = config
+  }
+
   isSpecializedModel = (engine: string, model: string): boolean => {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
     return false

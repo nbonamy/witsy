@@ -94,7 +94,7 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', 'this is my prompt')
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', { prompt: 'this is my prompt', attachment: null, docrepo: null })
   expect(prompt.element.value).toBe('')
 })
 
@@ -103,7 +103,7 @@ test('Send on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', 'this is my prompt')
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', { prompt: 'this is my prompt', attachment: null, docrepo: null })
   expect(prompt.element.value).toBe('')
 })
 
@@ -133,14 +133,14 @@ test('Show stop button when working', async () => {
   expect(emitEventMock).toHaveBeenCalledWith('stop-prompting')
 })
 
-test('Send attachment', async () => {
+test('Stores attachment', async () => {
   const attach = wrapper.find('.attach')
   await attach.trigger('click')
   expect(window.api.file.pick).toHaveBeenCalled()
   expect(window.api.file.pick).toHaveBeenCalledWith({
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
-  expect(emitEventMock).toHaveBeenCalledWith('attach-file', {
+  expect(wrapper.vm.attachment).toEqual({
     mimeType: 'image/png',
     contents: 'image64',
     saved: false,
@@ -150,7 +150,7 @@ test('Send attachment', async () => {
 })
 
 test('Display url attachment', async () => {
-  store.pendingAttachment = new Attachment('', '', 'file://image.png')
+  wrapper.vm.attachment = new Attachment('', '', 'file://image.png')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
@@ -158,7 +158,7 @@ test('Display url attachment', async () => {
 })
 
 test('Display base64 attachment', async () => {
-  store.pendingAttachment = new Attachment('image64', 'image/png', 'file://image.png')
+  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
@@ -166,8 +166,10 @@ test('Display base64 attachment', async () => {
 })
 
 test('Remove attachment', async () => {
+  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
+  await wrapper.vm.$nextTick()
   await wrapper.find('.attachment').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('detach-file')
+  expect(wrapper.vm.attachment).toBe(null)
 })
 
 // test('Accept incoming prompt', async () => {
