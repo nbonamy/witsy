@@ -8,7 +8,7 @@
   <img :src="imageSrc" class="image" @click="emit('image-click', imageSrc)" v-else />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { computed } from 'vue'
 import Attachment from '../models/attachment'

@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
 import { availableEngines } from '../llms/llm'
@@ -29,6 +29,8 @@ import SettingsXAI from './SettingsXAI.vue'
 
 const currentEngine = ref(availableEngines[0])
 const engineSettings = ref(null)
+
+type Engine = { id: string, label: string }
 
 const engines = computed(() => {
   return availableEngines.map(engine => {
@@ -59,12 +61,12 @@ const currentView = computed(() => {
   if (currentEngine.value == 'cerebras') return SettingsCerberas
 })
 
-const selectEngine = (engine) => {
+const selectEngine = (engine: Engine) => {
   currentEngine.value = engine.id
   nextTick(() => engineSettings.value.load())
 }
 
-const load = (payload) => {
+const load = (payload: { engine: string }) => {
   if (payload?.engine) {
     currentEngine.value = payload.engine
   }

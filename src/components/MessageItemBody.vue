@@ -7,7 +7,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { computed } from 'vue'
 import { store } from '../services/store'
@@ -15,15 +15,22 @@ import MessageItemImage from './MessageItemImage.vue'
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Object
+  message: Message
 })
+
+interface Block {
+  type: 'text'|'image'
+  content?: string
+  url?: string
+  desc?: string
+}
 
 const blocks = computed(() => {
 
   // extract each <img> in a separate block
   let match
   let lastIndex = 0
-  const blocks = []
+  const blocks: Block[] = []
   const regex = /!\[([^\]]*)\]\(([^\)]*)\)/g
   while (match = regex.exec(props.message.content)) {
 
@@ -56,11 +63,11 @@ const blocks = computed(() => {
 
 const emits = defineEmits(['image-loaded'])
 
-const onImageLoaded = (message) => {
+const onImageLoaded = (message: Message) => {
   emits('image-loaded', message)
 }
 
-const mdRender = (content) => {
+const mdRender = (content: string) => {
 
   // highlight code
   if (store.chatFilter) {

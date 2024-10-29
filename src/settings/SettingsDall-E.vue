@@ -18,12 +18,11 @@
   </div>  
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import { store } from '../services/store'
 import LlmFactory from '../llms/llm'
-import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)
 const refreshLabel = ref('Refresh')
@@ -41,7 +40,7 @@ const onRefresh = async () => {
   setTimeout(() => getModels(), 500)
 }
 
-const setEphemeralRefreshLabel = (text) => {
+const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
   setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }

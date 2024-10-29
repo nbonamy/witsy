@@ -18,13 +18,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
+import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
-import Chat from '../models/chat'
 import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
+import Chat from '../models/chat'
+
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
@@ -34,7 +35,7 @@ const props = defineProps({
   selectMode: Boolean,
 })
 
-const engine = (chat) => chat.engine || store.config.llm.engine
+const engine = (chat: Chat) => chat.engine || store.config.llm.engine
 
 const divChats = ref(null)
 const selection = ref([])
@@ -50,7 +51,7 @@ const visibleChats = computed(() => store.chats.filter((c) => {
   return false
 }).toSorted((a,b) => b.lastModified - a.lastModified))
 
-const getDay = (chat) => {
+const getDay = (chat: Chat) => {
   const now = new Date()
   const oneDay = 24 * 60 * 60 * 1000
   const diff = Date.now() - chat.lastModified
@@ -69,24 +70,25 @@ const getDay = (chat) => {
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const targetRow = ref({})
+const targetRow: Ref<Chat> = ref(null)
 const contextMenuActions = [
   { label: 'Rename Chat', action: 'rename' },
   { label: 'Delete', action: 'delete' },
 ]
 
-let scrollEndTimeout = null
+let scrollEndTimeout: NodeJS.Timeout = null
 onMounted(() => {
-  divChats.value?.addEventListener('scroll', (ev) => {
-    ev.target.classList.add('scrolling')
+  divChats.value?.addEventListener('scroll', (ev: Event) => {
+    const target = ev.target as HTMLElement
+    target.classList.add('scrolling')
     clearTimeout(scrollEndTimeout)
     scrollEndTimeout = setTimeout(() => {
-      ev.target.classList.remove('scrolling')
+      target.classList.remove('scrolling')
     }, 500)
   })
 })
 
-const onSelectChat = (chat) => {
+const onSelectChat = (chat: Chat) => {
   if (props.selectMode) {
     if (selection.value.includes(chat.uuid)) {
       selection.value = selection.value.filter((uuid) => uuid !== chat.uuid)
@@ -98,9 +100,9 @@ const onSelectChat = (chat) => {
   }
 }
 
-const showContextMenu = (event, user) => {
+const showContextMenu = (event: MouseEvent, chat: Chat) => {
   showMenu.value = true
-  targetRow.value = user
+  targetRow.value = chat
   menuX.value = event.clientX
   menuY.value = event.clientY
 }
@@ -109,7 +111,7 @@ const closeContextMenu = () => {
   showMenu.value = false;
 }
 
-const handleActionClick = async (action) => {
+const handleActionClick = async (action: string) => {
 
   // close
   closeContextMenu()

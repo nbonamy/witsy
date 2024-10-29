@@ -35,7 +35,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { v4 as uuidv4 } from 'uuid'
 import { ref, computed } from 'vue'
@@ -45,6 +45,9 @@ import CommandDefaults from '../screens/CommandDefaults.vue'
 import CommandEditor from '../screens/CommandEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
+import { Command, Expert } from 'types'
+import { H } from 'vite/dist/node/types.d-aGj9QkWt'
+import { Mouse } from '@playwright/test'
 
 const commands = ref(null)
 const selected = ref(null)
@@ -64,7 +67,7 @@ const contextMenuActions = [
   { label: 'Unselect All', action: 'unselect' },
 ]
 
-const visibleCommands = computed(() => commands.value?.filter(command => command.state != 'deleted'))
+const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
@@ -74,18 +77,18 @@ const columns = [
   { field: 'action', title: 'Action', },
 ]
 
-const action = (action) => {
+const action = (action: string) => {
   if (action == 'chat_window') return 'Chat Window'
   if (action == 'paste_below') return 'Insert Below'
   if (action == 'paste_in_place') return 'Replace Selection'
   if (action == 'clipboard_copy') return 'Copy to Clipboard'
 }
 
-const onMore = (event) => {
+const onMore = () => {
   if (showMenu.value) {
     closeContextMenu()
   } else {
-    showContextMenu(event)
+    showContextMenu()
   }
 }
 
@@ -101,17 +104,17 @@ const closeContextMenu = () => {
   showMenu.value = false;
 }
 
-const handleActionClick = async (action) => {
+const handleActionClick = async (action: string) => {
 
   // close
   closeContextMenu()
 
   // process
   if (action === 'select') {
-    commands.value.forEach(expert => expert.state = 'enabled')
+    commands.value.forEach((expert: Expert) => expert.state = 'enabled')
     save()
   } else if (action === 'unselect') {
-    commands.value.forEach(expert => expert.state = 'disabled')
+    commands.value.forEach((expert: Expert) => expert.state = 'disabled')
     save()
   } else if (action === 'defaults') {
     onDefaults()
@@ -125,7 +128,7 @@ const handleActionClick = async (action) => {
 
 const onDefaults = () => {
   defaults.value.load()
-  document.getElementById('defaults').showModal()
+  document.querySelector<HTMLDialogElement>('#defaults').showModal()
 }
 
 const onImport = () => {
@@ -146,20 +149,20 @@ const onExport = () => {
   }
 }
 
-const onSelect = (command) => {
+const onSelect = (command: Command) => {
   selected.value = command
 }
 
 const onNew = () => {
   selected.value = null
   edited.value = newCommand()
-  document.getElementById('command-editor').showModal()
+  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
 }
 
-const onEdit = (command) => {
+const onEdit = (command: Command) => {
   edited.value = command
   selected.value = command
-  document.getElementById('command-editor').showModal()
+  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
 }
 
 const onDelete = () => {
@@ -183,12 +186,12 @@ const onDelete = () => {
   })
 }
 
-const onEnabled = (command) => {
+const onEnabled = (command: Command) => {
   command.state = (command.state == 'enabled' ? 'disabled' : 'enabled')
   save()
 }
 
-const onCommandModified = (payload) => {
+const onCommandModified = (payload: Command) => {
 
   // new command?
   let command = null
@@ -197,7 +200,7 @@ const onCommandModified = (payload) => {
     command.id = uuidv4()
     commands.value.push(command)
   } else {
-    command = commands.value.find(command => command.id == payload.id)
+    command = commands.value.find((command: Command) => command.id == payload.id)
   }
 
   // update
@@ -228,18 +231,19 @@ const onCommandModified = (payload) => {
 
 }
 
-var draggedRow
-const onDragStart = (event) => {
-  draggedRow = event.target.closest('tr')
+var draggedRow: HTMLElement
+const onDragStart = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  draggedRow = target.closest('tr')
 }
 
-const onDragOver = (event) => {
+const onDragOver = (event: MouseEvent) => {
   
   event.preventDefault();
   
-  let target = event.target.closest('tr')
-  let targetIndex = Array.from(target.parentNode.children).indexOf(target);
-  let draggedRowIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
+  const target = (event.target as HTMLElement).closest('tr')
+  const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+  const draggedRowIndex = Array.from(draggedRow.parentNode.children).indexOf(draggedRow);
 
   // Determine where to place the dragged row
   if (targetIndex > draggedRowIndex) {
@@ -251,7 +255,7 @@ const onDragOver = (event) => {
   // reorder array
   const rows = document.querySelectorAll('tr[data-id]');
   const newOrderIds = Array.from(rows).map(row => row.getAttribute('data-id'));
-  commands.value.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+  commands.value.sort((a: Command, b: Command) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
 
 }
 

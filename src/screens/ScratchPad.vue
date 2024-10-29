@@ -11,19 +11,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // components
+import { FileContents } from 'types'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import LlmFactory from '../llms/llm'
-import ScratchpadToolbar from '../scratchpad/Toolbar.vue'
+import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
-import useAudioPlayer from '../composables/audio_player'
-import Chat from '../models/chat'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
+import Attachment from '../models/attachment'
+import Chat from '../models/chat'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -67,9 +69,8 @@ const conversationMode = ref(null)
 store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
 const modifiedCheckDelay = 1000
-let modifiedCheckTimeout = null
-let attachment = null
-let fileUrl = null
+let modifiedCheckTimeout: NodeJS.Timeout = null
+let fileUrl: string = null
 
 const resetState = () => {
   assistant.value.stop()
@@ -88,7 +89,7 @@ onMounted(() => {
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopPrompting)
   onEvent('action', onAction)
-  onEvent('conversation-mode', (mode) => conversationMode.value = mode)
+  onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)
 
   // load settings
@@ -99,7 +100,7 @@ onMounted(() => {
   const llmFactory = new LlmFactory(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
-  if (!engine?.length || !model?.length) {
+  if (!engine?.value.length || !model?.value.length) {
     ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
   }
 
@@ -125,10 +126,10 @@ onMounted(() => {
   }
 
   // override some system shortcuts
-  editor.value.$el.addEventListener('keydown', (e) => {
+  editor.value.$el.addEventListener('keydown', (e: KeyboardEvent) => {
 
-    const isCommand = !e.shift && (e.metaKey || e.ctrlKey)
-    const isShiftCommand = e.shift && (e.metaKey || e.ctrlKey)
+    const isCommand = !e.shiftKey && (e.metaKey || e.ctrlKey)
+    const isShiftCommand = e.shiftKey && (e.metaKey || e.ctrlKey)
 
     if (isCommand && e.key == 'n') {
       e.preventDefault()
@@ -142,7 +143,7 @@ onMounted(() => {
     } else if (isCommand && e.key == 'z') {
       e.preventDefault()
       onUndo()
-    } else if ((isCommand && e.key == 'y') && (isShiftCommand && e.key == 'z')) {
+    } else if ((isCommand && e.key == 'y') || (isShiftCommand && e.key == 'z')) {
       e.preventDefault()
       onRedo()
     } else if (isCommand && e.key == 'r') {
@@ -206,10 +207,10 @@ const checkIfModified = () => {
 
 }
 
-const onAction = (action) => {
+const onAction = (action: string|ToolbarAction) => {
 
   // basic actions
-  const actions = {
+  const actions: { [key: string]: CallableFunction} = {
     'clear': onClear,
     'load': onLoad,
     'save': onSave,
@@ -220,31 +221,34 @@ const onAction = (action) => {
   }
 
   // find
-  const callback = actions[action]
-  if (callback) {
-    callback()
-    return
+  if (action instanceof String) {
+    const callback = actions[action as string]
+    if (callback) {
+      callback()
+      return
+    }
   }
 
 
   // advanced actions
-  switch (action.type) {
+  const toolbarAction = action as ToolbarAction
+  switch (toolbarAction.type) {
 
     case 'fontFamily':
-      fontFamily.value = action.value
+      fontFamily.value = toolbarAction.value
       store.config.scratchpad.fontFamily = fontFamily.value
       store.saveSettings()
       return
 
     case 'fontSize':
-      fontSize.value = action.value
+      fontSize.value = toolbarAction.value
       store.config.scratchpad.fontSize = fontSize.value
       store.saveSettings()
       return
 
     case 'llm':
-      engine.value = action.engine
-      model.value = action.model
+      engine.value = toolbarAction.value.engine
+      model.value = toolbarAction.value.model
       store.config.scratchpad.engine = engine.value
       store.config.scratchpad.model = model.value
       store.saveSettings()
@@ -253,7 +257,7 @@ const onAction = (action) => {
     case 'magic':
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
-        const prompt = store.config.instructions.scratchpad[action.action]
+        const prompt = store.config.instructions.scratchpad[toolbarAction.value]
         onSendPrompt({ prompt: prompt })
       } else {
         emitEvent('llm-done')
@@ -263,7 +267,7 @@ const onAction = (action) => {
 
 }
 
-const confirmOverwrite = (callback) => {
+const confirmOverwrite = (callback: CallableFunction) => {
 
   if (!modified.value) {
     callback()
@@ -301,7 +305,8 @@ const onLoad = () => {
       if (!file) return
 
       // parse
-      const scratchpad = JSON.parse(window.api.base64.decode(file.contents))
+      const fileContents = file as FileContents
+      const scratchpad = JSON.parse(window.api.base64.decode(fileContents.contents))
       if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
         Dialog.alert('This file is not a scratchpad file. Please try again with another file.')
       }
@@ -310,7 +315,7 @@ const onLoad = () => {
       resetState()
 
       // update stuff
-      fileUrl = file.url
+      fileUrl = fileContents.url
       editor.value.setContent(scratchpad.contents)
       undoStack.value = scratchpad.undoStack
       redoStack.value = scratchpad.redoStack
@@ -384,11 +389,11 @@ const onReadAloud = async () => {
   }
 }
 
-const onAudioPlayerStatus = (status) => {
+const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = status.state
 }
 
-const onSendPrompt = async ({ prompt, attachment, docrepo }) => {
+const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment?: Attachment, docrepo?: any }) => {
 
   // one at a time
   if (processing.value) {

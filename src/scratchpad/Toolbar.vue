@@ -34,7 +34,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // components
 import { ref, watch, onMounted } from 'vue'
@@ -46,6 +46,11 @@ import ModelSelect from '../components/ModelSelect.vue'
 // bus
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+export interface ToolbarAction {
+  type: string,
+  value: any
+}
 
 const props = defineProps({
   engine: String,
@@ -81,7 +86,7 @@ const onChangeEngine = () => {
 }
 
 const onChangeModel = () => {
-  emitEvent('action', { type: 'llm', engine: engine.value, model: model.value })
+  emitEvent('action', { type: 'llm', value: { engine: engine.value, model: model.value }})
 }
 
 </script>

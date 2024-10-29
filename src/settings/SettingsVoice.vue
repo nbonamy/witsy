@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
 import { BIconMicFill, BIconVolumeUpFill } from 'bootstrap-icons-vue'
@@ -35,7 +35,7 @@ const currentView = computed(() => {
   if (current.value == 'stt') return SettingsSTT
 })
 
-const select = (item) => {
+const select = (item: { id: string}) => {
   current.value = item.id
   nextTick(() => settings.value.load())
 }

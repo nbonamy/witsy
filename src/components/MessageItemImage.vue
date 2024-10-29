@@ -5,9 +5,7 @@
   </div>
 </template>
 
-<script setup>
-
-import { ref, computed } from 'vue'
+<script setup lang="ts">
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -23,7 +21,7 @@ const onImageLoaded = () => {
   emits('image-loaded')
 }
 
-const onFullscreen = (url) => {
+const onFullscreen = () => {
   emitEvent('fullscreen', props.url)
 }
 

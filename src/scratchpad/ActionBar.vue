@@ -63,7 +63,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // components
 import { ref, onMounted } from 'vue'
@@ -102,9 +102,9 @@ const onStandardBar = () => {
   activeBar.value = 'standard'
 }
 
-const onMagicAction = (event, action) => {
-  event.target.closest('.action').classList.add('active')
-  emitEvent('action', { type: 'magic', action: action } )
+const onMagicAction = (event: Event, action: string) => {
+  (event.target as HTMLElement).closest('.action').classList.add('active')
+  emitEvent('action', { type: 'magic', value: action } )
 }
 
 </script>

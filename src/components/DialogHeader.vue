@@ -12,7 +12,7 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 
@@ -31,7 +31,7 @@ const onClose = () => {
 let lastX = 0
 let lastY = 0
 
-const onMoveStart = (event) => {
+const onMoveStart = (event: MouseEvent) => {
   window.addEventListener('mousemove', onMove)
   window.addEventListener('mouseup', onMoveEnd)
   const dialog = header.value.closest('dialog')
@@ -40,7 +40,7 @@ const onMoveStart = (event) => {
   lastY = event.clientY
 }
 
-const onMove = (event) => {
+const onMove = (event: MouseEvent) => {
   const dialog = header.value.closest('dialog')
   const left = parseInt(dialog.style.left) || 0
   const top = parseInt(dialog.style.top) || 0

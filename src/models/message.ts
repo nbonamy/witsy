@@ -16,6 +16,7 @@ export default class Message extends MessageBase {
     this.createdAt = Date.now()
     this.type = 'text'
     this.toolCall = null
+    this.attachment = null
     if (typeof content === 'string') {
       this.setText(content)
     }

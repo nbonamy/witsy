@@ -35,9 +35,9 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import defaultSettings from '../../defaults/settings.json'
 
@@ -56,7 +56,7 @@ onMounted(() => {
 })
 
 const onOpen = () => {
-  document.querySelector('#docrepoconfig').showModal()
+  document.querySelector<HTMLDialogElement>('#docrepoconfig').showModal()
   maxDocumentSizeMB.value = store.config.rag.maxDocumentSizeMB
   chunkSize.value = store.config.rag.chunkSize
   chunkOverlap.value = store.config.rag.chunkOverlap
@@ -79,6 +79,10 @@ const onSave = () => {
   store.config.rag.searchResultCount = searchResultCount.value
   store.config.rag.relevanceCutOff = relevanceCutOff.value
   store.saveSettings()
+}
+
+const onCancel = () => {
+  document.querySelector<HTMLDialogElement>('#docrepoconfig').close()
 }
 
 </script>

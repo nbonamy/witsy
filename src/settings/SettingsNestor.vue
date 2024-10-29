@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
@@ -30,8 +30,8 @@ const status = ref(null)
 
 const tools = computed(() => {
   if (!status.value) return []
-  return status.value.hubs.reduce((acc, hub) => {
-    return acc.concat(hub.tools.map(tool => tool.name))
+  return status.value.hubs.reduce((acc: [], hub: any) => {
+    return acc.concat(hub.tools.map((tool: any) => tool.name))
   }, [])
 })
 

@@ -27,7 +27,7 @@
   <div class="resizer" :style="`left: ${sidebarWidth-5}px`" @mousedown="onResizeSidebarStart">&nbsp;</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
@@ -90,12 +90,12 @@ const onDelete = () => {
   deleteMode.value = false
 }
 
-const onResizeSidebarStart = (event) => {
+const onResizeSidebarStart = () => {
   window.addEventListener('mousemove', onResizeSidebarMove)
   window.addEventListener('mouseup', onResizeSidebarEnd)
 }
 
-const onResizeSidebarMove = (event) => {
+const onResizeSidebarMove = (event: MouseEvent) => {
   let width = Math.max(150, Math.min(400, event.clientX))
   sidebarWidth.value = width
 }

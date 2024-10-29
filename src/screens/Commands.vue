@@ -9,8 +9,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
+import { Command } from 'types'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import {
@@ -42,7 +43,7 @@ onUnmounted(() => {
 
 const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
-const action = (command) => {
+const action = (command: Command) => {
   if (overrideAction.value) return BIconBoxArrowInUpRight
   if (command.action == 'chat_window') return BIconBoxArrowInUpRight
   if (command.action == 'paste_below') return BIconArrowReturnLeft
@@ -50,14 +51,14 @@ const action = (command) => {
   if (command.action == 'clipboard_copy') return BIconClipboard
 }
 
-const onKeyDown = (event) => {
+const onKeyDown = (event: KeyboardEvent) => {
   console.log(event)
   if (event.key == 'Shift') {
     overrideAction.value = true
   }
 }
 
-const onKeyUp = (event) => {
+const onKeyUp = (event: KeyboardEvent) => {
   overrideAction.value = false
   if (event.key == 'Escape') {
     window.api.commands.closePalette()
@@ -71,7 +72,7 @@ const onKeyUp = (event) => {
   }
 }
 
-const onRunCommand = (event, command) => {
+const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   
   // if shift key is pressed, run the command in a new window
   if (event.shiftKey) {

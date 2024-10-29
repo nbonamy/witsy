@@ -4,18 +4,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import Message from '../models/message'
 
-const props = defineProps({
-  message: Object,
+defineProps({
+  message: Message,
 })
 
 const copyLabel = ref('Copy')
 
-const onCopy = (message) => {
+const onCopy = (message: Message) => {
   if (message.type == 'text') {
     window.api.clipboard.writeText(message.content)
   } else if (message.type == 'image') {

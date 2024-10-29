@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -80,7 +80,7 @@ const load = () => {
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
 
-const setAppearanceTheme = (value) => {
+const setAppearanceTheme = (value: string) => {
   appearance.value = value
   window.api.setAppearanceTheme(value)
   save()

@@ -19,12 +19,12 @@
         <a href="https://console.groq.com/docs/models" target="_blank">More about Groq models</a><br/>
         <a href="https://groq.com/pricing/" target="_blank">Groq pricing</a>
       </div>
-      <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+      <!-- <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button> -->
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -47,7 +47,7 @@ const load = () => {
 //   setTimeout(() => getModels(), 500)
 // }
 
-const setEphemeralRefreshLabel = (text) => {
+const setEphemeralRefreshLabel = (text: string) => {
   // refreshLabel.value = text
   // setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }

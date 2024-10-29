@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
@@ -134,13 +134,13 @@ const onStop = () => {
   stopDictation(true)
 }
 
-const stopDictation = async (userStopped) => {
+const stopDictation = async (userStopped: boolean) => {
   userStoppedDictation = userStopped
   state.value = 'processing'
   audioRecorder.stop()
 }
 
-const transcribe = async (audioChunks) => {
+const transcribe = async (audioChunks: any[]) => {
 
   try {
 
@@ -162,7 +162,7 @@ const transcribe = async (audioChunks) => {
 
 }
 
-const onKeyDown = (event) => {
+const onKeyDown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     onCancel()
   }

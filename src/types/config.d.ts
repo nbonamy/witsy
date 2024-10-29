@@ -16,43 +16,46 @@ export interface Configuration {
   gdrive: GDriveConfig
 }
 
-interface GeneralConfig {
+export interface GeneralConfig {
   hideOnStartup: boolean
   keepRunning: boolean
   language: string
   tips: {[key: string]: boolean}
+  confirm: {[key: string]: boolean}
+  autoSavePrompt: boolean
 }
 
-interface LLMConfig {
+export interface LLMConfig {
   engine: string
   autoVisionSwitch: boolean
   conversationLength: number
 }
 
-interface InstructionsConfig {
+export interface InstructionsConfig {
   default: string
   titling: string
   titling_user: string
   docquery: string
 }
 
-interface AppearanceConfig {
+export interface AppearanceConfig {
   theme: 'light' | 'dark' | 'system'
   tint: 'black' | 'blue'
   chat: ChatAppearance
 }
 
-interface CommandsConfig {
+export interface CommandsConfig {
   engine: string
   model: string
 }
 
-interface ChatAppearance {
+export interface ChatAppearance {
   theme: string
+  fontFamily: string
   fontSize: number
 }
 
-interface ShortcutsConfig {
+export interface ShortcutsConfig {
   chat: Shortcut
   command: Shortcut
   prompt: Shortcut
@@ -63,7 +66,7 @@ interface ShortcutsConfig {
 
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
-interface STTConfig {
+export interface STTConfig {
   engine: string
   model: string
   silenceDetection: boolean
@@ -71,19 +74,19 @@ interface STTConfig {
   //silenceAction: SilenceAction
 }
 
-interface Model {
+export interface Model {
   id: string
   name: string
   meta: any
 }
 
-interface ModelsConfig {
+export interface ModelsConfig {
   chat: Model[]
   image?: Model[]
   embedding?: Model[]
 }
 
-interface ModelConfig {
+export interface ModelConfig {
   chat: string
   image: string
 }
@@ -91,12 +94,12 @@ interface ModelConfig {
 export type TTSModel = 'tts-1' | 'tts-1-hd'
 export type TTSVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 
-interface TTSConfig {
+export interface TTSConfig {
   model: TTSModel
   voice: TTSVoice
 }
 
-interface RagConfig {
+export interface RagConfig {
   maxDocumentSizeMB?: number
   chunkSize?: number
   chunkOverlap?: number
@@ -104,11 +107,11 @@ interface RagConfig {
   relevanceCutOff?: number
 }
 
-interface DropboxConfig {
+export interface DropboxConfig {
   accessToken: string
 }
 
-interface GDriveConfig {
+export interface GDriveConfig {
   tokens: anyDict
   fileIds: strDict
 }

@@ -52,7 +52,7 @@
   </dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, watch } from 'vue'
 import { store } from '../services/store'
@@ -102,7 +102,7 @@ const onChangeEngine = () => {
   else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
 }
 
-const onIconKeyDown = (event) => {
+const onIconKeyDown = (event: KeyboardEvent) => {
   if (icon.value?.length) {
     if (event.key !== 'Backspace' && event.key !== 'Delete') {
       event.preventDefault()
@@ -115,11 +115,11 @@ const onIconKeyUp = () => {
   }
 }
 
-const onShortcutKeyDown = (event) => {
+const onShortcutKeyDown = () => {
   shortcut.value = ''
 }
 
-const onShortcutKeyUp = (event) => {
+const onShortcutKeyUp = (event: KeyboardEvent) => {
 
   // must be a normal character
   if (event.keyCode < 32) {
@@ -134,7 +134,7 @@ const onCancel = () => {
   load()
 }
 
-const onSave = (event) => {
+const onSave = (event: Event) => {
 
   // check
   if (!label.value || !template.value || !action.value) {

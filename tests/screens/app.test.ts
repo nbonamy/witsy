@@ -14,6 +14,7 @@ beforeAll(() => {
 
   // eslint-disable-next-line no-global-assign
   navigator = {
+    // @ts-expect-error mock
     mediaDevices: {
       getUserMedia: vi.fn()
     }
@@ -24,7 +25,7 @@ beforeAll(() => {
     off: vi.fn(),
     listFonts: vi.fn(() => []),
     config: {
-      load: vi.fn(() => defaults),
+      load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
       save: vi.fn(),
     },
     store: {
@@ -51,35 +52,41 @@ beforeAll(() => {
 })
 
 test('Renders correctly', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/')
   mount(App)
 })
 
 test('Renders Main', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/')
   const wrapper = mount(App)
   expect(wrapper.findComponent(Main).exists()).toBe(true)
 })
 
 test('Renders Wait', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/#/wait')
   const wrapper = mount(App)
   expect(wrapper.findComponent(Wait).exists()).toBe(true)
 })
 
 test('Renders Commands', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/#/command')
   const wrapper = mount(App)
   expect(wrapper.findComponent(Commands).exists()).toBe(true)
 })
 
 test('Renders PromptAnywhere', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/#/prompt')
   const wrapper = mount(App)
   expect(wrapper.findComponent(PromptAnywhere).exists()).toBe(true)
 })
 
 test('Transmits query params', () => {
+  // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/?textId=6#/command')
   const wrapper = mount(App)
   expect(wrapper.findComponent(Commands).props().extra.textId).toBe('6')
