@@ -7,8 +7,8 @@
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
     <div class="input" @paste="onPaste">
-      <div v-if="store.pendingAttachment" class="attachment" @click="onDetach">
-        <AttachmentView class="attachment" :attachment="store.pendingAttachment" />
+      <div v-if="attachment" class="attachment" @click="onDetach">
+        <AttachmentView class="attachment" :attachment="attachment" />
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
@@ -27,7 +27,7 @@
 
 <script setup>
 
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
@@ -94,6 +94,8 @@ const llmFactory = new LlmFactory(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
+const attachment = ref(null)
+const docrepo = ref(null)
 const input = ref(null)
 const docRepos = ref([])
 const showDocRepo = ref(false)
@@ -123,7 +125,7 @@ const isPrompting = computed(() => {
 })
 
 const docRepoActive = computed(() => {
-  return props.chat?.docrepo || store.pendingDocRepo
+  return props.chat?.docrepo || docrepo.value
 })
 
 const docReposMenuItems = computed(() => {
@@ -177,6 +179,9 @@ onMounted(() => {
   loadDocRepos()
   initDictation()
 
+  // reset doc repo
+  watch(() => props.chat || {}, () => docrepo.value = props.chat?.docrepo, { immediate: true })
+
 })
 
 const defaultPrompt = (conversationMode) => {
@@ -228,8 +233,8 @@ const loadDocRepos = () => {
 }
 
 const onSetPrompt = (message) => {
-  store.pendingAttachment = message.attachment
   prompt.value = message.content
+  attachment.value = message.attachment
   nextTick(() => {
     autoGrow(input.value)
     input.value.focus()
@@ -237,8 +242,8 @@ const onSetPrompt = (message) => {
 }
 
 const onSetExpertPrompt = (message) => {
-  store.pendingAttachment = null
   prompt.value = message
+  attachment.value = null
   nextTick(() => {
     autoGrow(input.value)
     selectPromptQuotedPart()
@@ -251,7 +256,12 @@ const onSendPrompt = () => {
   prompt.value = defaultPrompt(props.conversationMode)
   nextTick(() => {
     autoGrow(input.value)
-    emitEvent('send-prompt', message)
+    emitEvent('send-prompt', {
+      prompt: message,
+      attachment: attachment.value || null,
+      docrepo: docrepo.value || null
+    })
+    attachment.value = null
   })
 }
 
@@ -267,16 +277,12 @@ const onAttach = () => {
     const format = file.url.split('.').pop()
     if (llmFactory.canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
-      emitEvent('attach-file', new Attachment(file.contents, mimeType, file.url))
+      attachment.value = new Attachment(file.contents, mimeType, file.url)
     } else {
       console.error('Cannot attach format', format)
       Dialog.alert('This file format is not supported')
     }
   }
-}
-
-const onDetach = () => {
-  emitEvent('detach-file')
 }
 
 const onPaste = (event) => {
@@ -294,7 +300,7 @@ const onPaste = (event) => {
 
           // check before attaching
           if (llmFactory.canProcessFormat(engine(), model(), format)) {
-            emitEvent('attach-file', new Attachment(contents, mimeType, 'clipboard://'))
+            attachment.value = new Attachment(contents, mimeType, 'clipboard://')
           } else {
             console.error('Cannot attach format', format)
             Dialog.alert('This file format is not supported')
@@ -305,6 +311,10 @@ const onPaste = (event) => {
       event.preventDefault();
     }
   }
+}
+
+const onDetach = () => {
+  attachment.value = null
 }
 
 const onExperts = () => {
@@ -474,14 +484,14 @@ const handleDocRepoClick = (action) => {
     if (props.chat) {
       props.chat.docrepo = null
     }
-    store.pendingDocRepo = null
+    docrepo.value = null
     window.api.docrepo.disconnect()
   } else {
     window.api.docrepo.connect(action)
     if (props.chat) {
       props.chat.docrepo = action
     } else {
-      store.pendingDocRepo = action
+      docrepo.value = action
     }
   }
 }

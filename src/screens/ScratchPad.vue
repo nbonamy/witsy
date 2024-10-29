@@ -87,8 +87,6 @@ onMounted(() => {
   // events
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopPrompting)
-  onEvent('attach-file', onAttachFile)
-  onEvent('detach-file', onDetachFile)
   onEvent('action', onAction)
   onEvent('conversation-mode', (mode) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)
@@ -256,7 +254,7 @@ const onAction = (action) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = store.config.instructions.scratchpad[action.action]
-        onSendPrompt(prompt)
+        onSendPrompt({ prompt: prompt })
       } else {
         emitEvent('llm-done')
       }
@@ -390,15 +388,7 @@ const onAudioPlayerStatus = (status) => {
   audioState.value = status.state
 }
 
-const onAttachFile = async (file) => {
-  store.pendingAttachment = file
-}
-
-const onDetachFile = async () => {
-  store.pendingAttachment = null
-}
-
-const onSendPrompt = async (userPrompt) => {
+const onSendPrompt = async ({ prompt, attachment, docrepo }) => {
 
   // one at a time
   if (processing.value) {
@@ -406,7 +396,7 @@ const onSendPrompt = async (userPrompt) => {
   }
   
   // we need a prompt
-  if (!userPrompt) {
+  if (!prompt) {
     return
   }
   
@@ -419,15 +409,18 @@ const onSendPrompt = async (userPrompt) => {
   subject = subject.trim()
 
   // now build the prompt
-  let finalPrompt = userPrompt
+  let finalPrompt = prompt
   if (subject.length > 0) {
     const template = store.config.instructions.scratchpad.prompt
-    finalPrompt = template.replace('{ask}', userPrompt).replace('{document}', subject)
+    finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
   }
 
   // log
   processing.value = true
   console.log(finalPrompt)
+
+  // load attachment
+  attachment?.loadContents()
 
   // prompt
   assistant.value.prompt(finalPrompt, {
@@ -437,7 +430,7 @@ const onSendPrompt = async (userPrompt) => {
     engine: engine.value,
     model: model.value,
     systemInstructions: store.config.instructions.scratchpad.system,
-    attachment: store.pendingAttachment,
+    attachment: attachment,
   }, (chunk) => {
 
     // if done
@@ -488,9 +481,6 @@ const onSendPrompt = async (userPrompt) => {
     
     }
   })
-
-  // clear stuff
-  store.pendingAttachment = null
 
 }
 

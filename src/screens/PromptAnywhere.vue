@@ -2,7 +2,7 @@
 <template>
   <div class="anywhere" @click="onClick">
     <div class="container">
-      <Prompt ref="prompt" :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="false" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+      <Prompt ref="prompt" :chat="chat" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
       <div class="spacer" />
       <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
@@ -14,6 +14,9 @@
           <MessageItemActionRead :message="response" :audio-state="audioState" :read-aloud="onReadAloud" />
           <div class="action continue" v-if="!response.transient" @click="onContinueConversation">
             <BIconBoxArrowInUpRight /> Open as Chat
+          </div>
+          <div class="action clear" @click="onClear">
+            <BIconXCircle />  Clear
           </div>
           <div class="action close" @click="onClose">
             <span class="narrow">Esc</span> Close
@@ -79,6 +82,15 @@ onMounted(() => {
   window.api.on('set-expert-prompt', onSetExpertPrompt)
   window.api.on('show', onShow)
 
+  // other
+  store.addListener({
+    onStoreUpdated(domain) {
+      if (domain === 'config') {
+        onConfigUpdated()
+      }
+    }
+  })
+
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
   onEvent('audio-noise-detected', () =>  audioPlayer.stop)
@@ -103,14 +115,18 @@ onUnmounted(() => {
   window.api.off('show', onShow)
 })
 
-const onShow = () => {
+const onConfigUpdated = async () => {
+  llmFactory.setConfig(store.config)
+}
 
-  // log
-  console.log('initialize prompt window llm')
+const onShow = () => {
 
   // get engine and model
   const { engine, model } = llmFactory.getChatEngineModel(false)
   
+  // log
+  console.log(`initialize prompt window llm: ${engine} ${model}`)
+
   // init llm with tools
   llm = llmFactory.igniteEngine(engine)
   for (const pluginName in availablePlugins) {
@@ -134,13 +150,34 @@ const onShow = () => {
     // init thread
     chat.value = new Chat()
     chat.value.title = null
-    chat.value.setEngineModel(engine, model)
     chat.value.addMessage(new Message('system', store.config.instructions.default))
 
     // reset response
     response.value = null
   
   }
+
+  // set engine model
+  chat.value.setEngineModel(engine, model)
+
+  // focus prompt
+  if (prompt.value) {
+    prompt.value.setPrompt()
+    prompt.value.focus()
+  }
+
+}
+
+const onClear = () => {
+
+  // stop generation
+  onStopGeneration()
+
+  // keep the first message (instuctions)
+  chat.value.messages = chat.value.messages.slice(0, 1)
+
+  // reset response
+  response.value = null
 
   // focus prompt
   if (prompt.value) {
@@ -208,29 +245,39 @@ const onStopGeneration = () => {
   stopGeneration = true
 }
 
-const onPrompt = async (data) => {
+const onPrompt = async ({ prompt, attachment, docrepo }) => {
 
   // set response
   response.value = new Message('assistant', '')
   response.value.setText(null)
 
   // update thread
-  chat.value.addMessage(new Message('user', data))
+  const userMessage = new Message('user', prompt)
+  if (attachment) {
+    attachment.loadContents()
+    userMessage.attach(attachment)
+  }
+  chat.value.addMessage(userMessage)
   chat.value.addMessage(response.value)
 
   // now generate
-  stopGeneration = false
-  const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
-  for await (const msg of stream) {
-    if (stopGeneration) {
-      llm.stop(stream)
-      break
+  try {
+    stopGeneration = false
+    const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
+    for await (const msg of stream) {
+      if (stopGeneration) {
+        llm.stop(stream)
+        break
+      }
+      if (msg.type === 'tool') {
+        response.value.setToolCall(msg.text)
+      } else if (msg.type === 'content') {
+        response.value.appendText(msg)
+      }
     }
-    if (msg.type === 'tool') {
-      response.value.setToolCall(msg.text)
-    } else if (msg.type === 'content') {
-      response.value.appendText(msg)
-    }
+  } catch (err) {
+    console.error(err)
+    response.value.setText('An error occurred while generating the response.')
   }
 
   // save?
@@ -360,8 +407,10 @@ const onReadAloud = async (message) => {
         &.insert svg {
           margin-top: 4px;
         }
-        &.close {
+        &.clear {
           margin-left: auto;
+        }
+        &.close {
           .narrow {
             border: 1px solid var(--icon-color);
             border-radius: 4px;

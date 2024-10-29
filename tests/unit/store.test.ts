@@ -54,7 +54,6 @@ test('Check atributtes', async () => {
   expect(store.experts).toEqual([])
   expect(store.chats).toEqual([])
   expect(store.chatFilter).toBe(null)
-  expect(store.pendingAttachment).toBe(null)
 })
 
 test('Load', async () => {

@@ -51,8 +51,6 @@ onMounted(() => {
   onEvent('delete-chat', onDeleteChat)
   onEvent('select-chat', onSelectChat)
   onEvent('send-prompt', onSendPrompt)
-  onEvent('attach-file', onAttachFile)
-  onEvent('detach-file', onDetachFile)
   onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-prompting', onStopGeneration)
 
@@ -163,7 +161,6 @@ const onNewChat = () => {
 const onSelectChat = (chat) => {
   // create a new assistant to allow parallel querying
   // this will be garbage collected anyway
-  store.pendingDocRepo = null
   assistant.value = new Assistant(store.config)
   assistant.value.setChat(chat)
   nextTick(() => {
@@ -223,7 +220,7 @@ const onDeleteChat = async (chat) => {
   })
 }
 
-const onSendPrompt = async (prompt) => {
+const onSendPrompt = async ({ prompt, attachment, docrepo }) => {
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -233,12 +230,12 @@ const onSendPrompt = async (prompt) => {
   }
 
   // save the attachment
-  if (store.pendingAttachment?.saved === false) {
-    store.pendingAttachment.loadContents()
-    const fileUrl = saveFileContents(store.pendingAttachment.format(), store.pendingAttachment.b64Contents())
+  if (attachment?.saved === false) {
+    attachment.loadContents()
+    const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
     if (fileUrl) {
-      store.pendingAttachment.saved = true
-      store.pendingAttachment.url = fileUrl
+      attachment.saved = true
+      attachment.url = fileUrl
     }
   }
 
@@ -246,15 +243,11 @@ const onSendPrompt = async (prompt) => {
   assistant.value.prompt(prompt, {
     ...(engine.value && { engine: engine.value }),
     ...(model.value && { model: model.value }),
-    attachment: store.pendingAttachment,
-    docrepo: store.pendingDocRepo,
+    attachment: attachment || null,
+    docrepo: docrepo || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
   })
-
-  // clear stuff
-  store.pendingAttachment = null
-  store.pendingDocRepo = null
 
 }
 
@@ -273,16 +266,12 @@ const onRetryGeneration = async (message) => {
   const lastMessage = assistant.value.chat.messages.pop()
 
   // and retry
-  onSendPrompt(lastMessage.content)
+  onSendPrompt({
+    prompt: lastMessage.content,
+    attachment: lastMessage.attachment,
+    docrepo: assistant.value.chat.docrepo
+  })
 
-}
-
-const onAttachFile = async (file) => {
-  store.pendingAttachment = file
-}
-
-const onDetachFile = async () => {
-  store.pendingAttachment = null
 }
 
 const onStopGeneration = async () => {
