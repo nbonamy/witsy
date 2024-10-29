@@ -30,7 +30,7 @@
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-    <CommandDefaults id="defaults" ref="defaults" @command-defaults-modified="onCommandModified"/>
+    <CommandDefaults id="defaults" ref="defaults" />
     <CommandEditor id="command-editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
 </template>

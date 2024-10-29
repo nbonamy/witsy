@@ -4,7 +4,6 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
-    "autoSavePrompt": false,
     "language": "",
     "tips": {
       "trayIcon": true,
@@ -54,6 +53,11 @@
     "model": "",
     "fontSize": "3",
     "fontFamily": "serif"
+  },
+  "prompt": {
+    "engine": "",
+    "model": "",
+    "autosave": false
   },
   "commands": {
     "engine": "",
