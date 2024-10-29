@@ -5,8 +5,8 @@ import { RunCommandResponse } from 'types/automation.d'
 import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
-import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import LlmFactory from '../llms/llm'
 import Message from '../models/message'
 import Automator from './automator'
 import { v4 as uuidv4 } from 'uuid'
@@ -121,6 +121,7 @@ export default class Commander {
 
       // config
       const config: Configuration = loadSettings(app);
+      const llmFactory = new LlmFactory(config);
 
       // extract what we need
       const template = command.template;
@@ -128,7 +129,7 @@ export default class Commander {
       let engine = command.engine || config.commands.engine;
       let model = command.model || config.commands.model;
       if (!engine?.length || !model?.length) {
-        ({ engine, model } = getChatEngineModel(false));
+        ({ engine, model } = llmFactory.getChatEngineModel(false));
       }
       // const temperature = command.temperature;
 
@@ -146,7 +147,7 @@ export default class Commander {
         window.openWaitingPanel();
 
         // we need an llm
-        const llm = igniteEngine(engine);
+        const llm = llmFactory.igniteEngine(engine);
         if (!llm) {
           throw new Error(`Invalid LLM engine: ${engine}`)
         }

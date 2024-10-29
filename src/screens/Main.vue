@@ -202,17 +202,12 @@ const onDeleteChat = async (chat) => {
     if (result.isConfirmed) {
 
       // fist remove
-      if (isStandaloneChat.value) {
-        chat.deleted = true
-        store.saveHistory()
-      } else {
-        for (const chat of chats) {
-          let index = store.chats.findIndex((c) => c.uuid === chat)
-          store.chats[index].delete()
-          store.chats.splice(index, 1)
-        }
-        store.saveHistory()
+      for (const chat of chats) {
+        let index = store.chats.findIndex((c) => c.uuid === chat)
+        store.chats[index].delete()
+        store.chats.splice(index, 1)
       }
+      store.saveHistory()
 
       // if current chat
       if (chats.includes(assistant.value.chat?.uuid)) {

@@ -28,7 +28,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadModels } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
@@ -59,7 +59,8 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadModels('google')
+  const llmFactory = new LlmFactory(store.config)
+  let success = await llmFactory.loadModels('google')
   if (!success) {
     chat_models.value = []
     //image_models.value = []

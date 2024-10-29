@@ -110,7 +110,7 @@ test('Merge history', async () => {
   listeners[0]('history')
   expect(store.chats).toHaveLength(3)
   expect(store.chats[1].messages).toHaveLength(3)
-  chats[2].deleted = true
+  chats.splice(2, 1)
   listeners[0]('history')
   expect(store.chats).toHaveLength(2)
   expect(store.chats[1].messages).toHaveLength(3)

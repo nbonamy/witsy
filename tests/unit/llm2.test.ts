@@ -1,8 +1,8 @@
 
 import { vi, expect, test } from 'vitest'
-import { loadModels } from '../../src/llms/llm'
 import * as _MultiLLM from 'multi-llm-ts'
 import { store } from '../../src/services/store'
+import LlmFactory from '../../src/llms/llm'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -44,36 +44,38 @@ store.config = {
   }
 }
 
+const llmFactory = new LlmFactory(store.config)
+
 test('Load models', async () => {
-  await loadModels('anthropic')
+  await llmFactory.loadModels('anthropic')
   expect(_MultiLLM.loadAnthropicModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(1)
   
-  await loadModels('cerebras')
+  await llmFactory.loadModels('cerebras')
   expect(_MultiLLM.loadCerebrasModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(2)
   
-  await loadModels('google')
+  await llmFactory.loadModels('google')
   expect(_MultiLLM.loadGoogleModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(3)
   
-  await loadModels('groq')
+  await llmFactory.loadModels('groq')
   expect(_MultiLLM.loadGroqModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(4)
   
-  await loadModels('mistralai')
+  await llmFactory.loadModels('mistralai')
   expect(_MultiLLM.loadMistralAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(5)
   
-  await loadModels('ollama')
+  await llmFactory.loadModels('ollama')
   expect(_MultiLLM.loadOllamaModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(6)
   
-  await loadModels('openai')
+  await llmFactory.loadModels('openai')
   expect(_MultiLLM.loadOpenAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(7)
   
-  await loadModels('xai')
+  await llmFactory.loadModels('xai')
   expect(_MultiLLM.loadXAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config.save).toHaveBeenCalledTimes(8)
 })

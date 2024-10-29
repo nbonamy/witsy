@@ -29,9 +29,9 @@
 
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import useAudioPlayer from '../composables/audio_player'
+import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
@@ -49,6 +49,7 @@ store.load()
 
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
+const llmFactory = new LlmFactory(store.config)
 
 const prompt = ref(null)
 const isMas = ref(false)
@@ -108,10 +109,10 @@ const onShow = () => {
   console.log('initialize prompt window llm')
 
   // get engine and model
-  const { engine, model } = getChatEngineModel(false)
+  const { engine, model } = llmFactory.getChatEngineModel(false)
   
   // init llm with tools
-  llm = igniteEngine(engine)
+  llm = llmFactory.igniteEngine(engine)
   for (const pluginName in availablePlugins) {
     const pluginClass = availablePlugins[pluginName]
     const instance = new pluginClass(store.config.plugins[pluginName])

@@ -1,10 +1,10 @@
 import { LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
-import { getChatEngineModel } from '../llms/llm'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
+import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
 // eslint-disable-next-line import/no-unresolved
@@ -15,6 +15,7 @@ type ChunkCallback = (chunk: LlmChunk) => void
 export default class {
 
   config: Configuration
+  llmFactory: LlmFactory
   engine: string
   llm: LlmWorker
   chat: Chat
@@ -31,10 +32,12 @@ export default class {
     this.stream = null
     this.opts = null
     this.callback = null
+    this.llmFactory = new LlmFactory(config)
   }
 
   setConfig(config: Configuration) {
     this.config = config
+    this.llmFactory = new LlmFactory(config)
   }
 
   setChat(chat: Chat) {
@@ -90,7 +93,7 @@ export default class {
     const defaults: LlmCompletionOpts = {
       save: true,
       titling: true,
-      ... getChatEngineModel(),
+      ... this.llmFactory.getChatEngineModel(),
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
     }

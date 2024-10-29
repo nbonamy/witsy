@@ -38,7 +38,8 @@
 
 // components
 import { ref, watch, onMounted } from 'vue'
-import { getChatModel } from '../llms/llm'
+import { store } from '../services/store'
+import LlmFactory from '../llms/llm'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 
@@ -74,7 +75,8 @@ const onChangeFontSize = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = getChatModel(engine.value, false)
+  const llmFactory = new LlmFactory(store.config)
+  model.value = llmFactory.getChatModel(engine.value, false)
   onChangeModel()
 }
 

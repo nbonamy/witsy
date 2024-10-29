@@ -1,4 +1,5 @@
 
+import { Configuration } from 'types/config'
 import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, Cerebras, LlmEngine , loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel } from 'multi-llm-ts'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
@@ -8,136 +9,152 @@ import OpenAI from './openai'
 export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'groq', 'cerebras' ]
 
-export const isSpecializedModel = (engine: string, model: string): boolean => {
-  if (engine === 'anthropic') return isSpecialAnthropicModel(model)
-  return false
-}
+export default class LlmFactory {
 
-export const getFallbackModel = (engine: string): string => {
-  if (engine === 'anthropic') return getAnthropicFallbackModel()
-  return null
-}
+  config: Configuration
 
-export const getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
-  const engine = store.config.llm.engine
-  const model = getChatModel(engine, acceptSpecializedModels)
-  return { engine, model }
-}
-
-export const getChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
-
-  // get from config
-  const model = store.config.engines[engine].model.chat
-
-  // check
-  if (!acceptSpecializedModels && isSpecializedModel(engine, model)) {  
-    return getFallbackModel(engine)
-  } else {
-    return model
+  constructor(config: Configuration) {
+    this.config = config
   }
 
-}
-
-export const isEngineConfigured = (engine: string): boolean => {
-  if (engine === 'anthropic') return Anthropic.isConfigured(store.config.engines.anthropic)
-  if (engine === 'cerebras') return Cerebras.isConfigured(store.config.engines.cerebras)
-  if (engine === 'google') return Google.isConfigured(store.config.engines.google)
-  if (engine === 'groq') return Groq.isConfigured(store.config.engines.groq)
-  if (engine === 'mistralai') return MistralAI.isConfigured(store.config.engines.mistralai)
-  if (engine === 'ollama') return Ollama.isConfigured(store.config.engines.ollama)
-  if (engine === 'openai') return OpenAI.isConfigured(store.config.engines.openai)
-  if (engine === 'xai') return XAI.isConfigured(store.config.engines.xai)
-  return false
-}  
-
-export const isEngineReady = (engine: string): boolean => {
-  if (engine === 'anthropic') return Anthropic.isReady(store.config.engines.anthropic)
-  if (engine === 'cerebras') return Cerebras.isReady(store.config.engines.cerebras)
-  if (engine === 'google') return Google.isReady(store.config.engines.google)
-  if (engine === 'groq') return Groq.isReady(store.config.engines.groq)
-  if (engine === 'mistralai') return MistralAI.isReady(store.config.engines.mistralai)
-  if (engine === 'ollama') return Ollama.isReady(store.config.engines.ollama)
-  if (engine === 'openai') return OpenAI.isReady(store.config.engines.openai)
-  if (engine === 'xai') return XAI.isReady(store.config.engines.xai)
-  return false
-}
-
-export const igniteEngine = (engine: string, fallback = 'openai'): LlmEngine => {
-  if (engine === 'anthropic') return new Anthropic(store.config.engines.anthropic, getComputerInfo())
-  if (engine === 'cerebras') return new Cerebras(store.config.engines.cerebras)
-  if (engine === 'google') return new Google(store.config.engines.google)
-  if (engine === 'groq') return new Groq(store.config.engines.groq)
-  if (engine === 'mistralai') return new MistralAI(store.config.engines.mistralai)
-  if (engine === 'ollama') return new Ollama(store.config.engines.ollama)
-  if (engine === 'openai') return new OpenAI(store.config.engines.openai)
-  if (engine === 'xai') return new XAI(store.config.engines.xai)
-  if (isEngineReady(fallback)) {
-    console.log(`Engine ${engine} unknown. Falling back to ${fallback}`)
-    return igniteEngine(fallback, store.config.engines[fallback])
+  isSpecializedModel = (engine: string, model: string): boolean => {
+    if (engine === 'anthropic') return isSpecialAnthropicModel(model)
+    return false
   }
-  return null
-}
-
-export const hasChatModels = (engine: string) => {
-  return store.config.engines[engine].models.chat.length > 0
-}
-
-export const hasVisionModels = (engine: string) => {
-  return _hasVisionModels(engine, store.config.engines[engine])
-}
-
-export const isVisionModel = (engine: string, model: string) => {
-  return _isVisionModel(engine, model, store.config.engines[engine])
-}
-
-export const canProcessFormat = (engine: string, model: string, format: string) => {
-  if (imageFormats.includes(format.toLowerCase())) {
-    const autoSwitch = store.config.llm.autoVisionSwitch
-    if (autoSwitch) {
-      return hasVisionModels(engine) || isVisionModel(engine, model)
-    } else {
-      return isVisionModel(engine, model)
-    }
-  } else {
-    return textFormats.includes(format.toLowerCase())
-  }
-}
-
-export const initModels = async () => {
-  for (const engine of staticModelsEngines) {
-    if (isEngineConfigured(engine)) {
-      await loadModels(engine)
-    }
-  }
-}
-
-export const loadModels = async (engine: string): Promise<boolean> => {
   
-  console.log('Loading models for', engine)
-  let rc = false
-  if (engine === 'openai') {
-    rc = await loadOpenAIModels(store.config.engines.openai)
-    console.log('OpenAI models loaded', rc)
-  } else if (engine === 'ollama') {
-    rc = await loadOllamaModels(store.config.engines.ollama)
-  } else if (engine === 'mistralai') {
-    rc = await loadMistralAIModels(store.config.engines.mistralai)
-  } else if (engine === 'anthropic') {
-    rc = await loadAnthropicModels(store.config.engines.anthropic, getComputerInfo())
-  } else if (engine === 'google') {
-    rc = await loadGoogleModels(store.config.engines.google)
-  } else if (engine === 'groq') {
-    rc = await loadGroqModels(store.config.engines.groq)
-  } else if (engine === 'cerebras') {
-    rc = await loadCerebrasModels(store.config.engines.cerebras)
-  } else if (engine === 'xai') {
-    rc = await loadXAIModels(store.config.engines.xai)
+  getFallbackModel = (engine: string): string => {
+    if (engine === 'anthropic') return getAnthropicFallbackModel()
+    return null
   }
+  
+  getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
+    const engine = this.config.llm.engine
+    const model = this.getChatModel(engine, acceptSpecializedModels)
+    return { engine, model }
+  }
+  
+  getChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
+  
+    // get from config
+    const model = this.config.engines[engine].model.chat
+  
+    // check
+    if (!acceptSpecializedModels && this.isSpecializedModel(engine, model)) {  
+      return this.getFallbackModel(engine)
+    } else {
+      return model
+    }
+  
+  }
+  
+  isEngineConfigured = (engine: string): boolean => {
+    if (engine === 'anthropic') return Anthropic.isConfigured(this.config.engines.anthropic)
+    if (engine === 'cerebras') return Cerebras.isConfigured(this.config.engines.cerebras)
+    if (engine === 'google') return Google.isConfigured(this.config.engines.google)
+    if (engine === 'groq') return Groq.isConfigured(this.config.engines.groq)
+    if (engine === 'mistralai') return MistralAI.isConfigured(this.config.engines.mistralai)
+    if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
+    if (engine === 'openai') return OpenAI.isConfigured(this.config.engines.openai)
+    if (engine === 'xai') return XAI.isConfigured(this.config.engines.xai)
+    return false
+  }  
+  
+  isEngineReady = (engine: string): boolean => {
+    if (engine === 'anthropic') return Anthropic.isReady(this.config.engines.anthropic)
+    if (engine === 'cerebras') return Cerebras.isReady(this.config.engines.cerebras)
+    if (engine === 'google') return Google.isReady(this.config.engines.google)
+    if (engine === 'groq') return Groq.isReady(this.config.engines.groq)
+    if (engine === 'mistralai') return MistralAI.isReady(this.config.engines.mistralai)
+    if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama)
+    if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai)
+    if (engine === 'xai') return XAI.isReady(this.config.engines.xai)
+    return false
+  }
+  
+  igniteEngine = (engine: string, fallback = 'openai'): LlmEngine => {
+    if (engine === 'anthropic') return new Anthropic(this.config.engines.anthropic, getComputerInfo())
+    if (engine === 'cerebras') return new Cerebras(this.config.engines.cerebras)
+    if (engine === 'google') return new Google(this.config.engines.google)
+    if (engine === 'groq') return new Groq(this.config.engines.groq)
+    if (engine === 'mistralai') return new MistralAI(this.config.engines.mistralai)
+    if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
+    if (engine === 'openai') return new OpenAI(this.config.engines.openai)
+    if (engine === 'xai') return new XAI(this.config.engines.xai)
+    if (this.isEngineReady(fallback)) {
+      console.log(`Engine ${engine} unknown. Falling back to ${fallback}`)
+      return this.igniteEngine(fallback, this.config.engines[fallback])
+    }
+    return null
+  }
+  
+  hasChatModels = (engine: string) => {
+    return this.config.engines[engine].models.chat.length > 0
+  }
+  
+  hasVisionModels = (engine: string) => {
+    return _hasVisionModels(engine, this.config.engines[engine])
+  }
+  
+  isVisionModel = (engine: string, model: string) => {
+    return _isVisionModel(engine, model, this.config.engines[engine])
+  }
+  
+  canProcessFormat = (engine: string, model: string, format: string) => {
+    if (imageFormats.includes(format.toLowerCase())) {
+      const autoSwitch = this.config.llm.autoVisionSwitch
+      if (autoSwitch) {
+        return this.hasVisionModels(engine) || this.isVisionModel(engine, model)
+      } else {
+        return this.isVisionModel(engine, model)
+      }
+    } else {
+      return textFormats.includes(format.toLowerCase())
+    }
+  }
+  
+  initModels = async () => {
+    for (const engine of staticModelsEngines) {
+      if (this.isEngineConfigured(engine)) {
+        await this.loadModels(engine)
+      }
+    }
+  }
+  
+  loadModels = async (engine: string): Promise<boolean> => {
+    
+    console.log('Loading models for', engine)
+    let rc = false
+    if (engine === 'openai') {
+      rc = await loadOpenAIModels(this.config.engines.openai)
+      console.log('OpenAI models loaded', rc)
+    } else if (engine === 'ollama') {
+      rc = await loadOllamaModels(this.config.engines.ollama)
+    } else if (engine === 'mistralai') {
+      rc = await loadMistralAIModels(this.config.engines.mistralai)
+    } else if (engine === 'anthropic') {
+      rc = await loadAnthropicModels(this.config.engines.anthropic, getComputerInfo())
+    } else if (engine === 'google') {
+      rc = await loadGoogleModels(this.config.engines.google)
+    } else if (engine === 'groq') {
+      rc = await loadGroqModels(this.config.engines.groq)
+    } else if (engine === 'cerebras') {
+      rc = await loadCerebrasModels(this.config.engines.cerebras)
+    } else if (engine === 'xai') {
+      rc = await loadXAIModels(this.config.engines.xai)
+    }
+  
+    // save
+    if (this.config == store.config) {
+      store.saveSettings()
+    }
+  
+    // done
+    return rc
+  
+  }
+  
 
-  // save
-  store.saveSettings()
 
-  // done
-  return rc
 
 }
+

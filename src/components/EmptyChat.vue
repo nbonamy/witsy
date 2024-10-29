@@ -25,7 +25,7 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { availableEngines, isEngineReady, hasChatModels } from '../llms/llm'
+import LlmFactory, { availableEngines } from '../llms/llm'
 import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'
 import EngineLogo from './EngineLogo.vue'
@@ -34,6 +34,7 @@ import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const tipsManager = useTipsManager(store)
+const llmFactory = new LlmFactory(store.config)
 
 const showAllEngines = ref(false)
 
@@ -68,7 +69,7 @@ const onEngine = (engine) => {
   } else {
 
     // check if the engine is ready
-    if (!isEngineReady(engine) || !hasChatModels(engine)) {
+    if (!llmFactory.isEngineReady(engine) || !llmFactory.hasChatModels(engine)) {
       Dialog.show({
         title: 'This engine needs to be configured first! Do you want to open the Settings?',
         confirmButtonText: 'Configure',
