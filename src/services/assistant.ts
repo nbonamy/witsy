@@ -29,11 +29,6 @@ export default class {
     this.llmFactory = new LlmFactory(config)
   }
 
-  setConfig(config: Configuration) {
-    this.config = config
-    this.llmFactory = new LlmFactory(config)
-  }
-
   setChat(chat: Chat) {
     this.chat = chat
   }

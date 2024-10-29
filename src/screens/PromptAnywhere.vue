@@ -76,20 +76,9 @@ onMounted(() => {
   
   onEvent('send-prompt', onPrompt)
   onEvent('prompt-resize', onResize)
-  onEvent('show-experts', onExperts)
   onEvent('stop-prompting', onStopGeneration)
   document.addEventListener('keyup', onKeyUp)
-  window.api.on('set-expert-prompt', onSetExpertPrompt)
   window.api.on('show', onShow)
-
-  // other
-  store.addListener({
-    onStoreUpdated(domain) {
-      if (domain === 'config') {
-        onConfigUpdated()
-      }
-    }
-  })
 
   // audio listener init
   audioPlayer.addListener(onAudioPlayerStatus)
@@ -111,13 +100,8 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
   audioPlayer.removeListener(onAudioPlayerStatus)
-  window.api.off('set-expert-prompt', onSetExpertPrompt)
   window.api.off('show', onShow)
 })
-
-const onConfigUpdated = async () => {
-  llmFactory.setConfig(store.config)
-}
 
 const onShow = () => {
 
@@ -217,13 +201,7 @@ const onResize = (data) => {
   //window.api.anywhere.resize(height)
 }
 
-const onExperts = () => {
-  if (!window.api.anywhere.isExpertsOpen()) {
-    window.api.anywhere.showExperts()
-  }
-}
-
-const onKeyUp = (event) => {
+const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     onClose()
   }
