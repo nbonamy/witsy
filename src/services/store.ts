@@ -136,25 +136,33 @@ const mergeHistory = (jsonChats: any[]) => {
   // need to know
   let patched = false
 
-  try {
-    for (const jsonChat of jsonChats) {
-      const chat: any = store.chats.find((chat) => chat.uuid === jsonChat.uuid)
-      if (chat) {
-        if (jsonChat.deleted) {
-          store.chats = store.chats.filter((chat) => chat.uuid !== jsonChat.uuid)
-          patched = true
-        } else {
-          patched = patched || chat.patchFromJson(jsonChat)
-        }
-      } else {
-        const chat = new Chat(jsonChat)
-        store.chats.push(chat)
-        patched = true
-      }
-    }
-  } catch (error) {
-    if (error.code !== 'ENOENT') {
-      console.log('Error patching history data', error)
+  // get the current ids and new ids
+  const currentIds = store.chats.map((chat) => chat.uuid)
+  const newIds = jsonChats.map((chat) => chat.uuid)
+
+  // remove deleted chats
+  const deletedIds = currentIds.filter((id) => !newIds.includes(id))
+  //console.log(`Deleting ${deletedIds.length} chats`)
+  if (deletedIds.length > 0) {
+    store.chats = store.chats.filter((chat) => !deletedIds.includes(chat.uuid))
+    patched = true
+  }
+
+  // add the new chats
+  const addedIds = newIds.filter((id) => !currentIds.includes(id))
+  //console.log(`Adding ${addedIds.length} chats`)
+  for (const addedId of addedIds) {
+    const chat = new Chat(jsonChats.find((chat) => chat.uuid === addedId))
+    store.chats.push(chat)
+    patched = true
+  }
+
+  // patch the existing chats
+  for (const chat of store.chats) {
+    const jsonChat = jsonChats.find((c) => c.uuid === chat.uuid)
+    if (jsonChat) {
+      //console.log(`Patching chat ${chat.uuid}`)
+      patched = chat.patchFromJson(jsonChat) || patched 
     }
   }
 
