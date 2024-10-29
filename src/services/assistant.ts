@@ -2,10 +2,10 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
-import { igniteEngine, getChatEngineModel } from '../llms/llm'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
+import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
 import { availablePlugins } from '../plugins/plugins'
@@ -13,6 +13,7 @@ import { availablePlugins } from '../plugins/plugins'
 export default class {
 
   config: Configuration
+  llmFactory: LlmFactory
   engine: string
   llm: LlmEngine
   chat: Chat
@@ -25,10 +26,12 @@ export default class {
     this.llm = null
     this.chat = null
     this.stream = null
+    this.llmFactory = new LlmFactory(config)
   }
 
   setConfig(config: Configuration) {
     this.config = config
+    this.llmFactory = new LlmFactory(config)
   }
 
   setChat(chat: Chat) {
@@ -48,7 +51,7 @@ export default class {
     }
 
     // switch
-    const llm = igniteEngine(engine)
+    const llm = this.llmFactory.igniteEngine(engine)
     this.setLlm(llm ? engine : null, llm)
   }
 
@@ -73,7 +76,7 @@ export default class {
     const defaults: LlmCompletionOpts = {
       save: true,
       titling: true,
-      ... getChatEngineModel(),
+      ... this.llmFactory.getChatEngineModel(),
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
     }

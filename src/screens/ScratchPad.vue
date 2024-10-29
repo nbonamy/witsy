@@ -16,7 +16,7 @@
 // components
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
-import { getChatEngineModel } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import ScratchpadToolbar from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
@@ -98,10 +98,11 @@ onMounted(() => {
   fontSize.value = store.config.scratchpad.fontSize || '3'
 
   // load engine and model
+  const llmFactory = new LlmFactory(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
   if (!engine?.length || !model?.length) {
-    ({ engine: engine.value, model: model.value } = getChatEngineModel(false))
+    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
   }
 
   // confirm close

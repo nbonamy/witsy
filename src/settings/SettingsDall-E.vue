@@ -22,7 +22,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import { loadModels } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)
@@ -49,7 +49,8 @@ const setEphemeralRefreshLabel = (text) => {
 const getModels = async () => {
 
   // load
-  let success = await loadModels('openai')
+  const llmFactory = new LlmFactory(store.config)
+  let success = await llmFactory.loadModels('openai')
   if (!success) {
     image_models.value = []
     setEphemeralRefreshLabel('Error!')

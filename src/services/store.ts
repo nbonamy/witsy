@@ -3,7 +3,7 @@ import { Store, StoreListener } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
-import { isEngineReady, initModels, availableEngines } from '../llms/llm'
+import LlmFactory, { availableEngines } from '../llms/llm'
 import Chat from '../models/chat'
 
 export const store: Store = reactive({
@@ -61,10 +61,11 @@ export const store: Store = reactive({
     })
 
     // load models and select valid engine
-    initModels()
-    if (!isEngineReady(store.config.llm.engine)) {
+    const llmFactory = new LlmFactory(store.config)
+    llmFactory.initModels()
+    if (!llmFactory.isEngineReady(store.config.llm.engine)) {
       for (const engine of availableEngines) {
-        if (isEngineReady(engine)) {
+        if (llmFactory.isEngineReady(engine)) {
           console.log(`Default engine ready, selecting ${engine} as default`)
           store.config.llm.engine = engine
           break

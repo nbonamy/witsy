@@ -30,7 +30,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
-import { canProcessFormat, getChatEngineModel } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'
@@ -90,6 +90,7 @@ const props = defineProps({
 const audioRecorder = useAudioRecorder(store.config)
 const transcriber = useTranscriber(store.config)
 const tipsManager = useTipsManager(store)
+const llmFactory = new LlmFactory(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
@@ -105,8 +106,8 @@ const processing = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const engine = () => props.chat?.engine || getChatEngineModel().engine
-const model = () => props.chat?.model || getChatEngineModel().model
+const engine = () => props.chat?.engine || llmFactory.getChatEngineModel().engine
+const model = () => props.chat?.model || llmFactory.getChatEngineModel().model
 
 const iconsLeftCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
@@ -264,7 +265,7 @@ const onAttach = () => {
   ]*/ })
   if (file) {
     const format = file.url.split('.').pop()
-    if (canProcessFormat(engine(), model(), format)) {
+    if (llmFactory.canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
       emitEvent('attach-file', new Attachment(file.contents, mimeType, file.url))
     } else {
@@ -292,7 +293,7 @@ const onPaste = (event) => {
           let contents = result.split(',')[1]
 
           // check before attaching
-          if (canProcessFormat(engine(), model(), format)) {
+          if (llmFactory.canProcessFormat(engine(), model(), format)) {
             emitEvent('attach-file', new Attachment(contents, mimeType, 'clipboard://'))
           } else {
             console.error('Cannot attach format', format)
