@@ -140,7 +140,11 @@ const onShow = () => {
     if (chat.value.lastModified < Date.now() - promptChatTimeout) {
       chat.value = null
     } else {
-      response.value = chat.value.lastMessage()
+      if (chat.value.messages.length > 1) {
+        response.value = chat.value.lastMessage()
+      } else {
+        response.value = null
+      }
     }
   }
 
