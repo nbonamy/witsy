@@ -4,6 +4,7 @@ import { Shortcut, anyDict } from './index.d'
 export interface Configuration {
   general: GeneralConfig
   llm: LLMConfig
+  prompt: PromptConfig
   commands: CommandsConfig
   instructions: InstructionsConfig
   appearance: AppearanceConfig
@@ -22,7 +23,6 @@ export interface GeneralConfig {
   language: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}
-  autoSavePrompt: boolean
 }
 
 export interface LLMConfig {
@@ -42,6 +42,12 @@ export interface AppearanceConfig {
   theme: 'light' | 'dark' | 'system'
   tint: 'black' | 'blue'
   chat: ChatAppearance
+}
+
+export interface PromptConfig {
+  engine: string
+  model: string
+  autosave: boolean
 }
 
 export interface CommandsConfig {

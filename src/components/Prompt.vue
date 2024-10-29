@@ -16,6 +16,7 @@
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
+    <slot />
     <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -79,7 +80,7 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  enableConversation: {
+  enableConversations: {
     type: Boolean,
     default: true
   },
@@ -416,7 +417,7 @@ const startDictation = async () => {
           input.value.focus()
 
           // conversation tip
-          if (tipsManager.isTipAvailable('conversation')) {
+          if (props.enableConversations && tipsManager.isTipAvailable('conversation')) {
             tipsManager.showTip('conversation')
           }
 
@@ -441,7 +442,7 @@ const startDictation = async () => {
 }
 
 const onConversationMenu = () => {
-  if (!props.enableConversation) return
+  if (!props.enableConversations) return
   if (props.inlineMenus) {
     const icon = document.querySelector('.prompt .dictate')
     const rect = icon?.getBoundingClientRect()
@@ -752,6 +753,10 @@ defineExpose({
   padding-top: 5px;
   padding-bottom: 7px;
   flex: 1;
+}
+
+.textarea-wrapper textarea::placeholder {
+  color: var(--control-placeholder-text-color);
 }
 
 .windows .input, .windows .textarea-wrapper textarea {

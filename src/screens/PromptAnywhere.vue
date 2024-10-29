@@ -2,7 +2,9 @@
 <template>
   <div class="anywhere" @click="onClick">
     <div class="container">
-      <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+      <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
+        <!-- <BIconSliders class="icon settings" @click="onSettings" /> -->
+      </Prompt>
       <div class="spacer" />
       <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
@@ -25,6 +27,7 @@
       </div>
     </div>
     <audio ref="audio" />
+    <PromptDefaults id="defaults" @defaults-modified="initLlm" />
   </div>
 </template>
 
@@ -38,6 +41,7 @@ import { LlmEngine } from 'multi-llm-ts'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
+import PromptDefaults from './PromptDefaults.vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
@@ -108,20 +112,6 @@ onUnmounted(() => {
 
 const onShow = () => {
 
-  // get engine and model
-  const { engine, model } = llmFactory.getChatEngineModel(false)
-  
-  // log
-  console.log(`initialize prompt window llm: ${engine} ${model}`)
-
-  // init llm with tools
-  llm = llmFactory.igniteEngine(engine)
-  for (const pluginName in availablePlugins) {
-    const pluginClass = availablePlugins[pluginName]
-    const instance = new pluginClass(store.config.plugins[pluginName])
-    llm.addPlugin(instance)
-  }
-
   // see if chat is not that old
   if (chat.value !== null) {
     if (chat.value.lastModified < Date.now() - promptChatTimeout) {
@@ -148,14 +138,39 @@ const onShow = () => {
   
   }
 
-  // set engine model
-  chat.value.setEngineModel(engine, model)
+  // init llm
+  initLlm()
 
   // focus prompt
   if (prompt.value) {
     prompt.value.setPrompt()
     prompt.value.focus()
   }
+
+}
+
+const initLlm = () => {
+
+  // get engine and model
+  let engine = store.config.prompt.engine
+  let model = store.config.prompt.model
+  if (!engine.length || !model.length) {
+    ({ engine, model } = llmFactory.getChatEngineModel(false))
+  }
+
+  // log
+  console.log(`initialize prompt window llm: ${engine} ${model}`)
+  
+  // init llm with tools
+  llm = llmFactory.igniteEngine(engine)
+  for (const pluginName in availablePlugins) {
+    const pluginClass = availablePlugins[pluginName]
+    const instance = new pluginClass(store.config.plugins[pluginName])
+    llm.addPlugin(instance)
+  }
+
+  // set engine model
+  chat.value.setEngineModel(engine, model)
 
 }
 
@@ -319,6 +334,10 @@ const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value.$el, message.uuid, message.content)
 }
 
+const onSettings = () => {
+  document.querySelector<HTMLDialogElement>('#defaults').showModal()
+}
+
 </script>
 
 <style scoped>
@@ -345,6 +364,13 @@ const onReadAloud = async (message: Message) => {
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
+
+    .icon {
+      cursor: pointer;
+      color: var(--prompt-icon-color);
+      margin-left: 4px;
+      margin-right: 8px;
+    }
   }
 
   .prompt, .prompt * {

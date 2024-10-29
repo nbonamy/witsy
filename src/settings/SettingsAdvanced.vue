@@ -39,7 +39,7 @@ const conversationLength = ref(null)
 
 const load = () => {
   autoVisionSwitch.value = store.config.llm.autoVisionSwitch
-  autoSavePrompt.value = store.config.general.autoSavePrompt
+  autoSavePrompt.value = store.config.prompt.autosave
   defaultInstructions.value = store.config.instructions.default || ''
   conversationLength.value = store.config.llm.conversationLength || 5
 }
@@ -51,7 +51,7 @@ const onResetDefaultInstructions = () => {
 
 const save = () => {
   store.config.llm.autoVisionSwitch = autoVisionSwitch.value
-  store.config.general.autoSavePrompt = autoSavePrompt.value
+  store.config.prompt.autosave = autoSavePrompt.value
   store.config.instructions.default = defaultInstructions.value
   store.config.llm.conversationLength = conversationLength.value
   store.saveSettings()
