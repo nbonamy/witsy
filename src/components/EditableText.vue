@@ -104,6 +104,8 @@ const getContent = () => {
     if (selection.isCollapsed) {
       cursorIndex = indexInNodeList(text.value.childNodes, selection.anchorNode)
       cursorOffset = selection.anchorOffset
+    } else {
+      checkSelection()
     }
   }
 
