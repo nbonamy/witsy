@@ -221,7 +221,7 @@ const onAction = (action: string|ToolbarAction) => {
   }
 
   // find
-  if (action instanceof String) {
+  if (typeof action === 'string') {
     const callback = actions[action as string]
     if (callback) {
       callback()
