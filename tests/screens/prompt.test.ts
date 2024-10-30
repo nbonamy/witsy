@@ -34,6 +34,8 @@ beforeAll(() => {
       getUserMedia: vi.fn()
     }
   }
+
+  store.chats = []  
   
   window.api = {
     on: vi.fn(),
@@ -46,6 +48,7 @@ beforeAll(() => {
     },
     history: {
       load: vi.fn(() => []),
+      save: vi.fn(),
     },
     commands: {
       load: vi.fn(() => []),
@@ -56,6 +59,7 @@ beforeAll(() => {
     anywhere: {
       prompt: vi.fn(),
       insert: vi.fn(),
+      continue: vi.fn(),
       cancel: vi.fn(),
     },
     markdown: {
@@ -84,6 +88,12 @@ test('Initalizes LLM and chat', async () => {
   expect(wrapper.vm.llm).toBeDefined()
   expect(wrapper.vm.llm.getName()).toBe('mock')
   expect(wrapper.vm.chat.messages).toHaveLength(1)
+})
+
+test('Closes when click on container', async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.find('.container').trigger('click')
+  expect(window.api.anywhere.cancel).toHaveBeenCalledWith()
 })
 
 // test('Closes on Escape', async () => {
@@ -125,7 +135,7 @@ test('Inserts response', async () => {
   expect(window.api.anywhere.insert).toHaveBeenCalledWith('This is a response')
 })
 
-test('Closes', async () => {
+test('Closes when click on icon', async () => {
   const wrapper = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
@@ -156,4 +166,32 @@ test('Resets chat', async () => {
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Brings back chat', async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  const chatId = wrapper.vm.chat.uuid
+  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  wrapper.find('.close').trigger('click')
+  wrapper.vm.onShow()
+  expect(wrapper.vm.chat.uuid).toBe(chatId)
+})
+
+test('Saves chat', async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  const chatId = wrapper.vm.chat.uuid
+  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  expect(wrapper.vm.chat.title).toBeNull()
+  wrapper.find('.continue').trigger('click')
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.chat.title).not.toBeNull()
+  expect(store.chats).toHaveLength(1)
+  expect(window.api.history.save).toHaveBeenCalled()
+  //expect(window.api.anywhere.continue).toHaveBeenCalledWith(chatId)
 })
