@@ -337,7 +337,7 @@ const hidePlaceholder = () => {
 const indexInNodeList = (nodeList, node) => {
   const index = Array.prototype.indexOf.call(nodeList, node)
   if (index !== -1) return index
-  if (node?.parentNode === null) return -1
+  if (node?.parentNode == null) return -1
   return indexInNodeList(nodeList, node.parentNode)
 }
 
