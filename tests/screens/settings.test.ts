@@ -119,9 +119,9 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(6)
   
   expect(store.config.llm.engine).not.toBe('anthropic')
-  expect(tab.findAll('.group.engine select option')).toHaveLength(availableEngines.length)
-  tab.find('.group.engine select').setValue('anthropic')
-  expect(store.config.llm.engine).toBe('anthropic')
+  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(availableEngines.length+1)
+  tab.find('.group.prompt select.engine').setValue('anthropic')
+  expect(store.config.prompt.engine).toBe('anthropic')
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()

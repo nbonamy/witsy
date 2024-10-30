@@ -1,9 +1,10 @@
 
 <template>
   <div class="content">
-    <div class="group engine">
-      <label>LLM engine</label>
-      <EngineSelect v-model="llmEngine" @change="save" />
+    <div class="group prompt">
+      <label>Prompt LLM Model</label>
+      <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" default-text="Last one used" />&nbsp;
+      <ModelSelect class="model" v-model="model" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
     </div>
     <div class="group language">
       <label>Answer in</label>
@@ -30,24 +31,37 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import EngineSelect from '../components/EngineSelect.vue'
+import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
 
-
-const llmEngine = ref(null)
+const engine = ref(null)
+const model = ref(null)
 const language = ref(null)
 const runAtLogin = ref(false)
 const hideOnStartup = ref(false)
 const keepRunning = ref(false)
 
+const models = computed(() => {
+  if (!engine.value || engine.value == '') return []
+  return store.config.engines[engine.value].models.chat
+})
+
 const load = () => {
-  llmEngine.value = store.config.llm.engine || 'openai'
+  engine.value = store.config.prompt.engine || ''
+  model.value = store.config.prompt.model || ''
   language.value = store.config.general.language
   runAtLogin.value = window.api.runAtLogin.get()
   hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
+}
+
+const onChangeEngine = () => {
+  if (engine.value == '') model.value = ''
+  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
+  save()
 }
 
 const onResetTips = () => {
@@ -56,7 +70,8 @@ const onResetTips = () => {
 }
 
 const save = () => {
-  store.config.llm.engine = llmEngine.value
+  store.config.prompt.engine = engine.value
+  store.config.prompt.model = model.value
   store.config.general.language = language.value
   window.api.runAtLogin.set(runAtLogin.value)
   store.config.general.hideOnStartup = hideOnStartup.value
