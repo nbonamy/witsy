@@ -200,9 +200,9 @@ test('Settings Advanced', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.general.autoSavePrompt).not.toBe(true)
+  expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.group.autosave input').setValue(true)
-  expect(store.config.general.autoSavePrompt).toBe(true)
+  expect(store.config.prompt.autosave).toBe(true)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
