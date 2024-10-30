@@ -82,7 +82,6 @@ let addedToHistory = false
 onMounted(() => {
   
   onEvent('send-prompt', onPrompt)
-  onEvent('prompt-resize', onResize)
   onEvent('stop-prompting', onStopGeneration)
   document.addEventListener('keyup', onKeyUp)
   window.api.on('show', onShow)
@@ -213,10 +212,6 @@ const setExpertPrompt = (id: string) => {
   const prompt = store.experts.find((p) => p.id == id)
   emitEvent('set-expert-prompt', prompt.prompt)
 }
-const onResize = (data: string) => {
-  const height = parseInt(data) + 18
-  //window.api.anywhere.resize(height)
-}
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
@@ -286,7 +281,7 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
   }
 
   // save?
-  if (store.config.general.autoSavePrompt) {
+  if (store.config.prompt.autosave) {
     saveChat()
   }
 
