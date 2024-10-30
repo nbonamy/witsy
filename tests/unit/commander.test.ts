@@ -37,12 +37,12 @@ vi.mock('../../src/automations/automator.ts', async () => {
 vi.mock('../../src/llms/llm.ts', async () => {
   const LlmFactory = vi.fn()
   LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
-  LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config)
+  LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
 	return { default: LlmFactory }
 })
 
 beforeAll(() => {
-  store.config = defaults
+  store.config = JSON.parse(JSON.stringify(defaults))
 })
 
 beforeEach(() => {

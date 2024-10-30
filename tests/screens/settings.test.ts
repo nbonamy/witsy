@@ -81,7 +81,7 @@ window.api = {
 beforeAll(() => {
 
   // init store
-  store.config = defaults
+  store.config = JSON.parse(JSON.stringify(defaults))
 
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
