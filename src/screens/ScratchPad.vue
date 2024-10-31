@@ -6,7 +6,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="assistant.chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :conversation-mode="conversationMode" />
+    <Prompt :chat="chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :conversation-mode="conversationMode" />
     <audio/>
   </div>
 </template>
@@ -25,6 +25,7 @@ import Prompt from '../components/Prompt.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
+import Message from '../models/message'
 import Chat from '../models/chat'
 
 // bus
@@ -34,9 +35,9 @@ const { onEvent, emitEvent } = useEventBus()
 // load store
 store.load()
 
-// assistant
-import Assistant from '../services/assistant'
-const assistant = ref(new Assistant(store.config))
+// init stuff
+let llm: LlmEngine = null
+let stopGeneration = false
 
 const placeholder = ref(`Start typing your document or
 ask Witsy to write something for you!
@@ -52,6 +53,7 @@ in the action bar in the lower right corner!
 
 Give it a go!`.replaceAll('\n', '<br/>'))
 
+const chat = ref(null)
 const editor = ref(null)
 const processing = ref(false)
 const engine = ref(null)
@@ -73,14 +75,40 @@ let modifiedCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
 
 const resetState = () => {
-  assistant.value.stop()
+
+  // easy reset
   editor.value.setContent({ content: '' })
-  assistant.value.setChat(null)
   modified.value = false
   processing.value = false
   undoStack.value = []
   redoStack.value = []
   fileUrl = null
+
+  // init new chat
+  chat.value = new Chat()
+  chat.value.addMessage(new Message('system', store.config.instructions.scratchpad.system))
+
+  // init llm
+  initLlm()
+
+}
+
+const initLlm = () => {
+
+  // load engine and model
+  const llmFactory = new LlmFactory(store.config)
+  engine.value = store.config.scratchpad.engine
+  model.value = store.config.scratchpad.model
+  if (!engine?.value.length || !model?.value.length) {
+    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
+  }
+
+  // prompt
+  llm = llmFactory.igniteEngine(engine)
+
+  // set chat
+  chat.value.setEngineModel(engine.value, model.value)
+
 }
 
 onMounted(() => {
@@ -95,14 +123,6 @@ onMounted(() => {
   // load settings
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
   fontSize.value = store.config.scratchpad.fontSize || '3'
-
-  // load engine and model
-  const llmFactory = new LlmFactory(store.config)
-  engine.value = store.config.scratchpad.engine
-  model.value = store.config.scratchpad.model
-  if (!engine?.value.length || !model?.value.length) {
-    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
-  }
 
   // confirm close
   window.onbeforeunload = (e) => {
@@ -162,6 +182,9 @@ onMounted(() => {
   store.config.general.tips.scratchpad = false
   store.saveSettings()
 
+  // init
+  resetState()
+
 })
 
 const resetModifiedCheckTimeout = () => {
@@ -182,7 +205,7 @@ const checkIfModified = () => {
       undoStack.value.push({
         before: { content: '', start: null, end: null },
         after: contents,
-        messages: assistant.value.chat?.messages.slice(-2)
+        messages: chat.value.messages.slice(-2)
       })
       redoStack.value = []
       modified.value = true
@@ -197,7 +220,7 @@ const checkIfModified = () => {
       undoStack.value.push({
         before: lastState.after,
         after: contents,
-        messages: assistant.value.chat?.messages.slice(-2)
+        messages: chat.value.messages.slice(-2)
       })
       redoStack.value = []
       modified.value = true
@@ -322,8 +345,7 @@ const onLoad = () => {
 
       // chat
       if (scratchpad.chat) {
-        const chat = new Chat(scratchpad.chat)
-        assistant.value.setChat(chat)
+        chat.value = new Chat(scratchpad.chat)
       }
 
     } catch (err) {
@@ -337,7 +359,7 @@ const onLoad = () => {
 const onSave = () => {
   const scratchpad = {
     contents: editor.value.getContent(),
-    chat: assistant.value.chat,
+    chat: chat.value,
     undoStack: undoStack.value,
     redoStack: redoStack.value
   }
@@ -360,7 +382,7 @@ const onUndo = () => {
     const action = undoStack.value.pop()
     redoStack.value.push(action)
     editor.value.setContent(action.before)
-    assistant.value.chat?.messages?.splice(-2, 2)
+    chat.value.messages?.splice(-2, 2)
     modified.value = true
   }
 }
@@ -370,7 +392,7 @@ const onRedo = () => {
     const action = redoStack.value.pop()
     undoStack.value.push(action)
     editor.value.setContent(action.after)
-    assistant.value.chat?.messages?.push(...action.messages)
+    chat.value.messages?.push(...action.messages)
     modified.value = true
   }
 }
@@ -393,7 +415,7 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = status.state
 }
 
-const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment?: Attachment, docrepo?: any }) => {
+const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
 
   // one at a time
   if (processing.value) {
@@ -415,82 +437,98 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
 
   // now build the prompt
   let finalPrompt = prompt
+
   if (subject.length > 0) {
     const template = store.config.instructions.scratchpad.prompt
     finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
+
+  } else {
+
+    // rag?
+    if (docrepo) {
+      sources = await window.api.docrepo.query(docrepo, finalPrompt);
+      if (sources.length > 0) {
+        const context = sources.map((source) => source.content).join('\n\n');
+        finalPrompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', finalPrompt);
+      }
+    }
+
   }
 
   // log
-  processing.value = true
   console.log(finalPrompt)
 
-  // load attachment
-  attachment?.loadContents()
+  // add to thead
+  const userMessage = new Message('user', finalPrompt)
+  if (attachment) {
+    attachment.loadContents()
+    userMessage.attach(attachment)
+  }
+  chat.value.addMessage(userMessage)
 
-  // prompt
-  assistant.value.prompt(finalPrompt, {
-    save: false,
-    titling: false,
-    overwriteEngineModel: true,
-    engine: engine.value,
-    model: model.value,
-    systemInstructions: store.config.instructions.scratchpad.system,
-    attachment: attachment,
-  }, (chunk) => {
+  // add response
+  const response = new Message('assistant')
+  chat.value.addMessage(response)
 
-    // if done
-    if (chunk?.done) {
-
-      // done
-      emitEvent('llm-done')
-
-      // if chunk text is null it means we had an error
-      if (chunk.text == null) {
-        processing.value = false
-        return
+  // now generate
+  try {
+    processing.value = true
+    stopGeneration = false
+    const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
+    for await (const msg of stream) {
+      if (stopGeneration) {
+        llm.stop(stream)
+        break
       }
-
-      // modified
-      modified.value = true
-
-      // default to all response
-      const response = assistant.value.chat.lastMessage().content
-      const action = {
-        content: response,
-        start: 0,
-        end: 0
+      if (msg.type === 'tool') {
+        response.setToolCall(msg.text)
+      } else if (msg.type === 'content') {
+        response.appendText(msg)
       }
-
-      // if we have a selection, replace it
-      if (selection) {
-        action.content = contents.content.substring(0, contents.start) + response + contents.content.substring(contents.end)
-        action.start = contents.start
-        action.end = contents.start + response.length
-      }
-
-      // add to undo stack
-      undoStack.value.push({
-        before: contents,
-        after: action,
-        messages: assistant.value.chat.messages.slice(-2)
-      })
-
-      // empty redo
-      redoStack.value = []
-
-      // now do it
-      editor.value.setContent(action)
-
-      // done
-      processing.value = false
-    
     }
+  } catch (err) {
+    console.error(err)
+    response.value.setText('An error occurred while generating the response.')
+  }
+
+  // done
+  emitEvent('llm-done')
+  modified.value = true
+
+  // default to all response
+  const action = {
+    content: response.content,
+    start: 0,
+    end: 0
+  }
+
+  // if we have a selection, replace it
+  if (selection) {
+    action.content = contents.content.substring(0, contents.start) + response.content + contents.content.substring(contents.end)
+    action.start = contents.start
+    action.end = contents.start + response.length
+  }
+
+  // add to undo stack
+  undoStack.value.push({
+    before: contents,
+    after: action,
+    messages: chat.value.messages.slice(-2)
   })
 
+  // empty redo
+  redoStack.value = []
+
+  // now do it
+  editor.value.setContent(action)
+
+  // done
+  processing.value = false
+    
 }
 
 const onStopPrompting = async () => {
-  await assistant.value.stop()
+  stopGeneration = true
 }
 
 </script>
