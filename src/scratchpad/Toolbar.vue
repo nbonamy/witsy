@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form onsubmit="return false">
 
     <div class="toolbar group">
     
