@@ -34,27 +34,42 @@
 <div>The night's dark shadows, they no longer fright,</div>
 <div>For in the moon's soft light, I know I am right.</div> -->
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted } from 'vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 
 // events
 import useEventBus from '../composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { onEvent } = useEventBus()
 
 // init stuff
 const appearanceTheme = useAppearanceTheme()
 
-const props = defineProps({
+defineProps({
   placeholder: String,
 })
+
+type TextSelection = {
+  startIndex: number,
+  startPos: number,
+  endIndex: number,
+  endPos: number,
+}
+
+type Content = {
+  content: string,
+  selection: string,
+  cursor: number,
+  start: number,
+  end: number,
+}
 
 const theme = ref('light')
 const text = ref(null)
 const pholder = ref(null)
 const showPlaceholder = ref(true)
-let textSelection = null
+let textSelection: TextSelection = null
 
 onMounted(() => {
 
@@ -65,9 +80,9 @@ onMounted(() => {
 
   // mouse stuff is ticky as mouseup could be outside of text
   // but at the same time we don't want to get them all the time
-  const onMouseUp = (ev) => {
+  const onMouseUp = () => {
     window.removeEventListener('mouseup', onMouseUp)
-    checkSelection(ev)
+    checkSelection()
   }
   text.value.addEventListener('mousedown', () => {
     window.addEventListener('mouseup', onMouseUp)
@@ -75,7 +90,7 @@ onMounted(() => {
 
   // dark mode stuff  
   theme.value = appearanceTheme.getTheme()
-  onEvent('appearance-theme-change', (th) => {
+  onEvent('appearance-theme-change', (th: string) => {
     theme.value = th
   })
 
@@ -85,10 +100,10 @@ const hightlightColor = () => {
   return theme.value == 'dark' ? 'rgb(91, 126, 165)' : 'rgb(180, 215, 255)'
 }
 
-const getContent = () => {
+const getContent = (): Content => {
 
   //
-  let result = {
+  let result: Content = {
     content: '',
     selection: null,
     cursor: null,
@@ -113,7 +128,7 @@ const getContent = () => {
   let cursorFound = false
   let startFound = false
   let endFound = false
-  for (const index in [...text.value.childNodes]) {
+  for (let index = 0; index < text.value.childNodes.length; index++) {
 
     // is this the start element?
     let isStart = false
@@ -174,7 +189,7 @@ const getContent = () => {
 
 }
 
-const setContent = ({ content, start, end }) => {
+const setContent = ({ content, start, end }: { content: string, start: number, end: number }) => {
 
   // as fast as possible
   if (content.length) {
@@ -247,7 +262,7 @@ const setContent = ({ content, start, end }) => {
     }
 
     // the nodes we need
-    const nodes = {
+    const nodes: { left: HTMLElement, middle: HTMLElement, right: HTMLElement } = {
       left: null,
       middle: null,
       right: null,
@@ -318,8 +333,8 @@ const setContent = ({ content, start, end }) => {
 
 }
 
-const checkPlaceholder = (ev) => {
-  showPlaceholder.value = (ev.witch >= 32 || !text.value.textContent.length)
+const checkPlaceholder = (ev: { which: number }) => {
+  showPlaceholder.value = (ev.which >= 32 || !text.value.textContent.length)
   if (!showPlaceholder.value) {
     // do not wait for vue to hide this (too slow)
     hidePlaceholder()
@@ -334,14 +349,14 @@ const hidePlaceholder = () => {
 
 // this will check in the index in nodeList
 // of node or first parent which is in nodeList
-const indexInNodeList = (nodeList, node) => {
+const indexInNodeList = (nodeList: NodeList, node: Node) => {
   const index = Array.prototype.indexOf.call(nodeList, node)
   if (index !== -1) return index
   if (node?.parentNode == null) return -1
   return indexInNodeList(nodeList, node.parentNode)
 }
 
-const checkSelection = (ev) => {
+const checkSelection = () => {
 
   // get system selection
   const selection = window.getSelection()
@@ -360,7 +375,7 @@ const checkSelection = (ev) => {
   let startIndex = indexInNodeList(text.value.childNodes, startNode)
   let endIndex = indexInNodeList(text.value.childNodes, endNode)
   if (startIndex === -1 || endIndex === -1) {
-    console.error('Could not find start or end node', selection)
+    console.error('Could not find start or end node', JSON.stringify(selection))
     textSelection = null
     return
   }
@@ -412,7 +427,7 @@ const onBlur = () => {
 
   let startFound = false
   let endFound = false
-  for (const index in text.value.childNodes) {
+  for (let index = 0; index < text.value.childNodes.length; index++) {
 
     // is this the start element?
     let isStart = false
@@ -556,7 +571,7 @@ const onFocus = () => {
 
 }
 
-const onPaste = (ev) => {
+const onPaste = (ev: ClipboardEvent) => {
 
   // we only accept text
   const text = ev.clipboardData.getData('text/plain')

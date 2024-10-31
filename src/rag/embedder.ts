@@ -56,7 +56,7 @@ export default class Embedder {
     } else if (this.engine === 'ollama') {
 
       this.ollama = new Ollama({
-        baseURL: this.config.engines.ollama.baseURL,
+        host: this.config.engines.ollama.baseURL,
       })
 
     // } else if (thibas.engine === 'fastembed') {
@@ -99,10 +99,11 @@ export default class Embedder {
 
     // ollama
     if (engine === 'ollama') {
-      const ollama = new Ollama({ baseURL: config.engines.ollama.baseURL, })
+      const ollama = new Ollama({ host: config.engines.ollama.baseURL, })
       const info = await ollama.show({ model: model })
       for (const item in info.model_info) {
         if (item.includes('embedding_length')) {
+          // @ts-expect-error access through []
           return info.model_info[item] as number
         }
       }

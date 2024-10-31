@@ -4,7 +4,7 @@
     <div class="group prompt">
       <label>Prompt LLM Model</label>
       <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" default-text="Last one used" />&nbsp;
-      <ModelSelect class="model" v-model="model" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
+      <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
     </div>
     <div class="group language">
       <label>Answer in</label>
@@ -58,15 +58,19 @@ const load = () => {
   keepRunning.value = store.config.general.keepRunning
 }
 
+const onResetTips = () => {
+  store.config.general.tips = {}
+  store.saveSettings()
+}
+
 const onChangeEngine = () => {
   if (engine.value == '') model.value = ''
   else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
   save()
 }
 
-const onResetTips = () => {
-  store.config.general.tips = {}
-  store.saveSettings()
+const onChangeModel = () => {
+  save()
 }
 
 const save = () => {

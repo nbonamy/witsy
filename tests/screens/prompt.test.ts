@@ -152,7 +152,7 @@ test('Manages conversation', async () => {
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\"role\":\"system\",\"content\":\"You are a helpful assistant. You are here to help the user with any questions they have.\"},{\"role\":\"user\",\"content\":\"Hello LLM\"},{\"role\":\"assistant\",\"content\":\"Be kind. Don\'t mock me\"}]\"},{\"role\":\"user\",\"content\":\"Bye LLM\"},{\"role\":\"assistant\",\"content\":"Be kind. Don\'t mock me\"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Resets chat', async () => {
@@ -184,7 +184,7 @@ test('Saves chat', async () => {
   const wrapper = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  const chatId = wrapper.vm.chat.uuid
+  //const chatId = wrapper.vm.chat.uuid
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.vm.chat.title).toBeNull()

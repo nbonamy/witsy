@@ -70,10 +70,6 @@ const autoUpdater = new AutoUpdater({
 const store = new Store({ name: 'window' });
 window.setStore(store);
 
-// // look for menus as soon as possible
-// import MacosAutomator from './automations/macos2';
-// new MacosAutomator();
-
 // start nestor
 if (!process.mas) {
   nestor = new Nestor();

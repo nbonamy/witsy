@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body" :disabled="!teleport">
-    <Overlay @click="onClose" />
+    <Overlay @click="onOverlay" />
     <div class="context-menu" :style="position">
       <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
@@ -99,6 +99,10 @@ onMounted(() => {
     input?.focus();
   }
 });
+
+const onOverlay = () => {
+  props.onClose()
+}
 
 const onAction = (action: MenuAction) => {
   if (!action.disabled) {  

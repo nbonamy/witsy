@@ -68,8 +68,8 @@ const draw = () => {
 
     // get the data and save it
     props.audioRecorder.getAnalyser().getByteTimeDomainData(dataArray)
-    previousDataArray = currentDataArray ? [...currentDataArray] : [...dataArray]
-    currentDataArray = [...dataArray]
+    previousDataArray = currentDataArray ? currentDataArray.slice() : dataArray.slice()
+    currentDataArray = dataArray.slice()
     lastSampleTime = now
     interpolationProgress = 0
 

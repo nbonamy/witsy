@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../plugins/plugins'
@@ -24,16 +24,26 @@ import SettingsTavily from './SettingsTavily.vue'
 import SettingsDallE from './SettingsDall-E.vue'
 import SettingsNestor from './SettingsNestor.vue'
 //import SettingsDropbox from './SettingsDropbox.vue'
+// @ts-expect-error svg
 import logoPython from '../../assets/python.svg'
+// @ts-expect-error svg
 import logoTavily from '../../assets/tavily.svg'
+// @ts-expect-error svg
 import logoOpenAI from '../../assets/openai.svg'
+// @ts-expect-error svg
 import logoNestor from '../../assets/nestor.jpg'
 //import logoDropbox from '../../assets/dropbox.svg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
 
-const plugins = computed(() => {
+type PluginUI = {
+  id: string,
+  label: string,
+  logo: { image?: string, icon?: any },
+}
+
+const plugins = computed((): PluginUI[] => {
 
   // nestor is not available everywhere
   const plugins = availablePlugins
@@ -78,7 +88,7 @@ const currentView = computed(() => {
   //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
 
-const selectPlugin = (plugin) => {
+const selectPlugin = (plugin: PluginUI) => {
   currentPlugin.value = plugin.id
   nextTick(() => pluginSettings.value.load())
 }

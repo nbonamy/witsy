@@ -1,5 +1,5 @@
 
-import { SearchRequest, SearchResponse } from './index.d'
+import type { SearchRequest, SearchResponse } from './index.d'
 
 export default class  {
   

@@ -15,9 +15,11 @@ export interface Configuration {
   rag: RagConfig
   dropbox: DropboxConfig
   gdrive: GDriveConfig
+  [key: string]: any
 }
 
 export interface GeneralConfig {
+  firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
   language: string
@@ -36,6 +38,7 @@ export interface InstructionsConfig {
   titling: string
   titling_user: string
   docquery: string
+  scratchpad: { [key: string]: string }
 }
 
 export interface AppearanceConfig {

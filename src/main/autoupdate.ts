@@ -37,13 +37,13 @@ export default class AutoUpdater {
     })
 
     // checking
-    autoUpdater.on('checking-for-update', (event: any) => {
-      console.log('Checking for updates', event)
+    autoUpdater.on('checking-for-update', () => {
+      console.log('Checking for updates')
     })
 
     // available
-    autoUpdater.on('update-available', (event: any) => {
-      console.log('Update available. Downloading…', event)
+    autoUpdater.on('update-available', () => {
+      console.log('Update available. Downloading…')
       this.downloading = true
       if (this.manualUpdate) {
         dialog.showMessageBox({
@@ -55,9 +55,9 @@ export default class AutoUpdater {
     })
 
     // not available
-    autoUpdater.on('update-not-available', (event: any) => {
+    autoUpdater.on('update-not-available', () => {
       if (!this.downloading) {
-        console.log('Update not available', event)
+        console.log('Update not available')
         if (this.manualUpdate) {
           dialog.showMessageBox({
             type: 'info',
