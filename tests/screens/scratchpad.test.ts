@@ -58,7 +58,16 @@ beforeAll(() => {
     base64: {
       decode: vi.fn((s) => s),
       encode: vi.fn((s) => s),
-    }
+    },
+    commands: {
+      load: vi.fn(() => []),
+    },
+    experts: {
+      load: vi.fn(() => []),
+    },
+    history: {
+      load: vi.fn(() => []),
+    },
   }
 })
 
@@ -151,6 +160,9 @@ test('Replaces selection', async () => {
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as \'## Title ##\' or \'** Text **\'. Do not include anything else in the response including things like \'here is the...\'"},{"role":"user","content":"EXTRACT:\\nSELECTED\\n\\nASK: Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
+  const content = wrapper.vm.editor.getContent()
+  expect(content.start).toBe(6)
+  expect(content.end).toBe(702)
 })
 
 test('Copies text', async () => {
