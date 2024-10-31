@@ -17,6 +17,7 @@
 import { FileContents } from 'types'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
+import { LlmEngine } from 'multi-llm-ts'
 import LlmFactory from '../llms/llm'
 import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
@@ -104,7 +105,7 @@ const initLlm = () => {
   }
 
   // prompt
-  llm = llmFactory.igniteEngine(engine)
+  llm = llmFactory.igniteEngine(engine.value)
 
   // set chat
   chat.value.setEngineModel(engine.value, model.value)
@@ -281,7 +282,7 @@ const onAction = (action: string|ToolbarAction) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = store.config.instructions.scratchpad[toolbarAction.value]
-        onSendPrompt({ prompt: prompt })
+        onSendPrompt({ prompt: prompt, attachment: null, docrepo: null })
       } else {
         emitEvent('llm-done')
       }
@@ -444,14 +445,14 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
 
   } else {
 
-    // rag?
-    if (docrepo) {
-      sources = await window.api.docrepo.query(docrepo, finalPrompt);
-      if (sources.length > 0) {
-        const context = sources.map((source) => source.content).join('\n\n');
-        finalPrompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', finalPrompt);
-      }
-    }
+    // // rag?
+    // if (docrepo) {
+    //   sources = await window.api.docrepo.query(docrepo, finalPrompt);
+    //   if (sources.length > 0) {
+    //     const context = sources.map((source) => source.content).join('\n\n');
+    //     finalPrompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', finalPrompt);
+    //   }
+    // }
 
   }
 
@@ -488,7 +489,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
     }
   } catch (err) {
     console.error(err)
-    response.value.setText('An error occurred while generating the response.')
+    response.setText('An error occurred while generating the response.')
   }
 
   // done
@@ -506,7 +507,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
   if (selection) {
     action.content = contents.content.substring(0, contents.start) + response.content + contents.content.substring(contents.end)
     action.start = contents.start
-    action.end = contents.start + response.length
+    action.end = contents.start + response.content.length
   }
 
   // add to undo stack
