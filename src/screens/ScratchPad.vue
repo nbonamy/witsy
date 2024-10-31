@@ -110,28 +110,28 @@ onMounted(() => {
   }
 
   // override some system shortcuts
-  editor.value.$el.addEventListener('keydown', (e: KeyboardEvent) => {
+  editor.value.$el.addEventListener('keydown', (ev: KeyboardEvent) => {
 
-    const isCommand = !e.shiftKey && (e.metaKey || e.ctrlKey)
-    const isShiftCommand = e.shiftKey && (e.metaKey || e.ctrlKey)
+    const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
+    const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
-    if (isCommand && e.key == 'n') {
-      e.preventDefault()
+    if (isCommand && ev.key == 'n') {
+      ev.preventDefault()
       onClear()
-    } else if (isCommand && e.key == 'o') {
-      e.preventDefault()
+    } else if (isCommand && ev.key == 'o') {
+      ev.preventDefault()
       onLoad()
-    } else if (isCommand && e.key == 's') {
-      e.preventDefault()
+    } else if (isCommand && ev.key == 's') {
+      ev.preventDefault()
       onSave()
-    } else if (isCommand && e.key == 'z') {
-      e.preventDefault()
+    } else if (isCommand && ev.key == 'z') {
+      ev.preventDefault()
       onUndo()
-    } else if ((isCommand && e.key == 'y') || (isShiftCommand && e.key == 'z')) {
-      e.preventDefault()
+    } else if ((isCommand && ev.key == 'y') || (isShiftCommand && ev.key == 'z')) {
+      ev.preventDefault()
       onRedo()
-    } else if (isCommand && e.key == 'r') {
-      e.preventDefault()
+    } else if (isCommand && ev.key == 'r') {
+      ev.preventDefault()
       onReadAloud()
     }
 
