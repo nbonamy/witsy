@@ -11,7 +11,7 @@ async function *listPackages(path) {
         yield pkg;
       }
     } else if (entry.isFile()) {
-      if (['RELEASES'].includes(entry.name) | ['zip', 'dmg', 'exe', 'deb', 'rpm', 'nupkg'].includes(fullPath.split('.').pop())) {
+      if (['RELEASES'].includes(entry.name) || ['zip', 'dmg', 'exe', 'deb', 'rpm', 'nupkg'].includes(fullPath.split('.').pop())) {
         yield fullPath;
       }
     }
