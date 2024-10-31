@@ -59,8 +59,7 @@ test('Build from JSON', () => {
 })
 
 test('Text message', () => {
-  const message = new Message('user', '')
-  message.setText(null)
+  const message = new Message('user')
   expect(message.transient).toBe(true)
   message.appendText({ type: 'content', text: 'content', done: false })
   expect(message.content).toBe('content')

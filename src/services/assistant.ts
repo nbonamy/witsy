@@ -123,7 +123,6 @@ export default class {
 
     // add assistant message
     this.chat.addMessage(new Message('assistant'))
-    this.chat.lastMessage().setText(null)
     callback?.call(null, null)
 
     // generate text
@@ -243,7 +242,7 @@ export default class {
 
     // make sure last message is from user else create it
     if (this.chat.lastMessage()?.role !== 'user') {
-      this.chat.addMessage(new Message('user'))
+      this.chat.addMessage(new Message('user', ''))
     }
 
     // now attach

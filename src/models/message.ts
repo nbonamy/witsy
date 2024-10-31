@@ -17,7 +17,9 @@ export default class Message extends MessageBase {
     this.type = 'text'
     this.toolCall = null
     this.attachment = null
-    if (typeof content === 'string') {
+    if (content === undefined) {
+      this.setText(null)
+    } else if (typeof content === 'string') {
       this.setText(content)
     }
   }
