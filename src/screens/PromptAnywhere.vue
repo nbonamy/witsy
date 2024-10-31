@@ -245,11 +245,10 @@ const onStopGeneration = () => {
   stopGeneration = true
 }
 
-const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: any }) => {
+const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
 
   // set response
-  response.value = new Message('assistant', '')
-  response.value.setText(null)
+  response.value = new Message('assistant')
 
   // update thread
   const userMessage = new Message('user', prompt)
