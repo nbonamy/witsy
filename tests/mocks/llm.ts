@@ -39,6 +39,7 @@ export default class LlmMock extends LlmEngine {
     ]
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
     return {
       type: 'text',
@@ -49,6 +50,7 @@ export default class LlmMock extends LlmEngine {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // errors
@@ -93,6 +95,7 @@ export default class LlmMock extends LlmEngine {
   }
 
    
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     return {
       type: 'image',
