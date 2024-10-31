@@ -9,7 +9,8 @@ export const newExpert = (): Expert => {
     type: 'user',
     name: 'New expert',
     prompt: '',
-    state: 'enabled'
+    state: 'enabled',
+    triggerApps: []
   }
 }
 

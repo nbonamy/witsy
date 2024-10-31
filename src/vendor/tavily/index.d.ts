@@ -1,5 +1,5 @@
 
-type SearchRequest = {
+export type SearchRequest = {
   api_key: string
   query: string
   search_depth?: 'basic' | 'advanced'
@@ -11,7 +11,7 @@ type SearchRequest = {
   exclude_domains?: string[]
 }
 
-type SearchResult = {
+export type SearchResult = {
   title: string
   url: string
   content: string
@@ -19,7 +19,7 @@ type SearchResult = {
   score: string
 }
 
-type SearchResponse = {
+export type SearchResponse = {
   answer: string
   query: string
   response_time: string

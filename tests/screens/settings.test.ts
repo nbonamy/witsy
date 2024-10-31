@@ -82,7 +82,15 @@ beforeAll(() => {
 
   // init store
   store.config = JSON.parse(JSON.stringify(defaults))
-
+  store.config.engines.anthropic = {
+    model: { chat: 'model2' },
+    models: { chat: [
+      { id: 'model1', name: 'Model 1' },
+      { id: 'model2', name: 'Model 2' }
+     ]
+    }
+  }
+    
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
   wrapper = mount(Settings, { attachTo: '#settings' })
@@ -118,12 +126,20 @@ test('Settings General', async () => {
   const tab = await switchToTab(0)
   expect(tab.findAll('.group')).toHaveLength(6)
   
-  expect(store.config.llm.engine).not.toBe('anthropic')
+  expect(store.config.prompt.engine).toBe('')
+  expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(availableEngines.length+1)
   tab.find('.group.prompt select.engine').setValue('anthropic')
+  await wrapper.vm.$nextTick()
   expect(store.config.prompt.engine).toBe('anthropic')
+  expect(store.config.prompt.model).toBe('model1')
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
+  tab.find('.group.prompt select.model').setValue('model2')
+  await wrapper.vm.$nextTick()
+  expect(store.config.prompt.model).toBe('model2')
+  expect(window.api.runAtLogin.set).toHaveBeenCalledTimes(2)
+  expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
   expect(store.config.general.language).not.toBe('es')

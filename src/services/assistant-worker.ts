@@ -7,6 +7,7 @@ import Attachment from '../models/attachment'
 import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
+// @ts-expect-error ?worker import
 // eslint-disable-next-line import/no-unresolved
 import LlmWorker from './llm-worker?worker'
 
@@ -197,8 +198,8 @@ export default class {
 
       // we need this
       const message: Message = this.chat.lastMessage()
-      message.appendText({ text: sourcesText, done: true })
-      this.callback?.call(null, { text: sourcesText, done: true })
+      message.appendText({ type: 'content', text: sourcesText, done: true })
+      this.callback?.call(null, { type: 'content', text: sourcesText, done: true })
     
     }
 
@@ -254,7 +255,7 @@ export default class {
         } else if (message.content === '') {
           message.setText('Sorry, I could not generate text for that prompt.')
         } else {
-          message.appendText({ text: '\n\nSorry, I am not able to continue here.', done: true })
+          message.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
         }
       } else {
         this.callback?.call(null, { text: null, done: true })
@@ -266,7 +267,7 @@ export default class {
   async stop() {
     if (this.stream) {
       await this.llm?.stop(this.stream)
-      this.chat.lastMessage().appendText({ text: null, done: true })
+      this.chat.lastMessage().appendText({ type: 'content', text: null, done: true })
     }
   }
 

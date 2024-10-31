@@ -6,15 +6,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { computed } from 'vue'
+import { ModelRef, computed } from 'vue'
+import { Shortcut } from '../types/index.d'
 
-const value = defineModel()
+const value: ModelRef<Shortcut> = defineModel()
 
 const emit = defineEmits(['change']);
 
-const modifiers = {
+const modifiers: { [key: string]: string } = {
   'ctrl': window.api.platform === 'darwin' ? '⌃' : 'Ctrl+',
   'alt': window.api.platform === 'darwin' ? '⌥' : 'Alt+',
   'shift': window.api.platform === 'darwin' ? '⇧' : 'Shift+',
@@ -47,7 +48,7 @@ const onDelete = () => {
   emit('change')
 }
 
-const onKeyDown = (event) => {
+const onKeyDown = (event: KeyboardEvent) => {
 
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {

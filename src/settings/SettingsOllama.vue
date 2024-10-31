@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
@@ -51,7 +51,7 @@ const onRefresh = async () => {
   setTimeout(() => getModels(), 500)
 }
 
-const setEphemeralRefreshLabel = (text) => {
+const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
   setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }

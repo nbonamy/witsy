@@ -1,4 +1,5 @@
 
+import { Configuration } from 'types/config'
 import { Store } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
@@ -8,7 +9,7 @@ import Chat from '../models/chat'
 
 export const store: Store = reactive({
 
-  config: {},
+  config: {} as Configuration,
   commands: [], 
   experts: [],
   chats: [],

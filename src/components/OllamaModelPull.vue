@@ -25,11 +25,16 @@
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import { Model, Ollama } from 'multi-llm-ts'
+import { Ollama } from 'multi-llm-ts'
 
 // bus
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+type Model = {
+  id: string,
+  name: string,
+}
 
 const props = defineProps({
   pullableModels: Array<Model>,

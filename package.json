@@ -13,7 +13,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint '**/*.ts'",
+    "lint": "eslint '**/*.ts' ; vue-tsc --noEmit",
     "test": "vitest --exclude './tests/e2e/**'",
     "testui": "vitest --ui --exclude './tests/e2e/**' --coverage.enabled=true",
     "teste2e": "vitest --ui ./tests/e2e/**"
@@ -60,7 +60,8 @@
     "vite-plugin-electron-renderer": "^0.14.6",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.1.2",
-    "vue-jest": "^5.0.0-alpha.10"
+    "vue-jest": "^5.0.0-alpha.10",
+    "vue-tsc": "^2.1.8"
   },
   "keywords": [],
   "author": {

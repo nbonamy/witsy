@@ -9,7 +9,7 @@
 
       <!-- attachment -->
       <div v-if="message.attachment">
-        <Attachment :attachment="message.attachment" class="attachment" @image-click="onClickAttachment(message.attachment)" />
+        <AttachmentView :attachment="message.attachment" class="attachment" @image-click="onClickAttachment(message.attachment)" />
       </div>
 
       <!-- image for backwards compatibility -->
@@ -32,19 +32,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer from '../composables/audio_player'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemImage from './MessageItemImage.vue'
 import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
+import Attachment from 'models/attachment'
 import Message from '../models/message'
 import Loader from './Loader.vue'
-import Attachment from './Attachment.vue'
+import AttachmentView from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
 
 // events
@@ -74,12 +75,12 @@ const audioState = ref({
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
-let updateLinkInterval = null 
+let updateLinkInterval: NodeJS.Timeout = null 
 onMounted(() => {
 
   // make sure links are going outside
   updateLinkInterval = setInterval(() => {
-    document.querySelectorAll('.messages a').forEach(link => {
+    document.querySelectorAll<HTMLLinkElement>('.messages a').forEach(link => {
       link.target = "_blank"
     })
   }, 500)
@@ -90,7 +91,7 @@ onMounted(() => {
 
   // dark mode stuff  
   theme.value = appearanceTheme.getTheme()
-  onEvent('appearance-theme-change', (th) => {
+  onEvent('appearance-theme-change', (th: string) => {
     theme.value = th
   })
 })
@@ -122,25 +123,25 @@ const imageUrl = computed(() => {
 // using simple css :hover
 // was not working from a testing perspective
 // so we fallback to that...
-const onHover = (value) => {
+const onHover = (value: boolean) => {
   if (props.showActions) {
     hovered.value = value
   }
 }
 
-const onClickAttachment = (attachment) => {
+const onClickAttachment = (attachment: Attachment) => {
   emitEvent('fullscreen', attachment.url)
 }
 
-const onImageLoaded = (message) => {
+const onImageLoaded = (message: Message) => {
   emits('image-loaded', message)
 }
 
-const onAudioPlayerStatus = (status) => {
+const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = { state: status.state, messageId: status.uuid }
 }
 
-const onReadAloud = async (message) => {
+const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value.$el, message.uuid, message.content)
 }
 

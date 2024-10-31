@@ -1,7 +1,7 @@
 
 import { Configuration } from 'types/config'
 import { store } from '../services/store'
-import { LlmEngine, LlmChunk, LlmEvent } from 'multi-llm-ts'
+import { LlmEngine } from 'multi-llm-ts'
 import LlmFactory from './llm'
 
 const worker: Worker = self as unknown as Worker
@@ -18,20 +18,13 @@ const initEngine = (engine: string, config: Configuration) => {
 const stream = async (messages: any[], opts: any) => {
 
   try {
-    let stream = await llm.stream(messages, opts)
-    while (stream) {
-      let newStream = null
-      for await (const streamChunk of stream) {
-        const chunk: LlmChunk = await llm.streamChunkToLlmChunk(streamChunk, (event: LlmEvent) => {
-          if (event.type === 'stream') {
-            newStream = event.content
-          } else  if (event.type === 'tool') {
-            worker.postMessage({ type: 'tool', content: event.content })
-          }
-        })
-        worker.postMessage({ type: 'chunk', chunk: chunk })
+    const stream = await llm.generate(messages, opts)
+    for await (const msg of stream) {
+      if (msg.type == 'content') {
+        worker.postMessage({ type: 'chunk', chunk: msg })
+      } else if (msg.type == 'tool') {
+        worker.postMessage({ type: 'tool', content: msg.text })
       }
-      stream = newStream
     }
   } catch (error) {
     console.error('Error while generating text', error)

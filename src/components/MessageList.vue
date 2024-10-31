@@ -2,7 +2,7 @@
   <div class="container" :style="fontStyle">
     <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
-        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" :ref="saveItemRef" />
+        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" ref="items" />
       </div>
     </div>
     <div v-if="overflown" class="overflow" @click="scrollDown">
@@ -15,10 +15,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
+import { LlmChunk } from 'multi-llm-ts'
 import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
@@ -29,7 +30,7 @@ const divScroller = ref(null)
 const overflown = ref(false)
 const fullScreenImageUrl = ref(null)
 
-const itemRefs = []
+const itemRefs = useTemplateRef('items')
 
 const fontStyle = computed(() => {
   return {
@@ -50,13 +51,7 @@ onMounted(() => {
   scrollDown()
 })
 
-const saveItemRef = (el) => {
-  if (el) {
-    itemRefs.push(el)
-  }
-}
-
-const onFullscreen = (imageUrl) => {
+const onFullscreen = (imageUrl: string) => {
   fullScreenImageUrl.value = imageUrl
   window.api.fullscreen(true)
 }
@@ -66,7 +61,7 @@ const onCloseFullScreen = () => {
   window.api.fullscreen(false)
 }
 
-const onImageLoaded = (message) => {
+const onImageLoaded = () => {
   if (!overflown.value) {
     scrollDown()
   }
@@ -80,7 +75,7 @@ const scrollDown = () => {
 }
 
 let scrollOnChunk = true
-const onNewChunk = (chunk) => {
+const onNewChunk = (chunk: LlmChunk) => {
 
   // reset on empty chunk
   if (!chunk) {
@@ -94,7 +89,8 @@ const onNewChunk = (chunk) => {
 
   // auto-read
   if (chunk?.done && props.conversationMode) {
-    itemRefs[itemRefs.length - 1].readAloud()
+    const last: any = itemRefs.value[itemRefs.value.length - 1]
+    last.readAloud()
   }
 
 }

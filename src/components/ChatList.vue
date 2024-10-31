@@ -37,6 +37,9 @@ const props = defineProps({
 
 const engine = (chat: Chat) => chat.engine || store.config.llm.engine
 
+let currDay: string
+let chatDay: string
+
 const divChats = ref(null)
 const selection = ref([])
 

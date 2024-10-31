@@ -42,7 +42,9 @@ test('New expert', () => {
     type: 'user',
     name: 'New expert',
     prompt: '',
-    state: 'enabled'
+    state: 'enabled',
+    triggerApps: [],
+
   })
 })
 

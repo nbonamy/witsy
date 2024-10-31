@@ -55,24 +55,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
-import getSTTEngine from '../voice/stt'
+import getSTTEngine, { ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
 import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
+import { Configuration } from 'types/config'
+
+type FilesProgressInfo = { [key: string]: DownloadProgress }
 
 const engine = ref('openai')
 const model = ref('whisper-1')
 const duration = ref(null)
-const progress = ref(null)
+const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
 
-let previousEngine = null
-let previousModel = null
+let previousEngine: string = null
+let previousModel: string = null
 
 const engines = [
   { id: 'openai', label: 'OpenAI' },
@@ -151,18 +154,22 @@ const onChangeModel = () => {
   }
 }
 
-const initializeEngine = async (engine) => {
+const initializeEngine = async (sttEngine: STTEngine) => {
 
   // init progress if download required
-  progress.value = engine.requiresDownload() ? {} : null
+  progress.value = sttEngine.requiresDownload() ? {} : null
 
   // initialize
-  engine.initialize((data) => {
+  sttEngine.initialize((data: ProgressInfo) => {
+
+    // cast
+    const taskStatus = data as TaskStatus
+    const dowloadProgress = data as DownloadProgress
 
     // error
-    if (data.status === 'error') {
+    if (taskStatus.status === 'error') {
       Dialog.alert('An error occured during initialization. Please try again.')
-      engine.deleteModel(model.value)
+      sttEngine.deleteModel(model.value)
       store.config.stt.engine = previousEngine
       store.config.stt.model = previousModel
       engine.value = previousEngine
@@ -171,11 +178,11 @@ const initializeEngine = async (engine) => {
     }
 
     // initialization completed
-    if (data.status === 'ready') {
+    if (taskStatus.status === 'ready') {
 
       // notify user
-      if (engine.requiresDownload()) {
-        progress.value = data
+      if (sttEngine.requiresDownload()) {
+        progress.value = taskStatus
         setTimeout(() => {
           progress.value = null
         }, 2000)
@@ -186,9 +193,10 @@ const initializeEngine = async (engine) => {
     }
 
     // progress but only if we know the file size
-    if (data.status === 'progress') {
-      if (data.total !== 0) {
-        progress.value[data.file] = data
+    if (dowloadProgress.state === 'progress') {
+      if (dowloadProgress.total !== 0) {
+        const filesProgressInfo = progress.value as FilesProgressInfo
+        filesProgressInfo[dowloadProgress.file] = dowloadProgress
       }
     }
 
@@ -205,7 +213,7 @@ const deleteLocalModels = async () => {
   }).then((result) => {
     if (result.isConfirmed) {
       for (const engineName of ['Xenova/']) {
-        const engine = getSTTEngine({ stt: { model: engineName } })
+        const engine = getSTTEngine({ stt: { model: engineName } } as Configuration)
         engine.deleteAllModels()
       }
     }

@@ -71,6 +71,7 @@ export interface Shortcut {
   shift?: boolean
   meta?: boolean
   key: string
+  [key: string]: boolean | string
 }
 
 export interface Store {
@@ -161,7 +162,7 @@ declare global {
         readIcon?(filepath: string): FileContents
         save?(opts: {
           contents: string,
-          url: string,
+          url?: string,
           properties: anyDict
         }): string
         download?(opts: {

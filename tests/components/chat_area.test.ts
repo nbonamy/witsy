@@ -49,7 +49,7 @@ beforeAll(() => {
   
   // init store
   store.loadSettings = vi.fn()
-  store.config = defaultSettings
+  store.config = JSON.parse(JSON.stringify(defaultSettings))
 })
 
 let chat: Chat = null
