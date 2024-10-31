@@ -1,6 +1,6 @@
 
 <template>
-  <div class="anywhere" @click="onClick">
+  <div class="anywhere" @click="onClick" @keydown="onKeyDown" @keyup="onKeyUp">
     <div class="container">
       <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
         <!-- <BIconSliders class="icon settings" @click="onSettings" /> -->
@@ -9,7 +9,7 @@
       <div class="response messages openai size4" v-if="response">
         <MessageItem :message="response" :show-role="false" :show-actions="false"/>
         <div class="actions">
-          <MessageItemActionCopy :message="response" />
+          <MessageItemActionCopy :message="response" ref="actionCopy" />
           <div class="action insert" v-if="!isMas && !response.transient" @click="onInsert">
             <BIconArrowReturnLeft /> Insert
           </div>
@@ -61,6 +61,7 @@ store.load()
 const audioPlayer = useAudioPlayer(store.config)
 const llmFactory = new LlmFactory(store.config)
 
+const actionCopy = ref(null)
 const prompt = ref(null)
 const isMas = ref(false)
 const chat = ref(null)
@@ -75,15 +76,20 @@ const props = defineProps({
   extra: Object
 })
 
+type LastViewed = {
+  uuid: string,
+  when: number,
+}
+
 let llm: LlmEngine = null
 let stopGeneration = false
 let addedToHistory = false
+let lastSeenChat: LastViewed = null
 
 onMounted(() => {
   
   onEvent('send-prompt', onPrompt)
   onEvent('stop-prompting', onStopGeneration)
-  document.addEventListener('keyup', onKeyUp)
   window.api.on('show', onShow)
 
   // audio listener init
@@ -113,7 +119,7 @@ const onShow = () => {
 
   // see if chat is not that old
   if (chat.value !== null) {
-    if (chat.value.lastModified < Date.now() - promptChatTimeout) {
+    if (lastSeenChat == null || lastSeenChat.uuid !== chat.value.uuid || lastSeenChat.when < Date.now() - promptChatTimeout) {
       chat.value = null
     } else {
       if (chat.value.messages.length > 1) {
@@ -126,15 +132,7 @@ const onShow = () => {
 
   // should we reinit?
   if (chat.value === null) {
-
-    // init thread
-    chat.value = new Chat()
-    chat.value.title = null
-    chat.value.addMessage(new Message('system', store.config.instructions.default))
-
-    // reset response
-    response.value = null
-  
+    initChat()
   }
 
   // init llm
@@ -145,6 +143,18 @@ const onShow = () => {
     prompt.value.setPrompt()
     prompt.value.focus()
   }
+
+}
+
+const initChat = () => {
+
+  // init thread
+  chat.value = new Chat()
+  chat.value.title = null
+  chat.value.addMessage(new Message('system', store.config.instructions.default))
+
+  // reset response
+  response.value = null
 
 }
 
@@ -170,6 +180,26 @@ const initLlm = () => {
 
   // set engine model
   chat.value.setEngineModel(engine, model)
+
+}
+
+const onKeyDown = (ev: KeyboardEvent) => {
+  
+  const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
+
+  if (isCommand && ev.key == 'x') {
+    ev.preventDefault()
+    onClear()
+  } else if (isCommand && ev.key == 'c') {
+    ev.preventDefault()
+    actionCopy.value?.copy()
+  } else if (isCommand && ev.key == 's') {
+    ev.preventDefault()
+    saveChat()
+  } else if (isCommand && ev.key == 'i') {
+    ev.preventDefault()
+    onInsert()
+  }
 
 }
 
@@ -237,7 +267,18 @@ const cleanUp = () => {
 }
 
 const onClose = () => {
+
+  // save last seen chat
+  if (chat.value !== null) {
+    lastSeenChat = { uuid: chat.value.uuid, when: Date.now() }
+  } else {
+    lastSeenChat = null
+  }
+
+  // cleanup
   cleanUp()
+
+  // done
   window.api.anywhere.cancel()
 }
 
@@ -247,20 +288,30 @@ const onStopGeneration = () => {
 
 const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
 
-  // set response
-  response.value = new Message('assistant')
-
-  // update thread
-  const userMessage = new Message('user', prompt)
-  if (attachment) {
-    attachment.loadContents()
-    userMessage.attach(attachment)
-  }
-  chat.value.addMessage(userMessage)
-  chat.value.addMessage(response.value)
-
-  // now generate
   try {
+
+    // this should not happen but it happens
+    if (chat.value === null) {
+      initChat()
+      initLlm()
+    }
+    if (llm === null) {
+      initLlm()
+    }
+
+    // set response
+    response.value = new Message('assistant')
+
+    // update thread
+    const userMessage = new Message('user', prompt)
+    if (attachment) {
+      attachment.loadContents()
+      userMessage.attach(attachment)
+    }
+    chat.value.addMessage(userMessage)
+    chat.value.addMessage(response.value)
+
+    // now generate
     stopGeneration = false
     const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
     for await (const msg of stream) {
@@ -274,14 +325,15 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
         response.value.appendText(msg)
       }
     }
+
+    // save?
+    if (store.config.prompt.autosave) {
+      saveChat()
+    }
+
   } catch (err) {
     console.error(err)
     response.value.setText('An error occurred while generating the response.')
-  }
-
-  // save?
-  if (store.config.prompt.autosave) {
-    saveChat()
   }
 
 }
@@ -393,7 +445,7 @@ const onSettings = () => {
       max-height: 60vh;
       scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
 
-      p:last-child() {
+      p:last-child {
         margin-bottom: 0px;
       }
     }
