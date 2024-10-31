@@ -153,8 +153,9 @@ const initChat = () => {
   chat.value.title = null
   chat.value.addMessage(new Message('system', store.config.instructions.default))
 
-  // reset response
+  // reset stuff
   response.value = null
+  addedToHistory = false
 
 }
 
@@ -186,6 +187,7 @@ const initLlm = () => {
 const onKeyDown = (ev: KeyboardEvent) => {
   
   const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
+  const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
   if (isCommand && ev.key == 'x') {
     ev.preventDefault()
@@ -196,6 +198,9 @@ const onKeyDown = (ev: KeyboardEvent) => {
   } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
     saveChat()
+  } else if (isShiftCommand && ev.key == 's') {
+    ev.preventDefault()
+    onContinueConversation()
   } else if (isCommand && ev.key == 'i') {
     ev.preventDefault()
     onInsert()
