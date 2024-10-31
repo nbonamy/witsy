@@ -3,7 +3,7 @@ import { Configuration } from 'types/config.d'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 import OpenAI from 'openai'
 
-export default class implements STTEngine {
+export default class STTOpenAI implements STTEngine {
 
   config: Configuration
   client: OpenAI
@@ -24,8 +24,12 @@ export default class implements STTEngine {
     return true
   }
 
-  requiresDownload(): boolean {
+  static requiresDownload(): boolean {
     return false
+  }
+
+  requiresDownload(): boolean {
+    return STTOpenAI.requiresDownload()
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {

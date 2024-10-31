@@ -3,7 +3,7 @@ import { Configuration } from 'types/config.d'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 import Groq from 'groq-sdk'
 
-export default class implements STTEngine {
+export default class STTGroq implements STTEngine {
 
   config: Configuration
   client: Groq
@@ -26,8 +26,12 @@ export default class implements STTEngine {
     return true
   }
 
-  requiresDownload(): boolean {
+  static requiresDownload(): boolean {
     return false
+  }
+
+  requiresDownload(): boolean {
+    return STTGroq.requiresDownload()
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {
