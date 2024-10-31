@@ -334,7 +334,7 @@ const setContent = ({ content, start, end }: { content: string, start: number, e
 }
 
 const checkPlaceholder = (ev: { which: number }) => {
-  showPlaceholder.value = (ev.which >= 32 || !text.value.textContent.length)
+  showPlaceholder.value = (/*ev.which >= 32 || */!text.value.textContent.length)
   if (!showPlaceholder.value) {
     // do not wait for vue to hide this (too slow)
     hidePlaceholder()
