@@ -75,43 +75,6 @@ const modifiedCheckDelay = 1000
 let modifiedCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
 
-const resetState = () => {
-
-  // easy reset
-  editor.value.setContent({ content: '' })
-  modified.value = false
-  processing.value = false
-  undoStack.value = []
-  redoStack.value = []
-  fileUrl = null
-
-  // init new chat
-  chat.value = new Chat()
-  chat.value.addMessage(new Message('system', store.config.instructions.scratchpad.system))
-
-  // init llm
-  initLlm()
-
-}
-
-const initLlm = () => {
-
-  // load engine and model
-  const llmFactory = new LlmFactory(store.config)
-  engine.value = store.config.scratchpad.engine
-  model.value = store.config.scratchpad.model
-  if (!engine?.value.length || !model?.value.length) {
-    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
-  }
-
-  // prompt
-  llm = llmFactory.igniteEngine(engine.value)
-
-  // set chat
-  chat.value.setEngineModel(engine.value, model.value)
-
-}
-
 onMounted(() => {
 
   // events
@@ -187,6 +150,43 @@ onMounted(() => {
   resetState()
 
 })
+
+const resetState = () => {
+
+  // easy reset
+  editor.value.setContent({ content: '' })
+  modified.value = false
+  processing.value = false
+  undoStack.value = []
+  redoStack.value = []
+  fileUrl = null
+
+  // init new chat
+  chat.value = new Chat()
+  chat.value.addMessage(new Message('system', store.config.instructions.scratchpad.system))
+
+  // init llm
+  initLlm()
+
+}
+
+const initLlm = () => {
+
+  // load engine and model
+  const llmFactory = new LlmFactory(store.config)
+  engine.value = store.config.scratchpad.engine
+  model.value = store.config.scratchpad.model
+  if (!engine?.value.length || !model?.value.length) {
+    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
+  }
+
+  // prompt
+  llm = llmFactory.igniteEngine(engine.value)
+
+  // set chat
+  chat.value.setEngineModel(engine.value, model.value)
+
+}
 
 const resetModifiedCheckTimeout = () => {
   clearTimeout(modifiedCheckTimeout)
@@ -276,6 +276,7 @@ const onAction = (action: string|ToolbarAction) => {
       store.config.scratchpad.engine = engine.value
       store.config.scratchpad.model = model.value
       store.saveSettings()
+      initLlm()
       return
     
     case 'magic':
