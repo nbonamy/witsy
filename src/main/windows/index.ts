@@ -82,8 +82,7 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
   // we keep prompt anywhere all the time so we need our own way
   window.on('closed', () => {
-    const windows = BrowserWindow.getAllWindows();
-    if (windows.length === 1 && windows[0] === promptAnywhereWindow) {
+    if (areAllWindowsClosed()) {
       app.emit('window-all-closed');
     }
   });
@@ -206,6 +205,11 @@ export const restoreWindows = () => {
   // done
   windowsToRestore = [];
 
+};
+
+export const areAllWindowsClosed = () => {
+  const windows = BrowserWindow.getAllWindows();
+  return windows.length === 0 || (windows.length === 1 && windows[0] === promptAnywhereWindow);
 };
 
 export const notifyBrowserWindows = (event: string, ...args: any[]) => {
