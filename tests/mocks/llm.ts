@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineConfig } from 'multi-llm-ts'
 import Message from '../../src/models/message'
@@ -63,12 +62,6 @@ export default class LlmMock extends LlmEngine {
       throw new LlmError('QuotaExceededError', 429, 'You have exceeded your quota')
     }
 
-    // model: switch to vision if needed
-    const model = this.selectModel(thread, opts?.model || this.getChatModel())
-
-    // build payload
-    const payload = this.buildPayload(thread, model)
-
     // now stream
     return new RandomChunkStream(JSON.stringify([
       ...thread.map(m => { return { role: m.role, content: m.content }}),
@@ -84,7 +77,6 @@ export default class LlmMock extends LlmEngine {
     if (chunk.toString('utf8') == '<DONE>') {
       yield {
         type: 'content',
-        text: null,
         done: true
       }
     } else {
@@ -101,7 +93,7 @@ export default class LlmMock extends LlmEngine {
   }
 
    
-  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse|null> {
+  async image(prompt: string, opts: LlmCompletionOpts): Promise<LlmResponse> {
     return {
       type: 'image',
       original_prompt: prompt,
