@@ -11,7 +11,7 @@ export type DownloadStatus = {
 }
 
 export type DownloadProgress = {
-  state: 'progress'
+  status: 'progress'
   name: string
   file: string
   progress: number
@@ -52,6 +52,18 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTGroq(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
+  } else {
+    throw new Error(`Unknown STT engine ${engine}`)
+  }
+}
+
+export const requiresDownload = (engine: string): boolean => {
+  if (engine === 'openai') {
+    return STTOpenAI.requiresDownload()
+  } else if (engine === 'groq') {
+    return STTGroq.requiresDownload()
+  } else if (engine === 'whisper') {
+    return STTWhisper.requiresDownload()
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }

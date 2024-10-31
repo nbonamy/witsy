@@ -5,7 +5,7 @@ import { STTEngine, ProgressCallback, ProgressInfo, TaskStatus, TranscribeRespon
 // importing from @xenova/transformers leads to a runtime error
 import { env, pipeline } from '@xenova/transformers/dist/transformers'
 
-export default class implements STTEngine {
+export default class STTWhisper implements STTEngine {
 
   config: Configuration
   transcriber?: any
@@ -27,8 +27,12 @@ export default class implements STTEngine {
     return this.ready
   }
 
-  requiresDownload(): boolean {
+  static requiresDownload(): boolean {
     return true
+  }
+
+  requiresDownload(): boolean {
+    return STTWhisper.requiresDownload()
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {

@@ -59,7 +59,7 @@
 
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
-import getSTTEngine, { ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
+import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
 import STTWhisper from '../voice/stt-whisper'
@@ -74,9 +74,6 @@ const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
 
-let previousEngine: string = null
-let previousModel: string = null
-
 const engines = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'groq', label: 'Groq' },
@@ -84,13 +81,24 @@ const engines = [
 ]
 
 const models = computed(() => {
-  if (engine.value === 'openai') {
-    return STTOpenAI.models
-  } else if (engine.value === 'groq') {
-    return STTGroq.models
-  } else if (engine.value === 'whisper') {
-    return STTWhisper.models
-  }
+
+  // get models
+  const models = (() => {
+    if (engine.value === 'openai') {
+      return STTOpenAI.models
+    } else if (engine.value === 'groq') {
+      return STTGroq.models
+    } else if (engine.value === 'whisper') {
+      return STTWhisper.models
+    }
+  })()
+
+  // add a dummy one if download is required
+  return [
+    ...(requiresDownload(engine.value) ? [{ id: '', label: 'Select a model' }] : []),
+    ...models
+  ]
+
 })
 
 const progressText = computed(() => {
@@ -123,17 +131,32 @@ const save = () => {
 }
 
 const onChangeEngine = () => {
-  previousEngine = `${store.config.stt.engine}`
   model.value = models.value[0].id
   onChangeModel()
 }
 
 const onChangeModel = () => {
-  previousModel = `${store.config.stt.model}`
-  store.config.stt.engine = engine.value
-  store.config.stt.model = model.value
-  const sttEngine = getSTTEngine(store.config)
-  if (sttEngine.requiresDownload()) {
+
+  // dummy selector
+  if (model.value === '') {
+    return
+  }
+
+  // confirmed callback
+  const changeEngine = () => {
+
+    // save settings
+    store.config.stt.engine = engine.value
+    store.config.stt.model = model.value
+    store.saveSettings()
+
+    // do it
+    const sttEngine = getSTTEngine(store.config)
+    initializeEngine(sttEngine)
+  }
+
+  // check if download is required
+  if (requiresDownload(engine.value)) {
     Dialog.show({
       target: document.querySelector('.settings .voice'),
       title: 'This model needs to be downloaded on your computer. Do you want to proceed?',
@@ -141,16 +164,13 @@ const onChangeModel = () => {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        initializeEngine(sttEngine)
+        changeEngine()
       } else {
-        store.config.stt.engine = previousEngine
-        store.config.stt.model = previousModel
-        engine.value = previousEngine
-        model.value = previousModel
+        model.value = ''
       }
     })
   } else {
-    initializeEngine(sttEngine)
+    changeEngine()
   }
 }
 
@@ -162,6 +182,9 @@ const initializeEngine = async (sttEngine: STTEngine) => {
   // initialize
   sttEngine.initialize((data: ProgressInfo) => {
 
+    // debug
+    //console.log(data)
+    
     // cast
     const taskStatus = data as TaskStatus
     const dowloadProgress = data as DownloadProgress
@@ -170,11 +193,8 @@ const initializeEngine = async (sttEngine: STTEngine) => {
     if (taskStatus.status === 'error') {
       Dialog.alert('An error occured during initialization. Please try again.')
       sttEngine.deleteModel(model.value)
-      store.config.stt.engine = previousEngine
-      store.config.stt.model = previousModel
-      engine.value = previousEngine
-      model.value = previousModel
       progress.value = null
+      model.value = ''
     }
 
     // initialization completed
@@ -193,7 +213,7 @@ const initializeEngine = async (sttEngine: STTEngine) => {
     }
 
     // progress but only if we know the file size
-    if (dowloadProgress.state === 'progress') {
+    if (dowloadProgress.status === 'progress') {
       if (dowloadProgress.total !== 0) {
         const filesProgressInfo = progress.value as FilesProgressInfo
         filesProgressInfo[dowloadProgress.file] = dowloadProgress
