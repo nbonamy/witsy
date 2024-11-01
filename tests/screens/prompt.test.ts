@@ -35,7 +35,13 @@ beforeAll(() => {
     }
   }
 
-  store.chats = []  
+  store.chats = []
+
+  window.getSelection = () => {
+    return {
+      isCollapsed: true,
+    }
+  }
   
   window.api = {
     on: vi.fn(),
@@ -96,12 +102,6 @@ test('Closes when click on container', async () => {
   expect(window.api.anywhere.cancel).toHaveBeenCalledWith()
 })
 
-// test('Closes on Escape', async () => {
-//   const wrapper = mount(PromptAnywhere)
-//   await wrapper.trigger('keyup.esc')
-//   expect(window.api.anywhere.cancel).toHaveBeenCalled()
-// })
-
 test('Renders response', async () => {
   const wrapper = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
@@ -140,7 +140,7 @@ test('Closes when click on icon', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere.cancel).toHaveBeenCalledWith()
+  expect(window.api.anywhere?.cancel).toHaveBeenCalledWith()
 })
 
 test('Manages conversation', async () => {
@@ -192,7 +192,7 @@ test('Saves chat', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.chats).toHaveLength(1)
-  expect(window.api.history.save).toHaveBeenCalled()
+  expect(window.api.history?.save).toHaveBeenCalled()
   //expect(window.api.anywhere.continue).toHaveBeenCalledWith(chatId)
 })
 
@@ -205,5 +205,41 @@ test('Auto saves chat', async () => {
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.chats).toHaveLength(1)
-  expect(window.api.history.save).toHaveBeenCalled()
+  expect(window.api.history?.save).toHaveBeenCalled()
+})
+
+test('Supports keyboard shortcuts', async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+
+  // copy
+  vi.clearAllMocks()
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
+  expect(window.api.clipboard?.writeText).toHaveBeenCalled()
+
+  // insert
+  vi.clearAllMocks()
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
+  expect(window.api.anywhere?.insert).toHaveBeenCalled()
+
+  // continue
+  vi.clearAllMocks()
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 's' }));
+  await wrapper.vm.$nextTick()
+  expect(window.api.history?.save).toHaveBeenCalled()
+  expect(window.api.anywhere?.continue).toHaveBeenCalled()
+
+  // clear
+  vi.clearAllMocks()
+  expect(wrapper.vm.response).not.toBeNull()
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'x' }));
+  expect(wrapper.vm.response).toBeNull()
+
+  // quit
+  vi.clearAllMocks()
+  document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+  expect(window.api.anywhere?.cancel).toHaveBeenCalled()
 })

@@ -445,6 +445,10 @@ ipcMain.on('anywhere-cancel', async () => {
   await window.closePromptAnywhere();
 })
 
+ipcMain.on('anywhere-resize', async (_, payload) => {
+  await window.resizePromptAnywhere(payload.deltaX, payload.deltaY);
+})
+
 ipcMain.on('readaloud-get-text', (event, payload) => {
   event.returnValue = ReadAloud.getCachedText(payload);
 })

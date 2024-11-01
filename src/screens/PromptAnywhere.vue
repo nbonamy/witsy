@@ -1,30 +1,32 @@
 
 <template>
-  <div class="anywhere" @click="onClick" @keydown="onKeyDown" @keyup="onKeyUp">
+  <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
-      <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
-        <!-- <BIconSliders class="icon settings" @click="onSettings" /> -->
-      </Prompt>
+      <ResizableHorizontal :min-width="500" :resize-elems="false" :on-resize="onPromptResize" ref="resizerPrompt">
+        <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+      </ResizableHorizontal>
       <div class="spacer" />
-      <div class="response messages openai size4" v-if="response">
-        <MessageItem :message="response" :show-role="false" :show-actions="false"/>
-        <div class="actions">
-          <MessageItemActionCopy :message="response" ref="actionCopy" />
-          <div class="action insert" v-if="!isMas && !response.transient" @click="onInsert">
-            <BIconArrowReturnLeft /> Insert
-          </div>
-          <MessageItemActionRead :message="response" :audio-state="audioState" :read-aloud="onReadAloud" />
-          <div class="action continue" v-if="!response.transient" @click="onContinueConversation">
-            <BIconBoxArrowInUpRight /> Open as Chat
-          </div>
-          <div class="action clear" @click="onClear">
-            <BIconXCircle />  Clear
-          </div>
-          <div class="action close" @click="onClose">
-            <span class="narrow">Esc</span> Close
+      <ResizableHorizontal :min-width="500" :resize-elems="false" :on-resize="onResponseResize" ref="resizerResponse" v-if="response">
+        <div class="response messages openai size4">
+          <MessageItem :message="response" :show-role="false" :show-actions="false"/>
+          <div class="actions">
+            <MessageItemActionCopy :message="response" ref="actionCopy" />
+            <div class="action insert" v-if="!isMas && !response.transient" @click="onInsert">
+              <BIconArrowReturnLeft /> Insert
+            </div>
+            <MessageItemActionRead :message="response" :audio-state="audioState" :read-aloud="onReadAloud" />
+            <div class="action continue" v-if="!response.transient" @click="onContinueConversation">
+              <BIconBoxArrowInUpRight /> Open as Chat
+            </div>
+            <div class="action clear" @click="onClear">
+              <BIconXCircle />  Clear
+            </div>
+            <div class="action close" @click="onClose">
+              <span class="narrow">Esc</span> Close
+            </div>
           </div>
         </div>
-      </div>
+      </ResizableHorizontal>
     </div>
     <audio ref="audio" />
     <PromptDefaults id="defaults" @defaults-modified="initLlm" />
@@ -45,6 +47,7 @@ import PromptDefaults from './PromptDefaults.vue'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
+import ResizableHorizontal from '../components/ResizableHorizontal.vue'
 import Attachment from 'models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
@@ -66,6 +69,8 @@ const prompt = ref(null)
 const isMas = ref(false)
 const chat: Ref<Chat> = ref(null)
 const response: Ref<Message> = ref(null)
+const resizerPrompt = ref(null)
+const resizerResponse = ref(null)
 const audio = ref(null)
 const audioState = ref({
   state: 'idle',
@@ -85,9 +90,11 @@ let llm: LlmEngine = null
 let stopGeneration = false
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
+let mouseDownToClose = false
 
 onMounted(() => {
   
+  // events
   onEvent('send-prompt', onPrompt)
   onEvent('stop-prompting', onStopGeneration)
   window.api.on('show', onShow)
@@ -110,12 +117,15 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('keyup', onKeyUp)
   audioPlayer.removeListener(onAudioPlayerStatus)
   window.api.off('show', onShow)
 })
 
 const onShow = () => {
+
+  // shotcuts work better at document level
+  document.addEventListener('keyup', onKeyUp)
+  document.addEventListener('keydown', onKeyDown)  
 
   // see if chat is not that old
   if (chat.value !== null) {
@@ -185,7 +195,7 @@ const initLlm = () => {
 }
 
 const onKeyDown = (ev: KeyboardEvent) => {
-  
+
   const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
@@ -193,14 +203,17 @@ const onKeyDown = (ev: KeyboardEvent) => {
     ev.preventDefault()
     onClear()
   } else if (isCommand && ev.key == 'c') {
-    ev.preventDefault()
-    actionCopy.value?.copy()
+    const selection = window.getSelection()
+    if (selection == null || selection.isCollapsed) {
+      ev.preventDefault()
+      actionCopy.value?.copy()
+    }
   } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
-    saveChat()
+    onContinueConversation()
   } else if (isShiftCommand && ev.key == 's') {
     ev.preventDefault()
-    onContinueConversation()
+    saveChat()
   } else if (isCommand && ev.key == 'i') {
     ev.preventDefault()
     onInsert()
@@ -250,7 +263,7 @@ const setExpertPrompt = (id: string) => {
 
 const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
-    if (prompt.value.getPrompt()?.length) {
+    if (prompt.value?.getPrompt()?.length) {
       prompt.value.setPrompt('')
     } else {
       onClose()
@@ -258,8 +271,14 @@ const onKeyUp = (event: KeyboardEvent) => {
   }
 }
 
-const onClick = (ev: MouseEvent) => {
-  const target = ev.target as HTMLElement;
+const onMouseDown = (ev: MouseEvent) => {
+  const target = ev.target as HTMLElement
+  mouseDownToClose = (target.classList.contains('anywhere') || target.classList.contains('container'))
+}
+
+const onMouseUp = (ev: MouseEvent) => {
+  if (!mouseDownToClose) return
+  const target = ev.target as HTMLElement
   if (target.classList.contains('anywhere') || target.classList.contains('container')) {
     onClose()
   }
@@ -267,7 +286,7 @@ const onClick = (ev: MouseEvent) => {
 
 const cleanUp = () => {
   audioPlayer.stop()
-  prompt.value.setPrompt()
+  prompt.value?.setPrompt()
   response.value = null
 }
 
@@ -282,6 +301,10 @@ const onClose = () => {
 
   // cleanup
   cleanUp()
+
+  // remove listeners
+  document.removeEventListener('keyup', onKeyUp)
+  document.removeEventListener('keydown', onKeyDown)
 
   // done
   window.api.anywhere.cancel()
@@ -344,7 +367,9 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
 }
 
 const onInsert = () => {
-  window.api.anywhere.insert(response.value.content)
+  if (response.value) {
+    window.api.anywhere.insert(response.value.content)
+  }
 }
 
 const saveChat = async () => {
@@ -389,6 +414,16 @@ const onSettings = () => {
   document.querySelector<HTMLDialogElement>('#defaults').showModal()
 }
 
+const onPromptResize = (deltaX: number) => {
+  resizerResponse.value?.adjustWidth(deltaX)
+  window.api.anywhere.resize(deltaX, 0)
+}
+
+const onResponseResize= (deltaX: number) => {
+  resizerPrompt.value?.adjustWidth(deltaX)
+  window.api.anywhere.resize(deltaX, 0)
+}
+
 </script>
 
 <style>
@@ -404,9 +439,9 @@ const onSettings = () => {
 
 .response {
   .body {
+    -webkit-app-region: no-drag;
     a {
       cursor: pointer;
-      -webkit-app-region: no-drag;
     }
   }
 }
@@ -417,10 +452,8 @@ const onSettings = () => {
 
 .anywhere {
   height: 75vh;
-  padding-top: 15vh;
-  padding-bottom: 10vh;
-  padding-left: 10vw;
-  padding-right: 10vw;
+  padding-left: 64px;
+  padding-right: 64px;
   overflow: hidden;
   background-color: transparent;
 }
@@ -438,6 +471,7 @@ const onSettings = () => {
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
+    resize: horizontal;
   }
 
   .prompt, .prompt * {
