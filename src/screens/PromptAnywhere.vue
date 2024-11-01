@@ -415,12 +415,10 @@ const onSettings = () => {
 }
 
 const onPromptResize = (deltaX: number) => {
-  resizerResponse.value?.adjustWidth(deltaX)
   window.api.anywhere.resize(deltaX, 0)
 }
 
 const onResponseResize= (deltaX: number) => {
-  resizerPrompt.value?.adjustWidth(deltaX)
   window.api.anywhere.resize(deltaX, 0)
 }
 
@@ -439,9 +437,22 @@ const onResponseResize= (deltaX: number) => {
 
 .response {
   .body {
-    -webkit-app-region: no-drag;
+    padding-left: 0px;
+    margin-left: 0px;
+    p:first-child {
+      margin-top: 0px !important;
+    }
+    p:last-child {
+      margin-bottom: 16px;
+    }
     a {
       cursor: pointer;
+    }
+    .transient {
+      margin-left: 4px;
+      .tool-call {
+        font-size: 12pt !important;
+      }
     }
   }
 }
@@ -451,7 +462,7 @@ const onResponseResize= (deltaX: number) => {
 <style scoped>
 
 .anywhere {
-  height: 75vh;
+  height: 100vh;
   padding-left: 64px;
   padding-right: 64px;
   overflow: hidden;
@@ -493,29 +504,26 @@ const onResponseResize= (deltaX: number) => {
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
-    padding: 16px 0px;
+    padding: 32px 0px 16px 32px;
     color: var(--text-color);
     display: flex;
     flex-direction: column;
 
     .message {
+      -webkit-app-region: no-drag;
       overflow-y: auto;
       margin-bottom: 0px;
       padding-bottom: 0px;
-      max-height: 60vh;
+      padding-left: 0px;
+      max-height: 75vh;
       scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
-
-      p:last-child {
-        margin-bottom: 0px;
-      }
-
     }
 
     .actions {
       display: flex;
       flex-direction: row;
       gap: 12px;
-      padding: 8px 32px;
+      padding: 8px 24px 8px 0px;
       padding-bottom: 2px;
       color: var(--icon-color);
       font-size: 10pt;
