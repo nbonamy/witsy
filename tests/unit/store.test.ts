@@ -17,11 +17,19 @@ const chats = [
     engine: 'engine',
     model: 'model',
     messages: [
-      { uuid: 1, role: 'system', content: 'Hi' },
-      { uuid: 2, role: 'user', content: 'Hello' }
+      new Message('system', 'Hi'),
+      new Message('user', 'Hello')
     ]
   })
 ]
+
+// to make testing easier
+// was trying to use expect.any(String) but it was not working
+chats[1].messages[0].uuid = '1'
+chats[1].messages[0].createdAt = 0
+chats[1].messages[1].uuid = '2'
+chats[1].messages[1].createdAt = 0
+
 
 window.api = {
   config: {
@@ -103,8 +111,8 @@ test('Save history', async () => {
     model: 'model',
     deleted: false,
     messages: [
-      { uuid: 1, role: 'system', type: 'text', content: 'Hi', toolCall: null, attachment: null, transient: false },
-      { uuid: 2, role: 'user', type: 'text', content: 'Hello', toolCall: null, attachment: null, transient: false }
+      { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', toolCall: null, attachment: null, transient: false },
+      { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', toolCall: null, attachment: null, transient: false }
     ]
   }])
 })
