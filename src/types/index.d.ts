@@ -20,8 +20,11 @@ export interface Attachment {
 
 export type ToolCallInfo = {
   status: string
-  params: any
-  result: any
+  calls: {
+    name: string
+    params: any
+    result: any
+  }[]
 }
 
 export interface Message {
@@ -133,7 +136,7 @@ export interface OnlineStorageProvider {
   upload: (filepath: string, modifiedTime: Date) => Promise<boolean>
 }
 
-export export type ComputerAction = {
+export type ComputerAction = {
   action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
   coordinate?: number[]
   text?: string

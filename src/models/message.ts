@@ -47,10 +47,23 @@ export default class Message extends MessageBase {
   }
 
   setToolCall(toolCall: LlmChunkTool) {
-    this.toolCall = {
-      status: toolCall.done ? null : toolCall.text,
-      params: toolCall.call?.params,
-      result: toolCall.call?.result
+    if (this.toolCall == null) {
+      this.toolCall = {
+        status: null,
+        calls: []
+      }
+    }
+    if (toolCall.done) {
+      this.toolCall.status = null
+      if (toolCall.call) {
+        this.toolCall.calls.push({
+          name: toolCall.name,
+          params: toolCall.call.params,
+          result: toolCall.call.result
+        })
+      }
+    } else {
+      this.toolCall.status = toolCall.status
     }
   }
 
