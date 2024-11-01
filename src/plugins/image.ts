@@ -95,12 +95,12 @@ export default class extends Plugin {
     // huggingface parameters
     if (this.config.engine == 'huggingface') {
 
-      parameters.push({
-        name: 'negative_prompt',
-        type: 'string',
-        description: 'Stuff to avoid in the generated image',
-        required: false
-      })
+      // parameters.push({
+      //   name: 'negative_prompt',
+      //   type: 'string',
+      //   description: 'Stuff to avoid in the generated image',
+      //   required: false
+      // })
 
       parameters.push({
         name: 'width',
@@ -178,7 +178,7 @@ export default class extends Plugin {
       model: model,
       inputs: parameters?.prompt,
       parameters: {
-        negative_prompt: parameters?.negative_prompt,
+        //negative_prompt: parameters?.negative_prompt,
         width: parameters?.width,
         height: parameters?.height
       }
