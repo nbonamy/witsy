@@ -21,8 +21,8 @@ const props = defineProps({
 
 const container = ref(null)
 
-let child = null
-let lastX = null
+let child: HTMLElement = null
+let lastX: number = null
 
 onMounted(() => {
   child = container.value.querySelector(':not(.handle)')
