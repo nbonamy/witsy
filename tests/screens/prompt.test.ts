@@ -98,8 +98,12 @@ test('Initalizes LLM and chat', async () => {
 
 test('Closes when click on container', async () => {
   const wrapper = mount(PromptAnywhere)
-  wrapper.find('.container').trigger('click')
-  expect(window.api.anywhere.cancel).toHaveBeenCalledWith()
+  wrapper.find('.prompt').trigger('mousedown')
+  wrapper.find('.container').trigger('mouseup')
+  expect(window.api.anywhere.cancel).not.toHaveBeenCalled()
+  wrapper.find('.container').trigger('mousedown')
+  wrapper.find('.container').trigger('mouseup')
+  expect(window.api.anywhere.cancel).toHaveBeenCalled()
 })
 
 test('Renders response', async () => {
