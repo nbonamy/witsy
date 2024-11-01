@@ -59,6 +59,12 @@ test('extract attachments - content', async () => {
     { messages: [ { content: '[image2](file://images/image2.png)[image3](file://images/image3.png)' } ] }
   ] as Chat[], 'images')).toEqual(['image1.png', 'image2.png', 'image3.png'])
 
+  expect(extractAttachmentsFromHistory([
+    { messages: [ { content: 'file://images folder/image1.png' } ] },
+    { messages: [ { content: 'file://images%20folder/image2.png' } ] },
+    { messages: [ { content: '[image3](file://images folder/image3.png)[image4](file://images%20folder/image4.png)' } ] }
+  ] as Chat[], 'images folder')).toEqual(['image1.png', 'image2.png', 'image3.png', 'image4.png'])
+
 })
 
 test('extract attachments - attachment', async () => {
