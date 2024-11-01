@@ -1,6 +1,7 @@
 
 import { anyDict } from 'types/index.d'
-import { Plugin, PluginConfig, PluginParameter } from 'multi-llm-ts'
+import { PluginParameter } from 'multi-llm-ts'
+import Plugin, { PluginConfig } from './plugin'
 
 export default class extends Plugin {
 

@@ -191,14 +191,25 @@
       "model": {
         "chat": "llama2"
       }
+    },
+    "huggingface": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": "black-forest-labs/FLUX.1-dev"
+      }
     }
   },
   "plugins": {
     "browse": {},
     "python": {},
     "tavily": {},
-    "dalle": {
-      "enabled": true
+    "image": {
+      "enabled": true,
+      "engine": "openai"
     },
     "nestor": {}
   },

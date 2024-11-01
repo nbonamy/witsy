@@ -21,7 +21,7 @@ import { availablePlugins } from '../plugins/plugins'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
-import SettingsDallE from './SettingsDall-E.vue'
+import SettingsImage from './SettingsImage.vue'
 import SettingsNestor from './SettingsNestor.vue'
 //import SettingsDropbox from './SettingsDropbox.vue'
 // @ts-expect-error svg
@@ -29,7 +29,7 @@ import logoPython from '../../assets/python.svg'
 // @ts-expect-error svg
 import logoTavily from '../../assets/tavily.svg'
 // @ts-expect-error svg
-import logoOpenAI from '../../assets/openai.svg'
+import logoImage from '../../assets/paintbrush.svg'
 // @ts-expect-error svg
 import logoNestor from '../../assets/nestor.jpg'
 //import logoDropbox from '../../assets/dropbox.svg'
@@ -59,14 +59,14 @@ const plugins = computed((): PluginUI[] => {
         browse: 'Browse',
         tavily: 'Tavily Search',
         python: 'Python',
-        dalle: 'DALL-E',
+        image: 'Image',
         nestor: 'Nestor',
       }[plugin],
       logo: {
         browse: { image: logoTavily },
         tavily: { image: logoTavily },
         python: { image: logoPython },
-        dalle: { image: logoOpenAI },
+        image: { image: logoImage },
         nestor: { image: logoNestor },
       }[plugin],
     }
@@ -83,7 +83,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'browse') return SettingsBrowse
   if (currentPlugin.value == 'python') return SettingsPython
   if (currentPlugin.value == 'tavily') return SettingsTavily
-  if (currentPlugin.value == 'dalle') return SettingsDallE
+  if (currentPlugin.value == 'image') return SettingsImage
   if (currentPlugin.value == 'nestor') return SettingsNestor
   //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
