@@ -52,7 +52,7 @@ import Dialog from '../composables/dialog'
 const emit = defineEmits(['expert-modified']);
 
 const props = defineProps<{
-  expert: Expert
+  expert: Expert|null
 }>()
 
 const name = ref(null)

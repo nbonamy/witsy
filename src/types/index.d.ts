@@ -222,6 +222,7 @@ declare global {
         insert?(prompt: string): void
         continue?(chatId: string): void
         cancel?(): void
+        resize?(deltaX: number, deltaY: number): void
       }
       experts?: {
         load?(): Expert[]
