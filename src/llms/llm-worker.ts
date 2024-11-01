@@ -20,11 +20,7 @@ const stream = async (messages: any[], opts: any) => {
   try {
     const stream = await llm.generate(messages, opts)
     for await (const msg of stream) {
-      if (msg.type == 'content') {
-        worker.postMessage({ type: 'chunk', chunk: msg })
-      } else if (msg.type == 'tool') {
-        worker.postMessage({ type: 'tool', content: msg.text })
-      }
+      worker.postMessage(msg)
     }
   } catch (error) {
     console.error('Error while generating text', error)

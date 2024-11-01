@@ -82,6 +82,11 @@ const onNewChunk = (chunk: LlmChunk) => {
     scrollOnChunk = true
   }
 
+  // only concerned with text chunks
+  if (chunk?.type !== 'content') {
+    return
+  }
+
   // chunk if not disabled
   if (scrollOnChunk && !chunk?.done) {
     scrollDown()

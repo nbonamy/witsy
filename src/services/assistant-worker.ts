@@ -226,7 +226,7 @@ export default class {
     if (event.data.type === 'chunk') {
     
       // message level processing
-      message.appendText(event.data.chunk)
+      message.appendText(event.data)
       if (event.data.chunk?.done) {
         this.onGenerationDone()
       }
@@ -237,7 +237,7 @@ export default class {
     
     } else if (event.data.type === 'tool') {
     
-      message.setToolCall(event.data.content)
+      message.setToolCall(event.data)
     
     } else if (event.data.type === 'error') {
     

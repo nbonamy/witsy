@@ -172,7 +172,7 @@ export default class {
           break
         }
         if (msg.type === 'tool') {
-            message.setToolCall(msg.text)
+            message.setToolCall(msg)
         } else if (msg.type === 'content') {
           if (msg && sources && sources.length > 0) {
             msg.done = false

@@ -23,7 +23,7 @@
       <!-- transient information -->
       <div v-if="message.transient" class="transient">
         <Loader />
-        <span v-if="message.toolCall" class="tool-call">{{ message.toolCall }}</span>
+        <span v-if="message.toolCall?.status" class="tool-call">{{ message.toolCall.status }}</span>
       </div>
 
     </div>

@@ -483,7 +483,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
         break
       }
       if (msg.type === 'tool') {
-        response.setToolCall(msg.text)
+        response.setToolCall(msg)
       } else if (msg.type === 'content') {
         response.appendText(msg)
       }

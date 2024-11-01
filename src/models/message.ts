@@ -1,5 +1,6 @@
 
-import { LlmRole, Message as MessageBase } from 'multi-llm-ts'
+import { ToolCallInfo } from 'types'
+import { LlmRole, LlmChunkTool, Message as MessageBase } from 'multi-llm-ts'
 import Attachment from './attachment'
 
 export default class Message extends MessageBase {
@@ -7,7 +8,7 @@ export default class Message extends MessageBase {
   uuid: string
   createdAt: number
   type: string
-  toolCall?: string
+  toolCall?: ToolCallInfo
   declare attachment: Attachment
 
   constructor(role: LlmRole, content?: string) {
@@ -45,8 +46,12 @@ export default class Message extends MessageBase {
     this.transient = false
   }
 
-  setToolCall(toolCall: string|null) {
-    this.toolCall = toolCall
+  setToolCall(toolCall: LlmChunkTool) {
+    this.toolCall = {
+      status: toolCall.done ? null : toolCall.text,
+      params: toolCall.call?.params,
+      result: toolCall.call?.result
+    }
   }
 
 }
