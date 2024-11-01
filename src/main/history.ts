@@ -126,7 +126,9 @@ export const extractAttachmentsFromHistory = (history: Chat[], imagesPath: strin
 
   // regexes[0] matches content that is exactly a file:// url
   // regexes[1] matches content that is a file:// embedded in markdown ("(file://....)"
-  const imagesPathUrl = encodeURI(`file://${imagesPath}`)
+  let imagesPathUrl = encodeURI(`file://${imagesPath}`)
+  imagesPathUrl = imagesPathUrl.replace(/%20/g, '(?:%20|\\s)')
+  imagesPath = imagesPath.replace(/ /g, '(?:%20|\\s)')
   const regexes = [
     new RegExp(`^file://${imagesPath}/([^()\\/]+)$`, 'g'),
     new RegExp(`\\(${imagesPathUrl}/([^()\\/]+)\\)`, 'g')
