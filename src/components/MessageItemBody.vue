@@ -2,7 +2,7 @@
   <div v-if="message.type == 'text'">
     <div v-for="block in blocks">
       <div v-if="block.type == 'text'" v-html="mdRender(block.content)" class="text variable-font-size"></div>
-      <MessageItemImage :url="block.url" :desc="block.desc" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
+      <MessageItemImage :url="block.url" :desc="block.desc" :prompt="block.prompt" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@ interface Block {
   content?: string
   url?: string
   desc?: string
+  prompt?: string
 }
 
 const blocks = computed(() => {
@@ -44,7 +45,19 @@ const blocks = computed(() => {
     if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
       imageUrl = `file://${imageUrl}`
     }
-    blocks.push({ type: 'image', url: imageUrl, desc: match[1]})
+
+    // try to find the prompt
+    let prompt = null
+    if (props.message.toolCall?.calls) {
+      for (const call of props.message.toolCall.calls) {
+        if (call.result?.path === match[2] || call.result?.path === decodeURIComponent(match[2])) {
+          prompt = call.params.prompt
+        }
+      }
+    }
+
+    // done
+    blocks.push({ type: 'image', url: imageUrl, desc: match[1], prompt: prompt })
 
     // continue
     lastIndex = regex.lastIndex
