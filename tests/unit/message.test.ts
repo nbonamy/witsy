@@ -75,3 +75,17 @@ test('Image message', () => {
   expect(message.type).toBe('image')
   expect(message.content).toBe('url')
 })
+
+test('Tool call message', () => {
+  const message = new Message('user')
+  message.setToolCall({ type: 'tool', text: 'Calling a tool', done: false })
+  expect(message.toolCall).not.toBe(null)
+  expect(message.toolCall.status).toBe('Calling a tool')
+  message.setToolCall({ type: 'tool', text: 'Calling a tool', done: true })
+  expect(message.toolCall.status).toBe(null)
+  message.setToolCall({ type: 'tool', call: { params: ['arg'], result: 'result' }, done: true })
+  expect(message.toolCall.status).toBe(null)
+  expect(message.toolCall.params).toStrictEqual(['arg'])
+  expect(message.toolCall.result).toBe('result')
+})
+

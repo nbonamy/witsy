@@ -79,6 +79,7 @@ export default class LlmMock extends LlmEngine {
     if (chunk.toString('utf8') == '<DONE>') {
       yield {
         type: 'content',
+        text: '',
         done: true
       }
     } else {

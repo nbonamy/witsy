@@ -156,7 +156,7 @@ test('Transient message', async () => {
 })
 
 test('Tool call message', async () => {
-  botMessageTransient.setToolCall('Calling a tool')
+  botMessageTransient.setToolCall({ type: 'tool', text: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .transient').exists()).toBe(true)
   expect(wrapper.find('.body .transient .tool-call').exists()).toBe(true)

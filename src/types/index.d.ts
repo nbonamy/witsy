@@ -1,7 +1,8 @@
 
 export { strDict, anyDict } from 'multi-llm-ts'
-import { LlmChunk, LlmRole, anyDict } from 'multi-llm-ts'
+import { LlmChunk, LlmChunkTool, LlmRole, anyDict } from 'multi-llm-ts'
 import { Configuration } from './config.d'
+import { ToolCallInfo } from 'models/message'
 
 export interface Attachment {
   contents: string
@@ -17,6 +18,12 @@ export interface Attachment {
   format(): string
 }
 
+export type ToolCallInfo = {
+  status: string
+  params: any
+  result: any
+}
+
 export interface Message {
   uuid: string
   type: string
@@ -24,11 +31,11 @@ export interface Message {
   role: LlmRole
   content: string
   transient: boolean
-  toolCall?: string
+  toolCall?: ToolCallInfo
   attachment: Attachment
   setText(text: string): void
   setImage(url: string): void
-  setToolCall(toolCall: string|null): void
+  setToolCall(toolCall: LlmChunkTool): void
   attach(attachment: Attachment): void
   appendText(chunk: LlmChunk): void
 }

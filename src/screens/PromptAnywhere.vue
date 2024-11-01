@@ -34,7 +34,7 @@
 <script setup lang="ts">
 
 import { anyDict } from 'types'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
@@ -64,8 +64,8 @@ const llmFactory = new LlmFactory(store.config)
 const actionCopy = ref(null)
 const prompt = ref(null)
 const isMas = ref(false)
-const chat = ref(null)
-const response = ref(null)
+const chat: Ref<Chat> = ref(null)
+const response: Ref<Message> = ref(null)
 const audio = ref(null)
 const audioState = ref({
   state: 'idle',
@@ -325,7 +325,7 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
         break
       }
       if (msg.type === 'tool') {
-        response.value.setToolCall(msg.text)
+        response.value.setToolCall(msg)
       } else if (msg.type === 'content') {
         response.value.appendText(msg)
       }
