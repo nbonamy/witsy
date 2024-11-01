@@ -195,3 +195,15 @@ test('Saves chat', async () => {
   expect(window.api.history.save).toHaveBeenCalled()
   //expect(window.api.anywhere.continue).toHaveBeenCalledWith(chatId)
 })
+
+test('Auto saves chat', async () => {
+  const wrapper = mount(PromptAnywhere)
+  store.config.prompt.autosave = true
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  expect(wrapper.vm.chat.title).not.toBeNull()
+  expect(store.chats).toHaveLength(1)
+  expect(window.api.history.save).toHaveBeenCalled()
+})
