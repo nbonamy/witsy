@@ -63,6 +63,7 @@ const load = () => {
 const onChangeEngine = () => {
   image_models.value = store.config.engines[engine.value]?.models?.image || []
   image_model.value = store.config.engines[engine.value]?.model?.image || ''
+  save()
 }
 
 const onRefresh = async () => {
