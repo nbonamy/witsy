@@ -118,6 +118,9 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Hugging face image generation
+- [x] Show prompt used for image generation
+- [x] Redesigned Prompt window
 - [x] Anthropic Computer Use
 - [x] Auto-update refactor (still not Windows)
 - [x] Dark mode
