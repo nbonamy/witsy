@@ -20,13 +20,13 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
     skipTaskbar: true,
     alwaysOnTop: true,
     opacity: 0.975,
-    resizable: process.env.DEBUG ? true : false,
     backgroundColor: 'rgba(0, 0, 0, 0)',
     transparent: true,
     hiddenInMissionControl: true,
     queryParams: params,
     keepHidden: keepHidden,
     hasShadow: false,
+    movable: true,
   });
 
   // notify show

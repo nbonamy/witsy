@@ -1,5 +1,5 @@
 
-import { Expert } from 'types'
+import { Expert } from '../../src/types/index.d'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { store } from '../../src/services/store'
@@ -44,7 +44,6 @@ beforeAll(() => {
   window.api = {
     on: vi.fn(),
     file: {
-       
       pick: vi.fn(() => {
         return {
           url: 'file://image.png',
@@ -52,7 +51,6 @@ beforeAll(() => {
           contents: 'image64'
          }
       }),
-       
       extractText: vi.fn((contents: string) => {
         return contents
       })
@@ -67,7 +65,6 @@ beforeAll(() => {
   }
 
   // init store
-  // @ts-expect-error no-other-way
   store.config = defaults
   store.loadSettings = vi.fn()
   store.experts = [

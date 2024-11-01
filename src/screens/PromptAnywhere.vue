@@ -391,6 +391,28 @@ const onSettings = () => {
 
 </script>
 
+<style>
+
+.prompt .icon {
+  cursor: pointer;
+  color: var(--prompt-icon-color);
+}
+
+.actions .action {
+  -webkit-app-region: no-drag;
+}
+
+.response {
+  .body {
+    a {
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+    }
+  }
+}
+
+</style>
+
 <style scoped>
 
 .anywhere {
@@ -412,20 +434,18 @@ const onSettings = () => {
   align-items: stretch;
 
   .prompt {
+    -webkit-app-region: drag;
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
-
-    .icon {
-      cursor: pointer;
-      color: var(--prompt-icon-color);
-      margin-left: 4px;
-      margin-right: 8px;
-    }
   }
 
   .prompt, .prompt * {
     font-size: 14pt;
+  }
+
+  .prompt * {
+    -webkit-app-region: no-drag;
   }
 
   /* this is to have space between prompt and response */
@@ -435,6 +455,7 @@ const onSettings = () => {
   }
 
   .response {
+    -webkit-app-region: drag;
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
     border-radius: 12px;
@@ -453,6 +474,7 @@ const onSettings = () => {
       p:last-child {
         margin-bottom: 0px;
       }
+
     }
 
     .actions {
