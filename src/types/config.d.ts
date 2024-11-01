@@ -9,13 +9,13 @@ export interface Configuration {
   instructions: InstructionsConfig
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
+  scratchpad: ScratchpadConfig
   engines: {[key: string]: EngineConfig}
   plugins: {[key: string]: PluginConfig}
   stt: STTConfig
   rag: RagConfig
   dropbox: DropboxConfig
   gdrive: GDriveConfig
-  [key: string]: any
 }
 
 export interface GeneralConfig {
@@ -71,6 +71,13 @@ export interface ShortcutsConfig {
   readaloud: Shortcut
   transcribe: Shortcut
   scratchpad: Shortcut
+}
+
+export interface ScratchpadConfig {
+  engine: string
+  model: string
+  fontFamily: string
+  fontSize: string
 }
 
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
