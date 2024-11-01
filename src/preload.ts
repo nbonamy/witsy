@@ -79,6 +79,7 @@ contextBridge.exposeInMainWorld(
       insert: (text: string): void => { return ipcRenderer.send('anywhere-insert', text) },
       continue: (chatid: string): void => { return ipcRenderer.send('anywhere-continue-as-chat', chatid) },
       cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
+      resize: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('anywhere-resize', { deltaX, deltaY }) },
     },
     experts: {
       load: (): Expert[] => { return JSON.parse(ipcRenderer.sendSync('experts-load')) },
