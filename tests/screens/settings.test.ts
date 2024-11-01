@@ -222,9 +222,9 @@ test('Settings Advanced', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.llm.conversationLength).not.toBe(1)
-  tab.find('.group.length select').setValue(1)
-  expect(store.config.llm.conversationLength).toBe(1)
+  expect(store.config.llm.conversationLength).not.toBe(10)
+  tab.find('.group.length input').setValue(10)
+  expect(store.config.llm.conversationLength).toBe(10)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
