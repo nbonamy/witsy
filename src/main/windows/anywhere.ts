@@ -20,7 +20,7 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
-    opacity: 0.975,
+    //opacity: 0.975,
     resizable: process.env.DEBUG ? true : false,
     backgroundColor: 'rgba(0, 0, 0, 0)',
     transparent: true,
