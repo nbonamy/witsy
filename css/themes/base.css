@@ -124,12 +124,15 @@
   background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
 }
 
-.message .download {
+.message .image-container .image-actions {
   display: none;
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.66);
   top: 24px;
   right: 12px;
+}
+
+.message .image-container .image-actions .action {
+  background-color: rgba(0, 0, 0, 0.66);
   cursor: pointer;
   font-size: 10pt;
   padding: 8px;
@@ -137,8 +140,10 @@
   color: white;
 }
 
-.message .image-container:hover .download {
-  display: block;
+.message .image-container:hover .image-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
 
 .message.assistant .actions {

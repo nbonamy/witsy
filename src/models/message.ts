@@ -31,7 +31,7 @@ export default class Message extends MessageBase {
     message.createdAt = obj.createdAt
     message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
     message.transient = false
-    message.toolCall = null
+    message.toolCall = obj.toolCall || null
     return message
   }
 
