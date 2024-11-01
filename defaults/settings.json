@@ -18,10 +18,10 @@
       "retryGeneration": true
     }
   },
-  "llm": {
+"llm": {
     "engine": "openai",
     "autoVisionSwitch": true,
-    "conversationLength": 5
+    "conversationLength": 20
   },
   "instructions": {
     "default": "You are a helpful assistant. You are here to help the user with any questions they have.",

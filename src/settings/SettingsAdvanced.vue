@@ -12,9 +12,7 @@
     <hr/>
     <div class="group length">
       <label>Conversation length</label>
-      <select v-model="conversationLength" @change="save">
-        <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
-      </select>
+      <input type="number" min="1" v-model="conversationLength" @change="save">
     </div>
     <div class="group instruction">
       <label>Default instructions</label>
@@ -81,6 +79,12 @@ hr {
   margin: 1em 0;
   padding: 0;
 
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 </style>
