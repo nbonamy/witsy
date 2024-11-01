@@ -106,9 +106,11 @@ const loadSettings = () => {
   const newKeys = Object.keys(updated)
   const obsoleteKeys = Object.keys(store.config).filter((key) => !newKeys.includes(key))
   for (const key of obsoleteKeys) {
+    // @ts-expect-error direct key access
     delete store.config[key]
   }
   for (const key of Object.keys(updated)) {
+    // @ts-expect-error direct key access
     store.config[key] = updated[key]
   }
 }
