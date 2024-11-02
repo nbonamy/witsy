@@ -196,8 +196,12 @@ const initLlm = () => {
 
 const onKeyDown = (ev: KeyboardEvent) => {
 
+  // all this requires we have a response
+  if (!response.value) return
+
   const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
+
 
   if (isCommand && ev.key == 'x') {
     ev.preventDefault()
