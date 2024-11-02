@@ -430,35 +430,66 @@ const onResponseResize= (deltaX: number) => {
 
 <style>
 
-.prompt .icon {
-  cursor: pointer;
-  color: var(--prompt-icon-color);
-}
+.anywhere {
 
-.actions .action {
-  -webkit-app-region: no-drag;
-}
-
-.response {
-  .body {
-    padding-left: 0px;
-    margin-left: 0px;
-    p:first-child {
-      margin-top: 0px !important;
+  .prompt {
+    
+    .input {
+      border: none;
+      border-radius: 0px;
+      background-color: var(--window-bg-color);
+      
+      .textarea-wrapper {
+        textarea {
+          border-radius: 0px;
+          background-color: var(--window-bg-color);
+          padding: 6px 16px 6px 8px;
+          font-size: 16pt;
+          &::placeholder {
+            opacity: 0.5;
+          }
+        }
+      }
     }
-    p:last-child {
-      margin-bottom: 16px;
-    }
-    a {
+    
+    .icon {
       cursor: pointer;
+      margin-top: 4px;
+      color: var(--prompt-icon-color);
+      font-size: 14pt;
     }
-    .transient {
-      margin-left: 4px;
-      .tool-call {
-        font-size: 12pt !important;
+
+    .icon.send, .icon.stop {
+      display: none;
+    }
+  }
+
+  .actions .action {
+    -webkit-app-region: no-drag;
+  }
+
+  .response {
+    .body {
+      padding-left: 0px;
+      margin-left: 0px;
+      p:first-child {
+        margin-top: 0px !important;
+      }
+      p:last-child {
+        margin-bottom: 16px;
+      }
+      a {
+        cursor: pointer;
+      }
+      .transient {
+        margin-left: 4px;
+        .tool-call {
+          font-size: 12pt !important;
+        }
       }
     }
   }
+
 }
 
 </style>
@@ -474,6 +505,8 @@ const onResponseResize= (deltaX: number) => {
 }
 
 .container {
+
+  --border-radius: 16px;
   
   display: flex;
   height: 100%;
@@ -485,12 +518,9 @@ const onResponseResize= (deltaX: number) => {
     -webkit-app-region: drag;
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     resize: horizontal;
-  }
-
-  .prompt, .prompt * {
-    font-size: 14pt;
+    padding: 10px 16px;
   }
 
   .prompt * {
@@ -500,14 +530,14 @@ const onResponseResize= (deltaX: number) => {
   /* this is to have space between prompt and response */
   /* that does not close the window if clicked */
   .spacer {
-    height:32px;
+    flex: 0 0 32px;
   }
 
   .response {
     -webkit-app-region: drag;
     box-shadow: var(--window-box-shadow);
     background-color: var(--window-bg-color);
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     padding: 32px 0px 16px 32px;
     color: var(--text-color);
     display: flex;
