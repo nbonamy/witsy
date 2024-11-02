@@ -7,8 +7,8 @@ import ImagePlugin from '../plugins/image'
 import NestorPlugin from '../plugins/nestor'
 
 export const availablePlugins: anyDict = {
-  browse: BrowsePlugin, 
   image: ImagePlugin,
+  browse: BrowsePlugin, 
   tavily: TavilyPlugin,
   python:  PythonPlugin,
   nestor: NestorPlugin,
