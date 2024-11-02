@@ -549,7 +549,7 @@ const onResponseResize= (deltaX: number) => {
       margin-bottom: 0px;
       padding-bottom: 0px;
       padding-left: 0px;
-      max-height: 75vh;
+      max-height: 70vh;
       scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
     }
 
