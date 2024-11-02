@@ -1,4 +1,11 @@
 
+@font-face {
+  font-family: 'STIX Two Math';
+  src:  url(../assets/STIXTwoMath-Regular.woff2) format('woff2'),
+        url(../assets/STIXTwoMath-Regular.otf) format('opentype'),
+        url(../assets/STIXTwoMath-Regular.ttf) format('truetype');
+}
+
 :root {
 
   --background-color: #fff;
