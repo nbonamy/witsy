@@ -105,12 +105,12 @@
   --scratchpad-actionbar-active-icon-color2: #0469dc;
 
   --window-box-shadow:
-    0  1px  1px  rgba(0,0,0,0.12),
-    0  2px  2px  rgba(0,0,0,0.12),
-    0  4px  4px  rgba(0,0,0,0.12),
-    0  8px  8px  rgba(0,0,0,0.12),
-    0 16px  16px rgba(0,0,0,0.12),
-    0 24px  24px rgba(0,0,0,0.12);
+    0  1px  1px  rgba(0,0,0,0.20),
+    0  2px  2px  rgba(0,0,0,0.20),
+    0  4px  4px  rgba(0,0,0,0.20),
+    0  8px  8px  rgba(0,0,0,0.20),
+    0 16px  16px rgba(0,0,0,0.20),
+    0 24px  24px rgba(0,0,0,0.20);
 
   --dialog-box-shadow: var(--window-box-shadow);
 
@@ -171,16 +171,16 @@
     --tabs-header-selected-bg-color: rgb(68, 69, 69);
     --tabs-header-selected-text-color: rgb(17, 136, 255);
 
-    --context-menu-bg-color: rgb(36, 46, 60, 0.96);
-    --context-menu-border-color: rgb(82, 92, 102);
+    --context-menu-bg-color: rgb(46, 46, 46, 0.96);
+    --context-menu-border-color: rgb(92, 92, 92);
     --context-menu-selected-bg-color: var(--highlight-color);
     --context-menu-filter-bg-color: var(--sidebar-search-bg-color);
     --context-menu-filter-text-color: var(--sidebar-text-color);
 
-    --actions-bar-bg-color: linear-gradient(to bottom, rgb(71, 72, 73), rgb(65, 66, 67));
+    --actions-bar-bg-color: linear-gradient(to bottom, rgb(72, 72, 72), rgb(66, 66, 66));
     --actions-bar-border-color: rgb(110, 110, 110);
     --actions-bar-button-border-color: var(--actions-bar-border-color);
-    --actions-bar-button-active-bg-color: linear-gradient(to bottom, rgb(93, 94, 95), rgb(83, 84, 85));
+    --actions-bar-button-active-bg-color: linear-gradient(to bottom, rgb(94, 94, 94), rgb(84, 84, 84));
 
     --scratchpad-bars-border-color: #555;
     --scratchpad-text-color: var(--text-color);
@@ -270,7 +270,7 @@
     --tabs-header-selected-bg-color: rgb(58, 68, 78);
     --tabs-header-selected-text-color: rgb(7, 126, 246);
 
-    --context-menu-bg-color: rgb(35, 45, 55, 0.96);
+    --context-menu-bg-color: rgba(24, 40, 55, 0.96);
     --context-menu-border-color: rgb(70, 80, 90);
     --context-menu-text-color: var(--text-color);
     --context-menu-selected-bg-color: var(--highlight-color);
