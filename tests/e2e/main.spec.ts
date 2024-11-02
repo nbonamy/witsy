@@ -6,7 +6,7 @@ let window: Page
 
 beforeAll(async () => {
   electronApp = await electron.launch({
-    args: ['.'],
+    args: ['.vite/build/main.js'],
     env: { ...process.env, TEST: '1' }
   })
   window = await electronApp.firstWindow()
