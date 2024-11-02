@@ -1,14 +1,14 @@
 
 <template>
   <div class="content">
-    <div class="llm">
-      <div class="engines">
-        <div class="engine" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
+    <div class="list-panel">
+      <div class="list">
+        <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
           <EngineLogo :engine="engine.id" :grayscale="true" />
           {{ engine.label }}
         </div>
       </div>
-      <component :is="currentView" class="settings" ref="engineSettings" />
+      <component :is="currentView" class="panel" ref="engineSettings" />
     </div>
   </div>
 </template>
@@ -84,60 +84,4 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
-</style>
-
-<style scoped>
-
-dialog.settings .content {
-  width: 100%;
-  height: 100%;
-  padding: 0px;
-}
-
-.llm {
-  
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-
-  .engines {
-    background-color: var(--sidebar-bg-color);
-    border-right: 0.5px solid var(--dialog-separator-color);
-    width: 140px;
-    padding: 10px;
-
-    .engine {
-
-      flex-direction: row;
-      align-items: center;
-      height: 24px;
-      padding: 0px 8px;
-      margin: 2px 0px;
-      display: flex;
-      border-radius: 4px;
-      font-size: 10.5pt;
-
-      .logo {
-        height: 10pt;
-        margin-right: 4px;
-      }
-
-      &.selected {
-        background-color: var(--highlight-color);
-        color: var(--highlighted-color);
-        .logo {
-          filter: invert(1);
-        }
-      }
-    }
-  }
-
-}
-
-.settings {
-  flex: 1;
-  min-height: 200px;
-  padding: 16px 16px 16px 0px !important;
-}
-
 </style>

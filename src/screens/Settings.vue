@@ -185,5 +185,53 @@ dialog.settings .actions .right {
   text-align: right;
 }
 
+dialog.settings .content:has(.list-panel) {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+}
+
+dialog.settings .list-panel {
+
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  .list {
+  
+    background-color: var(--sidebar-bg-color);
+    border-right: 0.5px solid var(--dialog-separator-color);
+    width: 140px;
+    padding: 10px;
+
+    .item {
+      flex-direction: row;
+      align-items: center;
+      height: 24px;
+      padding: 0px 8px;
+      margin: 2px 0px;
+      display: flex;
+      border-radius: 4px;
+      font-size: 10.5pt;
+
+      .logo {
+        height: 10pt;
+        margin-right: 4px;
+      }
+
+      &.selected {
+        background-color: var(--highlight-color);
+        color: var(--highlighted-color);
+      }
+    }
+  }
+
+  .panel {
+    flex: 1;
+    min-height: 200px;
+    padding: 16px 16px 16px 0px !important;
+  }
+
+}
 
 </style>

@@ -1,15 +1,15 @@
 
 <template>
   <div class="content">
-    <div class="tools">
-      <div class="plugins">
-        <div class="plugin" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" @click="selectPlugin(plugin)">
+    <div class="list-panel">
+      <div class="list">
+        <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" @click="selectPlugin(plugin)">
           <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
           <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
           {{ plugin.label }}
         </div>
       </div>
-      <component :is="currentView" class="settings" ref="pluginSettings" />
+      <component :is="currentView" class="panel" ref="pluginSettings" />
     </div>
   </div>
 </template>
@@ -24,12 +24,15 @@ import SettingsTavily from './SettingsTavily.vue'
 import SettingsImage from './SettingsImage.vue'
 import SettingsNestor from './SettingsNestor.vue'
 //import SettingsDropbox from './SettingsDropbox.vue'
+
+// @ts-expect-error svg
+import logoImage from '../../assets/palette.svg'
+// @ts-expect-error svg
+import logoDownload from '../../assets/download.svg'
 // @ts-expect-error svg
 import logoPython from '../../assets/python.svg'
 // @ts-expect-error svg
 import logoTavily from '../../assets/tavily.svg'
-// @ts-expect-error svg
-import logoImage from '../../assets/paintbrush.svg'
 // @ts-expect-error svg
 import logoNestor from '../../assets/nestor.jpg'
 //import logoDropbox from '../../assets/dropbox.svg'
@@ -56,14 +59,14 @@ const plugins = computed((): PluginUI[] => {
     return {
       id: plugin,
       label: {
-        browse: 'Browse',
+        browse: 'Download',
         tavily: 'Tavily Search',
         python: 'Python',
-        image: 'Image',
+        image: 'Text-to-Image',
         nestor: 'Nestor',
       }[plugin],
       logo: {
-        browse: { image: logoTavily },
+        browse: { image: logoDownload },
         tavily: { image: logoTavily },
         python: { image: logoPython },
         image: { image: logoImage },
@@ -112,60 +115,8 @@ defineExpose({ load })
 
 <style scoped>
 
-dialog.settings .content {
-  width: 100%;
-  height: 100%;
-  padding: 0px;
-}
-
-.tools {
-  
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-
-  .plugins {
-    background-color: var(--sidebar-bg-color);
-    border-right: 0.5px solid var(--dialog-separator-color);
-    width: 140px;
-    padding: 10px;
-
-    .plugin {
-
-      flex-direction: row;
-      align-items: center;
-      height: 24px;
-      padding: 0px 8px;
-      margin: 2px 0px;
-      display: flex;
-      border-radius: 4px;
-      font-size: 10.5pt;
-
-      .logo {
-        height: 10pt;
-        margin-right: 4px;
-      }
-
-      &.selected {
-        background-color: var(--highlight-color);
-        color: var(--highlighted-color);
-        .logo.image {
-          filter: invert(1);
-        }
-      }
-    }
-  }
-
-}
-
-.settings {
-  flex: 1;
-  min-height: 200px;
-  padding: 16px 16px 16px 0px !important;
-}
-
 @media (prefers-color-scheme: dark) {
-  .tools .logo {
+  .list-panel .list .item .logo {
     filter: invert(1);
   }
 }
