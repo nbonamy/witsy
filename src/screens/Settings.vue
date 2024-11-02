@@ -8,7 +8,7 @@
             <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
             <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
             <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
-            <SettingsTab class="experts" title="Experts"><BIconPersonVcard class="icon" /></SettingsTab>
+            <SettingsTab class="experts" title="Experts"><BIconMortarboard class="icon" /></SettingsTab>
             <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
             <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
             <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>

@@ -2,8 +2,8 @@
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
-      <BIconJournalMedical class="icon experts" @click="onExperts" v-if="enableExperts" />
-      <BIconFileEarmarkPlus class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      <BIconMortarboard class="icon experts" @click="onExperts" v-if="enableExperts" />
+      <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
     <div class="input" @paste="onPaste">
@@ -677,6 +677,16 @@ defineExpose({
 .prompt .icons-left-many .icon {
   padding-left: 4px;
   padding-right: 4px;
+}
+
+.prompt .icons-left-many .icon.attach {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.prompt .icons-left-many .icon.dictate {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .attachment .icon {
