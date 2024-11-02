@@ -81,7 +81,7 @@ export default class LlmFactory {
     if (engine === 'openai') return new OpenAI(this.config.engines.openai)
     if (engine === 'xai') return new XAI(this.config.engines.xai)
     if (this.isEngineReady(fallback)) {
-      console.log(`Engine ${engine} unknown. Falling back to ${fallback}`)
+      console.warn(`Engine ${engine} unknown. Falling back to ${fallback}`)
       return this.igniteEngine(fallback, this.config.engines[fallback])
     }
     return null
@@ -126,7 +126,6 @@ export default class LlmFactory {
     let rc = false
     if (engine === 'openai') {
       rc = await loadOpenAIModels(this.config.engines.openai)
-      console.log('OpenAI models loaded', rc)
     } else if (engine === 'ollama') {
       rc = await loadOllamaModels(this.config.engines.ollama)
     } else if (engine === 'mistralai') {
