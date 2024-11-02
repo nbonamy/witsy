@@ -161,9 +161,15 @@ defineExpose({
 </style>
 
 <style>
+
+.message .body .katex-mathml {
+  font-family: 'STIX Two Math';
+}
+
 .message .body .katex-html {
   display: none;
 }
+
 </style>
 
 <style scoped>
