@@ -3,7 +3,6 @@ import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import DocRepos from '../../src/screens/DocRepos.vue'
-import { DocumentBase } from '../../src/types/rag.d'
 
 enableAutoUnmount(afterAll)
 
