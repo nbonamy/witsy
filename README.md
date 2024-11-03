@@ -118,7 +118,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] Doc repo in Scratchpad
+- [ ] RAG in Scratchpad
 
 ## DONE
 
