@@ -1,12 +1,12 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Settings from '../../src/screens/Settings.vue'
-import defaults from '../../defaults/settings.json'
 import Assistant from '../../src/services/assistant'
 
 import useEventBus  from '../../src/composables/event_bus'
@@ -15,62 +15,8 @@ const { emitEvent } = useEventBus()
 enableAutoUnmount(afterAll)
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    // @ts-expect-error mock
-    mediaDevices: {
-      getUserMedia: vi.fn()
-    }
-  }
-
-  window.api = {
-    on: vi.fn(),
-    listFonts: vi.fn(() => []),
-    showDialog: vi.fn(async () => { return { response: 0, checkboxChecked: false }}),
-    update: {
-      isAvailable: vi.fn(() => false),
-    },
-    config: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
-      save: vi.fn(),
-    },
-    store: {
-      get: vi.fn(() => null),
-    },
-    commands: {
-      load: vi.fn(() => []),
-      isPromptEditable: vi.fn(() => true)
-    },
-    experts: {
-      load: vi.fn(() => []),
-    },
-    history: {
-      load: vi.fn(() => []),
-    },
-    base64:{
-      decode: (s) => `${s}_decoded`,
-      encode: (s) => `${s}_encoded`,
-    },
-    file: {
-      extractText: (s) => `${s}_extracted`,
-      save: vi.fn(() => 'file_url'),
-      read: (filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } },
-    },
-    docrepo: {
-      list: vi.fn(() => []),
-    },
-    scratchpad: {
-      open: vi.fn(),
-    },
-    nestor: {
-      isAvailable: vi.fn(() => false),
-    },
-    anywhere: {
-      prompt: vi.fn(),
-    }
-  }
-
+  useNavigatorMock()
+  useWindowMock()
 })
 
 vi.mock('../../src/services/assistant', async () => {

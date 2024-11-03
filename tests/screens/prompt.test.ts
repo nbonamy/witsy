@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
@@ -26,55 +27,8 @@ vi.mock('../../src/llms/llm.ts', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    // @ts-expect-error mock
-    mediaDevices: {
-      getUserMedia: vi.fn()
-    }
-  }
-
-  store.chats = []
-
-  window.getSelection = () => {
-    return {
-      isCollapsed: true,
-    }
-  }
-  
-  window.api = {
-    on: vi.fn(),
-    off: vi.fn(),
-    clipboard: {
-      writeText: vi.fn(),
-    },
-    config: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaultSettings))),
-    },
-    history: {
-      load: vi.fn(() => []),
-      save: vi.fn(),
-    },
-    commands: {
-      load: vi.fn(() => []),
-    },
-    experts: {
-      load: vi.fn(() => []),
-    },
-    anywhere: {
-      prompt: vi.fn(),
-      insert: vi.fn(),
-      continue: vi.fn(),
-      close: vi.fn(),
-    },
-    docrepo: {
-      list: vi.fn(() => []),
-    },
-    markdown: {
-      render: renderMarkdown
-    }
-  }
+  useNavigatorMock()
+  useWindowMock()
 })
 
 beforeEach(() => {

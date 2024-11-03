@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import DocRepos from '../../src/screens/DocRepos.vue'
 import { DocumentBase } from '../../src/types/rag.d'
 
@@ -19,34 +20,9 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 })
 
 beforeAll(() => {
-
-  window.api = {
-    on: vi.fn(),
-    showDialog: vi.fn(async () => { return { response: 0, checkboxChecked: false }}),
-    file: {
-      pick: vi.fn(() => [ 'file4', 'file5' ]),
-      pickDir: vi.fn(() => 'folder2'),
-    },
-    docrepo: {
-      list: vi.fn((): DocumentBase[] => {
-        return [
-          { uuid: 'uuid1', name: 'docrepo1', embeddingEngine: 'ollama', embeddingModel: 'all-minilm', documents: [] },
-          { uuid: 'uuid2', name: 'docrepo2', embeddingEngine: 'openai', embeddingModel: 'text-embedding-ada-002', documents: [
-            { uuid: 'uuid3', type: 'file', title: 'file1', origin: '/tmp/file1', filename: 'file1', url: 'file:///tmp/file1' },
-            { uuid: 'uuid4', type: 'folder', title: 'folder1', origin: '/tmp/folder1', filename: 'folder1', url: 'file:///tmp/folder1', items: [
-              { uuid: 'uuid5', type: 'file', title: 'file2', origin: '/tmp/file2', filename: 'file2', url: 'file:///tmp/file2' },
-              { uuid: 'uuid6', type: 'file', title: 'file3', origin: '/tmp/file3', filename: 'file3', url: 'file:///tmp/file3' },
-            ]},
-          ]},
-        ]
-      }),
-      delete: vi.fn(),
-      rename: vi.fn(),
-      addDocument: vi.fn(),
-      removeDocument: vi.fn(),
-      isEmbeddingAvailable: vi.fn(() => true),
-    }
-  }
+  useWindowMock()
+  window.api.file.pick = vi.fn(() => [ 'file4', 'file5' ])
+  window.api.file.pickDir = vi.fn(() => 'folder2')
 })
 
 beforeEach(() => {

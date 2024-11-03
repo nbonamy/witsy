@@ -1,17 +1,11 @@
 
-import { test, expect } from 'vitest'
+import { beforeAll, test, expect } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import Attachment from '../../src/models/attachment'
 
-window.api = {
-  base64:{
-    decode: (s) => `${s}_decoded`,
-    encode: (s) => `${s}_encoded`,
-  },
-  file: {
-    extractText: (s) => `${s}_extracted`,
-    read: (filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } },
-  }
-}
+beforeAll(() => {
+  useWindowMock()
+})
 
 test('Constructs without transformation', async () => {
   const text = new Attachment('text', 'text/plain', 'url', false)

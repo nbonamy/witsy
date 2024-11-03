@@ -1,29 +1,17 @@
 
-import { vi, expect, test } from 'vitest'
+import { vi, beforeAll, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
 import LlmFactory from '../../src/llms/llm'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 
-window.api = {
-  config: {
-    load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
-    save: vi.fn()
-  },
-  base64: {
-    decode: (data: string) => data
-  },
-  file: {
-    extractText: (contents) => contents
-  },
-  computer: {
-    isAvailable: () => true,
-  }
-}
-
-store.loadSettings()
-store.config.engines.openai.apiKey = '123'
+beforeAll(() => {
+  useWindowMock()
+  store.loadSettings()
+  store.config.engines.openai.apiKey = '123'
+})
 
 const llmFactory = new LlmFactory(store.config)
 

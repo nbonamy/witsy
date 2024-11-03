@@ -1,6 +1,7 @@
 
 import { LlmChunk } from 'multi-llm-ts'
-import { vi, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant'
@@ -8,26 +9,6 @@ import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 import LlmMock from '../mocks/llm'
-
-window.api = {
-  file: {
-    extractText: (contents) => contents
-  },
-  docrepo: {
-    query: vi.fn(async () => [
-      {
-        content: 'content',
-        score: 1,
-        metadata: {
-          uuid: 1,
-          type: 'type',
-          title: 'title',
-          url: 'url'
-        }
-      }
-    ])
-  }
-}
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -42,6 +23,10 @@ vi.mock('../../src/services/download.ts', async () => {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }
 })  
+
+beforeAll(() => {
+  useWindowMock()
+})
 
 let assistant: Assistant = null
 

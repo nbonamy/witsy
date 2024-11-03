@@ -1,18 +1,15 @@
 
-import { vi, expect, test, afterAll } from 'vitest'
+import { beforeAll, expect, test, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import Wait from '../../src/screens/Wait.vue'
 
 enableAutoUnmount(afterAll)
 
-window.api = {
-  commands: {
-    cancel: vi.fn()
-  },
-  anywhere: {
-    close: vi.fn()
-  }
-}
+beforeAll(() => {
+  useWindowMock()
+})
+
 
 test('Renders correctly', () => {
   const wrapper = mount(Wait)

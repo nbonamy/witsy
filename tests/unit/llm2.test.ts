@@ -1,5 +1,6 @@
 
-import { vi, expect, test } from 'vitest'
+import { vi, beforeAll, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels }from 'multi-llm-ts'
 import { store } from '../../src/services/store'
 import LlmFactory from '../../src/llms/llm'
@@ -19,32 +20,13 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
   }
 })
 
-window.api = {
-  config: {
-    save: vi.fn()
-  },
-  computer: {
-    isAvailable: () => true,
-  }
-}
+let llmFactory: LlmFactory
 
-store.config = {
-  engines: {
-    anthropic: {},
-    cerebras: {},
-    google: {},
-    groq: {},
-    mistralai: {},
-    ollama: {},
-    openai: {},
-    xai: {},
-  },
-  plugins: {
-    computer: {}
-  }
-}
-
-const llmFactory = new LlmFactory(store.config)
+beforeAll(() => {
+  useWindowMock()
+  store.loadSettings()
+  llmFactory = new LlmFactory(store.config)
+})
 
 test('Load models', async () => {
   await llmFactory.loadModels('anthropic')

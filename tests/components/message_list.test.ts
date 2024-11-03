@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import MessageList from '../../src/components/MessageList.vue'
@@ -16,19 +17,8 @@ enableAutoUnmount(afterAll)
 let wrapper: VueWrapper<any>
 
 beforeAll(() => {
-
-  // api
-  window.api = {
-    fullscreen: vi.fn(),
-    markdown: {
-      render: renderMarkdown
-    }
-  }
-  
-  // init store
-  store.config = defaults
-
-  // wrapper
+  useWindowMock()
+  store.loadSettings()
   wrapper = mount(MessageList)
 })
 

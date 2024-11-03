@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
@@ -29,32 +30,10 @@ const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'im
 const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
 
 beforeAll(() => {
-
-  // api
-  window.api = {
-    base64: {
-      encode: (data: string) => { return Buffer.from(data).toString('base64') },
-      decode: (data: string) => { return Buffer.from(data, 'base64').toString() },
-    },
-    file: {
-      download: vi.fn(),
-    },
-    ipcRenderer: {
-      send: vi.fn(),
-      sendSync: vi.fn(),
-    },
-    clipboard: {
-      writeText: vi.fn(),
-      writeImage: vi.fn(),
-    },
-    markdown: {
-      render: renderMarkdown
-    }
-  }
+  useWindowMock()
   
   // init store
-  store.loadSettings = vi.fn()
-  store.config = JSON.parse(JSON.stringify(defaultSettings))
+  store.loadSettings()
 
   // init chat
   chat = new Chat('MessageList test')

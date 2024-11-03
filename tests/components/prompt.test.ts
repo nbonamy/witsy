@@ -1,10 +1,9 @@
 
-import { Expert } from '../../src/types/index.d'
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
-import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
@@ -31,47 +30,10 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 let wrapper: VueWrapper<any>
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    // @ts-expect-error mock
-    mediaDevices: {
-      getUserMedia: vi.fn(),
-    }
-  }
-  
-  // api
-  window.api = {
-    on: vi.fn(),
-    file: {
-      pick: vi.fn(() => {
-        return {
-          url: 'file://image.png',
-          mimeType: 'image/png',
-          contents: 'image64'
-         }
-      }),
-      extractText: vi.fn((contents: string) => {
-        return contents
-      })
-    },
-    docrepo: {
-      list: vi.fn(() => [
-        { uuid: 'uuid1', name: 'doc1', embeddingEngine: 'mock', embeddingModel: 'chat', documents: [] }
-      ]),
-      connect: vi.fn(() => true),
-      disconnect: vi.fn(() => true)
-    },
-  }
-
-  // init store
-  store.config = defaults
-  store.loadSettings = vi.fn()
-  store.experts = [
-    { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
-    { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
-    { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
-  ] as Expert[]
+  useNavigatorMock()
+  useWindowMock()
+  store.loadSettings()
+  store.loadExperts()
 })
 
 beforeEach(() => {
@@ -224,13 +186,13 @@ test('Document repository', async () => {
   await trigger.trigger('click')
   let menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(3)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('doc1')
-  expect(menu.find('.item:nth-child(2) hr')).toBeTruthy()
-  expect(menu.find('.item:nth-child(3)').text()).toBe('Manage...')
+  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.find('.item:nth-child(1)').text()).toBe('docrepo1')
+  expect(menu.find('.item:nth-child(3) hr')).toBeTruthy()
+  expect(menu.find('.item:nth-child(4)').text()).toBe('Manage...')
 
   // manage
-  await menu.find('.item:nth-child(3)').trigger('click')
+  await menu.find('.item:nth-child(4)').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('open-doc-repos')
 
   // connect
@@ -243,10 +205,10 @@ test('Document repository', async () => {
   await trigger.trigger('click')
   menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.item').length).toBe(4)
-  expect(menu.find('.item:nth-child(3)').text()).toBe('Disconnect')
+  expect(menu.findAll('.item').length).toBe(5)
+  expect(menu.find('.item:nth-child(4)').text()).toBe('Disconnect')
 
   // disconnect
-  await menu.find('.item:nth-child(3)').trigger('click')
+  await menu.find('.item:nth-child(4)').trigger('click')
   expect(window.api.docrepo.disconnect).toHaveBeenCalledWith()
 })

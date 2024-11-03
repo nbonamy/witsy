@@ -1,10 +1,9 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { Expert } from '../../src/types/index.d'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import * as main from '../../src/main/experts'
 import * as service from '../../src/services/experts'
-import defaultExperts from '../../defaults/experts.json'
 import { app } from 'electron'
 
 vi.mock('electron', async() => {
@@ -24,15 +23,7 @@ vi.mock('fs', async (importOriginal) => {
 })
 
 beforeAll(() => {
-
-  // api
-  window.api = {
-    experts: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaultExperts)) as Expert[]),
-      save: vi.fn(),
-    }
-  }
-
+  useWindowMock()
 })
 
 test('New expert', () => {
@@ -70,7 +61,7 @@ test('Load custom experts', () => {
 test('Service Install experts', () => {
   service.loadExperts()
   expect(window.api.experts.load).toHaveBeenCalled()
-  expect(store.experts).toHaveLength(166)
+  expect(store.experts).toHaveLength(3)
 })
 
 test('Service Save expert', () => {

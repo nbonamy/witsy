@@ -1,5 +1,6 @@
 
-import { vi, test, expect, beforeEach } from 'vitest'
+import { vi, beforeAll, test, expect } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Dialog from '../../src/composables/dialog'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
@@ -10,24 +11,10 @@ vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   return { default: Swal }
 })
 
-beforeEach(() => {
-
-  window.api = {
-    showDialog: vi.fn(() => Promise.resolve({ response: 1, checkboxChecked: false })),
-    config: {
-      save: vi.fn(),
-    },
-  }
-
-  store.config = {
-    general: {
-      firstRun: true,
-      tips: {
-        scratchpad: true,
-        conversation: false,
-      }
-    }
-  }
+beforeAll(() => {
+  useWindowMock({ dialogResponse: 1})
+  store.loadSettings()
+  store.config.general.tips.conversation = false
 })
 
 test('Basic confirm', () => {

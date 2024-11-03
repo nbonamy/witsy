@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Settings from '../../src/screens/Settings.vue'
 import defaults from '../../defaults/settings.json'
@@ -57,31 +58,12 @@ const checkVisibility = (visible: number) => {
   }
 }
 
-// window
-let runAtLogin = false
-window.api = {
-  platform: 'darwin',
-  listFonts: vi.fn(() => []),
-  on: vi.fn(),
-  setAppearanceTheme: vi.fn(),
-  runAtLogin: {
-    get: () => runAtLogin,
-    set: vi.fn((state) => {
-      runAtLogin = state
-    })
-  },
-  commands: {
-    isPromptEditable: vi.fn(() => true)
-  },
-  nestor: {
-    isAvailable: vi.fn(() => false),
-  }
-}
-
 beforeAll(() => {
 
+  useWindowMock()
+  store.loadSettings()
+
   // init store
-  store.config = JSON.parse(JSON.stringify(defaults))
   store.config.engines.anthropic = {
     model: { chat: 'model2' },
     models: { chat: [

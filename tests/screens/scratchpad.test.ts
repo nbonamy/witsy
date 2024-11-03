@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
@@ -26,52 +27,20 @@ vi.mock('../../src/llms/llm.ts', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    // @ts-expect-error mock
-    mediaDevices: {
-      getUserMedia: vi.fn()
-    }
-  }
-
-  store.chats = []  
+  useNavigatorMock()
+  useWindowMock({ dialogResponse: 1})
   
-  window.api = {
-    on: vi.fn(),
-    off: vi.fn(),
-    showDialog: vi.fn(() => Promise.resolve({ response: 1, checkboxChecked: false })),
-    clipboard: {
-      writeText: vi.fn(),
-    },
-    config: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaultSettings))),
-      save: vi.fn(),
-    },
-    file: {
-      pick: vi.fn(() => { return {
-        contents: '{ "contents": { "content": "Hello LLM" }, "undoStack": [], "redoStack": [] }',
-        url: 'file://scratchpad.json',
-      }}),
-      save: vi.fn(),
-    },
-    base64: {
-      decode: vi.fn((s) => s),
-      encode: vi.fn((s) => s),
-    },
-    commands: {
-      load: vi.fn(() => []),
-    },
-    experts: {
-      load: vi.fn(() => []),
-    },
-    history: {
-      load: vi.fn(() => []),
-    },
-    docrepo: {
-      list: vi.fn(() => []),
-    }
+  window.api.base64 = {
+    decode: vi.fn((s) => s),
+    encode: vi.fn((s) => s),
   }
+  
+  // @ts-expect-error mock
+  window.api.file.pick = vi.fn(() => { return {
+    contents: '{ "contents": { "content": "Hello LLM" }, "undoStack": [], "redoStack": [] }',
+    url: 'file://scratchpad.json',
+  }})
+  
 })
 
 beforeEach(() => {

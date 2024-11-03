@@ -1,14 +1,10 @@
-import { expect, test } from 'vitest'
+import { beforeAll, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import Message from '../../src/models/message'
 
-window.api = {
-  base64: {
-    decode: (data: string) => data
-  },
-  file: {
-    extractText: (contents) => contents
-  }
-}
+beforeAll(() => {
+  useWindowMock()
+})
 
 test('Build from role and text', () => {
   const message = new Message('user', 'content')
