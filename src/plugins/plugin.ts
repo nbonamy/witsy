@@ -1,5 +1,6 @@
 
-import { anyDict, Plugin as PluginBase } from 'multi-llm-ts'
+import { anyDict } from 'types/index.d'
+import { Plugin as PluginBase } from 'multi-llm-ts'
 
 export type PluginConfig = anyDict
 

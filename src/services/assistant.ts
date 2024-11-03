@@ -10,6 +10,17 @@ import { store } from './store'
 import { countryCodeToName } from './i18n'
 import { availablePlugins } from '../plugins/plugins'
 
+export interface AssistantCompletionOpts extends LlmCompletionOpts {
+  engine?: string
+  model?: string
+  save?: boolean
+  titling?: boolean
+  attachment?: Attachment
+  docrepo?: string
+  overwriteEngineModel?: boolean
+  systemInstructions?: string
+}
+
 export default class {
 
   config: Configuration
@@ -18,7 +29,7 @@ export default class {
   llm: LlmEngine
   chat: Chat
   stopGeneration: boolean
-  stream: AsyncGenerator<LlmChunk, void, void>
+  stream: AsyncIterable<LlmChunk>
 
   constructor(config: Configuration) {
     this.config = config
@@ -59,7 +70,7 @@ export default class {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
     // check
     prompt = prompt.trim()
@@ -68,7 +79,7 @@ export default class {
     }
 
     // merge with defaults
-    const defaults: LlmCompletionOpts = {
+    const defaults: AssistantCompletionOpts = {
       save: true,
       titling: true,
       ... this.llmFactory.getChatEngineModel(),
@@ -140,7 +151,7 @@ export default class {
 
   }
 
-  async generateText(opts: LlmCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
+  async generateText(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
 
     // we need this to be const during generation
     const llm = this.llm
@@ -166,7 +177,7 @@ export default class {
 
       // now stream
       this.stopGeneration = false
-      this.stream = await llm.generate(messages, opts)
+      this.stream = await llm.generate(opts.model, messages, opts)
       for await (const msg of this.stream) {
         if (this.stopGeneration) {
           break
@@ -264,7 +275,7 @@ export default class {
 
       // now get it
       this.initLlm(this.chat.engine)
-      const response = await this.llm.complete(messages, { model: this.chat.model })
+      const response = await this.llm.complete(this.chat.model, messages)
       let title = response.content.trim()
       if (title === '') {
         return this.chat.messages[1].content

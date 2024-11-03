@@ -1,4 +1,6 @@
-import { LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
+
+import { LlmChunk } from 'multi-llm-ts'
+import { AssistantCompletionOpts } from './assistant'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
@@ -21,7 +23,7 @@ export default class {
   llm: LlmWorker
   chat: Chat
   stream: any
-  opts: LlmCompletionOpts
+  opts: AssistantCompletionOpts
   callback: ChunkCallback
   sources: DocRepoQueryResponseItem[]
 
@@ -82,7 +84,7 @@ export default class {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: LlmCompletionOpts, callback: ChunkCallback): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: ChunkCallback): Promise<void> {
 
     // check
     prompt = prompt.trim()
@@ -91,7 +93,7 @@ export default class {
     }
 
     // merge with defaults
-    const defaults: LlmCompletionOpts = {
+    const defaults: AssistantCompletionOpts = {
       save: true,
       titling: true,
       ... this.llmFactory.getChatEngineModel(),
@@ -296,7 +298,7 @@ export default class {
 
       // now get it
       this.initLlm(this.chat.engine)
-      const response = await this.llm.complete(messages, { model: this.chat.model })
+      const response = await this.llm.complete(this.chat.model, messages)
       let title = response.content.trim()
       if (title === '') {
         return this.chat.messages[1].content

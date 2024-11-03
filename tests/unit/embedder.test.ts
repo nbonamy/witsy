@@ -3,8 +3,8 @@ import { test, expect, vi, beforeEach } from 'vitest'
 import { app } from 'electron'
 import Embedder  from '../../src/rag/embedder'
 import defaultSettings from '../../defaults/settings.json'
-import * as _ollama from 'ollama/dist/browser.mjs'
-import * as _OpenAI from 'openai'
+import { Ollama } from 'ollama/dist/browser.mjs'
+import OpenAI from 'openai'
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
@@ -55,8 +55,8 @@ test('Create OpenAI', async () => {
 test('Embed OpenAI', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'openai', 'text-embedding-ada-002')
   const embeddings = await embedder.embed(['hello'])
-  expect(_OpenAI.default.prototype.embeddings.create).toHaveBeenCalled()
-  expect(_ollama.Ollama.prototype.embed).not.toHaveBeenCalled()
+  expect(OpenAI.prototype.embeddings.create).toHaveBeenCalled()
+  expect(Ollama.prototype.embed).not.toHaveBeenCalled()
   expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 
@@ -70,8 +70,8 @@ test('Create Ollama', async () => {
 test('Embed Ollama', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'ollama', 'all-minilm')
   const embeddings = await embedder.embed(['hello'])
-  expect(_ollama.Ollama.prototype.embed).toHaveBeenCalled()
-  expect(_OpenAI.default.prototype.embeddings.create).not.toHaveBeenCalled()
+  expect(Ollama.prototype.embed).toHaveBeenCalled()
+  expect(OpenAI.prototype.embeddings.create).not.toHaveBeenCalled()
   expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 
