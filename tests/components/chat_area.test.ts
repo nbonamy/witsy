@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
@@ -25,31 +26,9 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 })
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    mediaDevices: {
-      getUserMedia: vi.fn()
-    }
-  }
-  
-  // api
-  window.api = {
-    on: vi.fn(),
-    history: {
-      save: vi.fn()
-    },
-    docrepo: {
-      list: vi.fn(() => []),
-    },
-    markdown: {
-      render: renderMarkdown
-    }
-  }
-  
-  // init store
-  store.loadSettings = vi.fn()
-  store.config = JSON.parse(JSON.stringify(defaultSettings))
+  useNavigatorMock()
+  useWindowMock()
+  store.loadSettings()
 })
 
 let chat: Chat = null

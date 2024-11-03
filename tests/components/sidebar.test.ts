@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Sidebar from '../../src/components/Sidebar.vue'
 import defaults from '../../defaults/settings.json'
@@ -10,12 +11,6 @@ enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
-
-window.api = {
-  store: {
-    get: vi.fn(() => null),
-  },
-}
 
 vi.mock('../../src/composables/event_bus.js', async () => {
   return { default: () => {
@@ -27,8 +22,8 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 })
 
 beforeAll(() => {
-  // init store
-  store.config = defaults
+  useWindowMock()
+  store.loadSettings()
 })
 
 beforeEach(() => {

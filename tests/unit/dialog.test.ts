@@ -1,26 +1,16 @@
 
-import { vi, test, expect, beforeEach } from 'vitest'
+import { beforeAll, beforeEach, test, expect } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import useTipsManager from '../../src/composables/tips_manager'
 
+beforeAll(() => {
+  useWindowMock()
+})
+
 beforeEach(() => {
-
-  window.api = {
-    showDialog: vi.fn(() => Promise.resolve({ response: 1, checkboxChecked: false })),
-    config: {
-      save: vi.fn(),
-    },
-  }
-
-  store.config = {
-    general: {
-      firstRun: true,
-      tips: {
-        scratchpad: true,
-        conversation: false,
-      }
-    }
-  }
+  store.loadSettings()
+  store.config.general.tips.conversation = false
 })
 
 test('isTipAvailable', () => {

@@ -1,14 +1,10 @@
 
-import { vi, expect, test, beforeEach } from 'vitest'
-import { Command, Expert } from '../../src/types/index.d'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { useWindowMock, listeners } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import defaultSettings from '../../defaults/settings.json'
-import defaultCommands from '../../defaults/commands.json'
-import defaultExperts from '../../defaults/experts.json'
-
-const listeners: ((signal: string) => void)[] = []
 
 const chats = [
   new Chat(),
@@ -30,26 +26,11 @@ chats[1].messages[0].createdAt = 0
 chats[1].messages[1].uuid = '2'
 chats[1].messages[1].createdAt = 0
 
-
-window.api = {
-  config: {
-    load: vi.fn(() => JSON.parse(JSON.stringify(defaultSettings))),
-    save: vi.fn(),
-  },
-  commands: {
-    load: vi.fn(() => JSON.parse(JSON.stringify(defaultCommands)) as Command[]),
-  },
-  experts: {
-    load: vi.fn(() => JSON.parse(JSON.stringify(defaultExperts)) as Expert[]),
-  },
-  history: {
-    load: vi.fn(() => chats),
-    save: vi.fn(),
-  },
-  on: (signal: string, listener: any) => {
-    listeners.push(listener)
-  }
-}
+beforeAll(() => {
+  useWindowMock()
+  // @ts-expect-error mock
+  window.api.history.load = vi.fn(() => chats)
+})
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -71,8 +52,8 @@ test('Load', async () => {
   expect(window.api.commands?.load).toHaveBeenCalled()
   expect(window.api.history?.load).toHaveBeenCalled()
   expect(store.config).toStrictEqual(defaultSettings)
-  expect(store.commands).toStrictEqual(defaultCommands)
-  expect(store.experts).toStrictEqual(defaultExperts)
+  expect(store.commands).toHaveLength(5)
+  expect(store.experts).toHaveLength(3)
 })
 
 test('Save settings', async () => {

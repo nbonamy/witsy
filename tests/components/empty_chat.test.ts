@@ -1,6 +1,7 @@
 
-import { vi, beforeEach, afterAll, expect, test } from 'vitest'
+import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 import EngineLogo from '../../src/components/EngineLogo.vue'
@@ -8,12 +9,9 @@ import { availableEngines } from '../../src/llms/llm'
 
 enableAutoUnmount(afterAll)
 
-window.api = {
-  showDialog: vi.fn(async () => { return { response: 0, checkboxChecked: false }}),
-  config: {
-    save: vi.fn()
-  },
-}
+beforeAll(() => {
+  useWindowMock()
+})
 
 beforeEach(() => {
 

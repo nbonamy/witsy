@@ -1,5 +1,6 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Browse from '../../src/plugins/browse'
@@ -12,14 +13,9 @@ vi.mock('../../src/vendor/tavily', async () => {
   return { default: Tavily }
 })
 
-window.api = {
-  interpreter: {
-    python: vi.fn(() => ({ result: ['bonjour'] }))
-  }
-}
-
-beforeEach(() => {
-  store.config = defaults
+beforeAll(() => {
+  useWindowMock()
+  store.loadSettings()
   store.config.llm.engine = 'mock'
   store.config.plugins.browse = {
     enabled: true,

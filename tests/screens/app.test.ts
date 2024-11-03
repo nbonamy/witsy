@@ -1,6 +1,7 @@
 
 import { vi, expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
 import Wait from '../../src/screens/Wait.vue'
@@ -11,44 +12,8 @@ import defaults from '../../defaults/settings.json'
 enableAutoUnmount(afterAll)
 
 beforeAll(() => {
-
-  // eslint-disable-next-line no-global-assign
-  navigator = {
-    // @ts-expect-error mock
-    mediaDevices: {
-      getUserMedia: vi.fn()
-    }
-  }
-  
-  window.api = {
-    on: vi.fn(),
-    off: vi.fn(),
-    listFonts: vi.fn(() => []),
-    config: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaults))),
-      save: vi.fn(),
-    },
-    store: {
-      get: vi.fn(() => null),
-    },
-    commands: {
-      load: vi.fn(() => []),
-      isPromptEditable: vi.fn(() => true)
-    },
-    experts: {
-      load: vi.fn(() => []),
-    },
-    history: {
-      load: vi.fn(() => []),
-    },
-    docrepo: {
-      list: vi.fn(() => []),
-    },
-    nestor: {
-      isAvailable: vi.fn(() => false),
-    }
-  }
-
+  useNavigatorMock()
+  useWindowMock()
 })
 
 test('Renders correctly', () => {

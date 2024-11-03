@@ -1,10 +1,9 @@
 
 import { vi, beforeAll, expect, test } from 'vitest'
-import { Command } from '../../src/types/index.d'
+import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import * as main from '../../src/main/commands'
 import * as service from '../../src/services/commands'
-import defaultCommands from '../../defaults/commands.json'
 import { app } from 'electron'
 
 vi.mock('electron', async() => {
@@ -24,15 +23,7 @@ vi.mock('fs', async (importOriginal) => {
 })
 
 beforeAll(() => {
-
-  // api
-  window.api = {
-    commands: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaultCommands)) as Command[]),
-      save: vi.fn(),
-    }
-  }
-
+  useWindowMock()
 })
 
 test('New command', () => {
@@ -73,7 +64,7 @@ test('Load custom commands', () => {
 test('Service Install commands', () => {
   service.loadCommands()
   expect(window.api.commands.load).toHaveBeenCalled()
-  expect(store.commands).toHaveLength(40)
+  expect(store.commands).toHaveLength(5)
 })
 
 test('Service Save commands', () => {

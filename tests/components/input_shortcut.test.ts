@@ -1,19 +1,16 @@
 
-import { vi, expect, test, beforeEach, afterAll } from 'vitest'
+import { vi, beforeAll, expect, test, beforeEach, afterAll } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { useWindowMock } from '../mocks/window'
 import InputShortcut from '../../src/components/InputShortcut.vue'
 
 enableAutoUnmount(afterAll)
 
 let wrapper: VueWrapper<any>
 
-window.api = {
-  platform: 'darwin',
-  shortcuts: {
-    register: vi.fn(),
-    unregister: vi.fn(),
-  }
-}
+beforeAll(() => {
+  useWindowMock()
+})
 
 beforeEach(() => {
   wrapper = mount(InputShortcut, {
