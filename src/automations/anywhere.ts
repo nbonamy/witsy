@@ -9,7 +9,7 @@ export default class PromptAnywhere {
   constructor() {
   }
 
-  static initPrompt = async (): Promise<void> => {
+  static open = async (): Promise<void> => {
 
     // get foremost app
     let foremostApp = '';
@@ -23,6 +23,15 @@ export default class PromptAnywhere {
     await window.openPromptAnywhere({
       foremostApp: foremostApp
     });
+  }
+
+  static close = async (): Promise<void> => {
+
+    // close
+    await window.closePromptAnywhere();
+    await window.restoreWindows();
+    //await window.releaseFocus();
+
   }
   
   static insert = async (app: App, response: string): Promise<void> => {
@@ -47,26 +56,22 @@ export default class PromptAnywhere {
 
       // done
       await window.restoreWindows();
-      await window.releaseFocus();
+      //await window.releaseFocus();
       return;
 
     } catch (error) {
       console.error('Error while testing', error);
     }
 
-    // done waiting
-    await window.closeWaitingPanel();
-    await window.restoreWindows();
-    await window.releaseFocus();
+    // done
+    await this.close()
 
   }
 
   static continueAsChat = async (app: App, chatId: string): Promise<void> => {
 
-    // done with this
-    await window.closePromptAnywhere();
-    await window.restoreWindows();
-    await window.releaseFocus();
+    // done
+    await this.close();
 
     // now open main
     await window.openMainWindow({ queryParams: { chatId: chatId } });

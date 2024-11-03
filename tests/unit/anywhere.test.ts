@@ -54,7 +54,7 @@ beforeEach(() => {
 
 test('Prepare prompt', async () => {
 
-  await PromptAnywhere.initPrompt()
+  await PromptAnywhere.open()
 
   expect(window.hideWindows).toHaveBeenCalledOnce()
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
@@ -67,6 +67,7 @@ test('Execute Prompt', async () => {
 
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.pasteText).toHaveBeenCalledWith('Explain this')
 
@@ -78,7 +79,6 @@ test('Continue as Chat Prompt', async () => {
 
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
 
   expect(window.openMainWindow).toHaveBeenCalledWith({
     queryParams: { chatId: '123' }
