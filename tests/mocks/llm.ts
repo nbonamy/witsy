@@ -1,5 +1,5 @@
 
-import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineConfig } from 'multi-llm-ts'
+import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineCreateOpts } from 'multi-llm-ts'
 import Message from '../../src/models/message'
 import RandomChunkStream from './stream'
 
@@ -19,7 +19,7 @@ class LlmError extends Error {
 
 export default class LlmMock extends LlmEngine {
 
-  constructor(config: EngineConfig) {
+  constructor(config: EngineCreateOpts) {
     super(config)
   }
 
@@ -39,8 +39,8 @@ export default class LlmMock extends LlmEngine {
     ]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async complete(thread: Message[], opts: LlmCompletionOpts): Promise<LlmResponse> {
+   
+  async complete(model: string, thread: Message[]): Promise<LlmResponse> {
     return {
       type: 'text',
       content: JSON.stringify([
@@ -51,7 +51,7 @@ export default class LlmMock extends LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async stream(thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
+  async stream(model: string, thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
 
     // errors
     if (thread[thread.length-1].content.includes('no api key')) {

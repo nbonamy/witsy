@@ -88,7 +88,7 @@ const save = () => {
   store.config.engines.google.apiKey = apiKey.value
   store.config.engines.google.model = {
     chat: chat_model.value,
-    //image: image_model.value
+    image: ''
   }
   store.saveSettings()
 }

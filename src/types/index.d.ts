@@ -1,8 +1,10 @@
 
-export { strDict, anyDict } from 'multi-llm-ts'
 import { LlmChunk, LlmChunkTool, LlmRole, anyDict } from 'multi-llm-ts'
 import { Configuration } from './config.d'
 import { ToolCallInfo } from 'models/message'
+
+export type strDict = { [key: string]: string }
+export type anyDict = { [key: string]: any }
 
 export interface Attachment {
   contents: string

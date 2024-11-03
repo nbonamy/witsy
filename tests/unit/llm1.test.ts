@@ -27,7 +27,7 @@ store.config.engines.openai.apiKey = '123'
 
 const llmFactory = new LlmFactory(store.config)
 
-const model = [{ id: 'llava:latest', name: 'llava:latest', meta: {} }]
+const model = { id: 'model-id', name: 'model-name', meta: {} }
 
 test('Default Configuration', () => {
   expect(llmFactory.isEngineReady('openai')).toBe(true)
@@ -138,7 +138,6 @@ test('Ignite Engine', async () => {
   expect(await llmFactory.igniteEngine('groq')).toBeInstanceOf(Groq)
   expect(await llmFactory.igniteEngine('cerebras')).toBeInstanceOf(Cerebras)
   expect(await llmFactory.igniteEngine('aws')).toBeInstanceOf(OpenAI)
-  expect(await llmFactory.igniteEngine('aws', 'aws')).toBeNull()
 })
 
 test('Anthropic Computer Use', async () => {

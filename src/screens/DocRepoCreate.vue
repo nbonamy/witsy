@@ -127,7 +127,7 @@ const getModels = async () => {
 
   // load
   const llmFactory = new LlmFactory(store.config)
-  let success = await llmFactory.loadModels('ollama')
+  const success = await llmFactory.loadModels('ollama')
   if (!success) {
     setEphemeralRefreshLabel('Error!')
     return

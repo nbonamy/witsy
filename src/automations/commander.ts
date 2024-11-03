@@ -204,7 +204,7 @@ export default class Commander {
     ]
 
     // now get it
-    return llm.complete(messages, { model: model })
+    return llm.complete(model, messages)
 
   }
 

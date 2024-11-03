@@ -345,7 +345,7 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
 
     // now generate
     stopGeneration = false
-    const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
+    const stream = await llm.generate(chat.value.model, chat.value.messages.slice(0, -1))
     for await (const msg of stream) {
       if (stopGeneration) {
         llm.stop(stream)
@@ -380,7 +380,7 @@ const saveChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete([...chat.value.messages, new Message('user', store.config.instructions.titling_user)])
+    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', store.config.instructions.titling_user)])
     chat.value.title = title.content
   }
 

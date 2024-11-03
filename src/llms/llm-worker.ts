@@ -18,7 +18,7 @@ const initEngine = (engine: string, config: Configuration) => {
 const stream = async (messages: any[], opts: any) => {
 
   try {
-    const stream = await llm.generate(messages, opts)
+    const stream = await llm.generate(opts.model, messages, opts)
     for await (const msg of stream) {
       worker.postMessage(msg)
     }

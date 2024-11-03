@@ -66,10 +66,10 @@ test('Check atributtes', async () => {
 
 test('Load', async () => {
   store.load()
-  expect(window.api.config.load).toHaveBeenCalled()
-  expect(window.api.experts.load).toHaveBeenCalled()
-  expect(window.api.commands.load).toHaveBeenCalled()
-  expect(window.api.history.load).toHaveBeenCalled()
+  expect(window.api.config?.load).toHaveBeenCalled()
+  expect(window.api.experts?.load).toHaveBeenCalled()
+  expect(window.api.commands?.load).toHaveBeenCalled()
+  expect(window.api.history?.load).toHaveBeenCalled()
   expect(store.config).toStrictEqual(defaultSettings)
   expect(store.commands).toStrictEqual(defaultCommands)
   expect(store.experts).toStrictEqual(defaultExperts)
@@ -78,19 +78,19 @@ test('Load', async () => {
 test('Save settings', async () => {
   store.load()
   store.saveSettings()
-  expect(window.api.config.save).toHaveBeenCalled()
+  expect(window.api.config?.save).toHaveBeenCalled()
 })
 
 test('Reload settings without changing reference', async () => {
   store.load()
-  expect(window.api.config.load).toHaveBeenCalledTimes(1)
+  expect(window.api.config?.load).toHaveBeenCalledTimes(1)
   const backup = store.config
   expect(store.config.llm.engine).toBe('openai')
   expect(store.config.plugins).toBeDefined()
   defaultSettings.llm.engine = 'xai'
   delete defaultSettings.plugins
   listeners[0]('settings')
-  expect(window.api.config.load).toHaveBeenCalledTimes(2)
+  expect(window.api.config?.load).toHaveBeenCalledTimes(2)
   expect(store.config).toBe(backup)
   expect(store.config.llm.engine).toBe('xai')
   expect(store.config.plugins).toBeUndefined()
@@ -105,7 +105,7 @@ test('Load history', async () => {
 
 test('Save history', async () => {
   store.saveHistory()
-  expect(window.api.history.save).toHaveBeenCalledWith([ {
+  expect(window.api.history?.save).toHaveBeenCalledWith([ {
     uuid: '123',
     engine: 'engine',
     model: 'model',

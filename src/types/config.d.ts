@@ -1,4 +1,5 @@
 
+import { EngineCreateOpts, Model } from 'multi-llm-ts'
 import { Shortcut, anyDict } from './index.d'
 
 export interface Configuration {
@@ -16,6 +17,12 @@ export interface Configuration {
   rag: RagConfig
   dropbox: DropboxConfig
   gdrive: GDriveConfig
+}
+
+export interface EngineConfig extends EngineCreateOpts{
+  models: ModelsConfig
+  model: ModelConfig
+  tts: TTSConfig
 }
 
 export interface GeneralConfig {
@@ -88,12 +95,6 @@ export interface STTConfig {
   silenceDetection: boolean
   silenceDuration: number
   //silenceAction: SilenceAction
-}
-
-export interface Model {
-  id: string
-  name: string
-  meta: any
 }
 
 export interface ModelsConfig {

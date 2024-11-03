@@ -18,7 +18,7 @@
       "retryGeneration": true
     }
   },
-"llm": {
+  "llm": {
     "engine": "openai",
     "autoVisionSwitch": true,
     "conversationLength": 20

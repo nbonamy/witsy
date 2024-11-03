@@ -476,7 +476,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
   try {
     processing.value = true
     stopGeneration = false
-    const stream = await llm.generate(chat.value.messages.slice(0, -1), { model: chat.value.model })
+    const stream = await llm.generate(chat.value.model, chat.value.messages.slice(0, -1))
     for await (const msg of stream) {
       if (stopGeneration) {
         llm.stop(stream)
