@@ -199,7 +199,7 @@
       },
       "model": {
         "chat": "",
-        "image": "black-forest-labs/FLUX.1-dev"
+        "image": "black-forest-labs/FLUX.1-schnell"
       }
     }
   },
