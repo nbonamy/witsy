@@ -116,6 +116,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 - [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 
+## WIP
+
+- [ ] Doc repo in Scratchpad
+
 ## DONE
 
 - [x] Hugging face image generation
