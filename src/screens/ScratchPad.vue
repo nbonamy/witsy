@@ -6,7 +6,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-doc-repo="false" :enable-commands="false" :conversation-mode="conversationMode" />
+    <Prompt :chat="chat" :processing="processing" :enable-commands="false" :conversation-mode="conversationMode" />
     <audio/>
   </div>
 </template>
@@ -25,6 +25,7 @@ import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
+import Generator from '../services/generator'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
@@ -35,10 +36,6 @@ const { onEvent, emitEvent } = useEventBus()
 
 // load store
 store.load()
-
-// init stuff
-let llm: LlmEngine = null
-let stopGeneration = false
 
 const placeholder = ref(`Start typing your document or
 ask Witsy to write something for you!
@@ -71,6 +68,10 @@ const conversationMode = ref(null)
 // init stuff
 store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
+const generator = new Generator(store.config)
+
+// init stuff
+let llm: LlmEngine = null
 const modifiedCheckDelay = 1000
 let modifiedCheckTimeout: NodeJS.Timeout = null
 let fileUrl: string = null
@@ -439,22 +440,9 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
 
   // now build the prompt
   let finalPrompt = prompt
-
   if (subject.length > 0) {
     const template = store.config.instructions.scratchpad.prompt
     finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
-
-  } else {
-
-    // // rag?
-    // if (docrepo) {
-    //   sources = await window.api.docrepo.query(docrepo, finalPrompt);
-    //   if (sources.length > 0) {
-    //     const context = sources.map((source) => source.content).join('\n\n');
-    //     finalPrompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', finalPrompt);
-    //   }
-    // }
-
   }
 
   // log
@@ -473,25 +461,13 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
   chat.value.addMessage(response)
 
   // now generate
-  try {
-    processing.value = true
-    stopGeneration = false
-    const stream = await llm.generate(chat.value.model, chat.value.messages.slice(0, -1))
-    for await (const msg of stream) {
-      if (stopGeneration) {
-        llm.stop(stream)
-        break
-      }
-      if (msg.type === 'tool') {
-        response.setToolCall(msg)
-      } else if (msg.type === 'content') {
-        response.appendText(msg)
-      }
-    }
-  } catch (err) {
-    console.error(err)
-    response.setText('An error occurred while generating the response.')
-  }
+  processing.value = true
+  await generator.generate(llm, chat.value.messages, {
+    model: chat.value.model,
+    attachment: attachment,
+    docrepo: chat.value.docrepo,
+    sources: false,
+  })
 
   // done
   emitEvent('llm-done')
@@ -530,7 +506,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
 }
 
 const onStopPrompting = async () => {
-  stopGeneration = true
+  generator.stop()
 }
 
 </script>

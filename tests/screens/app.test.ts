@@ -89,5 +89,5 @@ test('Transmits query params', () => {
   // @ts-expect-error no-other-way
   window.location = new URL('http://localhost/?textId=6#/command')
   const wrapper = mount(App)
-  expect(wrapper.findComponent(Commands).props().extra.textId).toBe('6')
+  expect(wrapper.findComponent(Commands).props().extra?.textId).toBe('6')
 })

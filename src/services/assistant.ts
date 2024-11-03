@@ -1,7 +1,6 @@
 
-import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
-import { DocRepoQueryResponseItem } from 'types/rag.d'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
@@ -9,30 +8,24 @@ import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { countryCodeToName } from './i18n'
 import { availablePlugins } from '../plugins/plugins'
+import Generator, { GenerationOpts } from './generator'
 
-export interface AssistantCompletionOpts extends LlmCompletionOpts {
+export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
-  model?: string
   save?: boolean
   titling?: boolean
-  attachment?: Attachment
-  docrepo?: string
   overwriteEngineModel?: boolean
   systemInstructions?: string
 }
 
-export default class {
+export default class extends Generator {
 
-  config: Configuration
   llmFactory: LlmFactory
   engine: string
-  llm: LlmEngine
   chat: Chat
-  stopGeneration: boolean
-  stream: AsyncIterable<LlmChunk>
 
   constructor(config: Configuration) {
-    this.config = config
+    super(config)
     this.engine = null
     this.llm = null
     this.chat = null
@@ -83,6 +76,9 @@ export default class {
       save: true,
       titling: true,
       ... this.llmFactory.getChatEngineModel(),
+      attachment: null,
+      docrepo: null,
+      sources: true,
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
     }
@@ -112,6 +108,7 @@ export default class {
       // so engine and model are null so we need to keep opts ones...
       opts.engine = this.chat.engine || opts.engine
       opts.model = this.chat.model || opts.model
+      opts.docrepo = this.chat.docrepo || opts.docrepo
     }
 
     // we need an llm
@@ -137,7 +134,10 @@ export default class {
     callback?.call(null, null)
 
     // generate text
-    await this.generateText(opts, callback)
+    const rc = await this.generate(this.llm, this.chat.messages, opts, callback)
+    if (!rc) {
+      opts.titling = false
+    }
 
     // check if we need to update title
     if (opts.titling && this.chat.title === defaultTitle) {
@@ -149,104 +149,6 @@ export default class {
       store.saveHistory()
     }
 
-  }
-
-  async generateText(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
-
-    // we need this to be const during generation
-    const llm = this.llm
-    const message: Message = this.chat.lastMessage()
-
-    try {
-
-      // get messages
-      const messages = this.getRelevantChatMessages()
-
-      // rag?
-      let sources: DocRepoQueryResponseItem[] = [];
-      if (this.chat.docrepo) {
-        const userMessage = messages[messages.length - 1];
-        sources = await window.api.docrepo.query(this.chat.docrepo, userMessage.content);
-        //console.log('Sources', JSON.stringify(sources, null, 2));
-        if (sources.length > 0) {
-          const context = sources.map((source) => source.content).join('\n\n');
-          const prompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', userMessage.content);
-          messages[messages.length - 1] = new Message('user', prompt);
-        }
-      }
-
-      // now stream
-      this.stopGeneration = false
-      this.stream = await llm.generate(opts.model, messages, opts)
-      for await (const msg of this.stream) {
-        if (this.stopGeneration) {
-          break
-        }
-        if (msg.type === 'tool') {
-            message.setToolCall(msg)
-        } else if (msg.type === 'content') {
-          if (msg && sources && sources.length > 0) {
-            msg.done = false
-          }
-          message.appendText(msg)
-          callback?.call(null, msg)
-        }
-      }
-
-      // append sources
-      if (sources && sources.length > 0) {
-        
-        // reduce to unique sources based on metadata.id
-        const uniqueSourcesMap = new Map();
-        sources.forEach(source => {
-          uniqueSourcesMap.set(source.metadata.uuid, source);
-        })
-        sources = Array.from(uniqueSourcesMap.values());
-
-        // now add them
-        let sourcesText = '\n\nSources:\n\n'
-        sourcesText += sources.map((source) => `- [${source.metadata.title}](${source.metadata.url})`).join('\n')
-        message.appendText({ type: 'content', text: sourcesText, done: true })
-        callback?.call(null, { text: sourcesText, done: true })
-      }
-
-    } catch (error) {
-      console.error('Error while generating text', error)
-      if (error.name !== 'AbortError') {
-        if (error.status === 401 || error.message.includes('401') || error.message.toLowerCase().includes('apikey')) {
-          message.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
-          opts.titling = false
-          this.chat.setEngineModel(null, null)
-          this.resetLlm()
-        } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
-          message.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
-          opts.titling = false
-        } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota'))) {
-          message.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
-          opts.titling = false
-        } else if (message.content === '') {
-          message.setText('Sorry, I could not generate text for that prompt.')
-          opts.titling = false
-        } else {
-          message.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
-          opts.titling = false
-        }
-      } else {
-        callback?.call(null, { text: null, done: true })
-      }
-    }
-
-    // cleanup
-    this.stream = null
-    //callback?.call(null, null)
-  
-  }
-
-  async stop() {
-    if (this.stream) {
-      await this.llm?.stop(this.stream)
-      this.stopGeneration = true
-    }
   }
 
   async attach(file: Attachment) {
@@ -297,18 +199,6 @@ export default class {
       return null
     }
   
-  }
-
-  getRelevantChatMessages() {
-    const conversationLength = this.config.llm.conversationLength
-    const chatMessages = this.chat.messages.filter((msg) => msg.role !== 'system')
-    const messages = [this.chat.messages[0], ...chatMessages.slice(-conversationLength*2, -1)]
-    for (const message of messages) {
-      if (message.attachment && !message.attachment.contents) {
-        message.attachment.loadContents()
-      }
-    }
-    return messages
   }
 
   getLocalizedInstructions(instructions: string) {

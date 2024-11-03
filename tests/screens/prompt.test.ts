@@ -68,6 +68,9 @@ beforeAll(() => {
       continue: vi.fn(),
       close: vi.fn(),
     },
+    docrepo: {
+      list: vi.fn(() => []),
+    },
     markdown: {
       render: renderMarkdown
     }
