@@ -68,6 +68,9 @@ beforeAll(() => {
     history: {
       load: vi.fn(() => []),
     },
+    docrepo: {
+      list: vi.fn(() => []),
+    }
   }
 })
 

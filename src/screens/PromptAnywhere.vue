@@ -48,7 +48,8 @@ import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
-import Attachment from 'models/attachment'
+import Generator from '../services/generator'
+import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
@@ -61,6 +62,7 @@ const promptChatTimeout = 1000 * 60 * 1
 store.load()
 
 // init stuff
+const generator = new Generator(store.config)
 const audioPlayer = useAudioPlayer(store.config)
 const llmFactory = new LlmFactory(store.config)
 
@@ -87,7 +89,6 @@ type LastViewed = {
 }
 
 let llm: LlmEngine = null
-let stopGeneration = false
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
@@ -315,7 +316,7 @@ const onClose = () => {
 }
 
 const onStopGeneration = () => {
-  stopGeneration = true
+  generator.stop()
 }
 
 const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
@@ -344,19 +345,7 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
     chat.value.addMessage(response.value)
 
     // now generate
-    stopGeneration = false
-    const stream = await llm.generate(chat.value.model, chat.value.messages.slice(0, -1))
-    for await (const msg of stream) {
-      if (stopGeneration) {
-        llm.stop(stream)
-        break
-      }
-      if (msg.type === 'tool') {
-        response.value.setToolCall(msg)
-      } else if (msg.type === 'content') {
-        response.value.appendText(msg)
-      }
-    }
+    await generator.generate(llm, chat.value.messages, { model: chat.value.model, attachment, docrepo })
 
     // save?
     if (store.config.prompt.autosave) {
