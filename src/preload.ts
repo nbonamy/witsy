@@ -78,7 +78,7 @@ contextBridge.exposeInMainWorld(
       prompt: () => { return ipcRenderer.send('anywhere-prompt') },
       insert: (text: string): void => { return ipcRenderer.send('anywhere-insert', text) },
       continue: (chatid: string): void => { return ipcRenderer.send('anywhere-continue-as-chat', chatid) },
-      cancel: (): void => { return ipcRenderer.send('anywhere-cancel') },
+      close: (): void => { return ipcRenderer.send('anywhere-close') },
       resize: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('anywhere-resize', { deltaX, deltaY }) },
     },
     experts: {

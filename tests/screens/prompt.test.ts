@@ -66,7 +66,7 @@ beforeAll(() => {
       prompt: vi.fn(),
       insert: vi.fn(),
       continue: vi.fn(),
-      cancel: vi.fn(),
+      close: vi.fn(),
     },
     markdown: {
       render: renderMarkdown
@@ -100,10 +100,10 @@ test('Closes when click on container', async () => {
   const wrapper = mount(PromptAnywhere)
   wrapper.find('.prompt').trigger('mousedown')
   wrapper.find('.container').trigger('mouseup')
-  expect(window.api.anywhere.cancel).not.toHaveBeenCalled()
+  expect(window.api.anywhere.close).not.toHaveBeenCalled()
   wrapper.find('.container').trigger('mousedown')
   wrapper.find('.container').trigger('mouseup')
-  expect(window.api.anywhere.cancel).toHaveBeenCalled()
+  expect(window.api.anywhere.close).toHaveBeenCalled()
 })
 
 test('Renders response', async () => {
@@ -144,7 +144,7 @@ test('Closes when click on icon', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere?.cancel).toHaveBeenCalledWith()
+  expect(window.api.anywhere.close).toHaveBeenCalledWith()
 })
 
 test('Manages conversation', async () => {
@@ -245,5 +245,5 @@ test('Supports keyboard shortcuts', async () => {
   // quit
   vi.clearAllMocks()
   document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-  expect(window.api.anywhere?.cancel).toHaveBeenCalled()
+  expect(window.api.anywhere.close).toHaveBeenCalled()
 })

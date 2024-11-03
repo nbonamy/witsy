@@ -82,7 +82,7 @@ if (!process.mas) {
 // this is going to be called later
 const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
-    prompt: PromptAnywhere.initPrompt,
+    prompt: PromptAnywhere.open,
     chat: window.openMainWindow,
     command: Commander.initCommand,
     readaloud: ReadAloud.read,
@@ -123,7 +123,7 @@ app.whenReady().then(() => {
   menu.installMenu(app, {
     quit: app.quit,
     checkForUpdates: autoUpdater.check,
-    newPrompt: PromptAnywhere.initPrompt,
+    newPrompt: PromptAnywhere.open,
     newChat: window.openMainWindow,
     newScratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
@@ -430,7 +430,7 @@ ipcMain.on('code-python-run', async (event, payload) => {
 })
 
 ipcMain.on('anywhere-prompt', async () => {
-  await PromptAnywhere.initPrompt();
+  await PromptAnywhere.open();
 });
 
 ipcMain.on('anywhere-insert', async (event, payload) => {
@@ -441,8 +441,8 @@ ipcMain.on('anywhere-continue-as-chat', async (_, chatId) => {
   await PromptAnywhere.continueAsChat(app, chatId);
 })
 
-ipcMain.on('anywhere-cancel', async () => {
-  await window.closePromptAnywhere();
+ipcMain.on('anywhere-close', async () => {
+  await PromptAnywhere.close();
 })
 
 ipcMain.on('anywhere-resize', async (_, payload) => {

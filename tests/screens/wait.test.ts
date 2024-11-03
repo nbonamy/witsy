@@ -10,7 +10,7 @@ window.api = {
     cancel: vi.fn()
   },
   anywhere: {
-    cancel: vi.fn()
+    close: vi.fn()
   }
 }
 
@@ -38,5 +38,5 @@ test('Cancels command', () => {
   const wrapper = mount(Wait)
   wrapper.find('.cancel').trigger('click')
   expect(window.api.commands.cancel).toHaveBeenCalled()
-  expect(window.api.anywhere.cancel).toHaveBeenCalled()
+  expect(window.api.anywhere.close).toHaveBeenCalled()
 })

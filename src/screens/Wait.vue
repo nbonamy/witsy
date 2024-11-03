@@ -15,7 +15,7 @@ const hover = ref(false)
 
 const onCancel = () => {
   window.api.commands.cancel()
-  window.api.anywhere.cancel()
+  window.api.anywhere.close()
 }
 
 </script>

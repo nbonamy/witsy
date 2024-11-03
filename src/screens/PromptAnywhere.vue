@@ -311,7 +311,7 @@ const onClose = () => {
   document.removeEventListener('keydown', onKeyDown)
 
   // done
-  window.api.anywhere.cancel()
+  window.api.anywhere.close()
 }
 
 const onStopGeneration = () => {
