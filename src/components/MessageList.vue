@@ -52,11 +52,13 @@ onMounted(() => {
 })
 
 const onFullscreen = (imageUrl: string) => {
+  document.addEventListener('keydown', onCloseFullScreen)
   fullScreenImageUrl.value = imageUrl
   window.api.fullscreen(true)
 }
 
 const onCloseFullScreen = () => {
+  document.removeEventListener('keydown', onCloseFullScreen)
   fullScreenImageUrl.value = null
   window.api.fullscreen(false)
 }
