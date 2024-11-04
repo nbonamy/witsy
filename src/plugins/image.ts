@@ -25,7 +25,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Generate an image based on a prompt. Returns the path of the image saved on disk and a description of the image. Always embed the image visible in the final response. Do not just include a link to the image.'
+    return 'Generate an image based on a prompt. Returns the path of the image saved on disk and a description of the image. Create only one image at a time unless explicitely asked to do otherwise. Always embed the image visible in the final response. Do not just include a link to the image.'
   }
 
   getPreparationDescription(): string {
@@ -102,19 +102,19 @@ export default class extends Plugin {
       //   required: false
       // })
 
-      parameters.push({
-        name: 'width',
-        type: 'number',
-        description: 'The width of the image',
-        required: false
-      })
+      // parameters.push({
+      //   name: 'width',
+      //   type: 'number',
+      //   description: 'The width of the image',
+      //   required: false
+      // })
 
-      parameters.push({
-        name: 'height',
-        type: 'number',
-        description: 'The height of the image',
-        required: false
-      })
+      // parameters.push({
+      //   name: 'height',
+      //   type: 'number',
+      //   description: 'The height of the image',
+      //   required: false
+      // })
 
     }
 
