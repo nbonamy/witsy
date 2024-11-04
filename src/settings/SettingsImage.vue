@@ -32,7 +32,7 @@
     <div class="group" v-if="engine == 'huggingface'">
       <label>Image model</label>
       <div class="subgroup">
-        <input v-model="image_model" @blur="save" />
+        <Combobox :items="hf_models" placeholder="Enter a model or select from the list" v-model="image_model" @change="save"/>
         <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">More about Hugging Face models</a><br/>
       </div>
     </div>
@@ -44,6 +44,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import Combobox from '../components/Combobox.vue'
 import LlmFactory from '../llms/llm'
 
 const enabled = ref(false)
@@ -52,6 +53,14 @@ const hfAPIKey = ref(null)
 const refreshLabel = ref('Refresh')
 const image_model = ref(null)
 const image_models = ref([])
+
+const hf_models = ref([
+  'black-forest-labs/FLUX.1-schnell',
+  'black-forest-labs/FLUX.1-dev',
+  'dreamlike-art/dreamlike-photoreal-2.0',
+  'prompthero/openjourney',
+  'stabilityai/stable-diffusion-3.5-large-turbo',
+].sort().map(name => ({ id: name, name })))
 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false

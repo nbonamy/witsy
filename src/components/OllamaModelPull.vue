@@ -3,13 +3,7 @@
   <div class="group pull">
     <label>Pull nodel</label>
     <div class="subgroup">
-      <input type="text" v-model="pull_model" placeholder="Enter a model to pull">
-      <select v-model="pull_model_select" @change="onSelectPullModel">
-        <option disabled value="">Or select one from this list</option>
-        <option v-for="model in pullableModels" :key="model.id" :value="model.id">
-          {{ model.name }}
-        </option>
-      </select>
+      <Combobox class="combobox" :items="pullableModels" placeholder="Enter a model name to pull or select one" v-model="pull_model" />
       <a :href="props.infoUrl" target="_blank">{{ props.infoText }}</a>
     </div>
     <div>
@@ -23,9 +17,10 @@
 <script setup lang="ts">
 
 import { ref, nextTick } from 'vue'
+import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import { Ollama } from 'multi-llm-ts'
+import Combobox from './Combobox.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -109,9 +104,8 @@ const onStop = async () => {
 
 <style scoped>
 
-.pull .subgroup select {
-  margin-top: 4px;
-  color: var(--control-placeholder-text-color);
+.pull .subgroup {
+  flex: 1;
 }
 
 .progress {
