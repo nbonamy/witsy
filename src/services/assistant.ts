@@ -6,7 +6,6 @@ import Attachment from '../models/attachment'
 import Message from '../models/message'
 import LlmFactory from '../llms/llm'
 import { store } from './store'
-import { countryCodeToName } from './i18n'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationOpts } from './generator'
 
@@ -87,14 +86,11 @@ export default class extends Generator {
     // we need a chat
     if (this.chat === null) {
 
-      // system instructions
-      const systemPrompt = opts.systemInstructions || this.config.instructions.default
-
       // initialize the chat
       this.chat = new Chat()
       this.chat.docrepo = opts.docrepo
       this.chat.setEngineModel(opts.engine, opts.model)
-      this.chat.addMessage(new Message('system', this.getLocalizedInstructions(systemPrompt)))
+      this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
       
       // save
       if (opts.save) {
@@ -169,7 +165,7 @@ export default class extends Generator {
 
       // build messages
       const messages = [
-        new Message('system', this.getLocalizedInstructions(this.config.instructions.titling)),
+        new Message('system', this.getSystemInstructions(this.config.instructions.titling)),
         this.chat.messages[1],
         this.chat.messages[2],
         new Message('user', this.config.instructions.titling_user)
@@ -199,12 +195,6 @@ export default class extends Generator {
       return null
     }
   
-  }
-
-  getLocalizedInstructions(instructions: string) {
-    const instr = instructions
-    if (!this.config.general.language) return instr
-    return instr + ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
   }
 
 }

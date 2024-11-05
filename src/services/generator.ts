@@ -2,6 +2,7 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
+import { countryCodeToName } from './i18n'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 
@@ -128,13 +129,36 @@ export default class {
   getConversation(messages: Message[]): Message[] {
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = messages.filter((msg) => msg.role !== 'system')
-    const conversation = [messages[0], ...chatMessages.slice(-conversationLength*2, -1)]
+    const conversation = [
+      new Message('system', this.patchSystemInstructions(messages[0].content)),
+      ...chatMessages.slice(-conversationLength*2, -1)
+    ]
     for (const message of conversation) {
       if (message.attachment && !message.attachment.contents) {
         message.attachment.loadContents()
       }
     }
     return conversation
+  }
+
+  getSystemInstructions(instructions?: string) {
+
+    // default
+    let instr = instructions || this.config.instructions.default
+    
+    // language. asking the LLM to talk in the user language confuses them more than often!
+    if (this.config.general.language) instr += ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
+    //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
+
+    // add date and time
+    instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
+
+    // done
+    return instr
+  }
+
+  patchSystemInstructions(instructions: string) {
+    return instructions.replace(/Current date and time is [^.]+/, 'Current date and time is ' + new Date().toLocaleString())
   }
 
 }
