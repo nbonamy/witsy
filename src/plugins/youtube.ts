@@ -3,6 +3,8 @@ import { anyDict } from 'types/index.d'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { YoutubeTranscript } from 'youtube-transcript'
+import ytv from 'ytv'
+import { title } from 'process'
 
 export default class extends Plugin {
 
@@ -40,10 +42,16 @@ export default class extends Plugin {
   async execute(parameters: anyDict): Promise<anyDict> {
 
     try {
+      const info = await ytv.get_info(parameters.url)
       const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
-      return { content: transcript.map((line: any) => line.text).join(' ') }
+      return {
+        title: info.title,
+        channel: info.channel_name,
+        content: transcript.map((line: any) => line.text).join(' ')
+      }
     } catch (error) {
-      return error
+      console.error(error)
+      return { error: error }
     }
 
   }  
