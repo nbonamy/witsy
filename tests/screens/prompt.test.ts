@@ -2,12 +2,11 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
-import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
-import defaultSettings from '../../defaults/settings.json'
+import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
 import LlmMock from '../mocks/llm'
 
@@ -27,6 +26,7 @@ vi.mock('../../src/llms/llm.ts', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
+  Generator.addDateAndTimeToSystemInstr = false
   useNavigatorMock()
   useWindowMock()
 })
@@ -34,6 +34,15 @@ beforeAll(() => {
 beforeEach(() => {
   vi.clearAllMocks()
 })
+
+const prompt = async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  return wrapper
+}
 
 test('Renders correctly', () => {
   const wrapper = mount(PromptAnywhere)
@@ -72,11 +81,7 @@ test('Renders response', async () => {
 })
 
 test('Submits prompt', async () => {
-  const wrapper = mount(PromptAnywhere)
-  wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
-  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  const wrapper = await prompt()
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
@@ -105,11 +110,7 @@ test('Closes when click on icon', async () => {
 })
 
 test('Manages conversation', async () => {
-  const wrapper = mount(PromptAnywhere)
-  wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
-  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  const wrapper = await prompt()
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
@@ -117,11 +118,7 @@ test('Manages conversation', async () => {
 })
 
 test('Resets chat', async () => {
-  const wrapper = mount(PromptAnywhere)
-  wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
-  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  const wrapper = await prompt()
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   wrapper.find('.clear').trigger('click')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
@@ -142,12 +139,7 @@ test('Brings back chat', async () => {
 })
 
 test('Saves chat', async () => {
-  const wrapper = mount(PromptAnywhere)
-  wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  //const chatId = wrapper.vm.chat.uuid
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
-  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  const wrapper = await prompt()
   expect(wrapper.vm.chat.title).toBeNull()
   wrapper.find('.continue').trigger('click')
   await wrapper.vm.$nextTick()
@@ -169,38 +161,36 @@ test('Auto saves chat', async () => {
   expect(window.api.history?.save).toHaveBeenCalled()
 })
 
-test('Supports keyboard shortcuts', async () => {
-  const wrapper = mount(PromptAnywhere)
-  wrapper.vm.onShow()
-  await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
-  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-
-  // copy
-  vi.clearAllMocks()
+test('Supports keyboard copy', async () => {
+  await prompt()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
   expect(window.api.clipboard?.writeText).toHaveBeenCalled()
+})
 
-  // insert
-  vi.clearAllMocks()
+test('Supports keyboard insert', async () => {
+  await prompt()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
   expect(window.api.anywhere?.insert).toHaveBeenCalled()
+})
 
-  // continue
-  vi.clearAllMocks()
+test('Supports keyboard save', async () => {
+  const wrapper = await prompt()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 's' }));
   await wrapper.vm.$nextTick()
   expect(window.api.history?.save).toHaveBeenCalled()
+  await wrapper.vm.$nextTick()
   expect(window.api.anywhere?.continue).toHaveBeenCalled()
+})
 
-  // clear
-  vi.clearAllMocks()
+test('Supports keyboard clear', async () => {
+  const wrapper = await prompt()
   expect(wrapper.vm.response).not.toBeNull()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'x' }));
   expect(wrapper.vm.response).toBeNull()
+})
 
-  // quit
-  vi.clearAllMocks()
+test('Supports keyboard close', async () => {
+  await prompt()
   document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
   expect(window.api.anywhere.close).toHaveBeenCalled()
 })

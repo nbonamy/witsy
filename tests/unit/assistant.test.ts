@@ -5,6 +5,7 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant'
+import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
@@ -25,6 +26,7 @@ vi.mock('../../src/services/download.ts', async () => {
 })  
 
 beforeAll(() => {
+  Generator.addDateAndTimeToSystemInstr = false
   useWindowMock()
 })
 

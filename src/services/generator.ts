@@ -13,12 +13,14 @@ export interface GenerationOpts extends LlmCompletionOpts {
   sources?: boolean
 }
 
-export default class {
+export default class Generator {
 
   config: Configuration
   stopGeneration: boolean
   stream: AsyncIterable<LlmChunk>
   llm: LlmEngine
+
+  static addDateAndTimeToSystemInstr = true
 
   constructor(config: Configuration) {
     this.config = config
@@ -151,7 +153,9 @@ export default class {
     //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
 
     // add date and time
-    instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
+    if (Generator.addDateAndTimeToSystemInstr) {
+      instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
+    }
 
     // done
     return instr
