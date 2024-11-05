@@ -122,6 +122,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('keyup', onKeyUp)
   audioPlayer.removeListener(onAudioPlayerStatus)
   window.api.off('show', onShow)
 })
@@ -232,7 +234,9 @@ const onClear = () => {
   onStopGeneration()
 
   // keep the first message (instuctions)
-  chat.value.messages = chat.value.messages.slice(0, 1)
+  chat.value.messages = [
+    new Message('system', generator.getSystemInstructions())
+  ]
 
   // reset response
   response.value = null
@@ -388,7 +392,9 @@ const onContinueConversation = async () => {
 
   // make sure it is saved
   await saveChat()
-
+  
+  console.log('continue')
+  
   // continue
   window.api.anywhere.continue(chat.value.uuid)
   cleanUp()
