@@ -204,9 +204,14 @@
     }
   },
   "plugins": {
-    "browse": {},
+    "browse": {
+      "enabled": true
+    },
     "python": {},
     "tavily": {},
+    "youtube": {
+      "enabled": true
+    },
     "image": {
       "enabled": true,
       "engine": "openai"
