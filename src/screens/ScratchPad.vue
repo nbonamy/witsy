@@ -7,6 +7,7 @@
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
     <Prompt :chat="chat" :processing="processing" :enable-commands="false" :conversation-mode="conversationMode" />
+    <DocRepos />
     <audio/>
   </div>
 </template>
@@ -23,6 +24,7 @@ import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt from '../components/Prompt.vue'
+import DocRepos from '../screens/Docrepos.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
 import Generator from '../services/generator'
