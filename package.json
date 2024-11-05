@@ -98,7 +98,7 @@
     "markdown-it-mark": "^4.0.0",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^2.0.0-beta.1",
+    "multi-llm-ts": "^2.0.0",
     "nestor-client": "^0.3.1",
     "officeparser": "^4.1.1",
     "ollama": "^0.5.9",
