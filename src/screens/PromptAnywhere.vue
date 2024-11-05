@@ -104,6 +104,10 @@ onMounted(() => {
   audioPlayer.addListener(onAudioPlayerStatus)
   onEvent('audio-noise-detected', () =>  audioPlayer.stop)
 
+  // shotcuts work better at document level
+  document.addEventListener('keyup', onKeyUp)
+  document.addEventListener('keydown', onKeyDown)  
+
   // other stuff
   isMas.value = window.api.isMasBuild
 
@@ -123,10 +127,6 @@ onUnmounted(() => {
 })
 
 const onShow = () => {
-
-  // shotcuts work better at document level
-  document.addEventListener('keyup', onKeyUp)
-  document.addEventListener('keydown', onKeyDown)  
 
   // see if chat is not that old
   if (chat.value !== null) {
@@ -162,7 +162,7 @@ const initChat = () => {
   // init thread
   chat.value = new Chat()
   chat.value.title = null
-  chat.value.addMessage(new Message('system', store.config.instructions.default))
+  chat.value.addMessage(new Message('system', generator.getSystemInstructions()))
 
   // reset stuff
   response.value = null
@@ -203,7 +203,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
   const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
-
+  // now check
   if (isCommand && ev.key == 'x') {
     ev.preventDefault()
     onClear()
@@ -307,9 +307,9 @@ const onClose = () => {
   // cleanup
   cleanUp()
 
-  // remove listeners
-  document.removeEventListener('keyup', onKeyUp)
-  document.removeEventListener('keydown', onKeyDown)
+  // // remove listeners
+  // document.removeEventListener('keyup', onKeyUp)
+  // document.removeEventListener('keydown', onKeyDown)
 
   // done
   window.api.anywhere.close()
