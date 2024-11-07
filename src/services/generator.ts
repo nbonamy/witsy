@@ -55,7 +55,11 @@ export default class Generator {
 
       // now stream
       this.stopGeneration = false
-      this.stream = await llm.generate(opts.model, conversation, opts)
+      this.stream = await llm.generate(opts.model, conversation, {
+        models: this.config.engines[llm.getName()].models.chat,
+        autoSwitchVision: this.config.llm.autoVisionSwitch,
+        ...opts
+      })
       for await (const msg of this.stream) {
         if (this.stopGeneration) {
           break
