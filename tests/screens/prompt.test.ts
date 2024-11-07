@@ -82,7 +82,7 @@ test('Renders response', async () => {
 
 test('Submits prompt', async () => {
   const wrapper = await prompt()
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Copies response', async () => {
@@ -111,19 +111,19 @@ test('Closes when click on icon', async () => {
 
 test('Manages conversation', async () => {
   const wrapper = await prompt()
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Resets chat', async () => {
   const wrapper = await prompt()
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   wrapper.find('.clear').trigger('click')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are a helpful assistant. You are here to help the user with any questions they have."},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Brings back chat', async () => {
