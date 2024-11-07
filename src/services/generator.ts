@@ -56,7 +56,7 @@ export default class Generator {
       // now stream
       this.stopGeneration = false
       this.stream = await llm.generate(opts.model, conversation, {
-        models: this.config.engines[llm.getName()].models.chat,
+        models: this.config.engines[llm.getName()]?.models?.chat,
         autoSwitchVision: this.config.llm.autoVisionSwitch,
         ...opts
       })
