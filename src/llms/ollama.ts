@@ -1,6 +1,7 @@
 
 const getChatModels = [
   { id: 'llama3.2:latest', name: 'Llama 3.2' },
+  { id: 'llama3.2-vision', name: 'Llama 3.2 Vision' },
   { id: 'llama3.1:latest', name: 'Llama 3.1' },
   { id: 'mistral-large:latest', name: 'Mistral Large 2' },
   { id: 'phi3.5:latest', name: 'Phi 3.5' },
