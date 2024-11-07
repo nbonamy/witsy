@@ -118,10 +118,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] RAG in Scratchpad
 
 ## DONE
 
+- [x] Llama 3.2 vision support
+- [x] YouTube plugin
+- [x] RAG in Scratchpad
 - [x] Hugging face image generation
 - [x] Show prompt used for image generation
 - [x] Redesigned Prompt window
