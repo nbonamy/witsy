@@ -78,6 +78,11 @@ test('extract attachments - attachment', async () => {
     { messages: [ { attachment: { url: 'file://images/image2.png' } } ] },
   ] as Chat[], 'images')).toEqual(['image1.png', 'image2.png'])
 
+  expect(extractAttachmentsFromHistory([
+    { messages: [ { attachment: { url: 'file://images folder/image1.png' } } ] },
+    { messages: [ { attachment: { url: 'file://images folder/image2.png' } } ] },
+  ] as Chat[], 'images folder')).toEqual(['image1.png', 'image2.png'])
+
 })
 
 test('extract attachments - mixed', async () => {
@@ -90,6 +95,15 @@ test('extract attachments - mixed', async () => {
     { messages: [ { content: 'file://images/image4.png' } ] },
     { messages: [ { content: 'file://images.file6.png', attachment: { url: 'file://images/image5.png' } } ] },
   ] as Chat[], 'images')).toEqual(['image1.png', 'image2.png', 'image3.png', 'image4.png', 'image5.png'])
+
+  expect(extractAttachmentsFromHistory([
+    { messages: [ { content: 'Hello, world!' } ] },
+    { messages: [ { content: 'file://files/file.png' } ] },
+    { messages: [ { content: 'file://images folder/image1.png', attachment: { url: 'file://images folder/image2.png' } } ] },
+    { messages: [ { content: '[image3](file://images/image3.png)' } ] },
+    { messages: [ { content: 'file://images folder/image4.png' } ] },
+    { messages: [ { content: 'file://images.file6.png', attachment: { url: 'file://images folder/image5.png' } } ] },
+  ] as Chat[], 'images folder')).toEqual(['image1.png', 'image2.png', 'image4.png', 'image5.png'])
 
 })
 
