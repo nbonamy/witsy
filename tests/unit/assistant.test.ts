@@ -30,6 +30,8 @@ beforeAll(() => {
   useWindowMock()
 })
 
+const spy = vi.spyOn(LlmMock.prototype, 'stream')
+
 let assistant: Assistant = null
 
 const prompt = async (prompt: string, opts: AssistantCompletionOpts = {}): Promise<string> => {
@@ -53,6 +55,9 @@ const prompt = async (prompt: string, opts: AssistantCompletionOpts = {}): Promi
 
 beforeEach(() => {
 
+  // clear mock
+  vi.clearAllMocks()
+
   // init store
   store.config = defaults
   store.config.llm.engine = 'mock'
@@ -63,6 +68,7 @@ beforeEach(() => {
     docquery: '{context} / {query}'
   }
   store.config.engines.mock = {
+    models: { chat: [ 'chat1', 'chat2' ] },
     model: { chat: 'chat'  }
   }
 
@@ -74,6 +80,24 @@ beforeEach(() => {
 test('Assistant Creation', () => {
   expect(assistant).not.toBeNull()
   expect(assistant.hasLlm()).toBe(true)
+})
+
+test('Assistant parameters', async () => {
+  await prompt('Hello LLM')
+  const params: AssistantCompletionOpts = spy.mock.calls[0][2]
+  expect(params).toStrictEqual({
+    save: false,
+    titling: true,
+    engine: 'mock',
+    model: 'chat',
+    attachment: null,
+    docrepo: null,
+    sources: true,
+    models: [ 'chat1', 'chat2' ],
+    overwriteEngineModel: false,
+    systemInstructions: 'You are a chat assistant',
+    autoSwitchVision: true
+  })
 })
 
 test('Assistant Chat', async () => {
