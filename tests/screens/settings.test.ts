@@ -4,7 +4,6 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Settings from '../../src/screens/Settings.vue'
-import defaults from '../../defaults/settings.json'
 import { availableEngines } from '../../src/llms/llm'
 
 import useEventBus from '../../src/composables/event_bus'

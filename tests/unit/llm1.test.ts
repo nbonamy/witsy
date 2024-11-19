@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, expect, test } from 'vitest'
+import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'

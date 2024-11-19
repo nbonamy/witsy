@@ -1,8 +1,7 @@
 
-import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { vi, beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import defaults from '../../defaults/settings.json'
 import Browse from '../../src/plugins/browse'
 import Tavily from '../../src/plugins/tavily'
 import Python from '../../src/plugins/python'
