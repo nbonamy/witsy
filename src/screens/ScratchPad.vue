@@ -466,7 +466,6 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
   processing.value = true
   await generator.generate(llm, chat.value.messages, {
     model: chat.value.model,
-    attachment: attachment,
     docrepo: chat.value.docrepo,
     sources: false,
   })
