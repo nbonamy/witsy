@@ -89,21 +89,28 @@ test('Sends prompt', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: null }, expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file', docrepo: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file', docrepo: null, expert: null }, expect.any(Function))
 })
 
 test('Sends prompt with doc repo', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: 'docrepo' }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: 'docrepo', expert: null }, expect.any(Function))
+})
+
+test('Sends prompt with expert', async () => {
+  mount(Main)
+  emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
+  expect(Assistant.prototype.initLlm).toHaveBeenCalled()
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: 'expert', systemInstructions: 'system' }, expect.any(Function))
 })
 
 test('Stop assistant', async () => {

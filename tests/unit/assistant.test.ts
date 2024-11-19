@@ -92,6 +92,7 @@ test('Assistant parameters', async () => {
     model: 'chat',
     attachment: null,
     docrepo: null,
+    expert: null,
     sources: true,
     models: [ 'chat1', 'chat2' ],
     overwriteEngineModel: false,
@@ -152,7 +153,6 @@ test('Conversation language', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant.chat.messages[0].content
   expect(instructions).toMatch(/French/)
-
 })
 
 test('No API Key', async () => {

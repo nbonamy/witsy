@@ -55,6 +55,7 @@ export interface Chat {
   messages: Message[]
   deleted: boolean
   docrepo: string
+  expert: string
   fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void

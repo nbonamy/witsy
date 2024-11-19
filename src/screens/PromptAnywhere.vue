@@ -40,6 +40,7 @@ import { Ref, ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
+import { SendPromptParams } from '../components/Prompt.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
@@ -164,7 +165,6 @@ const initChat = () => {
   // init thread
   chat.value = new Chat()
   chat.value.title = null
-  chat.value.addMessage(new Message('system', generator.getSystemInstructions()))
 
   // reset stuff
   response.value = null
@@ -233,10 +233,8 @@ const onClear = () => {
   // stop generation
   onStopGeneration()
 
-  // keep the first message (instuctions)
-  chat.value.messages = [
-    new Message('system', generator.getSystemInstructions())
-  ]
+  // reset all messages
+  initChat()
 
   // reset response
   response.value = null
@@ -259,15 +257,15 @@ const processQueryParams = (params: anyDict) => {
     const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == params.foremostApp))
     if (expert) {
       console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-      setExpertPrompt(expert.id)
+      setExpert(expert.id)
     }
   }
 
 }
 
-const setExpertPrompt = (id: string) => {
-  const prompt = store.experts.find((p) => p.id == id)
-  emitEvent('set-expert-prompt', prompt.prompt)
+const setExpert = (id: string) => {
+  const expert = store.experts.find((p) => p.id == id)
+  emitEvent('set-expert', expert)
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
@@ -323,10 +321,13 @@ const onStopGeneration = () => {
   generator.stop()
 }
 
-const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
+const onPrompt = async (params: SendPromptParams) => {
 
   try {
 
+    // deconstruct params
+    const { prompt, attachment, docrepo, expert } = params
+  
     // this should not happen but it happens
     if (chat.value === null) {
       initChat()
@@ -334,6 +335,15 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
     }
     if (llm === null) {
       initLlm()
+    }
+
+    // save expert
+    chat.value.expert = expert?.id
+
+    // system instructions
+    if (chat.value.messages.length === 0) {
+      const systemInstructions = expert != null ? expert.prompt : generator.getSystemInstructions()
+      chat.value.addMessage(new Message('system', systemInstructions  ))
     }
 
     // set response
@@ -349,7 +359,10 @@ const onPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attac
     chat.value.addMessage(response.value)
 
     // now generate
-    await generator.generate(llm, chat.value.messages, { model: chat.value.model, attachment, docrepo })
+    await generator.generate(llm, chat.value.messages, {
+      model: chat.value.model,
+      docrepo
+    })
 
     // save?
     if (store.config.prompt.autosave) {

@@ -3,14 +3,12 @@ import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import { DocRepoQueryResponseItem } from 'types/rag.d'
 import { countryCodeToName } from './i18n'
-import Attachment from '../models/attachment'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
   model?: string
-  attachment?: Attachment
   docrepo?: string
-  sources?: boolean
+  sources?: boolean 
 }
 
 export default class Generator {

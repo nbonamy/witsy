@@ -14,6 +14,7 @@ export default class Chat implements ChatBase {
   engine: string
   model: string
   docrepo: string
+  expert: string
   messages: Message[]
   deleted: boolean
 
@@ -33,6 +34,7 @@ export default class Chat implements ChatBase {
     this.engine = null
     this.model = null
     this.docrepo = null
+    this.expert = null
     this.messages = []
     this.deleted = false
   
@@ -46,6 +48,7 @@ export default class Chat implements ChatBase {
     this.engine = obj.engine || 'openai'
     this.model = obj.model
     this.docrepo = obj.docrepo
+    this.expert = obj.expert
     this.messages = []
     this.deleted = false
     for (const msg of obj.messages) {
@@ -66,6 +69,7 @@ export default class Chat implements ChatBase {
     this.title = obj.title
     this.lastModified = obj.lastModified
     this.docrepo = obj.docrepo
+    this.expert = obj.expert
 
     // messages
     if (this.messages.length < obj.messages.length) {
