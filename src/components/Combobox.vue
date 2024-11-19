@@ -12,6 +12,11 @@
 
 import { ref } from 'vue'
 
+export type ComboBoxItem = {
+  id: string
+  name: string
+}
+
 const emit = defineEmits(['blur', 'change']);
 
 const focus = ref(false)
@@ -19,7 +24,7 @@ const value = defineModel()
 const selected = ref(null)
 
 const props = defineProps({
-  items: { type: Array, required: true },
+  items: { type: Array<ComboBoxItem>, required: true },
   placeholder: { type: String, required: false }
 })
 
@@ -37,7 +42,7 @@ const onChange = () => {
 }
 
 const onSelect = () => {
-  value.value = event.target.value
+  value.value = (event.target as HTMLSelectElement).value
   selected.value = null
   emit('change')
 }
