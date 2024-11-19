@@ -28,6 +28,7 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 })
 
 let wrapper: VueWrapper<any>
+let chat: Chat|null = null
 
 beforeAll(() => {
   useNavigatorMock()
@@ -38,7 +39,8 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  wrapper = mount(Prompt, { global: { stubs: { teleport: true } } } )
+  chat = new Chat()
+  wrapper = mount(Prompt, { props: { chat: chat }, global: { stubs: { teleport: true } } } )
 })
 
 test('Render', () => {
@@ -57,16 +59,43 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', { prompt: 'this is my prompt', attachment: null, docrepo: null })
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+    prompt: 'this is my prompt',
+    attachment: null,
+    docrepo: null,
+    expert: null
+  })
   expect(prompt.element.value).toBe('')
 })
 
-test('Send on enter', async () => {
+test('Sends on enter', async () => {
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', { prompt: 'this is my prompt', attachment: null, docrepo: null })
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+    prompt: 'this is my prompt',
+    attachment: null,
+    docrepo: null,
+    expert: null
+  })
+  expect(prompt.element.value).toBe('')
+})
+
+test('Sends with right parameters', async () => {
+  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
+  wrapper.vm.expert = store.experts[0]
+  wrapper.vm.docrepo = 'docrepo'
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  expect(prompt.element.value).not.toBe('this is my prompt')
+  await prompt.setValue('this is my prompt')
+  await prompt.trigger('keydown.Enter')
+  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+    prompt: 'this is my prompt',
+    attachment: { contents: 'image64', mimeType: 'image/png', url: 'file://image.png', saved: false, extracted: false },
+    expert: { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
+    docrepo: 'docrepo',
+  })
   expect(prompt.element.value).toBe('')
 })
 
@@ -169,14 +198,61 @@ test('History navigation', async () => {
 
 })
 
-test('Experts', async () => {
+test('Selects expert', async () => {
   const trigger = wrapper.find('.icon.experts')
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(2)
   await menu.find('.item:nth-child(2)').trigger('click')
-  expect(wrapper.find<HTMLInputElement>('.input textarea').element.value).toBe('prompt3')
+  expect(wrapper.vm.expert.id).toBe('uuid3')
+})
+
+test('Clears expert', async () => {
+  wrapper.vm.expert = store.experts[0]
+  const trigger = wrapper.find('.icon.experts')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
+  expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
+  expect(menu.find('.item:nth-child(3)').text()).toBe('')
+  expect(menu.find('.item:nth-child(4)').text()).toBe('Clear expert')
+  await menu.find('.item:nth-child(4)').trigger('click')
+  expect(wrapper.vm.expert).toBe(null)
+})
+
+test('Prevents changing expert after prompting', async () => {
+  wrapper.vm.expert = store.experts[0]
+  chat?.addMessage(new Message('system', 'I am an assistant'))
+  const trigger = wrapper.find('.icon.experts')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(4)
+  expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
+  expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
+  expect(menu.find('.item:nth-child(3)').text()).toBe('')
+  expect(menu.find('.item:nth-child(4)').text()).toMatch(/you cannot disable/i)
+  await menu.find('.item:nth-child(4)').trigger('click')
+  expect(wrapper.vm.expert.id).toBe('uuid1')
+})
+
+test('Prevents changing expert after prompting', async () => {
+  chat?.addMessage(new Message('system', 'I am an assistant'))
+  const trigger = wrapper.find('.icon.experts')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(1)
+  expect(menu.find('.item:nth-child(1)').text()).toMatch(/you cannot activate/i)
+  await menu.find('.item:nth-child(1)').trigger('click')
+  expect(wrapper.vm.expert).toBe(null)
 })
 
 test('Document repository', async () => {

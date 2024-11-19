@@ -66,7 +66,12 @@ export default class LlmMock extends LlmEngine {
 
     // now stream
     return new RandomChunkStream(JSON.stringify([
-      ...thread.map(m => { return { role: m.role, content: m.content }}),
+      ...thread.map(m => {
+        let content = m.content
+        if (m.attachment?.contents && m.attachment.isText()) {
+          content += ` (${m.attachment.contents})`
+        }
+        return { role: m.role, content: content }}),
       { role: 'assistant', content: 'Be kind. Don\'t mock me' }
     ]))
   }

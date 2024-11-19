@@ -2,7 +2,7 @@
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
-      <BIconMortarboard class="icon experts" @click="onExperts" v-if="enableExperts" />
+      <BIconMortarboard class="icon experts" :class="{ active: expert != null }" @click="onExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
@@ -20,7 +20,7 @@
     <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="experts" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="canFilterExperts" :actions="expertsMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
@@ -44,6 +44,13 @@ import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Loader from './Loader.vue'
 import Chat from '../models/chat'
+
+export type SendPromptParams = {
+  prompt: string,
+  attachment: Attachment|null
+  docrepo: string|null,
+  expert: Expert|null
+}
 
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
@@ -98,6 +105,7 @@ const llmFactory = new LlmFactory(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
+const expert = ref(null)
 const attachment = ref(null)
 const docrepo = ref(null)
 const input = ref(null)
@@ -125,7 +133,7 @@ const isProcessing = computed(() => {
 })
 
 const isPrompting = computed(() => {
-  return props.chat?.lastMessage().transient
+  return props.chat?.lastMessage()?.transient
 })
 
 const docRepoActive = computed(() => {
@@ -146,7 +154,40 @@ const docReposMenuItems = computed(() => {
   return menus
 })
 
-const experts = computed(() => {
+const canFilterExperts = computed(() => {
+  return expert.value == null && (props.chat == null || props.chat.messages.length === 0)
+})
+
+const expertsMenuItems = computed(() => {
+
+  const menus: MenuAction[] = []
+
+  // expert if active
+  if (expert.value) {
+    menus.push({ label: expert.value.name, icon: BIconStars })
+    if (expert.value.prompt) {
+      menus.push({ label: expert.value.prompt, disabled: true, wrap: true })
+    }
+    menus.push({ separator: true })
+  }
+
+  // if already started
+  if (props.chat?.messages.length > 0) {
+    if (expert.value) {
+      menus.push({ label: 'You cannot disable the expert after having started chatting', disabled: true, wrap: true })
+    } else {
+      menus.push({ label: 'You cannot activate experts after having started chatting', disabled: true, wrap: true })
+    }
+  } else if (expert.value) {
+    menus.push({ label: 'Clear expert', action: 'clear' })
+  }
+
+  // done
+  if (menus.length) {
+    return menus
+  }
+
+  // defaut list
   return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
     return { label: p.name, action: p.name, icon: BIconStars }
   })
@@ -175,7 +216,7 @@ onMounted(() => {
 
   // event
   onEvent('set-prompt', onSetPrompt)
-  onEvent('set-expert-prompt', onSetExpertPrompt)
+  onEvent('set-expert', onSetExpert)
   window.api.on('docrepo-modified', loadDocRepos)
   autoGrow(input.value)
 
@@ -183,8 +224,18 @@ onMounted(() => {
   loadDocRepos()
   initDictation()
 
-  // reset doc repo
-  watch(() => props.chat || {}, () => docrepo.value = props.chat?.docrepo, { immediate: true })
+  // reset doc repo and expert
+  watch(() => props.chat || {}, () => {
+    docrepo.value = props.chat?.docrepo
+    expert.value = store.experts.find(p => p.id === props.chat?.expert)
+    if (!expert.value) {
+      if (props.chat?.expert) {
+        expert.value = { id: props.chat?.expert, name: 'Unknown expert' }
+      } else {
+        expert.value = null
+      }
+    }
+  }, { immediate: true })
 
 })
 
@@ -245,12 +296,9 @@ const onSetPrompt = (message: Message) => {
   })
 }
 
-const onSetExpertPrompt = (message: string) => {
-  prompt.value = message
-  attachment.value = null
+const onSetExpert = (xpert: Expert) => {
+  expert.value = xpert
   nextTick(() => {
-    autoGrow(input.value)
-    selectPromptQuotedPart()
     input.value.focus()
   })
 }
@@ -263,8 +311,9 @@ const onSendPrompt = () => {
     emitEvent('send-prompt', {
       prompt: message,
       attachment: attachment.value || null,
-      docrepo: docrepo.value || null
-    })
+      docrepo: docrepo.value || null,
+      expert: expert.value || null
+    } as SendPromptParams)
     attachment.value = null
   })
 }
@@ -510,17 +559,11 @@ const closeContextMenu = () => {
 
 const handleExpertClick = (action: string) => {
   closeContextMenu()
-  const expert = store.experts.find(p => p.name === action)
-  onSetExpertPrompt(expert.prompt)
-}
-
-const selectPromptQuotedPart = () => {
-  const start = prompt.value.indexOf('"')
-  if (start > 0) {
-    const end = prompt.value.indexOf('"', start + 1)
-    if (end > 0) {
-      input.value.setSelectionRange(start + 1, end)
-    }
+  if (action === 'clear') {
+    expert.value = null
+    return
+  } else if (action) {
+    onSetExpert(store.experts.find(p => p.name === action))
   }
 }
 

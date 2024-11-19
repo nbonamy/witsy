@@ -14,6 +14,7 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { anyDict } from 'types'
 import { store } from '../services/store'
 import { saveFileContents } from '../services/download'
+import { SendPromptParams } from '../components/Prompt.vue'
 import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import Sidebar from '../components/Sidebar.vue'
@@ -215,7 +216,10 @@ const onDeleteChat = async (chat: string) => {
   })
 }
 
-const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: any }) => {
+const onSendPrompt = async (params: SendPromptParams) => {
+
+  // deconstruct params
+  const { prompt, attachment, docrepo, expert } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -234,12 +238,20 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
     }
   }
 
+  // system instructions
+  let systemInstructions = undefined
+  if (expert != null) {
+    systemInstructions = expert.prompt
+  }
+
   // prompt
   assistant.value.prompt(prompt, {
     ...(engine.value && { engine: engine.value }),
     ...(model.value && { model: model.value }),
+    systemInstructions: systemInstructions,
     attachment: attachment || null,
     docrepo: docrepo || null,
+    expert: expert?.id || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
   })
@@ -264,7 +276,8 @@ const onRetryGeneration = async (message: Message) => {
   onSendPrompt({
     prompt: lastMessage.content,
     attachment: lastMessage.attachment as Attachment,
-    docrepo: assistant.value.chat.docrepo
+    docrepo: assistant.value.chat.docrepo,
+    expert: null,//assistant.value.chat.expert
   })
 
 }

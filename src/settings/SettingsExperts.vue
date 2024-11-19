@@ -21,6 +21,7 @@
     <div class="actions">
       <button @click.prevent="onNew">New</button>
       <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
+      <button @click.prevent="onCopy(selected)" :disabled="!selected">Copy</button>
       <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
       <div class="right">
         <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
@@ -33,14 +34,14 @@
 
 <script setup lang="ts">
 
-import { v4 as uuidv4 } from 'uuid'
 import { Ref, ref, computed } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'
 import { newExpert, saveExperts } from '../services/experts'
+import { type Expert } from '../types/index.d'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
-import { Expert } from 'types'
 
 const experts: Ref<Expert[]> = ref(null)
 const selected = ref(null)
@@ -131,6 +132,22 @@ const onNew = () => {
   //selected.value = null
   edited.value =  newExpert()
   document.querySelector<HTMLDialogElement>('#expert-editor').showModal()
+}
+
+const onCopy = (expert: Expert) => {
+
+  const copy = newExpert()
+  copy.id = uuidv4()
+  copy.name = expert.name + ' (copy)'
+  copy.prompt = expert.prompt
+  copy.triggerApps = expert.triggerApps
+
+  const index = experts.value.indexOf(expert)
+  experts.value.splice(index + 1, 0, copy)
+
+  selected.value = copy
+  save()
+
 }
 
 const onEdit = (expert: Expert) => {

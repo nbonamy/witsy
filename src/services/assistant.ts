@@ -14,6 +14,8 @@ export interface AssistantCompletionOpts extends GenerationOpts {
   save?: boolean
   titling?: boolean
   overwriteEngineModel?: boolean
+  attachment?: Attachment
+  expert?: string
   systemInstructions?: string
 }
 
@@ -77,6 +79,7 @@ export default class extends Generator {
       ... this.llmFactory.getChatEngineModel(),
       attachment: null,
       docrepo: null,
+      expert: null,
       sources: true,
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
@@ -89,6 +92,7 @@ export default class extends Generator {
       // initialize the chat
       this.chat = new Chat()
       this.chat.docrepo = opts.docrepo
+      this.chat.expert = opts.expert
       this.chat.setEngineModel(opts.engine, opts.model)
       this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
       

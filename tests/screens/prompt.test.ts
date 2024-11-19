@@ -3,7 +3,9 @@ import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import Prompt from '../../src/components/Prompt.vue'
+import { Expert } from '../../src/types'
+import Attachment from '../../src/models/attachment'
+import Prompt, { SendPromptParams } from '../../src/components/Prompt.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
@@ -29,17 +31,18 @@ beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
   useNavigatorMock()
   useWindowMock()
+  store.loadExperts()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
 })
 
-const prompt = async () => {
+const prompt = async (attachment: Attachment|null = null, docrepo: string|null = null, expert: Expert|null = null) => {
   const wrapper = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment, docrepo, expert } as SendPromptParams)
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   return wrapper
 }
@@ -59,7 +62,7 @@ test('Initalizes LLM and chat', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.llm).toBeDefined()
   expect(wrapper.vm.llm.getName()).toBe('mock')
-  expect(wrapper.vm.chat.messages).toHaveLength(1)
+  expect(wrapper.vm.chat.messages).toHaveLength(0)
 })
 
 test('Closes when click on container', async () => {
@@ -83,6 +86,11 @@ test('Renders response', async () => {
 test('Submits prompt', async () => {
   const wrapper = await prompt()
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Submits prompt with params', async () => {
+  const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[0])
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"prompt1"},{"role":"user","content":"Hello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Copies response', async () => {

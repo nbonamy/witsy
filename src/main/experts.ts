@@ -34,6 +34,9 @@ export const loadExperts = (source: App|string): Expert[] => {
     if (p == null) {
       experts.push(prompt as Expert)
       updated = true
+    } else if (p.type == 'system') {
+      p.prompt = prompt.prompt
+      updated = true
     }
   }
 

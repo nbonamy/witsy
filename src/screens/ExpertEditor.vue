@@ -11,10 +11,11 @@
         </div>
         <div class="group">
           <label>Prompt</label>
-          <div class="subgroup">
-            <textarea v-model="expert" required></textarea>
-            <span v-pre>Text between quotes will be automatically selected to be easily modified</span>
-          </div>
+          <textarea v-model="prompt" required :disabled="isSystem"></textarea>
+        </div>
+        <div class="group" v-if="isSystem">
+          <label></label>
+          <div>System Experts cannot be edited. Make a copy to customize this expert.</div>
         </div>
         <div class="group" v-if="supportTriggerApps">
           <label>Trigger Apps</label>
@@ -55,10 +56,13 @@ const props = defineProps<{
   expert: Expert|null
 }>()
 
+const type = ref(null)
 const name = ref(null)
-const expert = ref(null)
+const prompt = ref(null)
 const triggerApps = ref(null)
 const selectedApp = ref(null)
+
+const isSystem = computed(() => type.value == 'system')
 
 const supportTriggerApps = computed(() => window.api.platform == 'darwin')
 
@@ -68,8 +72,9 @@ const iconData = (app: ExternalApp) => {
 }
 
 const load = () => {
+  type.value = props.expert?.type || 'user'
   name.value = props.expert?.name || ''
-  expert.value = props.expert?.prompt || ''
+  prompt.value = props.expert?.prompt || ''
   triggerApps.value = props.expert?.triggerApps || []
 }
 
@@ -99,7 +104,7 @@ const onCancel = () => {
 const onSave = (event: Event) => {
 
   // check
-  if (!name.value || !expert.value) {
+  if (!name.value || !prompt.value) {
     event.preventDefault()
     Dialog.alert('All fields marked with * are required.')
     return
@@ -109,7 +114,7 @@ const onSave = (event: Event) => {
   emit('expert-modified', {
     id: props.expert.id,
     name: name.value,
-    prompt: expert.value,
+    prompt: prompt.value,
     triggerApps: triggerApps.value
   })
 }
