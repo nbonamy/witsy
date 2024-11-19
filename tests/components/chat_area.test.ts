@@ -2,10 +2,8 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
-import { renderMarkdown } from '../../src/main/markdown'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
-import defaultSettings from '../../defaults/settings.json'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 

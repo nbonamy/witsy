@@ -4,7 +4,6 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Sidebar from '../../src/components/Sidebar.vue'
-import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 
 enableAutoUnmount(afterAll)

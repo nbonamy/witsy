@@ -1,5 +1,5 @@
 
-import { vi, expect, test, beforeAll, afterAll } from 'vitest'
+import { expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import App from '../../src/App.vue'
@@ -7,7 +7,6 @@ import Main from '../../src/screens/Main.vue'
 import Wait from '../../src/screens/Wait.vue'
 import Commands from '../../src/screens/Commands.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
-import defaults from '../../defaults/settings.json'
 
 enableAutoUnmount(afterAll)
 
