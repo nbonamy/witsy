@@ -4,7 +4,6 @@ import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { YoutubeTranscript } from 'youtube-transcript'
 import ytv from 'ytv'
-import { title } from 'process'
 
 export default class extends Plugin {
 
