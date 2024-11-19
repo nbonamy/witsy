@@ -2,13 +2,13 @@
   <Teleport to="body" :disabled="!teleport">
     <Overlay @click="onOverlay" />
     <div class="context-menu" :style="position">
-      <form v-if="showFilter"><div class="group"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
+      <form v-if="showFilter"><div class="group filter"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
       <div class="actions">
         <template v-for="action in visibleActions" :key="action.action">
           <div class="item separator disabled" v-if="action.separator">
             <hr  />
           </div>
-          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled }" @click="onAction(action)" v-else>
+          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap }" @click="onAction(action)" v-else>
             <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
             <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
             {{ action.label }}
@@ -30,6 +30,7 @@ export type MenuAction = {
   action?: string
   label?: string
   icon?: string | object
+  wrap?: boolean
 }
 
 const props = defineProps({
@@ -152,6 +153,10 @@ const onAction = (action: MenuAction) => {
   overflow-x: clip;
   text-overflow: ellipsis;
   color: var(--context-menu-text-color);
+}
+
+.context-menu .item.wrap {
+  white-space: normal;
 }
 
 .context-menu .item.right {
