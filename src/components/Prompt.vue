@@ -2,7 +2,7 @@
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
-      <BIconMortarboard class="icon experts" :class="{ active: expert != null }" @click="onExperts" v-if="enableExperts" />
+      <BIconMortarboard class="icon experts" :class="{ active: expert != null }" @click="onClickExperts" @mouseenter="onMouseEnterExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
@@ -371,7 +371,7 @@ const onDetach = () => {
   attachment.value = null
 }
 
-const onExperts = () => {
+const openExperts = () => {
   if (props.inlineMenus) {
     const icon = document.querySelector('.prompt .experts')
     const rect = icon?.getBoundingClientRect()
@@ -380,6 +380,16 @@ const onExperts = () => {
     showExperts.value = true
   } else {
     emitEvent('show-experts')
+  }
+}
+
+const onClickExperts = () => {
+  openExperts()
+}
+
+const onMouseEnterExperts = () => {
+  if (expert.value) {
+    openExperts()
   }
 }
 

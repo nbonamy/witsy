@@ -253,19 +253,25 @@ const processQueryParams = (params: anyDict) => {
   console.log('Processing query params', JSON.stringify(params))
 
   // auto-fill
+  let expertId = null
   if (params?.foremostApp) {
-    const expert = store.experts.find((p) => p.triggerApps?.find((app) => app.identifier == params.foremostApp))
-    if (expert) {
-      console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-      setExpert(expert.id)
+    for (const expert of store.experts) {
+      if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
+        console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
+        expertId = expert.id
+        break
+      }
     }
   }
+
+  // fill prompt
+  setExpert(expertId)
 
 }
 
 const setExpert = (id: string) => {
   const expert = store.experts.find((p) => p.id == id)
-  emitEvent('set-expert', expert)
+  emitEvent('set-expert', expert || null)
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
