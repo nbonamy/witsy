@@ -14,6 +14,16 @@
       <label>Conversation length</label>
       <input type="number" min="1" v-model="conversationLength" @change="save">
     </div>
+    <div class="group size">
+      <label>Image Resize</label>
+      <select v-model="imageResize" @change="save">
+        <option value="0">No resize</option>
+        <option value="512">Resize largest dimension to 512 pixels</option>
+        <option value="768">Resize largest dimension to 768 pixels</option>
+        <option value="1024">Resize largest dimension to 1024 pixels</option>
+        <option value="2048">Resize largest dimension to 2048 pixels</option>
+      </select>
+    </div>
     <div class="group instruction">
       <label>Default instructions</label>
       <div class="subgroup">
@@ -34,12 +44,14 @@ const defaultInstructions = ref(null)
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
 const conversationLength = ref(null)
+const imageResize = ref(null)
 
 const load = () => {
   autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   autoSavePrompt.value = store.config.prompt.autosave
   defaultInstructions.value = store.config.instructions.default || ''
   conversationLength.value = store.config.llm.conversationLength || 5
+  imageResize.value = store.config.llm.imageResize || 768
 }
 
 const onResetDefaultInstructions = () => {
@@ -52,6 +64,7 @@ const save = () => {
   store.config.prompt.autosave = autoSavePrompt.value
   store.config.instructions.default = defaultInstructions.value
   store.config.llm.conversationLength = conversationLength.value
+  store.config.llm.imageResize = imageResize.value
   store.saveSettings()
 }
 

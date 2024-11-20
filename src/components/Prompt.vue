@@ -37,6 +37,7 @@ import { mimeTypeToExtension, extensionToMimeType } from '../main/mimetype'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
+import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
 import ContextMenu, { MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
@@ -331,7 +332,7 @@ const onAttach = () => {
     const format = fileContents.url.split('.').pop()
     if (llmFactory.canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
-      attachment.value = new Attachment(fileContents.contents, mimeType, fileContents.url)
+      attach(fileContents.contents, mimeType, fileContents.url)
     } else {
       console.error('Cannot attach format', format)
       Dialog.alert('This file format is not supported')
@@ -354,7 +355,7 @@ const onPaste = (event: ClipboardEvent) => {
 
           // check before attaching
           if (llmFactory.canProcessFormat(engine(), model(), format)) {
-            attachment.value = new Attachment(contents, mimeType, 'clipboard://')
+            attach(contents, mimeType, 'clipboard://')
           } else {
             console.error('Cannot attach format', format)
             Dialog.alert('This file format is not supported')
@@ -364,6 +365,17 @@ const onPaste = (event: ClipboardEvent) => {
       reader.readAsDataURL(blob);
       event.preventDefault();
     }
+  }
+}
+
+const attach = async (contents: string, mimeType: string, url: string) => {
+  const toAttach = new Attachment(contents, mimeType, url)
+  if (toAttach.isImage() && store.config.llm.imageResize > 0) {
+    ImageUtils.resize(`data:${mimeType};base64,${contents}`, store.config.llm.imageResize, (contents, mimeType) => {
+      attachment.value = new Attachment(contents, mimeType, url)
+    })
+  } else {
+    attachment.value = toAttach
   }
 }
 

@@ -38,6 +38,7 @@ export interface LLMConfig {
   engine: string
   autoVisionSwitch: boolean
   conversationLength: number
+  imageResize: number
 }
 
 export interface InstructionsConfig {
