@@ -371,9 +371,14 @@ const onPaste = (event: ClipboardEvent) => {
 const attach = async (contents: string, mimeType: string, url: string) => {
   const toAttach = new Attachment(contents, mimeType, url)
   if (toAttach.isImage() && store.config.llm.imageResize > 0) {
-    ImageUtils.resize(`data:${mimeType};base64,${contents}`, store.config.llm.imageResize, (contents, mimeType) => {
-      attachment.value = new Attachment(contents, mimeType, url)
-    })
+    try {
+      ImageUtils.resize(`data:${mimeType};base64,${contents}`, store.config.llm.imageResize, (resizedContent, resizedMimeTyoe) => {
+        attachment.value = new Attachment(resizedContent, resizedMimeTyoe, url)
+      })
+    } catch (e) {
+      console.error('Error resizing image', e)
+      attachment.value = toAttach
+    }
   } else {
     attachment.value = toAttach
   }

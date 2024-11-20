@@ -35,6 +35,7 @@ beforeAll(() => {
   useWindowMock()
   store.loadSettings()
   store.loadExperts()
+  store.config.llm.imageResize = 0
 })
 
 beforeEach(() => {
