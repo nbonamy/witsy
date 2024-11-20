@@ -64,7 +64,7 @@ const save = () => {
   store.config.prompt.autosave = autoSavePrompt.value
   store.config.instructions.default = defaultInstructions.value
   store.config.llm.conversationLength = conversationLength.value
-  store.config.llm.imageResize = imageResize.value
+  store.config.llm.imageResize = parseInt(imageResize.value)
   store.saveSettings()
 }
 

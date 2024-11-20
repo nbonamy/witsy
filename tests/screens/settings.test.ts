@@ -189,7 +189,7 @@ test('Settings Appearance', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(8)
-  expect(tab.findAll('.group')).toHaveLength(4)
+  expect(tab.findAll('.group')).toHaveLength(5)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)
   tab.find('.group.vision input').setValue(false)
@@ -206,6 +206,12 @@ test('Settings Advanced', async () => {
   expect(store.config.llm.conversationLength).not.toBe(10)
   tab.find('.group.length input').setValue(10)
   expect(store.config.llm.conversationLength).toBe(10)
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.llm.imageResize).not.toBe(1024)
+  tab.find('.group.size select').setValue(1024)
+  expect(store.config.llm.imageResize).toBe(1024)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
