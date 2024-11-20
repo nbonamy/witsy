@@ -21,7 +21,8 @@
   "llm": {
     "engine": "openai",
     "autoVisionSwitch": true,
-    "conversationLength": 20
+    "conversationLength": 20,
+    "imageResize": 768
   },
   "instructions": {
     "default": "You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user's needs, communicate clearly, and provide responses that are informative, concise, and relevant.",
