@@ -162,7 +162,7 @@ const selectDoc = (event: MouseEvent, doc: DocumentBase) => {
 }
 
 const onCreate = async () => {
-  emitEvent('open-docrepo-create')
+  emitEvent('open-docrepo-create', null)
 }
 
 const onDelete = () => {
@@ -183,7 +183,7 @@ const onDelete = () => {
 }
 
 const onConfig = () => {
-  emitEvent('open-docrepo-config')
+  emitEvent('open-docrepo-config', null)
 }
 
 const onChangeRepoName = (event: Event) => {

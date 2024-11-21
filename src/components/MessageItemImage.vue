@@ -15,7 +15,10 @@ import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  url: String,
+  url: {
+    type: String,
+    required: true,
+  },
   desc: String,
   prompt: String
 })

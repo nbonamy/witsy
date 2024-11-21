@@ -99,7 +99,7 @@ const onClickModel = () => {
   store.saveSettings()
 }
 
-const onSelectModel = (ev: InputEvent) => {
+const onSelectModel = (ev: Event) => {
 
   // target
   const target = ev.target as HTMLSelectElement

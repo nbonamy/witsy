@@ -1,6 +1,6 @@
 
-import { strDict } from '../../types/index.d';
-import { CreateWindowOpts } from '../../types/window.d';
+import { strDict } from 'types/index.d';
+import { CreateWindowOpts } from 'types/window.d';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
 import { mainWindow } from './main';

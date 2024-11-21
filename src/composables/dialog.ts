@@ -44,7 +44,7 @@ const Dialog = {
     opts.willOpen = (e: any) => {
       try {
         const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
-        const logo: Element = document.querySelector('#logo').cloneNode() as Element
+        const logo: Element = document.querySelector('#logo')!.cloneNode() as Element
         logo.removeAttribute('id')
         logo.removeAttribute('style')
         icon?.replaceChildren(logo)

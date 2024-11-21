@@ -17,7 +17,7 @@ let wrapper: VueWrapper<any>
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
-  wrapper = mount(MessageList)
+  wrapper = mount(MessageList, { props: { chat: new Chat('MessageList test'), conversationMode: '' } })
 })
 
 beforeEach(() => {
@@ -60,6 +60,7 @@ test('Does not show system messages', async () => {
 
 test('Shows user and assistant messages', async () => {
   const chat: Chat = new Chat('MessageList test')
+  chat.engine = 'openai'
   chat.addMessage(new Message('system', 'Hello'))
   chat.addMessage(new Message('user', 'Bonjour'))
   chat.addMessage(new Message('assistant', 'Hola'))

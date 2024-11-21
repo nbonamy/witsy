@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, computed, onMounted } from 'vue'
+import { type Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
@@ -30,29 +30,39 @@ import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat,
-  filter: String,
-  selectMode: Boolean,
+  chat: {
+    type: Chat,
+    default: null,
+    // required: true,
+  },
+  filter: {
+    type: String,
+    default: '',
+  },
+  selectMode: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const engine = (chat: Chat) => chat.engine || store.config.llm.engine
 
-let currDay: string
+let currDay: string|null
 let chatDay: string
 
-const divChats = ref(null)
-const selection = ref([])
+const divChats: Ref<HTMLElement|null> = ref(null)
+const selection: Ref<string[]> = ref([])
 
 defineExpose({
   getSelection: () => selection.value,
   clearSelection: () => selection.value = [],
 })
 
-const visibleChats = computed(() => store.chats.filter((c) => {
+const visibleChats = computed(() => store.chats.filter((c: Chat) => {
   if (c.title?.toLowerCase().includes(props.filter.toLowerCase())) return true
   if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.toLowerCase()))) return true
   return false
-}).toSorted((a,b) => b.lastModified - a.lastModified))
+}).toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified))
 
 const getDay = (chat: Chat) => {
   const now = new Date()
@@ -73,18 +83,18 @@ const getDay = (chat: Chat) => {
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const targetRow: Ref<Chat> = ref(null)
+const targetRow: Ref<Chat|null> = ref(null)
 const contextMenuActions = [
   { label: 'Rename Chat', action: 'rename' },
   { label: 'Delete', action: 'delete' },
 ]
 
-let scrollEndTimeout: NodeJS.Timeout = null
+let scrollEndTimeout: NodeJS.Timeout|null = null
 onMounted(() => {
   divChats.value?.addEventListener('scroll', (ev: Event) => {
     const target = ev.target as HTMLElement
     target.classList.add('scrolling')
-    clearTimeout(scrollEndTimeout)
+    clearTimeout(scrollEndTimeout!)
     scrollEndTimeout = setTimeout(() => {
       target.classList.remove('scrolling')
     }, 500)
@@ -121,6 +131,7 @@ const handleActionClick = async (action: string) => {
 
   // init
   let chat = targetRow.value
+  if (!chat) return
 
   // process
   if (action === 'rename') {

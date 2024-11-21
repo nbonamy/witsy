@@ -141,7 +141,7 @@ export default class Generator {
       ...chatMessages.slice(-conversationLength*2, -1)
     ]
     for (const message of conversation) {
-      if (message.attachment && !message.attachment.contents) {
+      if (message.attachment && !message.attachment.content) {
         message.attachment.loadContents()
       }
     }

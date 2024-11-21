@@ -1,6 +1,6 @@
 
 
-import { Configuration } from 'types/config.d'
+import { type Configuration } from '@types/config'
 import { SpeechPlayer } from 'openai-speech-stream-player'
 import Tts from '../voice/tts'
 
@@ -12,9 +12,9 @@ class AudioPlayer {
 
   config: Configuration
   listeners: AudioStatusListener[]
-  player: SpeechPlayer
+  player: SpeechPlayer|null
   state: AudioState
-  uuid: string
+  uuid: string|null
 
   constructor(config: Configuration) {
     this.config = config
@@ -122,7 +122,7 @@ class AudioPlayer {
 
 }
 
-let instance: AudioPlayer = null
+let instance: AudioPlayer|null = null
 export default function useAudioPlayer(config: Configuration) {
   if (!instance) {
     instance = new AudioPlayer(config)

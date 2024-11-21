@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp } from '../types/index.d'
+import { Expert, ExternalApp } from 'types/index.d'
 import { ref, computed, watch } from 'vue'
 import Dialog from '../composables/dialog'
 

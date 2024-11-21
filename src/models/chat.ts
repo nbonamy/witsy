@@ -1,5 +1,5 @@
 
-import { Chat as ChatBase } from 'types/index.d'
+import { type Chat as ChatBase } from '@types/index'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
@@ -7,16 +7,15 @@ export const defaultTitle = 'New Chat'
 
 export default class Chat implements ChatBase {
 
-  uuid: string
-  title: string
-  createdAt: number
-  lastModified: number
-  engine: string
-  model: string
-  docrepo: string
-  expert: string
-  messages: Message[]
-  deleted: boolean
+  uuid!: string
+  title!: string
+  createdAt!: number
+  lastModified!: number
+  engine!: string|null
+  model!: string|null
+  docrepo!: string|null
+  messages!: Message[]
+  deleted!: boolean
 
   constructor(obj?: any) {
 
@@ -34,7 +33,6 @@ export default class Chat implements ChatBase {
     this.engine = null
     this.model = null
     this.docrepo = null
-    this.expert = null
     this.messages = []
     this.deleted = false
   
@@ -48,7 +46,6 @@ export default class Chat implements ChatBase {
     this.engine = obj.engine || 'openai'
     this.model = obj.model
     this.docrepo = obj.docrepo
-    this.expert = obj.expert
     this.messages = []
     this.deleted = false
     for (const msg of obj.messages) {

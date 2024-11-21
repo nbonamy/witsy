@@ -114,7 +114,7 @@ test('Assistant Chat', async () => {
 test('Assistant Attachment', async () => {
   assistant.setChat(new Chat())
   await assistant.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
-  expect(assistant.chat.lastMessage().attachment.contents).toStrictEqual('image_content')
+  expect(assistant.chat.lastMessage().attachment.content).toStrictEqual('image_content')
   expect(assistant.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
   expect(assistant.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
   expect(assistant.chat.lastMessage().attachment.saved).toStrictEqual(false)

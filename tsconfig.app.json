@@ -1,0 +1,25 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@types/*": [ "src/types/*" ],
+      "@composables/*": [ "src/composables/*" ],
+      "@components/*": [ "src/components/*" ],
+      "@services/*": [ "src/services/*" ],
+    }
+  },
+  "include": [
+    "env.d.ts",
+    "src/**/*.vue",
+    "src/types/**/*",
+    "src/composables/**/*",
+    "src/llms/**/*",
+    "src/models/**/*",
+    "src/plugins/**/*",
+    "src/services/**/*",
+    "src/voice/**/*",
+  ]
+}

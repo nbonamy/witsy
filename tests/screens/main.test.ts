@@ -45,7 +45,7 @@ test('Renders correctly', () => {
 
 test('Resets assistant', async () => {
   mount(Main)
-  emitEvent('new-chat')
+  emitEvent('new-chat', null)
   expect(Assistant.prototype.setChat).toHaveBeenCalledWith(null)
 })
 
@@ -110,11 +110,11 @@ test('Sends prompt with expert', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: 'expert', systemInstructions: 'system' }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' } }, expect.any(Function))
 })
 
 test('Stop assistant', async () => {
   mount(Main)
-  emitEvent('stop-prompting')
+  emitEvent('stop-prompting', null)
   expect(Assistant.prototype.stop).toHaveBeenCalled()
 })

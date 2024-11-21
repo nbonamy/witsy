@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
 defineProps({
   title: String
@@ -22,7 +22,7 @@ defineProps({
 
 const emit = defineEmits(['close'])
 
-const header = ref(null)
+const header: Ref<HTMLElement|null> = ref(null)
 
 const onClose = () => {
   emit('close')
@@ -34,18 +34,18 @@ let lastY = 0
 const onMoveStart = (event: MouseEvent) => {
   window.addEventListener('mousemove', onMove)
   window.addEventListener('mouseup', onMoveEnd)
-  const dialog = header.value.closest('dialog')
-  dialog.style.position = 'absolute'
+  const dialog = header.value!.closest('dialog')
+  dialog!.style.position = 'absolute'
   lastX = event.clientX
   lastY = event.clientY
 }
 
 const onMove = (event: MouseEvent) => {
-  const dialog = header.value.closest('dialog')
-  const left = parseInt(dialog.style.left) || 0
-  const top = parseInt(dialog.style.top) || 0
-  dialog.style.left = `${left + (event.clientX - lastX)*2}px`
-  dialog.style.top = `${top + (event.clientY - lastY)*2}px`
+  const dialog = header.value!.closest('dialog')
+  const left = parseInt(dialog!.style.left) || 0
+  const top = parseInt(dialog!.style.top) || 0
+  dialog!.style.left = `${left + (event.clientX - lastX)*2}px`
+  dialog!.style.top = `${top + (event.clientY - lastY)*2}px`
   lastX = event.clientX
   lastY = event.clientY
 }

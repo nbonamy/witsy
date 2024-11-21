@@ -46,7 +46,7 @@ test('No chat', async () => {
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .toolbar #new-chat').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('new-chat')
+  expect(emitEventMock).toHaveBeenCalledWith('new-chat', null)
 })
 
 test('Open Settings', async () => {

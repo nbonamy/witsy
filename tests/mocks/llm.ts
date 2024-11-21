@@ -44,7 +44,7 @@ export default class LlmMock extends LlmEngine {
     return {
       type: 'text',
       content: JSON.stringify([
-        ...thread.map(m => { return { role: m.role, content: m.content }}),
+        ...thread.map(m => { return { role: m.role, content: m.contentForModel }}),
         { role: 'assistant', content: 'Be kind. Don\'t mock me' }
       ])
     }
@@ -67,9 +67,9 @@ export default class LlmMock extends LlmEngine {
     // now stream
     return new RandomChunkStream(JSON.stringify([
       ...thread.map(m => {
-        let content = m.content
-        if (m.attachment?.contents && m.attachment.isText()) {
-          content += ` (${m.attachment.contents})`
+        let content = m.contentForModel
+        if (m.attachment?.content && m.attachment.isText()) {
+          content += ` (${m.attachment.content})`
         }
         return { role: m.role, content: content }}),
       { role: 'assistant', content: 'Be kind. Don\'t mock me' }
@@ -97,7 +97,7 @@ export default class LlmMock extends LlmEngine {
   }
 
   addImageToPayload(message: Message, payload: LLmCompletionPayload) {
-    payload.images = [ message.attachment.contents ]
+    payload.images = [ message.attachment.content ]
   }
 
    

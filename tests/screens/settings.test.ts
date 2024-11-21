@@ -75,7 +75,7 @@ beforeAll(() => {
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
   wrapper = mount(Settings, { attachTo: '#settings' })
-  emitEvent('open-settings')
+  emitEvent('open-settings', null)
   expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledOnce()
 })
 

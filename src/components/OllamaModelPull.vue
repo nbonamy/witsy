@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, type Ref } from 'vue'
 import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
@@ -24,6 +24,8 @@ import Combobox from './Combobox.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
+import type { ProgressInfo } from '@/voice/stt.ts'
+import type { ProgressResponse } from 'ollama/browser'
 const { emitEvent } = useEventBus()
 
 type Model = {
@@ -32,15 +34,18 @@ type Model = {
 }
 
 const props = defineProps({
-  pullableModels: Array<Model>,
+  pullableModels: {
+    type: Array<Model>,
+    required: true,
+  },
   infoUrl: String,
   infoText: String,
 })
 
-const pull_model = ref(null)
-const pull_model_select = ref('')
-const pull_progress = ref(null)
-const pullStream = ref(null)
+const pull_model: Ref<string|null> = ref(null)
+const pull_model_select: Ref<string> = ref('')
+const pull_progress: Ref<string|null> = ref(null)
+const pullStream: Ref<AsyncGenerator<ProgressResponse>|null> = ref(null)
 
 let ollama = new Ollama(store.config.engines.ollama)
 
@@ -59,7 +64,7 @@ const onPull = () => {
   nextTick(async () => {
 
     // start pulling
-    pullStream.value = await ollama.pullModel(pull_model.value)
+    pullStream.value = await ollama.pullModel(pull_model.value!)
 
     // TODO: handle error (this is not working)
     if (!pullStream.value) {
@@ -82,7 +87,7 @@ const onPull = () => {
     pull_progress.value = null
     pull_model.value = null
     pullStream.value = null
-    emitEvent('ollama-pull-done')
+    emitEvent('ollama-pull-done', null)
 
   })
 }

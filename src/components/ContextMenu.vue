@@ -22,20 +22,23 @@
 <script setup lang="ts">
 
 import { ref, computed, onMounted } from 'vue'
-import Overlay from './Overlay.vue'
+import Overlay from '../components/Overlay.vue'
 
 export type MenuAction = {
+  label: string
   disabled?: boolean
   separator?: boolean
-  action?: string
-  label?: string
+  action?: string|null
   icon?: string | object
   wrap?: boolean
 }
 
 const props = defineProps({
   actions: Array<MenuAction>,
-  onClose: Function,
+  onClose: {
+    type: Function,
+    required: true,
+  },
   position: String,
   x: Number,
   y: Number,
@@ -55,7 +58,7 @@ const filter = ref('')
 
 const visibleActions = computed(() => {
   if (props.showFilter && filter.value?.length) {
-    return props.actions.filter(action => action.label.toLowerCase().includes(filter.value.toLowerCase()));
+    return props.actions?.filter(action => action.label.toLowerCase().includes(filter.value.toLowerCase()));
   } else {
     return props.actions
   }

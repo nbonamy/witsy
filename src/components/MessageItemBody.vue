@@ -1,8 +1,8 @@
 <template>
   <div v-if="message.type == 'text'">
     <div v-for="block in blocks">
-      <div v-if="block.type == 'text'" v-html="mdRender(block.content)" class="text variable-font-size"></div>
-      <MessageItemImage :url="block.url" :desc="block.desc" :prompt="block.prompt" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
+      <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
+      <MessageItemImage :url="block.url!" :desc="block.desc" :prompt="block.prompt" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
     </div>
   </div>
 </template>
@@ -15,7 +15,10 @@ import MessageItemImage from './MessageItemImage.vue'
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Message
+  message: {
+    type: Message,
+    required: true,
+  },
 })
 
 interface Block {

@@ -5,18 +5,24 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, type Ref } from 'vue'
 
 const props = defineProps({
   width: Number,
   height: Number,
-  foregroundColorInactive: String,
-  foregroundColorActive: String,
+  foregroundColorInactive: {
+    type: String,
+    required: true,
+  },
+  foregroundColorActive: {
+    type: String,
+    required: true,
+  },
   isRecording: Boolean,
   audioRecorder: Object
 })
 
-const waveform = ref(null)
+const waveform: Ref<HTMLCanvasElement|null> = ref(null)
 
 onMounted(() => {
   console.log('Waveform mounted')
@@ -30,9 +36,9 @@ const verticalScale = 4.0
 const sampleIntervalMs = 100
 
 // interpolation between samples
-let dataArray: Uint8Array = null
-let previousDataArray: Uint8Array = null
-let currentDataArray: Uint8Array = null
+let dataArray: Uint8Array|null = null
+let previousDataArray: Uint8Array|null = null
+let currentDataArray: Uint8Array|null = null
 let interpolationProgress = 0
 let lastSampleTime = 0
 
@@ -82,8 +88,8 @@ const draw = () => {
 
   // now init the drawing
   const canvasCtx = canvas.getContext('2d')
-  canvasCtx.clearRect(0, 0, canvas.width, canvas.height)
-  canvasCtx.fillStyle = props.isRecording ? props.foregroundColorActive : props.foregroundColorInactive
+  canvasCtx!.clearRect(0, 0, canvas.width, canvas.height)
+  canvasCtx!.fillStyle = props.isRecording ? props.foregroundColorActive : props.foregroundColorInactive
 
   // some parameters
   const barWidth = canvas.width / bufferLength * horizontalScale
@@ -102,7 +108,7 @@ const draw = () => {
       const currV = currentDataArray[i] / 128.0
       v = prevV + (currV - prevV) * interpolationProgress
     } else {
-      v = dataArray[i] / 128.0
+      v = dataArray![i] / 128.0
     }
 
     // drawing vars
@@ -115,7 +121,7 @@ const draw = () => {
     }
     
     // now draw it
-    canvasCtx.fillRect(x, centerY - Math.abs(barHeight), barWidth - 1, Math.abs(barHeight * 2))
+    canvasCtx!.fillRect(x, centerY - Math.abs(barHeight), barWidth - 1, Math.abs(barHeight * 2))
 
   }
 

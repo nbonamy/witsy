@@ -11,9 +11,18 @@
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Message,
-  audioState: Object,
-  readAloud: Function
+  message: {
+    type: Message,
+    required: true,
+  },
+  audioState: {
+    type: Object,
+    required: true,
+  },
+  readAloud: {
+    type: Function,
+    required: true,
+  },
 })
 
 const mgsAudioState = (message: Message) => {

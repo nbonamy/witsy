@@ -16,12 +16,15 @@ import Attachment from '../models/attachment'
 const emit = defineEmits(['image-click'])
 
 const props = defineProps({
-  attachment: Attachment,
+  attachment: {
+    type: Attachment,
+    required: true,
+  }
 })
 
 const imageSrc = computed(() => {
-  if (props.attachment?.contents) {
-    return `data:${props.attachment.mimeType};base64,${props.attachment.contents}`
+  if (props.attachment?.content) {
+    return `data:${props.attachment.mimeType};base64,${props.attachment.content}`
   } else {
     return props.attachment?.url
   }

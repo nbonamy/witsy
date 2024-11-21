@@ -10,7 +10,10 @@ import { ref } from 'vue'
 import Message from '../models/message'
 
 const props = defineProps({
-  message: Message,
+  message: {
+    type: Message,
+    required: true,
+  }
 })
 
 const copyLabel = ref('Copy')

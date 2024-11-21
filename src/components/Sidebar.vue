@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, type Ref } from 'vue'
 import { store } from '../services/store'
 import Chat from '../models/chat'
 import ChatList from './ChatList.vue'
@@ -39,18 +39,20 @@ import { BIconTrash } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat
+  chat: {
+    type: Chat,
+  },
 })
 
-const chatList = ref(null)
-const sidebarWidth = ref(null)
-const filter = ref('')
-const deleteMode = ref(false)
+const chatList: Ref<typeof ChatList|null> = ref(null)
+const sidebarWidth: Ref<number> = ref(0)
+const filter: Ref<string> = ref('')
+const deleteMode: Ref<boolean> = ref(false)
 
 const selectMode = computed(() => deleteMode.value)
 
 onMounted(() => {
-  sidebarWidth.value = window.api.store.get('sidebarWidth') || 250
+  sidebarWidth.value = window.api.store.get('sidebarWidth', 250)
 })
 
 const onSettings = () => {
@@ -60,7 +62,7 @@ const onSettings = () => {
 const onNewChat = () => {
   onClearFilter()
   onCancelDelete()
-  emitEvent('new-chat')
+  emitEvent('new-chat', null)
 }
 
 const onFilterChange = () => {
@@ -78,14 +80,14 @@ const onStartDelete = () => {
 
 const onCancelDelete = () => {
   deleteMode.value = false
-  chatList.value.clearSelection()
+  chatList.value!.clearSelection()
 }
 
 const onDelete = () => {
-  const selection = chatList.value.getSelection()
+  const selection = chatList.value!.getSelection()
   if (selection.length) {
     emitEvent('delete-chat', selection)
-    chatList.value.clearSelection()
+    chatList.value!.clearSelection()
   }
   deleteMode.value = false
 }

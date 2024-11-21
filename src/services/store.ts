@@ -76,7 +76,7 @@ export const store: Store = reactive({
       for (const chat of chats) {
         for (const message of chat.messages) {
           if (message.attachment) {
-            message.attachment.contents = null
+            message.attachment.content = null
           }
         }
       }

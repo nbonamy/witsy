@@ -4,7 +4,7 @@ import mitt from 'mitt'
 const eventEmitter = mitt()
 
 export default function useEventBus () {
-  const eventHandlers = []
+  const eventHandlers: { event: any; handler: any }[] = []
 
   onBeforeUnmount(() => 
     eventHandlers.forEach((eventHandler) => 
@@ -12,11 +12,11 @@ export default function useEventBus () {
   ))
 
   return {
-    onEvent: (event, handler) => {
+    onEvent: (event: string, handler: any) => {
       eventHandlers.push({ event, handler })
       eventEmitter.on(event, handler)
     },
-    emitEvent: (event, payload) => {
+    emitEvent: (event: any, payload: unknown) => {
       eventEmitter.emit(event, payload)
     }
   }

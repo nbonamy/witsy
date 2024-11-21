@@ -10,8 +10,8 @@ export default class Attachment extends AttachmentBase {
   extracted: boolean
   saved: boolean
 
-  constructor(contents: string, mimeType: string, url: string = '', saved: boolean = false, load: boolean = false) {
-    super(contents, mimeType)
+  constructor(content: string, mimeType: string, url: string = '', saved: boolean = false, load: boolean = false) {
+    super(content, mimeType)
     this.url = url
     this.saved = saved
     this.extracted = false
@@ -23,7 +23,7 @@ export default class Attachment extends AttachmentBase {
   loadContents(): void {
 
     // not if we already have
-    if (this.contents) {
+    if (this.content) {
       if (this.isText() && !this.extracted) {
         this.extractText()
       }
@@ -31,12 +31,12 @@ export default class Attachment extends AttachmentBase {
     }
 
     // get contents
-    if (!this.contents && this.url) {
-      this.contents = window.api.file.read(this.url.replace('file://', ''))?.contents
+    if (!this.content && this.url) {
+      this.content = window.api.file.read(this.url.replace('file://', ''))?.contents
     }
 
     // text formats
-    if (this.contents) {
+    if (this.content) {
       if (this.isText()) {
         this.extractText()
       }
@@ -45,25 +45,25 @@ export default class Attachment extends AttachmentBase {
 
   b64Contents(): string {
     if (this.isText()) {
-      return window.api.base64.encode(this.contents)
+      return window.api.base64.encode(this.content)
     } else {
-      return this.contents
+      return this.content
     }
   }
 
   static fromJson(obj: any): Attachment {
-    return new Attachment(obj.contents, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
+    return new Attachment(obj.content, obj.mimeType || extensionToMimeType(obj.format || ''), obj.url, obj.saved || obj.downloaded)
   }
   
   extractText(): void {
 
     // get text
     if (this.format() === 'txt') {
-      this.contents = window.api.base64.decode(this.contents)
+      this.content = window.api.base64.decode(this.content)
     } else {
-      const rawText = window.api.file.extractText(this.contents, this.format())
+      const rawText = window.api.file.extractText(this.content, this.format())
       this.mimeType = 'text/plain'
-      this.contents = rawText
+      this.content = rawText
     }
 
     // save

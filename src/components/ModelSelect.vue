@@ -8,10 +8,11 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, type Ref } from 'vue'
 import { store } from '../services/store'
+import type { Model } from 'multi-llm-ts';
 
-const models = ref([])
+const models: Ref<Model[]> = ref([])
 
 const props = defineProps({
   engine: String,

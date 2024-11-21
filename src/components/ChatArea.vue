@@ -18,20 +18,28 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, type Ref } from 'vue'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
 import Chat from '../models/chat'
 import MessageList from './MessageList.vue'
 import Prompt from './Prompt.vue'
-import useEventBus from '../composables/event_bus'
 import EmptyChat from './EmptyChat.vue'
 import html2pdf from 'html2pdf.js'
+
+import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat,
-  standalone: Boolean,
+  chat: {
+    type: Chat,
+    default: null,
+    // required: true,
+  },
+  standalone: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const chatMenuPosition = computed(() => {
@@ -48,7 +56,7 @@ const chatMenuActions = computed(() => {
   ].filter((a) => a != null)
 })
 
-const conversationMode = ref(null)
+const conversationMode: Ref<string> = ref('')
 const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -60,7 +68,7 @@ onMounted(() => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar').offsetWidth : 0) 
+  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
   menuY.value = 32
 }
 
@@ -94,7 +102,7 @@ const onSave = () => {
 
 const onExportPdf = async () => {
   // copy and clean-up
-  const content: HTMLElement = document.querySelector<HTMLElement>('.content').cloneNode(true) as HTMLElement
+  const content: HTMLElement = document.querySelector<HTMLElement>('.content')!.cloneNode(true) as HTMLElement
   content.querySelector('.toolbar .menu')?.remove()
   content.querySelector('.message .actions')?.remove()
   content.querySelector('.overflow')?.remove()
@@ -102,18 +110,18 @@ const onExportPdf = async () => {
 
   // now remove scroll
   content.style.height = 'auto'
-  content.querySelector<HTMLElement>('.container').style.height = 'auto'
-  content.querySelector<HTMLElement>('.container').style.overflow = 'visible'
+  content.querySelector<HTMLElement>('.container')!.style.height = 'auto'
+  content.querySelector<HTMLElement>('.container')!.style.overflow = 'visible'
 
   // adjust title
-  //content.querySelector<HTMLElement>('.toolbar').style.marginTop = '-12px'
-  content.querySelector<HTMLElement>('.toolbar').style.marginLeft = '12px'
-  content.querySelector<HTMLElement>('.toolbar').style.marginRight = '12px'
+  //content.querySelector<HTMLElement>('.toolbar')!.style.marginTop = '-12px'
+  content.querySelector<HTMLElement>('.toolbar')!.style.marginLeft = '12px'
+  content.querySelector<HTMLElement>('.toolbar')!.style.marginRight = '12px'
 
   // render svg logos as png (for some of them)
   // this is not nice but it works for now
   content.querySelectorAll('.message .logo').forEach(async (logo) => {
-    let src = logo.getAttribute('src')
+    let src = logo.getAttribute('src') || ''
     src = src.replace('openai.svg', 'openai.png')
     src = src.replace('ollama.svg', 'ollama.png')
     src = src.replace('groq.svg', 'groq.png')
