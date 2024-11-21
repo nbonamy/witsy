@@ -2,7 +2,7 @@
   <div class="prompt">
     <div class="icons-left" :class="iconsLeftCount">
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
-      <BIconMortarboard class="icon experts" :class="{ active: expert != null }" @click="onClickExperts" @mouseenter="onMouseEnterExperts" v-if="enableExperts" />
+      <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
@@ -12,6 +12,7 @@
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
+        <div v-if="expert" class="icon left expert" @click="disableExpert" @mouseenter="onHoverActiveExpert"><BIconMortarboard /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
@@ -21,6 +22,7 @@
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="canFilterExperts" :actions="expertsMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
@@ -28,8 +30,8 @@
 
 <script setup lang="ts">
 
-import { FileContents, Expert } from 'types/index.d'
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { type FileContents, type Expert } from 'types/index.d'
+import { ref, computed, onMounted, nextTick, watch, type Ref } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
@@ -39,7 +41,7 @@ import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
 import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
-import ContextMenu, { MenuAction } from './ContextMenu.vue'
+import ContextMenu, { type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
@@ -106,13 +108,14 @@ const llmFactory = new LlmFactory(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
-const expert = ref(null)
+const expert: Ref<Expert|null> = ref(null)
 const attachment = ref(null)
 const docrepo = ref(null)
 const input = ref(null)
-const docRepos = ref([])
+const docRepos: Ref<DocRepoBase|null> = ref([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
+const showActiveExpert = ref(false)
 const showCommands = ref(false)
 const showConversationMenu = ref(false)
 const hasDictation = ref(false)
@@ -156,42 +159,22 @@ const docReposMenuItems = computed(() => {
 })
 
 const canFilterExperts = computed(() => {
-  return expert.value == null && (props.chat == null || props.chat.messages.length === 0)
+  return true//expert.value == null && (props.chat == null || props.chat.messages.length === 0)
 })
 
 const expertsMenuItems = computed(() => {
-
-  const menus: MenuAction[] = []
-
-  // expert if active
-  if (expert.value) {
-    menus.push({ label: expert.value.name, icon: BIconStars })
-    if (expert.value.prompt) {
-      menus.push({ label: expert.value.prompt, disabled: true, wrap: true })
-    }
-    menus.push({ separator: true })
-  }
-
-  // if already started
-  if (props.chat?.messages.length > 0) {
-    if (expert.value) {
-      menus.push({ label: 'You cannot disable the expert after having started chatting', disabled: true, wrap: true })
-    } else {
-      menus.push({ label: 'You cannot activate experts after having started chatting', disabled: true, wrap: true })
-    }
-  } else if (expert.value) {
-    menus.push({ label: 'Clear expert', action: 'clear' })
-  }
-
-  // done
-  if (menus.length) {
-    return menus
-  }
-
-  // defaut list
   return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
     return { label: p.name, action: p.name, icon: BIconStars }
   })
+})
+
+const activeExpertMenuItems = computed(() => {
+  return [
+    { label: expert.value.name, icon: BIconStars },
+    { label: expert.value.prompt, disabled: true, wrap: true },
+    { separator: true },
+    { label: 'Clear expert', action: 'clear' },
+  ];
 })
 
 const commands = computed(() => {
@@ -320,7 +303,7 @@ const onSendPrompt = () => {
 }
 
 const onStopPrompting = () => {
-  emitEvent('stop-prompting')
+  emitEvent('stop-prompting', null)
 }
 
 const onAttach = () => {
@@ -396,7 +379,7 @@ const openExperts = () => {
     menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
     showExperts.value = true
   } else {
-    emitEvent('show-experts')
+    emitEvent('show-experts', null)
   }
 }
 
@@ -404,9 +387,13 @@ const onClickExperts = () => {
   openExperts()
 }
 
-const onMouseEnterExperts = () => {
-  if (expert.value) {
-    openExperts()
+const onHoverActiveExpert = () => {
+  if (props.inlineMenus) {
+    const icon = document.querySelector('.prompt .expert')
+    const rect = icon?.getBoundingClientRect()
+    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
+    showActiveExpert.value = true
   }
 }
 
@@ -433,7 +420,7 @@ const startDictation = async () => {
   await audioRecorder.initialize({
 
     onNoiseDetected: () => {
-      emitEvent('audio-noise-detected')
+      emitEvent('audio-noise-detected', null)
     },
     
     onSilenceDetected: () => {
@@ -526,7 +513,7 @@ const onConversationMenu = () => {
     menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
     showConversationMenu.value = true
   } else {
-    emitEvent('show-conversation-menu')
+    emitEvent('show-conversation-menu', null)
   }
 }
 
@@ -545,7 +532,7 @@ const handleConversationClick = (action: string) => {
 }
 
 const stopConversation = () => {
-  emitEvent('audio-noise-detected')
+  emitEvent('audio-noise-detected', null)
   emitEvent('conversation-mode', null)
 }
 
@@ -560,7 +547,7 @@ const onDocRepo = () => {
 const handleDocRepoClick = (action: string) => {
   closeContextMenu()
   if (action === 'manage') {
-    emitEvent('open-doc-repos')
+    emitEvent('open-doc-repos', null)
   } else if (action === 'disconnect') {
     if (props.chat) {
       props.chat.docrepo = null
@@ -581,17 +568,22 @@ const closeContextMenu = () => {
   showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
+  showActiveExpert.value = false
   showConversationMenu.value = false
 }
 
 const handleExpertClick = (action: string) => {
   closeContextMenu()
   if (action === 'clear') {
-    expert.value = null
+    disableExpert()
     return
   } else if (action) {
     onSetExpert(store.experts.find(p => p.name === action))
   }
+}
+
+const disableExpert = () => {
+  expert.value = null
 }
 
 const onCommands = () => {
@@ -776,6 +768,17 @@ defineExpose({
 .input .attachment {
   margin-top: 4px;
   margin-left: 8px;
+}
+
+.input .expert {
+  margin-top: 4px;
+  margin-left: 8px;
+  margin-right: 0px;
+  color: var(--prompt-input-text-color);
+  cursor: pointer;
+  svg {
+    height: 12pt;
+  }
 }
 
 .textarea-wrapper {

@@ -286,9 +286,9 @@ const onAction = (action: string|ToolbarAction) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = store.config.instructions.scratchpad[toolbarAction.value]
-        onSendPrompt({ prompt: prompt, attachment: null, docrepo: null })
+        onSendPrompt({ prompt: prompt, attachment: null, docrepo: null, expert: null })
       } else {
-        emitEvent('llm-done')
+        emitEvent('llm-done', null)
       }
       return
   }
@@ -420,12 +420,15 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = status.state
 }
 
-const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, attachment: Attachment, docrepo: string }) => {
+const onSendPrompt = async (params: SendPromptParams) => {
 
   // one at a time
   if (processing.value) {
     return
   }
+  
+  // deconstruct params
+  const { prompt, attachment, docrepo, expert } = params
   
   // we need a prompt
   if (!prompt) {
@@ -452,6 +455,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
 
   // add to thead
   const userMessage = new Message('user', finalPrompt)
+  userMessage.expert = expert
   if (attachment) {
     attachment.loadContents()
     userMessage.attach(attachment)
@@ -471,7 +475,7 @@ const onSendPrompt = async ({ prompt, attachment, docrepo }: { prompt: string, a
   })
 
   // done
-  emitEvent('llm-done')
+  emitEvent('llm-done', null)
   modified.value = true
 
   // default to all response

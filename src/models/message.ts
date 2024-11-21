@@ -1,6 +1,6 @@
 
 import { ToolCallInfo } from 'types'
-import { LlmRole, LlmChunkTool, Message as MessageBase } from 'multi-llm-ts'
+import { LlmRole, LlmChunkTool, Message as MessageBase, LlmUsage } from 'multi-llm-ts'
 import Attachment from './attachment'
 
 export default class Message extends MessageBase {
@@ -9,6 +9,7 @@ export default class Message extends MessageBase {
   createdAt: number
   type: string
   toolCall?: ToolCallInfo
+  usage?: LlmUsage
   declare attachment: Attachment
 
   constructor(role: LlmRole, content?: string) {

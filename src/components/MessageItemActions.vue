@@ -2,6 +2,9 @@
   <div class="actions">
     <MessageItemActionCopy :message="message" />
     <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
+    <div class="action usage" v-if="message.usage" @click="onUsage(message)">
+      <BIconBarChartFill /> Usage
+    </div>
     <div class="action retry" v-if="message.role == 'assistant' && !message.transient" @click="onRetry(message)">
       <BIconArrowCounterclockwise /> Retry
     </div>
@@ -66,6 +69,15 @@ const onRetry = (message: Message) => {
 
 const onEdit = (message: Message) => {
   emitEvent('set-prompt', message)
+}
+
+const onUsage = (message: Message) => {
+  if (!message.usage) return
+  const totalTokens = message.usage.prompt_tokens + message.usage.completion_tokens
+  Dialog.show({
+    title: `Total tokens: ${totalTokens}`,
+    text: `Prompt tokens: ${message.usage.prompt_tokens}\nResponse tokens: ${message.usage.completion_tokens}`,
+  })
 }
 
 </script>

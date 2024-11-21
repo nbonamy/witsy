@@ -12,6 +12,7 @@ import ActionBar from '../../src/scratchpad/ActionBar.vue'
 import LlmMock from '../mocks/llm'
 
 import useEventBus  from '../../src/composables/event_bus'
+import Attachment from '../../src/models/attachment'
 const { emitEvent } = useEventBus()
 
 // mock llm
@@ -73,6 +74,14 @@ test('Sends prompt and sets modified', async () => {
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as \'## Title ##\' or \'** Text **\'. Do not include anything else in the response including things like \'here is the...\'"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.vm.modified).toBe(true)
+})
+
+test('Sends prompt with params', async () => {
+  const wrapper = mount(ScratchPad)
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[0] })
+  await vi.waitUntil(async () => !wrapper.vm.processing)
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as \'## Title ##\' or \'** Text **\'. Do not include anything else in the response including things like \'here is the...\'"},{"role":"user","content":"prompt1\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
