@@ -15,6 +15,11 @@
       <!-- image for backwards compatibility -->
       <MessageItemImage :url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
+      <!-- expert -->
+       <div v-if="message.expert" class="expert text variable-font-size">
+        <p><BIconStars/> {{  message.expert.name }}</p>
+      </div>
+
       <!-- text -->
       <div v-if="message.type == 'text' && message.content !== null">
         <MessageItemBody :message="message" @image-loaded="onImageLoaded" />
@@ -184,6 +189,11 @@ defineExpose({
 
 .name {
   font-family: var(--messages-font);
+}
+
+.expert {
+  margin-top: 12px;
+  margin-bottom: -12px;
 }
 
 img {
