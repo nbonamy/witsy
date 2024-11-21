@@ -121,6 +121,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Token usage report
 - [x] OpenAI o1 models support
 - [x] Groq vision support
 - [x] Image resize option
