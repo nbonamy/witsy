@@ -15,7 +15,7 @@ Generative AI desktop application:
 - Read aloud of any text in other applications (requires OpenAI API key)
 - Chat with your local files and documents (RAG)
 - Transcription/Dictation (Speech-to-Text)
-- <b>[BETA]</b> Anthropic Computer Use support
+- Anthropic Computer Use support
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
 - Image copy and download
@@ -121,6 +121,9 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] OpenAI o1 models support
+- [x] Groq vision support
+- [x] Image resize option
 - [x] Llama 3.2 vision support
 - [x] YouTube plugin
 - [x] RAG in Scratchpad
