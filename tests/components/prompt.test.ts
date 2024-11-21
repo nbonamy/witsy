@@ -215,7 +215,7 @@ test('Clears expert', async () => {
   wrapper.vm.expert = store.experts[0]
   await wrapper.vm.$nextTick()
   const trigger = wrapper.find('.input .icon.expert')
-  await trigger.trigger('mouseenter')
+  await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
   expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
