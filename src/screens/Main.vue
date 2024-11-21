@@ -146,7 +146,7 @@ const processQueryParams = (params: anyDict) => {
 
   // open settings
   if (params.settings) {
-    emitEvent('open-settings')
+    emitEvent('open-settings', null)
   }
 }
 
@@ -160,7 +160,7 @@ const onSelectChat = (chat: Chat) => {
   assistant.value = new Assistant(store.config)
   assistant.value.setChat(chat)
   nextTick(() => {
-    emitEvent('new-llm-chunk')
+    emitEvent('new-llm-chunk', null)
   })
 }
 
@@ -204,7 +204,7 @@ const onDeleteChat = async (chat: string) => {
 
       // if current chat
       if (chats.includes(assistant.value.chat?.uuid)) {
-        emitEvent('new-chat')
+        emitEvent('new-chat', null)
       }
 
       // close window if standalone
@@ -238,20 +238,13 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
   }
 
-  // system instructions
-  let systemInstructions = undefined
-  if (expert != null) {
-    systemInstructions = expert.prompt
-  }
-
   // prompt
   assistant.value.prompt(prompt, {
     ...(engine.value && { engine: engine.value }),
     ...(model.value && { model: model.value }),
-    systemInstructions: systemInstructions,
     attachment: attachment || null,
     docrepo: docrepo || null,
-    expert: expert?.id || null,
+    expert: expert || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
   })

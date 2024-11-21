@@ -97,7 +97,7 @@ let mouseDownToClose = false
 onMounted(() => {
   
   // events
-  onEvent('send-prompt', onPrompt)
+  onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopGeneration)
   window.api.on('show', onShow)
 
@@ -327,7 +327,7 @@ const onStopGeneration = () => {
   generator.stop()
 }
 
-const onPrompt = async (params: SendPromptParams) => {
+const onSendPrompt = async (params: SendPromptParams) => {
 
   try {
 
@@ -343,31 +343,30 @@ const onPrompt = async (params: SendPromptParams) => {
       initLlm()
     }
 
-    // save expert
-    chat.value.expert = expert?.id
-
     // system instructions
     if (chat.value.messages.length === 0) {
-      const systemInstructions = expert != null ? expert.prompt : generator.getSystemInstructions()
+      const systemInstructions = generator.getSystemInstructions()
       chat.value.addMessage(new Message('system', systemInstructions  ))
     }
 
-    // set response
-    response.value = new Message('assistant')
-
     // update thread
     const userMessage = new Message('user', prompt)
+    userMessage.expert = expert
     if (attachment) {
       attachment.loadContents()
       userMessage.attach(attachment)
     }
     chat.value.addMessage(userMessage)
+
+    // set response
+    response.value = new Message('assistant')
     chat.value.addMessage(response.value)
 
     // now generate
     await generator.generate(llm, chat.value.messages, {
       model: chat.value.model,
-      docrepo
+      docrepo: docrepo,
+      sources: true,
     })
 
     // save?

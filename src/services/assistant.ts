@@ -1,5 +1,5 @@
 
-import { LlmEngine, LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, type LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config.d'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
@@ -7,7 +7,8 @@ import Message from '../models/message'
 import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { availablePlugins } from '../plugins/plugins'
-import Generator, { GenerationOpts } from './generator'
+import Generator, { type GenerationOpts } from './generator'
+import { Expert } from 'types'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
@@ -15,7 +16,7 @@ export interface AssistantCompletionOpts extends GenerationOpts {
   titling?: boolean
   overwriteEngineModel?: boolean
   attachment?: Attachment
-  expert?: string
+  expert?: Expert
   systemInstructions?: string
 }
 
@@ -92,14 +93,13 @@ export default class extends Generator {
       // initialize the chat
       this.chat = new Chat()
       this.chat.docrepo = opts.docrepo
-      this.chat.expert = opts.expert
       this.chat.setEngineModel(opts.engine, opts.model)
       this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
       
       // save
       if (opts.save) {
         store.chats.push(this.chat)
-        store.saveHistory()
+        //store.saveHistory()
       }
     
     } else if (!opts.overwriteEngineModel) {
@@ -126,6 +126,7 @@ export default class extends Generator {
 
     // add message
     const message = new Message('user', prompt)
+    message.expert = opts.expert
     message.attach(opts.attachment)
     this.chat.addMessage(message)
 

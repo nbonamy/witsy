@@ -90,7 +90,7 @@ test('Submits prompt', async () => {
 
 test('Submits prompt with params', async () => {
   const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[0])
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"prompt1"},{"role":"user","content":"Hello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"prompt1\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Copies response', async () => {

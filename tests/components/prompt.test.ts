@@ -93,7 +93,7 @@ test('Sends with right parameters', async () => {
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
     prompt: 'this is my prompt',
-    attachment: { contents: 'image64', mimeType: 'image/png', url: 'file://image.png', saved: false, extracted: false },
+    attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', saved: false, extracted: false },
     expert: { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
     docrepo: 'docrepo',
   })
@@ -123,7 +123,7 @@ test('Show stop button when working', async () => {
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
   await wrapper.find('.icon.stop').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('stop-prompting')
+  expect(emitEventMock).toHaveBeenCalledWith('stop-prompting', null)
 })
 
 test('Stores attachment', async () => {
@@ -135,7 +135,7 @@ test('Stores attachment', async () => {
   })
   expect(wrapper.vm.attachment).toEqual({
     mimeType: 'image/png',
-    contents: 'image64',
+    content: 'image64',
     saved: false,
     extracted: false,
     url: 'file://image.png',
@@ -208,51 +208,21 @@ test('Selects expert', async () => {
   expect(menu.findAll('.item').length).toBe(2)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.expert.id).toBe('uuid3')
+  expect(wrapper.find('.input .icon.expert').exists()).toBe(true)
 })
 
 test('Clears expert', async () => {
   wrapper.vm.expert = store.experts[0]
-  const trigger = wrapper.find('.icon.experts')
-  await trigger.trigger('click')
+  await wrapper.vm.$nextTick()
+  const trigger = wrapper.find('.input .icon.expert')
+  await trigger.trigger('mouseenter')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
-  expect(menu.findAll('.item').length).toBe(4)
   expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
   expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
   expect(menu.find('.item:nth-child(3)').text()).toBe('')
   expect(menu.find('.item:nth-child(4)').text()).toBe('Clear expert')
   await menu.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.expert).toBe(null)
-})
-
-test('Prevents changing expert after prompting', async () => {
-  wrapper.vm.expert = store.experts[0]
-  chat?.addMessage(new Message('system', 'I am an assistant'))
-  const trigger = wrapper.find('.icon.experts')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
-  expect(menu.findAll('.item').length).toBe(4)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
-  expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
-  expect(menu.find('.item:nth-child(3)').text()).toBe('')
-  expect(menu.find('.item:nth-child(4)').text()).toMatch(/you cannot disable/i)
-  await menu.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.expert.id).toBe('uuid1')
-})
-
-test('Prevents changing expert after prompting', async () => {
-  chat?.addMessage(new Message('system', 'I am an assistant'))
-  const trigger = wrapper.find('.icon.experts')
-  await trigger.trigger('click')
-  const menu = wrapper.find('.context-menu')
-  expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
-  expect(menu.findAll('.item').length).toBe(1)
-  expect(menu.find('.item:nth-child(1)').text()).toMatch(/you cannot activate/i)
-  await menu.find('.item:nth-child(1)').trigger('click')
   expect(wrapper.vm.expert).toBe(null)
 })
 
@@ -270,7 +240,7 @@ test('Document repository', async () => {
 
   // manage
   await menu.find('.item:nth-child(4)').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-doc-repos')
+  expect(emitEventMock).toHaveBeenCalledWith('open-doc-repos', null)
 
   // connect
   await trigger.trigger('click')

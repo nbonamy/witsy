@@ -92,8 +92,8 @@ test('Save history', async () => {
     model: 'model',
     deleted: false,
     messages: [
-      { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', toolCall: null, attachment: null, transient: false },
-      { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', toolCall: null, attachment: null, transient: false }
+      { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', toolCall: null, attachment: null, usage: null, transient: false },
+      { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', toolCall: null, attachment: null, usage: null, transient: false }
     ]
   }])
 })

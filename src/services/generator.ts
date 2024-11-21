@@ -56,13 +56,16 @@ export default class Generator {
       this.stream = await llm.generate(opts.model, conversation, {
         models: this.config.engines[llm.getName()]?.models?.chat,
         autoSwitchVision: this.config.llm.autoVisionSwitch,
+        usage: true,
         ...opts
       })
       for await (const msg of this.stream) {
         if (this.stopGeneration) {
           break
         }
-        if (msg.type === 'tool') {
+        if (msg.type === 'usage') {
+          response.usage = msg.usage
+        } else if (msg.type === 'tool') {
             response.setToolCall(msg)
         } else if (msg.type === 'content') {
           if (msg && sources && sources.length > 0) {

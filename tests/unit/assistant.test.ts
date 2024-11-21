@@ -97,7 +97,8 @@ test('Assistant parameters', async () => {
     models: [ 'chat1', 'chat2' ],
     overwriteEngineModel: false,
     systemInstructions: 'You are a chat assistant',
-    autoSwitchVision: true
+    autoSwitchVision: true,
+    usage: true,
   })
 })
 
