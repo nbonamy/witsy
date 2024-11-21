@@ -446,7 +446,7 @@ const onResponseResize= (deltaX: number) => {
 .anywhere {
 
   .prompt {
-    
+
     .input {
       border: none;
       border-radius: 0px;
@@ -461,6 +461,21 @@ const onResponseResize= (deltaX: number) => {
           &::placeholder {
             opacity: 0.5;
           }
+        }
+
+        .icon.left {
+          position: static;
+          margin: 4px 0px 0px 8px;
+          color: var(--text-color);
+          
+          svg {
+            font-size: 14pt;
+            height: auto;
+          }
+        }
+
+        .icon.left + textarea {
+          padding-left: 16px;
         }
       }
     }

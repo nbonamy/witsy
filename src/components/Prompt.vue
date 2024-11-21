@@ -12,7 +12,7 @@
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
-        <div v-if="expert" class="icon left expert" @click="disableExpert" @mouseenter="onHoverActiveExpert"><BIconMortarboard /></div>
+        <div v-if="expert" class="icon left expert" @click="onClickActiveExpert"><BIconMortarboard /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
@@ -21,7 +21,7 @@
     <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="canFilterExperts" :actions="expertsMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -71,10 +71,6 @@ const props = defineProps({
     default: true
   },
   enableExperts: {
-    type: Boolean,
-    default: true
-  },
-  inlineMenus: {
     type: Boolean,
     default: true
   },
@@ -158,10 +154,6 @@ const docReposMenuItems = computed(() => {
   return menus
 })
 
-const canFilterExperts = computed(() => {
-  return true//expert.value == null && (props.chat == null || props.chat.messages.length === 0)
-})
-
 const expertsMenuItems = computed(() => {
   return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
     return { label: p.name, action: p.name, icon: BIconStars }
@@ -211,14 +203,6 @@ onMounted(() => {
   // reset doc repo and expert
   watch(() => props.chat || {}, () => {
     docrepo.value = props.chat?.docrepo
-    expert.value = store.experts.find(p => p.id === props.chat?.expert)
-    if (!expert.value) {
-      if (props.chat?.expert) {
-        expert.value = { id: props.chat?.expert, name: 'Unknown expert' }
-      } else {
-        expert.value = null
-      }
-    }
   }, { immediate: true })
 
 })
@@ -372,29 +356,23 @@ const onDetach = () => {
 }
 
 const openExperts = () => {
-  if (props.inlineMenus) {
-    const icon = document.querySelector('.prompt .experts')
-    const rect = icon?.getBoundingClientRect()
-    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
-    showExperts.value = true
-  } else {
-    emitEvent('show-experts', null)
-  }
+  const icon = document.querySelector('.prompt .experts')
+  const rect = icon?.getBoundingClientRect()
+  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
+  showExperts.value = true
 }
 
 const onClickExperts = () => {
   openExperts()
 }
 
-const onHoverActiveExpert = () => {
-  if (props.inlineMenus) {
-    const icon = document.querySelector('.prompt .expert')
-    const rect = icon?.getBoundingClientRect()
-    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
-    showActiveExpert.value = true
-  }
+const onClickActiveExpert = () => {
+  const icon = document.querySelector('.prompt .expert')
+  const rect = icon?.getBoundingClientRect()
+  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
+  showActiveExpert.value = true
 }
 
 const onDictate = async () => {
@@ -506,15 +484,11 @@ const startDictation = async () => {
 
 const onConversationMenu = () => {
   if (!props.enableConversations) return
-  if (props.inlineMenus) {
-    const icon = document.querySelector('.prompt .dictate')
-    const rect = icon?.getBoundingClientRect()
-    menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-    menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
-    showConversationMenu.value = true
-  } else {
-    emitEvent('show-conversation-menu', null)
-  }
+  const icon = document.querySelector('.prompt .dictate')
+  const rect = icon?.getBoundingClientRect()
+  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect.y : 8 )  + 24
+  showConversationMenu.value = true
 }
 
 const handleConversationClick = (action: string) => {
@@ -770,18 +744,7 @@ defineExpose({
   margin-left: 8px;
 }
 
-.input .expert {
-  margin-top: 4px;
-  margin-left: 8px;
-  margin-right: 0px;
-  color: var(--prompt-input-text-color);
-  cursor: pointer;
-  svg {
-    height: 12pt;
-  }
-}
-
-.textarea-wrapper {
+.input .textarea-wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -789,19 +752,28 @@ defineExpose({
   overflow: hidden;
 }
 
-.textarea-wrapper .icon.left {
-  position: absolute;
-  border-radius: 16px;
-  margin-top: -2px;
-  left: 4px;
+.input .textarea-wrapper .icon.left {
+  margin-left: 16px;
 }
 
-.textarea-wrapper .icon.left + textarea {
-  padding-left: 44px;
+.input .textarea-wrapper .icon.left.expert {
+  margin-top: 2px;
+  margin-right: 4px;
+  color: var(--prompt-input-text-color);
+  cursor: pointer;
+  svg {
+    height: 12pt;
+  }
 }
 
-.textarea-wrapper .loader-wrapper {
-  margin-top: 1px;
+.input .textarea-wrapper .icon.left:not(:first-of-type).expert {
+  margin-left: 4px;
+}
+
+.input .textarea-wrapper .icon.left.loader-wrapper {
+  margin-left: 4px;
+  margin-top: -8px;
+  height: 24px;
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -814,7 +786,7 @@ defineExpose({
   }
 }
 
-.textarea-wrapper .icon.right {
+.input .textarea-wrapper .icon.right {
   position: absolute;
   border-radius: 16px;
   margin-top: -2px;
@@ -822,7 +794,7 @@ defineExpose({
   right: 12px;
 }
 
-.textarea-wrapper textarea {
+.input .textarea-wrapper textarea {
   background-color: var(--prompt-input-bg-color);
   color: var(--prompt-input-text-color);
   border: none;
@@ -838,27 +810,31 @@ defineExpose({
   flex: 1;
 }
 
-.textarea-wrapper textarea::placeholder {
+.input .textarea-wrapper .icon.left + textarea {
+  padding-left: 8px;
+}
+
+.input .textarea-wrapper textarea::placeholder {
   color: var(--control-placeholder-text-color);
 }
 
-.windows .input, .windows .textarea-wrapper textarea {
+.input .textarea-wrapper textarea:focus {
+  outline: none;
+  flex: 1;
+}
+
+.input .textarea-wrapper textarea:disabled {
+  color: var(--control-placeholder-text-color);
+}
+
+.windows .input, .windows .input .textarea-wrapper textarea {
   border-radius: 0px;
-}
-
-.textarea-wrapper textarea:disabled {
-  color: var(--control-placeholder-text-color);
 }
 
 .input .attachment img {
   height: 36pt !important;
   width: 36pt !important;
   object-fit: cover;
-}
-
-.input textarea:focus {
-  outline: none;
-  flex: 1;
 }
 
 ::-webkit-scrollbar {
