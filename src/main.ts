@@ -1,6 +1,6 @@
 
-import { Chat, Command, Expert } from './types/index.d';
-import { Configuration } from './types/config.d';
+import { type Chat, type Command, type Expert } from '@types/index.d';
+import { type Configuration } from '@types/config.d';
 import process from 'node:process';
 import fontList from 'font-list';
 import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';

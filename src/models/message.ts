@@ -2,12 +2,14 @@
 import { ToolCallInfo } from 'types'
 import { LlmRole, LlmChunkTool, Message as MessageBase, LlmUsage } from 'multi-llm-ts'
 import Attachment from './attachment'
+import Expert from './expert'
 
 export default class Message extends MessageBase {
 
   uuid: string
   createdAt: number
   type: string
+  expert: Expert|null
   toolCall?: ToolCallInfo
   usage?: LlmUsage
   declare attachment: Attachment
@@ -17,8 +19,10 @@ export default class Message extends MessageBase {
     this.uuid = crypto.randomUUID()
     this.createdAt = Date.now()
     this.type = 'text'
+    this.expert = null
     this.toolCall = null
     this.attachment = null
+    this.usage = null
     if (content === undefined) {
       this.setText(null)
     } else if (typeof content === 'string') {
@@ -32,8 +36,18 @@ export default class Message extends MessageBase {
     message.createdAt = obj.createdAt
     message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
     message.transient = false
+    message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
     message.toolCall = obj.toolCall || null
+    message.usage = obj.usage || null
     return message
+  }
+
+  get contentForModel(): string {
+    if (this.expert == null) {
+      return this.content
+    } else {
+      return `${this.expert.prompt}\n${this.content}`
+    }
   }
 
   setText(text: string) {

@@ -1,4 +1,5 @@
 {
+  //"extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "commonjs",
@@ -7,26 +8,21 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": "src",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "paths": {
-    }
+    "baseUrl": "src",
+    // "paths": {
+    //   "@types/*": [ "types/*" ]
+    // }
   },
+  // "include": [
+  //   "main.ts",
+  //   "types/**/*",
+  //   "automations/**/*",
+  //   "main/**/*",
+  //   "rag/**/*"
+  // ],
   "exclude": [
-    "./tests/**/*.ts"
   ]  
-  // "files": [],
-  // "references": [
-  //   {
-  //     "path": "./tsconfig.node.json"
-  //   },
-  //   {
-  //     "path": "./tsconfig.app.json"
-  //   },
-  //   {
-  //     "path": "./tsconfig.vitest.json"
-  //   }
-  // ]
 }

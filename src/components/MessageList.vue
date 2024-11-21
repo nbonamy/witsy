@@ -17,18 +17,18 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
+import { type Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
-import { LlmChunk } from 'multi-llm-ts'
+import { type LlmChunk } from 'multi-llm-ts'
 import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
-const divScroller = ref(null)
+const divScroller: Ref<HTMLElement|null> = ref(null)
 const overflown = ref(false)
-const fullScreenImageUrl = ref(null)
+const fullScreenImageUrl: Ref<string|null> = ref(null)
 
 const itemRefs = useTemplateRef('items')
 
@@ -41,8 +41,14 @@ const fontStyle = computed(() => {
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 
 const props = defineProps({
-  chat: Chat,
-  conversationMode: String
+  chat: {
+    type: Chat,
+    required: true,
+  },
+  conversationMode: {
+    type: String,
+    required: true,
+  }
 })
 
 onMounted(() => {
@@ -71,7 +77,7 @@ const onImageLoaded = () => {
 
 const scrollDown = () => {
   nextTick(() => {
-    divScroller.value.scrollTop = divScroller.value.scrollHeight
+    divScroller.value!.scrollTop = divScroller.value!.scrollHeight
     overflown.value = false
   })
 }
@@ -95,7 +101,7 @@ const onNewChunk = (chunk: LlmChunk) => {
   }
 
   // auto-read
-  if (chunk?.done && props.conversationMode) {
+  if (chunk?.done && props.conversationMode && itemRefs.value?.length) {
     const last: any = itemRefs.value[itemRefs.value.length - 1]
     last.readAloud()
   }
@@ -103,7 +109,7 @@ const onNewChunk = (chunk: LlmChunk) => {
 }
 
 const onScroll = () => {
-  overflown.value = divScroller.value.scrollTop + divScroller.value.clientHeight < divScroller.value.scrollHeight
+  overflown.value = divScroller.value!.scrollTop + divScroller.value!.clientHeight < divScroller.value!.scrollHeight
   scrollOnChunk = !overflown.value
 }
 

@@ -41,7 +41,7 @@ const onChange = () => {
   emit('change')
 }
 
-const onSelect = () => {
+const onSelect = (event: Event) => {
   value.value = (event.target as HTMLSelectElement).value
   selected.value = null
   emit('change')

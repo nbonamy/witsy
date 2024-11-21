@@ -1,4 +1,6 @@
 
+import { BrowserWindow } from "electron"
+
 declare module 'applescript'
 
 export interface ShortcutCallbacks {

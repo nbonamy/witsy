@@ -1,7 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role" v-if="showRole">
-      <EngineLogo :engine="chat.engine" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
+      <EngineLogo :engine="chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
       <div class="name variable-font-size">{{ authorName }}</div>
     </div>
@@ -13,7 +13,7 @@
       </div>
 
       <!-- image for backwards compatibility -->
-      <MessageItemImage :url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image'" />
+      <MessageItemImage :url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
       <!-- text -->
       <div v-if="message.type == 'text' && message.content !== null">
@@ -34,15 +34,15 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import useAudioPlayer, { type AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemImage from './MessageItemImage.vue'
 import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
-import Attachment from 'models/attachment'
+import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Loader from './Loader.vue'
 import AttachmentView from './Attachment.vue'
@@ -57,8 +57,14 @@ const appearanceTheme = useAppearanceTheme()
 const audioPlayer = useAudioPlayer(store.config)
 
 const props = defineProps({
-  chat: Chat,
-  message: Message,
+  chat: {
+    type: Chat,
+    // required: true,
+  },
+  message: {
+    type: Message,
+    required: true,
+  },
   showRole: { type: Boolean, default: true },
   showActions: { type: Boolean, default: true },
 })
@@ -67,15 +73,15 @@ const emits = defineEmits(['image-loaded'])
 
 const theme = ref('light')
 const hovered = ref(false)
-const audio = ref(null)
-const audioState = ref({
+const audio: Ref<HTMLAudioElement|null> = ref(null)
+const audioState: Ref<{state: string, messageId: string|null}> = ref({
   state: 'idle',
   messageId: null,
 })
 
 // onUpdated is not called for an unknown reason
 // so let's hack it
-let updateLinkInterval: NodeJS.Timeout = null 
+let updateLinkInterval: NodeJS.Timeout|null = null 
 onMounted(() => {
 
   // make sure links are going outside
@@ -97,7 +103,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearInterval(updateLinkInterval)
+  if (updateLinkInterval) {
+    clearInterval(updateLinkInterval)
+  }
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
@@ -142,7 +150,7 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
 }
 
 const onReadAloud = async (message: Message) => {
-  await audioPlayer.play(audio.value.$el, message.uuid, message.content)
+  await audioPlayer.play(audio.value!, message.uuid, message.content)
 }
 
 defineExpose({

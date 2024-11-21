@@ -35,7 +35,10 @@ const logos: { [key: string]: any } = {
 }
 
 const props = defineProps({
-  engine: String,
+  engine: {
+    type: String,
+    required: true,
+  },
   grayscale: {
     type: Boolean,
     default: false

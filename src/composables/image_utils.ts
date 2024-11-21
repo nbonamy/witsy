@@ -15,7 +15,9 @@ export default {
         canvas.width = maxSize * img.width / img.height
       }
       console.log(`Image resized to ${canvas.width}x${canvas.height}`)
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'white'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx!.drawImage(img, 0, 0, canvas.width, canvas.height);
       const dataURI = canvas.toDataURL('image/jpeg', 0.95);
       callback(dataURI.split(',')[1], 'image/jpeg')
     })

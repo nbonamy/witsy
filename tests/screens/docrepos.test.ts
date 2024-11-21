@@ -74,13 +74,13 @@ test('Selects correctly', async () => {
 test('Shows create editor', async () => {
   const wrapper = mount(DocRepos)
   await wrapper.find('.master .actions button.create').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-create')
+  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-create', null)
 })
 
 test('Shows configuration', async () => {
   const wrapper = mount(DocRepos)
   await wrapper.find('.master .actions button.config').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-config')
+  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-config', null)
 })
 
 test('Deletes base', async () => {

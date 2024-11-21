@@ -1,11 +1,11 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { Chat, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types/index.d';
-import { Configuration } from './types/config.d';
-import { DocRepoQueryResponseItem } from './types/rag.d';
+import { type Chat, type Command, type ComputerAction, type Expert, type ExternalApp, type FileContents, type anyDict, type strDict } from './types';
+import { type Configuration } from './types/config';
+import { type DocRepoQueryResponseItem } from './types/rag';
 import { contextBridge, ipcRenderer } from 'electron'
-import { Size } from './main/computer';
+import { type Size } from './main/computer';
 
 contextBridge.exposeInMainWorld(
   'api', {

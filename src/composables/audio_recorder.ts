@@ -1,6 +1,6 @@
 
 
-import { Configuration } from 'types/config.d'
+import { type Configuration } from '@types/config'
 
 export interface AudioRecorderListener {
   onNoiseDetected: () => void

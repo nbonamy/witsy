@@ -8,10 +8,10 @@
 
 <script setup lang="ts">
 
-import { ModelRef, computed } from 'vue'
-import { Shortcut } from '../types/index.d'
+import { type ModelRef, computed } from 'vue'
+import { type Shortcut } from '@/types'
 
-const value: ModelRef<Shortcut> = defineModel()
+const value: ModelRef<Shortcut|undefined> = defineModel()
 
 const emit = defineEmits(['change']);
 
@@ -44,7 +44,7 @@ const onBlur = () => {
 }
 
 const onDelete = () => {
-  value.value = null
+  value.value = undefined
   emit('change')
 }
 
@@ -52,7 +52,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {
-    value.value = null
+    value.value = undefined
     emit('change')
     return
   }
