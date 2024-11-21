@@ -106,6 +106,18 @@ const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
 
+  // check if run from app folder
+  if (process.platform === 'darwin' && !process.env.DEBUG && !app.isInApplicationsFolder()) {
+    dialog.showMessageBox({
+      type: 'error',
+      message: 'You need to run Witsy from the Applications folder. Move the app icon there and try again.',
+      detail: 'If you already moved the app icon there, make sure you run Witsy from the Applications folder.',
+      buttons: ['OK'],
+    });
+    quitApp();
+    return;
+  }
+
   // we need settings
   const settings = config.loadSettings(app);
 
