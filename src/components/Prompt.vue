@@ -258,6 +258,7 @@ const loadDocRepos = () => {
 const onSetPrompt = (message: Message) => {
   prompt.value = message.content
   attachment.value = message.attachment
+  expert.value = message.expert
   nextTick(() => {
     autoGrow(input.value)
     input.value.focus()
