@@ -9,7 +9,7 @@ export default class Message extends MessageBase {
   uuid: string
   createdAt: number
   type: string
-  expert: Expert|null
+  expert?: Expert
   toolCall?: ToolCallInfo
   usage?: LlmUsage
   declare attachment: Attachment

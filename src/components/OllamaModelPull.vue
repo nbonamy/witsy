@@ -24,8 +24,8 @@ import Combobox from './Combobox.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
-import type { ProgressInfo } from '@/voice/stt.ts'
-import type { ProgressResponse } from 'ollama/browser'
+import type { ProgressInfo } from '../voice/stt.ts'
+import type { ProgressResponse } from 'ollama'
 const { emitEvent } = useEventBus()
 
 type Model = {

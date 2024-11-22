@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { type Chat, type Command, type ComputerAction, type Expert, type ExternalApp, type FileContents, type anyDict, type strDict } from './types';
+import { FileDownloadParams, FileSaveParams, RunCommandParams, type Chat, type Command, type ComputerAction, type Expert, type ExternalApp, type FileContents, type anyDict, type strDict } from './types';
 import { type Configuration } from './types/config';
 import { type DocRepoQueryResponseItem } from './types/rag';
 import { contextBridge, ipcRenderer } from 'electron'
@@ -38,10 +38,10 @@ contextBridge.exposeInMainWorld(
     file: {
       read: (filepath: string): FileContents => { return ipcRenderer.sendSync('read-file', filepath) },
       readIcon: (filepath: string): FileContents => { return ipcRenderer.sendSync('read-icon', filepath) },
-      save: (opts: any): string => { return ipcRenderer.sendSync('save-file', JSON.stringify(opts)) },
+      save: (opts: FileSaveParams): string => { return ipcRenderer.sendSync('save-file', JSON.stringify(opts)) },
       pick: (opts: any): string|strDict|string[] => { return ipcRenderer.sendSync('pick-file', JSON.stringify(opts)) },
       pickDir: (): string => { return ipcRenderer.sendSync('pick-directory') },
-      download: (opts: any): string => { return ipcRenderer.sendSync('download', JSON.stringify(opts)) },
+      download: (opts: FileDownloadParams): string => { return ipcRenderer.sendSync('download', JSON.stringify(opts)) },
       delete: (filepath: string): void => { return ipcRenderer.send('delete-file', filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
@@ -69,7 +69,7 @@ contextBridge.exposeInMainWorld(
       export: (): void => { return ipcRenderer.sendSync('commands-export') },
       import: (): void => { return ipcRenderer.sendSync('commands-import') },
       isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
-      run: (command: Command): void => { return ipcRenderer.send('command-run', JSON.stringify(command)) },
+      run: (params: RunCommandParams): void => { return ipcRenderer.send('command-run', JSON.stringify(params)) },
       closePalette: (): void => { return ipcRenderer.send('command-palette-close') },
       getPrompt: (id: string): string => { return ipcRenderer.sendSync('command-get-prompt', id) },
       cancel: (): void => { return ipcRenderer.send('command-stop') },

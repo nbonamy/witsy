@@ -146,6 +146,22 @@ export type ComputerAction = {
   text?: string
 }
 
+export type RunCommandParams = {
+  textId: string
+  command: Command
+}
+
+export type FileSaveParams = {
+  contents: string
+  url?: string
+  properties: anyDict
+}
+
+export type FileDownloadParams = {
+  url: string
+  properties: anyDict
+}
+
 declare global {
   interface Window {
     api: {
@@ -174,15 +190,8 @@ declare global {
       file: {
         read(filepath: string): FileContents
         readIcon(filepath: string): FileContents
-        save(opts: {
-          contents: string,
-          url: string,
-          properties: anyDict
-        }): string
-        download(opts: {
-          url: string,
-          properties: anyDict
-        }): string
+        save(opts: FileSaveParams): string
+        download(opts: FileDownloadParams): string
         pick(opts: anyDict): string|string[]|FileContents
         pickDir(): string
         delete(filepath: string): void
@@ -215,7 +224,7 @@ declare global {
         save(commands: Command[]): void
         cancel(): void
         closePalette(): void
-        run({ textId: string, command: Command }): void
+        run(params: RunCommandParams): void
         getPrompt(id: string): string
         isPromptEditable(id: string): boolean
         import(): boolean

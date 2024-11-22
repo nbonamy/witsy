@@ -1,5 +1,5 @@
 
-import { type Chat as ChatBase } from '@types/index'
+import { type Chat as ChatBase } from '../types/index'
 import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
@@ -66,7 +66,6 @@ export default class Chat implements ChatBase {
     this.title = obj.title
     this.lastModified = obj.lastModified
     this.docrepo = obj.docrepo
-    this.expert = obj.expert
 
     // messages
     if (this.messages.length < obj.messages.length) {
