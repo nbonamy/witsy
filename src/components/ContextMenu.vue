@@ -25,7 +25,7 @@ import { ref, computed, onMounted } from 'vue'
 import Overlay from '../components/Overlay.vue'
 
 export type MenuAction = {
-  label: string
+  label?: string
   disabled?: boolean
   separator?: boolean
   action?: string|null

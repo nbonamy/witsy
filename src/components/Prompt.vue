@@ -30,7 +30,8 @@
 
 <script setup lang="ts">
 
-import { type FileContents, type Expert } from 'types/index.d'
+import { type FileContents, type Expert } from '../types/index.d'
+import { type DocumentBase } from '../types/rag.d'
 import { ref, computed, onMounted, nextTick, watch, type Ref } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'
@@ -108,7 +109,7 @@ const expert: Ref<Expert|null> = ref(null)
 const attachment = ref(null)
 const docrepo = ref(null)
 const input = ref(null)
-const docRepos: Ref<DocRepoBase|null> = ref([])
+const docRepos: Ref<DocumentBase[]> = ref([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showActiveExpert = ref(false)

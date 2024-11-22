@@ -1,6 +1,6 @@
 
 
-import { type Configuration } from '@types/config'
+import { type Configuration } from '../types/config'
 import { SpeechPlayer } from 'openai-speech-stream-player'
 import Tts from '../voice/tts'
 

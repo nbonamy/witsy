@@ -1,7 +1,7 @@
 
-import { Command, strDict } from '@types/index.d'
-import { Configuration } from '@types/config.d'
-import { RunCommandResponse } from '@types/automation.d'
+import { Command, strDict } from '../types/index.d'
+import { Configuration } from '../types/config.d'
+import { RunCommandResponse } from '../types/automation.d'
 import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import { App, BrowserWindow, Notification } from 'electron'
 import { loadSettings } from '../main/config'
