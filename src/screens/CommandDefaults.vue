@@ -7,11 +7,11 @@
       <main>
         <div class="group">
           <label>LLM Provider</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Use global default" />
+          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Last one used" />
         </div>
         <div class="group">
           <label>LLM Model</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Use global default' : ''" />
+          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
         </div>
       </main>
       <footer>
