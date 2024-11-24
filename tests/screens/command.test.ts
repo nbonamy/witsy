@@ -103,7 +103,9 @@ test('Supports keyboard copy', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
-  expect(window.api.clipboard?.writeText).toHaveBeenCalled()
+  expect(window.api.clipboard.writeText).toHaveBeenCalledTimes(1)
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'c' }));
+  expect(window.api.clipboard.writeText).toHaveBeenCalledTimes(2)
 })
 
 test('Supports keyboard insert', async () => {
@@ -111,7 +113,9 @@ test('Supports keyboard insert', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
-  expect(window.api.automation.insert).toHaveBeenCalled()
+  expect(window.api.automation.insert).toHaveBeenCalledTimes(1)
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'i' }));
+  expect(window.api.automation.insert).toHaveBeenCalledTimes(2)
 })
 
 test('Supports keyboard replace', async () => {
@@ -119,7 +123,9 @@ test('Supports keyboard replace', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'r' }));
-  expect(window.api.automation.replace).toHaveBeenCalled()
+  expect(window.api.automation.replace).toHaveBeenCalledTimes(1)
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
+  expect(window.api.automation.replace).toHaveBeenCalledTimes(2)
 })
 
 test('Supports keyboard close', async () => {

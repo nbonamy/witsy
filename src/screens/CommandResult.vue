@@ -3,7 +3,7 @@
   <div class="command" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize">
-        <OutputPanel ref="output" :message="response" :show-replace="true" :show-clear="false" @close="onClose" @chat="onChat" v-if="response" />
+        <OutputPanel ref="output" :message="response" :allow-direct-keys="true" :show-replace="true" :show-clear="false" @close="onClose" @chat="onChat" v-if="response" />
       </ResizableHorizontal>
     </div>
   </div>
