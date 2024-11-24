@@ -13,7 +13,8 @@ export const openScratchPad = async (text?: string|null) => {
 
   // query params
   const queryParams: anyDict = {};
-  if (text) {
+  console.log('text', text);
+  if (typeof text === 'string' && text.length > 0) {
     const textId = putCachedText(text);
     queryParams['textId'] = textId;
   }
