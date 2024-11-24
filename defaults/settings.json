@@ -12,7 +12,8 @@
       "scratchpad": true,
       "conversation": true,
       "computerUse": true,
-      "newPrompt": true
+      "newPrompt": true,
+      "newCommand": true
     },
     "confirm": {
       "retryGeneration": true

@@ -2,9 +2,8 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import * as window from '../../src/main/window'
 import PromptAnywhere from '../../src/automations/anywhere'
-import Automator from '../../src/automations/automator'
+import * as window from '../../src/main/window'
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -58,30 +57,5 @@ test('Prepare prompt', async () => {
 
   expect(window.hideWindows).toHaveBeenCalledOnce()
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
-
-})
-
-test('Execute Prompt', async () => {
-
-  await PromptAnywhere.insert(null, 'Explain this')
-
-  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
-
-  expect(Automator.prototype.pasteText).toHaveBeenCalledWith('Explain this')
-
-})
-
-test('Continue as Chat Prompt', async () => {
-
-  await PromptAnywhere.continueAsChat(null, '123')
-
-  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
-
-  expect(window.openMainWindow).toHaveBeenCalledWith({
-    queryParams: { chatId: '123' }
-  })
 
 })

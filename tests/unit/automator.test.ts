@@ -1,9 +1,10 @@
 
-import { vi, expect, test } from 'vitest'
+import { vi, expect, test, beforeEach } from 'vitest'
 import { clipboard } from 'electron'
-import Automator from '../../src/automations/automator'
+import Automator, { AutomationAction } from '../../src/automations/automator'
 import MacosAutomator from '../../src/automations/macos'
 import RobotAutomator from '../../src/automations/robot'
+import * as window from '../../src/main/window'
 
 vi.mock('electron', () => ({
   clipboard: {
@@ -21,12 +22,29 @@ vi.mock(`../../src/automations/${process.platform === 'darwin' ? 'macos' : 'robo
   return { default: MockAutomator }
 })
 
+// mock windows
+vi.mock('../../src/main/window.ts', async () => {
+  return {
+    openPromptAnywhere: vi.fn(),
+    closePromptAnywhere: vi.fn(),
+    closeCommandResult: vi.fn(),
+    hideWindows: vi.fn(),
+    restoreWindows: vi.fn(),
+    releaseFocus: vi.fn(),
+    openMainWindow: vi.fn(),
+  }
+})
+
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+
+const prototype = process.platform === 'darwin' ? MacosAutomator.prototype : RobotAutomator.prototype
+
 test('Create', async () => {
   const automator = new Automator()
   expect(automator).toBeTruthy()
 })
-
-const prototype = process.platform === 'darwin' ? MacosAutomator.prototype : RobotAutomator.prototype
 
 test('Select all', async () => {
   const automator = new Automator()
@@ -56,4 +74,34 @@ test('Copy to clipboard', async () => {
   const automator = new Automator()
   await automator.copyToClipboard('text')
   expect(clipboard.writeText).toHaveBeenCalledWith('text')
+})
+
+test('Insert below', async () => {
+
+  await Automator.automate('Explain this', AutomationAction.INSERT_BELOW)
+
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
+
+  expect(prototype.moveCaretBelow).toHaveBeenCalled()
+
+  expect(clipboard.readText).toHaveBeenCalledWith()
+  expect(clipboard.writeText).toHaveBeenCalledWith('Explain this')
+  expect(prototype.pasteText).toHaveBeenCalledWith()
+
+})
+
+test('Replace', async () => {
+
+  await Automator.automate('Explain this', AutomationAction.REPLACE)
+
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
+
+  expect(prototype.moveCaretBelow).not.toHaveBeenCalled()
+
+  expect(clipboard.readText).toHaveBeenCalledWith()
+  expect(clipboard.writeText).toHaveBeenCalledWith('Explain this')
+  expect(prototype.pasteText).toHaveBeenCalledWith()
+
 })

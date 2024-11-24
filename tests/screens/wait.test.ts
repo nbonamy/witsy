@@ -34,6 +34,6 @@ test('Toggles cancel Button', async () => {
 test('Cancels command', () => {
   const wrapper = mount(Wait)
   wrapper.find('.cancel').trigger('click')
-  expect(window.api.commands.cancel).toHaveBeenCalled()
+  expect(window.api.commands.closeResult).toHaveBeenCalled()
   expect(window.api.anywhere.close).toHaveBeenCalled()
 })

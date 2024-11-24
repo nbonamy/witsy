@@ -73,17 +73,17 @@ const expectCreateWebPreferences = (callParams) => {
 
 beforeEach(async () => {
   try { await window.closeMainWindow() } catch { /* empty */ }
-  try { await window.closeCommandPalette() } catch { /* empty */ }
+  try { await window.closeCommandPicker() } catch { /* empty */ }
   try { await window.closePromptAnywhere() } catch { /* empty */ }
-  try { await window.closeWaitingPanel() } catch { /* empty */ }
+  //try { await window.closeWaitingPanel() } catch { /* empty */ }
   vi.clearAllMocks()
 })
 
 test('All windows are null', async () => {
   expect(window.mainWindow).toBeNull()
-  expect(window.commandPalette).toBeNull()
+  expect(window.commandPicker).toBeNull()
   expect(window.promptAnywhereWindow).toBeNull()
-  expect(window.waitingPanel).toBeNull()
+  //expect(window.waitingPanel).toBeNull()
 })
 
 test('Create main window', async () => {
@@ -148,18 +148,18 @@ test('Create chat window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
-test('Create command palette window', async () => {
-  await window.openCommandPalette('1')
-  expect(window.commandPalette).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=1#/command')
+test('Create command picker window', async () => {
+  await window.openCommandPicker('1')
+  expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=1#/commands')
   const callParams = BrowserWindow.mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
-test('Close command palette window', async () => {
-  await window.openCommandPalette('1')
-  await window.closeCommandPalette()
-  expect(window.commandPalette).toBeNull()
+test('Close command picker window', async () => {
+  await window.openCommandPicker('1')
+  await window.closeCommandPicker()
+  expect(window.commandPicker).toBeNull()
 })
 
 test('Create prompt anywhere window', async () => {
@@ -176,19 +176,19 @@ test('Close prompt anywhere window', async () => {
   expect(window.promptAnywhereWindow).not.toBeNull()
 })
 
-test('Open waiting panel', async () => {
-  await window.openWaitingPanel()
-  expect(window.waitingPanel).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/wait')
-  const callParams = BrowserWindow.mock.calls[0][0]
-  expectCreateWebPreferences(callParams)
-})
+// test('Open waiting panel', async () => {
+//   await window.openWaitingPanel()
+//   expect(window.waitingPanel).toBeInstanceOf(BrowserWindow)
+//   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/wait')
+//   const callParams = BrowserWindow.mock.calls[0][0]
+//   expectCreateWebPreferences(callParams)
+// })
 
-test('Close waiting panel', async () => {
-  await window.openWaitingPanel()
-  await window.closeWaitingPanel()
-  expect(window.waitingPanel).toBeNull()
-})
+// test('Close waiting panel', async () => {
+//   await window.openWaitingPanel()
+//   await window.closeWaitingPanel()
+//   expect(window.waitingPanel).toBeNull()
+// })
 
 test('Hides and restores active windows', async () => {
   await window.restoreWindows()

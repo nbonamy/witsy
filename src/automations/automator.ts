@@ -1,13 +1,20 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator as AutomatorImpl } from '../types/automation.d';
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
 import WindowsAutomator from './windows'
 import RobotAutomator  from './robot'
+import * as window from '../main/window'
 
-export default class {
+export enum AutomationAction {
+  INSERT_BELOW,
+  REPLACE
+}
+
+export default class Automator {
   
-  automator: Automator;
+  automator: AutomatorImpl;
 
   constructor() {
     if (process.platform === 'darwin') {
@@ -89,6 +96,43 @@ export default class {
 
   async copyToClipboard(text: string): Promise<void> {
     await clipboard.writeText(text)
+  }
+
+  static automate = async (text: string, action: AutomationAction): Promise<void> => {
+
+    try {
+
+      const result = removeMarkdown(text, {
+        stripListLeaders: false,
+        listUnicodeChar: ''
+      });
+
+      // done
+      await window.closePromptAnywhere();
+      await window.closeCommandResult();
+      await window.releaseFocus();
+
+      // now paste
+      console.debug(`Processing LLM output: "${result.slice(0, 50)}"…`);
+
+      // we need an automator
+      const automator = new Automator();
+      if (action === AutomationAction.INSERT_BELOW) {
+        await automator.moveCaretBelow()
+        await automator.pasteText(result)
+      } else if (action === AutomationAction.REPLACE) {
+        await automator.pasteText(result)
+      }
+
+      // done
+      await window.restoreWindows();
+      //await window.releaseFocus();
+      return;
+
+    } catch (error) {
+      console.error('Error while testing', error);
+    }
+
   }
 
 }

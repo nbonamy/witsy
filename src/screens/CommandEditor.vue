@@ -17,7 +17,7 @@
             <span v-pre>{input} will be subsituted with highlighted text</span>
           </div>
         </div>
-        <div class="group">
+        <!-- <div class="group">
           <label>Action</label>
           <select v-model="action" required :disabled="!isEditable">
             <option value="chat_window">Chat Window</option>
@@ -25,7 +25,7 @@
             <option value="paste_in_place">Replace Selection</option>
             <option value="clipboard_copy">Copy to Clipboard</option>
           </select>
-        </div>
+        </div> -->
         <div class="group">
           <label>LLM Provider</label>
           <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Use commands default" />

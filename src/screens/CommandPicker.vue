@@ -4,7 +4,7 @@
       <div class="icon">{{ command.icon }}</div>
       <div class="label">{{ command.label }}</div>
       <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
-      <div class="action"><component :is="action(command)"></component></div>
+      <!-- <div class="action"><component :is="action(command)"></component></div> -->
     </div>
   </div>
 </template>
@@ -61,7 +61,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 const onKeyUp = (event: KeyboardEvent) => {
   overrideAction.value = false
   if (event.key == 'Escape') {
-    window.api.commands.closePalette()
+    window.api.commands.closePicker()
   } else {
     for (const command of enabledCommands.value) {
       if (command.shortcut?.toLowerCase() === event.key.toLowerCase()) {

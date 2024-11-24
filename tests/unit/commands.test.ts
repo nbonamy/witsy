@@ -44,7 +44,7 @@ test('New command', () => {
 
 test('Load default commands', () => {
   const commands = main.loadCommands(app)
-  expect(commands).toHaveLength(40)
+  expect(commands).toHaveLength(41)
   commands.forEach((command) => {
     expect(command).toHaveProperty('id')
     expect(command.type).toEqual('system')
@@ -54,9 +54,9 @@ test('Load default commands', () => {
 
 test('Load custom commands', () => {
   const commands = main.loadCommands('./tests/fixtures/commands1.json')
-  expect(commands).toHaveLength(41)
+  expect(commands).toHaveLength(42)
   expect(commands.filter(c => c.type === 'user')).toHaveLength(1)
-  expect(commands.filter(c => c.type === 'system')).toHaveLength(40)
+  expect(commands.filter(c => c.type === 'system')).toHaveLength(41)
   expect(commands.filter(c => c.state === 'deleted')).toHaveLength(1)
   expect(commands.filter(c => c.state === 'disabled')).toHaveLength(1)
 })

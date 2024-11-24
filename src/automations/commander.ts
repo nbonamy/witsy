@@ -1,18 +1,13 @@
 
-import { Command, strDict } from '../types/index.d'
+import { Command } from '../types/index.d'
 import { Configuration } from '../types/config.d'
 import { RunCommandResponse } from '../types/automation.d'
-import { LlmEngine, LlmResponse } from 'multi-llm-ts'
 import { App, BrowserWindow, Notification } from 'electron'
+import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
-import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import LlmFactory from '../llms/llm'
-import Message from '../models/message'
 import Automator from './automator'
-import { v4 as uuidv4 } from 'uuid'
 import * as window from '../main/window'
-
-const textCache: strDict = {}
 
 const askMeAnythingId = '00000000-0000-0000-0000-000000000000'
 
@@ -22,24 +17,6 @@ export const notEditablePrompts = [
 
 export default class Commander {
 
-  private cancelled: boolean
-  
-  constructor() {
-    this.cancelled = false
-  }
-
-  cancelCommand = async (): Promise<void> => {
-
-    // close stuff
-    await window.closeWaitingPanel();
-    await window.restoreWindows();
-    await window.releaseFocus();
-
-    // record
-    this.cancelled = true;
-
-  }
-  
   static initCommand = async (): Promise<void> => {
 
     // not available in mas
@@ -96,8 +73,8 @@ export default class Commander {
     console.debug('Text grabbed:', `${text.slice(0, 50)}…`);
 
     // go on with a cached text id
-    const textId = Commander.putCachedText(text);
-    await window.openCommandPalette(textId)
+    const textId = putCachedText(text);
+    await window.openCommandPicker(textId)
 
   }
 
@@ -105,7 +82,7 @@ export default class Commander {
 
     //
     const result: RunCommandResponse = {
-      text: Commander.getCachedText(textId),
+      text: getCachedText(textId),
       prompt: null as string | null,
       response: null as string | null,
       chatWindow: null as BrowserWindow | null,
@@ -125,7 +102,7 @@ export default class Commander {
 
       // extract what we need
       const template = command.template;
-      const action = command.action;
+      //const action = command.action;
       let engine = command.engine || config.commands.engine;
       let model = command.model || config.commands.model;
       if (!engine?.length || !model?.length) {
@@ -136,49 +113,64 @@ export default class Commander {
       // build prompt
       result.prompt = template.replace('{input}', result.text);
 
-      // new window is different
-      if (action === 'chat_window') {
+      // new window
+      //if (action === 'chat_window') {
+      if (command.id == askMeAnythingId) {
         
         result.chatWindow = await this.finishCommand(command, result.prompt, engine, model);
 
       } else {
-        
-        // open waiting panel
-        window.openWaitingPanel();
 
-        // we need an llm
-        const llm = llmFactory.igniteEngine(engine);
-        if (!llm) {
-          throw new Error(`Invalid LLM engine: ${engine}`)
-        }
+        // store it
+        const promptId = putCachedText(result.prompt);
 
-        // now prompt llm
-        console.debug(`Prompting with ${result.prompt.slice(0, 50)}…`);
-        const response = await this.promptLlm(llm, model, result.prompt);
-        result.response = removeMarkdown(response.content, {
-          stripListLeaders: false,
-          listUnicodeChar: ''
-        });
+        // build the params
+        const params = {
+          promptId: promptId,
+          engine,
+          model
+        };
 
-        // if cancelled
-        if (this.cancelled) {
-          console.debug('Discarding LLM output as command was cancelled');
-          result.cancelled = true;
-          return result;
-        }
-
-        // done
-        await window.closeWaitingPanel();
-        await window.releaseFocus();
-
-        // now paste
-        console.debug(`Processing LLM output: ${result.response.slice(0, 50)}…`);
-        await this.finishCommand(command, result.response, engine, model);
-
-        // done
-        await window.restoreWindows();
-        await window.releaseFocus();
+        // and open the window
+        window.openCommandResult(params);
         return result;
+
+        // // open waiting panel
+        // window.openWaitingPanel();
+
+        // // we need an llm
+        // const llm = llmFactory.igniteEngine(engine);
+        // if (!llm) {
+        //   throw new Error(`Invalid LLM engine: ${engine}`)
+        // }
+
+        // // now prompt llm
+        // console.debug(`Prompting with ${result.prompt.slice(0, 50)}…`);
+        // const response = await this.promptLlm(llm, model, result.prompt);
+        // result.response = removeMarkdown(response.content, {
+        //   stripListLeaders: false,
+        //   listUnicodeChar: ''
+        // });
+
+        // // if cancelled
+        // if (this.cancelled) {
+        //   console.debug('Discarding LLM output as command was cancelled');
+        //   result.cancelled = true;
+        //   return result;
+        // }
+
+        // // done
+        // await window.closeWaitingPanel();
+        // await window.releaseFocus();
+
+        // // now paste
+        // console.debug(`Processing LLM output: ${result.response.slice(0, 50)}…`);
+        // await this.finishCommand(command, result.response, engine, model);
+
+        // // done
+        // await window.restoreWindows();
+        // await window.releaseFocus();
+        // return result;
 
       }
 
@@ -187,7 +179,7 @@ export default class Commander {
     }
 
     // done waiting
-    await window.closeWaitingPanel();
+    //await window.closeWaitingPanel();
     await window.restoreWindows();
     await window.releaseFocus();
 
@@ -196,17 +188,17 @@ export default class Commander {
 
   }
 
-  private promptLlm = (llm: LlmEngine, model: string, prompt: string): Promise<LlmResponse> => {
+  // private promptLlm = (llm: LlmEngine, model: string, prompt: string): Promise<LlmResponse> => {
 
-    // build messages
-    const messages: Message[]  = [
-      new Message('user', prompt)
-    ]
+  //   // build messages
+  //   const messages: Message[]  = [
+  //     new Message('user', prompt)
+  //   ]
 
-    // now get it
-    return llm.complete(model, messages)
+  //   // now get it
+  //   return llm.complete(model, messages)
 
-  }
+  // }
 
   private finishCommand = async (command: Command, text: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
     
@@ -218,9 +210,9 @@ export default class Commander {
 
     if (command.action === 'chat_window') {
 
-      return window.openChatWindow({
-        promptId: Commander.putCachedText(text),
-        execute: this.shouldExecutePrompt(command),
+      return window.openPromptAnywhere({
+        promptId: putCachedText(text),
+        // execute: this.shouldExecutePrompt(command),
         engine: engine || command.engine,
         model: model || command.model
       })
@@ -244,18 +236,6 @@ export default class Commander {
 
   private shouldExecutePrompt = (command: Command): boolean => {
     return !([askMeAnythingId].includes(command.id))
-  }
-
-  static getCachedText = (id: string): string => {
-    const prompt = textCache[id]
-    delete textCache[id]
-    return prompt
-  }
-
-  static putCachedText = (text: string): string => {
-    const id = uuidv4()
-    textCache[id] = text
-    return id
   }
 
 }

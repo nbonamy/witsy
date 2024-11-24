@@ -5,7 +5,7 @@ import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index'
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = true) => {
+export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = true): BrowserWindow => {
 
   // get bounds
   const width = Math.floor(getCurrentScreen().workAreaSize.width / 2.25);
@@ -36,21 +36,24 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
     promptAnywhereWindow.webContents.send('show', params);
   }
 
+  // done
+  return promptAnywhereWindow;
+  
 }
 
 
-export const openPromptAnywhere = (params: strDict) => {
+export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
   // do we have one
   if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
     promptAnywhereWindow.webContents.send('query-params', params);
     promptAnywhereWindow.webContents.send('show', params);
     promptAnywhereWindow.show();
-    return;
+    return promptAnywhereWindow;
   }
 
   // create a new one
-  preparePromptAnywhere(params, false);
+  return preparePromptAnywhere(params, false);
 
 };
 

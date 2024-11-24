@@ -14,7 +14,7 @@ import Loader from '../components/Loader.vue'
 const hover = ref(false)
 
 const onCancel = () => {
-  window.api.commands.cancel()
+  window.api.commands.closeResult()
   window.api.anywhere.close()
 }
 

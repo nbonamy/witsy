@@ -8,7 +8,7 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
-import { wait } from './main/utils';
+import { getCachedText, wait } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
@@ -32,6 +32,7 @@ import * as window from './main/window';
 import * as markdown from './main/markdown';
 import * as menu from './main/menu';
 import * as text from './main/text';
+import Automator, { AutomationAction } from 'automations/automator';
 
 let commander: Commander = null
 let docRepo: DocumentRepository = null
@@ -287,12 +288,18 @@ ipcMain.on('commands-import', (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
-ipcMain.on('command-get-prompt', (event, payload) => {
-  event.returnValue = Commander.getCachedText(payload);
+ipcMain.on('command-picker-close', async () => {
+  await window.closeCommandPicker();
+  await window.restoreWindows();
+  await window.releaseFocus();
+});
+
+ipcMain.on('command-result-resize', async (_, payload) => {
+  await window.resizeCommandResult(payload.deltaX, payload.deltaY);
 })
 
-ipcMain.on('command-palette-close', async () => {
-  await window.closeCommandPalette();
+ipcMain.on('command-result-close', async () => {
+  await window.closeCommandResult();
   await window.restoreWindows();
   await window.releaseFocus();
 });
@@ -303,14 +310,9 @@ ipcMain.on('command-is-prompt-editable', (event, payload) => {
 
 ipcMain.on('command-run', async (event, payload) => {
 
-  // cancel any running command
-  if (commander !== null) {
-    await commander.cancelCommand();
-  }
-
   // prepare
   const args = JSON.parse(payload);
-  await window.closeCommandPalette();
+  await window.closeCommandPicker();
   await window.releaseFocus();
 
   // now run
@@ -332,16 +334,6 @@ ipcMain.on('command-run', async (event, payload) => {
       steal: true,
     });
   }
-});
-
-ipcMain.on('command-stop', async () => {
-
-  // cancel any running command
-  if (commander !== null) {
-    await commander.cancelCommand();
-    commander = null;
-  }
-
 });
 
 ipcMain.on('experts-load', (event) => {
@@ -441,17 +433,25 @@ ipcMain.on('code-python-run', async (event, payload) => {
   }
 })
 
+ipcMain.on('automation-get-text', (event, payload) => {
+  event.returnValue = getCachedText(payload);
+})
+
+ipcMain.on('automation-insert', async (event, payload) => {
+  await Automator.automate(payload, AutomationAction.INSERT_BELOW);
+})
+
+ipcMain.on('automation-replace', async (event, payload) => {
+  await Automator.automate(payload, AutomationAction.REPLACE);
+})
+
+ipcMain.on('chat-open', async (_, chatId) => {
+  await window.openMainWindow({ queryParams: { chatId: chatId } });
+})
+
 ipcMain.on('anywhere-prompt', async () => {
   await PromptAnywhere.open();
 });
-
-ipcMain.on('anywhere-insert', async (event, payload) => {
-  await PromptAnywhere.insert(app, payload);
-})
-
-ipcMain.on('anywhere-continue-as-chat', async (_, chatId) => {
-  await PromptAnywhere.continueAsChat(app, chatId);
-})
 
 ipcMain.on('anywhere-close', async () => {
   await PromptAnywhere.close();
@@ -459,10 +459,6 @@ ipcMain.on('anywhere-close', async () => {
 
 ipcMain.on('anywhere-resize', async (_, payload) => {
   await window.resizePromptAnywhere(payload.deltaX, payload.deltaY);
-})
-
-ipcMain.on('readaloud-get-text', (event, payload) => {
-  event.returnValue = ReadAloud.getCachedText(payload);
 })
 
 ipcMain.on('readaloud-close-palette', async () => {
@@ -592,8 +588,8 @@ ipcMain.handle('nestor-call-tool', async (_, payload) => {
   return nestor ? await nestor.callTool(payload.name, payload.parameters) : null
 });
 
-ipcMain.on('scratchpad-open', async () => {
-  await window.openScratchPad();
+ipcMain.on('scratchpad-open', async (_, payload) => {
+  await window.openScratchPad(payload);
 });
 
 ipcMain.on('computer-is-available', async (event) => {

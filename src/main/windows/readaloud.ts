@@ -8,12 +8,12 @@ export let readAloudPalette: BrowserWindow = null;
 export const closeReadAloudPalette = async () => {
   try {
     if (readAloudPalette && !readAloudPalette.isDestroyed()) {
-      // console.log('Closing read aloud palette')
+      // console.log('Closing read aloud picker')
       readAloudPalette?.close()
       await wait();
     }
   } catch (error) {
-    console.error('Error while closing read aloud palette', error);
+    console.error('Error while closing read aloud picker', error);
   }
   readAloudPalette = null;
 };

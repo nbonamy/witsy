@@ -106,7 +106,7 @@ test('Inserts response', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.insert').trigger('click')
-  expect(window.api.anywhere.insert).toHaveBeenCalledWith('This is a response')
+  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response')
 })
 
 test('Closes when click on icon', async () => {
@@ -153,8 +153,8 @@ test('Saves chat', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.chats).toHaveLength(1)
-  expect(window.api.history?.save).toHaveBeenCalled()
-  //expect(window.api.anywhere.continue).toHaveBeenCalledWith(chatId)
+  expect(window.api.history.save).toHaveBeenCalled()
+  //expect(window.api.chat.open).toHaveBeenCalledWith(chatId)
 })
 
 test('Auto saves chat', async () => {
@@ -166,7 +166,7 @@ test('Auto saves chat', async () => {
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.chats).toHaveLength(1)
-  expect(window.api.history?.save).toHaveBeenCalled()
+  expect(window.api.history.save).toHaveBeenCalled()
 })
 
 test('Supports keyboard copy', async () => {
@@ -178,7 +178,7 @@ test('Supports keyboard copy', async () => {
 test('Supports keyboard insert', async () => {
   await prompt()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
-  expect(window.api.anywhere?.insert).toHaveBeenCalled()
+  expect(window.api.automation.replace).toHaveBeenCalled()
 })
 
 test('Supports keyboard save', async () => {
@@ -187,7 +187,7 @@ test('Supports keyboard save', async () => {
   await wrapper.vm.$nextTick()
   expect(window.api.history?.save).toHaveBeenCalled()
   await wrapper.vm.$nextTick()
-  expect(window.api.anywhere?.continue).toHaveBeenCalled()
+  expect(window.api.chat?.open).toHaveBeenCalled()
 })
 
 test('Supports keyboard clear', async () => {

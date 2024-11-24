@@ -2,34 +2,14 @@
 <template>
   <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
-      <ResizableHorizontal :min-width="500" :resize-elems="false" :on-resize="onPromptResize" ref="resizerPrompt">
+      <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
         <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
       </ResizableHorizontal>
       <div class="spacer" />
-      <ResizableHorizontal :min-width="500" :resize-elems="false" :on-resize="onResponseResize" ref="resizerResponse" v-if="response">
-        <div class="response messages openai size4">
-          <MessageItem :message="response" :show-role="false" :show-actions="false"/>
-          <div class="actions">
-            <MessageItemActionCopy :message="response" ref="actionCopy" />
-            <div class="action insert" v-if="!isMas && !response.transient" @click="onInsert">
-              <BIconArrowReturnLeft /> Insert
-            </div>
-            <MessageItemActionRead :message="response" :audio-state="audioState" :read-aloud="onReadAloud" />
-            <div class="action continue" v-if="!response.transient" @click="onContinueConversation">
-              <BIconBoxArrowInUpRight /> Open as Chat
-            </div>
-            <div class="action clear" @click="onClear">
-              <BIconXCircle />  Clear
-            </div>
-            <div class="action close" @click="onClose">
-              <span class="narrow">Esc</span> Close
-            </div>
-          </div>
-        </div>
+      <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
+        <OutputPanel ref="output" :message="response" @close="onClose" @clear="onClear" @chat="onChat"/>
       </ResizableHorizontal>
     </div>
-    <audio ref="audio" />
-    <PromptDefaults id="defaults" @defaults-modified="initLlm" />
   </div>
 </template>
 
@@ -41,14 +21,10 @@ import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
 import { SendPromptParams } from '../components/Prompt.vue'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import ResizableHorizontal from '../components/ResizableHorizontal.vue'
 import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
-import PromptDefaults from './PromptDefaults.vue'
-import MessageItem from '../components/MessageItem.vue'
-import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
-import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import ResizableHorizontal from '../components/ResizableHorizontal.vue'
+import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
@@ -64,21 +40,12 @@ store.load()
 
 // init stuff
 const generator = new Generator(store.config)
-const audioPlayer = useAudioPlayer(store.config)
 const llmFactory = new LlmFactory(store.config)
 
-const actionCopy = ref(null)
 const prompt = ref(null)
-const isMas = ref(false)
+const output = ref(null)
 const chat: Ref<Chat> = ref(null)
 const response: Ref<Message> = ref(null)
-const resizerPrompt = ref(null)
-const resizerResponse = ref(null)
-const audio = ref(null)
-const audioState = ref({
-  state: 'idle',
-  messageId: null,
-})
 
 const props = defineProps({
   extra: Object
@@ -93,6 +60,7 @@ let llm: LlmEngine = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
+let userPrompt: String = null
 
 onMounted(() => {
   
@@ -101,16 +69,9 @@ onMounted(() => {
   onEvent('stop-prompting', onStopGeneration)
   window.api.on('show', onShow)
 
-  // audio listener init
-  audioPlayer.addListener(onAudioPlayerStatus)
-  onEvent('audio-noise-detected', () =>  audioPlayer.stop)
-
   // shotcuts work better at document level
   document.addEventListener('keyup', onKeyUp)
   document.addEventListener('keydown', onKeyDown)  
-
-  // other stuff
-  isMas.value = window.api.isMasBuild
 
   // query params
   window.api.on('query-params', (params) => {
@@ -125,11 +86,16 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
-  audioPlayer.removeListener(onAudioPlayerStatus)
   window.api.off('show', onShow)
 })
 
 const onShow = () => {
+
+  // if we have a user prompt we start over
+  if (userPrompt?.length) {
+    chat.value = null
+    response.value = null
+  }
 
   // see if chat is not that old
   if (chat.value !== null) {
@@ -154,7 +120,7 @@ const onShow = () => {
 
   // focus prompt
   if (prompt.value) {
-    prompt.value.setPrompt()
+    prompt.value.setPrompt(userPrompt || undefined)
     prompt.value.focus()
   }
 
@@ -209,21 +175,12 @@ const onKeyDown = (ev: KeyboardEvent) => {
   if (isCommand && ev.key == 'x') {
     ev.preventDefault()
     onClear()
-  } else if (isCommand && ev.key == 'c') {
-    const selection = window.getSelection()
-    if (selection == null || selection.isCollapsed) {
-      ev.preventDefault()
-      actionCopy.value?.copy()
-    }
   } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
-    onContinueConversation()
+    onChat()
   } else if (isShiftCommand && ev.key == 's') {
     ev.preventDefault()
     saveChat()
-  } else if (isCommand && ev.key == 'i') {
-    ev.preventDefault()
-    onInsert()
   }
 
 }
@@ -237,6 +194,7 @@ const onClear = () => {
   initChat()
 
   // reset response
+  output.value?.cleanUp()
   response.value = null
 
   // focus prompt
@@ -252,20 +210,25 @@ const processQueryParams = (params: anyDict) => {
   // log
   console.log('Processing query params', JSON.stringify(params))
 
-  // auto-fill
-  let expertId = null
+  // auto-select prompt
+  userPrompt = null
+  if (params.promptId) {
+    userPrompt = window.api.automation.getText(params.promptId)
+    if (userPrompt?.length) {
+      console.log(`Tiggered with prompt: ${userPrompt}`)
+    }
+  }
+
+  // auto-select expert
   if (params?.foremostApp) {
     for (const expert of store.experts) {
       if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
         console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-        expertId = expert.id
+        setExpert(expert.id)
         break
       }
     }
   }
-
-  // fill prompt
-  setExpert(expertId)
 
 }
 
@@ -298,8 +261,8 @@ const onMouseUp = (ev: MouseEvent) => {
 }
 
 const cleanUp = () => {
-  audioPlayer.stop()
   prompt.value?.setPrompt()
+  output.value?.cleanUp()
   response.value = null
 }
 
@@ -346,7 +309,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     // system instructions
     if (chat.value.messages.length === 0) {
       const systemInstructions = generator.getSystemInstructions()
-      chat.value.addMessage(new Message('system', systemInstructions  ))
+      chat.value.addMessage(new Message('system', systemInstructions))
     }
 
     // update thread
@@ -381,12 +344,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
 }
 
-const onInsert = () => {
-  if (response.value) {
-    window.api.anywhere.insert(response.value.content)
-  }
-}
-
 const saveChat = async () => {
 
   // we need a title
@@ -406,29 +363,15 @@ const saveChat = async () => {
 
 }
 
-const onContinueConversation = async () => {
+const onChat = async () => {
 
   // make sure it is saved
   await saveChat()
   
-  console.log('continue')
-  
   // continue
-  window.api.anywhere.continue(chat.value.uuid)
-  cleanUp()
+  window.api.chat.open(chat.value.uuid)
+  onClose()
 
-}
-
-const onAudioPlayerStatus = (status: AudioStatus) => {
-  audioState.value = { state: status.state, messageId: status.uuid }
-}
-
-const onReadAloud = async (message: Message) => {
-  await audioPlayer.play(audio.value.$el, message.uuid, message.content)
-}
-
-const onSettings = () => {
-  document.querySelector<HTMLDialogElement>('#defaults').showModal()
 }
 
 const onPromptResize = (deltaX: number) => {
@@ -454,6 +397,7 @@ const onResponseResize= (deltaX: number) => {
       
       .textarea-wrapper {
         textarea {
+          max-height: 100px;
           border-radius: 0px;
           background-color: var(--window-bg-color);
           padding: 6px 16px 6px 8px;
@@ -489,32 +433,6 @@ const onResponseResize= (deltaX: number) => {
 
     .icon.send, .icon.stop {
       display: none;
-    }
-  }
-
-  .actions .action {
-    -webkit-app-region: no-drag;
-  }
-
-  .response {
-    .body {
-      padding-left: 0px;
-      margin-left: 0px;
-      p:first-child {
-        margin-top: 0px !important;
-      }
-      p:last-child {
-        margin-bottom: 16px;
-      }
-      a {
-        cursor: pointer;
-      }
-      .transient {
-        margin-left: 4px;
-        .tool-call {
-          font-size: 12pt !important;
-        }
-      }
     }
   }
 
@@ -559,62 +477,6 @@ const onResponseResize= (deltaX: number) => {
   /* that does not close the window if clicked */
   .spacer {
     flex: 0 0 32px;
-  }
-
-  .response {
-    -webkit-app-region: drag;
-    box-shadow: var(--window-box-shadow);
-    background-color: var(--window-bg-color);
-    border-radius: var(--border-radius);
-    padding: 32px 0px 16px 32px;
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-
-    .message {
-      -webkit-app-region: no-drag;
-      overflow-y: auto;
-      margin-bottom: 0px;
-      padding-bottom: 0px;
-      padding-left: 0px;
-      max-height: 70vh;
-      scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
-    }
-
-    .actions {
-      display: flex;
-      flex-direction: row;
-      gap: 12px;
-      padding: 8px 24px 8px 0px;
-      padding-bottom: 2px;
-      color: var(--icon-color);
-      font-size: 10pt;
-      cursor: pointer;
-
-      .action {
-        display: flex;
-        align-items: center;
-        svg {
-          margin-right: 4px;
-        }
-        &.insert svg {
-          margin-top: 4px;
-        }
-        &.clear {
-          margin-left: auto;
-        }
-        &.close {
-          .narrow {
-            border: 1px solid var(--icon-color);
-            border-radius: 4px;
-            padding: 2px 4px;
-            transform: scale(0.65, 0.7);
-            margin-right: 0px;
-          }
-        }
-      }
-    }
-
   }
 
 }

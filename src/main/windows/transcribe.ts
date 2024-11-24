@@ -8,12 +8,12 @@ export let transcribePalette: BrowserWindow = null;
 export const closeTranscribePalette = async () => {
   try {
     if (transcribePalette && !transcribePalette.isDestroyed()) {
-      // console.log('Closing read aloud palette')
+      // console.log('Closing read aloud picker')
       transcribePalette?.close()
       await wait();
     }
   } catch (error) {
-    console.error('Error while closing read aloud palette', error);
+    console.error('Error while closing read aloud picker', error);
   }
   transcribePalette = null;
 };

@@ -2,7 +2,7 @@
 import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
-export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt'
+export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand'
 
 class TipsManager {
 
@@ -50,6 +50,7 @@ class TipsManager {
       'conversation': this.showConversationTip,
       'computerUse': this.showComputerUseWarning,
       'newPrompt': this.showNewPromptTip,
+      'newCommand': this.showNewCommandTip,
     }
 
     // get the callback
@@ -106,6 +107,14 @@ class TipsManager {
       }
     })
   
+  }
+
+  showNewCommandTip = () => {
+    Dialog.show({
+      title: 'The AI Command feature has been completely redesigned and gives you more flexibility than ever!',
+      text: 'Replace, Insert and other commands are available at the bottom of the response window.',
+      confirmButtonText: 'Got it!',
+    })
   }
 
 }

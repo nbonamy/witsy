@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
-import Commands from '../../src/screens/Commands.vue'
+import CommandPicker from '../../src/screens/CommandPicker.vue'
 
 enableAutoUnmount(afterAll)
 
@@ -15,7 +15,7 @@ beforeEach(() => {
 })
 
 test('Renders correctly', () => {
-  const wrapper = mount(Commands)
+  const wrapper = mount(CommandPicker)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.commands').exists()).toBe(true)
   expect(wrapper.findAll('.command')).toHaveLength(4)
@@ -30,11 +30,11 @@ test('Renders correctly', () => {
 // test('Closes on Escape', async () => {
 //   const wrapper = mount(Commands)
 //   await wrapper.trigger('keyup', { key: 'Escape' })
-//   expect(window.api.commands.closePalette).toHaveBeenCalled()
+//   expect(window.api.commands.closePicker).toHaveBeenCalled()
 // })
 
 test('Runs command on click', async () => {
-  const wrapper = mount(Commands, { props: { extra: { textId: 6 }}})
+  const wrapper = mount(CommandPicker, { props: { extra: { textId: 6 }}})
   const command = wrapper.findAll('.command').at(0)
   await command.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({

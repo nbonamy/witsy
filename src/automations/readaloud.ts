@@ -1,11 +1,8 @@
 
-import { strDict } from 'types/index.d'
 import { Notification } from 'electron'
 import Automator from './automator'
-import { v4 as uuidv4 } from 'uuid'
 import * as window from '../main/window'
-
-const textCache: strDict = {}
+import { putCachedText } from '../main/utils'
 
 export default class ReadAloud {
 
@@ -65,21 +62,9 @@ export default class ReadAloud {
     console.debug('Text grabbed:', `${text.slice(0, 50)}…`);
 
     // go on with a cached text id
-    const textId = ReadAloud.putCachedText(text);
+    const textId = putCachedText(text);
     await window.openReadAloudPalette(textId)
 
-  }
-
-  static getCachedText = (id: string): string => {
-    const prompt = textCache[id]
-    delete textCache[id]
-    return prompt
-  }
-
-  static putCachedText = (text: string): string => {
-    const id = uuidv4()
-    textCache[id] = text
-    return id
   }
 
 }

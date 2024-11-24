@@ -31,7 +31,7 @@ let index = 0
 
 onMounted(async () => {
   audioPlayer.addListener(onAudioPlayerStatus)
-  const text = window.api.readaloud.getText(props.extra.textId) 
+  const text = window.api.automation.getText(props.extra.textId) 
   play(text)
 })
 

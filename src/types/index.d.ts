@@ -219,13 +219,22 @@ declare global {
         load(): Chat[]
         save(chats: Chat[]): void
       }
+      automation: {
+        getText(id: string): string
+        insert(text: string): void
+        replace(text: string): void
+      }
+      chat: {
+        open(chatId: string): void
+      }
       commands: {
         load(): Command[]
         save(commands: Command[]): void
         cancel(): void
-        closePalette(): void
+        closePicker(): void
+        closeResult(): void
+        resizeResult(deltaX: number, deltaY: number): void
         run(params: RunCommandParams): void
-        getPrompt(id: string): string
         isPromptEditable(id: string): boolean
         import(): boolean
         export(): boolean
@@ -233,7 +242,6 @@ declare global {
       anywhere: {
         prompt(): void
         insert(prompt: string): void
-        continue(chatId: string): void
         close(): void
         resize(deltaX: number, deltaY: number): void
       }
@@ -256,8 +264,7 @@ declare global {
         isEmbeddingAvailable(engine: string, model: string): boolean
       },
       readaloud: {
-        getText(id: string): string
-        closePalette(): void
+        closePicker(): void
       },
       whisper: {
         initialize(): void
