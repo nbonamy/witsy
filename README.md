@@ -118,6 +118,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
+- [ ] AI Commands redesign
 
 ## DONE
 
