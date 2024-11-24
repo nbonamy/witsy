@@ -203,10 +203,6 @@ declare global {
         register(): void
         unregister(): void
       }
-      ipcRenderer: {
-        send(event: string, payload: any): void
-        sendSync(event: string, payload: any): any
-      }
       update: {
         isAvailable(): boolean
         apply(): void
@@ -255,13 +251,13 @@ declare global {
         list(): DocumentBase[]
         connect(baseId: string): void
         disconnect(): void
+        isEmbeddingAvailable(engine: string, model: string): boolean
         create(title: string, embeddingEngine: string, embeddingModel: string): string
         rename(id: string, title: string): void
         delete(id: string): void
         addDocument(id: string, type: string, url: string): void
         removeDocument(id: string, docId: string): void
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
-        isEmbeddingAvailable(engine: string, model: string): boolean
       },
       readaloud: {
         closePicker(): void
