@@ -5,7 +5,7 @@ import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
 import Wait from '../../src/screens/Wait.vue'
-import Commands from '../../src/screens/Commands.vue'
+import CommandPicker from '../../src/screens/CommandPicker.vue'
 import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 
 enableAutoUnmount(afterAll)
@@ -37,9 +37,9 @@ test('Renders Wait', () => {
 
 test('Renders Commands', () => {
   // @ts-expect-error no-other-way
-  window.location = new URL('http://localhost/#/command')
+  window.location = new URL('http://localhost/#/commands')
   const wrapper = mount(App)
-  expect(wrapper.findComponent(Commands).exists()).toBe(true)
+  expect(wrapper.findComponent(CommandPicker).exists()).toBe(true)
 })
 
 test('Renders PromptAnywhere', () => {
@@ -51,7 +51,7 @@ test('Renders PromptAnywhere', () => {
 
 test('Transmits query params', () => {
   // @ts-expect-error no-other-way
-  window.location = new URL('http://localhost/?textId=6#/command')
+  window.location = new URL('http://localhost/?textId=6#/commands')
   const wrapper = mount(App)
-  expect(wrapper.findComponent(Commands).props().extra?.textId).toBe('6')
+  expect(wrapper.findComponent(CommandPicker).props().extra?.textId).toBe('6')
 })

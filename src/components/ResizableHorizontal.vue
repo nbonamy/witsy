@@ -8,11 +8,10 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
 const props = defineProps({
   minWidth: Number,
-  onResize: Function,
   resizeElems: {
     type: Boolean,
     default: true
@@ -24,13 +23,12 @@ const container: Ref<HTMLElement|null> = ref(null)
 let child: HTMLElement|null = null
 let lastX: number|null = null
 
-onMounted(() => {
-  child = container.value!.querySelector(':not(.handle)')
-})
+const emit = defineEmits(['resize'])
 
 const startResize = (ev: MouseEvent) => {
   window.addEventListener('mousemove', onResizing)
   window.addEventListener('mouseup', stopResizing)
+  child = container.value!.querySelector(':not(.handle)')
   lastX = ev.clientX
 }
 
@@ -38,7 +36,7 @@ const onResizing = (ev: MouseEvent) => {
   if (lastX === null) return
   const deltaX = ev.clientX - lastX
   if (adjustWidth(deltaX)) {
-    props.onResize?.(deltaX)
+    emit('resize', deltaX)
     lastX = ev.clientX
   }
 }

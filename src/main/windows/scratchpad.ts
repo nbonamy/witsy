@@ -1,13 +1,22 @@
 
+import { anyDict } from '../../types/index';
 import { app } from 'electron';
 import { createWindow, titleBarOptions, getCenteredCoordinates } from './index';
+import { putCachedText } from '../../main/utils';
 
-export const openScratchPad = async () => {
+export const openScratchPad = async (text?: string|null) => {
 
   // get bounds
   const width = 800;
   const height = 600;
   const { x, y } = getCenteredCoordinates(width, height);
+
+  // query params
+  const queryParams: anyDict = {};
+  if (text) {
+    const textId = putCachedText(text);
+    queryParams['textId'] = textId;
+  }
 
   // open a new one
   const scratchpadWindow = createWindow({
@@ -19,6 +28,7 @@ export const openScratchPad = async () => {
       darkBlackThemeColor: 'rgb(56, 56, 56)',
       darkBlueThemeColor: 'rgb(18, 32, 47)',
     }),
+    queryParams,
   });
 
   // open the DevTools

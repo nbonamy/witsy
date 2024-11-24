@@ -444,5 +444,16 @@
     "state": "enabled",
     "engine": "",
     "model": ""
+  },
+  {
+    "id": "e8ab9860-b99a-4763-bbaa-8cc3b7fe9dc4",
+    "type": "system",
+    "icon": "🧑‍💻",
+    "label": "Comment this code",
+    "action": "paste_below",
+    "template": "Create comments for the code below. Answer with the whole code with comments added. Do not include any explanations.\n\n```\n{input}\n```",
+    "state": "enabled",
+    "engine": "",
+    "model": ""
   }
 ]

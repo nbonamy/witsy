@@ -63,6 +63,14 @@ contextBridge.exposeInMainWorld(
       load: (): Chat[] => { return JSON.parse(ipcRenderer.sendSync('history-load')) },
       save: (data: Chat[]) => { return ipcRenderer.send('history-save', JSON.stringify(data)) },
     },
+    automation: {
+      getText: (id: string): string => { return ipcRenderer.sendSync('automation-get-text', id) },
+      replace: (text: string): void => { return ipcRenderer.send('automation-replace', text) },
+      insert: (text: string): void => { return ipcRenderer.send('automation-insert', text) },
+    },
+    chat: {
+      open: (chatid: string): void => { return ipcRenderer.send('chat-open', chatid) },
+    },
     commands: {
       load: (): Command[] => { return JSON.parse(ipcRenderer.sendSync('commands-load')) },
       save: (data: Command[]) => { return ipcRenderer.send('commands-save', JSON.stringify(data)) },
@@ -70,14 +78,12 @@ contextBridge.exposeInMainWorld(
       import: (): void => { return ipcRenderer.sendSync('commands-import') },
       isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
       run: (params: RunCommandParams): void => { return ipcRenderer.send('command-run', JSON.stringify(params)) },
-      closePalette: (): void => { return ipcRenderer.send('command-palette-close') },
-      getPrompt: (id: string): string => { return ipcRenderer.sendSync('command-get-prompt', id) },
-      cancel: (): void => { return ipcRenderer.send('command-stop') },
+      closePicker: (): void => { return ipcRenderer.send('command-picker-close') },
+      closeResult: (): void => { return ipcRenderer.send('command-result-close') },
+      resizeResult: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('command-result-resize', { deltaX, deltaY }) },
     },
     anywhere: {
       prompt: () => { return ipcRenderer.send('anywhere-prompt') },
-      insert: (text: string): void => { return ipcRenderer.send('anywhere-insert', text) },
-      continue: (chatid: string): void => { return ipcRenderer.send('anywhere-continue-as-chat', chatid) },
       close: (): void => { return ipcRenderer.send('anywhere-close') },
       resize: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('anywhere-resize', { deltaX, deltaY }) },
     },
@@ -100,7 +106,6 @@ contextBridge.exposeInMainWorld(
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync('docrepo-is-embedding-available', { engine, model }) },
     },
     readaloud: {
-      getText: (id: string): string => { return ipcRenderer.sendSync('readaloud-get-text', id) },
       closePalette: (): void => { return ipcRenderer.send('readaloud-close-palette') },
     },
     transcribe: {
@@ -120,7 +125,7 @@ contextBridge.exposeInMainWorld(
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
     },
     scratchpad: {
-      open: (): void => { return ipcRenderer.send('scratchpad-open') },
+      open: (textId?: string): void => { return ipcRenderer.send('scratchpad-open', textId) },
     },
     dropbox: {
       getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },

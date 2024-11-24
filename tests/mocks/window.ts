@@ -48,6 +48,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     store: {
       get: vi.fn(() => null),
     },
+    automation: {
+      getText: vi.fn(() => 'text'),
+      insert: vi.fn(),
+      replace: vi.fn(),
+    },
+    chat: {
+      open: vi.fn(),
+    },
     commands: {
       load: vi.fn(() => [
         { id: 1, icon: '1', label: 'Command 1', shortcut: '1', action: 'chat_window', state: 'enabled' },
@@ -60,8 +68,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       isPromptEditable: vi.fn(() => true),
       run: vi.fn(),
       cancel: vi.fn(),
-      closePalette: vi.fn(),
-      },
+      closePicker: vi.fn(),
+      closeResult: vi.fn(),
+    },
     experts: {
       load: vi.fn(() => [
         { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
@@ -137,8 +146,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     anywhere: {
       prompt: vi.fn(),
-      insert: vi.fn(),
-      continue: vi.fn(),
       close: vi.fn(),
     },
     interpreter: {

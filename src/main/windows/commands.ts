@@ -3,25 +3,25 @@ import { BrowserWindow, screen } from 'electron';
 import { createWindow, restoreWindows } from './index';
 import { wait } from '../utils';
 
-export let commandPalette: BrowserWindow = null;
+export let commandPicker: BrowserWindow = null;
 
-export const closeCommandPalette = async () => {
+export const closeCommandPicker = async () => {
   try {
-    if (commandPalette && !commandPalette.isDestroyed()) {
-      // console.log('Closing command palette')
-      commandPalette?.close()
+    if (commandPicker && !commandPicker.isDestroyed()) {
+      // console.log('Closing command picker')
+      commandPicker?.close()
       await wait();
     }
   } catch (error) {
-    console.error('Error while closing command palette', error);
+    console.error('Error while closing command picker', error);
   }
-  commandPalette = null;
+  commandPicker = null;
 };
 
-export const openCommandPalette = async (textId: string) => {
+export const openCommandPicker = async (textId: string) => {
 
   // try to show existig one
-  closeCommandPalette();
+  closeCommandPicker();
 
   // get bounds
   const width = 300;
@@ -29,8 +29,8 @@ export const openCommandPalette = async (textId: string) => {
   const { x, y } = screen.getCursorScreenPoint();
 
   // open a new one
-  commandPalette = createWindow({
-    hash: '/command',
+  commandPicker = createWindow({
+    hash: '/commands',
     x: x - width/2,
     y: y - 24,
     width: width,
@@ -44,8 +44,8 @@ export const openCommandPalette = async (textId: string) => {
     }
   });
 
-  commandPalette.on('blur', () => {
-    closeCommandPalette();
+  commandPicker.on('blur', () => {
+    closeCommandPicker();
     restoreWindows();
   });
 

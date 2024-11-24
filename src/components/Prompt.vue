@@ -263,6 +263,9 @@ const onSetPrompt = (message: Message) => {
   nextTick(() => {
     autoGrow(input.value)
     input.value.focus()
+    try {
+      input.value.scrollTo(0, input.value.scrollHeight)
+    } catch {}
   })
 }
 

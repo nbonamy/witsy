@@ -174,6 +174,8 @@ const config: ForgeConfig = {
       unlink('node_modules/officeparser/node_modules/.bin/rimraf')
       unlink('node_modules/@langchain/core/node_modules/.bin/uuid')
       unlink('node_modules/portfinder/node_modules/.bin/mkdirp')
+      unlink('node_modules/clipboardy/node_modules/.bin/semver')
+      unlink('node_modules/clipboardy/node_modules/.bin/which')
       unlink('node_modules/execa/node_modules/.bin/semver')
       unlink('node_modules/execa/node_modules/.bin/which')
     }

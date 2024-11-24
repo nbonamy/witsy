@@ -67,6 +67,10 @@ const copyState = ref('idle')
 const modified = ref(false)
 const conversationMode = ref(null)
 
+const props = defineProps({
+  extra: Object
+})
+
 // init stuff
 store.loadSettings()
 const audioPlayer = useAudioPlayer(store.config)
@@ -151,6 +155,13 @@ onMounted(() => {
 
   // init
   resetState()
+
+  // query params
+  if (props.extra && props.extra.textId) {
+    const text = window.api.automation.getText(props.extra.textId)
+    editor.value.setContent({ content: text })
+    modified.value = true
+  }
 
 })
 

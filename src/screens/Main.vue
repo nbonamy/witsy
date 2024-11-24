@@ -109,7 +109,7 @@ const processQueryParams = (params: anyDict) => {
   if (params.promptId) {
 
     // load extra
-    prompt.value = window.api.commands.getPrompt(params.promptId) || null
+    prompt.value = window.api.automation.getText(params.promptId) || null
     engine.value = params.engine || null
     model.value = params.model || null
 
