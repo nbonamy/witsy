@@ -52,10 +52,15 @@ beforeEach(() => {
 })
 
 test('Prepare prompt', async () => {
-
   await PromptAnywhere.open()
-
   expect(window.hideWindows).toHaveBeenCalledOnce()
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
-
 })
+
+test('Close prompt', async () => {
+  await PromptAnywhere.close()
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
+  //expect(window.releaseFocus).toHaveBeenCalledOnce()
+})
+

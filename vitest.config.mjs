@@ -36,6 +36,7 @@ export default defineConfig({
         'src/services/*worker.ts',
         'src/llms/*worker.ts',
         'src/vendor/**/*',
+        'tools/**/*'
       ]
     },
   },

@@ -1,5 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
+import { Notification } from 'electron'
 import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
@@ -10,6 +11,16 @@ import LlmMock from '../mocks/llm'
 import { getCachedText, putCachedText } from '../../src/main/utils'
 
 let cachedTextId: string = null
+let selectedText: string|null = ''
+
+// mock electron
+vi.mock('electron', async() => {
+  const Notification = vi.fn();
+  Notification.prototype.show = vi.fn();
+  return {
+    Notification
+  }
+})
 
 // mock windows
 vi.mock('../../src/main/window.ts', async () => {
@@ -27,7 +38,7 @@ vi.mock('../../src/main/window.ts', async () => {
 vi.mock('../../src/automations/automator.ts', async () => {
   const Automator = vi.fn()
   Automator.prototype.moveCaretBelow =  vi.fn()
-  Automator.prototype.getSelectedText = vi.fn(() => 'Grabbed text')
+  Automator.prototype.getSelectedText = vi.fn(() => selectedText)
   Automator.prototype.pasteText = vi.fn()
   Automator.prototype.copyToClipboard = vi.fn()
   return { default: Automator }
@@ -72,6 +83,8 @@ const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' |
 
 test('Prepare command', async () => {
 
+  selectedText = 'Grabbed text'
+
   await Commander.initCommand()
 
   expect(window.hideWindows).toHaveBeenCalledOnce()
@@ -81,6 +94,38 @@ test('Prepare command', async () => {
 
   const textId = window.openCommandPicker.mock.calls[0][0]
   expect(getCachedText(textId)).toBe('Grabbed text')
+
+})
+
+test('Error while grabbing', async () => {
+
+  selectedText = null
+
+  await Commander.initCommand()
+
+  expect(window.hideWindows).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
+
+  expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
+
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
+
+})
+
+test('No text to grab', async () => {
+
+  selectedText = ''
+
+  await Commander.initCommand()
+
+  expect(window.hideWindows).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
+
+  expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
+
+  expect(window.restoreWindows).toHaveBeenCalledOnce()
 
 })
 
