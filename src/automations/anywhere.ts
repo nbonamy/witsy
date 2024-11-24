@@ -4,9 +4,6 @@ import * as window from '../main/window'
 
 export default class PromptAnywhere {
 
-  constructor() {
-  }
-
   static open = async (): Promise<void> => {
 
     // get foremost app
