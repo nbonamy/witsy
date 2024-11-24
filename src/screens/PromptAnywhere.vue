@@ -61,6 +61,8 @@ let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
 let userPrompt: String = null
+let userEngine: String = null
+let userModel: String = null
 
 onMounted(() => {
   
@@ -88,6 +90,39 @@ onUnmounted(() => {
   document.removeEventListener('keyup', onKeyUp)
   window.api.off('show', onShow)
 })
+
+const processQueryParams = (params: anyDict) => {
+
+  // log
+  console.log('Processing query params', JSON.stringify(params))
+
+  // reset stuff
+  userPrompt = null
+  userEngine = null
+  userModel = null
+
+  // auto-select prompt
+  if (params.promptId) {
+    userPrompt = window.api.automation.getText(params.promptId)
+    if (userPrompt?.length) {
+      console.log(`Tiggered with prompt: ${userPrompt}`)
+      userEngine = params.engine
+      userModel = params.model
+    }
+  }
+
+  // auto-select expert
+  if (params?.foremostApp) {
+    for (const expert of store.experts) {
+      if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
+        console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
+        setExpert(expert.id)
+        break
+      }
+    }
+  }
+
+}
 
 const onShow = () => {
 
@@ -141,8 +176,8 @@ const initChat = () => {
 const initLlm = () => {
 
   // get engine and model
-  let engine = store.config.prompt.engine
-  let model = store.config.prompt.model
+  let engine = userEngine || store.config.prompt.engine
+  let model = userModel || store.config.prompt.model
   if (!engine.length || !model.length) {
     ({ engine, model } = llmFactory.getChatEngineModel(false))
   }
@@ -161,6 +196,11 @@ const initLlm = () => {
   // set engine model
   chat.value.setEngineModel(engine, model)
 
+}
+
+const setExpert = (id: string) => {
+  const expert = store.experts.find((p) => p.id == id)
+  emitEvent('set-expert', expert || null)
 }
 
 const onKeyDown = (ev: KeyboardEvent) => {
@@ -183,58 +223,6 @@ const onKeyDown = (ev: KeyboardEvent) => {
     saveChat()
   }
 
-}
-
-const onClear = () => {
-
-  // stop generation
-  onStopGeneration()
-
-  // reset all messages
-  initChat()
-
-  // reset response
-  output.value?.cleanUp()
-  response.value = null
-
-  // focus prompt
-  if (prompt.value) {
-    prompt.value.setPrompt()
-    prompt.value.focus()
-  }
-
-}
-
-const processQueryParams = (params: anyDict) => {
-
-  // log
-  console.log('Processing query params', JSON.stringify(params))
-
-  // auto-select prompt
-  userPrompt = null
-  if (params.promptId) {
-    userPrompt = window.api.automation.getText(params.promptId)
-    if (userPrompt?.length) {
-      console.log(`Tiggered with prompt: ${userPrompt}`)
-    }
-  }
-
-  // auto-select expert
-  if (params?.foremostApp) {
-    for (const expert of store.experts) {
-      if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
-        console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-        setExpert(expert.id)
-        break
-      }
-    }
-  }
-
-}
-
-const setExpert = (id: string) => {
-  const expert = store.experts.find((p) => p.id == id)
-  emitEvent('set-expert', expert || null)
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
@@ -264,6 +252,26 @@ const cleanUp = () => {
   prompt.value?.setPrompt()
   output.value?.cleanUp()
   response.value = null
+}
+
+const onClear = () => {
+
+  // stop generation
+  onStopGeneration()
+
+  // reset all messages
+  initChat()
+
+  // reset response
+  output.value?.cleanUp()
+  response.value = null
+
+  // focus prompt
+  if (prompt.value) {
+    prompt.value.setPrompt()
+    prompt.value.focus()
+  }
+
 }
 
 const onClose = () => {
