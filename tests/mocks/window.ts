@@ -21,23 +21,27 @@ const useWindowMock = (opts?: WindowMockOpts) => {
 
   let runAtLogin = false
   window.api = {
+    licensed: false,
     platform: 'darwin',
+    isMasBuild: false,
+    userDataPath: '/tmp',
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
-    listFonts: vi.fn(() => []),
     setAppearanceTheme: vi.fn(),
     showDialog: vi.fn(async () => { return { response: opts.dialogResponse, checkboxChecked: false }}),
+    listFonts: vi.fn(() => []),
     fullscreen: vi.fn(),
-    update: {
-      isAvailable: vi.fn(() => false),
-    },
     runAtLogin: {
       get: () => runAtLogin,
       set: vi.fn((state) => {
         runAtLogin = state
       })
     },
-      shortcuts: {
+    update: {
+      isAvailable: vi.fn(() => false),
+      apply: vi.fn(),
+    },
+    shortcuts: {
       register: vi.fn(),
       unregister: vi.fn(),
     },
@@ -46,6 +50,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       save: vi.fn(),
     },
     store: {
+      set: vi.fn(),
       get: vi.fn(() => null),
     },
     automation: {
@@ -65,11 +70,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { id: 5, icon: '5', label: 'Command 5', shortcut: '5', action: 'chat_window', state: 'disabled' },
       ] as unknown[] as Command[]),
       save: vi.fn(),
-      isPromptEditable: vi.fn(() => true),
-      run: vi.fn(),
       cancel: vi.fn(),
       closePicker: vi.fn(),
       closeResult: vi.fn(),
+      resizeResult: vi.fn(),
+      run: vi.fn(),
+      isPromptEditable: vi.fn(() => true),
+      import: vi.fn(),
+      export: vi.fn(),
     },
     experts: {
       load: vi.fn(() => [
@@ -78,6 +86,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
       ] as Expert[]),
       save: vi.fn(),
+      import: vi.fn(),
+      export: vi.fn(),
     },
     history: {
       load: vi.fn(() => []),
@@ -93,7 +103,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     file: {
       read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
-      extractText: vi.fn((s) => `${s}_extracted`),
+      readIcon: vi.fn(),
       save: vi.fn(() => 'file_url'),
       download: vi.fn(),
       pick: vi.fn(() => {
@@ -104,6 +114,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
          }
       }),
       pickDir: vi.fn(),
+      delete: vi.fn(),
+      find: vi.fn(),
+      extractText: vi.fn((s) => `${s}_extracted`),
+      getAppInfo: vi.fn(),
     },
     docrepo: {
       list: vi.fn((): DocumentBase[] => {
@@ -118,13 +132,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           ]},
         ]
       }),
-      delete: vi.fn(),
-      rename: vi.fn(),
-      addDocument: vi.fn(),
-      removeDocument: vi.fn(),
       isEmbeddingAvailable: vi.fn(() => true),
       connect: vi.fn(() => true),
       disconnect: vi.fn(() => true),
+      create: vi.fn(),
+      rename: vi.fn(),
+      delete: vi.fn(),
+      addDocument: vi.fn(),
+      removeDocument: vi.fn(),
       query: vi.fn(async () => [
         {
           content: 'content',
@@ -143,10 +158,15 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     nestor: {
       isAvailable: vi.fn(() => false),
+      getStatus: vi.fn(),
+      getTools: vi.fn(),
+      callTool: vi.fn(),
     },
     anywhere: {
       prompt: vi.fn(),
+      insert: vi.fn(),
       close: vi.fn(),
+      resize: vi.fn(),
     },
     interpreter: {
       python: vi.fn(() => ({ result: ['bonjour'] }))
@@ -156,7 +176,22 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     computer: {
       isAvailable: vi.fn(() => true),
-    }
+      getScaledScreenSize: vi.fn(() => ({ width: 1920, height: 1080 })),
+      getScreenNumber: vi.fn(() => 1),
+      takeScreenshot: vi.fn(() => 'screenshot_url'),
+      executeAction: vi.fn(),
+    },
+    readaloud: {
+      closePicker: vi.fn(),
+    },
+    whisper: {
+      initialize: vi.fn(),
+      transcribe: vi.fn(async () => ({ text: 'transcribed' })),
+    },
+    transcribe: {
+      insert: vi.fn(),
+      cancel: vi.fn(),
+    },
   }
 
   // @ts-expect-error mock
