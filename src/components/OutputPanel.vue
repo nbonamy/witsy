@@ -59,6 +59,10 @@ const props = defineProps({
     type: Message,
     required: true,
   },
+  allowDirectKeys: {
+    type: Boolean,
+    default: false,
+  },
   showReplace: {
     type: Boolean,
     default: false,
@@ -104,16 +108,16 @@ const onKeyDown = (ev: KeyboardEvent) => {
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
   // now check
-  if (isCommand && ev.key == 'c') {
+  if ((props.allowDirectKeys || isCommand) && ev.key == 'c') {
     const selection = window.getSelection()
     if (selection == null || selection.isCollapsed) {
       ev.preventDefault()
       actionCopy.value?.copy()
     }
-  } else if (isCommand && ev.key == 'i') {
+  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'i') {
     ev.preventDefault()
     onInsert()
-  } else if (props.showReplace && isCommand && ev.key == 'r') {
+  } else if (props.showReplace && (props.allowDirectKeys || isCommand) && ev.key == 'r') {
     ev.preventDefault()
     onReplace()
   }
