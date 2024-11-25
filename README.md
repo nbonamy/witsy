@@ -118,10 +118,9 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] AI Commands redesign
-
 ## DONE
 
+- [x] AI Commands redesign
 - [x] Token usage report
 - [x] OpenAI o1 models support
 - [x] Groq vision support
