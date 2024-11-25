@@ -339,7 +339,7 @@ const onLoad = () => {
 
       // pick
       const file = window.api.file.pick({
-        filters: [ { name: 'Scratchpad', extensions: ['*.json'] }]
+        filters: [ { name: 'Scratchpad', extensions: ['json'] }]
       })
       if (!file) return
 
