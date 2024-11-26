@@ -14,7 +14,7 @@ export const closeCommandResult = async () => {
       await wait();
     }
   } catch (error) {
-    console.error('Error while closing command picker', error);
+    console.error('Error while closing command result', error);
   }
   commandResult = null;
 };

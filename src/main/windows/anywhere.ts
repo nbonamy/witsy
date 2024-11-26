@@ -60,7 +60,14 @@ export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 export const closePromptAnywhere = async () => {
 
   // just hide so we reuse it
-  promptAnywhereWindow.hide();
+  try {
+    if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed() && promptAnywhereWindow.isVisible()) {
+      promptAnywhereWindow.hide();
+    }
+  } catch (error) {
+    console.error('Error while hiding prompt anywhere', error);
+    promptAnywhereWindow = null;
+  }
 
 }
 
