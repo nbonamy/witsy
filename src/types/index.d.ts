@@ -287,7 +287,7 @@ declare global {
         callTool(name: string, parameters: anyDict): any
       }
       scratchpad: {
-        open(): void
+        open(textId?: string): void
       }
       computer: {
         isAvailable(): boolean

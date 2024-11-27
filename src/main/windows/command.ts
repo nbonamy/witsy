@@ -52,6 +52,11 @@ export const openCommandResult = async (params: anyDict) => {
     restoreWindows();
   });
 
+  // // open the DevTools
+  // if (process.env.DEBUG) {
+  //   commandResult.webContents.openDevTools({ mode: 'right' });
+  // }
+
 }
 
 export const resizeCommandResult = async (deltaX: number, deltaY: number) => {

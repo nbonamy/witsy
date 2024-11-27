@@ -129,7 +129,7 @@ test('No text to grab', async () => {
 
 })
 
-test('Chat Window command', async () => {
+test('Prompt command', async () => {
 
   const commander = new Commander()
   const command = buildCommand('chat_window')
