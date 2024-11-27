@@ -152,7 +152,6 @@ const onInsert = () => {
 
 const onContinueConversation = async () => {
   emit('chat')
-  emit('close')
 }
 
 const onScratchPad = async () => {

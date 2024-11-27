@@ -16,18 +16,13 @@ import { Ref, ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
-import { SendPromptParams } from '../components/Prompt.vue'
 import useTipsManager from '../composables/tips_manager'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
 import LlmFactory from '../llms/llm'
-import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
 import Message from '../models/message'
 import Chat from '../models/chat'
-
-import useEventBus from '../composables/event_bus'
-const { onEvent, emitEvent } = useEventBus()
 
 // load store
 store.load()
@@ -78,17 +73,6 @@ const initLlm = (engine: string, model: string) => {
     const instance = new pluginClass(store.config.plugins[pluginName])
     llm.addPlugin(instance)
   }
-
-}
-
-const onClear = () => {
-
-  // stop generation
-  generator.stop()
-
-  // reset response
-  output.value?.cleanUp()
-  response.value = null
 
 }
 
@@ -148,8 +132,18 @@ const onChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', store.config.instructions.titling_user)])
-    chat.value.title = title.content
+    try {
+      const messages = [
+        new Message('system', store.config.instructions.titling),
+        ...chat.value.messages.slice(1),
+        new Message('user', store.config.instructions.titling_user)
+      ]
+      const title = await llm.complete(chat.value.model, messages)
+      chat.value.title = title.content
+    } catch (err) {
+      console.error('Error while titling', err)
+      chat.value.title = 'Untitled'
+    }
   }
 
   // add to history
@@ -162,7 +156,7 @@ const onChat = async () => {
 
 }
 
-const sendPrompt = async (prompt, engine, model) => {
+const sendPrompt = async (prompt: string, engine: string, model: string) => {
 
   try {
 
