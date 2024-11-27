@@ -5,6 +5,7 @@ import { saveFileContents } from '../services/download'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { HfInference } from '@huggingface/inference'
+import Replicate, { FileOutput } from 'replicate'
 import OpenAI from 'openai'
 
 export default class extends Plugin {
@@ -16,7 +17,8 @@ export default class extends Plugin {
   isEnabled(): boolean {
     return this.config?.enabled && (
       (this.config.engine == 'openai' && store.config?.engines.openai.apiKey != null) ||
-      (this.config.engine == 'huggingface' && store.config?.engines.huggingface.apiKey != null)
+      (this.config.engine == 'huggingface' && store.config?.engines.huggingface.apiKey != null) ||
+      (this.config.engine == 'replicate' && store.config?.engines.replicate.apiKey != null)
     )
   }
 
@@ -128,6 +130,8 @@ export default class extends Plugin {
       return this.openai(parameters)
     } else if (this.config.engine == 'huggingface') {
       return this.huggingface(parameters)
+    } else if (this.config.engine == 'replicate') {
+      return this.replicate(parameters)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -199,6 +203,36 @@ export default class extends Plugin {
 
   }  
 
+  async replicate(parameters: any): Promise<any> {
+
+    // init
+    const client = new Replicate({ auth: store.config.engines.replicate.apiKey }); 
+
+    // call
+    const model = store.config.engines.replicate.model.image
+    console.log(`[replicate] prompting model ${model}`)
+    const output: FileOutput[] = await client.run(model as `${string}/${string}`, {
+      input: {
+        prompt: parameters?.prompt,
+        output_format: 'jpg',
+      }
+    }) as FileOutput[];
+
+    // save the content on disk
+    const blob = Array.isArray(output) ? await output[0].blob() : await (output as FileOutput).blob()
+    const b64 = await this.blobToBase64(blob)
+    const image = b64.split(',')[1]
+    const fileUrl = saveFileContents('jpg', image)
+    //console.log('[image] saved image to', fileUrl)
+
+    // return an object
+    return {
+      path: fileUrl,
+      description: parameters?.prompt
+    }
+
+  }
+  
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
