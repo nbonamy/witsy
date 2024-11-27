@@ -12,6 +12,7 @@
       <select v-model="engine" @change="onChangeEngine">
         <option value="openai">OpenAI</option>
         <option value="huggingface">Hugging Face</option>
+        <option value="replicate">Replicate</option>
       </select>
     </div>
     <div class="group" v-if="engine == 'openai'">
@@ -25,9 +26,20 @@
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
+    <div class="group" v-if="engine == 'replicate'">
+      <label>API key</label>
+      <InputObfuscated v-model="replicateAPIKey" @blur="save" />
+    </div>
+    <div class="group" v-if="engine == 'replicate'">
+      <label>Image model</label>
+      <div class="subgroup">
+        <Combobox :items="replicate_models" placeholder="Enter a model or select from the list" v-model="image_model" @change="save"/>
+        <a href="https://replicate.com/collections/text-to-image" target="_blank">More about Replicate models</a><br/>
+      </div>
+    </div>
     <div class="group" v-if="engine == 'huggingface'">
       <label>API key</label>
-      <InputObfuscated v-model="hfAPIKey" @blur="save" />
+      <InputObfuscated v-model="huggingAPIKey" @blur="save" />
     </div>
     <div class="group" v-if="engine == 'huggingface'">
       <label>Image model</label>
@@ -49,7 +61,8 @@ import LlmFactory from '../llms/llm'
 
 const enabled = ref(false)
 const engine = ref(null)
-const hfAPIKey = ref(null)
+const huggingAPIKey = ref(null)
+const replicateAPIKey = ref(null)
 const refreshLabel = ref('Refresh')
 const image_model = ref(null)
 const image_models = ref([])
@@ -62,10 +75,19 @@ const hf_models = ref([
   'stabilityai/stable-diffusion-3.5-large-turbo',
 ].sort().map(name => ({ id: name, name })))
 
+const replicate_models = ref([
+  'black-forest-labs/flux-1.1-pro',
+  'black-forest-labs/flux-schnell',
+  'ideogram-ai/ideogram-v2',
+  'recraft-ai/recraft-v3-svg',
+  'fofr/any-comfyui-workflow',
+].sort().map(name => ({ id: name, name })))
+
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
   engine.value = store.config.plugins.image.engine || 'openai'
-  hfAPIKey.value = store.config.engines.huggingface?.apiKey || ''
+  huggingAPIKey.value = store.config.engines.huggingface?.apiKey || ''
+  replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   onChangeEngine()
 }
 
@@ -107,7 +129,8 @@ const getModels = async () => {
 const save = () => {
   store.config.plugins.image.enabled = enabled.value
   store.config.plugins.image.engine = engine.value
-  store.config.engines.huggingface.apiKey = hfAPIKey.value
+  store.config.engines.huggingface.apiKey = huggingAPIKey.value
+  store.config.engines.replicate.apiKey = replicateAPIKey.value
   store.config.engines[engine.value].model.image = image_model.value
   store.saveSettings()
 }

@@ -195,6 +195,7 @@
       }
     },
     "huggingface": {
+      "apiKey": "",
       "models": {
         "chat": [],
         "image": []
@@ -202,6 +203,17 @@
       "model": {
         "chat": "",
         "image": "black-forest-labs/FLUX.1-schnell"
+      }
+    },
+    "replicate": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": "black-forest-labs/flux-schnell"
       }
     }
   },
