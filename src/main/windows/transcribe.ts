@@ -37,6 +37,7 @@ export const openTranscribePalette = async () => {
     skipTaskbar: true,
     resizable: false,
     hiddenInMissionControl: true,
+    title: 'Dictation'
   });
 
   transcribePalette.on('closed', () => {

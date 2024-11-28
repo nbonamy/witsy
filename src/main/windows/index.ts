@@ -16,6 +16,17 @@ export const setStore = (aStore: Store): void => {
   electronStore = aStore
 }
 
+// listener
+export interface WindowListener {
+  onWindowCreated: (window: BrowserWindow) => void;
+  onWindowTitleChanged: (window: BrowserWindow) => void;
+  onWindowClosed: (window: BrowserWindow) => void;
+}
+const listeners: WindowListener[] = [];
+export const addWindowListener = (listener: WindowListener) => {
+  listeners.push(listener);
+}
+
 // titlebarOptions
 export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => {
 
@@ -80,8 +91,25 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     }
   });
 
+  // notify listeners
+  window.on('show', () => {
+    for (const listener of listeners) {
+      listener.onWindowCreated(window);
+    }
+  });
+
+  // notify listeners
+  window.webContents.on('page-title-updated', () => {
+    for (const listener of listeners) {
+      listener.onWindowTitleChanged(window);
+    }
+  });
+
   // we keep prompt anywhere all the time so we need our own way
   window.on('closed', () => {
+    for (const listener of listeners) {
+      listener.onWindowClosed(window);
+    }
     if (areAllWindowsClosed()) {
       app.emit('window-all-closed');
     }

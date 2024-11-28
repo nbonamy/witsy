@@ -23,7 +23,7 @@ export const openScratchPad = async (text?: string|null) => {
   const scratchpadWindow = createWindow({
     hash: '/scratchpad',
     x, y, width, height,
-    // --dialog-header-bg-color
+    title: 'Scratchpad',
     ...titleBarOptions({
       lightThemeColor: '#f3f3f3',
       darkBlackThemeColor: 'rgb(56, 56, 56)',

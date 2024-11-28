@@ -165,6 +165,17 @@ onMounted(() => {
 
 })
 
+const updateTitle = () => {
+  let title = 'Scratchpad'
+  if (fileUrl) {
+    title += ' - ' + URL.parse(fileUrl).pathname.split('/').pop()
+    if (modified.value) {
+      title += ' *'
+    }
+  }
+  document.title = title
+}
+
 const resetState = () => {
 
   // easy reset
@@ -181,6 +192,9 @@ const resetState = () => {
 
   // init llm
   initLlm()
+
+  // done
+  updateTitle()
 
 }
 
@@ -364,6 +378,9 @@ const onLoad = () => {
         chat.value = new Chat(scratchpad.chat)
       }
 
+      // done
+      updateTitle()
+
     } catch (err) {
       console.error(err)
       Dialog.alert('Error while loading scratchpad file')
@@ -390,6 +407,7 @@ const onSave = () => {
   if (url) {
     fileUrl = url
     modified.value = false
+    updateTitle()
   }
 }
 
