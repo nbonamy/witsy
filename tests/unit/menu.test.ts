@@ -5,6 +5,9 @@ import { installMenu } from '../../src/main/menu'
 
 vi.mock('electron', () => ({
   app: { },
+  BrowserWindow: {
+    getAllWindows: vi.fn(() => [])
+  },
   Menu: {
     buildFromTemplate: vi.fn(() => { return {}}),
     setApplicationMenu: vi.fn()

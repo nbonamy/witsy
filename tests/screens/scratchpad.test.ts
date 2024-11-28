@@ -35,7 +35,7 @@ beforeAll(() => {
     decode: vi.fn((s) => s),
     encode: vi.fn((s) => s),
   }
-  
+
   // @ts-expect-error mock
   window.api.file.pick = vi.fn(() => { return {
     contents: '{ "contents": { "content": "Hello LLM" }, "undoStack": [], "redoStack": [] }',
