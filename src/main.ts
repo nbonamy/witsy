@@ -133,14 +133,22 @@ app.whenReady().then(() => {
   nativeTheme.themeSource = settings.appearance.theme;
 
   // install the menu
-  menu.installMenu(app, {
-    quit: app.quit,
-    checkForUpdates: autoUpdater.check,
-    newPrompt: PromptAnywhere.open,
-    newChat: window.openMainWindow,
-    newScratchpad: window.openScratchPad,
-    settings: window.openSettingsWindow,
-  }, settings.shortcuts);
+  const installMenu = () => {
+    menu.installMenu(app, {
+      quit: app.quit,
+      checkForUpdates: autoUpdater.check,
+      newPrompt: PromptAnywhere.open,
+      newChat: window.openMainWindow,
+      newScratchpad: window.openScratchPad,
+      settings: window.openSettingsWindow,
+    }, settings.shortcuts);
+  }
+  window.addWindowListener({
+    onWindowCreated: installMenu,
+    onWindowTitleChanged: installMenu,
+    onWindowClosed: installMenu,
+  });
+  installMenu();
 
   // register shortcuts
   registerShortcuts();

@@ -34,6 +34,7 @@ export const openCommandResult = async (params: anyDict) => {
   commandResult = createWindow({
     hash: '/command',
     x, y, width, height: Math.floor(height * 0.75),
+    title: 'Command Result',
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
