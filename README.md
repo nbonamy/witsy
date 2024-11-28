@@ -112,7 +112,6 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Ollama function-calling (pending https://github.com/ollama/ollama-js/issues/123)
 - [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 
@@ -120,6 +119,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Ollama function-calling
 - [x] Replicate image generation
 - [x] AI Commands redesign
 - [x] Token usage report
