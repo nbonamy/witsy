@@ -16,7 +16,7 @@
             <td class="icon">{{ command.icon }}</td>
             <td class="label">{{ command.label }}</td>
             <td class="shortcut">{{ command.shortcut }}</td>
-            <td class="action">{{ action(command.action) }}</td>
+            <!-- <td class="action">{{ action(command.action) }}</td> -->
           </tr>
         </tbody>
       </table>
@@ -46,8 +46,6 @@ import CommandEditor from '../screens/CommandEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
 import { Command, Expert } from 'types'
-import { H } from 'vite/dist/node/types.d-aGj9QkWt'
-import { Mouse } from '@playwright/test'
 
 const commands = ref(null)
 const selected = ref(null)
@@ -74,7 +72,7 @@ const columns = [
   { field: 'icon', title: 'Icon' },
   { field: 'label', title: 'Name', },
   { field: 'shortcut', title: 'Shortcut', },
-  { field: 'action', title: 'Action', },
+  // { field: 'action', title: 'Action', },
 ]
 
 const action = (action: string) => {
