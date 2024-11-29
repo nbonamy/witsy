@@ -60,9 +60,9 @@ let llm: LlmEngine = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
-let userPrompt: String = null
-let userEngine: String = null
-let userModel: String = null
+let userPrompt: string = null
+let userEngine: string = null
+let userModel: string = null
 
 onMounted(() => {
   
@@ -212,13 +212,13 @@ const onKeyDown = (ev: KeyboardEvent) => {
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
   // now check
-  if (isCommand && ev.key == 'x') {
+  /*if (isCommand && ev.key == 'x') {
     ev.preventDefault()
     onClear()
   } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
     onChat()
-  } else if (isShiftCommand && ev.key == 's') {
+  } else */if (isShiftCommand && ev.key == 's') {
     ev.preventDefault()
     saveChat()
   }

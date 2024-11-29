@@ -11,7 +11,7 @@
         <BIconArrowReturnLeft /> Insert
       </div>
       <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
-      <div class="action continue" v-if="!message.transient" @click="onContinueConversation">
+      <div class="action continue" v-if="!message.transient" @click="onChat">
         <BIconChatSquare /> Chat
       </div>
       <div class="action scratchpad" v-if="!message.transient" @click="onScratchPad">
@@ -31,8 +31,7 @@
 
 <script setup lang="ts">
 
-import { anyDict } from 'types'
-import { Ref, ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import MessageItem from '../components/MessageItem.vue'
@@ -41,7 +40,7 @@ import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
-const { onEvent, emitEvent } = useEventBus()
+const { onEvent } = useEventBus()
 
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)
@@ -120,6 +119,18 @@ const onKeyDown = (ev: KeyboardEvent) => {
   } else if (props.showReplace && (props.allowDirectKeys || isCommand) && ev.key == 'r') {
     ev.preventDefault()
     onReplace()
+  } else if ((props.allowDirectKeys || isCommand) && ev.key == 't') {
+    ev.preventDefault()
+    onReadAloud(props.message)
+  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'x') {
+    ev.preventDefault()
+    onClear()
+  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'w') {
+    ev.preventDefault()
+    onScratchPad()
+  } else if ((props.allowDirectKeys || isCommand) && ev.key == 's') {
+    ev.preventDefault()
+    onChat()
   }
 
 }
@@ -150,7 +161,7 @@ const onInsert = () => {
   }
 }
 
-const onContinueConversation = async () => {
+const onChat = async () => {
   emit('chat')
 }
 
