@@ -434,9 +434,9 @@ ipcMain.on('code-python-run', async (event, payload) => {
       result: result
     }
   } catch (error) {
-    console.error(error);
+    console.log('Error while running python', error);
     event.returnValue = {
-      error: error
+      error: error || 'Unknown error'
     }
   }
 })

@@ -14,6 +14,7 @@ export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   save?: boolean
   titling?: boolean
+  disableTools?: boolean
   overwriteEngineModel?: boolean
   attachment?: Attachment
   expert?: Expert
@@ -118,10 +119,13 @@ export default class extends Generator {
     }
 
     // make sure llm has latest tools
-    for (const pluginName in availablePlugins) {
-      const pluginClass = availablePlugins[pluginName]
-      const instance = new pluginClass(this.config.plugins[pluginName])
-      this.llm.addPlugin(instance)
+    this.llm.clearPlugins()
+    if (!opts.disableTools) {
+      for (const pluginName in availablePlugins) {
+        const pluginClass = availablePlugins[pluginName]
+        const instance = new pluginClass(this.config.plugins[pluginName])
+        this.llm.addPlugin(instance)
+      }
     }
 
     // add message

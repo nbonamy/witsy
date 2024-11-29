@@ -19,7 +19,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Download an HTML page and return the text content'
+    return 'Returns the text content a web page given a URL. Use this tool to get detailed information or summarize the content of a web page.'
   }
 
   getRunningDescription(): string {

@@ -47,7 +47,7 @@ export default class extends Plugin {
     let script = parameters.script
     const lines = script.split('\n')
     const lastLine = lines[lines.length - 1]
-    if (!lastLine.startsWith('print(')) {
+    if (!lastLine.includes('print(')) {
       lines[lines.length - 1] = `print(${lastLine})`
       script = lines.join('\n')
     }
