@@ -203,7 +203,7 @@ export default class Commander {
   private finishCommand = async (command: Command, text: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
     
     // log
-    console.log('Finishing command', command, text, engine, model);
+    //console.log('Finishing command', command, text, engine, model);
 
     // we need an automator
     const automator = new Automator();

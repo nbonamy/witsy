@@ -176,7 +176,7 @@ app.whenReady().then(() => {
   docRepo = new DocumentRepository(app);
 
   // we want prompt anywhere to be as fast as possible
-  window.preparePromptAnywhere({});
+  window.preparePromptAnywhere();
 
 });
 
