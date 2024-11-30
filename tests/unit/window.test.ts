@@ -163,11 +163,13 @@ test('Close command picker window', async () => {
 })
 
 test('Create prompt anywhere window', async () => {
-  await window.openPromptAnywhere({})
+  await window.openPromptAnywhere({ promptId: '1' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?#/prompt')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
   const callParams = BrowserWindow.mock.calls[0][0]
   expectCreateWebPreferences(callParams)
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { promptId: '1'})
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show')
 })
 
 test('Close prompt anywhere window', async () => {

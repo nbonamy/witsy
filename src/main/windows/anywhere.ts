@@ -45,7 +45,7 @@ export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
   // now send our signals
   promptAnywhereWindow.webContents.send('query-params', params);
-  promptAnywhereWindow.webContents.send('show', params);
+  promptAnywhereWindow.webContents.send('show');
   promptAnywhereWindow.show();
 
   // done
