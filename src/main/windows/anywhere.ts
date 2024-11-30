@@ -5,7 +5,7 @@ import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index'
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = true): BrowserWindow => {
+export const preparePromptAnywhere = (): BrowserWindow => {
 
   // get bounds
   const width = Math.floor(getCurrentScreen().workAreaSize.width / 2.25);
@@ -25,16 +25,10 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
     backgroundColor: 'rgba(0, 0, 0, 0)',
     transparent: true,
     hiddenInMissionControl: true,
-    queryParams: params,
-    keepHidden: keepHidden,
+    keepHidden: true,
     hasShadow: false,
     movable: true,
   });
-
-  // notify show
-  if (!keepHidden) {
-    promptAnywhereWindow.webContents.send('show', params);
-  }
 
   // done
   return promptAnywhereWindow;
@@ -44,16 +38,18 @@ export const preparePromptAnywhere = (params: strDict, keepHidden: boolean = tru
 
 export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
-  // do we have one
-  if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed()) {
-    promptAnywhereWindow.webContents.send('query-params', params);
-    promptAnywhereWindow.webContents.send('show', params);
-    promptAnywhereWindow.show();
-    return promptAnywhereWindow;
+  // if we don't have a window, create one
+  if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
+    preparePromptAnywhere();
   }
 
-  // create a new one
-  return preparePromptAnywhere(params, false);
+  // now send our signals
+  promptAnywhereWindow.webContents.send('query-params', params);
+  promptAnywhereWindow.webContents.send('show', params);
+  promptAnywhereWindow.show();
+
+  // done
+  return promptAnywhereWindow;
 
 };
 

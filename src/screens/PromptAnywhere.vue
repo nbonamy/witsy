@@ -69,25 +69,19 @@ onMounted(() => {
   // events
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopGeneration)
+  window.api.on('query-params', processQueryParams)
   window.api.on('show', onShow)
 
   // shotcuts work better at document level
   document.addEventListener('keyup', onKeyUp)
   document.addEventListener('keydown', onKeyDown)  
 
-  // query params
-  window.api.on('query-params', (params) => {
-    processQueryParams(params)
-  })
-  if (props.extra) {
-    processQueryParams(props.extra)
-  }
-
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
+  window.api.off('query-params', processQueryParams)
   window.api.off('show', onShow)
 })
 
@@ -105,9 +99,11 @@ const processQueryParams = (params: anyDict) => {
   if (params.promptId) {
     userPrompt = window.api.automation.getText(params.promptId)
     if (userPrompt?.length) {
-      console.log(`Tiggered with prompt: ${userPrompt}`)
+      console.log(`Triggered with prompt: ${userPrompt.replaceAll('\n', '').substring(0, 50)}...`)
       userEngine = params.engine
       userModel = params.model
+    } else {
+      console.error(`Prompt with id ${params.promptId} not found`)
     }
   }
 
