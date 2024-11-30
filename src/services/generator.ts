@@ -102,6 +102,9 @@ export default class Generator {
         } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           rc = false
+        } else if (error.status === 400 && (error.message.includes('context length') || error.message.includes('too long'))) {
+          response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
+          rc = false
         } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota'))) {
           response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
           rc = false
