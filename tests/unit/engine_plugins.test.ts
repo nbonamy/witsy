@@ -32,7 +32,7 @@ beforeAll(() => {
 test('Browse Plugin', async () => {
   const browse = new Browse(store.config.plugins.browse)
   expect(browse.isEnabled()).toBe(true)
-  expect(browse.getName()).toBe('get_html_as_text')
+  expect(browse.getName()).toBe('extract_webpage_content')
   expect(browse.getDescription()).not.toBeFalsy()
   expect(browse.getPreparationDescription()).toBeFalsy()
   expect(browse.getRunningDescription()).not.toBeFalsy()
