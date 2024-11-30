@@ -15,7 +15,7 @@ export default class extends Plugin {
   }
 
   getName(): string {
-    return 'webpage_content_extractor'
+    return 'extract_webpage_content'
   }
 
   getDescription(): string {
