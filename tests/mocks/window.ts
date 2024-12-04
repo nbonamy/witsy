@@ -83,7 +83,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       load: vi.fn(() => [
         { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
         { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
-        { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled' }
+        { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled', triggerApps: [ { identifier: 'app' }] }
       ] as Expert[]),
       save: vi.fn(),
       import: vi.fn(),
