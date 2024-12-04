@@ -168,6 +168,30 @@
     "state": "enabled"
   },
   {
+    "id": "3a219388-1f9c-4c82-8a4e-047099770004",
+    "type": "system",
+    "name": "Command-Line Assistant",
+    "prompt": "You are a terminal assistant. You answer only with the shell command needed to execute the task requested. Just reply with the plain command without any formatting and without new line at the end.",
+    "state": "enabled",
+    "triggerApps": [
+      {
+        "name": "iTerm2",
+        "identifier": "com.googlecode.iterm2",
+        "icon": "/Applications/iTerm.app/Contents/Resources/AppIcon.icns"
+      },
+      {
+        "name": "Terminal",
+        "identifier": "com.apple.Terminal",
+        "icon": "/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns"
+      },
+      {
+        "name": "Ghostty",
+        "identifier": "com.mitchellh.ghostty",
+        "icon": "/Applications/Ghostty.app/Contents/Resources/AppIcon.icns"
+      }
+    ]
+  },
+  {
     "id": "320f70d5-25aa-4e2a-88e3-8943a8cf554b",
     "type": "system",
     "name": "Commentariat",

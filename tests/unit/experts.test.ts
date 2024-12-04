@@ -41,7 +41,7 @@ test('New expert', () => {
 
 test('Load default experts', () => {
   const experts = main.loadExperts(app)
-  expect(experts).toHaveLength(165)
+  expect(experts).toHaveLength(166)
   experts.forEach((expert) => {
     expect(expert).toHaveProperty('id')
     expect(expert.type).toEqual('system')
@@ -51,9 +51,9 @@ test('Load default experts', () => {
 
 test('Load custom experts', () => {
   const experts = main.loadExperts('./tests/fixtures/experts1.json')
-  expect(experts).toHaveLength(166)
+  expect(experts).toHaveLength(167)
   expect(experts.filter(c => c.type === 'user')).toHaveLength(1)
-  expect(experts.filter(c => c.type === 'system')).toHaveLength(165)
+  expect(experts.filter(c => c.type === 'system')).toHaveLength(166)
   expect(experts.filter(c => c.state === 'deleted')).toHaveLength(1)
   expect(experts.filter(c => c.state === 'disabled')).toHaveLength(1)
 })
