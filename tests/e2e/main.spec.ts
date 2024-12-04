@@ -1,15 +1,12 @@
-import { ElectronApplication, Page, _electron as electron } from 'playwright'
+import { ElectronApplication, Page } from 'playwright'
 import { beforeAll, afterAll, expect, test } from 'vitest'
+import { launchApp } from './e2e'
 
 let electronApp: ElectronApplication
 let window: Page
 
 beforeAll(async () => {
-  electronApp = await electron.launch({
-    args: ['.vite/build/main.js'],
-    env: { ...process.env, TEST: '1' }
-  })
-  window = await electronApp.firstWindow()
+  ({ electronApp, window } = await launchApp())
 })
 
 afterAll(async () => {

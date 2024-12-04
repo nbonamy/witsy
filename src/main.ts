@@ -108,7 +108,7 @@ const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
 app.whenReady().then(() => {
 
   // check if run from app folder
-  if (process.platform === 'darwin' && !process.env.DEBUG && !app.isInApplicationsFolder()) {
+  if (process.platform === 'darwin' && !process.env.DEBUG && !process.env.TEST && !app.isInApplicationsFolder()) {
     dialog.showMessageBox({
       type: 'error',
       message: 'You need to run Witsy from the Applications folder. Move the app icon there and try again.',
@@ -154,7 +154,7 @@ app.whenReady().then(() => {
   registerShortcuts();
 
   // create the main window
-  if (!settings.general.hideOnStartup/* || process.env.DEBUG*/) {
+  if (!settings.general.hideOnStartup || process.env.TEST) {
     log.info('Creating initial main window');
     window.openMainWindow();
   } else {
@@ -176,7 +176,9 @@ app.whenReady().then(() => {
   docRepo = new DocumentRepository(app);
 
   // we want prompt anywhere to be as fast as possible
-  window.preparePromptAnywhere();
+  if (!process.env.TEST) {
+    window.preparePromptAnywhere();
+  }
 
 });
 
