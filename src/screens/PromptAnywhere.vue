@@ -60,16 +60,12 @@ let llm: LlmEngine = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
-let userPrompt: string = null
-let userEngine: string = null
-let userModel: string = null
 
 onMounted(() => {
   
   // events
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopGeneration)
-  window.api.on('query-params', processQueryParams)
   window.api.on('show', onShow)
 
   // shotcuts work better at document level
@@ -81,22 +77,22 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
-  window.api.off('query-params', processQueryParams)
   window.api.off('show', onShow)
 })
 
-const processQueryParams = (params: anyDict) => {
+const onShow = (params?: anyDict) => {
 
   // log
   console.log('Processing query params', JSON.stringify(params))
 
   // reset stuff
-  userPrompt = null
-  userEngine = null
-  userModel = null
+  let userPrompt = null
+  let userEngine = null
+  let userModel = null
+  let userExpert = null
 
   // auto-select prompt
-  if (params.promptId) {
+  if (params?.promptId) {
     userPrompt = window.api.automation.getText(params.promptId)
     if (userPrompt?.length) {
       console.log(`Triggered with prompt: ${userPrompt.replaceAll('\n', '').substring(0, 50)}...`)
@@ -112,16 +108,12 @@ const processQueryParams = (params: anyDict) => {
     for (const expert of store.experts) {
       if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
         console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
-        setExpert(expert.id)
+        userExpert = expert
         break
       }
     }
   }
-
-}
-
-const onShow = () => {
-
+  
   // if we have a user prompt we start over
   if (userPrompt?.length) {
     chat.value = null
@@ -147,11 +139,12 @@ const onShow = () => {
   }
 
   // init llm
-  initLlm()
+  initLlm(userEngine, userModel)
 
   // focus prompt
   if (prompt.value) {
     prompt.value.setPrompt(userPrompt || undefined)
+    prompt.value.setExpert(userExpert)
     prompt.value.focus()
   }
 
@@ -169,11 +162,11 @@ const initChat = () => {
 
 }
 
-const initLlm = () => {
+const initLlm = (engine?: string, model?: string) => {
 
   // get engine and model
-  let engine = userEngine || store.config.prompt.engine
-  let model = userModel || store.config.prompt.model
+  engine = engine || store.config.prompt.engine
+  model = model || store.config.prompt.model
   if (!engine.length || !model.length) {
     ({ engine, model } = llmFactory.getChatEngineModel(false))
   }
@@ -192,11 +185,6 @@ const initLlm = () => {
   // set engine model
   chat.value.setEngineModel(engine, model)
 
-}
-
-const setExpert = (id: string) => {
-  const expert = store.experts.find((p) => p.id == id)
-  emitEvent('set-expert', expert || null)
 }
 
 const onKeyDown = (ev: KeyboardEvent) => {

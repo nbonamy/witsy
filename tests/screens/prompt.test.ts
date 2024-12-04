@@ -65,6 +65,14 @@ test('Initalizes LLM and chat', async () => {
   expect(wrapper.vm.chat.messages).toHaveLength(0)
 })
 
+test('Initalizes Expert', async () => {
+  const wrapper = mount(PromptAnywhere)
+  wrapper.vm.onShow({ foremostApp: 'app' })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findComponent(Prompt).vm.expert).toStrictEqual(store.experts[2])
+})
+
+
 test('Closes when click on container', async () => {
   const wrapper = mount(PromptAnywhere)
   wrapper.find('.prompt').trigger('mousedown')

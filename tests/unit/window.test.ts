@@ -168,8 +168,7 @@ test('Create prompt anywhere window', async () => {
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
   const callParams = BrowserWindow.mock.calls[0][0]
   expectCreateWebPreferences(callParams)
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { promptId: '1'})
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show')
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: '1'})
 })
 
 test('Close prompt anywhere window', async () => {

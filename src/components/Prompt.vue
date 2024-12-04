@@ -193,7 +193,6 @@ onMounted(() => {
 
   // event
   onEvent('set-prompt', onSetPrompt)
-  onEvent('set-expert', onSetExpert)
   window.api.on('docrepo-modified', loadDocRepos)
   autoGrow(input.value)
 
@@ -269,7 +268,7 @@ const onSetPrompt = (message: Message) => {
   })
 }
 
-const onSetExpert = (xpert: Expert) => {
+const setExpert = (xpert: Expert) => {
   expert.value = xpert
   nextTick(() => {
     input.value.focus()
@@ -557,7 +556,7 @@ const handleExpertClick = (action: string) => {
     disableExpert()
     return
   } else if (action) {
-    onSetExpert(store.experts.find(p => p.name === action))
+    setExpert(store.experts.find(p => p.name === action))
   }
 }
 
@@ -681,6 +680,8 @@ defineExpose({
       onSetPrompt(new Message('user', message))
     }
   },
+
+  setExpert,
     
   focus: () => {
     input.value.focus()
