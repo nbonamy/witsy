@@ -119,6 +119,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Groq LLama 3.3 support
 - [x] xAI Grok Vision Model support
 - [x] Ollama function-calling
 - [x] Replicate image generation
