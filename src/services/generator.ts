@@ -105,7 +105,7 @@ export default class Generator {
         } else if (error.status === 400 && (error.message.includes('context length') || error.message.includes('too long'))) {
           response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
           rc = false
-        } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota'))) {
+        } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota') || error.message.includes('too many'))) {
           response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
           rc = false
         } else if (response.content === '') {

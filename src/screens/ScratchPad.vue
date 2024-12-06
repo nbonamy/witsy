@@ -495,46 +495,57 @@ const onSendPrompt = async (params: SendPromptParams) => {
   const response = new Message('assistant')
   chat.value.addMessage(response)
 
-  // now generate
-  processing.value = true
-  await generator.generate(llm, chat.value.messages, {
-    model: chat.value.model,
-    docrepo: chat.value.docrepo,
-    sources: false,
-  })
+  try {
+
+    // now generate
+    processing.value = true
+    const rc = await generator.generate(llm, chat.value.messages, {
+      model: chat.value.model,
+      docrepo: chat.value.docrepo,
+      sources: false,
+    })
+
+    if (!rc) {
+      throw new Error(response.content)
+    }
+
+    // done
+    modified.value = true
+
+    // default to all response
+    const action = {
+      content: response.content,
+      start: 0,
+      end: 0
+    }
+
+    // if we have a selection, replace it
+    if (selection) {
+      action.content = contents.content.substring(0, contents.start) + response.content + contents.content.substring(contents.end)
+      action.start = contents.start
+      action.end = contents.start + response.content.length
+    }
+
+    // add to undo stack
+    undoStack.value.push({
+      before: contents,
+      after: action,
+      messages: chat.value.messages.slice(-2)
+    })
+
+    // empty redo
+    redoStack.value = []
+
+    // now do it
+    editor.value.setContent(action)
+
+  } catch (err) {
+    console.error(err)
+    Dialog.alert('Error while generating text')
+  }
 
   // done
   emitEvent('llm-done', null)
-  modified.value = true
-
-  // default to all response
-  const action = {
-    content: response.content,
-    start: 0,
-    end: 0
-  }
-
-  // if we have a selection, replace it
-  if (selection) {
-    action.content = contents.content.substring(0, contents.start) + response.content + contents.content.substring(contents.end)
-    action.start = contents.start
-    action.end = contents.start + response.content.length
-  }
-
-  // add to undo stack
-  undoStack.value.push({
-    before: contents,
-    after: action,
-    messages: chat.value.messages.slice(-2)
-  })
-
-  // empty redo
-  redoStack.value = []
-
-  // now do it
-  editor.value.setContent(action)
-
-  // done
   processing.value = false
     
 }
