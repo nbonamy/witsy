@@ -1,7 +1,7 @@
 
 <template>
   <div class="group pull">
-    <label>Pull nodel</label>
+    <label>Pull model</label>
     <div class="subgroup">
       <Combobox class="combobox" :items="pullableModels" placeholder="Enter a model name to pull or select one" v-model="pull_model" />
       <a :href="props.infoUrl" target="_blank">{{ props.infoText }}</a>
