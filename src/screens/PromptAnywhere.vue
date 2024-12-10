@@ -9,6 +9,11 @@
               <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
             </div>
           </template>
+          <template v-slot:actions>
+            <div class="info" v-if="chat">
+              <BIconGlobe /> {{ chat.engine }} / {{ chat.model }}
+            </div>
+          </template>
         </Prompt>
       </ResizableHorizontal>
       <div class="spacer" />
@@ -443,7 +448,24 @@ const onResponseResize= (deltaX: number) => {
     }
 
     .actions {
+      width: calc(100% - 12px);
       padding: 4px 12px;
+      .icon {
+        margin-right: 8px;
+      }
+      .info {
+        display: flex;
+        align-items: center;
+        color: var(--prompt-icon-color);
+        opacity: 0.5;
+        font-size: 10pt;
+        margin-left: auto;
+        svg {
+          margin-top: 2px;
+          font-size: 10pt;
+          margin-right: 6px;
+        }
+      }
     }
 
     .input {
