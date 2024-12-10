@@ -6,6 +6,7 @@
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
+      <slot name="actions" />
     </div>
     <slot name="between" />
     <div class="input" @paste="onPaste">
@@ -716,6 +717,10 @@ defineExpose({
 
 .prompt .icon.dictate.active {
   color: red;
+}
+
+.prompt .actions {
+  display: flex;
 }
 
 .prompt .actions-many .icon {
