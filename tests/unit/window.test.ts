@@ -42,6 +42,7 @@ vi.mock('electron', async () => {
     on: vi.fn(),
     send: vi.fn(),
     setWindowOpenHandler: vi.fn(),
+    openDevTools: vi.fn(),
   }
   const app = {
     dock: {
