@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
@@ -49,7 +49,7 @@ beforeEach(() => {
 })
 
 test('Renders correctly', () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.scratchpad').exists()).toBe(true)
   expect(wrapper.findComponent(Toolbar).exists()).toBe(true)
@@ -60,7 +60,7 @@ test('Renders correctly', () => {
 })
 
 test('Initalizes correctly', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   expect(wrapper.vm.llm).toBeDefined()
   expect(wrapper.vm.llm.getName()).toBe('mock')
   expect(wrapper.vm.chat.messages).toHaveLength(1)
@@ -70,7 +70,7 @@ test('Initalizes correctly', async () => {
 })
 
 test('Sends prompt and sets modified', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as \'## Title ##\' or \'** Text **\'. Do not include anything else in the response including things like \'here is the...\'"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
@@ -78,7 +78,7 @@ test('Sends prompt and sets modified', async () => {
 })
 
 test('Sends prompt with params', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as \'## Title ##\' or \'** Text **\'. Do not include anything else in the response including things like \'here is the...\'"},{"role":"user","content":"prompt1\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
@@ -86,7 +86,7 @@ test('Sends prompt with params', async () => {
 })
 
 test('Clears chat', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
@@ -96,7 +96,7 @@ test('Clears chat', async () => {
 })
 
 test('Undo/redo', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.vm.undoStack).toHaveLength(1)
@@ -114,14 +114,14 @@ test('Undo/redo', async () => {
 })
 
 test('Loads chat', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('action', 'load')
   await vi.waitUntil(async () => wrapper.vm.fileUrl)
   expect(wrapper.findComponent(EditableText).text()).toBe('Hello LLM')
 })
 
 test('Saves chat', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   emitEvent('action', 'save')
@@ -129,14 +129,14 @@ test('Saves chat', async () => {
 })
 
 test('Sets engine', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('action', { type: 'llm', value: { engine: 'openai', model: 'chat' }})
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat')
 })
 
 test('Replaces selection', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   wrapper.vm.editor.setContent({ content: 'Hello SELECTED LLM', start: 6, end: 14})
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
@@ -147,22 +147,22 @@ test('Replaces selection', async () => {
 })
 
 test('Copies text', async () => {
-  const wrapper = mount(ScratchPad)
+  const wrapper: VueWrapper<any> = mount(ScratchPad)
   wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
   emitEvent('action', 'copy')
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hello LLM')
 })
 
 // test('Reads text', async () => {
-//   const wrapper = mount(ScratchPad)
+//   const wrapper: VueWrapper<any> = mount(ScratchPad)
 //   wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
 //   emitEvent('action', 'read')
 // })
 
 for (const action of ['spellcheck', 'improve', 'takeaways', 'title', 'simplify', 'expand']) {
   test(`Runs action ${action}`, async () => {
-    const wrapper = mount(ScratchPad)
-    wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
+    const wrapper: VueWrapper<any> = mount(ScratchPad)
+      wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
     emitEvent('action', { type: 'magic', value: action } )
     await vi.waitUntil(async () => !wrapper.vm.processing)
     expect(wrapper.findComponent(EditableText).text()).toContain(defaultSettings.instructions.scratchpad[action])

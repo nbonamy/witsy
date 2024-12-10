@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 
-import { anyDict } from 'types'
+import { anyDict, ExternalApp } from 'types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
@@ -64,7 +64,7 @@ type LastViewed = {
 }
 
 let llm: LlmEngine = null
-let hiddenPrompt = null
+let hiddenPrompt: string|null = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false

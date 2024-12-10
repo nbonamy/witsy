@@ -1,7 +1,7 @@
 
 export type SourceType = 'file'|'folder'|'url'|'text'
 
-export interface DocumentSource {
+export type DocumentSource = {
   uuid: string
   type: SourceType
   title: string
@@ -11,7 +11,14 @@ export interface DocumentSource {
   items?: DocumentSource[]
 }
 
-export interface DocumentBase {
+export type DocumentMetadata = {
+  uuid: string,
+  type: SourceType,
+  title: string,
+  url: string
+}
+
+export type DocumentBase = {
   uuid: string
   name: string
   embeddingEngine: string
@@ -19,17 +26,17 @@ export interface DocumentBase {
   documents: DocumentSource[]
 }
 
-export interface DocRepoQueryResponseItem {
+export type DocRepoQueryResponseItem = {
   content: string
   score: number
   metadata: DocumentSource
 }
 
-export interface DocRepoQueryResponse {
+export type DocRepoQueryResponse = {
   items: DocRepoQueryResponseItem[]
 }
 
-export interface DocRepoAddDocResponse {
+export type DocRepoAddDocResponse = {
   queueItem: DocumentQueueItem
   queueLength: number
   error?: string

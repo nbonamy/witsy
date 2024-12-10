@@ -9,6 +9,7 @@ import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
+import { DocumentMetadata } from '../../src/types/rag'
 
 const EMPTY_PDF = '----------------Page (0) Break----------------'
 
@@ -25,13 +26,13 @@ vi.mock('electron', async() => {
 
 vi.mock('../../src/rag/embedder', async() => {
   const Embedder = vi.fn()
-  Embedder.dimensions = vi.fn(() => 384)
+  Embedder['dimensions'] = vi.fn(() => 384)
   Embedder.prototype.embed = vi.fn((texts: string[]) => {
     if (texts[0].includes('squash') && texts[0].includes('tennis')) return Array(texts.length).fill(embeddings['squashtennis'])
     else if (texts[0].includes('squash')) return Array(texts.length).fill(embeddings['squash'])
     else return Array(texts.length).fill(embeddings['other'])
   })
-  Embedder.init = vi.fn(() => new Embedder())
+  Embedder['init'] = vi.fn(() => new Embedder())
   return { default: Embedder }
 })
 
@@ -126,9 +127,10 @@ test('Docrepo add document', async () => {
 
   // check item
   expect(items[0].metadata.docId).toBe(docid)
-  expect(items[0].metadata.metadata.type).toBe('file')
-  expect(items[0].metadata.metadata.title).toBe('docrepo.json')
-  expect(items[0].metadata.metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
+  const metadata: DocumentMetadata = items[0].metadata.metadata as unknown as DocumentMetadata
+  expect(metadata.type).toBe('file')
+  expect(metadata.title).toBe('docrepo.json')
+  expect(metadata.url).toBe(`file://${path.join(os.tmpdir(), 'docrepo.json')}`)
   
 })
 
@@ -250,12 +252,14 @@ test('Docrepo add folder', async () => {
   expect(items).toHaveLength(2)
 
   // check items
-  expect(items[0].metadata.metadata.type).toBe('file')
-  expect(items[0].metadata.metadata.title).toBe('docrepo.json')
-  expect(items[0].metadata.metadata.url).toBe(`file://${path.join(tempdir, 'docrepo.json')}`)
-  expect(items[1].metadata.metadata.type).toBe('file')
-  expect(items[1].metadata.metadata.title).toBe('docrepo2.json')
-  expect(items[1].metadata.metadata.url).toBe(`file://${path.join(tempdir, 'docrepo2.json')}`)
+  const metadata0: DocumentMetadata = items[0].metadata.metadata as unknown as DocumentMetadata
+  const metadata1: DocumentMetadata = items[1].metadata.metadata as unknown as DocumentMetadata
+  expect(metadata0.type).toBe('file')
+  expect(metadata0.title).toBe('docrepo.json')
+  expect(metadata0.url).toBe(`file://${path.join(tempdir, 'docrepo.json')}`)
+  expect(metadata1.type).toBe('file')
+  expect(metadata1.title).toBe('docrepo2.json')
+  expect(metadata1.url).toBe(`file://${path.join(tempdir, 'docrepo2.json')}`)
 
 })
 

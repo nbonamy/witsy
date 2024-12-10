@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 
-import { Command } from 'types'
+import { Command, ExternalApp } from 'types'
 import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import {

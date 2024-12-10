@@ -1,6 +1,6 @@
 
-import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
-import { Notification } from 'electron'
+import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
+import { app, Notification } from 'electron'
 import { Command } from '../../src/types/index.d'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
@@ -18,6 +18,7 @@ vi.mock('electron', async() => {
   const Notification = vi.fn();
   Notification.prototype.show = vi.fn();
   return {
+    app: {},
     Notification
   }
 })
@@ -94,7 +95,7 @@ test('Prepare command', async () => {
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
-  const params = window.openCommandPicker.mock.calls[0][0]
+  const params = (window.openCommandPicker as Mock).mock.calls[0][0]
   expect(params.textId).toBeDefined()
   expect(params.sourceApp).toBe('appPath')
   expect(getCachedText(params.textId)).toBe('Grabbed text')
@@ -138,7 +139,7 @@ test('Prompt command', async () => {
   const commander = new Commander()
   const command = buildCommand('chat_window')
   command.id = notEditablePrompts[0]
-  await commander.execCommand(null, { textId: cachedTextId, sourceApp: 'appPath', command })
+  await commander.execCommand(app, { textId: cachedTextId!, sourceApp: 'appPath', command })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
@@ -148,7 +149,7 @@ test('Prompt command', async () => {
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
   expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
-  const args = window.openPromptAnywhere.mock.calls[0][0]
+  const args = (window.openPromptAnywhere as Mock).mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
   expect(prompt).toBe('Explain this:\n"""Grabbed text"""')
   expect(args.sourceApp).toBe('appPath')
@@ -161,7 +162,7 @@ test('Other commands', async () => {
 
   const commander = new Commander()
   const command = buildCommand('chat_window')
-  await commander.execCommand(null, { textId: cachedTextId, sourceApp: '', command })
+  await commander.execCommand(app, { textId: cachedTextId!, sourceApp: '', command })
 
   expect(window.openCommandResult).toHaveBeenCalledOnce()
 
@@ -169,7 +170,7 @@ test('Other commands', async () => {
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
   expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
-  const args = window.openCommandResult.mock.calls[0][0]
+  const args = (window.openCommandResult as Mock).mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
   expect(prompt).toBe('Explain this:\n"""Grabbed text"""')
   expect(args.engine).toBe('mock')

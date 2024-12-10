@@ -22,8 +22,8 @@ test('Renders correctly', () => {
 
   for (let i=0; i<4; i++) {
     const command = wrapper.findAll('.command').at(i)
-    expect(command.find('.icon').text()).toBe(`${i+1}`)
-    expect(command.find('.label').text()).toBe(`Command ${i+1}`)
+    expect(command!.find('.icon').text()).toBe(`${i+1}`)
+    expect(command!.find('.label').text()).toBe(`Command ${i+1}`)
   }
 })
 
@@ -36,7 +36,7 @@ test('Renders correctly', () => {
 test('Runs command on click', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6 }}})
   const command = wrapper.findAll('.command').at(0)
-  await command.trigger('click')
+  await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({
     command: {
       action: 'chat_window',

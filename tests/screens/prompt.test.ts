@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { Expert } from '../../src/types'
@@ -39,7 +39,7 @@ beforeEach(() => {
 })
 
 const prompt = async (attachment: Attachment|null = null, docrepo: string|null = null, expert: Expert|null = null) => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   emitEvent('send-prompt', { prompt: 'Hello LLM', attachment, docrepo, expert } as SendPromptParams)
@@ -48,7 +48,7 @@ const prompt = async (attachment: Attachment|null = null, docrepo: string|null =
 }
 
 test('Renders correctly', () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.anywhere').exists()).toBe(true)
   expect(wrapper.findComponent(Prompt).exists()).toBe(true)
@@ -57,7 +57,7 @@ test('Renders correctly', () => {
 })
 
 test('Initalizes LLM and chat', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.llm).toBeDefined()
@@ -66,15 +66,15 @@ test('Initalizes LLM and chat', async () => {
 })
 
 test('Initalizes Expert', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow({ foremostApp: 'app' })
   await wrapper.vm.$nextTick()
-  expect(wrapper.findComponent(Prompt).vm.expert).toStrictEqual(store.experts[2])
+  expect((wrapper.findComponent(Prompt).vm as unknown as typeof Prompt).expert).toStrictEqual(store.experts[2])
 })
 
 
 test('Closes when click on container', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.find('.prompt').trigger('mousedown')
   wrapper.find('.container').trigger('mouseup')
   expect(window.api.anywhere.close).not.toHaveBeenCalled()
@@ -84,7 +84,7 @@ test('Closes when click on container', async () => {
 })
 
 test('Renders response', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.response').exists()).toBe(true)
@@ -102,7 +102,7 @@ test('Submits prompt with params', async () => {
 })
 
 test('Copies response', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.copy').trigger('click')
@@ -110,7 +110,7 @@ test('Copies response', async () => {
 })
 
 test('Inserts response', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.insert').trigger('click')
@@ -118,7 +118,7 @@ test('Inserts response', async () => {
 })
 
 test('Closes when click on icon', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
@@ -143,7 +143,7 @@ test('Resets chat', async () => {
 })
 
 test('Brings back chat', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   const chatId = wrapper.vm.chat.uuid
@@ -166,7 +166,7 @@ test('Saves chat', async () => {
 })
 
 test('Auto saves chat', async () => {
-  const wrapper = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   store.config.prompt.autosave = true
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()

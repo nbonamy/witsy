@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import CommandResult from '../../src/screens/CommandResult.vue'
@@ -8,9 +8,6 @@ import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
 import LlmMock from '../mocks/llm'
-
-import useEventBus  from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
 
 // mock llm
 vi.mock('../../src/llms/llm.ts', async () => {
@@ -44,7 +41,7 @@ test('Renders correctly', () => {
 })
 
 test('Initalizes LLM and chat', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.processQueryParams({ promptId: '1', engine: 'mock', model: 'chat' })
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.llm).toBeDefined()
@@ -53,14 +50,14 @@ test('Initalizes LLM and chat', async () => {
 })
 
 test('Closes when click on container', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.find('.container').trigger('mousedown')
   wrapper.find('.container').trigger('mouseup')
   expect(window.api.commands.closeResult).toHaveBeenCalled()
 })
 
 test('Renders response', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.response').exists()).toBe(true)
@@ -68,14 +65,14 @@ test('Renders response', async () => {
 })
 
 test('Submits prompt', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.processQueryParams({ promptId: '1', engine: 'mock', model: 'chat' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Copies response', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.copy').trigger('click')
@@ -83,7 +80,7 @@ test('Copies response', async () => {
 })
 
 test('Inserts response', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.insert').trigger('click')
@@ -91,7 +88,7 @@ test('Inserts response', async () => {
 })
 
 test('Closes when click on icon', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
@@ -99,7 +96,7 @@ test('Closes when click on icon', async () => {
 })
 
 test('Supports keyboard copy', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
@@ -109,7 +106,7 @@ test('Supports keyboard copy', async () => {
 })
 
 test('Supports keyboard insert', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
@@ -119,7 +116,7 @@ test('Supports keyboard insert', async () => {
 })
 
 test('Supports keyboard replace', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'r' }));
@@ -129,7 +126,7 @@ test('Supports keyboard replace', async () => {
 })
 
 test('Supports keyboard close', async () => {
-  const wrapper = mount(CommandResult)
+  const wrapper: VueWrapper<any> = mount(CommandResult)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));

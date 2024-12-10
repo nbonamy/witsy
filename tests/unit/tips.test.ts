@@ -7,7 +7,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()
-  Swal.fire = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
+  Swal['fire'] = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
   return { default: Swal }
 })
 

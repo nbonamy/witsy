@@ -25,8 +25,8 @@ vi.mock('electron', async() => {
 })
 
 test('Find program', async () => {
-  expect(file.findProgram(null, 'sh')).toMatch(/^.*\/sh$/)
-  expect(file.findProgram(null, 'sh2')).toBeNull()
+  expect(file.findProgram(app, 'sh')).toMatch(/^.*\/sh$/)
+  expect(file.findProgram(app, 'sh2')).toBeNull()
 })
 
 test('Get file contents', async () => {
@@ -44,7 +44,7 @@ test('Delete file', async () => {
   const tempFile = path.join(os.tmpdir(), 'vitest')
   fs.writeFileSync(tempFile, 'Hello')
   expect(fs.existsSync(tempFile)).toBeTruthy()
-  file.deleteFile(null, tempFile)
+  file.deleteFile(app, tempFile)
   expect(fs.existsSync(tempFile)).toBeFalsy()
 })
 
@@ -59,7 +59,7 @@ test('Write file contents', async () => {
   expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
-  file.deleteFile(null, `file://${tempFile}`)
+  file.deleteFile(app, `file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeFalsy()
 })
 
@@ -75,7 +75,7 @@ test('Download local file', async () => {
   expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
-  file.deleteFile(null, `file://${tempFile}`)
+  file.deleteFile(app, `file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeFalsy()
 })
 
@@ -91,6 +91,6 @@ test('Download remote file', async () => {
   expect(fileURL).toBe(`file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeTruthy()
   expect(fs.readFileSync(tempFile, 'utf8')).toBe('Hello from TEXT')
-  file.deleteFile(null, `file://${tempFile}`)
+  file.deleteFile(app, `file://${tempFile}`)
   expect(fs.existsSync(tempFile)).toBeFalsy()
 })
