@@ -137,8 +137,10 @@ const onShow = (params?: anyDict) => {
   // source app
   if (params?.sourceApp?.length) {
     sourceApp.value = window.api.file.getAppInfo(params.sourceApp)
-    hiddenPrompt = userPrompt
-    userPrompt = null
+    if (sourceApp.value) {
+      hiddenPrompt = userPrompt
+      userPrompt = null
+    }
   }
   
   // see if chat is not that old
