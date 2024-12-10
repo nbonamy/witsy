@@ -130,7 +130,7 @@ test('Ignite Engine', async () => {
 
 test('Anthropic Computer Use', async () => {
   const anthropic = await llmFactory.igniteEngine('anthropic')
-  expect(anthropic.computerInfo).not.toBeNull()
+  expect(anthropic['computerInfo']).not.toBeNull()
 })
 
 test('Reflects configuration changes', () => {

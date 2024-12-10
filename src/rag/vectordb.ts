@@ -1,4 +1,5 @@
 
+import { DocumentMetadata } from '../types/rag'
 import { LocalIndex } from 'vectra'
 
 export default class VectorDB{
@@ -47,12 +48,12 @@ export default class VectorDB{
     return this.index.endUpdate()
   }
 
-  async insert(docid: string, content: string, vector: number[], metadata: any): Promise<string> {
+  async insert(docid: string, content: string, vector: number[], metadata: DocumentMetadata): Promise<string> {
     const item = await this.index.insertItem({
       metadata: {
         docId: docid,
         content: content,
-        metadata: metadata
+        metadata: metadata as any,
       },
       vector:vector,
     })

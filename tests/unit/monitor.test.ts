@@ -6,7 +6,7 @@ import path from 'path'
 import fs from 'fs'
 import os from 'os'
 
-let monitor: Monitor = null
+let monitor: Monitor|null = null
 const callback = vi.fn()
 const tempFile = path.join(os.tmpdir(), 'vitest')
 
@@ -27,7 +27,7 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  monitor.stop()
+  monitor!.stop()
 })
 
 test('Start monitor', async () => {

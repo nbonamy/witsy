@@ -1,6 +1,6 @@
 
 import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
-import { mount, enableAutoUnmount } from '@vue/test-utils'
+import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import EmptyChat from '../../src/components/EmptyChat.vue'
@@ -62,7 +62,7 @@ beforeEach(() => {
 })
 
 test('Renders correctly', async () => {
-  const wrapper = mount(EmptyChat)
+  const wrapper: VueWrapper<any> = mount(EmptyChat)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.empty').exists()).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(true)
@@ -72,13 +72,13 @@ test('Renders correctly', async () => {
 })
 
 test('Renders engines and models', async () => {
-  const wrapper = mount(EmptyChat)
+  const wrapper: VueWrapper<any> = mount(EmptyChat)
   expect(wrapper.findAllComponents(EngineLogo).length).toBe(availableEngines.length)
   expect(wrapper.findAll('.empty select option')).toHaveLength(3)
 })
 
 test('Selects engine', async () => {
-  const wrapper = mount(EmptyChat)
+  const wrapper: VueWrapper<any> = mount(EmptyChat)
   await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(false)

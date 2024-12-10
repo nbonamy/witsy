@@ -1,5 +1,5 @@
 
-import { vi, beforeEach, expect, test } from 'vitest'
+import { vi, beforeEach, expect, test, Mock } from 'vitest'
 import { BrowserWindow } from 'electron'
 import * as window from '../../src/main/window'
 
@@ -11,6 +11,7 @@ vi.mock('electron', async () => {
     this.visible = true
     this.minimized = false
     this.destroyed = false
+    return this
   })
   BrowserWindow.prototype.show = vi.fn()
   BrowserWindow.prototype.hide = vi.fn(function() { this.visible = false })
@@ -28,7 +29,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.setBounds = vi.fn()
   BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.getSize = vi.fn(() => [0, 0])
-  BrowserWindow.getAllWindows = vi.fn(() => {
+  BrowserWindow['getAllWindows'] = vi.fn(() => {
     const window1 = new BrowserWindow()
     const window2 = new BrowserWindow()
     const window3 = new BrowserWindow()
@@ -95,7 +96,7 @@ test('Create main window', async () => {
 
 test('Main window properties', async () => {
   await window.openMainWindow()
-  const callParams = BrowserWindow.mock.calls[0][0]
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expect(callParams.width).toBeDefined()
   expect(callParams.height).toBeDefined()
   expect(callParams.titleBarOverlay).toBeDefined()
@@ -144,7 +145,7 @@ test('Create chat window', async () => {
   const chatWindow = await window.openChatWindow({ promptId: '1'})
   expect(chatWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=1#')
-  const callParams = BrowserWindow.mock.calls[0][0]
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
@@ -152,12 +153,12 @@ test('Create command picker window', async () => {
   await window.openCommandPicker({ textId: '1' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=1#/commands')
-  const callParams = BrowserWindow.mock.calls[0][0]
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('Close command picker window', async () => {
-  await window.openCommandPicker('1')
+  await window.openCommandPicker({ textId: '1' })
   await window.closeCommandPicker()
   expect(window.commandPicker).toBeNull()
 })
@@ -166,7 +167,7 @@ test('Create prompt anywhere window', async () => {
   await window.openPromptAnywhere({ promptId: '1' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
-  const callParams = BrowserWindow.mock.calls[0][0]
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: '1'})
 })

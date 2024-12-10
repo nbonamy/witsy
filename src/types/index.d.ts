@@ -255,7 +255,7 @@ declare global {
         query(id: string, text: string): Promise<DocRepoQueryResponseItem[]>
       },
       readaloud: {
-        closePicker(): void
+        closePalette(): void
       },
       whisper: {
         initialize(): void

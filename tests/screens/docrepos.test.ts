@@ -1,6 +1,6 @@
 
-import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import DocRepos from '../../src/screens/DocRepos.vue'
 
@@ -29,7 +29,7 @@ beforeEach(() => {
 })
 
 test('Renders correctly', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.master').exists()).toBe(true)
@@ -42,25 +42,25 @@ test('Renders correctly', async () => {
 })
 
 test('Initializes correctly', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   expect(wrapper.findAll('.master .item')).toHaveLength(2)
   expect(wrapper.find('.master .item:nth-child(1)').text()).toBe('docrepo1')
   expect(wrapper.find('.master .item:nth-child(2)').text()).toBe('docrepo2')
   expect(wrapper.find('.master .item.selected').text()).toBe('docrepo1')
-  expect(wrapper.find('.details .name input').element.value).toBe('docrepo1')
-  expect(wrapper.find('.details .embeddings input').element.value).toBe('ollama / all-minilm')
+  expect(wrapper.find<HTMLInputElement>('.details .name input').element.value).toBe('docrepo1')
+  expect(wrapper.find<HTMLInputElement>('.details .embeddings input').element.value).toBe('ollama / all-minilm')
   expect(wrapper.findAll('.details .documents .item')).toHaveLength(0)
 })
 
 test('Selects correctly', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   expect(wrapper.findAll('.master .item')).toHaveLength(2)
   await wrapper.find('.master .item:nth-child(2)').trigger('click')
   expect(wrapper.find('.master .item.selected').text()).toBe('docrepo2')
-  expect(wrapper.find('.details .name input').element.value).toBe('docrepo2')
-  expect(wrapper.find('.details .embeddings input').element.value).toBe('openai / text-embedding-ada-002')
+  expect(wrapper.find<HTMLInputElement>('.details .name input').element.value).toBe('docrepo2')
+  expect(wrapper.find<HTMLInputElement>('.details .embeddings input').element.value).toBe('openai / text-embedding-ada-002')
   expect(wrapper.findAll('.details .documents .item')).toHaveLength(2)
   expect(wrapper.find('.details .documents .item:nth-child(1)').text()).toBe('file1 (/tmp/file1)')
   expect(wrapper.find('.details .documents .item:nth-child(2)').text()).toBe('folder1 (2 files) (/tmp/folder1)')
@@ -72,19 +72,19 @@ test('Selects correctly', async () => {
 })
 
 test('Shows create editor', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.create').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-create', null)
 })
 
 test('Shows configuration', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.config').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-config', null)
 })
 
 test('Deletes base', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .actions button.delete').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalled()
@@ -92,14 +92,14 @@ test('Deletes base', async () => {
 })
 
 test('Renames base', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.details .name input').setValue('docrepo1-new')
   expect(window.api.docrepo.rename).toHaveBeenCalledWith('uuid1', 'docrepo1-new')
 })
 
 test('Adds documents', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.details .actions button.add').trigger('click')
   expect(wrapper.find('.context-menu').exists()).toBe(true)
@@ -107,17 +107,17 @@ test('Adds documents', async () => {
   await wrapper.find('.context-menu .item:nth-child(1)').trigger('click')
   expect(window.api.file.pick).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(2)
-  expect(window.api.docrepo.addDocument.mock.calls[0]).toStrictEqual(['uuid1', 'file', 'file4'])
-  expect(window.api.docrepo.addDocument.mock.calls[1]).toStrictEqual(['uuid1', 'file', 'file5'])
+  expect((window.api.docrepo.addDocument as Mock).mock.calls[0]).toStrictEqual(['uuid1', 'file', 'file4'])
+  expect((window.api.docrepo.addDocument as Mock).mock.calls[1]).toStrictEqual(['uuid1', 'file', 'file5'])
   await wrapper.find('.details .actions button.add').trigger('click')
   await wrapper.find('.context-menu .item:nth-child(2)').trigger('click')
   expect(window.api.file.pickDir).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(3)
-  expect(window.api.docrepo.addDocument.mock.calls[2]).toStrictEqual(['uuid1', 'folder', 'folder2'])
+  expect((window.api.docrepo.addDocument as Mock).mock.calls[2]).toStrictEqual(['uuid1', 'folder', 'folder2'])
 })
 
 test('Deletes documents', async () => {
-  const wrapper = mount(DocRepos)
+  const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .item:nth-child(2)').trigger('click')
   await wrapper.find('.details .actions button.remove').trigger('click')

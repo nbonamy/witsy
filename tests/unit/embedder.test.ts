@@ -34,8 +34,8 @@ beforeEach(() => {
 })
 
 test('Model ready', async () => {
-  expect(Embedder.isModelReady(null, 'openai', 'text-embedding-ada-002')).toBeTruthy()
-  expect(Embedder.isModelReady(null, 'ollama', 'all-minilm')).toBeTruthy()
+  expect(Embedder.isModelReady(app, 'openai', 'text-embedding-ada-002')).toBeTruthy()
+  expect(Embedder.isModelReady(app, 'ollama', 'all-minilm')).toBeTruthy()
 })
 
 test('Model dimensions', async () => {

@@ -53,13 +53,13 @@ test('Load from contents', async () => {
 })
 
 test('Load from url', async () => {
-  const text = new Attachment(null, 'text/plain', 'file://text', false, true)
+  const text = new Attachment('', 'text/plain', 'file://text', false, true)
   expect(text.content).toBe('text_encoded_decoded')
 
-  const pdf = new Attachment(null, 'application/pdf', 'file://pdf', false, true)
+  const pdf = new Attachment('', 'application/pdf', 'file://pdf', false, true)
   expect(pdf.content).toBe('pdf_encoded_extracted')
 
-  const image = new Attachment(null, 'image/png', 'file://image', false, true)
+  const image = new Attachment('', 'image/png', 'file://image', false, true)
   expect(image.content).toBe('image_encoded')
 })
 
