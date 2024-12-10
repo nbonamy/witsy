@@ -10,7 +10,7 @@ import Automator from '../../src/automations/automator'
 import LlmMock from '../mocks/llm'
 import { getCachedText, putCachedText } from '../../src/main/utils'
 
-let cachedTextId: string = null
+let cachedTextId: string|null = null
 let selectedText: string|null = ''
 
 // mock electron
@@ -37,6 +37,8 @@ vi.mock('../../src/main/window.ts', async () => {
 // mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
   const Automator = vi.fn()
+  Automator.prototype.getForemostAppId =  vi.fn(() => 'appId')
+  Automator.prototype.getForemostAppPath =  vi.fn(() => 'appPath')
   Automator.prototype.moveCaretBelow =  vi.fn()
   Automator.prototype.getSelectedText = vi.fn(() => selectedText)
   Automator.prototype.pasteText = vi.fn()
@@ -92,8 +94,10 @@ test('Prepare command', async () => {
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
-  const textId = window.openCommandPicker.mock.calls[0][0]
-  expect(getCachedText(textId)).toBe('Grabbed text')
+  const params = window.openCommandPicker.mock.calls[0][0]
+  expect(params.textId).toBeDefined()
+  expect(params.sourceApp).toBe('appPath')
+  expect(getCachedText(params.textId)).toBe('Grabbed text')
 
 })
 
@@ -134,7 +138,7 @@ test('Prompt command', async () => {
   const commander = new Commander()
   const command = buildCommand('chat_window')
   command.id = notEditablePrompts[0]
-  await commander.execCommand(null, cachedTextId, command)
+  await commander.execCommand(null, { textId: cachedTextId, sourceApp: 'appPath', command })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
   expect(window.restoreWindows).toHaveBeenCalledOnce()
@@ -147,6 +151,7 @@ test('Prompt command', async () => {
   const args = window.openPromptAnywhere.mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
   expect(prompt).toBe('Explain this:\n"""Grabbed text"""')
+  expect(args.sourceApp).toBe('appPath')
   expect(args.engine).toBe('mock')
   expect(args.model).toBe('chat')
 
@@ -156,7 +161,7 @@ test('Other commands', async () => {
 
   const commander = new Commander()
   const command = buildCommand('chat_window')
-  await commander.execCommand(null, cachedTextId, command)
+  await commander.execCommand(null, { textId: cachedTextId, sourceApp: '', command })
 
   expect(window.openCommandResult).toHaveBeenCalledOnce()
 

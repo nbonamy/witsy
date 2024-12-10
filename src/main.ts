@@ -1,6 +1,8 @@
 
 import { type Chat, type Command, type Expert } from './types/index.d';
 import { type Configuration } from './types/config.d';
+import { RunCommandParams } from './types/automation';
+
 import process from 'node:process';
 import fontList from 'font-list';
 import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
@@ -327,7 +329,7 @@ ipcMain.on('command-run', async (event, payload) => {
 
   // now run
   commander = new Commander();
-  const result = await commander.execCommand(app, args.textId, args.command);
+  const result = await commander.execCommand(app, args as RunCommandParams);
   commander = null;
   
   // cancelled

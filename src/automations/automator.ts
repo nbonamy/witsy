@@ -26,15 +26,24 @@ export default class Automator {
     }
   }
 
-  async getForemostApp(): Promise<string> {
+  async getForemostAppId(): Promise<string> {
     try {
-      return await this.automator.getForemostApp();
+      return await this.automator.getForemostAppId();
     } catch (error) {
       console.error(error);
       return null;
     }
   }
 
+  async getForemostAppPath(): Promise<string> {
+    try {
+      return await this.automator.getForemostAppPath();
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+  
   async selectAll(): Promise<void> {
     try {
       await this.automator.selectAll();

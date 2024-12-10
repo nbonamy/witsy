@@ -1,11 +1,13 @@
 <template>
   <div class="prompt">
-    <div class="icons-left" :class="iconsLeftCount">
+    <slot name="before" />
+    <div class="actions" :class="actionsCount">
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
     </div>
+    <slot name="between" />
     <div class="input" @paste="onPaste">
       <div v-if="attachment" class="attachment" @click="onDetach">
         <AttachmentView class="attachment" :attachment="attachment" />
@@ -17,7 +19,7 @@
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
     </div>
-    <slot />
+    <slot name="after" />
     <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -124,9 +126,9 @@ const menuY = ref(0)
 const engine = () => props.chat?.engine || llmFactory.getChatEngineModel().engine
 const model = () => props.chat?.model || llmFactory.getChatEngineModel().model
 
-const iconsLeftCount = computed(() => {
+const actionsCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
-  return `icons-left-${count > 1 ? 'many' : count}`
+  return `actions-${count > 1 ? 'many' : count}`
 })
 
 const isProcessing = computed(() => {
@@ -716,17 +718,17 @@ defineExpose({
   color: red;
 }
 
-.prompt .icons-left-many .icon {
+.prompt .actions-many .icon {
   padding-left: 4px;
   padding-right: 4px;
 }
 
-.prompt .icons-left-many .icon.attach {
+.prompt .actions-many .icon.attach {
   padding-left: 3px;
   padding-right: 3px;
 }
 
-.prompt .icons-left-many .icon.dictate {
+.prompt .actions-many .icon.dictate {
   padding-left: 0px;
   padding-right: 0px;
 }
@@ -748,6 +750,7 @@ defineExpose({
 .input .attachment {
   margin-top: 4px;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 .input .textarea-wrapper {

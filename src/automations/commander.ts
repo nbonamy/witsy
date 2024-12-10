@@ -1,7 +1,7 @@
 
 import { Command } from '../types/index.d'
 import { Configuration } from '../types/config.d'
-import { RunCommandResponse } from '../types/automation.d'
+import { RunCommandParams, RunCommandResponse } from '../types/automation.d'
 import { App, BrowserWindow, Notification } from 'electron'
 import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
@@ -32,6 +32,7 @@ export default class Commander {
     // grab text
     const automator = new Automator();
     const text = await automator.getSelectedText();
+    const sourceApp = await automator.getForemostAppPath();
     //console.log('Text grabbed', text);
 
     // // select all
@@ -74,15 +75,20 @@ export default class Commander {
 
     // go on with a cached text id
     const textId = putCachedText(text);
-    await window.openCommandPicker(textId)
+    await window.openCommandPicker({ textId, sourceApp });
 
   }
 
-  execCommand = async (app: App, textId: string, command: Command): Promise<RunCommandResponse> => {
+  execCommand = async (app: App, params: RunCommandParams): Promise<RunCommandResponse> => {
 
+    // deconstruct
+    const { textId, sourceApp, command } = params;
+    //console.log('Running command', textId, sourceApp, command);
+    
     //
     const result: RunCommandResponse = {
       text: getCachedText(textId),
+      sourceApp: sourceApp,
       prompt: null as string | null,
       response: null as string | null,
       chatWindow: null as BrowserWindow | null,
@@ -117,7 +123,7 @@ export default class Commander {
       //if (action === 'chat_window') {
       if (command.id == askMeAnythingId) {
         
-        result.chatWindow = await this.finishCommand(command, result.prompt, engine, model);
+        result.chatWindow = await this.finishCommand(command, result.prompt, result.sourceApp, engine, model);
 
       } else {
 
@@ -200,7 +206,7 @@ export default class Commander {
 
   // }
 
-  private finishCommand = async (command: Command, text: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
+  private finishCommand = async (command: Command, text: string, sourceApp: string, engine: string, model: string): Promise<BrowserWindow|undefined> => {
     
     // log
     //console.log('Finishing command', command, text, engine, model);
@@ -212,6 +218,7 @@ export default class Commander {
 
       return window.openPromptAnywhere({
         promptId: putCachedText(text),
+        sourceApp: sourceApp,
         // execute: this.shouldExecutePrompt(command),
         engine: engine || command.engine,
         model: model || command.model

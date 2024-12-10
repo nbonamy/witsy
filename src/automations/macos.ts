@@ -4,7 +4,7 @@ import applescript from 'applescript';
 
 export default class implements Automator {
 
-  async getForemostApp(): Promise<string> {
+  async getForemostAppId(): Promise<string> {
 
     const script = `
       tell application "System Events"
@@ -19,6 +19,21 @@ export default class implements Automator {
 
   }
 
+  async getForemostAppPath(): Promise<string> {
+
+    const script = `
+      tell application "System Events"
+        set appPath to file of first application process whose frontmost is true
+      end tell
+      return appPath
+    `
+
+    // run it
+    const app = await this.runScript(script);
+    return (app as string).replace('/Volumes/Preboot/Cryptexes/App/System', '');
+
+  }
+  
   async selectAll(){
     
     const script = `

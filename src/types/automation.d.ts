@@ -13,17 +13,25 @@ export interface ShortcutCallbacks {
 }
 
 export interface Automator {
-  getForemostApp(): Promise<string>
+  getForemostAppId(): Promise<string>
+  getForemostAppPath(): Promise<string>
   selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>
   pasteText(): Promise<void>
 }
 
-export interface RunCommandResponse {
+export type RunCommandParams = {
+  textId: string
+  sourceApp: string | null
+  command: Command
+}
+
+export type RunCommandResponse = {
   text: string
   prompt: string|null
   response: string|null
   chatWindow: BrowserWindow | null
+  sourceApp: string | null
   cancelled: boolean
 }

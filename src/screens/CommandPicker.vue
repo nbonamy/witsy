@@ -1,10 +1,15 @@
 <template>
   <div class="commands">
-    <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand($event, command)">
-      <div class="icon">{{ command.icon }}</div>
-      <div class="label">{{ command.label }}</div>
-      <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
-      <!-- <div class="action"><component :is="action(command)"></component></div> -->
+    <div class="app" v-if="sourceApp">
+      <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+    </div>
+    <div class="list">
+      <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand($event, command)">
+        <div class="icon">{{ command.icon }}</div>
+        <div class="label">{{ command.label }}</div>
+        <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
+        <!-- <div class="action"><component :is="action(command)"></component></div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -12,7 +17,7 @@
 <script setup lang="ts">
 
 import { Command } from 'types'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import {
   BIconBoxArrowInUpRight,
@@ -30,10 +35,19 @@ const props = defineProps({
 })
 
 const overrideAction = ref(false)
+const sourceApp: Ref<ExternalApp|null> = ref(null)
+
+const iconData = computed(() => {
+  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
+  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+})
 
 onMounted(() => {
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
+  if (props.extra?.sourceApp) {
+    sourceApp.value = window.api.file.getAppInfo(props.extra.sourceApp)
+  }
 })
 
 onUnmounted(() => {
@@ -81,7 +95,7 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
 
   // now run it
   window.api.commands.run({
-    textId: props.extra.textId,
+    ...props.extra,
     command: JSON.parse(JSON.stringify(command))
   })
 }
@@ -101,8 +115,35 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   flex-direction: column;
   background-color: var(--window-bg-color);
   color: var(--text-color);
-  overflow: auto;
   padding: 10px;
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+  background-color: black;
+  color: var(--window-bg-color);
+  border-radius: 6px;
+  align-items: center;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+  font-size: 10pt;
+  font-weight: 500;
+  .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .app {
+    background-color: white;
+  }
+}
+
+.list {
+  overflow: auto;
 }
 
 .command {
@@ -112,6 +153,10 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   padding: 4px 8px;
   font-size: 10pt;
   font-family: -apple-system;
+}
+
+.commands:has(.app) .command:first-child {
+  padding-top: 2px;
 }
 
 .command:hover {
@@ -124,6 +169,7 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   flex: 0 0 24px;
   font-size: 13pt;
   text-align: center;
+  margin-right: 4px;
 }
 
 .windows .icon {

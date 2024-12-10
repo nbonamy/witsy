@@ -149,7 +149,7 @@ test('Create chat window', async () => {
 })
 
 test('Create command picker window', async () => {
-  await window.openCommandPicker('1')
+  await window.openCommandPicker({ textId: '1' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=1#/commands')
   const callParams = BrowserWindow.mock.calls[0][0]
