@@ -146,11 +146,6 @@ export type ComputerAction = {
   text?: string
 }
 
-export type RunCommandParams = {
-  textId: string
-  command: Command
-}
-
 export type FileSaveParams = {
   contents: string
   url?: string

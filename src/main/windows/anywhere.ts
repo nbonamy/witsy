@@ -8,7 +8,7 @@ export let promptAnywhereWindow: BrowserWindow = null;
 export const preparePromptAnywhere = (): BrowserWindow => {
 
   // get bounds
-  const width = Math.floor(getCurrentScreen().workAreaSize.width / 2.25);
+  const width = 700;//Math.floor(getCurrentScreen().workAreaSize.width / 2.25);
   const height = getCurrentScreen().workAreaSize.height;
   const { x } = getCenteredCoordinates(width, height);
   const y = Math.floor(height * 0.15);

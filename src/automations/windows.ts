@@ -4,7 +4,11 @@ import { runVbs } from '@el3um4s/run-vbs'
 
 export default class implements Automator {
 
-  async getForemostApp(): Promise<string> {
+  async getForemostAppId(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getForemostAppPath(): Promise<string> {
     throw new Error('Method not implemented.');
   }
 

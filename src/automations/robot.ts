@@ -5,7 +5,11 @@ import { Automator } from '../types/automation.d';
 
 export default class RobotAutomator implements Automator {
   
-  async getForemostApp(): Promise<string> {
+  async getForemostAppId(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getForemostAppPath(): Promise<string> {
     throw new Error('Method not implemented.');
   }
 

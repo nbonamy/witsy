@@ -10,7 +10,7 @@ export default class PromptAnywhere {
     let foremostApp = '';
     if (process.platform === 'darwin') {
       const automator = new Automator();
-      foremostApp = await automator.getForemostApp();
+      foremostApp = await automator.getForemostAppId();
     }
 
     // open prompt

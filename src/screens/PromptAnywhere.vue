@@ -3,7 +3,13 @@
   <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
-        <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false" />
+        <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
+          <template v-slot:after>
+            <div class="app" v-if="sourceApp">
+              <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+            </div>
+          </template>
+        </Prompt>
       </ResizableHorizontal>
       <div class="spacer" />
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
@@ -16,7 +22,7 @@
 <script setup lang="ts">
 
 import { anyDict } from 'types'
-import { Ref, ref, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
@@ -33,7 +39,7 @@ import Chat from '../models/chat'
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
-const promptChatTimeout = 1000 * 60 * 1
+const promptChatTimeout = 1000 * 60 * 5
 
 // load store
 store.load()
@@ -43,6 +49,7 @@ const generator = new Generator(store.config)
 const llmFactory = new LlmFactory(store.config)
 
 const prompt = ref(null)
+const sourceApp: Ref<ExternalApp|null> = ref(null)
 const output = ref(null)
 const chat: Ref<Chat> = ref(null)
 const response: Ref<Message> = ref(null)
@@ -57,9 +64,15 @@ type LastViewed = {
 }
 
 let llm: LlmEngine = null
+let hiddenPrompt = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
+
+const iconData = computed(() => {
+  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
+  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+})
 
 onMounted(() => {
   
@@ -86,6 +99,7 @@ const onShow = (params?: anyDict) => {
   console.log('Processing query params', JSON.stringify(params))
 
   // reset stuff
+  hiddenPrompt = null
   let userPrompt = null
   let userEngine = null
   let userModel = null
@@ -107,19 +121,26 @@ const onShow = (params?: anyDict) => {
   if (params?.foremostApp) {
     for (const expert of store.experts) {
       if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
-        console.log(`Tiggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
+        console.log(`Triggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
         userExpert = expert
         break
       }
     }
   }
-  
+
   // if we have a user prompt we start over
   if (userPrompt?.length) {
     chat.value = null
     response.value = null
   }
 
+  // source app
+  if (params?.sourceApp?.length) {
+    sourceApp.value = window.api.file.getAppInfo(params.sourceApp)
+    hiddenPrompt = userPrompt
+    userPrompt = null
+  }
+  
   // see if chat is not that old
   if (chat.value !== null) {
     if (lastSeenChat == null || lastSeenChat.uuid !== chat.value.uuid || lastSeenChat.when < Date.now() - promptChatTimeout) {
@@ -304,8 +325,13 @@ const onSendPrompt = async (params: SendPromptParams) => {
       chat.value.addMessage(new Message('system', systemInstructions))
     }
 
+    // final prompt
+    const finalPrompt = hiddenPrompt ? `${hiddenPrompt} ${prompt}` : prompt;
+    sourceApp.value = null
+    hiddenPrompt = null
+
     // update thread
-    const userMessage = new Message('user', prompt)
+    const userMessage = new Message('user', finalPrompt)
     userMessage.expert = expert
     if (attachment) {
       attachment.loadContents()
@@ -382,10 +408,51 @@ const onResponseResize= (deltaX: number) => {
 
   .prompt {
 
+    flex-direction: column-reverse;
+    justify-content: start;
+    align-items: flex-start;
+    padding-left: 12px !important;
+    
+    .app {
+      width: calc(100% - 12px);
+      display: flex;
+      flex-direction: row;
+      background-color: black;
+      color: var(--window-bg-color);
+      border-radius: 8px;
+      align-items: center;
+      padding: 2px 8px;
+      margin-bottom: 8px;
+      font-size: 11pt;
+      font-weight: 500;
+      .icon {
+        padding: 0px;
+        margin: 0px;
+        width: 28px;
+        height: 28px;
+        margin-right: 4px;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .app {
+        background-color: white;
+      }
+    }
+
+    .actions {
+      padding: 4px 12px;
+    }
+
     .input {
+      width: 100%;
       border: none;
       border-radius: 0px;
       background-color: var(--window-bg-color);
+
+      .attachment {
+        margin-left: 4px;
+      }
       
       .textarea-wrapper {
         textarea {

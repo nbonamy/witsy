@@ -1,4 +1,5 @@
 
+import { strDict } from '../../types/index';
 import { BrowserWindow, screen } from 'electron';
 import { createWindow, restoreWindows } from './index';
 import { wait } from '../utils';
@@ -18,7 +19,7 @@ export const closeCommandPicker = async () => {
   commandPicker = null;
 };
 
-export const openCommandPicker = async (textId: string) => {
+export const openCommandPicker = async (params: strDict) => {
 
   // try to show existig one
   closeCommandPicker();
@@ -39,9 +40,7 @@ export const openCommandPicker = async (textId: string) => {
     skipTaskbar: true,
     alwaysOnTop: true,
     hiddenInMissionControl: true,
-    queryParams: {
-      textId: textId,
-    }
+    queryParams: params,
   });
 
   commandPicker.on('blur', () => {
