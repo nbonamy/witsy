@@ -6,9 +6,11 @@ import EditableText from '../../src/components/EditableText.vue'
 enableAutoUnmount(afterAll)
 
 let selection:Selection | null = null
+// @ts-expect-error mock
 window.getSelection = vi.fn(() => { return {
   ...selection,
   setBaseAndExtent: vi.fn((anchorNode, anchorOffset, focusNode, focusOffset) => {
+    // @ts-expect-error mock
     selection = { anchorNode, anchorOffset, focusNode, focusOffset, isCollapsed: false }
   })
 }})
@@ -49,7 +51,7 @@ test('Can transform selection', async () => {
   const wrapper = mount(EditableText)
   wrapper.vm.setContent({ content: 'Hello\n\nBonjour', start: 0, end: 0 })
   const lines = wrapper.find('.content').findAll('div')
-  window.getSelection().setBaseAndExtent(lines[0].element.childNodes[0].childNodes[0], 1, lines[2].element.childNodes[0].childNodes[0], 2);
+  window.getSelection()!.setBaseAndExtent(lines[0].element.childNodes[0].childNodes[0], 1, lines[2].element.childNodes[0].childNodes[0], 2);
   await wrapper.vm.$nextTick()
   await wrapper.find('.content').trigger('keyup')
   await wrapper.find('.content').trigger('blur')
