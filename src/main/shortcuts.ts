@@ -34,6 +34,12 @@ const keyToAccelerator = (key: string): string => {
   if (key === '↓') return 'Down'
   if (key === '←') return 'Left'
   if (key === '→') return 'Right'
+  if (key === 'NumpadAdd') return 'numadd'
+  if (key === 'NumpadSubtract') return 'numsub'
+  if (key === 'NumpadMultiply') return 'nummult'
+  if (key === 'NumpadDivide') return 'numdiv'
+  if (key === 'NumpadDecimal') return 'numdec'
+  if (key.startsWith('Numpad')) return `num${key.substring(6).toLowerCase()}`
   return key
 }
 
