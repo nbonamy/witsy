@@ -8,7 +8,7 @@ export let promptAnywhereWindow: BrowserWindow = null;
 export const preparePromptAnywhere = (): BrowserWindow => {
 
   // get bounds
-  const width = 750;//Math.floor(getCurrentScreen().workAreaSize.width / 2.25);
+  const width = Math.max(750, Math.floor(getCurrentScreen().workAreaSize.width / 2.25));
   const height = getCurrentScreen().workAreaSize.height;
   const { x } = getCenteredCoordinates(width, height);
   const y = Math.floor(height * 0.15);
@@ -45,7 +45,9 @@ export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
   // now send our signals
   promptAnywhereWindow.webContents.send('show', params);
-  promptAnywhereWindow.show();
+  if (!promptAnywhereWindow.isVisible()) {
+    promptAnywhereWindow.show();
+  }
 
   // done
   return promptAnywhereWindow;
