@@ -189,7 +189,7 @@ export const releaseFocus = async () => {
 };
 
 let windowsToRestore: BrowserWindow[] = [];
-export const hideWindows = async () => {
+export const hideWindows = async (except: BrowserWindow[] = []) => {
 
   // remember to restore all windows
   windowsToRestore = [];
@@ -197,6 +197,9 @@ export const hideWindows = async () => {
     // console.log('Hiding windows');
     const windows = BrowserWindow.getAllWindows();
     for (const window of windows) {
+      if (except.includes(window)) {
+        continue;
+      }
       if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
         windowsToRestore.push(window);
         window.hide();

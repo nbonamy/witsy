@@ -15,6 +15,7 @@ vi.mock('../../src/main/config.ts', async () => {
 // mock windows
 vi.mock('../../src/main/window.ts', async () => {
   return {
+    promptAnywhereWindow: null,
     openPromptAnywhere: vi.fn(),
     closePromptAnywhere: vi.fn(),
     hideWindows: vi.fn(),
