@@ -11,6 +11,23 @@ test('Shortcuts Keys', async () => {
   expect(shortcutAccelerator({key: '↓'})).toBe('Down')
   expect(shortcutAccelerator({key: '←'})).toBe('Left')
   expect(shortcutAccelerator({key: '→'})).toBe('Right')
+
+  expect(shortcutAccelerator({key: 'NumpadAdd'})).toBe('numadd')
+  expect(shortcutAccelerator({key: 'NumpadSubtract'})).toBe('numsub')
+  expect(shortcutAccelerator({key: 'NumpadMultiply'})).toBe('nummult')
+  expect(shortcutAccelerator({key: 'NumpadDivide'})).toBe('numdiv')
+  expect(shortcutAccelerator({key: 'NumpadDecimal'})).toBe('numdec')
+  expect(shortcutAccelerator({key: 'Numpad0'})).toBe('num0')
+  expect(shortcutAccelerator({key: 'Numpad1'})).toBe('num1')
+  expect(shortcutAccelerator({key: 'Numpad2'})).toBe('num2')
+  expect(shortcutAccelerator({key: 'Numpad3'})).toBe('num3')
+  expect(shortcutAccelerator({key: 'Numpad4'})).toBe('num4')
+  expect(shortcutAccelerator({key: 'Numpad5'})).toBe('num5')
+  expect(shortcutAccelerator({key: 'Numpad6'})).toBe('num6')
+  expect(shortcutAccelerator({key: 'Numpad7'})).toBe('num7')
+  expect(shortcutAccelerator({key: 'Numpad8'})).toBe('num8')
+  expect(shortcutAccelerator({key: 'Numpad9'})).toBe('num9')
+
 })
 
 test('Shortcuts Modifiers', async () => {
