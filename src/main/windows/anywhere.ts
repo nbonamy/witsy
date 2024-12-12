@@ -45,9 +45,7 @@ export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
   // now send our signals
   promptAnywhereWindow.webContents.send('show', params);
-  if (!promptAnywhereWindow.isVisible()) {
-    promptAnywhereWindow.show();
-  }
+  promptAnywhereWindow.show();
 
   // done
   return promptAnywhereWindow;

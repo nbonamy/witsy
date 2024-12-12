@@ -14,7 +14,7 @@ export default class PromptAnywhere {
     }
 
     // open prompt
-    await window.hideWindows();
+    await window.hideWindows([ window.promptAnywhereWindow ]);
     await window.openPromptAnywhere({
       foremostApp: foremostApp
     });
