@@ -1,4 +1,3 @@
-
 {
   "general": {
     "firstRun": true,
@@ -38,7 +37,8 @@
       "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
       "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT.",
       "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
-      "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made."
+      "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
+      "complete": "Complete the sentence that follows, ensuring it fits the overall context. If the current text is code, complete the code snippet. Do not use quotation marks in your response."
     }
   },
   "appearance": {
@@ -232,8 +232,7 @@
     },
     "nestor": {}
   },
-  "dropbox": {
-  },
+  "dropbox": {},
   "gdrive": {
     "tokens": null,
     "fileIds": {}
