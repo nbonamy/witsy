@@ -1,6 +1,6 @@
 
 import { strDict } from 'types/index.d';
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index';
 
 export let promptAnywhereWindow: BrowserWindow = null;
@@ -28,6 +28,11 @@ export const preparePromptAnywhere = (): BrowserWindow => {
     keepHidden: true,
     hasShadow: false,
     movable: true,
+  });
+
+  promptAnywhereWindow.on('show', () => {
+    app.focus({ steal: true });
+    promptAnywhereWindow.focusOnWebView();
   });
 
   // done

@@ -25,7 +25,7 @@ export default class PromptAnywhere {
     // close
     await window.closePromptAnywhere();
     await window.restoreWindows();
-    //await window.releaseFocus();
+    await window.releaseFocus();
 
   }
   
