@@ -43,6 +43,10 @@ export default class Attachment extends AttachmentBase {
     } 
   }
 
+  isText(): boolean {
+    return super.isText() || this.format() === 'csv'
+  }
+
   b64Contents(): string {
     if (this.isText()) {
       return window.api.base64.encode(this.content)
@@ -58,7 +62,7 @@ export default class Attachment extends AttachmentBase {
   extractText(): void {
 
     // get text
-    if (this.format() === 'txt') {
+    if (this.format() === 'txt' || this.format() === 'csv') {
       this.content = window.api.base64.decode(this.content)
     } else {
       const rawText = window.api.file.extractText(this.content, this.format())

@@ -230,6 +230,9 @@
       "enabled": true,
       "engine": "openai"
     },
+    "vega": {
+      "enabled": true
+    },
     "nestor": {}
   },
   "dropbox": {
