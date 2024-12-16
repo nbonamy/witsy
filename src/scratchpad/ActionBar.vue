@@ -58,6 +58,10 @@
         <BIconChevronBarExpand />
       </div>
     
+      <div class="action" @click="onMagicAction($event, 'complete')" v-tooltip="'Complete text'" >
+        <BIconPen />
+      </div>
+    
     </div>
   
   </div>
