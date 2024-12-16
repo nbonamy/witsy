@@ -23,6 +23,7 @@ import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
 import SettingsImage from './SettingsImage.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
+import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
 //import SettingsDropbox from './SettingsDropbox.vue'
 
@@ -36,6 +37,8 @@ import logoPython from '../../assets/python.svg'
 import logoTavily from '../../assets/tavily.svg'
 // @ts-expect-error svg
 import logoYouTube from '../../assets/youtube.svg'
+// @ts-expect-error svg
+import logoVega from '../../assets/vega.svg'
 // @ts-expect-error svg
 import logoNestor from '../../assets/nestor.jpg'
 //import logoDropbox from '../../assets/dropbox.svg'
@@ -67,6 +70,7 @@ const plugins = computed((): PluginUI[] => {
         python: 'Python',
         image: 'Text-to-Image',
         youtube: 'YouTube',
+        vega: 'Vega',
         nestor: 'Nestor',
       }[plugin],
       logo: {
@@ -75,6 +79,7 @@ const plugins = computed((): PluginUI[] => {
         python: { image: logoPython },
         image: { image: logoImage },
         youtube: { image: logoYouTube },
+        vega: { image: logoVega },
         nestor: { image: logoNestor },
       }[plugin],
     }
@@ -93,6 +98,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'tavily') return SettingsTavily
   if (currentPlugin.value == 'image') return SettingsImage
   if (currentPlugin.value == 'youtube') return SettingsYouTube
+  if (currentPlugin.value == 'vega') return SettingsVega
   if (currentPlugin.value == 'nestor') return SettingsNestor
   //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
