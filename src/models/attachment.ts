@@ -4,6 +4,8 @@ import { Attachment as AttachmentBase, extensionToMimeType } from 'multi-llm-ts'
 export { textFormats } from 'multi-llm-ts'
 export { imageFormats } from 'multi-llm-ts'
 
+const plainTextFormats = ['txt', 'csv', 'json', 'yml', 'yaml', 'xml', 'html', 'css', 'md']
+
 export default class Attachment extends AttachmentBase {
 
   url: string
@@ -43,10 +45,6 @@ export default class Attachment extends AttachmentBase {
     } 
   }
 
-  isText(): boolean {
-    return super.isText() || this.format() === 'csv'
-  }
-
   b64Contents(): string {
     if (this.isText()) {
       return window.api.base64.encode(this.content)
@@ -62,7 +60,7 @@ export default class Attachment extends AttachmentBase {
   extractText(): void {
 
     // get text
-    if (this.format() === 'txt' || this.format() === 'csv') {
+    if (plainTextFormats.includes(this.format())) {
       this.content = window.api.base64.decode(this.content)
     } else {
       const rawText = window.api.file.extractText(this.content, this.format())

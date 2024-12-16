@@ -110,7 +110,7 @@ export default class LlmFactory {
         return this.isVisionModel(engine, model)
       }
     } else {
-      return [...textFormats, 'csv'].includes(format.toLowerCase())
+      return textFormats.includes(format.toLowerCase())
     }
   }
   
