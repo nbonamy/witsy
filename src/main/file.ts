@@ -1,7 +1,7 @@
   
 import { ExternalApp, FileContents, anyDict } from 'types/index.d';
 import { App, dialog } from 'electron';
-import { extensionToMimeType } from './mimetype';
+import { extensionToMimeType } from 'multi-llm-ts';
 import { execSync } from 'child_process';
 import icns from 'icns-lib';
 import plist from 'plist';

@@ -1,7 +1,7 @@
 
 import { Configuration } from 'types/config.d'
 import { SourceType } from 'types/rag.d'
-import { extensionToMimeType } from '../main/mimetype'
+import { extensionToMimeType } from 'multi-llm-ts'
 import { getPDFRawTextContent, getOfficeRawTextContent } from '../main/text'
 import fs from 'fs'
 
