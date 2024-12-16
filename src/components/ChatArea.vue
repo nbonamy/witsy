@@ -49,6 +49,7 @@ const chatMenuPosition = computed(() => {
 const chatMenuActions = computed(() => {
   return [
     props.chat.engine ? { label: `${props.chat.engine} ${props.chat.model}`, disabled: true } : null,
+    { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
     props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: false },
@@ -90,6 +91,8 @@ const handleActionClick = async (action: string) => {
     onSave()
   } else if (action == 'exportPdf') {
     onExportPdf()
+  } else if (action == 'toogleTools') {
+    props.chat.disableTools = !props.chat.disableTools
   }
 }
 

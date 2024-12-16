@@ -12,6 +12,7 @@ const chats = [
     uuid: '123',
     engine: 'engine',
     model: 'model',
+    disableTools: false,
     messages: [
       new Message('system', 'Hi'),
       new Message('user', 'Hello')
@@ -91,6 +92,7 @@ test('Save history', async () => {
     engine: 'engine',
     model: 'model',
     deleted: false,
+    disableTools: false,
     messages: [
       { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
       { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', expert: null, toolCall: null, attachment: null, usage: null, transient: false }
