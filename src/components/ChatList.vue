@@ -55,7 +55,7 @@ const selection: Ref<string[]> = ref([])
 
 defineExpose({
   getSelection: () => selection.value,
-  clearSelection: () => selection.value = [],
+  clearSelection: () => { selection.value = [] },
 })
 
 const visibleChats = computed(() => store.chats.filter((c: Chat) => {
