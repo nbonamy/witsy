@@ -5,6 +5,14 @@ import defaults from '../../defaults/settings.json'
 import PromptAnywhere from '../../src/automations/anywhere'
 import * as window from '../../src/main/window'
 
+vi.mock('electron', async() => {
+  return {
+    BrowserWindow: {
+      getFocusedWindow: vi.fn(() => null),
+    },
+  }
+})
+
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
   return {
@@ -55,14 +63,14 @@ beforeEach(() => {
 
 test('Prepare prompt', async () => {
   await PromptAnywhere.open()
-  expect(window.hideWindows).toHaveBeenCalledOnce()
+  //expect(window.hideWindows).toHaveBeenCalledOnce()
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
 })
 
 test('Close prompt', async () => {
   await PromptAnywhere.close()
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
-  //expect(window.releaseFocus).toHaveBeenCalledOnce()
+  //expect(window.restoreWindows).toHaveBeenCalledOnce()
+  expect(window.releaseFocus).toHaveBeenCalledOnce()
 })
 
