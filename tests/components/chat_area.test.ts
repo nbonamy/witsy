@@ -85,6 +85,7 @@ test('Context menu Normal', async () => {
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'mock chat', disabled: true },
+    { label: 'Disable plugins', action: 'toogleTools', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: false }
@@ -97,6 +98,7 @@ test('Context menu Standalone', async () => {
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'mock chat', disabled: true },
+    { label: 'Disable plugins', action: 'toogleTools', disabled: false },
     { label: 'Save', action: 'save', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: false },
@@ -108,7 +110,7 @@ test('Context menu rename', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[1].trigger('click')
+  await wrapper.findAll('.context-menu .item')[2].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('rename-chat', chat)
 })
 
@@ -124,7 +126,7 @@ test('Context menu delete', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[3].trigger('click')
+  await wrapper.findAll('.context-menu .item')[4].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat!.uuid)
 })
 
@@ -132,7 +134,7 @@ test('Context menu save', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat!, standalone: true } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[1].trigger('click')
+  await wrapper.findAll('.context-menu .item')[2].trigger('click')
   expect(store.chats).toHaveLength(1)
   expect(store.chats[0]).toStrictEqual(chat)
   //TODO test store.saveHistory

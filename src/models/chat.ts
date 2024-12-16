@@ -13,6 +13,7 @@ export default class Chat implements ChatBase {
   lastModified!: number
   engine!: string|null
   model!: string|null
+  disableTools: boolean = false
   docrepo!: string|null
   messages!: Message[]
   deleted!: boolean
@@ -32,6 +33,7 @@ export default class Chat implements ChatBase {
     this.lastModified = Date.now()
     this.engine = null
     this.model = null
+    this.disableTools = false
     this.docrepo = null
     this.messages = []
     this.deleted = false
@@ -45,6 +47,7 @@ export default class Chat implements ChatBase {
     this.lastModified = obj.lastModified || obj.createdAt
     this.engine = obj.engine || 'openai'
     this.model = obj.model
+    this.disableTools = obj.disableTools
     this.docrepo = obj.docrepo
     this.messages = []
     this.deleted = false
@@ -65,6 +68,7 @@ export default class Chat implements ChatBase {
     // header
     this.title = obj.title
     this.lastModified = obj.lastModified
+    this.disableTools = obj.disableTools
     this.docrepo = obj.docrepo
 
     // messages

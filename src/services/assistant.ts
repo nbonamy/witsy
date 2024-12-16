@@ -120,7 +120,7 @@ export default class extends Generator {
 
     // make sure llm has latest tools
     this.llm.clearPlugins()
-    if (!opts.disableTools) {
+    if (!opts.disableTools && !this.chat.disableTools) {
       for (const pluginName in availablePlugins) {
         const pluginClass = availablePlugins[pluginName]
         const instance = new pluginClass(this.config.plugins[pluginName])
@@ -139,9 +139,15 @@ export default class extends Generator {
     callback?.call(null, null)
 
     // generate text
+    const hadPlugins = this.llm.plugins.length > 0
     const rc = await this.generate(this.llm, this.chat.messages, opts, callback)
     if (!rc) {
       opts.titling = false
+    }
+
+    // check if generator disabled plugins
+    if (hadPlugins && this.llm.plugins.length === 0) {
+      this.chat.disableTools = true
     }
 
     // check if we need to update title
