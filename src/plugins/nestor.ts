@@ -8,6 +8,7 @@ export default class extends Plugin {
   
   constructor(config: PluginConfig) {
     super(config)
+    this.toolNames = []
   }
 
   isEnabled(): boolean {

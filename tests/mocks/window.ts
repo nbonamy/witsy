@@ -157,10 +157,13 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       open: vi.fn(),
     },
     nestor: {
-      isAvailable: vi.fn(() => false),
+      isAvailable: vi.fn(() => true),
       getStatus: vi.fn(),
-      getTools: vi.fn(),
-      callTool: vi.fn(),
+      getTools: vi.fn(async () => [
+        { function: { name: 'tool1' }, description: 'description1' },
+        { function: { name: 'tool2' }, description: 'description2' },
+      ]),
+      callTool: vi.fn(async (name, params) => ({ name, params })),
     },
     anywhere: {
       prompt: vi.fn(),
@@ -182,7 +185,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       executeAction: vi.fn(),
     },
     readaloud: {
-      closePicker: vi.fn(),
+      closePalette: vi.fn(),
     },
     whisper: {
       initialize: vi.fn(),
