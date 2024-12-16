@@ -56,6 +56,7 @@ export interface Chat {
   model: string|null
   messages: Message[]
   deleted: boolean
+  disableTools: boolean
   docrepo: string|null
   fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean

@@ -21,6 +21,7 @@ let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
 const dmgOptions: MakerDMGConfig = {
+  //appPath: 'actually_not_used',
   icon: './assets/icon.icns',
   background: './assets/dmg_background.png',
   additionalDMGOptions: {
