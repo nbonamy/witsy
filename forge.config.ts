@@ -1,7 +1,7 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
-import { MakerDMG } from '@electron-forge/maker-dmg';
+import { MakerDMG, MakerDMGConfig } from '@electron-forge/maker-dmg';
 import { MakerPKG } from '@electron-forge/maker-pkg';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -20,7 +20,7 @@ dotenv.config();
 let osxPackagerConfig = {}
 const isDarwin = process.platform == 'darwin';
 const isMas = isDarwin && process.argv.includes('mas');
-const dmgOptions = {
+const dmgOptions: MakerDMGConfig = {
   icon: './assets/icon.icns',
   background: './assets/dmg_background.png',
   additionalDMGOptions: {
