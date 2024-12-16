@@ -1,10 +1,16 @@
 
+import { BrowserWindow } from 'electron';
 import Automator from './automator'
 import * as window from '../main/window'
 
 export default class PromptAnywhere {
 
+  static hadFocus = false;
+
   static open = async (): Promise<void> => {
+
+    // check if we have focus
+    PromptAnywhere.hadFocus = !!BrowserWindow.getFocusedWindow();
 
     // get foremost app
     let foremostApp = '';
@@ -14,7 +20,7 @@ export default class PromptAnywhere {
     }
 
     // open prompt
-    await window.hideWindows([ window.promptAnywhereWindow ]);
+    //await window.hideWindows([ window.promptAnywhereWindow ]);
     await window.openPromptAnywhere({
       foremostApp: foremostApp
     });
@@ -24,8 +30,10 @@ export default class PromptAnywhere {
 
     // close
     await window.closePromptAnywhere();
-    await window.restoreWindows();
-    await window.releaseFocus();
+    //await window.restoreWindows();
+    if (!PromptAnywhere.hadFocus) {
+      await window.releaseFocus();
+    }
 
   }
   
