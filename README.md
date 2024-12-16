@@ -3,6 +3,13 @@
 
 # Witsy
 
+## Downloads
+
+Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](https://github.com/nbonamy/witsy/releases) page.
+
+
+## What is Witsy?
+
 Generative AI desktop application:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, Groq and Cerebras models supported
 - Chat completion and image generation with Vision models support
@@ -84,7 +91,8 @@ https://www.youtube.com/watch?v=vixl7I07hBk
 
 ## Setup
 
-You can download a binary from the Releases page or build yourself:
+You can download a binary from from [witsyai.com](https://witsyai.com), from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
+
 ```
 npm install
 npm start
@@ -119,6 +127,8 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Together.ai compatibility
+- [x] Gemini 2.0 Flash support
 - [x] Groq LLama 3.3 support
 - [x] xAI Grok Vision Model support
 - [x] Ollama function-calling
