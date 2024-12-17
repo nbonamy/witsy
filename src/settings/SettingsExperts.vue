@@ -14,6 +14,10 @@
           >
             <td class="enabled"><input type="checkbox" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
             <td class="name">{{ expert.name }}</td>
+            <td class="move">
+              <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
+              <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -57,6 +61,7 @@ const contextMenuActions = [
   { label: 'Import', action: 'import' },
   { label: 'Select All', action: 'select' },
   { label: 'Unselect All', action: 'unselect' },
+  { label: 'Sort Alphabetically', action: 'sort' },
 ]
 
 const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
@@ -64,7 +69,44 @@ const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => 
 const columns = [
   { field: 'enabled', title: '' },
   { field: 'name', title: 'Name' },
+  { field: 'move', title: 'Move', },
 ]
+
+const onMoveDown = (expert: Expert) => {
+  // move command up in commands
+  const index = experts.value.indexOf(expert)
+  if (index < experts.value.length - 1) {
+    experts.value.splice(index, 1)
+    experts.value.splice(index + 1, 0, expert)
+    save()
+
+    try {
+      // scroll commands down by one line
+      if (index != 0) {
+        const row = document.querySelector(`.experts .expert:first-child`)
+        document.querySelector('dialog.settings .content .experts').scrollBy(0, row.clientHeight)
+      }
+    } catch {}
+
+  }
+
+}
+
+const onMoveUp = (expert: Expert) => {
+  // move command down in commands
+  const index = experts.value.indexOf(expert)
+  if (index > 0) {
+    experts.value.splice(index, 1)
+    experts.value.splice(index - 1, 0, expert)
+    save()
+
+    try {
+      // scroll commands down by one line
+      const row = document.querySelector(`.experts .expert:first-child`)
+      document.querySelector('dialog.settings .content .experts').scrollBy(0, -row.clientHeight)
+    } catch {}
+  }
+}
 
 const onMore = () => {
   if (showMenu.value) {
@@ -102,6 +144,9 @@ const handleActionClick = async (action: string) => {
     onImport()
   } else if (action === 'export') {
     onExport()
+  } else if (action === 'sort') {
+    experts.value.sort((a, b) => a.name.localeCompare(b.name))
+    save()
   }
 
 }
@@ -273,6 +318,11 @@ defineExpose({ load })
 
 .sticky-table-container {
   height: 200px;
+}
+
+.move button {
+  font-size: 6pt;
+  padding: 2px 8px;
 }
 
 </style>
