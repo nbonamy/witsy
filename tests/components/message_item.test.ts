@@ -24,7 +24,9 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
-const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
+const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
+const botMessageVideo: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![video](file:///data/video.mp4)' })
+const botMessageImageLegacy: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
 const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
 
 beforeAll(() => {
@@ -45,7 +47,7 @@ beforeEach(() => {
   vi.clearAllMocks()
 
   // reset some stuff
-  botMessageImage.setImage('https://example.com/image.jpg')
+  botMessageImageLegacy.setImage('https://example.com/image.jpg')
   botMessageTransient.transient = true
 
 })
@@ -92,8 +94,8 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
 })
 
-test('Assistant image message', async () => {
-  const wrapper = await mount(botMessageImage)
+test('Assistant legacy image message', async () => {
+  const wrapper = await mount(botMessageImageLegacy)
   expect(wrapper.find('.message').classes()).toContain('assistant')
   expect(wrapper.find('.role').classes()).toContain('assistant')
   expect(wrapper.find('.role').text()).toBe('Assistant')
@@ -108,17 +110,52 @@ test('Assistant image message', async () => {
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
 })
 
+test('Assistant image message', async () => {
+  const wrapper = await mount(botMessageImage)
+  expect(wrapper.find('.message').classes()).toContain('assistant')
+  expect(wrapper.find('.role').classes()).toContain('assistant')
+  expect(wrapper.find('.role').text()).toBe('Assistant')
+  expect(wrapper.find('.role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.role .logo').exists()).toBe(true)
+  expect(wrapper.find('.body').text()).toBe('')
+  expect(wrapper.find('.body .image').exists()).toBe(true)
+  expect(wrapper.find('.body .download').exists()).toBe(true)
+  expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+})
+
+test('Assistant video message', async () => {
+  const wrapper = await mount(botMessageVideo)
+  expect(wrapper.find('.message').classes()).toContain('assistant')
+  expect(wrapper.find('.role').classes()).toContain('assistant')
+  expect(wrapper.find('.role').text()).toBe('Assistant')
+  expect(wrapper.find('.role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.role .logo').exists()).toBe(true)
+  expect(wrapper.find('.body').text()).toBe('')
+  expect(wrapper.find('.body .video').exists()).toBe(true)
+  expect(wrapper.find('.body .download').exists()).toBe(true)
+  expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+})
+
 test('Assistant image message formats', async () => {
-  const wrapper1 = await mount(botMessageImage)
+  const wrapper1 = await mount(botMessageImageLegacy)
   expect(wrapper1.find('.body img.image').attributes().src).toBe('https://example.com/image.jpg')
 
-  botMessageImage.setImage('file://image.png')
-  const wrapper2 = await mount(botMessageImage)
+  botMessageImageLegacy.setImage('file://image.png')
+  const wrapper2 = await mount(botMessageImageLegacy)
   expect(wrapper2.find('.body img.image').attributes().src).toBe('file://image.png')
 
-  botMessageImage.setImage('imageb64')
-  const wrapper3 = await mount(botMessageImage)
+  botMessageImageLegacy.setImage('imageb64')
+  const wrapper3 = await mount(botMessageImageLegacy)
   expect(wrapper3.find('.body img.image').attributes().src).toBe('data:image/png;base64,imageb64')
+
+  const wrappe4 = await mount(botMessageImage)
+  expect(wrappe4.find('.body img.image').attributes().src).toBe('https://example.com/image.jpg')
 })
 
 test('Transient message', async () => {
@@ -163,8 +200,8 @@ test('Run assistant text actions', async () => {
   // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
 })
 
-test('Run assistant image actions', async () => {
-  const wrapper = await mount(botMessageImage)
+test('Run assistant legacy image actions', async () => {
+  const wrapper = await mount(botMessageImageLegacy)
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenCalled()
   expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
@@ -177,7 +214,35 @@ test('Run assistant image actions', async () => {
     properties: {
       directory: 'downloads',
       prompt: true,
-      filename: 'image.png',
+      filename: 'image.jpg',
+    }
+  })
+
+})
+
+test('Run assistant image actions', async () => {
+  const wrapper = await mount(botMessageImage)
+  await wrapper.find('.body .download').trigger('click')
+  expect(window.api.file.download).toHaveBeenCalledWith({
+    url: 'https://example.com/image.jpg',
+    properties: {
+      directory: 'downloads',
+      prompt: true,
+      filename: 'image.jpg',
+    }
+  })
+
+})
+
+test('Run assistant video actions', async () => {
+  const wrapper = await mount(botMessageVideo)
+  await wrapper.find('.body .download').trigger('click')
+  expect(window.api.file.download).toHaveBeenCalledWith({
+    url: 'file:///data/video.mp4',
+    properties: {
+      directory: 'downloads',
+      prompt: true,
+      filename: 'video.mp4',
     }
   })
 

@@ -220,9 +220,10 @@ export default class extends Plugin {
 
     // save the content on disk
     const blob = Array.isArray(output) ? await output[0].blob() : await (output as FileOutput).blob()
+    const type = blob.type?.split('/')[1] || 'jpg'
     const b64 = await this.blobToBase64(blob)
     const image = b64.split(',')[1]
-    const fileUrl = saveFileContents('jpg', image)
+    const fileUrl = saveFileContents(type, image)
     //console.log('[image] saved image to', fileUrl)
 
     // return an object

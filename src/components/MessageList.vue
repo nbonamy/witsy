@@ -2,7 +2,7 @@
   <div class="container" :style="fontStyle">
     <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
-        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @image-loaded="onImageLoaded" ref="items" />
+        <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @media-loaded="onMediaLoaded" ref="items" />
       </div>
     </div>
     <div v-if="overflown" class="overflow" @click="scrollDown">
@@ -69,7 +69,7 @@ const onCloseFullScreen = () => {
   window.api.fullscreen(false)
 }
 
-const onImageLoaded = () => {
+const onMediaLoaded = () => {
   if (!overflown.value) {
     scrollDown()
   }

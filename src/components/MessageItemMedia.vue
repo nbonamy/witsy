@@ -1,7 +1,8 @@
 <template>
-  <div class="image-container">
-    <img :src="url" :alt="desc" class="image" @click="onFullscreen" @load="onImageLoaded"/>
-    <div class="image-actions">
+  <div class="media-container">
+    <video :src="url" :alt="desc" class="media video" @load="onMediaLoaded" controls v-if="isVideo()"/>
+    <img :src="url" :alt="desc" class="media image" @click="onFullscreen" @load="onMediaLoaded" v-else/>
+    <div class="media-actions">
       <BIconInfoCircle class="action info" v-if="prompt" @click="onInfo"/>
       <BIconDownload class="action download" @click="onDownload" />
     </div>
@@ -23,10 +24,14 @@ const props = defineProps({
   prompt: String
 })
 
-const emits = defineEmits(['image-loaded'])
+const emits = defineEmits(['media-loaded'])
 
-const onImageLoaded = () => {
-  emits('image-loaded')
+const isVideo = () => {
+  return props.url.endsWith('.mp4') || props.url.endsWith('.webm') || props.url.endsWith('.ogg')
+}
+
+const onMediaLoaded = () => {
+  emits('media-loaded')
 }
 
 const onFullscreen = () => {
@@ -46,7 +51,7 @@ const onDownload = () => {
     properties: {
       prompt: true,
       directory: 'downloads',
-      filename: 'image.png',
+      filename: `${isVideo() ? 'video' : 'image'}.${props.url.split('.').pop()}`,
     }
   })
 }

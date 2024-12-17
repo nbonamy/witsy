@@ -210,11 +210,13 @@
       "apiKey": "",
       "models": {
         "chat": [],
-        "image": []
+        "image": [],
+        "video": []
       },
       "model": {
         "chat": "",
-        "image": "black-forest-labs/flux-schnell"
+        "image": "black-forest-labs/flux-schnell",
+        "video": "minimax/video-01"
       }
     }
   },
@@ -230,6 +232,10 @@
     "image": {
       "enabled": true,
       "engine": "openai"
+    },
+    "video": {
+      "enabled": true,
+      "engine": "replicate"
     },
     "vega": {
       "enabled": true
