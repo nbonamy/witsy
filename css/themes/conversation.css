@@ -27,7 +27,7 @@
   color: black;
 }
 
-.messages.conversation .message .body:has(.image) {
+.messages.conversation .message .body:has(.media) {
   padding: 0px;
   background-color: transparent;
 }
