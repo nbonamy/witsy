@@ -90,7 +90,7 @@ const onMoveDown = (command: Command) => {
       // scroll commands down by one line
       if (index != 0) {
         const row = document.querySelector(`.commands .command:first-child`)
-        document.querySelector('.content .commands').scrollBy(0, row.clientHeight)
+        document.querySelector('dialog.settings .content .commands').scrollBy(0, row.clientHeight)
       }
     } catch {}
 
@@ -109,11 +109,10 @@ const onMoveUp = (command: Command) => {
     try {
       // scroll commands down by one line
       const row = document.querySelector(`.commands .command:first-child`)
-      document.querySelector('.content .commands').scrollBy(0, -row.clientHeight)
+      document.querySelector('dialog.settings .content .commands').scrollBy(0, -row.clientHeight)
     } catch {}
   }
 }
-
 
 const onMore = () => {
   if (showMenu.value) {
