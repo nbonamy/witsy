@@ -219,9 +219,19 @@ dialog.settings .list-panel {
         margin-right: 4px;
       }
 
+      .icon {
+        color: var(--text-color);
+      }
+
       &.selected {
         background-color: var(--highlight-color);
         color: var(--highlighted-color);
+        .icon {
+          color: var(--highlighted-color);
+        }
+        .image {
+          filter: invert(1);
+        }
       }
     }
   }
@@ -232,6 +242,12 @@ dialog.settings .list-panel {
     padding: 16px 16px 16px 0px !important;
   }
 
+}
+
+@media (prefers-color-scheme: dark) {
+  dialog.settings .list-panel .list .item .image {
+    filter: invert(1);
+  }
 }
 
 </style>

@@ -16,7 +16,10 @@
             <td class="icon">{{ command.icon }}</td>
             <td class="label">{{ command.label }}</td>
             <td class="shortcut">{{ command.shortcut }}</td>
-            <!-- <td class="action">{{ action(command.action) }}</td> -->
+            <td class="move">
+              <button @click.prevent="onMoveDown(command)" @dblclick.stop>▼</button>
+              <button @click.prevent="onMoveUp(command)" @dblclick.stop>▲</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -72,15 +75,45 @@ const columns = [
   { field: 'icon', title: 'Icon' },
   { field: 'label', title: 'Name', },
   { field: 'shortcut', title: 'Shortcut', },
-  // { field: 'action', title: 'Action', },
+  { field: 'move', title: 'Move', },
 ]
 
-const action = (action: string) => {
-  if (action == 'chat_window') return 'Chat Window'
-  if (action == 'paste_below') return 'Insert Below'
-  if (action == 'paste_in_place') return 'Replace Selection'
-  if (action == 'clipboard_copy') return 'Copy to Clipboard'
+const onMoveDown = (command: Command) => {
+  // move command up in commands
+  const index = commands.value.indexOf(command)
+  if (index < commands.value.length - 1) {
+    commands.value.splice(index, 1)
+    commands.value.splice(index + 1, 0, command)
+    save()
+
+    try {
+      // scroll commands down by one line
+      if (index != 0) {
+        const row = document.querySelector(`.commands .command:first-child`)
+        document.querySelector('.content .commands').scrollBy(0, row.clientHeight)
+      }
+    } catch {}
+
+  }
+
 }
+
+const onMoveUp = (command: Command) => {
+  // move command down in commands
+  const index = commands.value.indexOf(command)
+  if (index > 0) {
+    commands.value.splice(index, 1)
+    commands.value.splice(index - 1, 0, command)
+    save()
+
+    try {
+      // scroll commands down by one line
+      const row = document.querySelector(`.commands .command:first-child`)
+      document.querySelector('.content .commands').scrollBy(0, -row.clientHeight)
+    } catch {}
+  }
+}
+
 
 const onMore = () => {
   if (showMenu.value) {
@@ -288,6 +321,11 @@ defineExpose({ load })
 
 .sticky-table-container {
   height: 200px;
+}
+
+.move button {
+  font-size: 6pt;
+  padding: 2px 8px;
 }
 
 </style>
