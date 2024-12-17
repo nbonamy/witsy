@@ -4,7 +4,7 @@
   margin-bottom: 32px;
 }
 
-.message .image-container {
+.message .media-container {
   margin-bottom: 12px;
 }
 
@@ -100,7 +100,7 @@
   font-size: 9pt;
 }
 
-.message .attachment, .message .image {
+.message .attachment, .message .media {
   width: 100%;
   margin-top: 16px;
   border-radius: 8px;
@@ -115,7 +115,7 @@
   height: 32px !important;
 }
 
-.message .image-container {
+.message .media-container {
   position: relative;
   width: 400px;
 }
@@ -124,14 +124,14 @@
   background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
 }
 
-.message .image-container .image-actions {
+.message .media-container .media-actions {
   display: none;
   position: absolute;
   top: 24px;
   right: 12px;
 }
 
-.message .image-container .image-actions .action {
+.message .media-container .media-actions .action {
   background-color: rgba(0, 0, 0, 0.66);
   cursor: pointer;
   font-size: 10pt;
@@ -140,7 +140,7 @@
   color: white;
 }
 
-.message .image-container:hover .image-actions {
+.message .media-container:hover .media-actions {
   display: flex;
   flex-direction: row;
   gap: 8px;
