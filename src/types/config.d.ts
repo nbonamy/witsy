@@ -101,12 +101,14 @@ export interface STTConfig {
 export interface ModelsConfig {
   chat: Model[]
   image?: Model[]
+  video?: Model[]
   embedding?: Model[]
 }
 
 export interface ModelConfig {
   chat: string
   image: string
+  video?: string
 }
 
 export type TTSModel = 'tts-1' | 'tts-1-hd'

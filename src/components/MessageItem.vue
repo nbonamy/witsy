@@ -13,16 +13,16 @@
       </div>
 
       <!-- image for backwards compatibility -->
-      <MessageItemImage :url="imageUrl" @image-loaded="onImageLoaded(message)" v-if="message.type == 'image' && imageUrl" />
+      <MessageItemImage :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
       <!-- expert -->
        <div v-if="message.expert" class="expert text variable-font-size">
         <p><BIconStars/> {{  message.expert.name }}</p>
       </div>
 
-      <!-- text -->
+      <!-- content -->
       <div v-if="message.type == 'text' && message.content !== null">
-        <MessageItemBody :message="message" @image-loaded="onImageLoaded" />
+        <MessageItemBody :message="message" @media-loaded="onMediaLoaded" />
       </div>
 
       <!-- transient information -->
@@ -44,7 +44,7 @@ import { store } from '../services/store'
 import useAudioPlayer, { type AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
 import MessageItemBody from './MessageItemBody.vue'
-import MessageItemImage from './MessageItemImage.vue'
+import MessageItemImage from './MessageItemMedia.vue'
 import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
 import Attachment from '../models/attachment'
@@ -74,7 +74,7 @@ const props = defineProps({
   showActions: { type: Boolean, default: true },
 })
 
-const emits = defineEmits(['image-loaded'])
+const emits = defineEmits(['media-loaded'])
 
 const theme = ref('light')
 const hovered = ref(false)
@@ -146,8 +146,8 @@ const onClickAttachment = (attachment: Attachment) => {
   emitEvent('fullscreen', attachment.url)
 }
 
-const onImageLoaded = (message: Message) => {
-  emits('image-loaded', message)
+const onMediaLoaded = (message: Message) => {
+  emits('media-loaded', message)
 }
 
 const onAudioPlayerStatus = (status: AudioStatus) => {

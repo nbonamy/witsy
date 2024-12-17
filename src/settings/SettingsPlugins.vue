@@ -22,13 +22,12 @@ import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsTavily from './SettingsTavily.vue'
 import SettingsImage from './SettingsImage.vue'
+import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
-//import SettingsDropbox from './SettingsDropbox.vue'
+import { BIconCameraReels, BIconPalette, BIconYoutube } from 'bootstrap-icons-vue'
 
-// @ts-expect-error svg
-import logoImage from '../../assets/palette.svg'
 // @ts-expect-error svg
 import logoDownload from '../../assets/download.svg'
 // @ts-expect-error svg
@@ -36,12 +35,9 @@ import logoPython from '../../assets/python.svg'
 // @ts-expect-error svg
 import logoTavily from '../../assets/tavily.svg'
 // @ts-expect-error svg
-import logoYouTube from '../../assets/youtube.svg'
-// @ts-expect-error svg
 import logoVega from '../../assets/vega.svg'
 // @ts-expect-error svg
 import logoNestor from '../../assets/nestor.jpg'
-//import logoDropbox from '../../assets/dropbox.svg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -69,6 +65,7 @@ const plugins = computed((): PluginUI[] => {
         tavily: 'Tavily Search',
         python: 'Python',
         image: 'Text-to-Image',
+        video: 'Text-to-Video',
         youtube: 'YouTube',
         vega: 'Vega',
         nestor: 'Nestor',
@@ -77,18 +74,14 @@ const plugins = computed((): PluginUI[] => {
         browse: { image: logoDownload },
         tavily: { image: logoTavily },
         python: { image: logoPython },
-        image: { image: logoImage },
-        youtube: { image: logoYouTube },
+        image: { icon: BIconPalette },
+        video: { icon: BIconCameraReels },
+        youtube: { icon: BIconYoutube },
         vega: { image: logoVega },
         nestor: { image: logoNestor },
       }[plugin],
     }
   })
-  // res.push({
-  //   id: 'dropbox',
-  //   label: 'Dropbox',
-  //   logo: { image: logoDropbox },
-  // })
   return res
 })
 
@@ -97,10 +90,10 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'python') return SettingsPython
   if (currentPlugin.value == 'tavily') return SettingsTavily
   if (currentPlugin.value == 'image') return SettingsImage
+  if (currentPlugin.value == 'video') return SettingsVideo
   if (currentPlugin.value == 'youtube') return SettingsYouTube
   if (currentPlugin.value == 'vega') return SettingsVega
   if (currentPlugin.value == 'nestor') return SettingsNestor
-  //if (currentPlugin.value == 'dropbox') return SettingsDropbox
 })
 
 const selectPlugin = (plugin: PluginUI) => {
@@ -126,11 +119,5 @@ defineExpose({ load })
 </style>
 
 <style scoped>
-
-@media (prefers-color-scheme: dark) {
-  .list-panel .list .item .logo {
-    filter: invert(1);
-  }
-}
 
 </style>

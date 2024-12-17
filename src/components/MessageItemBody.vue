@@ -2,7 +2,7 @@
   <div v-if="message.type == 'text'">
     <div v-for="block in blocks">
       <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
-      <MessageItemImage :url="block.url!" :desc="block.desc" :prompt="block.prompt" @image-loaded="onImageLoaded(message)" v-else-if="block.type == 'image'" />
+      <MessageItemMedia :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded(message)" v-else-if="block.type == 'media'" />
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@
 
 import { computed } from 'vue'
 import { store } from '../services/store'
-import MessageItemImage from './MessageItemImage.vue'
+import MessageItemMedia from './MessageItemMedia.vue'
 import Message from '../models/message'
 
 const props = defineProps({
@@ -22,7 +22,7 @@ const props = defineProps({
 })
 
 interface Block {
-  type: 'text'|'image'
+  type: 'text'|'media'
   content?: string
   url?: string
   desc?: string
@@ -53,14 +53,15 @@ const blocks = computed(() => {
     let prompt = null
     if (props.message.toolCall?.calls) {
       for (const call of props.message.toolCall.calls) {
-        if (call.result?.path === match[2] || call.result?.path === decodeURIComponent(match[2])) {
+        const toolPath = call.result?.path || call.result?.url
+        if (toolPath === match[2] || toolPath === decodeURIComponent(match[2])) {
           prompt = call.params.prompt
         }
       }
     }
 
     // done
-    blocks.push({ type: 'image', url: imageUrl, desc: match[1], prompt: prompt })
+    blocks.push({ type: 'media', url: imageUrl, desc: match[1], prompt: prompt })
 
     // continue
     lastIndex = regex.lastIndex
@@ -77,10 +78,10 @@ const blocks = computed(() => {
 
 })
 
-const emits = defineEmits(['image-loaded'])
+const emits = defineEmits(['media-loaded'])
 
-const onImageLoaded = (message: Message) => {
-  emits('image-loaded', message)
+const onMediaLoaded = (message: Message) => {
+  emits('media-loaded', message)
 }
 
 const mdRender = (content: string) => {

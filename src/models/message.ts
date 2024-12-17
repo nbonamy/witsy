@@ -8,7 +8,7 @@ export default class Message extends MessageBase {
 
   uuid: string
   createdAt: number
-  type: string
+  type: 'text' | 'image'
   expert?: Expert
   toolCall?: ToolCallInfo
   usage?: LlmUsage
@@ -33,6 +33,7 @@ export default class Message extends MessageBase {
   static fromJson(obj: any): Message {
     const message = new Message(obj.role, obj.content)
     message.uuid = obj.uuid || crypto.randomUUID()
+    message.type = obj.type || 'text'
     message.createdAt = obj.createdAt
     message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
     message.transient = false
