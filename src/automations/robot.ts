@@ -2,21 +2,20 @@
 import { Automator } from '../types/automation.d';
 import { wait } from '../main/utils';
 
+let robot: any|null = null;
+
 export default class RobotAutomator implements Automator {
 
-  robot: any
-  
-  constructor() {
-    this.setup();
-  }
-
-  async setup() {
+    async setup() {
+    if (robot) {
+      return true;
+    }
     try {
       const robotPackage = 'robotjs';
-      this.robot = await import(robotPackage);
+      robot = (await import(robotPackage)).default;
       return true
     } catch {
-      console.log('Error loading robotjs. Disabling computer interaction.');
+      console.log('Error loading robotjs. Automation not available.');
       return false
     }
   }
@@ -30,28 +29,28 @@ export default class RobotAutomator implements Automator {
   }
 
   async selectAll() {
-    if (!this.robot) throw new Error('Robotjs not loaded');
-    this.robot.keyTap("a", process.platform === "darwin" ? "command" : "control");
+    if (!await this.setup()) throw new Error('Robotjs not loaded');
+    robot.keyTap('a', 'control');
     await wait();
   }
 
   async moveCaretBelow() {
-    if (!this.robot) throw new Error('Robotjs not loaded');
-    this.robot.keyTap("right");
-    this.robot.keyTap("enter");
-    this.robot.keyTap("enter");
+    if (!await this.setup()) throw new Error('Robotjs not loaded');
+    robot.keyTap('right');
+    robot.keyTap('enter');
+    robot.keyTap('enter');
     await wait();
   }
 
   async copySelectedText() {
-    if (!this.robot) throw new Error('Robotjs not loaded');
-    this.robot.keyTap("c", process.platform === "darwin" ? "command" : "control");
+    if (!await this.setup()) throw new Error('Robotjs not loaded');
+    robot.keyTap('c', 'control');
     await wait();
   }
 
   async pasteText() {
-    if (!this.robot) throw new Error('Robotjs not loaded');
-    this.robot.keyTap("v", process.platform === "darwin" ? "command" : "control");
+    if (!await this.setup()) throw new Error('Robotjs not loaded');
+    robot.keyTap('v', 'control');
     await wait();
   }
 
