@@ -42,11 +42,15 @@ export default class {
   
     // create tray
     this.tray = new Tray(trayIcon);
+    this.tray.setContextMenu(Menu.buildFromTemplate(this.buildTrayMenu()));
     this.tray.on('click', () => {
+      console.log('click');
       const contextMenu = Menu.buildFromTemplate(this.buildTrayMenu());
-      this.tray.popUpContextMenu(contextMenu);
+      this.tray.setContextMenu(contextMenu);
+      this.tray.popUpContextMenu();
     });
     this.tray.on('right-click', () => {
+      console.log('right-click');
       window.openMainWindow();
     }) 
   
