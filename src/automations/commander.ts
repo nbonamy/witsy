@@ -137,8 +137,7 @@ export default class Commander {
       console.error('Error while executing command', error);
     }
 
-    // done waiting
-    //await window.closeWaitingPanel();
+    // error
     await window.restoreWindows();
     await window.releaseFocus();
 
