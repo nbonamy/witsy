@@ -4,6 +4,9 @@ import { wait } from '../main/utils';
 
 let robot: any|null = null;
 
+const delay = 500;
+
+
 export default class RobotAutomator implements Automator {
 
     async setup() {
@@ -31,7 +34,7 @@ export default class RobotAutomator implements Automator {
   async selectAll() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('a', 'control');
-    await wait(500);
+    await wait(delay);
   }
 
   async moveCaretBelow() {
@@ -39,19 +42,19 @@ export default class RobotAutomator implements Automator {
     robot.keyTap('right');
     robot.keyTap('enter');
     robot.keyTap('enter');
-    await wait(500);
+    await wait(delay);
   }
 
   async copySelectedText() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('c', 'control');
-    await wait(500);
+    await wait(delay);
   }
 
   async pasteText() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('v', 'control');
-    await wait(500);
+    await wait(delay);
   }
 
 }
