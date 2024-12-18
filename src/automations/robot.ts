@@ -31,7 +31,7 @@ export default class RobotAutomator implements Automator {
   async selectAll() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('a', 'control');
-    await wait();
+    await wait(500);
   }
 
   async moveCaretBelow() {
@@ -39,19 +39,19 @@ export default class RobotAutomator implements Automator {
     robot.keyTap('right');
     robot.keyTap('enter');
     robot.keyTap('enter');
-    await wait();
+    await wait(500);
   }
 
   async copySelectedText() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('c', 'control');
-    await wait();
+    await wait(500);
   }
 
   async pasteText() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('v', 'control');
-    await wait();
+    await wait(500);
   }
 
 }
