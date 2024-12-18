@@ -58,6 +58,11 @@ linux-x64:
 	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p linux -a x64
 	cd out/make/zip/linux/x64 ; mv Witsy-linux-x64-$(VERSION).zip Witsy-$(VERSION)-linux-x64.zip
 
+linux-arm64:
+	-rm -rf out/*linux-arm64* out/make/zip/linux/arm64/*
+	BUILD_NUMBER=$(shell cat $(BUILD_NUMBER_FILE)) npx electron-forge make -p linux -a arm64
+	cd out/make/zip/linux/arm64 ; mv Witsy-linux-arm64-$(VERSION).zip Witsy-$(VERSION)-linux-arm64.zip
+
 linux: linux-x64
 
 all: clean increment-build-number mac win linux
