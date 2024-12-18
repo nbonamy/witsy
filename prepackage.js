@@ -12,9 +12,9 @@ export default function(platform, arch) {
   }
 
   // Add robotjs for Linux
-  if (platform === 'linux') {
-    console.log('Linux detected. Installing robotjs.')
-    execSync('npm install robotjs')
-  }
+  // if (platform === 'linux') {
+  //   console.log('Linux detected. Installing robotjs.')
+  //   execSync('npm install robotjs')
+  // }
 
 }

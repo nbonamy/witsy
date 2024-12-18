@@ -39,7 +39,7 @@ export default class RobotAutomator implements Automator {
 
   async moveCaretBelow() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
-    robot.keyTap('right');
+    robot.keyTap('down');
     robot.keyTap('enter');
     robot.keyTap('enter');
     await wait(delay);
