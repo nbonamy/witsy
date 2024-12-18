@@ -332,20 +332,19 @@ ipcMain.on('command-run', async (event, payload) => {
   const result = await commander.execCommand(app, args as RunCommandParams);
   commander = null;
   
-  // cancelled
-  if (result.cancelled) return;
+  // error
+  if (!result) {
+    return;
+  }
 
-  // show chat window
-  if (result?.chatWindow) {
-    await wait();
-    result.chatWindow.show();
-    result.chatWindow.moveTop();
+  // focus
+  try {
     await wait();
     app.show();
     app.focus({
       steal: true,
     });
-  }
+  } catch { /* empty */ }
 });
 
 ipcMain.on('experts-load', (event) => {

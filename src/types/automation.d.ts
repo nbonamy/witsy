@@ -1,6 +1,4 @@
 
-import { BrowserWindow } from "electron"
-
 declare module 'applescript'
 
 export interface ShortcutCallbacks {
@@ -25,13 +23,4 @@ export type RunCommandParams = {
   textId: string
   sourceApp: string | null
   command: Command
-}
-
-export type RunCommandResponse = {
-  text: string
-  prompt: string|null
-  response: string|null
-  chatWindow: BrowserWindow | null
-  sourceApp: string | null
-  cancelled: boolean
 }
