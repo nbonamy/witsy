@@ -11,4 +11,10 @@ export default function(platform, arch) {
     execSync('npm uninstall @nut-tree-fork/nut-js')
   }
 
+  // Add robotjs for Linux
+  if (platform === 'linux') {
+    console.log('Linux detected. Installing robotjs.')
+    execSync('npm install robotjs')
+  }
+
 }
