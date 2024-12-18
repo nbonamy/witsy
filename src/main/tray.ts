@@ -35,7 +35,8 @@ export default class {
   
     // tray icon
     const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
-    const trayIconPath = path.join(assetsFolder, updateAvailable ? 'bulbUpdateTemplate@2x.png' : 'bulbTemplate@2x.png');
+    const iconColor = process.platform === 'linux' ? 'White' : 'Template';
+    const trayIconPath = path.join(assetsFolder, updateAvailable ? `bulbUpdate${iconColor}@2x.png` : `bulb${iconColor}@2x.png`);
     //console.log('trayIconPath', trayIconPath);
     const trayIcon = nativeImage.createFromPath(trayIconPath);
     trayIcon.setTemplateImage(true);
@@ -44,13 +45,11 @@ export default class {
     this.tray = new Tray(trayIcon);
     this.tray.setContextMenu(Menu.buildFromTemplate(this.buildTrayMenu()));
     this.tray.on('click', () => {
-      console.log('click');
       const contextMenu = Menu.buildFromTemplate(this.buildTrayMenu());
       this.tray.setContextMenu(contextMenu);
       this.tray.popUpContextMenu();
     });
     this.tray.on('right-click', () => {
-      console.log('right-click');
       window.openMainWindow();
     }) 
   
