@@ -66,7 +66,6 @@ const action = (command: Command) => {
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
-  console.log(event)
   if (event.key == 'Shift') {
     overrideAction.value = true
   }
@@ -87,13 +86,6 @@ const onKeyUp = (event: KeyboardEvent) => {
 }
 
 const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
-  
-  // if shift key is pressed, run the command in a new window
-  if (event.shiftKey) {
-    command.action = 'chat_window'
-  }
-
-  // now run it
   window.api.commands.run({
     ...props.extra,
     command: JSON.parse(JSON.stringify(command))

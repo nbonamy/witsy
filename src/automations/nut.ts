@@ -1,106 +1,59 @@
 
-//
-// code from https://github.com/corbt/agent.exe
-//
+import { Automator } from '../types/automation.d';
+import { wait } from '../main/utils';
 
-// get some enums from nut-js
-// and declare some interfaces and variables
-// to avoid typescript lint errors
+let nut: any|null = null;
 
-declare enum Button {
-  LEFT = 0,
-  MIDDLE = 1,
-  RIGHT = 2
-}
+const delay = 500;
 
-declare enum Key {
-  Enter = 102,
-}
+export default class NutAutomator implements Automator {
 
-interface Point {
-  x: number
-  y: number
-}
-
-interface Mouse {
-  getPosition(): Promise<Point>
-  setPosition(point: Point): Promise<Mouse>
-  click(button: any): Promise<Mouse>
-  leftClick(): Promise<Mouse>
-  rightClick(): Promise<Mouse>
-  doubleClick(button: any): Promise<Mouse>
-  drag(points: Point[]): Promise<Mouse>
-}
-
-interface Keyboard {
-  config: any
-  pressKey(...keys: any[]): Promise<Keyboard>
-  type(text: string): Promise<Keyboard>
-}
-
-let mouse: Mouse
-let keyboard: Keyboard
-
-export default {
-
-  async isAvailable(): Promise<boolean> {
+    async setup() {
+    if (nut) {
+      return true;
+    }
     try {
-      if (process.mas) return false
       const nutPackage = '@nut-tree-fork/nut-js';
-      ({ mouse, keyboard } = await import(nutPackage));
+      nut = await import(nutPackage);
       return true
     } catch {
-      console.log('Error loading nut-js. Disabling computer interaction.');
+      console.log('Error loading nutjs. Automation not available.');
       return false
     }
-  },
+  }
+  
+  async getForemostAppId(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
 
-  async getCursorPosition(): Promise<Point> {
-    return await mouse.getPosition()
-  },
+  async getForemostAppPath(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
 
-  async mouseMove(x: number, y: number) {
-    await mouse.setPosition({ x, y })
-  },
+  async selectAll() {
+    if (!await this.setup()) throw new Error('nutjs not loaded');
+    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.A);
+    await wait(delay);
+  }
 
-  async leftClick() {
-    await mouse.leftClick()
-  },
+  async moveCaretBelow() {
+    if (!await this.setup()) throw new Error('nutjs not loaded');
+    await nut.keyboard.type(nut.Key.Down);
+    await nut.keyboard.type(nut.Key.Enter);
+    await nut.keyboard.type(nut.Key.Enter);
+    await wait(delay);
+  }
 
-  async rightClick() {
-    await mouse.rightClick()
-  },
+  async copySelectedText() {
+    if (!await this.setup()) throw new Error('nutjs not loaded');
+    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.C);
+    await wait(delay);
+  }
 
-  async middleClick() {
-    await mouse.click(Button.MIDDLE)
-  },
-
-  async doubleClick() {
-    await mouse.doubleClick(Button.LEFT)
-  },
-
-  async leftClickDrag(x: number, y: number) {
-    const position = await mouse.getPosition()
-    return mouse.drag([position, { x, y }])
-  },
-
-  async key(text: string) {
-    const keyMap = { Return: Key.Enter }
-    const keys = text.split('+').map((key) => {
-      const mappedKey = keyMap[key as keyof typeof keyMap];
-      if (!mappedKey) {
-        throw new Error(`Tried to press unknown key: ${key}`);
-      }
-      return mappedKey;
-    });
-    await keyboard.pressKey(...keys);
-  },
-
-  async type(text: string) {
-    const oldDelay = keyboard.config.autoDelayMs
-    keyboard.config.autoDelayMs = 0
-    await keyboard.type(text)
-    keyboard.config.autoDelayMs = oldDelay
+  async pasteText() {
+    if (!await this.setup()) throw new Error('nutjs not loaded');
+    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.V);
+    await wait(delay);
   }
 
 }

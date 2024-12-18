@@ -4,7 +4,7 @@ import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
 import WindowsAutomator from './windows'
-import RobotAutomator  from './robot'
+import NutAutomator from './nut'
 import * as window from '../main/window'
 
 export enum AutomationAction {
@@ -22,7 +22,7 @@ export default class Automator {
     } else if (process.platform === 'win32') {
       this.automator = new WindowsAutomator();
     } else {
-      this.automator = new RobotAutomator();
+      this.automator = new NutAutomator();
     }
   }
 
