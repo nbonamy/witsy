@@ -90,6 +90,11 @@ onMounted(() => {
   document.addEventListener('keyup', onKeyUp)
   document.addEventListener('keydown', onKeyDown)  
 
+  // query params
+  if (props.extra) {
+    processQueryParams(props.extra)
+  }
+
 })
 
 onUnmounted(() => {
@@ -99,12 +104,17 @@ onUnmounted(() => {
 })
 
 const onShow = (params?: anyDict) => {
+  processQueryParams(params)
+}
+
+const processQueryParams = (params?: anyDict) => {
 
   // log
   console.log('Processing query params', JSON.stringify(params))
 
   // reset stuff
   hiddenPrompt = null
+  sourceApp.value = null
   let userPrompt = null
   let userEngine = null
   let userModel = null
@@ -120,6 +130,14 @@ const onShow = (params?: anyDict) => {
     } else {
       console.error(`Prompt with id ${params.promptId} not found`)
     }
+  }
+
+  // if no user prompt then discard everything
+  if (!userPrompt?.length) {
+    console.log('No user prompt found, discarding everything')
+    prompt.value?.setPrompt()
+    prompt.value?.setExpert(null)
+    return
   }
 
   // auto-select expert

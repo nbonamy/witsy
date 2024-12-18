@@ -5,7 +5,7 @@ import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index'
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-export const preparePromptAnywhere = (): BrowserWindow => {
+export const preparePromptAnywhere = (queryParams?: strDict): BrowserWindow => {
 
   // get bounds
   const width = Math.max(750, Math.floor(getCurrentScreen().workAreaSize.width / 2.25));
@@ -16,6 +16,7 @@ export const preparePromptAnywhere = (): BrowserWindow => {
   // open a new one
   promptAnywhereWindow = createWindow({
     hash: '/prompt',
+    queryParams: queryParams,
     x, y, width, height: Math.floor(height * 0.75),
     frame: false,
     skipTaskbar: true,
@@ -32,6 +33,7 @@ export const preparePromptAnywhere = (): BrowserWindow => {
 
   promptAnywhereWindow.on('show', () => {
     app.focus({ steal: true });
+    promptAnywhereWindow.moveTop();
     promptAnywhereWindow.focusOnWebView();
   });
 
@@ -40,19 +42,17 @@ export const preparePromptAnywhere = (): BrowserWindow => {
   
 }
 
-
 export const openPromptAnywhere = (params: strDict): BrowserWindow => {
 
   // if we don't have a window, create one
   if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
-    preparePromptAnywhere();
+    preparePromptAnywhere(params);
+  } else {
+    promptAnywhereWindow.webContents.send('show', params);
   }
 
-  // now send our signals
-  promptAnywhereWindow.webContents.send('show', params);
-  promptAnywhereWindow.show();
-
   // done
+  promptAnywhereWindow.show();
   return promptAnywhereWindow;
 
 };
