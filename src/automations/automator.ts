@@ -30,7 +30,7 @@ export default class Automator {
     try {
       return await this.automator.getForemostAppId();
     } catch (error) {
-      console.error(error);
+      console.warn(error);
       return null;
     }
   }
@@ -39,7 +39,7 @@ export default class Automator {
     try {
       return await this.automator.getForemostAppPath();
     } catch (error) {
-      console.error(error);
+      console.warn(error);
       return null;
     }
   }
