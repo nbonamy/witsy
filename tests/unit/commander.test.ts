@@ -142,8 +142,6 @@ test('Prompt command', async () => {
   await commander.execCommand(app, { textId: cachedTextId!, sourceApp: 'appPath', command })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()

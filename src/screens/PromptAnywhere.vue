@@ -132,14 +132,6 @@ const processQueryParams = (params?: anyDict) => {
     }
   }
 
-  // if no user prompt then discard everything
-  if (!userPrompt?.length) {
-    console.log('No user prompt found, discarding everything')
-    prompt.value?.setPrompt()
-    prompt.value?.setExpert(null)
-    return
-  }
-
   // auto-select expert
   if (params?.foremostApp) {
     for (const expert of store.experts) {
@@ -158,7 +150,7 @@ const processQueryParams = (params?: anyDict) => {
   }
 
   // source app
-  if (params?.sourceApp?.length) {
+  if (userPrompt?.length && params?.sourceApp?.length) {
     sourceApp.value = window.api.file.getAppInfo(params.sourceApp)
     if (sourceApp.value) {
       hiddenPrompt = userPrompt

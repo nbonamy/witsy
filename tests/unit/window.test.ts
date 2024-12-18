@@ -167,9 +167,19 @@ test('Close command picker window', async () => {
 test('Create prompt anywhere window', async () => {
   await window.openPromptAnywhere({ promptId: '1' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=1#/prompt')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+  expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalled()
+})
+
+test('Update prompt anywhere window', async () => {
+  await window.preparePromptAnywhere()
+  expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
+  await window.openPromptAnywhere({ promptId: '1' })
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: '1'})
 })
 
@@ -178,20 +188,6 @@ test('Close prompt anywhere window', async () => {
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
 })
-
-// test('Open waiting panel', async () => {
-//   await window.openWaitingPanel()
-//   expect(window.waitingPanel).toBeInstanceOf(BrowserWindow)
-//   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/wait')
-//   const callParams = BrowserWindow.mock.calls[0][0]
-//   expectCreateWebPreferences(callParams)
-// })
-
-// test('Close waiting panel', async () => {
-//   await window.openWaitingPanel()
-//   await window.closeWaitingPanel()
-//   expect(window.waitingPanel).toBeNull()
-// })
 
 test('Hides and restores active windows', async () => {
   await window.restoreWindows()
