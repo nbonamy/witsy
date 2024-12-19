@@ -501,6 +501,7 @@ form .toolbar {
     margin: 4px 0px;
     font-size: 14pt;
     font-weight: bold;
+    font-variant-numeric: tabular-nums;
   }
   .note {
     font-size: 9pt;
