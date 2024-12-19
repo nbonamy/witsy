@@ -85,9 +85,11 @@ const sessionTotals: Ref<Stats> = ref({
   }
 })
 
+const kWelcomeMessage = 'Click the blob to start chatting'
+
 const model: Ref<string> = ref(store.config.engines.openai.realtime.model || 'davinci')
 const voice: Ref<RealtimeVoice> = ref(store.config.engines.openai.realtime.voice || 'ash')
-const status = ref('Click the blob to start chatting')
+const status = ref(kWelcomeMessage)
 const state: Ref<'idle'|'active'> = ref('idle')
 const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
 
@@ -297,6 +299,7 @@ const stopSession = () => {
   }
 
   // done
+  status.value = kWelcomeMessage
   state.value = 'idle'
 }
 
