@@ -35,36 +35,42 @@ const blocks = computed(() => {
   let match
   let lastIndex = 0
   const blocks: Block[] = []
-  const regex = /!\[([^\]]*)\]\(([^\)]*)\)/g
-  while (match = regex.exec(props.message.content)) {
+  const regex1 = /!\[(?:[^\]]*)\]\(([^\)]*)\)/g
+  const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"/g
+  for (const regex of [ regex1, regex2 ]) {
+  
+    while (match = regex.exec(props.message.content)) {
 
-    // 1st add test until here
-    if (match.index > lastIndex) {
-      blocks.push({ type: 'text', content: props.message.content.substring(lastIndex, match.index) })
-    }
+      // 1st add test until here
+      if (match.index > lastIndex) {
+        blocks.push({ type: 'text', content: props.message.content.substring(lastIndex, match.index) })
+      }
 
-    // now image
-    let imageUrl = decodeURIComponent(match[2])
-    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
-      imageUrl = `file://${imageUrl}`
-    }
+      // now image
+      let imageUrl = decodeURIComponent(match[1])
+      if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
+        imageUrl = `file://${imageUrl}`
+      }
 
-    // try to find the prompt
-    let prompt = null
-    if (props.message.toolCall?.calls) {
-      for (const call of props.message.toolCall.calls) {
-        const toolPath = call.result?.path || call.result?.url
-        if (toolPath === match[2] || toolPath === decodeURIComponent(match[2])) {
-          prompt = call.params.prompt
+      // try to find the prompt
+      let prompt = null
+      if (props.message.toolCall?.calls) {
+        for (const call of props.message.toolCall.calls) {
+          const toolPath = call.result?.path || call.result?.url
+          if (toolPath === match[2] || toolPath === decodeURIComponent(match[2])) {
+            prompt = call.params.prompt
+          }
         }
       }
+
+      // done
+      blocks.push({ type: 'media', url: imageUrl, desc: match[1], prompt: prompt })
+
+      // continue
+      lastIndex = regex.lastIndex
+
     }
-
-    // done
-    blocks.push({ type: 'media', url: imageUrl, desc: match[1], prompt: prompt })
-
-    // continue
-    lastIndex = regex.lastIndex
+  
   }
 
   // add last block
