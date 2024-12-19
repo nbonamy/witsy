@@ -25,7 +25,8 @@ let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
 const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
-const botMessageVideo: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![video](file:///data/video.mp4)' })
+const botMessageVideoMd: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![video](file:///data/video.mp4)' })
+const botMessageVideoHtml: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<video controls src="file:///data/video.mp4">' })
 const botMessageImageLegacy: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
 const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
 
@@ -105,6 +106,7 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.body .image').exists()).toBe(true)
   expect(wrapper.find('.body .download').exists()).toBe(true)
   expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
@@ -121,13 +123,14 @@ test('Assistant image message', async () => {
   expect(wrapper.find('.body .image').exists()).toBe(true)
   expect(wrapper.find('.body .download').exists()).toBe(true)
   expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
 })
 
-test('Assistant video message', async () => {
-  const wrapper = await mount(botMessageVideo)
+test('Assistant video markdown message', async () => {
+  const wrapper = await mount(botMessageVideoMd)
   expect(wrapper.find('.message').classes()).toContain('assistant')
   expect(wrapper.find('.role').classes()).toContain('assistant')
   expect(wrapper.find('.role').text()).toBe('Assistant')
@@ -137,6 +140,24 @@ test('Assistant video message', async () => {
   expect(wrapper.find('.body .video').exists()).toBe(true)
   expect(wrapper.find('.body .download').exists()).toBe(true)
   expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
+  expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+})
+
+test('Assistant video html message', async () => {
+  const wrapper = await mount(botMessageVideoHtml)
+  expect(wrapper.find('.message').classes()).toContain('assistant')
+  expect(wrapper.find('.role').classes()).toContain('assistant')
+  expect(wrapper.find('.role').text()).toBe('Assistant')
+  expect(wrapper.find('.role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.role .logo').exists()).toBe(true)
+  expect(wrapper.find('.body').text()).toBe('')
+  expect(wrapper.find('.body .video').exists()).toBe(true)
+  expect(wrapper.find('.body .download').exists()).toBe(true)
+  expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
@@ -235,7 +256,7 @@ test('Run assistant image actions', async () => {
 })
 
 test('Run assistant video actions', async () => {
-  const wrapper = await mount(botMessageVideo)
+  const wrapper = await mount(botMessageVideoMd)
   await wrapper.find('.body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenCalledWith({
     url: 'file:///data/video.mp4',

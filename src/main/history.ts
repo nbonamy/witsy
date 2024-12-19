@@ -126,12 +126,14 @@ export const extractAttachmentsFromHistory = (history: Chat[], imagesPath: strin
 
   // regexes[0] matches content that is exactly a file:// url
   // regexes[1] matches content that is a file:// embedded in markdown ("(file://....)"
+  // regexes[2] matches content that is a file:// url in an img or video tag
   let imagesPathUrl = encodeURI(`file://${imagesPath}`)
   imagesPathUrl = imagesPathUrl.replace(/%20/g, '(?:%20|\\s)')
   const imagesPathUri = imagesPath.replace(/ /g, '(?:%20|\\s)')
   const regexes = [
     new RegExp(`^file://${imagesPathUri}/([^()\\/]+)$`, 'g'),
-    new RegExp(`\\(${imagesPathUrl}/([^()\\/]+)\\)`, 'g')
+    new RegExp(`\\(${imagesPathUrl}/([^()\\/]+)\\)`, 'g'),
+    new RegExp(`<(?:img|video)[^>]*?src="${imagesPathUrl}/([^"]+)"`, 'g')
   ]
 
   // now extract all the attachments in the chat
