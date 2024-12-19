@@ -96,21 +96,23 @@ export default class Generator {
     } catch (error) {
       console.error('Error while generating text', error)
       if (error.name !== 'AbortError') {
-        if (error.status === 401 || error.message.includes('401') || error.message.toLowerCase().includes('apikey')) {
+        const message = error.message.toLowerCase()
+        if (error.status === 401 || message.includes('401') || message.includes('apikey')) {
           response.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
           rc = false
-        } else if (error.status === 400 && (error.message.includes('credit') || error.message.includes('balance'))) {
+        } else if (error.status === 400 && (message.includes('credit') || message.includes('balance'))) {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           rc = false
-        } else if (error.status === 400 && (error.message.includes('context length') || error.message.includes('too long'))) {
+        } else if (error.status === 400 && (message.includes('context length') || message.includes('too long'))) {
           response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
           rc = false
-        } else if (error.status === 400 && (error.message.includes('function call') || error.message.includes('tools'))) {
+        } else if (error.status === 400 && (message.includes('function call') || message.includes('tools'))) {
           if (llm.plugins.length > 0) {
+            console.log('Model does not support function calling: removing tool and retrying')
             llm.clearPlugins()
             return this.generate(llm, messages, opts, callback)
           }
-        } else if (error.status === 429 && (error.message.includes('resource') || error.message.includes('quota') || error.message.includes('too many'))) {
+        } else if (error.status === 429 && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
           response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
           rc = false
         } else if (response.content === '') {
