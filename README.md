@@ -127,6 +127,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Realtime chat
 - [x] Replicate video generation
 - [x] Together.ai compatibility
 - [x] Gemini 2.0 Flash support

@@ -2,7 +2,7 @@
 import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
-export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand'
+export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand' | 'realtime'
 
 class TipsManager {
 
@@ -51,6 +51,7 @@ class TipsManager {
       'computerUse': this.showComputerUseWarning,
       'newPrompt': this.showNewPromptTip,
       'newCommand': this.showNewCommandTip,
+      'realtime': this.showRealtimeTip,
     }
 
     // get the callback
@@ -116,6 +117,13 @@ class TipsManager {
       confirmButtonText: 'Got it!',
     })
   }
+
+  showRealtimeTip = () => {
+    Dialog.show({
+      title: 'Realtime chat can quickly be expensive. The estimated cost provided is just an estimate and may not be correct. Click on the glob to start and stop chatting!',
+    })
+  }
+
 
 }
 

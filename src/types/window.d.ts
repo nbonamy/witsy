@@ -1,6 +1,6 @@
 
 import { BrowserWindowConstructorOptions } from 'electron'
-interface CreateWindowOpts extends  BrowserWindowConstructorOptions {
+export type CreateWindowOpts = BrowserWindowConstructorOptions & {
   keepHidden?: boolean;
   queryParams?: strDict;
   hash?: string;

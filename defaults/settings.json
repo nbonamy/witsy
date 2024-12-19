@@ -13,7 +13,8 @@
       "conversation": true,
       "computerUse": true,
       "newPrompt": true,
-      "newCommand": true
+      "newCommand": true,
+      "realtime": true
     },
     "confirm": {
       "retryGeneration": true
@@ -129,6 +130,10 @@
       "tts": {
         "model": "tts-1",
         "voice": "alloy"
+      },
+      "realtime": {
+        "model": "gpt-4o-mini-realtime-preview",
+        "voice": "ash"
       }
     },
     "anthropic": {

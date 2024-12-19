@@ -12,6 +12,7 @@ import Wait from './screens/Wait.vue'
 import CommandPicker from './screens/CommandPicker.vue'
 import CommandResult from './screens/CommandResult.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
+import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
@@ -32,6 +33,7 @@ const routes: { [key: string]: any } = {
   '/command': CommandResult,
   '/prompt': PromptAnywhere,
   '/readaloud': ReadAloud,
+  '/realtime': RealtimeChat,
   '/transcribe': Transcribe,
   '/scratchpad': ScratchPad,
 }
