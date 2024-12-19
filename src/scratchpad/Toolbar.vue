@@ -98,7 +98,7 @@ const onChangeModel = () => {
 <style scoped>
 
 .macos form .toolbar {
-  padding-left: 100px;
+  padding-left: 90px;
 }
 
 form .toolbar {

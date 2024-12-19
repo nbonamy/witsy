@@ -2,7 +2,7 @@
 import { EngineCreateOpts, Model } from 'multi-llm-ts'
 import { Shortcut, anyDict } from './index.d'
 
-export interface Configuration {
+export type Configuration = {
   general: GeneralConfig
   llm: LLMConfig
   prompt: PromptConfig
@@ -19,13 +19,14 @@ export interface Configuration {
   gdrive: GDriveConfig
 }
 
-export interface EngineConfig extends EngineCreateOpts{
+export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
   tts: TTSConfig
+  realtime: RealtimeConfig
 }
 
-export interface GeneralConfig {
+export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
@@ -34,7 +35,7 @@ export interface GeneralConfig {
   confirm: {[key: string]: boolean}
 }
 
-export interface LLMConfig {
+export type LLMConfig = {
   engine: string
   autoVisionSwitch: boolean
   conversationLength: number
@@ -49,39 +50,40 @@ export interface InstructionsConfig {
   scratchpad: { [key: string]: string }
 }
 
-export interface AppearanceConfig {
+export type AppearanceConfig = {
   theme: 'light' | 'dark' | 'system'
   tint: 'black' | 'blue'
   chat: ChatAppearance
 }
 
-export interface PromptConfig {
+export type PromptConfig = {
   engine: string
   model: string
   autosave: boolean
 }
 
-export interface CommandsConfig {
+export type CommandsConfig = {
   engine: string
   model: string
 }
 
-export interface ChatAppearance {
+export type ChatAppearance = {
   theme: string
   fontFamily: string
   fontSize: number
 }
 
-export interface ShortcutsConfig {
+export type ShortcutsConfig = {
   chat: Shortcut
   command: Shortcut
   prompt: Shortcut
   readaloud: Shortcut
+  realtime: Shortcut
   transcribe: Shortcut
   scratchpad: Shortcut
 }
 
-export interface ScratchpadConfig {
+export type ScratchpadConfig = {
   engine: string
   model: string
   fontFamily: string
@@ -90,7 +92,7 @@ export interface ScratchpadConfig {
 
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
-export interface STTConfig {
+export type STTConfig = {
   engine: string
   model: string
   silenceDetection: boolean
@@ -98,14 +100,14 @@ export interface STTConfig {
   //silenceAction: SilenceAction
 }
 
-export interface ModelsConfig {
+export type ModelsConfig = {
   chat: Model[]
   image?: Model[]
   video?: Model[]
   embedding?: Model[]
 }
 
-export interface ModelConfig {
+export type ModelConfig = {
   chat: string
   image: string
   video?: string
@@ -114,12 +116,20 @@ export interface ModelConfig {
 export type TTSModel = 'tts-1' | 'tts-1-hd'
 export type TTSVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 
-export interface TTSConfig {
+export type TTSConfig = {
   model: TTSModel
   voice: TTSVoice
 }
 
-export interface RagConfig {
+export type RealtimeModel = string
+export type RealtimeVoice = 'ash' | 'ballad' | 'coral' | 'sage' | 'verse'
+
+export type RealtimeConfig = {
+  model: RealtimeModel
+  voice: RealtimeVoice
+}
+
+export type RagConfig = {
   maxDocumentSizeMB?: number
   chunkSize?: number
   chunkOverlap?: number
@@ -127,11 +137,11 @@ export interface RagConfig {
   relevanceCutOff?: number
 }
 
-export interface DropboxConfig {
+export type DropboxConfig = {
   accessToken: string
 }
 
-export interface GDriveConfig {
+export type GDriveConfig = {
   tokens: anyDict
   fileIds: strDict
 }

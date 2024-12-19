@@ -31,7 +31,7 @@ export type ToolCallInfo = {
 
 export interface Message {
   uuid: string
-  type: string
+  type: 'text' | 'image'
   createdAt: number
   role: LlmRole
   content: string
