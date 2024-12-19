@@ -1,4 +1,5 @@
 
+import { Attachment as IAttachment } from '../types'
 import { Attachment as AttachmentBase, extensionToMimeType } from 'multi-llm-ts'
 
 export { textFormats } from 'multi-llm-ts'
@@ -6,7 +7,7 @@ export { imageFormats } from 'multi-llm-ts'
 
 const plainTextFormats = ['txt', 'csv', 'json', 'yml', 'yaml', 'xml', 'html', 'css', 'md']
 
-export default class Attachment extends AttachmentBase {
+export default class Attachment extends AttachmentBase implements IAttachment{
 
   url: string
   extracted: boolean

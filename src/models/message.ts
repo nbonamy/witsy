@@ -1,14 +1,14 @@
 
-import { ToolCallInfo } from 'types'
-import { LlmRole, LlmChunkTool, Message as MessageBase, LlmUsage } from 'multi-llm-ts'
+import { ToolCallInfo, MessageType, Message as IMessage } from 'types'
+import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'
 
-export default class Message extends MessageBase {
+export default class Message extends MessageBase implements IMessage {
 
   uuid: string
   createdAt: number
-  type: 'text' | 'image'
+  type: MessageType
   expert?: Expert
   toolCall?: ToolCallInfo
   usage?: LlmUsage

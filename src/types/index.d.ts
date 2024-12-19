@@ -1,23 +1,18 @@
 
-import { LlmChunk, LlmChunkTool, LlmRole, anyDict } from 'multi-llm-ts'
+import { anyDict, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
 import { Configuration } from './config.d'
 import { ToolCallInfo } from '../models/message'
 
 export type strDict = { [key: string]: string }
 export type anyDict = { [key: string]: any }
 
-export interface Attachment {
-  content: string
-  mimeType: string
+export interface Attachment extends IAttachmentBase {
   url: string
   extracted: boolean
   saved: boolean
   extractText(): void
   loadContents(): void
   b64Contents(): string
-  isText(): boolean
-  isImage(): boolean
-  format(): string
 }
 
 export type ToolCallInfo = {
@@ -29,22 +24,18 @@ export type ToolCallInfo = {
   }[]
 }
 
-export interface Message {
+export type MessageType = 'text' | 'image'
+
+export interface Message extends IMessageBase {
   uuid: string
-  type: 'text' | 'image'
+  type: MessageType
   createdAt: number
-  role: LlmRole
-  content: string
-  transient: boolean
   expert?: Expert
   toolCall?: ToolCallInfo
   attachment: Attachment
   setText(text: string): void
   setImage(url: string): void
   setToolCall(toolCall: LlmChunkTool): void
-  attach(attachment: Attachment): void
-  appendText(chunk: LlmChunk): void
-  get contentForModel(): string
 }
 
 export interface Chat {
@@ -67,7 +58,7 @@ export interface Chat {
   delete(): void
 }
 
-export interface Command {
+export type Command = {
   id: string,
   type: 'system' | 'user',
   icon: string,
@@ -80,7 +71,7 @@ export interface Command {
   model: string,
 }
 
-export interface Shortcut {
+export type Shortcut = {
   alt?: boolean
   ctrl?: boolean
   shift?: boolean
@@ -106,13 +97,13 @@ export interface Store {
   dump?(): void
 }
 
-export interface ExternalApp {
+export type ExternalApp = {
   name: string
   identifier: string
   icon: string
 }
 
-export interface Expert {
+export type Expert = {
   id: string,
   type: 'system' | 'user',
   name: string
@@ -121,13 +112,13 @@ export interface Expert {
   triggerApps: ExternalApp[]
 }
 
-export interface FileContents {
+export type FileContents = {
   url: string
   mimeType: string
   contents: string
 }
 
-export interface OnlineFileMetadata {
+export type OnlineFileMetadata = {
   id: string
   size: number
   createdTime: Date
