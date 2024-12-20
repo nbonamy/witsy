@@ -19,7 +19,7 @@ let lastStatus = null;
 const check = () => {
 
   const status = execSync(`gh run list -c ${lastCommitHash} --json databaseId,workflowName,status,conclusion`).toString().trim();
-  const jobs = JSON.parse(status);
+  const jobs = JSON.parse(status).sort((a, b) => a.databaseId - b.databaseId);
   if (jobs.length === 0) {
     if (++tries > 6) {
       console.log(`${chalk.red('[X]')} No matching jobs found. Exiting...`);
