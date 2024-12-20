@@ -2,9 +2,12 @@
 # .github/workflows/build-darwin.yml
 name: Build macOS Releases
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      arch:
+        type: string
 jobs:
-  build-darwin-all:
+  build-darwin:
     runs-on: macos-15
     permissions:
       contents: write
@@ -34,7 +37,7 @@ jobs:
       - name: Install Dependencies
         run: npm i
       - name: Build script
-        run: make mac
+        run: make mac-${{ inputs.arch }}
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
