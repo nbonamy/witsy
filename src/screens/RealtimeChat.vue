@@ -24,15 +24,12 @@
         <div v-for="word in lastWords" :key="word" class="word" v-html="word" />
       </div> -->
 
-      <div class="blobs" :class="state" @click="onStart">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-      </div>
+      <AnimatedBlob :active="state === 'active'" @click="onStart" ref="blob"/>
 
       <div class="cost-container">
         <div class="total">
           <div class="title">Estimated cost:</div>
-          <div class="value">$ <span ref="totalCostRef"></span></div>
+          <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n) => n.toFixed(6)"/></div>
           <div class="note">based on<br>gpt-4o-realtime-preview-2024-12-17<br>
             <a href="https://openai.com/api/pricing" target="_blank">costs</a> as of 19-Dec-2024</div>
         </div>
@@ -48,7 +45,8 @@
 import { type RealtimeVoice } from '../types/config.d'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
-import { NumberFlip } from 'number-flip-animation'
+import AnimatedBlob from '../components/AnimatedBlob.vue'
+import NumberFlip from '../components/NumberFlip.vue'
 import useTipsManager from '../composables/tips_manager'
 
 store.load()
@@ -82,25 +80,23 @@ const sessionTotals: Ref<Stats> = ref({
   cost: {
     input: 0,
     output: 0,
-    total: 0
+    total: 0,
   }
 })
 
 const kWelcomeMessage = 'Click the blob to start chatting'
 
+const blob = ref<typeof AnimatedBlob>(null)
 const model: Ref<string> = ref(store.config.engines.openai.realtime.model || 'davinci')
 const voice: Ref<RealtimeVoice> = ref(store.config.engines.openai.realtime.voice || 'ash')
 const status = ref(kWelcomeMessage)
 const state: Ref<'idle'|'active'> = ref('idle')
 const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
-const totalCostRef = ref<HTMLElement>(null)
 
 const models = computed(() => {
   return store.config.engines.openai.models.chat.filter(m => m.id.includes('realtime'))
 })
 
-let totalFlip: NumberFlip
-let blobTimeout: NodeJS.Timeout
 let simInterval: NodeJS.Timeout
 
 onMounted(() => {
@@ -109,7 +105,7 @@ onMounted(() => {
   window.addEventListener('beforeunload', stopSession)
 
   // blob animation
-  updateBlob()
+  blob.value.update()
 
   // tip
   setTimeout(() => {
@@ -117,14 +113,6 @@ onMounted(() => {
       tipsManager.showTip('realtime')
     }
   }, 1000)
-
-  // flip
-  totalFlip = new NumberFlip({
-    rootElement: totalCostRef.value,
-    numberFormatter: (n: number) => n.toFixed(6),
-    animateInitialNumber: false,
-    initialNumber: 1e-10,
-  })
 
 })
 
@@ -144,7 +132,7 @@ const createRealtimeSession = async (inStream: MediaStream, token: String, voice
   dc.addEventListener('message', (e) => {
     try {
 
-      updateBlob()
+      blob.value.update()
 
       const eventData = JSON.parse(e.data)
 
@@ -247,8 +235,6 @@ const updateSessionTotals = (currentStats: Stats, costs: Cost) => {
   sessionTotals.value.cost.input += costs.input
   sessionTotals.value.cost.output += costs.output
   sessionTotals.value.cost.total += costs.total
-
-  totalFlip.setNumber(sessionTotals.value.cost.total)
 }
 
 const addEventToLog = (eventData: any) => {
@@ -324,57 +310,6 @@ const onStart = () => {
   }
 }
 
-let transforms = [
-  [0, 1, 50, 50, 50, 50],
-  [0, 1, 50, 50, 50, 50],
-]
-
-const random = (min: number, max: number) => Math.floor(min + Math.random() * (max - min));
-const remain = (n: number) => 100 - n;
-
-const updateBlob = () => {
-
-  clearTimeout(blobTimeout);
-  
-  const offset = state.value === 'active' ? 40 : 40;
-  const scaling = state.value === 'active' ? 100 : 50;
-  const delay = state.value === 'active' ? 250 : 2000;
-
-  document.querySelectorAll<HTMLElement>('.blob').forEach((blob, idx) => {
-
-    let rotation = transforms[idx][0]
-    rotation += random(0, state.value === 'active' ? 15 : 5);
-    transforms[idx][0] = rotation;
-
-    let scale = transforms[0][1];
-    if (idx === 0) {
-      scale += random(-scaling, scaling)/1000;
-      scale = Math.max(0.95, Math.min(scale, 1.05));
-      transforms[idx][1] = scale;
-    }
-
-    let r = [];
-    for (let i = 0; i < 4; i++) {
-      let v = transforms[idx][i+2];
-      v += random(-5, 5);
-      v = Math.max(offset, Math.min(v, remain(offset)));
-      transforms[idx][i+2] = v;
-      r.push(v);
-      r.push(remain(v));
-    }
-
-    let coordinates = `${r[0]}% ${r[1]}% ${r[2]}% ${r[3]}% / ${r[4]}% ${r[6]}% ${r[7]}% ${r[5]}%`;
-    blob.style.borderRadius = coordinates;
-    blob.style.setProperty("--r", `${rotation}deg`);
-    blob.style.setProperty("--s", `${scale}`);
-    blob.style.setProperty("transition", `linear ${delay}ms`);
-
-  });
-
-  blobTimeout = setTimeout(updateBlob, delay);
-
-};
-
 const save = () => {
   store.config.engines.openai.realtime.model = model.value
   store.config.engines.openai.realtime.voice = voice.value
@@ -382,10 +317,6 @@ const save = () => {
 }
 
 </script>
-
-<style>
-@import '../../node_modules/number-flip-animation/dist/styles.css';
-</style>
 
 <style scoped>
 @import '../../css/form.css';
@@ -473,43 +404,6 @@ form .toolbar {
 
 .blobs {
   cursor: pointer;
-  position: relative;
-  width: 300px;
-  height: 300px;
-}
-
-.blob {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  left: 0;
-  top: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  transform: rotate(var(--r, 0)) scale(var(--s, --s));
-}
-
-.blob {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0);
-}
-
-.blob1 {
-  background: var(--text-color);
-  opacity: 0.8;
-}
-
-.blob2 {
-  background: var(--icon-color);
-  opacity: 0.9;
-}
-
-.blobs.active .blob2 {
-  background-color: var(--highlight-color);
-  opacity: 0.5;
-}
-
-.blob, .blob div {
-  transition-property: border-radius, transform;
 }
 
 .cost-container {
