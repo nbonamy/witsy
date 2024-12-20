@@ -1,14 +1,17 @@
 
 import { strDict } from 'types/index.d';
 import { app, BrowserWindow } from 'electron';
-import { createWindow, getCurrentScreen, getCenteredCoordinates } from './index';
+import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen } from './index';
 
 export let promptAnywhereWindow: BrowserWindow = null;
+
+const kWidthMinimum = 750;
+const kWidthRatio = 2.25;
 
 export const preparePromptAnywhere = (queryParams?: strDict): BrowserWindow => {
 
   // get bounds
-  const width = Math.max(750, Math.floor(getCurrentScreen().workAreaSize.width / 2.25));
+  const width = Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio));
   const height = getCurrentScreen().workAreaSize.height;
   const { x } = getCenteredCoordinates(width, height);
   const y = Math.floor(height * 0.15);
@@ -50,6 +53,9 @@ export const openPromptAnywhere = (params: strDict): BrowserWindow => {
   } else {
     promptAnywhereWindow.webContents.send('show', params);
   }
+
+  // check prompt is on the right screen
+  ensureOnCurrentScreen(promptAnywhereWindow);
 
   // done
   promptAnywhereWindow.show();
