@@ -32,7 +32,7 @@
       <div class="cost-container">
         <div class="total">
           <div class="title">Estimated cost:</div>
-          <div class="value">$ {{ sessionTotals.cost.total.toFixed(6) }}</div>
+          <div class="value">$ <span ref="totalCostRef"></span></div>
           <div class="note">based on<br>gpt-4o-realtime-preview-2024-12-17<br>
             <a href="https://openai.com/api/pricing" target="_blank">costs</a> as of 19-Dec-2024</div>
         </div>
@@ -45,9 +45,10 @@
 
 <script setup lang="ts">
 
+import { type RealtimeVoice } from '../types/config.d'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
-import { type RealtimeVoice } from '../types/config.d'
+import { NumberFlip } from 'number-flip-animation'
 import useTipsManager from '../composables/tips_manager'
 
 store.load()
@@ -92,11 +93,13 @@ const voice: Ref<RealtimeVoice> = ref(store.config.engines.openai.realtime.voice
 const status = ref(kWelcomeMessage)
 const state: Ref<'idle'|'active'> = ref('idle')
 const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
+const totalCostRef = ref<HTMLElement>(null)
 
 const models = computed(() => {
   return store.config.engines.openai.models.chat.filter(m => m.id.includes('realtime'))
 })
 
+let totalFlip: NumberFlip
 let blobTimeout: NodeJS.Timeout
 let simInterval: NodeJS.Timeout
 
@@ -114,6 +117,14 @@ onMounted(() => {
       tipsManager.showTip('realtime')
     }
   }, 1000)
+
+  // flip
+  totalFlip = new NumberFlip({
+    rootElement: totalCostRef.value,
+    numberFormatter: (n: number) => n.toFixed(6),
+    animateInitialNumber: false,
+    initialNumber: 1e-10,
+  })
 
 })
 
@@ -236,6 +247,8 @@ const updateSessionTotals = (currentStats: Stats, costs: Cost) => {
   sessionTotals.value.cost.input += costs.input
   sessionTotals.value.cost.output += costs.output
   sessionTotals.value.cost.total += costs.total
+
+  totalFlip.setNumber(sessionTotals.value.cost.total)
 }
 
 const addEventToLog = (eventData: any) => {
@@ -369,6 +382,10 @@ const save = () => {
 }
 
 </script>
+
+<style>
+@import '../../node_modules/number-flip-animation/dist/styles.css';
+</style>
 
 <style scoped>
 @import '../../css/form.css';
@@ -505,6 +522,10 @@ form .toolbar {
     font-size: 14pt;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
+
+    span {
+      display: inline-flex !important;
+    }
   }
   .note {
     font-size: 9pt;
