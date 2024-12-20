@@ -6,6 +6,18 @@ on:
     inputs:
       arch:
         type: string
+        required: true
+    secrets:
+      BUILD_CERTIFICATE_BASE64:
+        required: true
+      APPLE_PASSWORD:
+        required: true
+      APPLE_ID:
+        required: true
+      APPLE_TEAM_ID:
+        required: true
+      IDENTIFY_DARWIN_CODE:
+        required: true
 jobs:
   build-darwin:
     runs-on: macos-15
