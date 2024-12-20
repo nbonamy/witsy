@@ -66,6 +66,29 @@ export const getCenteredCoordinates = (w: number, h: number) => {
   };
 };
 
+// ensure window is on current screen
+export const ensureOnCurrentScreen = (window: BrowserWindow) => {
+
+  const cursorScreen = getCurrentScreen();
+  const windowPosition = window.getPosition();
+  const windowScreen = screen.getDisplayNearestPoint({ x: windowPosition[0], y: windowPosition[1] });
+  if (cursorScreen.id !== windowScreen.id) {
+
+    // adjust width
+    let windowSize = window.getSize();
+    if (windowSize[0] > cursorScreen.workAreaSize.width) {
+      window.setSize(cursorScreen.workAreaSize.width * .8, windowSize[1]);
+    }
+
+    // move
+    windowSize = window.getSize();
+    const { x, y } = getCenteredCoordinates(windowSize[0], windowSize[1]);
+    window.setPosition(x, y);
+
+  }
+
+}
+
 // create window
 export const createWindow = (opts: CreateWindowOpts = {}) => {
 

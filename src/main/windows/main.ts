@@ -2,7 +2,7 @@
 import { CreateWindowOpts } from 'types/window';
 import { anyDict } from 'types/index.d';
 import { app, BrowserWindow, dialog } from 'electron';
-import { electronStore, createWindow, titleBarOptions } from './index';
+import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
 
@@ -13,6 +13,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
   // try to show existig one
   if (mainWindow && !mainWindow.isDestroyed()) {
     try {
+      ensureOnCurrentScreen(mainWindow);
       mainWindow.show();
       if (mainWindow.isMinimized()) {
         mainWindow.restore();
@@ -40,6 +41,9 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     ...titleBarOptions(),
     ...opts,
   });
+
+  // check
+  ensureOnCurrentScreen(mainWindow);
 
   // show a tip
   mainWindow.on('close', () => {
