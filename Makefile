@@ -82,7 +82,8 @@ publish:
 	@$(MAKE) increment-build-number
 	@$(MAKE) commit-build-number
 	gh release create v$(VERSION) --repo https://github.com/nbonamy/witsy --title $(VERSION) --generate-notes --draft
-	gh workflow run build-darwin.yml
+	gh workflow run build-darwin-x64.yml
+	gh workflow run build-darwin-arm64.yml
 	gh workflow run build-windows.yml
 	gh workflow run build-linux.yml
 	node build/monitor_gh_builds.mjs
