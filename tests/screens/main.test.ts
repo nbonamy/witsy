@@ -1,28 +1,46 @@
 
-import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
+import { enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { store } from '../../src/services/store'
+import Chat from '../../src/models/chat'
 import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Settings from '../../src/screens/Settings.vue'
 import Assistant from '../../src/services/assistant'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
-enableAutoUnmount(afterAll)
+enableAutoUnmount(afterEach)
 
 beforeAll(() => {
   useNavigatorMock()
   useWindowMock()
+
+  window.api.history.load = () => ({
+    folders: [
+      { id: 'folder', name: 'Folder', chats: [] }
+    ], chats: [
+      new Chat({ uuid: 'chat', title: 'title', messages: [] })
+    ]
+  })
+})
+
+vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
+  const Swal = vi.fn()
+  Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder' : 'user-input' }))
+  return { default: Swal }
 })
 
 vi.mock('../../src/services/assistant', async () => {
   const Assistant = vi.fn()
   Assistant.prototype.setConfig = vi.fn()
   Assistant.prototype.setChat = vi.fn()
+  Assistant.prototype.initChat = vi.fn(() => new Chat())
   Assistant.prototype.initLlm = vi.fn()
   Assistant.prototype.hasLlm = vi.fn(() => true)
   Assistant.prototype.prompt = vi.fn()
@@ -117,4 +135,86 @@ test('Stop assistant', async () => {
   mount(Main)
   emitEvent('stop-prompting', null)
   expect(Assistant.prototype.stop).toHaveBeenCalled()
+})
+
+test('New chat in folder', async () => {
+  console.log(store.history.chats)
+  mount(Main)
+  console.log(store.history.chats)
+  emitEvent('new-chat-in-folder', 'folder')
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.folders[0].chats).toHaveLength(1)
+  expect(store.history.folders[0].chats[0]).toBe(store.history.chats[1].uuid)
+})
+
+test('Rename chat', async () => {
+  mount(Main)
+  emitEvent('rename-chat', store.history.chats[0])
+  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'Rename Chat',
+    showCancelButton: true,
+    input: 'text',
+    inputValue: 'title',
+  }))
+  await flushPromises()
+  expect(store.history.chats[0].title).toBe('user-input')
+})
+
+test('Move chat', async () => {
+  expect(store.history.folders[0].chats).not.toHaveLength(1)
+  mount(Main)
+  emitEvent('move-chat', 'chat')
+  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'Select Destination Folder',
+    showCancelButton: true,
+    input: 'select',
+    inputValue: 'root',
+    inputOptions: {
+      root: 'Unsorted',
+      folder: 'Folder',
+    }
+  }))
+  await flushPromises()
+  expect(store.history.folders[0].chats).toHaveLength(1)
+})
+
+test('Delete chat', async () => {
+  mount(Main)
+  emitEvent('delete-chat', 'chat')
+  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
+    message: 'Are you sure you want to delete this conversation?',
+    detail: 'You can\'t undo this action.',
+  }))
+  await flushPromises()
+  expect(store.history.chats).toHaveLength(0) 
+})
+
+test('Rename folder', async () => {
+  mount(Main)
+  emitEvent('rename-folder', 'folder')
+  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'Rename Folder',
+    showCancelButton: true,
+    input: 'text',
+    inputValue: 'Folder',
+  }))
+  await flushPromises()
+  expect(store.history.folders[0].name).toBe('user-input')
+})
+
+test('Delete folder', async () => {
+  mount(Main)
+  emitEvent('delete-folder', 'folder')
+  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
+    message: 'Are you sure you want to delete this folder?',
+    detail: 'You can\'t undo this action.',
+  }))
+  await flushPromises()
+  expect(store.history.folders).toHaveLength(0)
+})
+
+test('Select chat', async () => {
+  mount(Main)
+  emitEvent('select-chat', store.history.chats[0])
+  expect(Assistant.prototype.setChat).toHaveBeenCalledWith(store.history.chats[0])
 })
