@@ -72,7 +72,7 @@ class TipsManager {
 
   showScratchpadTip = () => {
     Dialog.show({
-      title: 'Witsy now includes an interactive scratchpad leveraging Generative AI to help you write the best content!',
+      title: 'Witsy includes an interactive scratchpad leveraging Generative AI to help you write the best content!',
       text: 'Do you want to check it now? It is available in the Witsy menu when you need it!',
       confirmButtonText: 'Yes!',
       cancelButtonText: 'Later',
@@ -100,7 +100,7 @@ class TipsManager {
 
   showNewPromptTip = () => {
     Dialog.show({
-      title: 'The Prompt Anywhere feature has been completely redesigned and gives you faster than ever to Generative AI!',
+      title: 'Prompt Anywhere gives you faster than ever to Generative AI!',
       text: 'Do you want to check it now? It is available in the Witsy menu when you need it!',
       confirmButtonText: 'Yes!',
       cancelButtonText: 'Later',
