@@ -26,7 +26,7 @@ vi.mock('../../src/composables/event_bus.js', async () => {
 beforeAll(() => {
   useNavigatorMock()
   useWindowMock()
-  store.loadSettings()
+  store.load()
 })
 
 let chat: Chat|null = null
@@ -135,7 +135,7 @@ test('Context menu save', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat!, standalone: true } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.findAll('.context-menu .item')[2].trigger('click')
-  expect(store.chats).toHaveLength(1)
-  expect(store.chats[0]).toStrictEqual(chat)
+  expect(store.history.chats).toHaveLength(1)
+  expect(store.history.chats[0]).toStrictEqual(chat)
   //TODO test store.saveHistory
 })

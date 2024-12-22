@@ -53,6 +53,7 @@ export interface InstructionsConfig {
 export type AppearanceConfig = {
   theme: 'light' | 'dark' | 'system'
   tint: 'black' | 'blue'
+  chatList: ChatListAppearance
   chat: ChatAppearance
 }
 
@@ -71,6 +72,15 @@ export type ChatAppearance = {
   theme: string
   fontFamily: string
   fontSize: number
+}
+
+export type ChatListMode = 'timeline' | 'folder'
+
+export type ChatListLayout = 'normal' | 'compact'
+
+export type ChatListAppearance = {
+  mode: ChatListMode
+  layout: ChatListLayout
 }
 
 export type ShortcutsConfig = {

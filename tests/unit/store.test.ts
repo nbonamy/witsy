@@ -29,7 +29,7 @@ chats[1].messages[1].createdAt = 0
 
 beforeAll(() => {
   useWindowMock()
-  window.api.history.load = vi.fn(() => chats)
+  window.api.history.load = vi.fn(() => ({ folders: [], chats: chats }))
 })
 
 beforeEach(() => {
@@ -41,7 +41,7 @@ test('Check atributtes', async () => {
   expect(store.config).toEqual({})
   expect(store.commands).toEqual([])
   expect(store.experts).toEqual([])
-  expect(store.chats).toEqual([])
+  expect(store.history).toBe(null)
   expect(store.chatFilter).toBe(null)
 })
 
@@ -52,6 +52,8 @@ test('Load', async () => {
   expect(window.api.commands?.load).toHaveBeenCalled()
   expect(window.api.history?.load).toHaveBeenCalled()
   expect(store.config).toStrictEqual(defaultSettings)
+  expect(store.history.folders).toHaveLength(0)
+  expect(store.history.chats).toHaveLength(2)
   expect(store.commands).toHaveLength(5)
   expect(store.experts).toHaveLength(3)
 })
@@ -80,37 +82,41 @@ test('Reload settings without changing reference', async () => {
 
 test('Load history', async () => {
   store.load()
-  expect(store.chats).toHaveLength(2)
-  expect(store.chats[0].messages).toHaveLength(0)
-  expect(store.chats[1].messages).toHaveLength(2)
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[0].messages).toHaveLength(0)
+  expect(store.history.chats[1].messages).toHaveLength(2)
 })
 
 test('Save history', async () => {
   store.saveHistory()
-  expect(window.api.history?.save).toHaveBeenCalledWith([ {
-    uuid: '123',
-    engine: 'engine',
-    model: 'model',
-    deleted: false,
-    disableTools: false,
-    messages: [
-      { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
-      { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', expert: null, toolCall: null, attachment: null, usage: null, transient: false }
-    ]
-  }])
+  expect(window.api.history?.save).toHaveBeenCalled()
+  expect(window.api.history?.save).toHaveBeenCalledWith({
+    folders: [],
+    chats: [ {
+      uuid: '123',
+      engine: 'engine',
+      model: 'model',
+      deleted: false,
+      disableTools: false,
+      messages: [
+        { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
+        { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', expert: null, toolCall: null, attachment: null, usage: null, transient: false }
+      ]
+    } ]
+  })
 })
 
 test('Merge history', async () => {
   store.load()
-  expect(store.chats).toHaveLength(2)
-  expect(store.chats[1].messages).toHaveLength(2)
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].messages).toHaveLength(2)
   chats.push(new Chat())
   chats[1].messages.push(new Message('user', ''))
   listeners[0]('history')
-  expect(store.chats).toHaveLength(3)
-  expect(store.chats[1].messages).toHaveLength(3)
+  expect(store.history.chats).toHaveLength(3)
+  expect(store.history.chats[1].messages).toHaveLength(3)
   chats.splice(2, 1)
   listeners[0]('history')
-  expect(store.chats).toHaveLength(2)
-  expect(store.chats[1].messages).toHaveLength(3)
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].messages).toHaveLength(3)
 })

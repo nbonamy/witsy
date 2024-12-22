@@ -1,0 +1,78 @@
+<template>
+  <section v-for="c in chats" :key="c.uuid" :set="chatDay=getDay(c)">
+    <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div>
+    <ChatListItem :chat="c" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay" />
+  </section>
+</template>
+
+<script setup lang="ts">
+
+import ChatListItem from './ChatListItem.vue'
+import Chat from '../models/chat'
+
+defineProps({
+  chats: {
+    type: Array<Chat>,
+    required: true,
+  },
+  selection: {
+    type: Array<String>,
+    required: true,
+  },
+  active: {
+    type: Chat,
+    default: null,
+  },
+  selectMode: {
+    type: Boolean,
+    default: false,
+  }
+})
+
+let currDay: string|null = null
+let chatDay: string
+
+const emit = defineEmits(['select', 'menu']);
+
+const getDay = (chat: Chat) => {
+  const now = new Date()
+  const oneDay = 24 * 60 * 60 * 1000
+  const diff = Date.now() - chat.lastModified
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const yesterdayStart = todayStart - 86400000;
+  if (chat.lastModified >= todayStart) return 'Today'
+  if (chat.lastModified >= yesterdayStart) return 'Yesterday'
+  if (diff < 7 * oneDay) return 'Last 7 days'
+  if (diff < 14 * oneDay) return 'Last 14 days'
+  if (diff < 30 * oneDay) return 'Last 30 days'
+  // if (diff < 60 * oneDay) return 'Last Month'
+  // if (diff < 365 * oneDay) return 'This Year'
+  return 'Earlier'
+}
+
+const onSelectChat = (chat: Chat) => {
+  emit('select', chat)
+}
+
+const showContextMenu = (event: MouseEvent, chat: Chat) => {
+  emit('menu', event, chat)
+}
+
+</script>
+
+<style scoped>
+
+.day {
+  margin: 12px 0 8px;
+  padding: 0 12px;
+  font-size: 9pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--sidebar-section-title-color);
+}
+
+section:first-child .day {
+  margin-top: 0;
+}
+
+</style>

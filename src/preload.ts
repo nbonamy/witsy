@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { FileDownloadParams, FileSaveParams, type Chat, type Command, type ComputerAction, type Expert, type ExternalApp, type FileContents, type anyDict, type strDict } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types';
 import { type Configuration } from './types/config';
 import { type DocRepoQueryResponseItem } from './types/rag';
 import { type RunCommandParams } from './types/automation';
@@ -62,8 +62,8 @@ contextBridge.exposeInMainWorld(
       save: (data: Configuration) => { return ipcRenderer.send('config-save', JSON.stringify(data)) },
     },
     history: {
-      load: (): Chat[] => { return JSON.parse(ipcRenderer.sendSync('history-load')) },
-      save: (data: Chat[]) => { return ipcRenderer.send('history-save', JSON.stringify(data)) },
+      load: (): History => { return JSON.parse(ipcRenderer.sendSync('history-load')) },
+      save: (data: History) => { return ipcRenderer.send('history-save', JSON.stringify(data)) },
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync('automation-get-text', id) },

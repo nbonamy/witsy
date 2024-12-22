@@ -157,7 +157,7 @@ test('Settings General', async () => {
 test('Settings Appearance', async () => {
   
   const tab = await switchToTab(1)
-  expect(tab.findAll('.group')).toHaveLength(5)
+  expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')

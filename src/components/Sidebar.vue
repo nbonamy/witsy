@@ -9,9 +9,10 @@
         <BIconPencilSquare />
       </div>
     </div>
-    <ChatList :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
-    <div class="footer actions" v-if="deleteMode">
-      <button id="cancel-delete" @click="onCancelDelete">Cancel</button>
+    <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
+    <div class="footer actions" v-if="selectMode">
+      <button id="cancel-delete" @click="onCancelSelect">Cancel</button>
+      <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">Move</button>
       <button id="delete" @click="onDelete" class="destructive">Delete</button>
     </div>
     <div class="footer" v-else>
@@ -19,8 +20,11 @@
         <BIconGearFill />
         <span>Settings</span>
       </div>
-      <div id="start-delete" class="icon-text" v-if="store.chats.length" @click="onStartDelete">
-        <BIconTrash />
+      <div id="new-folder" class="icon-text" @click="onNewFolder" v-if="chatListDisplayMode == 'folder'">
+        <BIconFolderPlus />
+      </div>
+      <div id="select" class="icon-text" v-if="store.history.chats.length" @click="onSelect">
+        <BIconCheckSquare />
       </div>
     </div>
   </div>
@@ -29,31 +33,45 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, type Ref } from 'vue'
+import { ChatListMode } from '../types/config'
+import { ref, onMounted, type Ref } from 'vue'
 import { store } from '../services/store'
-import Chat from '../models/chat'
+import { v4 as uuidv4 } from 'uuid'
+import Dialog from '../composables/dialog'
 import ChatList from './ChatList.vue'
+import Chat from '../models/chat'
+
+import useTipsManager from '../composables/tips_manager'
+const tipsManager = useTipsManager(store)
 
 import useEventBus from '../composables/event_bus'
-import { BIconTrash } from 'bootstrap-icons-vue'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
-const props = defineProps({
+defineProps({
   chat: {
     type: Chat,
   },
 })
 
+const chatListDisplayMode: Ref<ChatListMode> = ref('timeline')
 const chatList: Ref<typeof ChatList|null> = ref(null)
 const sidebarWidth: Ref<number> = ref(0)
 const filter: Ref<string> = ref('')
-const deleteMode: Ref<boolean> = ref(false)
+const selectMode: Ref<boolean> = ref(false)
 
-const selectMode = computed(() => deleteMode.value)
 
 onMounted(() => {
   sidebarWidth.value = window.api.store.get('sidebarWidth', 250)
+  chatListDisplayMode.value = store.config.appearance.chatList.mode
+  onEvent('chat-list-mode', setChatListMode)
 })
+
+const setChatListMode = (mode: ChatListMode) => {
+  tipsManager.showTip('folderList')
+  chatListDisplayMode.value = mode
+  store.config.appearance.chatList.mode = mode
+  store.saveSettings()
+}
 
 const onSettings = () => {
   emitEvent('open-settings', { initialTab: 'general' })
@@ -61,7 +79,7 @@ const onSettings = () => {
 
 const onNewChat = () => {
   onClearFilter()
-  onCancelDelete()
+  onCancelSelect()
   emitEvent('new-chat', null)
 }
 
@@ -74,12 +92,26 @@ const onClearFilter = () => {
   store.chatFilter = null
 }
 
-const onStartDelete = () => {
-  deleteMode.value = true
+const onNewFolder = async () => {
+  const { value: name } = await Dialog.show({
+    title: 'New Folder',
+    input: 'text',
+    inputValue: '',
+    inputPlaceholder: 'New Folder Name',
+    showCancelButton: true,
+  });
+  if (name) {
+    store.history.folders.push({ id: uuidv4(), name, chats: [] })
+    store.saveHistory()
+  }
 }
 
-const onCancelDelete = () => {
-  deleteMode.value = false
+const onSelect = () => {
+  selectMode.value = true
+}
+
+const onCancelSelect = () => {
+  selectMode.value = false
   chatList.value!.clearSelection()
 }
 
@@ -87,9 +119,18 @@ const onDelete = () => {
   const selection = chatList.value!.getSelection()
   if (selection.length) {
     emitEvent('delete-chat', selection)
-    chatList.value!.clearSelection()
+  } else {
+    selectMode.value = false
   }
-  deleteMode.value = false
+}
+
+const onMove = () => {
+  const selection = chatList.value!.getSelection()
+  if (selection.length) {
+    emitEvent('move-chat', selection)
+  } else {
+    selectMode.value = false
+  }
 }
 
 const onResizeSidebarStart = () => {
@@ -107,6 +148,10 @@ const onResizeSidebarEnd = () => {
   window.removeEventListener('mouseup', onResizeSidebarEnd)
   window.api.store.set('sidebarWidth', sidebarWidth.value)
 }
+
+defineExpose({
+  cancelSelectMode: onCancelSelect
+})
 
 </script>
 
@@ -140,7 +185,8 @@ const onResizeSidebarEnd = () => {
 }
 
 .toolbar {
-  padding: 16px;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
   text-align: right;
   -webkit-app-region: drag;
   display: flex;

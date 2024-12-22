@@ -29,6 +29,13 @@
         <option value="conversation">Conversation</option>
       </select>
     </div>
+    <div class="group layout">
+      <label>Chat list layout</label>
+      <select v-model="layout" @change="save">
+        <option value="normal">Cozy</option>
+        <option value="compact">Compact</option>
+      </select>
+    </div>
     <div class="group font-family" v-if="!isMas">
       <label>Chat font</label>
       <select v-model="fontFamily" @change="save">
@@ -56,7 +63,8 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ChatListLayout } from '../types/config';
+import { Ref, ref } from 'vue'
 import { store } from '../services/store'
 
 // events
@@ -69,6 +77,7 @@ const tint = ref(null)
 const theme = ref(null)
 const fontSize = ref(null)
 const fontFamily = ref('')
+const layout: Ref<ChatListLayout> = ref('normal')
 const fonts = ref(window.api.listFonts())
 
 const load = () => {
@@ -76,6 +85,7 @@ const load = () => {
   appearance.value = store.config.appearance.theme || 'system'
   tint.value = store.config.appearance.tint || 'black'
   theme.value = store.config.appearance.chat.theme || 'openai'
+  layout.value = store.config.appearance.chatList.layout || 'normal'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
   fontSize.value = store.config.appearance.chat.fontSize || 3
 }
@@ -97,6 +107,7 @@ const save = () => {
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontFamily = fontFamily.value
   store.config.appearance.chat.fontSize = fontSize.value
+  store.config.appearance.chatList.layout = layout.value
   store.saveSettings()
 }
 

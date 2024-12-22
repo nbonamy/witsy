@@ -58,6 +58,17 @@ export interface Chat {
   delete(): void
 }
 
+export type Folder = {
+  id: string
+  name: string
+  chats: string[]
+}
+
+export type History = {
+  folders: Folder[]
+  chats: Chat[]
+}
+
 export type Command = {
   id: string,
   type: 'system' | 'user',
@@ -84,7 +95,8 @@ export interface Store {
   commands: Command[]
   experts: Expert[]
   config: Configuration
-  chats: Chat[]
+  history: History
+  rootFolder: Folder
   chatFilter: string|null
   saveHistory?(): void
   saveSettings?(): void
@@ -199,8 +211,8 @@ declare global {
         save(config: Configuration): void
       }
       history: {
-        load(): Chat[]
-        save(chats: Chat[]): void
+        load(): History
+        save(history: History): void
       }
       automation: {
         getText(id: string): string

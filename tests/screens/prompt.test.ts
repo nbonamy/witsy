@@ -160,7 +160,7 @@ test('Saves chat', async () => {
   wrapper.find('.continue').trigger('click')
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.title).not.toBeNull()
-  expect(store.chats).toHaveLength(1)
+  expect(store.history.chats).toHaveLength(1)
   expect(window.api.history.save).toHaveBeenCalled()
   //expect(window.api.chat.open).toHaveBeenCalledWith(chatId)
 })
@@ -173,7 +173,7 @@ test('Auto saves chat', async () => {
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.vm.chat.title).not.toBeNull()
-  expect(store.chats).toHaveLength(1)
+  expect(store.history.chats).toHaveLength(1)
   expect(window.api.history.save).toHaveBeenCalled()
 })
 

@@ -364,3 +364,24 @@ button.default:active:enabled {
 button.destructive {
   color: red;
 }
+
+.button-group button {
+  cursor: pointer;
+  border-left: none;
+  border-radius: 0;
+  outline: none;
+  margin: 0px;
+}
+
+.button-group button:not(.active) {
+  background-color: var(--window-bg-color);
+}
+
+.button-group button:first-child {
+  border-radius: var(--control-button-border-radius) 0 0 var(--control-button-border-radius);
+  border-left: 1px solid var(--control-button-border-color);
+}
+
+.button-group button:last-child {
+  border-radius: 0 var(--control-button-border-radius) var(--control-button-border-radius) 0;
+}

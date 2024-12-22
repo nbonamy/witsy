@@ -40,6 +40,12 @@ export default class extends Generator {
     this.chat = chat
   }
 
+  initChat(instructions?: string): Chat {
+    this.chat = new Chat()
+    this.chat.addMessage(new Message('system', this.getSystemInstructions(instructions)))
+    return this.chat
+  }
+
   resetLlm() {
     this.engine = null
     this.llm = null
@@ -92,14 +98,11 @@ export default class extends Generator {
     if (this.chat === null) {
 
       // initialize the chat
-      this.chat = new Chat()
-      this.chat.docrepo = opts.docrepo
-      this.chat.setEngineModel(opts.engine, opts.model)
-      this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
+      this.initChat(opts.systemInstructions)
       
       // save
       if (opts.save) {
-        store.chats.push(this.chat)
+        store.history.chats.push(this.chat)
         //store.saveHistory()
       }
     
@@ -111,6 +114,10 @@ export default class extends Generator {
       opts.model = this.chat.model || opts.model
       opts.docrepo = this.chat.docrepo || opts.docrepo
     }
+
+    // make sure chat options are set
+    this.chat.setEngineModel(opts.engine, opts.model)
+    this.chat.docrepo = opts.docrepo
 
     // we need an llm
     this.initLlm(opts.engine)
