@@ -54,7 +54,7 @@ const onRetry = (message: Message) => {
 
   // ask
   Dialog.show({
-    title: 'Are you sure you want to generate this messaage again?',
+    title: 'Are you sure you want to generate this message again?',
     text: 'Current version will be lost.',
     customClass: { denyButton: 'alert-neutral' },
     confirmButtonText: 'OK. Don\'t ask again.',
