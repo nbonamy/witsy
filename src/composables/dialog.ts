@@ -49,7 +49,9 @@ const Dialog = {
         logo.removeAttribute('style')
         icon?.replaceChildren(logo)
       } catch (err) {
-        console.warn('Could not replace logo', err)
+        if (!process.env.TEST) {
+          console.warn('Could not replace logo', err)
+        }
       }
     }
 

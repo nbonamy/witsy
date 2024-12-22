@@ -239,7 +239,7 @@ const onMoveChat = async (chatId: string|string[]) => {
   }
 
   // selection done
-  sidebar.value.cancelSelectMode()
+  sidebar.value?.cancelSelectMode()
 }
 
 const onDeleteChat = async (chatId: string|string[]) => {
@@ -256,6 +256,7 @@ const onDeleteChat = async (chatId: string|string[]) => {
     confirmButtonText: 'Delete',
     showCancelButton: true,
   }).then((result) => {
+    
     if (result.isConfirmed) {
 
       // fist remove
@@ -270,7 +271,7 @@ const onDeleteChat = async (chatId: string|string[]) => {
     }
 
     // selection done
-    sidebar.value.cancelSelectMode()
+    sidebar.value?.cancelSelectMode()
   })
 }
 
@@ -301,15 +302,17 @@ const deleteChats = (chatIds: string[]) => {
 
 const onRenameFolder = async (folderId: string) => {
   const folder = store.history.folders.find((f) => f.id === folderId)
-  const { value: name } = await Dialog.show({
-    title: 'Rename Folder',
-    input: 'text',
-    inputValue: folder.name,
-    showCancelButton: true,
-  });
-  if (name) {
-    folder.name = name
-    store.saveHistory()
+  if (folder) {
+    const { value: name } = await Dialog.show({
+      title: 'Rename Folder',
+      input: 'text',
+      inputValue: folder.name,
+      showCancelButton: true,
+    });
+    if (name) {
+      folder.name = name
+      store.saveHistory()
+    }
   }
 }
 
