@@ -210,10 +210,6 @@ defineExpose({
   padding-right: 24px;
 }
 
-.toolbar .search input:focus {
-  background-color: white;
-}
-
 .toolbar .clear-filter {
   position: relative;
   left: -20px;
