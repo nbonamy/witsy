@@ -1,35 +1,35 @@
 <template>
-  <div class="chats" ref="divChats" :set="currDay = null">
-    <div v-for="c in visibleChats" :key="c.uuid" :set="chatDay=getDay(c)">
-      <div v-if="chatDay != currDay" :set="currDay = chatDay" class="day">{{ currDay }}</div> 
-      <div class="chat" :class="c.uuid == chat?.uuid ? 'selected': ''" @click="onSelectChat(c)" @contextmenu.prevent="showContextMenu($event, c)" :data-day="chatDay">
-        <EngineLogo :engine="engine(c)" :background="true" />
-        <div class="info">
-          <div class="title">{{ c.title }}</div>
-          <div class="subtitle">{{ c.subtitle() }}</div>
-        </div>
-        <div v-if="selectMode" class="select">
-          <BIconCheckCircleFill v-if="selection.includes(c.uuid)" class="selected"/>
-          <BIconCircle v-else />
-        </div>
-      </div>
+  <div class="header">
+    <div class="button-group">
+      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">Timeline</button>
+      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">Folders</button>
     </div>
-    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
   </div>
+  <div class="chats" ref="divChats">
+    <ChatListTimeline v-if="displayMode == 'timeline'" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
+    <ChatListFolder v-if="displayMode == 'folder'" :filtered="filter != ''" :chats="visibleChats" :selection="selection" :active="chat" :selectMode="selectMode" @select="onSelectChat" @menu="showContextMenu"/>
+  </div>
+  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
 
-import { type Ref, ref, computed, onMounted } from 'vue'
+import { ChatListMode } from '../types/config'
+import { type Ref, ref, computed, onMounted, PropType } from 'vue'
 import { store } from '../services/store'
-import EngineLogo from './EngineLogo.vue'
 import ContextMenu from './ContextMenu.vue'
+import ChatListTimeline from './ChatListTimeline.vue'
+import ChatListFolder from './ChatListFolder.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
+  displayMode: {
+    type: String as PropType<ChatListMode>,
+    required: true,
+  },
   chat: {
     type: Chat,
     default: null,
@@ -45,47 +45,29 @@ const props = defineProps({
   }
 })
 
-const engine = (chat: Chat) => chat.engine || store.config.llm.engine
-
-let currDay: string|null
-let chatDay: string
-
-const divChats: Ref<HTMLElement|null> = ref(null)
 const selection: Ref<string[]> = ref([])
+const divChats: Ref<HTMLElement|null> = ref(null)
 
 defineExpose({
   getSelection: () => selection.value,
   clearSelection: () => { selection.value = [] },
 })
 
-const visibleChats = computed(() => store.chats.filter((c: Chat) => {
+const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
+  if (props.filter === null || props.filter.length === 0) return true
   if (c.title?.toLowerCase().includes(props.filter.toLowerCase())) return true
   if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.toLowerCase()))) return true
   return false
 }).toSorted((a: Chat, b: Chat) => b.lastModified - a.lastModified))
 
-const getDay = (chat: Chat) => {
-  const now = new Date()
-  const oneDay = 24 * 60 * 60 * 1000
-  const diff = Date.now() - chat.lastModified
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const yesterdayStart = todayStart - 86400000;
-  if (chat.lastModified >= todayStart) return 'Today'
-  if (chat.lastModified >= yesterdayStart) return 'Yesterday'
-  if (diff < 7 * oneDay) return 'Last 7 days'
-  if (diff < 14 * oneDay) return 'Last 14 days'
-  if (diff < 30 * oneDay) return 'Last 30 days'
-  // if (diff < 60 * oneDay) return 'Last Month'
-  // if (diff < 365 * oneDay) return 'This Year'
-  return 'Earlier'
-}
-
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow: Ref<Chat|null> = ref(null)
-const contextMenuActions = [
-  { label: 'Rename Chat', action: 'rename' },
+
+const contextMenuActions = () => [
+  { label: 'Rename', action: 'rename' },
+  ...(props.displayMode === 'folder' ? [ { label: 'Move', action: 'move' } ] : []),
   { label: 'Delete', action: 'delete' },
 ]
 
@@ -100,6 +82,10 @@ onMounted(() => {
     }, 500)
   })
 })
+
+const setDisplayMode = (mode: ChatListMode) => {
+  emitEvent('chat-list-mode', mode)
+}
 
 const onSelectChat = (chat: Chat) => {
   if (props.selectMode) {
@@ -136,6 +122,8 @@ const handleActionClick = async (action: string) => {
   // process
   if (action === 'rename') {
     emitEvent('rename-chat', chat)
+  } else if (action === 'move') {
+    emitEvent('move-chat', chat.uuid)
   } else if (action === 'delete') {
     emitEvent('delete-chat', chat.uuid)
   }
@@ -146,6 +134,12 @@ const handleActionClick = async (action: string) => {
 
 <style scoped>
 
+.header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .chats {
   flex: 1;
@@ -159,66 +153,6 @@ const handleActionClick = async (action: string) => {
 
 .chats.scrolling {
   padding-right: 0px;
-}
-
-.chats .day {
-  margin: 12px 0 8px;
-  padding: 0 12px;
-  font-size: 9pt;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: var(--sidebar-section-title-color);
-}
-
-.chats > div:first-child > .day {
-  margin-top: 0;
-}
-
-.chat {
-  margin: 2px 8px;
-  margin-right: 16px;
-  padding: 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 8px;
-}
-
-.chat.selected {
-  background-color: var(--sidebar-selected-color);
-}
-
-.chat .info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.chat .info * {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.chat .logo {
-  width: var(--sidebar-logo-size);
-  height: var(--sidebar-logo-size);
-  margin-right: 8px;
-}
-
-.chat .title {
-  font-weight: bold;
-  font-size: 10.5pt;
-}
-
-.chat .subtitle {
-  font-size: 9pt;
-}
-
-.chat .select {
-  margin-left: 16px;
-  text-align: right;
-  flex: 1;
 }
 
 </style>

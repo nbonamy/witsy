@@ -37,6 +37,10 @@
   "appearance": {
     "theme": "system",
     "tint": "black",
+    "chatList": {
+      "mode": "timeline",
+      "layout": "normal"
+    },
     "chat": {
       "theme": "openai",
       "fontFamily": "",

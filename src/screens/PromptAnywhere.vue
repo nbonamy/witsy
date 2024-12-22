@@ -37,12 +37,11 @@ import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
-import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
-const { onEvent, emitEvent } = useEventBus()
+const { onEvent } = useEventBus()
 
 const promptChatTimeout = 1000 * 60 * 5
 
@@ -389,7 +388,7 @@ const saveChat = async () => {
 
   // add to history
   if (!addedToHistory) {
-    store.chats.push(chat.value)
+    store.history.chats.push(chat.value)
     addedToHistory = true
   }
 

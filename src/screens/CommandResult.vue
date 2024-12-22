@@ -147,7 +147,7 @@ const onChat = async () => {
   }
 
   // add to history
-  store.chats.push(chat.value)
+  store.history.chats.push(chat.value)
   store.saveHistory()
 
   // continue
@@ -184,9 +184,7 @@ const sendPrompt = async (prompt: string, engine: string, model: string) => {
     })
 
     // show tip
-    if (tipsManager.isTipAvailable('newCommand')) {
-      tipsManager.showTip('newCommand')
-    }
+    tipsManager.showTip('newCommand')
 
   } catch (err) {
     console.error(err)

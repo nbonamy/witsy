@@ -2,7 +2,7 @@
 import { Store } from 'types/index.d'
 import Dialog from './dialog'
 
-export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand' | 'realtime'
+export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand' | 'realtime' | 'folderList'
 
 class TipsManager {
 
@@ -55,6 +55,7 @@ class TipsManager {
       'newPrompt': this.showNewPromptTip,
       'newCommand': this.showNewCommandTip,
       'realtime': this.showRealtimeTip,
+      'folderList': this.showFolderListTip,
     }
 
     // get the callback
@@ -123,10 +124,19 @@ class TipsManager {
 
   showRealtimeTip = () => {
     Dialog.show({
-      title: 'Realtime chat can quickly be expensive. The estimated cost provided is just an estimate and may not be correct. Click on the glob to start and stop chatting!',
+      title: 'Realtime chat can quickly be expensive. The estimated cost provided is just an estimate and may not be correct. Click on the blob to start and stop chatting!',
     })
   }
-
+  
+  showFolderListTip = () => {
+    Dialog.show({
+      title: `The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.
+      
+      The menu on the right of every folder allows you to manage your folders.
+      
+      The context menu of your chats allows you to move them to a folder.`,
+    })
+  }
 
 }
 

@@ -116,7 +116,7 @@ export default class {
       
       // save
       if (this.opts.save) {
-        store.chats.push(this.chat)
+        store.history.chats.push(this.chat)
         store.saveHistory()
       }
     

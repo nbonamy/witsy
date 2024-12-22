@@ -604,7 +604,7 @@ const onKeyDown = (event: KeyboardEvent) => {
     // get messages
     let userMessages = props.chat?.messages.filter(m => m.role === 'user')
     if (event.ctrlKey || event.metaKey) {
-      userMessages = store.chats.reduce((acc, chat) => {
+      userMessages = store.history.chats.reduce((acc, chat) => {
         return acc.concat(chat.messages.filter(m => m.role === 'user'))
       }, [])
       userMessages.sort((a, b) => a.createdAt - b.createdAt)

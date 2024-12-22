@@ -98,7 +98,7 @@ const handleActionClick = async (action: string) => {
 
 const onSave = () => {
   if (saved.value) return
-  store.chats.push(props.chat)
+  store.history.chats.push(props.chat)
   store.saveHistory()
   saved.value = true
 }

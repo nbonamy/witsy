@@ -90,7 +90,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       export: vi.fn(),
     },
     history: {
-      load: vi.fn(() => []),
+      load: vi.fn(() => ({ folders: [ ], chats: [ ] })),
       save: vi.fn(),
     },
     base64:{

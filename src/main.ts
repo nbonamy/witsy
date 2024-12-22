@@ -1,6 +1,6 @@
 
-import { type Chat, type Command, type Expert } from './types/index.d';
-import { type Configuration } from './types/config.d';
+import { History, Command, Expert } from './types/index.d';
+import { Configuration } from './types/config.d';
 import { RunCommandParams } from './types/automation';
 
 import process from 'node:process';
@@ -281,7 +281,7 @@ ipcMain.on('history-load', async (event) => {
 });
 
 ipcMain.on('history-save', (event, payload) => {
-  event.returnValue = history.saveHistory(app, JSON.parse(payload) as Chat[]);
+  event.returnValue = history.saveHistory(app, JSON.parse(payload) as History);
 });
 
 ipcMain.on('commands-load', (event) => {

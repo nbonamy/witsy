@@ -1,5 +1,5 @@
 
-import { Chat } from 'types/index.d'
+import { History, Chat } from 'types/index.d'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import Monitor from './monitor'
@@ -14,7 +14,7 @@ export const historyFilePath = (app: App): string => {
   return historyFilePath
 }
 
-export const loadHistory = async (app: App): Promise<Chat[]> => {
+export const loadHistory = async (app: App): Promise<History> => {
 
   // needed
   const filepath = historyFilePath(app) 
@@ -27,21 +27,26 @@ export const loadHistory = async (app: App): Promise<Chat[]> => {
 
   // check existence
   if (!fs.existsSync(filepath)) {
-    return []
+    return { folders: [], chats: [] }
   }
 
   // local
   try {
     
     // load it
-    const history = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+    let history = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+
+    // backwards compatibility
+    if (Array.isArray(history)) {
+      console.log('Upgrading history data')
+      history = { folders: [], chats: history }
+    }
 
     // clean-up in case deletions were missed
     cleanAttachmentsFolder(app, history)
     
     // start monitors
     monitor.start(filepath)
-    //dropbox.monitor()
 
     // done
     return history
@@ -55,21 +60,21 @@ export const loadHistory = async (app: App): Promise<Chat[]> => {
 
 }
 
-export const saveHistory = (app: App, content: Chat[]) => {
+export const saveHistory = (app: App, history: History) => {
   try {
 
     // local
     const filepath = historyFilePath(app) 
-    fs.writeFileSync(filepath, JSON.stringify(content, null, 2))
+    fs.writeFileSync(filepath, JSON.stringify(history, null, 2))
 
   } catch (error) {
     console.log('Error saving history data', error)
   }
 }
 
-const cleanAttachmentsFolder = (app: App, history: Chat[]) => {
+const cleanAttachmentsFolder = (app: App, history: History) => {
 
-  const unusedAttachments = listUnusedAttachments(app, history)
+  const unusedAttachments = listUnusedAttachments(app, history.chats)
   for (const attachment of unusedAttachments) {
     try {
       console.log(`Deleting unused file: ${attachment}`)
@@ -80,7 +85,7 @@ const cleanAttachmentsFolder = (app: App, history: Chat[]) => {
   }
 }
 
-export const listUnusedAttachments = (app: App, history: Chat[]): string[] => {
+export const listUnusedAttachments = (app: App, chats: Chat[]): string[] => {
 
   // get the user data path
   const userDataPath = app.getPath('userData')
@@ -90,7 +95,7 @@ export const listUnusedAttachments = (app: App, history: Chat[]): string[] => {
   const files = listExistingAttachments(imagesPath)
 
   // now extract all the attachments in the chat
-  const attachments = extractAttachmentsFromHistory(history, imagesPath)
+  const attachments = extractAttachmentsFromHistory(chats, imagesPath)
 
   // Compare files in the images folder with attachments in the chat
   const unusedAttachments = []
@@ -122,7 +127,7 @@ const listExistingAttachments = (imagesPath: string): string[] => {
 
 }  
 
-export const extractAttachmentsFromHistory = (history: Chat[], imagesPath: string): string[] => {
+export const extractAttachmentsFromHistory = (chats: Chat[], imagesPath: string): string[] => {
 
   // regexes[0] matches content that is exactly a file:// url
   // regexes[1] matches content that is a file:// embedded in markdown ("(file://....)"
@@ -138,7 +143,7 @@ export const extractAttachmentsFromHistory = (history: Chat[], imagesPath: strin
 
   // now extract all the attachments in the chat
   const attachments = []
-  for (const chat of history) {
+  for (const chat of chats) {
     for (const message of chat.messages) {
       
       // extract all attachments from message.content

@@ -20,16 +20,19 @@ vi.mock('../../src/composables/event_bus.js', async () => {
   }}
 })
 
+import useEventBus  from '../../src/composables/event_bus'
+const { emitEvent } = useEventBus()
+
 beforeAll(() => {
   useWindowMock()
-  store.loadSettings()
+  store.load()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
   const chat = new Chat()
   chat.setEngineModel('mock', 'chat')
-  store.chats = [chat]
+  store.history.chats = [chat]
 })
 
 test('No chat', async () => {
@@ -55,23 +58,45 @@ test('Open Settings', async () => {
   expect(emitEventMock).toHaveBeenCalledWith('open-settings', { initialTab: 'general'})
 })
 
+// test('Switch to Folder Mode', async () => {
+//   const wrapper: VueWrapper<any> = mount(Sidebar)
+//   emitEvent('chat-list-mode', 'folder')
+//   await wrapper.vm.$nextTick()
+//   expect(store.config.appearance.chatList.mode).toBe('folder')
+// })
+
 test('Start and Cancel Delete', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
-  await wrapper.find('.sidebar .footer #start-delete').trigger('click')
-  expect(wrapper.vm.deleteMode).toBe(true)
+  await wrapper.find('.sidebar .footer #select').trigger('click')
+  expect(wrapper.vm.selectMode).toBe(true)
   expect(wrapper.find('.sidebar .footer.actions').exists()).toBe(true)
   await wrapper.find('.sidebar .footer.actions #cancel-delete').trigger('click')  
-  expect(wrapper.vm.deleteMode).toBe(false)
+  expect(wrapper.vm.selectMode).toBe(false)
   expect(wrapper.find('.sidebar .footer.actions').exists()).toBe(false)
 })
 
 test('Delete Chat', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
-  await wrapper.find('.sidebar .footer #start-delete').trigger('click')
+  await wrapper.find('.sidebar .footer #select').trigger('click')
   await wrapper.findAll('.sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sidebar .footer.actions #delete').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', [store.chats[0].uuid])
-  expect(wrapper.vm.deleteMode).toBe(false)
+  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', [store.history.chats[0].uuid])
+  wrapper.vm.cancelSelectMode()
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.selectMode).toBe(false)
+  expect(wrapper.find('.sidebar .footer.actions').exists()).toBe(false)
+})
+
+test('Move Chat', async () => {
+  store.config.appearance.chatList.mode = 'folder'
+  const wrapper: VueWrapper<any> = mount(Sidebar)
+  await wrapper.find('.sidebar .footer #select').trigger('click')
+  await wrapper.findAll('.sidebar .chats .chat')[0].trigger('click')
+  await wrapper.find('.sidebar .footer.actions #move').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('move-chat', [store.history.chats[0].uuid])
+  wrapper.vm.cancelSelectMode()
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.selectMode).toBe(false)
   expect(wrapper.find('.sidebar .footer.actions').exists()).toBe(false)
 })
 

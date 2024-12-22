@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" />
+    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
     <Settings id="settings" />
     <DocRepos />
@@ -10,8 +10,8 @@
 <script setup lang="ts">
 
 // components
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { anyDict } from 'types'
+import { Ref, ref, computed, onMounted, nextTick } from 'vue'
+import { strDict, anyDict } from 'types'
 import { store } from '../services/store'
 import { saveFileContents } from '../services/download'
 import { SendPromptParams } from '../components/Prompt.vue'
@@ -21,6 +21,7 @@ import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
+import Assistant from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
@@ -34,9 +35,8 @@ store.load()
 const tipsManager = useTipsManager(store)
 
 // assistant
-import Assistant from '../services/assistant'
 const assistant = ref(new Assistant(store.config))
-
+const sidebar: Ref<typeof Sidebar> = ref(null)
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
@@ -52,8 +52,12 @@ onMounted(() => {
 
   // events
   onEvent('new-chat', onNewChat)
+  onEvent('new-chat-in-folder', onNewChatInFolder)
   onEvent('rename-chat', onRenameChat)
+  onEvent('move-chat', onMoveChat)
   onEvent('delete-chat', onDeleteChat)
+  onEvent('rename-folder', onRenameFolder)
+  onEvent('delete-folder', onDeleteFolder)
   onEvent('select-chat', onSelectChat)
   onEvent('send-prompt', onSendPrompt)
   onEvent('retry-generation', onRetryGeneration)
@@ -136,7 +140,7 @@ const processQueryParams = (params: anyDict) => {
   // load chat
   if (params.chatId) {
     store.loadHistory()
-    const chat: Chat = store.chats.find((c) => c.uuid === params.chatId)
+    const chat: Chat = store.history.chats.find((c) => c.uuid === params.chatId)
     if (chat) {
       onSelectChat(chat)
     } else {
@@ -152,6 +156,17 @@ const processQueryParams = (params: anyDict) => {
 
 const onNewChat = () => {
   onSelectChat(null)
+}
+
+const onNewChatInFolder = (folderId: string) => {
+  const folder = store.history.folders.find((f) => f.id === folderId)
+  if (folder) {
+    const chat = assistant.value.initChat()
+    folder.chats.push(chat.uuid)
+    store.history.chats.push(chat)
+    onSelectChat(chat)
+    store.saveHistory()
+  }
 }
 
 const onSelectChat = (chat: Chat) => {
@@ -178,10 +193,59 @@ const onRenameChat = async (chat: Chat) => {
   }
 }
 
-const onDeleteChat = async (chat: string) => {
+const onMoveChat = async (chatId: string|string[]) => {
 
-  const chats: string[] = Array.isArray(chat) ? chat : [chat]
-  const title = chats.length > 1
+  const chatIds: string[] = Array.isArray(chatId) ? chatId : [chatId]
+  const srcFolder = chatIds.length === 1
+    ? store.history.folders.find((f) => f.chats.includes(chatIds[0]))
+    : null
+
+  const { value: folderId } = await Dialog.show({
+    title: 'Select Destination Folder',
+    input: 'select',
+    inputValue: srcFolder?.id || store.rootFolder.id,
+    inputOptions: [
+      store.rootFolder,
+      ...store.history.folders.sort((a, b) => a.name.localeCompare(b.name))
+    ].reduce<strDict>((acc, f) => {
+      acc[f.id] = f.name
+      return acc
+    }, {}),
+    showCancelButton: true,
+  });
+  if (folderId) {
+
+    // destination folder
+    const dstFolder = store.history.folders.find((f) => f.id === folderId)
+
+    for (const chatId of chatIds) {
+
+      // remove from source folder
+      const srcFolder = store.history.folders.find((f) => f.chats.includes(chatId))
+      if (srcFolder) {
+        srcFolder.chats = srcFolder.chats.filter((c) => c !== chatId)
+      }
+
+      // add to destination folder
+      if (dstFolder) {
+        dstFolder.chats.push(chatId)
+      }
+
+    }
+
+    // done
+    store.saveHistory()
+
+  }
+
+  // selection done
+  sidebar.value.cancelSelectMode()
+}
+
+const onDeleteChat = async (chatId: string|string[]) => {
+
+  const chatIds: string[] = Array.isArray(chatId) ? chatId : [chatId]
+  const title = chatIds.length > 1
     ? 'Are you sure you want to delete these conversations?'
     : 'Are you sure you want to delete this conversation?'
 
@@ -195,17 +259,8 @@ const onDeleteChat = async (chat: string) => {
     if (result.isConfirmed) {
 
       // fist remove
-      for (const chat of chats) {
-        let index = store.chats.findIndex((c) => c.uuid === chat)
-        store.chats[index].delete()
-        store.chats.splice(index, 1)
-      }
+      deleteChats(chatIds)
       store.saveHistory()
-
-      // if current chat
-      if (chats.includes(assistant.value.chat?.uuid)) {
-        emitEvent('new-chat', null)
-      }
 
       // close window if standalone
       if (isStandaloneChat.value) {
@@ -213,6 +268,73 @@ const onDeleteChat = async (chat: string) => {
       }
 
     }
+
+    // selection done
+    sidebar.value.cancelSelectMode()
+  })
+}
+
+const deleteChats = (chatIds: string[]) => {
+
+  // fist remove from chat list
+  for (const chatId of chatIds) {
+
+    // remove from chats list
+    let index = store.history.chats.findIndex((c) => c.uuid === chatId)
+    if (index != -1) {
+      store.history.chats[index].delete()
+      store.history.chats.splice(index, 1)
+    }
+
+    // remove from folders
+    for (const folder of store.history.folders) {
+      folder.chats = folder.chats.filter((c) => c !== chatId)
+    }
+  }
+
+  // if current chat
+  if (chatIds.includes(assistant.value.chat?.uuid)) {
+    emitEvent('new-chat', null)
+  }
+
+}
+
+const onRenameFolder = async (folderId: string) => {
+  const folder = store.history.folders.find((f) => f.id === folderId)
+  const { value: name } = await Dialog.show({
+    title: 'Rename Folder',
+    input: 'text',
+    inputValue: folder.name,
+    showCancelButton: true,
+  });
+  if (name) {
+    folder.name = name
+    store.saveHistory()
+  }
+}
+
+const onDeleteFolder = async (folderId: string) => {
+  Dialog.show({
+    title: 'Are you sure you want to delete this folder?',
+    text: 'You can\'t undo this action.',
+    customClass: { denyButton: 'alert-neutral' },
+    confirmButtonText: 'OK but keep conversations',
+    denyButtonText: 'OK and delete conversations',
+    showCancelButton: true,
+    showDenyButton: true,
+  }).then((result) => {
+
+    // find folder and delete it
+    const folder = store.history.folders.find((f) => f.id === folderId)
+    store.history.folders = store.history.folders.filter((f) => f.id !== folderId)
+
+    // delete chats if asked
+    if (result.isDenied) {
+      deleteChats(folder.chats)
+    }
+
+    // done
+    store.saveHistory()
   })
 }
 

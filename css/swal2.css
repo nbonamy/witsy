@@ -88,23 +88,29 @@ div:where(.swal2-container) .swal2-html-container {
   line-height: 150%;
 }
 
-div:where(.swal2-container) input:where(.swal2-input), div:where(.swal2-container) input:where(.swal2-file), div:where(.swal2-container) textarea:where(.swal2-textarea) {
+div:where(.swal2-container) input:where(.swal2-input),
+div:where(.swal2-container) input:where(.swal2-file),
+div:where(.swal2-container) select:where(.swal2-select),
+div:where(.swal2-container) textarea:where(.swal2-textarea) {
   margin-left: 4px;
   margin-right: 4px;
   background-color: var(--control-bg-color) !important;
   border: 1px solid var(--control-border-color) !important;
   border-radius: var(--control-border-radius) !important;
   color: var(--control-text-color) !important;
-  font-size: 10pt;
+  font-size: 10pt !important;
   box-shadow: none;
 }
 
-div:where(.swal2-container) input:where(.swal2-input):focus, div:where(.swal2-container) input:where(.swal2-file):focus, div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
+div:where(.swal2-container) input:where(.swal2-input):focus,
+div:where(.swal2-container) input:where(.swal2-file):focus,
+div:where(.swal2-container) select:where(.swal2-select):focus,
+div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
   box-shadow: none;
   outline: 1px solid #83aaf2;
 }
 
-div:where(.swal2-container) .swal2-input {
+div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-select {
   height: auto;
   padding: 2px;
 }

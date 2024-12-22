@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config'
-import { Store } from 'types/index.d'
+import { Folder, History, Store } from 'types/index.d'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
@@ -12,8 +12,14 @@ export const store: Store = reactive({
   config: {} as Configuration,
   commands: [], 
   experts: [],
-  chats: [],
+  history: null,
   chatFilter: null,
+
+  rootFolder: {
+    id: 'root',
+    name: 'Unsorted',
+    chats: null
+  } as Folder,
 
   loadSettings: async () => {
     loadSettings()
@@ -70,10 +76,15 @@ export const store: Store = reactive({
   saveHistory: () => {
 
     try {
-  
+
       // we need to srip attachment contents
-      const chats = JSON.parse(JSON.stringify(store.chats.filter((chat) => chat.messages.length > 1)))
-      for (const chat of chats) {
+      const history = {
+        folders: JSON.parse(JSON.stringify(store.history.folders)),
+        chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
+          return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
+        })
+      }
+      for (const chat of history.chats) {
         for (const message of chat.messages) {
           if (message.attachment) {
             message.attachment.content = null
@@ -82,7 +93,7 @@ export const store: Store = reactive({
       }
       
       // save
-      window.api.history.save(chats)
+      window.api.history.save(history)
   
     } catch (error) {
       console.log('Error saving history data', error)
@@ -118,11 +129,12 @@ const loadSettings = () => {
 const loadHistory = () => {
 
   try {
-    store.chats = []
+    store.history = { folders: [], chats: [] }
     const history = window.api.history.load()
-    for (const jsonChat of history) {
+    store.history.folders = history.folders
+    for (const jsonChat of history.chats) {
       const chat = new Chat(jsonChat)
-      store.chats.push(chat)
+      store.history.chats.push(chat)
     }
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -133,44 +145,42 @@ const loadHistory = () => {
 }
 
 // 
-const mergeHistory = (jsonChats: any[]) => {
+const mergeHistory = (jsonHistory: History) => {
 
-  // need to know
-  let patched = false
+  // only if loaded
+  if (!store.history) {
+    return
+  }
 
+  //TODO merge folders properly
+  store.history.folders = jsonHistory.folders
+  
   // get the current ids and new ids
-  const currentIds = store.chats.map((chat) => chat.uuid)
-  const newIds = jsonChats.map((chat) => chat.uuid)
+  const currentIds = store.history.chats.map((chat) => chat.uuid)
+  const newIds = jsonHistory.chats.map((chat) => chat.uuid)
 
   // remove deleted chats
   const deletedIds = currentIds.filter((id) => !newIds.includes(id))
   //console.log(`Deleting ${deletedIds.length} chats`)
   if (deletedIds.length > 0) {
-    store.chats = store.chats.filter((chat) => !deletedIds.includes(chat.uuid))
-    patched = true
+    store.history.chats = store.history.chats.filter((chat) => !deletedIds.includes(chat.uuid))
   }
 
   // add the new chats
   const addedIds = newIds.filter((id) => !currentIds.includes(id))
   //console.log(`Adding ${addedIds.length} chats`)
   for (const addedId of addedIds) {
-    const chat = new Chat(jsonChats.find((chat) => chat.uuid === addedId))
-    store.chats.push(chat)
-    patched = true
+    const chat = new Chat(jsonHistory.chats.find((chat) => chat.uuid === addedId))
+    store.history.chats.push(chat)
   }
 
   // patch the existing chats
-  for (const chat of store.chats) {
-    const jsonChat = jsonChats.find((c) => c.uuid === chat.uuid)
+  for (const chat of store.history.chats) {
+    const jsonChat = jsonHistory.chats.find((c) => c.uuid === chat.uuid)
     if (jsonChat) {
       //console.log(`Patching chat ${chat.uuid}`)
-      patched = chat.patchFromJson(jsonChat) || patched 
+      chat.patchFromJson(jsonChat)
     }
-  }
-
-  // save
-  if (patched) {
-    store.saveHistory()
   }
 
 }
