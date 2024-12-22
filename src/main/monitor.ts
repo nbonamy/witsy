@@ -1,18 +1,16 @@
 
 import path from 'path'
-import fs from 'fs'
+import fs, { FSWatcher } from 'fs'
 
 export default class {
 
-  delay: number
   filepath: string
   filesize: number
   callback: CallableFunction
-  timer: NodeJS.Timeout
+  watcher: FSWatcher
   
-  constructor(callback: CallableFunction, delay = 1000) {
+  constructor(callback: CallableFunction) {
     this.callback = callback
-    this.delay = delay
   }
 
   start(filepath: string): void {
@@ -25,18 +23,18 @@ export default class {
     this.filesize = this.size()
 
     // start
-    this.timer = setInterval(() => {
+    this.watcher = fs.watch(filepath, () => {
       const size = this.size()
       if (size !== this.filesize) {
         this.filesize = size
         this.notify(filepath)
       }
-    }, this.delay)
+    })
   }
 
   stop(): void {
-    clearInterval(this.timer)
-    this.timer = null
+    this.watcher?.close()
+    this.watcher = null
     this.filepath = null
     this.filesize = 0
   }

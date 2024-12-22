@@ -44,18 +44,19 @@ test('Stop monitor', async () => {
 })
 
 test('Notify monitor', async () => {
-  monitor = new Monitor(callback, 50)
+  monitor = new Monitor(callback)
   monitor.start(tempFile)
+  await wait(1000)
   fs.appendFileSync(tempFile, ' World')
-  await wait(150)
-  expect(callback).toHaveBeenCalledTimes(1)
+  await vi.waitUntil(() => callback.mock.calls.length > 0)
 })
 
 test('Notify after stop', async () => {
-  monitor = new Monitor(callback, 500)
+  monitor = new Monitor(callback)
   monitor.start(tempFile)
   monitor.stop()
+  await wait(1000)
   fs.appendFileSync(tempFile, ' World')
-  await wait(150)
+  await wait(1000)
   expect(callback).toHaveBeenCalledTimes(0)
 })
