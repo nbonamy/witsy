@@ -13,7 +13,7 @@ class TipsManager {
   }
 
   isTipAvailable = (tip: TipId) => {
-    return this.store.config.general.tips[tip]
+    return this.store.config.general.tips[tip] === undefined || this.store.config.general.tips[tip] === true
   }
 
   setTipShown = (tip: TipId) => {
@@ -33,8 +33,7 @@ class TipsManager {
     const tipsToShow: TipId[] = [ 'scratchpad', 'newPrompt' ]
 
     for (const tip of tipsToShow) {
-      const shouldShow = this.store.config.general.tips[tip]
-      if (shouldShow) {
+      if (this.isTipAvailable(tip)) {
         this.showTip(tip)
         return
       }
@@ -42,7 +41,11 @@ class TipsManager {
 
   }
 
-  showTip = (tip: TipId) => {
+  showTip = (tip: TipId, anyway: boolean = false) => {
+
+    if (!anyway && !this.isTipAvailable(tip)) {
+      return
+    }
 
     // callbacks
     const callbacks: { [key: string]: CallableFunction } = {
