@@ -109,9 +109,7 @@ onMounted(() => {
 
   // tip
   setTimeout(() => {
-    if (tipsManager.isTipAvailable('realtime')) {
-      tipsManager.showTip('realtime')
-    }
+    tipsManager.showTip('realtime')
   }, 1000)
 
 })

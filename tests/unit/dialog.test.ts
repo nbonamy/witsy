@@ -1,37 +1,70 @@
 
-import { beforeAll, beforeEach, test, expect } from 'vitest'
+import { vi, beforeAll, test, expect } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import useTipsManager from '../../src/composables/tips_manager'
+import Dialog from '../../src/composables/dialog'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
-beforeAll(() => {
-  useWindowMock()
+vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
+  const Swal = vi.fn()
+  Swal['fire'] = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
+  return { default: Swal }
 })
 
-beforeEach(() => {
+beforeAll(() => {
+  useWindowMock({ dialogResponse: 1})
   store.loadSettings()
   store.config.general.tips.conversation = false
 })
 
-test('isTipAvailable', () => {
-  const { isTipAvailable } = useTipsManager(store)
-  expect(isTipAvailable('scratchpad')).toBe(true)
-  expect(isTipAvailable('conversation')).toBe(false)
+test('Basic confirm', () => {
+  Dialog.alert('Hello')
+  expect(window.api.showDialog).toHaveBeenCalledWith({
+    type: 'none',
+    message: 'Hello',
+    detail: undefined,
+    buttons: [ 'OK' ],
+    defaultId: 0,
+    cancelId: -1,
+  })
 })
 
-test('setTipShown', () => {
-  const { setTipShown } = useTipsManager(store)
-  setTipShown('scratchpad')
-  expect(store.config.general.tips.scratchpad).toBe(false)
+test('Confirm/Cancel', () => {
+  Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, confirmButtonText: 'Yes' })
+  expect(window.api.showDialog).toHaveBeenCalledWith({
+    type: 'none',
+    message: 'Hello',
+    detail: 'World',
+    buttons: [ 'Yes', 'Cancel' ],
+    defaultId: 0,
+    cancelId: 1,
+  })
 })
 
-test('showNextTip', () => {
-  const { showNextTip } = useTipsManager(store)
-  showNextTip()
-  expect(store.config.general.firstRun).toBe(false)
-  expect(store.config.general.tips.scratchpad).toBe(true)
-  expect(store.config.general.tips.conversation).toBe(false)
-  showNextTip()
-  expect(store.config.general.tips.scratchpad).toBe(false)
-  expect(store.config.general.tips.conversation).toBe(false)
+test('Confirm/Deny/Cancel', () => {
+  Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, showDenyButton: true, confirmButtonText: 'Yes', denyButtonText: 'No', cancelButtonText: 'Cancel' })
+  expect(window.api.showDialog).toHaveBeenCalledWith({
+    type: 'none',
+    message: 'Hello',
+    detail: 'World',
+    buttons: [ 'Yes', 'No', 'Cancel' ],
+    defaultId: 0,
+    cancelId: 2,
+  })
+})
+
+test('Input', () => {
+  Dialog.show({ title: 'Hello', text: 'World', input: 'text' })
+  expect(Swal.fire).toHaveBeenCalledWith({
+    customClass: {
+      cancelButton: 'alert-neutral',
+      denyButton: 'alert-danger',
+      confirmButton: 'alert-neutral',
+    },
+    iconHtml: '<img src="">',
+    input: 'text',
+    text: 'World',
+    title: 'Hello',
+    willOpen: expect.any(Function),
+  })
 })

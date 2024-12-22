@@ -6,15 +6,6 @@
     "hideOnStartup": false,
     "language": "",
     "tips": {
-      "trayIcon": true,
-      "engineSelector": true,
-      "modelSelector": true,
-      "scratchpad": true,
-      "conversation": true,
-      "computerUse": true,
-      "newPrompt": true,
-      "newCommand": true,
-      "realtime": true
     },
     "confirm": {
       "retryGeneration": true

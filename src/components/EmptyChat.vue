@@ -106,9 +106,7 @@ const onSelectModel = (ev: Event) => {
 
   // anthropic computer-use warning
   if (store.config.llm.engine === 'anthropic' && target.value === 'computer-use') {
-    if (tipsManager.isTipAvailable('computerUse')) {
-      tipsManager.showTip('computerUse')
-    }
+    tipsManager.showTip('computerUse')
   }
 
   // continue
