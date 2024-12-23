@@ -215,15 +215,39 @@ test('Settings Advanced', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.instructions.default).not.toBe('bot')
-  tab.find('.group.instruction textarea').setValue('bot')
-  expect(store.config.instructions.default).toBe('bot')
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  // helper to get instructions at any level
+  store.config.instructions.get = (key: string): string => {
+    const tokens = key.split('.')
+    let value = store.config.instructions
+    for (const token of tokens) {
+      value = value[token]
+    }
+    return value
+  }
 
-  // await tab.find('.group.instruction a').trigger('click')
-  // expect(store.config.instructions.default).not.toBe('bot')
-  // expect(store.saveSettings).toHaveBeenCalledOnce()
-  // vi.clearAllMocks()
+  const instructions = [
+    'default', 'titling', 'titling_user', 'docquery', 'scratchpad.system', 'scratchpad.prompt', 'scratchpad.spellcheck',
+    'scratchpad.improve', 'scratchpad.takeaways', 'scratchpad.title', 'scratchpad.simplify', 'scratchpad.expand', 'scratchpad.complete'
+  ]
+  
+  for (const instr in instructions) {
+
+    // check it is not bot
+    expect(store.config.instructions.get(instructions[instr])).not.toBe('bot')
+
+    // select and set value
+    await tab.find('.group.instruction select').setValue(instructions[instr])
+    await tab.find('.group.instruction textarea').setValue('bot')
+    expect(store.config.instructions.get(instructions[instr])).toBe('bot')
+    expect(store.saveSettings).toHaveBeenCalledOnce()
+    vi.clearAllMocks()
+
+    // reset default
+    await tab.find('.group.instruction a').trigger('click')
+    expect(store.config.instructions.get(instructions[instr])).not.toBe('bot')
+    expect(store.saveSettings).toHaveBeenCalledOnce()
+    vi.clearAllMocks()
+
+  }
 
 })

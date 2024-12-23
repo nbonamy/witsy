@@ -38,3 +38,40 @@ test('Save settings', () => {
   saved.instructions = {}
   expect(fs.writeFileSync).toHaveBeenCalledWith('settings.json', JSON.stringify(saved, null, 2))
 })
+
+test('Nullify instructions', () => {
+
+  const defaults = {
+    key1: 'value1',
+    key2: 'value2',
+    dict1: {
+      key1: 'value1',
+      key2: 'value2',
+    }
+  }
+
+  let input = JSON.parse(JSON.stringify(defaults))
+  let reference = JSON.parse(JSON.stringify(defaults))
+  config.nullifyInstructions(input, reference)
+  expect(input).toStrictEqual({})
+
+  input = JSON.parse(JSON.stringify(defaults))
+  reference = JSON.parse(JSON.stringify(defaults))
+  input.key1 = 'value3'
+  config.nullifyInstructions(input, reference)
+  expect(input).toStrictEqual({key1: 'value3'})
+
+  input = JSON.parse(JSON.stringify(defaults))
+  reference = JSON.parse(JSON.stringify(defaults))
+  input.dict1.key1 = 'value3'
+  config.nullifyInstructions(input, reference)
+  expect(input).toStrictEqual({dict1: {key1: 'value3'}})
+
+  input = JSON.parse(JSON.stringify(defaults))
+  reference = JSON.parse(JSON.stringify(defaults))
+  input.key2 = 'value3'
+  input.dict1.key2 = 'value4'
+  config.nullifyInstructions(input, reference)
+  expect(input).toStrictEqual({key2: 'value3', dict1: {key2: 'value4'}})
+
+})
