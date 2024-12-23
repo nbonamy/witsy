@@ -137,10 +137,10 @@ test('Docrepo add document', async () => {
 test('Doc base invalid documents', async () => {
   const docbase = new DocumentBaseImpl(app, null, '1', 'name', 'openai', 'text-embedding-ada-002')
   await docbase.create()
-  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.jpg'))).rejects.toThrowError(/^Unsupported document type$/)
-  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.png'))).rejects.toThrowError(/^Unsupported document type$/)
-  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.docx'))).rejects.toThrowError(/^Unable to load document$/)
-  expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'text', EMPTY_PDF))).rejects.toThrowError(/^Empty PDF$/)
+  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.jpg'))).rejects.toThrowError(/^Unsupported document type$/)
+  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.png'))).rejects.toThrowError(/^Unsupported document type$/)
+  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.docx'))).rejects.toThrowError(/^Unable to load document$/)
+  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'text', EMPTY_PDF))).rejects.toThrowError(/^Empty PDF$/)
 })
 
 test('Docrepo invalid documents', async () => {

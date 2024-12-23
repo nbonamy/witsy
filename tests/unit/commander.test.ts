@@ -18,7 +18,9 @@ vi.mock('electron', async() => {
   const Notification = vi.fn();
   Notification.prototype.show = vi.fn();
   return {
-    app: {},
+    app: {
+      getPath: vi.fn(() => '')
+    },
     Notification
   }
 })

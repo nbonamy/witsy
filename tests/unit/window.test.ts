@@ -46,6 +46,7 @@ vi.mock('electron', async () => {
     openDevTools: vi.fn(),
   }
   const app = {
+    getPath: vi.fn(() => ''),
     dock: {
       show: vi.fn(),
       hide: vi.fn(),
@@ -76,6 +77,7 @@ vi.mock('electron', async () => {
 
 vi.mock('../../src/main/utils', async () => {
   return {
+    wait: vi.fn(),
     putCachedText: vi.fn(() => 'textId')
   }
 })
