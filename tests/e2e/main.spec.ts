@@ -21,27 +21,27 @@ test('Start application', async () => {
 })
 
 test('Check components', async () => {
-  expect(window.isVisible('.main')).resolves.toBeTruthy()
-  expect(window.isVisible('.main .sidebar')).resolves.toBeTruthy()
-  expect(window.isVisible('.main .resizer')).resolves.toBeTruthy()
-  expect(window.isVisible('.main .content')).resolves.toBeTruthy()
+  await expect(window.isVisible('.main')).resolves.toBeTruthy()
+  await expect(window.isVisible('.main .sidebar')).resolves.toBeTruthy()
+  await expect(window.isVisible('.main .resizer')).resolves.toBeTruthy()
+  await expect(window.isVisible('.main .content')).resolves.toBeTruthy()
 })
 
 test('Check sidebar', async () => {
-  expect(window.isVisible('.sidebar .toolbar')).resolves.toBeTruthy()
-  expect(window.isVisible('.sidebar .chats')).resolves.toBeTruthy()
-  expect(window.isVisible('.sidebar .footer')).resolves.toBeTruthy()
-  expect(window.isVisible('.sidebar .footer #open-settings')).resolves.toBeTruthy()
+  await expect(window.isVisible('.sidebar .toolbar')).resolves.toBeTruthy()
+  await expect(window.isVisible('.sidebar .chats')).resolves.toBeTruthy()
+  await expect(window.isVisible('.sidebar .footer')).resolves.toBeTruthy()
+  await expect(window.isVisible('.sidebar .footer #open-settings')).resolves.toBeTruthy()
 })
 
 test('Check content', async () => {
-  expect(window.isVisible('.content .toolbar')).resolves.toBeTruthy()
-  expect(window.isVisible('.content .empty') || window.isVisible('.content .messages')).resolves.toBeTruthy()
-  expect(window.isVisible('.content .prompt')).resolves.toBeTruthy()
+  await expect(window.isVisible('.content .toolbar')).resolves.toBeTruthy()
+  await expect(window.isVisible('.content .empty') || window.isVisible('.content .messages')).resolves.toBeTruthy()
+  await expect(window.isVisible('.content .prompt')).resolves.toBeTruthy()
 })
 
 test('Open settings', async () => {
   await window.click('.sidebar .footer span')
   await window.waitForSelector('.settings')
-  expect(window.isVisible('.settings')).resolves.toBeTruthy()
+  await expect(window.isVisible('.settings')).resolves.toBeTruthy()
 })
