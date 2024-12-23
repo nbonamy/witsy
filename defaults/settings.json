@@ -241,11 +241,5 @@
       "enabled": true
     },
     "nestor": {}
-  },
-  "dropbox": {
-  },
-  "gdrive": {
-    "tokens": null,
-    "fileIds": {}
   }
 }

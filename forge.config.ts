@@ -88,7 +88,6 @@ const config: ForgeConfig = {
       'assets/bulbWhite@2x.png',
       'assets/bulbUpdateWhite.png',
       'assets/bulbUpdateWhite@2x.png',
-      //...(fs.existsSync('./gdrive.json') ? ['gdrive.json'] : []),
     ],
     ...osxPackagerConfig,
     afterCopy: [

@@ -15,8 +15,6 @@ export type Configuration = {
   plugins: {[key: string]: PluginConfig}
   stt: STTConfig
   rag: RagConfig
-  dropbox: DropboxConfig
-  gdrive: GDriveConfig
 }
 
 export type EngineConfig = EngineCreateOpts & {
@@ -145,13 +143,4 @@ export type RagConfig = {
   chunkOverlap?: number
   searchResultCount?: number
   relevanceCutOff?: number
-}
-
-export type DropboxConfig = {
-  accessToken: string
-}
-
-export type GDriveConfig = {
-  tokens: anyDict
-  fileIds: strDict
 }

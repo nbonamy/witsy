@@ -130,20 +130,6 @@ export type FileContents = {
   contents: string
 }
 
-export type OnlineFileMetadata = {
-  id: string
-  size: number
-  createdTime: Date
-  modifiedTime: Date
-}
-
-export interface OnlineStorageProvider {
-  initialize: () => Promise<void>
-  metadata: (filepath: string) => Promise<OnlineFileMetadata>
-  download: (filepath: string) => Promise<string>
-  upload: (filepath: string, modifiedTime: Date) => Promise<boolean>
-}
-
 export type ComputerAction = {
   action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
   coordinate?: number[]
