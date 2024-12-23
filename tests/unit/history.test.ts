@@ -29,7 +29,7 @@ vi.mock('fs', async (importOriginal) => {
     statSync: vi.fn((file) => {
       return {
         mtime: file.includes('image3')
-          ? new Date(new Date().getTime() - kUnusedDelay / 1.1)
+          ? new Date(new Date().getTime() - kUnusedDelay * 0.9)
           : new Date(new Date().getTime() - kUnusedDelay * 1.1)
       }
     })
