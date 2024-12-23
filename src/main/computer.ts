@@ -1,6 +1,6 @@
 
 import { ComputerAction } from 'types/index.d'
-import { desktopCapturer, screen } from 'electron'
+import { Display, desktopCapturer, screen } from 'electron'
 import nut from '../automations/computer_nut'
 
 //
@@ -16,7 +16,7 @@ export default {
     return nut.isAvailable()
   },
 
-  getActiveDisplay() {
+  getActiveDisplay(): Display {
     const cursorPoint = screen.getCursorScreenPoint()
     return screen.getDisplayNearestPoint(cursorPoint)
   },

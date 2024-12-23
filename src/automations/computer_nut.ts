@@ -7,13 +7,13 @@
 // and declare some interfaces and variables
 // to avoid typescript lint errors
 
-declare enum Button {
+enum Button {
   LEFT = 0,
   MIDDLE = 1,
   RIGHT = 2
 }
 
-declare enum Key {
+enum Key {
   Enter = 102,
 }
 
