@@ -6,6 +6,8 @@ import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
+export const kUnusedDelay = 3600000
+
 const monitor: Monitor = new Monitor(() => notifyBrowserWindows('file-modified', 'history'))
 
 export const historyFilePath = (app: App): string => {
@@ -112,8 +114,15 @@ const listExistingAttachments = (imagesPath: string): string[] => {
   }
 
   // read all files in the images folder
+  // return only ones created more than 1 hour ago
   try {
-    return fs.readdirSync(imagesPath)
+    const now = new Date()
+    return fs.readdirSync(imagesPath).filter(file => {
+      const filepath = path.join(imagesPath, file)
+      const stats = fs.statSync(filepath)
+      const diff = now.getTime() - stats.mtime.getTime()
+      return diff > kUnusedDelay
+    })
   } catch (error) {
     console.error('Error reading images folder:', error)
     return []
