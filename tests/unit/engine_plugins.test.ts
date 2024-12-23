@@ -1,12 +1,21 @@
-
 import { vi, beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
+import Image from '../../src/plugins/image'
+import Video from '../../src/plugins/video'
 import Browse from '../../src/plugins/browse'
 import Tavily from '../../src/plugins/tavily'
 import Python from '../../src/plugins/python'
 import YouTube from '../../src/plugins/youtube'
 import Nestor from '../../src/plugins/nestor'
+import Computer from '../../src/plugins/computer'
+import { HfInference } from '@huggingface/inference'
+import Replicate from 'replicate'
+import OpenAI from 'openai'
+
+vi.mock('../services/download', () => ({
+  saveFileContents: vi.fn(() => 'file_url')
+}))
 
 vi.mock('../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
@@ -24,6 +33,32 @@ vi.mock('ytv', async () => {
   return { default: {
     get_info: vi.fn(() => ({ title: 'title', channel_name: 'channel' }))
   } }
+})
+
+vi.mock('openai', () => {
+  const OpenAI = vi.fn()
+  OpenAI.prototype.images = {
+    generate: vi.fn(() =>  ({ data: [{ b64_json: 'base64encodedimage' }] }))
+  }
+  return { default : OpenAI }
+})
+
+vi.mock('@huggingface/inference', () => {
+  const HfInference = vi.fn()
+  HfInference.prototype.textToImage = vi.fn(() => new Blob(['image'], { type: 'image/jpeg' }))
+  return { HfInference }
+})
+
+vi.mock('replicate', () => {
+  const Replicate = vi.fn()
+  Replicate.prototype.run = vi.fn((model) => {
+    if (model.includes('image')) {
+      return [{ blob: () => new Blob(['image'], { type: 'image/jpeg' }) }]
+    } else {
+      return [{ blob: () => new Blob(['video'], { type: 'video/mp4' }) }]
+    }
+  })
+  return { default: Replicate }
 })
 
 beforeAll(() => {
@@ -47,6 +82,99 @@ beforeAll(() => {
   store.config.plugins.nestor = {
     enabled: true,
   }
+  store.config.engines = {
+    openai: { apiKey: 'test-api-key', model: { image: 'dall-e-2' } },
+    huggingface: { apiKey: 'test-api-key', model: { image: 'test-model' } },
+    replicate: { apiKey: 'test-api-key', model: { image: 'test-model' } }
+  }
+})
+
+test('Image Plugin', async () => {
+  
+  const image = new Image(store.config.plugins.image)
+  expect(image.isEnabled()).toBe(true)
+  expect(image.getName()).toBe('image_generation')
+  expect(image.getDescription()).not.toBeFalsy()
+  expect(image.getPreparationDescription()).toBe(image.getRunningDescription())
+  expect(image.getRunningDescription()).toBe('Painting pixels…')
+  expect(image.getParameters()[0].name).toBe('prompt')
+  expect(image.getParameters()[0].type).toBe('string')
+  expect(image.getParameters()[0].description).not.toBeFalsy()
+  expect(image.getParameters()[0].required).toBe(true)
+
+  // openai
+  vi.clearAllMocks()
+  store.config.plugins.image.engine = 'openai'
+  const result1 = await image.execute({ prompt: 'test prompt' })
+  expect(OpenAI.prototype.images.generate).toHaveBeenCalledWith(expect.objectContaining({
+    model: 'dall-e-2',
+    prompt: 'test prompt',
+    response_format: 'b64_json',
+  }))
+  expect(result1).toStrictEqual({
+    url: 'file_url',
+    description: 'test prompt'
+    
+  })
+
+  // hugging face
+  vi.clearAllMocks()
+  store.config.plugins.image.engine = 'huggingface'
+  const result2 = await image.execute({ prompt: 'test prompt' })
+  expect(HfInference.prototype.textToImage).toHaveBeenCalledWith(expect.objectContaining({
+    model: 'test-model',
+    inputs: 'test prompt',
+  }))
+  expect(result2).toStrictEqual({
+    url: 'file_url',
+    description: 'test prompt'
+  })
+
+  // replicate
+  vi.clearAllMocks()
+  store.config.plugins.image.engine = 'replicate'
+  store.config.engines.replicate.model.image = 'image/model'
+  const result3 = await image.execute({ prompt: 'test prompt' })
+  expect(Replicate.prototype.run).toHaveBeenCalledWith('image/model', expect.objectContaining({
+    input: {
+      prompt: 'test prompt',
+      output_format: 'jpg',
+    }
+  }))
+  expect(result3).toStrictEqual({
+    url: 'file_url',
+    description: 'test prompt'
+  })
+})
+
+test('Video Plugin', async () => {
+  
+  const video = new Video(store.config.plugins.video)
+  expect(video.isEnabled()).toBe(true)
+  expect(video.getName()).toBe('video_generation')
+  expect(video.getDescription()).not.toBeFalsy()
+  expect(video.getPreparationDescription()).toBe(video.getRunningDescription())
+  expect(video.getRunningDescription()).toBe('Animating frames…')
+  expect(video.getParameters()[0].name).toBe('prompt')
+  expect(video.getParameters()[0].type).toBe('string')
+  expect(video.getParameters()[0].description).not.toBeFalsy()
+  expect(video.getParameters()[0].required).toBe(true)
+
+  // replicate
+  vi.clearAllMocks()
+  store.config.plugins.video.engine = 'replicate'
+  store.config.engines.replicate.model.video = 'video/model'
+  const result3 = await video.execute({ prompt: 'test prompt' })
+  expect(Replicate.prototype.run).toHaveBeenCalledWith('video/model', expect.objectContaining({
+    input: {
+      prompt: 'test prompt',
+    }
+  }))
+  expect(result3).toStrictEqual({
+    url: 'file_url',
+    description: 'test prompt'
+  })
+
 })
 
 test('Browse Plugin', async () => {
@@ -125,5 +253,32 @@ test('Nestor Plugin', async () => {
   expect(await nestor.execute({ tool: 'tool1', parameters: { arg: 'hello' } })).toStrictEqual({
     name: 'tool1',
     params: { arg: 'hello' }
+  })
+})
+
+test('Computer Plugin', async () => {
+
+  // basic stuff
+  const computer = new Computer(store.config.plugins.computer)
+  expect(computer.isEnabled()).toBe(true)
+  expect(computer.getName()).toBe('computer')
+  expect(computer.getDescription()).toBe('')
+  expect(computer.getRunningDescription()).toBe('Using your computer')
+  expect(computer.getParameters()).toStrictEqual([])
+
+  // all actions should return a screenshot
+  const result = await computer.execute({ action: 'whatever' })
+  expect(window.api.computer.takeScreenshot).toHaveBeenCalled()
+  expect(result).toStrictEqual({
+    content: [
+      {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: 'image/jpeg',
+          data: 'screenshot_url'
+        }
+      }
+    ]
   })
 })
