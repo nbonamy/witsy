@@ -66,6 +66,12 @@ vi.mock('electron', async () => {
   }
 })
 
+vi.mock('../../src/main/utils', async () => {
+  return {
+    putCachedText: vi.fn(() => 'textId')
+  }
+})
+
 const expectCreateWebPreferences = (callParams) => {
   expect(callParams.webPreferences.nodeIntegration).toBe(false)
   expect(callParams.webPreferences.contextIsolation).toBe(true)
@@ -92,6 +98,9 @@ test('All windows are null', async () => {
 test('Create main window', async () => {
   await window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'Witsy'
+  }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#')
 
 })
@@ -134,60 +143,129 @@ test('Restores existing main window', async () => {
 test('Open Settings window in current main window', async () => {
   await window.openMainWindow()
   await window.openSettingsWindow()
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalled()
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { settings: true })
 })
 
 test('Open Settings window in new main window', async () => {
   await window.openSettingsWindow()
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    title: 'Witsy',
+    queryParams: { settings: true }
+  }))
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?settings=true#')
 })
 
 test('Create chat window', async () => {
-  const chatWindow = await window.openChatWindow({ promptId: '1'})
+  const chatWindow = await window.openChatWindow({ promptId: 'id'})
   expect(chatWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=1#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('Create command picker window', async () => {
-  await window.openCommandPicker({ textId: '1' })
+  await window.openCommandPicker({ textId: 'id' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=1#/commands')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=id#/commands')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('Close command picker window', async () => {
-  await window.openCommandPicker({ textId: '1' })
+  await window.openCommandPicker({ textId: 'id' })
   await window.closeCommandPicker()
   expect(window.commandPicker).toBeNull()
 })
 
+test('Open command result window', async () => {
+  await window.openCommandResult({ textId: 'id' })
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/command',
+    queryParams: { textId: 'id' }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=id#/command')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
 test('Create prompt anywhere window', async () => {
-  await window.openPromptAnywhere({ promptId: '1' })
+  await window.openPromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=1#/prompt')
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/prompt',
+    queryParams: { promptId: 'id' }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
   expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalled()
 })
 
 test('Update prompt anywhere window', async () => {
-  await window.preparePromptAnywhere()
+  await window.preparePromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/prompt')
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/prompt',
+    queryParams: { promptId: 'id' }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
-  await window.openPromptAnywhere({ promptId: '1' })
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: '1'})
+  await window.openPromptAnywhere({ promptId: 'id' })
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: 'id'})
 })
 
 test('Close prompt anywhere window', async () => {
   await window.openPromptAnywhere({})
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
+})
+
+test('Open Readaloud window', async () => {
+  await window.openReadAloudPalette('textId')
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/readaloud',
+    queryParams: { textId: 'textId' }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId#/readaloud')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
+test('Open Transcribe window', async () => {
+  await window.openTranscribePalette()
+  expect(window.transcribePalette).toBeInstanceOf(BrowserWindow)
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/transcribe',
+    title: 'Dictation',
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/transcribe')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
+test('Open Scratchpad window', async () => {
+  await window.openScratchPad('text')
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/scratchpad',
+    title: 'Scratchpad',
+    queryParams: { textId: 'textId' }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId#/scratchpad')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+});
+
+test('Open Realtime window', async () => {
+  await window.openRealtimeChatWindow()
+  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+    hash: '/realtime',
+    title: 'Realtime Chat'
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/realtime')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
 })
 
 test('Hides and restores active windows', async () => {

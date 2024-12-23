@@ -37,7 +37,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     y: bounds?.y,
     width: bounds?.width ?? 1400,
     height: bounds?.height ?? 800,
-    title: 'Chat',
+    title: 'Witsy',
     ...titleBarOptions(),
     ...opts,
   });
