@@ -35,7 +35,7 @@ vi.mock('ytv', async () => {
   } }
 })
 
-vi.mock('openai', () => {
+vi.mock('openai', async () => {
   const OpenAI = vi.fn()
   OpenAI.prototype.images = {
     generate: vi.fn(() =>  ({ data: [{ b64_json: 'base64encodedimage' }] }))
@@ -43,13 +43,13 @@ vi.mock('openai', () => {
   return { default : OpenAI }
 })
 
-vi.mock('@huggingface/inference', () => {
+vi.mock('@huggingface/inference', async () => {
   const HfInference = vi.fn()
   HfInference.prototype.textToImage = vi.fn(() => new Blob(['image'], { type: 'image/jpeg' }))
   return { HfInference }
 })
 
-vi.mock('replicate', () => {
+vi.mock('replicate', async () => {
   const Replicate = vi.fn()
   Replicate.prototype.run = vi.fn((model) => {
     if (model.includes('image')) {
