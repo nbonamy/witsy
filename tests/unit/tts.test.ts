@@ -6,7 +6,6 @@ import Tts from '../../src/voice/tts'
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
-  OpenAI.prototype.apiKey = '123'
   OpenAI.prototype.audio = {
     speech: {
       create: vi.fn((opts) => opts.input)
@@ -17,7 +16,6 @@ vi.mock('openai', async () => {
 
 beforeEach(() => {
   store.config = defaults
-  store.config.engines.openai.apiKey = '123'
 })
 
 test('Synthetizes text', async () => {
