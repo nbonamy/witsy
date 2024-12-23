@@ -1,0 +1,43 @@
+{
+  "folders": [
+    {
+      "id": "1",
+      "name": "Folder 1",
+      "chats": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Folder 2",
+      "chats": [
+        "3"
+      ]
+    }
+  ],
+  "chats": [
+    {
+      "uuid": "1",
+      "title": "Chat 1",
+      "messages": [
+        {},
+        {}
+      ]
+    },
+    {
+      "uuid": "2",
+      "title": "Chat 2",
+      "messages": [
+        {}
+      ]
+    },
+    {
+      "uuid": "3",
+      "title": "Chat 3",
+      "messages": [
+        {}
+      ]
+    }
+  ]
+}

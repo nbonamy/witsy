@@ -1,6 +1,6 @@
 
 import { vi, beforeEach, expect, test, Mock } from 'vitest'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, dialog, shell } from 'electron'
 import * as window from '../../src/main/window'
 
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
@@ -58,9 +58,17 @@ vi.mock('electron', async () => {
   const nativeTheme = {
     shouldUseDarkColors: vi.fn(() => false),
   }
+  const dialog = {
+    showMessageBoxSync: vi.fn(() => 1),
+  }
+  const shell = {
+    openExternal: vi.fn(),
+  }
   return {
     app,
+    shell,
     screen,
+    dialog,
     nativeTheme,
     BrowserWindow,
   }
@@ -277,4 +285,15 @@ test('Hides and restores active windows', async () => {
   expect(BrowserWindow.prototype.restore).toHaveBeenCalledTimes(2)
   await window.restoreWindows()
   expect(BrowserWindow.prototype.restore).toHaveBeenCalledTimes(2)
+})
+
+test('MAS build warning', async () => {
+  window.showMasLimitsDialog()
+  expect(dialog.showMessageBoxSync).toHaveBeenCalledWith(null, {
+    buttons: ['Close', 'Check website'],
+    message: expect.any(String),
+    detail: expect.any(String),
+    defaultId: 1,
+  })
+  expect(shell.openExternal).toHaveBeenCalledWith(expect.stringContaining('https://witsyai.com/'))
 })
