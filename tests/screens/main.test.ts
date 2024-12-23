@@ -138,9 +138,7 @@ test('Stop assistant', async () => {
 })
 
 test('New chat in folder', async () => {
-  console.log(store.history.chats)
   mount(Main)
-  console.log(store.history.chats)
   emitEvent('new-chat-in-folder', 'folder')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.folders[0].chats).toHaveLength(1)
