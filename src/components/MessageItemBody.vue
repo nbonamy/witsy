@@ -35,7 +35,7 @@ const blocks = computed(() => {
   let match
   let lastIndex = 0
   const blocks: Block[] = []
-  const regex1 = /!\[(?:[^\]]*)\]\(([^\)]*)\)/g
+  const regex1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
   const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"/g
   for (const regex of [ regex1, regex2 ]) {
   
@@ -47,7 +47,7 @@ const blocks = computed(() => {
       }
 
       // now image
-      let imageUrl = decodeURIComponent(match[1])
+      let imageUrl = decodeURIComponent(match[match.length - 1])
       if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
         imageUrl = `file://${imageUrl}`
       }
@@ -57,14 +57,16 @@ const blocks = computed(() => {
       if (props.message.toolCall?.calls) {
         for (const call of props.message.toolCall.calls) {
           const toolPath = call.result?.path || call.result?.url
-          if (toolPath === match[2] || toolPath === decodeURIComponent(match[2])) {
+          if (toolPath === match[match.length - 1] || toolPath === decodeURIComponent(match[match.length - 1])) {
             prompt = call.params.prompt
+            break
           }
         }
       }
 
       // done
-      blocks.push({ type: 'media', url: imageUrl, desc: match[1], prompt: prompt })
+      const desc = match.length === 3 ? match[1] : 'Video'
+      blocks.push({ type: 'media', url: imageUrl, desc, prompt })
 
       // continue
       lastIndex = regex.lastIndex
