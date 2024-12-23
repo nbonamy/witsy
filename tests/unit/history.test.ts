@@ -1,6 +1,6 @@
 
 import { expect, test, vi } from 'vitest'
-import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory } from '../../src/main/history'
+import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory, kUnusedDelay } from '../../src/main/history'
 import { App, app } from 'electron'
 import Chat from '../../src/models/chat'
 import fs from 'fs'
@@ -17,14 +17,22 @@ vi.mock('fs', async (importOriginal) => {
   const mod: any = await importOriginal()
   return { default: {
     ...mod,
+    unlinkSync: vi.fn(),
     writeFileSync: vi.fn(),
     existsSync: vi.fn(() => true),
     readdirSync: vi.fn(() => [
       'image1.png',
       'image2.png',
       'image3.jpg',
-      'image4.png'
-    ])
+      'image4.png',
+    ]),
+    statSync: vi.fn((file) => {
+      return {
+        mtime: file.includes('image3')
+          ? new Date(new Date().getTime() - kUnusedDelay / 1.1)
+          : new Date(new Date().getTime() - kUnusedDelay * 1.1)
+      }
+    })
   }}
 })
 
@@ -130,5 +138,5 @@ test('extract attachments - mixed', async () => {
 test('unused attachments', async () => {
   expect(listUnusedAttachments({ getPath: () => '' } as unknown as App, [
     { messages: [ { content: 'file://images/image1.png', attachment: { url: 'file://images/image2.png' } } ] },
-  ] as Chat[])).toEqual(['images/image3.jpg','images/image4.png'])
+  ] as Chat[])).toEqual(['images/image4.png'])
 })
