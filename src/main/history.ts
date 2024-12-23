@@ -19,12 +19,6 @@ export const loadHistory = async (app: App): Promise<History> => {
   // needed
   const filepath = historyFilePath(app) 
 
-  // // dropbox
-  // if (!dropbox) {
-  //   dropbox = new Dropbox(app, filepath, DROPBOX_PATH)
-  // }
-  // await dropbox.downloadIfNeeded()
-
   // check existence
   if (!fs.existsSync(filepath)) {
     return { folders: [], chats: [] }

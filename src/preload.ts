@@ -129,10 +129,6 @@ contextBridge.exposeInMainWorld(
     scratchpad: {
       open: (textId?: string): void => { return ipcRenderer.send('scratchpad-open', textId) },
     },
-    dropbox: {
-      getAuthenticationUrl: (): string => { return ipcRenderer.sendSync('dropbox-get-authentication-url') },
-      authenticateWithCode: (code: string): boolean => { return ipcRenderer.sendSync('dropbox-authenticate-with-code', code) },
-    },
     computer: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync('computer-is-available') },
       getScaledScreenSize: (): Size => { return ipcRenderer.sendSync('computer-get-scaled-screen-size') },

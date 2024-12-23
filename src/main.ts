@@ -21,7 +21,6 @@ import DocumentRepository from './rag/docrepo';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
 import Computer from './main/computer';
-//import OnlineStorage from './main/online';
 import TrayIconManager from './main/tray';
 
 import * as config from './main/config';
@@ -38,7 +37,6 @@ import Automator, { AutomationAction } from 'automations/automator';
 
 let commander: Commander = null
 let docRepo: DocumentRepository = null
-//let onlineStorage: OnlineStorage = null
 let nestor: Nestor = null
 
 // first-thing: single instance
@@ -77,10 +75,6 @@ window.setStore(store);
 if (!process.mas) {
   nestor = new Nestor();
 }
-
-// start online storage
-// onlineStorage = new OnlineStorage(app);
-// onlineStorage.initialize();
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -622,14 +616,3 @@ ipcMain.on('computer-get-screenshot', async (event) => {
 ipcMain.on('computer-execute-action', async (event, payload) => {
   event.returnValue = await Computer.executeAction(payload);
 });
-
-// ipcMain.on('dropbox-get-authentication-url', async (event, payload) => {
-//   const dropbox = new Dropbox(app, '', '')
-//   event.returnValue = await dropbox.getOAuthUrl()
-// })
-
-// ipcMain.on('dropbox-authenticate-with-code', async (event, payload) => {
-//   const dropbox = new Dropbox(app, '', '')
-//   const accessToken = await dropbox.getAccessTokenFromCode(payload)
-//   event.returnValue = (accessToken != null)
-// })
