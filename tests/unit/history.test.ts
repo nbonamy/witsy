@@ -1,13 +1,14 @@
 
 import { expect, test, vi } from 'vitest'
-import { extractAttachmentsFromHistory, listUnusedAttachments } from '../../src/main/history'
+import { extractAttachmentsFromHistory, listUnusedAttachments, loadHistory, saveHistory } from '../../src/main/history'
+import { App, app } from 'electron'
 import Chat from '../../src/models/chat'
-import { app } from 'electron'
+import fs from 'fs'
 
 vi.mock('electron', async() => {
   return {
     app: {
-      getPath: () => ''
+      getPath: () => './tests/fixtures',
     },
   }
 })
@@ -16,6 +17,7 @@ vi.mock('fs', async (importOriginal) => {
   const mod: any = await importOriginal()
   return { default: {
     ...mod,
+    writeFileSync: vi.fn(),
     existsSync: vi.fn(() => true),
     readdirSync: vi.fn(() => [
       'image1.png',
@@ -26,16 +28,25 @@ vi.mock('fs', async (importOriginal) => {
   }}
 })
 
+test('load history', async () => {
+  const history = await loadHistory(app)
+  expect(history.folders).toHaveLength(2)
+  expect(history.chats).toHaveLength(3)
+})
+
+test('save history', async () => {
+  const history = await loadHistory(app)
+  await saveHistory(app, history)
+  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/history.json', expect.any(String))
+})
 
 test('extract attachments - invalid', async () => {
-
   expect(extractAttachmentsFromHistory([
     { messages: [ { content: 'Hello, world!' } ] },
     { messages: [ { content: 'http://images.image.png' } ] },
     { messages: [ { content: 'file://files/file.png' } ] },
     { messages: [ { content: 'file://images.file.png' } ] },
   ] as Chat[], 'images')).toEqual([])
-
 })
 
 test('extract attachments - content', async () => {
@@ -117,9 +128,7 @@ test('extract attachments - mixed', async () => {
 })
 
 test('unused attachments', async () => {
-
-  expect(listUnusedAttachments(app, [
+  expect(listUnusedAttachments({ getPath: () => '' } as unknown as App, [
     { messages: [ { content: 'file://images/image1.png', attachment: { url: 'file://images/image2.png' } } ] },
   ] as Chat[])).toEqual(['images/image3.jpg','images/image4.png'])
-
 })
