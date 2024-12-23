@@ -15,7 +15,7 @@
       <input type="number" min="1" v-model="conversationLength" @change="save">
     </div>
     <div class="group size">
-      <label>Image Resize</label>
+      <label>Image resize</label>
       <select v-model="imageResize" @change="save">
         <option value="0">No resize</option>
         <option value="512">Resize largest dimension to 512 pixels</option>
@@ -25,9 +25,24 @@
       </select>
     </div>
     <div class="group instruction">
-      <label>Default instructions</label>
+      <label>System instructions</label>
       <div class="subgroup">
-        <textarea v-model="defaultInstructions" @change="save" />
+        <select v-model="instructions" @change="onChangeInstructions">
+          <option value="default">Chat - Instructions</option>
+          <option value="docquery">Document query - Instructions</option>
+          <option value="titling">Chat title - Instructions</option>
+          <option value="titling_user">Chat title - Prompt</option>
+          <option value="scratchpad.system">Scratchpad - Instructions</option>
+          <option value="scratchpad.prompt">Scratchpad - Prompt</option>
+          <option value="scratchpad.spellcheck">Scratchpad - Spellcheck</option>
+          <option value="scratchpad.improve">Scratchpad - Improve</option>
+          <option value="scratchpad.takeaways">Scratchpad - Takeaways</option>
+          <option value="scratchpad.title">Scratchpad - Title</option>
+          <option value="scratchpad.simplify">Scratchpad - Simplify</option>
+          <option value="scratchpad.expand">Scratchpad - Expand</option>
+          <option value="scratchpad.complete">Scratchpad - Complete</option>
+        </select>
+        <textarea v-model="prompt" @change="save" />
         <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
       </div>
     </div>
@@ -40,7 +55,8 @@ import { ref, } from 'vue'
 import { store } from '../services/store'
 import defaults from '../../defaults/settings.json'
 
-const defaultInstructions = ref(null)
+const prompt = ref(null)
+const instructions = ref('default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
 const conversationLength = ref(null)
@@ -49,22 +65,47 @@ const imageResize = ref(null)
 const load = () => {
   autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   autoSavePrompt.value = store.config.prompt.autosave
-  defaultInstructions.value = store.config.instructions.default || ''
   conversationLength.value = store.config.llm.conversationLength || 5
   imageResize.value = store.config.llm.imageResize || 768
+  onChangeInstructions()
+}
+
+const onChangeInstructions = () => {
+  const tokens = instructions.value.split('.')
+  let promptValue = store.config.instructions
+  for (const token of tokens) {
+    promptValue = promptValue[token]
+  }
+  prompt.value = promptValue
 }
 
 const onResetDefaultInstructions = () => {
-  defaultInstructions.value = defaults.instructions.default
+  const tokens = instructions.value.split('.')
+  let defaultValue = defaults.instructions
+  for (const token of tokens) {
+    defaultValue = defaultValue[token]
+  }
+  prompt.value = defaultValue
   save()
 }
 
 const save = () => {
+
+  // basic stuff
   store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.prompt.autosave = autoSavePrompt.value
-  store.config.instructions.default = defaultInstructions.value
   store.config.llm.conversationLength = conversationLength.value
   store.config.llm.imageResize = parseInt(imageResize.value)
+
+  // update prompt
+  const tokens = instructions.value.split('.')
+  let config = store.config.instructions
+  for (let i = 0; i < tokens.length - 1; i++) {
+    config = config[tokens[i]]
+  }
+  config[tokens[tokens.length - 1]] = prompt.value
+
+  // save
   store.saveSettings()
 }
 
@@ -98,6 +139,15 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.subgroup select {
+  margin-bottom: 0.5rem;
+}
+
+.subgroup textarea {
+  width: 100%;
+  height: 100px;
 }
 
 </style>

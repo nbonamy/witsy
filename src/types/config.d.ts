@@ -1,6 +1,6 @@
 
 import { EngineCreateOpts, Model } from 'multi-llm-ts'
-import { Shortcut, anyDict } from './index.d'
+import { Shortcut, strDict } from './index.d'
 
 export type Configuration = {
   general: GeneralConfig
@@ -45,7 +45,7 @@ export interface InstructionsConfig {
   titling: string
   titling_user: string
   docquery: string
-  scratchpad: { [key: string]: string }
+  scratchpad: strDict
 }
 
 export type AppearanceConfig = {

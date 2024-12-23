@@ -71,25 +71,16 @@ export const loadSettings = (source: App|string): Configuration => {
   return buildConfig(defaultSettings, JSON.parse(data))
 }
 
-export const saveSettings = (dest: App|string, config: anyDict) => {
+export const saveSettings = (dest: App|string, config: Configuration) => {
   try {
 
     // nullify defaults
     nullifyDefaults(config)
-
-    // remove instructions that are the same as the default
-    const settings = JSON.parse(JSON.stringify(config))
-    for (const instr in settings.instructions) {
-      const standard = JSON.stringify(defaultSettings.instructions[instr as keyof typeof defaultSettings.instructions])
-      const current = JSON.stringify(settings.instructions[instr as keyof typeof settings.instructions])
-      if (standard === current) {
-        delete settings.instructions[instr]
-      }
-    }
+    nullifyInstructions(config.instructions, defaultSettings.instructions)
 
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
-    fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2))
+    fs.writeFileSync(settingsFile, JSON.stringify(config, null, 2))
 
   } catch (error) {
     console.log('Error saving settings data', error)
@@ -102,5 +93,22 @@ const nullifyDefaults = (settings: anyDict) => {
   }
   if (settings.engines.ollama.baseURL == '' || settings.engines.ollama.baseURL === defaultSettings.engines.ollama.baseURL) {
     delete settings.engines.ollama.baseURL
+  }
+}
+
+export const nullifyInstructions = (settings: anyDict, defaults: anyDict) => {
+  for (const instr in settings) {
+    if (typeof settings[instr] === 'object') {
+      nullifyInstructions(settings[instr], defaults[instr])
+      if (Object.keys(settings[instr]).length === 0) {
+        delete settings[instr]
+      }
+    } else {
+      const standard = JSON.stringify(defaults[instr as keyof typeof defaults])
+      const current = JSON.stringify(settings[instr as keyof typeof settings])
+      if (standard === current) {
+        delete settings[instr]
+      }
+    }
   }
 }
