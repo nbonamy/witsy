@@ -24,7 +24,7 @@
         <BIconFolderPlus />
       </div>
       <div id="select" class="icon-text" v-if="store.history.chats.length" @click="onSelect">
-        <BIconCheckSquare />
+        <BIconCheck2Square />
       </div>
     </div>
   </div>
