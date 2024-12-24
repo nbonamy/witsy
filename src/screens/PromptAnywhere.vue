@@ -561,7 +561,7 @@ const onResponseResize= (deltaX: number) => {
     padding: 10px 16px;
   }
 
-  .prompt * {
+  .prompt *:not(.actions):not(.info) {
     -webkit-app-region: no-drag;
   }
 

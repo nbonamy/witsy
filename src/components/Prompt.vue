@@ -721,6 +721,10 @@ defineExpose({
 
 .prompt .actions {
   display: flex;
+  -webkit-app-region: drag;
+  * {
+    -webkit-app-region: no-drag;
+  }
 }
 
 .prompt .actions-many .icon {
