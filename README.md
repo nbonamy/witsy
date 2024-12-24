@@ -125,6 +125,9 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
+- [ ] Folder mode
+- [ ] All instructions customization
+
 ## DONE
 
 - [x] Realtime chat
