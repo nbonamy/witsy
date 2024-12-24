@@ -73,8 +73,8 @@ const onSave = () => {
 
   if (!title.value.length || !engine.value.length || !model.value.length) {
     Dialog.show({
-      title: 'All fields is required',
-      text: 'Please enter a title for this chat.',
+      title: 'All fields are required',
+      text: 'Make sure you enter a title for this chat.',
       confirmButtonText: 'OK',
     })
     return
