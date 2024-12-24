@@ -20,9 +20,6 @@ vi.mock('../../src/composables/event_bus.js', async () => {
   }}
 })
 
-import useEventBus  from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
-
 beforeAll(() => {
   useWindowMock()
   store.load()
