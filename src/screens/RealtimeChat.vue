@@ -7,10 +7,13 @@
           <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
         </select>
         <select class="tool" v-model="voice" @change="save">
+          <option value="alloy">Alloy</option>
           <option value="ash">Ash</option>
           <option value="ballad">Ballad</option>
           <option value="coral">Coral</option>
+          <option value="echo">Echo</option>
           <option value="sage">Sage</option>
+          <option value="simmer">Simmer</option>
           <option value="verse">Verse</option>
         </select>
       </div>

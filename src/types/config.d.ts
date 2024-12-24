@@ -130,7 +130,7 @@ export type TTSConfig = {
 }
 
 export type RealtimeModel = string
-export type RealtimeVoice = 'ash' | 'ballad' | 'coral' | 'sage' | 'verse'
+export type RealtimeVoice = 'alloy' | 'ash' | 'ballad' | 'coral' | 'edge' | 'sage' | 'simmer' | 'verse'
 
 export type RealtimeConfig = {
   model: RealtimeModel
