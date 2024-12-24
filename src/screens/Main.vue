@@ -328,10 +328,9 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
   fork.model = model
 
   // special case: forking on a user message
-  let send = false
-  if (message.role === 'user') {
+  const messageIsFromUser = (message.role === 'user')
+  if (messageIsFromUser) {
     fork.messages.pop()
-    send = true
   }
   
   // save
@@ -345,7 +344,8 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
   onSelectChat(fork)
 
   // now send prompt
-  if (send) {
+  if (messageIsFromUser) {
+    //emitEvent('set-prompt', message)
     onSendPrompt({
       prompt: message.content,
       attachment: message.attachment as Attachment,
