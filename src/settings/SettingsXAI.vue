@@ -37,7 +37,7 @@ const chat_models = ref([])
 
 const load = () => {
   apiKey.value = store.config.engines.xai?.apiKey || ''
-  chat_models.value = store.config.engines.xai?.models.chat || []
+  chat_models.value = store.config.engines.xai?.models?.chat || []
   chat_model.value = store.config.engines.xai?.model?.chat || ''
 }
 
