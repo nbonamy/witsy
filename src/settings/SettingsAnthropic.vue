@@ -38,7 +38,7 @@ const chat_models = ref([])
 
 const load = () => {
   apiKey.value = store.config.engines.anthropic?.apiKey || ''
-  chat_models.value = store.config.engines.anthropic?.models.chat || []
+  chat_models.value = store.config.engines.anthropic?.models?.chat || []
   chat_model.value = store.config.engines.anthropic?.model?.chat || ''
 }
 

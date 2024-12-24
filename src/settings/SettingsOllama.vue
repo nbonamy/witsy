@@ -42,7 +42,7 @@ onMounted(() => {
 
 const load = () => {
   baseURL.value = store.config.engines.ollama?.baseURL || ''
-  chat_models.value = store.config.engines.ollama?.models.chat || []
+  chat_models.value = store.config.engines.ollama?.models?.chat || []
   chat_model.value = store.config.engines.ollama?.model?.chat || ''
 }
 

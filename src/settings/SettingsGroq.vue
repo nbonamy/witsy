@@ -38,7 +38,7 @@ const chat_models = ref([])
 
 const load = () => {
   apiKey.value = store.config.engines.groq?.apiKey || ''
-  chat_models.value = store.config.engines.groq?.models.chat || []
+  chat_models.value = store.config.engines.groq?.models?.chat || []
   chat_model.value = store.config.engines.groq?.model?.chat || ''
 }
 
