@@ -40,7 +40,7 @@ export type LLMConfig = {
   imageResize: number
 }
 
-export interface InstructionsConfig {
+export type InstructionsConfig = {
   default: string
   titling: string
   titling_user: string

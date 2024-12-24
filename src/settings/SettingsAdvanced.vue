@@ -74,6 +74,7 @@ const onChangeInstructions = () => {
   const tokens = instructions.value.split('.')
   let promptValue = store.config.instructions
   for (const token of tokens) {
+    // @ts-expect-error - instructions are InstructionsConfig keys
     promptValue = promptValue[token]
   }
   prompt.value = promptValue
@@ -83,6 +84,7 @@ const onResetDefaultInstructions = () => {
   const tokens = instructions.value.split('.')
   let defaultValue = defaults.instructions
   for (const token of tokens) {
+    // @ts-expect-error - instructions are InstructionsConfig keys
     defaultValue = defaultValue[token]
   }
   prompt.value = defaultValue
@@ -101,8 +103,10 @@ const save = () => {
   const tokens = instructions.value.split('.')
   let config = store.config.instructions
   for (let i = 0; i < tokens.length - 1; i++) {
+    // @ts-expect-error - instructions are InstructionsConfig keys
     config = config[tokens[i]]
   }
+  // @ts-expect-error - instructions are InstructionsConfig keys
   config[tokens[tokens.length - 1]] = prompt.value
 
   // save

@@ -4,7 +4,6 @@ import { screen } from 'electron'
 import Computer from '../../src/main/computer'
 import nut from '../../src/automations/computer_nut'
 import { mouse, keyboard } from '@nut-tree-fork/nut-js'
-import exp from 'constants'
 
 const spyMove = vi.spyOn(nut, 'mouseMove')
 const spyLeftClick = vi.spyOn(nut, 'leftClick')
