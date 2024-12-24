@@ -1,6 +1,5 @@
 
 import { type Chat as ChatBase } from '../types/index'
-import { v4 as uuidv4 } from 'uuid'
 import Message from './message'
 
 export const defaultTitle = 'New Chat'
@@ -27,7 +26,7 @@ export default class Chat implements ChatBase {
     }
 
     // default
-    this.uuid = uuidv4()
+    this.uuid = crypto.randomUUID()
     this.title = obj || defaultTitle
     this.createdAt = Date.now()
     this.lastModified = Date.now()
@@ -41,7 +40,7 @@ export default class Chat implements ChatBase {
   }
 
   fromJson(obj: any) {
-    this.uuid = obj.uuid || uuidv4()
+    this.uuid = obj.uuid || crypto.randomUUID()
     this.title = obj.title
     this.createdAt = obj.createdAt
     this.lastModified = obj.lastModified || obj.createdAt
@@ -117,6 +116,21 @@ export default class Chat implements ChatBase {
         window.api.file.delete(message.attachment.url)
       }
     }
+  }
+
+  fork(message: Message): Chat {
+    const fork = new Chat(this)
+    fork.uuid = crypto.randomUUID()
+    fork.lastModified = Date.now()
+    fork.messages = []
+    for (const msg of this.messages) {
+      fork.messages.push(Message.fromJson(msg))
+      fork.lastMessage().uuid = crypto.randomUUID()
+      if (msg.uuid === message.uuid) {
+        break
+      }
+    }
+    return fork
   }
 
 }

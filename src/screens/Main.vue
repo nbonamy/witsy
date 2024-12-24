@@ -2,6 +2,7 @@
   <div class="main">
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
+    <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" />
     <Settings id="settings" />
     <DocRepos />
   </div>
@@ -19,6 +20,7 @@ import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
+import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
 import Assistant from '../services/assistant'
@@ -36,10 +38,14 @@ const tipsManager = useTipsManager(store)
 
 // assistant
 const assistant = ref(new Assistant(store.config))
+
 const sidebar: Ref<typeof Sidebar> = ref(null)
 const prompt = ref(null)
 const engine = ref(null)
 const model = ref(null)
+const chatEditorConfirmButtonText = ref('Save')
+const chatEditorCallback: Ref<ChatEditorCallback> = ref(() => {})
+
 const props = defineProps({
   extra: Object
 })
@@ -56,6 +62,7 @@ onMounted(() => {
   onEvent('rename-chat', onRenameChat)
   onEvent('move-chat', onMoveChat)
   onEvent('delete-chat', onDeleteChat)
+  onEvent('fork-chat', onForkChat)
   onEvent('rename-folder', onRenameFolder)
   onEvent('delete-folder', onDeleteFolder)
   onEvent('select-chat', onSelectChat)
@@ -298,6 +305,54 @@ const deleteChats = (chatIds: string[]) => {
     emitEvent('new-chat', null)
   }
 
+}
+
+const onForkChat = (message: Message) => {
+
+  // set up editor for forking
+  chatEditorConfirmButtonText.value = 'Fork'
+  chatEditorCallback.value = ({ title, engine, model }) => {
+    const chat = assistant.value.chat
+    forkChat(chat, message, title, engine, model)
+  }
+
+  // show editor
+  document.querySelector<HTMLDialogElement>('#chat-editor').showModal()
+}
+
+const forkChat = (chat: Chat, message: Message, title: string, engine: string, model: string) => {
+
+  const fork = chat.fork(message)
+  fork.title = title
+  fork.engine = engine
+  fork.model = model
+
+  // special case: forking on a user message
+  let send = false
+  if (message.role === 'user') {
+    fork.messages.pop()
+    send = true
+  }
+  
+  // save
+  store.history.chats.push(fork)
+  const folder = store.history.folders.find((f) => f.chats.includes(chat.uuid))
+  if (folder) {
+    folder.chats.push(fork.uuid)
+  }
+
+  // select
+  onSelectChat(fork)
+
+  // now send prompt
+  if (send) {
+    onSendPrompt({
+      prompt: message.content,
+      attachment: message.attachment as Attachment,
+      docrepo: fork.docrepo,
+      expert: message.expert
+    })
+  }
 }
 
 const onRenameFolder = async (folderId: string) => {

@@ -11,6 +11,9 @@
     <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
       <BIconPencil /> Edit
     </div>
+    <div class="action fork" v-if="!message.transient" @click="onFork(message)">
+      <ForkSvg /> Fork
+    </div>
   </div>
 </template>
 
@@ -19,6 +22,7 @@
 import { store } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
+import ForkSvg from '../components/ForkSvg.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
 
@@ -89,6 +93,10 @@ const onUsage = (message: Message) => {
   })
 }
 
+const onFork = (message: Message) => {
+  emitEvent('fork-chat', message)
+}
+
 </script>
 
 <style scoped>
@@ -107,12 +115,14 @@ const onUsage = (message: Message) => {
 
     svg {
       margin-right: 4px;
+      height: 12px;
     }
 
     &.read svg {
       position: relative;
       top: 1.5px;
     }
+
   }
 
 }

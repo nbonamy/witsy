@@ -1,9 +1,10 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
-import { enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
+import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
+import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
@@ -25,7 +26,14 @@ beforeAll(() => {
     folders: [
       { id: 'folder', name: 'Folder', chats: [] }
     ], chats: [
-      new Chat({ uuid: 'chat', title: 'title', messages: [] })
+      new Chat({ uuid: 'chat', title: 'title', docrepo: 'docrepo', messages: [
+        new Message('system', 'instructions'),
+        new Message('user', 'prompt1'),
+        new Message('assistant', 'response1'),
+        Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
+        new Message('user', 'prompt2'),
+        new Message('assistant', 'response2'),  
+      ] })
     ]
   })
 })
@@ -215,4 +223,33 @@ test('Select chat', async () => {
   mount(Main)
   emitEvent('select-chat', store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenCalledWith(store.history.chats[0])
+})
+
+test('Fork Chat on Assistant Message', async () => {
+  const wrapper: VueWrapper<any> = mount(Main)
+  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[2], 'title2', 'engine2', 'model2')
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].title).toBe('title2')
+  expect(store.history.chats[1].engine).toBe('engine2')
+  expect(store.history.chats[1].model).toBe('model2')
+  expect(store.history.chats[1].messages).toHaveLength(3)
+  expect(Assistant.prototype.initLlm).not.toHaveBeenCalled()
+  expect(Assistant.prototype.prompt).not.toHaveBeenCalled()
+})
+
+
+test('Fork Chat on User Message', async () => {
+  const wrapper: VueWrapper<any> = mount(Main)
+  emitEvent('select-chat', store.history.chats[0])
+  wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[3], 'title2', 'engine2', 'model2')
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].title).toBe('title2')
+  expect(store.history.chats[1].engine).toBe('engine2')
+  expect(store.history.chats[1].model).toBe('model2')
+  expect(store.history.chats[1].messages).toHaveLength(3)
+  expect(Assistant.prototype.initLlm).toHaveBeenCalled()
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', { attachment: expect.objectContaining({
+    content: 'attachment',
+  }), docrepo: 'docrepo', expert: expect.objectContaining({ id: 'expert'}) }, expect.any(Function))
 })

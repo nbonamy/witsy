@@ -53,6 +53,7 @@ export interface Chat {
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void
   addMessage(message: Message): void
+  fork(message: Message): Chat
   lastMessage(): Message
   subtitle(): string
   delete(): void
