@@ -450,7 +450,7 @@ const onRetryGeneration = async (message: Message) => {
     prompt: lastMessage.content,
     attachment: lastMessage.attachment as Attachment,
     docrepo: assistant.value.chat.docrepo,
-    expert: null,//assistant.value.chat.expert
+    expert: lastMessage.expert
   })
 
 }
