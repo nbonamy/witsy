@@ -51,3 +51,38 @@ test('Subtitle', () => {
   chat.addMessage(new Message('assistant', 'this is the subtitle'))
   expect(chat.subtitle()).toBe('this is the subtitle')
 })
+
+test('Fork', () => {
+  const chat = new Chat({
+    uuid: 'uuid',
+    title: 'title',
+    createdAt: 1,
+    lastModified: 1,
+    engine: 'engine',
+    model: 'model',
+    docrero: 'docrepo',
+    disableTools: true,
+    messages: [
+      { uuid: '1', role: 'role1', content: 'content1' },
+      { uuid: '2', role: 'role2', content: 'content2' },
+      { uuid: '3', role: 'role3', content: 'content3' },
+      { uuid: '4', role: 'role4', content: 'content4' },
+    ]
+  })
+  
+  const fork = chat.fork(chat.messages[2])
+  expect(fork.uuid).not.toBe(chat.uuid)
+  expect(fork.title).toBe(chat.title)
+  expect(fork.createdAt).toBe(chat.createdAt)
+  expect(fork.lastModified).not.toBe(chat.lastModified)
+  expect(fork.engine).toBe(chat.engine)
+  expect(fork.model).toBe(chat.model)
+  expect(fork.docrepo).toBe(chat.docrepo)
+  expect(fork.disableTools).toBe(chat.disableTools)
+  expect(fork.deleted).toBe(false)
+  expect(fork.messages.length).toBe(3)
+  expect(fork.messages[0]).toMatchObject({ uuid: expect.not.stringMatching('^1$'), role: 'role1', content: 'content1' })
+  expect(fork.messages[1]).toMatchObject({ uuid: expect.not.stringMatching('^2$'), role: 'role2', content: 'content2' })
+  expect(fork.messages[2]).toMatchObject({ uuid: expect.not.stringMatching('^3$'), role: 'role3', content: 'content3' })
+
+})
