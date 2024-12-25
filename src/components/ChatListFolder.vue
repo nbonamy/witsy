@@ -59,7 +59,7 @@ const visibleFolders = computed(() => {
   }
   folders.sort((a: Folder, b: Folder) => a.name.localeCompare(b.name))
   let rootChats = store.history.chats.filter(c => store.history.folders.every(f => !f.chats.includes(c.uuid)))
-  if (rootChats.length) folders.push({ id: store.rootFolder.id, name: store.rootFolder.name, chats: rootChats.map(c => c.uuid) })
+  folders.push({ id: store.rootFolder.id, name: store.rootFolder.name, chats: rootChats.map(c => c.uuid) })
   return folders.map(f => {
     return {
       id: f.id,
