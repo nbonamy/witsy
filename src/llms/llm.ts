@@ -1,13 +1,13 @@
 
 import { Configuration, EngineConfig } from 'types/config.d'
-import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model } from 'multi-llm-ts'
+import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, DeepSeek, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model, loadDeepSeekModels } from 'multi-llm-ts'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
 import OpenAI from './openai'
 
-export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'groq', 'cerebras' ]
-export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'groq', 'cerebras' ]
+export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
+export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
 
 export default class LlmFactory {
 
@@ -50,6 +50,7 @@ export default class LlmFactory {
   isEngineConfigured = (engine: string): boolean => {
     if (engine === 'anthropic') return Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return Cerebras.isConfigured(this.config.engines.cerebras)
+    if (engine === 'deepseek') return DeepSeek.isConfigured(this.config.engines.deepseek)
     if (engine === 'google') return Google.isConfigured(this.config.engines.google)
     if (engine === 'groq') return Groq.isConfigured(this.config.engines.groq)
     if (engine === 'mistralai') return MistralAI.isConfigured(this.config.engines.mistralai)
@@ -62,6 +63,7 @@ export default class LlmFactory {
   isEngineReady = (engine: string): boolean => {
     if (engine === 'anthropic') return Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
+    if (engine === 'deepseek') return DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
     if (engine === 'google') return Google.isReady(this.config.engines.google, this.config.engines.google?.models)
     if (engine === 'groq') return Groq.isReady(this.config.engines.groq, this.config.engines.groq?.models)
     if (engine === 'mistralai') return MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
@@ -76,6 +78,7 @@ export default class LlmFactory {
     // select
     if (engine === 'anthropic') return new Anthropic(this.config.engines.anthropic, getComputerInfo())
     if (engine === 'cerebras') return new Cerebras(this.config.engines.cerebras)
+    if (engine === 'deepseek') return new DeepSeek(this.config.engines.deepseek)
     if (engine === 'google') return new Google(this.config.engines.google)
     if (engine === 'groq') return new Groq(this.config.engines.groq)
     if (engine === 'mistralai') return new MistralAI(this.config.engines.mistralai)
@@ -142,6 +145,8 @@ export default class LlmFactory {
       models = await loadCerebrasModels(this.config.engines.cerebras)
     } else if (engine === 'xai') {
       models = await loadXAIModels(this.config.engines.xai)
+    } else if (engine === 'deepseek') {
+      models = await loadDeepSeekModels(this.config.engines.deepseek)
     }
 
     // needed

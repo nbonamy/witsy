@@ -26,6 +26,7 @@ import SettingsGoogle from './SettingsGoogle.vue'
 import SettingsGroq from './SettingsGroq.vue'
 import SettingsCerberas from './SettingsCerebras.vue'
 import SettingsXAI from './SettingsXAI.vue'
+import SettingsDeepSeek from './SettingsDeepSeek.vue'
 
 const currentEngine = ref(availableEngines[0])
 const engineSettings = ref(null)
@@ -43,6 +44,7 @@ const engines = computed(() => {
         mistralai: 'Mistral AI',
         google: 'Google',
         xai: 'xAI',
+        deepseek: 'DeepSeek',
         groq: 'Groq',
         cerebras: 'Cerebras',
       }[engine],
@@ -57,6 +59,7 @@ const currentView = computed(() => {
   if (currentEngine.value == 'mistralai') return SettingsMistralAI
   if (currentEngine.value == 'google') return SettingsGoogle
   if (currentEngine.value == 'xai') return SettingsXAI
+  if (currentEngine.value == 'deepseek') return SettingsDeepSeek
   if (currentEngine.value == 'groq') return SettingsGroq
   if (currentEngine.value == 'cerebras') return SettingsCerberas
 })
