@@ -167,6 +167,15 @@
         "chat": ""
       }
     },
+    "deepseek": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "cerebras": {
       "models": {
         "chat": [],
