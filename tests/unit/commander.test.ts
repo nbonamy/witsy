@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { app, Notification } from 'electron'
-import { Command } from '../../src/types/index.d'
+import { Command } from '../../src/types/index'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import * as window from '../../src/main/window'

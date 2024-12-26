@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
-import { Configuration } from 'types/config.d'
-import { SourceType, DocumentBase, DocRepoQueryResponseItem } from 'types/rag.d'
+import { Configuration } from 'types/config'
+import { SourceType, DocumentBase, DocumentQueueItem, DocRepoQueryResponseItem } from 'types/rag'
 import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
@@ -10,13 +10,6 @@ import * as config from '../main/config'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import fs from 'fs'
-
-interface DocumentQueueItem {
-  uuid: string
-  baseId: string
-  type: SourceType
-  origin: string
-}
 
 export default class DocumentRepository {
 

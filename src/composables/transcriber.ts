@@ -1,5 +1,5 @@
 
-import { type Configuration } from '../types/config.d'
+import { type Configuration } from '../types/config'
 import getSTTEngine, { type STTEngine, type TranscribeResponse } from '../voice/stt'
 
 class Transcriber {

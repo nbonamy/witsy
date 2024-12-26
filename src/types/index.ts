@@ -1,7 +1,9 @@
 
-import { anyDict, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
-import { Configuration } from './config.d'
-import { ToolCallInfo } from '../models/message'
+import { Size } from 'electron'
+import { LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
+import { DocRepoQueryResponseItem, DocumentBase } from './rag'
+import { RunCommandParams } from './automation'
+import { Configuration } from './config'
 
 export type strDict = { [key: string]: string }
 export type anyDict = { [key: string]: any }

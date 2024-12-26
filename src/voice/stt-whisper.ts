@@ -1,5 +1,5 @@
 
-import { Configuration } from 'types/config.d'
+import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, ProgressInfo, TaskStatus, TranscribeResponse } from './stt'
 
 // importing from @xenova/transformers leads to a runtime error

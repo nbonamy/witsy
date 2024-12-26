@@ -36,6 +36,13 @@ export type DocRepoQueryResponse = {
   items: DocRepoQueryResponseItem[]
 }
 
+export interface DocumentQueueItem {
+  uuid: string
+  baseId: string
+  type: SourceType
+  origin: string
+}
+
 export type DocRepoAddDocResponse = {
   queueItem: DocumentQueueItem
   queueLength: number

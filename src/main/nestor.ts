@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index.d'
+import { anyDict } from 'types/index'
 import { NestorClient } from 'nestor-client'
 
 export default class {

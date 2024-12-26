@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 
-import { Folder } from '../types/index.d'
+import { Folder } from '../types/index'
 import { type Ref, ref, onMounted, computed } from 'vue'
 import { store } from '../services/store'
 import ChatListItem from './ChatListItem.vue'

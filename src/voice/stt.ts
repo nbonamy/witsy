@@ -1,5 +1,5 @@
 
-import { Configuration } from 'types/config.d'
+import { Configuration } from 'types/config'
 import STTOpenAI from './stt-openai'
 import STTGroq from './stt-groq'
 import STTWhisper from './stt-whisper'

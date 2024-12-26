@@ -1,6 +1,6 @@
 
 import { CreateWindowOpts } from 'types/window';
-import { anyDict } from 'types/index.d';
+import { anyDict } from 'types/index';
 import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { wait } from '../utils';

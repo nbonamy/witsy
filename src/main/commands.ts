@@ -1,4 +1,4 @@
-import { Command } from 'types/index.d'
+import { Command } from 'types/index'
 import { App } from 'electron'
 import defaultCommands from '../../defaults/commands.json'
 import * as file from './file'

@@ -1,4 +1,6 @@
 
+import { Command } from './index'
+
 declare module 'applescript'
 
 export interface ShortcutCallbacks {

@@ -1,5 +1,5 @@
 
-import { Configuration } from 'types/config.d'
+import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 import Groq from 'groq-sdk'
 

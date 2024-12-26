@@ -1,8 +1,8 @@
 
 import { LlmChunk } from 'multi-llm-ts'
 import { AssistantCompletionOpts } from './assistant'
-import { Configuration } from 'types/config.d'
-import { DocRepoQueryResponseItem } from 'types/rag.d'
+import { Configuration } from 'types/config'
+import { DocRepoQueryResponseItem } from 'types/rag'
 import Chat, { defaultTitle } from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'

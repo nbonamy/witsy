@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator } from '../types/automation';
 import { wait } from '../main/utils';
 
 let robot: any|null = null;

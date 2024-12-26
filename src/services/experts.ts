@@ -1,5 +1,5 @@
 
-import { Expert } from 'types/index.d'
+import { Expert } from 'types/index'
 import { store } from './store'
 import defaultExperts from '../../defaults/experts.json'
 

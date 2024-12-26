@@ -1,5 +1,5 @@
 
-import { Automator as AutomatorImpl } from '../types/automation.d';
+import { Automator as AutomatorImpl } from '../types/automation';
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'

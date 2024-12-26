@@ -1,5 +1,5 @@
 
-import { Command } from 'types/index.d'
+import { Command } from 'types/index'
 import { store } from './store'
 import defaultCommands from '../../defaults/commands.json'
 

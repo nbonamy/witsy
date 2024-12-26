@@ -1,6 +1,6 @@
 
-import { Configuration } from '../types/config.d'
-import { RunCommandParams } from '../types/automation.d'
+import { Configuration } from '../types/config'
+import { RunCommandParams } from '../types/automation'
 import { App, Notification } from 'electron'
 import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
