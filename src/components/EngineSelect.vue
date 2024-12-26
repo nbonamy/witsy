@@ -8,6 +8,7 @@
     <option value="mistralai">MistralAI</option>
     <option value="google">Google</option>
     <option value="xai">xAI</option>
+    <option value="deepseek">DeepSeek</option>
     <option value="groq">Groq</option>
     <option value="cerebras">Cerebras</option>
   </select>
