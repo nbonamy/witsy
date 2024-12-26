@@ -2,7 +2,7 @@
   <div class="main">
     <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
-    <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" />
+    <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <Settings id="settings" />
     <DocRepos />
   </div>
@@ -39,6 +39,7 @@ const tipsManager = useTipsManager(store)
 // assistant
 const assistant = ref(new Assistant(store.config))
 
+const chatEditor: Ref<typeof ChatEditor> = ref(null)
 const sidebar: Ref<typeof Sidebar> = ref(null)
 const prompt = ref(null)
 const engine = ref(null)
@@ -317,7 +318,7 @@ const onForkChat = (message: Message) => {
   }
 
   // show editor
-  document.querySelector<HTMLDialogElement>('#chat-editor').showModal()
+  chatEditor.value.show()
 }
 
 const forkChat = (chat: Chat, message: Message, title: string, engine: string, model: string) => {

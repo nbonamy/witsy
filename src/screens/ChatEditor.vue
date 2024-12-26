@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="chat-editor">
+  <AlertDialog id="chat-editor" ref="dialog">
     <template v-slot:body>
       <div class="group">
         <label>Title</label>
@@ -15,8 +15,10 @@
       </div>
     </template> 
     <template v-slot:footer>
-      <button @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
-      <button @click="onSave" class="alert-confirm">{{ confirmButtonText }}</button>
+      <div class="buttons">
+        <button @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
+        <button @click="onSave" class="alert-confirm">{{ confirmButtonText }}</button>
+      </div>
     </template>
   </AlertDialog>
 </template>
@@ -34,6 +36,7 @@ import Chat from '../models/chat'
 
 export type ChatEditorCallback = ({title, engine, model}: {title: string, engine: string, model: string}) => void
 
+const dialog = ref(null)
 const title = ref('')
 const engine = ref('')
 const model = ref('')
@@ -60,13 +63,17 @@ onMounted(async () => {
   }, { immediate: true })
 })
 
+const close = () => {
+  dialog.value.close('#chat-editor')
+}
+
 const onChangeEngine = () => {
   const llmFactory = new LlmFactory(store.config)
   model.value = llmFactory.getChatModel(engine.value, false)
 }
 
 const onCancel = () => {
-  document.querySelector<HTMLDialogElement>('#chat-editor').close()
+  close()
 }
 
 const onSave = () => {
@@ -86,8 +93,13 @@ const onSave = () => {
     engine: engine.value,
     model: model.value,
   })
-  onCancel()
+  close()
 }
+
+defineExpose({
+  show: () => dialog.value.show('#chat-editor'),
+  close,
+})
 
 </script>
 
