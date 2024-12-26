@@ -1,6 +1,6 @@
 
 import { LlmEngine, type LlmChunk } from 'multi-llm-ts'
-import { Configuration } from 'types/config.d'
+import { Configuration } from 'types/config'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'

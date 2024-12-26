@@ -1,5 +1,5 @@
 
-import { Configuration } from '../../src/types/config.d'
+import { Configuration } from '../../src/types/config'
 import { vi, expect, test } from 'vitest'
 import * as config from '../../src/main/config'
 import defaultSettings from '../../defaults/settings.json'

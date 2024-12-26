@@ -9,7 +9,7 @@
 <script setup lang="ts">
 
 import { type ModelRef, computed } from 'vue'
-import { type Shortcut } from '../types/index.d'
+import { type Shortcut } from '../types/index'
 
 const value: ModelRef<Shortcut|undefined> = defineModel()
 

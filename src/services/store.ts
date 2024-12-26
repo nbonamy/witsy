@@ -1,6 +1,6 @@
 
 import { Configuration } from 'types/config'
-import { Folder, History, Store } from 'types/index.d'
+import { Folder, History, Store } from 'types/index'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'

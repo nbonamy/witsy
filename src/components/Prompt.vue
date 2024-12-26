@@ -33,8 +33,8 @@
 
 <script setup lang="ts">
 
-import { type FileContents, type Expert } from '../types/index.d'
-import { type DocumentBase } from '../types/rag.d'
+import { type FileContents, type Expert } from '../types/index'
+import { type DocumentBase } from '../types/rag'
 import { ref, computed, onMounted, nextTick, watch, type Ref } from 'vue'
 import { store } from '../services/store'
 import { BIconStars } from 'bootstrap-icons-vue'

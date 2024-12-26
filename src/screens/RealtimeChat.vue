@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 
-import { type RealtimeVoice } from '../types/config.d'
+import { type RealtimeVoice } from '../types/config'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import AnimatedBlob from '../components/AnimatedBlob.vue'

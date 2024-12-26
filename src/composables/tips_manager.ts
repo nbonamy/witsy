@@ -1,5 +1,5 @@
 
-import { Store } from 'types/index.d'
+import { Store } from 'types/index'
 import Dialog from './dialog'
 
 export type TipId = 'scratchpad' | 'conversation' | 'computerUse' | 'newPrompt' | 'newCommand' | 'realtime' | 'folderList'

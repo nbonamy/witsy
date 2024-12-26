@@ -19,6 +19,8 @@ import logoGoogle from '../../assets/google.svg'
 // @ts-expect-error svg
 import logoXAI from '../../assets/xai.svg'
 // @ts-expect-error svg
+import logoDeepSeek from '../../assets/deepseek.svg'
+// @ts-expect-error svg
 import logoGroq from '../../assets/groq.svg'
 // @ts-expect-error svg
 import logoCerberas from '../../assets/cerebras.svg'
@@ -30,6 +32,7 @@ const logos: { [key: string]: any } = {
   mistralai: logoMistralAI,
   google: logoGoogle,
   xai: logoXAI,
+  deepseek: logoDeepSeek,
   groq: logoGroq,
   cerebras: logoCerberas,
 }
@@ -96,6 +99,14 @@ const logo = computed(() => logos[props.engine])
 
 .logo.grayscale.xai {
   filter: grayscale();
+}
+
+.logo.background.deepseek {
+  background-color: #f0f0ea;
+}
+
+.logo.grayscale.deepseek {
+  filter: grayscale() brightness(2.0);
 }
 
 .logo.grayscale.cerebras {

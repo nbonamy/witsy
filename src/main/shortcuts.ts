@@ -1,6 +1,6 @@
 
-import { Shortcut } from 'types/index.d';
-import { ShortcutCallbacks } from 'types/automation.d';
+import { Shortcut } from 'types/index';
+import { ShortcutCallbacks } from 'types/automation';
 import { App, globalShortcut } from 'electron';
 import { loadSettings } from './config';
 

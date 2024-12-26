@@ -1,5 +1,5 @@
 
-import { strDict } from 'types/index.d';
+import { strDict } from 'types/index';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen } from './index';
 

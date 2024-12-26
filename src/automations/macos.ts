@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator } from '../types/automation';
 import applescript from 'applescript';
 
 export default class implements Automator {

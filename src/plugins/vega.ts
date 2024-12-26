@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index.d'
+import { anyDict } from 'types/index'
 import { saveFileContents } from '../services/download'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'

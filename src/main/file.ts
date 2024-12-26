@@ -1,5 +1,5 @@
   
-import { ExternalApp, FileContents, anyDict } from 'types/index.d';
+import { ExternalApp, FileContents, anyDict } from 'types/index';
 import { App, dialog } from 'electron';
 import { extensionToMimeType } from 'multi-llm-ts';
 import { execSync } from 'child_process';

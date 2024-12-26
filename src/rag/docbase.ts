@@ -1,7 +1,7 @@
 
 import { App } from 'electron'
-import { Configuration } from 'types/config.d'
-import { SourceType, DocRepoQueryResponseItem } from 'types/rag.d'
+import { Configuration } from 'types/config'
+import { SourceType, DocRepoQueryResponseItem } from 'types/rag'
 import defaultSettings from '../../defaults/settings.json'
 import DocumentSourceImpl from './docsource'
 import VectorDB from './vectordb'

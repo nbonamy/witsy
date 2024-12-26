@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index.d'
+import { anyDict } from 'types/index'
 import Plugin, { PluginConfig } from './plugin'
 
 export default class extends Plugin {

@@ -1,6 +1,6 @@
 
-import { History, Command, Expert } from './types/index.d';
-import { Configuration } from './types/config.d';
+import { History, Command, Expert } from './types/index';
+import { Configuration } from './types/config';
 import { RunCommandParams } from './types/automation';
 
 import process from 'node:process';

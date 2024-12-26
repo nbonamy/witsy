@@ -1,7 +1,9 @@
 
 import { BrowserWindowConstructorOptions } from 'electron'
+import { anyDict } from './index'
+
 export type CreateWindowOpts = BrowserWindowConstructorOptions & {
   keepHidden?: boolean;
-  queryParams?: strDict;
+  queryParams?: anyDict;
   hash?: string;
 }

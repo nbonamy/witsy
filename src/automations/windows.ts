@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation.d';
+import { Automator } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
 
 export default class implements Automator {

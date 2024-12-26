@@ -1,6 +1,7 @@
 
 import { EngineCreateOpts, Model } from 'multi-llm-ts'
-import { Shortcut, strDict } from './index.d'
+import { Shortcut, strDict } from './index'
+import { PluginConfig } from 'plugins/plugin'
 
 export type Configuration = {
   general: GeneralConfig

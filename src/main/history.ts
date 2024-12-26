@@ -1,5 +1,5 @@
 
-import { History, Chat } from 'types/index.d'
+import { History, Chat } from 'types/index'
 import { App } from 'electron'
 import { notifyBrowserWindows } from './windows'
 import Monitor from './monitor'

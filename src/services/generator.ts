@@ -1,7 +1,7 @@
 
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
-import { Configuration } from 'types/config.d'
-import { DocRepoQueryResponseItem } from 'types/rag.d'
+import { Configuration } from 'types/config'
+import { DocRepoQueryResponseItem } from 'types/rag'
 import { countryCodeToName } from './i18n'
 import Message from '../models/message'
 

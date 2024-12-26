@@ -87,7 +87,8 @@ const onKeyUp = (event: KeyboardEvent) => {
 
 const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   window.api.commands.run({
-    ...props.extra,
+    textId: props.extra.textId,
+    sourceApp: props.extra.sourceApp,
     command: JSON.parse(JSON.stringify(command))
   })
 }

@@ -1,8 +1,8 @@
 
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { Command, Expert } from '../../src/types/index.d'
-import { DocumentBase } from '../../src/types/rag.d'
+import { Command, Expert } from '../../src/types/index'
+import { DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
 
 const listeners: ((signal: string) => void)[] = []

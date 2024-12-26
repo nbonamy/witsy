@@ -1,5 +1,5 @@
 
-import { Configuration, EngineConfig } from 'types/config.d'
+import { Configuration, EngineConfig } from 'types/config'
 import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, DeepSeek, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model, loadDeepSeekModels } from 'multi-llm-ts'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
