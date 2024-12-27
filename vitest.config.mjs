@@ -33,6 +33,7 @@ export default defineConfig({
         'src/automations/windows.ts',
         'src/services/*worker.ts',
         'src/llms/*worker.ts',
+        'src/types/**/*',
         'src/vendor/**/*',
         'tools/**/*'
       ]
