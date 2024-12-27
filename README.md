@@ -125,6 +125,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
+- [ ] DeepSeek support
 - [ ] Folder mode
 - [ ] All instructions customization
 - [ ] Fork chat (with optional LLM switch)
