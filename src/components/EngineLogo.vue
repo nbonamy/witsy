@@ -24,6 +24,8 @@ import logoDeepSeek from '../../assets/deepseek.svg'
 import logoGroq from '../../assets/groq.svg'
 // @ts-expect-error svg
 import logoCerberas from '../../assets/cerebras.svg'
+// @ts-expect-error svg
+import logoOpenRouter from '../../assets/openrouter.svg'
 
 const logos: { [key: string]: any } = {
   openai: logoOpenAI,
@@ -32,6 +34,7 @@ const logos: { [key: string]: any } = {
   mistralai: logoMistralAI,
   google: logoGoogle,
   xai: logoXAI,
+  openrouter: logoOpenRouter,
   deepseek: logoDeepSeek,
   groq: logoGroq,
   cerebras: logoCerberas,
@@ -106,7 +109,11 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.grayscale.deepseek {
-  filter: grayscale() brightness(2.0);
+  filter: grayscale() invert() brightness(0);
+}
+
+.logo.background.openrouter {
+  background-color: #f0f0ea;
 }
 
 .logo.grayscale.cerebras {
@@ -119,6 +126,7 @@ const logo = computed(() => logos[props.engine])
 }
 
 @media (prefers-color-scheme: dark) {
+  
   .logo.openai {
     filter: invert(1) brightness(0.7);
   }
@@ -140,6 +148,17 @@ const logo = computed(() => logos[props.engine])
   .logo.grayscale.xai {
     filter: invert(1) brightness(0.7);
   }
+  .logo.grayscale.deepseek {
+    filter: grayscale() brightness(1.7);
+  }
+  .logo.grayscale.openrouter {
+    filter: invert(1) brightness(0.7);
+  }
+  .logo.grayscale.cerebras {
+    filter: grayscale() brightness(1.3);
+  }
+
+
 
   [data-tint=blue] {
     .logo.grayscale.openai {
@@ -158,13 +177,16 @@ const logo = computed(() => logos[props.engine])
       filter: grayscale() brightness(1.2);
     }
     .logo.grayscale.xai {
-      filter: invert(1) brightness(0.9);
+      filter: invert(1) brightness(0.8);
     }
     .logo.grayscale.groq {
-      filter: invert(1) brightness(0.9);
+      filter: invert(1) brightness(0.8);
     }
     .logo.grayscale.cerebras {
       filter: grayscale() brightness(1.85);
+    }
+    .logo.grayscale.openrouter {
+      filter: invert(1) brightness(0.8);
     }
   }
 }

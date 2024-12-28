@@ -203,6 +203,8 @@ dialog.settings .list-panel {
     border-right: 0.5px solid var(--dialog-separator-color);
     width: 140px;
     padding: 10px;
+    max-height: 190px;
+    overflow-y: scroll;
 
     .item {
       flex-direction: row;

@@ -167,6 +167,15 @@
         "chat": ""
       }
     },
+    "openrouter": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": ""
+      }
+    },
     "deepseek": {
       "models": {
         "chat": [],
