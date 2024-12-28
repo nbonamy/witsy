@@ -100,13 +100,13 @@ export default class Generator {
         if (error.status === 401 || message.includes('401') || message.includes('apikey')) {
           response.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
           rc = false
-        } else if (error.status === 400 && (message.includes('credit') || message.includes('balance'))) {
+        } else if ((error.status === 400 || error.status === 402) && (message.includes('credit') || message.includes('balance'))) {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           rc = false
         } else if (error.status === 400 && (message.includes('context length') || message.includes('too long'))) {
           response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
           rc = false
-        } else if (error.status === 400 && (message.includes('function call') || message.includes('tools'))) {
+        } else if ((error.status === 400 || error.status === 404) && (message.includes('function call') || message.includes('tools') || message.includes('tool use'))) {
           if (llm.plugins.length > 0) {
             console.log('Model does not support function calling: removing tool and retrying')
             llm.clearPlugins()
