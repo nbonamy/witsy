@@ -125,13 +125,13 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] DeepSeek support
-- [ ] Folder mode
-- [ ] All instructions customization
-- [ ] Fork chat (with optional LLM switch)
 
 ## DONE
 
+- [x] DeepSeek support
+- [x] Folder mode
+- [x] All instructions customization
+- [x] Fork chat (with optional LLM switch)
 - [x] Realtime chat
 - [x] Replicate video generation
 - [x] Together.ai compatibility
