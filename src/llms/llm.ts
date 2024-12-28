@@ -1,12 +1,12 @@
 
 import { Configuration, EngineConfig } from 'types/config'
-import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, DeepSeek, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model, loadDeepSeekModels } from 'multi-llm-ts'
+import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, OpenRouter, DeepSeek, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model, loadOpenRouterModels, loadDeepSeekModels } from 'multi-llm-ts'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
 import OpenAI from './openai'
 
-export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
+export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
 
 export default class LlmFactory {
@@ -56,6 +56,7 @@ export default class LlmFactory {
     if (engine === 'mistralai') return MistralAI.isConfigured(this.config.engines.mistralai)
     if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
     if (engine === 'openai') return OpenAI.isConfigured(this.config.engines.openai)
+    if (engine === 'openrouter') return OpenRouter.isConfigured(this.config.engines.openrouter)
     if (engine === 'xai') return XAI.isConfigured(this.config.engines.xai)
     return false
   }  
@@ -69,6 +70,7 @@ export default class LlmFactory {
     if (engine === 'mistralai') return MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
     if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
     if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
+    if (engine === 'openrouter') return OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
     return false
   }
@@ -84,6 +86,7 @@ export default class LlmFactory {
     if (engine === 'mistralai') return new MistralAI(this.config.engines.mistralai)
     if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
     if (engine === 'openai') return new OpenAI(this.config.engines.openai)
+    if (engine === 'openrouter') return new OpenRouter(this.config.engines.openrouter)
     if (engine === 'xai') return new XAI(this.config.engines.xai)
 
     // fallback
@@ -145,6 +148,8 @@ export default class LlmFactory {
       models = await loadCerebrasModels(this.config.engines.cerebras)
     } else if (engine === 'xai') {
       models = await loadXAIModels(this.config.engines.xai)
+    } else if (engine === 'openrouter') {
+      models = await loadOpenRouterModels(this.config.engines.openrouter)
     } else if (engine === 'deepseek') {
       models = await loadDeepSeekModels(this.config.engines.deepseek)
     }
