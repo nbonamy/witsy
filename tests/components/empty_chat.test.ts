@@ -73,7 +73,7 @@ test('Renders correctly', async () => {
 
 test('Renders engines and models', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  expect(wrapper.findAllComponents(EngineLogo).length).toBe(availableEngines.length)
+  expect(wrapper.findAllComponents(EngineLogo).length).toBe(availableEngines.length+1)
   expect(wrapper.findAll('.empty select option')).toHaveLength(3)
 })
 
