@@ -61,8 +61,11 @@ const logo = computed(() => logos[props.engine])
 
 <style scoped>
 
-.logo.colored {
+.logo {
   object-fit: contain;
+}
+
+.logo.background {
   border-radius: 6px;
   padding: 4px;
 }
@@ -88,8 +91,12 @@ const logo = computed(() => logos[props.engine])
 }
 
 .logo.background.groq {
-  background-color: #0aafc9;
-  filter: invert(1) brightness(1.3);
+  filter: none;
+  background-color: white;
+}
+
+.logo.grayscale.groq {
+  filter: grayscale() invert(1) brightness(0.6);
 }
 
 .logo.grayscale.google {
@@ -134,19 +141,42 @@ const logo = computed(() => logos[props.engine])
     filter: invert(1) brightness(0.7);
   }
   .logo.colored.ollama {
-    filter: invert(0);
+    filter: invert(1);
+    background-color: transparent;
   }
   .logo.anthropic {
     filter: invert(1) brightness(0.7);
   }
   .logo.colored.anthropic {
-    filter: invert(0)
+    filter: invert(1) brightness(1.5);
+  }
+  .logo.background.anthropic {
+    filter: none;
   }
   .logo.groq {
-    filter: invert(1) brightness(0.6);
+    filter: grayscale() invert(1) brightness(0.6);
   }
+  .logo.colored.groq {
+    filter: none;
+  }
+  .logo.background.groq {
+    filter: none;
+    background-color: white;
+  }
+  .logo.grayscale.groq {
+      filter: grayscale() invert(1) brightness(1.4);
+    }
   .logo.grayscale.xai {
     filter: invert(1) brightness(0.7);
+  }
+  .logo.colored.xai {
+    filter: invert(1) brightness(1.5);
+  }
+  .logo.colored.openrouter {
+    filter: invert(1) brightness(1.5);
+  }
+  .logo.background.openrouter {
+    filter: none;
   }
   .logo.grayscale.deepseek {
     filter: grayscale() brightness(1.7);
@@ -157,8 +187,6 @@ const logo = computed(() => logos[props.engine])
   .logo.grayscale.cerebras {
     filter: grayscale() brightness(1.3);
   }
-
-
 
   [data-tint=blue] {
     .logo.grayscale.openai {
@@ -177,9 +205,6 @@ const logo = computed(() => logos[props.engine])
       filter: grayscale() brightness(1.2);
     }
     .logo.grayscale.xai {
-      filter: invert(1) brightness(0.8);
-    }
-    .logo.grayscale.groq {
       filter: invert(1) brightness(0.8);
     }
     .logo.grayscale.cerebras {
