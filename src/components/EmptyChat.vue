@@ -119,6 +119,8 @@ const onEngine = (engine: string) => {
 
 const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (progress: number) => void) => {
 
+  try {
+
     const container = document.querySelector('.engines')
     const source = document.querySelector(srcSelector)
     const target = document.querySelector(dstSelector)
@@ -133,6 +135,10 @@ const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (
     const targetX = target.getBoundingClientRect().left
     const targetY = target.getBoundingClientRect().top
     moveElement(clone, targetX, targetY, 150, (progress) => callback({ container, source, target, clone }, progress))
+
+  } catch (e) {
+    console.error(e)
+  }
 
 }
 
