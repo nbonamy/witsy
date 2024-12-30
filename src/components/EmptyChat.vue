@@ -5,12 +5,12 @@
       Click here to switch to a different chat bot provider!<br/>
       <img src="/assets/arrow_dashed.svg" />
     </div>
-		<div class="engines">
-			<EngineLogo v-for="engine in engines" :engine="engine" :grayscale="true"
-				:class="{ current: isCurrentEngine(engine), hidden: !showAllEngines && !isCurrentEngine(engine) }"
-				@click="onEngine(engine)"
-			/>
-		</div>
+    <div class="engine">
+      <div class="engines">
+        <EngineLogo v-for="engine in engines" :engine="engine" :grayscale="true" @click="onEngine(engine)" />
+      </div>
+      <EngineLogo :engine="store.config.llm.engine" :grayscale="true" class="current" @click="onEngine(store.config.llm.engine)" />
+    </div>
 		<select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
 			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
 		</select>
@@ -65,6 +65,17 @@ const onEngine = (engine: string) => {
 
     // show all always
     showAllEngines.value = true
+
+    // now animate current icon to the ones in the selector
+    const current = store.config.llm.engine
+    animateEngineLogo(`.engine .logo.current`, `.engines .logo.${current}`, (elems, progress) => {
+      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress)
+      elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25))
+      if (progress >= 1) {
+        elems.clone.remove()
+        elems.container.style.opacity = 1
+      }
+    })
   
   } else {
 
@@ -83,15 +94,71 @@ const onEngine = (engine: string) => {
     }
 
     // close and disable tip
-    showAllEngines.value = false
     store.config.general.tips.engineSelector = false
 
     // select the engine
     store.config.llm.engine = engine
     store.saveSettings()
 
+    // and do the animation in reverse
+    animateEngineLogo(`.engines .logo.${engine}`, `.engine .logo.current`, (elems, progress) => {
+      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress)
+      elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress)
+      if (progress >= 1) {
+        elems.clone.remove()
+        showAllEngines.value = false
+        elems.container.style.opacity = 0
+        elems.target.style.opacity = 1
+        elems.source.style.opacity = 1
+      }
+    })
+
   }
 
+}
+
+const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (progress: number) => void) => {
+
+    const container = document.querySelector('.engines')
+    const source = document.querySelector(srcSelector)
+    const target = document.querySelector(dstSelector)
+    const clone = source.cloneNode(true)
+    clone.style.position = 'absolute'
+    clone.style.width = source.getBoundingClientRect().width + 'px'
+    clone.style.height = source.getBoundingClientRect().height + 'px'
+    clone.style.left = source.getBoundingClientRect().left + 'px'
+    clone.style.top = source.getBoundingClientRect().top + 'px'
+    document.body.appendChild(clone)
+    source.style.opacity = 0
+    const targetX = target.getBoundingClientRect().left
+    const targetY = target.getBoundingClientRect().top
+    moveElement(clone, targetX, targetY, 150, (progress) => callback({ container, source, target, clone }, progress))
+
+}
+
+const moveElement = (element: HTMLElement, endX: number, endY: number, duration: number, callback: (progress: number) => void) => {
+
+  const startX = parseInt(element.style.left)
+  const startY = parseInt(element.style.top)
+  var startTime = null;
+
+  function animate(currentTime) {
+    if (!startTime) startTime = currentTime;
+    var timeElapsed = currentTime - startTime;
+    var progress = Math.min(timeElapsed / duration, 1);
+
+    element.style.left = startX + (endX - startX) * progress + 'px';
+    element.style.top = startY + (endY - startY) * progress + 'px';
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+      callback(progress)
+    } else if (progress > 0) {
+      callback(1)
+    }
+  }
+
+  requestAnimationFrame(animate);
 }
 
 const onClickModel = () => {
@@ -156,28 +223,39 @@ const onSelectModel = (ev: Event) => {
   font-size: 14pt;
 }
 
+.empty .engine {
+  position: relative;
+}
+
 .empty .engines {
+  position: relative;
+  top: 40px;
   display: flex;
+  max-width: 400px;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  opacity: 0;
 }
 
-.empty .engines .logo {
-  transition: all 0.2s;
+.empty .engine .logo {
   flex: 0 0 48px;
   cursor: pointer;
-  margin: 0px 16px;
+  margin: 16px;
   width: 48px;
   height: 48px;
+  opacity: 1;
 }
 
-.empty .engines .logo.hidden {
-  width: 0px;
-  flex-basis: 0px;
-  margin: 0px;
+.empty .engine .current {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -24px;
 }
 
 .empty .select-model {
+  z-index: 2;
   border: none;
   outline: none;
   margin-top: 16px;
