@@ -1,5 +1,5 @@
 
-import { beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
@@ -15,6 +15,8 @@ beforeAll(() => {
 
 beforeEach(() => {
 
+  vi.clearAllMocks()
+
   // store
   store.config = {
     general: {
@@ -27,6 +29,7 @@ beforeEach(() => {
     },
     engines: {
       openai: {
+        apiKey: 'key',
         models: {
           chat: [
             { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo' },
@@ -41,8 +44,8 @@ beforeEach(() => {
       ollama: {
         models: {
           chat: [
-            { id: 'llama3-8b', name: 'llama3-70b' },
-            { id: 'llama3-8b', name: 'llama3-70b' }
+            { id: 'llama3-8b', name: 'llama3-8b' },
+            { id: 'llama3-70b', name: 'llama3-70b' }
           ]
         }
       },
@@ -50,10 +53,11 @@ beforeEach(() => {
         apiKey: 'test',
       },
       mistralai: {
+        apiKey: 'test',
         models: {
           chat: [
-            { id: 'llama3-8b', name: 'llama3-70b' },
-            { id: 'llama3-8b', name: 'llama3-70b' }
+            { id: 'llama3-8b', name: 'llama3-8b' },
+            { id: 'llama3-70b', name: 'llama3-70b' }
           ]
         }
       }
@@ -95,15 +99,23 @@ test('Selects model', async () => {
 })
 
 test('Prompts when selecting not ready engine', async () => {
-  const wrapper = mount(EmptyChat)
-  await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
-  await wrapper.find('.empty .engines :nth-child(3)').trigger('click')
+  const wrapper: VueWrapper<any> = mount(EmptyChat)
+
+  // openai is ready
+  wrapper.vm.showAllEngines = true
+  await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
+  expect(window.api.showDialog).toHaveBeenCalledTimes(0)
+  
+  // anthropic is not
+  wrapper.vm.showAllEngines = true
+  await wrapper.find('.empty .engines .logo:nth-child(3)').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
   expect(store.config.llm.engine).toBe(availableEngines[0])
-  await wrapper.find('.empty .engines :nth-child(4)').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
-  expect(store.config.llm.engine).toBe(availableEngines[0])
-  await wrapper.find('.empty .engines :nth-child(5)').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(3)
-  expect(store.config.llm.engine).toBe(availableEngines[0])
+
+  // mistralai is
+  wrapper.vm.showAllEngines = true
+  await wrapper.find('.empty .engines .logo:nth-child(4)').trigger('click')
+  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
+  expect(store.config.llm.engine).toBe(availableEngines[3])
+
 })

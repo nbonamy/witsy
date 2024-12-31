@@ -2,7 +2,7 @@
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role" v-if="showRole">
       <EngineLogo :engine="chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
-      <img src="/assets/person.crop.circle.svg" class="avatar" v-else />
+      <UserAvatar class="avatar" v-else />
       <div class="name variable-font-size">{{ authorName }}</div>
     </div>
     <div class="body">
@@ -43,6 +43,7 @@ import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
 import { store } from '../services/store'
 import useAudioPlayer, { type AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
+import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemImage from './MessageItemMedia.vue'
 import MessageItemActions from './MessageItemActions.vue'

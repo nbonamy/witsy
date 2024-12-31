@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0.00 0.00 77.00 77.00">
-<path fill="#101828" d="
+<svg fill="#101828" viewBox="0.00 0.00 77.00 77.00" preserveAspectRatio="xMidYMid" xmlns="http://www.w3.org/2000/svg">
+<path  d="
   M 38.20 71.97
   C 37.19 53.29 24.26 39.75 5.44 38.83
   Q 3.15 38.71 5.41 38.36

@@ -12,7 +12,7 @@
       <BIconPencil /> Edit
     </div>
     <div class="action fork" v-if="!message.transient" @click="onFork(message)">
-      <ForkSvg /> Fork
+      <ForIcon /> Fork
     </div>
   </div>
 </template>
@@ -22,9 +22,9 @@
 import { store } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
-import ForkSvg from '../components/ForkSvg.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
+import ForIcon from '../../assets/fork.svg?component'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

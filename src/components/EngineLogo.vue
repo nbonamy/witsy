@@ -1,43 +1,35 @@
 
 <template>
-  <img :src="logo" class="logo" :class="[ engine, grayscale ? 'grayscale' : 'colored', background ? 'background' : '' ]" />
+  <div :class="[ 'logo', engine, background ? 'background' : '' ]">
+    <component :is="logo" :class="[ 'svg', grayscale ? 'grayscale' : '' ]" />
+  </div>
 </template>
 
 <script setup lang="ts">
 
 import { computed } from 'vue'
-// @ts-expect-error svg
-import logoOpenAI from '../../assets/openai.svg'
-// @ts-expect-error svg
-import logoOllama from '../../assets/ollama.svg'
-// @ts-expect-error svg
-import logoAnthropic from '../../assets/anthropic.svg'
-// @ts-expect-error svg
-import logoMistralAI from '../../assets/mistralai.svg'
-// @ts-expect-error svg
-import logoGoogle from '../../assets/google.svg'
-// @ts-expect-error svg
-import logoXAI from '../../assets/xai.svg'
-// @ts-expect-error svg
-import logoDeepSeek from '../../assets/deepseek.svg'
-// @ts-expect-error svg
-import logoGroq from '../../assets/groq.svg'
-// @ts-expect-error svg
-import logoCerberas from '../../assets/cerebras.svg'
-// @ts-expect-error svg
-import logoOpenRouter from '../../assets/openrouter.svg'
+import LogoOpenAI from '../../assets/openai.svg?component'
+import LogoOllama from '../../assets/ollama.svg?component'
+import LogoAnthropic from '../../assets/anthropic.svg?component'
+import LogoMistralAI from '../../assets/mistralai.svg?component'
+import LogoGoogle from '../../assets/google.svg?component'
+import LogoXAI from '../../assets/xai.svg?component'
+import LogoDeepSeek from '../../assets/deepseek.svg?component'
+import LogoGroq from '../../assets/groq.svg?component'
+import LogoCerberas from '../../assets/cerebras.svg?component'
+import LogoOpenRouter from '../../assets/openrouter.svg?component'
 
 const logos: { [key: string]: any } = {
-  openai: logoOpenAI,
-  ollama: logoOllama,
-  anthropic: logoAnthropic,
-  mistralai: logoMistralAI,
-  google: logoGoogle,
-  xai: logoXAI,
-  openrouter: logoOpenRouter,
-  deepseek: logoDeepSeek,
-  groq: logoGroq,
-  cerebras: logoCerberas,
+  openai: LogoOpenAI,
+  ollama: LogoOllama,
+  anthropic: LogoAnthropic,
+  mistralai: LogoMistralAI,
+  google: LogoGoogle,
+  xai: LogoXAI,
+  openrouter: LogoOpenRouter,
+  deepseek: LogoDeepSeek,
+  groq: LogoGroq,
+  cerebras: LogoCerberas,
 }
 
 const props = defineProps({
@@ -62,158 +54,56 @@ const logo = computed(() => logos[props.engine])
 <style scoped>
 
 .logo {
-  object-fit: contain;
-}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-.logo.background {
-  border-radius: 6px;
-  padding: 4px;
-}
+  &.background {
+    padding: 4px;
+    border-radius: 6px;
+    background-color: rgb(255, 255, 255);
+  }
 
-.logo.colored.openai {
-  filter: invert(1);
-}
+  /* &.openai.background {
+    background-color: rgb(117, 169, 155);
+    .svg {
+      fill: rgb(255, 255, 255);
+    }
+  } */
 
-.logo.background.openai {
-  background-color: #865563;
-}
+  /* &.anthropic.background {
+    background-color: rgb(20, 20, 19)
+  } */
 
-.logo.colored.ollama {
-  background-color: white;
-}
+  .svg {
+    object-fit: fill;
+    height: 100%;
 
-.logo.grayscale.mistralai {
-  filter: grayscale()
-}
+    &.grayscale {
+      fill: rgb(64, 64, 64);
+      filter: grayscale(100%);
+    }
 
-.logo.background.anthropic {
-  background-color: #f0f0ea;
-}
+  }
 
-.logo.background.groq {
-  filter: none;
-  background-color: white;
-}
-
-.logo.grayscale.groq {
-  filter: grayscale() invert(1) brightness(0.6);
-}
-
-.logo.grayscale.google {
-  filter: grayscale();
-}
-
-.logo.background.xai {
-  background-color: #f0f0ea;
-}
-
-.logo.grayscale.xai {
-  filter: grayscale();
-}
-
-.logo.background.deepseek {
-  background-color: #f0f0ea;
-}
-
-.logo.grayscale.deepseek {
-  filter: grayscale() invert() brightness(0);
-}
-
-.logo.background.openrouter {
-  background-color: #f0f0ea;
-}
-
-.logo.grayscale.cerebras {
-  filter: grayscale()
-}
-
-.logo.background.cerebras {
-  background-color: white;
-  filter: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  
-  .logo.openai {
-    filter: invert(1) brightness(0.7);
-  }
-  .logo.ollama {
-    filter: invert(1) brightness(0.7);
-  }
-  .logo.colored.ollama {
-    filter: invert(1);
-    background-color: transparent;
-  }
-  .logo.anthropic {
-    filter: invert(1) brightness(0.7);
-  }
-  .logo.colored.anthropic {
-    filter: invert(1) brightness(1.5);
-  }
-  .logo.background.anthropic {
-    filter: none;
-  }
-  .logo.groq {
-    filter: grayscale() invert(1) brightness(0.6);
-  }
-  .logo.colored.groq {
-    filter: none;
-  }
-  .logo.background.groq {
-    filter: none;
-    background-color: white;
-  }
-  .logo.grayscale.groq {
-      filter: grayscale() invert(1) brightness(1.4);
+
+  .logo {
+
+    &.background {
+      background-color: var(--text-color);
     }
-  .logo.grayscale.xai {
-    filter: invert(1) brightness(0.7);
-  }
-  .logo.colored.xai {
-    filter: invert(1) brightness(1.5);
-  }
-  .logo.colored.openrouter {
-    filter: invert(1) brightness(1.5);
-  }
-  .logo.background.openrouter {
-    filter: none;
-  }
-  .logo.grayscale.deepseek {
-    filter: grayscale() brightness(1.7);
-  }
-  .logo.grayscale.openrouter {
-    filter: invert(1) brightness(0.7);
-  }
-  .logo.grayscale.cerebras {
-    filter: grayscale() brightness(1.3);
+
+    .svg {
+      &.grayscale {
+        fill: var(--text-color);
+      }
+    }
+
   }
 
-  [data-tint=blue] {
-    .logo.grayscale.openai {
-      filter: invert(1) brightness(0.9);
-    }
-    .logo.grayscale.ollama {
-      filter: invert(1) brightness(0.9);
-    }
-    .logo.grayscale.logo.anthropic {
-      filter: invert(1) brightness(1.0);
-    }
-    .logo.logo.grayscale.mistralai {
-      filter: grayscale() brightness(1.1);
-    }
-    .logo.grayscale.google {
-      filter: grayscale() brightness(1.2);
-    }
-    .logo.grayscale.xai {
-      filter: invert(1) brightness(0.8);
-    }
-    .logo.grayscale.cerebras {
-      filter: grayscale() brightness(1.85);
-    }
-    .logo.grayscale.openrouter {
-      filter: invert(1) brightness(0.8);
-    }
-  }
 }
 
 </style>

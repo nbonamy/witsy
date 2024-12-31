@@ -27,17 +27,12 @@ import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
 import { BIconCameraReels, BIconPalette, BIconYoutube } from 'bootstrap-icons-vue'
-
+import WIconDownload from '../../assets/download.svg?component'
+import WIconPython from '../../assets/python.svg?component'
+import WIconTavily from '../../assets/tavily.svg?component'
+import WIconVega from '../../assets/vega.svg?component'
 // @ts-expect-error svg
-import logoDownload from '../../assets/download.svg'
-// @ts-expect-error svg
-import logoPython from '../../assets/python.svg'
-// @ts-expect-error svg
-import logoTavily from '../../assets/tavily.svg'
-// @ts-expect-error svg
-import logoVega from '../../assets/vega.svg'
-// @ts-expect-error svg
-import logoNestor from '../../assets/nestor.jpg'
+import WImageNestor from '../../assets/nestor.jpg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -71,14 +66,14 @@ const plugins = computed((): PluginUI[] => {
         nestor: 'Nestor',
       }[plugin],
       logo: {
-        browse: { image: logoDownload },
-        tavily: { image: logoTavily },
-        python: { image: logoPython },
+        browse: { icon: WIconDownload },
+        tavily: { icon: WIconTavily },
+        python: { icon: WIconPython },
         image: { icon: BIconPalette },
         video: { icon: BIconCameraReels },
         youtube: { icon: BIconYoutube },
-        vega: { image: logoVega },
-        nestor: { image: logoNestor },
+        vega: { icon: WIconVega },
+        nestor: { image: WImageNestor },
       }[plugin],
     }
   })
