@@ -38,20 +38,20 @@
 
 <script setup lang="ts">
 
+import { Expert } from 'types/index'
 import { Ref, ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'
 import { newExpert, saveExperts } from '../services/experts'
-import { type Expert } from 'types/index'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
 
 const experts: Ref<Expert[]> = ref(null)
-const selected = ref(null)
-const edited = ref(null)
+const selected: Ref<Expert> = ref(null)
+const edited: Ref<Expert> = ref(null)
 
-const moreButton = ref(null)
+const moreButton: Ref<HTMLElement> = ref(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -119,7 +119,7 @@ const onMore = () => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
-  const rcDialog = document.getElementsByTagName('dialog')[0].getBoundingClientRect()
+  const rcDialog = moreButton.value.closest('dialog').getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
   menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }
