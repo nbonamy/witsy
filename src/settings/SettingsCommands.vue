@@ -40,22 +40,22 @@
 
 <script setup lang="ts">
 
-import { v4 as uuidv4 } from 'uuid'
-import { ref, computed } from 'vue'
+import { Command } from 'types'
+import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
+import { v4 as uuidv4 } from 'uuid'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
 import CommandEditor from '../screens/CommandEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
-import { Command, Expert } from 'types'
 
-const commands = ref(null)
-const selected = ref(null)
-const edited = ref(null)
-const defaults = ref(null)
+const commands: Ref<Command[]> = ref(null)
+const selected: Ref<Command> = ref(null)
+const edited: Ref<Command> = ref(null)
+const defaults: Ref<typeof CommandDefaults> = ref(null)
 
-const moreButton = ref(null)
+const moreButton: Ref<HTMLElement> = ref(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -125,7 +125,7 @@ const onMore = () => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
-  const rcDialog = document.getElementsByTagName('dialog')[0].getBoundingClientRect()
+  const rcDialog = moreButton.value.closest('dialog').getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
   menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }
@@ -141,10 +141,10 @@ const handleActionClick = async (action: string) => {
 
   // process
   if (action === 'select') {
-    commands.value.forEach((expert: Expert) => expert.state = 'enabled')
+    commands.value.forEach((command: Command) => command.state = 'enabled')
     save()
   } else if (action === 'unselect') {
-    commands.value.forEach((expert: Expert) => expert.state = 'disabled')
+    commands.value.forEach((command: Command) => command.state = 'disabled')
     save()
   } else if (action === 'defaults') {
     onDefaults()
