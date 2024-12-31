@@ -2,6 +2,7 @@ import type { ConfigEnv, UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import { pluginExposeRenderer } from './vite.base.config';
 import renderer from 'vite-plugin-electron-renderer';
+import svgLoader from 'vite-svg-loader';
 import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config
@@ -17,7 +18,7 @@ export default defineConfig((env) => {
     build: {
       outDir: `.vite/renderer/${name}`,
     },
-    plugins: [pluginExposeRenderer(name), renderer(), vue()],
+    plugins: [pluginExposeRenderer(name), renderer(), vue(), svgLoader({ defaultImport: 'url' })],
     resolve: {
       preserveSymlinks: true,
     },

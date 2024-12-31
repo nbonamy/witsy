@@ -47,16 +47,12 @@ const engines = computed(() => availableEngines)
 const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
 const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
 
-const isCurrentEngine = (engine: string) => {
-  return store.config.llm.engine === engine
-}
-
 const showEngineTip = () => {
-  return store.config.general.tips.engineSelector && !showAllEngines.value && engines.value.length > 1
+  return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && engines.value.length > 1
 }
 
 const showModelTip = () => {
-  return !store.config.general.tips.engineSelector && store.config.general.tips.modelSelector && !showAllEngines.value && models.value.length > 1
+  return !tipsManager.isTipAvailable('engineSelector') && tipsManager.isTipAvailable('modelSelector') && !showAllEngines.value && models.value.length > 1
 }
 
 const onEngine = (engine: string) => {
@@ -69,11 +65,11 @@ const onEngine = (engine: string) => {
     // now animate current icon to the ones in the selector
     const current = store.config.llm.engine
     animateEngineLogo(`.engine .logo.current`, `.engines .logo.${current}`, (elems, progress) => {
-      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress)
-      elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25))
+      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+      elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
       if (progress >= 1) {
         elems.clone.remove()
-        elems.container.style.opacity = 1
+        elems.container.style.opacity = '1'
       }
     })
   
@@ -102,14 +98,14 @@ const onEngine = (engine: string) => {
 
     // and do the animation in reverse
     animateEngineLogo(`.engines .logo.${engine}`, `.engine .logo.current`, (elems, progress) => {
-      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress)
-      elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress)
+      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+      elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
       if (progress >= 1) {
         elems.clone.remove()
         showAllEngines.value = false
-        elems.container.style.opacity = 0
-        elems.target.style.opacity = 1
-        elems.source.style.opacity = 1
+        elems.container.style.opacity = '0'
+        elems.target.style.opacity = '1'
+        elems.source.style.opacity = '1'
       }
     })
 
@@ -117,27 +113,34 @@ const onEngine = (engine: string) => {
 
 }
 
-const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (progress: number) => void) => {
+const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (elems: {
+  container: HTMLElement,
+  source: HTMLElement,
+  target: HTMLElement,
+  clone: HTMLElement
+}, progress: number) => void) => {
 
   try {
 
-    const container = document.querySelector('.engines')
-    const source = document.querySelector(srcSelector)
-    const target = document.querySelector(dstSelector)
-    const clone = source.cloneNode(true)
+    const container = document.querySelector<HTMLElement>('.engines')
+    const source = document.querySelector<HTMLElement>(srcSelector)
+    const target = document.querySelector<HTMLElement>(dstSelector)
+    const clone = source.cloneNode(true) as HTMLElement
     clone.style.position = 'absolute'
     clone.style.width = source.getBoundingClientRect().width + 'px'
     clone.style.height = source.getBoundingClientRect().height + 'px'
     clone.style.left = source.getBoundingClientRect().left + 'px'
     clone.style.top = source.getBoundingClientRect().top + 'px'
     document.body.appendChild(clone)
-    source.style.opacity = 0
+    source.style.opacity = '0'
     const targetX = target.getBoundingClientRect().left
     const targetY = target.getBoundingClientRect().top
     moveElement(clone, targetX, targetY, 150, (progress) => callback({ container, source, target, clone }, progress))
 
   } catch (e) {
-    console.error(e)
+    if (!process.env.TEST) {
+      console.error(e)
+    }
   }
 
 }
@@ -146,9 +149,9 @@ const moveElement = (element: HTMLElement, endX: number, endY: number, duration:
 
   const startX = parseInt(element.style.left)
   const startY = parseInt(element.style.top)
-  var startTime = null;
+  var startTime: DOMHighResTimeStamp = null;
 
-  function animate(currentTime) {
+  function animate(currentTime: DOMHighResTimeStamp) {
     if (!startTime) startTime = currentTime;
     var timeElapsed = currentTime - startTime;
     var progress = Math.min(timeElapsed / duration, 1);
@@ -222,6 +225,10 @@ const onSelectModel = (ev: Event) => {
     img {
       rotate: 270deg;
     }
+  }
+
+  &.engine {
+    top: 96px;
   }
 }
 

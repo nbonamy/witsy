@@ -202,8 +202,8 @@ dialog.settings .list-panel {
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);
     width: 140px;
-    padding: 10px;
-    max-height: 190px;
+    padding: 12px;
+    max-height: 208px;
     overflow-y: scroll;
 
     .item {
@@ -249,6 +249,9 @@ dialog.settings .list-panel {
 @media (prefers-color-scheme: dark) {
   dialog.settings .list-panel .list .item .image {
     filter: invert(1);
+  }
+  dialog.settings .list-panel .list .item .icon {
+    fill: var(--text-color);
   }
 }
 

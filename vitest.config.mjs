@@ -7,17 +7,21 @@
 
 import { defineConfig } from 'vite'
 import { coverageConfigDefaults } from 'vitest/dist/config'
+import svgLoader from 'vite-svg-loader';
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue({
-    template: {
-      compilerOptions: {
-        isCustomElement: tag => tag.startsWith('BIcon')
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: tag => tag.startsWith('BIcon')
+        }
       }
-    }
-  })],
+    }),
+    svgLoader()
+  ],
   test: {
     globals: true,
     environment: 'jsdom',
