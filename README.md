@@ -128,6 +128,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] OpenRouter support
 - [x] DeepSeek support
 - [x] Folder mode
 - [x] All instructions customization
