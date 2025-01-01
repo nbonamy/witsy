@@ -11,8 +11,8 @@ Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](ht
 ## What is Witsy?
 
 Generative AI desktop application:
-- OpenAI, Ollama, Anthropic, MistralAI, Google, Groq and Cerebras models supported
-- Chat completion and image generation with Vision models support
+- OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, OpenRouter, DeepSeek, Groq and Cerebras models supported
+- Chat completion and image generation with vision models support
 - Scratchpad to interactively create the best content with any model!
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
@@ -22,6 +22,7 @@ Generative AI desktop application:
 - Read aloud of any text in other applications (requires OpenAI API key)
 - Chat with your local files and documents (RAG)
 - Transcription/Dictation (Speech-to-Text)
+- Realtime Chat aka Voice Mode
 - Anthropic Computer Use support
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
