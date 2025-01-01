@@ -34,13 +34,19 @@ export default class {
     const updateAvailable = this.autoUpdater.updateAvailable;
   
     // tray icon
+    let trayIcon = null;
     const assetsFolder = process.env.DEBUG ? path.resolve('./assets') : process.resourcesPath;
-    const iconColor = process.platform === 'linux' ? 'White' : 'Template';
-    const trayIconPath = path.join(assetsFolder, updateAvailable ? `bulbUpdate${iconColor}@2x.png` : `bulb${iconColor}@2x.png`);
-    //console.log('trayIconPath', trayIconPath);
-    const trayIcon = nativeImage.createFromPath(trayIconPath);
-    trayIcon.setTemplateImage(true);
-  
+    if (process.platform === 'win32') {
+      const trayIconPath = path.join(assetsFolder, 'icon.ico');
+      trayIcon = nativeImage.createFromPath(trayIconPath);
+    } else {
+      const iconColor = process.platform === 'linux' ? 'White' : 'Template';
+      const trayIconPath = path.join(assetsFolder, updateAvailable ? `bulbUpdate${iconColor}@2x.png` : `bulb${iconColor}@2x.png`);
+      //console.log('trayIconPath', trayIconPath);
+      trayIcon = nativeImage.createFromPath(trayIconPath);
+      trayIcon.setTemplateImage(true);
+    }
+    
     // create tray
     this.tray = new Tray(trayIcon);
     this.tray.setContextMenu(Menu.buildFromTemplate(this.buildTrayMenu()));
