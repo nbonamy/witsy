@@ -157,6 +157,19 @@ app.whenReady().then(() => {
     app.dock?.hide();
   }
 
+  // new icon warning
+  if (!settings.general.firstRun && settings.general.hideOnStartup && settings.general.tips.newTrayIcon === undefined) {
+    dialog.showMessageBox(null, {
+      message: process.platform === 'win32' ? 'New system tray icon!' : 'New menu bar icon!',
+      detail: process.platform === 'win32'
+        ? 'The old lightbulb tray icon has been replaced with the Witsy application icon.'
+        : 'The old lightbulb menu bar icon has been replaed with a fountain pen icon.'
+
+    });
+    settings.general.tips.newTrayIcon = false;
+    config.saveSettings(app, settings);
+  }
+
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
