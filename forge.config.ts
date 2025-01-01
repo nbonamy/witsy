@@ -88,6 +88,7 @@ const config: ForgeConfig = {
       'assets/bulbWhite@2x.png',
       'assets/bulbUpdateWhite.png',
       'assets/bulbUpdateWhite@2x.png',
+      'assets/icon.ico',
     ],
     ...osxPackagerConfig,
     afterCopy: [
