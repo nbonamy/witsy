@@ -41,7 +41,7 @@ export default class {
       trayIcon = nativeImage.createFromPath(trayIconPath);
     } else {
       const iconColor = process.platform === 'linux' ? 'White' : 'Template';
-      const trayIconPath = path.join(assetsFolder, updateAvailable ? `bulbUpdate${iconColor}@2x.png` : `bulb${iconColor}@2x.png`);
+      const trayIconPath = path.join(assetsFolder, updateAvailable ? `trayUpdate${iconColor}@2x.png` : `tray${iconColor}@2x.png`);
       //console.log('trayIconPath', trayIconPath);
       trayIcon = nativeImage.createFromPath(trayIconPath);
       trayIcon.setTemplateImage(true);

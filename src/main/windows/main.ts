@@ -50,9 +50,9 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
     // check
     const config = loadSettings(app);
-    if (config.general.tips.trayIcon) {
-      const systemTray = process.platform === 'darwin' ? 'menu bar' : 'system tray';
-      const message = `You can activate Witsy from the light bulb icon in the ${systemTray}.`;
+    if (config.general.tips.trayIcon === undefined || config.general.tips.trayIcon === true) {
+      const trayIconDesc = process.platform === 'win32' ? 'the icon in the system tray' : 'the fountain pen icon in the menu bar';
+      const message = `You can activate Witsy from ${trayIconDesc}.`;
       const options = {
         buttons: ['OK'],
         message: message,

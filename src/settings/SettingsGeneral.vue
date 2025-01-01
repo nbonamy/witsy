@@ -19,7 +19,7 @@
       <input type="checkbox" v-model="runAtLogin" @change="save" />
     </div>
     <div class="group hide-on-startup">
-      <label>Hide chat on start</label>
+      <label>Hide main window on start</label>
       <input type="checkbox" v-model="hideOnStartup" @change="save" />
     </div>
     <div class="group keep-running">
@@ -91,4 +91,10 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
+</style>
+
+<style scoped>
+form .group label {
+  min-width: 170px;
+}
 </style>
