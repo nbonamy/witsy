@@ -196,14 +196,16 @@ dialog.settings .list-panel {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  padding-top: 12px;
+  padding-bottom: 0px;
 
   .list {
   
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);
     width: 140px;
-    padding: 12px;
-    max-height: 208px;
+    padding: 0px 12px;
+    max-height: 218px;
     overflow-y: auto;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
