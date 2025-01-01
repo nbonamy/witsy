@@ -86,8 +86,9 @@ test('Selects engine', async () => {
   await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
-  await wrapper.find('.empty .engines :nth-child(2)').trigger('click')
-  expect(store.config.llm.engine).toBe(availableEngines[1])
+  const ollama = availableEngines.indexOf('ollama')
+  await wrapper.find(`.empty .engines :nth-child(${ollama+1})`).trigger('click')
+  expect(store.config.llm.engine).toBe('ollama')
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
 })
 
@@ -108,14 +109,16 @@ test('Prompts when selecting not ready engine', async () => {
   
   // anthropic is not
   wrapper.vm.showAllEngines = true
-  await wrapper.find('.empty .engines .logo:nth-child(3)').trigger('click')
+  const anthropic = availableEngines.indexOf('anthropic')
+  await wrapper.find(`.empty .engines .logo:nth-child(${anthropic+1})`).trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(store.config.llm.engine).toBe(availableEngines[0])
+  expect(store.config.llm.engine).toBe('openai')
 
   // mistralai is
   wrapper.vm.showAllEngines = true
-  await wrapper.find('.empty .engines .logo:nth-child(4)').trigger('click')
+  const mistralai = availableEngines.indexOf('mistralai')
+  await wrapper.find(`.empty .engines .logo:nth-child(${mistralai+1})`).trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(store.config.llm.engine).toBe(availableEngines[3])
+  expect(store.config.llm.engine).toBe('mistralai')
 
 })
