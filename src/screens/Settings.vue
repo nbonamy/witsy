@@ -204,7 +204,8 @@ dialog.settings .list-panel {
     width: 140px;
     padding: 12px;
     max-height: 208px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
     .item {
       flex-direction: row;
