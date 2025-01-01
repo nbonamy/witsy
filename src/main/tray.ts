@@ -57,7 +57,7 @@ export default class {
     });
     this.tray.on('right-click', () => {
       window.openMainWindow();
-    }) 
+    });
   
   }
 
