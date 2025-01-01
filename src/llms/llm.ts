@@ -6,7 +6,7 @@ import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
 import OpenAI from './openai'
 
-export const availableEngines = [ 'openai', 'ollama', 'anthropic', 'mistralai', 'google', 'xai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
+export const availableEngines = [ 'openai', 'anthropic', 'ollama', 'google', 'xai', 'mistralai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
 
 export default class LlmFactory {
