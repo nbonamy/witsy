@@ -24,9 +24,10 @@ import SettingsTavily from './SettingsTavily.vue'
 import SettingsImage from './SettingsImage.vue'
 import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
+import SettingsMemory from './SettingsMemory.vue'
 import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
-import { BIconCameraReels, BIconPalette, BIconYoutube } from 'bootstrap-icons-vue'
+import { BIconCameraReels, BIconPalette, BIconYoutube, BIconPersonVcard } from 'bootstrap-icons-vue'
 import WIconDownload from '../../assets/download.svg?component'
 import WIconPython from '../../assets/python.svg?component'
 import WIconTavily from '../../assets/tavily.svg?component'
@@ -60,6 +61,7 @@ const plugins = computed((): PluginUI[] => {
         tavily: 'Tavily Search',
         python: 'Python',
         image: 'Text-to-Image',
+        memory: 'Memory',
         video: 'Text-to-Video',
         youtube: 'YouTube',
         vega: 'Vega',
@@ -71,6 +73,7 @@ const plugins = computed((): PluginUI[] => {
         python: { icon: WIconPython },
         image: { icon: BIconPalette },
         video: { icon: BIconCameraReels },
+        memory: { icon: BIconPersonVcard },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
         nestor: { image: WImageNestor },
@@ -87,6 +90,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'image') return SettingsImage
   if (currentPlugin.value == 'video') return SettingsVideo
   if (currentPlugin.value == 'youtube') return SettingsYouTube
+  if (currentPlugin.value == 'memory') return SettingsMemory
   if (currentPlugin.value == 'vega') return SettingsVega
   if (currentPlugin.value == 'nestor') return SettingsNestor
 })

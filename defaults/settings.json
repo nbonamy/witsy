@@ -251,6 +251,9 @@
       "enabled": true,
       "engine": "openai"
     },
+    "memory": {
+      "enabled": false
+    },
     "video": {
       "enabled": true,
       "engine": "replicate"

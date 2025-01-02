@@ -135,6 +135,12 @@ contextBridge.exposeInMainWorld(
       getScreenNumber: (): number => { return ipcRenderer.sendSync('computer-get-screen-number') },
       takeScreenshot: (): string => { return ipcRenderer.sendSync('computer-get-screenshot') },
       executeAction: (action: ComputerAction): anyDict => { return ipcRenderer.sendSync('computer-execute-action', action) },
-    }
+    },
+    memory: {
+      reset: (): void => { ipcRenderer.send('memory-reset') },
+      hasFacts: (): boolean => { return ipcRenderer.sendSync('memory-has-facts') },
+      store: (content: string): boolean => { return ipcRenderer.sendSync('memory-store', content) },
+      retrieve: (query: string): string[] => { return ipcRenderer.sendSync('memory-retrieve', query) },
+    },
   },
 );

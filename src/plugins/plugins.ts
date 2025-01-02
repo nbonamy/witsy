@@ -6,6 +6,7 @@ import PythonPlugin from '../plugins/python'
 import ImagePlugin from '../plugins/image'
 import VideoPlugin from '../plugins/video'
 import YouTubePlugin from '../plugins/youtube'
+import MemoryPlugin from '../plugins/memory'
 //import VegaPlugin from '../plugins/vega'
 import NestorPlugin from '../plugins/nestor'
 
@@ -15,6 +16,7 @@ export const availablePlugins: anyDict = {
   browse: BrowsePlugin, 
   youtube: YouTubePlugin,
   tavily: TavilyPlugin,
+  memory: MemoryPlugin,
   //vega: VegaPlugin,
   python:  PythonPlugin,
   nestor: NestorPlugin,
