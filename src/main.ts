@@ -640,7 +640,11 @@ ipcMain.on('memory-reset', async () => {
 });
 
 ipcMain.on('memory-has-facts', async (event) => {
-  event.returnValue = await memoryManager.hasMemory();
+  event.returnValue = await memoryManager.isNotEmpty();
+});
+
+ipcMain.on('memory-facts', async (event) => {
+  event.returnValue = await memoryManager.list();
 });
 
 ipcMain.on('memory-store', async (event, payload) => {
@@ -649,4 +653,8 @@ ipcMain.on('memory-store', async (event, payload) => {
 
 ipcMain.on('memory-retrieve', async (event, payload) => {
   event.returnValue = await memoryManager.query(payload);
+});
+
+ipcMain.on('memory-delete', async (event, payload) => {
+  event.returnValue = await memoryManager.delete(payload);
 });

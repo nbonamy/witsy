@@ -140,10 +140,12 @@ declare global {
         executeAction(action: ComputerAction): any
       }
       memory: {
-        hasFacts(): boolean
         reset(): void
+        isNotEmpty(): boolean
+        facts(): string[]
         store(content: string): boolean
         retrieve(query: string): string[]
+        delete(uuid: string): void
       }      
     }
   }

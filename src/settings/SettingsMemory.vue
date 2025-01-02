@@ -10,9 +10,11 @@
     </div>
     <EmbeddingSelector :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
     <div class="group">
-      <label>Reset contents</label>
+      <label>Contents</label>
+      <button @click.prevent="onView">View</button>
       <button @click.prevent="onReset">Reset</button>
     </div>
+    <MemoryInspector ref="inspector" @close="load"/>
   </div>
 </template>
 
@@ -22,14 +24,16 @@ import { ref } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
+import MemoryInspector from '../screens/MemoryInspector.vue'
 
 const enabled = ref(false)
 const hasFacts = ref(false)
 const engine = ref('openai')
 const model = ref('text-embedding-ada-002')
+const inspector = ref(null)
 
 const load = () => {
-  hasFacts.value = window.api.memory.hasFacts()
+  hasFacts.value = window.api.memory.isNotEmpty()
   enabled.value = store.config.plugins.memory.enabled || false
   engine.value = store.config.plugins.memory.engine || 'openai'
   model.value = store.config.plugins.memory.model || 'text-embedding-ada-002'
@@ -40,6 +44,10 @@ const save = () => {
   store.config.plugins.memory.engine = engine.value
   store.config.plugins.memory.model = model.value
   store.saveSettings()
+}
+
+const onView = () => {
+  inspector.value.show()
 }
 
 const onReset = () => {
