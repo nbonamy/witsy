@@ -127,6 +127,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
+- [ ] Long-term memory
 
 ## DONE
 

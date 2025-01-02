@@ -1,6 +1,6 @@
 
 import { DocumentMetadata } from '../types/rag'
-import { IndexStats, LocalIndex, MetadataTypes, QueryResult } from 'vectra'
+import { IndexItem, IndexStats, LocalIndex, MetadataTypes, QueryResult } from 'vectra'
 
 export default class VectorDB {
 
@@ -60,15 +60,20 @@ export default class VectorDB {
     return item.id
   }
 
-  async delete(docId: string): Promise<void> {
+  async delete(docId: string): Promise<number> {
     const items = await this.index.listItemsByMetadata({ docId: docId })
     for (const item of items) {
       await this.index.deleteItem(item.id)
     }
+    return items.length
   }
 
   async query(query: number[], searchResultCount: number): Promise<QueryResult<Record<string,MetadataTypes>>[]> {
     return await this.index.queryItems(query, searchResultCount)
+  }
+
+  async list(): Promise<IndexItem<Record<string,MetadataTypes>>[]> {
+    return await this.index.listItems()
   }
 
   async stats(): Promise<IndexStats> {

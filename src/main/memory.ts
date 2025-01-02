@@ -16,13 +16,25 @@ export default class MemoryManager {
     this.app = app
   }
 
-  async hasMemory(): Promise<boolean> {
-    if (!this.db) {
+  async isNotEmpty(): Promise<boolean> {
+    if (!this.  db) {
       await this.open()
     }
     if (!this.db) return false
     const stats = await this.db.stats()
     return stats.items > 0
+  }
+
+  async list(): Promise<{ uuid: string, content: string }[]> {
+    if (!this.db) {
+      await this.open()
+    }
+    if (!this.db) return []
+    const results = await this.db.list()
+    return results.map((result) => ({
+      uuid: result.metadata.docId as string,
+      content: result.metadata.content as string
+    }))
   }
 
   async reset(): Promise<void> {
@@ -70,6 +82,17 @@ export default class MemoryManager {
       .filter((result) => result.score > relevanceCutOff)
       .map((result) => result.item.metadata.content as string)
       .slice(0, searchResultCount)
+  }
+
+  async delete(uuid: string): Promise<boolean> {
+
+    // we need a connection
+    await this.connect()
+    if (!this.db) return false
+
+    // delete
+    const count = await this.db.delete(uuid)
+    return count > 0
   }
 
   private async connect() {

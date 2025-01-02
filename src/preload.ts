@@ -138,9 +138,11 @@ contextBridge.exposeInMainWorld(
     },
     memory: {
       reset: (): void => { ipcRenderer.send('memory-reset') },
-      hasFacts: (): boolean => { return ipcRenderer.sendSync('memory-has-facts') },
+      isNotEmpty: (): boolean => { return ipcRenderer.sendSync('memory-has-facts') },
+      facts: (): string[] => { return ipcRenderer.sendSync('memory-facts') },
       store: (content: string): boolean => { return ipcRenderer.sendSync('memory-store', content) },
       retrieve: (query: string): string[] => { return ipcRenderer.sendSync('memory-retrieve', query) },
+      delete: (uuid: string): void => { return ipcRenderer.sendSync('memory-delete', uuid) },
     },
   },
 );
