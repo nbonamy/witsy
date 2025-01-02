@@ -23,6 +23,10 @@ export default class extends Plugin {
     return 'Returns the transcript of a YouTube video'
   }
 
+  getPreparationDescription(): string {
+    return this.getRunningDescription()
+  }
+
   getRunningDescription(): string {
     return 'Downloading transcript…'
   }

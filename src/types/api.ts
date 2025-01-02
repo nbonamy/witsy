@@ -1,6 +1,6 @@
 
 import { Size } from 'electron'
-import { anyDict, History, Command, ComputerAction, Expert, ExternalApp, FileContents, FileDownloadParams, FileSaveParams } from './index'
+import { anyDict, History, Command, ComputerAction, Expert, ExternalApp, FileContents, FileDownloadParams, FileSaveParams, MemoryFact } from './index'
 import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { RunCommandParams } from './automation'
 import { Configuration } from './config'
@@ -142,7 +142,7 @@ declare global {
       memory: {
         reset(): void
         isNotEmpty(): boolean
-        facts(): string[]
+        facts(): MemoryFact[]
         store(content: string): boolean
         retrieve(query: string): string[]
         delete(uuid: string): void

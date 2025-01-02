@@ -35,13 +35,14 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
+import { MemoryFact } from '../types/index'
 import Dialog from '../composables/dialog'
 
 const contents = ref([])
 
 const emit = defineEmits(['close'])
 
-const onDelete = (fact) => {
+const onDelete = (fact: MemoryFact) => {
   Dialog.show({
     target: document.querySelector('.settings .memory'),
     title: 'Are you sure you want to delete this memory?',

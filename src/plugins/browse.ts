@@ -22,6 +22,10 @@ export default class extends Plugin {
     return 'Returns the text content a web page given a URL. Use this tool to get detailed information or summarize the content of a web page.'
   }
 
+  getPreparationDescription(): string {
+    return this.getRunningDescription()
+  }
+      
   getRunningDescription(): string {
     return 'Downloading content…'
   }

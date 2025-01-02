@@ -1,4 +1,5 @@
 
+import { MemoryFact } from '../types/index'
 import { App } from 'electron'
 import VectorDB from 'rag/vectordb'
 import Embedder from 'rag/embedder'
@@ -25,7 +26,7 @@ export default class MemoryManager {
     return stats.items > 0
   }
 
-  async list(): Promise<{ uuid: string, content: string }[]> {
+  async list(): Promise<MemoryFact[]> {
     if (!this.db) {
       await this.open()
     }
