@@ -1,5 +1,5 @@
 
-import { ComputerAction, anyDict } from 'types/index'
+import { ComputerAction, anyDict } from '../types/index'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 
