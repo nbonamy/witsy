@@ -1,8 +1,8 @@
 
 import { DocumentMetadata } from '../types/rag'
-import { LocalIndex } from 'vectra'
+import { IndexStats, LocalIndex, MetadataTypes, QueryResult } from 'vectra'
 
-export default class VectorDB{
+export default class VectorDB {
 
   static async create(path: string, dimensions: number): Promise<VectorDB> {
     const db = new VectorDB(path)
@@ -67,8 +67,12 @@ export default class VectorDB{
     }
   }
 
-  async query(query: number[], searchResultCount: number) {
+  async query(query: number[], searchResultCount: number): Promise<QueryResult<Record<string,MetadataTypes>>[]> {
     return await this.index.queryItems(query, searchResultCount)
+  }
+
+  async stats(): Promise<IndexStats> {
+    return await this.index.getIndexStats()
   }
 
 }

@@ -10,7 +10,7 @@
       </select>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
-    <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="Browse models"/>
+    <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="Browse models" @done="onRefresh"/>
     <div class="group">
       <label>API Base URL</label>
       <input v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>
@@ -20,25 +20,17 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
 import { getChatModels } from '../llms/ollama'
 import LlmFactory from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 
-// bus
-import useEventBus from '../composables/event_bus'
-const { onEvent } = useEventBus()
-
 const baseURL = ref(null)
 const refreshLabel = ref('Refresh')
 const chat_model = ref(null)
 const chat_models = ref([])
-
-onMounted(() => {
-  onEvent('ollama-pull-done', onRefresh)
-})
 
 const load = () => {
   baseURL.value = store.config.engines.ollama?.baseURL || ''

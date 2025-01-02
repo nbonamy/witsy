@@ -21,12 +21,8 @@ import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
-
-// bus
-import useEventBus from '../composables/event_bus'
 import type { ProgressInfo } from '../voice/stt.ts'
 import type { ProgressResponse } from 'ollama'
-const { emitEvent } = useEventBus()
 
 type Model = {
   id: string,
@@ -41,6 +37,8 @@ const props = defineProps({
   infoUrl: String,
   infoText: String,
 })
+
+const emit = defineEmits(['done'])
 
 const pull_model: Ref<string|null> = ref(null)
 const pull_model_select: Ref<string> = ref('')
@@ -87,7 +85,7 @@ const onPull = () => {
     pull_progress.value = null
     pull_model.value = null
     pullStream.value = null
-    emitEvent('ollama-pull-done', null)
+    emit('done')
 
   })
 }

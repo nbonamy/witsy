@@ -18,6 +18,7 @@ import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
+import MemoryManager from './main/memory';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
 import Computer from './main/computer';
@@ -37,6 +38,7 @@ import Automator, { AutomationAction } from 'automations/automator';
 
 let commander: Commander = null
 let docRepo: DocumentRepository = null
+let memoryManager: MemoryManager = null
 let nestor: Nestor = null
 
 // first-thing: single instance
@@ -183,6 +185,9 @@ app.whenReady().then(() => {
 
   // create the document repository
   docRepo = new DocumentRepository(app);
+
+  // create the memory manager
+  memoryManager = new MemoryManager(app);
 
   // we want prompt anywhere to be as fast as possible
   if (!process.env.TEST) {
@@ -628,4 +633,20 @@ ipcMain.on('computer-get-screenshot', async (event) => {
 
 ipcMain.on('computer-execute-action', async (event, payload) => {
   event.returnValue = await Computer.executeAction(payload);
+});
+
+ipcMain.on('memory-reset', async () => {
+  await memoryManager.reset();
+});
+
+ipcMain.on('memory-has-facts', async (event) => {
+  event.returnValue = await memoryManager.hasMemory();
+});
+
+ipcMain.on('memory-store', async (event, payload) => {
+  event.returnValue = await memoryManager.store(payload);
+});
+
+ipcMain.on('memory-retrieve', async (event, payload) => {
+  event.returnValue = await memoryManager.query(payload);
 });

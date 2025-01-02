@@ -32,7 +32,7 @@
       <div class="cost-container">
         <div class="total">
           <div class="title">Estimated cost:</div>
-          <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n) => n.toFixed(6)"/></div>
+          <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n: number) => n.toFixed(6)"/></div>
           <div class="note">based on<br>gpt-4o-realtime-preview-2024-12-17<br>
             <a href="https://openai.com/api/pricing" target="_blank">costs</a> as of 19-Dec-2024</div>
         </div>
