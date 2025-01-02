@@ -18,13 +18,12 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return `Stores and retrieves significant facts about the user.
-            Use this tool to save and get user information, preferences, tastes and make your answers more personalized.
+    return `Use this tool to save and retrieve user information, preferences, tastes in order to make your answers more personalized.
+            When user asks for suggestions, retrieve any releveant preferences stored in memory and use them to build the suggestions.
             When you save information, make sure the content includes enough description to be easily retrieved later.
             For instance don't just store "User likes U2" but "User musical tastes includes U2".
             Avoid storing unrelated facts together: split them into different facts and store them separately.
             Don't be shy about storing information, the more you store, the more you can personalize the user experience.
-            When user asks for suggestions, make sure you retrieve any preferences stored in memory and use them to filter the suggestions.
             `
   }
 
