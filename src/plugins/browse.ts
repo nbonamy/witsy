@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index'
+import { anyDict } from '../types/index'
 import { PluginParameter } from 'multi-llm-ts'
 import { convert } from 'html-to-text'
 import Plugin, { PluginConfig } from './plugin'

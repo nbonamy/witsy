@@ -1,12 +1,12 @@
 
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
-import { Configuration } from 'types/config'
-import { DocRepoQueryResponseItem } from 'types/rag'
+import { Configuration } from '../types/config'
+import { DocRepoQueryResponseItem } from '../types/rag'
 import { countryCodeToName } from './i18n'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
-  model?: string
+  model: string
   docrepo?: string
   sources?: boolean
 }
@@ -15,8 +15,8 @@ export default class Generator {
 
   config: Configuration
   stopGeneration: boolean
-  stream: AsyncIterable<LlmChunk>
-  llm: LlmEngine
+  stream: AsyncIterable<LlmChunk>|null
+  llm: LlmEngine|null
 
   static addDateAndTimeToSystemInstr = true
 

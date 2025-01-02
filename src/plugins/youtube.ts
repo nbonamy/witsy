@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index'
+import { anyDict } from '../types/index'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { YoutubeTranscript } from 'youtube-transcript'

@@ -1,3 +1,4 @@
+
 import { vi, beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
