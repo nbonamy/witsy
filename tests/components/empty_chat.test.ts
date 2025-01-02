@@ -83,11 +83,11 @@ test('Renders engines and models', async () => {
 
 test('Selects engine', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  await wrapper.find('.empty .engines :nth-child(1)').trigger('click')
+  await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
   const ollama = availableEngines.indexOf('ollama')
-  await wrapper.find(`.empty .engines :nth-child(${ollama+1})`).trigger('click')
+  await wrapper.find(`.empty .engines .logo:nth-child(${ollama+1})`).trigger('click')
   expect(store.config.llm.engine).toBe('ollama')
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
 })
