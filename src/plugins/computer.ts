@@ -21,12 +21,16 @@ export default class extends Plugin {
     return 'computer'
   }
 
+  getDescription(): string {
+    return ''
+  }
+
   getPreparationDescription(): string {
     return this.getRunningDescription()
   }
 
   getRunningDescription(): string {
-    return 'Using your computer'
+    return 'Using your computer…'
   }
 
   getParameters(): PluginParameter[] {
