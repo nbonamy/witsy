@@ -8,7 +8,7 @@ import Message from '../models/message'
 export interface GenerationOpts extends LlmCompletionOpts {
   model?: string
   docrepo?: string
-  sources?: boolean 
+  sources?: boolean
 }
 
 export default class Generator {
@@ -66,7 +66,7 @@ export default class Generator {
         if (msg.type === 'usage') {
           response.usage = msg.usage
         } else if (msg.type === 'tool') {
-            response.setToolCall(msg)
+          response.setToolCall(msg)
         } else if (msg.type === 'content') {
           if (msg && sources && sources.length > 0) {
             msg.done = false
@@ -78,7 +78,7 @@ export default class Generator {
 
       // append sources
       if (opts.sources && sources && sources.length > 0) {
-        
+
         // reduce to unique sources based on metadata.id
         const uniqueSourcesMap = new Map();
         sources.forEach(source => {
@@ -133,7 +133,7 @@ export default class Generator {
 
     // done
     return rc
-  
+
   }
 
   async stop() {
@@ -148,7 +148,7 @@ export default class Generator {
     const chatMessages = messages.filter((msg) => msg.role !== 'system')
     const conversation = [
       new Message('system', this.patchSystemInstructions(messages[0].content)),
-      ...chatMessages.slice(-conversationLength*2, -1)
+      ...chatMessages.slice(-conversationLength * 2, -1)
     ]
     for (const message of conversation) {
       if (message.attachment && !message.attachment.content) {
@@ -162,7 +162,7 @@ export default class Generator {
 
     // default
     let instr = instructions || this.config.instructions.default
-    
+
     // language. asking the LLM to talk in the user language confuses them more than often!
     if (this.config.general.language) instr += ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
     //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
