@@ -21,8 +21,8 @@ export default class extends Plugin {
     return 'computer'
   }
 
-  getDescription(): string {
-    return ''
+  getPreparationDescription(): string {
+    return this.getRunningDescription()
   }
 
   getRunningDescription(): string {

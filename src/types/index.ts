@@ -146,3 +146,8 @@ export type FileDownloadParams = {
   url: string
   properties: anyDict
 }
+
+export type MemoryFact = {
+  uuid: string
+  content: string
+}

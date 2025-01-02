@@ -27,6 +27,10 @@ export default class extends Plugin {
             `
   }
 
+  getPreparationDescription(): string {
+    return this.getRunningDescription()
+  }
+
   getRunningDescription(): string {
     return 'Personnalizing…'
   }
