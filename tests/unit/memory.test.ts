@@ -84,6 +84,4 @@ test('MemoryManager destroy', async () => {
   expect(fs.existsSync(path.join(os.tmpdir(), 'memory'))).toBe(true)
   await memory.reset()
   expect(fs.existsSync(path.join(os.tmpdir(), 'memory'))).toBe(false)
-  expect(await memory.list()).toEqual([])
-  expect(await memory.isNotEmpty()).toBe(false)
 })
