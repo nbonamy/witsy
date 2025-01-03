@@ -104,7 +104,11 @@ export default class Generator {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           rc = false
         } else if (error.status === 400 && (message.includes('context length') || message.includes('too long'))) {
-          response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
+          if (message.includes('function.description')) {
+            response.setText('Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.')
+          } else {
+            response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
+          }
           rc = false
         } else if ((error.status === 400 || error.status === 404) && (message.includes('function call') || message.includes('tools') || message.includes('tool use'))) {
           if (llm.plugins.length > 0) {

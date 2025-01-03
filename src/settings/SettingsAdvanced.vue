@@ -1,6 +1,6 @@
 
 <template>
-  <div class="content">
+  <div class="content large">
     <div class="group vision top checkbox">
       <label>Automatically switch to vision model</label>
       <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
@@ -28,19 +28,20 @@
       <label>System instructions</label>
       <div class="subgroup">
         <select v-model="instructions" @change="onChangeInstructions">
-          <option value="default">Chat - Instructions</option>
-          <option value="docquery">Document query - Instructions</option>
-          <option value="titling">Chat title - Instructions</option>
-          <option value="titling_user">Chat title - Prompt</option>
-          <option value="scratchpad.system">Scratchpad - Instructions</option>
-          <option value="scratchpad.prompt">Scratchpad - Prompt</option>
-          <option value="scratchpad.spellcheck">Scratchpad - Spellcheck</option>
-          <option value="scratchpad.improve">Scratchpad - Improve</option>
-          <option value="scratchpad.takeaways">Scratchpad - Takeaways</option>
-          <option value="scratchpad.title">Scratchpad - Title</option>
-          <option value="scratchpad.simplify">Scratchpad - Simplify</option>
-          <option value="scratchpad.expand">Scratchpad - Expand</option>
-          <option value="scratchpad.complete">Scratchpad - Complete</option>
+          <option value="instructions.default">Chat - Instructions</option>
+          <option value="instructions.docquery">Document query - Instructions</option>
+          <option value="instructions.titling">Chat title - Instructions</option>
+          <option value="instructions.titling_user">Chat title - Prompt</option>
+          <option value="plugins.memory.description">Memory Plugin - Description (1024 characters max)</option>
+          <option value="instructions.scratchpad.system">Scratchpad - Instructions</option>
+          <option value="instructions.scratchpad.prompt">Scratchpad - Prompt</option>
+          <option value="instructions.scratchpad.spellcheck">Scratchpad - Spellcheck</option>
+          <option value="instructions.scratchpad.improve">Scratchpad - Improve</option>
+          <option value="instructions.scratchpad.takeaways">Scratchpad - Takeaways</option>
+          <option value="instructions.scratchpad.title">Scratchpad - Title</option>
+          <option value="instructions.scratchpad.simplify">Scratchpad - Simplify</option>
+          <option value="instructions.scratchpad.expand">Scratchpad - Expand</option>
+          <option value="instructions.scratchpad.complete">Scratchpad - Complete</option>
         </select>
         <textarea v-model="prompt" @change="save" />
         <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
@@ -56,7 +57,7 @@ import { store } from '../services/store'
 import defaults from '../../defaults/settings.json'
 
 const prompt = ref(null)
-const instructions = ref('default')
+const instructions = ref('instructions.default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
 const conversationLength = ref(null)
@@ -72,7 +73,7 @@ const load = () => {
 
 const onChangeInstructions = () => {
   const tokens = instructions.value.split('.')
-  let promptValue = store.config.instructions
+  let promptValue = store.config
   for (const token of tokens) {
     // @ts-expect-error - instructions are InstructionsConfig keys
     promptValue = promptValue[token]
@@ -82,7 +83,7 @@ const onChangeInstructions = () => {
 
 const onResetDefaultInstructions = () => {
   const tokens = instructions.value.split('.')
-  let defaultValue = defaults.instructions
+  let defaultValue = defaults
   for (const token of tokens) {
     // @ts-expect-error - instructions are InstructionsConfig keys
     defaultValue = defaultValue[token]
@@ -101,7 +102,7 @@ const save = () => {
 
   // update prompt
   const tokens = instructions.value.split('.')
-  let config = store.config.instructions
+  let config = store.config
   for (let i = 0; i < tokens.length - 1; i++) {
     // @ts-expect-error - instructions are InstructionsConfig keys
     config = config[tokens[i]]
@@ -126,7 +127,7 @@ defineExpose({ load })
 <style scoped>
 
 .checkbox label {
-  width: 300px;
+  width: 370px;
 }
 
 hr {

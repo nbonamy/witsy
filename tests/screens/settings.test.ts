@@ -216,9 +216,9 @@ test('Settings Advanced', async () => {
   vi.clearAllMocks()
 
   // helper to get instructions at any level
-  store.config.instructions.get = (key: string): string => {
+  store.config.get = (key: string): string => {
     const tokens = key.split('.')
-    let value = store.config.instructions
+    let value = store.config
     for (const token of tokens) {
       value = value[token]
     }
@@ -226,25 +226,28 @@ test('Settings Advanced', async () => {
   }
 
   const instructions = [
-    'default', 'titling', 'titling_user', 'docquery', 'scratchpad.system', 'scratchpad.prompt', 'scratchpad.spellcheck',
-    'scratchpad.improve', 'scratchpad.takeaways', 'scratchpad.title', 'scratchpad.simplify', 'scratchpad.expand', 'scratchpad.complete'
+    'instructions.default', 'instructions.titling', 'instructions.titling_user', 'instructions.docquery',
+    'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
+    'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
+    'instructions.scratchpad.simplify', 'instructions.scratchpad.expand', 'instructions.scratchpad.complete',
+    'plugins.memory.description'
   ]
   
   for (const instr in instructions) {
 
     // check it is not bot
-    expect(store.config.instructions.get(instructions[instr])).not.toBe('bot')
+    expect(store.config.get(instructions[instr])).not.toBe('bot')
 
     // select and set value
     await tab.find('.group.instruction select').setValue(instructions[instr])
     await tab.find('.group.instruction textarea').setValue('bot')
-    expect(store.config.instructions.get(instructions[instr])).toBe('bot')
+    expect(store.config.get(instructions[instr])).toBe('bot')
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 
     // reset default
     await tab.find('.group.instruction a').trigger('click')
-    expect(store.config.instructions.get(instructions[instr])).not.toBe('bot')
+    expect(store.config.get(instructions[instr])).not.toBe('bot')
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 

@@ -78,6 +78,11 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
     nullifyDefaults(config)
     nullifyInstructions(config.instructions, defaultSettings.instructions)
 
+    // TODO: do that better
+    if (config.plugins.memory.description == '' || config.plugins.memory.description === defaultSettings.plugins.memory.description) {
+      delete config.plugins.memory.description
+    }
+
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
     fs.writeFileSync(settingsFile, JSON.stringify(config, null, 2))
