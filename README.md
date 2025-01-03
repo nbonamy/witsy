@@ -10,7 +10,10 @@ Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](ht
 
 ## What is Witsy?
 
-Generative AI desktop application:
+Witsy is a BYOK (Bring You Own Keys) AI application: it means you need to have API keys for the LLM providers you want to use. Alternatively,
+you can use [Ollama](https://ollama.com) to run models locally on your machine for free and use them in Witsy.
+
+Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Chat completion with vision models support (describe an image)
 - Text-to-image and text-to video with OpenAI, HuggingFace and Replicate
@@ -87,7 +90,7 @@ You can transcribe audio recorded on the microphone to text. Transcription can b
 - Copy it to your clipboard
 - Insert it in the application that was running before you activated the dictation
 
-## [BETA] Anthropic Computer Use
+## Anthropic Computer Use
 
 https://www.youtube.com/watch?v=vixl7I07hBk
 
@@ -106,8 +109,11 @@ npm start
 To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
 - [OpenAI](https://platform.openai.com/api-keys)
 - [Anthropic](https://console.anthropic.com/settings/keys)
-- [MistralAI](https://console.mistral.ai/api-keys/)
+- [xAI](https://console.x.ai/team/)
 - [Google](https://aistudio.google.com/app/apikey)
+- [MistralAI](https://console.mistral.ai/api-keys/)
+- [DeepSeek](https://platform.deepseek.com/api_keys)
+- [OpenRouter](https://openrouter.ai/settings/keys)
 - [Groq](https://console.groq.com/keys)
 - [Cerebras](https://cloud.cerebras.ai/platform/)
 
