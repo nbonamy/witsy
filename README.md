@@ -19,6 +19,7 @@ Generative AI desktop application:
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
+- Long-term memory plugin to increase relevance of LLM answers
 - Read aloud of assistant messages (requires OpenAI API key)
 - Read aloud of any text in other applications (requires OpenAI API key)
 - Chat with your local files and documents (RAG)
@@ -127,10 +128,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] Long-term memory
 
 ## DONE
 
+- [x] Long-term memory plugin
 - [x] OpenRouter support
 - [x] DeepSeek support
 - [x] Folder mode
