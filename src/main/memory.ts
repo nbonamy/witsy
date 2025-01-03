@@ -43,23 +43,23 @@ export default class MemoryManager {
     this.db = null
   }
 
-  async store(content: string): Promise<boolean> {
+  async store(contents: string[]): Promise<boolean> {
 
-    // we need a connection
+    // we need a connection and embedder
     await this.connect()
-    
-    // and embeddings
     const embedder = await this.embedder()
-    const embeddings = await embedder.embed([content])
 
-    // store
-    const uuid = crypto.randomUUID()
-    this.db.insert(uuid, content, embeddings[0], {
-      uuid: uuid,
-      type: 'text',
-      title: '',
-      url: '',
-    })
+    // embed each content separately
+    for (const content of contents) {
+      const embeddings = await embedder.embed([content])
+      const uuid = crypto.randomUUID()
+      this.db.insert(uuid, content, embeddings[0], {
+        uuid: uuid,
+        type: 'text',
+        title: '',
+        url: '',
+      })
+    }
 
     return true
   }
