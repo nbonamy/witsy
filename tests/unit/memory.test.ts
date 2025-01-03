@@ -48,30 +48,31 @@ test('MemoryManager initialization', async () => {
 
 test('MemoryManager store', async () => {
   const memory = new MemoryManager(app)
-  await memory.store('I play squash and tennis')
+  await memory.store(['I play squash and tennis', 'I play squash'])
   expect(await memory.isNotEmpty()).toBe(true)
-  expect(await memory.list()).toEqual([
-    { uuid: expect.any(String), content: 'I play squash and tennis' }
+  expect((await memory.list()).sort((a,b) => a.content.localeCompare(b.content))).toEqual([
+    { uuid: expect.any(String), content: 'I play squash' },
+    { uuid: expect.any(String), content: 'I play squash and tennis' },
   ])
 })
 
 test('MemoryManager retrieve', async () => {
   const memory = new MemoryManager(app)
-  await memory.store('I play squash and tennis')
+  await memory.store(['I play squash and tennis'])
   expect(await memory.query('squash')).toEqual(['I play squash and tennis'])
   expect(await memory.query('tennis')).toEqual([])
 })
 
 test('MemoryManager delete', async () => {
   const memory = new MemoryManager(app)
-  await memory.store('I play squash and tennis')
+  await memory.store(['I play squash and tennis'])
   expect(await memory.delete((await memory.list())[0].uuid)).toBe(true)
   expect(await memory.list()).toEqual([])
 })
 
 test('MemoryManager delete non-existent', async () => {
   const memory = new MemoryManager(app)
-  await memory.store('I play squash and tennis')
+  await memory.store(['I play squash and tennis'])
   expect(await memory.delete('non-existent')).toBe(false)
   expect(await memory.list()).toEqual([
     { uuid: expect.any(String), content: 'I play squash and tennis' }
@@ -80,7 +81,7 @@ test('MemoryManager delete non-existent', async () => {
 
 test('MemoryManager destroy', async () => {
   const memory = new MemoryManager(app)
-  await memory.store('I play squash and tennis')
+  await memory.store(['I play squash and tennis'])
   expect(fs.existsSync(path.join(os.tmpdir(), 'memory'))).toBe(true)
   await memory.reset()
   expect(fs.existsSync(path.join(os.tmpdir(), 'memory'))).toBe(false)
