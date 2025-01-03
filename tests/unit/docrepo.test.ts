@@ -4,8 +4,8 @@ import DocumentRepository from '../../src/rag/docrepo'
 import DocumentSourceImpl from '../../src/rag/docsource'
 import DocumentBaseImpl from '../../src/rag/docbase'
 import { DocumentMetadata } from '../../src/types/rag'
-import { LocalIndex } from 'vectra'
 import embeddings from '../fixtures/embedder.json'
+import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
@@ -15,6 +15,9 @@ const EMPTY_PDF = '----------------Page (0) Break----------------'
 
 vi.mock('electron', async() => {
   return {
+    BrowserWindow: {
+      getAllWindows: vi.fn(() => []),
+    },
     app: {
       getPath: vi.fn(() => os.tmpdir())
     },
