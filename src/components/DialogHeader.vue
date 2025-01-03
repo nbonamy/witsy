@@ -44,8 +44,8 @@ const onMove = (event: MouseEvent) => {
   const dialog = header.value!.closest('dialog')
   const left = parseInt(dialog!.style.left) || 0
   const top = parseInt(dialog!.style.top) || 0
-  dialog!.style.left = `${left + (event.clientX - lastX)*2}px`
-  dialog!.style.top = `${top + (event.clientY - lastY)*2}px`
+  dialog!.style.left = `${left + (event.clientX - lastX)}px`
+  dialog!.style.top = `${top + (event.clientY - lastY)}px`
   lastX = event.clientX
   lastY = event.clientY
 }
