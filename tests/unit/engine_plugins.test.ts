@@ -261,6 +261,12 @@ test('Memory Plugin', async () => {
   expect(memory.getParameters()[2].type).toBe('string')
   expect(memory.getParameters()[2].description).not.toBeFalsy()
   expect(memory.getParameters()[2].required).toBe(false)
+  expect(await memory.execute({ action: 'store', content: ['test'] })).toStrictEqual({ success: true })
+  expect(window.api.memory.store).toHaveBeenCalledWith(['test'])
+  expect(await memory.execute({ action: 'retrieve', query: 'fact' })).toStrictEqual({ content: ['fact1'] })
+  expect(window.api.memory.retrieve).toHaveBeenCalledWith('fact')
+  expect(await memory.execute({ action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
+  expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
 })
 
 test('Nestor Plugin', async () => {

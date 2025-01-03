@@ -195,6 +195,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       insert: vi.fn(),
       cancel: vi.fn(),
     },
+    memory: {
+      reset: vi.fn(),
+      isNotEmpty: vi.fn(() => false),
+      store: vi.fn(() => true),
+      facts: vi.fn(() => [ { uuid: 'uuid1', content: 'fact1' }, { uuid: 'uuid2', content: 'fact2' } ]),
+      retrieve: vi.fn((query: string) => query === 'fact' ? [ 'fact1' ] : []),
+      delete: vi.fn(),
+    }
   }
 
   // @ts-expect-error mock
