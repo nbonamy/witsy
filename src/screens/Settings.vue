@@ -1,39 +1,40 @@
 <template>
-  <dialog class="settings">
+  <dialog class="settings" ref="dialog">
     <form method="dialog">
-      <DialogHeader title="Settings" @close="onClose" />
-      <main>
-        <div class="tabs">
-          <ul>
-            <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-            <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
-            <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
-            <SettingsTab class="experts" title="Experts"><BIconMortarboard class="icon" /></SettingsTab>
-            <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-            <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-            <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-            <SettingsTab class="voice" title="Voice" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-            <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
-          </ul>
-          <SettingsGeneral ref="settingsGeneral" />
-          <SettingsAppearance ref="settingsAppearance" />
-          <SettingsCommands ref="settingsCommands" />
-          <SettingsExperts ref="settingsExperts" />
-          <SettingsShortcuts ref="settingsShortcuts" />
-          <SettingsLLM ref="settingsLLM" />
-          <SettingsPlugins ref="settingsPlugins" />
-          <SettingsVoice ref="settingsVoice" />
-          <SettingsAdvanced ref="settingsAdvanced" />
-        </div>
-      </main>
+      <div class="wrapper">
+        <DialogHeader title="Settings" @close="onClose" />
+        <main>
+          <div class="tabs">
+            <ul>
+              <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
+              <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
+              <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
+              <SettingsTab class="experts" title="Experts"><BIconMortarboard class="icon" /></SettingsTab>
+              <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
+              <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+              <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="voice" title="Voice" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
+              <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
+            </ul>
+            <SettingsGeneral ref="settingsGeneral" />
+            <SettingsAppearance ref="settingsAppearance" />
+            <SettingsCommands ref="settingsCommands" />
+            <SettingsExperts ref="settingsExperts" />
+            <SettingsShortcuts ref="settingsShortcuts" />
+            <SettingsLLM ref="settingsLLM" />
+            <SettingsPlugins ref="settingsPlugins" />
+            <SettingsVoice ref="settingsVoice" />
+            <SettingsAdvanced ref="settingsAdvanced" />
+          </div>
+        </main>
+      </div>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
-
+import { Ref, ref, onMounted, nextTick } from 'vue'
 import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
@@ -45,8 +46,6 @@ import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
-
-import { nextTick } from 'vue'
 import { installTabs, showActiveTab } from '../composables/tabs'
 
 // bus
@@ -64,6 +63,8 @@ const props = defineProps({
     default: 'general'
   }
 })
+
+const dialog: Ref<HTMLElement> = ref(null)
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
@@ -77,9 +78,23 @@ const settingsAdvanced = ref(null)
 onMounted(async () => {
   window.api.on('show-settings', onOpenSettings)
   onEvent('open-settings', onOpenSettings)
-  showActiveTab()
-  installTabs()
+  showActiveTab(dialog.value)
+  installTabs(dialog.value, adjustHeight)
 })
+
+const adjustHeight = () => {
+  
+  // get elements
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.settings')
+  const form = document.querySelector<HTMLFormElement>('.settings form')
+  const wrapper = document.querySelector<HTMLDivElement>('.settings .wrapper')
+
+  // adjust height
+  const current = parseInt(form.style.height || '0')
+  const updated = wrapper.offsetHeight
+  form.style.height = `${updated}px`
+
+}
 
 const onOpenSettings = (payload: OpenSettingsPayload) => {
 
@@ -94,14 +109,24 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
   settingsVoice.value.load(payload)
   settingsAdvanced.value.load(payload)
   document.querySelector<HTMLDialogElement>('#settings').showModal()
-  showActiveTab()
+  showActiveTab(dialog.value)
+
+  // remove auto-positioning
+  if (!dialog.value.style.margin) {
+    dialog.value.style.left = `${dialog.value.getBoundingClientRect().left}px`
+    dialog.value.style.top = `${dialog.value.getBoundingClientRect().top}px`
+    dialog.value.style.margin = '0px'
+  }
 
   // show initial tab
-  if (payload?.initialTab) {
-    nextTick(() => {
+  nextTick(() => {
+    if (payload?.initialTab) {
       document.querySelector<HTMLElement>(`.settings .tab.${payload.initialTab} input`)?.click()
-    })
-  }
+    }
+    adjustHeight()
+  })
+
+  //
 }
 
 const onClose = () => {
@@ -119,7 +144,18 @@ const onClose = () => {
 <style>
 
 dialog.settings {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
   width: 640px;
+}
+
+dialog.settings form {
+  overflow: hidden;
+  transition: height 150ms ease;
 }
 
 dialog.settings .content {
@@ -212,7 +248,7 @@ dialog.settings .list-panel {
   flex-direction: row;
   align-items: stretch;
   padding-top: 12px;
-  padding-bottom: 0px;
+  padding-bottom: 12px;
 
   .list {
   
@@ -220,7 +256,6 @@ dialog.settings .list-panel {
     border-right: 0.5px solid var(--dialog-separator-color);
     width: 140px;
     padding: 0px 12px;
-    max-height: 218px;
     overflow-y: auto;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
