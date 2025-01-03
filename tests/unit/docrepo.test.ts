@@ -3,21 +3,18 @@ import { test, expect, vi, beforeEach, afterEach } from 'vitest'
 import DocumentRepository from '../../src/rag/docrepo'
 import DocumentSourceImpl from '../../src/rag/docsource'
 import DocumentBaseImpl from '../../src/rag/docbase'
-import embeddings from '../fixtures/embedder.json'
+import { DocumentMetadata } from '../../src/types/rag'
 import { LocalIndex } from 'vectra'
+import embeddings from '../fixtures/embedder.json'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
-import { DocumentMetadata } from '../../src/types/rag'
 
 const EMPTY_PDF = '----------------Page (0) Break----------------'
 
 vi.mock('electron', async() => {
   return {
-    BrowserWindow: {
-      getAllWindows: vi.fn(() => []),
-    },
     app: {
       getPath: vi.fn(() => os.tmpdir())
     },
