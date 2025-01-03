@@ -127,6 +127,21 @@ dialog.settings .content {
   margin: 0 auto;
   padding: 16px 0px 24px 0px;
   min-height: 160px;
+
+  &.large {
+    padding-top: 24px;
+    width: 540px;
+  }
+
+  .sticky-table-container {
+    height: 200px;
+  
+    td button {
+      font-size: 6pt;
+      padding: 2px 8px;
+    }
+  }
+
 }
 
 dialog.settings .tabs .tab>label {
