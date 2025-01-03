@@ -18,7 +18,7 @@ export default class MemoryManager {
   }
 
   async isNotEmpty(): Promise<boolean> {
-    if (!this.  db) {
+    if (!this.db) {
       await this.open()
     }
     if (!this.db) return false
@@ -53,7 +53,7 @@ export default class MemoryManager {
     for (const content of contents) {
       const embeddings = await embedder.embed([content])
       const uuid = crypto.randomUUID()
-      this.db.insert(uuid, content, embeddings[0], {
+      await this.db.insert(uuid, content, embeddings[0], {
         uuid: uuid,
         type: 'text',
         title: '',
