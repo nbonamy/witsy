@@ -1,8 +1,8 @@
 
 import { MemoryFact } from '../types/index'
 import { App } from 'electron'
-import VectorDB from 'rag/vectordb'
-import Embedder from 'rag/embedder'
+import VectorDB from '../rag/vectordb'
+import Embedder from '../rag/embedder'
 import defaultSettings from '../../defaults/settings.json'
 import * as config from '../main/config'
 import path from 'path'
