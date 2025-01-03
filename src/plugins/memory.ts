@@ -18,14 +18,8 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return `Use this tool to save and retrieve user information, preferences, tastes in order to make your answers more personalized.
-            When user asks for suggestions, retrieve any releveant preferences stored in memory and use them to build the suggestions.
-            When you save information, make sure the content includes enough description to be easily retrieved later.
-            For instance don't just store "User likes U2" but "User musical tastes includes U2".
-            Avoid storing unrelated facts together: split them into different facts and store them separately.
-            Don't be shy about storing information, the more you store, the more you can personalize the user experience.
-            You can save multiple facts at once by providing an array of strings as the content parameter.
-            `
+    // https://python.langchain.com/docs/versions/migrating_memory/long_term_memory_agent/
+    return this.config.description
   }
 
   getPreparationDescription(): string {
