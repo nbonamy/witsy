@@ -1,6 +1,6 @@
 
 <template>
-  <div class="content" @click="closeContextMenu">
+  <div class="content large" @click="closeContextMenu">
     <div class="experts sticky-table-container">
       <table>
         <thead>
@@ -310,19 +310,5 @@ defineExpose({ load })
 </style>
 
 <style scoped>
-
-.content {
-  padding-top: 24px !important;
-  width: 540px !important;
-}
-
-.sticky-table-container {
-  height: 200px;
-}
-
-.move button {
-  font-size: 6pt;
-  padding: 2px 8px;
-}
 
 </style>
