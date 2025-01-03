@@ -293,7 +293,7 @@ declare global {
         reset(): void
         isNotEmpty(): boolean
         facts(): MemoryFact[]
-        store(content: string): boolean
+        store(contents: string[]): boolean
         retrieve(query: string): string[]
         delete(uuid: string): void
       }      

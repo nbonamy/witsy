@@ -24,6 +24,7 @@ export default class extends Plugin {
             For instance don't just store "User likes U2" but "User musical tastes includes U2".
             Avoid storing unrelated facts together: split them into different facts and store them separately.
             Don't be shy about storing information, the more you store, the more you can personalize the user experience.
+            You can save multiple facts at once by providing an array of strings as the content parameter.
             `
   }
 
@@ -46,8 +47,9 @@ export default class extends Plugin {
       },
       {
         name: 'content',
-        type: 'string',
-        description: 'The information to store',
+        type: 'array',
+        description: 'The list of information to store',
+        items: { type: 'string' },
         required: false
       },
       {
