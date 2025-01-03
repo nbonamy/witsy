@@ -8,6 +8,7 @@ import Browse from '../../src/plugins/browse'
 import Tavily from '../../src/plugins/tavily'
 import Python from '../../src/plugins/python'
 import YouTube from '../../src/plugins/youtube'
+import Memory from '../../src/plugins/memory'
 import Nestor from '../../src/plugins/nestor'
 import Computer from '../../src/plugins/computer'
 import { HfInference } from '@huggingface/inference'
@@ -237,6 +238,29 @@ test('YouTube Plugin', async () => {
     channel: 'channel',
     content: 'line1'
   })
+})
+
+test('Memory Plugin', async () => {
+  const memory = new Memory(store.config.plugins.memory)
+  expect(memory.isEnabled()).toBe(false)
+  expect(memory.getName()).toBe('long_term_memory')
+  expect(memory.getDescription()).not.toBeFalsy()
+  expect(memory.getPreparationDescription()).toBe('Personnalizing…')
+  expect(memory.getRunningDescription()).toBe('Personnalizing…')
+  expect(memory.getParameters()[0].name).toBe('action')
+  expect(memory.getParameters()[0].type).toBe('string')
+  expect(memory.getParameters()[0].enum).toStrictEqual(['store', 'retrieve'])
+  expect(memory.getParameters()[0].description).not.toBeFalsy()
+  expect(memory.getParameters()[0].required).toBe(true)
+  expect(memory.getParameters()[1].name).toBe('content')
+  expect(memory.getParameters()[1].type).toBe('array')
+  expect(memory.getParameters()[1].items!.type).toBe('string')
+  expect(memory.getParameters()[1].description).not.toBeFalsy()
+  expect(memory.getParameters()[1].required).toBe(false)
+  expect(memory.getParameters()[2].name).toBe('query')
+  expect(memory.getParameters()[2].type).toBe('string')
+  expect(memory.getParameters()[2].description).not.toBeFalsy()
+  expect(memory.getParameters()[2].required).toBe(false)
 })
 
 test('Nestor Plugin', async () => {
