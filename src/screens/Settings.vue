@@ -165,12 +165,13 @@ dialog.settings .content {
   min-height: 160px;
 
   &.large {
-    padding-top: 24px;
     width: 540px;
   }
 
   .sticky-table-container {
     height: 200px;
+    margin-top: 8px;
+    margin-bottom: 8px;
   
     td button {
       font-size: 6pt;
@@ -294,7 +295,7 @@ dialog.settings .list-panel {
   .panel {
     flex: 1;
     min-height: 200px;
-    padding: 16px 16px 16px 0px !important;
+    padding: 4px 16px 16px 0px !important;
   }
 
 }
