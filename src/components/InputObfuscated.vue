@@ -57,7 +57,7 @@ form .group .wrapper input {
 .icon {
   cursor: pointer;
   position: absolute;
-  top: 4px;
+  top: 5.5px;
   right: 6px;
 }
 
