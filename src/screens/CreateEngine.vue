@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="create-engine" ref="dialog">
+  <AlertDialog id="create-engine" ref="dialog" @keyup.enter="onSave">
     <template v-slot:header>
       <div class="title">Create Custom Engine</div>
       <div class="text">Create a new custom engine based on an API standard.</div>
