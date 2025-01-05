@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onUpdated } from 'vue'
+import { ref, shallowReactive, computed, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
@@ -51,6 +51,12 @@ const showEngineTip = () => {
 const showModelTip = () => {
   return !tipsManager.isTipAvailable('engineSelector') && tipsManager.isTipAvailable('modelSelector') && !showAllEngines.value && models.value.length > 1
 }
+
+onBeforeUpdate(() => {
+  if (store.config.engines[store.config.llm.engine] === undefined) {
+    store.config.llm.engine = 'openai'
+  }
+})
 
 onUpdated(() => {
   centerCurrentEngineLogo()

@@ -53,9 +53,10 @@ const chatMenuPosition = computed(() => {
 const chatMenuActions = computed(() => {
 
   let engine = props.chat.engine
-  if (llmFactory.isCustomEngine(engine)) {
+  if (!store.config.engines[engine]) {
+    engine = 'custom'
+  } else if (llmFactory.isCustomEngine(engine)) {
     engine = (store.config.engines[engine] as CustomEngineConfig)?.label
-    if (!engine) engine = 'custom'
   }
 
   return [
