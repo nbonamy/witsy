@@ -4,6 +4,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { standardEngines } from '../../src/llms/llm'
+import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 
 import useEventBus from '../../src/composables/event_bus'
@@ -31,31 +32,10 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
 
 let wrapper: VueWrapper<any>
 
-const tabs = [
-  'settingsGeneral',
-  'settingsAppearance',
-  'settingsCommands',
-  'settingsExperts',
-  'settingsShortcuts',
-  'settingsLLM',
-  'settingsPlugins',
-  'settingsVoice',
-  'settingsAdvanced',
-]
-
-const switchToTab = async (i: number): Promise<Omit<VueWrapper<any, any>, 'exists'>> => {
-  await wrapper.find(`.tabs .tab:nth-child(${i+1})`).trigger('click')
-  return getTab(i)
-}
-
-const getTab = (i: number): Omit<VueWrapper<any, any>, 'exists'> => {
-  return wrapper.getComponent({ ref: tabs[i] })
-}
-  
 const checkVisibility = (visible: number) => {
   for (let i=0; i<tabs.length; i++) {
     const display = i === visible ? 'block' : 'none'
-    expect(getTab(i).attributes().style).toMatch(new RegExp(`display: ${display}`))
+    expect(getTab(wrapper, i).attributes().style).toMatch(new RegExp(`display: ${display}`))
   }
 }
 
@@ -93,7 +73,7 @@ test('Settings renders correctly', () => {
 
 for (let i=1; i<tabs.length; i++) {
   test(`Settings switch to tab #${i}`, async () => {
-    switchToTab(i)
+    switchToTab(wrapper, i)
     checkVisibility(i)
     expect(wrapper.getComponent({ ref: tabs[i] }).find('.group')).not.toBeNull()
   })
@@ -106,7 +86,7 @@ test('Settings close', async () => {
 
 test('Settings General', async () => {
   
-  const tab = await switchToTab(0)
+  const tab = await switchToTab(wrapper, 0)
   expect(tab.findAll('.group')).toHaveLength(6)
   
   expect(store.config.prompt.engine).toBe('')
@@ -158,7 +138,7 @@ test('Settings General', async () => {
 
 test('Settings Appearance', async () => {
   
-  const tab = await switchToTab(1)
+  const tab = await switchToTab(wrapper, 1)
   expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.appearance.theme).toBe('system')
@@ -190,7 +170,7 @@ test('Settings Appearance', async () => {
 
 test('Settings Commands', async () => {
 
-  const tab = await switchToTab(2)
+  const tab = await switchToTab(wrapper, 2)
   
   // basic stuff
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
@@ -245,7 +225,7 @@ test('Settings Commands', async () => {
 
 test('Settings Experts', async () => {
 
-  const tab = await switchToTab(3)
+  const tab = await switchToTab(wrapper, 3)
   
   // basic stuff
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
@@ -305,7 +285,7 @@ test('Settings Experts', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = await switchToTab(8)
+  const tab = await switchToTab(wrapper, 8)
   expect(tab.findAll('.group')).toHaveLength(5)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)
