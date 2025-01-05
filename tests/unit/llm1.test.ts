@@ -3,12 +3,12 @@ import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
-import LlmFactory from '../../src/llms/llm'
+import LlmFactory, { standardEngines, nonChatEngines } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 
 beforeAll(() => {
-  useWindowMock()
+  useWindowMock({ customEngine: true })
   store.loadSettings()
   store.config.engines.openai.apiKey = '123'
 })
@@ -16,6 +16,22 @@ beforeAll(() => {
 const llmFactory = new LlmFactory(store.config)
 
 const model = { id: 'model-id', name: 'model-name', meta: {} }
+
+test('Custom Engine', () => {
+  for (const engine of standardEngines) {
+    expect(llmFactory.isCustomEngine(engine)).toBe(false)
+  }
+  for (const engine of nonChatEngines) {
+    expect(llmFactory.isCustomEngine(engine)).toBe(false)
+  }
+  expect(llmFactory.isCustomEngine('aws')).toBe(false)
+  expect(llmFactory.isCustomEngine('custom')).toBe(true)
+})
+
+test('Get Engines', () => {
+  expect(llmFactory.getChatEngines()).toStrictEqual([...standardEngines, 'custom'])
+  expect(llmFactory.getCustomEngines()).toStrictEqual(['custom'])
+})
 
 test('Default Configuration', () => {
   expect(llmFactory.isEngineReady('openai')).toBe(true)
@@ -27,6 +43,7 @@ test('Default Configuration', () => {
   expect(llmFactory.isEngineReady('groq')).toBe(false)
   expect(llmFactory.isEngineReady('cerebras')).toBe(false)
   expect(llmFactory.isEngineReady('aws')).toBe(false)
+  expect(llmFactory.isEngineReady('custom')).toBe(true)
 })
 
 test('OpenAI Configuration', () => {
@@ -116,6 +133,13 @@ test('Cerebras Configuration', () => {
   expect(llmFactory.isEngineReady('cerebras')).toBe(true)
 })
 
+test('Custom Configuration', () => {
+  expect(llmFactory.isEngineConfigured('custom')).toBe(true)
+  expect(llmFactory.isEngineReady('custom')).toBe(true)
+  store.config.engines.custom.models.image = [model]
+  expect(llmFactory.isEngineReady('custom')).toBe(true)
+})
+
 test('Ignite Engine', async () => {
   expect(await llmFactory.igniteEngine('openai')).toBeInstanceOf(OpenAI)
   expect(await llmFactory.igniteEngine('ollama')).toBeInstanceOf(Ollama)
@@ -126,6 +150,13 @@ test('Ignite Engine', async () => {
   expect(await llmFactory.igniteEngine('groq')).toBeInstanceOf(Groq)
   expect(await llmFactory.igniteEngine('cerebras')).toBeInstanceOf(Cerebras)
   expect(await llmFactory.igniteEngine('aws')).toBeInstanceOf(OpenAI)
+})
+
+test('Ignite Custom Engine', async () => {
+  const engine = await llmFactory.igniteEngine('custom')
+  expect(engine).toBeInstanceOf(OpenAI)
+  expect(engine.config.apiKey).toBe('456')
+  expect(engine.config.baseURL).toBe('http://localhost/api/v1')
 })
 
 test('Anthropic Computer Use', async () => {

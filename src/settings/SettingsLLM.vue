@@ -2,22 +2,32 @@
 <template>
   <div class="content">
     <div class="list-panel">
-      <div class="list">
-        <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
-          <EngineLogo :engine="engine.id" :grayscale="true" />
-          {{ engine.label }}
+      <div class="master">
+        <div class="list">
+          <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
+            <EngineLogo :engine="engine.id" :grayscale="true" />
+            {{ engine.label }}
+          </div>
+        </div>
+        <div class="actions">
+          <button class="button create" @click.prevent="showCreateCustom"><BIconPlusLg /> <span v-if="!isCustom">Create engine</span></button>
+          <button class="button delete" @click.prevent="onDeleteCustom" v-if="isCustom"><BIconTrash /> Delete engine</button>
         </div>
       </div>
-      <component :is="currentView" class="panel" ref="engineSettings" />
+      <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" />
     </div>
+    <CreateEngine ref="createEngine" @create="onCreateCustom" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, nextTick } from 'vue'
-import { availableEngines } from '../llms/llm'
+import { CustomEngineConfig } from '../types/config'
+import { Ref, ref, computed, nextTick } from 'vue'
+import { store } from '../services/store'
+import Dialog from '../composables/dialog'
 import EngineLogo from '../components/EngineLogo.vue'
+import CreateEngine from '../screens/CreateEngine.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
@@ -28,28 +38,45 @@ import SettingsCerberas from './SettingsCerebras.vue'
 import SettingsXAI from './SettingsXAI.vue'
 import SettingsDeepSeek from './SettingsDeepSeek.vue'
 import SettingsOpenRouter from './SettingsOpenRouter.vue'
+import SettingsCustomLLM from './SettingsCustomLLM.vue'
+import LlmFactory from '../llms/llm'
 
-const currentEngine = ref(availableEngines[0])
+type Engine = {
+  id: string,
+  label: string
+}
+
+const llmFactory = new LlmFactory(store.config)
+
+const createEngine = ref(null)
+const currentEngine:Ref<string> = ref(llmFactory.getChatEngines()[0])
 const engineSettings = ref(null)
 
-type Engine = { id: string, label: string }
+const isCustom = computed(() => llmFactory.isCustomEngine(currentEngine.value))
 
 const engines = computed(() => {
-  return availableEngines.map(engine => {
-    return {
-      id: engine,
-      label: {
-        openai: 'OpenAI',
-        ollama: 'Ollama',
-        anthropic: 'Anthropic',
-        mistralai: 'Mistral AI',
-        google: 'Google',
-        xai: 'xAI',
-        openrouter: 'OpenRouter',
-        deepseek: 'DeepSeek',
-        groq: 'Groq',
-        cerebras: 'Cerebras',
-      }[engine],
+  return llmFactory.getChatEngines().map(id => {
+    if (llmFactory.isCustomEngine(id)) {
+      return {
+        id: id,
+        label: (store.config.engines[id] as CustomEngineConfig).label
+      }
+    } else {
+      return {
+        id: id,
+        label: {
+          openai: 'OpenAI',
+          ollama: 'Ollama',
+          anthropic: 'Anthropic',
+          mistralai: 'Mistral AI',
+          google: 'Google',
+          xai: 'xAI',
+          openrouter: 'OpenRouter',
+          deepseek: 'DeepSeek',
+          groq: 'Groq',
+          cerebras: 'Cerebras',
+        }[id]
+      }
     }
   })
 })
@@ -65,6 +92,7 @@ const currentView = computed(() => {
   if (currentEngine.value == 'openrouter') return SettingsOpenRouter
   if (currentEngine.value == 'groq') return SettingsGroq
   if (currentEngine.value == 'cerebras') return SettingsCerberas
+  return SettingsCustomLLM
 })
 
 const selectEngine = (engine: Engine) => {
@@ -72,11 +100,46 @@ const selectEngine = (engine: Engine) => {
   nextTick(() => engineSettings.value.load())
 }
 
+const showCreateCustom = () => {
+  createEngine.value.show()
+}
+
+const onCreateCustom = (payload: { label: string, api: string, baseURL: string, apiKey: string}) => {
+  const uuid = 'c' + crypto.randomUUID().replace(/-/g, '')
+  store.config.engines[uuid] = {
+    label: payload.label,
+    api: payload.api,
+    baseURL: payload.baseURL,
+    apiKey: payload.apiKey,
+    models: { chat: [], image: [] },
+    model: { chat: '', image: '' }
+  }
+  store.saveSettings()
+  selectEngine({ id: uuid } as Engine)
+}
+
+const onDeleteCustom = () => {
+  Dialog.show({
+    target: document.querySelector('.settings .plugins'),
+    title: 'Are you sure you want to delete this custom provider?',
+    text: 'You can\'t undo this action.',
+    confirmButtonText: 'Delete',
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      delete store.config.engines[currentEngine.value]
+      selectEngine({ id: llmFactory.getChatEngines()[0] } as Engine)
+      store.saveSettings()
+    }
+  })
+}
+
 const load = (payload: { engine: string }) => {
   if (payload?.engine) {
-    currentEngine.value = payload.engine
+    selectEngine({ id: payload.engine } as Engine)
+  } else {
+    engineSettings.value.load()
   }
-  engineSettings.value.load()
 }
 
 const save = () => {
@@ -90,4 +153,39 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
+</style>
+
+<style scoped>
+
+.list {
+  max-height: 208px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-self: stretch;
+  border-top: 1px solid var(--actions-bar-border-color);
+  padding-left: 6px;
+
+  button {
+    border: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    margin: 0px;
+    font-size: 10pt;
+    padding: 2px;
+
+    &:active {
+      background: var(--actions-bar-button-active-bg-color);
+    }
+
+    svg {
+      position: relative;
+      top: 2px;
+    }
+  }
+}
+
 </style>

@@ -1,13 +1,14 @@
 
-import { Configuration, EngineConfig } from 'types/config'
+import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
 import { Anthropic, Ollama, MistralAI, Google, Groq, XAI, OpenRouter, DeepSeek, Cerebras, LlmEngine, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels, loadOllamaModels, loadOpenAIModels, loadXAIModels, hasVisionModels as _hasVisionModels, isVisionModel as _isVisionModel, ModelsList, Model, loadOpenRouterModels, loadDeepSeekModels } from 'multi-llm-ts'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
 import OpenAI from './openai'
 
-export const availableEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
+export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
+export const nonChatEngines = [ 'huggingface', 'replicate' ]
 
 export default class LlmFactory {
 
@@ -17,9 +18,24 @@ export default class LlmFactory {
     this.config = config
   }
 
+  getChatEngines = (): string[] => {
+    return [
+      ...standardEngines,
+      ...this.getCustomEngines()
+    ]
+  }
+
+  getCustomEngines = (): string[] => {
+    return Object.keys(this.config.engines).filter(e => !standardEngines.includes(e) && !nonChatEngines.includes(e))
+  }
+
   isSpecializedModel = (engine: string, model: string): boolean => {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
     return false
+  }
+
+  isCustomEngine = (engine: string): boolean => {
+    return this.config.engines[engine] !== undefined && !standardEngines.includes(engine) && !nonChatEngines.includes(engine)
   }
   
   getFallbackModel = (engine: string): string => {
@@ -32,11 +48,15 @@ export default class LlmFactory {
     const model = this.getChatModel(engine, acceptSpecializedModels)
     return { engine, model }
   }
+
+  getChatModels = (engine: string): Model[] => {
+    return this.config.engines[engine].models.chat
+  }
   
   getChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
   
     // get from config
-    const model = this.config.engines[engine].model.chat
+    const model = this.config.engines[engine]?.model?.chat
   
     // check
     if (!acceptSpecializedModels && this.isSpecializedModel(engine, model)) {  
@@ -45,6 +65,11 @@ export default class LlmFactory {
       return model
     }
   
+  }
+
+  setChatModel = (engine: string, model: string) => {
+    this.config.engines[engine].model.chat = model
+    store.saveSettings()
   }
   
   isEngineConfigured = (engine: string): boolean => {
@@ -58,6 +83,7 @@ export default class LlmFactory {
     if (engine === 'openai') return OpenAI.isConfigured(this.config.engines.openai)
     if (engine === 'openrouter') return OpenRouter.isConfigured(this.config.engines.openrouter)
     if (engine === 'xai') return XAI.isConfigured(this.config.engines.xai)
+    if (this.isCustomEngine(engine)) return true
     return false
   }  
   
@@ -72,6 +98,7 @@ export default class LlmFactory {
     if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
+      if (this.isCustomEngine(engine)) return true
     return false
   }
   
@@ -89,6 +116,17 @@ export default class LlmFactory {
     if (engine === 'openrouter') return new OpenRouter(this.config.engines.openrouter)
     if (engine === 'xai') return new XAI(this.config.engines.xai)
 
+      // custom
+    if (this.isCustomEngine(engine)) {
+      const engineConfig = this.config.engines[engine] as CustomEngineConfig
+      if (engineConfig.api === 'openai') {
+        return new OpenAI({
+          apiKey: engineConfig.apiKey,
+          baseURL: engineConfig.baseURL
+        })
+      }
+    }
+
     // fallback
     console.warn(`Engine ${engine} unknown. Falling back to OpenAI`)
     return new OpenAI(this.config.engines.openai)
@@ -100,10 +138,12 @@ export default class LlmFactory {
   }
   
   hasVisionModels = (engine: string) => {
+    if (this.isCustomEngine(engine)) return false
     return _hasVisionModels(engine, this.config.engines[engine])
   }
   
   isVisionModel = (engine: string, model: string) => {
+    if (this.isCustomEngine(engine)) return false
     return _isVisionModel(engine, model, this.config.engines[engine])
   }
   
@@ -129,6 +169,10 @@ export default class LlmFactory {
   }
   
   loadModels = async (engine: string): Promise<boolean> => {
+
+    if (this.isCustomEngine(engine)) {
+      return this.loadModelsCustom(engine)
+    }
     
     console.log('Loading models for', engine)
     let models: ModelsList|null = null
@@ -178,18 +222,50 @@ export default class LlmFactory {
       })
     }
 
-    // local function
-    const getValidModelId = (engineConfig: EngineConfig, type: string, modelId: string) => {
-      const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
-      const m = models?.find(m => m.id == modelId)
-      return m ? modelId : (models?.[0]?.id || null)
-    }
-    
     // save in store
     engineConfig.models = models
     engineConfig.model = {
-      chat: getValidModelId(engineConfig, 'chat', engineConfig.model?.chat),
-      image: getValidModelId(engineConfig, 'image', engineConfig.model?.image)
+      chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat),
+      image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image)
+    }
+    
+    // save
+    if (this.config == store.config) {
+      store.saveSettings()
+    }
+
+    // done
+    return true
+  
+  }
+
+  loadModelsCustom = async (engine: string): Promise<boolean> => {
+
+    const engineConfig = store.config.engines[engine] as CustomEngineConfig
+    console.log('Loading models for', engineConfig.label)
+    let models: ModelsList|null = null
+
+    // depends on base api
+    if (engineConfig.api === 'openai') {
+      const openaiConfig = {
+        apiKey: engineConfig.apiKey,
+        baseURL: engineConfig.baseURL,
+        models: engineConfig.models
+      }
+      models = await loadOpenAIModels(openaiConfig)
+    }
+
+    // check
+    if (typeof models !== 'object') {
+      engineConfig.models = { chat: [], image: [] }
+      return false
+    }
+
+    // save in store
+    engineConfig.models = models
+    engineConfig.model = {
+      chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat),
+      image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image)
     }
     
     // save
@@ -202,8 +278,11 @@ export default class LlmFactory {
   
   }
   
-
-
+  getValidModelId = (engineConfig: EngineConfig, type: string, modelId: string) => {
+    const models: Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
+    const m = models?.find(m => m.id == modelId)
+    return m ? modelId : (models?.[0]?.id || null)
+  }
 
 }
 

@@ -2,12 +2,16 @@
 <template>
   <div :class="[ 'logo', engine, background ? 'background' : '' ]">
     <component :is="logo" :class="[ 'svg', grayscale ? 'grayscale' : '' ]" />
+    <div class="label" v-if="customLabel && label">{{ label }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { CustomEngineConfig } from '../types/config'
 import { computed } from 'vue'
+import { store } from '../services/store'
+import LlmFactory from '../llms/llm'
 import LogoOpenAI from '../../assets/openai.svg?component'
 import LogoOllama from '../../assets/ollama.svg?component'
 import LogoAnthropic from '../../assets/anthropic.svg?component'
@@ -18,6 +22,9 @@ import LogoDeepSeek from '../../assets/deepseek.svg?component'
 import LogoGroq from '../../assets/groq.svg?component'
 import LogoCerberas from '../../assets/cerebras.svg?component'
 import LogoOpenRouter from '../../assets/openrouter.svg?component'
+import LogoCustom from '../../assets/custom.svg?component'
+
+const llmFactory = new LlmFactory(store.config)
 
 const logos: { [key: string]: any } = {
   openai: LogoOpenAI,
@@ -44,16 +51,27 @@ const props = defineProps({
   background: {
     type: Boolean,
     default: false
+  },
+  customLabel: {
+    type: Boolean,
+    default: false
   }
 })
 
-const logo = computed(() => logos[props.engine])
+const logo = computed(() => logos[props.engine] ?? LogoCustom)
+
+const label = computed(() => {
+  if (llmFactory.isCustomEngine(props.engine)) {
+    return (store.config.engines[props.engine] as CustomEngineConfig).label
+  }
+})  
 
 </script>
 
 <style scoped>
 
 .logo {
+  positiion: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -84,6 +102,13 @@ const logo = computed(() => logos[props.engine])
       filter: grayscale(100%);
     }
 
+  }
+
+  .label {
+    position: absolute;
+    background-color: var(--background-color);
+    padding: 1px 0px 2px 0px;
+    font-size: 10pt;
   }
 
 }

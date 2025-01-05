@@ -4,7 +4,7 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Settings from '../../src/screens/Settings.vue'
-import { availableEngines } from '../../src/llms/llm'
+import { standardEngines } from '../../src/llms/llm'
 
 import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -109,7 +109,7 @@ test('Settings General', async () => {
   
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(availableEngines.length+1)
+  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(standardEngines.length+1)
   tab.find('.group.prompt select.engine').setValue('anthropic')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.engine).toBe('anthropic')

@@ -18,17 +18,21 @@
 
 <script setup lang="ts">
 
+import { CustomEngineConfig } from '../types/config'
 import { ref, computed, onMounted, type Ref } from 'vue'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
-import Chat from '../models/chat'
 import MessageList from './MessageList.vue'
-import Prompt from './Prompt.vue'
 import EmptyChat from './EmptyChat.vue'
+import Prompt from './Prompt.vue'
+import LlmFactory from '../llms/llm'
+import Chat from '../models/chat'
 import html2pdf from 'html2pdf.js'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
+
+const llmFactory = new LlmFactory(store.config)
 
 const props = defineProps({
   chat: {
@@ -47,8 +51,15 @@ const chatMenuPosition = computed(() => {
 })
 
 const chatMenuActions = computed(() => {
+
+  let engine = props.chat.engine
+  if (llmFactory.isCustomEngine(engine)) {
+    engine = (store.config.engines[engine] as CustomEngineConfig)?.label
+    if (!engine) engine = 'custom'
+  }
+
   return [
-    props.chat.engine ? { label: `${props.chat.engine} ${props.chat.model}`, disabled: true } : null,
+    engine ? { label: `${engine} ${props.chat.model}`, disabled: true } : null,
     { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
     props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
     { label: 'Rename Chat', action: 'rename', disabled: false },

@@ -7,28 +7,30 @@
     </div>
     <div class="engine">
       <div class="engines">
-        <EngineLogo v-for="engine in engines" :engine="engine" :grayscale="true" @click="onEngine(engine)" />
+        <EngineLogo v-for="engine in llmFactory.getChatEngines()" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
       </div>
-      <EngineLogo :engine="store.config.llm.engine" :grayscale="true" class="current" @click="onEngine(store.config.llm.engine)" />
-    </div>
-		<select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
-			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-		</select>
-    <div class="tip model" v-if="showModelTip()">
-      <img src="/assets/arrow_dashed.svg" /><br/>
-      Click here to switch to a different chat bot model!
+      <div class="current">
+        <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
+        <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
+    			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+		    </select>
+        <div class="tip model" v-if="showModelTip()">
+          <img src="/assets/arrow_dashed.svg" /><br/>
+          Click here to switch to a different chat bot model!
+        </div>
+      </div>
     </div>
 	</div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref, shallowReactive, computed, onUpdated } from 'vue'
 import { store } from '../services/store'
-import LlmFactory, { availableEngines } from '../llms/llm'
+import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'
-import EngineLogo from './EngineLogo.vue'
+import LlmFactory from '../llms/llm'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -37,22 +39,40 @@ const tipsManager = useTipsManager(store)
 const llmFactory = new LlmFactory(store.config)
 
 const showAllEngines = ref(false)
+const engines = shallowReactive(store.config.engines)
 
-//
-// we cannot use llm.getChatEngineModel here
-// because we will lose reactivity :-(
-//
-
-const engines = computed(() => availableEngines)
-const models = computed(() => store.config?.engines[store.config.llm.engine]?.models?.chat)
-const model = computed(() => store.config?.engines[store.config.llm.engine]?.model?.chat)
+const models = computed(() => llmFactory.getChatModels(store.config.llm.engine))
+const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, true))
 
 const showEngineTip = () => {
-  return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && engines.value.length > 1
+  return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && Object.keys(engines).length > 1
 }
 
 const showModelTip = () => {
   return !tipsManager.isTipAvailable('engineSelector') && tipsManager.isTipAvailable('modelSelector') && !showAllEngines.value && models.value.length > 1
+}
+
+onUpdated(() => {
+  centerCurrentEngineLogo()
+})
+
+const centerCurrentEngineLogo = () => {
+
+  const engines = document.querySelector<HTMLElement>('.engines')
+  const current = document.querySelector<HTMLElement>('.current')
+  if (!engines || !current) return
+  
+  const logo = current.querySelector<HTMLElement>('.logo')
+
+  const rc1 = engines.getBoundingClientRect()
+  const midY1 = rc1.top + rc1.height / 2
+
+  const rc2 = logo.getBoundingClientRect()
+  const midY2 = rc2.top + rc2.height / 2
+
+  const top = parseInt(current.style.top) || 0
+  current.style.top = `${top+midY1-midY2}px`
+
 }
 
 const onEngine = (engine: string) => {
@@ -64,12 +84,13 @@ const onEngine = (engine: string) => {
 
     // now animate current icon to the ones in the selector
     const current = store.config.llm.engine
-    animateEngineLogo(`.engine .logo.current`, `.engines .logo.${current}`, (elems, progress) => {
+    animateEngineLogo(`.engine .current .logo`, `.engines .logo.${current}`, (elems, progress) => {
       elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
       elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
       if (progress >= 1) {
         elems.clone.remove()
         elems.container.style.opacity = '1'
+        elems.source.parentElement.style.pointerEvents = 'none'
       }
     })
   
@@ -97,15 +118,16 @@ const onEngine = (engine: string) => {
     store.saveSettings()
 
     // and do the animation in reverse
-    animateEngineLogo(`.engines .logo.${engine}`, `.engine .logo.current`, (elems, progress) => {
+    animateEngineLogo(`.engines .logo.${engine}`, `.engine .current .logo`, (elems, progress) => {
       elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
       elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
       if (progress >= 1) {
         elems.clone.remove()
         showAllEngines.value = false
         elems.container.style.opacity = '0'
-        elems.target.style.opacity = '1'
         elems.source.style.opacity = '1'
+        elems.target.style.opacity = '1'
+        elems.target.parentElement.style.pointerEvents = 'auto'
       }
     })
 
@@ -186,9 +208,7 @@ const onSelectModel = (ev: Event) => {
   }
 
   // continue
-  let model = target.value
-  store.config.engines[store.config.llm.engine].model.chat = model
-  store.saveSettings()
+  llmFactory.setChatModel(store.config.llm.engine, target.value)
 }
 
 </script>
@@ -238,11 +258,13 @@ const onSelectModel = (ev: Event) => {
 
 .empty .engine {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .empty .engines {
   position: relative;
-  top: 40px;
   display: flex;
   max-width: 400px;
   flex-wrap: wrap;
@@ -262,9 +284,9 @@ const onSelectModel = (ev: Event) => {
 
 .empty .engine .current {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  margin-left: -24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .empty .select-model {

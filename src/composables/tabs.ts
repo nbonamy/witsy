@@ -9,7 +9,7 @@ export const installTabs = (dialog: HTMLElement, callback: VoidFunction) => {
   })
 }
 
-export const showActiveTab = (dialog: HTMLElement, callback: VoidFunction) => {
+export const showActiveTab = (dialog: HTMLElement, callback?: VoidFunction) => {
   const tabs = dialog.querySelectorAll<HTMLInputElement>('.tabs input[name="tabs"]')
   const contents = dialog.querySelectorAll<HTMLElement>('.tabs .content')
   tabs.forEach((tab, index) => {

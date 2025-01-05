@@ -5,7 +5,9 @@
       <div class="icon">
         <img src="/assets/icon.png" alt="RAG Logo" />
       </div>
-      <slot name="header"></slot>
+      <div class="header">
+        <slot name="header"></slot>
+      </div>
       <slot name="body"></slot>
       <slot name="footer"></slot>
     </form>
@@ -67,16 +69,23 @@ defineExpose({
       margin-bottom: 1.5rem;
     }
 
+    .header:not(:empty) {
+      margin-bottom: 1rem;
+    }
+
     &:deep() .title {
       font-size: 10pt;
       line-height: 150%;
       font-weight: bold;
+      text-align: center;
       margin-top: 12px;
     }
 
     &:deep() .text {
       font-size: 8.5pt;
       margin-top: 12px;
+      padding: 0px 32px;
+      text-align: center;
     }
 
     &:deep() .group {
@@ -94,7 +103,7 @@ defineExpose({
         }
       }
 
-      input, select {
+      .wrapper {
         width: 100%;
       }
 
