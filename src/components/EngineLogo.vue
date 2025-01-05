@@ -71,7 +71,7 @@ const label = computed(() => {
 <style scoped>
 
 .logo {
-  positiion: relative;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -109,6 +109,8 @@ const label = computed(() => {
     background-color: var(--background-color);
     padding: 1px 0px 2px 0px;
     font-size: 10pt;
+    min-width: 100%;
+    text-align: center;
   }
 
 }
