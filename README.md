@@ -134,10 +134,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] Custom engines
 
 ## DONE
 
+- [x] Custom engines (OpenAI compatible)
 - [x] Long-term memory plugin
 - [x] OpenRouter support
 - [x] DeepSeek support
