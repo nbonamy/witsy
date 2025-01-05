@@ -1,7 +1,7 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI } from 'multi-llm-ts'
+import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, isVisionModel } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
 import LlmFactory, { standardEngines, nonChatEngines } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
@@ -40,6 +40,8 @@ test('Default Configuration', () => {
   expect(llmFactory.isEngineReady('anthropic')).toBe(false)
   expect(llmFactory.isEngineReady('google')).toBe(false)
   expect(llmFactory.isEngineReady('xai')).toBe(false)
+  expect(llmFactory.isEngineReady('deepseek')).toBe(false)
+  expect(llmFactory.isEngineReady('openrouter')).toBe(false)
   expect(llmFactory.isEngineReady('groq')).toBe(false)
   expect(llmFactory.isEngineReady('cerebras')).toBe(false)
   expect(llmFactory.isEngineReady('aws')).toBe(false)
@@ -109,6 +111,30 @@ test('xAI Configuration', () => {
   expect(llmFactory.isEngineReady('xai')).toBe(true)
 })
 
+test('DeepSeek Configuration', () => {
+  expect(llmFactory.isEngineConfigured('deepseek')).toBe(false)
+  store.config.engines.deepseek.models.image = [model]
+  expect(llmFactory.isEngineReady('deepseek')).toBe(false)
+  store.config.engines.deepseek.models.chat = [model]
+  expect(llmFactory.isEngineReady('deepseek')).toBe(false)
+  expect(llmFactory.isEngineConfigured('deepseek')).toBe(false)
+  store.config.engines.deepseek.apiKey = '123'
+  expect(llmFactory.isEngineConfigured('deepseek')).toBe(true)
+  expect(llmFactory.isEngineReady('deepseek')).toBe(true)
+})
+
+test('OpenRouter Configuration', () => {
+  expect(llmFactory.isEngineConfigured('openrouter')).toBe(false)
+  store.config.engines.openrouter.models.image = [model]
+  expect(llmFactory.isEngineReady('openrouter')).toBe(false)
+  store.config.engines.openrouter.models.chat = [model]
+  expect(llmFactory.isEngineReady('openrouter')).toBe(false)
+  expect(llmFactory.isEngineConfigured('openrouter')).toBe(false)
+  store.config.engines.openrouter.apiKey = '123'
+  expect(llmFactory.isEngineConfigured('openrouter')).toBe(true)
+  expect(llmFactory.isEngineReady('openrouter')).toBe(true)
+})
+
 test('Groq Configuration', () => {
   expect(llmFactory.isEngineConfigured('groq')).toBe(false)
   store.config.engines.groq.models.image = [model]
@@ -149,6 +175,8 @@ test('Ignite Engine', async () => {
   expect(await llmFactory.igniteEngine('xai')).toBeInstanceOf(XAI)
   expect(await llmFactory.igniteEngine('groq')).toBeInstanceOf(Groq)
   expect(await llmFactory.igniteEngine('cerebras')).toBeInstanceOf(Cerebras)
+  expect(await llmFactory.igniteEngine('deepseek')).toBeInstanceOf(DeepSeek)
+  expect(await llmFactory.igniteEngine('openrouter')).toBeInstanceOf(OpenRouter)
   expect(await llmFactory.igniteEngine('aws')).toBeInstanceOf(OpenAI)
 })
 
@@ -157,6 +185,11 @@ test('Ignite Custom Engine', async () => {
   expect(engine).toBeInstanceOf(OpenAI)
   expect(engine.config.apiKey).toBe('456')
   expect(engine.config.baseURL).toBe('http://localhost/api/v1')
+})
+
+test('No vision models for custom engine', () => {
+  expect(llmFactory.hasVisionModels('custom')).toBe(false)
+  expect(llmFactory.isVisionModel('custom', 'vision')).toBe(false)  
 })
 
 test('Anthropic Computer Use', async () => {
