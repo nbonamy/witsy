@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="chat-editor" ref="dialog">
+  <AlertDialog id="chat-editor" ref="dialog" @keyup.enter="onSave">
     <template v-slot:body>
       <div class="group">
         <label>Title</label>
