@@ -3,8 +3,8 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import Settings from '../../src/screens/Settings.vue'
 import { standardEngines } from '../../src/llms/llm'
+import Settings from '../../src/screens/Settings.vue'
 
 import useEventBus from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -16,12 +16,14 @@ HTMLDialogElement.prototype.close = vi.fn()
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
   const commands = await import('../../defaults/commands.json')
+  const experts = await import('../../defaults/experts.json')
   const mod: any = await importOriginal()
   return {
     clone: mod.clone,
     store: {
       ...mod.store,
       commands: commands.default,
+      experts: experts.default,
       saveSettings: vi.fn()
     }
   }
@@ -183,6 +185,121 @@ test('Settings Appearance', async () => {
   expect(store.config.appearance.chat.fontSize).toBe('2')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
+
+})
+
+test('Settings Commands', async () => {
+
+  const tab = await switchToTab(2)
+  
+  // basic stuff
+  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
+  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
+  expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
+  expect(tab.findAll('.actions button')).toHaveLength(4)
+
+  // move up and down
+  const first = tab.find('.sticky-table-container tr.command').attributes('data-id')
+  const second = tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')
+  await tab.find('.sticky-table-container tr.command:nth-of-type(2) button:nth-of-type(2)').trigger('click')
+  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(second)
+  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(first)
+  await tab.find('.sticky-table-container tr.command:nth-of-type(1) button:nth-of-type(1)').trigger('click')
+  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(first)
+  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(second)
+
+  // new command opens
+  const modal = tab.find<HTMLDialogElement>('#command-editor').element
+  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
+  expect(modal.showModal).not.toHaveBeenCalled()
+  await tab.find('.actions button:nth-of-type(1)').trigger('click')
+  expect(modal.showModal).toHaveBeenCalledTimes(1)
+  expect(modal.hasAttribute('open')).toBe(true)
+  modal.removeAttribute('open')
+
+  // new command creates
+  await tab.find('#command-editor textarea').setValue('{input}')
+  await tab.find('#command-editor button.default').trigger('click')
+  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
+
+  // delete
+  await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
+  await tab.find('.actions button:nth-of-type(3)').trigger('click')
+  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
+
+  // edit
+  expect(modal.hasAttribute('open')).toBe(false)
+  await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
+  expect(modal.showModal).toHaveBeenCalledTimes(2)
+  expect(modal.hasAttribute('open')).toBe(true)
+  // expect(tab.find<HTMLInputElement>('#command-editor input').element.value).toBe(store.commands[1].name)
+  // expect(tab.find<HTMLTextAreaElement>('#command-editor textarea').element.value).toBe(store.commands[1].name)
+
+  // context menu
+  expect(tab.findAll('.context-menu')).toHaveLength(0)
+  await tab.find('.actions .right button').trigger('click')
+  await tab.vm.$nextTick()
+  expect(tab.findAll('.context-menu')).toHaveLength(1)
+
+})
+
+test('Settings Experts', async () => {
+
+  const tab = await switchToTab(3)
+  
+  // basic stuff
+  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(332)
+  expect(tab.findAll('.content > .actions button')).toHaveLength(5)
+
+  // move up and down
+  const first = tab.find('.sticky-table-container tr.expert').attributes('data-id')
+  const second = tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(2) button:nth-of-type(2)').trigger('click')
+  expect (tab.find('.sticky-table-container tr.expert').attributes('data-id')).toBe(second)
+  expect (tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')).toBe(first)
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(1) button:nth-of-type(1)').trigger('click')
+  expect (tab.find('.sticky-table-container tr.expert').attributes('data-id')).toBe(first)
+  expect (tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')).toBe(second)
+
+  // new command opens
+  const modal = tab.find<HTMLDialogElement>('#expert-editor').element
+  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
+  expect(modal.showModal).not.toHaveBeenCalled()
+  await tab.find('.actions button:nth-of-type(1)').trigger('click')
+  expect(modal.showModal).toHaveBeenCalledTimes(1)
+  expect(modal.hasAttribute('open')).toBe(true)
+  modal.removeAttribute('open')
+
+  // new command creates
+  await tab.find('#expert-editor textarea').setValue('expert prompt')
+  await tab.find('#expert-editor button.default').trigger('click')
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
+
+  // copy
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('click')
+  await tab.find('.actions button:nth-of-type(3)').trigger('click')
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(168)
+
+  // delete
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(168)').trigger('click')
+  await tab.find('.actions button:nth-of-type(4)').trigger('click')
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
+
+  // edit
+  expect(modal.hasAttribute('open')).toBe(false)
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(2)').trigger('dblclick')
+  expect(modal.showModal).toHaveBeenCalledTimes(2)
+  expect(modal.hasAttribute('open')).toBe(true)
+  // expect(tab.find<HTMLInputElement>('#expert-editor input').element.value).toBe(store.expert[1].name)
+  // expect(tab.find<HTMLTextAreaElement>('#expert-editor textarea').element.value).toBe(store.expert[1].name)
+
+  // context menu
+  expect(tab.findAll('.context-menu')).toHaveLength(0)
+  await tab.find('.actions .right button').trigger('click')
+  await tab.vm.$nextTick()
+  expect(tab.findAll('.context-menu')).toHaveLength(1)
 
 })
 
