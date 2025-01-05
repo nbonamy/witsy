@@ -118,7 +118,7 @@ const save = () => {
   store.saveSettings()
 }
 
-defineExpose({ load })
+defineExpose({ load, loadModels: onRefresh })
 
 </script>
 
