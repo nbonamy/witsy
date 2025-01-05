@@ -1,5 +1,5 @@
 
-import { EngineCreateOpts, ModelsList, OpenAI } from "multi-llm-ts";
+import { EngineCreateOpts, ModelsList, OpenAI } from 'multi-llm-ts'
 
 export default class extends OpenAI {
 
