@@ -1,7 +1,7 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, isVisionModel } from 'multi-llm-ts'
+import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
 import LlmFactory, { standardEngines, nonChatEngines } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
