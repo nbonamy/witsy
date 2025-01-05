@@ -116,6 +116,7 @@ const onCreateCustom = (payload: { label: string, api: string, baseURL: string, 
   }
   store.saveSettings()
   selectEngine({ id: uuid } as Engine)
+  nextTick(() => engineSettings.value.loadModels())
 }
 
 const onDeleteCustom = () => {
