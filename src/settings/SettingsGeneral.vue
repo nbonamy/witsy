@@ -46,6 +46,12 @@ const keepRunning = ref(false)
 
 const models = computed(() => {
   if (!engine.value || engine.value == '') return []
+  if (!store.config.engines[engine.value]) {
+    engine.value = ''
+    model.value = ''
+    save()
+    return []
+  }
   return store.config.engines[engine.value].models.chat
 })
 

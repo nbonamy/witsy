@@ -98,7 +98,7 @@ export default class LlmFactory {
     if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
-      if (this.isCustomEngine(engine)) return true
+    if (this.isCustomEngine(engine)) return true
     return false
   }
   
