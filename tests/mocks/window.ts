@@ -8,14 +8,18 @@ import defaultSettings from '../../defaults/settings.json'
 const listeners: ((signal: string) => void)[] = []
 
 interface WindowMockOpts {
-  dialogResponse: number
+  dialogResponse?: number
+  customEngine?: boolean
 }
 
 const useWindowMock = (opts?: WindowMockOpts) => {
 
   // merge with deafults
   opts = {
-    ...{ dialogResponse: 0 },
+    ...{
+      dialogResponse: 0,
+      customEngine: false
+    },
     ...opts
   }
 
@@ -46,7 +50,20 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       unregister: vi.fn(),
     },
     config: {
-      load: vi.fn(() => JSON.parse(JSON.stringify(defaultSettings))),
+      load: vi.fn(() => {
+        const config = JSON.parse(JSON.stringify(defaultSettings))
+        if (opts.customEngine) {
+          config.engines.custom = { 
+            label: 'custom',
+            api: 'openai',
+            apiKey: '456',
+            baseURL: 'http://localhost/api/v1',
+            models: { image: [], chat: [] },
+            model: { chat: '', image: '' }
+          }
+        }
+        return config
+      }),
       save: vi.fn(),
     },
     store: {

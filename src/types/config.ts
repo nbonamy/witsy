@@ -12,7 +12,7 @@ export type Configuration = {
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
   scratchpad: ScratchpadConfig
-  engines: {[key: string]: EngineConfig}
+  engines: {[key: string]: EngineConfig|CustomEngineConfig}
   plugins: {[key: string]: PluginConfig}
   stt: STTConfig
   rag: RagConfig
@@ -21,8 +21,13 @@ export type Configuration = {
 export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
-  tts: TTSConfig
-  realtime: RealtimeConfig
+  tts?: TTSConfig
+  realtime?: RealtimeConfig
+}
+
+export type CustomEngineConfig = EngineConfig & {
+  label: string
+  api: string
 }
 
 export type GeneralConfig = {
