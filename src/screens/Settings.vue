@@ -85,12 +85,10 @@ onMounted(async () => {
 const adjustHeight = () => {
   
   // get elements
-  const dialog = document.querySelector<HTMLDialogElement>('dialog.settings')
   const form = document.querySelector<HTMLFormElement>('.settings form')
   const wrapper = document.querySelector<HTMLDivElement>('.settings .wrapper')
 
   // adjust height
-  const current = parseInt(form.style.height || '0')
   const updated = wrapper.offsetHeight
   form.style.height = `${updated}px`
 

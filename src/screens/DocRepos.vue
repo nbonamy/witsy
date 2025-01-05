@@ -191,14 +191,6 @@ const onChangeRepoName = (event: Event) => {
   window.api.docrepo.rename(selectedRepo.value.uuid, (event.target as HTMLInputElement).value)
 }
 
-const onMore = () => {
-  if (showMenu.value) {
-    closeContextMenu()
-  } else {
-    showContextMenu()
-  }
-}
-
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = plusButton.value.getBoundingClientRect()
