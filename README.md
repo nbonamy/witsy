@@ -1,7 +1,18 @@
 
-<img src="https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg">
+<div align="center">
 
-# Witsy
+  <img src="assets/icon.png" width="128" alt="Witsy Logo">
+  <div><b>Witsy</b></div>
+  <div>Desktop AI Assistant</div>
+
+</div>
+
+<p></p>
+<div align="center">
+
+[![test](https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg)](https://github.com/nbonamy/witsy/workflows/test.yml)
+
+</div>
 
 ## Downloads
 
