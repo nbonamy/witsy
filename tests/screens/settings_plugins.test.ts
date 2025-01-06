@@ -15,6 +15,10 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
     loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
   }
 })
+
+HTMLDialogElement.prototype.showModal = vi.fn()
+HTMLDialogElement.prototype.close = vi.fn()
+
 let wrapper: VueWrapper<any>
 const pluginIndex = 6
 
@@ -86,7 +90,7 @@ test('video settings', async () => {
   // replicate
   await video.findAll('select')[0].setValue('replicate')
   expect(video.find<HTMLInputElement>('input[type=password]').element.value).toBe('repl-api-key')
-  expect(video.findAll('select')[1].find('option').text()).toBe('minimax/video-01')
+  expect(video.findAll('select')[1].find('option').text()).toBe(store.config.engines.replicate.model.video)
   const reploption2 = video.findAll('select')[1].findAll('option')[1]
   await video.findAll('select')[1].setValue(reploption2.element.value)
   expect(store.config.engines.replicate.model.video).toBe(reploption2.element.value)
@@ -131,6 +135,18 @@ test('memory settings', async () => {
   expect(memory.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
   await memory.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
   expect(store.config.plugins.memory.enabled).toBe(true)
+
+  // openai
+  expect(memory.findAll('select')[0].element.value).toBe('openai')
+  expect(memory.find('input[type=text]').exists()).toBeFalsy()
+
+  // view
+  await memory.findAll('button')[0].trigger('click')
+  expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledOnce()
+
+  // reset
+  await memory.findAll('button')[1].trigger('click')
+  expect(window.api.memory.reset).toHaveBeenCalled()
 })
 
 test('python settings', async () => {
