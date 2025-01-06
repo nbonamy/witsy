@@ -123,16 +123,20 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       readIcon: vi.fn(),
       save: vi.fn(() => 'file_url'),
       download: vi.fn(),
-      pick: vi.fn(() => {
-        return {
-          url: 'file://image.png',
-          mimeType: 'image/png',
-          contents: 'image64'
-         }
+      pick: vi.fn((opts) => {
+        if (opts?.location) {
+          return 'image.png'
+        } else {
+          return {
+            url: 'file://image.png',
+            mimeType: 'image/png',
+            contents: 'image64'
+          }
+        }
       }),
       pickDir: vi.fn(),
       delete: vi.fn(),
-      find: vi.fn(),
+      find: vi.fn(() => 'file.ext'),
       extractText: vi.fn((s) => `${s}_extracted`),
       getAppInfo: vi.fn(),
     },

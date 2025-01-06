@@ -21,6 +21,10 @@ const pluginIndex = 6
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.config.engines.huggingface.apiKey = 'hf-api-key'
+  store.config.engines.replicate.apiKey = 'repl-api-key'
+  store.config.plugins.tavily.apiKey = 'tavily-api-key'
+  store.config.plugins.python.binpath = 'python3'
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
@@ -43,6 +47,8 @@ test('image settings', async () => {
   const image = tab.findComponent({ name: 'SettingsImage' })
   expect(image.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(image.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
+  await image.find('input[type=checkbox]').setValue(false)
+  expect(store.config.plugins.image.enabled).toBe(false)
 
   // openai
   expect(image.findAll('select')[0].element.value).toBe('openai')
@@ -53,13 +59,19 @@ test('image settings', async () => {
 
   // huggingface
   await image.findAll('select')[0].setValue('huggingface')
-  expect(image.find('input[type=text]').exists()).toBeTruthy()
+  expect(image.find<HTMLInputElement>('input[type=password]').element.value).toBe('hf-api-key')
   expect(image.findAll('select')[1].find('option').text()).toBe('black-forest-labs/FLUX.1-dev')
+  const hfoption2 = image.findAll('select')[1].findAll('option')[1]
+  await image.findAll('select')[1].setValue(hfoption2.element.value)
+  expect(store.config.engines.huggingface.model.image).toBe(hfoption2.element.value)
 
   // replicate
   await image.findAll('select')[0].setValue('replicate')
-  expect(image.find('input[type=text]').exists()).toBeTruthy()
+  expect(image.find<HTMLInputElement>('input[type=password]').element.value).toBe('repl-api-key')
   expect(image.findAll('select')[1].find('option').text()).toBe('black-forest-labs/flux-1.1-pro')
+  const reploption2 = image.findAll('select')[1].findAll('option')[1]
+  await image.findAll('select')[1].setValue(reploption2.element.value)
+  expect(store.config.engines.replicate.model.image).toBe(reploption2.element.value)
 })
 
 test('video settings', async () => {
@@ -68,6 +80,16 @@ test('video settings', async () => {
   const video = tab.findComponent({ name: 'SettingsVideo' })
   expect(video.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(video.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
+  await video.find('input[type=checkbox]').trigger('click')
+  expect(store.config.plugins.video.enabled).toBe(false)
+
+  // replicate
+  await video.findAll('select')[0].setValue('replicate')
+  expect(video.find<HTMLInputElement>('input[type=password]').element.value).toBe('repl-api-key')
+  expect(video.findAll('select')[1].find('option').text()).toBe('minimax/video-01')
+  const reploption2 = video.findAll('select')[1].findAll('option')[1]
+  await video.findAll('select')[1].setValue(reploption2.element.value)
+  expect(store.config.engines.replicate.model.video).toBe(reploption2.element.value)
 })
 
 test('browse settings', async () => {
@@ -76,6 +98,8 @@ test('browse settings', async () => {
   const browse = tab.findComponent({ name: 'SettingsBrowse' })
   expect(browse.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(browse.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
+  await browse.find('input[type=checkbox]').setValue(false)
+  expect(store.config.plugins.browse.enabled).toBe(false)
 })
 
 test('youtube settings', async () => {
@@ -84,6 +108,8 @@ test('youtube settings', async () => {
   const youtube = tab.findComponent({ name: 'SettingsYouTube' })
   expect(youtube.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(youtube.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
+  await youtube.find('input[type=checkbox]').setValue(false)
+  expect(store.config.plugins.youtube.enabled).toBe(false)
 })
 
 test('tavily settings', async () => {
@@ -92,6 +118,9 @@ test('tavily settings', async () => {
   const tavily = tab.findComponent({ name: 'SettingsTavily' })
   expect(tavily.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(tavily.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
+  await tavily.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
+  expect(store.config.plugins.tavily.enabled).toBe(true)
+  expect(tavily.find<HTMLInputElement>('input[type=password]').element.value).toBe('tavily-api-key')
 })
 
 test('memory settings', async () => {
@@ -100,6 +129,8 @@ test('memory settings', async () => {
   const memory = tab.findComponent({ name: 'SettingsMemory' })
   expect(memory.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(memory.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
+  await memory.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
+  expect(store.config.plugins.memory.enabled).toBe(true)
 })
 
 test('python settings', async () => {
@@ -108,6 +139,17 @@ test('python settings', async () => {
   const python = tab.findComponent({ name: 'SettingsPython' })
   expect(python.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(python.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
+  await python.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
+  expect(store.config.plugins.python.enabled).toBe(true)
+  expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('python3')
+  await python.findAll('button')[0].trigger('click')
+  expect(window.api.file.pick).toHaveBeenCalled()
+  expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('image.png')
+  expect(store.config.plugins.python.binpath).toBe('image.png')
+  await python.findAll('button')[1].trigger('click')
+  expect(window.api.file.find).toHaveBeenCalled()
+  expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('file.ext')
+  expect(store.config.plugins.python.binpath).toBe('file.ext')
 })
 
 test('nestor settings', async () => {
@@ -116,4 +158,6 @@ test('nestor settings', async () => {
   const nestor = tab.findComponent({ name: 'SettingsNestor' })
   expect(nestor.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(nestor.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
+  await nestor.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
+  expect(store.config.plugins.nestor.enabled).toBe(true)
 })

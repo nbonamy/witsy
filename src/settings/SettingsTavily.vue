@@ -7,7 +7,7 @@
     </div>
     <div class="group">
       <label>Enabled</label>
-      <input type="checkbox" v-model="enabled" :disabled="!apiKey" @change="save" />
+      <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="group">
       <label>Tavily API Key</label>
@@ -34,9 +34,11 @@ const load = () => {
 }
 
 const save = () => {
+  console.log('save')
   store.config.plugins.tavily.enabled = enabled.value
   store.config.plugins.tavily.apiKey = apiKey.value
   store.saveSettings()
+  console.log(store.config.plugins.tavily)
 }
 
 defineExpose({ load })

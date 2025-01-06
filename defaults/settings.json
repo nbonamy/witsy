@@ -242,8 +242,12 @@
     "browse": {
       "enabled": true
     },
-    "python": {},
-    "tavily": {},
+    "python": {
+      "enabled": false
+    },
+    "tavily": {
+      "enabled": false
+    },
     "youtube": {
       "enabled": true
     },
@@ -262,6 +266,8 @@
     "vega": {
       "enabled": true
     },
-    "nestor": {}
+    "nestor": {
+      "enabled": false
+    }
   }
 }

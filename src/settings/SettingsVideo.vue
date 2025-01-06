@@ -52,7 +52,7 @@ const replicate_models = ref([
 
 const load = () => {
   enabled.value = store.config.plugins.video.enabled || false
-  engine.value = store.config.plugins.video.engine || 'openai'
+  engine.value = store.config.plugins.video.engine || 'replicate'
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   onChangeEngine()
 }
