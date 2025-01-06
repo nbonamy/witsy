@@ -8,7 +8,7 @@
     </div>
     <div class="group">
       <label>Enabled</label>
-      <input type="checkbox" v-model="enabled" :disabled="!binpath" @change="save" />
+      <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="group">
       <label>Python Binary</label>
