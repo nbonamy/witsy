@@ -32,7 +32,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
     setAppearanceTheme: vi.fn(),
-    showDialog: vi.fn(async () => { return { response: opts.dialogResponse, checkboxChecked: false }}),
+    showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
     listFonts: vi.fn(() => []),
     fullscreen: vi.fn(),
     runAtLogin: {
