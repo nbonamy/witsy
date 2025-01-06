@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onBeforeUpdate, onUpdated } from 'vue'
+import { ref, shallowReactive, computed, onMounted, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
@@ -58,6 +58,10 @@ onBeforeUpdate(() => {
   }
 })
 
+onMounted(() => {
+  centerCurrentEngineLogo()
+})
+
 onUpdated(() => {
   centerCurrentEngineLogo()
 })
@@ -76,8 +80,14 @@ const centerCurrentEngineLogo = () => {
   const rc2 = logo.getBoundingClientRect()
   const midY2 = rc2.top + rc2.height / 2
 
-  const top = parseInt(current.style.top) || 0
+  let top = parseInt(current.style.top) || 0
   current.style.top = `${top+midY1-midY2}px`
+
+  const tip = document.querySelector<HTMLElement>('.tip.engine')
+  if (tip) {
+    top = parseInt(tip.style.top) || 0
+    tip.style.top = `${top+midY1-midY2}px`
+  }
 
 }
 
