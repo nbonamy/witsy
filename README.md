@@ -1,7 +1,7 @@
 
 <div align="center">
 
-  <img src="assets/icon.png" width="128" alt="Witsy Logo">
+  <a href="https://witsyai.com" target="_blank"><img src="assets/icon.png" width="128" alt="Witsy Logo"></a>
   <div><b>Witsy</b></div>
   <div>Desktop AI Assistant</div>
 
