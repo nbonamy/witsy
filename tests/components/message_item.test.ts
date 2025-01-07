@@ -11,19 +11,27 @@ enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
+const readAloudMock = vi.fn()
 
-vi.mock('../../src/composables/event_bus.js', async () => {
-  return { default: () => {
-    return {
-      onEvent: onEventMock,
-      emitEvent: emitEventMock
-    }
-  }}
+vi.mock('../../src/composables/event_bus', async () => {
+  return { default: () => ({
+    onEvent: onEventMock,
+    emitEvent: emitEventMock
+  })}
+})
+
+vi.mock('../../src/composables/audio_player', async () => {
+  return { default: () => ({
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    play: readAloudMock,
+  })}
 })
 
 let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
+botMessageText.usage = { prompt_tokens: 0, completion_tokens: 0 }
 const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
 const botMessageVideoMd: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![video](file:///data/video.mp4)' })
 const botMessageVideoHtml: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<video controls src="file:///data/video.mp4">' })
@@ -54,7 +62,7 @@ beforeEach(() => {
 })
 
 const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<any>> => {
-  const wrapper = vtumount(MessageItem, { props: { chat: chat, message: message } })
+  const wrapper = vtumount(MessageItem, { props: { chat: chat, message: message, readAloud: readAloudMock } })
   if (mouseenter) await wrapper.trigger('mouseenter')
   return wrapper
 }
@@ -78,7 +86,11 @@ test('User message', async () => {
   expect(wrapper.find('.body .transient').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(false)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
+  expect(wrapper.find('.actions .retry').exists()).toBe(false)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(true)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
+  
 })
 
 test('Assistant text message', async () => {
@@ -92,7 +104,10 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.body .transient').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(true)
 })
 
 test('Assistant legacy image message', async () => {
@@ -109,7 +124,10 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
 })
 
 test('Assistant image message', async () => {
@@ -126,7 +144,10 @@ test('Assistant image message', async () => {
   expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
 })
 
 test('Assistant video markdown message', async () => {
@@ -143,7 +164,10 @@ test('Assistant video markdown message', async () => {
   expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
 })
 
 test('Assistant video html message', async () => {
@@ -160,7 +184,10 @@ test('Assistant video html message', async () => {
   expect(wrapper.find('.body video').attributes('src')).toBe('file:///data/video.mp4')
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
 })
 
 test('Assistant image message formats', async () => {
@@ -213,10 +240,36 @@ test('Run user actions', async () => {
 })
 
 test('Run assistant text actions', async () => {
-  const wrapper = await mount(botMessageText)
+  const wrapper = await mount(botMessageText, )
+  
+  // copy
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hi')
   expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
+
+  // usage
+  await wrapper.find('.actions .usage').trigger('click')
+  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
+
+  // read aloud
+  await wrapper.find('.actions .read').trigger('click')
+  expect(readAloudMock).toHaveBeenCalled()
+
+  // retry
+  await wrapper.find('.actions .retry').trigger('click')
+  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
+  expect(store.config.general.confirm.retryGeneration).toBe(false)
+  expect(emitEventMock).toHaveBeenCalledWith('retry-generation', botMessageText)
+
+  // retry again
+  await wrapper.find('.actions .retry').trigger('click')
+  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
+
+  // fork
+  await wrapper.find('.actions .fork').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('fork-chat', botMessageText)
+
+
   // await wait(1500)
   // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
 })
