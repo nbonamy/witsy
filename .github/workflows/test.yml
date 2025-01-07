@@ -23,15 +23,12 @@ jobs:
         run: |
           set -o pipefail
           npm run test-ci 2>&1 | tee test-output.txt
-          echo $(tail -5 test-output.txt | head -1)
           echo "SUMMARY=$(tail -5 test-output.txt | head -1)" > $GITHUB_OUTPUT
       - name: Capture coverage
         id: coverage
         run: |
           SUMMARY="${{ steps.test.outputs.SUMMARY }}"
-          echo $SUMMARY
           TOKENS=($SUMMARY)
-          echo ${TOKENS[2]}
           echo "COVERAGE=$(echo ${TOKENS[2]})" > $GITHUB_OUTPUT
       - name: Create coverage badge
         uses: schneegans/dynamic-badges-action@v1.0.0
@@ -39,7 +36,7 @@ jobs:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 8febadb1ecb32078db4c003d0c09f565
           filename: witsy__main.json
-          label: Test Coverage
+          label: Coverage
           message: ${{ steps.coverage.outputs.COVERAGE }}
-          color: green
+          color: rgb(51, 203, 85)
           namedLogo: vitest
