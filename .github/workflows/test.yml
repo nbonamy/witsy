@@ -28,7 +28,7 @@ jobs:
       - name: Capture coverage
         id: coverage
         run: |
-          SUMMARY=${{ steps.test.outputs.SUMMARY }}
+          SUMMARY="${{ steps.test.outputs.SUMMARY }}"
           echo $SUMMARY
           TOKENS=($SUMMARY)
           echo ${TOKENS[2]}
