@@ -1,6 +1,11 @@
-import { expect, test } from 'vitest'
+import { beforeAll, expect, test } from 'vitest'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
+import { useWindowMock } from '../mocks/window'
+
+beforeAll(() => {
+  useWindowMock()
+})
 
 test('Build from title', () => {
   const chat = new Chat('The chat title')
@@ -50,6 +55,17 @@ test('Subtitle', () => {
   expect(chat.subtitle()).toBe('')
   chat.addMessage(new Message('assistant', 'this is the subtitle'))
   expect(chat.subtitle()).toBe('this is the subtitle')
+})
+
+test('Delete', () => {
+  const chat = new Chat('title')
+  chat.addMessage(Message.fromJson({ role: 'role', type: 'image', content: 'file' })) 
+  chat.addMessage(Message.fromJson({ role: 'role', attachment: { saved: true, url: 'url' } }))
+  chat.addMessage(Message.fromJson({ role: 'role', attachment: { saved: false, url: 'url' } }))
+  chat.delete()
+  expect(window.api.file.delete).toHaveBeenCalledTimes(2)
+  expect(window.api.file.delete).toHaveBeenNthCalledWith(1, 'file')
+  expect(window.api.file.delete).toHaveBeenNthCalledWith(2, 'url')
 })
 
 test('Fork', () => {
