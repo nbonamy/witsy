@@ -94,6 +94,9 @@
       "key": "N",
       "meta": true,
       "alt": true
+    },
+    "voicemode": {
+      "key": "none"
     }
   },
   "rag": {
