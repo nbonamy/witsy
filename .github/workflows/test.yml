@@ -39,5 +39,6 @@ jobs:
           label: Coverage
           message: ${{ steps.coverage.outputs.COVERAGE }}
           labelColor: rgb(61, 70, 78)
+          logoColor: rgb(255, 255, 255)
           color: rgb(51, 203, 85)
           namedLogo: vitest
