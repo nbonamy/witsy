@@ -95,7 +95,7 @@
       "meta": true,
       "alt": true
     },
-    "voicemode": {
+    "realtime": {
       "key": "none"
     }
   },
