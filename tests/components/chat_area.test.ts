@@ -14,13 +14,11 @@ const emitEventMock = vi.fn()
 
 const stubTeleport = { global: { stubs: { teleport: true } } }
 
-vi.mock('../../src/composables/event_bus.js', async () => {
-  return { default: () => {
-    return {
-      onEvent: onEventMock,
-      emitEvent: emitEventMock
-    }
-  }}
+vi.mock('../../src/composables/event_bus', async () => {
+  return { default: () => ({
+    onEvent: onEventMock,
+    emitEvent: emitEventMock
+  })}
 })
 
 beforeAll(() => {
