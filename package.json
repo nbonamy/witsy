@@ -16,6 +16,7 @@
     "lint": "eslint '**/*.ts' ; vue-tsc --noEmit",
     "credits": "npx @opengovsg/credits-generator",
     "test": "vitest --exclude './tests/e2e/**'",
+    "test-ci": "vitest run --exclude './tests/e2e/**' --coverage.enabled=true --coverage.reporter='text-summary'",
     "testui": "vitest --ui --exclude './tests/e2e/**' --coverage.enabled=true",
     "teste2e": "vitest ./tests/e2e/**"
   },

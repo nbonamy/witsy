@@ -19,4 +19,18 @@ jobs:
       - name: Install Dependencies
         run: npm i
       - name: Run tests
-        run: npm test
+        id: coverage
+        run: |
+          SUMMARY=$(npm run test-ci 2> /dev/null | tail -5 | head -1)
+          TOKENS=($SUMMARY)
+          echo "COVERAGE=$(echo ${TOKENS[2]})" >> $$GITHUB_OUTPUT
+      - name: Create coverage badge
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 8febadb1ecb32078db4c003d0c09f565
+          filename: witsy__main.json
+          label: Test Coverage
+          message: ${{ steps.coverage.outputs.COVERAGE }}
+          color: green
+          namedLogo: vitest
