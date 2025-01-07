@@ -32,7 +32,7 @@
     </div>
     <div class="group">
       <label>Voice Mode</label>
-      <InputShortcut v-model="voicemode" @change="save" />
+      <InputShortcut v-model="realtime" @change="save" />
     </div>
   </div>
 </template>
@@ -49,7 +49,7 @@ const scratchpad = ref(null)
 const command = ref(null)
 const readaloud = ref(null)
 const transcribe = ref(null)
-const voicemode = ref(null)
+const realtime = ref(null)
 
 const load = () => {
   prompt.value = store.config.shortcuts.prompt
@@ -58,7 +58,7 @@ const load = () => {
   command.value = store.config.shortcuts.command
   readaloud.value = store.config.shortcuts.readaloud
   transcribe.value = store.config.shortcuts.transcribe
-  voicemode.value = store.config.shortcuts.voicemode
+  realtime.value = store.config.shortcuts.realtime
 }
 
 const save = () => {
@@ -68,7 +68,7 @@ const save = () => {
   store.config.shortcuts.command = command.value
   store.config.shortcuts.readaloud = readaloud.value
   store.config.shortcuts.transcribe = transcribe.value
-  store.config.shortcuts.voicemode = voicemode.value
+  store.config.shortcuts.realtime = realtime.value
   store.saveSettings()
   window.api.shortcuts.register()
 }

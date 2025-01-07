@@ -10,7 +10,7 @@ export interface ShortcutCallbacks {
   readaloud: () => void
   transcribe: () => void
   scratchpad: () => void
-  voicemode: () => void
+  realtime: () => void
 }
 
 export interface Automator {

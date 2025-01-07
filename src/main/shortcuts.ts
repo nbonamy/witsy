@@ -26,7 +26,7 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
   registerShortcut(config.shortcuts.command, callbacks.command);
   registerShortcut(config.shortcuts.readaloud, callbacks.readaloud);
   registerShortcut(config.shortcuts.transcribe, callbacks.transcribe);
-  registerShortcut(config.shortcuts.voicemode, callbacks.voicemode);
+  registerShortcut(config.shortcuts.realtime, callbacks.realtime);
 
 }
 
