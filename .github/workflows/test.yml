@@ -38,5 +38,6 @@ jobs:
           filename: witsy__main.json
           label: Coverage
           message: ${{ steps.coverage.outputs.COVERAGE }}
+          labelColor: rgb(61, 70, 78)
           color: rgb(51, 203, 85)
           namedLogo: vitest
