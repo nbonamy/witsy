@@ -88,3 +88,6 @@ publish:
 	gh workflow run build-linux.yml
 	node build/monitor_gh_builds.mjs
 	gh release edit v$(VERSION) --draft=false
+	@echo "{\"schemaVersion\":1,\"label\":\"Version\",\"message\":\"$(VERSION)\",\"labelColor\":\"rgb(61, 70, 78)\",\"color\":\"blue\"}" > $(TMPDIR)/version.json
+	gh gist edit 8febadb1ecb32078db4c003d0c09f565 -f version.json $(TMPDIR)/version.json
+	@rm $(TMPDIR)/version.json
