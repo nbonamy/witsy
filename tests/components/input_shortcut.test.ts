@@ -25,16 +25,6 @@ test('Create', async () => {
   expect(wrapper.find('input').exists()).toBe(true)
 })
 
-test('Focus', async () => {
-  await wrapper.find('input').trigger('focus')
-  expect(window.api.shortcuts.unregister).toHaveBeenCalled()
-})
-
-test('Blur', async () => {
-  await wrapper.find('input').trigger('blur')
-  expect(window.api.shortcuts.register).toHaveBeenCalled()
-})
-
 test('Input value', async () => {
   expect(wrapper.find('input').element.value).toBe('')
   await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 32, ctrlKey: true })
@@ -46,6 +36,7 @@ test('Delete value with backspace', async () => {
   expect(wrapper.find('input').element.value).not.toBe('')
   await wrapper.find('input').trigger('keydown', { code: 'Backspace', key: 'Backspace', keyCode: 8 })
   expect(wrapper.find('input').element.value).toBe('')
+  expect(wrapper.emitted().change).toBeTruthy()
 })
 
 test('Delete value with icon', async () => {
@@ -53,6 +44,8 @@ test('Delete value with icon', async () => {
   expect(wrapper.find('input').element.value).not.toBe('')
   await wrapper.find('.icon').trigger('click')
   expect(wrapper.find('input').element.value).toBe('')
+  expect(wrapper.vm.value).toStrictEqual({ key: 'none' })
+  expect(wrapper.emitted().change).toBeTruthy()
 })
 
 test('Invalid shortcuts', async () => {

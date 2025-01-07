@@ -3,7 +3,12 @@ import { expect, test } from 'vitest'
 import { shortcutAccelerator } from '../../src/main/shortcuts'
 
 test('Shortcuts Keys', async () => {
+  
+  expect(shortcutAccelerator()).toBeNull()
   expect(shortcutAccelerator(null)).toBeNull()
+  
+  expect(shortcutAccelerator({key: 'none'})).toBeNull()
+  
   expect(shortcutAccelerator({key: 'Space'})).toBe('Space')
   expect(shortcutAccelerator({key: 'A'})).toBe('A')
   expect(shortcutAccelerator({key: '+'})).toBe('Plus')
@@ -31,6 +36,12 @@ test('Shortcuts Keys', async () => {
 })
 
 test('Shortcuts Modifiers', async () => {
+
+  expect(shortcutAccelerator({key: 'none', alt: true})).toBe(null)
+  expect(shortcutAccelerator({key: 'none', ctrl: true})).toBe(null)
+  expect(shortcutAccelerator({key: 'none', shift: true})).toBe(null)
+  expect(shortcutAccelerator({key: 'none', meta: true})).toBe(null)
+
   expect(shortcutAccelerator({key: 'A', alt: true})).toBe('Alt+A')
   expect(shortcutAccelerator({key: 'A', ctrl: true})).toBe('Control+A')
   expect(shortcutAccelerator({key: 'A', shift: true})).toBe('Shift+A')

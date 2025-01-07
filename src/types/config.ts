@@ -88,13 +88,13 @@ export type ChatListAppearance = {
 }
 
 export type ShortcutsConfig = {
-  chat: Shortcut
-  command: Shortcut
   prompt: Shortcut
-  readaloud: Shortcut
-  realtime: Shortcut
-  transcribe: Shortcut
+  chat: Shortcut
   scratchpad: Shortcut
+  command: Shortcut
+  readaloud: Shortcut
+  transcribe: Shortcut
+  voicemode: Shortcut
 }
 
 export type ScratchpadConfig = {

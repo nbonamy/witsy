@@ -85,6 +85,8 @@ export type Command = {
   model: string,
 }
 
+export const disabledShortcutKey: string = 'none'
+
 export type Shortcut = {
   alt?: boolean
   ctrl?: boolean

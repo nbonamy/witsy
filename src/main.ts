@@ -87,6 +87,7 @@ const registerShortcuts = () => {
     readaloud: ReadAloud.read,
     transcribe: Transcriber.initTranscription,
     scratchpad: window.openScratchPad,
+    voicemode: window.openRealtimeChatWindow,
   });
 }
 

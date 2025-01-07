@@ -1,8 +1,9 @@
 
-import { Shortcut } from 'types/index';
-import { ShortcutCallbacks } from 'types/automation';
+import { Shortcut, disabledShortcutKey } from '../types/index';
+import { ShortcutCallbacks } from '../types/automation';
 import { App, globalShortcut } from 'electron';
 import { loadSettings } from './config';
+
 
 export const unregisterShortcuts = () => {
   console.info('Unregistering shortcuts')
@@ -19,12 +20,13 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
 
   // now register
   console.info('Registering shortcuts')
-  registerShortcut(config.shortcuts.chat, callbacks.chat);
-  registerShortcut(config.shortcuts.command, callbacks.command);
   registerShortcut(config.shortcuts.prompt, callbacks.prompt);
+  registerShortcut(config.shortcuts.chat, callbacks.chat);
+  registerShortcut(config.shortcuts.scratchpad, callbacks.scratchpad);
+  registerShortcut(config.shortcuts.command, callbacks.command);
   registerShortcut(config.shortcuts.readaloud, callbacks.readaloud);
   registerShortcut(config.shortcuts.transcribe, callbacks.transcribe);
-  registerShortcut(config.shortcuts.scratchpad, callbacks.scratchpad);
+  registerShortcut(config.shortcuts.voicemode, callbacks.voicemode);
 
 }
 
@@ -43,10 +45,10 @@ const keyToAccelerator = (key: string): string => {
   return key
 }
 
-export const shortcutAccelerator = (shortcut: Shortcut): string => {
+export const shortcutAccelerator = (shortcut?: Shortcut|null): string => {
 
   // null check
-  if (shortcut == null) { 
+  if (!shortcut || shortcut.key === disabledShortcutKey) { 
     return null
   }
 
@@ -74,6 +76,9 @@ const registerShortcut = (shortcut: Shortcut, callback: () => void): void => {
   
   // build accelerator
   const accelerator = shortcutAccelerator(shortcut)
+  if (accelerator === null) {
+    return
+  }
 
   // debug
   console.debug('Registering shortcut', shortcut, accelerator)

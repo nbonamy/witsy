@@ -1,15 +1,15 @@
 
 <template>
   <div class="wrapper">
-    <input type="text" v-model="display" @focus="onFocus" @blur="onBlur" @keydown.prevent="onKeyDown" />
+    <input type="text" v-model="display" @keydown.prevent="onKeyDown" />
     <BIconXCircleFill class="icon" @click="onDelete" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { type ModelRef, computed } from 'vue'
-import { type Shortcut } from '../types/index'
+import { ModelRef, computed } from 'vue'
+import { Shortcut, disabledShortcutKey } from '../types/index'
 
 const value: ModelRef<Shortcut|undefined> = defineModel()
 
@@ -24,7 +24,7 @@ const modifiers: { [key: string]: string } = {
 
 const display = computed(() => {
   let display = ''
-  if (value.value != null) {
+  if (value.value != null && value.value.key !== disabledShortcutKey) {
     for (const modifier of Object.keys(modifiers)) {
       if (value.value[modifier]) {
         display = display + modifiers[modifier]
@@ -35,16 +35,8 @@ const display = computed(() => {
   return display
 })
 
-const onFocus = () => {
-  window.api.shortcuts.unregister()
-}
-
-const onBlur = () => {
-  window.api.shortcuts.register()
-}
-
 const onDelete = () => {
-  value.value = undefined
+  value.value = { key: disabledShortcutKey }
   emit('change')
 }
 
@@ -52,7 +44,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // delete
   if (event.key === 'Backspace' || event.key === 'Delete') {
-    value.value = undefined
+    value.value = { key: disabledShortcutKey }
     emit('change')
     return
   }
