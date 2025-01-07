@@ -19,11 +19,20 @@ jobs:
       - name: Install Dependencies
         run: npm i
       - name: Run tests
+        id: test
+        run: |
+          set -o pipefail
+          npm run test-ci 2>&1 | tee test-output.txt
+          echo $(tail -5 test-output.txt | head -1)
+          echo "SUMMARY=$(tail -5 test-output.txt | head -1)" > $GITHUB_OUTPUT
+      - name: Capture coverage
         id: coverage
         run: |
-          SUMMARY=$(npm run test-ci 2> /dev/null | tail -5 | head -1)
+          SUMMARY=${{ steps.test.outputs.SUMMARY }}
+          echo $SUMMARY
           TOKENS=($SUMMARY)
-          echo "COVERAGE=$(echo ${TOKENS[2]})" >> $$GITHUB_OUTPUT
+          echo ${TOKENS[2]}
+          echo "COVERAGE=$(echo ${TOKENS[2]})" > $GITHUB_OUTPUT
       - name: Create coverage badge
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
