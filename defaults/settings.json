@@ -256,7 +256,8 @@
     },
     "image": {
       "enabled": true,
-      "engine": "openai"
+      "engine": "openai",
+      "description": "Generate an image based on a prompt. Returns the url of the image starting with the \"file://\" scheme which is OK. Create only one image at a time unless explicitely asked to do otherwise. Always embed the image visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the image."
     },
     "memory": {
       "enabled": false,
@@ -264,7 +265,8 @@
     },
     "video": {
       "enabled": true,
-      "engine": "replicate"
+      "engine": "replicate",
+      "description": "Generate a video based on a prompt. Returns the url of the video starting with the \"file://\" scheme which is OK. Create only one video at a time unless explicitely asked to do otherwise. Always embed the video visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the video."
     },
     "vega": {
       "enabled": true
