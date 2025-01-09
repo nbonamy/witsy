@@ -36,7 +36,7 @@ const blocks = computed(() => {
   let lastIndex = 0
   const blocks: Block[] = []
   const regex1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
-  const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"/g
+  const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   for (const regex of [ regex1, regex2 ]) {
   
     while (match = regex.exec(props.message.content)) {

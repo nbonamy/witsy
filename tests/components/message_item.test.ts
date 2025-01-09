@@ -33,6 +33,7 @@ const userMessage: Message = new Message('user', 'Hello')
 const botMessageText: Message = new Message('assistant', 'Hi')
 botMessageText.usage = { prompt_tokens: 0, completion_tokens: 0 }
 const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
+const botMessageImage2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<img src="https://example.com/image.jpg" alt="description">' })
 const botMessageVideoMd: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![video](file:///data/video.mp4)' })
 const botMessageVideoHtml: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<video controls src="file:///data/video.mp4">' })
 const botMessageImageLegacy: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
@@ -130,8 +131,28 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
 })
 
-test('Assistant image message', async () => {
+test('Assistant image markdown message', async () => {
   const wrapper = await mount(botMessageImage)
+  expect(wrapper.find('.message').classes()).toContain('assistant')
+  expect(wrapper.find('.role').classes()).toContain('assistant')
+  expect(wrapper.find('.role').text()).toBe('Assistant')
+  expect(wrapper.find('.role .avatar').exists()).toBe(true)
+  expect(wrapper.find('.role .logo').exists()).toBe(true)
+  expect(wrapper.find('.body').text()).toBe('')
+  expect(wrapper.find('.body .image').exists()).toBe(true)
+  expect(wrapper.find('.body .download').exists()).toBe(true)
+  expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body img').attributes('src')).toBe('https://example.com/image.jpg')
+  expect(wrapper.find('.actions .copy').exists()).toBe(true)
+  expect(wrapper.find('.actions .read').exists()).toBe(true)
+  expect(wrapper.find('.actions .retry').exists()).toBe(true)
+  expect(wrapper.find('.actions .fork').exists()).toBe(true)
+  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .usage').exists()).toBe(false)
+})
+
+test('Assistant image html message', async () => {
+  const wrapper = await mount(botMessageImage2)
   expect(wrapper.find('.message').classes()).toContain('assistant')
   expect(wrapper.find('.role').classes()).toContain('assistant')
   expect(wrapper.find('.role').text()).toBe('Assistant')
