@@ -115,8 +115,6 @@ test('Image Plugin', async () => {
   }))
   expect(result1).toStrictEqual({
     url: 'file_url',
-    description: 'test prompt'
-    
   })
 
   // hugging face
@@ -129,7 +127,6 @@ test('Image Plugin', async () => {
   }))
   expect(result2).toStrictEqual({
     url: 'file_url',
-    description: 'test prompt'
   })
 
   // replicate
@@ -145,7 +142,6 @@ test('Image Plugin', async () => {
   }))
   expect(result3).toStrictEqual({
     url: 'file_url',
-    description: 'test prompt'
   })
 })
 
@@ -174,7 +170,6 @@ test('Video Plugin', async () => {
   }))
   expect(result3).toStrictEqual({
     url: 'file_url',
-    description: 'test prompt'
   })
 
 })

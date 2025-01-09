@@ -22,7 +22,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return 'Generate a video based on a prompt. Returns the url of the video and a description of the video. Create only one video at a time unless explicitely asked to do otherwise. Always embed the video visible in the final response. Do not just include a link to the video.'
+    return this.config.description
   }
 
   getPreparationDescription(): string {
@@ -75,7 +75,6 @@ export default class extends Plugin {
     // return an object
     return {
       url: fileUrl,
-      description: parameters?.prompt
     }
 
   }

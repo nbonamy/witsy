@@ -77,11 +77,7 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
     // nullify defaults
     nullifyDefaults(config)
     nullifyInstructions(config.instructions, defaultSettings.instructions)
-
-    // TODO: do that better
-    if (config.plugins.memory.description == '' || config.plugins.memory.description === defaultSettings.plugins.memory.description) {
-      delete config.plugins.memory.description
-    }
+    nullifyPluginDescriptions(config.plugins, defaultSettings.plugins)
 
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
@@ -117,3 +113,15 @@ export const nullifyInstructions = (settings: anyDict, defaults: anyDict) => {
     }
   }
 }
+
+export const nullifyPluginDescriptions = (settings: anyDict, defaults: anyDict) => {
+  for (const plugin of ['image', 'video', 'memory']) {
+    const standard = JSON.stringify(defaults[plugin as keyof typeof defaults])
+    const current = JSON.stringify(settings[plugin as keyof typeof settings])
+    if (current.description === '' || standard.description === current.description) {
+      delete settings[plugin].description
+    }
+  }
+}
+
+

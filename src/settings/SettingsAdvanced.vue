@@ -32,6 +32,8 @@
           <option value="instructions.docquery">Document query - Instructions</option>
           <option value="instructions.titling">Chat title - Instructions</option>
           <option value="instructions.titling_user">Chat title - Prompt</option>
+          <option value="plugins.image.description">Image Plugin - Description (1024 characters max)</option>
+          <option value="plugins.video.description">Video Plugin - Description (1024 characters max)</option>
           <option value="plugins.memory.description">Memory Plugin - Description (1024 characters max)</option>
           <option value="instructions.scratchpad.system">Scratchpad - Instructions</option>
           <option value="instructions.scratchpad.prompt">Scratchpad - Prompt</option>
