@@ -29,7 +29,9 @@ const mdOptions: MarkdownIt.Options = {
 const mdPreprocess = (markdown: string) => {
   // for katex processing, we need to replace \[ and \] with $$ to trigger processing
   // until https://github.com/iktakahiro/markdown-it-katex/pull/13 is merged
-  return markdown.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
+  let preprocessed = markdown.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
+  preprocessed = preprocessed.replaceAll('\\( ', '$').replaceAll(' \\)', '$')
+  return preprocessed
 }
 
 export const renderMarkdown = (markdown: string): string => {
