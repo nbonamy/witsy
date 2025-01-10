@@ -187,12 +187,11 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 };
 
 // https://ashleyhindle.com/thoughts/electron-returning-focus
-export const releaseFocus = async () => {
+export const releaseFocus = async ({ delay } = { delay: 500 }) => {
 
   if (process.platform === 'darwin') {
 
     Menu.sendActionToFirstResponder('hide:');
-    await wait(500);
 
   } else if (process.platform === 'win32') {
 
@@ -207,8 +206,13 @@ export const releaseFocus = async () => {
 
     dummyTransparentWindow.close();
 
-    await wait(500);
   }
+
+  // pause
+  if (delay > 0) {
+    await wait(delay);
+  }
+
 };
 
 let windowsToRestore: BrowserWindow[] = [];

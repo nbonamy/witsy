@@ -24,14 +24,36 @@ export default class Commander {
       return
     }
 
+    // get started
+    console.log('Commander init');
+    const start = new Date().getTime();
+    const automator = new Automator();
+
+    // perf log
+    console.log(`Init done [${new Date().getTime() - start}ms]`);
+
     // hide active windows
     await window.hideWindows();
-    await window.releaseFocus();
+    await window.releaseFocus({ delay: 100 });
 
-    // grab text
-    const automator = new Automator();
-    const text = await automator.getSelectedText();
-    const sourceApp = await automator.getForemostAppPath();
+    // perf log
+    console.log(`Windows hidden and focus released [${new Date().getTime() - start}ms]`);
+
+    // grab text repeatedly
+    let text = null;
+    const timeout = 1000;
+    const grabStart = new Date().getTime();
+    while (true) {
+      text = await automator.getSelectedText();
+      if (text != null && text.trim() !== '') {
+        break;
+      }
+      if (new Date().getTime() - grabStart > timeout) {
+        console.log(`Grab text timeout after ${timeout}ms`);
+        break;
+      }
+      await wait(100);
+    }
 
     // error
     if (text == null) {
@@ -63,11 +85,12 @@ export default class Commander {
     }
 
     // log
-    console.debug('Text grabbed:', `${text.slice(0, 50)}…`);
+    console.debug(`Text grabbed: ${text.slice(0, 50)}… [${new Date().getTime() - start}ms]`);
 
     // go on with a cached text id
     const textId = putCachedText(text);
-    await window.openCommandPicker({ textId, sourceApp });
+    const sourceApp = await automator.getForemostAppPath();
+    window.openCommandPicker({ textId, sourceApp });
 
   }
 
