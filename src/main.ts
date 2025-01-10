@@ -190,9 +190,10 @@ app.whenReady().then(() => {
   // create the memory manager
   memoryManager = new MemoryManager(app);
 
-  // we want prompt anywhere to be as fast as possible
+  // we want some windows to be as fast as possible
   if (!process.env.TEST) {
     window.preparePromptAnywhere();
+    window.prepareCommandPicker();
   }
 
 });
