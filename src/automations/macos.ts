@@ -4,7 +4,7 @@ import applescript from 'applescript';
 
 export default class implements Automator {
 
-  async getForemostAppId(): Promise<string> {
+  async getForemostAppId(): Promise<string|null> {
 
     const script = `
       tell application "System Events"
@@ -19,7 +19,7 @@ export default class implements Automator {
 
   }
 
-  async getForemostAppPath(): Promise<string> {
+  async getForemostAppPath(): Promise<string|null> {
 
     const script = `
       tell application "System Events"

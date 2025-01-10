@@ -23,12 +23,14 @@ export default class RobotAutomator implements Automator {
     }
   }
   
-  async getForemostAppId(): Promise<string> {
-    throw new Error('Method not implemented.');
+  async getForemostAppId(): Promise<string|null> {
+    console.warn('getForemostAppId not implemented (expected)');
+    return null;
   }
 
-  async getForemostAppPath(): Promise<string> {
-    throw new Error('Method not implemented.');
+  async getForemostAppPath(): Promise<string|null> {
+    console.warn('getForemostAppPath not implemented (expected)');
+    return null;
   }
 
   async selectAll() {

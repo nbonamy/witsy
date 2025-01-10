@@ -14,8 +14,8 @@ export interface ShortcutCallbacks {
 }
 
 export interface Automator {
-  getForemostAppId(): Promise<string>
-  getForemostAppPath(): Promise<string>
+  getForemostAppId(): Promise<string|null>
+  getForemostAppPath(): Promise<string|null>
   selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>
