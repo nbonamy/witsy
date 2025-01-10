@@ -1,6 +1,5 @@
 
 import { App } from 'electron'
-import { Configuration } from 'types/config'
 import { SourceType, DocumentBase, DocumentQueueItem, DocRepoQueryResponseItem } from 'types/rag'
 import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
@@ -14,7 +13,6 @@ import fs from 'fs'
 export default class DocumentRepository {
 
   app: App
-  config: Configuration
   activeDb: DocumentBaseImpl | null = null
   contents: DocumentBaseImpl[] = []
   queue: DocumentQueueItem[] = []
@@ -22,7 +20,6 @@ export default class DocumentRepository {
 
   constructor(app: App) {
     this.app = app
-    this.config = config.loadSettings(app)
     this.activeDb = null
     this.processing = false
     this.queue = []
@@ -101,12 +98,16 @@ export default class DocumentRepository {
     // clear
     this.contents = []
 
+    // init
+    const settings = config.loadSettings(this.app)
     const docrepoFile = docrepoFilePath(this.app)
+
+    // load the file
     try {
 
       const repoJson = fs.readFileSync(docrepoFile, 'utf-8')
       for (const jsonDb of JSON.parse(repoJson)) {
-        const base = new DocumentBaseImpl(this.app, this.config, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
+        const base = new DocumentBaseImpl(this.app, settings, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
         for (const jsonDoc of jsonDb.documents) {
           const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
           base.documents.push(doc)
@@ -151,7 +152,8 @@ export default class DocumentRepository {
   async create(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
     // now create the base
-    const base = new DocumentBaseImpl(this.app, this.config, uuidv4(), title, embeddingEngine, embeddingModel)
+    const settings = config.loadSettings(this.app)
+    const base = new DocumentBaseImpl(this.app, settings, uuidv4(), title, embeddingEngine, embeddingModel)
     await base.create()
     this.contents.push(base)
 

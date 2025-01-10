@@ -5,6 +5,7 @@ import DocumentSourceImpl from '../../src/rag/docsource'
 import DocumentBaseImpl from '../../src/rag/docbase'
 import { DocumentMetadata } from '../../src/types/rag'
 import embeddings from '../fixtures/embedder.json'
+import defaultSettings from '../../defaults/settings.json'
 import { LocalIndex } from 'vectra'
 import { app } from 'electron'
 import path from 'path'
@@ -13,14 +14,26 @@ import os from 'os'
 
 const EMPTY_PDF = '----------------Page (0) Break----------------'
 
+let ragConfig
+
 vi.mock('electron', async() => {
   return {
     BrowserWindow: {
       getAllWindows: vi.fn(() => []),
     },
     app: {
-      getPath: vi.fn(() => os.tmpdir())
+      getPath: vi.fn(() => os.tmpdir()),
     },
+  }
+})
+
+vi.mock('../../src/main/config', async() => {
+  return {
+    loadSettings: vi.fn(() => {
+      return {
+        rag: ragConfig
+      }
+    })
   }
 })
 
@@ -51,6 +64,7 @@ const createTempDir = () => {
 
 beforeEach(() => {
   cleanup()
+  ragConfig = JSON.parse(JSON.stringify(defaultSettings.rag))
 })
 
 afterEach(() => {
@@ -166,9 +180,9 @@ test('Docrepo invalid documents', async () => {
 
 test('Docrepo large document', async () => {
   
+  ragConfig.maxDocumentSizeMB = 0.0001
   const docrepo = new DocumentRepository(app)
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
-  docrepo.config.rag = { maxDocumentSizeMB: 0.0001 }
   await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
@@ -185,8 +199,9 @@ test('Docrepo large document', async () => {
 
 test('Docrepo update document', async () => {
   
+  ragConfig.chunkSize = 500
+  ragConfig.chunkOverlap = 50
   const docrepo = new DocumentRepository(app)
-  docrepo.config.rag = { chunkSize: 500, chunkOverlap: 50 }
   const docbase = await docrepo.create('name', 'openai', 'text-embedding-ada-002')
   const docid1 = await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'docrepo.json'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
@@ -330,7 +345,7 @@ test('Docrepo query score', async () => {
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // with zero relevance cut off to check sorting
-  docrepo.config.rag = { relevanceCutOff: 0.0 }
+  ragConfig.relevanceCutOff = 0.0
   const query1 = await docrepo.query(docbase, 'tell me about squash')
   expect(query1).toBeDefined()
   expect(query1.length).toBe(2)
@@ -339,7 +354,7 @@ test('Docrepo query score', async () => {
   expect(query1[0].score).toBeGreaterThan(query1[1].score)
 
   // with relevance cut off to check filtering
-  docrepo.config.rag = { relevanceCutOff: query1[1].score * 1.1 }
+  ragConfig.relevanceCutOff = query1[1].score * 1.1
   const query2 = await docrepo.query(docbase, 'tell me about squash')
   expect(query2.length).toBe(1)
   expect(query2[0].metadata.uuid).toBe(docid2)

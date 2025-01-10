@@ -1,5 +1,5 @@
 
-import { Configuration } from 'types/config'
+import { Configuration, CustomEngineConfig } from 'types/config'
 import { App } from 'electron'
 import defaults from '../../defaults/settings.json'
 import similarity from 'compute-cosine-similarity'
@@ -7,6 +7,7 @@ import similarity from 'compute-cosine-similarity'
 import { Ollama } from 'ollama/dist/browser.mjs'
 import OpenAI from 'openai'
 import { Embedding } from 'openai/resources'
+import LlmFactory from '../llms/llm'
 // import path from 'path'
 // import fs from 'fs'
 
@@ -45,6 +46,9 @@ export default class Embedder {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async init(app: App): Promise<void> {
     
+    // we need this
+    const llmFactory = new LlmFactory(this.config)
+    
     if (this.engine === 'openai') {
 
       this.openai = new OpenAI({
@@ -82,8 +86,22 @@ export default class Embedder {
     //   } else {
     //     throw new Error(`Unsupported FastEmbed model: ${this.model}`)
     //   }
+
+    } else if (llmFactory.isCustomEngine(this.engine)) {
+
+      const engineConfig = this.config.engines[this.engine] as CustomEngineConfig
+      if (engineConfig.api === 'openai') {
+        this.openai = new OpenAI({
+          apiKey: engineConfig.apiKey,
+          baseURL: engineConfig.baseURL,
+          dangerouslyAllowBrowser: true
+        })
+      }
     
-    } else {
+    }
+
+    // check
+    if (!this.openai && !this.ollama) {
       throw new Error(`Unsupported embedding engine: ${this.engine}`)
     }
   }
