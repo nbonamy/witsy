@@ -6,7 +6,6 @@ export * from './windows/main';
 export * from './windows/anywhere';
 export * from './windows/commands';
 export * from './windows/command';
-//export * from './windows/wait';
 export * from './windows/readaloud';
 export * from './windows/realtime';
 export * from './windows/transcribe';
