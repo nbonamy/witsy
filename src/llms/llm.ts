@@ -18,6 +18,16 @@ export default class LlmFactory {
     this.config = config
   }
 
+  getEngineName = (engine: string): string => {
+    if (!this.config.engines[engine]) {
+      return 'custom'
+    } else if (this.isCustomEngine(engine)) {
+      return (this.config.engines[engine] as CustomEngineConfig)?.label
+    } else {
+      return engine
+    }
+  }
+
   getChatEngines = (): string[] => {
     return [
       ...standardEngines,
