@@ -115,8 +115,7 @@ export default class MemoryManager {
   private async create() {
     const dbPath = this.databasePath()
     fs.mkdirSync(dbPath, { recursive: true })
-    const settings = await config.loadSettings(this.app)
-    await VectorDB.create(dbPath, await Embedder.dimensions(settings, settings.plugins.memory.engine, settings.plugins.memory.model))
+    await VectorDB.create(dbPath)
   }
 
   private async destroy() {

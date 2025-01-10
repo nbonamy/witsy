@@ -38,13 +38,6 @@ test('Model ready', async () => {
   expect(Embedder.isModelReady(app, 'ollama', 'all-minilm')).toBeTruthy()
 })
 
-test('Model dimensions', async () => {
-  expect(await Embedder.dimensions(defaultSettings, 'openai', 'text-embedding-ada-002')).toBe(1536)
-  expect(await Embedder.dimensions(defaultSettings, 'openai', 'text-embedding-3-small')).toBe(1536)
-  expect(await Embedder.dimensions(defaultSettings, 'openai', 'text-embedding-3-large')).toBe(3072)
-  expect(await Embedder.dimensions(defaultSettings, 'ollama', 'all-minilm')).toBe(384)
-})
-
 test('Create OpenAI', async () => {
   const embedder = await Embedder.init(app, defaultSettings, 'openai', 'text-embedding-ada-002')
   expect(embedder).toBeTruthy()

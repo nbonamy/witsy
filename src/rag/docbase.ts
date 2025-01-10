@@ -42,7 +42,7 @@ export default class DocumentBaseImpl {
   async create() {
     const dbPath = databasePath(this.app, this.uuid)
     fs.mkdirSync(dbPath, { recursive: true })
-    await VectorDB.create(dbPath, await Embedder.dimensions(this.config, this.embeddingEngine, this.embeddingModel))
+    await VectorDB.create(dbPath)
   }
 
   async connect(): Promise<void> {
