@@ -2,9 +2,7 @@
   <div class="group">
     <label>Embedding Provider</label>
     <select v-model="engine" @change="onChangeEngine" required :disabled="disabled">
-      <option value="openai">OpenAI</option>
-      <option value="ollama">Ollama</option>
-      <!--option value="fastembed">FastEmbed-js</option-->
+      <option v-for="e in engines" :key="e.id" :value="e.id">{{ e.name }}</option>
     </select>
   </div>
   <div class="group">
@@ -14,15 +12,16 @@
     </select>
     <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
   </div>
-  <div class="group" style="margin-top: -8px" v-if="engine === 'openai'">
+  <div class="group" style="margin-top: -8px" v-if="engine !== 'ollama'">
     <label></label>
-    <span>Make sure you enter your OpenAI API key in the Models pane of Witsy Settings.</span>
+    <span>Make sure you enter your API key in the Models pane of Witsy Settings.</span>
   </div>
   <OllamaModelPull v-if="engine === 'ollama'" :pullable-models="getEmbeddingModels" info-url="https://ollama.com/blog/embedding-models" info-text="Browse models" @done="onRefresh"/>
 </template>
 
 <script setup lang="ts">
 
+import { CustomEngineConfig } from '../types/config'
 import { Model } from 'multi-llm-ts'
 import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
@@ -44,6 +43,30 @@ defineProps({
 
 const emit = defineEmits(['update'])
 
+const llmFactory = new LlmFactory(store.config)
+
+const engines = computed(() => {
+
+  // standard
+  const engines = [
+    { id: 'openai', name: 'OpenAI' },
+    { id: 'ollama', name: 'Ollama' },
+    //{ id: 'fastembed', name: 'FastEmbed-js' },
+  ]
+
+  // add custom engines
+  for (const engine of llmFactory.getCustomEngines()) {
+    const engineConfig = store.config?.engines?.[engine] as CustomEngineConfig
+    if (engineConfig?.api === 'openai' && engineConfig?.models?.embedding?.length) {
+      engines.push({ id: engine, name: engineConfig.label })
+    }
+  }
+
+  // done
+  return engines
+
+})
+
 const models = computed(() => {
   if (engine.value === 'openai') {
     return [
@@ -60,6 +83,8 @@ const models = computed(() => {
   //     { id: 'bge-base-en-v1.5', name: 'bge-base-en-v1.5' },
   //     //{ id: 'multilingual-e5-large', name: 'multilingual-e5-large' },
   //   ]
+  } else if (llmFactory.isCustomEngine(engine.value)) {
+    return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
   } else {
     return []
   }
