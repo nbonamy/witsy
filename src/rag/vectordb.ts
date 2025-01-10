@@ -4,9 +4,9 @@ import { IndexItem, IndexStats, LocalIndex, MetadataTypes, QueryResult } from 'v
 
 export default class VectorDB {
 
-  static async create(path: string, dimensions: number): Promise<VectorDB> {
+  static async create(path: string): Promise<VectorDB> {
     const db = new VectorDB(path)
-    await db.create(dimensions)
+    await db.create()
     return db
   }
 
@@ -17,15 +17,13 @@ export default class VectorDB {
   }
 
   path: string
-  dimensions: number
   index: LocalIndex
   
   constructor(path: string) {
     this.path = path
   }
 
-  async create(dimensions: number): Promise<void> {
-    this.dimensions = dimensions
+  async create(): Promise<void> {
     this.index = new LocalIndex(this.path)
     await this.index.createIndex()
   }

@@ -88,47 +88,7 @@ export default class Embedder {
     }
   }
 
-  static async dimensions(config: Configuration, engine: string, model: string): Promise<number> {
-
-    // open ai
-    if (engine === 'openai') {
-      if (model === 'text-embedding-ada-002') return 1536
-      if (model === 'text-embedding-3-small') return 1536
-      if (model === 'text-embedding-3-large') return 3072
-    }
-
-    // ollama
-    if (engine === 'ollama') {
-      const ollama = new Ollama({ host: config.engines.ollama.baseURL, })
-      const info = await ollama.show({ model: model })
-      for (const item in info.model_info) {
-        if (item.includes('embedding_length')) {
-          // @ts-expect-error access through []
-          return info.model_info[item] as number
-        }
-      }
-    }
-
-    // // fast embed
-    // if (engine === 'fastembed') {
-    //   if (model === 'all-MiniLM-L6-v2') return 384
-    //   if (model === 'bge-base-en') return 768
-    //   if (model === 'bge-base-en-v1.5') return 768
-    //   if (model === 'bge-small-en') return 384
-    //   if (model === 'bge-small-en-v1.5') return 384
-    //   if (model === 'bge-small-zh-v1.5') return 512
-    //   if (model === 'multilingual-e5-large') return 1024
-    // }
-
-    // too bad
-    return 0
-
-  }
-
   async embed(texts: string[]): Promise<number[][]> {
-
-    // for testing purposes
-    //return Array(Embedder.dimensions(this.engine, this.model)).fill(0)
 
     // openai
     if (this.openai) {
