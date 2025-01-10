@@ -26,10 +26,11 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.loadURL = vi.fn()
   BrowserWindow.prototype.on = vi.fn()
   BrowserWindow.prototype.once = vi.fn()
-  BrowserWindow.prototype.setBounds = vi.fn()
-  BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.getPosition =  vi.fn(() => [0, 0])
   BrowserWindow.prototype.getSize = vi.fn(() => [0, 0])
+  BrowserWindow.prototype.setPosition = vi.fn()
+  BrowserWindow.prototype.setBounds = vi.fn()
+  BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow['getAllWindows'] = vi.fn(() => {
     const window1 = new BrowserWindow()
     const window2 = new BrowserWindow()
@@ -185,18 +186,8 @@ test('Create command picker window', async () => {
 test('Close command picker window', async () => {
   await window.openCommandPicker({ textId: 'id' })
   await window.closeCommandPicker()
-  expect(window.commandPicker).toBeNull()
-})
-
-test('Open command result window', async () => {
-  await window.openCommandResult({ textId: 'id' })
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
-    hash: '/command',
-    queryParams: { textId: 'id' }
-  }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=id#/command')
-  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
-  expectCreateWebPreferences(callParams)
+  expect(window.commandPicker).not.toBeNull()
+  expect(window.commandPicker.isVisible()).toBe(false)
 })
 
 test('Create prompt anywhere window', async () => {
@@ -230,6 +221,7 @@ test('Close prompt anywhere window', async () => {
   await window.openPromptAnywhere({})
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
+  expect(window.promptAnywhereWindow.isVisible()).toBe(false)
 })
 
 test('Open Readaloud window', async () => {
