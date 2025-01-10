@@ -52,8 +52,14 @@ onMounted(() => {
   initializeAudio()
   
   // grab colors
-  foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
-  foregroundColorActive.value = window.getComputedStyle(document.querySelector('.controls')).getPropertyValue('color')
+  try {
+    foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
+    foregroundColorActive.value = window.getComputedStyle(document.querySelector('.controls')).getPropertyValue('color')
+  } catch (error) {
+    if (!process.env.TEST) {
+      console.error('Error getting colors:', error)
+    }
+  }
 
   // other stuff
   isMas.value = window.api.isMasBuild
