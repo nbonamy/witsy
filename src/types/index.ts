@@ -223,8 +223,6 @@ declare global {
         save(commands: Command[]): void
         cancel(): void
         closePicker(): void
-        closeResult(): void
-        resizeResult(deltaX: number, deltaY: number): void
         run(params: RunCommandParams): void
         isPromptEditable(id: string): boolean
         import(): boolean

@@ -81,8 +81,6 @@ contextBridge.exposeInMainWorld(
       isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
       run: (params: RunCommandParams): void => { return ipcRenderer.send('command-run', JSON.stringify(params)) },
       closePicker: (): void => { return ipcRenderer.send('command-picker-close') },
-      closeResult: (): void => { return ipcRenderer.send('command-result-close') },
-      resizeResult: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('command-result-resize', { deltaX, deltaY }) },
     },
     anywhere: {
       prompt: () => { return ipcRenderer.send('anywhere-prompt') },

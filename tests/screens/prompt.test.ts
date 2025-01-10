@@ -83,22 +83,58 @@ test('Closes when click on container', async () => {
   expect(window.api.anywhere.close).toHaveBeenCalled()
 })
 
-test('Renders response', async () => {
+test('Renders prompt response', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.response').exists()).toBe(true)
   expect(wrapper.findComponent(MessageItem).exists()).toBe(true)
+  expect(wrapper.find('.response .copy').exists()).toBe(true)
+  expect(wrapper.find('.response .insert').exists()).toBe(true)
+  expect(wrapper.find('.response .replace').exists()).toBe(false)
+  expect(wrapper.find('.response .read').exists()).toBe(true)
+  expect(wrapper.find('.response .continue').exists()).toBe(true)
+  expect(wrapper.find('.response .scratchpad').exists()).toBe(true)
 })
 
 test('Submits prompt', async () => {
   const wrapper = await prompt()
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits prompt with params', async () => {
   const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[0])
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"prompt1\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Does not execute command response', async () => {
+  // will execute the prompt returned by window mock ("text")
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  wrapper.vm.onShow({ promptId: 'whatever', engine: 'mock', model: 'chat', execute: false, replace: true })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('text')
+  expect(wrapper.find('.response').exists()).toBe(false)
+})
+
+test('Executes command response', async () => {
+  // will execute the prompt returned by window mock ("text")
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  wrapper.vm.onShow({ promptId: 'whatever', engine: 'mock', model: 'chat', execute: true, replace: true })
+  await wrapper.vm.$nextTick()
+  await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
+  await wrapper.vm.$nextTick()
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
+  expect(wrapper.find('.response').exists()).toBe(true)
+  expect(wrapper.findComponent(MessageItem).exists()).toBe(true)
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.find('.response .copy').exists()).toBe(true)
+  expect(wrapper.find('.response .insert').exists()).toBe(true)
+  expect(wrapper.find('.response .replace').exists()).toBe(true)
+  expect(wrapper.find('.response .read').exists()).toBe(true)
+  expect(wrapper.find('.response .continue').exists()).toBe(true)
+  expect(wrapper.find('.response .scratchpad').exists()).toBe(true)
 })
 
 test('Copies response', async () => {

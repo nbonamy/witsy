@@ -29,7 +29,6 @@ vi.mock('../../src/main/window.ts', async () => {
   return {
     openPromptAnywhere: vi.fn(),
     closePromptAnywhere: vi.fn(),
-    closeCommandResult: vi.fn(),
     hideWindows: vi.fn(),
     restoreWindows: vi.fn(),
     releaseFocus: vi.fn(),

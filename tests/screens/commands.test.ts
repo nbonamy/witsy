@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import CommandPicker from '../../src/screens/CommandPicker.vue'
 
 enableAutoUnmount(afterAll)
@@ -32,6 +32,24 @@ test('Renders correctly', () => {
 //   await wrapper.trigger('keyup', { key: 'Escape' })
 //   expect(window.api.commands.closePicker).toHaveBeenCalled()
 // })
+
+test('Runs command on click', async () => {
+  const wrapper: VueWrapper<any> = mount(CommandPicker)
+  wrapper.vm.onShow({ textId: 6 })
+  const command = wrapper.findAll('.command').at(0)
+  await command!.trigger('click')
+  expect(window.api.commands.run).toHaveBeenCalledWith({
+    command: {
+      action: 'chat_window',
+      icon: '1',
+      id: 1,
+      shortcut: '1',
+      label: 'Command 1',
+      state: 'enabled',
+    },
+    textId: 6,
+  })
+})
 
 test('Runs command on click', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6 }}})
