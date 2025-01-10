@@ -24,7 +24,7 @@
           </div>
           <div class="group embeddings">
             <label>Embeddings</label>
-            <input type="text" :value="selectedRepo.embeddingEngine + ' / ' + selectedRepo.embeddingModel" disabled />
+            <input type="text" :value="embeddingModel" disabled />
             <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
           <div class="group documents">
@@ -61,8 +61,10 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
-import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from 'types/rag'
+import { ref, onMounted, computed } from 'vue'
+import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
+import { store } from '../services/store'
+import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import DialogHeader from '../components/DialogHeader.vue'
 import ContextMenu from '../components/ContextMenu.vue'
@@ -73,6 +75,8 @@ import Spinner from '../components/Spinner.vue'
 // bus
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
+
+const llmFactory = new LlmFactory(store.config)
 
 const docRepos = ref(null)
 const plusButton = ref(null)
@@ -105,6 +109,10 @@ const docLabel = (doc: DocumentSource) => {
     return doc.filename
   }
 }
+
+const embeddingModel = computed(() => {
+  return llmFactory.getEngineName(selectedRepo.value?.embeddingEngine) + ' / ' + selectedRepo.value?.embeddingModel
+})
 
 onMounted(async () => {
   window.api.on('docrepo-modified', loadDocRepos)

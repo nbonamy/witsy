@@ -51,16 +51,8 @@ const chatMenuPosition = computed(() => {
 })
 
 const chatMenuActions = computed(() => {
-
-  let engine = props.chat.engine
-  if (!store.config.engines[engine]) {
-    engine = 'custom'
-  } else if (llmFactory.isCustomEngine(engine)) {
-    engine = (store.config.engines[engine] as CustomEngineConfig)?.label
-  }
-
   return [
-    engine ? { label: `${engine} ${props.chat.model}`, disabled: true } : null,
+    props.chat.engine ? { label: `${llmFactory.getEngineName(props.chat.engine)} ${props.chat.model}`, disabled: true } : null,
     { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
     props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
     { label: 'Rename Chat', action: 'rename', disabled: false },
