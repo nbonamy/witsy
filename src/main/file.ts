@@ -9,8 +9,7 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
- 
-export const getFileContents = (app: App, filepath: string): FileContents => {
+ export const getFileContents = (app: App, filepath: string): FileContents => {
 
   try {
     const fileContents = fs.readFileSync(filepath);
@@ -30,7 +29,6 @@ export const getFileContents = (app: App, filepath: string): FileContents => {
 
 }
 
- 
 export const getIconContents = (app: App, filepath: string): FileContents => {
 
   try {
@@ -56,8 +54,7 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
 
 }
 
- 
-export const deleteFile = (app: App, filepath: string) => {
+ export const deleteFile = (app: App, filepath: string) => {
 
   try {
     let path = filepath;
