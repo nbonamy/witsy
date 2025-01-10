@@ -2,7 +2,7 @@
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
 import { Command, Expert } from '../../src/types/index'
-import { DocumentBase } from '../../src/types/rag'
+import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
 
 const listeners: ((signal: string) => void)[] = []
@@ -54,7 +54,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         const config = JSON.parse(JSON.stringify(defaultSettings))
         if (opts.customEngine) {
           config.engines.custom = { 
-            label: 'custom',
+            label: 'custom_engine',
             api: 'openai',
             apiKey: '456',
             baseURL: 'http://localhost/api/v1',
@@ -164,12 +164,14 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           content: 'content',
           score: 1,
           metadata: {
-            uuid: 1,
-            type: 'type',
+            uuid: '1',
+            type: 'file',
             title: 'title',
-            url: 'url'
+            url: 'url',
+            origin: 'origin',
+            filename: 'filename',
           }
-        }
+        } as DocRepoQueryResponseItem
       ])
     },
     scratchpad: {
