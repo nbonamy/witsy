@@ -33,6 +33,12 @@ test('Get Engines', () => {
   expect(llmFactory.getCustomEngines()).toStrictEqual(['custom'])
 })
 
+test('Get Engine name', () => {
+  expect(llmFactory.getEngineName('openai')).toBe('openai')
+  expect(llmFactory.getEngineName('custom')).toBe('custom_engine')
+  expect(llmFactory.getEngineName('unknown')).toBe('custom')
+})
+
 test('Default Configuration', () => {
   expect(llmFactory.isEngineReady('openai')).toBe(true)
   expect(llmFactory.isEngineReady('ollama')).toBe(false)
