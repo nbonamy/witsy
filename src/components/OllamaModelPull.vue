@@ -22,7 +22,10 @@ import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
 import type { ProgressInfo } from '../voice/stt.ts'
-import type { ProgressResponse } from 'ollama'
+import type { ProgressResponse } from 'ollama/dist/browser.cjs'
+
+ // until https://github.com/ollama/ollama-js/issues/187
+import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.6319775f.d.cts'
 
 type Model = {
   id: string,
@@ -43,7 +46,7 @@ const emit = defineEmits(['done'])
 const pull_model: Ref<string|null> = ref(null)
 const pull_model_select: Ref<string> = ref('')
 const pull_progress: Ref<string|null> = ref(null)
-const pullStream: Ref<AsyncGenerator<ProgressResponse>|null> = ref(null)
+const pullStream: Ref<AbortableAsyncIterator<ProgressResponse>|null> = ref(null)
 
 let ollama = new Ollama(store.config.engines.ollama)
 
