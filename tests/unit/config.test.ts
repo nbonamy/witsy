@@ -75,3 +75,37 @@ test('Nullify instructions', () => {
   expect(input).toStrictEqual({key2: 'value3', dict1: {key2: 'value4'}})
 
 })
+
+test('Nullify descriptions', () => {
+
+  const defaults = {
+    image: {
+      description: 'image',
+    },
+    video: {
+      description: 'video',
+    },
+    memory: {
+      apiKey: '123',
+      description: 'memory',
+    }
+  }
+
+  let input = JSON.parse(JSON.stringify(defaults))
+  let reference = JSON.parse(JSON.stringify(defaults))
+  config.nullifyPluginDescriptions(input, reference)
+  expect(input).toStrictEqual({ image: {}, video: {}, memory: { apiKey: '123' } })
+
+  input = JSON.parse(JSON.stringify(defaults))
+  reference = JSON.parse(JSON.stringify(defaults))
+  input.image.description = 'custom'
+  config.nullifyPluginDescriptions(input, reference)
+  expect(input).toStrictEqual({image: { description: 'custom' }, video: {}, memory: { apiKey: '123' }})
+
+  input = JSON.parse(JSON.stringify(defaults))
+  reference = JSON.parse(JSON.stringify(defaults))
+  input.memory.description = 'custom'
+  config.nullifyPluginDescriptions(input, reference)
+  expect(input).toStrictEqual({image: { }, video: {}, memory: { apiKey: '123', description: 'custom' }})
+
+})
