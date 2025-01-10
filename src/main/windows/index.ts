@@ -3,6 +3,7 @@ import { strDict } from 'types/index';
 import { CreateWindowOpts } from 'types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
+import { commandPicker } from './commands';
 import { mainWindow } from './main';
 import * as config from '../config';
 import { wait } from '../utils';
@@ -266,8 +267,9 @@ export const restoreWindows = () => {
 };
 
 export const areAllWindowsClosed = () => {
-  const windows = BrowserWindow.getAllWindows();
-  return windows.length === 0 || (windows.length === 1 && windows[0] === promptAnywhereWindow);
+  let windows = BrowserWindow.getAllWindows();
+  windows = windows.filter(window => window !== promptAnywhereWindow && window !== commandPicker);
+  return windows.length === 0;
 };
 
 export const notifyBrowserWindows = (event: string, ...args: any[]) => {

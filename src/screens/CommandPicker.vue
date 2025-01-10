@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 
-import { Command, ExternalApp } from 'types'
+import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import {
@@ -30,6 +30,7 @@ import {
 store.loadSettings()
 store.loadCommands()
 
+let showParams: anyDict = {}
 const props = defineProps({
   extra: Object
 })
@@ -43,17 +44,33 @@ const iconData = computed(() => {
 })
 
 onMounted(() => {
+
+  // shortcuts work better at document level
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
-  if (props.extra?.sourceApp) {
-    sourceApp.value = window.api.file.getAppInfo(props.extra.sourceApp)
+
+  // events
+  window.api.on('show', onShow)
+
+  // query params
+  if (props.extra) {
+    onShow(props.extra)
   }
+
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
+  window.api.off('show', onShow)
 })
+
+const onShow = (params?: anyDict) => {
+  //console.log('CommandPicker.onShow', JSON.stringify(params))
+  store.loadCommands()
+  showParams = params
+  sourceApp.value = showParams?.sourceApp ? window.api.file.getAppInfo(showParams.sourceApp) : null
+}
 
 const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
 
@@ -87,8 +104,8 @@ const onKeyUp = (event: KeyboardEvent) => {
 
 const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   window.api.commands.run({
-    textId: props.extra.textId,
-    sourceApp: props.extra.sourceApp,
+    textId: showParams.textId,
+    sourceApp: showParams.sourceApp,
     command: JSON.parse(JSON.stringify(command))
   })
 }
