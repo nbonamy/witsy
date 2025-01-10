@@ -15,6 +15,8 @@ vi.mock('electron', () => ({
 
 vi.mock(`../../src/automations/${process.platform === 'darwin' ? 'macos' : 'robot'}.ts`, async () => {
   const MockAutomator = vi.fn()
+  MockAutomator.prototype.getForemostAppId = vi.fn()
+  MockAutomator.prototype.getForemostAppPath = vi.fn()
   MockAutomator.prototype.selectAll = vi.fn()
   MockAutomator.prototype.moveCaretBelow = vi.fn()
   MockAutomator.prototype.copySelectedText = vi.fn()
@@ -44,6 +46,14 @@ const prototype = process.platform === 'darwin' ? MacosAutomator.prototype : Rob
 test('Create', async () => {
   const automator = new Automator()
   expect(automator).toBeTruthy()
+})
+
+test('Foremost app', async () => {
+  const automator = new Automator()
+  await automator.getForemostAppId()
+  expect(prototype.getForemostAppId).toHaveBeenCalled()
+  await automator.getForemostAppPath()
+  expect(prototype.getForemostAppPath).toHaveBeenCalled()
 })
 
 test('Select all', async () => {

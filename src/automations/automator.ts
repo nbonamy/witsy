@@ -26,7 +26,7 @@ export default class Automator {
     }
   }
 
-  async getForemostAppId(): Promise<string> {
+  async getForemostAppId(): Promise<string|null> {
     try {
       return await this.automator.getForemostAppId();
     } catch (error) {
@@ -35,7 +35,7 @@ export default class Automator {
     }
   }
 
-  async getForemostAppPath(): Promise<string> {
+  async getForemostAppPath(): Promise<string|null> {
     try {
       return await this.automator.getForemostAppPath();
     } catch (error) {
