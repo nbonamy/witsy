@@ -116,8 +116,8 @@ export const nullifyInstructions = (settings: anyDict, defaults: anyDict) => {
 
 export const nullifyPluginDescriptions = (settings: anyDict, defaults: anyDict) => {
   for (const plugin of ['image', 'video', 'memory']) {
-    const standard = JSON.stringify(defaults[plugin as keyof typeof defaults])
-    const current = JSON.stringify(settings[plugin as keyof typeof settings])
+    const standard = defaults[plugin as keyof typeof defaults]
+    const current = settings[plugin as keyof typeof settings]
     if (current.description === '' || standard.description === current.description) {
       delete settings[plugin].description
     }
