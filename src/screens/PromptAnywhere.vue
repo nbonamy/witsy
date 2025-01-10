@@ -18,7 +18,7 @@
       </ResizableHorizontal>
       <div class="spacer" />
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
-        <OutputPanel ref="output" :message="response" @close="onClose" @clear="onClear" @chat="onChat"/>
+        <OutputPanel ref="output" :message="response" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat"/>
       </ResizableHorizontal>
     </div>
   </div>
@@ -57,6 +57,7 @@ const sourceApp: Ref<ExternalApp|null> = ref(null)
 const output = ref(null)
 const chat: Ref<Chat> = ref(null)
 const response: Ref<Message> = ref(null)
+const showReplace = ref(false)
 
 const props = defineProps({
   extra: Object
@@ -80,14 +81,14 @@ const iconData = computed(() => {
 
 onMounted(() => {
   
+  // shortcuts work better at document level
+  document.addEventListener('keyup', onKeyUp)
+  document.addEventListener('keydown', onKeyDown)  
+
   // events
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopGeneration)
   window.api.on('show', onShow)
-
-  // shotcuts work better at document level
-  document.addEventListener('keyup', onKeyUp)
-  document.addEventListener('keydown', onKeyDown)  
 
   // query params
   if (props.extra) {
@@ -118,6 +119,9 @@ const processQueryParams = (params?: anyDict) => {
   let userEngine = null
   let userModel = null
   let userExpert = null
+
+  // replace is easy
+  showReplace.value = params?.replace || false
 
   // auto-select prompt
   if (params?.promptId) {
@@ -177,6 +181,12 @@ const processQueryParams = (params?: anyDict) => {
 
   // init llm
   initLlm(userEngine, userModel)
+
+  // execute
+  if (params?.execute) {
+    onSendPrompt({ prompt: userPrompt, expert: userExpert, attachment: null, docrepo: null })
+    return
+  }
 
   // focus prompt
   if (prompt.value) {
@@ -325,6 +335,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // deconstruct params
     const { prompt, attachment, docrepo, expert } = params
+    console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
     if (chat.value === null) {

@@ -320,16 +320,6 @@ ipcMain.on('command-picker-close', async () => {
   await window.releaseFocus();
 });
 
-ipcMain.on('command-result-resize', async (_, payload) => {
-  await window.resizeCommandResult(payload.deltaX, payload.deltaY);
-})
-
-ipcMain.on('command-result-close', async () => {
-  await window.closeCommandResult();
-  await window.restoreWindows();
-  await window.releaseFocus();
-});
-
 ipcMain.on('command-is-prompt-editable', (event, payload) => {
   event.returnValue = !notEditablePrompts.includes(payload);
 });

@@ -2,7 +2,7 @@
 import { Configuration } from '../types/config'
 import { RunCommandParams } from '../types/automation'
 import { App, Notification } from 'electron'
-import { getCachedText, putCachedText } from '../main/utils'
+import { getCachedText, putCachedText, wait } from '../main/utils'
 import { loadSettings } from '../main/config'
 import LlmFactory from '../llms/llm'
 import Automator from './automator'
@@ -124,37 +124,20 @@ export default class Commander {
 
       // build prompt
       const prompt = template.replace('{input}', text);
-      const promptId = putCachedText(prompt);
 
-      // ask me anything is special
-      if (command.id == askMeAnythingId) {
-
-        // build the params
-        const params = {
-          promptId: putCachedText(prompt),
-          sourceApp: sourceApp,
-          engine: engine || command.engine,
-          model: model || command.model
-        };          
-          
-        // and open the window
-        window.openPromptAnywhere(params);
-        return true;
-
-      } else {
-
-        // build the params
-        const params = {
-          promptId: promptId,
-          engine,
-          model
-        };
-
-        // and open the window
-        window.openCommandResult(params);
-        return true;
-
-      }
+      // build the params
+      const params = {
+        promptId: putCachedText(prompt),
+        sourceApp: sourceApp,
+        engine: engine || command.engine,
+        model: model || command.model,
+        execute: command.id != askMeAnythingId,
+        replace: true,
+      };
+      
+      // and open the window
+      window.openPromptAnywhere(params);
+      return true;
 
     } catch (error) {
       console.error('Error while executing command', error);

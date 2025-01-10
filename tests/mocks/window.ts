@@ -89,8 +89,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       save: vi.fn(),
       cancel: vi.fn(),
       closePicker: vi.fn(),
-      closeResult: vi.fn(),
-      resizeResult: vi.fn(),
       run: vi.fn(),
       isPromptEditable: vi.fn(() => true),
       import: vi.fn(),

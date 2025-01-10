@@ -8,9 +8,7 @@ import { strDict } from 'types'
 import { ref, computed, onMounted } from 'vue'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
-import Wait from './screens/Wait.vue'
 import CommandPicker from './screens/CommandPicker.vue'
-import CommandResult from './screens/CommandResult.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
 import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
@@ -28,9 +26,7 @@ const appearanceTheme = useAppearanceTheme()
 const routes: { [key: string]: any } = {
   '/': Main,
   '/chat': Main,
-  '/wait': Wait,
   '/commands': CommandPicker,
-  '/command': CommandResult,
   '/prompt': PromptAnywhere,
   '/readaloud': ReadAloud,
   '/realtime': RealtimeChat,

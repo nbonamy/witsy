@@ -1,5 +1,5 @@
 
-import { strDict } from 'types/index';
+import { anyDict } from 'types/index';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen } from './index';
 
@@ -8,7 +8,7 @@ export let promptAnywhereWindow: BrowserWindow = null;
 const kWidthMinimum = 750;
 const kWidthRatio = 2.25;
 
-export const preparePromptAnywhere = (queryParams?: strDict): BrowserWindow => {
+export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
 
   // get bounds
   const width = Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio));
@@ -45,7 +45,7 @@ export const preparePromptAnywhere = (queryParams?: strDict): BrowserWindow => {
   
 }
 
-export const openPromptAnywhere = (params: strDict): BrowserWindow => {
+export const openPromptAnywhere = (params: anyDict): BrowserWindow => {
 
   // if we don't have a window, create one
   if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {

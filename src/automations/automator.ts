@@ -118,7 +118,6 @@ export default class Automator {
 
       // done
       await window.closePromptAnywhere();
-      await window.closeCommandResult();
       await window.releaseFocus();
 
       // now paste
