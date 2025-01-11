@@ -13,7 +13,7 @@ export default class extends Plugin {
 
   isEnabled(): boolean {
     return this.config?.enabled && (
-      (this.config.engine == 'replicate' && store.config?.engines.replicate.apiKey != null)
+      (this.config.engine == 'replicate' && store.config?.engines.replicate.apiKey?.trim().length > 0)
     )
   }
 

@@ -16,9 +16,9 @@ export default class extends Plugin {
 
   isEnabled(): boolean {
     return this.config?.enabled && (
-      (this.config.engine == 'openai' && store.config?.engines.openai.apiKey != null) ||
-      (this.config.engine == 'huggingface' && store.config?.engines.huggingface.apiKey != null) ||
-      (this.config.engine == 'replicate' && store.config?.engines.replicate.apiKey != null)
+      (this.config.engine == 'openai' && store.config?.engines.openai.apiKey?.trim().length > 0) ||
+      (this.config.engine == 'huggingface' && store.config?.engines.huggingface.apiKey?.trim().length > 0) ||
+      (this.config.engine == 'replicate' && store.config?.engines.replicate.apiKey?.trim().length > 0)
     )
   }
 

@@ -11,7 +11,7 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return this.config?.enabled && this.config?.apiKey != null
+    return this.config?.enabled && this.config?.apiKey?.trim().length > 0
   }
 
   getName(): string {
