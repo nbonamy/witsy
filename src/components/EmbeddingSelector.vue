@@ -68,26 +68,7 @@ const engines = computed(() => {
 })
 
 const models = computed(() => {
-  if (engine.value === 'openai') {
-    return [
-      { id: 'text-embedding-ada-002', name: 'text-embedding-ada-002' },
-      { id: 'text-embedding-3-small', name: 'text-embedding-3-small' },
-      { id: 'text-embedding-3-large', name: 'text-embedding-3-large' },
-    ]
-  } else if (engine.value === 'ollama') {
-    return store.config?.engines?.ollama?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
-  // } else if (engine.value === 'fastembed') {
-  //   return [
-  //     { id: 'all-MiniLM-L6-v2', name: 'all-MiniLM-L6-v2' },
-  //     { id: 'bge-small-en-v1.5', name: 'bge-small-en-v1.5' },
-  //     { id: 'bge-base-en-v1.5', name: 'bge-base-en-v1.5' },
-  //     //{ id: 'multilingual-e5-large', name: 'multilingual-e5-large' },
-  //   ]
-  } else if (llmFactory.isCustomEngine(engine.value)) {
-    return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
-  } else {
-    return []
-  }
+  return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
 })
 
 const canRefresh = computed(() => engine.value === 'ollama')
