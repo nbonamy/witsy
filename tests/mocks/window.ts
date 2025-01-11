@@ -119,7 +119,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     file: {
       read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
       readIcon: vi.fn(),
-      save: vi.fn(() => 'file_url'),
+      save: vi.fn(() => 'file://file_saved'),
       download: vi.fn(),
       pick: vi.fn((opts) => {
         if (opts?.location) {

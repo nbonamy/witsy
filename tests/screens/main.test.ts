@@ -80,7 +80,7 @@ test('Saves text attachment', async () => {
   const attachment = new Attachment('text', 'text/plain', 'file://text', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
-  expect(attachment.url).toBe('file_url')
+  expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
@@ -89,7 +89,7 @@ test('Saves pdf attachment', async () => {
   const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
-  expect(attachment.url).toBe('file_url')
+  expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
@@ -98,7 +98,7 @@ test('Saves image attachment', async () => {
   const attachment = new Attachment('image', 'image/png', 'file://image', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'image', properties: expect.any(Object) })
-  expect(attachment.url).toBe('file_url')
+  expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
