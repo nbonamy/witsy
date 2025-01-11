@@ -99,6 +99,7 @@
     "groq-sdk": "^0.9.1",
     "highlight.js": "^11.11.0",
     "html-to-text": "^9.0.5",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "github:ssamilg/html2pdf.js#fix/update-html2canvas",
     "icns-lib": "^1.0.1",
     "katex": "^0.16.15",

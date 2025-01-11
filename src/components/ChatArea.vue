@@ -18,8 +18,7 @@
 
 <script setup lang="ts">
 
-import { CustomEngineConfig } from '../types/config'
-import { ref, computed, onMounted, type Ref } from 'vue'
+import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
@@ -27,6 +26,7 @@ import EmptyChat from './EmptyChat.vue'
 import Prompt from './Prompt.vue'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
+import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
 
 import useEventBus from '../composables/event_bus'
@@ -108,6 +108,25 @@ const onSave = () => {
 }
 
 const onExportPdf = async () => {
+
+  // first take a screenshot so that theme flickering is invisible to user
+  const canvas = await html2canvas(document.documentElement)
+
+  // add to body
+  var t = canvas.toDataURL()
+  const image = document.createElement('img')
+  image.style.position = 'absolute'
+  image.style.top = '0'
+  image.style.left = '0'
+  image.style.width = '100%'
+  image.style.zIndex = '10000'
+  image.src = t
+  document.body.appendChild(image)
+
+  // switch to light for export
+  const theme = store.config.appearance.theme
+  window.api.setAppearanceTheme('light')
+
   // copy and clean-up
   const content: HTMLElement = document.querySelector<HTMLElement>('.content')!.cloneNode(true) as HTMLElement
   content.querySelector('.toolbar .menu')?.remove()
@@ -124,16 +143,6 @@ const onExportPdf = async () => {
   //content.querySelector<HTMLElement>('.toolbar')!.style.marginTop = '-12px'
   content.querySelector<HTMLElement>('.toolbar')!.style.marginLeft = '12px'
   content.querySelector<HTMLElement>('.toolbar')!.style.marginRight = '12px'
-
-  // render svg logos as png (for some of them)
-  // this is not nice but it works for now
-  content.querySelectorAll('.message .logo').forEach(async (logo) => {
-    let src = logo.getAttribute('src') || ''
-    src = src.replace('openai.svg', 'openai.png')
-    src = src.replace('ollama.svg', 'ollama.png')
-    src = src.replace('groq.svg', 'groq.png')
-    logo.setAttribute('src', src)
-  })
 
   // replace images with their b64 version
   content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
@@ -156,7 +165,15 @@ const onExportPdf = async () => {
     pagebreak: { mode: 'avoid-all' },
     jsPDF: { compress: true, putOnlyUsedFonts: true }
   }
-  html2pdf().from(content).set(opt).save()
+  await html2pdf().from(content).set(opt).save()
+
+  // restore theme
+  window.api.setAppearanceTheme(theme)
+
+  // remove image
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  document.body.removeChild(image)
+
 }
 </script>
 
