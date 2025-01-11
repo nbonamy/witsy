@@ -155,6 +155,19 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       role: 'help',
       submenu: [
         {
+          label: 'Go to Data Folder',
+          click: async () => {
+            await shell.openPath(app.getPath('userData'))
+          }
+        },
+        {
+          label: 'Go to Log Folder',
+          click: async () => {
+            await shell.openPath(app.getPath('logs'))
+          }
+        },
+        { type: 'separator' },
+        {
           label: 'Learn More',
           click: async () => {
             await shell.openExternal('https://github.com/nbonamy/witsy')
