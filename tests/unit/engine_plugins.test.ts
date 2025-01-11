@@ -15,10 +15,6 @@ import { HfInference } from '@huggingface/inference'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
-vi.mock('../services/download', () => ({
-  saveFileContents: vi.fn(() => 'file_url')
-}))
-
 vi.mock('../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
   Tavily.prototype.search = vi.fn(() => ({ results: [ 'page1' ] }))
@@ -114,7 +110,7 @@ test('Image Plugin', async () => {
     response_format: 'b64_json',
   }))
   expect(result1).toStrictEqual({
-    url: 'file_url',
+    url: 'file://file_saved',
   })
 
   // hugging face
@@ -126,7 +122,7 @@ test('Image Plugin', async () => {
     inputs: 'test prompt',
   }))
   expect(result2).toStrictEqual({
-    url: 'file_url',
+    url: 'file://file_saved',
   })
 
   // replicate
@@ -141,7 +137,7 @@ test('Image Plugin', async () => {
     }
   }))
   expect(result3).toStrictEqual({
-    url: 'file_url',
+    url: 'file://file_saved',
   })
 })
 
@@ -169,7 +165,7 @@ test('Video Plugin', async () => {
     }
   }))
   expect(result3).toStrictEqual({
-    url: 'file_url',
+    url: 'file://file_saved',
   })
 
 })
