@@ -292,6 +292,7 @@ const onClear = () => {
 
   // reset all messages
   initChat()
+  initLlm()
 
   // reset response
   output.value?.cleanUp()
