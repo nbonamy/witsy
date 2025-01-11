@@ -266,9 +266,14 @@ export const restoreWindows = () => {
 
 };
 
+export const persistentWindows = (): BrowserWindow[] => {
+  return [ promptAnywhereWindow, commandPicker ]
+}
+
 export const areAllWindowsClosed = () => {
   let windows = BrowserWindow.getAllWindows();
-  windows = windows.filter(window => window !== promptAnywhereWindow && window !== commandPicker);
+  const permanentWindows = persistentWindows();
+  windows = windows.filter(window => !permanentWindows.includes(window));
   return windows.length === 0;
 };
 
