@@ -1,7 +1,7 @@
 
 import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineCreateOpts } from 'multi-llm-ts'
 import Message from '../../src/models/message'
-import RandomChunkStream from './stream'
+import { RandomChunkStream, InfiniteStream } from './streams'
 
 class LlmError extends Error {
 
@@ -64,6 +64,11 @@ export default class LlmMock extends LlmEngine {
       throw new LlmError('QuotaExceededError', 429, 'You have exceeded your quota')
     }
 
+    // infinite
+    if (thread[thread.length-1].content.includes('infinite')) {
+      return new InfiniteStream()
+    }
+
     // now stream
     return new RandomChunkStream(JSON.stringify([
       ...thread.map(m => {
@@ -76,8 +81,7 @@ export default class LlmMock extends LlmEngine {
     ]))
   }
 
-  async stop(stream: RandomChunkStream) {
-    stream.destroy()
+  async stop() {
   }
 
   async *nativeChunkToLlmChunk(chunk: any): AsyncGenerator<LlmChunk, void, void> {

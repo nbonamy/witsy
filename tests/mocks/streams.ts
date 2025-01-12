@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
 
-export default class extends Readable {
+export class RandomChunkStream extends Readable {
 
   remainingString: string
 
@@ -19,6 +19,17 @@ export default class extends Readable {
       this.remainingString = this.remainingString.substring(chunkSize)
       this.push(chunk)
     }
+  }
+
+  [Symbol.iterator]() {
+    return this
+  }
+}
+
+export class InfiniteStream extends Readable {
+
+  async _read() {
+    setTimeout(() => this.push('infinite'), 100)
   }
 
   [Symbol.iterator]() {

@@ -34,7 +34,7 @@ const spy = vi.spyOn(LlmMock.prototype, 'stream')
 
 let assistant: Assistant|null = null
 
-const prompt = async (prompt: string, opts: AssistantCompletionOpts = {}): Promise<string> => {
+const prompt = async (prompt: string, opts: AssistantCompletionOpts = { model: 'chat' }): Promise<string> => {
 
   // callback
   let content = ''
@@ -84,7 +84,7 @@ test('Assistant Creation', () => {
 
 test('Assistant parameters', async () => {
   await prompt('Hello LLM')
-  const params: AssistantCompletionOpts = spy.mock.calls[0][2]
+  const params: AssistantCompletionOpts = spy.mock.calls[0][2] as AssistantCompletionOpts
   expect(params).toStrictEqual({
     save: false,
     titling: true,
@@ -121,7 +121,7 @@ test('Assistant Attachment', async () => {
 })
 
 test('Asistant DocRepo', async () => {
-  const content = await prompt('Hello LLM', { docrepo: 'docrepo' })
+  const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenCalledWith('docrepo', 'Hello LLM')
   expect(content).toBe('[{"role":"system","content":"You are a chat assistant"},{"role":"user","content":"content / Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
   expect(assistant!.chat.lastMessage().type).toBe('text')
@@ -172,4 +172,14 @@ test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
   expect(content).toBe('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+})
+
+test('Stop generation', async () => {
+  const start = Date.now()
+  await assistant!.prompt('infinite', { model: 'chat', save: false }, () => {
+    if (Date.now() > start + 50) {
+      assistant!.stop()
+    }
+  })
+  expect(assistant!.chat.lastMessage().transient).toBe(false)
 })
