@@ -11,7 +11,7 @@
           </template>
           <template v-slot:actions>
             <div class="info" v-if="chat">
-              <BIconGlobe /> {{ chat.engine }} / {{ chat.model }}
+              <BIconGlobe /> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}
             </div>
           </template>
         </Prompt>
@@ -336,7 +336,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // deconstruct params
     const { prompt, attachment, docrepo, expert } = params
-    console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
+    //console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
     if (chat.value === null) {
