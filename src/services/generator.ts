@@ -61,6 +61,7 @@ export default class Generator {
       })
       for await (const msg of this.stream) {
         if (this.stopGeneration) {
+          response.appendText({ type: 'content', text: '', done: true })
           break
         }
         if (msg.type === 'usage') {
@@ -142,8 +143,10 @@ export default class Generator {
 
   async stop() {
     if (this.stream) {
-      await this.llm?.stop(this.stream)
       this.stopGeneration = true
+      try {
+        await this.llm?.stop(this.stream)
+      } catch { /* empty */ }
     }
   }
 
