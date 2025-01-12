@@ -5,13 +5,10 @@ import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrent
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-const kWidthMinimum = 750;
-const kWidthRatio = 2.25;
-
 export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
 
   // get bounds
-  const width = Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio));
+  const width = 800;
   const height = getCurrentScreen().workAreaSize.height;
   const { x } = getCenteredCoordinates(width, height);
   const y = Math.floor(height * 0.15);
