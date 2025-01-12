@@ -38,7 +38,7 @@ const { onEvent } = useEventBus()
 const nameInput = ref(null)
 const name = ref('')
 const engine = ref('openai')
-const model = ref('text-embedding-ada-002')
+const model = ref('')
 
 onMounted(() => {
   onEvent('open-docrepo-create', onOpen)
