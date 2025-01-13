@@ -177,8 +177,10 @@ test('Quota exceeded', async () => {
 test('Stop generation', async () => {
   const start = Date.now()
   await assistant!.prompt('infinite', { model: 'chat', save: false }, () => {
-    if (Date.now() > start + 50) {
+    if (Date.now() > start + 250) {
       assistant!.stop()
+    } else {
+      expect(assistant!.chat.lastMessage().transient).toBe(true)
     }
   })
   expect(assistant!.chat.lastMessage().transient).toBe(false)
