@@ -122,7 +122,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
   } else if ((props.allowDirectKeys || isCommand) && ev.key == 't') {
     ev.preventDefault()
     onReadAloud(props.message)
-  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'x') {
+  } else if (((props.allowDirectKeys || isCommand) && ev.key == 'x') || (isCommand && ev.key == 'Escape')) {
     ev.preventDefault()
     onClear()
   } else if ((props.allowDirectKeys || isCommand) && ev.key == 'w') {

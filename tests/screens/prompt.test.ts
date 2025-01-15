@@ -241,10 +241,17 @@ test('Supports keyboard save', async () => {
   expect(window.api.chat?.open).toHaveBeenCalled()
 })
 
-test('Supports keyboard clear', async () => {
+test('Supports keyboard clear with X', async () => {
   const wrapper = await prompt()
   expect(wrapper.vm.response).not.toBeNull()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'x' }));
+  expect(wrapper.vm.response).toBeNull()
+})
+
+test('Supports keyboard clear with escape', async () => {
+  const wrapper = await prompt()
+  expect(wrapper.vm.response).not.toBeNull()
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'Escape' }));
   expect(wrapper.vm.response).toBeNull()
 })
 
