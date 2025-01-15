@@ -5,11 +5,12 @@ import * as window from '../main/window'
 
 export default class PromptAnywhere {
 
-  static hadFocus = false;
+  static hadFocus = true;
 
   static open = async (): Promise<void> => {
 
     // check if we have focus
+    // console.log('PromptAnywhere.open', BrowserWindow.getFocusedWindow());
     PromptAnywhere.hadFocus = !!BrowserWindow.getFocusedWindow();
 
     // get foremost app
@@ -33,6 +34,7 @@ export default class PromptAnywhere {
     //await window.restoreWindows();
     if (!PromptAnywhere.hadFocus) {
       await window.releaseFocus();
+      PromptAnywhere.hadFocus = true;
     }
 
   }
