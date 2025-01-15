@@ -115,7 +115,9 @@ export default class AutoUpdater {
     if (this.updateAvailable) {
       console.log('Applying update')
       this.hooks.preInstall?.()
-      autoUpdater.quitAndInstall()
+      // https://github.com/electron-userland/electron-builder/issues/3402
+      setImmediate(() => autoUpdater.quitAndInstall())
+      setTimeout(() => autoUpdater.quitAndInstall(), 5000)
     }
   }
 
