@@ -5,7 +5,7 @@ import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrent
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-const kWidthMinimum = 750;
+const kWidthMinimum = 800;
 const kWidthMaximum = 1000;
 const kWidthRatio = 2.25;
 
