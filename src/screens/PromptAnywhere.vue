@@ -540,6 +540,12 @@ const onResponseResize= (deltaX: number) => {
     }
   }
 
+  .response {
+    .message {
+      max-height: 65vh;
+    }
+  }
+
 }
 
 </style>

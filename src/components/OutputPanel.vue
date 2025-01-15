@@ -233,7 +233,6 @@ defineExpose({
     margin-bottom: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
-    max-height: 70vh;
     scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
   }
 
