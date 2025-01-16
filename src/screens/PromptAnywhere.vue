@@ -10,8 +10,9 @@
             </div>
           </template>
           <template v-slot:actions>
-            <div class="info" v-if="chat">
-              <BIconGlobe /> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}
+            <div class="info" v-if="chat" @click="onEngineModel">
+              <BIconGlobe />
+              <span> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}</span>
             </div>
           </template>
         </Prompt>
@@ -22,6 +23,7 @@
       </ResizableHorizontal>
     </div>
   </div>
+  <EngineModelPicker ref="engineModelPicker" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +35,7 @@ import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
 import { SendPromptParams } from '../components/Prompt.vue'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
+import EngineModelPicker from '../screens/EngineModelPicker.vue'
 import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
@@ -53,6 +56,7 @@ const generator = new Generator(store.config)
 const llmFactory = new LlmFactory(store.config)
 
 const prompt = ref(null)
+const engineModelPicker: Ref<typeof EngineModelPicker> = ref(null)
 const sourceApp: Ref<ExternalApp|null> = ref(null)
 const output = ref(null)
 const chat: Ref<Chat> = ref(null)
@@ -234,6 +238,17 @@ const initLlm = (engine?: string, model?: string) => {
   // set engine model
   chat.value.setEngineModel(engine, model)
 
+}
+
+const onEngineModel = () => {
+  engineModelPicker.value.show()
+}
+
+const onUpdateEngineModel = (payload) => {
+  const { engine, model } = payload
+  store.config.llm.engine = engine
+  store.config.engines[engine].model.chat = model
+  initLlm(engine, model)
 }
 
 const onKeyDown = (ev: KeyboardEvent) => {
@@ -473,13 +488,16 @@ const onResponseResize= (deltaX: number) => {
     .actions {
       width: calc(100% - 12px);
       padding: 4px 12px;
+      
       .icon {
         margin-right: 8px;
       }
+      
       .info {
         display: flex;
         align-items: center;
         color: var(--prompt-icon-color);
+        cursor: pointer;
         opacity: 0.5;
         font-size: 10pt;
         margin-left: auto;
