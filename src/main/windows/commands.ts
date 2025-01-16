@@ -56,7 +56,12 @@ export const openCommandPicker = (params: anyDict): BrowserWindow => {
 
   // and at right location
   const { x, y } = screen.getCursorScreenPoint();
-  commandPicker.setPosition(x - width/2, y - (params.sourceApp ? 64 : 24))
+  commandPicker.setBounds({
+    x: x - width/2,
+    y: y - (params.sourceApp ? 64 : 24),
+    width: width,
+    height: height,
+  });
 
   // done
   commandPicker.show();
