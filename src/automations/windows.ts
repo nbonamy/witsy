@@ -1,15 +1,10 @@
 
-import { Automator } from '../types/automation';
+import { Application, Automator } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
 
 export default class implements Automator {
 
-  async getForemostAppId(): Promise<string|null> {
-    console.warn('getForemostAppId not implemented (expected)');
-    return null;
-  }
-
-  async getForemostAppPath(): Promise<string|null> {
+  async getForemostApp(): Promise<Application|null> {
     console.warn('getForemostApp not implemented (expected)');
     return null;
   }

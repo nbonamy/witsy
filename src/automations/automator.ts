@@ -1,5 +1,5 @@
 
-import { Automator as AutomatorImpl } from '../types/automation';
+import { Application, Automator as AutomatorImpl } from '../types/automation';
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
@@ -26,24 +26,15 @@ export default class Automator {
     }
   }
 
-  async getForemostAppId(): Promise<string|null> {
+  async getForemostApp(): Promise<Application|null> {
     try {
-      return await this.automator.getForemostAppId();
+      return await this.automator.getForemostApp();
     } catch (error) {
       console.warn(error);
       return null;
     }
   }
 
-  async getForemostAppPath(): Promise<string|null> {
-    try {
-      return await this.automator.getForemostAppPath();
-    } catch (error) {
-      console.warn(error);
-      return null;
-    }
-  }
-  
   async selectAll(): Promise<void> {
     try {
       await this.automator.selectAll();
@@ -107,7 +98,7 @@ export default class Automator {
     await clipboard.writeText(text)
   }
 
-  static automate = async (text: string, action: AutomationAction): Promise<void> => {
+  static automate = async (text: string, sourceApp: Application|null, action: AutomationAction): Promise<void> => {
 
     try {
 
@@ -118,7 +109,7 @@ export default class Automator {
 
       // done
       await window.closePromptAnywhere();
-      await window.releaseFocus();
+      await window.releaseFocus({ sourceApp });
 
       // now paste
       console.debug(`Processing LLM output: "${result.slice(0, 50)}"…`);
@@ -133,8 +124,8 @@ export default class Automator {
       }
 
       // done
-      await window.restoreWindows();
-      //await window.releaseFocus();
+      // await window.restoreWindows();
+      // await window.releaseFocus();
       return;
 
     } catch (error) {

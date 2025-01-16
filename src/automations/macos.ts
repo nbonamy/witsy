@@ -1,40 +1,87 @@
 
-import { Automator } from '../types/automation';
+import { Application, Automator } from '../types/automation';
 import applescript from 'applescript';
 
 export default class implements Automator {
 
-  async getForemostAppId(): Promise<string|null> {
+  async getForemostApp(): Promise<Application|null> {
 
     const script = `
       tell application "System Events"
-        set bundleID to bundle identifier of first application process whose frontmost is true
+        set appProcess to first application process whose frontmost is true
+        set bundleID to bundle identifier of appProcess
+        set appName to name of appProcess
+        set appPath to POSIX path of (file of appProcess as alias)
+        set winTitle to name of first window of appProcess
       end tell
-      return bundleID
+      return bundleID & "<|>" & appName & "<|>" & appPath & "<|>" & winTitle
     `
 
     // run it
     const app = await this.runScript(script);
-    return app as string;
+    const [id, name, realpath, window] = (app as string).split('<|>');
+    const path = realpath
+      .replace('/System/Volumes/Preboot/Cryptexes/App/System', '')
+      .replace('/Volumes/Preboot/Cryptexes/App/System', '')
+    return { id, name, path, window };
 
   }
 
-  async getForemostAppPath(): Promise<string|null> {
+  async focusApp(application: Application): Promise<boolean> {
 
-    const script = `
-      tell application "System Events"
-        set appPath to file of first application process whose frontmost is true
-      end tell
-      return appPath
-    `
+    try {
+      
+      // check
+      if (!application.id) {
+        console.error('Application ID is required');
+        return false
+      }
+      
+      // now focus window
+      if (application.window?.length) {
 
-    // run it
-    const app = await this.runScript(script);
-    return (app as string).replace('/Volumes/Preboot/Cryptexes/App/System', '');
+        const script = `
+          tell application "System Events"
+            set appProcess to first application process whose bundle identifier is "${application.id}"
+            tell appProcess
+              set frontmost to true
+              set focusedWindow to first window whose name is "${application.window.replaceAll('"', '\\"')}"
+              perform action "AXRaise" of focusedWindow
+              set value of attribute "AXFocused" of focusedWindow to true
+            end tell
+          end tell
+        `
+
+        // run it
+        await this.runScript(script);
+
+      } else {
+
+        const script = `
+          tell application "System Events"
+            set appProcess to first application process whose bundle identifier is "${application.id}"
+            tell appProcess
+              set frontmost to true
+            end tell
+          end tell
+        `
+        
+        // run it
+        await this.runScript(script);
+
+      }
+
+      // probably done
+      return true
+
+    } catch (error) {
+      console.error('Error while focusingApp', application, error);
+      return false
+    }
 
   }
-  
-  async selectAll(){
+
+  async selectAll(): Promise<void> {
     
     const script = `
       tell application "System Events" to keystroke "a" using command down      
@@ -46,7 +93,7 @@ export default class implements Automator {
 
   }
 
-  async moveCaretBelow() {
+  async moveCaretBelow(): Promise<void> {
 
     const script = `
     tell application "System Events"
@@ -60,7 +107,7 @@ export default class implements Automator {
     await this.runScript(script);    
   }
 
-  async copySelectedText() {
+  async copySelectedText(): Promise<void> {
 
     const script = `
       set the clipboard to ""
@@ -77,7 +124,7 @@ export default class implements Automator {
 
   }
 
-  async pasteText() {
+  async pasteText(): Promise<void> {
 
     const script = `
       tell application "System Events" to keystroke "v" using command down      

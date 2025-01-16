@@ -13,9 +13,15 @@ export interface ShortcutCallbacks {
   realtime: () => void
 }
 
+export type Application = {
+  id: string
+  name: string
+  path: string
+  window: string
+}
+
 export interface Automator {
-  getForemostAppId(): Promise<string|null>
-  getForemostAppPath(): Promise<string|null>
+  getForemostApp(): Promise<Application|null>
   selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>

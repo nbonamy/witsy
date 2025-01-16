@@ -1,7 +1,7 @@
 
 import { History, Command, Expert } from './types/index';
 import { Configuration } from './types/config';
-import { RunCommandParams } from './types/automation';
+import { Application, RunCommandParams } from './types/automation';
 
 import process from 'node:process';
 import fontList from 'font-list';
@@ -317,10 +317,10 @@ ipcMain.on('commands-import', (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
-ipcMain.on('command-picker-close', async () => {
+ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
   await window.closeCommandPicker();
-  await window.restoreWindows();
-  await window.releaseFocus();
+  // await window.restoreWindows();
+  await window.releaseFocus({ sourceApp });
 });
 
 ipcMain.on('command-is-prompt-editable', (event, payload) => {
@@ -332,7 +332,7 @@ ipcMain.on('command-run', async (event, payload) => {
   // prepare
   const args = JSON.parse(payload);
   await window.closeCommandPicker();
-  await window.releaseFocus();
+  //await window.releaseFocus();
 
   // now run
   commander = new Commander();
@@ -455,12 +455,14 @@ ipcMain.on('automation-get-text', (event, payload) => {
   event.returnValue = getCachedText(payload);
 })
 
-ipcMain.on('automation-insert', async (event, payload) => {
-  await Automator.automate(payload, AutomationAction.INSERT_BELOW);
+ipcMain.on('automation-insert', async (_, payload) => {
+  const { text, sourceApp } = payload
+  await Automator.automate(text, sourceApp, AutomationAction.INSERT_BELOW);
 })
 
-ipcMain.on('automation-replace', async (event, payload) => {
-  await Automator.automate(payload, AutomationAction.REPLACE);
+ipcMain.on('automation-replace', async (_, payload) => {
+  const { text, sourceApp } = payload
+  await Automator.automate(text, sourceApp, AutomationAction.REPLACE);
 })
 
 ipcMain.on('chat-open', async (_, chatId) => {
@@ -471,16 +473,18 @@ ipcMain.on('anywhere-prompt', async () => {
   await PromptAnywhere.open();
 });
 
-ipcMain.on('anywhere-close', async () => {
-  await PromptAnywhere.close();
+ipcMain.on('anywhere-close', async (_, sourceApp: Application) => {
+  await PromptAnywhere.close(sourceApp);
 })
 
 ipcMain.on('anywhere-resize', async (_, payload) => {
   await window.resizePromptAnywhere(payload.deltaX, payload.deltaY);
 })
 
-ipcMain.on('readaloud-close-palette', async () => {
+ipcMain.on('readaloud-close-palette', async (_, sourceApp: Application) => {
+  console.log(sourceApp)
   await window.closeReadAloudPalette();
+  await window.releaseFocus({ sourceApp });
 });
 
 ipcMain.on('transcribe-insert', async (_, payload) => {

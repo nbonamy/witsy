@@ -68,11 +68,10 @@ test('Initalizes LLM and chat', async () => {
 
 test('Initalizes Expert', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
-  wrapper.vm.onShow({ foremostApp: 'app' })
+  wrapper.vm.onShow({ sourceApp: { id: 'app' } })
   await wrapper.vm.$nextTick()
   expect((wrapper.findComponent(Prompt).vm as unknown as typeof Prompt).expert).toStrictEqual(store.experts[2])
 })
-
 
 test('Closes when click on container', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
@@ -146,20 +145,30 @@ test('Copies response', async () => {
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('This is a response')
 })
 
-test('Inserts response', async () => {
-  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+test('Replaces always when only insert available', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere, { props: { extra: { sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
-  wrapper.find('.insert').trigger('click')
-  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response')
+  await wrapper.find('.insert').trigger('click')
+  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+})
+
+test('Replaces always when only insert available', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere, { props: { extra: { replace: true, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
+  wrapper.vm.response = new Message('assistant', 'This is a response')
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.insert').trigger('click')
+  expect(window.api.automation.insert).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  await wrapper.find('.replace').trigger('click')
+  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Closes when click on icon', async () => {
-  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere, { props: { extra: { replace: true, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere.close).toHaveBeenCalledWith()
+  expect(window.api.anywhere.close).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Manages conversation', async () => {

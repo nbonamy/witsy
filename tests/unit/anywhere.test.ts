@@ -36,8 +36,7 @@ vi.mock('../../src/main/window.ts', async () => {
 // mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
   const Automator = vi.fn()
-  Automator.prototype.getForemostAppId = vi.fn()
-  Automator.prototype.getForemostAppPath = vi.fn()
+  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
   Automator.prototype.moveCaretBelow =  vi.fn()
   Automator.prototype.getSelectedText = vi.fn(() => 'Grabbed text')
   Automator.prototype.pasteText = vi.fn()

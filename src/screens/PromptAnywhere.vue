@@ -18,7 +18,7 @@
       </ResizableHorizontal>
       <div class="spacer" />
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
-        <OutputPanel ref="output" :message="response" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat"/>
+        <OutputPanel ref="output" :message="response" :source-app="showParams?.sourceApp" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat"/>
       </ResizableHorizontal>
     </div>
   </div>
@@ -59,6 +59,7 @@ const chat: Ref<Chat> = ref(null)
 const response: Ref<Message> = ref(null)
 const showReplace = ref(false)
 
+let showParams: anyDict = {}
 const props = defineProps({
   extra: Object
 })
@@ -111,6 +112,7 @@ const processQueryParams = (params?: anyDict) => {
 
   // log
   console.log('Processing query params', JSON.stringify(params))
+  showParams = params
 
   // reset stuff
   hiddenPrompt = null
@@ -136,10 +138,10 @@ const processQueryParams = (params?: anyDict) => {
   }
 
   // auto-select expert
-  if (params?.foremostApp) {
+  if (params?.sourceApp) {
     for (const expert of store.experts) {
-      if (expert.triggerApps?.find((app) => app.identifier == params.foremostApp)) {
-        console.log(`Triggered on ${params.foremostApp}: filling prompt with expert ${expert.name}`)
+      if (expert.triggerApps?.find((app) => app.identifier == params.sourceApp.id)) {
+        console.log(`Triggered on ${params.sourceApp.id}: filling prompt with expert ${expert.name}`)
         userExpert = expert
         break
       }
@@ -153,8 +155,8 @@ const processQueryParams = (params?: anyDict) => {
   }
 
   // source app
-  if (userPrompt?.length && params?.sourceApp?.length) {
-    sourceApp.value = window.api.file.getAppInfo(params.sourceApp)
+  if (userPrompt?.length && params?.sourceApp) {
+    sourceApp.value = window.api.file.getAppInfo(params.sourceApp.path)
     if (sourceApp.value) {
       hiddenPrompt = userPrompt
       userPrompt = null
@@ -323,7 +325,7 @@ const onClose = () => {
   // document.removeEventListener('keydown', onKeyDown)
 
   // done
-  window.api.anywhere.close()
+  window.api.anywhere.close(showParams?.sourceApp)
 }
 
 const onStopGeneration = () => {

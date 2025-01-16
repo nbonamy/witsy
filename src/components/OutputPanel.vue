@@ -31,12 +31,13 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, PropType } from 'vue'
 import { store } from '../services/store'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
+import { Application } from '../types/automation'
 import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
@@ -57,6 +58,10 @@ const props = defineProps({
   message: {
     type: Message,
     required: true,
+  },
+  sourceApp: {
+    type: Object as PropType<Application>,
+    required: false,
   },
   allowDirectKeys: {
     type: Boolean,
@@ -150,14 +155,14 @@ const onClose = () => {
 }
 
 const onReplace = () => {
-  window.api.automation.replace(props.message.content)
+  window.api.automation.replace(props.message.content, props.sourceApp)
 }
 
 const onInsert = () => {
   if (!props.showReplace) {
-    window.api.automation.replace(props.message.content)
+    window.api.automation.replace(props.message.content, props.sourceApp)
   } else {
-    window.api.automation.insert(props.message.content)
+    window.api.automation.insert(props.message.content, props.sourceApp)
   }
 }
 

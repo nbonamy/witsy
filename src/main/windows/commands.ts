@@ -1,14 +1,14 @@
 
-import { strDict } from '../../types/index';
+import { anyDict } from '../../types/index';
 import { app, BrowserWindow, screen } from 'electron';
-import { createWindow, ensureOnCurrentScreen, restoreWindows } from './index';
+import { createWindow, ensureOnCurrentScreen } from './index';
 
 export let commandPicker: BrowserWindow = null;
 
 const width = 300;
 const height = 320;
 
-export const prepareCommandPicker = (queryParams?: strDict): BrowserWindow => {
+export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
   // open a new one
   commandPicker = createWindow({
@@ -34,7 +34,7 @@ export const prepareCommandPicker = (queryParams?: strDict): BrowserWindow => {
 
   commandPicker.on('blur', () => {
     closeCommandPicker();
-    restoreWindows();
+    // restoreWindows();
   });
 
   // done
@@ -42,7 +42,7 @@ export const prepareCommandPicker = (queryParams?: strDict): BrowserWindow => {
   
 }
 
-export const openCommandPicker = (params: strDict): BrowserWindow => {
+export const openCommandPicker = (params: anyDict): BrowserWindow => {
 
   // if we don't have a window, create one
   if (!commandPicker || commandPicker.isDestroyed()) {

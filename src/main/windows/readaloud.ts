@@ -1,6 +1,7 @@
 
+import { strDict } from '../../types/index';
 import { BrowserWindow } from 'electron';
-import { createWindow, restoreWindows, getCenteredCoordinates } from './index';
+import { createWindow, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
 
 export let readAloudPalette: BrowserWindow = null;
@@ -18,7 +19,7 @@ export const closeReadAloudPalette = async () => {
   readAloudPalette = null;
 };
 
-export const openReadAloudPalette = async (textId: string) => {
+export const openReadAloudPalette = async (params: strDict) => {
 
   // try to show existig one
   closeReadAloudPalette();
@@ -37,13 +38,11 @@ export const openReadAloudPalette = async (textId: string) => {
     alwaysOnTop: true,
     resizable: false,
     hiddenInMissionControl: true,
-    queryParams: {
-      textId: textId,
-    }
+    queryParams: params
   });
 
-  readAloudPalette.on('closed', () => {
-    restoreWindows();
-  });
+  // readAloudPalette.on('closed', () => {
+  //   restoreWindows();
+  // });
 
 }

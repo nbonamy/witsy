@@ -6,11 +6,11 @@ export default class Transcriber {
 
   static initTranscription = async (): Promise<void> => {
 
-    // hide active windows
-    if (!window.isMainWindowFocused()) {
-      await window.hideWindows();
-      await window.releaseFocus();
-    }
+    // // hide active windows
+    // if (!window.isMainWindowFocused()) {
+    //   await window.hideWindows();
+    //   await window.releaseFocus();
+    // }
 
     // go on with a cached text id
     await window.openTranscribePalette()
@@ -31,8 +31,8 @@ export default class Transcriber {
       await automator.pasteText(text)
 
       // done
-      await window.restoreWindows();
-      await window.releaseFocus();
+      // await window.restoreWindows();
+      // await window.releaseFocus();
       return;
 
   }

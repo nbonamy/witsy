@@ -1,7 +1,8 @@
 
-import { strDict } from 'types/index';
-import { CreateWindowOpts } from 'types/window';
+import { strDict } from '../../types/index';
+import { CreateWindowOpts, ReleaseFocusOpts } from '../../types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
+import MacosAutomator from '../../automations/macos';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
 import { mainWindow } from './main';
@@ -188,13 +189,41 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 };
 
 // https://ashleyhindle.com/thoughts/electron-returning-focus
-export const releaseFocus = async ({ delay } = { delay: 500 }) => {
 
+
+
+export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
+
+  // defaults
+  opts = {
+    sourceApp: null,
+    delay: 500,
+    ...opts
+  };
+
+  // platform specific
   if (process.platform === 'darwin') {
 
-    Menu.sendActionToFirstResponder('hide:');
+    let focused = false;
 
-  } else if (process.platform === 'win32') {
+    // if we have an app then target it
+    if (opts?.sourceApp) {
+
+      try {
+        console.log(`Releasing focus to ${opts.sourceApp.id} / ${opts.sourceApp.window}`);
+        const macosAutomator = new MacosAutomator();
+        focused = await macosAutomator.focusApp(opts.sourceApp);
+      } catch (error) {
+        console.error('Error while focusing app', error);
+      }
+
+    }
+
+    if (!focused) {
+      Menu.sendActionToFirstResponder('hide:');
+    }
+
+} else if (process.platform === 'win32') {
 
     const dummyTransparentWindow = new BrowserWindow({
         width: 1,
@@ -210,8 +239,8 @@ export const releaseFocus = async ({ delay } = { delay: 500 }) => {
   }
 
   // pause
-  if (delay > 0) {
-    await wait(delay);
+  if (opts.delay > 0) {
+    await wait(opts.delay);
   }
 
 };

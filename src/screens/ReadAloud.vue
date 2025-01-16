@@ -44,7 +44,7 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   console.log(state.value)
   if (state.value == 'idle') {
     if (!nextChunk()) {
-      window.api.readaloud.closePalette()
+      onClose()
     }
   }
 }
@@ -55,7 +55,11 @@ const onPlayPause = () => {
 
 const onStop = () => {
   audioPlayer.stop()
-  window.api.readaloud.closePalette()
+  onClose()
+}
+
+const onClose = () => {
+  window.api.readaloud.closePalette(props.extra?.sourceApp)
 }
 
 const play = async (message: string) => {
