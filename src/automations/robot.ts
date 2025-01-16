@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation';
+import { Application, Automator } from '../types/automation';
 import { wait } from '../main/utils';
 
 let robot: any|null = null;
@@ -23,13 +23,8 @@ export default class RobotAutomator implements Automator {
     }
   }
   
-  async getForemostAppId(): Promise<string|null> {
-    console.warn('getForemostAppId not implemented (expected)');
-    return null;
-  }
-
-  async getForemostAppPath(): Promise<string|null> {
-    console.warn('getForemostAppPath not implemented (expected)');
+  async getForemostApp(): Promise<Application|null> {
+    console.warn('getForemostApp not implemented (expected)');
     return null;
   }
 

@@ -15,8 +15,7 @@ vi.mock('electron', () => ({
 
 vi.mock(`../../src/automations/${process.platform === 'darwin' ? 'macos' : 'robot'}.ts`, async () => {
   const MockAutomator = vi.fn()
-  MockAutomator.prototype.getForemostAppId = vi.fn()
-  MockAutomator.prototype.getForemostAppPath = vi.fn()
+  MockAutomator.prototype.getForemostApp = vi.fn()
   MockAutomator.prototype.selectAll = vi.fn()
   MockAutomator.prototype.moveCaretBelow = vi.fn()
   MockAutomator.prototype.copySelectedText = vi.fn()
@@ -49,10 +48,8 @@ test('Create', async () => {
 
 test('Foremost app', async () => {
   const automator = new Automator()
-  await automator.getForemostAppId()
-  expect(prototype.getForemostAppId).toHaveBeenCalled()
-  await automator.getForemostAppPath()
-  expect(prototype.getForemostAppPath).toHaveBeenCalled()
+  await automator.getForemostApp()
+  expect(prototype.getForemostApp).toHaveBeenCalled()
 })
 
 test('Select all', async () => {
@@ -87,10 +84,9 @@ test('Copy to clipboard', async () => {
 
 test('Insert below', async () => {
 
-  await Automator.automate('Explain this', AutomationAction.INSERT_BELOW)
+  await Automator.automate('Explain this', null, AutomationAction.INSERT_BELOW)
 
   expect(window.releaseFocus).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
 
   expect(prototype.moveCaretBelow).toHaveBeenCalled()
 
@@ -102,10 +98,9 @@ test('Insert below', async () => {
 
 test('Replace', async () => {
 
-  await Automator.automate('Explain this', AutomationAction.REPLACE)
+  await Automator.automate('Explain this', null, AutomationAction.REPLACE)
 
   expect(window.releaseFocus).toHaveBeenCalledOnce()
-  expect(window.restoreWindows).toHaveBeenCalledOnce()
 
   expect(prototype.moveCaretBelow).not.toHaveBeenCalled()
 

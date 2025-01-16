@@ -27,18 +27,20 @@ test('Renders correctly', () => {
   }
 })
 
-// test('Closes on Escape', async () => {
-//   const wrapper = mount(Commands)
-//   await wrapper.trigger('keyup', { key: 'Escape' })
-//   expect(window.api.commands.closePicker).toHaveBeenCalled()
-// })
+test('Closes on Escape', async () => {
+  mount(CommandPicker, { props: { extra: { sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } } )
+  document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+  expect(window.api.commands.closePicker).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
+})
 
 test('Runs command on click', async () => {
   const wrapper: VueWrapper<any> = mount(CommandPicker)
-  wrapper.vm.onShow({ textId: 6 })
+  wrapper.vm.onShow({ textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } })
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({
+    textId: 6,
+    sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
       action: 'chat_window',
       icon: '1',
@@ -47,15 +49,16 @@ test('Runs command on click', async () => {
       label: 'Command 1',
       state: 'enabled',
     },
-    textId: 6,
   })
 })
 
 test('Runs command on click', async () => {
-  const wrapper = mount(CommandPicker, { props: { extra: { textId: 6 }}})
+  const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } }}})
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({
+    textId: 6,
+    sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
       action: 'chat_window',
       icon: '1',
@@ -64,7 +67,6 @@ test('Runs command on click', async () => {
       label: 'Command 1',
       state: 'enabled',
     },
-    textId: 6,
   })
 })
 

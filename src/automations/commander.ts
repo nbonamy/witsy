@@ -30,14 +30,15 @@ export default class Commander {
     const automator = new Automator();
 
     // perf log
-    console.log(`Init done [${new Date().getTime() - start}ms]`);
+    //console.log(`Init done [${new Date().getTime() - start}ms]`);
 
-    // hide active windows
-    await window.hideWindows();
-    await window.releaseFocus({ delay: 100 });
+    // // hide active windows
+    // await window.hideWindows();
+    // await window.releaseFocus({ delay: 100 });
+    await wait(250)
 
-    // perf log
-    console.log(`Windows hidden and focus released [${new Date().getTime() - start}ms]`);
+    // // perf log
+    // console.log(`Windows hidden and focus released [${new Date().getTime() - start}ms]`);
 
     // grab text repeatedly
     let text = null;
@@ -62,7 +63,7 @@ export default class Commander {
           title: 'Witsy',
           body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
         }).show()
-        window.restoreWindows();
+        // window.restoreWindows();
       } catch (error) {
         console.error('Error showing notification', error);
       }
@@ -77,7 +78,7 @@ export default class Commander {
           body: 'Please highlight the text you want to analyze'
         }).show()
         console.log('No text selected');
-        window.restoreWindows();
+        // window.restoreWindows();
       } catch (error) {
         console.error('Error showing notification', error);
       }
@@ -89,7 +90,7 @@ export default class Commander {
 
     // go on with a cached text id
     const textId = putCachedText(text);
-    const sourceApp = await automator.getForemostAppPath();
+    const sourceApp = await automator.getForemostApp();
     window.openCommandPicker({ textId, sourceApp });
 
   }
@@ -144,8 +145,8 @@ export default class Commander {
     }
 
     // error
-    await window.restoreWindows();
-    await window.releaseFocus();
+    // await window.restoreWindows();
+    // await window.releaseFocus();
 
     // done
     return false;

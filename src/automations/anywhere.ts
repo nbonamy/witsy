@@ -1,4 +1,5 @@
 
+import { Application } from '../types/automation';
 import { BrowserWindow } from 'electron';
 import Automator from './automator'
 import * as window from '../main/window'
@@ -14,26 +15,24 @@ export default class PromptAnywhere {
     PromptAnywhere.hadFocus = !!BrowserWindow.getFocusedWindow();
 
     // get foremost app
-    let foremostApp = '';
+    let sourceApp = null;
     if (process.platform === 'darwin') {
       const automator = new Automator();
-      foremostApp = await automator.getForemostAppId();
+      sourceApp = await automator.getForemostApp();
     }
 
     // open prompt
     //await window.hideWindows([ window.promptAnywhereWindow ]);
-    await window.openPromptAnywhere({
-      foremostApp: foremostApp
-    });
+    await window.openPromptAnywhere({ sourceApp });
   }
 
-  static close = async (): Promise<void> => {
+  static close = async (sourceApp?: Application): Promise<void> => {
 
     // close
     await window.closePromptAnywhere();
     //await window.restoreWindows();
     if (!PromptAnywhere.hadFocus) {
-      await window.releaseFocus();
+      await window.releaseFocus({ sourceApp });
       PromptAnywhere.hadFocus = true;
     }
 

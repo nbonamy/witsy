@@ -4,7 +4,7 @@
 import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types';
 import { type Configuration } from './types/config';
 import { type DocRepoQueryResponseItem } from './types/rag';
-import { type RunCommandParams } from './types/automation';
+import { Application, type RunCommandParams } from './types/automation';
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { type Size } from './main/computer';
@@ -67,8 +67,8 @@ contextBridge.exposeInMainWorld(
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync('automation-get-text', id) },
-      replace: (text: string): void => { return ipcRenderer.send('automation-replace', text) },
-      insert: (text: string): void => { return ipcRenderer.send('automation-insert', text) },
+      replace: (text: string, sourceApp: Application): void => { return ipcRenderer.send('automation-replace', { text, sourceApp }) },
+      insert: (text: string, sourceApp: Application): void => { return ipcRenderer.send('automation-insert', { text, sourceApp }) },
     },
     chat: {
       open: (chatid: string): void => { return ipcRenderer.send('chat-open', chatid) },
@@ -80,11 +80,11 @@ contextBridge.exposeInMainWorld(
       import: (): void => { return ipcRenderer.sendSync('commands-import') },
       isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
       run: (params: RunCommandParams): void => { return ipcRenderer.send('command-run', JSON.stringify(params)) },
-      closePicker: (): void => { return ipcRenderer.send('command-picker-close') },
+      closePicker: (sourceApp: Application): void => { return ipcRenderer.send('command-picker-close', sourceApp) },
     },
     anywhere: {
       prompt: () => { return ipcRenderer.send('anywhere-prompt') },
-      close: (): void => { return ipcRenderer.send('anywhere-close') },
+      close: (sourceApp: Application): void => { return ipcRenderer.send('anywhere-close', sourceApp) },
       resize: (deltaX : number, deltaY: number): void => { return ipcRenderer.send('anywhere-resize', { deltaX, deltaY }) },
     },
     experts: {
@@ -106,7 +106,7 @@ contextBridge.exposeInMainWorld(
       isEmbeddingAvailable(engine: string, model: string): boolean { return ipcRenderer.sendSync('docrepo-is-embedding-available', { engine, model }) },
     },
     readaloud: {
-      closePalette: (): void => { return ipcRenderer.send('readaloud-close-palette') },
+      closePalette: (sourceApp: Application): void => { return ipcRenderer.send('readaloud-close-palette', sourceApp) },
     },
     transcribe: {
       insert(text: string): void { return ipcRenderer.send('transcribe-insert', text) },

@@ -1,5 +1,5 @@
 
-import { Automator } from '../types/automation';
+import { Application, Automator } from '../types/automation';
 import { wait } from '../main/utils';
 
 let nut: any|null = null;
@@ -22,12 +22,7 @@ export default class NutAutomator implements Automator {
     }
   }
   
-  async getForemostAppId(): Promise<string|null> {
-    console.warn('getForemostAppId not implemented (expected)');
-    return null;
-  }
-
-  async getForemostAppPath(): Promise<string|null> {
+  async getForemostApp(): Promise<Application|null> {
     console.warn('getForemostApp not implemented (expected)');
     return null;
   }

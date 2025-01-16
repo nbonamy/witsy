@@ -76,6 +76,12 @@ vi.mock('electron', async () => {
   }
 })
 
+vi.mock('../../src/automations/automator.ts', async () => {
+  const Automator = vi.fn()
+  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
+  return { default: Automator }
+})
+
 vi.mock('../../src/main/utils', async () => {
   return {
     wait: vi.fn(),
@@ -225,12 +231,15 @@ test('Close prompt anywhere window', async () => {
 })
 
 test('Open Readaloud window', async () => {
-  await window.openReadAloudPalette('textId')
+  await window.openReadAloudPalette({ textId: 'textId', sourceApp: JSON.stringify({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }) })
   expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
     hash: '/readaloud',
-    queryParams: { textId: 'textId' }
+    queryParams: {
+      textId: 'textId',
+      sourceApp: "{\"id\":\"appId\",\"name\":\"appName\",\"path\":\"appPath\",\"window\":\"title\"}"
+    }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId#/readaloud')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId&sourceApp=%7B%22id%22%3A%22appId%22%2C%22name%22%3A%22appName%22%2C%22path%22%3A%22appPath%22%2C%22window%22%3A%22title%22%7D#/readaloud')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
