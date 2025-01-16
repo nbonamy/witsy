@@ -10,9 +10,11 @@ import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
+import LlmFactory from '../../src/llms/llm'
 import LlmMock from '../mocks/llm'
 
 import useEventBus  from '../../src/composables/event_bus'
+import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
 const { emitEvent } = useEventBus()
 
 // mock llm
@@ -21,8 +23,9 @@ vi.mock('../../src/llms/llm.ts', async () => {
   LlmFactory.prototype.initModels = vi.fn()
   LlmFactory.prototype.isEngineReady = vi.fn(() => true)
   LlmFactory.prototype.getEngineName = () => 'mock'
+  LlmFactory.prototype.getCustomEngines = () => []
   LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
-  LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
+  LlmFactory.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
 	return { default: LlmFactory }
 })
 
@@ -32,6 +35,7 @@ beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
   useNavigatorMock()
   useWindowMock()
+  store.loadSettings()
   store.loadExperts()
 })
 
@@ -75,12 +79,23 @@ test('Initalizes Expert', async () => {
 
 test('Closes when click on container', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
-  wrapper.find('.prompt').trigger('mousedown')
-  wrapper.find('.container').trigger('mouseup')
+  await wrapper.find('.prompt').trigger('mousedown')
+  await wrapper.find('.container').trigger('mouseup')
   expect(window.api.anywhere.close).not.toHaveBeenCalled()
-  wrapper.find('.container').trigger('mousedown')
-  wrapper.find('.container').trigger('mouseup')
+  await wrapper.find('.container').trigger('mousedown')
+  await wrapper.find('.container').trigger('mouseup')
   expect(window.api.anywhere.close).toHaveBeenCalled()
+})
+
+test('Changes engine model', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2' })
+  await wrapper.vm.$nextTick()
+  expect(LlmFactory.prototype.igniteEngine).toHaveBeenCalledWith('openai')
+  expect(wrapper.vm.chat.engine).toBe('openai')
+  expect(wrapper.vm.chat.model).toBe('chat2')
 })
 
 test('Renders prompt response', async () => {
