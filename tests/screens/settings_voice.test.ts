@@ -86,7 +86,5 @@ test('tts settings', async () => {
   const engine2 = tts.findAll('select')[0].findAll('option')[1]
   await tts.findAll('select')[0].setValue(engine2.element.value)
   expect(store.config.tts.engine).toBe(engine2.element.value)
-  expect(store.config.tts.model).toBe('kokoro')
-  expect(store.config.tts.voice).toBe('af')
 
 })

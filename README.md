@@ -28,7 +28,7 @@ you can use [Ollama](https://ollama.com) to run models locally on your machine f
 
 Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, OpenRouter, DeepSeek, Groq and Cerebras models supported
-- Connect other providers (together, sliconflow, fireworks...) through OpenAI compatibility layer
+- Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
 - Text-to-image and text-to video with OpenAI, HuggingFace and Replicate
 - Scratchpad to interactively create the best content with any model!
@@ -37,14 +37,15 @@ Non-exhaustive feature list:
 - Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
 - Long-term memory plugin to increase relevance of LLM answers
-- Read aloud of assistant messages (requires OpenAI API key)
-- Read aloud of any text in other applications (requires OpenAI API key)
+- Read aloud of assistant messages (requires OpenAI or ElevenLabs API key)
+- Read aloud of any text in other applications (requires OpenAI or ElevenLabs API key)
 - Chat with your local files and documents (RAG)
 - Transcription/Dictation (Speech-to-Text)
 - Realtime Chat aka Voice Mode
 - Anthropic Computer Use support
 - Local history of conversations (with automatic titles)
 - Formatting and copy to clipboard of generated code
+- Conversation PDF export
 - Image copy and download
 
 <p align="center">
@@ -151,6 +152,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] ElevenLabs Text-to-Speech
 - [x] Custom engines (OpenAI compatible)
 - [x] Long-term memory plugin
 - [x] OpenRouter support

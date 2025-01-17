@@ -8,7 +8,7 @@ import OpenAI from './openai'
 
 export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
 export const staticModelsEngines = [ 'anthropic', 'google', 'xai', 'deepseek', 'groq', 'cerebras' ]
-export const nonChatEngines = [ 'huggingface', 'replicate' ]
+export const nonChatEngines = [ 'huggingface', 'replicate', 'elevenlabs' ]
 
 export default class LlmFactory {
 

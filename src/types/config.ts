@@ -125,11 +125,12 @@ export type ModelsConfig = {
   image?: Model[]
   video?: Model[]
   embedding?: Model[]
+  tts?: Model[]
 }
 
 export type ModelConfig = {
-  chat: string
-  image: string
+  chat?: string
+  image?: string
   video?: string
 }
 

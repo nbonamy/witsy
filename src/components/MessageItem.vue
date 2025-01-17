@@ -41,7 +41,7 @@
 
 import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
 import { store } from '../services/store'
-import useAudioPlayer, { type AudioStatus } from '../composables/audio_player'
+import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import MessageItemBody from './MessageItemBody.vue'
