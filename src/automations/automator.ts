@@ -74,6 +74,14 @@ export default class Automator {
   
   }
 
+  async deleteSelectedText(): Promise<void> {
+    try {
+      await this.automator.deleteSelectedText();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async pasteText(textToPaste: string): Promise<void> {
 
     try {
@@ -120,6 +128,7 @@ export default class Automator {
         await automator.moveCaretBelow()
         await automator.pasteText(result)
       } else if (action === AutomationAction.REPLACE) {
+        await automator.deleteSelectedText()
         await automator.pasteText(result)
       }
 
