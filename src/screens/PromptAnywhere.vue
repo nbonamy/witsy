@@ -568,7 +568,7 @@ const onResponseResize= (deltaX: number) => {
 
 }
 
-dialog {
+dialog#engine-model-picker {
 
   position: relative;
   top: -30%;
@@ -579,7 +579,7 @@ dialog {
 
 }
 
-body.macos dialog {
+body.macos dialog#engine-model-picker {
   top: -50%;
 }
 

@@ -240,6 +240,12 @@
         "image": "black-forest-labs/flux-schnell",
         "video": "minimax/video-01"
       }
+    },
+    "elevenlabs": {
+      "apiKey": "",
+      "models": {
+        "tts": []
+      }
     }
   },
   "plugins": {

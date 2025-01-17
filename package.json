@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.35.2",
+  "version": "1.36.0",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -93,6 +93,7 @@
     "electron-log": "^5.2.4",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.2.0",
+    "elevenlabs": "^1.50.2",
     "floating-vue": "^5.2.2",
     "font-list": "^1.5.1",
     "googleapis": "^144.0.0",
