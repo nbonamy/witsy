@@ -571,7 +571,7 @@ const onResponseResize= (deltaX: number) => {
 dialog {
 
   position: relative;
-  top: -50%;
+  top: -30%;
 
   &::backdrop {
     display: none;
@@ -579,8 +579,8 @@ dialog {
 
 }
 
-body.windows dialog {
-  top: -30%;
+body.macos dialog {
+  top: -50%;
 }
 
 </style>
