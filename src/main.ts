@@ -319,7 +319,6 @@ ipcMain.on('commands-import', (event) => {
 
 ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
   await window.closeCommandPicker();
-  // await window.restoreWindows();
   await window.releaseFocus({ sourceApp });
 });
 

@@ -14,12 +14,6 @@ export default class ReadAloud {
       return
     }
 
-    // // hide active windows
-    // if (!window.isMainWindowFocused()) {
-    //   await window.hideWindows();
-    //   await window.releaseFocus();
-    // }
-
     // grab text
     const automator = new Automator();
     const text = await automator.getSelectedText();

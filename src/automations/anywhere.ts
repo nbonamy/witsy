@@ -22,7 +22,6 @@ export default class PromptAnywhere {
     }
 
     // open prompt
-    //await window.hideWindows([ window.promptAnywhereWindow ]);
     await window.openPromptAnywhere({ sourceApp });
   }
 
@@ -30,7 +29,6 @@ export default class PromptAnywhere {
 
     // close
     await window.closePromptAnywhere();
-    //await window.restoreWindows();
     if (!PromptAnywhere.hadFocus) {
       await window.releaseFocus({ sourceApp });
       PromptAnywhere.hadFocus = true;

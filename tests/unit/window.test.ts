@@ -279,17 +279,6 @@ test('Open Realtime window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
-test('Hides and restores active windows', async () => {
-  await window.restoreWindows()
-  expect(BrowserWindow.prototype.restore).toHaveBeenCalledTimes(0)
-  await window.hideWindows()
-  expect(BrowserWindow.prototype.hide).toHaveBeenCalledTimes(2)
-  await window.restoreWindows()
-  expect(BrowserWindow.prototype.restore).toHaveBeenCalledTimes(2)
-  await window.restoreWindows()
-  expect(BrowserWindow.prototype.restore).toHaveBeenCalledTimes(2)
-})
-
 test('MAS build warning', async () => {
   window.showMasLimitsDialog()
   expect(dialog.showMessageBoxSync).toHaveBeenCalledWith(null, {
