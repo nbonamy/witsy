@@ -1,38 +1,32 @@
 
-import { Configuration, TTSModel, TTSVoice } from 'types/config'
-import OpenAI from 'openai'
+import { Configuration } from 'types/config'
+import TTSOpenAI from './tts-openai'
+import TTSKokoro from './tts-kokoro'
+// import TTSReplicate from './tts-replicate'
 
-export default class {
-
-  config: Configuration
-  client: OpenAI
-
-  static get textMaxLength() {
-    return 4096
-  }
-
-  constructor(config: Configuration) {
-    this.config = config
-    this.client = new OpenAI({
-      apiKey: config.engines.openai.apiKey,
-      dangerouslyAllowBrowser: true
-    })
-  }
-
-  async synthetize(text: string, opts?: { model?: TTSModel, voice?: TTSVoice}) {
-    
-    // call
-    const response = await this.client.audio.speech.create({
-      model: opts?.model || this.config.engines.openai.tts.model || 'tts-1',
-      voice: opts?.voice || this.config.engines.openai.tts.voice || 'alloy',
-      input: text
-    });
-
-    // return an object
-    return {
-      type: 'audio',
-      content: response
-    }
-  }
-
+export type SynthesisResponse = {
+  type: 'audio'
+  content: Response
 }
+
+export interface TTSEngine {
+  //constructor(config: Configuration): STTBase
+  synthetize(text: string, opts?: object): Promise<SynthesisResponse>
+}
+
+const getTTSEngine = (config: Configuration): TTSEngine => {
+  const engine = config.tts.engine || 'openai'
+  if (engine === 'openai') {
+    return new TTSOpenAI(config)
+  // } else if (engine === 'replicate') {
+  //   return new TTSReplicate(config)
+  } else if (engine === 'kokoro') {
+    return new TTSKokoro(config)
+  } else {
+    throw new Error(`Unknown STT engine ${engine}`)
+  }
+}
+
+export const textMaxLength = 4096
+
+export default getTTSEngine

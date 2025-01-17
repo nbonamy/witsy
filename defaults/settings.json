@@ -113,6 +113,11 @@
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe"
   },
+  "tts": {
+    "engine": "openai",
+    "model": "tts-1",
+    "voice": "alloy"
+},
   "engines": {
     "openai": {
       "apiKey": "",
@@ -124,10 +129,6 @@
       "model": {
         "chat": "gpt-4o",
         "image": "dall-e-3"
-      },
-      "tts": {
-        "model": "tts-1",
-        "voice": "alloy"
       },
       "realtime": {
         "model": "gpt-4o-mini-realtime-preview",

@@ -8,11 +8,11 @@ export default class STTOpenAI implements STTEngine {
   config: Configuration
   client: OpenAI
 
-  static readonly models: any[] = [
+  static readonly models = [
     { id: 'whisper-1', label: 'OpenAI Whisper V2 (online)' },
   ]
 
-  constructor(config: Configuration) {
+    constructor(config: Configuration) {
     this.config = config
     this.client = new OpenAI({
       apiKey: config.engines.openai.apiKey,
