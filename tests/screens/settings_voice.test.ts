@@ -70,15 +70,23 @@ test('tts settings', async () => {
   const tts = tab.findComponent({ name: 'SettingsTTS' })
 
   // model
-  expect(tts.findAll('select')[0].element.value).toBe(store.config.engines.openai.tts.model)
-  const model2 = tts.findAll('select')[0].findAll('option')[1]
-  await tts.findAll('select')[0].setValue(model2.element.value)
-  expect(store.config.engines.openai.tts.model).toBe(model2.element.value)
+  expect(tts.findAll('select')[1].element.value).toBe(store.config.tts.model)
+  const model2 = tts.findAll('select')[1].findAll('option')[1]
+  await tts.findAll('select')[1].setValue(model2.element.value)
+  expect(store.config.tts.model).toBe(model2.element.value)
 
   // voice
-  expect(tts.findAll('select')[1].element.value).toBe(store.config.engines.openai.tts.voice)
-  const voice2 = tts.findAll('select')[1].findAll('option')[2]
-  await tts.findAll('select')[1].setValue(voice2.element.value)
-  expect(store.config.engines.openai.tts.voice).toBe(voice2.element.value)
+  expect(tts.findAll('select')[2].element.value).toBe(store.config.tts.voice)
+  const voice2 = tts.findAll('select')[2].findAll('option')[2]
+  await tts.findAll('select')[2].setValue(voice2.element.value)
+  expect(store.config.tts.voice).toBe(voice2.element.value)
+
+  // engine (last as kokoro has only one option)
+  expect(tts.findAll('select')[0].element.value).toBe(store.config.tts.engine)
+  const engine2 = tts.findAll('select')[0].findAll('option')[1]
+  await tts.findAll('select')[0].setValue(engine2.element.value)
+  expect(store.config.tts.engine).toBe(engine2.element.value)
+  expect(store.config.tts.model).toBe('kokoro')
+  expect(store.config.tts.voice).toBe('af')
 
 })

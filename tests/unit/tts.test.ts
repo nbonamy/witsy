@@ -2,7 +2,7 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import Tts from '../../src/voice/tts'
+import getTTSEngine from '../../src/voice/tts'
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 
 test('Synthetizes text', async () => {
-  const tts = new Tts(store.config)
+  const tts = getTTSEngine(store.config)
   const response = await tts.synthetize('hello')
   expect(response).toStrictEqual({ type: 'audio', content: 'hello' })
 })

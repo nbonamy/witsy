@@ -15,13 +15,13 @@ export type Configuration = {
   engines: {[key: string]: EngineConfig|CustomEngineConfig}
   plugins: {[key: string]: PluginConfig}
   stt: STTConfig
+  tts: TTSConfig
   rag: RagConfig
 }
 
 export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
-  tts?: TTSConfig
   realtime?: RealtimeConfig
 }
 
@@ -114,6 +114,12 @@ export type STTConfig = {
   //silenceAction: SilenceAction
 }
 
+export type TTSConfig = {
+  engine: string
+  model: string
+  voice: string
+}
+
 export type ModelsConfig = {
   chat: Model[]
   image?: Model[]
@@ -125,14 +131,6 @@ export type ModelConfig = {
   chat: string
   image: string
   video?: string
-}
-
-export type TTSModel = 'tts-1' | 'tts-1-hd'
-export type TTSVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
-
-export type TTSConfig = {
-  model: TTSModel
-  voice: TTSVoice
 }
 
 export type RealtimeModel = string

@@ -2,7 +2,7 @@
 
 import { type Configuration } from '../types/config'
 import { SpeechPlayer } from 'openai-speech-stream-player'
-import Tts from '../voice/tts'
+import getTTSEngine, { textMaxLength as importedTextMaxLength } from '../voice/tts'
 
 export type AudioState = 'idle'|'loading'|'playing'|'paused'
 export type AudioStatus = { state: AudioState, uuid: string }
@@ -53,7 +53,7 @@ class AudioPlayer {
     try {
   
       // get the stream
-      const tts = new Tts(this.config)
+      const tts = getTTSEngine(this.config)
       const response = await tts.synthetize(content)
 
       // have we been cancelled
@@ -130,4 +130,4 @@ export default function useAudioPlayer(config: Configuration) {
   return instance
 }
 
-export const textMaxLength = Tts.textMaxLength
+export const textMaxLength = importedTextMaxLength
