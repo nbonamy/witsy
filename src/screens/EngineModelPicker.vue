@@ -47,10 +47,10 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  watch(() => props.engine, () => {
+  watch(() => props, () => {
     engine.value = props.engine
     model.value = props.model
-  })
+  }, { immediate: true })
 })
 
 const close = () => {

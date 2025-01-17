@@ -568,6 +568,17 @@ const onResponseResize= (deltaX: number) => {
 
 }
 
+dialog {
+
+  position: relative;
+  top: -50%;
+
+  &::backdrop {
+    display: none;
+  }
+
+}
+
 </style>
 
 <style scoped>
