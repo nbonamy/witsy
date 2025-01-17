@@ -47,6 +47,12 @@ export default class NutAutomator implements Automator {
     await wait(delay);
   }
 
+  async deleteSelectedText() {
+    if (!await this.setup()) throw new Error('nutjs not loaded');
+    await nut.keyboard.type(nut.Key.Delete);
+    await wait(delay);
+  }
+
   async pasteText() {
     if (!await this.setup()) throw new Error('nutjs not loaded');
     await nut.keyboard.type(nut.Key.LeftControl, nut.Key.V);

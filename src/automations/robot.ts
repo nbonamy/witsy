@@ -48,6 +48,12 @@ export default class RobotAutomator implements Automator {
     await wait(delay);
   }
 
+  async deleteSelectedText() {
+    if (!await this.setup()) throw new Error('Robotjs not loaded');
+    robot.keyTap('delete');
+    await wait(delay);
+  }
+
   async pasteText() {
     if (!await this.setup()) throw new Error('Robotjs not loaded');
     robot.keyTap('v', 'control');

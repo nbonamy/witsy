@@ -25,6 +25,7 @@ export interface Automator {
   selectAll(): Promise<void>
   moveCaretBelow(): Promise<void>
   copySelectedText(): Promise<void>
+  deleteSelectedText(): Promise<void>
   pasteText(): Promise<void>
 }
 

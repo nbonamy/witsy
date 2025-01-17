@@ -124,6 +124,19 @@ export default class implements Automator {
 
   }
 
+  async deleteSelectedText(): Promise<void> {
+
+    const script = `
+    tell application "System Events"
+        key code 117
+      end tell
+    `
+
+    // run it
+    await this.runScript(script);    
+
+  }
+
   async pasteText(): Promise<void> {
 
     const script = `
