@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config'
+/*import { Configuration } from '../types/config'
 import { SynthesisResponse, TTSEngine } from './tts'
 import Replicate, { FileOutput, Prediction } from 'replicate'
 
@@ -54,4 +54,4 @@ export default class TTSReplicate implements TTSEngine {
         reader.readAsDataURL(blob)
     })
   }
-}
+}*/
