@@ -14,12 +14,35 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
+vi.mock('elevenlabs', async () => {
+  const ElevenLabsClient = vi.fn()
+  ElevenLabsClient.prototype.textToSpeech = {
+    convertAsStream: vi.fn((_, opts) => opts.text)
+  }
+  return { ElevenLabsClient }
+})
+
 beforeEach(() => {
   store.config = defaults
 })
 
-test('Synthetizes text', async () => {
+test('OpenAI', async () => {
   const tts = getTTSEngine(store.config)
-  const response = await tts.synthetize('hello')
-  expect(response).toStrictEqual({ type: 'audio', content: 'hello' })
+  const response = await tts.synthetize('hello openai')
+  expect(response).toStrictEqual({ type: 'audio', content: 'hello openai' })
 })
+
+test('ElevenLabs', async () => {
+  store.config.tts.engine = 'elevenlabs'
+  const tts = getTTSEngine(store.config)
+  const response = await tts.synthetize('hello elevenlabs')
+  expect(response).toStrictEqual({ type: 'audio', content: 'hello elevenlabs' })
+})
+
+test('Kokoro', async () => {
+  store.config.tts.engine = 'kokoro'
+  const tts = getTTSEngine(store.config)
+  const response = await tts.synthetize('hello kokoro')
+  expect(response).toStrictEqual({ type: 'audio', content: 'hello kokoro' })
+})
+
