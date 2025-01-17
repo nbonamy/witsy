@@ -579,6 +579,10 @@ dialog {
 
 }
 
+body.windows dialog {
+  top: -30%;
+}
+
 </style>
 
 <style scoped>
