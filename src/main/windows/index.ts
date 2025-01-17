@@ -5,7 +5,6 @@ import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme,
 import MacosAutomator from '../../automations/macos';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
-import { mainWindow } from './main';
 import * as config from '../config';
 import { wait } from '../utils';
 import Store from 'electron-store';
@@ -242,56 +241,6 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
   if (opts.delay > 0) {
     await wait(opts.delay);
   }
-
-};
-
-let windowsToRestore: BrowserWindow[] = [];
-export const hideWindows = async (except: BrowserWindow[] = []) => {
-
-  // remember to restore all windows
-  windowsToRestore = [];
-  try {
-    // console.log('Hiding windows');
-    const windows = BrowserWindow.getAllWindows();
-    for (const window of windows) {
-      if (except.includes(window)) {
-        continue;
-      }
-      if (!window.isDestroyed() && window.isVisible() && !window.isMinimized()) {
-        windowsToRestore.push(window);
-        window.hide();
-      }
-    }
-  } catch (error) {
-    console.error('Error while hiding active windows', error);
-  }
-
-}
-
-export const restoreWindows = () => {
-
-  // log
-  // console.log(`Restoring ${windowsToRestore.length} windows`)
-
-  // restore main window first
-  windowsToRestore.sort((a, b) => {
-    if (a === mainWindow) return -1;
-    if (b === mainWindow) return 1;
-    return 0;
-  })
-
-  // now restore
-  for (const window of windowsToRestore) {
-    try {
-      window.restore();
-      //window.showInactive();
-    } catch (error) {
-      console.error('Error while restoring window', error);
-    }
-  }
-
-  // done
-  windowsToRestore = [];
 
 };
 

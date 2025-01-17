@@ -34,7 +34,6 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
   commandPicker.on('blur', () => {
     closeCommandPicker();
-    // restoreWindows();
   });
 
   // done

@@ -133,8 +133,6 @@ export default class Automator {
       }
 
       // done
-      // await window.restoreWindows();
-      // await window.releaseFocus();
       return;
 
     } catch (error) {

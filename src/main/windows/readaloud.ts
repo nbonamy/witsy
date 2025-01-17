@@ -41,8 +41,4 @@ export const openReadAloudPalette = async (params: strDict) => {
     queryParams: params
   });
 
-  // readAloudPalette.on('closed', () => {
-  //   restoreWindows();
-  // });
-
 }

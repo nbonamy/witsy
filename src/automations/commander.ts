@@ -32,9 +32,7 @@ export default class Commander {
     // perf log
     //console.log(`Init done [${new Date().getTime() - start}ms]`);
 
-    // // hide active windows
-    // await window.hideWindows();
-    // await window.releaseFocus({ delay: 100 });
+    // wait for focus
     await wait(250)
 
     // // perf log
@@ -63,7 +61,6 @@ export default class Commander {
           title: 'Witsy',
           body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
         }).show()
-        // window.restoreWindows();
       } catch (error) {
         console.error('Error showing notification', error);
       }
@@ -78,7 +75,6 @@ export default class Commander {
           body: 'Please highlight the text you want to analyze'
         }).show()
         console.log('No text selected');
-        // window.restoreWindows();
       } catch (error) {
         console.error('Error showing notification', error);
       }
@@ -143,10 +139,6 @@ export default class Commander {
     } catch (error) {
       console.error('Error while executing command', error);
     }
-
-    // error
-    // await window.restoreWindows();
-    // await window.releaseFocus();
 
     // done
     return false;

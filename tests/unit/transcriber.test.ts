@@ -7,8 +7,6 @@ import * as window from '../../src/main/window'
 // mock windows
 vi.mock('../../src/main/window.ts', async () => {
   return {
-    hideWindows: vi.fn(),
-    restoreWindows: vi.fn(),
     releaseFocus: vi.fn(),
     openTranscribePalette: vi.fn(),
     closeTranscribePalette: vi.fn(),
@@ -30,8 +28,6 @@ beforeEach(() => {
 
 test('Open transcriber window', async () => {
   await Transcriber.initTranscription()
-  // expect(window.hideWindows).toHaveBeenCalled()
-  // expect(window.releaseFocus).toHaveBeenCalled()
   expect(window.openTranscribePalette).toHaveBeenCalledWith()
 })
 

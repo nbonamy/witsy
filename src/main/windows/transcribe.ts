@@ -1,6 +1,6 @@
 
 import { BrowserWindow } from 'electron';
-import { createWindow, restoreWindows, getCenteredCoordinates } from './index';
+import { createWindow, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
 
 export let transcribePalette: BrowserWindow = null;
@@ -38,10 +38,6 @@ export const openTranscribePalette = async () => {
     resizable: false,
     hiddenInMissionControl: true,
     title: 'Dictation'
-  });
-
-  transcribePalette.on('closed', () => {
-    restoreWindows();
   });
 
 }

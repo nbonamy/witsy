@@ -34,8 +34,6 @@ vi.mock('../../src/main/window.ts', async () => {
         throw new Error('Error')
       }
     }),
-    hideWindows: vi.fn(),
-    restoreWindows: vi.fn(),
     releaseFocus: vi.fn()
   }
 })
@@ -93,9 +91,6 @@ test('Prepare command', async () => {
   selectedText = 'Grabbed text'
 
   await Commander.initCommand()
-
-  // expect(window.hideWindows).toHaveBeenCalledOnce()
-  // expect(window.releaseFocus).toHaveBeenCalledOnce()
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
@@ -116,14 +111,8 @@ test('Error while grabbing', async () => {
   selectedText = null
 
   await Commander.initCommand()
-
-  // expect(window.hideWindows).toHaveBeenCalledOnce()
-  // expect(window.releaseFocus).toHaveBeenCalledOnce()
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
-
-  // expect(window.restoreWindows).toHaveBeenCalledOnce()
 
 })
 
@@ -132,14 +121,8 @@ test('No text to grab', async () => {
   selectedText = ''
 
   await Commander.initCommand()
-
-  // expect(window.hideWindows).toHaveBeenCalledOnce()
-  // expect(window.releaseFocus).toHaveBeenCalledOnce()
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
-
-  // expect(window.restoreWindows).toHaveBeenCalledOnce()
 
 })
 
@@ -196,7 +179,6 @@ test('No text', async () => {
   expect(await commander.execCommand(app, { textId: 'unknown', sourceApp: '', command })).toBe(false)
 
   expect(window.openPromptAnywhere).not.toHaveBeenCalled()
-  // expect(window.restoreWindows).not.toHaveBeenCalledOnce()
   expect(window.releaseFocus).not.toHaveBeenCalledOnce()
 
 })
@@ -208,7 +190,5 @@ test('Error while executing', async () => {
   expect(await commander.execCommand(app, { textId: cachedTextId!, sourceApp: 'error', command })).toBe(false)
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
-  // expect(window.restoreWindows).toHaveBeenCalledOnce()
-  // expect(window.releaseFocus).toHaveBeenCalledOnce()
 
 })
