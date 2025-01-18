@@ -98,33 +98,49 @@ export default class Generator {
       console.error('Error while generating text', error)
       if (error.name !== 'AbortError') {
         const message = error.message.toLowerCase()
-        if (error.status === 401 || message.includes('401') || message.includes('apikey')) {
+        
+        // missing api key
+        if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
           response.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
           rc = false
-        } else if ((error.status === 400 || error.status === 402) && (message.includes('credit') || message.includes('balance'))) {
+        }
+        
+        // out of credits
+        else if ([400, 402].includes(error.status) && (message.includes('credit') || message.includes('balance'))) {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
           rc = false
-        } else if (error.status === 400 && (message.includes('context length') || message.includes('too long'))) {
+        
+        // quota exceeded
+        } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
+          response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+          rc = false
+
+        // context length or function description too long
+        } else if ([400].includes(error.status) && (message.includes('context length') || message.includes('too long'))) {
           if (message.includes('function.description')) {
             response.setText('Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.')
           } else {
             response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
           }
           rc = false
-        } else if ((error.status === 400 || error.status === 404) && (message.includes('function call') || message.includes('tools') || message.includes('tool use'))) {
-          if (llm.plugins.length > 0) {
-            console.log('Model does not support function calling: removing tool and retrying')
-            llm.clearPlugins()
-            return this.generate(llm, messages, opts, callback)
-          }
-        } else if (error.status === 429 && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
-          response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
-          rc = false
-        } else if (response.content === '') {
-          response.setText('Sorry, I could not generate text for that prompt.')
-          rc = false
+        
+        // catch all for function call
+        } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool use') || message.includes('tool choice'))) {
+          console.log('Model does not support function calling: removing tool and retrying')
+          llm.clearPlugins()
+          return this.generate(llm, messages, opts, callback)
+
+        // final error: depends if we already have some content and if plugins are enabled
         } else {
-          response.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
+          if (response.content === '') {
+            if (llm.plugins.length > 0) {
+              response.setText('Sorry, I could not generate text for that prompt. Do you want to <a href="#retry_without_plugins">try again without plugins</a>?')
+            } else {
+              response.setText('Sorry, I could not generate text for that prompt.')
+            }
+          } else {
+            response.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
+          }
           rc = false
         }
       } else {
