@@ -94,6 +94,15 @@ onMounted(() => {
       emitEvent('open-settings', { initialTab: href.split('_')[1] })
       e.preventDefault()
       return false
+    } else if (href === '#retry_without_plugins') {
+      if (assistant.value.chat) {
+        assistant.value.chat.disableTools = true
+        onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
+      } else {
+        console.log('No chat to retry')
+      }
+      e.preventDefault()
+      return false
     }
   })
 
