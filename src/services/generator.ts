@@ -124,7 +124,7 @@ export default class Generator {
           }
           rc = false
         
-        // catch all for function call
+        // function call not supported
         } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool use') || message.includes('tool choice'))) {
           console.log('Model does not support function calling: removing tool and retrying')
           llm.clearPlugins()
