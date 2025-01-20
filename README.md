@@ -11,7 +11,7 @@
 <div align="center">
 
 [![Version Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nbonamy/8febadb1ecb32078db4c003d0c09f565/raw/version.json)](https://github.com/nbonamy/witsy/releases)
-[![Downloads Badge](https://img.shields.io/github/downloads/nbonamy/witsy/total.svg)](https://github.com/nbonamy/witsy/releases)
+[![Downloads Badge](https://img.shields.io/github/downloads/nbonamy/witsy/total.svg?color=orange)](https://github.com/nbonamy/witsy/releases)
 [![Test Badge](https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg)](https://github.com/nbonamy/witsy/blob/main/.github/workflows/test.yml)
 [![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nbonamy/8febadb1ecb32078db4c003d0c09f565/raw/witsy__main.json)](https://github.com/nbonamy/witsy/blob/main/.github/workflows/test.yml)
 
@@ -153,6 +153,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Favorite models
 - [x] ElevenLabs Text-to-Speech
 - [x] Custom engines (OpenAI compatible)
 - [x] Long-term memory plugin
