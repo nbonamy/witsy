@@ -24,12 +24,10 @@ export interface AssistantCompletionOpts extends GenerationOpts {
 export default class extends Generator {
 
   llmFactory: LlmFactory
-  engine: string
   chat: Chat
 
   constructor(config: Configuration) {
     super(config)
-    this.engine = null
     this.llm = null
     this.chat = null
     this.stream = null
@@ -47,24 +45,22 @@ export default class extends Generator {
   }
 
   resetLlm() {
-    this.engine = null
     this.llm = null
   }
 
   initLlm(engine: string): void {
     
     // same?
-    if (this.engine === engine && this.llm !== null) {
+    if (this.llm !== null && this.llm.getName() === engine) {
       return
     }
 
     // switch
     const llm = this.llmFactory.igniteEngine(engine)
-    this.setLlm(llm ? engine : null, llm)
+    this.setLlm(llm)
   }
 
-  setLlm(engine: string, llm: LlmEngine) {
-    this.engine = engine
+  setLlm(llm: LlmEngine) {
     this.llm = llm
   }
 

@@ -47,6 +47,7 @@ test('Check atributtes', async () => {
 
 test('Load', async () => {
   store.load()
+  store.config.llm.favorites = []
   expect(window.api.config?.load).toHaveBeenCalled()
   expect(window.api.experts?.load).toHaveBeenCalled()
   expect(window.api.commands?.load).toHaveBeenCalled()

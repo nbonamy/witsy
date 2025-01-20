@@ -3,12 +3,12 @@ import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
-import LlmFactory, { standardEngines, nonChatEngines } from '../../src/llms/llm'
+import LlmFactory, { standardEngines, nonChatEngines, favoriteMockEngine } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 
 beforeAll(() => {
-  useWindowMock({ customEngine: true })
+  useWindowMock({ customEngine: true, favoriteModels: true })
   store.loadSettings()
   store.config.engines.openai.apiKey = '123'
 })
@@ -24,12 +24,13 @@ test('Custom Engine', () => {
   for (const engine of nonChatEngines) {
     expect(llmFactory.isCustomEngine(engine)).toBe(false)
   }
+  expect(llmFactory.isCustomEngine('__favorites__')).toBe(false)
   expect(llmFactory.isCustomEngine('aws')).toBe(false)
   expect(llmFactory.isCustomEngine('custom')).toBe(true)
 })
 
 test('Get Engines', () => {
-  expect(llmFactory.getChatEngines()).toStrictEqual([...standardEngines, 'custom'])
+  expect(llmFactory.getChatEngines()).toStrictEqual([favoriteMockEngine, ...standardEngines, 'custom'])
   expect(llmFactory.getCustomEngines()).toStrictEqual(['custom'])
 })
 
@@ -186,6 +187,15 @@ test('Ignite Engine', async () => {
   expect(await llmFactory.igniteEngine('aws')).toBeInstanceOf(OpenAI)
 })
 
+test('Ignite Favorite Engine', async () => {
+  store.config.llm.favorites = [ { id: '1', engine: 'anthropic', model: 'chat1' } ]
+  store.config.engines[favoriteMockEngine].model.chat = '1'
+  expect(await llmFactory.igniteEngine(favoriteMockEngine)).toBeInstanceOf(Anthropic)
+  // fallback
+  store.config.engines[favoriteMockEngine].model.chat = '2'
+  expect(await llmFactory.igniteEngine(favoriteMockEngine)).toBeInstanceOf(OpenAI)
+})
+
 test('Ignite Custom Engine', async () => {
   const engine = await llmFactory.igniteEngine('custom')
   expect(engine).toBeInstanceOf(OpenAI)
@@ -207,4 +217,68 @@ test('Reflects configuration changes', () => {
   defaults.engines.openai.apiKey = '345'
   store.loadSettings()
   expect(llmFactory.config.engines.openai.apiKey).toBe('345')
+})
+
+test('getChatEngineModel', () => {
+  store.config.llm.engine = 'mock'
+  store.config.engines.mock = { model: { chat: 'chat1' } }
+  expect(llmFactory.getChatEngineModel(true)).toStrictEqual({ engine: 'mock', model: 'chat1' })
+  store.config.llm.engine = favoriteMockEngine
+  store.config.engines[favoriteMockEngine] = { model: { chat: 'mock-chat2' } }
+  expect(llmFactory.getChatEngineModel(true)).toStrictEqual({ engine: 'mock', model: 'chat2' })
+})
+
+test('Favorite engine', () => {
+  expect(llmFactory.isFavoriteEngine(favoriteMockEngine)).toBe(true)
+  expect(llmFactory.isFavoriteEngine('openai')).toBe(false)
+  expect(llmFactory.isFavoriteEngine('mock')).toBe(false)
+})
+
+test('Favorite Ids', () => {
+  expect(llmFactory.getFavoriteId('mock', 'chat')).toBe('mock-chat')
+  expect(llmFactory.isFavoriteId('mock-chat1')).toBe(true)
+  expect(llmFactory.isFavoriteId('mocq-chat1')).toBe(false)
+  expect(llmFactory.isFavoriteId('mock-chat3')).toBe(false)
+})
+
+test('Favorite models', () => {
+  expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
+    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
+    { id: 'mock-chat2', name: 'chat2@mock', meta: {} }
+  ])
+  expect(llmFactory.isFavoriteModel('mock', 'chat1')).toBe(true)
+  expect(llmFactory.isFavoriteModel('mocq', 'chat1')).toBe(false)
+  expect(llmFactory.isFavoriteModel('mock', 'chat3')).toBe(false)
+})
+
+test('Favorites update', () => {
+
+  store.config.engines['mock'] = {
+    model: { chat: '' }
+  }
+
+  llmFactory.addFavoriteModel('mock', 'chat3')
+  expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
+    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
+    { id: 'mock-chat2', name: 'chat2@mock', meta: {} },
+    { id: 'mock-chat3', name: 'chat3@mock', meta: {} }
+  ])
+
+  llmFactory.removeFavoriteModel(favoriteMockEngine, 'mock-chat2')
+  expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
+    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
+    { id: 'mock-chat3', name: 'chat3@mock', meta: {} }
+  ])
+
+  llmFactory.removeFavoriteModel('mock', 'chat3')
+  expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
+    { id: 'mock-chat1', name: 'chat1@mock', meta: {} }
+  ])
+
+  store.config.llm.engine = favoriteMockEngine
+  llmFactory.removeFavoriteModel('mock', 'chat1')
+  expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([])
+  expect(store.config.llm.engine).toBe('mock')
+  expect(store.config.engines['mock'].model.chat).toBe('chat1')
+  
 })

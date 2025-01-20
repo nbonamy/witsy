@@ -13,6 +13,7 @@
   },
   "llm": {
     "engine": "openai",
+    "favorites": [],
     "autoVisionSwitch": true,
     "conversationLength": 20,
     "imageResize": 768
@@ -119,6 +120,18 @@
     "voice": "alloy"
 },
   "engines": {
+    "__favorites__": {
+      "models": {
+        "chat": [],
+        "image": [],
+        "video": []
+      },
+      "model": {
+        "chat": "",
+        "image": "",
+        "video": ""
+      }
+    },
     "openai": {
       "apiKey": "",
       "baseURL": "https://api.openai.com/v1",

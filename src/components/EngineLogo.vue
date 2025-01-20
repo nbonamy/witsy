@@ -11,7 +11,7 @@
 import { CustomEngineConfig } from '../types/config'
 import { computed } from 'vue'
 import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 import LogoOpenAI from '../../assets/openai.svg?component'
 import LogoOllama from '../../assets/ollama.svg?component'
 import LogoAnthropic from '../../assets/anthropic.svg?component'
@@ -23,6 +23,7 @@ import LogoGroq from '../../assets/groq.svg?component'
 import LogoCerberas from '../../assets/cerebras.svg?component'
 import LogoOpenRouter from '../../assets/openrouter.svg?component'
 import LogoCustom from '../../assets/custom.svg?component'
+import LogoFavorite from '../../assets/favorite.svg?component'
 
 const llmFactory = new LlmFactory(store.config)
 
@@ -58,7 +59,7 @@ const props = defineProps({
   }
 })
 
-const logo = computed(() => logos[props.engine] ?? LogoCustom)
+const logo = computed(() => props.engine == favoriteMockEngine ? LogoFavorite : logos[props.engine] ?? LogoCustom)
 
 const label = computed(() => {
   if (llmFactory.isCustomEngine(props.engine)) {
