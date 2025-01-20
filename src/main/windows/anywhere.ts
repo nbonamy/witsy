@@ -1,6 +1,6 @@
 
 import { anyDict } from 'types/index';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Size } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen } from './index';
 
 export let promptAnywhereWindow: BrowserWindow = null;
@@ -9,19 +9,23 @@ const kWidthMinimum = 800;
 const kWidthMaximum = 1000;
 const kWidthRatio = 2.25;
 
+const desiredSize = (): Size => ({
+  width: Math.min(kWidthMaximum, Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio))),
+  height: Math.floor(getCurrentScreen().workAreaSize.height * 0.80)
+});
+
 export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
 
   // get bounds
-  const width = Math.min(kWidthMaximum, Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio)));
-  const height = getCurrentScreen().workAreaSize.height;
-  const { x } = getCenteredCoordinates(width, height);
-  const y = Math.floor(height * 0.15);
+  const size = desiredSize();
+  const { x } = getCenteredCoordinates(size.width, size.height);
+  const y = Math.floor(size.height * 0.18);
 
   // open a new one
   promptAnywhereWindow = createWindow({
     hash: '/prompt',
     queryParams: queryParams,
-    x, y, width, height: Math.floor(height * 0.80),
+    x, y, width: size.width, height: size.height,
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
@@ -54,6 +58,10 @@ export const openPromptAnywhere = (params: anyDict): BrowserWindow => {
   } else {
     promptAnywhereWindow.webContents.send('show', params);
   }
+
+  // adjust height to current screem
+  const windowSize = promptAnywhereWindow.getSize();
+  promptAnywhereWindow.setSize(windowSize[0], desiredSize().height);
 
   // check prompt is on the right screen
   ensureOnCurrentScreen(promptAnywhereWindow);
