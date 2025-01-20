@@ -248,6 +248,7 @@ const onUpdateEngineModel = (payload: { engine: string, model: string}) => {
   const { engine, model } = payload
   store.config.llm.engine = engine
   store.config.engines[engine].model.chat = model
+  store.saveSettings()
   initLlm(engine, model)
 }
 
