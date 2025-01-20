@@ -12,8 +12,12 @@
       <div class="current">
         <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
         <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
-    			<option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-		    </select>
+          <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+        </select>
+        <div class="favorite" v-if="!showModelTip() && !showAllEngines">
+          <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> Remove from favorites</span>
+          <span @click="addToFavorites" v-else><BIconStar /> Add to favorites</span>
+        </div>
         <div class="tip model" v-if="showModelTip()">
           <img src="/assets/arrow_dashed.svg" /><br/>
           Click here to switch to a different chat bot model!
@@ -43,6 +47,7 @@ const engines = shallowReactive(store.config.engines)
 
 const models = computed(() => llmFactory.getChatModels(store.config.llm.engine))
 const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, true))
+const isFavoriteModel = computed(() => llmFactory.isFavoriteModel(store.config.llm.engine, model.value))
 
 const showEngineTip = () => {
   return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && Object.keys(engines).length > 1
@@ -101,12 +106,14 @@ const onEngine = (engine: string) => {
     // now animate current icon to the ones in the selector
     const current = store.config.llm.engine
     animateEngineLogo(`.engine .current .logo`, `.engines .logo.${current}`, (elems, progress) => {
-      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
-      elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
-      if (progress >= 1) {
-        elems.clone.remove()
-        elems.container.style.opacity = '1'
-        elems.source.parentElement.style.pointerEvents = 'none'
+      if (elems) {
+        elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+        elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
+        if (progress >= 1) {
+          elems.clone.remove()
+          elems.container.style.opacity = '1'
+          elems.source.parentElement.style.pointerEvents = 'none'
+        }
       }
     })
   
@@ -135,15 +142,19 @@ const onEngine = (engine: string) => {
 
     // and do the animation in reverse
     animateEngineLogo(`.engines .logo.${engine}`, `.engine .current .logo`, (elems, progress) => {
-      elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
-      elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+      if (elems) {
+        elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+        elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
+        if (progress >= 1) {
+          elems.clone.remove()
+          elems.container.style.opacity = '0'
+          elems.source.style.opacity = '1'
+          elems.target.style.opacity = '1'
+          elems.target.parentElement.style.pointerEvents = 'auto'
+        }
+      }
       if (progress >= 1) {
-        elems.clone.remove()
         showAllEngines.value = false
-        elems.container.style.opacity = '0'
-        elems.source.style.opacity = '1'
-        elems.target.style.opacity = '1'
-        elems.target.parentElement.style.pointerEvents = 'auto'
       }
     })
 
@@ -175,10 +186,9 @@ const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (
     const targetY = target.getBoundingClientRect().top
     moveElement(clone, targetX, targetY, 150, (progress) => callback({ container, source, target, clone }, progress))
 
-  } catch (e) {
-    if (!process.env.TEST) {
-      console.error(e)
-    }
+  } catch (error) {
+    console.log(error)
+    callback(null, 1)
   }
 
 }
@@ -225,6 +235,15 @@ const onSelectModel = (ev: Event) => {
 
   // continue
   llmFactory.setChatModel(store.config.llm.engine, target.value)
+}
+
+const addToFavorites = () => {
+  llmFactory.addFavoriteModel(store.config.llm.engine, model.value)
+  tipsManager.showTip('favoriteModels')
+}
+
+const removeFavorite = () => {
+  llmFactory.removeFavoriteModel(store.config.llm.engine, model.value)
 }
 
 </script>
@@ -320,6 +339,19 @@ const onSelectModel = (ev: Event) => {
 
 .empty .select-model.hidden {
   visibility: hidden;
+}
+
+.favorite {
+
+  margin-top: 1rem;
+  cursor: pointer;
+  font-size: 9.5pt;
+  
+  > * {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
 }
 
 </style>

@@ -39,8 +39,15 @@ export type GeneralConfig = {
   confirm: {[key: string]: boolean}
 }
 
+export type FavoriteModel = {
+  id: string
+  engine: string
+  model: string
+}
+
 export type LLMConfig = {
   engine: string
+  favorites: FavoriteModel[]
   autoVisionSwitch: boolean
   conversationLength: number
   imageResize: number

@@ -4,7 +4,8 @@ import Dialog from './dialog'
 
 export type TipId = 
   'engineSelector' | 'modelSelector' | 'scratchpad' | 'conversation' |
-  'computerUse' | 'newPrompt' | 'newCommand' | 'realtime' | 'folderList'
+  'computerUse' | 'newPrompt' | 'newCommand' | 'realtime' | 'folderList' |
+  'favoriteModels'
 
 class TipsManager {
 
@@ -58,6 +59,7 @@ class TipsManager {
       'newCommand': this.showNewCommandTip,
       'realtime': this.showRealtimeTip,
       'folderList': this.showFolderListTip,
+      'favoriteModels': this.showFavoriteModelsTip,
     }
 
     // get the callback
@@ -137,6 +139,12 @@ class TipsManager {
       The menu on the right of every folder allows you to manage your folders.
       
       The context menu of your chats allows you to move them to a folder.`,
+    })
+  }
+
+  showFavoriteModelsTip = () => {
+    Dialog.show({
+      title: 'Click on the LLM icon: your preferred models will be grouped under the star icon!',
     })
   }
 
