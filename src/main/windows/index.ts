@@ -78,7 +78,7 @@ export const ensureOnCurrentScreen = (window: BrowserWindow) => {
     // adjust width
     let windowSize = window.getSize();
     if (windowSize[0] > cursorScreen.workAreaSize.width) {
-      window.setSize(cursorScreen.workAreaSize.width * .8, windowSize[1]);
+      window.setSize(Math.floor(cursorScreen.workAreaSize.width * .8), windowSize[1]);
     }
 
     // move
