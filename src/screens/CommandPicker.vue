@@ -122,8 +122,8 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
 .app {
   display: flex;
   flex-direction: row;
-  background-color: black;
-  color: var(--window-bg-color);
+  background-color: var(--source-app-bg-color);
+  color: var(--source-app-text-color);
   border-radius: 6px;
   align-items: center;
   padding: 2px 8px;
@@ -134,12 +134,6 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
     width: 24px;
     height: 24px;
     margin-right: 4px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .app {
-    background-color: white;
   }
 }
 

@@ -9,6 +9,10 @@ dialog {
   width: 500px;
 }
 
+dialog::backdrop {
+  display: none;
+}
+
 .windows dialog {
   border-radius: var(--control-border-radius);
 }	
