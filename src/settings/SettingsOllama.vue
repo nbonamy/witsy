@@ -8,6 +8,7 @@
           {{ model.name }}
         </option>
       </select>
+      <button @click.prevent="onDelete"><BIconTrash /></button>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
     <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="Browse models" @done="onRefresh"/>
@@ -20,9 +21,11 @@
 
 <script setup lang="ts">
 
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
 import { getChatModels } from '../llms/ollama'
+import { Ollama } from 'multi-llm-ts'
+import Dialog from '../composables/dialog'
 import LlmFactory from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
@@ -36,6 +39,24 @@ const load = () => {
   baseURL.value = store.config.engines.ollama?.baseURL || ''
   chat_models.value = store.config.engines.ollama?.models?.chat || []
   chat_model.value = store.config.engines.ollama?.model?.chat || ''
+}
+
+const onDelete = () => {
+  
+  Dialog.show({
+    target: document.querySelector('dialog'),
+    title: 'Are you sure you want to delete this model?',
+    text: 'You can\'t undo this action.',
+    confirmButtonText: 'Delete',
+    showCancelButton: true,
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const ollama = new Ollama(store.config.engines.ollama)
+      await ollama.deleteModel(chat_model.value)
+      onRefresh()
+    }
+  })
+
 }
 
 const onRefresh = async () => {
