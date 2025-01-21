@@ -207,7 +207,7 @@ defineExpose({
   background-color: var(--sidebar-search-bg-color);
   border: 0.5px solid var(--sidebar-search-border-color);
   border-radius: 6px;
-  padding-right: 24px;
+  padding: 5px 24px 5px 8px;
 }
 
 .toolbar .clear-filter {

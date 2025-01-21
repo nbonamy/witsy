@@ -452,6 +452,18 @@ const onResponseResize= (deltaX: number) => {
 
 .anywhere {
 
+  .prompt, .response {
+    opacity: 0.95;
+    background-color: var(--anywhere-bg-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .prompt, .response {
+      opacity: 1.0;
+    }
+  }
+
+
   .prompt {
 
     flex-direction: column-reverse;
@@ -463,8 +475,8 @@ const onResponseResize= (deltaX: number) => {
       width: calc(100% - 12px);
       display: flex;
       flex-direction: row;
-      background-color: black;
-      color: var(--window-bg-color);
+      background-color: var(--source-app-bg-color);
+      color: var(--source-app-text-color);
       border-radius: 8px;
       align-items: center;
       padding: 2px 8px;
@@ -477,12 +489,6 @@ const onResponseResize= (deltaX: number) => {
         width: 28px;
         height: 28px;
         margin-right: 4px;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .app {
-        background-color: white;
       }
     }
 
@@ -514,7 +520,7 @@ const onResponseResize= (deltaX: number) => {
       width: 100%;
       border: none;
       border-radius: 0px;
-      background-color: var(--window-bg-color);
+      background-color: var(--anywhere-bg-color);
 
       .attachment {
         margin-left: 4px;
@@ -524,7 +530,7 @@ const onResponseResize= (deltaX: number) => {
         textarea {
           max-height: 100px;
           border-radius: 0px;
-          background-color: var(--window-bg-color);
+          background-color: var(--anywhere-bg-color);
           padding: 6px 16px 6px 8px;
           font-size: 16pt;
           &::placeholder {
@@ -609,7 +615,6 @@ body.macos dialog#engine-model-picker {
   .prompt {
     -webkit-app-region: drag;
     box-shadow: var(--window-box-shadow);
-    background-color: var(--window-bg-color);
     border-radius: var(--border-radius);
     resize: horizontal;
     padding: 10px 16px;

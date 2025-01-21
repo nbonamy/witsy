@@ -104,7 +104,7 @@ const emit = defineEmits(['select', 'menu']);
 }
 
 .chat.compact .title {
-  font-weight: 500;
+  font-weight: normal;
   font-size: 10.5pt;
 }
 
