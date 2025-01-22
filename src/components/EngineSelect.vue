@@ -2,7 +2,7 @@
 <template>
   <select v-model="value" @change="$emit('change')">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
-    <option :value="favoriteMockEngine" v-if="favorites">Favorites</option>
+    <option :value="favoriteMockEngine" v-if="favorites">Favorite models</option>
     <option value="openai">OpenAI</option>
     <option value="ollama">Ollama</option>
     <option value="anthropic">Anthropic</option>
