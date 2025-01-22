@@ -142,6 +142,7 @@ export default class extends Plugin {
     // init
     const client = new OpenAI({
       apiKey: store.config.engines.openai.apiKey,
+      baseURL: store.config.engines.openai.baseURL,
       dangerouslyAllowBrowser: true
     })
 
