@@ -22,6 +22,7 @@ vi.mock('../../src/llms/llm', async () => {
   LlmFactory.prototype.isEngineReady = vi.fn(() => true)
   LlmFactory.prototype.getCustomEngines = vi.fn(() => [])
   LlmFactory.prototype.getEngineName = vi.fn(() => 'mock')
+  LlmFactory.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
   LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
 	return { default: LlmFactory }

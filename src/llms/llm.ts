@@ -73,6 +73,11 @@ export default class LlmFactory {
     return this.isFavoriteEngine(engine) || this.isFavoriteId(this.getFavoriteId(engine, model))
   }
 
+  getFavoriteModel = (id: string): { engine: string, model: string }|null => {
+    const favorite = this.config.llm.favorites.find(f => f.id === id)
+    return favorite ? { engine: favorite.engine, model: favorite.model } : null
+  }
+
   addFavoriteModel = (engine: string, model: string) => {
     const id = this.getFavoriteId(engine, model)
     this.config.llm.favorites.push({

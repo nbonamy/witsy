@@ -2,6 +2,7 @@
 <template>
   <select v-model="value" @change="$emit('change')">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
+    <option :value="favoriteMockEngine" v-if="favorites">Favorites</option>
     <option value="openai">OpenAI</option>
     <option value="ollama">Ollama</option>
     <option value="anthropic">Anthropic</option>
@@ -21,12 +22,13 @@
 import { CustomEngineConfig } from '../types/config'
 import { computed } from 'vue'
 import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 
 const llmFactory = new LlmFactory(store.config)
 
 defineProps({
-  defaultText: String
+  defaultText: String,
+  favorites: Boolean,
 })
 
 const value = defineModel()

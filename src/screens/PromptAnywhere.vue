@@ -11,8 +11,7 @@
           </template>
           <template v-slot:actions>
             <div class="info" v-if="chat" @click="onEngineModel">
-              <BIconGlobe />
-              <span> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}</span>
+              <BIconGlobe /> <span>{{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}</span>
             </div>
           </template>
         </Prompt>
@@ -23,7 +22,7 @@
       </ResizableHorizontal>
     </div>
   </div>
-  <EngineModelPicker ref="engineModelPicker" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
+  <EngineModelPicker ref="engineModelPicker" :favorites="true" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
 </template>
 
 <script setup lang="ts">
@@ -499,7 +498,6 @@ const onResponseResize= (deltaX: number) => {
       .icon {
         margin-right: 8px;
       }
-      
       .info {
         display: flex;
         align-items: center;

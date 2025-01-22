@@ -3,7 +3,7 @@
     <template v-slot:body>
       <div class="group">
         <label>LLM Provider</label>
-        <EngineSelect v-model="engine" @change="onChangeEngine"/>
+        <EngineSelect :favorites="favorites" v-model="engine" @change="onChangeEngine"/>
       </div>
       <div class="group">
         <label>LLM Model</label>
@@ -27,7 +27,9 @@ import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { favoriteMockEngine } from '../llms/llm'
+
+const llmFactory = new LlmFactory(store.config)
 
 const dialog = ref(null)
 const engine = ref('openai')
@@ -36,6 +38,10 @@ const model = ref('gpt-4o')
 const emit = defineEmits(['save'])
 
 const props = defineProps({
+  favorites: {
+    type: Boolean,
+    default: false,
+  },
   engine: {
     type: String,
     default: 'openai',
@@ -48,8 +54,20 @@ const props = defineProps({
 
 onMounted(() => {
   watch(() => props, () => {
+
+    // get value
     engine.value = props.engine
     model.value = props.model
+
+    // use favorites
+    if (props.favorites) {
+      const favId = llmFactory.getFavoriteId(engine.value, model.value)
+      if (favId) {
+        engine.value = favoriteMockEngine
+        model.value = favId
+      }
+    }
+
   }, { immediate: true })
 })
 
@@ -58,7 +76,6 @@ const close = () => {
 }
 
 const onChangeEngine = () => {
-  const llmFactory = new LlmFactory(store.config)
   model.value = llmFactory.getChatModel(engine.value, false)
 }
 
@@ -67,7 +84,12 @@ const onCancel = () => {
 }
 
 const onSave = () => {
-  emit('save', { engine: engine.value, model: model.value })
+  if (llmFactory.isFavoriteEngine(engine.value)) {
+    const favorite = llmFactory.getFavoriteModel(model.value)
+    emit('save', { engine: favorite.engine, model: favorite.model })
+  } else {
+    emit('save', { engine: engine.value, model: model.value })
+  }
   close()
 }
 

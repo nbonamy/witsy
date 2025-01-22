@@ -242,13 +242,21 @@ test('Favorite Ids', () => {
 })
 
 test('Favorite models', () => {
+
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
     { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
     { id: 'mock-chat2', name: 'chat2@mock', meta: {} }
   ])
+
   expect(llmFactory.isFavoriteModel('mock', 'chat1')).toBe(true)
   expect(llmFactory.isFavoriteModel('mocq', 'chat1')).toBe(false)
   expect(llmFactory.isFavoriteModel('mock', 'chat3')).toBe(false)
+
+  expect(llmFactory.getFavoriteModel('mock-chat1')).toStrictEqual({ engine: 'mock', model: 'chat1' })
+  expect(llmFactory.getFavoriteModel('mock-chat2')).toStrictEqual({ engine: 'mock', model: 'chat2' })
+  expect(llmFactory.getFavoriteModel('mocq-chat1')).toBeNull()
+  expect(llmFactory.getFavoriteModel('mock-chat3')).toBeNull()
+
 })
 
 test('Favorites update', () => {
