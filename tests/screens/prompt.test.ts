@@ -24,9 +24,11 @@ vi.mock('../../src/llms/llm.ts', async () => {
   LlmFactory.prototype.isEngineReady = vi.fn(() => true)
   LlmFactory.prototype.getEngineName = () => 'mock'
   LlmFactory.prototype.getCustomEngines = () => []
+  LlmFactory.prototype.getFavoriteId = () => 'favid'
+  LlmFactory.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
   LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmFactory.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
-	return { default: LlmFactory }
+	return { default: LlmFactory, favoriteMockEngine: '__favorites__' }
 })
 
 enableAutoUnmount(afterEach)

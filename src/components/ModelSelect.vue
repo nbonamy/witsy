@@ -8,9 +8,12 @@
 
 <script setup lang="ts">
 
+import { Model } from 'multi-llm-ts'
 import { ref, onMounted, watch, type Ref } from 'vue'
 import { store } from '../services/store'
-import type { Model } from 'multi-llm-ts';
+import LlmFactory from '../llms/llm'
+
+const llmFactory = new LlmFactory(store.config)
 
 const models: Ref<Model[]> = ref([])
 
@@ -28,7 +31,7 @@ onMounted(() => {
 
 const loadModels = () => {
   if (!props.engine || props.engine == '') models.value = []
-  models.value = store.config?.engines?.[props.engine]?.models?.chat
+  else models.value = llmFactory.getChatModels(props.engine)
 }
 
 </script>
