@@ -22,7 +22,7 @@
       </ResizableHorizontal>
     </div>
   </div>
-  <EngineModelPicker ref="engineModelPicker" :favorites="true" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
+  <EngineModelPicker ref="engineModelPicker" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
 </template>
 
 <script setup lang="ts">

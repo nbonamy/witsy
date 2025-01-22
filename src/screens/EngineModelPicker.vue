@@ -40,7 +40,7 @@ const emit = defineEmits(['save'])
 const props = defineProps({
   favorites: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   engine: {
     type: String,
