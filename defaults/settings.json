@@ -154,7 +154,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "google": {
@@ -163,7 +164,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "groq": {
@@ -172,7 +174,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "xai": {
@@ -181,7 +184,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "openrouter": {
@@ -190,7 +194,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "deepseek": {
@@ -199,7 +204,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "cerebras": {
@@ -208,7 +214,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "mistralai": {
@@ -217,7 +224,8 @@
         "image": []
       },
       "model": {
-        "chat": ""
+        "chat": "",
+        "image": ""
       }
     },
     "ollama": {
@@ -227,7 +235,8 @@
         "image": []
       },
       "model": {
-        "chat": "llama2"
+        "chat": "",
+        "image": ""
       }
     },
     "huggingface": {

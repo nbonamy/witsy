@@ -25,7 +25,11 @@ beforeAll(() => {
   useNavigatorMock()
   useWindowMock()
   store.load()
-  store.config.engines.mock = { label: 'mock' }
+  store.config.engines.mock = {
+    label: 'mock',
+    models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
+    model: { chat: 'chat', image: '' }
+  }
 })
 
 let chat: Chat|null = null

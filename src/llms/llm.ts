@@ -45,7 +45,7 @@ export default class LlmFactory {
   }
 
   getCustomEngines = (): string[] => {
-    return Object.keys(this.config.engines).filter(e => e != favoriteMockEngine && !standardEngines.includes(e) && !nonChatEngines.includes(e))
+    return Object.keys(this.config.engines).filter(e => this.isCustomEngine(e))
   }
 
   isCustomEngine = (engine: string): boolean => {
@@ -307,6 +307,7 @@ export default class LlmFactory {
 
     // needed
     const engineConfig = store.config.engines[engine]
+    const initialConfig = JSON.stringify(engineConfig)
 
     // check
     if (typeof models !== 'object') {
@@ -330,14 +331,19 @@ export default class LlmFactory {
     }
 
     // save in store
-    engineConfig.models = models
+    engineConfig.models = {
+      chat: [],
+      image: [],
+      ...models
+    }
     engineConfig.model = {
-      chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat),
-      image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image)
+      chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat) || '',
+      image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image) || '',
     }
     
-    // save
-    if (this.config == store.config) {
+    // save only if modified
+    const updatedConfig = JSON.stringify(engineConfig)
+    if (this.config == store.config && updatedConfig !== initialConfig) {
       store.saveSettings()
     }
 

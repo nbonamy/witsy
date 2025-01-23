@@ -13,12 +13,12 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
   return {
     ...mod,
     loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadGroqModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
+    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [] })),
+    loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [ { id: 'image', name: 'image' } ] })),
+    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
     loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
+    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
     loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] }))
@@ -29,6 +29,11 @@ let llmFactory: LlmFactory
 
 beforeAll(() => {
   useWindowMock({ customEngine: true })
+  llmFactory = new LlmFactory(store.config)
+})
+
+beforeEach(() => {
+  vi.clearAllMocks()
   store.loadSettings()
   store.config.engines.openai.apiKey = '123'
   store.config.engines.anthropic.apiKey = '123'
@@ -40,11 +45,6 @@ beforeAll(() => {
   store.config.engines.xai.apiKey =
   store.config.engines.deepseek.apiKey = '123'
   store.config.engines.openrouter.apiKey = '123'
-  llmFactory = new LlmFactory(store.config)
-})
-
-beforeEach(() => {
-  vi.clearAllMocks()
 })
 
 test('Init models', async () => {
@@ -64,43 +64,43 @@ test('Init models', async () => {
 test('Load models', async () => {
   await llmFactory.loadModels('anthropic')
   expect(loadAnthropicModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(1)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(0)
   
   await llmFactory.loadModels('cerebras')
   expect(loadCerebrasModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(2)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(1)
   
   await llmFactory.loadModels('google')
   expect(loadGoogleModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(2)
   
   await llmFactory.loadModels('groq')
   expect(loadGroqModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
   await llmFactory.loadModels('mistralai')
   expect(loadMistralAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(5)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
   await llmFactory.loadModels('ollama')
   expect(loadOllamaModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(6)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
   await llmFactory.loadModels('openai')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(7)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
   
   await llmFactory.loadModels('xai')
   expect(loadXAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(8)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
   await llmFactory.loadModels('deepseek')
   expect(loadDeepSeekModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(9)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
   await llmFactory.loadModels('openrouter')
   expect(loadOpenRouterModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(10)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
   await llmFactory.loadModels('custom')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(2)
@@ -109,6 +109,6 @@ test('Load models', async () => {
     baseURL: 'http://localhost/api/v1',
     models: { chat: [], image: [] }
   })
-  expect(window.api.config?.save).toHaveBeenCalledTimes(11)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(5)
 
 })
