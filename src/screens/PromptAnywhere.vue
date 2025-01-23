@@ -10,9 +10,9 @@
             </div>
           </template>
           <template v-slot:actions>
-            <div class="info" v-if="chat" @click="onEngineModel">
-              <BIconGlobe /> <span>{{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}</span>
-            </div>
+            <div class="info" v-if="chat"><span @click="onEngineModel">
+              <BIconGlobe /> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}
+            </span></div>
           </template>
         </Prompt>
       </ResizableHorizontal>
@@ -500,14 +500,15 @@ const onResponseResize= (deltaX: number) => {
       }
       .info {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         color: var(--prompt-icon-color);
         cursor: pointer;
         opacity: 0.5;
         font-size: 10pt;
         margin-left: auto;
         svg {
-          margin-top: 2px;
+          position: relative;
+          top: 1px;
           font-size: 10pt;
           margin-right: 6px;
         }
