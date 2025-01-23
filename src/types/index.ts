@@ -105,11 +105,11 @@ export interface Store {
   chatFilter: string|null
   saveHistory?(): void
   saveSettings?(): void
-  load?(): Promise<void>
-  loadSettings?(): Promise<void>
-  loadCommands?(): Promise<void>
-  loadExperts?(): Promise<void>
-  loadHistory?(): Promise<void>
+  load?(): void
+  loadSettings?(): void
+  loadCommands?(): void
+  loadExperts?(): void
+  loadHistory?(): void
   mergeHistory?(chats: any[]): void
   dump?(): void
 }

@@ -21,29 +21,32 @@ export const store: Store = reactive({
     chats: null
   } as Folder,
 
-  loadSettings: async () => {
+  loadSettings: (): void => {
     loadSettings()
   },
 
-  loadHistory: async () => {
+  loadHistory: (): void => {
     loadHistory()
   },
 
-  loadCommands: async () => {
+  loadCommands: (): void => {
     loadCommands()
   },
 
-  loadExperts: async () => {
+  loadExperts: (): void => {
     loadExperts()
   },
 
-  load: async () => {
+  load: async (): Promise<void> => {
+
+    //perf
+    const start = Date.now()
 
     // load data
     store.loadSettings()
     store.loadCommands()
-    loadHistory()
-    loadExperts()
+    store.loadHistory()
+    store.loadExperts()
 
     // subscribe to file changes
     window.api.on('file-modified', (signal) => {
@@ -56,7 +59,7 @@ export const store: Store = reactive({
 
     // load models and select valid engine
     const llmFactory = new LlmFactory(store.config)
-    llmFactory.initModels()
+    await llmFactory.initModels()
     if (!llmFactory.isEngineReady(store.config.llm.engine)) {
       for (const engine of llmFactory.getChatEngines({ favorites: false })) {
         if (llmFactory.isEngineReady(engine)) {
@@ -67,13 +70,17 @@ export const store: Store = reactive({
       }
     }
 
+    // perf
+    console.log(`Store loaded in ${Date.now() - start}ms`)
+
+
   },
 
-  saveSettings: () => {
+  saveSettings: (): void => {
     window.api.config.save(JSON.parse(JSON.stringify(store.config)))
   },
   
-  saveHistory: () => {
+  saveHistory: (): void => {
 
     try {
 
@@ -101,13 +108,13 @@ export const store: Store = reactive({
   
   },
   
-  dump: () => {
+  dump: (): void => {
     console.dir(JSON.parse(JSON.stringify(store.config)))
   },
 
 })
 
-const loadSettings = () => {
+const loadSettings = (): void => {
   // we don't want to reassign store.config
   // as others are referencing it directly
   // so we update locally instead
@@ -126,7 +133,7 @@ const loadSettings = () => {
   }
 }
 
-const loadHistory = () => {
+const loadHistory = (): void => {
 
   try {
     store.history = { folders: [], chats: [] }
@@ -145,7 +152,7 @@ const loadHistory = () => {
 }
 
 // 
-const mergeHistory = (jsonHistory: History) => {
+const mergeHistory = (jsonHistory: History): void => {
 
   // only if loaded
   if (!store.history) {

@@ -112,7 +112,7 @@ test('ollama settings', async () => {
   await ollama.findAll('input')[1].setValue('base-url')
   await ollama.findAll('input')[1].trigger('blur')
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
-  await ollama.find('button').trigger('click')
+  await ollama.findAll('button')[1].trigger('click')
   await wait(750) //timeout
   expect(loadOllamaModels).toHaveBeenCalledWith(expect.objectContaining({
   }))
