@@ -87,6 +87,7 @@ export default class extends Generator {
       sources: true,
       overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
+      citations: true,
     }
     opts = {...defaults, ...opts }
 

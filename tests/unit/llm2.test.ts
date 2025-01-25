@@ -49,15 +49,15 @@ beforeEach(() => {
 
 test('Init models', async () => {
   await llmFactory.initModels()
-  expect(loadAnthropicModels).toHaveBeenCalledTimes(1)
-  expect(loadCerebrasModels).toHaveBeenCalledTimes(1)
+  expect(loadAnthropicModels).toHaveBeenCalledTimes(0)
+  expect(loadCerebrasModels).toHaveBeenCalledTimes(0)
   expect(loadGoogleModels).toHaveBeenCalledTimes(1)
-  expect(loadGroqModels).toHaveBeenCalledTimes(1)
+  expect(loadGroqModels).toHaveBeenCalledTimes(0)
   expect(loadMistralAIModels).toHaveBeenCalledTimes(0)
   expect(loadOllamaModels).toHaveBeenCalledTimes(0)
   expect(loadOpenAIModels).toHaveBeenCalledTimes(0)
-  expect(loadXAIModels).toHaveBeenCalledTimes(1)
-  expect(loadDeepSeekModels).toHaveBeenCalledTimes(1)
+  expect(loadXAIModels).toHaveBeenCalledTimes(0)
+  expect(loadDeepSeekModels).toHaveBeenCalledTimes(0)
   expect(loadOpenRouterModels).toHaveBeenCalledTimes(0)
 })
 

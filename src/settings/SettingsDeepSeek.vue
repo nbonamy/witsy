@@ -18,7 +18,7 @@
         </select>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">More about DeepSeek models</a>
       </div>
-      <!-- <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button> -->
+      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>
 </template>
@@ -41,14 +41,14 @@ const load = () => {
   chat_model.value = store.config.engines.deepseek?.model?.chat || ''
 }
 
-// const onRefresh = async () => {
-//   refreshLabel.value = 'Refreshing…'
-//   setTimeout(() => getModels(), 500)
-// }
+const onRefresh = async () => {
+  refreshLabel.value = 'Refreshing…'
+  setTimeout(() => getModels(), 500)
+}
 
 const setEphemeralRefreshLabel = (text: string) => {
-  // refreshLabel.value = text
-  // setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  refreshLabel.value = text
+  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }
 
 const getModels = async () => {
