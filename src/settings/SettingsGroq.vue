@@ -19,7 +19,7 @@
         <a href="https://console.groq.com/docs/models" target="_blank">More about Groq models</a><br/>
         <a href="https://groq.com/pricing/" target="_blank">Groq pricing</a>
       </div>
-      <!-- <button style="visibility: hidden;" @click.prevent="onRefresh">{{ refreshLabel }}</button> -->
+      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>
 </template>
@@ -42,14 +42,14 @@ const load = () => {
   chat_model.value = store.config.engines.groq?.model?.chat || ''
 }
 
-// const onRefresh = async () => {
-//   refreshLabel.value = 'Refreshing…'
-//   setTimeout(() => getModels(), 500)
-// }
+const onRefresh = async () => {
+  refreshLabel.value = 'Refreshing…'
+  setTimeout(() => getModels(), 500)
+}
 
 const setEphemeralRefreshLabel = (text: string) => {
-  // refreshLabel.value = text
-  // setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  refreshLabel.value = text
+  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
 }
 
 const getModels = async () => {

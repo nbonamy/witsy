@@ -98,6 +98,7 @@ test('Assistant parameters', async () => {
     overwriteEngineModel: false,
     systemInstructions: 'You are a chat assistant',
     autoSwitchVision: true,
+    citations: true,
     usage: true,
   })
 })
