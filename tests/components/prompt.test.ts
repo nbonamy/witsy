@@ -91,7 +91,7 @@ test('Sends with right parameters', async () => {
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
     prompt: 'this is my prompt',
-    attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', saved: false, extracted: false },
+    attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false },
     expert: { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
     docrepo: 'docrepo',
   })
@@ -137,6 +137,8 @@ test('Stores attachment', async () => {
     saved: false,
     extracted: false,
     url: 'file://image.png',
+    title: '',
+    context: '',
   })
 })
 
