@@ -1,5 +1,5 @@
 
-import { LlmEngine, type LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, LlmResponse, type LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
 import Chat, { defaultTitle } from '../models/chat'
 import Attachment from '../models/attachment'
@@ -7,7 +7,7 @@ import Message from '../models/message'
 import LlmFactory from '../llms/llm'
 import { store } from './store'
 import { availablePlugins } from '../plugins/plugins'
-import Generator, { type GenerationOpts } from './generator'
+import Generator, { GenerationResult, type GenerationOpts } from './generator'
 import { Expert } from 'types'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
@@ -144,8 +144,16 @@ export default class extends Generator {
 
     // generate text
     const hadPlugins = this.llm.plugins.length > 0
-    const rc = await this.generate(this.llm, this.chat.messages, opts, callback)
-    if (!rc) {
+    let rc: GenerationResult = await this._prompt(opts, callback)
+
+    // check if streaming is not supported
+    if (rc === 'streaming_not_supported') {
+      this.chat.disableStreaming = true
+      rc = await this._prompt(opts, callback)
+    }
+
+    // titling
+    if (rc !== 'success') {
       opts.titling = false
     }
 
@@ -162,6 +170,43 @@ export default class extends Generator {
     // save
     if (opts.save) {
       store.saveHistory()
+    }
+
+  }
+
+  async _prompt(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<GenerationResult> {
+
+    // normal case: we stream
+    if (!this.chat.disableStreaming) {
+      return await this.generate(this.llm, this.chat.messages, opts, callback)
+    }
+
+    try {
+
+      // normal completion
+      const response: LlmResponse = await this.llm.complete(this.chat.model, this.chat.messages, {
+        usage: true,
+        ...opts
+      })
+
+      // fake streaming
+      const chunk: LlmChunk = {
+        type: 'content',
+        text: response.content,
+        done: true
+      }
+
+      // add content
+      this.chat.lastMessage().appendText(chunk)
+      this.chat.lastMessage().usage = response.usage
+      callback.call(null, chunk)
+
+      // done
+      return 'success'
+
+    } catch (error) {
+      console.error('Error while trying to complete', error)
+      return 'error'
     }
 
   }

@@ -499,13 +499,13 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // now generate
     processing.value = true
-    const rc = await generator.generate(llm, chat.value.messages, {
+    const rc: GenerationResult = await generator.generate(llm, chat.value.messages, {
       model: chat.value.model,
       docrepo: chat.value.docrepo,
       sources: false,
     })
 
-    if (!rc) {
+    if (rc !== 'success') {
       throw new Error(response.content)
     }
 

@@ -11,7 +11,18 @@ export interface GenerationOpts extends LlmCompletionOpts {
   sources?: boolean
 }
 
-export default class Generator {
+export type GenerationResult = 
+  'success' |
+  'missing_api_key' |
+  'out_of_credits' |
+  'quota_exceeded' |
+  'context_too_long' |
+  'function_description_too_long' |
+  'function_call_not_supported' |
+  'streaming_not_supported' |
+  'error'
+
+  export default class Generator {
 
   config: Configuration
   stopGeneration: boolean
@@ -27,10 +38,10 @@ export default class Generator {
     this.llm = null
   }
 
-  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, callback?: (chunk: LlmChunk) => void): Promise<boolean> {
+  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, callback?: (chunk: LlmChunk) => void): Promise<GenerationResult> {
 
     // return code
-    let rc = true
+    let rc: GenerationResult = 'success'
 
     // get messages
     const response = messages[messages.length - 1]
@@ -102,33 +113,38 @@ export default class Generator {
         // missing api key
         if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
           response.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
-          rc = false
+          rc = 'missing_api_key'
         }
         
         // out of credits
         else if ([400, 402].includes(error.status) && (message.includes('credit') || message.includes('balance'))) {
           response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
-          rc = false
+          rc = 'out_of_credits'
         
         // quota exceeded
         } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
           response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
-          rc = false
+          rc = 'quota_exceeded'
 
         // context length or function description too long
         } else if ([400].includes(error.status) && (message.includes('context length') || message.includes('too long'))) {
           if (message.includes('function.description')) {
             response.setText('Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.')
+            rc = 'function_description_too_long'
           } else {
             response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
+            rc = 'context_too_long'
           }
-          rc = false
         
         // function call not supported
         } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool use') || message.includes('tool choice'))) {
           console.log('Model does not support function calling: removing tool and retrying')
           llm.clearPlugins()
           return this.generate(llm, messages, opts, callback)
+
+        // streaming not supported
+        } else if ([400].includes(error.status) && message.includes('\'stream\' does not support true')) {
+          rc = 'streaming_not_supported'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
@@ -141,7 +157,7 @@ export default class Generator {
           } else {
             response.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
           }
-          rc = false
+          rc = 'error'
         }
       } else {
         callback?.call(null, { type: 'content', text: null, done: true })

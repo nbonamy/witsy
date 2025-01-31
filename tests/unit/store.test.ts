@@ -98,6 +98,7 @@ test('Save history', async () => {
       engine: 'engine',
       model: 'model',
       deleted: false,
+      disableStreaming: false,
       disableTools: false,
       messages: [
         { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
