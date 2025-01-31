@@ -85,11 +85,22 @@ const onEdit = (message: Message) => {
 }
 
 const onUsage = (message: Message) => {
+  
+  // check
   if (!message.usage) return
+  
+  // build text
   const totalTokens = message.usage.prompt_tokens + message.usage.completion_tokens
+  let text = `Prompt tokens: ${message.usage.prompt_tokens}`
+  text += `\nResponse tokens: ${message.usage.completion_tokens}`
+  if (message.usage.completion_tokens_details?.reasoning_tokens) {
+    text += `\nReasoning tokens: ${message.usage.completion_tokens_details.reasoning_tokens}`
+  }
+
+  // show
   Dialog.show({
     title: `Total tokens: ${totalTokens}`,
-    text: `Prompt tokens: ${message.usage.prompt_tokens}\nResponse tokens: ${message.usage.completion_tokens}`,
+    text: text,
   })
 }
 

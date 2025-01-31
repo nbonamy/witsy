@@ -12,6 +12,7 @@ export default class Chat implements ChatBase {
   lastModified!: number
   engine!: string|null
   model!: string|null
+  disableStreaming: boolean = false
   disableTools: boolean = false
   docrepo!: string|null
   messages!: Message[]
