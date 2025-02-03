@@ -104,7 +104,6 @@ const mdRender = (content: string) => {
   var html = window.api.markdown.render(content)
   // append html with '</think>' if there is <think> in html but no '</think>'
   if (html.includes('<think>') && !html.includes('</think>')) {
-    console.log('appending </think>')
     html += '</think>'
   }
   // replace <think> with <div class="think"> and </think> with </div>
