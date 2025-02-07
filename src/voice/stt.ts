@@ -40,6 +40,7 @@ export interface STTEngine {
   requiresDownload(): boolean
   initialize(callback?: ProgressCallback): Promise<void>
   transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse>
+  isModelDownloaded(model: string): Promise<boolean>
   deleteModel(model: string): Promise<void>
   deleteAllModels(): Promise<void>
 }
