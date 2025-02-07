@@ -66,6 +66,9 @@ import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
 import { Configuration } from 'types/config'
 
+type InitModelMode = 'download' | 'verify'
+let initMode: InitModelMode = 'download'
+
 type FilesProgressInfo = { [key: string]: DownloadProgress }
 
 const engine = ref('openai')
@@ -105,14 +108,14 @@ const progressText = computed(() => {
   if (Object.keys(progress.value).length === 0) {
     return 'Initializing...'
   } else if (progress.value.status === 'ready') {
-    return 'Download completed!'
+    return `${initMode === 'download' ? 'Download' : 'Verification'} completed!`
   }
   const loadedTotal = Object.values(progress.value).reduce((acc, p) => {
     acc.loaded += p.loaded
     acc.total += p.total
     return acc
   }, { loaded: 0, total: 0 })
-  return `Downloading: ${Math.floor(loadedTotal.loaded / loadedTotal.total * 100)}%`
+  return `${initMode === 'download' ? 'Downloading' : 'Verifying'}: ${Math.floor(loadedTotal.loaded / loadedTotal.total * 100)}%`
 })
 
 const load = () => {
@@ -135,7 +138,7 @@ const onChangeEngine = () => {
   onChangeModel()
 }
 
-const onChangeModel = () => {
+const onChangeModel = async () => {
 
   // dummy selector
   if (model.value === '') {
@@ -155,23 +158,34 @@ const onChangeModel = () => {
     initializeEngine(sttEngine)
   }
 
-  // check if download is required
-  if (requiresDownload(engine.value)) {
-    Dialog.show({
-      target: document.querySelector('.settings .voice'),
-      title: 'This model needs to be downloaded on your computer. Do you want to proceed?',
-      confirmButtonText: 'Continue',
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        changeEngine()
-      } else {
-        model.value = ''
-      }
-    })
-  } else {
+  // if no download required easy:
+  if (!requiresDownload(engine.value)) {
     changeEngine()
+    return
   }
+
+  // check if download is required
+  const sttEngine = getSTTEngine(store.config)
+  if (await sttEngine.isModelDownloaded(model.value)) {
+    initMode = 'verify'
+    changeEngine()
+    return
+  }
+  
+  // show dialog
+  Dialog.show({
+    target: document.querySelector('.settings .voice'),
+    title: 'This model needs to be downloaded on your computer. Do you want to proceed?',
+    confirmButtonText: 'Continue',
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      initMode = 'download'
+      changeEngine()
+    } else {
+      model.value = ''
+    }
+  })
 }
 
 const initializeEngine = async (sttEngine: STTEngine) => {
@@ -236,6 +250,9 @@ const deleteLocalModels = async () => {
         const engine = getSTTEngine({ stt: { model: engineName } } as Configuration)
         engine.deleteAllModels()
       }
+    }
+    if (engine.value === 'whisper') {
+      model.value = ''
     }
   })
 }

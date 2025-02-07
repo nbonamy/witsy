@@ -50,6 +50,11 @@ export default class STTOpenAI implements STTEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async isModelDownloaded(model: string): Promise<boolean> {
+    return false
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteModel(model: string): Promise<void> {
     return
   }

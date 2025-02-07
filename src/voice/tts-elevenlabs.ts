@@ -20,6 +20,7 @@ export default class TTSElevenLabs implements TTSEngine {
 
   static readonly voices = [
     { id: 'Xb7hH8MSUJpSbSDYk0k2', label: 'Alice' },
+    // { id: 'aEO01A4wXwd1O8GPgGlF', label: 'Arabella' },
     { id: '9BWtsMINqrJLrRacOk9x', label: 'Aria' },
     { id: 'pqHfZKP75CvOlQylNhV4', label: 'Bill' },
     { id: 'nPczCjzI2devNBz1zQrb', label: 'Brian' },
