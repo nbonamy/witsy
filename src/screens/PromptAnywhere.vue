@@ -18,7 +18,7 @@
       </ResizableHorizontal>
       <div class="spacer" />
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
-        <OutputPanel ref="output" :message="response" :source-app="showParams?.sourceApp" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat"/>
+        <OutputPanel ref="output" :message="response" :source-app="showParams?.sourceApp" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat" @retry="onRetry"/>
       </ResizableHorizontal>
     </div>
   </div>
@@ -434,6 +434,24 @@ const onChat = async () => {
   // continue
   window.api.chat.open(chat.value.uuid)
   onClose()
+
+}
+
+const onRetry = () => {
+
+  // remove response
+  chat.value.messages.pop()
+
+  // now pop the prompt
+  const lastMessage = chat.value.messages.pop()
+
+  // and retry
+  onSendPrompt({
+    prompt: lastMessage.content,
+    attachment: lastMessage.attachment as Attachment,
+    docrepo: chat.value.docrepo,
+    expert: lastMessage.expert
+  })
 
 }
 

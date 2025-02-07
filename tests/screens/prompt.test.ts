@@ -152,6 +152,7 @@ test('Executes command response', async () => {
   expect(wrapper.find('.response .read').exists()).toBe(true)
   expect(wrapper.find('.response .continue').exists()).toBe(true)
   expect(wrapper.find('.response .scratchpad').exists()).toBe(true)
+  expect(wrapper.find('.response .retry').exists()).toBe(true)
 })
 
 test('Copies response', async () => {
