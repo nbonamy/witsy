@@ -17,6 +17,9 @@
       <div class="action scratchpad" v-if="!message.transient" @click="onScratchPad">
         <BIconPen /> Write
       </div>
+      <div class="action retry" v-if="!message.transient" @click="onRetry(message)">
+        <BIconArrowCounterclockwise /> Retry
+      </div>
       <div class="action spacer" />
       <div class="action clear" @click="onClear" v-if="showClear">
         <BIconXCircle />  Clear
@@ -81,6 +84,7 @@ const emit = defineEmits([
   'close',
   'clear',
   'chat',
+  'retry'
 ])
 
 onMounted(() => {
@@ -183,6 +187,10 @@ const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value.$el, message.uuid, message.content)
 }
 
+const onRetry = async (message: Message) => {
+  emit('retry')
+}
+
 defineExpose({
   cleanUp
 })
@@ -242,6 +250,8 @@ defineExpose({
   }
 
   .actions {
+    container-type: inline-size;
+    container-name: actions;
     display: flex;
     flex-direction: row;
     gap: 12px;
@@ -273,6 +283,24 @@ defineExpose({
         }
       }
     }
+  }
+}
+
+@container actions (max-width: 600px) {
+  .action.clear {
+    display: none !important;
+  }
+}
+
+@container actions (max-width: 550px) {
+  .action.retry {
+    display: none !important;
+  }
+}
+
+@container actions (max-width: 475px) {
+  .action.scratchpad {
+    display: none !important;
   }
 }
 
