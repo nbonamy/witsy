@@ -3,7 +3,7 @@ import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, ProgressInfo, TaskStatus, TranscribeResponse } from './stt'
 
 // importing from @xenova/transformers leads to a runtime error
-import { env, pipeline } from '@xenova/transformers/dist/transformers'
+import { env, pipeline } from '@huggingface/transformers'
 
 export default class STTWhisper implements STTEngine {
 
@@ -41,7 +41,7 @@ export default class STTWhisper implements STTEngine {
 
       const model = this.config.stt.model || 'Xenova/whisper-tiny'
       this.transcriber = await pipeline('automatic-speech-recognition', model, {
-        quantized: false,
+        dtype: 'q8',
         progress_callback: (data: ProgressInfo) => {
           if ((data as TaskStatus).status === 'ready') {
             this.ready = true

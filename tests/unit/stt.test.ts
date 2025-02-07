@@ -35,7 +35,7 @@ vi.mock('groq-sdk', async () => {
   return { default : Groq }
 })
 
-vi.mock('@xenova/transformers/dist/transformers', async () => {
+vi.mock('@huggingface/transformers', async () => {
   return {
     env: { allowLocalModels: false },
     pipeline: async (task, model, opts) => {
