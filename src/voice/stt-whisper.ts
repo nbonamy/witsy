@@ -91,6 +91,17 @@ export default class STTWhisper implements STTEngine {
     })
   }
 
+  async isModelDownloaded(model: string): Promise<boolean> {
+    const storage = await caches.open('transformers-cache')
+    const keys = await storage.keys()
+    for (const key of keys) {
+      if (key.url.includes(`/${model}/`)) {
+        return true
+      }
+    }
+    return false
+  }
+
   async deleteModel(model: string): Promise<void> {
     const storage = await caches.open('transformers-cache')
     const keys = await storage.keys()
