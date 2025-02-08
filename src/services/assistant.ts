@@ -1,12 +1,12 @@
 
-import { LlmEngine, LlmResponse, type LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, LlmResponse, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
 import Chat from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 import LlmFactory from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
-import Generator, { GenerationResult, type GenerationOpts } from './generator'
+import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
@@ -63,7 +63,7 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, beforeTitleCallback?: () => void): Promise<void> {
 
     // check
     prompt = prompt.trim()
@@ -157,7 +157,8 @@ export default class extends Generator {
     }
 
     // check if we need to update title
-    if (opts.titling && !this.chat.title) {
+    if (opts.titling && !this.chat.hasTitle()) {
+      beforeTitleCallback?.call(null)
       this.chat.title = await this.getTitle() || this.chat.title
     }
   
