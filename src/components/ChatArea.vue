@@ -18,7 +18,7 @@
         <EmptyChat v-else />
         <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
       </div>
-      <ModelSettings class="model-settings" :chat="chat" v-if="showModelSettings"/>
+      <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </div>
     <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
@@ -56,18 +56,17 @@ const chatMenuPosition = computed(() => {
 
 const chatMenuActions = computed(() => {
 
-  // show default is chat not setup yet
-  let { engine, model } = llmFactory.getChatEngineModel()
-  if (props.chat.engine) {
-    engine = llmFactory.getEngineName(props.chat.engine)
-    model = props.chat.model
-  }
-
+  // // show default is chat not setup yet
+  // let { engine, model } = llmFactory.getChatEngineModel()
+  // if (props.chat.engine) {
+  //   engine = llmFactory.getEngineName(props.chat.engine)
+  //   model = props.chat.model
+  // }
 
   return [
-    { label: `${engine} ${model}`, disabled: true },
-    { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
-    { label: 'Model Settings', action: 'modelSettings', disabled: false },
+    // { label: `${engine} ${model}`, disabled: true },
+    // { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
+    // { label: 'Model Settings', action: 'modelSettings', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: !hasMessages() },
     { label: 'Delete', action: 'delete', disabled: !isSaved() },
@@ -198,6 +197,7 @@ const onExportPdf = async () => {
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  background-color: var(--message-list-bg-color);
 }
 
 .toolbar {
@@ -268,11 +268,17 @@ const onExportPdf = async () => {
 }
 
 .model-settings {
-  flex: 0 0 var(--info-panel-width);
-}
+  flex: 0 0 0px;
+  transition: flex-basis 0.2s ease-in-out;
+  overflow: hidden;
 
-  .prompt {
-  background-color: var(--message-list-bg-color);
+  &:deep() label {
+    white-space: nowrap;
+  }
+
+  &.visible {
+    flex: 0 0 var(--info-panel-width);
+  }
 }
 
 .windows {
