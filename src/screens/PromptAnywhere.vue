@@ -39,6 +39,7 @@ import LlmFactory from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
+import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
@@ -171,7 +172,7 @@ const processQueryParams = (params?: anyDict) => {
     if (lastSeenChat == null || lastSeenChat.uuid !== chat.value.uuid || lastSeenChat.when < Date.now() - promptChatTimeout) {
       chat.value = null
     } else {
-      if (chat.value.messages.length > 1) {
+      if (chat.value.hasMessages()) {
         response.value = chat.value.lastMessage()
       } else {
         response.value = null

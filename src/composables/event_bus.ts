@@ -16,7 +16,7 @@ export default function useEventBus () {
       eventHandlers.push({ event, handler })
       eventEmitter.on(event, handler)
     },
-    emitEvent: (event: any, payload: unknown) => {
+    emitEvent: (event: any, payload?: unknown) => {
       eventEmitter.emit(event, payload)
     }
   }

@@ -251,7 +251,6 @@ const removeFavorite = () => {
 <style scoped>
 
 .empty {
-  height: 100vh;
   padding: 16px;
   display: flex;
   flex-direction: column;

@@ -7,6 +7,8 @@ import Expert from './expert'
 export default class Message extends MessageBase implements IMessage {
 
   uuid: string
+  engine: string
+  model: string
   createdAt: number
   type: MessageType
   expert?: Expert
@@ -17,6 +19,8 @@ export default class Message extends MessageBase implements IMessage {
   constructor(role: LlmRole, content?: string) {
     super(role, content)
     this.uuid = crypto.randomUUID()
+    this.engine = null
+    this.model = null
     this.createdAt = Date.now()
     this.type = 'text'
     this.expert = null
@@ -34,6 +38,8 @@ export default class Message extends MessageBase implements IMessage {
     const message = new Message(obj.role, obj.content)
     message.uuid = obj.uuid || crypto.randomUUID()
     message.type = obj.type || 'text'
+    message.engine = obj.engine || null
+    message.model = obj.model || null
     message.createdAt = obj.createdAt
     message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
     message.transient = false

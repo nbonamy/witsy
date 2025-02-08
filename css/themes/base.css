@@ -74,6 +74,7 @@
 
 .message .body .text pre.hljs code.hljs {
   white-space: pre-wrap !important;
+  word-break: break-all !important;
 }
 
 .message .body .text pre.hljs {
