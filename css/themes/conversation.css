@@ -35,10 +35,3 @@
 .message.assistant .actions {
   top: 0px;
 }
-
-div.think {
-  font-style: italic;
-  display: block;
-  margin: 8px 0;
-  color: #666;
-}
