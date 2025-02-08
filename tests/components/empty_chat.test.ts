@@ -153,7 +153,6 @@ test('Manages favorites', async () => {
   store.config.general.tips.modelSelector = false
   await wrapper.find('.empty .current .logo').trigger('click')
   await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
-  console.log(wrapper.find('.empty').html())
   await wrapper.find('.empty .current .favorite span').trigger('click')
   expect(store.config.llm.favorites).toHaveLength(1)
 
