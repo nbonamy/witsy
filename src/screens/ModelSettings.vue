@@ -3,7 +3,7 @@
     <form class="vertical">
       <div class="group">
         <label>LLM Provider</label>
-        <EngineSelect :favorites="true" v-model="engine" @change="onChangeEngine"/>
+        <EngineSelect v-model="engine" @change="onChangeEngine"/>
       </div>
       <div class="group">
         <label>LLM Model</label>
@@ -57,7 +57,6 @@ import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
 
 const llmFactory = new LlmFactory(store.config)
-const dialog = ref(null)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableTools: Ref<boolean> = ref(false)
@@ -86,10 +85,6 @@ onMounted(async () => {
     reasoningEffort.value = props.chat.modelOpts?.reasoningEffort
   }, { deep: true, immediate: true })
 })
-
-const close = () => {
-  dialog.value.close('#model-settings')
-}
 
 const onChangeEngine = () => {
   model.value = llmFactory.getChatModel(engine.value, false)
@@ -164,8 +159,6 @@ const save = () => {
       top_p: topPValue,
       reasoningEffort: reasoningEffortValue,
     }
-
-    console.log(JSON.parse(JSON.stringify(props.chat.modelOpts)))
 
     // special case
     if (!props.chat.hasMessages()) {

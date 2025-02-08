@@ -205,12 +205,8 @@ const onExportPdf = async () => {
   -webkit-app-region: drag;
   display: grid;
   grid-template-columns: auto 16px 16px;
-  background-color: var(--message-list-bg-color);
+  background-color: var(--chatarea-toolbar-bg-color);
   gap: 8px;
-
-  &:has(.title) {
-    background-color: var(--chatarea-toolbar-bg-color);
-  }
 
   .title {
     grid-column: 1;
