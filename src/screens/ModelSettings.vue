@@ -30,7 +30,7 @@
       </div>
       <div class="group">
         <label>TopP [0.0 … 1.0]</label>
-        <input type="text" name="top_k" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
+        <input type="text" name="top_p" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
       </div>
       <div class="group">
         <label>Reasoning Effort</label>
