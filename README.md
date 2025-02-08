@@ -153,6 +153,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Model parameters (temperature...)
 - [x] Favorite models
 - [x] ElevenLabs Text-to-Speech
 - [x] Custom engines (OpenAI compatible)
