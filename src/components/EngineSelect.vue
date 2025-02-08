@@ -1,6 +1,6 @@
 
 <template>
-  <select v-model="value" @change="$emit('change')">
+  <select v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
     <option :value="favoriteMockEngine" v-if="favorites">Favorite models</option>
     <option value="openai">OpenAI</option>
@@ -29,6 +29,10 @@ const llmFactory = new LlmFactory(store.config)
 defineProps({
   defaultText: String,
   favorites: Boolean,
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const value = defineModel()
