@@ -161,6 +161,9 @@ test('Model settings', async () => {
   expect(chat?.modelOpts?.top_p).toBeUndefined()
   expect(chat?.modelOpts?.reasoningEffort).toBeUndefined()
 
+  await wrapper.find('.model-settings input[name=temperature]').setValue('not a number')
+  expect(chat?.modelOpts?.temperature).toBeUndefined()
+
   await wrapper.find('.toolbar .settings').trigger('click')
   expect(wrapper.find('.model-settings').classes()).not.toContain('visible')
 
