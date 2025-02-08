@@ -1,5 +1,5 @@
 
-import { LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -30,6 +30,8 @@ export type MessageType = 'text' | 'image'
 
 export interface Message extends IMessageBase {
   uuid: string
+  engine: string
+  model: string
   type: MessageType
   createdAt: number
   expert?: Expert
@@ -42,7 +44,7 @@ export interface Message extends IMessageBase {
 
 export interface Chat {
   uuid: string
-  title: string
+  title: string|null
   createdAt: number
   lastModified: number
   engine: string|null
@@ -50,10 +52,13 @@ export interface Chat {
   messages: Message[]
   deleted: boolean
   disableTools: boolean
+  disableStreaming: boolean
   docrepo: string|null
+  modelOpts: LlmModelOpts|null
   fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void
+  hasMessages(): boolean
   addMessage(message: Message): void
   fork(message: Message): Chat
   lastMessage(): Message

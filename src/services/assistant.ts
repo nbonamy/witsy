@@ -1,21 +1,17 @@
 
 import { LlmEngine, LlmResponse, type LlmChunk } from 'multi-llm-ts'
 import { Configuration } from 'types/config'
-import Chat, { defaultTitle } from '../models/chat'
+import Chat from '../models/chat'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
 import LlmFactory from '../llms/llm'
-import { store } from './store'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationResult, type GenerationOpts } from './generator'
 import { Expert } from 'types'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
-  save?: boolean
   titling?: boolean
-  disableTools?: boolean
-  overwriteEngineModel?: boolean
   attachment?: Attachment
   expert?: Expert
   systemInstructions?: string
@@ -29,18 +25,17 @@ export default class extends Generator {
   constructor(config: Configuration) {
     super(config)
     this.llm = null
-    this.chat = null
     this.stream = null
     this.llmFactory = new LlmFactory(config)
+    this.chat = new Chat()
   }
 
   setChat(chat: Chat) {
     this.chat = chat
   }
 
-  initChat(instructions?: string): Chat {
+  initChat(): Chat {
     this.chat = new Chat()
-    this.chat.addMessage(new Message('system', this.getSystemInstructions(instructions)))
     return this.chat
   }
 
@@ -78,14 +73,12 @@ export default class extends Generator {
 
     // merge with defaults
     const defaults: AssistantCompletionOpts = {
-      save: true,
       titling: true,
       ... this.llmFactory.getChatEngineModel(),
       attachment: null,
       docrepo: null,
       expert: null,
       sources: true,
-      overwriteEngineModel: false,
       systemInstructions: this.config.instructions.default,
       citations: true,
     }
@@ -93,24 +86,20 @@ export default class extends Generator {
 
     // we need a chat
     if (this.chat === null) {
-
-      // initialize the chat
-      this.initChat(opts.systemInstructions)
-      
-      // save
-      if (opts.save) {
-        store.history.chats.push(this.chat)
-        //store.saveHistory()
-      }
-    
-    } else if (!opts.overwriteEngineModel) {
-      // make sure we have the right engine and model
-      // special case: chat was started without an apiKey
-      // so engine and model are null so we need to keep opts ones...
-      opts.engine = this.chat.engine || opts.engine
-      opts.model = this.chat.model || opts.model
-      opts.docrepo = this.chat.docrepo || opts.docrepo
+      this.initChat()
     }
+
+    // we need messages
+    if (this.chat.messages.length === 0) {
+      this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
+    }
+
+    // make sure we have the right engine and model
+    // special case: chat was started without an apiKey
+    // so engine and model are null so we need to keep opts ones...
+    opts.engine = this.chat.engine || opts.engine
+    opts.model = this.chat.model || opts.model
+    opts.docrepo = this.chat.docrepo || opts.docrepo
 
     // make sure chat options are set
     this.chat.setEngineModel(opts.engine, opts.model)
@@ -124,7 +113,7 @@ export default class extends Generator {
 
     // make sure llm has latest tools
     this.llm.clearPlugins()
-    if (!opts.disableTools && !this.chat.disableTools) {
+    if (!this.chat.disableTools) {
       for (const pluginName in availablePlugins) {
         const pluginClass = availablePlugins[pluginName]
         const instance = new pluginClass(this.config.plugins[pluginName])
@@ -132,14 +121,19 @@ export default class extends Generator {
       }
     }
 
-    // add message
-    const message = new Message('user', prompt)
-    message.expert = opts.expert
-    message.attach(opts.attachment)
-    this.chat.addMessage(message)
+    // add user message
+    const userMessage = new Message('user', prompt)
+    userMessage.engine = opts.engine
+    userMessage.model = opts.model
+    userMessage.expert = opts.expert
+    userMessage.attach(opts.attachment)
+    this.chat.addMessage(userMessage)
 
     // add assistant message
-    this.chat.addMessage(new Message('assistant'))
+    const assistantMessage = new Message('assistant')
+    assistantMessage.engine = opts.engine
+    assistantMessage.model = opts.model
+    this.chat.addMessage(assistantMessage)
     callback?.call(null, null)
 
     // generate text
@@ -163,22 +157,20 @@ export default class extends Generator {
     }
 
     // check if we need to update title
-    if (opts.titling && this.chat.title === defaultTitle) {
+    if (opts.titling && !this.chat.title) {
       this.chat.title = await this.getTitle() || this.chat.title
     }
   
-    // save
-    if (opts.save) {
-      store.saveHistory()
-    }
-
   }
 
   async _prompt(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<GenerationResult> {
 
     // normal case: we stream
     if (!this.chat.disableStreaming) {
-      return await this.generate(this.llm, this.chat.messages, opts, callback)
+      return await this.generate(this.llm, this.chat.messages, {
+        ...opts,
+        ...this.chat.modelOpts,
+      }, callback)
     }
 
     try {
@@ -186,7 +178,8 @@ export default class extends Generator {
       // normal completion
       const response: LlmResponse = await this.llm.complete(this.chat.model, this.chat.messages, {
         usage: true,
-        ...opts
+        ...opts,
+        ...this.chat.modelOpts
       })
 
       // fake streaming

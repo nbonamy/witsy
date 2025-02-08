@@ -60,6 +60,8 @@
   --message-list-overflow-bg-color: var(--background-color);
   --message-list-overflow-border-color: #ccc;
 
+  --info-panel-width: 250px;
+
   --prompt-icon-color: var(--icon-color);
   --prompt-input-bg-color: var(--message-list-bg-color);
   --prompt-input-border-color: #bbb;

@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <Sidebar :chat="assistant.chat" v-if="!isStandaloneChat" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :standalone="isStandaloneChat" />
+    <Sidebar :chat="assistant.chat" ref="sidebar" />
+    <ChatArea :chat="assistant.chat" />
     <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <Settings id="settings" />
     <DocRepos />
@@ -11,7 +11,7 @@
 <script setup lang="ts">
 
 // components
-import { Ref, ref, computed, onMounted, nextTick } from 'vue'
+import { Ref, ref, onMounted, nextTick, watch } from 'vue'
 import { strDict, anyDict } from 'types'
 import { store } from '../services/store'
 import { saveFileContents } from '../services/download'
@@ -27,6 +27,7 @@ import Assistant from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
+import LlmFactory from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -35,15 +36,11 @@ const { onEvent, emitEvent } = useEventBus()
 // init stuff
 store.load()
 const tipsManager = useTipsManager(store)
-
-// assistant
+const llmFactory = new LlmFactory(store.config)
 const assistant = ref(new Assistant(store.config))
 
 const chatEditor: Ref<typeof ChatEditor> = ref(null)
 const sidebar: Ref<typeof Sidebar> = ref(null)
-const prompt = ref(null)
-const engine = ref(null)
-const model = ref(null)
 const chatEditorConfirmButtonText = ref('Save')
 const chatEditorCallback: Ref<ChatEditorCallback> = ref(() => {})
 
@@ -51,11 +48,10 @@ const props = defineProps({
   extra: Object
 })
 
-const isStandaloneChat = computed(() => {
-  return prompt.value !== null
-})
-
 onMounted(() => {
+
+  // init a new chat
+  onNewChat()
 
   // events
   onEvent('new-chat', onNewChat)
@@ -119,6 +115,9 @@ onMounted(() => {
     }
   }, 500)
 
+  // make sure engine and model are always up-to-date
+  watch(() => store.config, updateChatEngineModel, { immediate: true, deep: true })
+
 })
 
 const processQueryParams = (params: anyDict) => {
@@ -126,34 +125,6 @@ const processQueryParams = (params: anyDict) => {
   // log
   console.log('Processing query params', JSON.stringify(params))
   
-  // load extra from props
-  if (params.promptId) {
-
-    // load extra
-    prompt.value = window.api.automation.getText(params.promptId) || null
-    engine.value = params.engine || null
-    model.value = params.model || null
-
-    // special commands are not executed
-    const execute = !(params.execute === false || params.execute === 'false')
-
-    // execute or not
-    if (prompt.value !== null) {
-      if (execute) {
-        assistant.value.prompt(prompt.value, {
-          engine: engine.value,
-          model: model.value,
-          save: false,
-        }, (chunk) => {
-          emitEvent('new-llm-chunk', chunk)
-        })
-      } else {
-        emitEvent('set-prompt', { content: prompt.value })
-      }
-    }
-
-  }
-
   // load chat
   if (params.chatId) {
     store.loadHistory()
@@ -172,7 +143,11 @@ const processQueryParams = (params: anyDict) => {
 }
 
 const onNewChat = () => {
-  onSelectChat(null)
+  assistant.value.initChat()
+  updateChatEngineModel()
+  nextTick(() => {
+    emitEvent('new-llm-chunk', null)
+  })
 }
 
 const onNewChatInFolder = (folderId: string) => {
@@ -183,6 +158,13 @@ const onNewChatInFolder = (folderId: string) => {
     store.history.chats.push(chat)
     onSelectChat(chat)
     store.saveHistory()
+  }
+}
+
+const updateChatEngineModel = () => {
+  if (!assistant.value.chat.hasMessages()) {
+    const { engine, model } = llmFactory.getChatEngineModel()
+    assistant.value.chat.setEngineModel(engine, model)
   }
 }
 
@@ -279,11 +261,6 @@ const onDeleteChat = async (chatId: string|string[]) => {
       // fist remove
       deleteChats(chatIds)
       store.saveHistory()
-
-      // close window if standalone
-      if (isStandaloneChat.value) {
-        window.close()
-      }
 
     }
 
@@ -428,16 +405,23 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
   }
 
+  // make sure the chat is part of history
+  if (!store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+    store.history.chats.push(assistant.value.chat)
+  }
+
   // prompt
-  assistant.value.prompt(prompt, {
-    ...(engine.value && { engine: engine.value }),
-    ...(model.value && { model: model.value }),
+  await assistant.value.prompt(prompt, {
+    model: assistant.value.chat.model,
     attachment: attachment || null,
     docrepo: docrepo || null,
     expert: expert || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
   })
+
+  // save
+  store.saveHistory()
 
 }
 
