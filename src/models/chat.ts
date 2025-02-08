@@ -1,22 +1,24 @@
 
+import { LlmModelOpts } from 'multi-llm-ts'
 import { type Chat as ChatBase } from '../types/index'
 import Message from './message'
 
-export const defaultTitle = 'New Chat'
+const DEFAULT_TITLE = 'New Chat'
 
 export default class Chat implements ChatBase {
 
-  uuid!: string
-  title!: string
-  createdAt!: number
-  lastModified!: number
-  engine!: string|null
-  model!: string|null
+  uuid: string
+  title: string|null
+  createdAt: number
+  lastModified: number
+  engine: string|null
+  model: string|null
   disableStreaming: boolean = false
   disableTools: boolean = false
-  docrepo!: string|null
-  messages!: Message[]
-  deleted!: boolean
+  modelOpts: LlmModelOpts|null = null
+  docrepo: string|null
+  messages: Message[]
+  deleted: boolean
 
   constructor(obj?: any) {
 
@@ -28,12 +30,13 @@ export default class Chat implements ChatBase {
 
     // default
     this.uuid = crypto.randomUUID()
-    this.title = obj || defaultTitle
+    this.title = obj || null
     this.createdAt = Date.now()
     this.lastModified = Date.now()
     this.engine = null
     this.model = null
     this.disableTools = false
+    this.modelOpts = null
     this.docrepo = null
     this.messages = []
     this.deleted = false
@@ -48,6 +51,7 @@ export default class Chat implements ChatBase {
     this.engine = obj.engine || 'openai'
     this.model = obj.model
     this.disableTools = obj.disableTools
+    this.modelOpts = obj.modelOpts
     this.docrepo = obj.docrepo
     this.messages = []
     this.deleted = false
@@ -69,6 +73,7 @@ export default class Chat implements ChatBase {
     this.title = obj.title
     this.lastModified = obj.lastModified
     this.disableTools = obj.disableTools
+    this.modelOpts = obj.modelOpts
     this.docrepo = obj.docrepo
 
     // messages
@@ -97,6 +102,18 @@ export default class Chat implements ChatBase {
     } else {
       return ''
     }
+  }
+
+  initTitle() {
+    this.title = this.title || DEFAULT_TITLE
+  }
+
+  hasTitle() {
+    return this.title && this.title !== DEFAULT_TITLE
+  }
+
+  hasMessages() {
+    return this.messages.length > 1
   }
 
   addMessage(message: Message) {

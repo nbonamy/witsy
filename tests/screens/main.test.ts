@@ -47,8 +47,13 @@ vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
 vi.mock('../../src/services/assistant', async () => {
   const Assistant = vi.fn()
   Assistant.prototype.setConfig = vi.fn()
-  Assistant.prototype.setChat = vi.fn()
-  Assistant.prototype.initChat = vi.fn(() => new Chat())
+  Assistant.prototype.setChat = vi.fn((chat) => {
+    Assistant.prototype.chat = chat
+  })
+  Assistant.prototype.initChat = vi.fn(() => {
+    Assistant.prototype.chat = new Chat()
+    return Assistant.prototype.chat
+  })
   Assistant.prototype.initLlm = vi.fn()
   Assistant.prototype.hasLlm = vi.fn(() => true)
   Assistant.prototype.prompt = vi.fn()
@@ -72,7 +77,7 @@ test('Renders correctly', () => {
 test('Resets assistant', async () => {
   mount(Main)
   emitEvent('new-chat', null)
-  expect(Assistant.prototype.setChat).toHaveBeenCalledWith(null)
+  expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
 })
 
 test('Saves text attachment', async () => {
@@ -115,28 +120,36 @@ test('Sends prompt', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: null, expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: 'file', docrepo: null, expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: 'file', docrepo: null, expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with doc repo', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: 'docrepo', expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: 'docrepo', expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with expert', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' } }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' }
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Stop assistant', async () => {
@@ -241,7 +254,9 @@ test('Fork Chat on Assistant Message', async () => {
 
 test('Fork Chat on User Message', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
+  expect(store.history.chats).toHaveLength(1)
   emitEvent('select-chat', store.history.chats[0])
+  expect(store.history.chats).toHaveLength(1)
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[3], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBe('title2')
@@ -249,7 +264,12 @@ test('Fork Chat on User Message', async () => {
   expect(store.history.chats[1].model).toBe('model2')
   expect(store.history.chats[1].messages).toHaveLength(3)
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', { attachment: expect.objectContaining({
-    content: 'attachment',
-  }), docrepo: 'docrepo', expert: expect.objectContaining({ id: 'expert'}) }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', {
+    model: 'model2',
+    attachment: expect.objectContaining({
+      content: 'attachment',
+    }),
+    docrepo: 'docrepo',
+    expert: expect.objectContaining({ id: 'expert'})
+  }, expect.any(Function), expect.any(Function))
 })

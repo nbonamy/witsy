@@ -173,14 +173,6 @@ test('Open Settings window in new main window', async () => {
   expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?settings=true#')
 })
 
-test('Create chat window', async () => {
-  const chatWindow = await window.openChatWindow({ promptId: 'id'})
-  expect(chatWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#')
-  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
-  expectCreateWebPreferences(callParams)
-})
-
 test('Create command picker window', async () => {
   await window.openCommandPicker({ textId: 'id' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)

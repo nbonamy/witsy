@@ -1,17 +1,25 @@
 
 <template>
-  <div class="content" :class="{ standalone: standalone }">
+  <div class="chat-area">
     <div class="toolbar">
-      <div class="title" v-if="chat?.messages.length">{{ chat?.title }}</div>
-      <div class="menu" @click="onMenu" v-if="chat">
+      <div class="title" v-if="chat?.title">{{ chat.title }}</div>
+      <div class="action settings" @click="showModelSettings = !showModelSettings">
+        <BIconSliders />
+      </div>
+      <div class="action menu" @click="onMenu">
         <div></div>
         <div></div>
         <div></div>
       </div>
     </div>
-    <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.messages.length > 1"/>
-    <EmptyChat v-else />
-    <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
+    <div class="inside-content">
+      <div class="chat-content">
+        <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
+        <EmptyChat v-else />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
+      </div>
+      <ModelSettings class="model-settings" :chat="chat" v-if="showModelSettings"/>
+    </div>
     <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
 </template>
@@ -24,6 +32,7 @@ import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
 import Prompt from './Prompt.vue'
+import ModelSettings from '../screens/ModelSettings.vue'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
@@ -37,13 +46,8 @@ const llmFactory = new LlmFactory(store.config)
 const props = defineProps({
   chat: {
     type: Chat,
-    default: null,
-    // required: true,
+    required: true,
   },
-  standalone: {
-    type: Boolean,
-    default: false,
-  }
 })
 
 const chatMenuPosition = computed(() => {
@@ -51,21 +55,38 @@ const chatMenuPosition = computed(() => {
 })
 
 const chatMenuActions = computed(() => {
+
+  // show default is chat not setup yet
+  let { engine, model } = llmFactory.getChatEngineModel()
+  if (props.chat.engine) {
+    engine = llmFactory.getEngineName(props.chat.engine)
+    model = props.chat.model
+  }
+
+
   return [
-    props.chat.engine ? { label: `${llmFactory.getEngineName(props.chat.engine)} ${props.chat.model}`, disabled: true } : null,
+    { label: `${engine} ${model}`, disabled: true },
     { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
-    props.standalone ? { label: 'Save', action: 'save', disabled: saved.value } : null,
+    { label: 'Model Settings', action: 'modelSettings', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: props.standalone && !saved.value },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: !hasMessages() },
+    { label: 'Delete', action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
 })
 
+const isSaved = () => {
+  return store.history.chats.some((c) => c.uuid == props.chat.uuid)
+}
+
+const hasMessages = () => {
+  return props.chat.hasMessages()
+}
+
 const conversationMode: Ref<string> = ref('')
+const showModelSettings = ref(false)
 const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const saved = ref(false)
 
 onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
@@ -91,20 +112,13 @@ const handleActionClick = async (action: string) => {
     emitEvent('rename-chat', props.chat)
   } else if (action === 'delete') {
     emitEvent('delete-chat', props.chat.uuid)
-  } else if (action == 'save') {
-    onSave()
   } else if (action == 'exportPdf') {
     onExportPdf()
   } else if (action == 'toogleTools') {
     props.chat.disableTools = !props.chat.disableTools
+  } else if (action == 'modelSettings') {
+    showModelSettings.value = !showModelSettings.value
   }
-}
-
-const onSave = () => {
-  if (saved.value) return
-  store.history.chats.push(props.chat)
-  store.saveHistory()
-  saved.value = true
 }
 
 const onExportPdf = async () => {
@@ -179,7 +193,7 @@ const onExportPdf = async () => {
 
 <style scoped>
 
-.content {
+.chat-area {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -190,64 +204,93 @@ const onExportPdf = async () => {
   padding: 16px;
   -webkit-app-region: drag;
   display: grid;
-  grid-template-columns: auto 16px;
-  background-color: var(--message-list-bg-color);
-}
-
-.toolbar:has(.title) {
+  grid-template-columns: auto 16px 16px;
   background-color: var(--chatarea-toolbar-bg-color);
+  gap: 8px;
+
+  .title {
+    grid-column: 1;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--chatarea-toolbar-text-color);
+  }
+
+  .action {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    text-align: right;
+    width: 16px;
+    height: 16px;
+    color: var(--chatarea-toolbar-icon-color);
+  }
+
+  .settings {
+    grid-column: 2;
+  }
+
+  .menu {
+    grid-column: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+
+    div {
+      width: 16px;
+      height: 1.5px;
+      background-color: var(--chatarea-toolbar-icon-color);
+    }
+  }
 }
 
-.toolbar .title {
-  grid-column: 1;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--chatarea-toolbar-text-color);
-}
-
-.toolbar .menu {
-  -webkit-app-region: no-drag;
-  grid-column: 2;
-  cursor: pointer;
-  text-align: right;
-  width: 16px;
-  height: 16px;
+.inside-content {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
+  flex-direction: row;
+  overflow-y: auto;
+
+  .chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    &:deep() > div:first-child {
+      flex: 1;
+    }
+
+    &:deep() .prompt {
+      padding-bottom: 12px;
+    }
+  }
+
 }
 
-.toolbar .menu div {
-  width: 16px;
-  height: 1.5px;
-  background-color: var(--chatarea-toolbar-icon-color);
+.model-settings {
+  flex: 0 0 var(--info-panel-width);
 }
 
-.prompt {
+  .prompt {
   background-color: var(--message-list-bg-color);
 }
 
-.windows .toolbar {
-  grid-template-columns: 16px auto;
-}
+.windows {
+  .toolbar {
+    grid-template-columns: 16px auto;
 
-.windows .toolbar .title {
-  margin-left: 8px;
-  grid-column: 2;
-  order: 2;
-}
+    .title {
+      margin-left: 8px;
+      grid-column: 2;
+      order: 2;
+    }
 
-.windows .toolbar .menu {
-  margin-top: 4px;
-  grid-column: 1;
-  order: 1;
-}
-
-.macos .content.standalone .toolbar {
-  padding-left: 80px;
+    .menu {
+      margin-top: 4px;
+      grid-column: 1;
+      order: 1;
+    }
+  }
 }
 
 </style>

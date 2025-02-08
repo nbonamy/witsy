@@ -34,7 +34,7 @@ beforeAll(() => {
 
 let chat: Chat|null = null
 beforeEach(() => {
-  chat = new Chat()
+  chat = new Chat('New Chat')
   chat.setEngineModel('mock', 'chat')
 })
 
@@ -43,13 +43,12 @@ const addMessagesToChat = () => {
   chat!.addMessage(new Message('user', 'Hi'))
 }
 
-test('No chat', async () => {
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: undefined } } )
+test('Empty chat', async () => {
+  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.content').classes()).not.toContain('standalone')
   expect(wrapper.find('.toolbar').exists()).toBe(true)
   expect(wrapper.find('.toolbar .title').exists()).toBe(false)
-  expect(wrapper.find('.toolbar .menu').exists()).toBe(false)
+  expect(wrapper.find('.toolbar .menu').exists()).toBe(true)
   expect(wrapper.find('.messages').exists()).toBe(false)
   expect(wrapper.find('.empty').exists()).toBe(true)
   expect(wrapper.find('.prompt').exists()).toBe(true)
@@ -59,7 +58,6 @@ test('With chat', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.content').classes()).not.toContain('standalone')
   expect(wrapper.find('.toolbar').exists()).toBe(true)
   expect(wrapper.find('.toolbar .title').text()).toBe('New Chat')
   expect(wrapper.find('.toolbar .menu').exists()).toBe(true)
@@ -69,40 +67,28 @@ test('With chat', async () => {
 
 })
 
-test('Standalone chat', async () => {
+test('Context menu empty chat', async () => {
   addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat!, standalone: true } } )
-  expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.content').classes()).toContain('standalone')
-  expect(wrapper.find('.toolbar').exists()).toBe(true)
-  expect(wrapper.find('.toolbar .title').text()).toBe('New Chat')
-  expect(wrapper.find('.toolbar .menu').exists()).toBe(true)
-  expect(wrapper.find('.messages').exists()).toBe(true)
-  expect(wrapper.find('.empty').exists()).toBe(false)
-  expect(wrapper.find('.prompt').exists()).toBe(true)
+  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  expect(wrapper.vm.chatMenuActions).toStrictEqual([
+    { label: 'mock chat', disabled: true },
+    { label: 'Disable plugins', action: 'toogleTools', disabled: false },
+    { label: 'Model Settings', action: 'modelSettings', disabled: false },
+    { label: 'Rename Chat', action: 'rename', disabled: false },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: true },
+    { label: 'Delete', action: 'delete', disabled: true }
+  ])
 })
 
-test('Context menu Normal', async () => {
+test('Context menu normal chat', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'mock chat', disabled: true },
     { label: 'Disable plugins', action: 'toogleTools', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: false }
-  ])
-})
-
-test('Context menu Standalone', async () => {
-  addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat!, standalone: true } })
-  await wrapper.find('.toolbar .menu').trigger('click')
-  expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'mock chat', disabled: true },
-    { label: 'Disable plugins', action: 'toogleTools', disabled: false },
-    { label: 'Save', action: 'save', disabled: false },
+    { label: 'Model Settings', action: 'modelSettings', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: true }
@@ -113,7 +99,7 @@ test('Context menu rename', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[2].trigger('click')
+  await wrapper.findAll('.context-menu .item')[3].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('rename-chat', chat)
 })
 
@@ -121,24 +107,15 @@ test('Context menu export', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  //await wrapper.findAll('.context-menu .item')[2].trigger('click')
+  //await wrapper.findAll('.context-menu .item')[4].trigger('click')
   //expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat)
 })
 
 test('Context menu delete', async () => {
   addMessagesToChat()
+  store.history.chats.push(chat!)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[4].trigger('click')
+  await wrapper.findAll('.context-menu .item')[5].trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat!.uuid)
-})
-
-test('Context menu save', async () => {
-  addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat!, standalone: true } } )
-  await wrapper.find('.toolbar .menu').trigger('click')
-  await wrapper.findAll('.context-menu .item')[2].trigger('click')
-  expect(store.history.chats).toHaveLength(1)
-  expect(store.history.chats[0]).toStrictEqual(chat)
-  //TODO test store.saveHistory
 })

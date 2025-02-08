@@ -1,6 +1,6 @@
 
 <template>
-  <select v-model="value" @change="$emit('change')">
+  <select v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
     <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
   </select>
@@ -19,7 +19,11 @@ const models: Ref<Model[]> = ref([])
 
 const props = defineProps({
   engine: String,
-  defaultText: String
+  defaultText: String,
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const value = defineModel()
