@@ -1,5 +1,6 @@
 
 import { LlmEngine, LlmResponse, LlmChunk } from 'multi-llm-ts'
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { Configuration } from 'types/config'
 import Chat from '../models/chat'
 import Attachment from '../models/attachment'
@@ -237,14 +238,23 @@ export default class extends Generator {
         return this.chat.messages[1].content
       }
 
-      // now clean up
+      // ollama reasoning removal: everything between <think> and </think>
+      title = title.replace(/<think>[\s\S]*?<\/think>/g, '')
+
+      // remove html tags
+      title = title.replace(/<[^>]*>/g, '')
+
+      // and markdown
+      title = removeMarkdown(title)
+
+      // remove prefixes
       if (title.startsWith('Title:')) {
         title = title.substring(6)
       }
 
       // remove quotes
       title = title.trim().replace(/^"|"$/g, '').trim()
-
+      
       // done
       return title
 

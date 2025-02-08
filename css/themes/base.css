@@ -84,6 +84,17 @@
   overflow: auto;
 }
 
+.message .body .think {
+  font-style: italic;
+  opacity: 0.66;
+}
+
+@media (prefers-color-scheme: dark) {
+  .message .body .think {
+    opacity: 0.80;
+  }
+}
+
 .message .actions {
   height: 32px;
   display: flex;
