@@ -107,7 +107,7 @@ test('Assistant Chat', async () => {
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('[{"role":"system","content":"You are a titling assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\\"role\\":\\"system\\",\\"content\\":\\"You are a chat assistant\\"},{\\"role\\":\\"user\\",\\"content\\":\\"Hello LLM\\"},{\\"role\\":\\"assistant\\",\\"content\\":\\"Be kind. Don\'t mock me\\"}]"},{"role":"user","content":"Provide a title"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(assistant!.chat.title).toBe('Title')
 })
 
 test('Assistant Attachment', async () => {
@@ -126,7 +126,7 @@ test('Asistant DocRepo', async () => {
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('[{"role":"system","content":"You are a titling assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{\\"role\\":\\"system\\",\\"content\\":\\"You are a chat assistant\\"},{\\"role\\":\\"user\\",\\"content\\":\\"content / Hello LLM\\"},{\\"role\\":\\"assistant\\",\\"content\\":\\"Be kind. Don\'t mock me\\"}]\\n\\nSources:\\n\\n- [title](url)"},{"role":"user","content":"Provide a title"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(assistant!.chat.title).toBe('Title')
 })
 
 test('Conversaton Length 1', async () => {
