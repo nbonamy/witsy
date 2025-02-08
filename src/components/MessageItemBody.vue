@@ -100,8 +100,17 @@ const mdRender = (content: string) => {
     content = content.replace(regex, (match) => `==${match}==`);
   }
 
+  // HACK: dealing with <think> tag from reasoning model like Deepseek R1
+  var html = window.api.markdown.render(content)
+  // append html with '</think>' if there is <think> in html but no '</think>'
+  if (html.includes('<think>') && !html.includes('</think>')) {
+    html += '</think>'
+  }
+  // replace <think> with <div class="think"> and </think> with </div>
+  html = html.replace(/<think>/g, '<div class="think">').replace(/<\/think>/g, '</div>')
+
   // do it
-  return window.api.markdown.render(content)
+  return html
 }
 
 </script>

@@ -57,3 +57,9 @@ test('renders block math', () => {
   const html = renderMarkdown(markdown)
   expect(html).toContain('θ')
 })
+
+test('render <think>', () => {
+  const markdown = '<think>Thinking</think>Talking'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p><think>Thinking</think>Talking</p>')
+})
