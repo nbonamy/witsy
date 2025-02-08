@@ -48,9 +48,15 @@ const stopResizing = () => {
 }
 
 const setElWidth = (el: HTMLElement, width: number) => {
-  const pl = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) || 0
-  const pr = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-right')) || 0
-  el.style.width = `${width-pl-pr}px`
+  try {
+    const pl = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) || 0
+    const pr = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-right')) || 0
+    el.style.width = `${width-pl-pr}px`
+  } catch (e) {
+    if (!process.env.TEST) {
+      console.error('Error setting element width:', e)
+    }
+  }
 }
 
 const adjustWidth = (deltaX: number): boolean => {

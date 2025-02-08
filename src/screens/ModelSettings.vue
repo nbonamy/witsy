@@ -75,6 +75,7 @@ const props = defineProps({
 
 onMounted(async () => {
   watch(() => props || {}, () => {
+    if (!props.chat) return
     engine.value = props.chat.engine
     model.value = props.chat.model
     disableTools.value = props.chat.disableTools
@@ -181,7 +182,9 @@ const save = () => {
 
 .model-settings {
   background-color: var(--sidebar-bg-color);
-  padding: 16px;
+  form {
+    padding: 16px;
+  }
 }
 
 </style>
