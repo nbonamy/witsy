@@ -120,28 +120,36 @@ test('Sends prompt', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { model: 'gpt-4o', attachment: null, docrepo: null, expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: null, expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { model: 'gpt-4o', attachment: 'file', docrepo: null, expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: 'file', docrepo: null, expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with doc repo', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { model: 'gpt-4o', attachment: null, docrepo: 'docrepo', expert: null }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: 'docrepo', expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with expert', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', { model: 'gpt-4o', attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' } }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' }
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Stop assistant', async () => {
@@ -256,7 +264,12 @@ test('Fork Chat on User Message', async () => {
   expect(store.history.chats[1].model).toBe('model2')
   expect(store.history.chats[1].messages).toHaveLength(3)
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', { model: 'model2', attachment: expect.objectContaining({
-    content: 'attachment',
-  }), docrepo: 'docrepo', expert: expect.objectContaining({ id: 'expert'}) }, expect.any(Function))
+  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', {
+    model: 'model2',
+    attachment: expect.objectContaining({
+      content: 'attachment',
+    }),
+    docrepo: 'docrepo',
+    expert: expect.objectContaining({ id: 'expert'})
+  }, expect.any(Function), expect.any(Function))
 })
