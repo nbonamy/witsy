@@ -101,31 +101,6 @@ export const isMainWindowFocused = () => {
   return mainWindow && !mainWindow.isDestroyed() && mainWindow.isFocused();
 }
 
-export const openChatWindow = (params: anyDict) => {
-
-  // always open
-  const chatWindow = createWindow({
-    width: 600,
-    height: 600,
-    ...titleBarOptions(),
-    queryParams: params,
-  });
-
-  // open the DevTools
-  if (process.env.DEBUG) {
-    //chatWindow.webContents.openDevTools({ mode: 'right' });
-  }
-
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
-  }
-
-  // done
-  return chatWindow;
-
-};
-
 export const openSettingsWindow = () => {
   try {
     openMainWindow({ queryParams: { settings: true }});
