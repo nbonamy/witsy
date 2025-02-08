@@ -8,7 +8,7 @@
           <div class="item separator disabled" v-if="action.separator">
             <hr  />
           </div>
-          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap }" @click="onAction(action)" v-else>
+          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap }" :data-action="action.action" @click="onAction(action)" v-else>
             <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
             <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
             {{ action.label }}
