@@ -26,6 +26,7 @@ beforeAll(() => {
     folders: [
       { id: 'folder', name: 'Folder', chats: [] }
     ], chats: [
+      // @ts-expect-error incomplete mocks
       new Chat({ uuid: 'chat', title: 'title', docrepo: 'docrepo', messages: [
         new Message('system', 'instructions'),
         new Message('user', 'prompt1'),

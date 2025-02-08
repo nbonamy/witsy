@@ -34,11 +34,9 @@ const load = () => {
 }
 
 const save = () => {
-  console.log('save')
   store.config.plugins.tavily.enabled = enabled.value
   store.config.plugins.tavily.apiKey = apiKey.value
   store.saveSettings()
-  console.log(store.config.plugins.tavily)
 }
 
 defineExpose({ load })

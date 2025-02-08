@@ -93,7 +93,6 @@ const onClose = () => {
 }
 
 const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
-  console.log(showParams)
   window.api.commands.run({
     textId: showParams.textId,
     sourceApp: showParams.sourceApp,
