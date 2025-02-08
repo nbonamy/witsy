@@ -11,30 +11,30 @@
       </div>
       <div class="group">
         <label>Plugins</label>
-        <select v-model="disableTools" @change="save()">
+        <select name="plugins" v-model="disableTools" @change="save()">
           <option :value="false">Enabled</option>
           <option :value="true">Disabled</option>
         </select>
       </div>
       <div class="group">
         <label>Max Completion Tokens</label>
-        <input type="text" v-model="maxTokens" placeholder="Default model value when empty" @change="save"/>
+        <input type="text" name="maxTokens" v-model="maxTokens" placeholder="Default model value when empty" @change="save"/>
       </div>
       <div class="group">
         <label>Temperature [0.0 … 2.0]</label>
-        <input type="text" v-model="temperature" placeholder="Default model value when empty" @change="save"/>
+        <input type="text" name="temperature" v-model="temperature" placeholder="Default model value when empty" @change="save"/>
       </div>
       <div class="group">
         <label>TopK / Logprobs [0 … 20]</label>
-        <input type="text" v-model="top_k" placeholder="Default model value when empty" @change="save"/>
+        <input type="text" name="top_k" v-model="top_k" placeholder="Default model value when empty" @change="save"/>
       </div>
       <div class="group">
         <label>TopP [0.0 … 1.0]</label>
-        <input type="text" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
+        <input type="text" name="top_k" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
       </div>
       <div class="group">
         <label>Reasoning Effort</label>
-        <select v-model="reasoningEffort" @change="save">
+        <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
           <option :value="undefined">Default</option>
           <option value="low">Low</option>
           <option value="medium">Medium</option>
