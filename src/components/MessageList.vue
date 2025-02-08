@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :style="fontStyle">
+  <div class="messages-list" :style="fontStyle">
     <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @wheel="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @media-loaded="onMediaLoaded" ref="items" />
@@ -117,8 +117,7 @@ const onScroll = () => {
 
 <style scoped>
 
-.container {
-  height: 100vh;
+.messages-list {
   display: flex;
   position: relative;
   overflow: hidden;

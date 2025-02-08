@@ -128,7 +128,7 @@ export default class LlmFactory {
     if (this.isFavoriteEngine(engine)) {
       return this.config.llm.favorites.map(f => ({ id: f.id, name: `${f.model}@${f.engine}`, meta: {} })).sort((a, b) => a.name.localeCompare(b.name))
     } else {
-      return this.config.engines[engine].models.chat
+      return this.config.engines[engine]?.models.chat || []
     }
   }
   

@@ -1,7 +1,7 @@
 <template>
   <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
     <div class="role" :class="message.role" v-if="showRole">
-      <EngineLogo :engine="chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
+      <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <UserAvatar class="avatar" v-else />
       <div class="name variable-font-size">{{ authorName }}</div>
     </div>

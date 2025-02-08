@@ -13,6 +13,9 @@ const chats = [
     engine: 'engine',
     model: 'model',
     disableTools: false,
+    modelOpts: {
+      temperature: 1.0
+    },
     messages: [
       new Message('system', 'Hi'),
       new Message('user', 'Hello')
@@ -26,6 +29,8 @@ chats[1].messages[0].uuid = '1'
 chats[1].messages[0].createdAt = 0
 chats[1].messages[1].uuid = '2'
 chats[1].messages[1].createdAt = 0
+chats[1].messages[1].engine = 'engine'
+chats[1].messages[1].model = 'model'
 
 beforeAll(() => {
   useWindowMock()
@@ -100,9 +105,10 @@ test('Save history', async () => {
       deleted: false,
       disableStreaming: false,
       disableTools: false,
+      modelOpts: { temperature: 1 },
       messages: [
-        { uuid: '1', createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
-        { uuid: '2', createdAt: 0, role: 'user', type: 'text', content: 'Hello', expert: null, toolCall: null, attachment: null, usage: null, transient: false }
+        { uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },
+        { uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', expert: null, toolCall: null, attachment: null, usage: null, transient: false }
       ]
     } ]
   })

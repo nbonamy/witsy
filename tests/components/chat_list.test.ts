@@ -47,7 +47,6 @@ test('No chat', async () => {
   store.history.chats = []
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.chats').classes()).not.toContain('standalone')
 })
 
 test('Shows chats', async () => {

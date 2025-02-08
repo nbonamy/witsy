@@ -45,7 +45,7 @@ const prompt = async (prompt: string, opts: AssistantCompletionOpts = { model: '
   }
   
   // call and wait
-  await assistant!.prompt(prompt, { ...opts, save: false }, callback)
+  await assistant!.prompt(prompt, opts, callback)
   await vi.waitUntil(async () => !assistant!.chat.lastMessage().transient)
 
   // return
@@ -86,7 +86,6 @@ test('Assistant parameters', async () => {
   await prompt('Hello LLM')
   const params: AssistantCompletionOpts = spy.mock.calls[0][2] as AssistantCompletionOpts
   expect(params).toStrictEqual({
-    save: false,
     titling: true,
     engine: 'mock',
     model: 'chat',
@@ -95,7 +94,6 @@ test('Assistant parameters', async () => {
     expert: null,
     sources: true,
     models: [ 'chat1', 'chat2' ],
-    overwriteEngineModel: false,
     systemInstructions: 'You are a chat assistant',
     autoSwitchVision: true,
     citations: true,
@@ -177,7 +175,7 @@ test('Quota exceeded', async () => {
 
 test('Stop generation', async () => {
   const start = Date.now()
-  await assistant!.prompt('infinite', { model: 'chat', save: false }, () => {
+  await assistant!.prompt('infinite', { model: 'chat' }, () => {
     if (Date.now() > start + 250) {
       assistant!.stop()
     } else {

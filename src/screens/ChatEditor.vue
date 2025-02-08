@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
@@ -46,7 +46,7 @@ const props = defineProps({
     type: Chat,
   },
   onConfirm: {
-    type: Function,
+    type: Function as PropType<ChatEditorCallback>,
     required: true,
   },
   confirmButtonText: {
