@@ -99,6 +99,15 @@ onMounted(() => {
       }
       e.preventDefault()
       return false
+    } else if (href === '#retry_without_params') {
+      if (assistant.value.chat) {
+        assistant.value.chat.modelOpts = undefined
+        onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
+      } else {
+        console.log('No chat to retry')
+      }
+      e.preventDefault()
+      return false
     }
   })
 

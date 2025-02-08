@@ -149,7 +149,9 @@ export type GenerationResult =
         // final error: depends if we already have some content and if plugins are enabled
         } else {
           if (response.content === '') {
-            if (llm.plugins.length > 0) {
+            if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p) {
+              response.setText('Sorry, I could not generate text for that prompt. Do you want to <a href="#retry_without_params">try again without model parameters</a>?')
+            } else if (llm.plugins.length > 0) {
               response.setText('Sorry, I could not generate text for that prompt. Do you want to <a href="#retry_without_plugins">try again without plugins</a>?')
             } else {
               response.setText('Sorry, I could not generate text for that prompt.')
