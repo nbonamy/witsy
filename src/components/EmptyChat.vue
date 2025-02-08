@@ -187,7 +187,7 @@ const animateEngineLogo = (srcSelector: string, dstSelector: string, callback: (
     moveElement(clone, targetX, targetY, 150, (progress) => callback({ container, source, target, clone }, progress))
 
   } catch (error) {
-    console.log(error)
+    //console.log(error)
     callback(null, 1)
   }
 

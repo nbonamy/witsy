@@ -480,7 +480,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
 
   // log
-  console.log(finalPrompt)
+  //console.log(finalPrompt)
 
   // add to thead
   const userMessage = new Message('user', finalPrompt)

@@ -71,7 +71,7 @@ export const store: Store = reactive({
     }
 
     // perf
-    console.log(`Store loaded in ${Date.now() - start}ms`)
+    //console.log(`Store loaded in ${Date.now() - start}ms`)
 
 
   },

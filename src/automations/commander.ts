@@ -25,7 +25,7 @@ export default class Commander {
     }
 
     // get started
-    console.log('Commander init');
+    //console.log('Commander init');
     const start = new Date().getTime();
     const automator = new Automator();
 
