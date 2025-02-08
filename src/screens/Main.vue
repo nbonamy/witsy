@@ -407,7 +407,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // make sure the chat is part of history
   if (!store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+    assistant.value.chat.initTitle()
     store.history.chats.push(assistant.value.chat)
+    store.saveHistory()
   }
 
   // prompt
@@ -418,6 +420,8 @@ const onSendPrompt = async (params: SendPromptParams) => {
     expert: expert || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
+  }, () => {
+    store.saveHistory()
   })
 
   // save

@@ -3,6 +3,8 @@ import { LlmModelOpts } from 'multi-llm-ts'
 import { type Chat as ChatBase } from '../types/index'
 import Message from './message'
 
+const DEFAULT_TITLE = 'New Chat'
+
 export default class Chat implements ChatBase {
 
   uuid: string
@@ -100,6 +102,14 @@ export default class Chat implements ChatBase {
     } else {
       return ''
     }
+  }
+
+  initTitle() {
+    this.title = this.title || DEFAULT_TITLE
+  }
+
+  hasTitle() {
+    return this.title && this.title !== DEFAULT_TITLE
   }
 
   hasMessages() {
