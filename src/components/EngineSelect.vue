@@ -1,6 +1,6 @@
 
 <template>
-  <select v-model="value" @change="$emit('change')" :disabled="disabled">
+  <select name="engine" v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
     <option :value="favoriteMockEngine" v-if="favorites">Favorite models</option>
     <option value="openai">OpenAI</option>
