@@ -145,6 +145,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] Speech-to-text language
 - [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 
