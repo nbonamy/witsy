@@ -16,27 +16,27 @@
           <option :value="true">Disabled</option>
         </select>
       </div>
-      <!-- <div class="group">
+      <div class="group" v-if="isContextWindowSupported">
         <label>Context Window Size</label>
         <input type="text" name="contextWindowSize" v-model="contextWindowSize" placeholder="Default model value when empty" @change="save"/>
-      </div> -->
-      <div class="group">
+      </div>
+      <div class="group" v-if="isMaxTokensSupported">
         <label>Max Completion Tokens</label>
         <input type="text" name="maxTokens" v-model="maxTokens" placeholder="Default model value when empty" @change="save"/>
       </div>
-      <div class="group">
+      <div class="group" v-if="isTemperatureSupported">
         <label>Temperature [0.0 … 2.0]</label>
         <input type="text" name="temperature" v-model="temperature" placeholder="Default model value when empty" @change="save"/>
       </div>
-      <div class="group">
+      <div class="group" v-if="isTopKSupported">
         <label>TopK / Logprobs [0 … 20]</label>
         <input type="text" name="top_k" v-model="top_k" placeholder="Default model value when empty" @change="save"/>
       </div>
-      <div class="group">
+      <div class="group" v-if="isTopPSupported">
         <label>TopP [0.0 … 1.0]</label>
         <input type="text" name="top_p" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
       </div>
-      <div class="group">
+      <div class="group" v-if="isReasoningEffortSupported">
         <label>Reasoning Effort</label>
         <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
           <option :value="undefined">Default</option>
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref,onMounted, watch } from 'vue'
+import { ref, Ref, onMounted, computed, watch } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
@@ -64,7 +64,7 @@ const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableTools: Ref<boolean> = ref(false)
-// const contextWindowSize: Ref<number> = ref(undefined)
+const contextWindowSize: Ref<number> = ref(undefined)
 const maxTokens: Ref<number> = ref(undefined)
 const temperature: Ref<number> = ref(undefined)
 const top_k: Ref<number> = ref(undefined)
@@ -78,13 +78,37 @@ const props = defineProps({
   },
 })
 
+const isContextWindowSupported = computed(() => {
+  return engine.value === 'ollama'
+})
+
+const isMaxTokensSupported = computed(() => {
+  return true
+})
+
+const isTemperatureSupported = computed(() => {
+  return true
+})
+
+const isTopKSupported = computed(() => {
+  return engine.value !== 'groq' && engine.value !== 'mistralai' && engine.value !== 'cerebras'
+})
+
+const isTopPSupported = computed(() => {
+  return true
+})
+
+const isReasoningEffortSupported = computed(() => {
+  return engine.value === 'openai'
+})
+
 onMounted(async () => {
   watch(() => props || {}, () => {
     if (!props.chat) return
     engine.value = props.chat.engine
     model.value = props.chat.model
     disableTools.value = props.chat.disableTools
-    // contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
+    contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
     maxTokens.value = props.chat.modelOpts?.maxTokens
     temperature.value = props.chat.modelOpts?.temperature
     top_k.value = props.chat.modelOpts?.top_k
@@ -161,7 +185,7 @@ const save = () => {
     props.chat.setEngineModel(engine.value, model.value)
     props.chat.disableTools = disableTools.value
     props.chat.modelOpts = {
-      // contextWindowSize: contextWindowSizeValue,
+      contextWindowSize: contextWindowSizeValue,
       maxTokens: maxTokensValue,
       temperature: temperatureValue,
       top_k: topKValue,
