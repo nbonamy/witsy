@@ -174,7 +174,7 @@ const save = () => {
   // get various data
   try {
 
-    // const contextWindowSizeValue = parseUserInput('Context Window Size', contextWindowSize, 'int', 1)
+    const contextWindowSizeValue = parseUserInput('Context Window Size', contextWindowSize, 'int', 1)
     const maxTokensValue = parseUserInput('Max Completion Tokens', maxTokens, 'int', 1)
     const temperatureValue = parseUserInput('Temperature', temperature, 'float', 0, 2)
     const topKValue = parseUserInput('TopK', top_k, 'int', 0, 20)

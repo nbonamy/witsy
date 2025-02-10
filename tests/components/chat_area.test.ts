@@ -30,6 +30,11 @@ beforeAll(() => {
     models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
     model: { chat: 'chat', image: '' }
   }
+  store.config.engines.openai = {
+    label: 'openai',
+    models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
+    model: { chat: 'chat', image: '' }
+  }
 })
 
 let chat: Chat|null = null
@@ -126,13 +131,17 @@ test('Context menu delete', async () => {
 })
 
 test('Model settings', async () => {
+
+  chat?.setEngineModel('openai', 'chat')
+
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
   expect(wrapper.find('.model-settings').classes()).toContain('visible')
 
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('mock')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('openai')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
