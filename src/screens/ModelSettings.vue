@@ -16,6 +16,10 @@
           <option :value="true">Disabled</option>
         </select>
       </div>
+      <!-- <div class="group">
+        <label>Context Window Size</label>
+        <input type="text" name="contextWindowSize" v-model="contextWindowSize" placeholder="Default model value when empty" @change="save"/>
+      </div> -->
       <div class="group">
         <label>Max Completion Tokens</label>
         <input type="text" name="maxTokens" v-model="maxTokens" placeholder="Default model value when empty" @change="save"/>
@@ -60,6 +64,7 @@ const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableTools: Ref<boolean> = ref(false)
+// const contextWindowSize: Ref<number> = ref(undefined)
 const maxTokens: Ref<number> = ref(undefined)
 const temperature: Ref<number> = ref(undefined)
 const top_k: Ref<number> = ref(undefined)
@@ -79,6 +84,7 @@ onMounted(async () => {
     engine.value = props.chat.engine
     model.value = props.chat.model
     disableTools.value = props.chat.disableTools
+    // contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
     maxTokens.value = props.chat.modelOpts?.maxTokens
     temperature.value = props.chat.modelOpts?.temperature
     top_k.value = props.chat.modelOpts?.top_k
@@ -144,6 +150,7 @@ const save = () => {
   // get various data
   try {
 
+    // const contextWindowSizeValue = parseUserInput('Context Window Size', contextWindowSize, 'int', 1)
     const maxTokensValue = parseUserInput('Max Completion Tokens', maxTokens, 'int', 1)
     const temperatureValue = parseUserInput('Temperature', temperature, 'float', 0, 2)
     const topKValue = parseUserInput('TopK', top_k, 'int', 0, 20)
@@ -154,6 +161,7 @@ const save = () => {
     props.chat.setEngineModel(engine.value, model.value)
     props.chat.disableTools = disableTools.value
     props.chat.modelOpts = {
+      // contextWindowSize: contextWindowSizeValue,
       maxTokens: maxTokensValue,
       temperature: temperatureValue,
       top_k: topKValue,
@@ -167,7 +175,7 @@ const save = () => {
     }
 
   } catch (e) {
-    //console.error(e)
+    console.error(e)
   }
 
 }
