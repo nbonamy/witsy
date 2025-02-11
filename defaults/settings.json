@@ -110,6 +110,7 @@
   "stt": {
     "engine": "openai",
     "model": "whisper-1",
+    "language": "",
     "silenceDetection": true,
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe"

@@ -114,6 +114,7 @@ export type ScratchpadConfig = {
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
 export type STTConfig = {
+  language: string
   engine: string
   model: string
   silenceDetection: boolean
