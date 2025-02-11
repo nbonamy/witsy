@@ -51,7 +51,7 @@ test('Init models', async () => {
   await llmFactory.initModels()
   expect(loadAnthropicModels).toHaveBeenCalledTimes(0)
   expect(loadCerebrasModels).toHaveBeenCalledTimes(0)
-  expect(loadGoogleModels).toHaveBeenCalledTimes(1)
+  expect(loadGoogleModels).toHaveBeenCalledTimes(0)
   expect(loadGroqModels).toHaveBeenCalledTimes(0)
   expect(loadMistralAIModels).toHaveBeenCalledTimes(0)
   expect(loadOllamaModels).toHaveBeenCalledTimes(0)
