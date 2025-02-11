@@ -32,33 +32,38 @@ test('stt settings', async () => {
   const tab = await switchToTab(wrapper, voiceIndex)
   await tab.find('.list-panel .list .item:nth-child(1)').trigger('click')
   const stt = tab.findComponent({ name: 'SettingsSTT' })
-  expect(stt.find('select').element.value).toBe('openai')
+  expect(stt.find<HTMLSelectElement>('select[name=engine]').element.value).toBe('openai')
+
+  // language
+  expect(stt.find<HTMLSelectElement>('select[name=language]').element.value).toBe('')
+  await stt.find('select[name=language]').setValue('fr')
+  expect(store.config.stt.language).toBe('fr')
 
   // silence detection
-  expect(stt.findAll('select')[2].element.value).toBe('2000')
-  await stt.findAll('select')[2].setValue('0')
+  expect(stt.find<HTMLSelectElement>('select[name=duration]').element.value).toBe('2000')
+  await stt.find('select[name=duration]').setValue('0')
   expect(store.config.stt.silenceDetection).toBe(false)
   expect(store.config.stt.silenceDuration).toBe(0)
-  await stt.findAll('select')[2].setValue('1000')
+  await stt.find('select[name=duration]').setValue('1000')
   expect(store.config.stt.silenceDetection).toBe(true)
   expect(store.config.stt.silenceDuration).toBe(1000)
 
   // openai
-  expect(stt.findAll('select')[1].element.value).toBe('whisper-1')
+  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('whisper-1')
 
   // groq
-  await stt.find('select').setValue('groq')
+  await stt.find('select[name=engine]').setValue('groq')
   expect(store.config.stt.engine).toBe('groq')
-  expect(stt.findAll('select')[1].element.value).toBe('whisper-large-v3-turbo')
-  const groq2 = stt.findAll('select')[1].findAll('option')[2]
-  await stt.findAll('select')[1].setValue(groq2.element.value)
+  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('whisper-large-v3-turbo')
+  const groq2 = stt.find('select[name=model]').findAll('option')[2]
+  await stt.find<HTMLSelectElement>('select[name=model]').setValue(groq2.element.value)
   expect(store.config.stt.model).toBe(groq2.element.value)
 
   // whisper
-  await stt.find('select').setValue('whisper')
-  expect(stt.findAll('select')[1].element.value).toBe('')
-  const whisper2 = stt.findAll('select')[1].findAll('option')[2]
-  await stt.findAll('select')[1].setValue(whisper2.element.value)
+  await stt.find('select[name=engine]').setValue('whisper')
+  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('')
+  const whisper2 = stt.find('select[name=model]').findAll('option')[2]
+  await stt.find<HTMLSelectElement>('select[name=model]').setValue(whisper2.element.value)
   expect(store.config.stt.engine).toBe('whisper')
   expect(store.config.stt.model).toBe(whisper2.element.value)
 

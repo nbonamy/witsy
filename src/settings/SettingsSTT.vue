@@ -1,8 +1,12 @@
 <template>
   <div>
+    <div class="group language">
+      <label>Spoken Language</label>
+      <LangSelect v-model="language" default-text="🤖 Automatic" @change="save" />
+    </div>
     <div class="group">
       <label>Engine</label>
-      <select v-model="engine" @change="onChangeEngine">
+      <select name="engine" v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :key="engine.id" :value="engine.id">
           {{ engine.label }}
         </option>
@@ -11,7 +15,7 @@
     <div class="group">
       <label>Model</label>
       <div class="subgroup">
-        <select v-model="model" @change="onChangeModel">
+        <select name="model" v-model="model" @change="onChangeModel">
           <option v-for="model in models" :key="model.id" :value="model.id">
             {{ model.label }}
           </option>
@@ -22,7 +26,7 @@
     </div>
     <div class="group">
       <label>Silence Detection</label>
-      <select v-model="duration" @change="save">
+      <select name="duration" v-model="duration" @change="save">
         <option value="0">Disabled</option>
         <option value="1000">1 second</option>
         <option value="2000">2 seconds</option>
@@ -64,6 +68,7 @@ import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
 import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
+import LangSelect from '../components/LangSelect.vue'
 import { Configuration } from 'types/config'
 
 type InitModelMode = 'download' | 'verify'
@@ -71,6 +76,7 @@ let initMode: InitModelMode = 'download'
 
 type FilesProgressInfo = { [key: string]: DownloadProgress }
 
+const language = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
 const duration = ref(null)
@@ -121,12 +127,14 @@ const progressText = computed(() => {
 const load = () => {
   const detection = store.config.stt.silenceDetection
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
+  language.value = store.config.stt.language || ''
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
 const save = () => {
+  store.config.stt.language = language.value
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
   //store.config.stt.silenceAction = action.value

@@ -1,7 +1,7 @@
 
 <template>
-  <select v-model="language" @change="emit('change')">
-    <option value="">🤖 Let LLM decide</option>
+  <select name="language" v-model="language" @change="emit('change')">
+    <option value="">{{ defaultText }}</option>
     <option value="en">🇬🇧 English</option>
     <option value="es">🇪🇸 Spanish</option>
     <option value="fr">🇫🇷 French</option>
@@ -29,6 +29,13 @@
 <script setup lang="ts">
 
 const language = defineModel()
+
+const props = defineProps({
+  defaultText: {
+    type: String,
+    default: '🤖 Let LLM decide'
+  }
+})
 
 const emit = defineEmits(['change']);
 
