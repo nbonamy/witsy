@@ -145,7 +145,6 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] Speech-to-text language
 - [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 
@@ -154,6 +153,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Speech-to-text language
 - [x] Model parameters (temperature...)
 - [x] Favorite models
 - [x] ElevenLabs Text-to-Speech
