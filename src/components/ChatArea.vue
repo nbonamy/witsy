@@ -340,28 +340,29 @@ const onExportPdf = async () => {
     grid-template-columns: fit-content(24px) fit-content(24px) fit-content(24px) fit-content(24px) auto;
 
     .sidebar {
+      margin-top: 1px;
       grid-column: 1;
       order: 1;
     }
 
     .new-chat {
-      margin-top: 4px;
+      margin-top: 3px;
       grid-column: 2;
       order: 2;
     }
 
-    .menu {
-      margin-top: 4px;
+    .settings {
+      margin-top: 2px;
       grid-column: 3;
       order: 3;
     }
-
-    .settings {
-      margin-top: 3px;
+    
+    .menu {
+      margin-top: 4px;
       grid-column: 4;
       order: 4;
     }
-    
+
     .title {
       margin-left: 8px;
       grid-column: 5;
