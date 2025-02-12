@@ -51,7 +51,7 @@ const props = defineProps({
 })
 
 const chatMenuPosition = computed(() => {
-  return window.api.platform == 'windows' ? 'left' : 'right'
+  return window.api.platform == 'win32' ? 'left' : 'right'
 })
 
 const chatMenuActions = computed(() => {
@@ -94,7 +94,7 @@ onMounted(() => {
 const onMenu = () => {
   showChatMenu.value = true
   menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
-  menuY.value = 32
+  menuY.value = 32 + (window.api.platform == 'win32' ? 16 : 0)
 }
 
 const closeChatMenu = () => {
@@ -283,18 +283,24 @@ const onExportPdf = async () => {
 
 .windows {
   .toolbar {
-    grid-template-columns: 16px auto;
+    grid-template-columns: 16px 16px auto;
 
     .title {
       margin-left: 8px;
-      grid-column: 2;
-      order: 2;
+      grid-column: 3;
+      order: 3;
     }
 
     .menu {
       margin-top: 4px;
       grid-column: 1;
       order: 1;
+    }
+
+    .settings {
+      grid-column: 2;
+      order: 2;
+      margin-top: 2px;
     }
   }
 }
