@@ -94,7 +94,7 @@ onMounted(() => {
 const onMenu = () => {
   showChatMenu.value = true
   menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
-  menuY.value = 32 + (window.api.platform == 'win32' ? 16 : 0)
+  menuY.value = 32 + (window.api.platform == 'win32' ? 8 : 4)
 }
 
 const closeChatMenu = () => {
