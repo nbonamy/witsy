@@ -23,7 +23,7 @@
       <label>API key</label>
       <InputObfuscated v-model="apiKey" />
     </div>
-    </template> 
+    </template>
     <template v-slot:footer>
       <div class="buttons">
         <button @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>

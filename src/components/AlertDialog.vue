@@ -57,6 +57,12 @@ defineExpose({
   form.vertical {
     padding: 16px;
     padding-top: 26px;
+    
+    .icon, .icon img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 1.5rem;
+    }
   }
 
 }

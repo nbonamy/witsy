@@ -173,12 +173,6 @@ form.vertical {
   align-items: center;
   color: var(--text-color);
 
-  .icon, .icon img {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 1.5rem;
-  }
-
   .header:not(:empty) {
     margin-bottom: 1rem;
   }
