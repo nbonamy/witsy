@@ -15,10 +15,13 @@ export default class TTSOpenAI implements TTSEngine {
 
   static readonly voices = [
     { id: 'alloy', label: 'Alloy' },
+    { id: 'ash', label: 'Ash' },
+    { id: 'coral', label: 'Coral' },
     { id: 'echo', label: 'Echo' },
     { id: 'fable', label: 'Fable' },
     { id: 'onyx', label: 'Onyx' },
     { id: 'nova', label: 'Nova' },
+    { id: 'sage', label: 'Sage' },
     { id: 'shimmer', label: 'Shimmer' },
   ]
 
