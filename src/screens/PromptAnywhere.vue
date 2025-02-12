@@ -418,7 +418,7 @@ const saveChat = async () => {
 
   // add to history
   if (!addedToHistory) {
-    store.history.chats.push(chat.value)
+    store.addChat(chat.value)
     addedToHistory = true
   }
 

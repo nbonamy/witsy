@@ -50,7 +50,7 @@ export interface Chat {
   engine: string|null
   model: string|null
   messages: Message[]
-  deleted: boolean
+  temporary: boolean
   disableTools: boolean
   disableStreaming: boolean
   docrepo: string|null
@@ -117,6 +117,8 @@ export interface Store {
   loadCommands?(): void
   loadExperts?(): void
   loadHistory?(): void
+  addChat?(chat: Chat, folderId?: string): void
+  removeChat?(chat: Chat): void
   mergeHistory?(chats: any[]): void
   dump?(): void
 }

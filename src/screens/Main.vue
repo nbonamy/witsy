@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <Sidebar :chat="assistant.chat" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" />
     <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <Settings id="settings" />
     <DocRepos />
@@ -66,6 +66,7 @@ onMounted(() => {
   onEvent('send-prompt', onSendPrompt)
   onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-prompting', onStopGeneration)
+  onEvent('toggle-sidebar', onToggleSidebar)
 
   // main event
   window.api.on('delete-chat', () => {
@@ -160,14 +161,11 @@ const onNewChat = () => {
 }
 
 const onNewChatInFolder = (folderId: string) => {
-  const folder = store.history.folders.find((f) => f.id === folderId)
-  if (folder) {
-    const chat = assistant.value.initChat()
-    folder.chats.push(chat.uuid)
-    store.history.chats.push(chat)
-    onSelectChat(chat)
-    store.saveHistory()
-  }
+  const chat = assistant.value.initChat()
+  updateChatEngineModel()
+  chat.initTitle()
+  store.addChat(chat, folderId)
+  onSelectChat(chat)
 }
 
 const updateChatEngineModel = () => {
@@ -330,11 +328,8 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
   }
   
   // save
-  store.history.chats.push(fork)
   const folder = store.history.folders.find((f) => f.chats.includes(chat.uuid))
-  if (folder) {
-    folder.chats.push(fork.uuid)
-  }
+  store.addChat(fork, folder?.id)
 
   // select
   onSelectChat(fork)
@@ -415,10 +410,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
 
   // make sure the chat is part of history
-  if (!store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+  if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
     assistant.value.chat.initTitle()
-    store.history.chats.push(assistant.value.chat)
-    store.saveHistory()
+    store.addChat(assistant.value.chat)
   }
 
   // prompt
@@ -479,6 +473,14 @@ const onUpdateAvailable = () => {
       window.api.update.apply()
     }
   })
+}
+
+const onToggleSidebar = () => {
+  if (sidebar.value?.isVisible()) {
+    sidebar.value.hide()
+  } else {
+    sidebar.value.show()
+  }
 }
 
 </script>

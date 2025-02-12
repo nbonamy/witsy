@@ -102,7 +102,6 @@ test('Save history', async () => {
       uuid: '123',
       engine: 'engine',
       model: 'model',
-      deleted: false,
       disableStreaming: false,
       disableTools: false,
       modelOpts: { temperature: 1 },

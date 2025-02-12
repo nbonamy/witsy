@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :style="`width: ${sidebarWidth}px`">
+  <div class="sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
     <div class="toolbar">
       <form><div class="group search">
         <input id="filter" v-model="filter" placeholder="Search…" @keyup="onFilterChange" />
@@ -28,7 +28,7 @@
       </div>
     </div>
   </div>
-  <div class="resizer" :style="`left: ${sidebarWidth-5}px`" @mousedown="onResizeSidebarStart">&nbsp;</div>
+  <div class="resizer" :style="`left: ${width-5}px`" @mousedown="onResizeSidebarStart" v-if="visible">&nbsp;</div>
 </template>
 
 <script setup lang="ts">
@@ -53,15 +53,17 @@ defineProps({
   },
 })
 
+const visible: Ref<boolean> = ref(true)
+const width: Ref<number> = ref(0)
+const manualResize = ref(false)
 const chatListDisplayMode: Ref<ChatListMode> = ref('timeline')
 const chatList: Ref<typeof ChatList|null> = ref(null)
-const sidebarWidth: Ref<number> = ref(0)
 const filter: Ref<string> = ref('')
 const selectMode: Ref<boolean> = ref(false)
 
-
 onMounted(() => {
-  sidebarWidth.value = window.api.store.get('sidebarWidth', 250)
+  visible.value = window.api.store.get('sidebarVisible', true)
+  width.value = window.api.store.get('sidebarWidth', 250)
   chatListDisplayMode.value = store.config.appearance.chatList.mode
   onEvent('chat-list-mode', setChatListMode)
 })
@@ -136,21 +138,30 @@ const onMove = () => {
 const onResizeSidebarStart = () => {
   window.addEventListener('mousemove', onResizeSidebarMove)
   window.addEventListener('mouseup', onResizeSidebarEnd)
+  manualResize.value = true
 }
 
 const onResizeSidebarMove = (event: MouseEvent) => {
-  let width = Math.max(150, Math.min(400, event.clientX))
-  sidebarWidth.value = width
+  width.value = Math.max(150, Math.min(400, event.clientX))
 }
 
 const onResizeSidebarEnd = () => {
   window.removeEventListener('mousemove', onResizeSidebarMove)
   window.removeEventListener('mouseup', onResizeSidebarEnd)
-  window.api.store.set('sidebarWidth', sidebarWidth.value)
+  manualResize.value = false
+  saveSidebarState()
+}
+
+const saveSidebarState = () => {
+  window.api.store.set('sidebarVisible', visible.value)
+  window.api.store.set('sidebarWidth', width.value)
 }
 
 defineExpose({
-  cancelSelectMode: onCancelSelect
+  cancelSelectMode: onCancelSelect,
+  isVisible: () => visible.value,
+  hide: () => { visible.value = false; saveSidebarState() },
+  show: () => { visible.value = true; saveSidebarState() },
 })
 
 </script>
@@ -161,16 +172,22 @@ defineExpose({
 
 <style scoped>
 .sidebar {
-  width: var(--sidebar-width);
+  flex: 0 0 0px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   height: 100vh;
   background-color: var(--sidebar-bg-color);
   color: var(--sidebar-text-color);
-  border-right: 1px solid #d0cfce;
   overflow-x: hidden;
   position: relative;
+
+  /* resizing animation except when dragging */
+  transition: flex-basis 0.1s ease-in-out;
+  &.manual-resize {
+    transition: none;
+  }
+
 }
 
 .sidebar .icon-text {
