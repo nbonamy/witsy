@@ -1,7 +1,13 @@
 
 <template>
   <div class="chat-area">
-    <div class="toolbar">
+    <div class="toolbar" :class="{ 'is-left-most': isLeftMost }">
+      <div class="action sidebar" @click="toggleSideBar">
+        <IconSideBar />
+      </div>
+      <div class="action new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
+        <BIconPencilSquare />
+      </div>
       <div class="title" v-if="chat?.title">{{ chat.title }}</div>
       <div class="action settings" @click="showModelSettings = !showModelSettings">
         <BIconSliders />
@@ -37,6 +43,7 @@ import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
+import IconSideBar from '../../assets/sidebar.svg?component'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
@@ -48,6 +55,10 @@ const props = defineProps({
     type: Chat,
     required: true,
   },
+  isLeftMost: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const chatMenuPosition = computed(() => {
@@ -67,6 +78,7 @@ const chatMenuActions = computed(() => {
     // { label: `${engine} ${model}`, disabled: true },
     // { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
     // { label: 'Model Settings', action: 'modelSettings', disabled: false },
+    { label: props.chat?.temporary ? 'Save Chat' : 'Temporary Chat', action: 'toggle_temp', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: !hasMessages() },
     { label: 'Delete', action: 'delete', disabled: !isSaved() },
@@ -91,6 +103,14 @@ onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
 })
 
+const toggleSideBar = () => {
+  emitEvent('toggle-sidebar')
+}
+
+const onNewChat = () => {
+  emitEvent('new-chat')
+}
+
 const onMenu = () => {
   showChatMenu.value = true
   menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
@@ -107,7 +127,9 @@ const handleActionClick = async (action: string) => {
   closeChatMenu()
 
   // process
-  if (action === 'rename') {
+  if (action === 'toggle_temp') {
+    onToggleTemporary()
+  } else if (action === 'rename') {
     emitEvent('rename-chat', props.chat)
   } else if (action === 'delete') {
     emitEvent('delete-chat', props.chat.uuid)
@@ -117,6 +139,18 @@ const handleActionClick = async (action: string) => {
     props.chat.disableTools = !props.chat.disableTools
   } else if (action == 'modelSettings') {
     showModelSettings.value = !showModelSettings.value
+  }
+}
+
+const onToggleTemporary = () => {
+  if (props.chat.temporary) {
+    props.chat.temporary = false
+    if (props.chat.hasMessages()) {
+      store.addChat(props.chat)
+    }
+  } else {
+    props.chat.temporary = true
+    store.removeChat(props.chat)
   }
 }
 
@@ -188,9 +222,14 @@ const onExportPdf = async () => {
   document.body.removeChild(image)
 
 }
+
 </script>
 
 <style scoped>
+
+.macos .chat-area .toolbar.is-left-most {
+  padding-left: 90px;
+}
 
 .chat-area {
   display: flex;
@@ -204,16 +243,16 @@ const onExportPdf = async () => {
   padding: 16px;
   -webkit-app-region: drag;
   display: grid;
-  grid-template-columns: auto 16px 16px;
+  grid-template-columns: fit-content(24px) fit-content(24px) auto fit-content(24px) fit-content(24px);
   background-color: var(--chatarea-toolbar-bg-color);
-  gap: 8px;
 
   .title {
-    grid-column: 1;
+    grid-column: 3;
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-left: 8px;
     color: var(--chatarea-toolbar-text-color);
   }
 
@@ -223,15 +262,30 @@ const onExportPdf = async () => {
     text-align: right;
     width: 16px;
     height: 16px;
+    margin-right: 8px;
     color: var(--chatarea-toolbar-icon-color);
+    fill: var(--chatarea-toolbar-icon-color);
+  }
+
+  .sidebar {
+    margin-top: -1.5px;
+    transform: scaleY(120%);
+    grid-column: 1;
+  }
+
+  .new-chat {
+    grid-column: 2;
+    &.hidden {
+      display: none;
+    }
   }
 
   .settings {
-    grid-column: 2;
+    grid-column: 4;
   }
 
   .menu {
-    grid-column: 3;
+    grid-column: 5;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -283,25 +337,37 @@ const onExportPdf = async () => {
 
 .windows {
   .toolbar {
-    grid-template-columns: 16px 16px auto;
+    grid-template-columns: fit-content(24px) fit-content(24px) fit-content(24px) fit-content(24px) auto;
 
-    .title {
-      margin-left: 8px;
-      grid-column: 3;
-      order: 3;
-    }
-
-    .menu {
-      margin-top: 4px;
+    .sidebar {
       grid-column: 1;
       order: 1;
     }
 
-    .settings {
+    .new-chat {
+      margin-top: 4px;
       grid-column: 2;
       order: 2;
-      margin-top: 2px;
     }
+
+    .menu {
+      margin-top: 4px;
+      grid-column: 3;
+      order: 3;
+    }
+
+    .settings {
+      margin-top: 3px;
+      grid-column: 4;
+      order: 4;
+    }
+    
+    .title {
+      margin-left: 8px;
+      grid-column: 5;
+      order: 5;
+    }
+
   }
 }
 

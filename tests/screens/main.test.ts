@@ -76,9 +76,12 @@ test('Renders correctly', () => {
 })
 
 test('Resets assistant', async () => {
-  mount(Main)
+  const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('new-chat', null)
   expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
+  expect(wrapper.vm.assistant.chat.title).toBeNull()
+  expect(wrapper.vm.assistant.chat.engine).toBeTruthy()
+  expect(wrapper.vm.assistant.chat.model).toBeTruthy()
 })
 
 test('Saves text attachment', async () => {
@@ -160,11 +163,15 @@ test('Stop assistant', async () => {
 })
 
 test('New chat in folder', async () => {
-  mount(Main)
+  const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('new-chat-in-folder', 'folder')
   expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].title).toBeTruthy()
+  expect(store.history.chats[1].engine).toBeTruthy()
+  expect(store.history.chats[1].model).toBeTruthy()
   expect(store.history.folders[0].chats).toHaveLength(1)
   expect(store.history.folders[0].chats[0]).toBe(store.history.chats[1].uuid)
+  expect(wrapper.vm.assistant.chat.uuid).toBe(store.history.chats[1].uuid)
 })
 
 test('Rename chat', async () => {

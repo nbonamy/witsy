@@ -81,9 +81,7 @@ test('Context menu empty chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    // { label: 'mock chat', disabled: true },
-    // { label: 'Disable plugins', action: 'toogleTools', disabled: false },
-    // { label: 'Model Settings', action: 'modelSettings', disabled: false },
+    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: true },
     { label: 'Delete', action: 'delete', disabled: true }
@@ -95,13 +93,54 @@ test('Context menu normal chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    // { label: 'mock chat', disabled: true },
-    // { label: 'Disable plugins', action: 'toogleTools', disabled: false },
-    // { label: 'Model Settings', action: 'modelSettings', disabled: false },
+    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
     { label: 'Rename Chat', action: 'rename', disabled: false },
     { label: 'Export as PDF', action: 'exportPdf', disabled: false },
     { label: 'Delete', action: 'delete', disabled: true }
   ])
+})
+
+test('Context menu temporary chat', async () => {
+  addMessagesToChat()
+  chat!.temporary = true
+  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  expect(wrapper.vm.chatMenuActions).toStrictEqual([
+    { label: 'Save Chat', action: 'toggle_temp', disabled: false },
+    { label: 'Rename Chat', action: 'rename', disabled: false },
+    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
+    { label: 'Delete', action: 'delete', disabled: true }
+  ])
+})
+
+test('Context menu temporary 1', async () => {
+  expect(store.history.chats.length).toBe(0)
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
+  expect(chat?.temporary).toBe(true)
+  expect(store.history.chats.length).toBe(0)
+})
+
+test('Context menu temporary 2', async () => {
+  addMessagesToChat()
+  expect(store.history.chats.length).toBe(0)
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
+  expect(chat?.temporary).toBe(true)
+  expect(store.history.chats.length).toBe(0)
+})
+
+test('Context menu temporary 3', async () => {
+  addMessagesToChat()
+  chat!.temporary = true
+  expect(store.history.chats.length).toBe(0)
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  await wrapper.find('.context-menu .item[data-action=toggle_temp]').trigger('click')
+  expect(chat?.temporary).toBe(false)
+  expect(store.history.chats.length).toBe(1)
 })
 
 test('Context menu rename', async () => {
@@ -123,7 +162,7 @@ test('Context menu rename', async () => {
 
 test('Context menu delete', async () => {
   addMessagesToChat()
-  store.history.chats.push(chat!)
+  store.addChat(chat!)
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=delete]').trigger('click')

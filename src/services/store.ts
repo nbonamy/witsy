@@ -40,7 +40,7 @@ export const store: Store = reactive({
   load: async (): Promise<void> => {
 
     //perf
-    const start = Date.now()
+    //const start = Date.now()
 
     // load data
     store.loadSettings()
@@ -79,7 +79,37 @@ export const store: Store = reactive({
   saveSettings: (): void => {
     window.api.config.save(JSON.parse(JSON.stringify(store.config)))
   },
-  
+
+
+  addChat: (chat: Chat, folderId?: string): void => {
+
+    // add to folder
+    if (folderId) {
+      const folder = store.history.folders.find((f) => f.id === folderId)
+      if (folder) {
+        folder.chats.push(chat.uuid)
+      }
+    }
+
+    // add to history
+    store.history.chats.push(chat)
+    store.saveHistory()
+
+  },
+
+  removeChat: (chat: Chat): void => {
+
+    // remove from folders
+    for (const folder of store.history.folders) {
+      folder.chats = folder.chats.filter((id) => id !== chat.uuid)
+    }
+
+    // remove from history
+    store.history.chats = store.history.chats.filter((c) => c.uuid !== chat.uuid)
+    store.saveHistory()
+
+  },
+
   saveHistory: (): void => {
 
     try {

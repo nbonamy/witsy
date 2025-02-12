@@ -95,7 +95,6 @@ test('Fork', () => {
   expect(fork.model).toBe(chat.model)
   expect(fork.docrepo).toBe(chat.docrepo)
   expect(fork.disableTools).toBe(chat.disableTools)
-  expect(fork.deleted).toBe(false)
   expect(fork.messages.length).toBe(3)
   expect(fork.messages[0]).toMatchObject({ uuid: expect.not.stringMatching('^1$'), role: 'role1', content: 'content1' })
   expect(fork.messages[1]).toMatchObject({ uuid: expect.not.stringMatching('^2$'), role: 'role2', content: 'content2' })

@@ -825,7 +825,7 @@ defineExpose({
   padding-right: 36px;
   padding-top: 5px;
   padding-bottom: 7px;
-  flex: 1;
+  width: 100%;
 }
 
 .input .textarea-wrapper .icon.left + textarea {

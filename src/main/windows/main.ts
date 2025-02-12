@@ -1,6 +1,5 @@
 
 import { CreateWindowOpts } from 'types/window';
-import { anyDict } from 'types/index';
 import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { wait } from '../utils';
@@ -37,6 +36,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     y: bounds?.y,
     width: bounds?.width ?? 1400,
     height: bounds?.height ?? 800,
+    minWidth: 800,
     title: 'Witsy',
     ...titleBarOptions(),
     ...opts,

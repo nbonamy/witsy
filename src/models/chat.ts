@@ -18,7 +18,7 @@ export default class Chat implements ChatBase {
   modelOpts: LlmModelOpts|null = null
   docrepo: string|null
   messages: Message[]
-  deleted: boolean
+  temporary: boolean
 
   constructor(obj?: any) {
 
@@ -39,7 +39,7 @@ export default class Chat implements ChatBase {
     this.modelOpts = null
     this.docrepo = null
     this.messages = []
-    this.deleted = false
+    this.temporary = false
   
   }
 
@@ -54,7 +54,6 @@ export default class Chat implements ChatBase {
     this.modelOpts = obj.modelOpts
     this.docrepo = obj.docrepo
     this.messages = []
-    this.deleted = false
     for (const msg of obj.messages) {
       const message = Message.fromJson(msg)
       this.messages.push(message)

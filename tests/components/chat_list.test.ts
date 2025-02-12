@@ -39,7 +39,7 @@ beforeEach(() => {
     chat.messages.push(new Message('system', 'System Prompt'))
     chat.messages.push(new Message('user', `Question ${i}`))
     chat.messages.push(new Message('assistant', `Subtitle ${i}`))
-    store.history.chats.push(chat)
+    store.addChat(chat)
   }
 })
 
