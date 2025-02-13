@@ -224,19 +224,24 @@ const initLlm = (engine?: string, model?: string) => {
     ({ engine, model } = llmFactory.getChatEngineModel(false))
   }
 
+  // set engine model
+  chat.value.setEngineModel(engine, model)
+  store.initChatWithDefaults(chat.value)
+
   // log
   console.log(`initialize prompt window llm: ${engine} ${model}`)
   
-  // init llm with tools
+  // init llm
   llm = llmFactory.igniteEngine(engine)
-  for (const pluginName in availablePlugins) {
-    const pluginClass = availablePlugins[pluginName]
-    const instance = new pluginClass(store.config.plugins[pluginName])
-    llm.addPlugin(instance)
-  }
 
-  // set engine model
-  chat.value.setEngineModel(engine, model)
+  // tools depend on chat parameters
+  if (!chat.value.disableTools) {
+    for (const pluginName in availablePlugins) {
+      const pluginClass = availablePlugins[pluginName]
+      const instance = new pluginClass(store.config.plugins[pluginName])
+      llm.addPlugin(instance)
+    }
+  }
 
 }
 
@@ -391,6 +396,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // now generate
     await generator.generate(llm, chat.value.messages, {
+      ...chat.value.modelOpts,
       model: chat.value.model,
       docrepo: docrepo,
       sources: true,

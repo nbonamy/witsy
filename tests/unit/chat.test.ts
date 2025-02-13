@@ -17,7 +17,7 @@ test('Build from title', () => {
 })
 
 test('Build from JSON', () => {
-  const chat = new Chat({
+  const chat = Chat.fromJson({
     uuid: 'uuid',
     title: 'title',
     createdAt: 1,
@@ -69,7 +69,7 @@ test('Delete', () => {
 })
 
 test('Fork', () => {
-  const chat = new Chat({
+  const chat = Chat.fromJson({
     uuid: 'uuid',
     title: 'title',
     createdAt: 1,

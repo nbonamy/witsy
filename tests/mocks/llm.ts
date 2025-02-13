@@ -1,7 +1,16 @@
 
 import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineCreateOpts } from 'multi-llm-ts'
+import { store } from '../../src/services/store'
 import Message from '../../src/models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
+
+export const setLlmDefaults = (engine: string, model: string) => {
+  store.config.llm.engine = engine
+  store.config.engines[engine] = {
+    models: { chat: [] },
+    model: { chat: model }
+  }
+}
 
 class LlmError extends Error {
 

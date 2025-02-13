@@ -115,7 +115,7 @@ test('Not send on shift enter', async () => {
 // })
 
 test('Show stop button when working', async () => {
-  const chat = new Chat({ messages: [ {} ] })
+  const chat = Chat.fromJson({ messages: [ {} ] })
   chat.messages[0].transient = true
   await wrapper.setProps({ chat: chat })
   expect(wrapper.find('.send').exists()).toBe(false)
@@ -176,7 +176,7 @@ test('Remove attachment', async () => {
 
 test('History navigation', async () => {
   
-  await wrapper.setProps({ chat: new Chat({ messages: [ 
+  await wrapper.setProps({ chat: Chat.fromJson({ messages: [ 
     new Message('system', 'I am an assistant'),
     new Message('user', 'Hello'),
     new Message('assistant', 'Hi'),

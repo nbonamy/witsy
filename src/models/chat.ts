@@ -20,17 +20,11 @@ export default class Chat implements ChatBase {
   messages: Message[]
   temporary: boolean
 
-  constructor(obj?: any) {
-
-    // json
-    if (typeof obj === 'object') {
-      this.fromJson(obj)
-      return
-    }
+  constructor(title?: string) {
 
     // default
     this.uuid = crypto.randomUUID()
-    this.title = obj || null
+    this.title = title || null
     this.createdAt = Date.now()
     this.lastModified = Date.now()
     this.engine = null
@@ -43,24 +37,26 @@ export default class Chat implements ChatBase {
   
   }
 
-  fromJson(obj: any) {
-    this.uuid = obj.uuid || crypto.randomUUID()
-    this.title = obj.title
-    this.createdAt = obj.createdAt
-    this.lastModified = obj.lastModified || obj.createdAt
-    this.engine = obj.engine || 'openai'
-    this.model = obj.model
-    this.disableTools = obj.disableTools
-    this.modelOpts = obj.modelOpts
-    this.docrepo = obj.docrepo
-    this.messages = []
+  static fromJson(obj: any): Chat {
+    const chat = new Chat()
+    chat.uuid = obj.uuid || crypto.randomUUID()
+    chat.title = obj.title
+    chat.createdAt = obj.createdAt
+    chat.lastModified = obj.lastModified || obj.createdAt
+    chat.engine = obj.engine || 'openai'
+    chat.model = obj.model
+    chat.disableTools = obj.disableTools
+    chat.modelOpts = obj.modelOpts
+    chat.docrepo = obj.docrepo
+    chat.messages = []
     for (const msg of obj.messages) {
       const message = Message.fromJson(msg)
-      this.messages.push(message)
+      chat.messages.push(message)
     }
+    return chat
   }
 
-  patchFromJson(obj: any) {
+  patchFromJson(obj: any): boolean {
 
     // any diff spotted
     let patched = false
@@ -90,12 +86,12 @@ export default class Chat implements ChatBase {
     return patched
   }
 
-  setEngineModel(engine: string, model: string) {
+  setEngineModel(engine: string, model: string): void {
     this.engine = engine
     this.model = model
   }
 
-  subtitle() {
+  subtitle(): string {
     if (this.messages.length > 2 && this.messages[2].type == 'text') {
       return this.messages[2].content
     } else {
@@ -103,19 +99,19 @@ export default class Chat implements ChatBase {
     }
   }
 
-  initTitle() {
+  initTitle(): void {
     this.title = this.title || DEFAULT_TITLE
   }
 
-  hasTitle() {
+  hasTitle(): boolean {
     return this.title && this.title !== DEFAULT_TITLE
   }
 
-  hasMessages() {
+  hasMessages(): boolean {
     return this.messages.length > 1
   }
 
-  addMessage(message: Message) {
+  addMessage(message: Message): void {
     this.messages.push(message)
     this.lastModified = Date.now()
   }
@@ -136,7 +132,7 @@ export default class Chat implements ChatBase {
   }
 
   fork(message: Message): Chat {
-    const fork = new Chat(this)
+    const fork = Chat.fromJson(this)
     fork.uuid = crypto.randomUUID()
     fork.lastModified = Date.now()
     fork.messages = []
