@@ -59,6 +59,7 @@
 
 <script setup lang="ts">
 
+import { anyDict } from '../types/index'
 import { ref, Ref, onMounted, computed, watch } from 'vue'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
@@ -190,8 +191,8 @@ const saveAsDefaults = () => {
     reasoningEffort: reasoningEffort.value,
   }
   for (const key of Object.keys(modelDefaults)) {
-    if (modelDefaults[key] === undefined) {
-      delete modelDefaults[key]
+    if ((modelDefaults as anyDict)[key] === undefined) {
+      delete (modelDefaults as anyDict)[key]
     }
   }
   store.config.llm.defaults.push(modelDefaults)
@@ -289,8 +290,8 @@ const save = () => {
 
     // set to undefined if all values are undefined
     for (const key of Object.keys(props.chat.modelOpts)) {
-      if (props.chat.modelOpts[key] === undefined) {
-        delete props.chat.modelOpts[key]
+      if ((props.chat.modelOpts as anyDict)[key] === undefined) {
+        delete (props.chat.modelOpts as anyDict)[key]
       }
     }
     if (Object.keys(props.chat.modelOpts).length === 0) {
