@@ -46,12 +46,16 @@
         </select>
       </div>
       <div class="group">
-        <label>Defaults for this Model</label>
+        <label>Defaults for this model</label>
         <div class="subgroup">
           <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">Load</button>
           <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">Save</button>
           <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">Clear</button>
         </div>
+      </div>
+      <div class="group" v-if="engine === 'ollama'">
+        <label>Create new model</label>
+        <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">Create</button>
       </div>
     </form>
   </div>
@@ -68,6 +72,7 @@ import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
+import { Ollama } from 'ollama/dist/browser.cjs'
 
 const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
@@ -94,6 +99,17 @@ const modelHasDefaults = computed(() => {
 const canSaveAsDefaults = computed(() => {
   return (
     disableTools.value === true ||
+    contextWindowSize.value !== undefined ||
+    maxTokens.value !== undefined ||
+    temperature.value !== undefined ||
+    top_k.value !== undefined ||
+    top_p.value !== undefined ||
+    reasoningEffort.value !== undefined
+  )
+})
+
+const canCreateOllamaModel = computed(() => {
+  return (
     contextWindowSize.value !== undefined ||
     maxTokens.value !== undefined ||
     temperature.value !== undefined ||
@@ -305,6 +321,49 @@ const save = () => {
 
   } catch (e) {
     console.error(e)
+  }
+
+}
+
+const onCreateOllamaModel = async () => {
+
+  let { value: name } = await Dialog.show({
+    title: 'Enter new model name',
+    input: 'text',
+    inputValue: '',
+    showCancelButton: true,
+  });
+  
+  if (name) {
+
+    // add suffix
+    if (!name.includes(':')) {
+      name += ':latest'
+    }
+
+    // init
+    const ollama = new Ollama({
+      host: store.config.engines.ollama.baseURL,
+    })
+
+    // create
+    await ollama.create({
+      model: name,
+      from: model.value,
+      parameters: {
+        num_ctx: contextWindowSize.value,
+        temperature: temperature.value,
+        top_k: top_k.value,
+        top_p: top_p.value,
+      }
+    })
+
+    // reload
+    await llmFactory.loadModels('ollama')
+
+    // and select
+    model.value = name
+
   }
 
 }
