@@ -62,6 +62,9 @@ export type GenerationResult =
         }
       }
 
+      // debug
+      //console.log(`Generation with ${llm.plugins.length} plugins and opts ${JSON.stringify(opts)}`)
+
       // now stream
       this.stopGeneration = false
       this.stream = await llm.generate(opts.model, conversation, {

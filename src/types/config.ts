@@ -1,5 +1,5 @@
 
-import { EngineCreateOpts, Model } from 'multi-llm-ts'
+import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
 
@@ -45,12 +45,19 @@ export type FavoriteModel = {
   model: string
 }
 
+export type ModelDefaults = {
+  engine: string
+  model: string
+  disableTools: boolean
+} & LlmModelOpts
+
 export type LLMConfig = {
   engine: string
   favorites: FavoriteModel[]
   autoVisionSwitch: boolean
   conversationLength: number
   imageResize: number
+  defaults: ModelDefaults[],
 }
 
 export type InstructionsConfig = {

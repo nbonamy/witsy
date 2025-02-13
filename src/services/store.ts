@@ -80,6 +80,24 @@ export const store: Store = reactive({
     window.api.config.save(JSON.parse(JSON.stringify(store.config)))
   },
 
+  initChatWithDefaults(chat: Chat): void {
+
+    const defaults = store.config.llm.defaults.find(d => d.engine === chat.engine && d.model === chat.model)
+    if (defaults) {
+      chat.disableTools = defaults.disableTools
+      chat.modelOpts = {
+        contextWindowSize: defaults.contextWindowSize,
+        maxTokens: defaults.maxTokens,
+        temperature: defaults.temperature,
+        top_k: defaults.top_k,
+        top_p: defaults.top_p,
+        reasoningEffort: defaults.reasoningEffort,
+      }
+    } else {
+      chat.disableTools = false
+      chat.modelOpts = undefined
+    }
+  },
 
   addChat: (chat: Chat, folderId?: string): void => {
 
@@ -170,7 +188,7 @@ const loadHistory = (): void => {
     const history = window.api.history.load()
     store.history.folders = history.folders
     for (const jsonChat of history.chats) {
-      const chat = new Chat(jsonChat)
+      const chat = Chat.fromJson(jsonChat)
       store.history.chats.push(chat)
     }
   } catch (error) {
@@ -207,7 +225,7 @@ const mergeHistory = (jsonHistory: History): void => {
   const addedIds = newIds.filter((id) => !currentIds.includes(id))
   //console.log(`Adding ${addedIds.length} chats`)
   for (const addedId of addedIds) {
-    const chat = new Chat(jsonHistory.chats.find((chat) => chat.uuid === addedId))
+    const chat = Chat.fromJson(jsonHistory.chats.find((chat) => chat.uuid === addedId))
     store.history.chats.push(chat)
   }
 

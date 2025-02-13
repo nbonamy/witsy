@@ -55,7 +55,6 @@ export interface Chat {
   disableStreaming: boolean
   docrepo: string|null
   modelOpts: LlmModelOpts|null
-  fromJson(json: any): void
   patchFromJson(jsonChat: any): boolean
   setEngineModel(engine: string, model: string): void
   initTitle(): void
@@ -117,6 +116,7 @@ export interface Store {
   loadCommands?(): void
   loadExperts?(): void
   loadHistory?(): void
+  initChatWithDefaults(chat: Chat): void
   addChat?(chat: Chat, folderId?: string): void
   removeChat?(chat: Chat): void
   mergeHistory?(chats: any[]): void

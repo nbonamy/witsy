@@ -7,7 +7,7 @@
       </div>
       <div class="group">
         <label>LLM Model</label>
-        <ModelSelect v-model="model" :engine="engine" @change="save"/>
+        <ModelSelect v-model="model" :engine="engine" @change="onChangeModel"/>
       </div>
       <div class="group">
         <label>Plugins</label>
@@ -45,6 +45,14 @@
           <option value="high">High</option>
         </select>
       </div>
+      <div class="group">
+        <label>Defaults for this Model</label>
+        <div class="subgroup">
+          <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">Load</button>
+          <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">Save</button>
+          <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">Clear</button>
+        </div>
+      </div>
     </form>
   </div>
 </template>
@@ -76,6 +84,22 @@ const props = defineProps({
     type: Chat,
     required: true,
   },
+})
+
+const modelHasDefaults = computed(() => {
+  return store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value) !== undefined
+})
+
+const canSaveAsDefaults = computed(() => {
+  return (
+    disableTools.value === true ||
+    contextWindowSize.value !== undefined ||
+    maxTokens.value !== undefined ||
+    temperature.value !== undefined ||
+    top_k.value !== undefined ||
+    top_p.value !== undefined ||
+    reasoningEffort.value !== undefined
+  )
 })
 
 const isContextWindowSupported = computed(() => {
@@ -117,8 +141,78 @@ onMounted(async () => {
   }, { deep: true, immediate: true })
 })
 
+const onLoadDefaults = () => {
+  loadDefaults()
+  save()
+}
+
+const onSaveDefaults = () => {
+  saveAsDefaults()
+}
+
+const onClearDefaults = () => {
+  clearDefaults()
+  loadDefaults()
+}
+
+const loadDefaults = () => {
+  const defaults = store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value)
+  if (defaults) {
+    disableTools.value = defaults.disableTools
+    contextWindowSize.value = defaults.contextWindowSize
+    maxTokens.value = defaults.maxTokens
+    temperature.value = defaults.temperature
+    top_k.value = defaults.top_k
+    top_p.value = defaults.top_p
+    reasoningEffort.value = defaults.reasoningEffort
+  } else {
+    disableTools.value = false
+    contextWindowSize.value = undefined
+    maxTokens.value = undefined
+    temperature.value = undefined
+    top_k.value = undefined
+    top_p.value = undefined
+    reasoningEffort.value = undefined
+  }
+}
+
+const saveAsDefaults = () => {
+  clearDefaults()
+  const modelDefaults = {
+    engine: engine.value,
+    model: model.value,
+    disableTools: disableTools.value,
+    contextWindowSize: contextWindowSize.value,
+    maxTokens: maxTokens.value,
+    temperature: temperature.value,
+    top_k: top_k.value,
+    top_p: top_p.value,
+    reasoningEffort: reasoningEffort.value,
+  }
+  for (const key of Object.keys(modelDefaults)) {
+    if (modelDefaults[key] === undefined) {
+      delete modelDefaults[key]
+    }
+  }
+  store.config.llm.defaults.push(modelDefaults)
+  store.saveSettings()
+}
+
+const clearDefaults = () => {
+  const index = store.config.llm.defaults.findIndex(d => d.engine === engine.value && d.model === model.value)
+  if (index !== -1) {
+    store.config.llm.defaults.splice(index, 1)
+    store.saveSettings()
+  }
+}
+
 const onChangeEngine = () => {
   model.value = llmFactory.getChatModel(engine.value, false)
+  onChangeModel()
+}
+
+const onChangeModel = () => {
+  loadDefaults()
   save()
 }
 
@@ -191,6 +285,16 @@ const save = () => {
       top_k: topKValue,
       top_p: topPValue,
       reasoningEffort: reasoningEffortValue,
+    }
+
+    // set to undefined if all values are undefined
+    for (const key of Object.keys(props.chat.modelOpts)) {
+      if (props.chat.modelOpts[key] === undefined) {
+        delete props.chat.modelOpts[key]
+      }
+    }
+    if (Object.keys(props.chat.modelOpts).length === 0) {
+      props.chat.modelOpts = undefined
     }
 
     // special case

@@ -172,6 +172,7 @@ const updateChatEngineModel = () => {
   if (!assistant.value.chat.hasMessages()) {
     const { engine, model } = llmFactory.getChatEngineModel()
     assistant.value.chat.setEngineModel(engine, model)
+    store.initChatWithDefaults(assistant.value.chat)
   }
 }
 

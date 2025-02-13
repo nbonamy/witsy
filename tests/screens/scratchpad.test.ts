@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import LlmMock from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
@@ -9,7 +10,6 @@ import Prompt from '../../src/components/Prompt.vue'
 import EditableText from '../../src/components/EditableText.vue'
 import Toolbar from '../../src/scratchpad/Toolbar.vue'
 import ActionBar from '../../src/scratchpad/ActionBar.vue'
-import LlmMock from '../mocks/llm'
 
 import useEventBus  from '../../src/composables/event_bus'
 import Attachment from '../../src/models/attachment'
@@ -31,8 +31,8 @@ vi.mock('../../src/llms/llm', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
+  useWindowMock({ dialogResponse: 1, modelDefaults: true })
   useNavigatorMock()
-  useWindowMock({ dialogResponse: 1})
   
   window.api.base64 = {
     decode: vi.fn((s) => s),
@@ -66,6 +66,10 @@ test('Initalizes correctly', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   expect(wrapper.vm.llm).toBeDefined()
   expect(wrapper.vm.llm.getName()).toBe('mock')
+  expect(wrapper.vm.chat.engine).toBe('mock')
+  expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableTools).toBe(true)
+  expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(1)
   expect(wrapper.vm.editor.value).not.toBeNull()
   expect(wrapper.vm.undoStack).toHaveLength(0)
@@ -136,6 +140,8 @@ test('Sets engine', async () => {
   emitEvent('action', { type: 'llm', value: { engine: 'openai', model: 'chat' }})
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableTools).toBe(false)
+  expect(wrapper.vm.chat.modelOpts).not.toBeDefined()
 })
 
 test('Replaces selection', async () => {

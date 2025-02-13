@@ -9,6 +9,7 @@ const listeners: ((signal: string) => void)[] = []
 
 interface WindowMockOpts {
   dialogResponse?: number
+  modelDefaults?: boolean
   favoriteModels?: boolean
   customEngine?: boolean
 }
@@ -19,6 +20,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
   opts = {
     ...{
       dialogResponse: 0,
+      modelDefaults: false,
       favoriteModels: false,
       customEngine: false
     },
@@ -58,6 +60,21 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           config.llm.favorites = [
             { id: 'mock-chat1', engine: 'mock', model: 'chat1' },
             { id: 'mock-chat2', engine: 'mock', model: 'chat2' },
+          ]
+        }
+        if (opts.modelDefaults) {
+          config.llm.defaults = [
+            {
+              engine: 'mock',
+              model: 'chat',
+              disableTools: true,
+              contextWindowSize: 512,
+              maxTokens: 150,
+              temperature: 0.7,
+              top_k: 10,
+              top_p: 0.5,
+              reasoningEffort: 'low'
+            },
           ]
         }
         if (opts.customEngine) {

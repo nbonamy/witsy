@@ -57,18 +57,18 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
-  setText(text: string) {
+  setText(text: string): void {
     this.content = text || ''
     this.transient = (text == null)
   }
 
-  setImage(url: string) {
+  setImage(url: string): void {
     this.type = 'image'
     this.content = url
     this.transient = false
   }
 
-  setToolCall(toolCall: LlmChunkTool) {
+  setToolCall(toolCall: LlmChunkTool): void {
     if (this.toolCall == null) {
       this.toolCall = {
         status: null,

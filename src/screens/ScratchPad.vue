@@ -208,11 +208,12 @@ const initLlm = () => {
     ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
   }
 
-  // prompt
-  llm = llmFactory.igniteEngine(engine.value)
-
   // set chat
   chat.value.setEngineModel(engine.value, model.value)
+  store.initChatWithDefaults(chat.value)
+
+  // prompt
+  llm = llmFactory.igniteEngine(engine.value)
 
 }
 
@@ -500,6 +501,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     // now generate
     processing.value = true
     const rc: GenerationResult = await generator.generate(llm, chat.value.messages, {
+      ...chat.value.modelOpts,
       model: chat.value.model,
       docrepo: chat.value.docrepo,
       sources: false,

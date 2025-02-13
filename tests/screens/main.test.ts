@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
@@ -17,27 +18,6 @@ import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
-
-beforeAll(() => {
-  useNavigatorMock()
-  useWindowMock()
-
-  window.api.history.load = () => ({
-    folders: [
-      { id: 'folder', name: 'Folder', chats: [] }
-    ], chats: [
-      // @ts-expect-error incomplete mocks
-      new Chat({ uuid: 'chat', title: 'title', docrepo: 'docrepo', messages: [
-        new Message('system', 'instructions'),
-        new Message('user', 'prompt1'),
-        new Message('assistant', 'response1'),
-        Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
-        new Message('user', 'prompt2'),
-        new Message('assistant', 'response2'),  
-      ] })
-    ]
-  })
-})
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()
@@ -62,6 +42,27 @@ vi.mock('../../src/services/assistant', async () => {
   return { default: Assistant }
 })
 
+beforeAll(() => {
+  useWindowMock({ modelDefaults: true })
+  useNavigatorMock()
+
+  window.api.history.load = () => ({
+    folders: [
+      { id: 'folder', name: 'Folder', chats: [] }
+    ], chats: [
+      Chat.fromJson({ uuid: 'chat', title: 'title', docrepo: 'docrepo', messages: [
+        new Message('system', 'instructions'),
+        new Message('user', 'prompt1'),
+        new Message('assistant', 'response1'),
+        Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
+        new Message('user', 'prompt2'),
+        new Message('assistant', 'response2'),  
+      ] })
+    ]
+  })
+
+})
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -77,11 +78,33 @@ test('Renders correctly', () => {
 
 test('Resets assistant', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
+
+  // load witb defaults
+  setLlmDefaults('mock', 'chat')
   emitEvent('new-chat', null)
   expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeNull()
-  expect(wrapper.vm.assistant.chat.engine).toBeTruthy()
-  expect(wrapper.vm.assistant.chat.model).toBeTruthy()
+  expect(wrapper.vm.assistant.chat.engine).toBe('mock')
+  expect(wrapper.vm.assistant.chat.model).toBe('chat')
+  expect(wrapper.vm.assistant.chat.disableTools).toBe(true)
+  expect(wrapper.vm.assistant.chat.modelOpts).toEqual({
+    contextWindowSize: 512,
+    maxTokens: 150,
+    temperature: 0.7,
+    top_k: 10,
+    top_p: 0.5,
+    reasoningEffort: 'low',
+  })
+
+  // load witbout defaults
+  setLlmDefaults('openai', 'gpt-4o-mini')
+  emitEvent('new-chat', null)
+  expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
+  expect(wrapper.vm.assistant.chat.title).toBeNull()
+  expect(wrapper.vm.assistant.chat.engine).toBe('openai')
+  expect(wrapper.vm.assistant.chat.model).toBe('gpt-4o-mini')
+  expect(wrapper.vm.assistant.chat.disableTools).toBe(false)
+  expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
 
 test('Saves text attachment', async () => {
@@ -164,6 +187,7 @@ test('Stop assistant', async () => {
 
 test('New chat in folder', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
+  setLlmDefaults('mock', 'chat')
   emitEvent('new-chat-in-folder', 'folder')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBeTruthy()
@@ -172,6 +196,7 @@ test('New chat in folder', async () => {
   expect(store.history.folders[0].chats).toHaveLength(1)
   expect(store.history.folders[0].chats[0]).toBe(store.history.chats[1].uuid)
   expect(wrapper.vm.assistant.chat.uuid).toBe(store.history.chats[1].uuid)
+  expect(wrapper.vm.assistant.chat.modelOpts).not.toBeUndefined()
 })
 
 test('Rename chat', async () => {
@@ -241,9 +266,11 @@ test('Delete folder', async () => {
 })
 
 test('Select chat', async () => {
-  mount(Main)
+  const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('select-chat', store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenCalledWith(store.history.chats[0])
+  expect(wrapper.vm.assistant.chat.disableTools).toBeFalsy()
+  expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
 
 test('Fork Chat on Assistant Message', async () => {

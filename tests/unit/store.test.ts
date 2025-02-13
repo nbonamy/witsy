@@ -8,7 +8,7 @@ import defaultSettings from '../../defaults/settings.json'
 
 const chats = [
   new Chat(),
-  new Chat({
+  Chat.fromJson({
     uuid: '123',
     engine: 'engine',
     model: 'model',
@@ -104,6 +104,7 @@ test('Save history', async () => {
       model: 'model',
       disableStreaming: false,
       disableTools: false,
+      temporary: false,
       modelOpts: { temperature: 1 },
       messages: [
         { uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', expert: null, toolCall: null, attachment: null, usage: null, transient: false },

@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import LlmMock, { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import { Expert } from '../../src/types'
 import Attachment from '../../src/models/attachment'
@@ -11,7 +12,6 @@ import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
 import LlmFactory from '../../src/llms/llm'
-import LlmMock from '../mocks/llm'
 
 import useEventBus  from '../../src/composables/event_bus'
 import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
@@ -35,8 +35,8 @@ enableAutoUnmount(afterEach)
 
 beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
+  useWindowMock({ modelDefaults: true })
   useNavigatorMock()
-  useWindowMock()
   store.loadSettings()
   store.loadExperts()
 })
@@ -63,12 +63,31 @@ test('Renders correctly', () => {
   expect(wrapper.findComponent(MessageItem).exists()).toBe(false)
 })
 
-test('Initalizes LLM and chat', async () => {
+test('Initalizes LLM and chat without defaults', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  store.config.llm.defaults = []
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.llm).toBeDefined()
   expect(wrapper.vm.llm.getName()).toBe('mock')
+  expect(wrapper.vm.chat.engine).toBe('mock')
+  expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableTools).toBe(false)
+  expect(wrapper.vm.chat.modelOpts).not.toBeDefined()
+  expect(wrapper.vm.chat.messages).toHaveLength(0)
+})
+
+test('Initalizes LLM and chat with defaults', async () => {
+  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  setLlmDefaults('mock', 'chat')
+  wrapper.vm.onShow()
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.llm).toBeDefined()
+  expect(wrapper.vm.llm.getName()).toBe('mock')
+  expect(wrapper.vm.chat.engine).toBe('mock')
+  expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableTools).toBe(true)
+  expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
 })
 
@@ -197,14 +216,17 @@ test('Manages conversation', async () => {
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
-test('Resets chat', async () => {
+test('Resets chat with defaults', async () => {
   const wrapper = await prompt()
+  setLlmDefaults('mock', 'chat')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   wrapper.find('.clear').trigger('click')
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableTools).toBe(true)
+  expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.findComponent(MessageItem).exists()).toBeFalsy()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
