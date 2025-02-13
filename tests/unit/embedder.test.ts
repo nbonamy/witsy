@@ -3,7 +3,7 @@ import { test, expect, vi, beforeEach } from 'vitest'
 import { app } from 'electron'
 import Embedder  from '../../src/rag/embedder'
 import defaultSettings from '../../defaults/settings.json'
-import { Ollama } from 'ollama/dist/browser.mjs'
+import { Ollama } from 'ollama'
 import OpenAI from 'openai'
 
 vi.mock('openai', async () => {
@@ -18,7 +18,7 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
-vi.mock('ollama/browser', async() => {
+vi.mock('ollama', async() => {
   const Ollama = vi.fn()
   Ollama.prototype.show = vi.fn(() => {
     return { model_info: { embedding_length: 384 } }
