@@ -114,8 +114,7 @@ const canCreateOllamaModel = computed(() => {
     maxTokens.value !== undefined ||
     temperature.value !== undefined ||
     top_k.value !== undefined ||
-    top_p.value !== undefined ||
-    reasoningEffort.value !== undefined
+    top_p.value !== undefined
   )
 })
 
@@ -352,6 +351,7 @@ const onCreateOllamaModel = async () => {
       from: model.value,
       parameters: {
         num_ctx: contextWindowSize.value,
+        num_predict: maxTokens.value,
         temperature: temperature.value,
         top_k: top_k.value,
         top_p: top_p.value,
@@ -363,6 +363,8 @@ const onCreateOllamaModel = async () => {
 
     // and select
     model.value = name
+    store.config.engines.ollama.model.chat = name
+    store.saveSettings()
 
   }
 
