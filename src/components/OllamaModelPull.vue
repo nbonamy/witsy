@@ -16,17 +16,14 @@
 
 <script setup lang="ts">
 
-import { ref, nextTick, type Ref } from 'vue'
+import { ref, nextTick, Ref } from 'vue'
 import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
-import type { ProgressResponse } from 'ollama/dist/browser.cjs'
+import { ProgressResponse, AbortableAsyncIterator } from 'ollama'
 
- // until https://github.com/ollama/ollama-js/issues/187
-import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.6319775f.d.cts'
-
-type Model = {
+ type Model = {
   id: string,
   name: string,
 }
