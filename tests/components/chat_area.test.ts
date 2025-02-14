@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
@@ -23,7 +23,7 @@ vi.mock('../../src/composables/event_bus', async () => {
 
 beforeAll(() => {
   useWindowMock({ modelDefaults: true })
-  useNavigatorMock()
+  useBrowserMock()
   store.load()
   store.config.engines.mock = {
     label: 'mock',

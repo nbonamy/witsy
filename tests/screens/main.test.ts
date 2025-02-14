@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
@@ -44,7 +44,7 @@ vi.mock('../../src/services/assistant', async () => {
 
 beforeAll(() => {
   useWindowMock({ modelDefaults: true })
-  useNavigatorMock()
+  useBrowserMock()
 
   window.api.history.load = () => ({
     folders: [

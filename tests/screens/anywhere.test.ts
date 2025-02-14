@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import LlmMock, { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import { Expert } from '../../src/types'
@@ -36,7 +36,7 @@ enableAutoUnmount(afterEach)
 beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
   useWindowMock({ modelDefaults: true })
-  useNavigatorMock()
+  useBrowserMock()
   store.loadSettings()
   store.loadExperts()
 })

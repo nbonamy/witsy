@@ -3,7 +3,7 @@
   <div class="content">
     <div class="list-panel">
       <div class="list">
-        <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" @click="selectPlugin(plugin)">
+        <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
           <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
           <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
           {{ plugin.label }}
@@ -20,14 +20,14 @@ import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../plugins/plugins'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
-import SettingsTavily from './SettingsTavily.vue'
+import SettingsSearch from './SettingsSearch.vue'
 import SettingsImage from './SettingsImage.vue'
 import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
-import { BIconCameraReels, BIconPalette, BIconYoutube, BIconPersonVcard } from 'bootstrap-icons-vue'
+import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill } from 'bootstrap-icons-vue'
 import WIconDownload from '../../assets/download.svg?component'
 import WIconPython from '../../assets/python.svg?component'
 import WIconTavily from '../../assets/tavily.svg?component'
@@ -58,7 +58,7 @@ const plugins = computed((): PluginUI[] => {
       id: plugin,
       label: {
         browse: 'Download',
-        tavily: 'Tavily Search',
+        search: 'Web Search',
         python: 'Python',
         image: 'Text-to-Image',
         memory: 'Memory',
@@ -68,12 +68,12 @@ const plugins = computed((): PluginUI[] => {
         nestor: 'Nestor',
       }[plugin],
       logo: {
-        browse: { icon: WIconDownload },
-        tavily: { icon: WIconTavily },
+        browse: { icon: BIconCloudArrowDownFill },
+        search: { icon: BIconBinocularsFill },
         python: { icon: WIconPython },
-        image: { icon: BIconPalette },
-        video: { icon: BIconCameraReels },
-        memory: { icon: BIconPersonVcard },
+        image: { icon: BIconPaletteFill },
+        video: { icon: BIconCameraReelsFill },
+        memory: { icon: BIconPersonVcardFill },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
         nestor: { image: WImageNestor },
@@ -86,7 +86,7 @@ const plugins = computed((): PluginUI[] => {
 const currentView = computed(() => {
   if (currentPlugin.value == 'browse') return SettingsBrowse
   if (currentPlugin.value == 'python') return SettingsPython
-  if (currentPlugin.value == 'tavily') return SettingsTavily
+  if (currentPlugin.value == 'search') return SettingsSearch
   if (currentPlugin.value == 'image') return SettingsImage
   if (currentPlugin.value == 'video') return SettingsVideo
   if (currentPlugin.value == 'youtube') return SettingsYouTube
@@ -115,8 +115,4 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
-</style>
-
-<style scoped>
-
 </style>

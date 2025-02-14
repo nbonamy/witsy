@@ -1,21 +1,21 @@
 
 import { anyDict } from 'types/index'
-import BrowsePlugin from '../plugins/browse'
-import TavilyPlugin from '../plugins/tavily'
-import PythonPlugin from '../plugins/python'
-import ImagePlugin from '../plugins/image'
-import VideoPlugin from '../plugins/video'
-import YouTubePlugin from '../plugins/youtube'
-import MemoryPlugin from '../plugins/memory'
-//import VegaPlugin from '../plugins/vega'
-import NestorPlugin from '../plugins/nestor'
+import BrowsePlugin from './browse'
+import SearchPlugin from './search'
+import PythonPlugin from './python'
+import ImagePlugin from './image'
+import VideoPlugin from './video'
+import YouTubePlugin from './youtube'
+import MemoryPlugin from './memory'
+//import VegaPlugin from './vega'
+import NestorPlugin from './nestor'
 
 export const availablePlugins: anyDict = {
   image: ImagePlugin,
   video: VideoPlugin,
+  search: SearchPlugin,
   browse: BrowsePlugin, 
   youtube: YouTubePlugin,
-  tavily: TavilyPlugin,
   memory: MemoryPlugin,
   //vega: VegaPlugin,
   python:  PythonPlugin,

@@ -279,8 +279,10 @@
     "python": {
       "enabled": false
     },
-    "tavily": {
-      "enabled": false
+    "search": {
+      "enabled": false,
+      "engine": "local",
+      "contentLength": 5000
     },
     "youtube": {
       "enabled": true
@@ -300,7 +302,7 @@
       "description": "Generate a video based on a prompt. Returns the url of the video starting with the \"file://\" scheme which is OK. Create only one video at a time unless explicitely asked to do otherwise. Always embed the video visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the video."
     },
     "vega": {
-      "enabled": true
+      "enabled": false
     },
     "nestor": {
       "enabled": false

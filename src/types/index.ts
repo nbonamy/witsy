@@ -4,6 +4,7 @@ import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
 import { DocRepoQueryResponseItem, DocumentBase } from './rag'
+import { LocalSearchResult } from '../main/search'
 
 export type strDict = { [key: string]: string }
 export type anyDict = { [key: string]: any }
@@ -305,7 +306,10 @@ declare global {
         store(contents: string[]): boolean
         retrieve(query: string): string[]
         delete(uuid: string): void
-      }      
+      }
+      search: {
+        query(query: string, num: number): Promise<LocalSearchResult[]>
+      }
     }
   }
 }

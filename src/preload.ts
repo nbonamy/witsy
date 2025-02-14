@@ -1,13 +1,13 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types';
-import { type Configuration } from './types/config';
-import { type DocRepoQueryResponseItem } from './types/rag';
-import { Application, type RunCommandParams } from './types/automation';
-
 import { contextBridge, ipcRenderer } from 'electron'
-import { type Size } from './main/computer';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types';
+import { Configuration } from './types/config';
+import { DocRepoQueryResponseItem } from './types/rag';
+import { Application, RunCommandParams } from './types/automation';
+import { LocalSearchResult } from './main/search';
+import { Size } from './main/computer';
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -142,5 +142,8 @@ contextBridge.exposeInMainWorld(
       retrieve: (query: string): string[] => { return ipcRenderer.sendSync('memory-retrieve', query) },
       delete: (uuid: string): void => { return ipcRenderer.sendSync('memory-delete', uuid) },
     },
+    search: {
+      query: (query: string, num: number = 5): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke('search-query', { query, num }) },
+    }
   },
 );

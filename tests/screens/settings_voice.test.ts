@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -11,6 +11,7 @@ const voiceIndex = 7
 
 beforeAll(() => {
   useWindowMock()
+  useBrowserMock()
   store.loadSettings()
     
   // wrapper

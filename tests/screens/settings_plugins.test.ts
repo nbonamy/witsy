@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -24,10 +24,11 @@ const pluginIndex = 6
 
 beforeAll(() => {
   useWindowMock()
+  useBrowserMock()
   store.loadSettings()
   store.config.engines.huggingface.apiKey = 'hf-api-key'
   store.config.engines.replicate.apiKey = 'repl-api-key'
-  store.config.plugins.tavily.apiKey = 'tavily-api-key'
+  store.config.plugins.search.tavilyApiKey = 'tavily-api-key'
   store.config.plugins.python.binpath = 'python3'
     
   // wrapper
@@ -47,7 +48,7 @@ test('should render', async () => {
 
 test('image settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(1)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=image]').trigger('click')
   const image = tab.findComponent({ name: 'SettingsImage' })
   expect(image.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(image.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -80,7 +81,7 @@ test('image settings', async () => {
 
 test('video settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(2)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=video]').trigger('click')
   const video = tab.findComponent({ name: 'SettingsVideo' })
   expect(video.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(video.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -98,7 +99,7 @@ test('video settings', async () => {
 
 test('browse settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(3)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=browse').trigger('click')
   const browse = tab.findComponent({ name: 'SettingsBrowse' })
   expect(browse.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(browse.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -108,7 +109,7 @@ test('browse settings', async () => {
 
 test('youtube settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(4)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=youtube]').trigger('click')
   const youtube = tab.findComponent({ name: 'SettingsYouTube' })
   expect(youtube.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(youtube.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -116,20 +117,21 @@ test('youtube settings', async () => {
   expect(store.config.plugins.youtube.enabled).toBe(false)
 })
 
-test('tavily settings', async () => {
+test('search settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(5)').trigger('click')
-  const tavily = tab.findComponent({ name: 'SettingsTavily' })
+  await tab.find('.list-panel .list .item[data-id=search]').trigger('click')
+  const tavily = tab.findComponent({ name: 'SettingsSearch' })
   expect(tavily.find('input[type=checkbox]').exists()).toBeTruthy()
-  expect(tavily.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
-  await tavily.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
-  expect(store.config.plugins.tavily.enabled).toBe(true)
+  expect(tavily.find<HTMLInputElement>('input[name=enabled]').element.checked).toBe(false)
+  await tavily.find<HTMLInputElement>('input[name=enabled]').setValue(true)
+  expect(store.config.plugins.search.enabled).toBe(true)
+  await tavily.find<HTMLSelectElement>('select[name=engine]').setValue('tavily')
   expect(tavily.find<HTMLInputElement>('input[type=password]').element.value).toBe('tavily-api-key')
 })
 
 test('memory settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(6)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=memory]').trigger('click')
   const memory = tab.findComponent({ name: 'SettingsMemory' })
   expect(memory.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(memory.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
@@ -151,7 +153,7 @@ test('memory settings', async () => {
 
 test('python settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
+  await tab.find('.list-panel .list .item[data-id=python]').trigger('click')
   const python = tab.findComponent({ name: 'SettingsPython' })
   expect(python.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(python.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
