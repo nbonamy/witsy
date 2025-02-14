@@ -12,7 +12,7 @@
     <div class="group">
       <label>Engine</label>
       <select v-model="engine" name="engine" @change="save">
-        <option value="local">Local search (EXPERIMENTAL)</option>
+        <option value="local">Local Browser Search (EXPERIMENTAL)</option>
         <option value="tavily">Tavily</option>
       </select>
     </div>
