@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, nextTick } from 'vue'
+import { Ref, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
@@ -75,11 +75,27 @@ const settingsPlugins = ref(null)
 const settingsVoice = ref(null)
 const settingsAdvanced = ref(null)
 
+let observer: MutationObserver|null = null
+
 onMounted(async () => {
+
+  // events
   window.api.on('show-settings', onOpenSettings)
   onEvent('open-settings', onOpenSettings)
+
+  // tabs
+  installTabs(dialog.value)
   showActiveTab(dialog.value)
-  installTabs(dialog.value, adjustHeight)
+
+  // update height on dom changes
+  observer = new MutationObserver(adjustHeight)
+  observer.observe(dialog.value, { attributes: true, subtree: true, childList: true })
+
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  observer = null
 })
 
 const adjustHeight = () => {
@@ -292,7 +308,6 @@ dialog.settings .list-panel {
 
   .panel {
     flex: 1;
-    min-height: 200px;
     padding: 4px 16px 16px 0px !important;
   }
 

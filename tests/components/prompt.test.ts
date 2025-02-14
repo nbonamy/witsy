@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import Chat from '../../src/models/chat'
@@ -29,7 +29,7 @@ let wrapper: VueWrapper<any>
 let chat: Chat|null = null
 
 beforeAll(() => {
-  useNavigatorMock()
+  useBrowserMock()
   useWindowMock()
   store.loadSettings()
   store.loadExperts()

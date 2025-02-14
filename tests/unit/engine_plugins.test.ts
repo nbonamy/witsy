@@ -1,11 +1,11 @@
 
-import { vi, beforeAll, expect, test } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Image from '../../src/plugins/image'
 import Video from '../../src/plugins/video'
 import Browse from '../../src/plugins/browse'
-import Tavily from '../../src/plugins/tavily'
+import Search from '../../src/plugins/search'
 import Python from '../../src/plugins/python'
 import YouTube from '../../src/plugins/youtube'
 import Memory from '../../src/plugins/memory'
@@ -15,9 +15,15 @@ import { HfInference } from '@huggingface/inference'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
+global.fetch = vi.fn(async () => ({
+  text: () => 'fetched_content',
+}))
+
 vi.mock('../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
-  Tavily.prototype.search = vi.fn(() => ({ results: [ 'page1' ] }))
+  Tavily.prototype.search = vi.fn(() => ({ results: [
+    { title: 'title', url: 'url', content: 'content' }
+  ] }))
   return { default: Tavily }
 })
 
@@ -66,9 +72,11 @@ beforeAll(() => {
   store.config.plugins.browse = {
     enabled: true,
   }
-  store.config.plugins.tavily = {
+  store.config.plugins.search = {
     enabled: true,
-    apiKey: '123',
+    engine: 'local',
+    tavilyApiKey: '123',
+    contentLength: 8
   }
   store.config.plugins.python = {
     enabled: true,
@@ -87,6 +95,10 @@ beforeAll(() => {
   }
 })
 
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+
 test('Image Plugin', async () => {
   
   const image = new Image(store.config.plugins.image)
@@ -100,45 +112,55 @@ test('Image Plugin', async () => {
   expect(image.getParameters()[0].description).not.toBeFalsy()
   expect(image.getParameters()[0].required).toBe(true)
 
-  // openai
-  vi.clearAllMocks()
+})
+
+test('Image Plugin OpenAI', async () => {
+
   store.config.plugins.image.engine = 'openai'
-  const result1 = await image.execute({ prompt: 'test prompt' })
+  const image = new Image(store.config.plugins.image)
+  const result = await image.execute({ prompt: 'test prompt' })
   expect(OpenAI.prototype.images.generate).toHaveBeenCalledWith(expect.objectContaining({
     model: 'dall-e-2',
     prompt: 'test prompt',
     response_format: 'b64_json',
   }))
-  expect(result1).toStrictEqual({
+  expect(result).toStrictEqual({
     url: 'file://file_saved',
   })
 
-  // hugging face
-  vi.clearAllMocks()
+})
+
+test('Image Plugin HuggingFace', async () => {
+
   store.config.plugins.image.engine = 'huggingface'
-  const result2 = await image.execute({ prompt: 'test prompt' })
+  const image = new Image(store.config.plugins.image)
+  const result = await image.execute({ prompt: 'test prompt' })
   expect(HfInference.prototype.textToImage).toHaveBeenCalledWith(expect.objectContaining({
     model: 'test-model',
     inputs: 'test prompt',
   }))
-  expect(result2).toStrictEqual({
+  expect(result).toStrictEqual({
     url: 'file://file_saved',
   })
 
-  // replicate
-  vi.clearAllMocks()
+})
+
+test('Image Plugin Replicate', async () => {
+
   store.config.plugins.image.engine = 'replicate'
   store.config.engines.replicate.model.image = 'image/model'
-  const result3 = await image.execute({ prompt: 'test prompt' })
+  const image = new Image(store.config.plugins.image)
+  const result = await image.execute({ prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenCalledWith('image/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
       output_format: 'jpg',
     }
   }))
-  expect(result3).toStrictEqual({
+  expect(result).toStrictEqual({
     url: 'file://file_saved',
   })
+
 })
 
 test('Video Plugin', async () => {
@@ -154,17 +176,20 @@ test('Video Plugin', async () => {
   expect(video.getParameters()[0].description).not.toBeFalsy()
   expect(video.getParameters()[0].required).toBe(true)
 
-  // replicate
-  vi.clearAllMocks()
+})
+
+test('Video Plugin Replicate', async () => {
+  
   store.config.plugins.video.engine = 'replicate'
   store.config.engines.replicate.model.video = 'video/model'
-  const result3 = await video.execute({ prompt: 'test prompt' })
+  const video = new Video(store.config.plugins.video)
+  const result = await video.execute({ prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenCalledWith('video/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
     }
   }))
-  expect(result3).toStrictEqual({
+  expect(result).toStrictEqual({
     url: 'file://file_saved',
   })
 
@@ -181,21 +206,40 @@ test('Browse Plugin', async () => {
   expect(browse.getParameters()[0].type).toBe('string')
   expect(browse.getParameters()[0].description).not.toBeFalsy()
   expect(browse.getParameters()[0].required).toBe(true)
-  expect(await browse.execute({ url: 'https://google.com' })).toHaveProperty('content')
+  expect(await browse.execute({ url: 'https://google.com' })).toStrictEqual({ content: 'fetched_content' })
 })
 
-test('Tavily Plugin', async () => {
-  const tavily = new Tavily(store.config.plugins.tavily)
-  expect(tavily.isEnabled()).toBe(true)
-  expect(tavily.getName()).toBe('search_tavily')
-  expect(tavily.getDescription()).not.toBeFalsy()
-  expect(tavily.getPreparationDescription()).toBe('Searching the internet…')
-  expect(tavily.getRunningDescription()).toBe('Searching the internet…')
-  expect(tavily.getParameters()[0].name).toBe('query')
-  expect(tavily.getParameters()[0].type).toBe('string')
-  expect(tavily.getParameters()[0].description).not.toBeFalsy()
-  expect(tavily.getParameters()[0].required).toBe(true)
-  expect(await tavily.execute({ query: 'test' })).toHaveProperty('results')
+test('Search Plugin Local', async () => {
+  const search = new Search(store.config.plugins.search)
+  expect(search.isEnabled()).toBe(true)
+  expect(search.getName()).toBe('search_internet')
+  expect(search.getDescription()).not.toBeFalsy()
+  expect(search.getPreparationDescription()).toBe('Searching the internet…')
+  expect(search.getRunningDescription()).toBe('Searching the internet…')
+  expect(search.getParameters()[0].name).toBe('query')
+  expect(search.getParameters()[0].type).toBe('string')
+  expect(search.getParameters()[0].description).not.toBeFalsy()
+  expect(search.getParameters()[0].required).toBe(true)
+  expect(await search.execute({ query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title1', url: 'url1', content: 'page_con' },
+      { title: 'title2', url: 'url2', content: 'page_con' }
+    ]
+  })
+  expect(window.api.search.query).toHaveBeenCalledWith('test', 5)
+})
+
+test('Search Plugin Tavily', async () => {
+  store.config.plugins.search.engine = 'tavily'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute({ query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
 test('Python Plugin', async () => {

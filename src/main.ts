@@ -19,6 +19,7 @@ import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
 import MemoryManager from './main/memory';
+import LocalSearch from './main/search';
 import Embedder from './rag/embedder';
 import Nestor from './main/nestor';
 import Computer from './main/computer';
@@ -655,4 +656,11 @@ ipcMain.on('memory-retrieve', async (event, payload) => {
 
 ipcMain.on('memory-delete', async (event, payload) => {
   event.returnValue = await memoryManager.delete(payload);
+});
+
+ipcMain.handle('search-query', async (_, payload) => {
+  const { query, num } = payload;
+  const localSearch = new LocalSearch();
+  const results = localSearch.search(query, num);
+  return results;
 });

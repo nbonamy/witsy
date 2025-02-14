@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import LlmMock from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
@@ -32,7 +32,7 @@ enableAutoUnmount(afterEach)
 
 beforeAll(() => {
   useWindowMock({ dialogResponse: 1, modelDefaults: true })
-  useNavigatorMock()
+  useBrowserMock()
   
   window.api.base64 = {
     decode: vi.fn((s) => s),

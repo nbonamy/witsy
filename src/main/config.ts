@@ -49,6 +49,16 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
     delete config.ollama
   }
 
+  // backwards compatibility
+  if (config.plugins.tavily) {
+    config.plugins.search = {
+      enabled: config.plugins.tavily.enabled,
+      engine: config.plugins.tavily.enabled ? 'tavily' : 'local',
+      tavilyApiKey: config.plugins.tavily.apiKey
+    }
+    delete config.plugins.tavily
+  }
+
   // nullify defaults
   nullifyDefaults(config)
 

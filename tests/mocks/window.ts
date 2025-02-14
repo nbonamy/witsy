@@ -248,6 +248,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       facts: vi.fn(() => [ { uuid: 'uuid1', content: 'fact1' }, { uuid: 'uuid2', content: 'fact2' } ]),
       retrieve: vi.fn((query: string) => query === 'fact' ? [ 'fact1' ] : []),
       delete: vi.fn(),
+    },
+    search: {
+      query: vi.fn(async () => [
+        { title: 'title1', url: 'url1', content: '<html>page_content1<img src="test" /></html>' },
+        { title: 'title2', url: 'url2', content: '<html>header<main id="main">page_content2</main></html>' },
+      ])
     }
   }
 
@@ -259,7 +265,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
   }
 }
 
-const useNavigatorMock = () => {
+const useBrowserMock = () => {
 
   // eslint-disable-next-line no-global-assign
   navigator = {
@@ -269,6 +275,12 @@ const useNavigatorMock = () => {
     }
   }
 
+  // eslint-disable-next-line no-global-assign
+  MutationObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
+  }))
+
 }
 
-export { useWindowMock, useNavigatorMock, listeners }
+export { useWindowMock, useBrowserMock, listeners }

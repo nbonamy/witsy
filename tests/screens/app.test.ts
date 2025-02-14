@@ -1,7 +1,7 @@
 
 import { expect, test, beforeAll, afterAll } from 'vitest'
 import { enableAutoUnmount, mount } from '@vue/test-utils'
-import { useWindowMock, useNavigatorMock } from '../mocks/window'
+import { useWindowMock, useBrowserMock } from '../mocks/window'
 import App from '../../src/App.vue'
 import Main from '../../src/screens/Main.vue'
 import CommandPicker from '../../src/screens/CommandPicker.vue'
@@ -14,7 +14,7 @@ import ReadAloud from '../../src/screens/ReadAloud.vue'
 enableAutoUnmount(afterAll)
 
 beforeAll(() => {
-  useNavigatorMock()
+  useBrowserMock()
   useWindowMock()
 })
 
