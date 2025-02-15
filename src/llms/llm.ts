@@ -7,7 +7,7 @@ import * as llm from 'multi-llm-ts'
 import OpenAI from './openai'
 
 export const favoriteMockEngine = '__favorites__'
-export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'openrouter', 'deepseek', 'groq', 'cerebras' ]
+export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
 export const nonChatEngines = [ 'huggingface', 'replicate', 'elevenlabs' ]
 
 export type GetChatEnginesOpts = {

@@ -132,28 +132,28 @@ test('mistralai settings', async () => {
   }))
 })
 
-test('openrouter settings', async () => {
-  const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
-  await tab.vm.$nextTick()
-  const openrouter = tab.findComponent({ name: 'SettingsOpenRouter' })
-  await openrouter.find('input').setValue('api-key')
-  await openrouter.find('input').trigger('blur')
-  expect(store.config.engines.openrouter.apiKey).toBe('api-key')
-  expect(loadOpenRouterModels).toHaveBeenCalledWith(expect.objectContaining({
-    apiKey: 'api-key'
-  }))
-})
-
 test('deepseek settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
   await tab.vm.$nextTick()
   const deepseek = tab.findComponent({ name: 'SettingsDeepSeek' })
   await deepseek.find('input').setValue('api-key')
   await deepseek.find('input').trigger('blur')
   expect(store.config.engines.deepseek.apiKey).toBe('api-key')
   expect(loadDeepSeekModels).toHaveBeenCalledWith(expect.objectContaining({
+    apiKey: 'api-key'
+  }))
+})
+
+test('openrouter settings', async () => {
+  const tab = await switchToTab(wrapper, llmIndex)
+  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+  await tab.vm.$nextTick()
+  const openrouter = tab.findComponent({ name: 'SettingsOpenRouter' })
+  await openrouter.find('input').setValue('api-key')
+  await openrouter.find('input').trigger('blur')
+  expect(store.config.engines.openrouter.apiKey).toBe('api-key')
+  expect(loadOpenRouterModels).toHaveBeenCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
