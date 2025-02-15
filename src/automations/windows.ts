@@ -38,8 +38,15 @@ export default class implements Automator {
 
     const script = `
       Set WshShell = WScript.CreateObject("WScript.Shell")
-      WshShell.SendKeys "^c"
-      WScript.Sleep 200
+      Dim clipboardContents
+      For i = 1 To 20
+        On Error Resume Next
+        WshShell.SendKeys "^c"
+        WScript.Sleep 20
+        clipboardContents = WshShell.Exec("powershell Get-Clipboard").StdOut.ReadAll()
+        If Len(clipboardContents) > 0 Then Exit For
+        WScript.Sleep 100
+      Next
     `
 
     // run it
