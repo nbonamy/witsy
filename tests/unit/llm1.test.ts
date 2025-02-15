@@ -244,8 +244,8 @@ test('Favorite Ids', () => {
 test('Favorite models', () => {
 
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
-    { id: 'mock-chat2', name: 'chat2@mock', meta: {} }
+    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
+    { id: 'mock-chat2', name: 'mock/chat2', meta: {} }
   ])
 
   expect(llmFactory.isFavoriteModel('mock', 'chat1')).toBe(true)
@@ -267,20 +267,20 @@ test('Favorites update', () => {
 
   llmFactory.addFavoriteModel('mock', 'chat3')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
-    { id: 'mock-chat2', name: 'chat2@mock', meta: {} },
-    { id: 'mock-chat3', name: 'chat3@mock', meta: {} }
+    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
+    { id: 'mock-chat2', name: 'mock/chat2', meta: {} },
+    { id: 'mock-chat3', name: 'mock/chat3', meta: {} }
   ])
 
   llmFactory.removeFavoriteModel(favoriteMockEngine, 'mock-chat2')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'chat1@mock', meta: {} },
-    { id: 'mock-chat3', name: 'chat3@mock', meta: {} }
+    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
+    { id: 'mock-chat3', name: 'mock/chat3', meta: {} }
   ])
 
   llmFactory.removeFavoriteModel('mock', 'chat3')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'chat1@mock', meta: {} }
+    { id: 'mock-chat1', name: 'mock/chat1', meta: {} }
   ])
 
   store.config.llm.engine = favoriteMockEngine
