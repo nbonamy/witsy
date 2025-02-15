@@ -1,7 +1,7 @@
 
 <template>
   <div class="wrapper">
-    <input type="text" v-model="display" @keydown.prevent="onKeyDown" />
+    <input type="text" v-model="display" spellcheck="false" @keydown.prevent="onKeyDown" />
     <BIconXCircleFill class="icon" @click="onDelete" />
   </div>
 </template>
