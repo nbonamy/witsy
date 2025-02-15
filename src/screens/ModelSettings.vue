@@ -382,6 +382,10 @@ const onCreateOllamaModel = async () => {
   background-color: var(--sidebar-bg-color);
   form {
     padding: 16px;
+
+    .subgroup {
+      white-space: nowrap;
+    }
   }
 }
 
