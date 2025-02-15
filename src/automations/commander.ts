@@ -40,7 +40,7 @@ export default class Commander {
 
     // grab text repeatedly
     let text = null;
-    const timeout = 1000;
+    const timeout = 2000;
     const grabStart = new Date().getTime();
     while (true) {
       text = await automator.getSelectedText();

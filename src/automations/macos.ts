@@ -110,12 +110,15 @@ export default class implements Automator {
   async copySelectedText(): Promise<void> {
 
     const script = `
-      set the clipboard to ""
-      tell application "System Events" to keystroke "c" using command down      
-      repeat 5 times
-        delay 0.1
-        set clipboardContents to the clipboard
-        if clipboardContents is not "" then exit repeat
+      repeat 20 times
+        try
+          tell application "System Events" to keystroke "c" using command down
+          delay 0.02
+          set clipboardContents to the clipboard
+          if length of clipboardContents is not 0 then exit repeat
+          delay 0.1
+        on error
+        end try
       end repeat
     `
 
