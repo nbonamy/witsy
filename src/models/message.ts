@@ -42,6 +42,7 @@ export default class Message extends MessageBase implements IMessage {
     message.model = obj.model || null
     message.createdAt = obj.createdAt
     message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
+    message.reasoning = obj.reasoning || null
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
     message.toolCall = obj.toolCall || null

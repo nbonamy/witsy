@@ -88,6 +88,9 @@ export type GenerationResult =
           }
           response.appendText(msg)
           callback?.call(null, msg)
+        } else if (msg.type === 'reasoning') {
+          response.appendText(msg)
+          callback?.call(null, msg)
         }
       }
 

@@ -1,8 +1,12 @@
 <template>
   <div v-if="message.type == 'text'">
-    <div v-for="block in blocks">
-      <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
-      <MessageItemMedia :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded(message)" v-else-if="block.type == 'media'" />
+    <div class="think" v-if="message.reasoning">
+      <div v-for="block in reasoningBlocks">
+        <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+      </div>
+    </div>
+    <div v-for="block in contentBlocks">
+      <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
     </div>
   </div>
 </template>
@@ -11,7 +15,7 @@
 
 import { computed } from 'vue'
 import { store } from '../services/store'
-import MessageItemMedia from './MessageItemMedia.vue'
+import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 import Message from '../models/message'
 
 const props = defineProps({
@@ -21,15 +25,21 @@ const props = defineProps({
   },
 })
 
-interface Block {
-  type: 'text'|'media'
-  content?: string
-  url?: string
-  desc?: string
-  prompt?: string
+const reasoningBlocks = computed(() => {
+  return computeBlocks(props.message.reasoning)
+})
+
+const contentBlocks = computed(() => {
+  return computeBlocks(props.message.content)
+})
+
+const emits = defineEmits(['media-loaded'])
+
+const onMediaLoaded = (message: Message) => {
+  emits('media-loaded', message)
 }
 
-const blocks = computed(() => {
+const computeBlocks = (content: string): Block[] => {
 
   // extract each <img> in a separate block
   let match
@@ -39,11 +49,11 @@ const blocks = computed(() => {
   const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   for (const regex of [ regex1, regex2 ]) {
   
-    while (match = regex.exec(props.message.content)) {
+    while (match = regex.exec(content)) {
 
       // 1st add test until here
       if (match.index > lastIndex) {
-        blocks.push({ type: 'text', content: props.message.content.substring(lastIndex, match.index) })
+        blocks.push({ type: 'text', content: content.substring(lastIndex, match.index) })
       }
 
       // now image
@@ -76,43 +86,14 @@ const blocks = computed(() => {
   }
 
   // add last block
-  if (lastIndex != props.message.content.length) {
-    blocks.push({ type: 'text', content: props.message.content.substring(lastIndex) })
+  if (lastIndex != content.length) {
+    blocks.push({ type: 'text', content: content.substring(lastIndex) })
   }
 
   // done
   //console.log(blocks)
   return blocks
 
-})
-
-const emits = defineEmits(['media-loaded'])
-
-const onMediaLoaded = (message: Message) => {
-  emits('media-loaded', message)
-}
-
-const mdRender = (content: string) => {
-
-  // highlight code
-  if (store.chatFilter) {
-    const regex = new RegExp(store.chatFilter, 'gi')
-    content = content.replace(regex, (match) => `==${match}==`);
-  }
-
-  // convert to html 
-  var html = window.api.markdown.render(content)
-
-  // deepseek@ollama outputs <think> and ultimately </think> to separate its reasoning process
-  // let's render it nicely: append html with '</think>' if there is <think> in html but no '</think>'
-  if (html.includes('<think>') && !html.includes('</think>')) {
-    html += '</think>'
-  }
-  // replace <think> with <div class="think"> and </think> with </div>
-  html = html.replace(/<think>/g, '<div class="text think"><p>').replace(/<\/think>/g, '</p></div>')
-
-  // do it
-  return html
 }
 
 </script>
