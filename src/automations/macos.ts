@@ -135,8 +135,10 @@ export default class extends NutAutomator {
 
     try {
 
-      await super.copySelectedText();
-    
+      if (!await this.setup()) throw new Error('nutjs not loaded');
+      await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
+      await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
+      
     } catch {
 
       const script = `
@@ -200,7 +202,7 @@ export default class extends NutAutomator {
 
   }
 
-  runScript(script: string) {
+  private runScript(script: string) {
     return new Promise((resolve, reject) => {
       applescript.execString(script, (err: Error, rtn: any) => {
         if (err) {
@@ -212,4 +214,19 @@ export default class extends NutAutomator {
     });
   }
 
+  protected async setup() {
+    const rc = await super.setup();
+    if (rc) {
+      this.nut().keyboard.config.autoDelayMs = 10
+    }
+    return rc
+  }
+
+  protected delay() {
+    return 50;
+  }
+  
+  protected commandKey() {
+    return this.nut().Key.LeftCmd;
+  }
 }
