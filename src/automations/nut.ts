@@ -4,17 +4,18 @@ import { wait } from '../main/utils';
 
 let nut: any|null = null;
 
-const delay = 500;
+const delay = 250;
 
 export default class NutAutomator implements Automator {
 
-    async setup() {
+  async setup() {
     if (nut) {
       return true;
     }
     try {
       const nutPackage = '@nut-tree-fork/nut-js';
       nut = await import(nutPackage);
+      nut.keyboard.config.autoDelayMs = 10
       return true
     } catch {
       console.log('Error loading nutjs. Automation not available.');
@@ -29,7 +30,7 @@ export default class NutAutomator implements Automator {
 
   async selectAll() {
     if (!await this.setup()) throw new Error('nutjs not loaded');
-    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.A);
+    await nut.keyboard.type(this.commandKey(), nut.Key.A);
     await wait(delay);
   }
 
@@ -43,8 +44,9 @@ export default class NutAutomator implements Automator {
 
   async copySelectedText() {
     if (!await this.setup()) throw new Error('nutjs not loaded');
-    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.C);
-    await wait(delay);
+    await nut.keyboard.pressKey(this.commandKey(), nut.Key.C);
+    await nut.keyboard.releaseKey(this.commandKey(), nut.Key.C);
+    //await wait(delay);
   }
 
   async deleteSelectedText() {
@@ -55,8 +57,12 @@ export default class NutAutomator implements Automator {
 
   async pasteText() {
     if (!await this.setup()) throw new Error('nutjs not loaded');
-    await nut.keyboard.type(nut.Key.LeftControl, nut.Key.V);
+    await nut.keyboard.type(this.commandKey(), nut.Key.V);
     await wait(delay);
+  }
+
+  private commandKey() {
+    return (process.platform === 'darwin') ? nut.Key.LeftCmd :  nut.Key.LeftControl;
   }
 
 }
