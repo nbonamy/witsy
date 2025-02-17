@@ -1,12 +1,13 @@
 
 import { Notification } from 'electron'
 import Automator from './automator'
+import Automation from './automation'
 import * as window from '../main/window'
 import { putCachedText } from '../main/utils'
 
 export default class ReadAloud {
 
-  static read = async (): Promise<void> => {
+  static read = async (timeout?: number): Promise<void> => {
 
     // not available in mas
     if (process.mas) {
@@ -14,16 +15,9 @@ export default class ReadAloud {
       return
     }
 
-    // grab text
+    // get selected text
     const automator = new Automator();
-    const text = await automator.getSelectedText();
-    //console.log('Text grabbed', text);
-
-    // // select all
-    // if (text == null || text.trim() === '') {
-    //   await automator.selectAll();
-    //   text = await automator.getSelectedText();
-    // }
+    const text = await Automation.grabSelectedText(automator, timeout);
 
     // error
     if (text == null) {
@@ -51,9 +45,6 @@ export default class ReadAloud {
       }
       return;
     }
-
-    // log
-    console.debug('Text grabbed:', `${text.slice(0, 50)}…`);
 
     // go on with a cached text id
     const textId = putCachedText(text);
