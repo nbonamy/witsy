@@ -135,9 +135,10 @@ export default class extends NutAutomator {
 
     try {
 
-      if (!await this.setup()) throw new Error('nutjs not loaded');
-      await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
-      await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
+      await super.copySelectedText();
+      // if (!await this.setup()) throw new Error('nutjs not loaded');
+      // await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
+      // await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
       
     } catch {
 
