@@ -2,10 +2,11 @@
 import { Configuration } from '../types/config'
 import { RunCommandParams } from '../types/automation'
 import { App, Notification } from 'electron'
-import { getCachedText, putCachedText, wait } from '../main/utils'
+import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
 import LlmFactory from '../llms/llm'
 import Automator from './automator'
+import Automation from './automation'
 import * as window from '../main/window'
 
 const askMeAnythingId = '00000000-0000-0000-0000-000000000000'
@@ -16,7 +17,7 @@ export const notEditablePrompts = [
 
 export default class Commander {
 
-  static initCommand = async (): Promise<void> => {
+  static initCommand = async (timeout?: number): Promise<void> => {
 
     // not available in mas
     if (process.mas) {
@@ -24,35 +25,9 @@ export default class Commander {
       return
     }
 
-    // get started
-    //console.log('Commander init');
-    const start = new Date().getTime();
+    // get selected text
     const automator = new Automator();
-
-    // perf log
-    //console.log(`Init done [${new Date().getTime() - start}ms]`);
-
-    // wait for focus
-    await wait(250)
-
-    // // perf log
-    // console.log(`Windows hidden and focus released [${new Date().getTime() - start}ms]`);
-
-    // grab text repeatedly
-    let text = null;
-    const timeout = 2000;
-    const grabStart = new Date().getTime();
-    while (true) {
-      text = await automator.getSelectedText();
-      if (text != null && text.trim() !== '') {
-        break;
-      }
-      if (new Date().getTime() - grabStart > timeout) {
-        console.log(`Grab text timeout after ${timeout}ms`);
-        break;
-      }
-      await wait(100);
-    }
+    const text = await Automation.grabSelectedText(automator, timeout);
 
     // error
     if (text == null) {
@@ -80,9 +55,6 @@ export default class Commander {
       }
       return;
     }
-
-    // log
-    console.debug(`Text grabbed: ${text.slice(0, 50)}… [${new Date().getTime() - start}ms]`);
 
     // go on with a cached text id
     const textId = putCachedText(text);

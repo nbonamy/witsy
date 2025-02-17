@@ -90,7 +90,7 @@ test('Prepare command', async () => {
 
   selectedText = 'Grabbed text'
 
-  await Commander.initCommand()
+  await Commander.initCommand(100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
@@ -110,7 +110,7 @@ test('Error while grabbing', async () => {
 
   selectedText = null
 
-  await Commander.initCommand()
+  await Commander.initCommand(100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
 
@@ -120,7 +120,7 @@ test('No text to grab', async () => {
 
   selectedText = ''
 
-  await Commander.initCommand()
+  await Commander.initCommand(100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
 
