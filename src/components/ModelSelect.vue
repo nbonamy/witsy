@@ -8,7 +8,6 @@
 
 <script setup lang="ts">
 
-import { Model } from 'multi-llm-ts'
 import { computed } from 'vue'
 import { store } from '../services/store'
 import LlmFactory from '../llms/llm'

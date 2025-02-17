@@ -17,6 +17,7 @@ export type GenerationResult =
   'out_of_credits' |
   'quota_exceeded' |
   'context_too_long' |
+  'invalid_model' |
   'function_description_too_long' |
   'function_call_not_supported' |
   'streaming_not_supported' |
@@ -151,6 +152,11 @@ export type GenerationResult =
         // streaming not supported
         } else if ([400].includes(error.status) && message.includes('\'stream\' does not support true')) {
           rc = 'streaming_not_supported'
+
+        // invalid model
+        } else if ([404].includes(error.status) && message.includes('model')) {
+          response.setText('Sorry, it seems this model is not available.')
+          rc = 'invalid_model'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
