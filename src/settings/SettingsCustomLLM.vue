@@ -23,10 +23,7 @@
     <div class="group">
       <label>Chat model</label>
       <div class="subgroup">
-        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-          <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
-          </option>
-        </select>
+        <Combobox class="combobox" :items="chat_models" placeholder="Enter a model name or select one" v-model="chat_model" @change="save" />
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
@@ -41,6 +38,7 @@ import { store } from '../services/store'
 import LlmFactory from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import Combobox from '../components/Combobox.vue'
 
 const props = defineProps({
   engine: {
@@ -83,6 +81,11 @@ const setEphemeralRefreshLabel = (text: string) => {
 
 const getModels = async () => {
 
+  // // save witsy models
+  // const engineConfig = store.config.engines[props.engine] as CustomEngineConfig
+  // const witsyModels = engineConfig.models.chat.filter(m => m.meta?.owned_by === 'witsy')
+  // const model = engineConfig.model.chat
+
   // load
   const llmFactory = new LlmFactory(store.config)
   let success = await llmFactory.loadModelsCustom(props.engine)
@@ -94,6 +97,15 @@ const getModels = async () => {
 
   // reload
   load()
+
+  // // prepend witsy models
+  // if (witsyModels.length) {
+  //   chat_models.value = [...witsyModels, ...chat_models.value]
+  //   chat_model.value = model
+  //   engineConfig.models.chat = chat_models.value
+  //   engineConfig.model.chat = model
+  //   store.saveSettings()
+  // }
 
   // done
   setEphemeralRefreshLabel('Done!')
@@ -109,12 +121,22 @@ const onKeyChange = () => {
 }
 
 const save = () => {
+
+  // easy stuff
   const engineConfig = store.config.engines[props.engine] as CustomEngineConfig
   engineConfig.label = label.value
   engineConfig.api = api.value
   engineConfig.apiKey = apiKey.value
   engineConfig.baseURL = baseURL.value
   engineConfig.model.chat = chat_model.value
+
+  // now add model to models if it does not exist
+  if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {
+    chat_models.value.unshift({ id: chat_model.value, name: chat_model.value, meta: { owned_by: 'witsy' } })
+    engineConfig.models.chat = chat_models.value
+  }
+
+  // done
   store.saveSettings()
 }
 
