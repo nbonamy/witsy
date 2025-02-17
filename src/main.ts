@@ -197,6 +197,9 @@ app.whenReady().then(() => {
     window.prepareCommandPicker();
   }
 
+  // some platforms have a one-time automator initialization to do so give them a chance
+  new Automator();
+
 });
 
 // called when the app is already running
