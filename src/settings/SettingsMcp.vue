@@ -198,9 +198,12 @@ const onDelete = async () => {
 }
 
 const onEnabled = async (server: McpServer) => {
-  server.state = (server.state == 'enabled' ? 'disabled' : 'enabled')
-  await window.api.mcp.editServer(JSON.parse(JSON.stringify(server)))
-  reload()
+  loading.value = true
+  nextTick(async () => {
+    server.state = (server.state == 'enabled' ? 'disabled' : 'enabled')
+    await window.api.mcp.editServer(JSON.parse(JSON.stringify(server)))
+    load()
+  })
 }
 
 const edit = (server: McpServer) => {
@@ -225,12 +228,6 @@ const onEdited = async ({ type, command, url }) => {
     load()
   })
 
-}
-
-// @ts-expect-error lazy
-const onInstall = async ({ registry, server }) => {
-  await window.api.mcp.installServer(registry, server)
-  reload()
 }
 
 defineExpose({ load })
