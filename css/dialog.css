@@ -1,5 +1,6 @@
 
 dialog {
+  outline: none;
   user-select: none;
   box-shadow: var(--dialog-box-shadow);
   background-color: var(--dialog-body-bg-color);

@@ -1,12 +1,36 @@
 
 .list-with-actions {
 
-  .list {
+  .sticky-table-container {
     background-color: var(--control-list-bg-color);
     border: 1px solid var(--control-list-border-color);
+    border-bottom: 0px;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+  }
+  
+  &:not(:has(.sticky-table-container)) .list {
+    border: 1px solid var(--control-list-border-color);
+    border-bottom: 0px;
+  }
+
+  .list {
+    width: calc(100%);
     scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
+    background-color: var(--control-list-bg-color);
     border-bottom: 0px;
     flex-grow: 1;
+
+    th, td {
+      border: 0px;
+      border-bottom: 0.5px solid rgba(192, 192, 192, 0.5);
+      border-right: 0.5px solid rgba(192, 192, 192, 0.5);
+    }
+
+    th:last-child, td:last-child {
+      border-right: 0px;
+    }
+
   }
 
   :not(table).list {
