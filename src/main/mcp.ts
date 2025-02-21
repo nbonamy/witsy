@@ -270,7 +270,7 @@ export default class {
       //   ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
       // })
 
-      const command = process.platform === 'win32' ? 'cmd' : `"${server.command}"`
+      const command = process.platform === 'win32' ? 'cmd' : server.command
       const args = process.platform === 'win32' ? ['/C', `"${server.command}" ${server.url}`] : server.url.split(' ')
       const env = process.platform === 'win32' ? server.env : {
         ...server.env,
