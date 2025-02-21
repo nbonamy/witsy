@@ -44,10 +44,12 @@ export default class {
       ...Object.keys(config.mcpServers).reduce((arr: McpServer[], key: string) => {
         arr.push({
           uuid: key.replace('@', ''),
+          registryId: key,
           state: config.plugins.mcp.disabledMcpServers?.includes(key) ? 'disabled' : 'enabled',
           type: 'stdio',
           command: config.mcpServers[key].command,
-          url: config.mcpServers[key].args.join(' ')
+          url: config.mcpServers[key].args.join(' '),
+          env: config.mcpServers[key].env
         })
         return arr
       }, [])
@@ -93,20 +95,43 @@ export default class {
 
   installServer = async (registry: string, server: string): Promise<boolean> => {
 
-    if (registry === 'smithery') {
-      try {
-      const command = `npx -y @smithery/cli@latest install ${server} --client witsy`
-      const result = execSync(command).toString().trim();
-      console.log(result)
-      return true
-      } catch (e) {
-        console.error(`Failed to install MCP server ${server}:`, e)
-      }
-    }
+    const command = this.getInstallCommand(registry, server)
+    if (!command) return false
 
+    try {
+
+      const before = this.getServers()
+
+      this.monitor?.stop()
+      const result = execSync(command).toString().trim()
+      console.log(result)
+
+      // now we should be able to connect
+      const after = this.getServers()
+      const servers = after.filter(s => !before.find(b => b.uuid === s.uuid))
+      if (servers.length === 1) {
+        await this.connectToServer(servers[0])
+      }
+
+      // done
+      return true
+
+    } catch (e) {
+      console.error(`Failed to install MCP server ${server}:`, e)
+    } finally {
+      this.startConfigMonitor()
+    }
+    
     // too bad
     return false
     
+  }
+
+  getInstallCommand = (registry: string, server: string): string|null => {
+    if (registry === 'smithery') {
+      return `npx -y @smithery/cli@latest install ${server} --client witsy`
+    }
+    return null
   }
 
   editServer = async (server: McpServer): Promise<boolean> => {
@@ -118,6 +143,7 @@ export default class {
     // create?
     if (server.uuid === null) {
       server.uuid = crypto.randomUUID()
+      server.registryId = server.uuid
       config.plugins.mcp.servers.push(server)
       edited = true
     }
@@ -140,7 +166,7 @@ export default class {
     }
 
     // and in mcp servers
-    const originalMcp = config.mcpServers[server.uuid]
+    const originalMcp = config.mcpServers[server.registryId]
     if (originalMcp) {
 
       // state is outside of mcpServers
@@ -148,9 +174,11 @@ export default class {
         if (!config.plugins.mcp.disabledMcpServers) {
           config.plugins.mcp.disabledMcpServers = []
         }
-        config.plugins.mcp.disabledMcpServers.push(server.uuid)
-      } else if (config.plugins.mcp.disabledMcpServers?.includes(server.uuid)) {
-        config.plugins.mcp.disabledMcpServers = config.plugins.mcp.disabledMcpServers.filter((s: string) => s !== server.uuid)
+        if (!config.plugins.mcp.disabledMcpServers.includes(server.registryId)) {
+          config.plugins.mcp.disabledMcpServers.push(server.registryId)
+        }
+      } else {
+        config.plugins.mcp.disabledMcpServers = config.plugins.mcp.disabledMcpServers.filter((s: string) => s !== server.registryId)
       }
 
       // rest is normal
@@ -297,7 +325,7 @@ export default class {
       })
 
       client.onerror = (e) => {
-        this.logs[server.uuid].push(e)
+        this.logs[server.uuid].push(e.message)
       }
 
       // disable start and connect

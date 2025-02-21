@@ -215,17 +215,21 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       isAvailable: vi.fn(() => true),
       //@ts-expect-error not sure about the state: 'enabled' complain
       getServers: vi.fn(() => [
-        { uuid: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js' },
-        { uuid: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
-        { uuid: '3', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
-        { uuid: 'mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js' },
-        { uuid: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'}
+        { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js' },
+        { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
+        { uuid: '3', registryId: '3', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
+        { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js' },
+        { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'}
       ]),
       editServer: vi.fn(async () => true),
       deleteServer: vi.fn(async () => true),
       installServer: vi.fn(async () => true),
       reload: vi.fn(async () => {}),
-      getStatus: vi.fn(() => ({ servers: [], logs: {} })),
+      //@ts-expect-error not sure about the state: 'enabled' complain
+      getStatus: vi.fn(() => ({ servers: [
+        { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', tools: [ 'tool1', 'tool2' ] },
+        { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: [ 'tool3', 'tool4' ] },
+      ], logs: {} })),
       //@ts-expect-error not sure about the type: 'function' complain
       getTools: vi.fn(async () => [
         { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },

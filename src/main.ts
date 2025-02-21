@@ -617,11 +617,16 @@ ipcMain.on('mcp-get-servers', (event) => {
 });
 
 ipcMain.handle('mcp-edit-server', async (_, server): Promise<boolean> => {
-  return mcp ? await mcp.editServer(server) : false;
+  return mcp ? await mcp.editServer(JSON.parse(server)) : false;
 });
 
 ipcMain.handle('mcp-delete-server', async (_, uuid): Promise<boolean> => {
   return await mcp?.deleteServer(uuid) || false;
+});
+
+ipcMain.on('mcp-get-install-command', (event, payload) => {
+  const { registry, server } = payload;
+  event.returnValue = mcp ? mcp.getInstallCommand(registry, server) : '';
 });
 
 ipcMain.handle('mcp-install-server', async (_, payload): Promise<boolean> => {
