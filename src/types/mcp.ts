@@ -6,6 +6,7 @@ export type McpServerType = 'stdio' | 'sse'
 
 export type McpServer = {
   uuid: string|null
+  registryId: string|null
   state: 'enabled' | 'disabled'
   type: McpServerType
   command?: string

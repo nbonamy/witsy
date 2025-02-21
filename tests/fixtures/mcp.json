@@ -3,9 +3,9 @@
     "mcp": {
       "enabled": true,
       "servers": [
-        { "uuid": "1", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js" },
-        { "uuid": "2", "state": "enabled", "type": "sse", "url": "http://localhost:3000" },
-        { "uuid": "3", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py" }
+        { "uuid": "1", "registryId": "1", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js", "env": { "KEY": "value" } },
+        { "uuid": "2", "registryId": "2", "state": "enabled", "type": "sse", "url": "http://localhost:3000" },
+        { "uuid": "3", "registryId": "3", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py" }
       ],
       "disabledMcpServers": [ "mcp2" ]
     }
@@ -13,7 +13,8 @@
   "mcpServers": {
     "@mcp1": {
       "command": "npx",
-      "args": ["-y", "run", "mcp1.js"]
+      "args": ["-y", "run", "mcp1.js"],
+      "env": { "KEY": "value" }
     },
     "mcp2": {
       "command": "npx",

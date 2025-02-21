@@ -289,6 +289,7 @@ declare global {
         getServers(): McpServer[]
         editServer(server: McpServer): Promise<boolean>
         deleteServer(uuid: string): Promise<boolean>
+        getInstallCommand(registry: string, server: string): string
         installServer(registry: string, server: string): Promise<boolean>
         reload(): Promise<void>
         getStatus(): McpStatus

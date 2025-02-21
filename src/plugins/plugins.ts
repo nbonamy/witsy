@@ -12,14 +12,14 @@ import McpPlugin from './mcp'
 //import NestorPlugin from './nestor'
 
 export const availablePlugins: anyDict = {
-  image: ImagePlugin,
-  video: VideoPlugin,
   search: SearchPlugin,
   browse: BrowsePlugin, 
+  image: ImagePlugin,
+  video: VideoPlugin,
+  mcp: McpPlugin,
   youtube: YouTubePlugin,
+  python:  PythonPlugin,
   memory: MemoryPlugin,
   //vega: VegaPlugin,
-  python:  PythonPlugin,
-  mcp: McpPlugin,
   //nestor: NestorPlugin,
 }

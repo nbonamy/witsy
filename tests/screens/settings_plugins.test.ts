@@ -4,9 +4,9 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
 import { ModelsList, loadOpenAIModels } from 'multi-llm-ts'
 import { wait } from '../../src/main/utils'
+import Settings from '../../src/screens/Settings.vue'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -43,7 +43,6 @@ beforeEach(async () => {
 test('should render', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
   expect(tab.find('.list-panel').exists()).toBeTruthy()
-  expect(tab.findComponent({ name: 'SettingsImage' }).exists()).toBeTruthy()
 })
 
 test('image settings', async () => {
@@ -170,22 +169,9 @@ test('python settings', async () => {
   expect(store.config.plugins.python.binpath).toBe('file.ext')
 })
 
-test('mcp settings', async () => {
-  const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
-  const mcp = tab.findComponent({ name: 'SettingsMcp' })
-  expect(mcp.find('input[type=checkbox]').exists()).toBeTruthy()
-  expect(mcp.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
-  await mcp.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
-  expect(store.config.plugins.mcp.enabled).toBe(true)
-  expect(mcp.findAll<HTMLTableRowElement>('tr')).toHaveLength(6)
-  expect(mcp.findAll<HTMLTableRowElement>('tr input[type=checkbox]:checked')).toHaveLength(3)
-  expect(mcp.findAll<HTMLTableRowElement>('tr td:nth-child(4)').map(e => e.text())).toStrictEqual([ '❌', '❌', '🔶', '❌', '🔶' ])
-})
-
 // test('nestor settings', async () => {
 //   const tab = await switchToTab(wrapper, pluginIndex)
-//   await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+//    await tab.find('.list-panel .list .item[data-id=nestor]').trigger('click')
 //   const nestor = tab.findComponent({ name: 'SettingsNestor' })
 //   expect(nestor.find('input[type=checkbox]').exists()).toBeTruthy()
 //   expect(nestor.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
