@@ -46,7 +46,7 @@
         </table>
       </div>
       <div class="actions">
-        <button ref="plusButton" class="button add" @click.prevent="onCreate"><BIconPlus /></button>
+        <button ref="addButton" class="button add" @click.prevent="onAdd"><BIconPlus /></button>
         <button class="button remove" @click.prevent="onDelete" v-if="servers.length"><BIconDash /></button>
       </div>
       <div style="margin-top: 16px">
@@ -54,6 +54,7 @@
         <button @click.prevent="onRestart">Restart client</button>
       </div>
     </div>
+    <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="above" :teleport="false" />
     <McpServerEditor ref="editor" :server="selected" @save="onEdited" />
   </div>
 </template>
@@ -63,14 +64,19 @@
 import { McpServer, McpServerStatus } from '../types/mcp'
 import { ref } from 'vue'
 import { store } from '../services/store'
+import ContextMenu from '../components/ContextMenu.vue'
 import McpServerEditor from '../screens/McpServerEditor.vue'
 import Dialog from '../composables/dialog'
 
 const editor = ref(null)
+const addButton = ref(null)
 const enabled = ref(false)
 const servers = ref([])
 const status = ref(null)
 const selected = ref(null)
+const showAddMenu = ref(false)
+const addMenuX = ref(0)
+const addMenuY = ref(0)
 
 const getType = (server: McpServer) => {
   if (server.url.includes('@smithery/cli')) return 'smithery'
@@ -117,9 +123,44 @@ const onRestart = async () => {
   load()
 }
 
-const onCreate = () => {
-  selected.value = { uuid: null, state: 'enabled', type: 'stdio', command: '', url: '' }
+// Add the context menu actions
+const addMenuActions = [
+  { label: 'Add custom server…', action: 'custom' },
+  { label: 'Import Smithery.ai server…', action: 'smithery' },
+]
+
+// Add these methods to handle the plus button menu
+const onAdd = (event: MouseEvent) => {
+  const rcButton = addButton.value.getBoundingClientRect()
+  const rcDialog = addButton.value.closest('dialog').getBoundingClientRect()
+  addMenuX.value = rcButton.left - rcDialog.left
+  addMenuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
+  showAddMenu.value = true
+}
+
+const closeAddMenu = () => {
+  showAddMenu.value = false
+}
+
+// Modify the onCreate method to handle both types
+const onCreate = (type: string) => {
+  selected.value = { 
+    uuid: null, 
+    state: 'enabled', 
+    type: type,
+    command: '',
+    url: '' 
+  }
   editor.value.show()
+}
+
+const handleAddAction = (action: string) => {
+  closeAddMenu()
+  if (action === 'custom') {
+    onCreate('stdio')
+  } else if (action === 'smithery') {
+    onCreate('smithery')
+  }
 }
 
 const onDelete = async () => {
