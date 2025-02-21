@@ -54,8 +54,8 @@ const onKeyDown = (event: KeyboardEvent) => {
     return
   }
 
-  // can't be a modifier
-  if ([16, 17, 18, 20, 91, 92, 93, 224, 225].includes(event.keyCode)) {
+  // can't be a modifier or escape
+  if ([16, 17, 18, 20, 27, 91, 92, 93, 224, 225].includes(event.keyCode)) {
     return
   }
 
