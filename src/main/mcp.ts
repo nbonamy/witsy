@@ -298,12 +298,20 @@ export default class {
       //   ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
       // })
 
+      // build command and args
       const command = process.platform === 'win32' ? 'cmd' : server.command
       const args = process.platform === 'win32' ? ['/C', `"${server.command}" ${server.url}`] : server.url.split(' ')
-      const env = process.platform === 'win32' ? server.env : {
+      let env = process.platform === 'win32' ? server.env : {
         ...server.env,
         ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
       }
+
+      // if env is empty, remove it
+      if (Object.keys(env).length === 0) {
+        env = undefined
+      }
+
+      // console.log('MCP Stdio command', process.platform, command, args, env)
 
       const transport = new StdioClientTransport({
         command, args, env, stderr: 'pipe'
