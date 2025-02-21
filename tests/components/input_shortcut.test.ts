@@ -29,6 +29,8 @@ test('Input value', async () => {
   expect(wrapper.find('input').element.value).toBe('')
   await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 32, ctrlKey: true })
   expect(wrapper.find('input').element.value).toBe('⌃Space')
+  await wrapper.find('input').trigger('keydown', { code: 'Enter', key: 'Enter', keyCode: 13, shiftKey: true, ctrlKey: true })
+  expect(wrapper.find('input').element.value).toBe('⌃⇧Enter')
 })
 
 test('Delete value with backspace', async () => {
@@ -51,7 +53,7 @@ test('Delete value with icon', async () => {
 test('Invalid shortcuts', async () => {
   await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 32 })
   expect(wrapper.find('input').element.value).toBe('')
-  await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 14, ctrlKey: true })
+  await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 17, ctrlKey: true })
   expect(wrapper.find('input').element.value).toBe('')
   await wrapper.find('input').trigger('keydown', { code: 'Shift', key: ' ', keyCode: 32, ctrlKey: true })
   expect(wrapper.find('input').element.value).toBe('')
