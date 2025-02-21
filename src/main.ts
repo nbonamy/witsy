@@ -11,7 +11,7 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
-import { getCachedText, wait } from './main/utils';
+import { fixPath, getCachedText, wait } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
@@ -56,6 +56,9 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
 
 // set up logging
 Object.assign(console, log.functions);
+
+// fix path
+fixPath();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
