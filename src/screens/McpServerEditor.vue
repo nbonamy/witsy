@@ -169,7 +169,7 @@ const onSave = () => {
 const install = async (registry: string, server: string) => {
   const rc = await window.api.mcp.installServer(registry, server)
   if (!rc) {
-    Dialog.alert('Failed to install server')
+    Dialog.alert('Failed to install server. Make sure npx is installed and can be run from your Terminal.')
     return
   }
 
