@@ -265,14 +265,20 @@ export default class {
 
     try {
 
+      // console.log('stdio env', {
+      //   ...server.env,
+      //   ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
+      // })
+
+      const command = process.platform === 'win32' ? 'cmd' : `"${server.command}"`
+      const args = process.platform === 'win32' ? ['/C', `"${server.command}" ${server.url}`] : server.url.split(' ')
+      const env = process.platform === 'win32' ? server.env : {
+        ...server.env,
+        ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
+      }
+
       const transport = new StdioClientTransport({
-        command: server.command,
-        args: server.url.split(' '),
-        env: {
-          ...server.env,
-          ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
-        },
-        stderr: 'pipe'
+        command, args, env, stderr: 'pipe'
       })
 
       // start transport to get errors
@@ -290,6 +296,10 @@ export default class {
         capabilities: { tools: {} }
       })
 
+      client.onerror = (e) => {
+        this.logs[server.uuid].push(e)
+      }
+
       // disable start and connect
       transport.start = async () => {}
       await client.connect(transport)
@@ -298,7 +308,7 @@ export default class {
       return client
 
     } catch (e) {
-      console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      console.error(`Failed to connect to MCP server ${server.command} ${server.url}:`, e)
     }
 
   }

@@ -166,13 +166,12 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
 
  
 export const findProgram = (app: App, program: string) => {
-  if (process.platform !== 'win32') {
-    try {
-      const path = execSync(`which ${program}`).toString().trim();
-      return path;
-    } catch(error) {
-      console.error(`Error while finding program ${program}`, error);
-    }
+  try {
+    const which = process.platform === 'win32' ? 'where' : 'which';
+    const path = execSync(`${which} ${program}`).toString().split('\n')[0].trim();
+    return path;
+  } catch(error) {
+    console.error(`Error while finding program ${program}`, error);
   }
   return null;
 }
