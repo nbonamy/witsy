@@ -38,8 +38,13 @@ vi.mock('electron', async() => {
 })
 
 test('Find program', async () => {
-  expect(file.findProgram(app, 'sh')).toMatch(/^.*\/sh$/)
-  expect(file.findProgram(app, 'sh2')).toBeNull()
+  if (process.platform == 'win32') {
+    expect(file.findProgram(app, 'notepad.exe')).toMatch(/^.*notepad.exe$/)
+    expect(file.findProgram(app, 'textedit.exe')).toBeNull()
+  } else {
+    expect(file.findProgram(app, 'sh')).toMatch(/^.*\/sh$/)
+    expect(file.findProgram(app, 'sh2')).toBeNull()
+  }
 })
 
 test('Get file contents', async () => {
@@ -147,7 +152,7 @@ test('List files recursively', async () => {
     '.github/workflows/build-linux.yml',
     '.github/workflows/build-windows.yml',
     '.github/workflows/test.yml',
-  ])
+  ].map(f => process.platform == 'win32' ? f.replace(/\//g, '\\') : f))
 })
 
 test('Get icon contents', async () => {
