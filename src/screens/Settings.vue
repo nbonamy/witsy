@@ -265,7 +265,7 @@ dialog.settings .list-panel {
   padding-top: 12px;
   padding-bottom: 12px;
 
-  .list {
+  > .list, .master .list {
   
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);

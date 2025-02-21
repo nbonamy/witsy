@@ -8,7 +8,8 @@ import VideoPlugin from './video'
 import YouTubePlugin from './youtube'
 import MemoryPlugin from './memory'
 //import VegaPlugin from './vega'
-import NestorPlugin from './nestor'
+import McpPlugin from './mcp'
+//import NestorPlugin from './nestor'
 
 export const availablePlugins: anyDict = {
   image: ImagePlugin,
@@ -19,5 +20,6 @@ export const availablePlugins: anyDict = {
   memory: MemoryPlugin,
   //vega: VegaPlugin,
   python:  PythonPlugin,
-  nestor: NestorPlugin,
+  mcp: McpPlugin,
+  //nestor: NestorPlugin,
 }

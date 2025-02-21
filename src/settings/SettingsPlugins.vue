@@ -25,14 +25,14 @@ import SettingsImage from './SettingsImage.vue'
 import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsMemory from './SettingsMemory.vue'
-import SettingsVega from './SettingsVega.vue'
 import SettingsNestor from './SettingsNestor.vue'
+import SettingsVega from './SettingsVega.vue'
+import SettingsMcp from './SettingsMcp.vue'
 import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill } from 'bootstrap-icons-vue'
-import WIconDownload from '../../assets/download.svg?component'
 import WIconPython from '../../assets/python.svg?component'
-import WIconTavily from '../../assets/tavily.svg?component'
 import WIconVega from '../../assets/vega.svg?component'
-// @ts-expect-error svg
+import WIconMcp from '../../assets/mcp.svg?component'
+//@ts-expect-error
 import WImageNestor from '../../assets/nestor.jpg'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
@@ -65,6 +65,7 @@ const plugins = computed((): PluginUI[] => {
         video: 'Text-to-Video',
         youtube: 'YouTube',
         vega: 'Vega',
+        mcp: 'MCP',
         nestor: 'Nestor',
       }[plugin],
       logo: {
@@ -76,6 +77,7 @@ const plugins = computed((): PluginUI[] => {
         memory: { icon: BIconPersonVcardFill },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
+        mcp: { icon: WIconMcp },
         nestor: { image: WImageNestor },
       }[plugin],
     }
@@ -92,6 +94,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'youtube') return SettingsYouTube
   if (currentPlugin.value == 'memory') return SettingsMemory
   if (currentPlugin.value == 'vega') return SettingsVega
+  if (currentPlugin.value == 'mcp') return SettingsMcp
   if (currentPlugin.value == 'nestor') return SettingsNestor
 })
 

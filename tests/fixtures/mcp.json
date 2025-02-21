@@ -1,0 +1,23 @@
+{
+  "plugins": {
+    "mcp": {
+      "enabled": true,
+      "servers": [
+        { "uuid": "1", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js" },
+        { "uuid": "2", "state": "enabled", "type": "sse", "url": "http://localhost:3000" },
+        { "uuid": "3", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py" }
+      ],
+      "disabledMcpServers": [ "mcp2" ]
+    }
+  },
+  "mcpServers": {
+    "@mcp1": {
+      "command": "npx",
+      "args": ["-y", "run", "mcp1.js"]
+    },
+    "mcp2": {
+      "command": "npx",
+      "args": ["-y", "run", "mcp2.js"]
+    }
+  }
+}

@@ -1,10 +1,11 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
 import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
+import { McpServer, McpStatus } from './mcp'
 
 export type strDict = { [key: string]: string }
 export type anyDict = { [key: string]: any }
@@ -282,6 +283,17 @@ declare global {
       }
       interpreter: {
         python(code: string): any
+      }
+      mcp: {
+        isAvailable(): boolean
+        getServers(): McpServer[]
+        editServer(server: McpServer): Promise<boolean>
+        deleteServer(uuid: string): Promise<boolean>
+        installServer(registry: string, server: string): Promise<boolean>
+        reload(): Promise<void>
+        getStatus(): McpStatus
+        getTools(): Promise<LlmTool[]>
+        callTool(name: string, parameters: anyDict): any
       }
       nestor: {
         isAvailable(): boolean
