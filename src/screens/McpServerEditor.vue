@@ -266,7 +266,7 @@ defineExpose({
     height: 100px;
 
     td {
-      max-width: 110px;
+      max-width: 60px;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
