@@ -54,8 +54,8 @@ const onKeyDown = (event: KeyboardEvent) => {
     return
   }
 
-  // must be a normal character
-  if (event.keyCode < 32) {
+  // can't be a modifier
+  if ([16, 17, 18, 20, 91, 92, 93, 224, 225].includes(event.keyCode)) {
     return
   }
 
