@@ -25,7 +25,7 @@
       </div>
       <div class="group" v-if="type === 'stdio'">
         <label>Command</label>
-        <input type="text" v-model="command" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false"/>
+        <input type="text" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false"/>
         <div style="width: 100%;">
           <select v-model="source" @change="findCommand">
             <option value="">Select command</option>
@@ -40,7 +40,7 @@
       <div class="group" v-if="type === 'stdio'">
         <label>Arguments</label>
         <div style="display: flex; width: 100%;">
-          <input type="text" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+          <input type="text" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button @click="pickScript">Pick</button>
         </div>
       </div>
