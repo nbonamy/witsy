@@ -18,9 +18,9 @@
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="servers list-with-actions">
-      <div class="title">
-        <span v-if="servers.length">MCP Servers:</span>
-        <span v-else>No MCP Servers configured</span>
+      <div class="header">
+        <span>MCP Servers:</span>
+        <Spinner v-if="loading" />
       </div>
       <div class="sticky-table-container" v-if="servers.length">
         <table class="list">
@@ -50,7 +50,7 @@
         <button class="button remove" @click.prevent="onDelete" v-if="servers.length"><BIconDash /></button>
       </div>
       <div style="margin-top: 16px">
-        <button @click.prevent="load">Refresh</button>
+        <button @click.prevent="reload">Refresh</button>
         <button @click.prevent="onRestart">Restart client</button>
       </div>
     </div>
@@ -61,12 +61,13 @@
 
 <script setup lang="ts">
 
-import { McpServer, McpServerStatus } from '../types/mcp'
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
+import { McpServer, McpServerStatus } from '../types/mcp'
 import ContextMenu from '../components/ContextMenu.vue'
 import McpServerEditor from '../screens/McpServerEditor.vue'
 import Dialog from '../composables/dialog'
+import Spinner from '../components/Spinner.vue'
 
 const editor = ref(null)
 const addButton = ref(null)
@@ -77,6 +78,7 @@ const selected = ref(null)
 const showAddMenu = ref(false)
 const addMenuX = ref(0)
 const addMenuY = ref(0)
+const loading = ref(false)
 
 const getType = (server: McpServer) => {
   if (server.url.includes('@smithery/cli')) return 'smithery'
@@ -101,13 +103,21 @@ const hasLogs = (server: McpServer) => {
 
 const load = async () => {
   enabled.value = store.config.plugins.mcp.enabled || false
-  servers.value = window.api.mcp.getServers()
-  status.value = window.api.mcp.getStatus()
+  servers.value = await window.api.mcp.getServers()
+  status.value = await window.api.mcp.getStatus()
+  loading.value = false
 }
 
 const save = async () => {
   store.config.plugins.mcp.enabled = enabled.value
   store.saveSettings()
+}
+
+const reload = async () => {
+  loading.value = true
+  nextTick(async () => {
+    await load()
+  })
 }
 
 const showLogs = (server: McpServer) => {
@@ -119,8 +129,12 @@ const showLogs = (server: McpServer) => {
 }
 
 const onRestart = async () => {
-  await window.api.mcp.reload()
-  load()
+  loading.value = true
+  status.value = { servers: [], logs: {} }
+  nextTick(async () => {
+    await window.api.mcp.reload()
+    load()
+  })
 }
 
 // Add the context menu actions
@@ -173,9 +187,12 @@ const onDelete = async () => {
     showCancelButton: true,
   }).then(async (result) => {
     if (result.isConfirmed) {
-      await window.api.mcp.deleteServer(selected.value.uuid)
-      selected.value = null
-      load()
+      loading.value = true
+      nextTick(async () => {
+        await window.api.mcp.deleteServer(selected.value.uuid)
+        selected.value = null
+        load()
+      })
     }
   })
 }
@@ -183,7 +200,7 @@ const onDelete = async () => {
 const onEnabled = async (server: McpServer) => {
   server.state = (server.state == 'enabled' ? 'disabled' : 'enabled')
   await window.api.mcp.editServer(JSON.parse(JSON.stringify(server)))
-  load()
+  reload()
 }
 
 const edit = (server: McpServer) => {
@@ -202,17 +219,18 @@ const onEdited = async ({ type, command, url }) => {
   }
 
   // edit it
-  await window.api.mcp.editServer(server)
-  
-  // reload
-  load()
+  loading.value = true
+  nextTick(async () => {
+    await window.api.mcp.editServer(server)
+    load()
+  })
 
 }
 
 // @ts-expect-error lazy
 const onInstall = async ({ registry, server }) => {
   await window.api.mcp.installServer(registry, server)
-  load()
+  reload()
 }
 
 defineExpose({ load })
@@ -239,9 +257,12 @@ defineExpose({ load })
   padding-left: 32px;
   padding-right: 16px;
 
-  .title {
+  .header {
+    display: flex;
+    justify-content: space-between;
     font-size: 10pt;
     margin-bottom: 8px;
+    padding-right: 4px;
   }
 
   .sticky-table-container {
