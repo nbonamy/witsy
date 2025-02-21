@@ -14,7 +14,6 @@
 <script setup lang="ts">
 
 import { computed } from 'vue'
-import { store } from '../services/store'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 import Message from '../models/message'
 

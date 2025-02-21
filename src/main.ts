@@ -2,6 +2,7 @@
 import { History, Command, Expert } from './types/index';
 import { Configuration } from './types/config';
 import { Application, RunCommandParams } from './types/automation';
+import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
 import fontList from 'font-list';
@@ -21,7 +22,7 @@ import DocumentRepository from './rag/docrepo';
 import MemoryManager from './main/memory';
 import LocalSearch from './main/search';
 import Embedder from './rag/embedder';
-import Nestor from './main/nestor';
+import Mcp from './main/mcp';
 import Computer from './main/computer';
 import TrayIconManager from './main/tray';
 
@@ -40,7 +41,8 @@ import Automator, { AutomationAction } from 'automations/automator';
 let commander: Commander = null
 let docRepo: DocumentRepository = null
 let memoryManager: MemoryManager = null
-let nestor: Nestor = null
+//const nestor: Nestor = null
+let mcp: Mcp = null
 
 // first-thing: single instance
 // on darwin/mas this is done through Info.plist (LSMultipleInstancesProhibited)
@@ -74,10 +76,10 @@ const autoUpdater = new AutoUpdater({
 const store = new Store({ name: 'window' });
 window.setStore(store);
 
-// start nestor
-if (!process.mas) {
-  nestor = new Nestor();
-}
+// // start nestor
+// if (!process.mas) {
+//   nestor = new Nestor();
+// }
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -152,6 +154,12 @@ app.whenReady().then(() => {
 
   // register shortcuts
   registerShortcuts();
+
+  // start mcp
+  if (!process.mas) {
+    mcp = new Mcp(app);
+    mcp.connect();
+  }
 
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {
@@ -294,7 +302,7 @@ ipcMain.on('config-load', (event) => {
 });
 
 ipcMain.on('config-save', (event, payload) => {
-  event.returnValue = config.saveSettings(app, JSON.parse(payload) as Configuration);
+  config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
 ipcMain.on('history-load', async (event) => {
@@ -597,20 +605,57 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
   }
 });
 
+ipcMain.on('mcp-is-available', (event) => {
+  event.returnValue = mcp !== null;
+});
+
+ipcMain.on('mcp-get-servers', (event) => {
+  event.returnValue = mcp ? mcp.getServers() : [];
+});
+
+ipcMain.handle('mcp-edit-server', async (_, server): Promise<boolean> => {
+  return mcp ? await mcp.editServer(server) : false;
+});
+
+ipcMain.handle('mcp-delete-server', async (_, uuid): Promise<boolean> => {
+  return await mcp?.deleteServer(uuid) || false;
+});
+
+ipcMain.handle('mcp-install-server', async (_, payload): Promise<boolean> => {
+  const { registry, server } = payload;
+  return await mcp?.installServer(registry, server) || false;
+});
+
+ipcMain.handle('mcp-reload', async () => {
+  await mcp?.reload();
+});
+
+ipcMain.on('mcp-get-status', (event): void => {
+  event.returnValue = mcp ? mcp.getStatus() : null;
+});
+
+ipcMain.handle('mcp-get-tools', async (): Promise<LlmTool[]> => {
+  return mcp ? await mcp.getTools() : [];
+});
+
+ipcMain.handle('mcp-call-tool', async (_, payload) => {
+  return mcp ? await mcp.callTool(payload.name, payload.parameters) : null;
+});
+
 ipcMain.on('nestor-is-available', (event) => {
-  event.returnValue = nestor !== null;
+  event.returnValue = false//nestor !== null;
 });
 
 ipcMain.handle('nestor-get-status', async () => {
-  return nestor ? await nestor.getStatus() : {}
+  //return nestor ? await nestor.getStatus() : {};
 });
 
 ipcMain.handle('nestor-get-tools', async () => {
-  return nestor ? await nestor.getTools() : []
+  //return nestor ? await nestor.getTools() : [];
 });
 
-ipcMain.handle('nestor-call-tool', async (_, payload) => {
-  return nestor ? await nestor.callTool(payload.name, payload.parameters) : null
+ipcMain.handle('nestor-call-tool', async () => {
+  //return nestor ? await nestor.callTool(payload.name, payload.parameters) : null;
 });
 
 ipcMain.on('scratchpad-open', async (_, payload) => {

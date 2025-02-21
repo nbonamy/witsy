@@ -1,0 +1,52 @@
+
+.list-with-actions {
+
+  .list {
+    background-color: var(--control-list-bg-color);
+    border: 1px solid var(--control-list-border-color);
+    scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
+    border-bottom: 0px;
+    flex-grow: 1;
+  }
+
+  :not(table).list {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: start;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-self: stretch;
+    background: var(--actions-bar-bg-color);
+    border: 1px solid var(--actions-bar-border-color);
+    margin-top: 0px;
+
+    button {
+      border: 0px;
+      border-right: 1px solid var(--actions-bar-button-border-color);
+      border-radius: 0px;
+      background-color: transparent;
+      margin: 0px;
+      font-size: 10pt;
+      padding-bottom: 2px;
+
+      &.right {
+        border-left: 0.8px solid var(--actions-bar-button-border-color);
+        border-right: none;
+        margin-left: auto;
+      }
+
+      &.lighter {
+        opacity: 0.6;
+      }
+
+      &:active {
+        background: var(--actions-bar-button-active-bg-color);
+      }
+    }
+  }
+}

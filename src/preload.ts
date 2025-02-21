@@ -6,8 +6,10 @@ import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, Ex
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
+import { McpServer, McpStatus } from './types/mcp';
 import { LocalSearchResult } from './main/search';
 import { Size } from './main/computer';
+import { LlmTool } from 'multi-llm-ts';
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -123,6 +125,17 @@ contextBridge.exposeInMainWorld(
       getStatus: (): Promise<any> => { return ipcRenderer.invoke('nestor-get-status') },
       getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
+    },
+    mcp: {
+      isAvailable: (): boolean => { return ipcRenderer.sendSync('mcp-is-available') },
+      getServers: (): McpServer[] => { return ipcRenderer.sendSync('mcp-get-servers') },
+      editServer: (server: McpServer): Promise<boolean> => { return ipcRenderer.invoke('mcp-edit-server', server) },
+      deleteServer: (uuid: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-delete-server', uuid)},
+      installServer: (registry: string, server: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-install-server', { registry, server }) },
+      reload: (): Promise<void> => { return ipcRenderer.invoke('mcp-reload') },
+      getStatus: (): McpStatus|null => { return ipcRenderer.sendSync('mcp-get-status') },
+      getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke('mcp-get-tools') },
+      callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('mcp-call-tool', { name, parameters }) },
     },
     scratchpad: {
       open: (textId?: string): void => { return ipcRenderer.send('scratchpad-open', textId) },

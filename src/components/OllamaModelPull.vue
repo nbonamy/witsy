@@ -55,6 +55,7 @@ const onPull = () => {
   nextTick(async () => {
 
     // start pulling
+    //@ts-expect-error version mismatch because of direct import
     pullStream.value = await ollama.pullModel(pull_model.value!)
 
     // TODO: handle error (this is not working)

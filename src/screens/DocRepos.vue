@@ -3,7 +3,7 @@
     <form method="dialog">
       <DialogHeader title="Document Repositories" @close="onClose" />
       <main>
-        <div class="master">
+        <div class="master list-with-actions">
           <div class="list">
             <template v-for="repo in docRepos" :key="repo.uuid">
               <div :class="{ item: true, selected: repo.uuid == selectedRepo?.uuid }" @click="selectRepo(repo)">
@@ -27,7 +27,7 @@
             <input type="text" :value="embeddingModel" disabled />
             <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
-          <div class="group documents">
+          <div class="group documents list-with-actions">
             <div class="header">
               <label>Documents</label>
               <Spinner v-if="loading" />
@@ -285,6 +285,7 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
+@import '../../css/list-with-actions.css';
 </style>
 
 <style scoped>
@@ -302,16 +303,6 @@ main {
 
 .list {
 
-  background-color: var(--control-list-bg-color);
-  border: 1px solid var(--control-list-border-color);
-  scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
-  border-bottom: 0px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-self: stretch;
-  align-items: start;
-
   .item {
 
     display: flex;
@@ -322,39 +313,6 @@ main {
     &.selected {
       background-color: var(--highlight-color);
       color: var(--highlighted-color);
-    }
-  }
-}
-
-.actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-self: stretch;
-  background: var(--actions-bar-bg-color);
-  border: 1px solid var(--actions-bar-border-color);
-
-  button {
-    border: 0px;
-    border-right: 1px solid var(--actions-bar-button-border-color);
-    border-radius: 0px;
-    background-color: transparent;
-    margin: 0px;
-    font-size: 10pt;
-    padding-bottom: 2px;
-
-    &.right {
-      border-left: 0.8px solid var(--actions-bar-button-border-color);
-      border-right: none;
-      margin-left: auto;
-    }
-
-    &.lighter {
-      opacity: 0.6;
-    }
-
-    &:active {
-      background: var(--actions-bar-button-active-bg-color);
     }
   }
 }

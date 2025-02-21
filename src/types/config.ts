@@ -2,6 +2,7 @@
 import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
+import { McpClaudeServer } from './mcp'
 
 export type Configuration = {
   general: GeneralConfig
@@ -17,6 +18,7 @@ export type Configuration = {
   stt: STTConfig
   tts: TTSConfig
   rag: RagConfig
+  mcpServers: { [key: string]: McpClaudeServer }
 }
 
 export type EngineConfig = EngineCreateOpts & {

@@ -306,6 +306,12 @@
     },
     "nestor": {
       "enabled": false
+    },
+    "mcp": {
+      "enabled": false,
+      "servers": [],
+      "disabledMcpServers": []
     }
-  }
+  },
+  "mcpServers": {}
 }

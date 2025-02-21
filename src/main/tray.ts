@@ -88,6 +88,7 @@ export default class {
     }
   
     // add common stuff
+    //@ts-expect-error uknown
     menuItems = menuItems.concat([
       { label: 'Quick Prompt', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt), click: PromptAnywhere.open },
       { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },

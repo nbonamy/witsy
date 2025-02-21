@@ -211,6 +211,28 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ]),
       callTool: vi.fn(async (name, params) => ({ name, params })),
     },
+    mcp: {
+      isAvailable: vi.fn(() => true),
+      //@ts-expect-error not sure about the state: 'enabled' complain
+      getServers: vi.fn(() => [
+        { uuid: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js' },
+        { uuid: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
+        { uuid: '3', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
+        { uuid: 'mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js' },
+        { uuid: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'}
+      ]),
+      editServer: vi.fn(async () => true),
+      deleteServer: vi.fn(async () => true),
+      installServer: vi.fn(async () => true),
+      reload: vi.fn(async () => {}),
+      getStatus: vi.fn(() => ({ servers: [], logs: {} })),
+      //@ts-expect-error not sure about the type: 'function' complain
+      getTools: vi.fn(async () => [
+        { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
+        { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
+      ]),
+      callTool: vi.fn(async () => ({ result: 'result' })),
+    },
     anywhere: {
       prompt: vi.fn(),
       insert: vi.fn(),
