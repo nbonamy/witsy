@@ -1,4 +1,3 @@
-
 import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel , getComputerInfo } from './anthropic'
 import { imageFormats, textFormats } from '../models/attachment'
@@ -50,7 +49,7 @@ export default class LlmFactory {
   isCustomEngine = (engine: string): boolean => {
     return this.config.engines[engine] !== undefined && engine != favoriteMockEngine && !standardEngines.includes(engine) && !nonChatEngines.includes(engine)
   }
-  
+
   isSpecializedModel = (engine: string, model: string): boolean => {
     if (engine === 'anthropic') return isSpecialAnthropicModel(model)
     return false
@@ -112,7 +111,7 @@ export default class LlmFactory {
     if (engine === 'anthropic') return getAnthropicFallbackModel()
     return null
   }
-  
+
   getChatEngineModel = (acceptSpecializedModels: boolean = true): { engine: string, model: string } => {
     const engine = this.config.llm.engine
     const model = this.getChatModel(engine, acceptSpecializedModels)
@@ -131,14 +130,14 @@ export default class LlmFactory {
       return this.config.engines[engine]?.models.chat || []
     }
   }
-  
+
   getChatModel = (engine: string, acceptSpecializedModels: boolean = true): string => {
-  
+
     // get from config
     const model = this.config.engines[engine]?.model?.chat
-  
+
     // check specialized
-    if (!acceptSpecializedModels && this.isSpecializedModel(engine, model)) {  
+    if (!acceptSpecializedModels && this.isSpecializedModel(engine, model)) {
       return this.getFallbackModel(engine)
     }
 
@@ -150,7 +149,7 @@ export default class LlmFactory {
 
     // default
     return model
-  
+
   }
 
   setChatModel = (engine: string, model: string) => {
@@ -174,8 +173,8 @@ export default class LlmFactory {
     if (this.isFavoriteEngine(engine)) return true
     if (this.isCustomEngine(engine)) return true
     return false
-  }  
-  
+  }
+
   isEngineReady = (engine: string): boolean => {
     if (engine === 'anthropic') return llm.Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
@@ -183,7 +182,7 @@ export default class LlmFactory {
     if (engine === 'google') return llm.Google.isReady(this.config.engines.google, this.config.engines.google?.models)
     if (engine === 'groq') return llm.Groq.isReady(this.config.engines.groq, this.config.engines.groq?.models)
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
-    if (engine === 'ollama') return llm.Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
+    if (engine === 'ollama') return llm.Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models)
     if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return llm.OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return llm.XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
@@ -191,12 +190,11 @@ export default class LlmFactory {
     if (this.isCustomEngine(engine)) return true
     return false
   }
-  
+
   igniteEngine = (engine: string): llm.LlmEngine => {
 
     // favorite
     if (this.isFavoriteEngine(engine)) {
-
       const modelId = this.config.engines[favoriteMockEngine].model.chat
       const favorite = this.config.llm.favorites.find(f => f.id === modelId)
       if (!favorite) {
@@ -206,7 +204,7 @@ export default class LlmFactory {
         return this.igniteEngine(favorite.engine)
       }
     }
-    
+
     // select
     if (engine === 'anthropic') return new llm.Anthropic(this.config.engines.anthropic, getComputerInfo())
     if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
@@ -235,24 +233,24 @@ export default class LlmFactory {
     return new OpenAI(this.config.engines.openai)
 
   }
-  
+
   hasChatModels = (engine: string) => {
     if (this.isFavoriteEngine(engine)) return this.config.llm.favorites.length > 0
     else return this.config.engines[engine].models?.chat?.length > 0
   }
-  
+
   hasVisionModels = (engine: string) => {
     if (this.isCustomEngine(engine)) return false
     if (this.isFavoriteEngine(engine)) throw new Error('This should not be called for favorite engines')
     return llm.hasVisionModels(engine, this.config.engines[engine])
   }
-  
+
   isVisionModel = (engine: string, model: string) => {
     if (this.isCustomEngine(engine)) return false
     if (this.isFavoriteEngine(engine)) throw new Error('This should not be called for favorite engines')
     return llm.isVisionModel(engine, model, this.config.engines[engine])
   }
-  
+
   canProcessFormat = (engine: string, model: string, format: string) => {
     if (imageFormats.includes(format.toLowerCase())) {
       const autoSwitch = this.config.llm.autoVisionSwitch
@@ -265,7 +263,7 @@ export default class LlmFactory {
       return textFormats.includes(format.toLowerCase())
     }
   }
-  
+
   initModels = async () => {
     for (const engine of llm.staticModelsListEngines) {
       if (this.isEngineConfigured(engine)) {
@@ -273,13 +271,13 @@ export default class LlmFactory {
       }
     }
   }
-  
+
   loadModels = async (engine: string): Promise<boolean> => {
 
     if (this.isCustomEngine(engine)) {
       return this.loadModelsCustom(engine)
     }
-    
+
     console.log('Loading models for', engine)
     let models: llm.ModelsList|null = null
     if (engine === 'openai') {
@@ -339,7 +337,7 @@ export default class LlmFactory {
       chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat) || '',
       image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image) || '',
     }
-    
+
     // save only if modified
     const updatedConfig = JSON.stringify(engineConfig)
     if (this.config == store.config && updatedConfig !== initialConfig) {
@@ -348,7 +346,7 @@ export default class LlmFactory {
 
     // done
     return true
-  
+
   }
 
   loadModelsCustom = async (engine: string): Promise<boolean> => {
@@ -379,7 +377,7 @@ export default class LlmFactory {
       chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat),
       image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image)
     }
-    
+
     // save
     if (this.config == store.config) {
       store.saveSettings()
@@ -387,9 +385,9 @@ export default class LlmFactory {
 
     // done
     return true
-  
+
   }
-  
+
   getValidModelId = (engineConfig: EngineConfig, type: string, modelId: string) => {
     const models: llm.Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
     const m = models?.find(m => m.id == modelId)

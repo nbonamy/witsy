@@ -1,4 +1,3 @@
-
 {
   "general": {
     "firstRun": true,
@@ -33,7 +32,7 @@
       "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT.",
       "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
       "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
-      "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response."      
+      "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response."
     }
   },
   "appearance": {
@@ -269,6 +268,30 @@
       "apiKey": "",
       "models": {
         "tts": []
+      }
+    },
+    "github": {
+      "api": "openai",
+      "label": "GitHub Models",
+      "apiKey": "",
+      "baseURL": "https://models.github.ai/inference",
+      "models": {
+        "chat": [
+          "gpt-3.5-turbo",
+          "gpt-4",
+          "gpt-4-turbo",
+          "claude-2.1",
+          "claude-3-sonnet",
+          "claude-3-opus",
+          "gemini-pro",
+          "llama-2-70b-chat",
+          "mixtral-8x7b"
+        ],
+        "image": []
+      },
+      "model": {
+        "chat": "gpt-3.5-turbo",
+        "image": ""
       }
     }
   },

@@ -132,6 +132,7 @@ To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your AP
 - [OpenRouter](https://openrouter.ai/settings/keys)
 - [Groq](https://console.groq.com/keys)
 - [Cerebras](https://cloud.cerebras.ai/platform/)
+- [GitHub](https://github.com/settings/tokens)
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
 
@@ -192,7 +193,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 - [x] Google function calling
 - [x] Anthropic function calling
 - [x] Scratchpad
-- [x] Dictation: OpenAI Whisper + Whisper WebGPU 
+- [x] Dictation: OpenAI Whisper + Whisper WebGPU
 - [x] Auto-select expert based on foremost app (Mac only)
 - [x] Cerebras support
 - [x] Local files RAG

@@ -1,4 +1,3 @@
-
 <template>
   <div :class="[ 'logo', engine, background ? 'background' : '' ]">
     <component :is="logo" :class="[ 'svg', grayscale ? 'grayscale' : '' ]" />
@@ -22,6 +21,7 @@ import LogoDeepSeek from '../../assets/deepseek.svg?component'
 import LogoGroq from '../../assets/groq.svg?component'
 import LogoCerberas from '../../assets/cerebras.svg?component'
 import LogoOpenRouter from '../../assets/openrouter.svg?component'
+import LogoGitHub from '../../assets/github.svg?component'
 import LogoCustom from '../../assets/custom.svg?component'
 import LogoFavorite from '../../assets/favorite.svg?component'
 
@@ -38,6 +38,7 @@ const logos: { [key: string]: any } = {
   deepseek: LogoDeepSeek,
   groq: LogoGroq,
   cerebras: LogoCerberas,
+  github: LogoGitHub,
 }
 
 const props = defineProps({
@@ -65,7 +66,7 @@ const label = computed(() => {
   if (llmFactory.isCustomEngine(props.engine)) {
     return (store.config.engines[props.engine] as CustomEngineConfig).label
   }
-})  
+})
 
 </script>
 

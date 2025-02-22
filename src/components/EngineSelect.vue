@@ -1,4 +1,3 @@
-
 <template>
   <select name="engine" v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
@@ -13,6 +12,7 @@
     <option value="deepseek">DeepSeek</option>
     <option value="groq">Groq</option>
     <option value="cerebras">Cerebras</option>
+    <option value="github">GitHub</option>
     <option v-for="c in custom" :key="c.id" :value="c.id">{{ c.label }}</option>
   </select>
 </template>
