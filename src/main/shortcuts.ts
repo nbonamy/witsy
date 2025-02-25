@@ -20,13 +20,13 @@ export const registerShortcuts = (app: App, callbacks: ShortcutCallbacks): void 
 
   // now register
   console.info('Registering shortcuts')
-  registerShortcut(config.shortcuts.prompt, callbacks.prompt);
-  registerShortcut(config.shortcuts.chat, callbacks.chat);
-  registerShortcut(config.shortcuts.scratchpad, callbacks.scratchpad);
-  registerShortcut(config.shortcuts.command, callbacks.command);
-  registerShortcut(config.shortcuts.readaloud, callbacks.readaloud);
-  registerShortcut(config.shortcuts.transcribe, callbacks.transcribe);
-  registerShortcut(config.shortcuts.realtime, callbacks.realtime);
+  registerShortcut('prompt', config.shortcuts.prompt, callbacks.prompt);
+  registerShortcut('chat', config.shortcuts.chat, callbacks.chat);
+  registerShortcut('scratchpad', config.shortcuts.scratchpad, callbacks.scratchpad);
+  registerShortcut('command', config.shortcuts.command, callbacks.command);
+  registerShortcut('readaloud', config.shortcuts.readaloud, callbacks.readaloud);
+  registerShortcut('transcribe', config.shortcuts.transcribe, callbacks.transcribe);
+  registerShortcut('realtime', config.shortcuts.realtime, callbacks.realtime);
 
 }
 
@@ -67,7 +67,7 @@ export const shortcutAccelerator = (shortcut?: Shortcut|null): string => {
 
 }
 
-const registerShortcut = (shortcut: Shortcut, callback: () => void): void => {
+const registerShortcut = (name: string, shortcut: Shortcut, callback: () => void): void => {
 
   // check
   if (!shortcut || !callback) {
@@ -84,6 +84,10 @@ const registerShortcut = (shortcut: Shortcut, callback: () => void): void => {
   console.debug('Registering shortcut', shortcut, accelerator)
 
   // do it
-  globalShortcut.register(accelerator, callback)
+  try {
+    globalShortcut.register(accelerator, callback)
+  } catch (error) {
+    console.error(`Failed to register shortcut for ${name}:`, error)
+  }
 
 };

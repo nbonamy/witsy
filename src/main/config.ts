@@ -8,6 +8,7 @@ import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
+let firstLoad = true
 const monitor: Monitor = new Monitor(() => notifyBrowserWindows('file-modified', 'settings'))
 
 export const settingsFilePath = (app: App): string => {
@@ -71,6 +72,10 @@ export const loadSettings = (source: App|string): Configuration => {
   let data = '{}'
   try {
     const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
+    if (firstLoad) {
+      console.log('Loading settings from', settingsFile)
+      firstLoad = false
+    }
     monitor.start(settingsFile)
     data = fs.readFileSync(settingsFile, 'utf-8')
   } catch (error) {
