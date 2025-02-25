@@ -466,7 +466,7 @@ const onPromptResize = (deltaX: number) => {
   window.api.anywhere.resize(deltaX, 0)
 }
 
-const onResponseResize= (deltaX: number) => {
+const onResponseResize = (deltaX: number) => {
   window.api.anywhere.resize(deltaX, 0)
 }
 
