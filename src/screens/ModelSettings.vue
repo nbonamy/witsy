@@ -36,6 +36,14 @@
         <label>TopP [0.0 … 1.0]</label>
         <input type="text" name="top_p" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
       </div>
+      <div class="group" v-if="isReasoningFlagSupported">
+        <label>Extended Thinking</label>
+        <select name="reasoning" v-model="reasoning" @change="save">
+          <option :value="undefined">Default</option>
+          <option :value="true">Enabled</option>
+          <option :value="false">Disabled</option>
+        </select>
+      </div>
       <div class="group" v-if="isReasoningEffortSupported">
         <label>Reasoning Effort</label>
         <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
@@ -83,6 +91,7 @@ const maxTokens: Ref<number> = ref(undefined)
 const temperature: Ref<number> = ref(undefined)
 const top_k: Ref<number> = ref(undefined)
 const top_p: Ref<number> = ref(undefined)
+const reasoning: Ref<boolean> = ref(undefined)
 const reasoningEffort: Ref<LlmReasoningEffort> = ref(undefined)
 
 const props = defineProps({
@@ -104,6 +113,7 @@ const canSaveAsDefaults = computed(() => {
     temperature.value !== undefined ||
     top_k.value !== undefined ||
     top_p.value !== undefined ||
+    reasoning.value !== undefined ||
     reasoningEffort.value !== undefined
   )
 })
@@ -138,6 +148,10 @@ const isTopPSupported = computed(() => {
   return true
 })
 
+const isReasoningFlagSupported = computed(() => {
+  return engine.value === 'anthropic' || engine.value === 'mock'
+})
+
 const isReasoningEffortSupported = computed(() => {
   return engine.value === 'openai'
 })
@@ -153,6 +167,7 @@ onMounted(async () => {
     temperature.value = props.chat.modelOpts?.temperature
     top_k.value = props.chat.modelOpts?.top_k
     top_p.value = props.chat.modelOpts?.top_p
+    reasoning.value = props.chat.modelOpts?.reasoning,
     reasoningEffort.value = props.chat.modelOpts?.reasoningEffort
   }, { deep: true, immediate: true })
 })
@@ -180,6 +195,7 @@ const loadDefaults = () => {
     temperature.value = defaults.temperature
     top_k.value = defaults.top_k
     top_p.value = defaults.top_p
+    reasoning.value = defaults.reasoning
     reasoningEffort.value = defaults.reasoningEffort
   } else {
     disableTools.value = false
@@ -188,6 +204,7 @@ const loadDefaults = () => {
     temperature.value = undefined
     top_k.value = undefined
     top_p.value = undefined
+    reasoning.value = undefined
     reasoningEffort.value = undefined
   }
 }
@@ -203,6 +220,7 @@ const saveAsDefaults = () => {
     temperature: temperature.value,
     top_k: top_k.value,
     top_p: top_p.value,
+    reasoning: reasoning.value,
     reasoningEffort: reasoningEffort.value,
   }
   for (const key of Object.keys(modelDefaults)) {
@@ -289,6 +307,7 @@ const save = () => {
     const temperatureValue = parseUserInput('Temperature', temperature, 'float', 0, 2)
     const topKValue = parseUserInput('TopK', top_k, 'int', 0, 20)
     const topPValue = parseUserInput('TopP', top_p, 'float', 0, 1)
+    const reasoningValue = reasoning.value ?? undefined
     const reasoningEffortValue = reasoningEffort.value ?? undefined
 
     // update chat
@@ -300,6 +319,7 @@ const save = () => {
       temperature: temperatureValue,
       top_k: topKValue,
       top_p: topPValue,
+      reasoning: reasoningValue,
       reasoningEffort: reasoningEffortValue,
     }
 

@@ -91,6 +91,7 @@ export const store: Store = reactive({
         temperature: defaults.temperature,
         top_k: defaults.top_k,
         top_p: defaults.top_p,
+        reasoning: defaults.reasoning,
         reasoningEffort: defaults.reasoningEffort,
       }
     } else {

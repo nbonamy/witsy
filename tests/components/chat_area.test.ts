@@ -188,12 +188,15 @@ test('Model settings init chat', async () => {
   // load engine/model with defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('mock')
   await wrapper.find('.model-settings select[name=model]').setValue('chat')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('true')
   expect(chat?.disableTools).toBe(true)
   expect(chat?.modelOpts?.contextWindowSize).toBe(512)
   expect(chat?.modelOpts?.maxTokens).toBe(150)
   expect(chat?.modelOpts?.temperature).toBe(0.7)
   expect(chat?.modelOpts?.top_k).toBe(10)
   expect(chat?.modelOpts?.top_p).toBe(0.5)
+  expect(chat?.modelOpts?.reasoning).toBe(true)
   expect(chat?.modelOpts?.reasoningEffort).toBe('low')
 
   // load engine/model without defaults
