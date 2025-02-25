@@ -42,4 +42,9 @@ export const openRealtimeChatWindow = async () => {
   if (process.platform === 'darwin') {
     app.dock.show();
   }
+
+  // open the DevTools
+  if (process.env.DEBUG) {
+    realtimeChatWindow.webContents.openDevTools({ mode: 'right' });
+  }
 }

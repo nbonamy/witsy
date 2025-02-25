@@ -101,6 +101,10 @@ const onChangeModel = () => {
   padding-left: 90px;
 }
 
+.windows form .toolbar {
+  padding-top: 32px;
+}
+
 form .toolbar {
   
   display: flex;
