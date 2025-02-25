@@ -27,6 +27,11 @@
   flex: 1;
 }
 
+.messages.openai .message .think {
+  border-left: 1.5px solid var(--text-color);
+  padding-left: 0.75rem;
+}
+
 .messages.openai .message .text p {
   margin-top: 8px;
 }
