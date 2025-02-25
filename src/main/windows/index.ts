@@ -36,16 +36,18 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
 
   opts = {
     titleBarStyle: 'hidden',
-    lightThemeColor: '#fff',
-    darkBlackThemeColor: 'rgb(32, 32, 32)',
-    darkBlueThemeColor: 'rgb(18, 32, 47)',
+    lightThemeColor: '#efefef',
+    darkBlackThemeColor: '#383838',
+    darkBlueThemeColor: 'rgb(40, 50, 65)',
     ...opts
   }
 
   return {
     titleBarStyle: opts.titleBarStyle,
     titleBarOverlay: {
+      // windows+linux
       color: nativeTheme.shouldUseDarkColors ? (isBlueTheme ? opts.darkBlueThemeColor : opts.darkBlackThemeColor) : opts.lightThemeColor,
+      // windows
       symbolColor: nativeTheme.shouldUseDarkColors ? '#fff' : '#000',
     },
     trafficLightPosition: { x: 16, y: 16 },

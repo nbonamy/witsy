@@ -49,7 +49,7 @@
   --scrollbar-bg-color: var(--background-color-light);
   --scrollbar-thumb-color: #c2c2c2;
 
-  --chatarea-toolbar-bg-color: #f3f3f3;
+  --chatarea-toolbar-bg-color: #efefef;
   --chatarea-toolbar-text-color: var(--dimmed-text-color);
   --chatarea-toolbar-icon-color: var(--dimmed-text-color);
 
@@ -158,7 +158,7 @@
 
     --scrollbar-thumb-color: #787878;
 
-    --chatarea-toolbar-bg-color: #383838;
+    --chatarea-toolbar-bg-color: #373737;
     --chatarea-toolbar-icon-color: var(--icon-color);
 
     --message-list-tip-text-color: var(--text-color);

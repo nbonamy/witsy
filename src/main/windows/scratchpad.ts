@@ -24,11 +24,7 @@ export const openScratchPad = async (text?: string|null) => {
     hash: '/scratchpad',
     x, y, width, height,
     title: 'Scratchpad',
-    ...titleBarOptions({
-      lightThemeColor: '#f3f3f3',
-      darkBlackThemeColor: 'rgb(56, 56, 56)',
-      darkBlueThemeColor: 'rgb(18, 32, 47)',
-    }),
+    ...titleBarOptions(),
     queryParams,
   });
 
