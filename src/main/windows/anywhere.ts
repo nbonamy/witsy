@@ -44,7 +44,19 @@ export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
     app.focus({ steal: true });
     promptAnywhereWindow.moveTop();
     promptAnywhereWindow.focusOnWebView();
+    if (process.platform === 'win32') {
+      setTimeout(() => {
+        promptAnywhereWindow.setOpacity(1);
+      }, 100);
+    }
   });
+
+  promptAnywhereWindow.on('hide', () => {
+    if (process.platform === 'win32') {
+      promptAnywhereWindow.setOpacity(0);
+    }
+  });
+
 
   // done
   return promptAnywhereWindow;
