@@ -32,7 +32,9 @@ export const openRealtimeChatWindow = async () => {
   realtimeChatWindow = createWindow({
     hash: '/realtime',
     x, y, width, height,
-    ...titleBarOptions(),
+    ...titleBarOptions({
+      height: 48,
+    }),
     title: 'Realtime Chat',
     resizable: process.env.DEBUG ? true : false,
     movable: true,

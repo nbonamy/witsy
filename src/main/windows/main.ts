@@ -38,7 +38,9 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     height: bounds?.height ?? 800,
     minWidth: 800,
     title: 'Witsy',
-    ...titleBarOptions(),
+    ...titleBarOptions({
+      height: 48,
+    }),
     ...opts,
   });
 

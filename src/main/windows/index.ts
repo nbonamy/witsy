@@ -39,6 +39,7 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
     lightThemeColor: '#efefef',
     darkBlackThemeColor: '#383838',
     darkBlueThemeColor: 'rgb(40, 50, 65)',
+    height: undefined,
     ...opts
   }
 
@@ -49,6 +50,8 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
       color: nativeTheme.shouldUseDarkColors ? (isBlueTheme ? opts.darkBlueThemeColor : opts.darkBlackThemeColor) : opts.lightThemeColor,
       // windows
       symbolColor: nativeTheme.shouldUseDarkColors ? '#fff' : '#000',
+      // windows
+      height: process.platform === 'win32' ? opts.height : undefined,
     },
     trafficLightPosition: { x: 16, y: 16 },
   }
