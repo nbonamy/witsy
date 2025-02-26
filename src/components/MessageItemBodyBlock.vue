@@ -1,13 +1,20 @@
 <template>
-  <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
-  <MessageItemMedia :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" v-else-if="block.type == 'media'" />
+  <div ref="messageItemBodyBlock">
+    <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size" ></div>
+   <MessageItemMedia :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" v-else-if="block.type == 'media'" />
+  </div>
 </template>
 
 <script setup lang="ts">
 
-import { PropType } from 'vue'
+import { nextTick, PropType, ref, Ref, h, render } from 'vue'
 import { store } from '../services/store'
+import mermaid, { RenderResult } from 'mermaid'
 import MessageItemMedia from './MessageItemMedia.vue'
+import { BIconDownload, BIconCircleHalf } from 'bootstrap-icons-vue'
+
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
 
 export type Block = {
   type: 'text'|'media'
@@ -17,7 +24,7 @@ export type Block = {
   prompt?: string
 }
 
-const props = defineProps({
+defineProps({
   block: {
     type: Object as PropType<Block>,
     required: true,
@@ -29,6 +36,15 @@ const emits = defineEmits(['media-loaded'])
 const onMediaLoaded = () => {
   emits('media-loaded')
 }
+
+// Initialize mermaid
+mermaid.initialize({ 
+  startOnLoad: false,
+  theme: 'default'
+})
+
+const messageItemBodyBlock: Ref<HTMLElement> = ref(null)
+let mermaidRenderTimeout: NodeJS.Timeout|null = null
 
 const mdRender = (content: string) => {
 
@@ -49,8 +65,142 @@ const mdRender = (content: string) => {
   // replace <think> with <div class="think"> and </think> with </div>
   html = html.replace(/<think>/g, '<div class="text think"><p>').replace(/<\/think>/g, '</p></div>')
 
+  // mermaid
+  nextTick(() => {
+    clearTimeout(mermaidRenderTimeout)
+    mermaidRenderTimeout = setTimeout(() => {
+      renderMermaidBlocks()
+    }, 150)
+  })
+
   // do it
   return html
 }
 
+const renderMermaidBlocks = async () => {
+
+  if (!messageItemBodyBlock.value) return
+
+  // we only want valid mermaid blocks (some of them can be transient)
+  let mermaidBlocks: HTMLElement[] = []
+  const allMermaidBlocks = messageItemBodyBlock.value.querySelectorAll<HTMLElement>('.mermaid')
+  for (const block of allMermaidBlocks) {
+    try {
+      if (!block.textContent) continue
+      if (!block.textContent.trim().length) continue
+      if (await mermaid.parse(block.textContent, { suppressErrors: true })) {
+        mermaidBlocks.push(block)
+      }
+    } catch (error) {
+      console.error('Error parsing mermaid block:', error)
+    }
+  }
+
+  // check
+  if (mermaidBlocks.length === 0) {
+    return
+  }
+
+
+  try {
+    // Process blocks in parallel but maintain order
+    await Promise.all(mermaidBlocks.map(async (block) => {
+      
+      try {
+
+        // the svg
+        let svgRender: RenderResult = await mermaid.render(`mermaid-${Date.now()}`, block.textContent!)
+        if (!svgRender) {
+          return
+        }
+
+        // now create a media-container
+        const vnode = h('div', { class: 'media-container' }, [
+          h('div', {
+            class: 'mermaid-rendered',
+            innerHTML: svgRender.svg,
+            onClick: () => {
+                const blob = new Blob([svgRender.svg], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                emitEvent('fullscreen', { url, theme: vnode.el.classList.contains('dark') ? 'dark' : 'light' });
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+          }),
+          h('div', { class: 'media-actions' }, [
+            h(BIconCircleHalf, {
+              class: 'action',
+              onClick: () => {
+                vnode.el.classList.toggle('dark')
+              }
+            }),
+            h(BIconDownload, {
+              class: 'action download',
+              onClick: () => {
+                const blob = new Blob([svgRender.svg], { type: 'image/svg+xml' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = 'mermaid.svg'
+                a.click()
+                URL.revokeObjectURL(url)
+              }
+            })
+          ])
+        ])
+
+        // render it
+        const target = document.createElement('div')
+        target.classList.add('mermaid-container')
+        render(vnode, target)
+        
+        // amd add it to the dom
+        block.parentNode?.insertBefore(target, block.nextSibling)
+        //block.parentNode?.removeChild(block)
+
+      } catch (error) {
+        console.error('Error rendering mermaid diagram:', error)
+        block.classList.add('mermaid-error')
+      }
+
+    }))
+  } catch (error) {
+    console.error('Error processing mermaid blocks:', error)
+  }
+
+}
+
 </script>
+
+<style>
+
+.message .mermaid-container {
+
+  .media-container {
+    
+    cursor: pointer;
+    width: fit-content !important;
+    padding: 8px 96px 8px 8px;
+    border-radius: 4px;
+
+    &.dark {
+      background-color: black;
+    }
+
+    .media-actions {
+      top: 8px;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .message .mermaid-container {
+    .media-container {
+      background-color: white;
+      &.dark {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+</style>

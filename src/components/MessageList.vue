@@ -9,7 +9,7 @@
       <BIconArrowDown />
     </div>
   </div>
-  <div class="fullscreen" v-if="fullScreenImageUrl" @click="onCloseFullScreen">
+  <div class="fullscreen" :class="fullScreenTheme" v-if="fullScreenImageUrl" @click="onCloseFullScreen">
     <img :src="fullScreenImageUrl"/>
     <BIconXLg class="close" />
   </div>
@@ -29,6 +29,7 @@ const { onEvent } = useEventBus()
 const divScroller: Ref<HTMLElement|null> = ref(null)
 const overflown = ref(false)
 const fullScreenImageUrl: Ref<string|null> = ref(null)
+const fullScreenTheme: Ref<string|null> = ref(null)
 
 const itemRefs = useTemplateRef('items')
 
@@ -57,9 +58,10 @@ onMounted(() => {
   scrollDown()
 })
 
-const onFullscreen = (imageUrl: string) => {
+const onFullscreen = (payload: string|strDict) => {
   document.addEventListener('keydown', onCloseFullScreen)
-  fullScreenImageUrl.value = imageUrl
+  fullScreenImageUrl.value = payload.url ?? payload
+  fullScreenTheme.value = payload.theme
   window.api.fullscreen(true)
 }
 
@@ -176,6 +178,10 @@ const onScroll = () => {
   top: 16px;
   right: 16px;
   font-size: 14pt;
+}
+
+.fullscreen.light {
+  background-color: white;
 }
 
 </style>

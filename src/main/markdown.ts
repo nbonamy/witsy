@@ -3,6 +3,7 @@
 import MarkdownIt from 'markdown-it';
 import MarkdownItKatex from '@iktakahiro/markdown-it-katex'
 import MarkdownItMark from 'markdown-it-mark'
+import MarkdownItDiagram from 'markdown-it-diagram'
 import hljs from 'highlight.js'
 
 const mdOptions: MarkdownIt.Options = {
@@ -40,5 +41,6 @@ export const renderMarkdown = (markdown: string): string => {
   md.validateLink = (url) =>  url.startsWith('file://') ? true : validateLink(url)
   md.use(MarkdownItKatex)
   md.use(MarkdownItMark)
+  md.use(MarkdownItDiagram)
   return md.render(mdPreprocess(markdown))
 }
