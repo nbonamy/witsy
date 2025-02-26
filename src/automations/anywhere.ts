@@ -22,7 +22,7 @@ export default class PromptAnywhere {
     }
 
     // open prompt
-    await window.openPromptAnywhere({ sourceApp });
+    window.openPromptAnywhere({ sourceApp });
   }
 
   static close = async (sourceApp?: Application): Promise<void> => {
