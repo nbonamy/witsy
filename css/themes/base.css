@@ -139,8 +139,10 @@
 .message .media-container .media-actions {
   display: none;
   position: absolute;
+  flex-direction: row;
   top: 24px;
   right: 12px;
+  gap: 8px;
 }
 
 .message .media-container .media-actions .action {
@@ -154,11 +156,13 @@
 
 .message .media-container:hover .media-actions {
   display: flex;
-  flex-direction: row;
-  gap: 8px;
 }
 
 .message.assistant .actions {
   position: relative;
   top: -16px;
+}
+
+.message a.copy {
+  cursor: pointer;
 }
