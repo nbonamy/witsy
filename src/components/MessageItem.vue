@@ -13,7 +13,7 @@
       </div>
 
       <!-- image for backwards compatibility -->
-      <MessageItemImage :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
+      <MessageItemMediaBlock :url="imageUrl" @media-loaded="onMediaLoaded(message)" v-if="message.type == 'image' && imageUrl" />
 
       <!-- expert -->
        <div v-if="message.expert" class="expert text variable-font-size">
@@ -45,7 +45,7 @@ import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import MessageItemBody from './MessageItemBody.vue'
-import MessageItemImage from './MessageItemMedia.vue'
+import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
 import Attachment from '../models/attachment'

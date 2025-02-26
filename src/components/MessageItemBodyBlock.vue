@@ -1,15 +1,15 @@
 <template>
   <div ref="messageItemBodyBlock">
     <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size" ></div>
-   <MessageItemMedia :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" v-else-if="block.type == 'media'" />
+   <MessageItemMediaBlock :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" v-else-if="block.type == 'media'" />
   </div>
 </template>
 
 <script setup lang="ts">
 
 import { nextTick, PropType, ref, Ref, h, render } from 'vue'
-import MessageItemMermaid from './MessageItemMermaid.vue'
-import MessageItemMedia from './MessageItemMedia.vue'
+import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
+import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import { store } from '../services/store'
 
 export type Block = {
@@ -73,7 +73,7 @@ const renderMermaidBlocks = async () => {
   const allMermaidBlocks = messageItemBodyBlock.value.querySelectorAll<HTMLElement>('pre.mermaid')
   for (const block of allMermaidBlocks) {
     try {
-      const vnode = h(MessageItemMermaid, { src: block.textContent })
+      const vnode = h(MessageItemMermaidBlock, { src: block.textContent })
       block.innerHTML = ''
       render(vnode, block)
     } catch (error) {
