@@ -90,7 +90,7 @@ a {
   
   cursor: pointer;
   width: fit-content !important;
-  padding: 8px 24px 8px 8px;
+  padding: 8px 48px 8px 8px;
   border-radius: 4px;
 
   &.dark {
