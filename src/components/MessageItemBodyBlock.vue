@@ -7,10 +7,11 @@
 
 <script setup lang="ts">
 
-import { nextTick, PropType, ref, Ref } from 'vue'
+import { nextTick, PropType, ref, Ref, h, render } from 'vue'
 import { store } from '../services/store'
 import mermaid, { RenderResult } from 'mermaid'
 import MessageItemMedia from './MessageItemMedia.vue'
+import { BIconDownload } from 'bootstrap-icons-vue'
 
 export type Block = {
   type: 'text'|'media'
@@ -105,18 +106,36 @@ const renderMermaidBlocks = async () => {
       try {
 
         // the svg
-        let render: RenderResult = await mermaid.render(`mermaid-${Date.now()}`, block.textContent!)
-        if (!render) {
+        let svgRender: RenderResult = await mermaid.render(`mermaid-${Date.now()}`, block.textContent!)
+        if (!svgRender) {
           return
         }
 
-        // now create the svg element
-        const svgContainer = document.createElement('div')
-        svgContainer.className = 'mermaid-rendered'
-        svgContainer.innerHTML = render.svg
+        // now create a media-container
+        const vnode = h('div', { class: 'media-container fit' }, [
+          h('div', { class: 'mermaid-rendered', innerHTML: svgRender.svg, }),
+          h('div', { class: 'media-actions' }, [
+            h(BIconDownload, {
+              class: 'action download',
+              onClick: () => {
+                const blob = new Blob([svgRender.svg], { type: 'image/svg+xml' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = 'mermaid.svg'
+                a.click()
+                URL.revokeObjectURL(url)
+              }
+            })
+          ])
+        ])
 
-        // and add it
-        block.parentNode?.insertBefore(svgContainer, block.nextSibling)
+        // render it
+        const target = document.createElement('div')
+        render(vnode, target)
+        
+        // amd add it to the dom
+        block.parentNode?.insertBefore(target, block.nextSibling)
         //block.parentNode?.removeChild(block)
 
       } catch (error) {
