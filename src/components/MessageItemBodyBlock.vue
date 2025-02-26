@@ -11,7 +11,10 @@ import { nextTick, PropType, ref, Ref, h, render } from 'vue'
 import { store } from '../services/store'
 import mermaid, { RenderResult } from 'mermaid'
 import MessageItemMedia from './MessageItemMedia.vue'
-import { BIconDownload } from 'bootstrap-icons-vue'
+import { BIconDownload, BIconCircleHalf } from 'bootstrap-icons-vue'
+
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
 
 export type Block = {
   type: 'text'|'media'
@@ -112,9 +115,24 @@ const renderMermaidBlocks = async () => {
         }
 
         // now create a media-container
-        const vnode = h('div', { class: 'media-container fit' }, [
-          h('div', { class: 'mermaid-rendered', innerHTML: svgRender.svg, }),
+        const vnode = h('div', { class: 'media-container' }, [
+          h('div', {
+            class: 'mermaid-rendered',
+            innerHTML: svgRender.svg,
+            onClick: () => {
+                const blob = new Blob([svgRender.svg], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                emitEvent('fullscreen', { url, theme: vnode.el.classList.contains('dark') ? 'dark' : 'light' });
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+          }),
           h('div', { class: 'media-actions' }, [
+            h(BIconCircleHalf, {
+              class: 'action',
+              onClick: () => {
+                vnode.el.classList.toggle('dark')
+              }
+            }),
             h(BIconDownload, {
               class: 'action download',
               onClick: () => {
@@ -132,6 +150,7 @@ const renderMermaidBlocks = async () => {
 
         // render it
         const target = document.createElement('div')
+        target.classList.add('mermaid-container')
         render(vnode, target)
         
         // amd add it to the dom
@@ -151,3 +170,37 @@ const renderMermaidBlocks = async () => {
 }
 
 </script>
+
+<style>
+
+.message .mermaid-container {
+
+  .media-container {
+    
+    cursor: pointer;
+    width: fit-content;
+    padding: 8px 48px 8px 8px;
+    border-radius: 4px;
+
+    &.dark {
+      background-color: black;
+    }
+
+    .media-actions {
+      top: 8px;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .message .mermaid-container {
+    .media-container {
+      background-color: white;
+      &.dark {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+</style>
