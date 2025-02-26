@@ -178,8 +178,8 @@ const renderMermaidBlocks = async () => {
   .media-container {
     
     cursor: pointer;
-    width: fit-content;
-    padding: 8px 48px 8px 8px;
+    width: fit-content !important;
+    padding: 8px 96px 8px 8px;
     border-radius: 4px;
 
     &.dark {
