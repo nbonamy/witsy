@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 
-import { PropType, onMounted, ref } from 'vue'
+import { nextTick, PropType, ref, Ref } from 'vue'
 import { store } from '../services/store'
-import mermaid from 'mermaid'
+import mermaid, { RenderResult } from 'mermaid'
 import MessageItemMedia from './MessageItemMedia.vue'
 
 export type Block = {
@@ -20,7 +20,7 @@ export type Block = {
   prompt?: string
 }
 
-const props = defineProps({
+defineProps({
   block: {
     type: Object as PropType<Block>,
     required: true,
@@ -39,37 +39,8 @@ mermaid.initialize({
   theme: 'default'
 })
 
-const messageItemBodyBlock = ref()
-
-onMounted(async () => {
-  if (!messageItemBodyBlock.value) return
-  
-  const mermaidBlocks = messageItemBodyBlock.value.querySelectorAll<HTMLElement>('.mermaid')
-  if (!mermaidBlocks.length) return
-
-  try {
-    // Process blocks in parallel but maintain order
-    await Promise.all(Array.from(mermaidBlocks).map(async (block) => {
-      if (!block.textContent) return
-      
-      try {
-        const { svg } = await mermaid.render(`mermaid-${Date.now()}`, block.textContent)
-        
-        const svgContainer = document.createElement('div')
-        svgContainer.className = 'mermaid-rendered'
-        svgContainer.innerHTML = svg
-        
-        block.parentNode?.insertBefore(svgContainer, block.nextSibling)
-      } catch (error) {
-        console.error('Error rendering mermaid diagram:', error)
-        // Fallback to showing raw mermaid code
-        block.classList.add('mermaid-error')
-      }
-    }))
-  } catch (error) {
-    console.error('Error processing mermaid blocks:', error)
-  }
-})
+const messageItemBodyBlock: Ref<HTMLElement> = ref(null)
+let mermaidRenderTimeout: NodeJS.Timeout|null = null
 
 const mdRender = (content: string) => {
 
@@ -90,8 +61,74 @@ const mdRender = (content: string) => {
   // replace <think> with <div class="think"> and </think> with </div>
   html = html.replace(/<think>/g, '<div class="text think"><p>').replace(/<\/think>/g, '</p></div>')
 
+  // mermaid
+  nextTick(() => {
+    clearTimeout(mermaidRenderTimeout)
+    mermaidRenderTimeout = setTimeout(() => {
+      renderMermaidBlocks()
+    }, 150)
+  })
+
   // do it
   return html
+}
+
+const renderMermaidBlocks = async () => {
+
+  if (!messageItemBodyBlock.value) return
+
+  // we only want valid mermaid blocks (some of them can be transient)
+  let mermaidBlocks: HTMLElement[] = []
+  const allMermaidBlocks = messageItemBodyBlock.value.querySelectorAll<HTMLElement>('.mermaid')
+  for (const block of allMermaidBlocks) {
+    try {
+      if (!block.textContent) continue
+      if (!block.textContent.trim().length) continue
+      if (await mermaid.parse(block.textContent, { suppressErrors: true })) {
+        mermaidBlocks.push(block)
+      }
+    } catch (error) {
+      console.error('Error parsing mermaid block:', error)
+    }
+  }
+
+  // check
+  if (mermaidBlocks.length === 0) {
+    return
+  }
+
+
+  try {
+    // Process blocks in parallel but maintain order
+    await Promise.all(mermaidBlocks.map(async (block) => {
+      
+      try {
+
+        // the svg
+        let render: RenderResult = await mermaid.render(`mermaid-${Date.now()}`, block.textContent!)
+        if (!render) {
+          return
+        }
+
+        // now create the svg element
+        const svgContainer = document.createElement('div')
+        svgContainer.className = 'mermaid-rendered'
+        svgContainer.innerHTML = render.svg
+
+        // and add it
+        block.parentNode?.insertBefore(svgContainer, block.nextSibling)
+        //block.parentNode?.removeChild(block)
+
+      } catch (error) {
+        console.error('Error rendering mermaid diagram:', error)
+        block.classList.add('mermaid-error')
+      }
+
+    }))
+  } catch (error) {
+    console.error('Error processing mermaid blocks:', error)
+  }
+
 }
 
 </script>
