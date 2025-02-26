@@ -234,6 +234,7 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
         height: 1,
         x: -100,
         y: -100,
+        skipTaskbar: true,
         transparent: true,
         frame: false,
       });
