@@ -40,6 +40,11 @@
   width: 400px;
 }
 
+.messages.openai .message .media-container.fit {
+  width: fit-content;
+  padding-right: 48px;
+}
+
 .messages.openai pre.hljs {
   border-radius: 8px;
 }
@@ -47,4 +52,8 @@
 .messages.openai .message .actions {
   position: relative;
   top: -16px;
+}
+
+.messages.openai .message .media-container.fit .media-actions {
+  top: 8px;
 }
