@@ -89,16 +89,4 @@ export default class extends NutAutomator {
     
   }
 
-  async activateApp(title: string) {
-
-    const script = `
-      Set WshShell = WScript.CreateObject("WScript.Shell")
-      WshShell.AppActivate "${title}"
-      WScript.Sleep 200
-    `
-
-    // run it
-    await runVbs({ vbs: script }) 
-  }
-
 }
