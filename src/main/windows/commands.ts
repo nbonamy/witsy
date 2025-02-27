@@ -33,11 +33,6 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     app.focus({ steal: true });
     commandPicker.moveTop();
     commandPicker.focusOnWebView();
-
-    if (process.platform === 'win32') {
-      const automator = new WindowsAutomator();
-      automator.activateApp(title);
-    }
   });
 
   commandPicker.on('blur', () => {
