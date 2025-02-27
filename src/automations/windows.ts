@@ -1,8 +1,14 @@
 
-import { Application, Automator } from '../types/automation';
+import { Application } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
+import NutAutomator from './nut';
 
-export default class implements Automator {
+export default class extends NutAutomator {
+
+  constructor() {
+    super();
+    this.setup();
+  }
 
   async getForemostApp(): Promise<Application|null> {
     console.warn('getForemostApp not implemented (expected)');
@@ -36,22 +42,26 @@ export default class implements Automator {
 
   async copySelectedText() {
 
-    const script = `
-      Set WshShell = WScript.CreateObject("WScript.Shell")
-      Dim clipboardContents
-      For i = 1 To 20
-        On Error Resume Next
+    try {
+
+      //await super.copySelectedText();
+      if (!await this.setup()) throw new Error('nutjs not loaded');
+      await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
+      await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
+      
+    } catch {
+
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
         WshShell.SendKeys "^c"
         WScript.Sleep 20
-        clipboardContents = WshShell.Exec("powershell Get-Clipboard").StdOut.ReadAll()
-        If Len(clipboardContents) > 0 Then Exit For
-        WScript.Sleep 100
-      Next
-    `
+      `
 
-    // run it
-    await runVbs({ vbs: script }) 
+      // run it
+      await runVbs({ vbs: script }) 
 
+    }
+  
   }
 
   async deleteSelectedText() {
