@@ -1,7 +1,7 @@
 
 <template>
   <div class="media-container" :class="theme" v-if="render">
-    <div v-html="render.svg" @click="onFullscreen" />
+    <div class="diagram" v-html="render.svg" @click="onFullscreen" />
     <div class="media-actions">
       <BIconCircleHalf class="action theme" @click="onTheme" />
       <BIconCodeSlash class="action code" @click="onViewCode" />
@@ -83,15 +83,19 @@ const onCopyCode = () => {
 <style scoped>
 
 a {
-    cursor: pointer;
-  }
+  cursor: pointer;
+}
 
-  .message .media-container {
+.message .media-container {
   
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   cursor: pointer;
   width: fit-content !important;
   padding: 8px 48px 8px 8px;
   border-radius: 4px;
+  min-height: 108px;
 
   &.dark {
     background-color: black;
