@@ -47,7 +47,7 @@ const tavilyApiKey = ref(null)
 const load = () => {
   enabled.value = store.config.plugins.search.enabled || false
   engine.value = store.config.plugins.search.engine || 'local'
-  contentLength.value = store.config.plugins.search.contentLength || 4096
+  contentLength.value = store.config.plugins.search.contentLength ?? 4096
   tavilyApiKey.value = store.config.plugins.search.tavilyApiKey || ''
 }
 
