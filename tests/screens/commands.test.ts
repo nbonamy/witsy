@@ -14,8 +14,9 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-test('Renders correctly', () => {
-  const wrapper = mount(CommandPicker)
+test('Renders correctly', async () => {
+  const wrapper = mount(CommandPicker, { props: { extra: {  } } } )
+  await wrapper.vm.$nextTick()
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.commands').exists()).toBe(true)
   expect(wrapper.findAll('.command')).toHaveLength(4)
@@ -33,9 +34,44 @@ test('Closes on Escape', async () => {
   expect(window.api.commands.closePicker).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
+test('Changes selection on arrow keys', async () => {
+  const wrapper = mount(CommandPicker, { props: { extra: {  } } } )
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.selected .label').text()).toBe('Command 2')
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+})
+
+test('Runs on Enter', async () => {
+  const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+  expect(window.api.commands.run).toHaveBeenCalledWith({
+    textId: 6,
+    sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
+    command: {
+      action: 'chat_window',
+      icon: '1',
+      id: 1,
+      shortcut: '1',
+      label: 'Command 1',
+      state: 'enabled',
+    },
+  })
+})
+
 test('Runs command on click', async () => {
   const wrapper: VueWrapper<any> = mount(CommandPicker)
   wrapper.vm.onShow({ textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } })
+  await wrapper.vm.$nextTick()
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({
@@ -54,6 +90,7 @@ test('Runs command on click', async () => {
 
 test('Runs command on click', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } }}})
+  await wrapper.vm.$nextTick()
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenCalledWith({
