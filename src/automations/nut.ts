@@ -2,7 +2,7 @@
 import { Application, Automator } from '../types/automation';
 import { wait } from '../main/utils';
 
-let nut: any|null = null;
+let nut: any = undefined;
 
 export default class NutAutomator implements Automator {
 
@@ -14,12 +14,16 @@ export default class NutAutomator implements Automator {
     if (nut) {
       return true;
     }
+    if (nut === null) {
+      return false;
+    }
     try {
       const nutPackage = '@nut-tree-fork/nut-js';
       nut = await import(nutPackage);
       return true
     } catch {
       console.log('Error loading nutjs. Automation not available.');
+      nut = null;
       return false
     }
   }
