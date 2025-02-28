@@ -285,7 +285,7 @@ const deleteChats = (chatIds: string[]) => {
   for (const chatId of chatIds) {
 
     // remove from chats list
-    let index = store.history.chats.find((c) => c.uuid === chatId)
+    let index = store.history.chats.findIndex((c) => c.uuid === chatId)
     if (index != -1) {
       store.history.chats[index].delete()
       store.history.chats.splice(index, 1)

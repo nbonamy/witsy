@@ -63,12 +63,12 @@ test('Selects correctly', async () => {
   expect(wrapper.find<HTMLInputElement>('.details .embeddings input').element.value).toBe('openai / text-embedding-ada-002')
   expect(wrapper.findAll('.details .documents .item')).toHaveLength(2)
   expect(wrapper.find('.details .documents .item:nth-child(1)').text()).toBe('file1 (/tmp/file1)')
-  expect(wrapper.find('.details .documents .item:nth-child(2)').text()).toBe('folder1 (2 files) (/tmp/folder1)')
+  expect(wrapper.find('.details .documents .item:nth-child(2)').text()).toBe('folder1 (2 common.files) (/tmp/folder1)')
   expect(wrapper.findAll('.details .documents .item.selected')).toHaveLength(1)
   expect(wrapper.find('.details .documents .item.selected').text()).toBe('file1 (/tmp/file1)')
   await wrapper.find('.details .documents .item:nth-child(2)').trigger('click')
   expect(wrapper.findAll('.details .documents .item.selected')).toHaveLength(1)
-  expect(wrapper.find('.details .documents .item.selected').text()).toBe('folder1 (2 files) (/tmp/folder1)')
+  expect(wrapper.find('.details .documents .item.selected').text()).toBe('folder1 (2 common.files) (/tmp/folder1)')
 })
 
 test('Shows create editor', async () => {

@@ -71,18 +71,18 @@ test('Switches to folder mode', async () => {
 test('Shows day indicator', async () => {
   const wrapper: VueWrapper<any> = mount(ChatList, { props: { displayMode: 'timeline', chat: undefined, filter: '' } } )
   expect(wrapper.findAll('.day')).toHaveLength(6)
-  expect(wrapper.findAll('.day').at(0)!.text()).toBe('Today')
-  expect(wrapper.findAll('.day').at(1)!.text()).toBe('Yesterday')
-  expect(wrapper.findAll('.day').at(2)!.text()).toBe('Last 7 days')
-  expect(wrapper.findAll('.day').at(3)!.text()).toBe('Last 14 days')
-  expect(wrapper.findAll('.day').at(4)!.text()).toBe('Last 30 days')
-  expect(wrapper.findAll('.day').at(5)!.text()).toBe('Earlier')
-  expect(wrapper.findAll('[data-day=Today]')).toHaveLength(1)
-  expect(wrapper.findAll('[data-day=Yesterday]')).toHaveLength(1)
-  expect(wrapper.findAll('[data-day="Last 7 days"]')).toHaveLength(2)
-  expect(wrapper.findAll('[data-day="Last 14 days"]')).toHaveLength(2)
-  expect(wrapper.findAll('[data-day="Last 30 days"]')).toHaveLength(2)
-  expect(wrapper.findAll('[data-day="Earlier"]')).toHaveLength(2)
+  expect(wrapper.findAll('.day').at(0)!.text()).toBe('chatList.timeline.today')
+  expect(wrapper.findAll('.day').at(1)!.text()).toBe('chatList.timeline.yesterday')
+  expect(wrapper.findAll('.day').at(2)!.text()).toBe('chatList.timeline.last7days')
+  expect(wrapper.findAll('.day').at(3)!.text()).toBe('chatList.timeline.last14days')
+  expect(wrapper.findAll('.day').at(4)!.text()).toBe('chatList.timeline.last30days')
+  expect(wrapper.findAll('.day').at(5)!.text()).toBe('chatList.timeline.earlier')
+  expect(wrapper.findAll('[data-day="chatList.timeline.today"]')).toHaveLength(1)
+  expect(wrapper.findAll('[data-day="chatList.timeline.yesterday"]')).toHaveLength(1)
+  expect(wrapper.findAll('[data-day="chatList.timeline.last7days"]')).toHaveLength(2)
+  expect(wrapper.findAll('[data-day="chatList.timeline.last14days"]')).toHaveLength(2)
+  expect(wrapper.findAll('[data-day="chatList.timeline.last30days"]')).toHaveLength(2)
+  expect(wrapper.findAll('[data-day="chatList.timeline.earlier"]')).toHaveLength(2)
 })
 
 test('Shows folders indicator', async () => {
@@ -165,8 +165,8 @@ test('Context Menu Timeline Mode', async () => {
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
   expect(wrapper.vm.contextMenuActions()).toStrictEqual([
-    { label: 'Rename', action: 'rename' },
-    { label: 'Delete', action: 'delete' },
+    { label: 'common.rename', action: 'rename' },
+    { label: 'common.delete', action: 'delete' },
   ])
 })
 
@@ -176,9 +176,9 @@ test('Context Menu Folder Mode', async () => {
   await wrapper.findAll('.chat').at(3)!.trigger('contextmenu')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
   expect(wrapper.vm.contextMenuActions()).toStrictEqual([
-    { label: 'Rename', action: 'rename' },
-    { label: 'Move', action: 'move' },
-    { label: 'Delete', action: 'delete' },
+    { label: 'common.rename', action: 'rename' },
+    { label: 'common.move', action: 'move' },
+    { label: 'common.delete', action: 'delete' },
   ])
 })
 
@@ -210,9 +210,9 @@ test('Context Menu Folder', async () => {
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
   expect(wrapper.findAll('.context-menu .actions > div')).toHaveLength(3)
-  expect(wrapper.findAll('.context-menu .actions > div').at(0)!.text()).toBe('New chat')
-  expect(wrapper.findAll('.context-menu .actions > div').at(1)!.text()).toBe('Rename')
-  expect(wrapper.findAll('.context-menu .actions > div').at(2)!.text()).toBe('Delete')
+  expect(wrapper.findAll('.context-menu .actions > div').at(0)!.text()).toBe('common.newChat')
+  expect(wrapper.findAll('.context-menu .actions > div').at(1)!.text()).toBe('common.rename')
+  expect(wrapper.findAll('.context-menu .actions > div').at(2)!.text()).toBe('chatList.folder.actions.delete')
 })
 
 test('New Chat', async () => {

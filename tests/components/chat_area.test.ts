@@ -81,10 +81,10 @@ test('Context menu empty chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: true },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: true },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -93,10 +93,10 @@ test('Context menu normal chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -106,10 +106,10 @@ test('Context menu temporary chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Save Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.saveChat', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -222,7 +222,7 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('Default')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
   
   await wrapper.find('.model-settings input[name=maxTokens]').setValue('1000')
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
@@ -314,7 +314,7 @@ test('Model settings defaults', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('Default')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
 
 
 
