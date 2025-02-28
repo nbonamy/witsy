@@ -221,7 +221,7 @@ test('Clears expert', async () => {
   expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
   expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
   expect(menu.find('.item:nth-child(3)').text()).toBe('')
-  expect(menu.find('.item:nth-child(4)').text()).toBe('Clear expert')
+  expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.expert.clear')
   await menu.find('.item:nth-child(4)').trigger('click')
   expect(wrapper.vm.expert).toBe(null)
 })

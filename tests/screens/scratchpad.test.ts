@@ -59,7 +59,7 @@ test('Renders correctly', () => {
   expect(wrapper.findComponent(EditableText).exists()).toBe(true)
   expect(wrapper.findComponent(ActionBar).exists()).toBe(true)
   expect(wrapper.findComponent(Prompt).exists()).toBe(true)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Start typing your document orask Witsy to write something for you!Once you started you can ask Witsyto make modification on your document.If you highligh a portion of your text,Witsy will only update this portion.Also check out the Writing Assistantin the action bar in the lower right corner!Give it a go!')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder')
 })
 
 test('Initalizes correctly', async () => {
@@ -99,7 +99,7 @@ test('Clears chat', async () => {
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   emitEvent('action', 'clear')
   await vi.waitUntil(async () => !wrapper.vm.modified)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Start typing your document orask Witsy to write something for you!Once you started you can ask Witsyto make modification on your document.If you highligh a portion of your text,Witsy will only update this portion.Also check out the Writing Assistantin the action bar in the lower right corner!Give it a go!')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder')
 })
 
 test('Undo/redo', async () => {
@@ -110,7 +110,7 @@ test('Undo/redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
   emitEvent('action', 'undo')
   await vi.waitUntil(async () => wrapper.vm.undoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Start typing your document orask Witsy to write something for you!Once you started you can ask Witsyto make modification on your document.If you highligh a portion of your text,Witsy will only update this portion.Also check out the Writing Assistantin the action bar in the lower right corner!Give it a go!')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder')
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
   emitEvent('action', 'redo')

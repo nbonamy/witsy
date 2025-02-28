@@ -208,7 +208,7 @@ test('error server add', async () => {
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({ message: 'Some fields are required' }))
+  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({ message: 'mcp.serverEditor.validation.requiredFields' }))
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')

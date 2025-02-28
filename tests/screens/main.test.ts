@@ -204,7 +204,7 @@ test('Rename chat', async () => {
   mount(Main)
   emitEvent('rename-chat', store.history.chats[0])
   expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Rename Chat',
+    title: 'main.chat.rename',
     showCancelButton: true,
     input: 'text',
     inputValue: 'title',
@@ -218,7 +218,7 @@ test('Move chat', async () => {
   mount(Main)
   emitEvent('move-chat', 'chat')
   expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Select Destination Folder',
+    title: 'main.chat.moveToFolder',
     showCancelButton: true,
     input: 'select',
     inputValue: 'root',
@@ -235,8 +235,8 @@ test('Delete chat', async () => {
   mount(Main)
   emitEvent('delete-chat', 'chat')
   expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
-    message: 'Are you sure you want to delete this conversation?',
-    detail: 'You can\'t undo this action.',
+    message: 'main.chat.confirmDeleteSingle',
+    detail: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.chats).toHaveLength(0) 
@@ -246,7 +246,7 @@ test('Rename folder', async () => {
   mount(Main)
   emitEvent('rename-folder', 'folder')
   expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Rename Folder',
+    title: 'main.folder.rename',
     showCancelButton: true,
     input: 'text',
     inputValue: 'Folder',
@@ -259,8 +259,8 @@ test('Delete folder', async () => {
   mount(Main)
   emitEvent('delete-folder', 'folder')
   expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
-    message: 'Are you sure you want to delete this folder?',
-    detail: 'You can\'t undo this action.',
+    message: 'main.folder.confirmDelete',
+    detail: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.folders).toHaveLength(0)

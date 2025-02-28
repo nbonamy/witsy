@@ -266,7 +266,7 @@ test('Run assistant text actions', async () => {
   // copy
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hi')
-  expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
+  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
 
   // usage
   await wrapper.find('.actions .usage').trigger('click')
@@ -292,16 +292,16 @@ test('Run assistant text actions', async () => {
 
 
   // await wait(1500)
-  // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
+  // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
 })
 
 test('Run assistant legacy image actions', async () => {
   const wrapper = await mount(botMessageImageLegacy)
   await wrapper.find('.actions .copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenCalled()
-  expect(wrapper.find('.actions .copy').text()).toBe('Copied!')
+  expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
   // await wait(1500)
-  // expect(wrapper.find('.actions .copy').text()).not.toBe('Copied!')
+  // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
 
   await wrapper.find('.body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenCalledWith({
