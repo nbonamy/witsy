@@ -2,23 +2,23 @@
   <dialog class="editor">
     <form method="dialog">
       <header>
-        <div class="title">Expert details</div>
+        <div class="title">{{ t('experts.editor.title') }}</div>
       </header>
       <main>
         <div class="group">
-          <label>Name</label>
+          <label>{{ t('common.name') }}</label>
           <input type="text" v-model="name" required />
         </div>
         <div class="group">
-          <label>Prompt</label>
+          <label>{{ t('common.prompt') }}</label>
           <textarea v-model="prompt" required :disabled="isSystem"></textarea>
         </div>
         <div class="group" v-if="isSystem">
           <label></label>
-          <div>System Experts cannot be edited. Make a copy to customize this expert.</div>
+          <div>{{ t('experts.editor.systemExpertNotice') }}</div>
         </div>
         <div class="group" v-if="supportTriggerApps">
-          <label>Trigger Apps</label>
+          <label>{{ t('experts.editor.triggerApps') }}</label>
           <div class="subgroup list-with-actions">
             <div class="list">
               <template v-for="app in triggerApps" :key="app.identifier">
@@ -32,19 +32,21 @@
               <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
               <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
             </div>
-            <span v-pre>The prompt will be automatically selected when Prompt Anywhere is called from one of these applications</span>
+            <span v-pre>{{ t('experts.editor.triggerAppsDescription') }}</span>
           </div>
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { Expert, ExternalApp } from 'types/index'
 import { ref, computed, watch } from 'vue'
@@ -106,7 +108,7 @@ const onSave = (event: Event) => {
   // check
   if (!name.value || !prompt.value) {
     event.preventDefault()
-    Dialog.alert('All fields marked with * are required.')
+    Dialog.alert(t('experts.editor.validation.requiredFields'))
     return
   }
 

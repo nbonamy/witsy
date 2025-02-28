@@ -1,28 +1,28 @@
 
 <template>
   <select name="language" v-model="language" @change="emit('change')">
-    <option value="">{{ defaultText }}</option>
-    <option value="en">🇬🇧 English</option>
-    <option value="es">🇪🇸 Spanish</option>
-    <option value="fr">🇫🇷 French</option>
-    <option value="de">🇩🇪 German</option>
-    <option value="it">🇮🇹 Italian</option>
-    <option value="pt">🇵🇹 Portuguese</option>
-    <option value="nl">🇳🇱 Dutch</option>
-    <option value="pl">🇵🇱 Polish</option>
-    <option value="ru">🇷🇺 Russian</option>
-    <option value="ja">🇯🇵 Japanese</option>
-    <option value="ko">🇰🇷 Korean</option>
-    <option value="zh">🇨🇳 Chinese</option>
-    <option value="vi">🇻🇳 Vietnamese</option>
-    <option value="th">🇹🇭 Thai</option>
-    <option value="id">🇮🇩 Indonesian</option>
-    <option value="hi">🇮🇳 Hindi</option>
-    <option value="ar">🇸🇦 Arabic</option>
-    <option value="tr">🇹🇷 Turkish</option>
-    <option value="ms">🇲🇾 Malay</option>
-    <option value="fil">🇵🇭 Filipino</option>
-    <option value="sw">🇰🇪 Swahili</option>
+    <option value="">{{ $t(defaultText) }}</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="es">🇪🇸 Español</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="de">🇩🇪 Deutsch</option>
+      <option value="it">🇮🇹 Italiano</option>
+      <option value="pt">🇵🇹 Português</option>
+      <option value="nl">🇳🇱 Nederlands</option>
+      <option value="pl">🇵🇱 Polski</option>
+      <option value="ru">🇷🇺 Русский</option>
+      <option value="ja">🇯🇵 日本語</option>
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="vi">🇻🇳 Tiếng Việt</option>
+      <option value="th">🇹🇭 ไทย</option>
+      <option value="id">🇮🇩 Bahasa Indonesia</option>
+      <option value="hi">🇮🇳 हिन्दी</option>
+      <option value="ar">🇸🇦 العربية</option>
+      <option value="tr">🇹🇷 Türkçe</option>
+      <option value="ms">🇲🇾 Bahasa Melayu</option>
+      <option value="fil">🇵🇭 Filipino</option>
+      <option value="sw">🇰🇪 Kiswahili</option>
   </select>
 </template>
 
@@ -30,10 +30,10 @@
 
 const language = defineModel()
 
-const props = defineProps({
+defineProps({
   defaultText: {
     type: String,
-    default: '🤖 Let LLM decide'
+    default: 'common.language.auto'
   }
 })
 

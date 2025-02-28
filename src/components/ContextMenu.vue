@@ -2,11 +2,15 @@
   <Teleport to="body" :disabled="!teleport">
     <Overlay @click="onOverlay" />
     <div class="context-menu" :style="position">
-      <form v-if="showFilter"><div class="group filter"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
+      <form v-if="showFilter">
+        <div class="group filter">
+          <input v-model="filter" :placeholder="t('common.search')" autofocus="true" />
+        </div>
+      </form>
       <div class="actions">
         <template v-for="action in visibleActions" :key="action.action">
           <div class="item separator disabled" v-if="action.separator">
-            <hr  />
+            <hr />
           </div>
           <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap }" :data-action="action.action" @click="onAction(action)" v-else>
             <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
@@ -20,9 +24,10 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, computed, onMounted } from 'vue'
 import Overlay from '../components/Overlay.vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 export type MenuAction = {
   label?: string

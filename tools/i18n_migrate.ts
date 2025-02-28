@@ -78,14 +78,14 @@ class WriteFilePlugin extends llm.Plugin {
   engine.addPlugin(new WriteFilePlugin())
 
   const directories = [
-    'src/components',
-    'src/composables',
-    'src/plugins',
-    'src/scratchpad',
+    // 'src/components',
+    // 'src/composables',
+    // 'src/plugins',
+    // 'src/scratchpad',
     'src/screens',
-    'src/services',
+    // 'src/services',
     'src/settings',
-    'src/voice',
+    // 'src/voice',
   ]
 
   for (const directory of directories) {

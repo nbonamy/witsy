@@ -1,33 +1,35 @@
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to create videos from a text description.
+      {{ t('settings.plugins.video.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="group">
-      <label>Provider</label>
+      <label>{{ t('settings.plugins.video.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option value="replicate">Replicate</option>
       </select>
     </div>
     <div class="group" v-if="engine == 'replicate'">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="replicateAPIKey" @blur="save" />
     </div>
     <div class="group" v-if="engine == 'replicate'">
-      <label>Video model</label>
+      <label>{{ t('settings.plugins.video.videoModel') }}</label>
       <div class="subgroup">
-        <Combobox :items="replicate_models" placeholder="Enter a model or select from the list" v-model="video_model" @change="save"/>
-        <a href="https://replicate.com/collections/text-to-video" target="_blank">More about Replicate models</a><br/>
+        <Combobox :items="replicate_models" :placeholder="t('settings.plugins.video.replicate.modelPlaceholder')" v-model="video_model" @change="save"/>
+        <a href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.video.replicate.aboutModels') }}</a><br/>
       </div>
     </div>
   </div>  
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'

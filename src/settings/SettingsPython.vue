@@ -1,22 +1,21 @@
-
 <template>
   <div>
     <div class="description">
-      <b>Warning!</b> Enabling this plugin will allow LLM engines to run arbitray code on your computer.
-      There is no way to predict if the code that LLM engines will generate is safe or not.
-      <b>Use at your own risk</b>!
+      <b>{{ t('settings.plugins.python.warning') }}</b> {{ t('settings.plugins.python.description1') }}
+      {{ t('settings.plugins.python.description2') }}
+      <b>{{ t('settings.plugins.python.useAtOwnRisk') }}</b>!
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="group">
-      <label>Python Binary</label>
+      <label>{{ t('settings.plugins.python.binaryPath') }}</label>
       <div class="subgroup">
         <input type="text" v-model="binpath" @change="save">
         <div class="actions">
-          <button @click.prevent="pick">Pick</button>  
-          <button @click.prevent="search" class="search">Search</button>
+          <button @click.prevent="pick">{{ t('common.pick') }}</button>  
+          <button @click.prevent="search" class="search">{{ t('settings.plugins.python.search') }}</button>
         </div>
       </div>
     </div>
@@ -24,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'

@@ -1,4 +1,3 @@
-
 <template>
   <div class="content large" @click="closeContextMenu">
     <div class="experts sticky-table-container">
@@ -23,12 +22,12 @@
       </table>
     </div>
     <div class="actions">
-      <button @click.prevent="onNew">New</button>
-      <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
-      <button @click.prevent="onCopy(selected)" :disabled="!selected">Copy</button>
-      <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
+      <button @click.prevent="onNew">{{ t('settings.experts.new') }}</button>
+      <button @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+      <button @click.prevent="onCopy(selected)" :disabled="!selected">{{ t('settings.experts.copy') }}</button>
+      <button @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
       <div class="right">
-        <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
+        <button @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.experts.more') }} {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
@@ -37,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { Expert } from 'types/index'
 import { Ref, ref, computed } from 'vue'
@@ -57,19 +58,19 @@ const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Export', action: 'export' },
-  { label: 'Import', action: 'import' },
-  { label: 'Select All', action: 'select' },
-  { label: 'Unselect All', action: 'unselect' },
-  { label: 'Sort Alphabetically', action: 'sort' },
+  { label: t('settings.experts.export'), action: 'export' },
+  { label: t('settings.experts.import'), action: 'import' },
+  { label: t('settings.experts.selectAll'), action: 'select' },
+  { label: t('settings.experts.unselectAll'), action: 'unselect' },
+  { label: t('settings.experts.sortAlphabetically'), action: 'sort' },
 ]
 
 const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
-  { field: 'name', title: 'Name' },
-  { field: 'move', title: 'Move', },
+  { field: 'name', title: t('common.name') },
+  { field: 'move', title: t('common.move'), },
 ]
 
 const onMoveDown = (expert: Expert) => {
@@ -155,17 +156,17 @@ const onImport = () => {
   if (window.api.experts.import()) {
     store.loadExperts()
     load()
-    Dialog.alert('Experts file imported successfully')
+    Dialog.alert(t('settings.experts.importSuccess'))
   } else {
-    Dialog.alert('Failed to import experts file')
+    Dialog.alert(t('settings.experts.importError'))
   }
 }
 
 const onExport = () => {
   if (window.api.experts.export()) {
-    Dialog.alert('Experts file exported successfully')
+    Dialog.alert(t('settings.experts.exportSuccess'))
   } else {
-    Dialog.alert('Failed to export experts file')
+    Dialog.alert(t('settings.experts.exportError'))
   }
 }
 
@@ -183,7 +184,7 @@ const onCopy = (expert: Expert) => {
 
   const copy = newExpert()
   copy.id = uuidv4()
-  copy.name = expert.name + ' (copy)'
+  copy.name = expert.name + ' (' + t('settings.experts.copy') + ')'
   copy.prompt = expert.prompt
   copy.triggerApps = expert.triggerApps
 
@@ -204,9 +205,9 @@ const onEdit = (expert: Expert) => {
 const onDelete = () => {
   Dialog.show({
     target: document.querySelector('.settings .experts'),
-    title: 'Are you sure you want to delete this expert?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('settings.experts.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

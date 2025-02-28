@@ -1,4 +1,3 @@
-
 <template>
   <div class="scratchpad">
     <ScratchpadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
@@ -13,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 // components
 import { FileContents } from 'types'
@@ -39,19 +40,7 @@ const { onEvent, emitEvent } = useEventBus()
 // load store
 store.load()
 
-const placeholder = ref(`Start typing your document or
-ask Witsy to write something for you!
-
-Once you started you can ask Witsy
-to make modification on your document.
-
-If you highligh a portion of your text,
-Witsy will only update this portion.
-
-Also check out the Writing Assistant
-in the action bar in the lower right corner!
-
-Give it a go!`.replaceAll('\n', '<br/>'))
+const placeholder = ref(t('scratchpad.placeholder').replaceAll('\n', '<br/>'))
 
 const chat = ref(null)
 const editor = ref(null)
@@ -101,10 +90,10 @@ onMounted(() => {
       e.returnValue = false
       setTimeout(() => {
         Dialog.show({
-          title: 'You have unsaved changes. You will lose your work if you close this window.',
+          title: t('common.confirmation.unsavedChanges'),
           showCancelButton: true,
-          confirmButtonText: 'Do not close',
-          cancelButtonText: 'Close anyway',
+          confirmButtonText: t('common.confirmation.doNotClose'),
+          cancelButtonText: t('common.confirmation.closeAnyway'),
           reverseButtons: true
         }).then((result) => {
           if (result.isDismissed) {
@@ -329,10 +318,10 @@ const confirmOverwrite = (callback: CallableFunction) => {
   }
 
   Dialog.show({
-    title: 'You have unsaved changes. You will lose your work if you continue.',
+    title: t('common.confirmation.continueQuestion'),
     showCancelButton: true,
-    confirmButtonText: 'Cancel',
-    cancelButtonText: 'Continue',
+    confirmButtonText: t('common.cancel'),
+    cancelButtonText: t('common.confirmation.continue'),
     reverseButtons: true
   }).then((result) => {
     if (result.isDismissed) {
@@ -362,7 +351,7 @@ const onLoad = () => {
       const fileContents = file as FileContents
       const scratchpad = JSON.parse(window.api.base64.decode(fileContents.contents))
       if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
-        Dialog.alert('This file is not a scratchpad file. Please try again with another file.')
+        Dialog.alert(t('scratchpad.fileError'))
       }
 
       // reset
@@ -384,7 +373,7 @@ const onLoad = () => {
 
     } catch (err) {
       console.error(err)
-      Dialog.alert('Error while loading scratchpad file')
+      Dialog.alert(t('scratchpad.loadingError'))
     }
   })
 
@@ -543,7 +532,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   } catch (err) {
     console.error(err)
-    Dialog.alert('Error while generating text')
+    Dialog.alert(t('scratchpad.generationError'))
   }
 
   // done

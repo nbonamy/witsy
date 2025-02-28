@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 // components
 import { Ref, ref, onMounted, nextTick, watch } from 'vue'
@@ -41,7 +43,7 @@ const assistant = ref(new Assistant(store.config))
 
 const chatEditor: Ref<typeof ChatEditor> = ref(null)
 const sidebar: Ref<typeof Sidebar> = ref(null)
-const chatEditorConfirmButtonText = ref('Save')
+const chatEditorConfirmButtonText = ref('common.save')
 const chatEditorCallback: Ref<ChatEditorCallback> = ref(() => {})
 
 const props = defineProps({
@@ -189,7 +191,7 @@ const onSelectChat = (chat: Chat) => {
 const onRenameChat = async (chat: Chat) => {
   // prompt
   const { value: title } = await Dialog.show({
-    title: 'Rename Chat',
+    title: t('main.chat.rename'),
     input: 'text',
     inputValue: chat.title,
     showCancelButton: true,
@@ -208,7 +210,7 @@ const onMoveChat = async (chatId: string|string[]) => {
     : null
 
   const { value: folderId } = await Dialog.show({
-    title: 'Select Destination Folder',
+    title: t('main.chat.moveToFolder'),
     input: 'select',
     inputValue: srcFolder?.id || store.rootFolder.id,
     inputOptions: [
@@ -253,14 +255,14 @@ const onDeleteChat = async (chatId: string|string[]) => {
 
   const chatIds: string[] = Array.isArray(chatId) ? chatId : [chatId]
   const title = chatIds.length > 1
-    ? 'Are you sure you want to delete these conversations?'
-    : 'Are you sure you want to delete this conversation?'
+    ? t('main.chat.confirmDeleteMultiple')
+    : t('main.chat.confirmDeleteSingle')
 
   Dialog.show({
     target: document.querySelector('.main'),
     title: title,
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     
@@ -283,7 +285,7 @@ const deleteChats = (chatIds: string[]) => {
   for (const chatId of chatIds) {
 
     // remove from chats list
-    let index = store.history.chats.findIndex((c) => c.uuid === chatId)
+    let index = store.history.chats.find((c) => c.uuid === chatId)
     if (index != -1) {
       store.history.chats[index].delete()
       store.history.chats.splice(index, 1)
@@ -305,7 +307,7 @@ const deleteChats = (chatIds: string[]) => {
 const onForkChat = (message: Message) => {
 
   // set up editor for forking
-  chatEditorConfirmButtonText.value = 'Fork'
+  chatEditorConfirmButtonText.value = 'common.fork'
   chatEditorCallback.value = ({ title, engine, model }) => {
     const chat = assistant.value.chat
     forkChat(chat, message, title, engine, model)
@@ -351,7 +353,7 @@ const onRenameFolder = async (folderId: string) => {
   const folder = store.history.folders.find((f) => f.id === folderId)
   if (folder) {
     const { value: name } = await Dialog.show({
-      title: 'Rename Folder',
+      title: t('main.folder.rename'),
       input: 'text',
       inputValue: folder.name,
       showCancelButton: true,
@@ -365,11 +367,11 @@ const onRenameFolder = async (folderId: string) => {
 
 const onDeleteFolder = async (folderId: string) => {
   Dialog.show({
-    title: 'Are you sure you want to delete this folder?',
-    text: 'You can\'t undo this action.',
+    title: t('main.folder.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
     customClass: { denyButton: 'alert-neutral' },
-    confirmButtonText: 'OK but keep conversations',
-    denyButtonText: 'OK and delete conversations',
+    confirmButtonText: t('main.folder.keepConversations'),
+    denyButtonText: t('main.folder.deleteConversations'),
     showCancelButton: true,
     showDenyButton: true,
   }).then((result) => {
@@ -464,11 +466,11 @@ const onStopGeneration = async () => {
 const onUpdateAvailable = () => {
 
   Dialog.show({
-    title: 'Application Update Available',
-    text: 'A new version has been downloaded. Restart the application to apply the update.',
+    title: t('main.update.available'),
+    text: t('main.update.restart'),
     showCancelButton: true,
-    confirmButtonText: 'Restart',
-    cancelButtonText: 'Later',
+    confirmButtonText: t('main.update.restartNow'),
+    cancelButtonText: t('main.update.later'),
   }).then((result) => {
     if (result.isConfirmed) {
       window.api.update.apply()

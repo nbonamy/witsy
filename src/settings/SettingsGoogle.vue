@@ -1,30 +1,31 @@
 <template>
   <div>
     <div class="group">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <div class="subgroup">
         <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
-        <a href="https://aistudio.google.com/app/apikey" target="_blank">Get your API key</a>
+        <a href="https://aistudio.google.com/app/apikey" target="_blank">{{ t('settings.engines.getApiKey') }}</a>
       </div>
     </div>
     <div class="group">
-      <label>Chat model</label>
+      <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
           <option v-for="model in chat_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select>
         <br />
-        <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">More about Google models</a><br/>
-        <a href="https://ai.google.dev/pricing" target="_blank">Google pricing</a>
+        <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">{{ t('settings.engines.google.aboutModels') }}</a><br/>
+        <a href="https://ai.google.dev/pricing" target="_blank">{{ t('settings.engines.google.pricing') }}</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
   </div>  
 </template>
 
-
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -32,7 +33,7 @@ import LlmFactory from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
-const refreshLabel = ref('Refresh')
+const refreshLabel = ref(t('common.refresh'))
 const chat_model = ref(null)
 //const image_model = ref(null)
 const chat_models = ref([])
@@ -47,13 +48,13 @@ const load = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing…'
+  refreshLabel.value = t('common.refreshing')
   setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
 }
 
 const getModels = async () => {
@@ -64,7 +65,7 @@ const getModels = async () => {
   if (!success) {
     chat_models.value = []
     //image_models.value = []
-    setEphemeralRefreshLabel('Error!')
+    setEphemeralRefreshLabel(t('common.error'))
     return
   }
 
@@ -72,7 +73,7 @@ const getModels = async () => {
   load()
 
   // done
-  setEphemeralRefreshLabel('Done!')
+  setEphemeralRefreshLabel(t('common.done'))
 
 }
 

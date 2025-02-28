@@ -1,33 +1,34 @@
 <template>
   <AlertDialog id="mcp-variable-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
     <template v-slot:header>
-      <div class="title">MCP Environment Variable</div>
+      <div class="title">{{ t('mcp.variableEditor.title') }}</div>
     </template>
     <template v-slot:body>
       <div class="group">
-        <label>Key</label>
+        <label>{{ t('common.key') }}</label>
         <input type="text" name="key" v-model="key" autofocus spellcheck="false" autocapitalize="false"
           autocomplete="false" autocorrect="false" />
       </div>
       <div class="group">
-        <label>Value</label>
+        <label>{{ t('common.value') }}</label>
         <input type="text" name="value" v-model="value" autofocus spellcheck="false" autocapitalize="false"
           autocomplete="false" autocorrect="false" />
       </div>
     </template>
     <template v-slot:footer>
       <div class="buttons">
-        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
-        <button name="save" @click="onSave" class="alert-confirm">Save</button>
+        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>
     </template>
   </AlertDialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, onMounted, watch, PropType } from 'vue'
-import { type McpServer } from '../types/mcp'
 import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
 
@@ -63,9 +64,9 @@ const onSave = () => {
 
   if (!key.value.length) {
     Dialog.show({
-      title: 'Some fields are required',
-      text: 'Make sure you enter a key for this variable.',
-      confirmButtonText: 'OK',
+      title: t('mcp.serverEditor.validation.requiredFields'),
+      text: t('mcp.variableEditor.validation.keyRequired'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }

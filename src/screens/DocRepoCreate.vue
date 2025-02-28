@@ -2,32 +2,32 @@
   <dialog class="editor" id="docrepocreate">
     <form method="dialog">
       <header>
-        <div class="title">Create Document Repository</div>
+        <div class="title">{{ t('docRepo.create.title') }}</div>
       </header>
       <main>
         <div class="group" style="margin-bottom: 16px">
           <label></label>
-          <span><b>Warning</b>: embedding model cannot be changed once repository is created</span>
+          <span><b>{{ t('common.warning') }}</b>: {{ t('docRepo.create.embeddingWarning') }}</span>
         </div>
         <div class="group name">
-          <label>Name</label>
+          <label>{{ t('common.name') }}</label>
           <input type="text" ref="nameInput" v-model="name" required />
         </div>
         <EmbeddingSelector v-model:engine="engine" v-model:model="model" />
       </main>
       <footer>
-        <button @click="onCreate" class="default">Create</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button @click="onCreate" class="default">{{ t('common.create') }}</button>
+        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
-import { Model } from 'multi-llm-ts'
 import { ref, onMounted, nextTick } from 'vue'
-import { store } from '../services/store'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import Dialog from '../composables/dialog'
 
@@ -46,7 +46,7 @@ onMounted(() => {
 
 const onOpen = () => {
   document.querySelector<HTMLDialogElement>('#docrepocreate').showModal()
-  name.value = 'Document Repository'
+  name.value = t('docRepo.create.defaultName')
   nextTick(() => {
     nameInput.value.focus()
     nameInput.value.select()
@@ -58,7 +58,7 @@ const onCreate = (event: Event) => {
   // check
   if (!name.value || !engine.value || !model.value) {
     event.preventDefault()
-    Dialog.alert('All fields marked with * are required.')
+    Dialog.alert(t('commands.editor.validation.requiredFields'))
     return
   } 
 

@@ -1,7 +1,7 @@
 <template>
   <dialog class="docrepos" id="docrepos">
     <form method="dialog">
-      <DialogHeader title="Document Repositories" @close="onClose" />
+      <DialogHeader :title="t('docRepo.repositories.title')" @close="onClose" />
       <main>
         <div class="master list-with-actions">
           <div class="list">
@@ -19,17 +19,17 @@
         </div>
         <div class="details" v-if="selectedRepo">
           <div class="group name">
-            <label>Name</label>
+            <label>{{ t('common.name') }}</label>
             <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
           </div>
           <div class="group embeddings">
-            <label>Embeddings</label>
+            <label>{{ t('common.embeddings') }}</label>
             <input type="text" :value="embeddingModel" disabled />
             <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
           <div class="group documents list-with-actions">
             <div class="header">
-              <label>Documents</label>
+              <label>{{ t('common.documents') }}</label>
               <Spinner v-if="loading" />
             </div>
             <div class="list">
@@ -49,7 +49,7 @@
         </div>
         <div class="empty" v-else>
           <div>
-            You don't have any repositories yet.<br />Click on the <span class="button">+</span> button to create one.
+            {{ t('docRepo.repositories.noRepositories') }}<br />{{ t('docRepo.repositories.clickToCreate') }}
           </div>
         </div>
       </main>
@@ -60,6 +60,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, onMounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
@@ -89,8 +91,8 @@ const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Add Files...', action: 'addFiles' },
-  { label: 'Add Folder...', action: 'addFolder' },
+  { label: t('common.actions.addFiles'), action: 'addFiles' },
+  { label: t('common.actions.addFolder'), action: 'addFolder' },
 ]
 
 const docIcon = (doc: DocumentSource) => {
@@ -104,7 +106,7 @@ const docIcon = (doc: DocumentSource) => {
 
 const docLabel = (doc: DocumentSource) => {
   if (doc.type === 'folder') {
-    return `${doc.filename} (${doc.items.length} files)`
+    return `${doc.filename} (${doc.items.length} ${t('common.files')})`
   } else {
     return doc.filename
   }
@@ -177,9 +179,9 @@ const onDelete = () => {
   if (!selectedRepo.value) return
   Dialog.show({
     target: document.querySelector('.docrepos'),
-    title: 'Are you sure you want to delete this repository?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('common.confirmation.deleteRepository'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
@@ -260,9 +262,9 @@ const onDelDoc = () => {
   if (selectedDocs.value.length == 0) return
   Dialog.show({
     target: document.querySelector('.docrepos'),
-    title: 'Are you sure you want to delete this document?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('common.confirmation.deleteDocument'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

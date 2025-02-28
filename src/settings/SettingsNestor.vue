@@ -1,26 +1,27 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to access local API on the network.
-      Check <a href="https://github.com/nbonamy/nestor" target="_blank">https://github.com/nbonamy/nestor</a>.
+      {{ t('settings.plugins.nestor.description') }}
+      <a href="https://github.com/nbonamy/nestor" target="_blank">{{ t('settings.plugins.nestor.githubLink') }}</a>.
     </div>
     <div class="description status" v-if="status">
-      <span v-if="status.hubs?.length == 0">No Nestor hubs available</span>
+      <span v-if="status.hubs?.length == 0">{{ t('settings.plugins.nestor.noHubs') }}</span>
       <span v-else><b>
-        <span>Connected to {{ status.hubs.length }} Nestor hub{{ status.hubs.length > 1 ? 's' : '' }}</span>
-        <span v-if="tools.length > 0"><br/>Total of {{ tools.length }} service{{ tools.length > 1 ? 's' : '' }} available</span>
-        <span v-else><br/>No service available</span>
+        <span>{{ t('settings.plugins.nestor.connectedToHubs', { count: status.hubs.length }) }}</span>
+        <span v-if="tools.length > 0"><br/>{{ t('settings.plugins.nestor.totalServices', { count: tools.length }) }}</span>
+        <span v-else><br/>{{ t('settings.plugins.nestor.noServices') }}</span>
       </b></span>
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'

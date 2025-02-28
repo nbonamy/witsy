@@ -2,28 +2,30 @@
   <AlertDialog id="chat-editor" ref="dialog" @keyup.enter="onSave">
     <template v-slot:body>
       <div class="group">
-        <label>Title</label>
+        <label>{{ t('chat.editor.title') }}</label>
         <input type="text" v-model="title" />
       </div>
       <div class="group">
-        <label>LLM Provider</label>
+        <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine"/>
       </div>
       <div class="group">
-        <label>LLM Model</label>
+        <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" />
       </div>
     </template> 
     <template v-slot:footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
-        <button @click="onSave" class="alert-confirm">{{ confirmButtonText }}</button>
+        <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click="onSave" class="alert-confirm">{{ t(confirmButtonText) }}</button>
       </div>
     </template>
   </AlertDialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, onMounted, watch, PropType } from 'vue'
 import { store } from '../services/store'
@@ -51,7 +53,7 @@ const props = defineProps({
   },
   confirmButtonText: {
     type: String,
-    default: 'Save',
+    default: 'common.save',
   },
 })
 
@@ -80,9 +82,9 @@ const onSave = () => {
 
   if (!title.value.length || !engine.value.length || !model.value.length) {
     Dialog.show({
-      title: 'All fields are required',
-      text: 'Make sure you enter a title for this chat.',
-      confirmButtonText: 'OK',
+      title: t('chat.editor.validation.requiredFields'),
+      text: t('chat.editor.validation.titleRequired'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }

@@ -1,17 +1,18 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to download transcripts of YouTube videos.
+      {{ t('settings.plugins.youtube.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'

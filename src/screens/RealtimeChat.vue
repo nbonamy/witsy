@@ -31,10 +31,10 @@
 
       <div class="cost-container">
         <div class="total">
-          <div class="title">Estimated cost:</div>
+          <div class="title">{{ t('common.estimatedCost') }}</div>
           <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n: number) => n.toFixed(6)"/></div>
-          <div class="note">based on<br>gpt-4o-realtime-preview-2024-12-17<br>
-            <a href="https://openai.com/api/pricing" target="_blank">costs</a> as of 19-Dec-2024</div>
+          <div class="note">{{ t('common.basedOn') }}<br>gpt-4o-realtime-preview-2024-12-17<br>
+            <a href="https://openai.com/api/pricing" target="_blank">{{ t('common.costsAsOf') }}</a> 19-Dec-2024</div>
         </div>
       </div>
 
@@ -44,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { type RealtimeVoice } from '../types/config'
 import { Ref, ref, computed, onMounted } from 'vue'
@@ -87,7 +89,7 @@ const sessionTotals: Ref<Stats> = ref({
   }
 })
 
-const kWelcomeMessage = 'Click the blob to start chatting'
+const kWelcomeMessage = t('common.clickToStart')
 
 const blob = ref<typeof AnimatedBlob>(null)
 const model: Ref<string> = ref(store.config.engines.openai.realtime.model || 'davinci')
@@ -246,7 +248,7 @@ const startSession = async () => {
   try {
 
     //status.className = 'status'
-    status.value = 'Requesting microphone access...'
+    status.value = t('realtimeChat.requestingMicrophone')
     state.value = 'active'
 
     audioStream = await navigator.mediaDevices.getUserMedia({
@@ -254,7 +256,7 @@ const startSession = async () => {
       video: false
     })
 
-    status.value = 'Establishing connection...'
+    status.value = t('realtimeChat.establishingConnection')
 
     peerConnection = await createRealtimeSession(
       audioStream,
@@ -267,11 +269,11 @@ const startSession = async () => {
     // }, 250)
 
     //status.className = 'status success'
-    status.value = 'Session established successfully!'
+    status.value = t('realtimeChat.sessionEstablished')
 
   } catch (err) {
     //status.className = 'status error'
-    status.value = `Error: ${err.message}`
+    status.value = `${t('realtimeChat.errorPrefix')}${err.message}`
     console.error('Session error:', err)
     stopSession()
   }

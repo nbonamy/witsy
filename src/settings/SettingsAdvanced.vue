@@ -1,60 +1,61 @@
-
 <template>
   <div class="content large">
     <div class="group vision top checkbox">
-      <label>Automatically switch to vision model</label>
+      <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
       <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
     </div>
     <div class="group autosave checkbox">
-      <label>Always save prompt sessions in chat history</label>
+      <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       <input type="checkbox" v-model="autoSavePrompt" @change="save" />
     </div>
     <hr/>
     <div class="group length">
-      <label>Conversation length</label>
+      <label>{{ t('settings.advanced.conversationLength') }}</label>
       <input type="number" min="1" v-model="conversationLength" @change="save">
     </div>
     <div class="group size">
-      <label>Image resize</label>
+      <label>{{ t('settings.advanced.imageResize') }}</label>
       <select v-model="imageResize" @change="save">
-        <option value="0">No resize</option>
-        <option value="512">Resize largest dimension to 512 pixels</option>
-        <option value="768">Resize largest dimension to 768 pixels</option>
-        <option value="1024">Resize largest dimension to 1024 pixels</option>
-        <option value="2048">Resize largest dimension to 2048 pixels</option>
+        <option value="0">{{ t('settings.advanced.imageResizeOptions.none') }}</option>
+        <option value="512">{{ t('settings.advanced.imageResizeOptions.size', { size: 512 }) }}</option>
+        <option value="768">{{ t('settings.advanced.imageResizeOptions.size', { size: 768 }) }}</option>
+        <option value="1024">{{ t('settings.advanced.imageResizeOptions.size', { size: 1024 }) }}</option>
+        <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
       </select>
     </div>
     <div class="group instruction">
-      <label>System instructions</label>
+      <label>{{ t('settings.advanced.systemInstructions') }}</label>
       <div class="subgroup">
         <select v-model="instructions" @change="onChangeInstructions">
-          <option value="instructions.default">Chat - Instructions</option>
-          <option value="instructions.docquery">Document query - Instructions</option>
-          <option value="instructions.titling">Chat title - Instructions</option>
-          <option value="instructions.titling_user">Chat title - Prompt</option>
-          <option value="plugins.image.description">Image Plugin - Description (1024 characters max)</option>
-          <option value="plugins.video.description">Video Plugin - Description (1024 characters max)</option>
-          <option value="plugins.memory.description">Memory Plugin - Description (1024 characters max)</option>
-          <option value="instructions.scratchpad.system">Scratchpad - Instructions</option>
-          <option value="instructions.scratchpad.prompt">Scratchpad - Prompt</option>
-          <option value="instructions.scratchpad.spellcheck">Scratchpad - Spellcheck</option>
-          <option value="instructions.scratchpad.improve">Scratchpad - Improve</option>
-          <option value="instructions.scratchpad.takeaways">Scratchpad - Takeaways</option>
-          <option value="instructions.scratchpad.title">Scratchpad - Title</option>
-          <option value="instructions.scratchpad.simplify">Scratchpad - Simplify</option>
-          <option value="instructions.scratchpad.expand">Scratchpad - Expand</option>
-          <option value="instructions.scratchpad.complete">Scratchpad - Complete</option>
+          <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
+          <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
+          <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
+          <option value="instructions.titling_user">{{ t('settings.advanced.instructions.titling_user') }}</option>
+          <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
+          <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
+          <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>
+          <option value="instructions.scratchpad.system">{{ t('settings.advanced.instructions.scratchpad_system') }}</option>
+          <option value="instructions.scratchpad.prompt">{{ t('settings.advanced.instructions.scratchpad_prompt') }}</option>
+          <option value="instructions.scratchpad.spellcheck">{{ t('settings.advanced.instructions.scratchpad_spellcheck') }}</option>
+          <option value="instructions.scratchpad.improve">{{ t('settings.advanced.instructions.scratchpad_improve') }}</option>
+          <option value="instructions.scratchpad.takeaways">{{ t('settings.advanced.instructions.scratchpad_takeaways') }}</option>
+          <option value="instructions.scratchpad.title">{{ t('settings.advanced.instructions.scratchpad_title') }}</option>
+          <option value="instructions.scratchpad.simplify">{{ t('settings.advanced.instructions.scratchpad_simplify') }}</option>
+          <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
+          <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
         </select>
         <textarea v-model="prompt" @change="save" />
-        <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
+        <a href="#" @click="onResetDefaultInstructions">{{ t('settings.advanced.resetToDefault') }}</a>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
-import { ref, } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
 import defaults from '../../defaults/settings.json'
 
@@ -117,7 +118,6 @@ const save = () => {
 }
 
 defineExpose({ load })
-
 </script>
 
 <style scoped>
@@ -127,7 +127,6 @@ defineExpose({ load })
 </style>
 
 <style scoped>
-
 .checkbox label {
   width: 370px;
 }
@@ -139,7 +138,6 @@ hr {
   border-top: 1px solid var(--control-bg-color);
   margin: 1em 0;
   padding: 0;
-
 }
 
 input::-webkit-outer-spin-button,
@@ -156,5 +154,4 @@ input::-webkit-inner-spin-button {
   width: 100%;
   height: 100px;
 }
-
 </style>

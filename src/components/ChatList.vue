@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <div class="button-group">
-      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">Timeline</button>
-      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">Folders</button>
+      <button :class="{active: displayMode == 'timeline'}" @click="setDisplayMode('timeline')">{{ t('chatList.displayMode.timeline') }}</button>
+      <button :class="{active: displayMode == 'folder'}" @click="setDisplayMode('folder')">{{ t('chatList.displayMode.folders') }}</button>
     </div>
   </div>
   <div class="chats" ref="divChats">
@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ChatListMode } from '../types/config'
 import { type Ref, ref, computed, onMounted, PropType } from 'vue'
@@ -66,9 +68,9 @@ const menuY = ref(0)
 const targetRow: Ref<Chat|null> = ref(null)
 
 const contextMenuActions = () => [
-  { label: 'Rename', action: 'rename' },
-  ...(props.displayMode === 'folder' ? [ { label: 'Move', action: 'move' } ] : []),
-  { label: 'Delete', action: 'delete' },
+  { label: t('common.rename'), action: 'rename' },
+  ...(props.displayMode === 'folder' ? [ { label: t('common.move'), action: 'move' } ] : []),
+  { label: t('common.delete'), action: 'delete' },
 ]
 
 let scrollEndTimeout: NodeJS.Timeout|null = null

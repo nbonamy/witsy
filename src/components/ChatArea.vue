@@ -1,4 +1,3 @@
-
 <template>
   <div class="chat-area">
     <div class="toolbar" :class="{ 'is-left-most': isLeftMost }">
@@ -31,6 +30,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
@@ -66,7 +67,6 @@ const chatMenuPosition = computed(() => {
 })
 
 const chatMenuActions = computed(() => {
-
   // // show default is chat not setup yet
   // let { engine, model } = llmFactory.getChatEngineModel()
   // if (props.chat.engine) {
@@ -78,10 +78,10 @@ const chatMenuActions = computed(() => {
     // { label: `${engine} ${model}`, disabled: true },
     // { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
     // { label: 'Model Settings', action: 'modelSettings', disabled: false },
-    { label: props.chat?.temporary ? 'Save Chat' : 'Temporary Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: !hasMessages() },
-    { label: 'Delete', action: 'delete', disabled: !isSaved() },
+    { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
+    { label: t('common.rename'), action: 'rename', disabled: false },
+    { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
+    { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
 })
 

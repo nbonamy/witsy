@@ -1,25 +1,26 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to access <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">Model Context Protocol</a> (MCP) servers.
-      Discover and install MCP servers from the <a href="https://smithery.ai" target="_blank">Smithery</a>.
+      {{ t('settings.plugins.mcp.description') }}
+      <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">{{ t('settings.plugins.mcp.modelContextProtocol') }}</a> (MCP)
+      {{ t('settings.plugins.mcp.servers') }}
+      <a href="https://smithery.ai" target="_blank">{{ t('settings.plugins.mcp.smithery') }}</a>.
     </div>
     <!--div class="description status" v-if="status">
-      <span v-if="status.servers == 0">No MCP Servers found</span>
+      <span v-if="status.servers == 0">{{ t('settings.plugins.mcp.noServersFound') }}</span>
       <span v-else><b>
-        <span>Connected to {{ status.servers }} MCP server{{ status.servers > 1 ? 's' : '' }}</span>
-        <span v-if="status.tools > 0"><br/>Total of {{ status.tools }} service{{ status.tools > 1 ? 's' : '' }} available</span>
-        <span v-else><br/>No tools available</span>
+        <span>{{ t('settings.plugins.mcp.connectedToServers', { count: status.servers }) }}</span>
+        <span v-if="status.tools > 0"><br/>{{ t('settings.plugins.mcp.totalTools', { count: status.tools }) }}</span>
+        <span v-else><br/>{{ t('settings.plugins.mcp.noTools') }}</span>
       </b></span>
     </div-->
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="servers list-with-actions">
       <div class="header">
-        <span>MCP Servers:</span>
+        <span>{{ t('settings.plugins.mcp.mcpServers') }}</span>
         <Spinner v-if="loading" />
       </div>
       <div class="sticky-table-container" v-if="servers.length">
@@ -27,9 +28,9 @@
           <thead>
             <tr>
               <th>&nbsp;</th>
-              <th>Type</th>
-              <th>Target</th>
-              <th>Status</th>
+              <th>{{ t('common.type') }}</th>
+              <th>{{ t('settings.plugins.mcp.target') }}</th>
+              <th>{{ t('settings.plugins.mcp.status') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -50,8 +51,8 @@
         <button class="button remove" @click.prevent="onDelete" :disabled="!selected"><BIconDash /></button>
       </div>
       <div style="margin-top: 16px">
-        <button name="reload" @click.prevent="reload">Refresh</button>
-        <button name="restart" @click.prevent="onRestart">Restart client</button>
+        <button name="reload" @click.prevent="reload">{{ t('common.refresh') }}</button>
+        <button name="restart" @click.prevent="onRestart">{{ t('settings.plugins.mcp.restartClient') }}</button>
       </div>
     </div>
     <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="above" :teleport="false" />
@@ -60,6 +61,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
@@ -122,9 +125,9 @@ const reload = async () => {
 
 const showLogs = (server: McpServer) => {
   Dialog.show({
-    title: 'MCP Server Logs',
+    title: t('settings.plugins.mcp.serverLogs'),
     text: status.value.logs[server.uuid].join(''),
-    confirmButtonText: 'Close',
+    confirmButtonText: t('common.close'),
   })
 }
 
@@ -139,8 +142,8 @@ const onRestart = async () => {
 
 // Add the context menu actions
 const addMenuActions = [
-  { label: 'Add custom server…', action: 'custom' },
-  { label: 'Import Smithery.ai server…', action: 'smithery' },
+  { label: t('settings.plugins.mcp.addCustomServer'), action: 'custom' },
+  { label: t('settings.plugins.mcp.importSmitheryServer'), action: 'smithery' },
 ]
 
 // Add these methods to handle the plus button menu
@@ -182,9 +185,9 @@ const onDelete = async () => {
   if (!selected.value) return
   Dialog.show({
     target: document.querySelector('.settings .plugins'),
-    title: 'Are you sure you want to delete this server?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('settings.plugins.mcp.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then(async (result) => {
     if (result.isConfirmed) {
@@ -242,9 +245,9 @@ const onInstall = async ({ registry, server }) => {
     if (!rc) {
       loading.value = false
       Dialog.show({
-        title: 'Failed to install server',
-        text: 'You can copy the install command to your clipboard and try it in a Terminal.',
-        confirmButtonText: 'Copy',
+        title: t('settings.plugins.mcp.failedToInstall'),
+        text: t('settings.plugins.mcp.copyInstallCommand'),
+        confirmButtonText: t('common.copy'),
         showCancelButton: true,
       }).then((result) => {
         if (result.isConfirmed) {
