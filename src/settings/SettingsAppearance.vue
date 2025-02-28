@@ -1,50 +1,50 @@
 <template>
   <div class="content">
     <div class="group appearance">
-      <label>Appearance</label>
+      <label>{{ t('settings.appearance.theme') }}</label>
       <div @click="setAppearanceTheme('light')" :class="{ selected: appearance == 'light' }">
         <img src="/assets/appearance-light.png" />
-        Light
+        {{ t('settings.appearance.themes.light') }}
       </div>
       <div @click="setAppearanceTheme('dark')" :class="{ selected: appearance == 'dark' }">
         <img src="/assets/appearance-dark.png" />
-        Dark
+        {{ t('settings.appearance.themes.dark') }}
       </div>
       <div @click="setAppearanceTheme('system')" :class="{ selected: appearance == 'system' }">
         <img src="/assets/appearance-system.png" />
-        System
+        {{ t('settings.appearance.themes.system') }}
       </div>
     </div>
     <div class="group tint">
-      <label>Dark tint</label>
+      <label>{{ t('settings.appearance.darkTint') }}</label>
       <select v-model="tint" @change="onTintChange">
-        <option value="black">Black</option>
-        <option value="blue">Blue</option>
+        <option value="black">{{ t('settings.appearance.tints.black') }}</option>
+        <option value="blue">{{ t('settings.appearance.tints.blue') }}</option>
       </select>
     </div>
     <div class="group theme">
-      <label>Chat theme</label>
+      <label>{{ t('settings.appearance.chatTheme') }}</label>
       <select v-model="theme" @change="save">
-        <option value="openai">OpenAI</option>
-        <option value="conversation">Conversation</option>
+        <option value="openai">{{ t('settings.appearance.chatThemes.openai') }}</option>
+        <option value="conversation">{{ t('settings.appearance.chatThemes.conversation') }}</option>
       </select>
     </div>
     <div class="group layout">
-      <label>Chat list layout</label>
+      <label>{{ t('settings.appearance.chatListLayout') }}</label>
       <select v-model="layout" @change="save">
-        <option value="normal">Cozy</option>
-        <option value="compact">Compact</option>
+        <option value="normal">{{ t('settings.appearance.chatListLayouts.cozy') }}</option>
+        <option value="compact">{{ t('settings.appearance.chatListLayouts.compact') }}</option>
       </select>
     </div>
     <div class="group font-family" v-if="!isMas">
-      <label>Chat font</label>
+      <label>{{ t('settings.appearance.chatFont') }}</label>
       <select v-model="fontFamily" @change="save">
-        <option value="">Default</option>
+        <option value="">{{ t('common.default') }}</option>
         <option v-for="font in fonts" :value="font">{{ font.replaceAll('"', '') }}</option>
       </select>
     </div>
     <div class="group font-size">
-      <label>Chat font size</label>
+      <label>{{ t('settings.appearance.chatFontSize') }}</label>
       <span class="fontsize small">A</span>
       <div class="slidergroup">
         <input type="range" min="1" max="5" v-model="fontSize" @input="save" />
@@ -62,6 +62,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ChatListLayout } from '../types/config';
 import { Ref, ref } from 'vue'

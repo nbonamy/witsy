@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import Message from '../models/message'
@@ -16,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const copyLabel = ref('Copy')
+const copyLabel = ref(t('common.copy'))
 
 const copy = () => {
   if (props.message.type == 'text') {
@@ -24,14 +26,13 @@ const copy = () => {
   } else if (props.message.type == 'image') {
     window.api.clipboard.writeImage(props.message.content)
   }
-  copyLabel.value = 'Copied!'
-  setTimeout(() => copyLabel.value = 'Copy', 1000)
+  copyLabel.value = t('common.copied')
+  setTimeout(() => copyLabel.value = t('common.copy'), 1000)
 }
 
 defineExpose({
   copy
 })
-
 </script>
 
 <style scoped>

@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="group language">
-      <label>Spoken Language</label>
-      <LangSelect v-model="language" default-text="🤖 Automatic" @change="save" />
+      <label>{{ t('settings.voice.spokenLanguage') }}</label>
+      <LangSelect v-model="language" :default-text="t('settings.voice.automatic')" @change="save" />
     </div>
     <div class="group">
-      <label>Engine</label>
+      <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :key="engine.id" :value="engine.id">
           {{ engine.label }}
@@ -13,7 +13,7 @@
       </select>
     </div>
     <div class="group">
-      <label>Model</label>
+      <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
         <select name="model" v-model="model" @change="onChangeModel">
           <option v-for="model in models" :key="model.id" :value="model.id">
@@ -25,14 +25,14 @@
       </div>
     </div>
     <div class="group">
-      <label>Silence Detection</label>
+      <label>{{ t('settings.voice.silenceDetection') }}</label>
       <select name="duration" v-model="duration" @change="save">
-        <option value="0">Disabled</option>
-        <option value="1000">1 second</option>
-        <option value="2000">2 seconds</option>
-        <option value="3000">3 seconds</option>
-        <option value="4000">4 seconds</option>
-        <option value="5000">5 seconds</option>
+        <option value="0">{{ t('settings.voice.silenceOptions.disabled') }}</option>
+        <option value="1000">{{ t('settings.voice.silenceOptions.oneSecond') }}</option>
+        <option value="2000">{{ t('settings.voice.silenceOptions.twoSeconds') }}</option>
+        <option value="3000">{{ t('settings.voice.silenceOptions.threeSeconds') }}</option>
+        <option value="4000">{{ t('settings.voice.silenceOptions.fourSeconds') }}</option>
+        <option value="5000">{{ t('settings.voice.silenceOptions.fiveSeconds') }}</option>
       </select>
     </div>
     <!-- <div class="group">
@@ -46,20 +46,22 @@
     </div> -->
     <div class="group">
       <label></label>
-      <button @click.prevent="deleteLocalModels">Delete all models stored locally</button>
+      <button @click.prevent="deleteLocalModels">{{ t('settings.voice.deleteLocalModels') }}</button>
     </div>
     <div class="group" v-if="engine === 'openai'">
       <label></label>
-      <span>Make sure you enter your OpenAI API key in the Models pane.</span>
+      <span>{{ t('settings.voice.openaiApiKeyReminder') }}</span>
     </div>
     <div class="group" v-if="engine === 'groq'">
       <label></label>
-      <span>Make sure you enter your Groq API key in the Models pane.</span>
+      <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
@@ -104,7 +106,7 @@ const models = computed(() => {
 
   // add a dummy one if download is required
   return [
-    ...(requiresDownload(engine.value) ? [{ id: '', label: 'Select a model' }] : []),
+    ...(requiresDownload(engine.value) ? [{ id: '', label: t('settings.voice.selectModel') }] : []),
     ...models
   ]
 
@@ -112,16 +114,20 @@ const models = computed(() => {
 
 const progressText = computed(() => {
   if (Object.keys(progress.value).length === 0) {
-    return 'Initializing...'
+    return t('settings.voice.initializing')
   } else if (progress.value.status === 'ready') {
-    return `${initMode === 'download' ? 'Download' : 'Verification'} completed!`
+    return initMode === 'download' ? t('settings.voice.downloadComplete') : t('settings.voice.verificationComplete')
   }
   const loadedTotal = Object.values(progress.value).reduce((acc, p) => {
     acc.loaded += p.loaded
     acc.total += p.total
     return acc
   }, { loaded: 0, total: 0 })
-  return `${initMode === 'download' ? 'Downloading' : 'Verifying'}: ${Math.floor(loadedTotal.loaded / loadedTotal.total * 100)}%`
+  
+  const percent = Math.floor(loadedTotal.loaded / loadedTotal.total * 100)
+  return initMode === 'download' 
+    ? t('settings.voice.downloading', { percent }) 
+    : t('settings.voice.verifying', { percent })
 })
 
 const load = () => {
@@ -183,8 +189,8 @@ const onChangeModel = async () => {
   // show dialog
   Dialog.show({
     target: document.querySelector('.settings .voice'),
-    title: 'This model needs to be downloaded on your computer. Do you want to proceed?',
-    confirmButtonText: 'Continue',
+    title: t('settings.voice.downloadConfirmation.title'),
+    confirmButtonText: t('common.continue'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
@@ -213,7 +219,7 @@ const initializeEngine = async (sttEngine: STTEngine) => {
 
     // error
     if (taskStatus.status === 'error') {
-      Dialog.alert('An error occured during initialization. Please try again.')
+      Dialog.alert(t('settings.voice.initializationError'))
       sttEngine.deleteModel(model.value)
       progress.value = null
       model.value = ''
@@ -248,9 +254,9 @@ const initializeEngine = async (sttEngine: STTEngine) => {
 const deleteLocalModels = async () => {
   Dialog.show({
     target: document.querySelector('.settings .voice'),
-    title: 'Are you sure you want to delete all local models?',
-    text: 'You will have to download all local models again.',
-    confirmButtonText: 'Delete',
+    title: t('settings.voice.deleteConfirmation.title'),
+    text: t('settings.voice.deleteConfirmation.text'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

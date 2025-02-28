@@ -7,20 +7,22 @@
       <Waveform :width="310" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
-      <textarea v-model="transcription" placeholder="Click the record button when you are ready!" />
+      <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord')" />
     </div>
     <div class="actions">
-      <button class="button" v-if="state == 'recording'" @click="onStop()">Stop</button>
-      <button class="button" v-else @click="onRecord()">Record</button>
-      <button class="button" @click="onClear()">Clear</button>
-      <button class="button push" @click="onCancel()">Cancel</button>
-      <button class="button" @click="onInsert()" v-if="!isMas">Insert</button>
-      <button class="button " @click="onCopy()">Copy</button>
+      <button class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
+      <button class="button" v-else @click="onRecord()">{{ t('common.record') }}</button>
+      <button class="button" @click="onClear()">{{ t('common.clear') }}</button>
+      <button class="button push" @click="onCancel()">{{ t('common.cancel') }}</button>
+      <button class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
+      <button class="button" @click="onCopy()">{{ t('common.copy') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
@@ -63,7 +65,6 @@ onMounted(() => {
 
   // other stuff
   isMas.value = window.api.isMasBuild
-
 
 })
 
@@ -108,7 +109,7 @@ const initializeAudio = async () => {
     
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    Dialog.alert('Error accessing microphone')
+    Dialog.alert(t('transcribe.errorMicrophone'))
   }
 
 }
@@ -119,7 +120,7 @@ const onRecord = async () => {
 
     // check
     if (transcriber.isReady() === false) {
-      Dialog.alert('Speech-to-text engine not ready')
+      Dialog.alert(t('transcribe.errorSTTNotReady'))
       return
     }
 
@@ -131,7 +132,7 @@ const onRecord = async () => {
 
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    Dialog.alert('Error accessing microphone')
+    Dialog.alert(t('transcribe.errorMicrophone'))
   }
 
 }
@@ -163,7 +164,7 @@ const transcribe = async (audioChunks: any[]) => {
 
   } catch (error) {
     console.error('Error:', error)
-    Dialog.alert('Error occurred during transcription')
+    Dialog.alert(t('transcribe.errorTranscription'))
   }
 
 }
@@ -196,7 +197,6 @@ const onInsert = () => {
 const onCancel = () => {
   window.api.transcribe.cancel()
 }
-
 </script>
 
 <style scoped>

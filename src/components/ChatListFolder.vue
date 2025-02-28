@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { Folder } from '../types/index'
 import { type Ref, ref, onMounted, computed } from 'vue'
@@ -81,9 +83,9 @@ const menuX = ref(0)
 const menuY = ref(0)
 const targetRow: Ref<string|null> = ref(null)
 const contextMenuActions = [
-  { label: 'New chat', action: 'chat' },
-  { label: 'Rename', action: 'rename' },
-  { label: 'Delete', action: 'delete' },
+  { label: t('common.newChat'), action: 'chat' },
+  { label: t('common.rename'), action: 'rename' },
+  { label: t('chatList.folder.actions.delete'), action: 'delete' },
 ]
 
 onMounted(() => {

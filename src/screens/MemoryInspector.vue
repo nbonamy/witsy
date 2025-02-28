@@ -2,15 +2,15 @@
   <dialog class="memory">
     <form method="dialog">
       <header>
-        <div class="title">Memory Contents</div>
+        <div class="title">{{ t('memory.inspector.title') }}</div>
       </header>
       <main>
-        <div class="empty" v-if="contents.length == 0">No facts stored so far</div>
+        <div class="empty" v-if="contents.length == 0">{{ t('memory.inspector.noFacts') }}</div>
         <div class="sticky-table-container" v-else>
           <table>
             <thead>
               <tr>
-                <th>Memory</th>
+                <th>{{ t('memory.inspector.memory') }}</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -18,7 +18,7 @@
               <tr v-for="fact in contents">
                 <td>{{ fact.content }}</td>
                 <td>
-                  <button @click.prevent="onDelete(fact)">Delete</button>
+                  <button @click.prevent="onDelete(fact)">{{ t('common.delete') }}</button>
                 </td>
               </tr>
             </tbody>
@@ -26,13 +26,15 @@
         </div>
       </main>
       <footer>
-        <button @click.prevent="onClose">Close</button>
+        <button @click.prevent="onClose">{{ t('common.close') }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { MemoryFact } from '../types/index'
@@ -45,9 +47,9 @@ const emit = defineEmits(['close'])
 const onDelete = (fact: MemoryFact) => {
   Dialog.show({
     target: document.querySelector('.settings .memory'),
-    title: 'Are you sure you want to delete this memory?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('common.confirmation.deleteMemory'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

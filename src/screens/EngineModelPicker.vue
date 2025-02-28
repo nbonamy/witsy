@@ -2,28 +2,29 @@
   <AlertDialog id="engine-model-picker" ref="dialog" @keyup.enter="onSave">
     <template v-slot:body>
       <div class="group">
-        <label>LLM Provider</label>
+        <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect :favorites="favorites" v-model="engine" @change="onChangeEngine"/>
       </div>
       <div class="group">
-        <label>LLM Model</label>
+        <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" />
       </div>
     </template> 
     <template v-slot:footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
-        <button @click="onSave" class="alert-confirm">Save</button>
+        <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>
     </template>
   </AlertDialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, onMounted, watch } from 'vue'
 import { store } from '../services/store'
-import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'

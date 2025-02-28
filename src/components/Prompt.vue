@@ -32,6 +32,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { type FileContents, type Expert } from '../types/index'
 import { type DocumentBase } from '../types/rag'
@@ -169,7 +171,7 @@ const activeExpertMenuItems = computed(() => {
     { label: expert.value.name, icon: BIconStars },
     { label: expert.value.prompt, disabled: true, wrap: true },
     { separator: true },
-    { label: 'Clear expert', action: 'clear' },
+    { label: t('prompt.expert.clear'), action: 'clear' },
   ];
 })
 
@@ -182,12 +184,12 @@ const commands = computed(() => {
 const conversationMenu = computed(() => {
   if (props.conversationMode) {
     return [
-      { label: 'Stop conversation', action: null }
+      { label: t('prompt.conversation.stop'), action: null }
     ]
   } else {
     return [
-      { label: 'Start automatic conversation', action: 'auto' },
-      { label: 'Start push-to-talk conversation', action: 'ptt' },
+      { label: t('prompt.conversation.startAuto'), action: 'auto' },
+      { label: t('prompt.conversation.startPTT'), action: 'ptt' },
     ]
   }
 })
@@ -212,9 +214,9 @@ onMounted(() => {
 
 const defaultPrompt = (conversationMode: string) => {
   if (conversationMode === 'auto') {
-    return 'You can start talking now...'
+    return t('prompt.conversation.placeholders.auto')
   } else if (conversationMode === 'ptt') {
-    return 'Press and hold space to talk...'
+    return t('prompt.conversation.placeholders.ptt')
   } else {
     return ''
   }

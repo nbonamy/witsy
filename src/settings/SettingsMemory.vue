@@ -1,24 +1,25 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to store and retrieve information about you, making their answers more personalized.
+      {{ t('settings.plugins.memory.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <EmbeddingSelector :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
     <div class="group">
-      <label>Contents</label>
-      <button @click.prevent="onView">View</button>
-      <button @click.prevent="onReset">Reset</button>
+      <label>{{ t('settings.plugins.memory.contents') }}</label>
+      <button @click.prevent="onView">{{ t('settings.plugins.memory.view') }}</button>
+      <button @click.prevent="onReset">{{ t('common.reset') }}</button>
     </div>
     <MemoryInspector ref="inspector" @close="load"/>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'
@@ -53,9 +54,9 @@ const onView = () => {
 const onReset = () => {
   Dialog.show({
     target: document.querySelector('.settings .plugins'),
-    title: 'Are you sure you want to reset the memory and lose all facts about you?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Reset',
+    title: t('settings.plugins.memory.resetConfirmation.title'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.reset'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

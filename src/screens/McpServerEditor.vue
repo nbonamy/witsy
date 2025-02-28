@@ -1,37 +1,37 @@
 <template>
   <AlertDialog id="mcp-server-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
     <template v-slot:header>
-      <div class="title">MCP Server Configuration</div>
+      <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </template>
     <template v-slot:body>
       <div class="group">
-        <label>Type</label>
+        <label>{{ t('common.type') }}</label>
         <select name="type" v-model="type">
-          <option value="stdio">stdio</option>
-          <option value="sse">SSE</option>
-          <option value="smithery" v-if="!server?.uuid">Smithery.ai</option>
+          <option value="stdio">{{ t('mcp.serverEditor.type.stdio') }}</option>
+          <option value="sse">{{ t('mcp.serverEditor.type.sse') }}</option>
+          <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
         </select>
       </div>
       <div class="group" v-if="type === 'sse'">
-        <label>URL</label>
+        <label>{{ t('common.url') }}</label>
         <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
       <div class="group" v-if="type === 'smithery'">
-        <label>Server Package</label>
+        <label>{{ t('mcp.serverEditor.serverPackage') }}</label>
         <div class="subgroup">
           <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <a href="https://smithery.ai" target="_blank">Browse Smithery.ai</a>
+          <a href="https://smithery.ai" target="_blank">{{ t('common.browse') }} Smithery.ai</a>
         </div>
       </div>
       <div class="group" v-if="type === 'stdio'">
-        <label>Command</label>
+        <label>{{ t('common.command') }}</label>
         <div style="display: flex; width: 100%;">
           <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickCommand" @click="pickCommand">Pick</button>
+          <button name="pickCommand" @click="pickCommand">{{ t('common.pick') }}</button>
         </div>
         <div style="width: 100%;">
           <select name="source" v-model="source" @change="findCommand">
-            <option value="">Select command</option>
+            <option value="">{{ t('mcp.serverEditor.selectCommand') }}</option>
             <option value="python3">python</option>
             <option value="uvx">uvx</option>
             <option value="node">node</option>
@@ -42,21 +42,21 @@
         </div>
       </div>
       <div class="group" v-if="type === 'stdio'">
-        <label>Arguments</label>
+        <label>{{ t('common.arguments') }}</label>
         <div style="display: flex; width: 100%;">
           <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickScript" @click="pickScript">Pick</button>
+          <button name="pickScript" @click="pickScript">{{ t('common.pick') }}</button>
         </div>
       </div>
       <div class="group" v-if="type === 'stdio'">
-        <label>Environment Variables</label>
+        <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
         <div class="list-with-actions">
           <div class="sticky-table-container">
             <table class="list">
               <thead>
                 <tr>
-                  <th>Key</th>
-                  <th>Value</th>
+                  <th>{{ t('common.key') }}</th>
+                  <th>{{ t('common.value') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -76,8 +76,8 @@
     </template>
     <template v-slot:footer>
       <div class="buttons">
-        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>Cancel</button>
-        <button name="save" @click="onSave" class="alert-confirm">{{ type === 'smithery' ? 'Install' : 'Save' }}</button>
+        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click="onSave" class="alert-confirm">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
       </div>
     </template>
   </AlertDialog>
@@ -85,6 +85,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { Ref, ref, onMounted, watch, PropType } from 'vue'
 import { McpServer } from '../types/mcp'
@@ -194,27 +196,27 @@ const onSave = () => {
 
   if (type.value === 'stdio' && !command.value.length) {
     Dialog.show({
-      title: 'Some fields are required',
-      text: 'Make sure you enter a command for this server.',
-      confirmButtonText: 'OK',
+      title: t('mcp.serverEditor.validation.requiredFields'),
+      text: t('mcp.serverEditor.validation.commandRequired'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }
 
   if (type.value === 'sse' && !url.value.length) {
     Dialog.show({
-      title: 'Some fields are required',
-      text: 'Make sure you enter a URL for this server.',
-      confirmButtonText: 'OK',
+      title: t('mcp.serverEditor.validation.requiredFields'),
+      text: t('mcp.serverEditor.validation.urlRequired'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }
 
   if (type.value === 'smithery' && !url.value.length) {
     Dialog.show({
-      title: 'Some fields are required',
-      text: 'Make sure you enter a package name for this server.',
-      confirmButtonText: 'OK',
+      title: t('mcp.serverEditor.validation.requiredFields'),
+      text: t('mcp.serverEditor.validation.packageRequired'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }

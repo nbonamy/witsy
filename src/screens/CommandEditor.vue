@@ -2,48 +2,50 @@
   <dialog class="editor">
     <form method="dialog">
       <header>
-        <div class="title">Command details</div>
+        <div class="title">{{ t('commands.editor.title') }}</div>
       </header>
       <main>
         <div class="group">
-          <label>Label</label>
+          <label>{{ t('common.label') }}</label>
           <input type="text" v-model="label" required />
         </div>
         <div class="group">
-          <label>Prompt</label>
+          <label>{{ t('commands.editor.prompt') }}</label>
           <div class="subgroup">
             <textarea v-model="template" v-if="isEditable"></textarea>
-            <textarea v-else disabled="true">This command is not editable. The content captured will be available in the prompt for you to ask anything about it!</textarea>
-            <span v-pre>{input} will be subsituted with highlighted text</span>
+            <textarea v-else disabled="true">{{ t('commands.editor.notEditable') }}</textarea>
+            <span v-pre>{{ t('commands.editor.inputPlaceholder') }}</span>
           </div>
         </div>
         <div class="group">
-          <label>LLM Provider</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Use commands default" />
+          <label>{{ t('common.llmProvider') }}</label>
+          <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.editor.useDefault')" />
         </div>
         <div class="group">
-          <label>LLM Model</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Use commands default' : ''" />
+          <label>{{ t('common.llmModel') }}</label>
+          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
         </div>
         <div class="group">
-          <label>Icon</label>
+          <label>{{ t('common.icon') }}</label>
           <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
           <input type="text" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
         </div>
         <div class="group">
-          <label>Shortcut</label>
+          <label>{{ t('common.shortcut') }}</label>
           <input type="text" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, computed, watch } from 'vue'
 import { store } from '../services/store'
@@ -130,14 +132,14 @@ const onSave = (event: Event) => {
   // check
   if (!label.value || !template.value || !action.value) {
     event.preventDefault()
-    Dialog.alert('All fields marked with * are required.')
+    Dialog.alert(t('commands.editor.validation.requiredFields'))
     return
   }
 
   // check
   if (!template.value.includes('{input}')) {
     event.preventDefault()
-    Dialog.alert('The template must contain the {input} placeholder.')
+    Dialog.alert(t('commands.editor.validation.inputPlaceholder'))
     return
   }
 

@@ -2,74 +2,76 @@
   <div class="model-settings">
     <form class="vertical">
       <div class="group">
-        <label>LLM Provider</label>
+        <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine"/>
       </div>
       <div class="group">
-        <label>LLM Model</label>
+        <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" @change="onChangeModel"/>
       </div>
       <div class="group">
-        <label>Plugins</label>
+        <label>{{ t('modelSettings.plugins') }}</label>
         <select name="plugins" v-model="disableTools" @change="save()">
-          <option :value="false">Enabled</option>
-          <option :value="true">Disabled</option>
+          <option :value="false">{{ t('common.enabled') }}</option>
+          <option :value="true">{{ t('common.disabled') }}</option>
         </select>
       </div>
       <div class="group" v-if="isContextWindowSupported">
-        <label>Context Window Size</label>
-        <input type="text" name="contextWindowSize" v-model="contextWindowSize" placeholder="Default model value when empty" @change="save"/>
+        <label>{{ t('modelSettings.contextWindowSize') }}</label>
+        <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="isMaxTokensSupported">
-        <label>Max Completion Tokens</label>
-        <input type="text" name="maxTokens" v-model="maxTokens" placeholder="Default model value when empty" @change="save"/>
+        <label>{{ t('modelSettings.maxCompletionTokens') }}</label>
+        <input type="text" name="maxTokens" v-model="maxTokens" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="isTemperatureSupported">
-        <label>Temperature [0.0 … 2.0]</label>
-        <input type="text" name="temperature" v-model="temperature" placeholder="Default model value when empty" @change="save"/>
+        <label>{{ t('modelSettings.temperature') }}</label>
+        <input type="text" name="temperature" v-model="temperature" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="isTopKSupported">
-        <label>TopK / Logprobs [0 … 20]</label>
-        <input type="text" name="top_k" v-model="top_k" placeholder="Default model value when empty" @change="save"/>
+        <label>{{ t('modelSettings.topK') }}</label>
+        <input type="text" name="top_k" v-model="top_k" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="isTopPSupported">
-        <label>TopP [0.0 … 1.0]</label>
-        <input type="text" name="top_p" v-model="top_p" placeholder="Default model value when empty" @change="save"/>
+        <label>{{ t('modelSettings.topP') }}</label>
+        <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="isReasoningFlagSupported">
-        <label>Extended Thinking</label>
+        <label>{{ t('modelSettings.extendedThinking') }}</label>
         <select name="reasoning" v-model="reasoning" @change="save">
-          <option :value="undefined">Default</option>
-          <option :value="true">Enabled</option>
-          <option :value="false">Disabled</option>
+          <option :value="undefined">{{ t('common.default') }}</option>
+          <option :value="true">{{ t('common.enabled') }}</option>
+          <option :value="false">{{ t('common.disabled') }}</option>
         </select>
       </div>
       <div class="group" v-if="isReasoningEffortSupported">
-        <label>Reasoning Effort</label>
+        <label>{{ t('modelSettings.reasoningEffort') }}</label>
         <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
-          <option :value="undefined">Default</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option :value="undefined">{{ t('common.default') }}</option>
+          <option value="low">{{ t('common.low') }}</option>
+          <option value="medium">{{ t('common.medium') }}</option>
+          <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
       <div class="group">
-        <label>Defaults for this model</label>
+        <label>{{ t('modelSettings.defaultForModel') }}</label>
         <div class="subgroup">
-          <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">Load</button>
-          <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">Save</button>
-          <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">Clear</button>
+          <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
+          <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
+          <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">{{ t('common.clear') }}</button>
         </div>
       </div>
       <div class="group" v-if="engine === 'ollama'">
-        <label>Create new model</label>
-        <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">Create</button>
+        <label>{{ t('modelSettings.createNewModel') }}</label>
+        <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">{{ t('common.create') }}</button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { anyDict } from '../types/index'
 import { ref, Ref, onMounted, computed, watch } from 'vue'
@@ -255,9 +257,9 @@ const save = () => {
   // check engine
   if (!engine.value.length || !model.value.length) {
     Dialog.show({
-      title: 'No LLM Provider or Model selected',
-      text: 'Make sure you select a model for this chat.',
-      confirmButtonText: 'OK',
+      title: t('modelSettings.errors.noProviderOrModel.title'),
+      text: t('modelSettings.errors.noProviderOrModel.text'),
+      confirmButtonText: t('common.ok'),
     })
     return
   }
@@ -272,9 +274,9 @@ const save = () => {
     if (isNaN(value)) {
       ref.value = undefined
       Dialog.show({
-        title: `Invalid ${name}`,
-        text: `Must be a number`,
-        confirmButtonText: 'OK',
+        title: t('modelSettings.errors.invalid.title', { name }),
+        text: t('modelSettings.errors.invalid.mustBeNumber'),
+        confirmButtonText: t('common.ok'),
       })
       throw new Error(`Invalid ${name}`)
     }
@@ -283,14 +285,14 @@ const save = () => {
     if ((min !== undefined && value < min) || (max !== undefined && value > max)) {
       ref.value = undefined
       Dialog.show({
-        title: `Invalid ${name}`,
+        title: t('modelSettings.errors.invalid.title', { name }),
         text: 
           min != undefined && max !== undefined
-            ? `Must be between ${min} and ${max}`
+            ? t('modelSettings.errors.invalid.mustBeBetween', { min, max })
             : min !== undefined
-              ? `Must be greater than ${min}`
-              : `Must be less than ${max}`,
-        confirmButtonText: 'OK',
+              ? t('modelSettings.errors.invalid.mustBeGreaterThan', { min })
+              : t('modelSettings.errors.invalid.mustBeLessThan', { max }),
+        confirmButtonText: t('common.ok'),
       })
       throw new Error(`Invalid ${name}`)
     }
@@ -347,7 +349,7 @@ const save = () => {
 const onCreateOllamaModel = async () => {
 
   let { value: name } = await Dialog.show({
-    title: 'Enter new model name',
+    title: t('modelSettings.createOllama.title'),
     input: 'text',
     inputValue: '',
     showCancelButton: true,

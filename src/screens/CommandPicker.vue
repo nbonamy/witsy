@@ -1,7 +1,7 @@
 <template>
   <div class="commands">
     <div class="app" v-if="sourceApp">
-      <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+      <img class="icon" :src="iconData" /> {{ t('commands.picker.workingWith') }} {{ sourceApp.name }}
     </div>
     <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
         <div class="icon">{{ command.icon }}</div>
@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
@@ -92,7 +94,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 const ensureVisible = () => {
   nextTick(() => {
-    const selectedEl = list.value?.querySelector('.selected')
+    const selectedEl = list.value?.querySelector('.selected') as HTMLElement
     if (selectedEl) {
       scrollToBeVisible(selectedEl, list.value)
     }
@@ -131,7 +133,7 @@ const onRunCommand = (event: MouseEvent | KeyboardEvent, command: Command) => {
   })
 }
 
-const scrollToBeVisible = function (ele, container) {
+const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   const eleTop = ele.offsetTop - container.offsetTop;
   const eleBottom = eleTop + ele.clientHeight;
 

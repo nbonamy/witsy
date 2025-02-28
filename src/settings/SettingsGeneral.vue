@@ -1,35 +1,36 @@
-
 <template>
   <div class="content">
     <div class="group prompt">
-      <label>Prompt LLM Model</label>
-      <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" default-text="Last one used" />&nbsp;
-      <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
+      <label>{{ t('settings.general.promptLLMModel') }}</label>
+      <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />&nbsp;
+      <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
     </div>
     <div class="group language">
-      <label>Answer in</label>
+      <label>{{ t('settings.general.answerIn') }}</label>
       <LangSelect v-model="language" @change="save" />
     </div>
     <div class="group reset-tips">
-      <label>Reset tips</label>
-      <button @click.prevent="onResetTips">Reset</button>
+      <label>{{ t('settings.general.resetTips') }}</label>
+      <button @click.prevent="onResetTips">{{ t('common.reset') }}</button>
     </div>
     <div class="group run-at-login">
-      <label>Run at login</label>
+      <label>{{ t('settings.general.runAtLogin') }}</label>
       <input type="checkbox" v-model="runAtLogin" @change="save" />
     </div>
     <div class="group hide-on-startup">
-      <label>Hide main window on start</label>
+      <label>{{ t('settings.general.hideOnStartup') }}</label>
       <input type="checkbox" v-model="hideOnStartup" @change="save" />
     </div>
     <div class="group keep-running">
-      <label>Keep in Status Bar</label>
+      <label>{{ t('settings.general.keepInStatusBar') }}</label>
       <input type="checkbox" v-model="keepRunning" @change="save" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'

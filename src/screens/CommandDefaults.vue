@@ -2,27 +2,29 @@
   <dialog class="editor">
     <form method="dialog">
       <header>
-        <div class="title">Commands defaults</div>
+        <div class="title">{{ t('commands.defaults.title') }}</div>
       </header>
       <main>
         <div class="group">
-          <label>LLM Provider</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Last one used" />
+          <label>{{ t('common.llmProvider') }}</label>
+          <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.defaults.lastOneUsed')" />
         </div>
         <div class="group">
-          <label>LLM Model</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Last one used' : ''" />
+          <label>{{ t('common.llmModel') }}</label>
+          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'

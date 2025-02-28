@@ -1,8 +1,7 @@
-
 <template>
   <div>
     <div class="group">
-      <label>Engine</label>
+      <label>{{ t('settings.voice.engine') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :key="engine.id" :value="engine.id">
           {{ engine.label }}
@@ -10,11 +9,11 @@
       </select>
     </div>
     <div class="group" v-if="engine == 'elevenlabs'">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="elevenlabsAPIKey" @blur="save" />
     </div>
     <div class="group">
-      <label>Model</label>
+      <label>{{ t('settings.voice.model') }}</label>
       <select v-model="model" @change="save">
         <option v-for="model in models" :key="model.id" :value="model.id">
           {{ model.label }}
@@ -22,7 +21,7 @@
       </select>
     </div>
     <div class="group">
-      <label>Voice</label>
+      <label>{{ t('settings.voice.tts.voice') }}</label>
       <select v-model="voice" @change="save">
         <option v-for="voice in voices" :key="voice.id" :value="voice.id">
           {{ voice.label }}
@@ -36,16 +35,18 @@
     </div>
     <div class="group" v-if="engine === 'openai'">
       <label></label>
-      <span>Make sure you enter your OpenAI API key in the Models pane.</span>
+      <span>{{ t('settings.voice.openaiApiKeyReminder') }}</span>
     </div>
     <div class="group" v-if="engine === 'kokoro'">
       <label></label>
-      <span>Provided <a href="https://kokorotts.com" target="_blank">Kokoro TTS</a>. The service may stop working at any point in time.</span>
+      <span>{{ t('settings.voice.tts.kokoroReminder') }} <a href="https://kokorotts.com" target="_blank">Kokoro TTS</a>. {{ t('settings.voice.tts.serviceDisclaimer') }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { Ref, ref, onMounted, onUnmounted, computed } from 'vue'
 import { store } from '../services/store'
@@ -54,6 +55,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import TTSOpenAI from '../voice/tts-openai'
 import TTSKokoro from '../voice/tts-kokoro'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
+import { BIconPlayFill, BIconStopFill } from 'bootstrap-icons-vue'
 
 const engine = ref('openai')
 const voice = ref(null)
@@ -129,7 +131,7 @@ const onPlay = () => {
   if (audioState.value.state !== 'idle') {
     audioPlayer.stop()
   } else {
-    audioPlayer.play(audio.value!, 'sample', 'Welcome to Witsy, the ultimate AI desktop assistant.')
+    audioPlayer.play(audio.value!, 'sample', t('settings.voice.tts.sampleText'))
   }
 }
 

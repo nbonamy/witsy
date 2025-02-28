@@ -1,8 +1,7 @@
-
 <template>
-	<div class="empty">
+  <div class="empty">
     <div class="tip engine" v-if="showEngineTip()">
-      Click here to switch to a different chat bot provider!<br/>
+      {{ t('emptyChat.tips.switchProvider') }}<br/>
       <img src="/assets/arrow_dashed.svg" />
     </div>
     <div class="engine">
@@ -15,19 +14,21 @@
           <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
         </select>
         <div class="favorite" v-if="!showModelTip() && !showAllEngines">
-          <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> Remove from favorites</span>
-          <span @click="addToFavorites" v-else><BIconStar /> Add to favorites</span>
+          <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
+          <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
         </div>
         <div class="tip model" v-if="showModelTip()">
           <img src="/assets/arrow_dashed.svg" /><br/>
-          Click here to switch to a different chat bot model!
+          {{ t('emptyChat.tips.switchModel') }}
         </div>
       </div>
     </div>
-	</div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref, shallowReactive, computed, onMounted, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
@@ -97,7 +98,6 @@ const centerCurrentEngineLogo = () => {
 }
 
 const onEngine = (engine: string) => {
-
   if (showAllEngines.value === false) {
 
     // show all always
@@ -122,8 +122,8 @@ const onEngine = (engine: string) => {
     // check if the engine is ready
     if (!llmFactory.isEngineReady(engine) || !llmFactory.hasChatModels(engine)) {
       Dialog.show({
-        title: 'This engine needs to be configured first! Do you want to open the Settings?',
-        confirmButtonText: 'Configure',
+        title: t('emptyChat.settings.needsConfiguration'),
+        confirmButtonText: t('emptyChat.settings.configure'),
         showCancelButton: true,
       }).then((result) => {
         if (result.isConfirmed) {

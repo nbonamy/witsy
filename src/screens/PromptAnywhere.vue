@@ -1,12 +1,11 @@
-
 <template>
   <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
-        <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
+        <Prompt ref="prompt" :chat="chat" :placeholder="t('common.askMeAnything')" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
           <template v-slot:after>
             <div class="app" v-if="sourceApp">
-              <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+              <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
             </div>
           </template>
           <template v-slot:actions>
@@ -26,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { anyDict, ExternalApp } from 'types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'

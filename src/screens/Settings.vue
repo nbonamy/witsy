@@ -2,19 +2,19 @@
   <dialog class="settings" ref="dialog">
     <form method="dialog">
       <div class="wrapper">
-        <DialogHeader title="Settings" @close="onClose" />
+        <DialogHeader :title="t('common.settings')" @close="onClose" />
         <main>
           <div class="tabs">
             <ul>
-              <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-              <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
-              <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
-              <SettingsTab class="experts" title="Experts"><BIconMortarboard class="icon" /></SettingsTab>
-              <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-              <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-              <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-              <SettingsTab class="voice" title="Voice" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-              <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
+              <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
+              <SettingsTab class="commands" :title="t('settings.tabs.commands')"><BIconMagic class="icon" /></SettingsTab>
+              <SettingsTab class="experts" :title="t('settings.tabs.experts')"><BIconMortarboard class="icon" /></SettingsTab>
+              <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
+              <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+              <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
+              <SettingsTab class="advanced" :title="t('settings.tabs.advanced')"><BIconTools class="icon" /></SettingsTab>
             </ul>
             <SettingsGeneral ref="settingsGeneral" />
             <SettingsAppearance ref="settingsAppearance" />
@@ -33,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n' 
+const { t } = useI18n()
 
 import { Ref, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import DialogHeader from '../components/DialogHeader.vue'
@@ -57,7 +59,7 @@ export interface OpenSettingsPayload {
   engine?: string
 }
 
-const props = defineProps({
+defineProps({
   initialTab: {
     type: String,
     default: 'general'

@@ -1,4 +1,3 @@
-
 <template>
   <div class="content large" @click="closeContextMenu">
     <div class="commands sticky-table-container">
@@ -25,11 +24,11 @@
       </table>
     </div>
     <div class="actions">
-      <button @click.prevent="onNew">New</button>
-      <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
-      <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
+      <button @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
+      <button @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+      <button @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
       <div class="right">
-        <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
+        <button @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
@@ -39,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { Command } from 'types'
 import { Ref, ref, computed } from 'vue'
@@ -61,21 +62,21 @@ const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Defaults', action: 'defaults' },
-  { label: 'Export', action: 'export' },
-  { label: 'Import', action: 'import' },
-  { label: 'Select All', action: 'select' },
-  { label: 'Unselect All', action: 'unselect' },
+  { label: t('settings.commands.defaults'), action: 'defaults' },
+  { label: t('settings.commands.export'), action: 'export' },
+  { label: t('settings.commands.import'), action: 'import' },
+  { label: t('settings.commands.selectAll'), action: 'select' },
+  { label: t('settings.commands.unselectAll'), action: 'unselect' },
 ]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
 
 const columns = [
   { field: 'enabled', title: '' },
-  { field: 'icon', title: 'Icon' },
-  { field: 'label', title: 'Name', },
-  { field: 'shortcut', title: 'Shortcut', },
-  { field: 'move', title: 'Move', },
+  { field: 'icon', title: t('common.icon') },
+  { field: 'label', title: t('common.name'), },
+  { field: 'shortcut', title: t('common.shortcut'), },
+  { field: 'move', title: t('common.move'), },
 ]
 
 const onMoveDown = (command: Command) => {
@@ -165,17 +166,17 @@ const onImport = () => {
   if (window.api.commands.import()) {
     store.loadCommands()
     load()
-    Dialog.alert('Commands file imported successfully')
+    Dialog.alert(t('settings.commands.importSuccess'))
   } else {
-    Dialog.alert('Failed to import commands file')
+    Dialog.alert(t('settings.commands.importError'))
   }
 }
 
 const onExport = () => {
   if (window.api.commands.export()) {
-    Dialog.alert('Commands file exported successfully')
+    Dialog.alert(t('settings.commands.exportSuccess'))
   } else {
-    Dialog.alert('Failed to export commands file')
+    Dialog.alert(t('settings.commands.exportError'))
   }
 }
 
@@ -198,9 +199,9 @@ const onEdit = (command: Command) => {
 const onDelete = () => {
   Dialog.show({
     target: document.querySelector('.settings .commands'),
-    title: 'Are you sure you want to delete this command?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('settings.commands.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
