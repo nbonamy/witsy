@@ -36,8 +36,7 @@ export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
-  locale?: string
-  language: string
+  locale: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}
 }
@@ -56,6 +55,7 @@ export type ModelDefaults = {
 
 export type LLMConfig = {
   engine: string
+  locale: string
   favorites: FavoriteModel[]
   autoVisionSwitch: boolean
   conversationLength: number

@@ -14,7 +14,7 @@
           <div class="subgroup">
             <textarea v-model="template" v-if="isEditable"></textarea>
             <textarea v-else disabled="true">{{ t('commands.editor.notEditable') }}</textarea>
-            <span v-pre>{{ t('commands.editor.inputPlaceholder') }}</span>
+            <span>{{ t('commands.editor.inputPlaceholder') }}</span>
           </div>
         </div>
         <div class="group">

@@ -18,13 +18,13 @@ test('Load default settings', () => {
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
-  expect(loaded.general.language).toBe('')
+  expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
 })
 
 test('Load overridden settings', () => {
   const loaded1: Configuration = config.loadSettings('./tests/fixtures/config1.json')
-  expect(loaded1.general.language).toBe('fr')
+  expect(loaded1.general.locale).toBe('fr')
   expect(loaded1.general.keepRunning).toBe(true)
 
   const loaded2 = config.loadSettings('./tests/fixtures/config2.json')

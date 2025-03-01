@@ -5,7 +5,7 @@
       "addFolder": "Ajouter un dossier..."
     },
     "arguments": "Arguments",
-    "askMeAnything": "Demandez-moi ce que vous voulez !",
+    "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
     "basedOn": "basé sur",
     "browse": "Parcourir",
@@ -14,6 +14,7 @@
     "clear": "Effacer",
     "clickToStart": "Cliquez sur le blob pour commencer à discuter",
     "close": "Fermer",
+    "colon": "spaced",
     "command": "Commande",
     "confirmation": {
       "cannotUndo": "Cette action ne peut pas être annulée.",
@@ -35,11 +36,11 @@
     "delete": "Supprimer",
     "disabled": "Désactivé",
     "documents": "Documents",
-    "done": "Terminé !",
+    "done": "Terminé !",
     "edit": "Modifier",
     "embeddings": "Embeddings",
     "enabled": "Activé",
-    "error": "Erreur !",
+    "error": "Erreur !",
     "esc": "Échap",
     "estimatedCost": "Coût estimé :",
     "favorites": {
@@ -54,10 +55,11 @@
     "install": "Installer",
     "key": "Clé",
     "language": {
-      "auto": "🤖 Laisser le chat bot décider"
+      "auto": "🤖 Laisser le modèle décider",
+      "system": "🖥️ Langue du système"
     },
-    "llmModel": "Modèle LLM",
-    "llmProvider": "Fournisseur LLM",
+    "llmModel": "Modèle",
+    "llmProvider": "Fournisseur",
     "load": "Charger",
     "low": "Faible",
     "medium": "Moyen",
@@ -67,7 +69,7 @@
     "no": "Non",
     "ok": "OK",
     "pick": "Sélectionner",
-    "prompt": "Requête",
+    "prompt": "Prompt",
     "pull": "Télécharger",
     "read": "Lire",
     "record": "Enregistrer",
@@ -92,7 +94,7 @@
     "usage": "Usage",
     "value": "Valeur",
     "warning": "Attention",
-    "workingWith": "Travail avec",
+    "workingWith": "Texte de",
     "write": "Écrire"
   },
   "chat": {
@@ -134,8 +136,8 @@
       "title": "Paramètres par défaut des commandes"
     },
     "editor": {
-      "inputPlaceholder": "{input} sera remplacé par le texte surligné",
-      "notEditable": "Cette commande n'est pas modifiable. Le contenu capturé sera disponible dans le prompt pour que vous puissiez poser des questions à son sujet !",
+      "inputPlaceholder": "{'{'}input{'}'} sera remplacé par le texte sélectionné.",
+      "notEditable": "Cette commande n'est pas modifiable. Le contenu capturé sera disponible dans le prompt pour que vous puissiez poser des questions à son sujet !",
       "prompt": "Prompt",
       "title": "Détails de la commande",
       "useDefault": "Utiliser les paramètres par défaut",
@@ -143,9 +145,6 @@
         "inputPlaceholder": "Le template doit contenir le marqueur {input}.",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
       }
-    },
-    "picker": {
-      "workingWith": "Travail avec"
     }
   },
   "docRepo": {
@@ -182,8 +181,8 @@
       "needsConfiguration": "Ce moteur doit d'abord être configuré ! Voulez-vous ouvrir les Paramètres ?"
     },
     "tips": {
-      "switchModel": "Cliquez ici pour changer de modèle de chat bot !",
-      "switchProvider": "Cliquez ici pour changer de fournisseur de chat bot !"
+      "switchModel": "Cliquez ici pour changer de modèle !",
+      "switchProvider": "Cliquez ici pour changer de fournisseur !"
     }
   },
   "engine": {
@@ -294,7 +293,7 @@
   "modelPull": {
     "browse": "Parcourir les modèles",
     "error": "Erreur lors du téléchargement du modèle",
-    "label": "Télécharger un modèle",
+    "label": "Charger un modèle",
     "placeholder": "Entrez un nom de modèle à télécharger ou sélectionnez-en un",
     "progress": "Téléchargement du modèle..."
   },
@@ -347,7 +346,7 @@
     "errorPrefix": "Erreur : ",
     "establishingConnection": "Établissement de la connexion...",
     "requestingMicrophone": "Demande d'accès au microphone...",
-    "sessionEstablished": "Session établie avec succès !"
+    "sessionEstablished": "Session établie avec succès !"
   },
   "scratchpad": {
     "actions": {
@@ -376,7 +375,7 @@
     },
     "generationError": "Erreur lors de la génération du texte",
     "loadingError": "Erreur lors du chargement du fichier de bloc-notes",
-    "placeholder": "Commencez à taper votre document ou\ndemandez à Witsy d'écrire quelque chose pour vous !\n\nUne fois que vous avez commencé, vous pouvez demander à Witsy\nde faire des modifications sur votre document.\n\nSi vous surlignez une partie de votre texte,\nWitsy ne mettra à jour que cette partie.\n\nJetez également un coup d'œil à l'Assistant d'Écriture\ndans la barre d'action en bas à droite !\n\nEssayez-le !"
+    "placeholder": "Commencez à taper votre document ou\ndemandez à Witsy d'écrire quelque chose pour vous !\n\nUne fois que vous avez commencé, vous pouvez demander à Witsy\nde faire des modifications sur votre document.\n\nSi vous surlignez une partie de votre texte,\nWitsy ne mettra à jour que cette partie.\n\nJetez également un coup d'œil à l'Assistant d'Écriture\ndans la barre d'action en bas à droite !\n\nEssayez-le !"
   },
   "settings": {
     "advanced": {
@@ -415,7 +414,7 @@
       "chatListLayout": "Liste des conversations",
       "chatListLayouts": {
         "compact": "Compact",
-        "cozy": "Confortable"
+        "cozy": "Aéré"
       },
       "chatTheme": "Thème des conversations",
       "chatThemes": {
@@ -450,12 +449,12 @@
     },
     "engines": {
       "anthropic": {
-        "aboutModels": "En savoir plus sur les modèles Anthropic",
+        "aboutModels": "A propos des modèles Anthropic",
         "pricing": "Tarification Anthropic"
       },
       "apiKey": "Clé API",
       "cerebras": {
-        "aboutModels": "En savoir plus sur les modèles Cerebras"
+        "aboutModels": "A propos des modèles Cerebras"
       },
       "chatModel": "Modèle de chat",
       "custom": {
@@ -467,19 +466,19 @@
         "modelPlaceholder": "Entrez un nom de modèle ou sélectionnez-en un"
       },
       "deepseek": {
-        "aboutModels": "En savoir plus sur les modèles DeepSeek"
+        "aboutModels": "A propos des modèles DeepSeek"
       },
       "getApiKey": "Obtenir votre clé API",
       "google": {
-        "aboutModels": "En savoir plus sur les modèles Google",
+        "aboutModels": "A propos des modèles Google",
         "pricing": "Tarification Google"
       },
       "groq": {
-        "aboutModels": "En savoir plus sur les modèles Groq",
+        "aboutModels": "A propos des modèles Groq",
         "pricing": "Tarification Groq"
       },
       "mistralai": {
-        "aboutModels": "En savoir plus sur les modèles MistralAI",
+        "aboutModels": "A propos des modèles MistralAI",
         "pricing": "Tarification MistralAI"
       },
       "ollama": {
@@ -488,20 +487,20 @@
         "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce modèle ?"
       },
       "openai": {
-        "aboutModels": "En savoir plus sur les modèles OpenAI",
+        "aboutModels": "A propos des modèles OpenAI",
         "apiBaseURL": "URL de base de l'API",
         "pricing": "Tarification OpenAI"
       },
       "openrouter": {
-        "aboutModels": "En savoir plus sur les modèles OpenRouter"
+        "aboutModels": "A propos des modèles OpenRouter"
       },
       "xai": {
-        "aboutModels": "En savoir plus sur les modèles xAI"
+        "aboutModels": "A propos des modèles xAI"
       }
     },
     "experts": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet expert ?",
-      "copy": "copie",
+      "copy": "Copier",
       "export": "Exporter",
       "exportError": "Échec de l'exportation du fichier d'experts",
       "exportSuccess": "Fichier d'experts exporté avec succès",
@@ -515,7 +514,8 @@
       "unselectAll": "Tout désélectionner"
     },
     "general": {
-      "answerIn": "Répondre en",
+      "localeUI": "Langue de l'interface",
+      "localeLlm": "Langue des modèles",
       "hideOnStartup": "Masquer au démarrage",
       "keepInStatusBar": "Garder dans la barre d'état",
       "lastOneUsed": "Dernier utilisé",
@@ -531,7 +531,7 @@
       "image": {
         "description": "Ce plugin permet aux moteurs LLM de créer des images à partir d'une description textuelle.",
         "huggingface": {
-          "aboutModels": "En savoir plus sur les modèles Hugging Face",
+          "aboutModels": "A propos des modèles Hugging Face",
           "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
         },
         "imageModel": "Modèle d'image",
@@ -540,7 +540,7 @@
         },
         "provider": "Fournisseur",
         "replicate": {
-          "aboutModels": "En savoir plus sur les modèles Replicate",
+          "aboutModels": "A propos des modèles Replicate",
           "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
         },
         "title": "Texte vers Image"
@@ -591,7 +591,7 @@
         "search": "Rechercher",
         "title": "Python",
         "useAtOwnRisk": "Utilisez à vos propres risques",
-        "warning": "Attention !"
+        "warning": "Attention !"
       },
       "search": {
         "characters": "caractères (0 pour le contenu complet)",
@@ -616,7 +616,7 @@
         "description": "Ce plugin permet aux moteurs LLM de créer des vidéos à partir d'une description textuelle.",
         "provider": "Fournisseur",
         "replicate": {
-          "aboutModels": "En savoir plus sur les modèles Replicate",
+          "aboutModels": "A propos des modèles Replicate",
           "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
         },
         "title": "Texte vers Vidéo",
@@ -632,7 +632,7 @@
       "aiCommandsUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier puis choisissez une commande IA",
       "dictation": "Dictée",
       "newChat": "Nouveau chat",
-      "newPrompt": "Nouvelle requête",
+      "newPrompt": "Nouvelle requête rapide",
       "newScratchpad": "Nouveau bloc-notes",
       "readAloud": "Lecture à haute voix",
       "readAloudUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier",
@@ -656,7 +656,7 @@
         "title": "Êtes-vous sûr de vouloir supprimer tous les modèles locaux ?"
       },
       "deleteLocalModels": "Supprimer tous les modèles stockés localement",
-      "downloadComplete": "Téléchargement terminé !",
+      "downloadComplete": "Téléchargement terminé !",
       "downloadConfirmation": {
         "title": "Ce modèle doit être téléchargé sur votre ordinateur. Voulez-vous continuer ?"
       },
@@ -679,8 +679,8 @@
       },
       "spokenLanguage": "Langue parlée",
       "tabs": {
-        "speechToText": "Reconnaissance vocale",
-        "textToSpeech": "Synthèse vocale"
+        "speechToText": "Dictée",
+        "textToSpeech": "Synthèse"
       },
       "tts": {
         "kokoroReminder": "Fourni par",
@@ -688,7 +688,7 @@
         "serviceDisclaimer": "Le service peut cesser de fonctionner à tout moment.",
         "voice": "Voix"
       },
-      "verificationComplete": "Vérification terminée !",
+      "verificationComplete": "Vérification terminée !",
       "verifying": "Vérification : {percent}%"
     }
   },
@@ -699,30 +699,25 @@
     }
   },
   "tips": {
-    "common": {
-      "gotIt": "Compris !",
-      "later": "Plus tard",
-      "yes": "Oui !"
-    },
     "computerUse": {
-      "text": "Utilisez à vos propres risques !",
+      "text": "Utilisez à vos propres risques !",
       "title": "L'utilisation de l'ordinateur interagira avec votre ordinateur et effectuera des actions de souris et de clavier. Ces actions peuvent provoquer un comportement inattendu et entraîner une perte de données."
     },
     "conversation": {
       "title": "Découvrez les options de conversation en faisant un clic droit sur l'icône du microphone dans la fenêtre de chat."
     },
     "favoriteModels": {
-      "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
+      "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
     },
     "folderList": {
       "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."
     },
     "realtime": {
-      "title": "Le chat en temps réel peut rapidement devenir coûteux. Le coût estimé fourni n'est qu'une estimation et peut ne pas être correct. Cliquez sur le blob pour démarrer et arrêter la discussion !"
+      "title": "Le chat en temps réel peut rapidement devenir coûteux. Le coût estimé fourni n'est qu'une estimation et peut ne pas être correct. Cliquez sur le blob pour démarrer et arrêter la discussion !"
     }
   },
   "transcribe": {
-    "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
+    "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
     "errorMicrophone": "Erreur d'accès au microphone",
     "errorSTTNotReady": "Le moteur de reconnaissance vocale n'est pas prêt",
     "errorTranscription": "Une erreur s'est produite pendant la transcription"
