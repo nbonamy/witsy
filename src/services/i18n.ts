@@ -37,29 +37,9 @@ if (!i18nLlm) {
 }
 
 const localeToLangName = (locale: string): string => {
-  const code = locale.split('-')[0]
-  if (code == 'en') return 'English'
-  if (code == 'es') return 'Español'
-  if (code == 'fr') return 'Français'
-  if (code == 'de') return 'Deutsch'
-  if (code == 'it') return 'Italiano'
-  if (code == 'pt') return 'Português'
-  if (code == 'nl') return 'Nederlands'
-  if (code == 'pl') return 'Polski'
-  if (code == 'ru') return 'Русский'
-  if (code == 'ja') return '日本語'
-  if (code == 'ko') return '한국어'
-  if (code == 'zh') return '中文'
-  if (code == 'vi') return 'Tiếng Việt'
-  if (code == 'th') return 'ไทย'
-  if (code == 'id') return 'Bahasa Indonesia'
-  if (code == 'hi') return 'हिन्दी'
-  if (code == 'ar') return 'العربية'
-  if (code == 'tr') return 'Türkçe'
-  if (code == 'ms') return 'Bahasa Melayu'
-  if (code == 'sw') return 'Kiswahili'
-  console.error(`Unknown language code: ${code}`)
-  return '' 
+  const t = i18nLlm.global.t as CallableFunction
+  const language = t(`common.language.${locale}`)
+  return language.startsWith('common.language.') ? locale : language
 }
 
 const t: CallableFunction = i18n?.global?.t
@@ -78,10 +58,15 @@ const i18nInstructions = (config: anyDict, key: string, params?: any): string =>
 
 }
 
+const hasLocalization = (locale: string): boolean => {
+  return Object.keys(messages).includes(locale.substring(0, 2))
+}
+
 export {
   i18n as default,
   i18nLlm,
   t,
   i18nInstructions,
-  localeToLangName
+  localeToLangName,
+  hasLocalization
 }

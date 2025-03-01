@@ -16,9 +16,9 @@
     <div class="group localeLLM">
       <label>{{ t('settings.general.localeLLM') }}</label>
       <div class="subgroup">
-        <LangSelect v-model="localeLLM" @change="save" />
+        <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
         <div class="checkbox">
-          <input type="checkbox" v-model="forceLocale" @change="save" />
+          <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
           <div class="label">{{ t('settings.general.forceLocale') }}</div>
         </div>
       </div>
@@ -46,7 +46,7 @@
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { t, hasLocalization } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
@@ -55,6 +55,7 @@ const engine = ref(null)
 const model = ref(null)
 const localeUI = ref(null)
 const localeLLM = ref(null)
+const isLocalized = ref(false)
 const forceLocale = ref(false)
 const runAtLogin = ref(false)
 const hideOnStartup = ref(false)
@@ -80,6 +81,7 @@ const load = () => {
   runAtLogin.value = window.api.runAtLogin.get()
   hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
+  onChangeLocaleLLM()
 }
 
 const onResetTips = () => {
@@ -94,6 +96,15 @@ const onChangeEngine = () => {
 }
 
 const onChangeModel = () => {
+  save()
+}
+
+const onChangeLocaleLLM = () => {
+  isLocalized.value = hasLocalization(localeLLM.value)
+  console.log('isLocalized', isLocalized.value, localeLLM.value)
+  if (!isLocalized.value) {
+    forceLocale.value = true
+  }
   save()
 }
 

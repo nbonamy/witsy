@@ -218,7 +218,9 @@ export type GenerationResult =
     // forced locale
     if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.forceLocale) {
       const lang = localeToLangName(this.config.llm.locale)
-      if (lang) instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang }) + '.'
+      if (lang.length) {
+        instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang })
+      }
     }
 
     // // add date and time

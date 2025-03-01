@@ -184,7 +184,7 @@ async function checkUnusedTranslations() {
 
       // Find all source files
       const srcFiles = glob.sync(`${SRC_DIR}/**/*.{ts,vue}`)
-      const unusedKeys = new Set(allKeys.filter(key => !key.match(/^settings\.plugins\.[^.]+\.title$/)))
+      const unusedKeys = new Set(allKeys.filter(key => !key.match(/^settings\.plugins\.[^.]+\.title$/) && !key.match(/^common\.language\.[a-z]{2}-[A-Z]{2}$/)))
 
       // Check each source file for key usage
       for (const srcFile of srcFiles) {
