@@ -35,23 +35,11 @@ vi.mock('../../src/services/i18n', async (importOriginal) => {
     t: (key: string) => `${key}.${store.config.llm.locale}`,
     i18nInstructions: (config: any, key: string) => {
 
-      //
-      const tokens = key.split('.').slice(1)
-      let instructions = config?.instructions as { [key: string]: any }
-      if (instructions) {
-        for (const token of tokens) {
-          instructions = instructions[token]
-          if (!instructions) {
-            break
-          }
-        }
-      }
-
-      // valid
-      if (typeof instructions === 'string') {
+      // get instructions
+      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
+      if (typeof instructions === 'string' && (instructions as string)?.length) {
         return instructions
       }
-
       // default
       return `${key}.${store.config.llm.locale}`
 

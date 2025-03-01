@@ -28,29 +28,18 @@ vi.mock('../../src/services/download.ts', async () => {
 // mock i18n
 vi.mock('../../src/services/i18n', async () => {
   return {
-    t: (key: string) => `${key}.${store.config.llm.locale}`,
-    countryCodeToLangName: (code: string) => code,
+    t: (key: string) => `${key}.${store.config.general.locale}`,
+    countryCodeToLangName: (code: string) => code == 'xx' ? '' : code,
     i18nInstructions: (config: any, key: string) => {
 
-      //
-      const tokens = key.split('.').slice(1)
-      let instructions = config?.instructions as { [key: string]: any }
-      if (instructions) {
-        for (const token of tokens) {
-          instructions = instructions[token]
-          if (!instructions) {
-            break
-          }
-        }
-      }
-
-      // valid
-      if (typeof instructions === 'string') {
+      // get instructions
+      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
+      if (typeof instructions === 'string' && (instructions as string)?.length) {
         return instructions
       }
 
       // default
-      return `${key}.${store.config.llm.locale}`
+      return `${key}.${store.config.llm.locale || store.config.general.locale}`
 
     }
   }
@@ -92,14 +81,8 @@ beforeEach(() => {
   // init store
   store.config = defaults
   store.config.general.locale = 'en'
-  store.config.llm.engine = 'mock'
   store.config.llm.locale = 'fr'
-  // store.config.instructions = {
-  //   default: 'You are a chat assistant',
-  //   titling: 'You are a titling assistant',
-  //   titling_user: 'Provide a title',
-  //   docquery: '{context} / {query}'
-  // }
+  store.config.llm.engine = 'mock'
   store.config.engines.mock = {
     models: { chat: [ 'chat1', 'chat2' ] },
     model: { chat: 'chat'  }
@@ -131,6 +114,27 @@ test('Assistant parameters', async () => {
     citations: true,
     usage: true,
   })
+})
+
+test('Asistant language default', async () => {
+  store.config.llm.locale = ''
+  const content = await prompt('Hello LLM')
+  expect(content).toContain('instructions.default.en')
+  expect(content).not.toContain('instructions.setlang.en')
+})
+
+test('Asistant language override', async () => {
+  store.config.llm.locale = 'fr'
+  const content = await prompt('Hello LLM')
+  expect(content).toContain('instructions.default.fr')
+  expect(content).toContain('instructions.setlang.fr')
+})
+
+test('Asistant language unknown', async () => {
+  store.config.llm.locale = 'xx'
+  const content = await prompt('Hello LLM')
+  expect(content).toContain('instructions.default.xx')
+  expect(content).not.toContain('instructions.setlang.fr')
 })
 
 test('Assistant Chat', async () => {
@@ -203,19 +207,19 @@ test('User-defined instructions', async () => {
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.missingApiKey.fr')
+  expect(content).toBe('generator.errors.missingApiKey.en')
 })
 
 test('Low balance', async () => {
   await prompt('no credit left')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.outOfCredits.fr')
+  expect(content).toBe('generator.errors.outOfCredits.en')
 })
 
 test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.quotaExceeded.fr')
+  expect(content).toBe('generator.errors.quotaExceeded.en')
 })
 
 test('Stop generation', async () => {

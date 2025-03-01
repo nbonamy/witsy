@@ -25,19 +25,8 @@ vi.mock('../../src/services/i18n', async () => {
   return {
     i18nInstructions: (config: any, key: string) => {
 
-      //
-      const tokens = key.split('.')
-      let instructions = config
-      if (instructions) {
-        for (const token of tokens) {
-          instructions = instructions[token]
-          if (!instructions) {
-            break
-          }
-        }
-      }
-
-      // valid
+      // get instructions
+      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
       if (typeof instructions === 'string' && (instructions as string)?.length) {
         return instructions
       }

@@ -55,7 +55,7 @@
     "install": "Install",
     "key": "Key",
     "language": {
-      "auto": "🤖 Let LLM decide",
+      "auto": "🤖 Same as interface",
       "system": "🖥️ System language"
     },
     "llmModel": "LLM Model",

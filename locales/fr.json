@@ -55,7 +55,7 @@
     "install": "Installer",
     "key": "Clé",
     "language": {
-      "auto": "🤖 Laisser le modèle décider",
+      "auto": "🤖 Identique à l'interface",
       "system": "🖥️ Langue du système"
     },
     "llmModel": "Modèle",
