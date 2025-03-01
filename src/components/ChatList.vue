@@ -13,12 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ChatListMode } from '../types/config'
 import { type Ref, ref, computed, onMounted, PropType } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
 import ChatListFolder from './ChatListFolder.vue'

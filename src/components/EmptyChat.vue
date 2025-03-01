@@ -27,11 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref, shallowReactive, computed, onMounted, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'

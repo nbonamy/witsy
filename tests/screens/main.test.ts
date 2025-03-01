@@ -19,6 +19,12 @@ const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+  }
+})
+
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()
   Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder' : 'user-input' }))

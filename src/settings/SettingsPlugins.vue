@@ -14,11 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../plugins/plugins'
+import { t } from '../services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsSearch from './SettingsSearch.vue'

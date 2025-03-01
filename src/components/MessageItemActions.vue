@@ -18,10 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'

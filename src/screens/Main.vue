@@ -9,13 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
-// components
 import { Ref, ref, onMounted, nextTick, watch } from 'vue'
 import { strDict, anyDict } from 'types'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
 import { SendPromptParams } from '../components/Prompt.vue'
 import Dialog from '../composables/dialog'

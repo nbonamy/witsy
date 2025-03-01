@@ -31,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { t } from '../services/i18n'
 
 import { CustomEngineConfig } from '../types/config'
 import { ref, onMounted, watch } from 'vue'

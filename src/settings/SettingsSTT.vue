@@ -60,11 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'

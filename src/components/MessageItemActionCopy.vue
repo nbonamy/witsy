@@ -5,10 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref } from 'vue'
+import { t } from '../services/i18n'
 import Message from '../models/message'
 
 const props = defineProps({

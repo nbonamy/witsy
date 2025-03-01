@@ -14,6 +14,12 @@ const emitEventMock = vi.fn()
 
 const stubTeleport = { global: { stubs: { teleport: true } } }
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+  }
+})
+
 vi.mock('../../src/composables/event_bus', async () => {
   return { default: () => ({
     onEvent: onEventMock,

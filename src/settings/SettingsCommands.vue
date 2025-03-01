@@ -38,12 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { Command } from 'types'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
