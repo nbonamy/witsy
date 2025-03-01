@@ -29,7 +29,7 @@ form .group:has(.subgroup) {
 }
 
 form .group label {
-  min-width: 150px;
+  min-width: 160px;
   margin-right: 10px;
   text-align: right;
 }
@@ -49,6 +49,14 @@ form .group:has([required]) label:not(:empty)::after {
 
 form .group label:not(:empty)::after {
   content: ':';
+}
+
+.colon-spaced form .group:has([required]) label:not(:empty)::after {
+  content: '\00a0\00a0:*';
+}
+
+.colon-spaced form .group label:not(:empty)::after {
+  content: '\00a0\00a0:';
 }
 
 form .group:has(.subgroup) label {

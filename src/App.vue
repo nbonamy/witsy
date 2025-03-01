@@ -14,7 +14,7 @@ import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
-import i18n from './services/i18n'
+import i18n, { t } from './services/i18n'
 
 // events
 import useEventBus from './composables/event_bus'
@@ -60,6 +60,19 @@ const setTint = (tint?: string) => {
   document.querySelector('body').setAttribute('data-tint', tint)
 }
 
+const setLocale = () => {
+  const locale = window.api.config.locale()
+  console.log('Changing locale to', locale)
+  // @ts-expect-error not sure why
+  i18n.global.locale.value = window.api.config.locale()
+
+  // dom
+  const body = document.querySelector('body')
+  body.setAttribute('data-locale', locale)
+  body.classList.remove('colon-spaced', 'colon-notspaced')
+  body.classList.add(`colon-${t('common.colon')}`)
+}
+
 // add platform name
 onMounted(() => {
 
@@ -71,15 +84,8 @@ onMounted(() => {
   // config change may lead to tint change
   window.api.on('file-modified', (signal) => {
     if (signal === 'settings') {
-
-      // tint
       setTint()
-
-      // language
-      const locale = window.api.config.locale()
-      console.log('Changing locale to', locale)
-      // @ts-expect-error not sure why
-      i18n.global.locale.value = window.api.config.locale()
+      setLocale()
     }
   })  
 
@@ -95,6 +101,9 @@ onMounted(() => {
   // init theme
   theme.value = appearanceTheme.getTheme()
   setTint()
+
+  // init locale
+  setLocale()
 
   // watch for theme change
   if (window.matchMedia) {

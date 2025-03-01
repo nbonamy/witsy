@@ -33,14 +33,14 @@ afterEach(async () => {
 test('Start monitor', async () => {
   monitor = new Monitor(callback)
   monitor.start(tempFile)
-  expect(monitor.size()).toBe(5)
+  expect(monitor.stats().size).toBe(5)
 })
 
 test('Stop monitor', async () => {
   monitor = new Monitor(callback)
   monitor.start(tempFile)
   monitor.stop()
-  expect(monitor.size()).toBe(0)
+  expect(monitor.stats().size).toBe(0)
 })
 
 test('Notify monitor', async () => {

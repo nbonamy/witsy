@@ -5,9 +5,17 @@
       <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />&nbsp;
       <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
     </div>
-    <div class="group language">
-      <label>{{ t('settings.general.answerIn') }}</label>
-      <LangSelect v-model="language" @change="save" />
+    <div class="group localeUI">
+      <label>{{ t('settings.general.localeUI') }}</label>
+      <select v-model="localeUI" @change="save">
+        <option value="">{{ t('common.language.system') }}</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="fr">🇫🇷 Français</option>
+      </select>
+    </div>
+    <div class="group localeLlm">
+      <label>{{ t('settings.general.localeLlm') }}</label>
+      <LangSelect v-model="localeLlm" @change="save" />
     </div>
     <div class="group reset-tips">
       <label>{{ t('settings.general.resetTips') }}</label>
@@ -40,7 +48,8 @@ import LangSelect from '../components/LangSelect.vue'
 
 const engine = ref(null)
 const model = ref(null)
-const language = ref(null)
+const localeUI = ref(null)
+const localeLlm = ref(null)
 const runAtLogin = ref(false)
 const hideOnStartup = ref(false)
 const keepRunning = ref(false)
@@ -59,7 +68,8 @@ const models = computed(() => {
 const load = () => {
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
-  language.value = store.config.general.language
+  localeUI.value = store.config.general.locale
+  localeLlm.value = store.config.llm.locale
   runAtLogin.value = window.api.runAtLogin.get()
   hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
@@ -83,7 +93,8 @@ const onChangeModel = () => {
 const save = () => {
   store.config.prompt.engine = engine.value
   store.config.prompt.model = model.value
-  store.config.general.language = language.value
+  store.config.general.locale = localeUI.value
+  store.config.llm.locale = localeLlm.value
   window.api.runAtLogin.set(runAtLogin.value)
   store.config.general.hideOnStartup = hideOnStartup.value
   store.config.general.keepRunning = keepRunning.value

@@ -32,7 +32,7 @@
               <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
               <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
             </div>
-            <span v-pre>{{ t('experts.editor.triggerAppsDescription') }}</span>
+            <span> {{ t('experts.editor.triggerAppsDescription') }}</span>
           </div>
         </div>
       </main>

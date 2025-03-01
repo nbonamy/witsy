@@ -87,7 +87,7 @@ test('Settings close', async () => {
 test('Settings General', async () => {
   
   const tab = await switchToTab(wrapper, 0)
-  expect(tab.findAll('.group')).toHaveLength(6)
+  expect(tab.findAll('.group')).toHaveLength(7)
   
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
@@ -105,10 +105,27 @@ test('Settings General', async () => {
   expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
-  expect(store.config.general.language).not.toBe('es')
-  expect(tab.findAll('.group.language select option')).toHaveLength(22)
-  tab.find('.group.language select').setValue('es')
-  expect(store.config.general.language).toBe('es')
+  expect(store.config.general.locale).not.toBe('fr')
+  expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
+  tab.find('.group.localeUI select').setValue('fr')
+  expect(store.config.general.locale).toBe('fr')
+  
+  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  tab.find('.group.localeUI select').setValue('')
+  expect(store.config.general.locale).toBe('')
+  
+  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.llm.locale).not.toBe('es')
+  expect(tab.findAll('.group.localeLlm select option')).toHaveLength(22)
+  tab.find('.group.localeLlm select').setValue('es')
+  expect(store.config.llm.locale).toBe('es')
+  
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()

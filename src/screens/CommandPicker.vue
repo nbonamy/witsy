@@ -1,7 +1,7 @@
 <template>
   <div class="commands">
     <div class="app" v-if="sourceApp">
-      <img class="icon" :src="iconData" /> {{ t('commands.picker.workingWith') }} {{ sourceApp.name }}
+      <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
     </div>
     <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
         <div class="icon">{{ command.icon }}</div>

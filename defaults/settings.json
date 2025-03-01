@@ -4,7 +4,6 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
-    "language": "",
     "tips": {
     },
     "confirm": {
@@ -13,6 +12,7 @@
     "locale": ""
   },
   "llm": {
+    "locale": "",
     "engine": "openai",
     "favorites": [],
     "autoVisionSwitch": true,

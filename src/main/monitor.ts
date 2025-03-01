@@ -1,11 +1,11 @@
 
 import path from 'path'
-import fs, { FSWatcher } from 'fs'
+import fs, { FSWatcher, Stats } from 'fs'
 
 export default class {
 
   filepath: string
-  filesize: number
+  filestats: Stats
   callback: CallableFunction
   timeout: NodeJS.Timeout
   watcher: FSWatcher
@@ -22,13 +22,13 @@ export default class {
     // init
     this.timeout = null
     this.filepath = filepath
-    this.filesize = this.size()
+    this.filestats = this.stats()
 
     // start
     this.watcher = fs.watch(filepath, async () => {
-      const size = this.size()
-      if (size !== this.filesize) {
-        this.filesize = size
+      const stats = this.stats()
+      if (stats.size !== this.filestats.size || stats.mtimeMs !== this.filestats.mtimeMs) {
+        this.filestats = stats
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           this.notify(filepath)
@@ -41,15 +41,14 @@ export default class {
     this.watcher?.close()
     this.watcher = null
     this.filepath = null
-    this.filesize = 0
   }
 
-  size(): number {
+  stats(): Stats {
     try {
-      return fs.statSync(this.filepath).size
+      return fs.statSync(this.filepath)
     } catch {
       //console.error('Error while getting file size', error)
-      return 0
+      return { size: 0, mtimeMs: 0 } as Stats
     }
   }
 

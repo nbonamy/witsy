@@ -1,5 +1,6 @@
 
 const getChatModels = [
+  { id: 'deepseek-r1:14b', name: 'DeepSeek Reasoner' },
   { id: 'llama3.3:latest', name: 'Llama 3.3' },
   { id: 'llama3.2:latest', name: 'Llama 3.2' },
   { id: 'llama3.2-vision', name: 'Llama 3.2 Vision' },
