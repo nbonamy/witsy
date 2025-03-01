@@ -2,7 +2,7 @@
   <div>
     <div class="group language">
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
-      <LangSelect v-model="language" :default-text="t('settings.voice.automatic')" @change="save" />
+      <LangSelect v-model="language" default-text="settings.voice.automatic" @change="save" />
     </div>
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>

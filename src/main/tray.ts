@@ -1,4 +1,3 @@
-
 import { App, Tray, Menu, nativeImage } from 'electron';
 import AutoUpdater from './autoupdate';
 import Commander from '../automations/commander';
@@ -8,6 +7,7 @@ import Transcriber from '../automations/transcriber';
 import * as config from './config';
 import * as window from './window';
 import * as shortcuts from './shortcuts';
+import { useI18n } from './i18n';
 import path from 'path';
 
 export default class {
@@ -63,6 +63,9 @@ export default class {
 
   private buildTrayMenu = (): Array<Electron.MenuItemConstructorOptions> => {
 
+    // get i18n
+    const t = useI18n(this.app);
+
     // load the config
     const configShortcuts = config.loadSettings(this.app).shortcuts;
   
@@ -73,7 +76,7 @@ export default class {
     if (this.autoUpdater.updateAvailable) {
       menuItems = [
         ...menuItems,
-        { label: 'Install update and restart...', click: this.autoUpdater.install },
+        { label: t('tray.menu.installUpdate'), click: this.autoUpdater.install },
         { type: 'separator' },
       ]
     } 
@@ -90,18 +93,18 @@ export default class {
     // add common stuff
     //@ts-expect-error uknown
     menuItems = menuItems.concat([
-      { label: 'Quick Prompt', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt), click: PromptAnywhere.open },
-      { label: 'New Chat', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-      { label: 'Scratchpad', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: () => window.openScratchPad() },
-      { label: 'Run AI Command', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
+      { label: t('tray.menu.quickPrompt'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt), click: PromptAnywhere.open },
+      { label: t('tray.menu.newChat'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
+      { label: t('tray.menu.scratchpad'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: () => window.openScratchPad() },
+      { label: t('tray.menu.runAiCommand'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
       { type: 'separator' },
-      { label: 'Read Aloud', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
-      { label: 'Start Dictation', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },
-      { label: 'Voice Mode', accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime), click: window.openRealtimeChatWindow },
+      { label: t('tray.menu.readAloud'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
+      { label: t('tray.menu.startDictation'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },
+      { label: t('tray.menu.voiceMode'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime), click: window.openRealtimeChatWindow },
       { type: 'separator' },
-      { label: 'Settings…', click: window.openSettingsWindow },
+      { label: t('tray.menu.settings'), click: window.openSettingsWindow },
       { type: 'separator' },
-      { label: 'Quit', /*accelerator: 'Command+Q', */click: () => this.quit() }
+      { label: t('tray.menu.quit'), /*accelerator: 'Command+Q', */click: () => this.quit() }
     ]);
 
     // return

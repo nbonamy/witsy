@@ -1,3 +1,4 @@
+#!/usr/bin/env npx ts-node
 
 import * as llm from 'multi-llm-ts'
 import fs from 'fs'

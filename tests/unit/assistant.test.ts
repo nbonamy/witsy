@@ -25,6 +25,13 @@ vi.mock('../../src/services/download.ts', async () => {
   }
 })  
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => key,
+    countryCodeToName: (code: string) => code,
+  }
+})
+
 beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
   useWindowMock()
@@ -152,25 +159,25 @@ test('Conversation language', async () => {
   store.config.general.language = 'fr'
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toMatch(/French/)
+  expect(instructions).toMatch(/ fr.$/)
 })
 
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
+  expect(content).toBe('generator.errors.missingApiKey')
 })
 
 test('Low balance', async () => {
   await prompt('no credit left')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
+  expect(content).toBe('generator.errors.outOfCredits')
 })
 
 test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+  expect(content).toBe('generator.errors.quotaExceeded')
 })
 
 test('Stop generation', async () => {

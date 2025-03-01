@@ -1,6 +1,11 @@
 
-import { expect, test } from 'vitest'
+import { beforeAll, expect, test } from 'vitest'
+import { useWindowMock } from '../mocks/window'
 import { countryCodeToName } from '../../src/services/i18n'
+
+beforeAll(() => {
+  useWindowMock()
+})
 
 test('Country code to Name', async () => {
   expect(countryCodeToName('en')).toBe('English')

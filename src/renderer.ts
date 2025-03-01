@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { BootstrapIconsPlugin } from 'bootstrap-icons-vue'
-import { i18n } from './i18n'
+import i18n from './services/i18n'
 import App from './App.vue'
 
 try {

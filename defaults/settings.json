@@ -9,7 +9,8 @@
     },
     "confirm": {
       "retryGeneration": true
-    }
+    },
+    "locale": ""
   },
   "llm": {
     "engine": "openai",

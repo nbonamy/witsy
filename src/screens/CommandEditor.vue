@@ -6,7 +6,7 @@
       </header>
       <main>
         <div class="group">
-          <label>{{ t('common.label') }}</label>
+          <label>{{ t('common.name') }}</label>
           <input type="text" v-model="label" required />
         </div>
         <div class="group">

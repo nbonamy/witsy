@@ -214,6 +214,7 @@ declare global {
         apply(): void
       }
       config: {
+        locale(): string
         load(): Configuration
         save(config: Configuration): void
       }

@@ -1,4 +1,27 @@
 
+import { createI18n, I18n } from 'vue-i18n'
+import messages from '../../locales/index'
+
+let i18n: I18n|null = null
+
+if (!i18n) {
+
+  // load locale
+  const locale = window.api?.config?.locale() || 'en'
+  console.log('Creating i18n', locale)
+
+  // now do it
+  i18n = createI18n({
+    legacy: false,
+    locale: locale,
+    fallbackLocale: 'en',
+    messages
+  })
+}
+
+export default i18n
+export const t = i18n.global.t as CallableFunction
+
 export const countryCodeToName = (code: string): string => {
   if (code == 'en') return 'English'
   if (code == 'es') return 'Spanish'

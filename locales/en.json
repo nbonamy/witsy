@@ -1,209 +1,265 @@
 {
   "common": {
-    "esc": "Esc",
-    "save": "Save",
-    "cancel": "Cancel",
-    "ok": "OK",
-    "label": "Label",
-    "icon": "Icon",
-    "shortcut": "Shortcut",
-    "name": "Name",
-    "create": "Create",
-    "reset": "Reset",
-    "required": {
-      "fieldsRequired": "Make sure you enter a value for the required fields."
-    },
-    "warning": "Warning",
-    "delete": "Delete",
-    "documents": "Documents",
-    "files": "Files",
-    "folder": "Folder",
-    "embeddings": "Embeddings",
-    "confirmation": {
-      "deleteRepository": "Are you sure you want to delete this repository?",
-      "deleteDocument": "Are you sure you want to delete this document?",
-      "cannotUndo": "You can't undo this action.",
-      "deleteMemory": "Are you sure you want to delete this memory?",
-      "unsavedChanges": "You have unsaved changes. You will lose your work if you close this window.",
-      "doNotClose": "Do not close",
-      "closeAnyway": "Close anyway",
-      "continueQuestion": "You have unsaved changes. You will lose your work if you continue.",
-      "continue": "Continue"
-    },
     "actions": {
       "addFiles": "Add Files...",
       "addFolder": "Add Folder..."
     },
-    "prompt": "Prompt",
-    "add": "Add",
-    "remove": "Remove",
-    "pick": "Pick",
-    "type": "Type",
-    "url": "URL",
-    "command": "Command",
     "arguments": "Arguments",
-    "install": "Install",
-    "key": "Key",
-    "value": "Value",
-    "browse": "Browse",
-    "close": "Close",
-    "load": "Load",
-    "clear": "Clear",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "default": "Default",
-    "low": "Low",
-    "medium": "Medium",
-    "high": "High",
-    "workingWith": "Working with",
     "askMeAnything": "Ask me anything",
-    "estimatedCost": "Estimated cost:",
+    "back": "Back",
     "basedOn": "based on",
-    "costsAsOf": "costs as of",
+    "browse": "Browse",
+    "cancel": "Cancel",
+    "chat": "Chat",
+    "clear": "Clear",
     "clickToStart": "Click the blob to start chatting",
-    "undo": "Undo",
-    "redo": "Redo",
-    "copy": "Copy",
-    "read": "Read",
+    "close": "Close",
+    "command": "Command",
+    "confirmation": {
+      "cannotUndo": "You can't undo this action.",
+      "closeAnyway": "Close anyway",
+      "continue": "Continue",
+      "continueQuestion": "You have unsaved changes. You will lose your work if you continue.",
+      "deleteDocument": "Are you sure you want to delete this document?",
+      "deleteMemory": "Are you sure you want to delete this memory?",
+      "deleteRepository": "Are you sure you want to delete this repository?",
+      "doNotClose": "Do not close",
+      "unsavedChanges": "You have unsaved changes. You will lose your work if you close this window."
+    },
+    "continue": "Continue",
     "copied": "Copied",
-    "settings": "Settings",
-    "stop": "Stop",
-    "record": "Record",
-    "insert": "Insert",
-    "llmProvider": "LLM Provider",
-    "llmModel": "LLM Model",
-    "rename": "Rename",
-    "move": "Move",
-    "newChat": "New chat",
-    "search": "Search…",
-    "refresh": "Refresh",
-    "refreshing": "Refreshing…",
+    "copy": "Copy",
+    "costsAsOf": "costs as of",
+    "create": "Create",
+    "default": "Default",
+    "delete": "Delete",
+    "disabled": "Disabled",
+    "documents": "Documents",
     "done": "Done!",
+    "edit": "Edit",
+    "embeddings": "Embeddings",
+    "enabled": "Enabled",
     "error": "Error!",
+    "esc": "Esc",
+    "estimatedCost": "Estimated cost:",
     "favorites": {
       "add": "Add to favorites",
       "remove": "Remove from favorites"
     },
-    "retry": "Retry",
-    "edit": "Edit",
+    "files": "Files",
     "fork": "Fork",
-    "usage": "Usage",
-    "pull": "Pull",
-    "replace": "Replace",
-    "chat": "Chat",
-    "write": "Write",
+    "high": "High",
+    "icon": "Icon",
+    "insert": "Insert",
+    "install": "Install",
+    "key": "Key",
     "language": {
       "auto": "🤖 Let LLM decide"
-    }
-  },
-  "promptAnywhere": {
-    "actions": {
-      "clearResponse": "Clear response",
-      "saveChat": "Save chat",
-      "continueInChat": "Continue in chat",
-      "retry": "Retry"
-    }
+    },
+    "llmModel": "LLM Model",
+    "llmProvider": "LLM Provider",
+    "load": "Load",
+    "low": "Low",
+    "medium": "Medium",
+    "move": "Move",
+    "name": "Name",
+    "newChat": "New chat",
+    "no": "No",
+    "ok": "OK",
+    "pick": "Pick",
+    "prompt": "Prompt",
+    "pull": "Pull",
+    "read": "Read",
+    "record": "Record",
+    "redo": "Redo",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "rename": "Rename",
+    "replace": "Replace",
+    "required": {
+      "fieldsRequired": "Make sure you enter a value for the required fields."
+    },
+    "reset": "Reset",
+    "retry": "Retry",
+    "save": "Save",
+    "search": "Search…",
+    "settings": "Settings",
+    "shortcut": "Shortcut",
+    "stop": "Stop",
+    "type": "Type",
+    "undo": "Undo",
+    "url": "URL",
+    "usage": "Usage",
+    "value": "Value",
+    "warning": "Warning",
+    "workingWith": "Working with",
+    "write": "Write"
   },
   "chat": {
+    "actions": {
+      "exportPdf": "Export as PDF",
+      "makeTemporary": "Temporary Chat",
+      "saveChat": "Save Chat"
+    },
     "editor": {
       "title": "Title",
       "validation": {
         "requiredFields": "All fields are required",
         "titleRequired": "Make sure you enter a title for this chat."
       }
+    }
+  },
+  "chatList": {
+    "displayMode": {
+      "folders": "Folders",
+      "timeline": "Timeline"
     },
-    "actions": {
-      "saveChat": "Save Chat",
-      "makeTemporary": "Temporary Chat",
-      "rename": "Rename Chat",
-      "exportPdf": "Export as PDF"
+    "folder": {
+      "actions": {
+        "delete": "Delete folder"
+      }
+    },
+    "timeline": {
+      "earlier": "Earlier",
+      "last14days": "Last 14 days",
+      "last30days": "Last 30 days",
+      "last7days": "Last 7 days",
+      "today": "Today",
+      "yesterday": "Yesterday"
     }
   },
   "commands": {
     "defaults": {
-      "title": "Commands defaults",
-      "lastOneUsed": "Last one used"
+      "lastOneUsed": "Last one used",
+      "title": "Commands defaults"
     },
     "editor": {
-      "title": "Command details",
-      "prompt": "Prompt",
-      "useDefault": "Use commands default",
       "inputPlaceholder": "{input} will be subsituted with highlighted text",
       "notEditable": "This command is not editable. The content captured will be available in the prompt for you to ask anything about it!",
+      "prompt": "Prompt",
+      "title": "Command details",
+      "useDefault": "Use commands default",
       "validation": {
-        "requiredFields": "All fields marked with * are required.",
-        "inputPlaceholder": "The template must contain the {input} placeholder."
+        "inputPlaceholder": "The template must contain the {input} placeholder.",
+        "requiredFields": "All fields marked with * are required."
       }
     },
     "picker": {
       "workingWith": "Working with"
     }
   },
+  "docRepo": {
+    "config": {
+      "characters": "characters",
+      "chunkOverlap": "Chunk overlap",
+      "chunkSize": "Chunk size",
+      "maxDocumentSize": "Max document size",
+      "millionCharacters": "million characters",
+      "relevanceCutOff": "Search relevance cut-off",
+      "searchResultCount": "Search result count",
+      "title": "Document Repositories defaults"
+    },
+    "create": {
+      "defaultName": "Document Repository",
+      "embeddingWarning": "embedding model cannot be changed once repository is created",
+      "title": "Create Document Repository"
+    },
+    "repositories": {
+      "clickToCreate": "Click on the + button to create one.",
+      "noRepositories": "You don't have any repositories yet.",
+      "title": "Document Repositories"
+    }
+  },
+  "embedding": {
+    "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
+    "browse": "Browse models",
+    "model": "Embedding Model",
+    "provider": "Embedding Provider"
+  },
+  "emptyChat": {
+    "settings": {
+      "configure": "Configure",
+      "needsConfiguration": "This engine needs to be configured first! Do you want to open the Settings?"
+    },
+    "tips": {
+      "switchModel": "Click here to switch to a different chat bot model!",
+      "switchProvider": "Click here to switch to a different chat bot provider!"
+    }
+  },
   "engine": {
     "create": {
-      "title": "Create Custom Engine",
-      "description": "Create a new custom engine based on an API standard.",
-      "apiSpecification": "API Specification",
       "apiBaseURL": "API Base URL",
       "apiKey": "API key",
+      "apiSpecification": "API Specification",
+      "description": "Create a new custom engine based on an API standard.",
+      "title": "Create Custom Engine",
       "validation": {
         "nameBaseURLRequired": "Name and Base URL are required"
       }
-    },
-    "modelPicker": {
-      "title": "LLM Provider and Model"
-    }
-  },
-  "docRepo": {
-    "config": {
-      "title": "Document Repositories defaults",
-      "maxDocumentSize": "Max document size",
-      "chunkSize": "Chunk size",
-      "chunkOverlap": "Chunk overlap",
-      "searchResultCount": "Search result count",
-      "relevanceCutOff": "Search relevance cut-off",
-      "millionCharacters": "million characters",
-      "characters": "characters"
-    },
-    "create": {
-      "title": "Create Document Repository",
-      "embeddingWarning": "embedding model cannot be changed once repository is created",
-      "defaultName": "Document Repository"
-    },
-    "repositories": {
-      "title": "Document Repositories",
-      "noRepositories": "You don't have any repositories yet.",
-      "clickToCreate": "Click on the + button to create one."
     }
   },
   "experts": {
     "editor": {
+      "systemExpertNotice": "System Experts cannot be edited. Make a copy to customize this expert.",
       "title": "Expert details",
       "triggerApps": "Trigger Apps",
-      "systemExpertNotice": "System Experts cannot be edited. Make a copy to customize this expert.",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",
       "validation": {
         "requiredFields": "All fields marked with * are required."
       }
     }
   },
+  "generator": {
+    "errors": {
+      "cannotContinue": "\n\nSorry, I am not able to continue here.",
+      "contextTooLong": "Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.",
+      "couldNotGenerate": "Sorry, I could not generate text for that prompt.",
+      "invalidModel": "Sorry, it seems this model is not available.",
+      "missingApiKey": "You need to enter your API key in the Models tab of <a href=\"#settings_models\">Settings</a> in order to chat.",
+      "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.",
+      "pluginDescriptionTooLong": "Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.",
+      "quotaExceeded": "Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.",
+      "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_params\">try again without model parameters</a>?",
+      "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_plugins\">try again without plugins</a>?"
+    }
+  },
+  "main": {
+    "chat": {
+      "confirmDeleteMultiple": "Are you sure you want to delete these chats?",
+      "confirmDeleteSingle": "Are you sure you want to delete this chat?",
+      "moveToFolder": "Move to Folder",
+      "rename": "Rename Chat"
+    },
+    "folder": {
+      "confirmDelete": "Are you sure you want to delete this folder?",
+      "deleteConversations": "Delete conversations",
+      "keepConversations": "Keep conversations",
+      "rename": "Rename Folder"
+    },
+    "update": {
+      "available": "Update Available",
+      "later": "Later",
+      "restart": "An update is available. Restart to apply it.",
+      "restartNow": "Restart now"
+    }
+  },
   "mcp": {
     "serverEditor": {
+      "environmentVariables": "Environment Variables",
+      "selectCommand": "Select command",
+      "serverPackage": "Server Package",
       "title": "MCP Server Configuration",
       "type": {
-        "stdio": "stdio",
+        "smithery": "Smithery.ai",
         "sse": "SSE",
-        "smithery": "Smithery.ai"
+        "stdio": "stdio"
       },
-      "serverPackage": "Server Package",
-      "environmentVariables": "Environment Variables",
       "validation": {
-        "requiredFields": "Some fields are required",
         "commandRequired": "Make sure you enter a command for this server.",
-        "urlRequired": "Make sure you enter a URL for this server.",
-        "packageRequired": "Make sure you enter a package name for this server."
-      },
-      "selectCommand": "Select command"
+        "packageRequired": "Make sure you enter a package name for this server.",
+        "requiredFields": "Some fields are required",
+        "urlRequired": "Make sure you enter a URL for this server."
+      }
     },
     "variableEditor": {
       "title": "MCP Environment Variable",
@@ -214,110 +270,206 @@
   },
   "memory": {
     "inspector": {
-      "title": "Memory Contents",
+      "memory": "Memory",
       "noFacts": "No facts stored so far",
-      "memory": "Memory"
+      "title": "Memory Contents"
     }
   },
+  "message": {
+    "actions": {
+      "retryConfirm": {
+        "confirmButton": "OK. Don't ask again.",
+        "denyButton": "OK",
+        "text": "Current version will be lost.",
+        "title": "Are you sure you want to generate this message again?"
+      },
+      "usage": {
+        "prompt": "Prompt tokens: {prompt}",
+        "reasoning": "Reasoning tokens: {reasoning}",
+        "response": "Response tokens: {completion}",
+        "title": "Total tokens: {total}"
+      }
+    }
+  },
+  "modelPull": {
+    "browse": "Browse models",
+    "error": "Error pulling model",
+    "label": "Pull model",
+    "placeholder": "Enter a model name to pull or select one",
+    "progress": "Pulling model..."
+  },
   "modelSettings": {
-    "plugins": "Plugins",
     "contextWindowSize": "Context Window Size",
-    "maxCompletionTokens": "Max Completion Tokens",
-    "temperature": "Temperature [0.0 … 2.0]",
-    "topK": "TopK / Logprobs [0 … 20]",
-    "topP": "TopP [0.0 … 1.0]",
-    "extendedThinking": "Extended Thinking",
-    "reasoningEffort": "Reasoning Effort",
-    "defaultForModel": "Defaults for this model",
     "createNewModel": "Create new model",
+    "createOllama": {
+      "title": "Enter new model name"
+    },
+    "defaultForModel": "Defaults for this model",
+    "errors": {
+      "invalid": {
+        "mustBeBetween": "Must be between {min} and {max}",
+        "mustBeGreaterThan": "Must be greater than {min}",
+        "mustBeLessThan": "Must be less than {max}",
+        "mustBeNumber": "Must be a number",
+        "title": "Invalid {name}"
+      },
+      "noProviderOrModel": {
+        "text": "Make sure you select a model for this chat.",
+        "title": "No LLM Provider or Model selected"
+      }
+    },
+    "extendedThinking": "Extended Thinking",
+    "maxCompletionTokens": "Max Completion Tokens",
     "placeholder": {
       "defaultModelValue": "Default model value when empty"
     },
-    "errors": {
-      "noProviderOrModel": {
-        "title": "No LLM Provider or Model selected",
-        "text": "Make sure you select a model for this chat."
+    "plugins": "Plugins",
+    "reasoningEffort": "Reasoning Effort",
+    "temperature": "Temperature [0.0 … 2.0]",
+    "topK": "TopK / Logprobs [0 … 20]",
+    "topP": "TopP [0.0 … 1.0]"
+  },
+  "prompt": {
+    "conversation": {
+      "placeholders": {
+        "auto": "You can start talking now...",
+        "ptt": "Press and hold space to talk..."
       },
-      "invalid": {
-        "title": "Invalid {name}",
-        "mustBeNumber": "Must be a number",
-        "mustBeBetween": "Must be between {min} and {max}",
-        "mustBeGreaterThan": "Must be greater than {min}",
-        "mustBeLessThan": "Must be less than {max}"
-      }
+      "startAuto": "Start automatic conversation",
+      "startPTT": "Start push-to-talk conversation",
+      "stop": "Stop conversation"
     },
-    "createOllama": {
-      "title": "Enter new model name"
+    "expert": {
+      "clear": "Clear expert"
     }
   },
   "realtimeChat": {
-    "requestingMicrophone": "Requesting microphone access...",
+    "errorPrefix": "Error: ",
     "establishingConnection": "Establishing connection...",
-    "sessionEstablished": "Session established successfully!",
-    "errorPrefix": "Error: "
+    "requestingMicrophone": "Requesting microphone access...",
+    "sessionEstablished": "Session established successfully!"
   },
   "scratchpad": {
-    "placeholder": "Start typing your document or\nask Witsy to write something for you!\n\nOnce you started you can ask Witsy\nto make modification on your document.\n\nIf you highligh a portion of your text,\nWitsy will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!",
+    "actions": {
+      "completeText": "Complete text",
+      "copyToClipboard": "Copy to clipboard",
+      "expandWriting": "Expand writing",
+      "improveWriting": "Improve writing",
+      "listTakeaways": "List key takeaways",
+      "simplifyWriting": "Simplify writing",
+      "spellcheck": "Spellcheck",
+      "suggestTitle": "Suggest a title",
+      "writingAssistant": "Writing assistant"
+    },
     "fileError": "This file is not a scratchpad file. Please try again with another file.",
+    "fontFamily": {
+      "monospace": "Monospace",
+      "sansSerif": "Sans-Serif",
+      "serif": "Serif"
+    },
+    "fontSize": {
+      "large": "Large",
+      "larger": "Larger",
+      "normal": "Normal",
+      "small": "Small",
+      "smaller": "Smaller"
+    },
     "generationError": "Error while generating text",
-    "loadingError": "Error while loading scratchpad file"
+    "loadingError": "Error while loading scratchpad file",
+    "placeholder": "Start typing your document or\nask Witsy to write something for you!\n\nOnce you started you can ask Witsy\nto make modification on your document.\n\nIf you highligh a portion of your text,\nWitsy will only update this portion.\n\nAlso check out the Writing Assistant\nin the action bar in the lower right corner!\n\nGive it a go!"
   },
   "settings": {
-    "tabs": {
-      "general": "General",
-      "appearance": "Appearance",
-      "commands": "Commands",
-      "experts": "Experts",
-      "shortcuts": "Shortcuts",
-      "models": "Models",
-      "plugins": "Plugins",
-      "voice": "Voice",
-      "advanced": "Advanced"
-    },
     "advanced": {
-      "autoVisionSwitch": "Automatically switch to vision model",
       "autoSavePrompt": "Always save prompt sessions in chat history",
+      "autoVisionSwitch": "Automatically switch to vision model",
       "conversationLength": "Conversation length",
       "imageResize": "Image resize",
       "imageResizeOptions": {
         "none": "No resize",
         "size": "Resize largest dimension to {size} pixels"
       },
-      "systemInstructions": "System instructions",
-      "resetToDefault": "Reset to default value",
       "instructions": {
         "chat": "Chat - Instructions",
         "docquery": "Document query - Instructions",
-        "titling": "Chat title - Instructions",
-        "titling_user": "Chat title - Prompt",
         "image_plugin": "Image Plugin - Description (1024 characters max)",
-        "video_plugin": "Video Plugin - Description (1024 characters max)",
         "memory_plugin": "Memory Plugin - Description (1024 characters max)",
-        "scratchpad_system": "Scratchpad - Instructions",
-        "scratchpad_prompt": "Scratchpad - Prompt",
-        "scratchpad_spellcheck": "Scratchpad - Spellcheck",
+        "scratchpad_complete": "Scratchpad - Complete",
+        "scratchpad_expand": "Scratchpad - Expand",
         "scratchpad_improve": "Scratchpad - Improve",
+        "scratchpad_prompt": "Scratchpad - Prompt",
+        "scratchpad_simplify": "Scratchpad - Simplify",
+        "scratchpad_spellcheck": "Scratchpad - Spellcheck",
+        "scratchpad_system": "Scratchpad - Instructions",
         "scratchpad_takeaways": "Scratchpad - Takeaways",
         "scratchpad_title": "Scratchpad - Title",
-        "scratchpad_simplify": "Scratchpad - Simplify",
-        "scratchpad_expand": "Scratchpad - Expand",
-        "scratchpad_complete": "Scratchpad - Complete"
+        "titling": "Chat title - Instructions",
+        "titling_user": "Chat title - Prompt",
+        "video_plugin": "Video Plugin - Description (1024 characters max)"
+      },
+      "resetToDefault": "Reset to default value",
+      "systemInstructions": "System instructions"
+    },
+    "appearance": {
+      "chatFont": "Chat font",
+      "chatFontSize": "Chat font size",
+      "chatListLayout": "Chat list layout",
+      "chatListLayouts": {
+        "compact": "Compact",
+        "cozy": "Cozy"
+      },
+      "chatTheme": "Chat theme",
+      "chatThemes": {
+        "conversation": "Conversation",
+        "openai": "OpenAI"
+      },
+      "darkTint": "Dark tint",
+      "theme": "Appearance",
+      "themes": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+      },
+      "tints": {
+        "black": "Black",
+        "blue": "Blue"
       }
     },
+    "commands": {
+      "confirmDelete": "Are you sure you want to delete this command?",
+      "defaults": "Defaults",
+      "export": "Export",
+      "exportError": "Failed to export commands file",
+      "exportSuccess": "Commands file exported successfully",
+      "import": "Import",
+      "importError": "Failed to import commands file",
+      "importSuccess": "Commands file imported successfully",
+      "more": "More",
+      "new": "New",
+      "selectAll": "Select All",
+      "unselectAll": "Unselect All"
+    },
     "engines": {
-      "apiKey": "API key",
-      "getApiKey": "Get your API key",
-      "chatModel": "Chat model",
       "anthropic": {
         "aboutModels": "More about Anthropic models",
         "pricing": "Anthropic pricing"
       },
+      "apiKey": "API key",
       "cerebras": {
         "aboutModels": "More about Cerebras models"
+      },
+      "chatModel": "Chat model",
+      "custom": {
+        "apiBaseURL": "API Base URL",
+        "apiSpecification": "API Specification",
+        "confirmDelete": "Are you sure you want to delete this custom provider?",
+        "create": "Create engine",
+        "delete": "Delete engine",
+        "modelPlaceholder": "Enter a model name or select one"
       },
       "deepseek": {
         "aboutModels": "More about DeepSeek models"
       },
+      "getApiKey": "Get your API key",
       "google": {
         "aboutModels": "More about Google models",
         "pricing": "Google pricing"
@@ -332,248 +484,241 @@
       },
       "ollama": {
         "apiBaseURL": "API Base URL",
-        "confirmDelete": "Are you sure you want to delete this model?",
-        "browseModels": "Browse models"
+        "browseModels": "Browse models",
+        "confirmDelete": "Are you sure you want to delete this model?"
       },
       "openai": {
         "aboutModels": "More about OpenAI models",
-        "pricing": "OpenAI pricing",
-        "apiBaseURL": "API Base URL"
+        "apiBaseURL": "API Base URL",
+        "pricing": "OpenAI pricing"
       },
       "openrouter": {
         "aboutModels": "More about OpenRouter models"
       },
       "xai": {
         "aboutModels": "More about xAI models"
-      },
-      "custom": {
-        "apiSpecification": "API Specification",
-        "apiBaseURL": "API Base URL",
-        "modelPlaceholder": "Enter a model name or select one",
-        "create": "Create engine",
-        "delete": "Delete engine",
-        "confirmDelete": "Are you sure you want to delete this custom provider?"
       }
     },
-    "appearance": {
-      "theme": "Appearance",
-      "themes": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
-      },
-      "darkTint": "Dark tint",
-      "tints": {
-        "black": "Black",
-        "blue": "Blue"
-      },
-      "chatTheme": "Chat theme",
-      "chatThemes": {
-        "openai": "OpenAI",
-        "conversation": "Conversation"
-      },
-      "chatListLayout": "Chat list layout",
-      "chatListLayouts": {
-        "cozy": "Cozy",
-        "compact": "Compact"
-      },
-      "chatFont": "Chat font",
-      "chatFontSize": "Chat font size"
+    "experts": {
+      "confirmDelete": "Are you sure you want to delete this expert?",
+      "copy": "Copy",
+      "export": "Export",
+      "exportError": "Failed to export experts file",
+      "exportSuccess": "Experts file exported successfully",
+      "import": "Import",
+      "importError": "Failed to import experts file",
+      "importSuccess": "Experts file imported successfully",
+      "more": "More",
+      "new": "New",
+      "selectAll": "Select All",
+      "sortAlphabetically": "Sort Alphabetically",
+      "unselectAll": "Unselect All"
+    },
+    "general": {
+      "answerIn": "Answer in",
+      "hideOnStartup": "Hide main window on start",
+      "keepInStatusBar": "Keep in Status Bar",
+      "lastOneUsed": "Last one used",
+      "promptLLMModel": "Prompt LLM Model",
+      "resetTips": "Reset tips",
+      "runAtLogin": "Run at login"
     },
     "plugins": {
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",
         "title": "Download"
       },
+      "image": {
+        "description": "This plugin allows LLM engines to create images from a text description.",
+        "huggingface": {
+          "aboutModels": "More about Hugging Face models",
+          "modelPlaceholder": "Enter a model or select from the list"
+        },
+        "imageModel": "Image model",
+        "openai": {
+          "apiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane of Witsy Settings."
+        },
+        "provider": "Provider",
+        "replicate": {
+          "aboutModels": "More about Replicate models",
+          "modelPlaceholder": "Enter a model or select from the list"
+        },
+        "title": "Text-to-Image"
+      },
+      "mcp": {
+        "addCustomServer": "Add custom server…",
+        "confirmDelete": "Are you sure you want to delete this server?",
+        "connectedToServers": "Connected to {count} MCP server{count > 1 ? 's' : ''}",
+        "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
+        "description": "This plugin allows LLM engines to access",
+        "failedToInstall": "Failed to install server",
+        "importSmitheryServer": "Import Smithery.ai server…",
+        "mcpServers": "MCP Servers:",
+        "modelContextProtocol": "Model Context Protocol",
+        "noServersFound": "No MCP Servers found",
+        "noTools": "No tools available",
+        "restartClient": "Restart client",
+        "serverLogs": "MCP Server Logs",
+        "servers": "servers. Discover and install MCP servers from the",
+        "smithery": "Smithery",
+        "status": "Status",
+        "target": "Target",
+        "title": "MCP",
+        "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
+      },
+      "memory": {
+        "contents": "Contents",
+        "description": "This plugin allows LLM engines to store and retrieve information about you, making their answers more personalized.",
+        "resetConfirmation": {
+          "title": "Are you sure you want to reset the memory and lose all facts about you?"
+        },
+        "title": "Memory",
+        "view": "View"
+      },
+      "nestor": {
+        "connectedToHubs": "Connected to {count} Nestor hub{count > 1 ? 's' : ''}",
+        "description": "This plugin allows LLM engines to access local API on the network. Check",
+        "githubLink": "https://github.com/nbonamy/nestor",
+        "noHubs": "No Nestor hubs available",
+        "noServices": "No service available",
+        "title": "Nestor",
+        "totalServices": "Total of {count} service{count > 1 ? 's' : ''} available"
+      },
+      "python": {
+        "binaryPath": "Python Binary",
+        "description1": "Enabling this plugin will allow LLM engines to run arbitray code on your computer.",
+        "description2": "There is no way to predict if the code that LLM engines will generate is safe or not.",
+        "search": "Search",
+        "title": "Python",
+        "useAtOwnRisk": "Use at your own risk",
+        "warning": "Warning!"
+      },
       "search": {
-        "title": "Web Search",
+        "characters": "characters (0 for full content)",
+        "contentLength": "Content Length",
         "description": "This plugin allows LLM engines to search the Internet and use the results as input to generate up-to-date responses.",
         "engine": "Engine",
         "engines": {
           "local": "Local Browser Search (EXPERIMENTAL)",
           "tavily": "Tavily"
         },
-        "tavilyApiKey": "Tavily API Key",
         "getApiKey": "Get your API key",
-        "contentLength": "Content Length",
+        "tavilyApiKey": "Tavily API Key",
+        "title": "Web Search",
         "truncateTo": "Truncate to",
-        "characters": "characters (0 for full content)",
         "truncationWarning": "WARNING: Truncation length will impact input tokens count and therefore request costs"
       },
-      "python": {
-        "title": "Python",
-        "warning": "Warning!",
-        "description1": "Enabling this plugin will allow LLM engines to run arbitray code on your computer.",
-        "description2": "There is no way to predict if the code that LLM engines will generate is safe or not.",
-        "useAtOwnRisk": "Use at your own risk",
-        "binaryPath": "Python Binary",
-        "search": "Search"
-      },
-      "image": {
-        "title": "Text-to-Image",
-        "description": "This plugin allows LLM engines to create images from a text description.",
-        "provider": "Provider",
-        "imageModel": "Image model",
-        "openai": {
-          "apiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane of Witsy Settings."
-        },
-        "replicate": {
-          "modelPlaceholder": "Enter a model or select from the list",
-          "aboutModels": "More about Replicate models"
-        },
-        "huggingface": {
-          "modelPlaceholder": "Enter a model or select from the list",
-          "aboutModels": "More about Hugging Face models"
-        }
-      },
-      "memory": {
-        "title": "Memory",
-        "description": "This plugin allows LLM engines to store and retrieve information about you, making their answers more personalized.",
-        "contents": "Contents",
-        "view": "View",
-        "resetConfirmation": {
-          "title": "Are you sure you want to reset the memory and lose all facts about you?"
-        }
+      "vega": {
+        "description": "This plugin allows LLM engines to create charts image based on data using the Vega visualisation library.",
+        "title": "Vega"
       },
       "video": {
-        "title": "Text-to-Video",
         "description": "This plugin allows LLM engines to create videos from a text description.",
         "provider": "Provider",
-        "videoModel": "Video model",
         "replicate": {
-          "modelPlaceholder": "Enter a model or select from the list",
-          "aboutModels": "More about Replicate models"
-        }
+          "aboutModels": "More about Replicate models",
+          "modelPlaceholder": "Enter a model or select from the list"
+        },
+        "title": "Text-to-Video",
+        "videoModel": "Video model"
       },
       "youtube": {
-        "title": "YouTube",
-        "description": "This plugin allows LLM engines to download transcripts of YouTube videos."
-      },
-      "vega": {
-        "title": "Vega",
-        "description": "This plugin allows LLM engines to create charts image based on data using the Vega visualisation library."
-      },
-      "mcp": {
-        "title": "MCP",
-        "description": "This plugin allows LLM engines to access",
-        "modelContextProtocol": "Model Context Protocol",
-        "servers": "servers. Discover and install MCP servers from the",
-        "smithery": "Smithery",
-        "noServersFound": "No MCP Servers found",
-        "connectedToServers": "Connected to {count} MCP server{count > 1 ? 's' : ''}",
-        "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available",
-        "noTools": "No tools available",
-        "mcpServers": "MCP Servers:",
-        "target": "Target",
-        "status": "Status",
-        "restartClient": "Restart client",
-        "addCustomServer": "Add custom server…",
-        "importSmitheryServer": "Import Smithery.ai server…",
-        "confirmDelete": "Are you sure you want to delete this server?",
-        "serverLogs": "MCP Server Logs",
-        "failedToInstall": "Failed to install server",
-        "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal."
-      },
-      "nestor": {
-        "title": "Nestor",
-        "description": "This plugin allows LLM engines to access local API on the network. Check",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "No Nestor hubs available",
-        "connectedToHubs": "Connected to {count} Nestor hub{count > 1 ? 's' : ''}",
-        "totalServices": "Total of {count} service{count > 1 ? 's' : ''} available",
-        "noServices": "No service available"
+        "description": "This plugin allows LLM engines to download transcripts of YouTube videos.",
+        "title": "YouTube"
       }
     },
-    "general": {
-      "promptLLMModel": "Prompt LLM Model",
-      "lastOneUsed": "Last one used",
-      "answerIn": "Answer in",
-      "resetTips": "Reset tips",
-      "runAtLogin": "Run at login",
-      "hideOnStartup": "Hide main window on start",
-      "keepInStatusBar": "Keep in Status Bar"
-    },
     "shortcuts": {
-      "newPrompt": "New prompt",
-      "newChat": "New chat",
-      "newScratchpad": "New Scratchpad",
       "aiCommands": "AI Commands",
       "aiCommandsUsage": "Usage: Highlight your text, press keyboard shortcut then choose an Al command",
+      "dictation": "Dictation",
+      "newChat": "New chat",
+      "newPrompt": "New prompt",
+      "newScratchpad": "New Scratchpad",
       "readAloud": "Read Aloud",
       "readAloudUsage": "Usage: Highlight your text, press keyboard shortcut",
-      "dictation": "Dictation",
       "voiceMode": "Voice Mode"
     },
+    "tabs": {
+      "advanced": "Advanced",
+      "appearance": "Appearance",
+      "commands": "Commands",
+      "experts": "Experts",
+      "general": "General",
+      "models": "Models",
+      "plugins": "Plugins",
+      "shortcuts": "Shortcuts",
+      "voice": "Voice"
+    },
     "voice": {
-      "spokenLanguage": "Spoken Language",
       "automatic": "🤖 Automatic",
-      "engine": "Engine",
-      "model": "Model",
-      "silenceDetection": "Silence Detection",
-      "silenceOptions": {
-        "disabled": "Disabled",
-        "oneSecond": "1 second",
-        "twoSeconds": "2 seconds",
-        "threeSeconds": "3 seconds",
-        "fourSeconds": "4 seconds",
-        "fiveSeconds": "5 seconds"
+      "deleteConfirmation": {
+        "text": "You will have to download all local models again.",
+        "title": "Are you sure you want to delete all local models?"
       },
-      "selectModel": "Select a model",
-      "initializing": "Initializing...",
-      "downloading": "Downloading: {percent}%",
-      "verifying": "Verifying: {percent}%",
-      "downloadComplete": "Download completed!",
-      "verificationComplete": "Verification completed!",
       "deleteLocalModels": "Delete all models stored locally",
-      "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
-      "groqApiKeyReminder": "Make sure you enter your Groq API key in the Models pane.",
-      "initializationError": "An error occured during initialization. Please try again.",
+      "downloadComplete": "Download completed!",
       "downloadConfirmation": {
         "title": "This model needs to be downloaded on your computer. Do you want to proceed?"
       },
-      "deleteConfirmation": {
-        "title": "Are you sure you want to delete all local models?",
-        "text": "You will have to download all local models again."
+      "downloading": "Downloading: {percent}%",
+      "engine": "Engine",
+      "groqApiKeyReminder": "Make sure you enter your Groq API key in the Models pane.",
+      "initializationError": "An error occured during initialization. Please try again.",
+      "initializing": "Initializing...",
+      "model": "Model",
+      "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
+      "selectModel": "Select a model",
+      "silenceDetection": "Silence Detection",
+      "silenceOptions": {
+        "disabled": "Disabled",
+        "fiveSeconds": "5 seconds",
+        "fourSeconds": "4 seconds",
+        "oneSecond": "1 second",
+        "threeSeconds": "3 seconds",
+        "twoSeconds": "2 seconds"
       },
-      "tts": {
-        "voice": "Voice",
-        "kokoroReminder": "Provided",
-        "serviceDisclaimer": "The service may stop working at any point in time.",
-        "sampleText": "Welcome to Witsy, the ultimate AI desktop assistant."
-      },
+      "spokenLanguage": "Spoken Language",
       "tabs": {
         "speechToText": "Speech-to-Text",
         "textToSpeech": "Text-to-Speech"
-      }
+      },
+      "tts": {
+        "kokoroReminder": "Provided",
+        "sampleText": "Welcome to Witsy, the ultimate AI desktop assistant.",
+        "serviceDisclaimer": "The service may stop working at any point in time.",
+        "voice": "Voice"
+      },
+      "verificationComplete": "Verification completed!",
+      "verifying": "Verifying: {percent}%"
+    }
+  },
+  "sidebar": {
+    "newFolder": {
+      "placeholder": "New Folder Name",
+      "title": "New Folder"
+    }
+  },
+  "tips": {
+    "common": {
+      "gotIt": "Got it!",
+      "later": "Later",
+      "yes": "Yes!"
     },
-    "commands": {
-      "new": "New",
-      "more": "More",
-      "defaults": "Defaults",
-      "export": "Export",
-      "import": "Import",
-      "selectAll": "Select All",
-      "unselectAll": "Unselect All",
-      "confirmDelete": "Are you sure you want to delete this command?",
-      "importSuccess": "Commands file imported successfully",
-      "importError": "Failed to import commands file",
-      "exportSuccess": "Commands file exported successfully",
-      "exportError": "Failed to export commands file"
+    "computerUse": {
+      "text": "Use at your own risk!",
+      "title": "Computer Use will interact with your computer and perform mouse and keyboard actions. These actions may cause unexpected behavior which could result in data loss."
     },
-    "experts": {
-      "new": "New",
-      "copy": "Copy",
-      "more": "More",
-      "export": "Export",
-      "import": "Import",
-      "selectAll": "Select All",
-      "unselectAll": "Unselect All",
-      "sortAlphabetically": "Sort Alphabetically",
-      "confirmDelete": "Are you sure you want to delete this expert?",
-      "importSuccess": "Experts file imported successfully",
-      "importError": "Failed to import experts file",
-      "exportSuccess": "Experts file exported successfully",
-      "exportError": "Failed to export experts file"
+    "conversation": {
+      "title": "Check the conversation options by right-clicking on the microphone icon in the chat window."
+    },
+    "favoriteModels": {
+      "title": "Click on the LLM icon: your preferred models will be grouped under the star icon!"
+    },
+    "folderList": {
+      "title": "The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.\n\nThe menu on the right of every folder allows you to manage your folders.\n\nThe context menu of your chats allows you to move them to a folder."
+    },
+    "realtime": {
+      "title": "Realtime chat can quickly be expensive. The estimated cost provided is just an estimate and may not be correct. Click on the blob to start and stop chatting!"
     }
   },
   "transcribe": {
@@ -582,84 +727,47 @@
     "errorSTTNotReady": "Speech-to-text engine not ready",
     "errorTranscription": "Error occurred during transcription"
   },
-  "chatList": {
-    "displayMode": {
-      "timeline": "Timeline",
-      "folders": "Folders"
+  "menu": {
+    "app": {
+      "checkForUpdates": "Check for Updates…",
+      "settings": "Settings…",
+      "quit": "Quit Witsy"
     },
-    "folder": {
-      "actions": {
-        "newChat": "New chat",
-        "delete": "Delete folder"
-      }
+    "file": {
+      "title": "File",
+      "newPrompt": "New Prompt",
+      "newChat": "New Chat",
+      "newScratchpad": "New Scratchpad"
     },
-    "timeline": {
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "last7days": "Last 7 days",
-      "last14days": "Last 14 days",
-      "last30days": "Last 30 days",
-      "earlier": "Earlier"
+    "edit": {
+      "title": "Edit",
+      "deleteChat": "Delete Chat"
+    },
+    "view": {
+      "title": "View"
+    },
+    "window": {
+      "title": "Window"
+    },
+    "help": {
+      "title": "Help",
+      "goToDataFolder": "Go to Data Folder",
+      "goToLogFolder": "Go to Log Folder",
+      "learnMore": "Learn More"
     }
   },
-  "embedding": {
-    "provider": "Embedding Provider",
-    "model": "Embedding Model",
-    "browse": "Browse models",
-    "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings."
-  },
-  "emptyChat": {
-    "tips": {
-      "switchProvider": "Click here to switch to a different chat bot provider!",
-      "switchModel": "Click here to switch to a different chat bot model!"
-    },
-    "settings": {
-      "needsConfiguration": "This engine needs to be configured first! Do you want to open the Settings?",
-      "configure": "Configure"
+  "tray": {
+    "menu": {
+      "installUpdate": "Install update and restart...",
+      "quickPrompt": "Quick Prompt",
+      "newChat": "New Chat",
+      "scratchpad": "Scratchpad",
+      "runAiCommand": "Run AI Command",
+      "readAloud": "Read Aloud",
+      "startDictation": "Start Dictation",
+      "voiceMode": "Voice Mode",
+      "settings": "Settings…",
+      "quit": "Quit"
     }
-  },
-  "message": {
-    "actions": {
-      "retryConfirm": {
-        "title": "Are you sure you want to generate this message again?",
-        "text": "Current version will be lost.",
-        "confirmButton": "OK. Don't ask again.",
-        "denyButton": "OK"
-      },
-      "usage": {
-        "title": "Total tokens: {total}",
-        "prompt": "Prompt tokens: {prompt}",
-        "response": "Response tokens: {completion}",
-        "reasoning": "Reasoning tokens: {reasoning}"
-      }
-    }
-  },
-  "modelPull": {
-    "browse": "Browse models",
-    "label": "Pull model",
-    "placeholder": "Enter a model name to pull or select one",
-    "progress": "Pulling model...",
-    "error": "Error pulling model"
-  },
-  "prompt": {
-    "expert": {
-      "clear": "Clear expert"
-    },
-    "conversation": {
-      "stop": "Stop conversation",
-      "startAuto": "Start automatic conversation",
-      "startPTT": "Start push-to-talk conversation",
-      "placeholders": {
-        "auto": "You can start talking now...",
-        "ptt": "Press and hold space to talk..."
-      }
-    }
-  },
-  "sidebar": {
-    "newFolder": {
-      "title": "New Folder",
-      "placeholder": "New Folder Name"
-    },
-    "select": "Select"
   }
 }
