@@ -145,6 +145,7 @@ test('List files recursively', async () => {
   expect(file.listFilesRecursively('./notfound')).toStrictEqual([])
   const files = file.listFilesRecursively('./.github')
   expect(files).toStrictEqual([
+    '.github/FUNDING.yml',
     '.github/dependabot.yml',
     '.github/workflows/build-darwin-arm64.yml',
     '.github/workflows/build-darwin-x64.yml',
