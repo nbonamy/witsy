@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n'
 import { loadSettings } from './config'
 import messages from '../../locales/index'
 
-export const getLocaleUi = (app: App): string => {
+export const getLocaleUI = (app: App): string => {
 
   // load settings
   const config = loadSettings(app)
@@ -18,7 +18,7 @@ export const getLocaleUi = (app: App): string => {
 
 }
 
-export const getLocaleLlm = (app: App): string => {
+export const getLocaleLLM = (app: App): string => {
 
   // load settings
   const config = loadSettings(app)
@@ -27,14 +27,14 @@ export const getLocaleLlm = (app: App): string => {
   }
 
   // default to UI locale
-  return getLocaleUi(app)
+  return getLocaleUI(app)
 
 }
 
 export const useI18n = (app: App): CallableFunction => {
 
   // load settings
-  const locale = getLocaleUi(app)
+  const locale = getLocaleUI(app)
 
   // now do it
   console.log('Creating i18n', locale)

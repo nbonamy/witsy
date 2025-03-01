@@ -1,16 +1,19 @@
 
-import { app, autoUpdater, dialog } from 'electron';
+import { App, autoUpdater, dialog } from 'electron';
+import { useI18n } from '../main/i18n'
 
 export default class AutoUpdater {
 
+  app: App
   manualUpdate = false
   downloading = false
   updateAvailable = false
 
-  constructor(public hooks: {
+  constructor(app: App, public hooks: {
     onUpdateAvailable: () => void
     preInstall: () => void
   }) {
+    this.app = app
     this.initialize();
   }
 
@@ -21,9 +24,12 @@ export default class AutoUpdater {
       return
     }
 
+    // localization
+    const t = useI18n(this.app)
+
     // basic setup
     const server = 'https://update.electronjs.org'
-    const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${app.getVersion()}`
+    const feed = `${server}/nbonamy/witsy/${process.platform}-${process.arch}/${this.app.getVersion()}`
     console.log('Checking for updates at', feed)
     autoUpdater.setFeedURL({ url: feed })
 
@@ -32,7 +38,7 @@ export default class AutoUpdater {
       console.error('Error while checking for updates', error)
       this.downloading = false
       if (this.manualUpdate) {
-        dialog.showErrorBox('Witsy', 'Error while checking for updates. Please try again later.')
+        dialog.showErrorBox('Witsy', t('autoupdate.error'))
       } 
     })
 
@@ -49,7 +55,7 @@ export default class AutoUpdater {
         dialog.showMessageBox({
           type: 'info',
           message: 'Witsy',
-          detail: 'A new version is available. Downloading now…'
+          detail: t('autoupdate.available'),
         })
       }
     })
@@ -62,7 +68,7 @@ export default class AutoUpdater {
           dialog.showMessageBox({
             type: 'info',
             message: 'Witsy',
-            detail: 'You are already using the latest version of Witsy.',
+            detail: t('autoupdate.uptodate'),
           })
         }
       }
@@ -100,10 +106,11 @@ export default class AutoUpdater {
 
   check = () => {
     if (this.downloading) {
+      const t = useI18n(this.app)
       dialog.showMessageBox({
         type: 'info',
         message: 'Witsy',
-        detail: 'An update is in progress. Please wait for it to complete.',
+        detail: t('autoupdate.downloading'),
       })
     } else {
       this.manualUpdate = true;

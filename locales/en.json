@@ -97,6 +97,21 @@
     "workingWith": "Working with",
     "write": "Write"
   },
+  "automation": {
+    "commander": {
+      "emptyText": "Please highlight the text you want to analyze."
+    },
+    "grabError": "An error occurred while trying to grab the text. Please check Privacy & Security settings.",
+    "readAloud": {
+      "emptyText": "Please highlight the text you want to read aloud."
+    }
+  },
+  "autoupdate": {
+    "available": "A new version is available. Downloading now…",
+    "downloading": "An update is in progress. Please wait for it to complete.",
+    "error": "Error while checking for updates. Please try again later.",
+    "uptodate": "You are already using the latest version of Witsy."
+  },
   "chat": {
     "actions": {
       "exportPdf": "Export as PDF",

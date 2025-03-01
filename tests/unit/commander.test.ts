@@ -19,6 +19,7 @@ vi.mock('electron', async() => {
   Notification.prototype.show = vi.fn();
   return {
     app: {
+      getLocale: vi.fn(() => 'en-US'),
       getPath: vi.fn(() => '')
     },
     Notification
@@ -90,7 +91,7 @@ test('Prepare command', async () => {
 
   selectedText = 'Grabbed text'
 
-  await Commander.initCommand(100)
+  await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalledOnce()
   expect(window.openCommandPicker).toHaveBeenCalledOnce()
 
@@ -110,7 +111,7 @@ test('Error while grabbing', async () => {
 
   selectedText = null
 
-  await Commander.initCommand(100)
+  await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
 
@@ -120,7 +121,7 @@ test('No text to grab', async () => {
 
   selectedText = ''
 
-  await Commander.initCommand(100)
+  await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
 

@@ -41,7 +41,7 @@ beforeAll(() => {
 })
 
 test('Creates tray', async () => {
-  const tray = new Tray(app, new AutoUpdater({ onUpdateAvailable: () => {}, preInstall: () => {} }), () => {})
+  const tray = new Tray(app, new AutoUpdater(app, { onUpdateAvailable: () => {}, preInstall: () => {} }), () => {})
   tray.install()
   expect(tray.tray).toBeDefined()
   expect(Menu.buildFromTemplate).toHaveBeenCalled()

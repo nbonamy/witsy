@@ -68,7 +68,7 @@ if (require('electron-squirrel-startup')) {
 }
 
 // auto-update
-const autoUpdater = new AutoUpdater({
+const autoUpdater = new AutoUpdater(app, {
   preInstall: () => quitAnyway = true,
   onUpdateAvailable: () => {
     window.notifyBrowserWindows('update-available');
@@ -90,8 +90,8 @@ const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     prompt: PromptAnywhere.open,
     chat: window.openMainWindow,
-    command: Commander.initCommand,
-    readaloud: ReadAloud.read,
+    command: () => Commander.initCommand(app),
+    readaloud: () => ReadAloud.read(app),
     transcribe: Transcriber.initTranscription,
     scratchpad: window.openScratchPad,
     realtime: window.openRealtimeChatWindow,
@@ -305,11 +305,11 @@ ipcMain.on('clipboard-write-image', (event, payload) => {
 });
 
 ipcMain.on('config-get-locale-ui', (event) => {
-  event.returnValue = i18n.getLocaleUi(app);
+  event.returnValue = i18n.getLocaleUI(app);
 });
 
 ipcMain.on('config-get-locale-llm', (event) => {
-  event.returnValue = i18n.getLocaleLlm(app);
+  event.returnValue = i18n.getLocaleLLM(app);
 });
 
 ipcMain.on('config-load', (event) => {
