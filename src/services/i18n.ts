@@ -10,7 +10,7 @@ if (!i18n) {
 
   // load locale
   const locale = window.api?.config?.localeUI() || 'en-US'
-  console.log('Creating i18n', locale)
+  //console.log('Creating i18n', locale)
 
   // now do it
   i18n = createI18n({
@@ -25,7 +25,7 @@ if (!i18nLlm) {
 
   // load locale
   const locale = window.api?.config?.localeLLM() || 'en-US'
-  console.log('Creating i18n for Llm', locale)
+  //console.log('Creating i18n for Llm', locale)
 
   // now do it
   i18nLlm = createI18n({

@@ -18,12 +18,13 @@
               <tr v-for="fact in contents">
                 <td>{{ fact.content }}</td>
                 <td>
-                  <button @click.prevent="onDelete(fact)">{{ t('common.delete') }}</button>
+                  <button @click.prevent="onDelete($event, fact)">{{ t('common.delete') }}</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <div>{{ t('memory.inspector.shiftDelete') }}</div>
       </main>
       <footer>
         <button @click.prevent="onClose">{{ t('common.close') }}</button>
@@ -44,7 +45,18 @@ const contents = ref([])
 
 const emit = defineEmits(['close'])
 
-const onDelete = (fact: MemoryFact) => {
+const onDelete = (event: MouseEvent, fact: MemoryFact) => {
+
+  const deleteFact = (fact: MemoryFact) => {
+    window.api.memory.delete(fact.uuid)
+    contents.value = window.api.memory.facts()
+  }
+
+  if (event.shiftKey) {
+    deleteFact(fact)
+    return
+  }
+
   Dialog.show({
     target: document.querySelector('.settings .memory'),
     title: t('common.confirmation.deleteMemory'),
@@ -53,8 +65,7 @@ const onDelete = (fact: MemoryFact) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.memory.delete(fact.uuid)
-      contents.value = window.api.memory.facts()
+      deleteFact(fact)
     }
   })
 }

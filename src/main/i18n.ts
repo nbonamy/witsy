@@ -37,7 +37,7 @@ export const useI18n = (app: App): CallableFunction => {
   const locale = getLocaleUI(app)
 
   // now do it
-  console.log('Creating i18n', locale)
+  //console.log('Creating i18n', locale)
   return createI18n({
     legacy: false,
     locale: locale,

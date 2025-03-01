@@ -1,6 +1,6 @@
 
 <template>
-  <li class="tab">
+  <li class="tab" @click="$emit('change', ($event.target as HTMLInputElement).checked)">
     <input type="radio" name="tabs" :id="uuidv4()" :checked="checked" />
     <label>
       <slot></slot>

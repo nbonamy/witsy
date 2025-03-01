@@ -25,7 +25,7 @@
       <label>{{ t('settings.plugins.search.contentLength') }}</label>
       <div class="subgroup">
         <div>{{ t('settings.plugins.search.truncateTo') }}&nbsp; <input type="text" name="contentLength" v-model="contentLength" @change="save" />&nbsp; {{ t('settings.plugins.search.characters') }}</div>
-        <div>{{ t('settings.plugins.search.truncationWarning') }}</div>
+        <p>{{ t('settings.plugins.search.truncationWarning') }}</p>
       </div>
     </div>
   </div>
