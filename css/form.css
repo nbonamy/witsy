@@ -52,7 +52,7 @@ form .group label:not(:empty)::after {
 }
 
 .colon-spaced form .group:has([required]) label:not(:empty)::after {
-  content: '\00a0\00a0:*';
+  content: '\00a0\00a0:\00a0\00a0*';
 }
 
 .colon-spaced form .group label:not(:empty)::after {
