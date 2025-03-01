@@ -217,7 +217,8 @@ export type GenerationResult =
 
     // language. asking the LLM to talk in the user language confuses them more than often!
     if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.locale.length) {
-      instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang: countryCodeToLangName(window.api.config.localeLlm()) }) + '.'
+      const lang = countryCodeToLangName(this.config.llm.locale)
+      if (lang) instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang }) + '.'
     }
     //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
 

@@ -93,19 +93,18 @@ const save = () => {
   // update prompt
   const defaultInstructions = i18nInstructions(null, instructions.value)
   const valueToSave = prompt.value === defaultInstructions ? '' : prompt.value
-  const tokens = instructions.value.split('.')
-  let config = store.config as anyDict
-  for (let i = 0; i < tokens.length - 1; i++) {
-    if (!config[tokens[i]]) {
-      config[tokens[i]] = {}
-    }
-    config = config[tokens[i]]
-  }
-  if (valueToSave.length) {
-    config[tokens[tokens.length - 1]] = valueToSave
-  } else {
-    delete config[tokens[tokens.length - 1]]
-  }
+  instructions.value.split('.').reduce((acc, key, i, arr) => {
+    if (i === arr.length - 1) {
+      if (valueToSave.length) {
+        acc[key] = valueToSave
+      } else {
+        delete acc[key]
+      }
+    } else if (!acc[key]) {
+      acc[key] = {}
+    } 
+    return acc[key]
+  }, store.config as anyDict)
 
   // save
   store.saveSettings()

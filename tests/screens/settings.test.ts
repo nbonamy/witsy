@@ -330,15 +330,8 @@ test('Settings Advanced', async () => {
   vi.clearAllMocks()
 
   // helper to get instructions at any level
-  store.config.get = (key: string): string => {
-    const tokens = key.split('.')
-    let value = store.config
-    for (const token of tokens) {
-      if (!value) return ''
-      value = value[token]
-    }
-    return value || ''
-  }
+  store.config.get = (key: string): string => 
+    key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
     'instructions.default', 'instructions.titling', 'instructions.titling_user', 'instructions.docquery',
@@ -350,8 +343,8 @@ test('Settings Advanced', async () => {
   
   for (const instr in instructions) {
 
-    // check it is not bot
-    expect(store.config.get(instructions[instr])).toBe('')
+    // check it is not set
+    expect(store.config.get(instructions[instr])).toBeUndefined()
 
     // select and set value
     await tab.find('.group.instruction select').setValue(instructions[instr])
@@ -362,7 +355,7 @@ test('Settings Advanced', async () => {
 
     // reset default
     await tab.find('.group.instruction a').trigger('click')
-    expect(store.config.get(instructions[instr])).toBe('')
+    expect(store.config.get(instructions[instr])).toBeUndefined()
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 

@@ -59,26 +59,15 @@ const countryCodeToLangName = (code: string): string => {
   if (code == 'fi') return 'Filipino'
   if (code == 'sw') return 'Kiswahili'
   console.error(`Unknown language code: ${code}`)
-  return 'English' 
+  return '' 
 }
 
 const t: CallableFunction = i18n?.global?.t
 
 const i18nInstructions = (config: anyDict, key: string, params?: any): string => {
 
-  //
-  const tokens = key.split('.')
-  let instructions = config
-  if (instructions) {
-    for (const token of tokens) {
-      instructions = instructions[token]
-      if (!instructions) {
-        break
-      }
-    }
-  }
-
-  // valid
+  // get instructions
+  const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
   if (typeof instructions === 'string' && (instructions as string)?.length) {
     return instructions
   }
