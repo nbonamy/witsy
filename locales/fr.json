@@ -56,7 +56,8 @@
     "key": "Clé",
     "language": {
       "auto": "🤖 Identique à l'interface",
-      "system": "🖥️ Langue du système"
+      "system": "🖥️ Langue du système",
+      "fr-FR": "Français"
     },
     "llmModel": "Modèle",
     "llmProvider": "Fournisseur",
@@ -251,7 +252,7 @@
       "takeaways": "Écrivez une liste (avec des tirets) des points clés de l'EXTRAIT. Gardez entre 3 et 5 points clés pour un EXTRAIT court, jusqu'à 10 pour un EXTRAIT plus long.",
       "title": "Suggérez un titre pour l'EXTRAIT. Retournez le titre suivi du texte complet de l'EXTRAIT."
     },
-    "setlang": "Toujours répondre en {lang}",
+    "setlang": "Toujours répondre en {lang} même si le reste de la conversation est dans une autre langue y compris les messages de l'utilisateur.",
     "titling": "Vous êtes un assistant dont la tâche est de trouver le meilleur titre pour la conversation ci-dessous. Le titre doit être composé de quelques mots seulement.",
     "titling_user": "Donnez un titre à la conversation ci-dessus. Ne renvoyez rien d'autre que le titre. N'entourez pas les réponses de guillemets."
   },

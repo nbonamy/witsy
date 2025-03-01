@@ -105,6 +105,10 @@ form .group input[type=checkbox] {
   background: linear-gradient(#2991FF, #057AFF);
 }
 
+.macos form .group input[type=checkbox]:disabled {
+  background: linear-gradient(#a0a0a0, #808080);
+}
+
 .macos form .group input[type=checkbox]:checked:after {
   position: relative;
   content: '\2713';

@@ -56,7 +56,27 @@
     "key": "Key",
     "language": {
       "auto": "🤖 Same as interface",
-      "system": "🖥️ System language"
+      "system": "🖥️ System language",
+      "en-US": "English",
+      "fr-FR": "French",
+      "es-ES": "Spanish", 
+      "de-DE": "German",
+      "it-IT": "Italian",
+      "pt-PT": "Portuguese",
+      "nl-NL": "Dutch",
+      "pl-PL": "Polish",
+      "ru-RU": "Russian",
+      "ja-JP": "Japanese",
+      "ko-KR": "Korean", 
+      "zh-CN": "Chinese",
+      "vi-VN": "Vietnamese",
+      "th-TH": "Thai",
+      "id-ID": "Indonesian",
+      "hi-IN": "Hindi",
+      "ar-SA": "Arabic",
+      "tr-TR": "Turkish",
+      "ms-MY": "Malay",
+      "sw-KE": "Swahili"
     },
     "llmModel": "LLM Model",
     "llmProvider": "LLM Provider",
@@ -251,7 +271,7 @@
       "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
       "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT."
     },
-    "setlang": "Always respond in {lang}",
+    "setlang": "Always respond in {lang} even if the rest of the conversation is in another language including the user's questions.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
     "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
   },
