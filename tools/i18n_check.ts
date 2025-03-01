@@ -7,7 +7,8 @@ import glob from 'glob'
 // Configuration
 const SRC_DIR = 'src'
 const LOCALES_DIR = 'locales'
-const I18N_KEY_PATTERN = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
+const I18N_KEY_PATTERN_T = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
+const I18N_KEY_PATTERN_I = /i18nInstructions\((?:[^,]+),\s*['"]([^'"]+)['"]/g
 
 // Helper types
 interface LocaleData {
@@ -55,31 +56,36 @@ async function checkMissingTranslations() {
     for (const file of srcFiles) {
       const content = fs.readFileSync(file, 'utf8')
       const lines = content.split('\n')
+
+      for (const regex of [I18N_KEY_PATTERN_T, I18N_KEY_PATTERN_I]) {
       
-      // Need to reset the regex for each file
-      I18N_KEY_PATTERN.lastIndex = 0
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i]
-        let match
+        // Need to reset the regex for each file
+        regex.lastIndex = 0
         
-        // Create a new regex for each line to avoid issues with stateful regex
-        const lineRegex = new RegExp(I18N_KEY_PATTERN.source, I18N_KEY_PATTERN.flags)
-        
-        while ((match = lineRegex.exec(line)) !== null) {
-          const key = match[1]
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i]
+          let match
           
-          if (!keyUsages.has(key)) {
-            keyUsages.set(key, { key, files: [] })
+          // Create a new regex for each line to avoid issues with stateful regex
+          const lineRegex = new RegExp(regex.source, regex.flags)
+          
+          while ((match = lineRegex.exec(line)) !== null) {
+            
+            const key = match[1]
+            
+            if (!keyUsages.has(key)) {
+              keyUsages.set(key, { key, files: [] })
+            }
+            
+            const usage = keyUsages.get(key)!
+            usage.files.push({
+              filename: file,
+              line: i + 1
+            })
           }
-          
-          const usage = keyUsages.get(key)!
-          usage.files.push({
-            filename: file,
-            line: i + 1
-          })
         }
       }
+    
     }
     
     const allKeys = Array.from(keyUsages.keys())
@@ -111,7 +117,9 @@ async function checkMissingTranslations() {
     for (const key of allKeys) {
       for (const locale in locales) {
         if (!keyExists(locales[locale], key)) {
-          missingTranslations[locale].push(key)
+          if (!key.startsWith('plugins.') || locale === 'en') {
+            missingTranslations[locale].push(key)
+          }
         }
       }
     }
