@@ -114,7 +114,7 @@ test('Changes engine model', async () => {
   await wrapper.vm.$nextTick()
   wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2' })
   await wrapper.vm.$nextTick()
-  expect(LlmFactory.prototype.igniteEngine).toHaveBeenCalledWith('openai')
+  expect(LlmFactory.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat2')
 })
@@ -179,7 +179,7 @@ test('Copies response', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.copy').trigger('click')
-  expect(window.api.clipboard.writeText).toHaveBeenCalledWith('This is a response')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('This is a response')
 })
 
 test('Replaces always when only insert available', async () => {
@@ -187,7 +187,7 @@ test('Replaces always when only insert available', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   await wrapper.find('.insert').trigger('click')
-  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.replace).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Replaces always when only insert available', async () => {
@@ -195,9 +195,9 @@ test('Replaces always when only insert available', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   await wrapper.find('.insert').trigger('click')
-  expect(window.api.automation.insert).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.insert).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
   await wrapper.find('.replace').trigger('click')
-  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.replace).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Closes when click on icon', async () => {
@@ -205,7 +205,7 @@ test('Closes when click on icon', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere.close).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.anywhere.close).toHaveBeenLastCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Manages conversation', async () => {
@@ -254,7 +254,7 @@ test('Saves chat', async () => {
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.history.chats).toHaveLength(1)
   expect(window.api.history.save).toHaveBeenCalled()
-  //expect(window.api.chat.open).toHaveBeenCalledWith(chatId)
+  //expect(window.api.chat.open).toHaveBeenLastCalledWith(chatId)
 })
 
 test('Auto saves chat', async () => {

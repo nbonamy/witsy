@@ -96,7 +96,7 @@ test('Load history', async () => {
 test('Save history', async () => {
   store.saveHistory()
   expect(window.api.history?.save).toHaveBeenCalled()
-  expect(window.api.history?.save).toHaveBeenCalledWith({
+  expect(window.api.history?.save).toHaveBeenLastCalledWith({
     folders: [],
     chats: [ {
       uuid: '123',

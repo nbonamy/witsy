@@ -115,10 +115,10 @@ test('All windows are null', async () => {
 test('Create main window', async () => {
   await window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'Witsy'
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#')
 
 })
 
@@ -160,23 +160,23 @@ test('Restores existing main window', async () => {
 test('Open Settings window in current main window', async () => {
   await window.openMainWindow()
   await window.openSettingsWindow()
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { settings: true })
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { settings: true })
 })
 
 test('Open Settings window in new main window', async () => {
   await window.openSettingsWindow()
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'Witsy',
     queryParams: { settings: true }
   }))
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?settings=true#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?settings=true#')
 })
 
 test('Create command picker window', async () => {
   await window.openCommandPicker({ textId: 'id' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=id#/commands')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?textId=id#/commands')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -191,11 +191,11 @@ test('Close command picker window', async () => {
 test('Create prompt anywhere window', async () => {
   await window.openPromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/prompt',
     queryParams: { promptId: 'id' }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#/prompt')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?promptId=id#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
   expect(BrowserWindow.prototype.webContents.send).not.toHaveBeenCalled()
@@ -204,15 +204,15 @@ test('Create prompt anywhere window', async () => {
 test('Update prompt anywhere window', async () => {
   await window.preparePromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/prompt',
     queryParams: { promptId: 'id' }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?promptId=id#/prompt')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?promptId=id#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
   await window.openPromptAnywhere({ promptId: 'id' })
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('show', { promptId: 'id'})
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('show', { promptId: 'id'})
 })
 
 test('Close prompt anywhere window', async () => {
@@ -224,14 +224,14 @@ test('Close prompt anywhere window', async () => {
 
 test('Open Readaloud window', async () => {
   await window.openReadAloudPalette({ textId: 'textId', sourceApp: JSON.stringify({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }) })
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/readaloud',
     queryParams: {
       textId: 'textId',
       sourceApp: "{\"id\":\"appId\",\"name\":\"appName\",\"path\":\"appPath\",\"window\":\"title\"}"
     }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId&sourceApp=%7B%22id%22%3A%22appId%22%2C%22name%22%3A%22appName%22%2C%22path%22%3A%22appPath%22%2C%22window%22%3A%22title%22%7D#/readaloud')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?textId=textId&sourceApp=%7B%22id%22%3A%22appId%22%2C%22name%22%3A%22appName%22%2C%22path%22%3A%22appPath%22%2C%22window%22%3A%22title%22%7D#/readaloud')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -239,45 +239,45 @@ test('Open Readaloud window', async () => {
 test('Open Transcribe window', async () => {
   await window.openTranscribePalette()
   expect(window.transcribePalette).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/transcribe',
     title: 'Dictation',
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/transcribe')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/transcribe')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('Open Scratchpad window', async () => {
   await window.openScratchPad('text')
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/scratchpad',
     title: 'Scratchpad',
     queryParams: { textId: 'textId' }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/?textId=textId#/scratchpad')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?textId=textId#/scratchpad')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 });
 
 test('Open Realtime window', async () => {
   await window.openRealtimeChatWindow()
-  expect(BrowserWindow.prototype.constructor).toHaveBeenCalledWith(expect.objectContaining({
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/realtime',
     title: 'Realtime Chat'
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenCalledWith('http://localhost:3000/#/realtime')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/realtime')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
 
 test('MAS build warning', async () => {
   window.showMasLimitsDialog()
-  expect(dialog.showMessageBoxSync).toHaveBeenCalledWith(null, {
+  expect(dialog.showMessageBoxSync).toHaveBeenLastCalledWith(null, {
     buttons: ['Close', 'Check website'],
     message: expect.any(String),
     detail: expect.any(String),
     defaultId: 1,
   })
-  expect(shell.openExternal).toHaveBeenCalledWith(expect.stringContaining('https://witsyai.com/'))
+  expect(shell.openExternal).toHaveBeenLastCalledWith(expect.stringContaining('https://witsyai.com/'))
 })

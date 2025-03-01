@@ -177,7 +177,7 @@ test('Assistant Attachment', async () => {
 
 test('Asistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
-  expect(window.api.docrepo?.query).toHaveBeenCalledWith('docrepo', 'Hello LLM')
+  expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"instructions.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)

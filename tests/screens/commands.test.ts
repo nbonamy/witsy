@@ -31,7 +31,7 @@ test('Renders correctly', async () => {
 test('Closes on Escape', async () => {
   mount(CommandPicker, { props: { extra: { sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } } )
   document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-  expect(window.api.commands.closePicker).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.commands.closePicker).toHaveBeenLastCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Changes selection on arrow keys', async () => {
@@ -54,7 +54,7 @@ test('Runs on Enter', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.selected .label').text()).toBe('Command 1')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-  expect(window.api.commands.run).toHaveBeenCalledWith({
+  expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
@@ -74,7 +74,7 @@ test('Runs command on click', async () => {
   await wrapper.vm.$nextTick()
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
-  expect(window.api.commands.run).toHaveBeenCalledWith({
+  expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
@@ -93,7 +93,7 @@ test('Runs command on click', async () => {
   await wrapper.vm.$nextTick()
   const command = wrapper.findAll('.command').at(0)
   await command!.trigger('click')
-  expect(window.api.commands.run).toHaveBeenCalledWith({
+  expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
@@ -110,7 +110,7 @@ test('Runs command on click', async () => {
 // test('Runs command on shortcut', async () => {
 //   const wrapper = mount(Commands, { props: { extra: { textId: 6 }}})
 //   await wrapper.trigger('keyup', { key: '2' })
-//   expect(window.api.commands.run).toHaveBeenCalledWith({
+//   expect(window.api.commands.run).toHaveBeenLastCalledWith({
 //     command: {
 //       action: 'paste_below',
 //       icon: '2',
@@ -126,7 +126,7 @@ test('Runs command on click', async () => {
 // test('Uses chat on shift', async () => {
 //   const wrapper = mount(Commands, { props: { extra: { textId: 6 }}})
 //   await wrapper.trigger('keyup', { key: '3', shiftKey: true})
-//   expect(window.api.commands.run).toHaveBeenCalledWith({
+//   expect(window.api.commands.run).toHaveBeenLastCalledWith({
 //     command: {
 //       action: 'chat_window',
 //       icon: '3',

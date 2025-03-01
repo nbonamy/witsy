@@ -75,39 +75,39 @@ test('Take screenshot', async () => {
 test('Execute actions', async () => {
   await expect(Computer.executeAction({ action: 'cursor_position' })).resolves.toHaveProperty('x')
   await expect(Computer.executeAction({ action: 'cursor_position' })).resolves.toHaveProperty('y')
-  expect(mouse.getPosition).toHaveBeenCalledWith()
+  expect(mouse.getPosition).toHaveBeenLastCalledWith()
   
   await expect(Computer.executeAction({ action: 'mouse_move', coordinate: [1280/3, 800/3] })).resolves.toBe(true)
-  expect(spyMove).toHaveBeenCalledWith(640, 400)
-  expect(mouse.setPosition).toHaveBeenCalledWith({ x: 640, y: 400 })
+  expect(spyMove).toHaveBeenLastCalledWith(640, 400)
+  expect(mouse.setPosition).toHaveBeenLastCalledWith({ x: 640, y: 400 })
 
   await expect(Computer.executeAction({ action: 'left_click' })).resolves.toBe(true)
   expect(spyLeftClick).toHaveBeenCalled()
-  expect(mouse.leftClick).toHaveBeenCalledWith()
+  expect(mouse.leftClick).toHaveBeenLastCalledWith()
 
   await expect(Computer.executeAction({ action: 'left_click_drag', coordinate: [1280/3, 800/3] })).resolves.toBe(true)
-  expect(spyLeftClickDrag).toHaveBeenCalledWith(640, 400)
-  expect(mouse.drag).toHaveBeenCalledWith([{ x: 0, y: 0 }, { x: 640, y: 400 }])
+  expect(spyLeftClickDrag).toHaveBeenLastCalledWith(640, 400)
+  expect(mouse.drag).toHaveBeenLastCalledWith([{ x: 0, y: 0 }, { x: 640, y: 400 }])
 
   await expect(Computer.executeAction({ action: 'right_click' })).resolves.toBe(true)
   expect(spyRightClick).toHaveBeenCalled()
-  expect(mouse.rightClick).toHaveBeenCalledWith()
+  expect(mouse.rightClick).toHaveBeenLastCalledWith()
 
   await expect(Computer.executeAction({ action: 'middle_click' })).resolves.toBe(true)
   expect(spyMiddleClick).toHaveBeenCalled()
-  expect(mouse.click).toHaveBeenCalledWith(1)
+  expect(mouse.click).toHaveBeenLastCalledWith(1)
 
   await expect(Computer.executeAction({ action: 'double_click' })).resolves.toBe(true)
   expect(spyDoubleClick).toHaveBeenCalled()
-  expect(mouse.doubleClick).toHaveBeenCalledWith(0)
+  expect(mouse.doubleClick).toHaveBeenLastCalledWith(0)
 
   await expect(Computer.executeAction({ action: 'type', text: 'Hello' })).resolves.toBe(true)
-  expect(spyType).toHaveBeenCalledWith('Hello')
-  expect(keyboard.type).toHaveBeenCalledWith('Hello')
+  expect(spyType).toHaveBeenLastCalledWith('Hello')
+  expect(keyboard.type).toHaveBeenLastCalledWith('Hello')
 
   await expect(Computer.executeAction({ action: 'key', text: 'Return' })).resolves.toBe(true)
-  expect(spyKey).toHaveBeenCalledWith('Return')
-  expect(keyboard.pressKey).toHaveBeenCalledWith(102)
+  expect(spyKey).toHaveBeenLastCalledWith('Return')
+  expect(keyboard.pressKey).toHaveBeenLastCalledWith(102)
 
 })
 

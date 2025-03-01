@@ -154,7 +154,7 @@ test('Context menu rename', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=rename]').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('rename-chat', chat)
+  expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
 })
 
 // test('Context menu export', async () => {
@@ -163,7 +163,7 @@ test('Context menu rename', async () => {
 //   await wrapper.find('.toolbar .menu').trigger('click')
 //   await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
 //   await wrapper.findAll('.context-menu .item')[4].trigger('click')
-//   expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat)
+//   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat)
 // })
 
 test('Context menu delete', async () => {
@@ -172,7 +172,7 @@ test('Context menu delete', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=delete]').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat!.uuid)
+  expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat!.uuid)
 })
 
 test('Model settings visibility', async () => {

@@ -74,13 +74,13 @@ test('Selects correctly', async () => {
 test('Shows create editor', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.create').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-create', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-docrepo-create', null)
 })
 
 test('Shows configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.config').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-config', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-docrepo-config', null)
 })
 
 test('Deletes base', async () => {
@@ -88,14 +88,14 @@ test('Deletes base', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .actions button.delete').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalled()
-  expect(window.api.docrepo.delete).toHaveBeenCalledWith('uuid1')
+  expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid1')
 })
 
 test('Renames base', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.details .name input').setValue('docrepo1-new')
-  expect(window.api.docrepo.rename).toHaveBeenCalledWith('uuid1', 'docrepo1-new')
+  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'docrepo1-new')
 })
 
 test('Adds documents', async () => {
@@ -122,5 +122,5 @@ test('Deletes documents', async () => {
   await wrapper.find('.master .item:nth-child(2)').trigger('click')
   await wrapper.find('.details .actions button.remove').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalled()
-  expect(window.api.docrepo.removeDocument).toHaveBeenCalledWith('uuid2', 'uuid3')
+  expect(window.api.docrepo.removeDocument).toHaveBeenLastCalledWith('uuid2', 'uuid3')
 })

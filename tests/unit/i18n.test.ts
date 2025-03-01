@@ -67,7 +67,7 @@ test('Init i18n', async () => {
 
   store.config.general.locale = 'de-DE'
   useI18n(app)
-  expect(createI18n).toHaveBeenCalledWith({
+  expect(createI18n).toHaveBeenLastCalledWith({
     legacy: false,
     locale: 'de-DE',
     fallbackLocale: 'en',
