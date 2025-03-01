@@ -97,6 +97,21 @@
     "workingWith": "Texte de",
     "write": "Écrire"
   },
+  "automation": {
+    "commander": {
+      "emptyText": "Veuillez surligner le texte que vous souhaitez analyser."
+    },
+    "grabError": "Une erreur s'est produite lors de la récupération du texte. Veuillez vérifier les paramètres de Confidentialité et Sécurité.",
+    "readAloud": {
+      "emptyText": "Veuillez surligner le texte que vous souhaitez lire à haute voix."
+    }
+  },
+  "autoupdate": {
+    "available": "Une nouvelle version est disponible. Téléchargement en cours…",
+    "downloading": "Une mise à jour est en cours. Veuillez attendre qu'elle soit terminée.",
+    "error": "Erreur lors de la vérification des mises à jour. Veuillez réessayer plus tard.", 
+    "uptodate": "Vous utilisez déjà la dernière version de Witsy."
+  },
   "chat": {
     "actions": {
       "exportPdf": "Exporter en PDF",

@@ -4,7 +4,7 @@ import { app } from 'electron'
 import { store } from '../../src/services/store'
 import { createI18n } from 'vue-i18n'
 import { useWindowMock } from '../mocks/window'
-import { getLocaleUi, getLocaleLlm, useI18n } from '../../src/main/i18n'
+import { getLocaleUI, getLocaleLLM, useI18n } from '../../src/main/i18n'
 import { i18nInstructions, localeToLangName } from '../../src/services/i18n'
 
 vi.mock('electron', async() => {
@@ -43,23 +43,23 @@ beforeAll(() => {
 test('Get UI Locale', async () => {
   
   // default to system language
-  expect(getLocaleUi(app)).toBe('en-US')
-  expect(getLocaleLlm(app)).toBe('en-US')
+  expect(getLocaleUI(app)).toBe('en-US')
+  expect(getLocaleLLM(app)).toBe('en-US')
 
   // override llm locale
   store.config.llm.locale = 'fr-FR'
-  expect(getLocaleUi(app)).toBe('en-US')
-  expect(getLocaleLlm(app)).toBe('fr-FR')
+  expect(getLocaleUI(app)).toBe('en-US')
+  expect(getLocaleLLM(app)).toBe('fr-FR')
 
   // override both
   store.config.general.locale = 'es-ES'
-  expect(getLocaleUi(app)).toBe('es-ES')
-  expect(getLocaleLlm(app)).toBe('fr-FR')
+  expect(getLocaleUI(app)).toBe('es-ES')
+  expect(getLocaleLLM(app)).toBe('fr-FR')
 
   // override only one
   store.config.llm.locale = ''
-  expect(getLocaleUi(app)).toBe('es-ES')
-  expect(getLocaleLlm(app)).toBe('es-ES')
+  expect(getLocaleUI(app)).toBe('es-ES')
+  expect(getLocaleLLM(app)).toBe('es-ES')
 
 })
 

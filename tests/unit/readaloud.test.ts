@@ -1,6 +1,6 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
-import { Notification } from 'electron'
+import { app, Notification } from 'electron'
 import ReadAloud from '../../src/automations/readaloud'
 import * as window from '../../src/main/window'
 import * as utils from '../../src/main/utils'
@@ -12,6 +12,9 @@ vi.mock('electron', async() => {
   const Notification = vi.fn();
   Notification.prototype.show = vi.fn();
   return {
+    app: {
+      getLocale: vi.fn(() => 'en-US'),
+    },
     Notification
   }
 })
@@ -48,7 +51,7 @@ test('Open readaloud window', async () => {
 
   selectedText = 'Grabbed text'
   
-  await ReadAloud.read(100)
+  await ReadAloud.read(app, 100)
   expect(utils.putCachedText).toHaveBeenCalledWith('Grabbed text')
   expect(window.openReadAloudPalette).toHaveBeenCalledWith({
     textId: 'textId',
@@ -61,10 +64,10 @@ test('Show no text error notification', async () => {
 
   selectedText = ''
   
-  await ReadAloud.read(100)
+  await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
-    expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: 'Please highlight the text you want to read aloud' })
+    expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: 'Please highlight the text you want to read aloud.' })
 
   })
 
@@ -72,7 +75,7 @@ test('Show no grab error notification', async () => {
 
   selectedText = null
   
-  await ReadAloud.read(100)
+  await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
   expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.' })
