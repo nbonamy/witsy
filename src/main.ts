@@ -304,8 +304,12 @@ ipcMain.on('clipboard-write-image', (event, payload) => {
   clipboard.writeImage(image);
 });
 
-ipcMain.on('config-get-locale', (event) => {
-  event.returnValue = i18n.getLocale(app);
+ipcMain.on('config-get-locale-ui', (event) => {
+  event.returnValue = i18n.getLocaleUi(app);
+});
+
+ipcMain.on('config-get-locale-llm', (event) => {
+  event.returnValue = i18n.getLocaleLlm(app);
 });
 
 ipcMain.on('config-load', (event) => {

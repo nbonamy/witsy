@@ -52,12 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { t, i18nInstructions } from '../services/i18n'
 
 import { ref } from 'vue'
 import { store } from '../services/store'
-import defaults from '../../defaults/settings.json'
+import { anyDict } from '../types/index'
 
 const prompt = ref(null)
 const instructions = ref('instructions.default')
@@ -75,23 +74,11 @@ const load = () => {
 }
 
 const onChangeInstructions = () => {
-  const tokens = instructions.value.split('.')
-  let promptValue = store.config
-  for (const token of tokens) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
-    promptValue = promptValue[token]
-  }
-  prompt.value = promptValue
+  prompt.value = i18nInstructions(store.config, instructions.value)
 }
 
 const onResetDefaultInstructions = () => {
-  const tokens = instructions.value.split('.')
-  let defaultValue = defaults
-  for (const token of tokens) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
-    defaultValue = defaultValue[token]
-  }
-  prompt.value = defaultValue
+  prompt.value = i18nInstructions(null, instructions.value)
   save()
 }
 
@@ -104,14 +91,21 @@ const save = () => {
   store.config.llm.imageResize = parseInt(imageResize.value)
 
   // update prompt
+  const defaultInstructions = i18nInstructions(null, instructions.value)
+  const valueToSave = prompt.value === defaultInstructions ? '' : prompt.value
   const tokens = instructions.value.split('.')
-  let config = store.config
+  let config = store.config as anyDict
   for (let i = 0; i < tokens.length - 1; i++) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
+    if (!config[tokens[i]]) {
+      config[tokens[i]] = {}
+    }
     config = config[tokens[i]]
   }
-  // @ts-expect-error - instructions are InstructionsConfig keys
-  config[tokens[tokens.length - 1]] = prompt.value
+  if (valueToSave.length) {
+    config[tokens[tokens.length - 1]] = valueToSave
+  } else {
+    delete config[tokens[tokens.length - 1]]
+  }
 
   // save
   store.saveSettings()

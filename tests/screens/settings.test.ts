@@ -334,9 +334,10 @@ test('Settings Advanced', async () => {
     const tokens = key.split('.')
     let value = store.config
     for (const token of tokens) {
+      if (!value) return ''
       value = value[token]
     }
-    return value
+    return value || ''
   }
 
   const instructions = [
@@ -350,7 +351,7 @@ test('Settings Advanced', async () => {
   for (const instr in instructions) {
 
     // check it is not bot
-    expect(store.config.get(instructions[instr])).not.toBe('bot')
+    expect(store.config.get(instructions[instr])).toBe('')
 
     // select and set value
     await tab.find('.group.instruction select').setValue(instructions[instr])
@@ -361,7 +362,7 @@ test('Settings Advanced', async () => {
 
     // reset default
     await tab.find('.group.instruction a').trigger('click')
-    expect(store.config.get(instructions[instr])).not.toBe('bot')
+    expect(store.config.get(instructions[instr])).toBe('')
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 

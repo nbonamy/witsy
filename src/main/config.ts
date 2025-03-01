@@ -98,8 +98,6 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
 
     // nullify defaults
     nullifyDefaults(config)
-    nullifyInstructions(config.instructions, defaultSettings.instructions)
-    nullifyPluginDescriptions(config.plugins, defaultSettings.plugins)
 
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
@@ -118,32 +116,3 @@ const nullifyDefaults = (settings: anyDict) => {
     delete settings.engines.ollama.baseURL
   }
 }
-
-export const nullifyInstructions = (settings: anyDict, defaults: anyDict) => {
-  for (const instr in settings) {
-    if (typeof settings[instr] === 'object') {
-      nullifyInstructions(settings[instr], defaults[instr])
-      if (Object.keys(settings[instr]).length === 0) {
-        delete settings[instr]
-      }
-    } else {
-      const standard = JSON.stringify(defaults[instr as keyof typeof defaults])
-      const current = JSON.stringify(settings[instr as keyof typeof settings])
-      if (standard === current) {
-        delete settings[instr]
-      }
-    }
-  }
-}
-
-export const nullifyPluginDescriptions = (settings: anyDict, defaults: anyDict) => {
-  for (const plugin of ['image', 'video', 'memory']) {
-    const standard = defaults[plugin as keyof typeof defaults]
-    const current = settings[plugin as keyof typeof settings]
-    if (current.description === '' || standard.description === current.description) {
-      delete settings[plugin].description
-    }
-  }
-}
-
-

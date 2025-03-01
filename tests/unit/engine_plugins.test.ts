@@ -15,10 +15,41 @@ import { HfInference } from '@huggingface/inference'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
+// @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
   text: () => 'fetched_content',
 }))
 
+// mock i18n
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    i18nInstructions: (config: any, key: string) => {
+
+      //
+      const tokens = key.split('.')
+      let instructions = config
+      if (instructions) {
+        for (const token of tokens) {
+          instructions = instructions[token]
+          if (!instructions) {
+            break
+          }
+        }
+      }
+
+      // valid
+      if (typeof instructions === 'string' && (instructions as string)?.length) {
+        return instructions
+      }
+
+      // default
+      return `${key}.${store.config.llm.locale}`
+
+    }
+  }
+})
+
+// tavily
 vi.mock('../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
   Tavily.prototype.search = vi.fn(() => ({ results: [
@@ -27,18 +58,21 @@ vi.mock('../../src/vendor/tavily', async () => {
   return { default: Tavily }
 })
 
+// youtube transcript
 vi.mock('youtube-transcript', async () => {
   return { YoutubeTranscript: {
     fetchTranscript: vi.fn(() => [ { text: 'line1' } ])
   } }
 })
 
+// youtube info
 vi.mock('ytv', async () => {
   return { default: {
     get_info: vi.fn(() => ({ title: 'title', channel_name: 'channel' }))
   } }
 })
 
+// openai
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
   OpenAI.prototype.images = {
@@ -47,12 +81,14 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
+// huggingface
 vi.mock('@huggingface/inference', async () => {
   const HfInference = vi.fn()
   HfInference.prototype.textToImage = vi.fn(() => new Blob(['image'], { type: 'image/jpeg' }))
   return { HfInference }
 })
 
+// replicate
 vi.mock('replicate', async () => {
   const Replicate = vi.fn()
   Replicate.prototype.run = vi.fn((model) => {
@@ -68,6 +104,7 @@ vi.mock('replicate', async () => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.config.llm.locale = 'fr'
   store.config.llm.engine = 'mock'
   store.config.plugins.browse = {
     enabled: true,
@@ -104,7 +141,7 @@ test('Image Plugin', async () => {
   const image = new Image(store.config.plugins.image)
   expect(image.isEnabled()).toBe(true)
   expect(image.getName()).toBe('image_generation')
-  expect(image.getDescription()).not.toBeFalsy()
+  expect(image.getDescription()).toBe('plugins.image.description.fr')
   expect(image.getPreparationDescription()).toBe(image.getRunningDescription())
   expect(image.getRunningDescription()).toBe('Painting pixels…')
   expect(image.getParameters()[0].name).toBe('prompt')
@@ -168,13 +205,16 @@ test('Video Plugin', async () => {
   const video = new Video(store.config.plugins.video)
   expect(video.isEnabled()).toBe(true)
   expect(video.getName()).toBe('video_generation')
-  expect(video.getDescription()).not.toBeFalsy()
+  expect(video.getDescription()).toBe('plugins.video.description.fr')
   expect(video.getPreparationDescription()).toBe(video.getRunningDescription())
   expect(video.getRunningDescription()).toBe('Animating frames…')
   expect(video.getParameters()[0].name).toBe('prompt')
   expect(video.getParameters()[0].type).toBe('string')
   expect(video.getParameters()[0].description).not.toBeFalsy()
   expect(video.getParameters()[0].required).toBe(true)
+
+  store.config.plugins.video.description = 'test description'
+  expect(video.getDescription()).toBe('test description')
 
 })
 
@@ -279,7 +319,7 @@ test('Memory Plugin', async () => {
   const memory = new Memory(store.config.plugins.memory)
   expect(memory.isEnabled()).toBe(false)
   expect(memory.getName()).toBe('long_term_memory')
-  expect(memory.getDescription()).not.toBeFalsy()
+  expect(memory.getDescription()).toBe('plugins.memory.description.fr')
   expect(memory.getPreparationDescription()).toBe('Personnalizing…')
   expect(memory.getRunningDescription()).toBe('Personnalizing…')
   expect(memory.getParameters()[0].name).toBe('action')

@@ -25,10 +25,34 @@ vi.mock('../../src/services/download.ts', async () => {
   }
 })  
 
+// mock i18n
 vi.mock('../../src/services/i18n', async () => {
   return {
-    t: (key: string) => key,
-    countryCodeToName: (code: string) => code,
+    t: (key: string) => `${key}.${store.config.llm.locale}`,
+    countryCodeToLangName: (code: string) => code,
+    i18nInstructions: (config: any, key: string) => {
+
+      //
+      const tokens = key.split('.').slice(1)
+      let instructions = config?.instructions as { [key: string]: any }
+      if (instructions) {
+        for (const token of tokens) {
+          instructions = instructions[token]
+          if (!instructions) {
+            break
+          }
+        }
+      }
+
+      // valid
+      if (typeof instructions === 'string') {
+        return instructions
+      }
+
+      // default
+      return `${key}.${store.config.llm.locale}`
+
+    }
   }
 })
 
@@ -67,13 +91,15 @@ beforeEach(() => {
 
   // init store
   store.config = defaults
+  store.config.general.locale = 'en'
   store.config.llm.engine = 'mock'
-  store.config.instructions = {
-    default: 'You are a chat assistant',
-    titling: 'You are a titling assistant',
-    titling_user: 'Provide a title',
-    docquery: '{context} / {query}'
-  }
+  store.config.llm.locale = 'fr'
+  // store.config.instructions = {
+  //   default: 'You are a chat assistant',
+  //   titling: 'You are a titling assistant',
+  //   titling_user: 'Provide a title',
+  //   docquery: '{context} / {query}'
+  // }
   store.config.engines.mock = {
     models: { chat: [ 'chat1', 'chat2' ] },
     model: { chat: 'chat'  }
@@ -101,7 +127,6 @@ test('Assistant parameters', async () => {
     expert: null,
     sources: true,
     models: [ 'chat1', 'chat2' ],
-    systemInstructions: 'You are a chat assistant',
     autoSwitchVision: true,
     citations: true,
     usage: true,
@@ -110,11 +135,11 @@ test('Assistant parameters', async () => {
 
 test('Assistant Chat', async () => {
   const content = await prompt('Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"You are a chat assistant"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr instructions.setlang.fr."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('Title')
+  expect(assistant!.chat.title).toBe('instructions.titling.fr:\n"Title"')
 })
 
 test('Assistant Attachment', async () => {
@@ -129,11 +154,11 @@ test('Assistant Attachment', async () => {
 test('Asistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenCalledWith('docrepo', 'Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"You are a chat assistant"},{"role":"user","content":"content / Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr instructions.setlang.fr."},{"role":"user","content":"instructions.docquery.fr"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('Title')
+  expect(assistant!.chat.title).toBe('instructions.titling.fr:\n"Title"')
 })
 
 test('Conversaton Length 1', async () => {
@@ -155,29 +180,42 @@ test('Conversaton Length 2', async () => {
   expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
 })
 
-test('Conversation language', async () => {
-  store.config.general.language = 'fr'
+test('Llm language', async () => {
+  store.config.llm.locale = 'es'
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toMatch(/ fr.$/)
+  expect(instructions).toBe('instructions.default.es instructions.setlang.es.')
+})
+
+test('User-defined instructions', async () => {
+  store.config.instructions = {
+    default: 'You are a chat assistant',
+    titling: 'You are a titling assistant',
+    titling_user: 'Provide a title',
+    docquery: '{context} / {query}'
+  }
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('You are a chat assistant')
+  expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.missingApiKey')
+  expect(content).toBe('generator.errors.missingApiKey.fr')
 })
 
 test('Low balance', async () => {
   await prompt('no credit left')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.outOfCredits')
+  expect(content).toBe('generator.errors.outOfCredits.fr')
 })
 
 test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.quotaExceeded')
+  expect(content).toBe('generator.errors.quotaExceeded.fr')
 })
 
 test('Stop generation', async () => {

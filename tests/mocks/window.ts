@@ -54,7 +54,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       unregister: vi.fn(),
     },
     config: {
-      locale: vi.fn(() => 'en'),
+      localeUi: vi.fn(() => 'en'),
+      localeLlm: vi.fn(() => 'en'),
       load: vi.fn(() => {
         const config = JSON.parse(JSON.stringify(defaultSettings))
         if (opts.favoriteModels) {

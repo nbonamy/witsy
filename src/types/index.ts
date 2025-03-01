@@ -55,6 +55,7 @@ export interface Chat {
   temporary: boolean
   disableTools: boolean
   disableStreaming: boolean
+  locale: string|null
   docrepo: string|null
   modelOpts: LlmModelOpts|null
   patchFromJson(jsonChat: any): boolean
@@ -214,7 +215,8 @@ declare global {
         apply(): void
       }
       config: {
-        locale(): string
+        localeUi(): string
+        localeLlm(): string
         load(): Configuration
         save(config: Configuration): void
       }
