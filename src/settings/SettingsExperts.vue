@@ -36,13 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { Expert } from 'types/index'
 import { Ref, ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { newExpert, saveExperts } from '../services/experts'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'

@@ -18,11 +18,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import MemoryInspector from '../screens/MemoryInspector.vue'

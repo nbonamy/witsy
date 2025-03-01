@@ -35,6 +35,7 @@
 
 import { ref, onMounted, onUnmounted, PropType } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
@@ -44,9 +45,6 @@ import Message from '../models/message'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
-
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 // init stuff
 const audioPlayer = useAudioPlayer(store.config)

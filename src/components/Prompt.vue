@@ -32,13 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
-import { type FileContents, type Expert } from '../types/index'
-import { type DocumentBase } from '../types/rag'
-import { ref, computed, onMounted, nextTick, watch, type Ref } from 'vue'
+import { FileContents, Expert } from '../types/index'
+import { DocumentBase } from '../types/rag'
+import { ref, computed, onMounted, nextTick, watch, Ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'

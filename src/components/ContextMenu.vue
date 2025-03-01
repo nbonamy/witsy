@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, computed, onMounted } from 'vue'
 import Overlay from '../components/Overlay.vue'
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { t } from '../services/i18n'
 
 export type MenuAction = {
   label?: string

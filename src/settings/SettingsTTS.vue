@@ -45,11 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { Ref, ref, onMounted, onUnmounted, computed } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import TTSOpenAI from '../voice/tts-openai'

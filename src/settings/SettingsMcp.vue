@@ -61,11 +61,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { McpServer, McpServerStatus } from '../types/mcp'
 import ContextMenu from '../components/ContextMenu.vue'
 import McpServerEditor from '../screens/McpServerEditor.vue'

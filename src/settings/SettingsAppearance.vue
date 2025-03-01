@@ -62,12 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ChatListLayout } from '../types/config';
 import { Ref, ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 
 // events
 import useEventBus from '../composables/event_bus'

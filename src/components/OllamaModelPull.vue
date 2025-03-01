@@ -14,12 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref, nextTick, Ref } from 'vue'
 import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
 import { ProgressResponse, AbortableAsyncIterator } from 'ollama'

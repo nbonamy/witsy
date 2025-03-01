@@ -70,12 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { anyDict } from '../types/index'
 import { ref, Ref, onMounted, computed, watch } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'

@@ -16,12 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { Folder } from '../types/index'
-import { type Ref, ref, onMounted, computed } from 'vue'
+import { Ref, ref, onMounted, computed } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import ChatListItem from './ChatListItem.vue'
 import ContextMenu from './ContextMenu.vue'
 import Chat from '../models/chat'

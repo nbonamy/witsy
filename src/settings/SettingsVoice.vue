@@ -13,10 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { ref, computed, nextTick } from 'vue'
+import { t } from '../services/i18n'
 import { BIconMicFill, BIconVolumeUpFill } from 'bootstrap-icons-vue'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'

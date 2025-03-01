@@ -20,12 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { CustomEngineConfig } from '../types/config'
 import { Ref, ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineLogo from '../components/EngineLogo.vue'
 import CreateEngine from '../screens/CreateEngine.vue'

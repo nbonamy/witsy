@@ -26,13 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 import { CustomEngineConfig } from '../types/config'
 import { Model } from 'multi-llm-ts'
 import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { getEmbeddingModels } from '../llms/ollama'
 import LlmFactory from '../llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'

@@ -68,12 +68,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
-// components
 import { ref, onMounted } from 'vue'
 import FloatingVue, { vTooltip } from 'floating-vue'
+import { t } from '../services/i18n'
 
 // bus
 import useEventBus from '../composables/event_bus'
