@@ -376,7 +376,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // final prompt
-    const finalPrompt = hiddenPrompt ? `${hiddenPrompt} ${prompt}` : prompt;
+    const finalPrompt = hiddenPrompt ? `${hiddenPrompt} ${prompt||''}` : prompt;
     sourceApp.value = null
     hiddenPrompt = null
 
