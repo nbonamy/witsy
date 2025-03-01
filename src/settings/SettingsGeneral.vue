@@ -100,12 +100,12 @@ const onChangeModel = () => {
 }
 
 const onChangeLocaleLLM = () => {
-  isLocalized.value = hasLocalization(localeLLM.value)
-  console.log('isLocalized', isLocalized.value, localeLLM.value)
+  save()
+  isLocalized.value = hasLocalization(window.api.config.localeLLM())
   if (!isLocalized.value) {
     forceLocale.value = true
+    save()
   }
-  save()
 }
 
 const save = () => {

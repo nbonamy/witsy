@@ -53,6 +53,9 @@ beforeAll(() => {
      ]
     }
   }
+
+  // override
+  window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
@@ -88,76 +91,86 @@ test('Settings General', async () => {
   
   const tab = await switchToTab(wrapper, 0)
   expect(tab.findAll('.group')).toHaveLength(7)
-  
+  expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
+  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(standardEngines.length+1)
+  
+  // helper
+  const checkAndReset = (times: number = 1) => {
+    expect(window.api.runAtLogin.set).toHaveBeenCalledTimes(times)
+    expect(store.saveSettings).toHaveBeenCalledTimes(times)
+    vi.clearAllMocks()
+  }
+
+  // set prompt engine
   tab.find('.group.prompt select.engine').setValue('anthropic')
   await wrapper.vm.$nextTick()
+  expect(store.config.llm.forceLocale).toBe(false)
   expect(store.config.prompt.engine).toBe('anthropic')
   expect(store.config.prompt.model).toBe('model1')
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
+  checkAndReset()
+  
+  // set prompt model
   tab.find('.group.prompt select.model').setValue('model2')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
-  expect(window.api.runAtLogin.set).toHaveBeenCalledTimes(2)
-  expect(store.saveSettings).toHaveBeenCalledTimes(2)
-  vi.clearAllMocks()
+  checkAndReset()
 
-  expect(store.config.general.locale).not.toBe('fr-FR')
-  expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
+  // set ui locale to french
+  expect(store.config.general.locale).toBe('')
   tab.find('.group.localeUI select').setValue('fr-FR')
   expect(store.config.general.locale).toBe('fr-FR')
-  
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
+  // set it back to default
   tab.find('.group.localeUI select').setValue('')
   expect(store.config.general.locale).toBe('')
-  
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
-  expect(store.config.llm.locale).not.toBe('es-ES')
-  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
-  tab.find('.group.localeLLM select').setValue('es-ES')
-  expect(store.config.llm.locale).toBe('es-ES')
-  
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
-
+  // set llm locale to french: translation exists so forceLocale is false
+  expect(store.config.llm.locale).toBe('')
   expect(store.config.llm.forceLocale).toBe(false)
+  tab.find('.group.localeLLM select').setValue('fr-FR')
+  expect(store.config.llm.locale).toBe('fr-FR')
+  expect(store.config.llm.forceLocale).toBe(false)
+  checkAndReset()
+
+  // set forceLocale to true
   tab.find('.group.localeLLM input').setValue(true)
   expect(store.config.llm.forceLocale).toBe(true)
+  checkAndReset()
 
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  // set it back to false
+  tab.find('.group.localeLLM input').setValue(false)
+  expect(store.config.llm.forceLocale).toBe(false)
+  checkAndReset()
 
+  // set llm locale to spanish: translation does not exist so forceLocale is true
+  expect(store.config.llm.locale).not.toBe('es-ES')
+  tab.find('.group.localeLLM select').setValue('es-ES')
+  expect(store.config.llm.locale).toBe('es-ES')
+  expect(store.config.llm.forceLocale).toBe(true)
+  checkAndReset(2)
+
+  // now run at login
   expect(window.api.runAtLogin.get()).not.toBe(true)
   tab.find('.group.run-at-login input').setValue(true)
   expect(window.api.runAtLogin.get()).toBe(true)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
+  // hide on startup
   expect(store.config.general.hideOnStartup).not.toBe(true)
   tab.find('.group.hide-on-startup input').setValue(true)
   expect(store.config.general.hideOnStartup).toBe(true)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
+  // and keep running
   expect(store.config.general.keepRunning).not.toBe(false)
   tab.find('.group.keep-running input').setValue(false)
   expect(store.config.general.keepRunning).toBe(false)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
 })
 
