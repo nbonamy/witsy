@@ -52,11 +52,12 @@ export default class {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   notify(filepath: string): void {
 
     // log
-    const filename = path.basename(filepath)
-    console.log(`File ${filename} modified. Notifying`)
+    // const filename = path.basename(filepath)
+    // console.log(`File ${filename} modified. Notifying`)
 
     // callback
     this.callback()

@@ -5,7 +5,8 @@
 <script setup lang="ts">
 
 import { strDict } from 'types'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, WritableComputedRef } from 'vue'
+import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
 import CommandPicker from './screens/CommandPicker.vue'
@@ -64,15 +65,19 @@ const setLocale = () => {
   
   // ui locale
   const localeUI = window.api.config.localeUI()
-  console.log('Changing locale to', localeUI)
-  // @ts-expect-error not sure why
-  i18n.global.locale.value = localeUI
+  const i18nLocale = (i18n.global.locale as WritableComputedRef<Locale>)
+  if (i18nLocale.value !== localeUI) {
+    console.log('Changing UI locale to', localeUI)
+    i18nLocale.value = localeUI
+  }
 
   // llm locale
   const localeLLM = window.api.config.localeLLM()
-  console.log('Changing llm locale to', localeLLM)
-  // @ts-expect-error not sure why
-  i18nLlm.global.locale.value = localeLLM
+  const i18nLlmLocale = (i18nLlm.global.locale as WritableComputedRef<Locale>)
+  if (i18nLlmLocale.value !== localeLLM) {
+    console.log('Changing LLM locale to', localeLLM)
+    i18nLlmLocale.value = localeLLM
+  }
 
   // dom
   const body = document.querySelector('body')

@@ -304,6 +304,7 @@
     "inspector": {
       "memory": "Mémoire",
       "noFacts": "Aucun fait enregistré jusqu'à présent",
+      "shiftDelete": "Maintenez Shift en cliquant sur Supprimer pour ignorer la confirmation.",
       "title": "Contenu de la mémoire"
     }
   },
@@ -443,7 +444,7 @@
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
       "autoVisionSwitch": "Passer automatiquement au modèle vision",
-      "conversationLength": "Longueur des conversations",
+      "conversationLength": "Messages par conversation",
       "imageResize": "Taille des images",
       "imageResizeOptions": {
         "none": "Taille originale",
@@ -467,6 +468,7 @@
         "titling_user": "Titre de conversation - Prompt",
         "video_plugin": "Plugin Vidéo - Description (1024 caractères max)"
       },
+      "overridingHelp": "Les prompts et instructions personnalisés s'appliquent à toutes les langues.",
       "resetToDefault": "Réinitialiser à la valeur par défaut",
       "systemInstructions": "Instructions système"
     },

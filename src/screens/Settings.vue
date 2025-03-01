@@ -14,7 +14,7 @@
               <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
               <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
               <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-              <SettingsTab class="advanced" :title="t('settings.tabs.advanced')"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
             </ul>
             <SettingsGeneral ref="settingsGeneral" />
             <SettingsAppearance ref="settingsAppearance" />
@@ -149,6 +149,10 @@ const onClose = () => {
   document.querySelector<HTMLDialogElement>('#settings').close()
 }
 
+const load = (tab: any) => {
+  tab.load()
+}
+
 </script>
 
 <style scoped>
@@ -214,6 +218,7 @@ dialog.settings .tabs label .icon {
   margin: 0 auto;
   width: 15pt;
   height: 15pt;
+  margin-bottom: 4px;
   color: var(--tabs-header-normal-text-color);
   filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
 }

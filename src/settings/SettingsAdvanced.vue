@@ -44,8 +44,9 @@
           <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
           <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
         </select>
-        <textarea v-model="prompt" @change="save" />
-        <a href="#" @click="onResetDefaultInstructions">{{ t('settings.advanced.resetToDefault') }}</a>
+        <textarea v-model="prompt" @change="save" @keyup="save" />
+        <a href="#" @click="onResetDefaultInstructions" v-if="isPromptOverridden">{{ t('settings.advanced.resetToDefault') }}</a>
+        <span v-else>{{ t('settings.advanced.overridingHelp') }}</span>
       </div>
     </div>
   </div>
@@ -59,6 +60,7 @@ import { store } from '../services/store'
 import { anyDict } from '../types/index'
 
 const prompt = ref(null)
+const isPromptOverridden = ref(false)
 const instructions = ref('instructions.default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
@@ -75,6 +77,7 @@ const load = () => {
 
 const onChangeInstructions = () => {
   prompt.value = i18nInstructions(store.config, instructions.value)
+  isPromptOverridden.value = (prompt.value !== i18nInstructions(null, instructions.value));
 }
 
 const onResetDefaultInstructions = () => {
@@ -92,11 +95,11 @@ const save = () => {
 
   // update prompt
   const defaultInstructions = i18nInstructions(null, instructions.value)
-  const valueToSave = prompt.value === defaultInstructions ? '' : prompt.value
+  isPromptOverridden.value = (prompt.value !== defaultInstructions);
   instructions.value.split('.').reduce((acc, key, i, arr) => {
     if (i === arr.length - 1) {
-      if (valueToSave.length) {
-        acc[key] = valueToSave
+      if (isPromptOverridden.value) {
+        acc[key] = prompt.value
       } else {
         delete acc[key]
       }
@@ -137,6 +140,10 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+form .group label {
+  min-width: 180px;
 }
 
 .subgroup select {

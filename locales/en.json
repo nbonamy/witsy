@@ -304,6 +304,7 @@
     "inspector": {
       "memory": "Memory",
       "noFacts": "No facts stored so far",
+      "shiftDelete": "Hold Shift while clicking on Delete to skip confirmation.",
       "title": "Memory Contents"
     }
   },
@@ -454,7 +455,7 @@
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
       "autoVisionSwitch": "Automatically switch to vision model",
-      "conversationLength": "Conversation length",
+      "conversationLength": "Messages per conversation",
       "imageResize": "Image resize",
       "imageResizeOptions": {
         "none": "No resize",
@@ -478,6 +479,7 @@
         "titling_user": "Chat title - Prompt",
         "video_plugin": "Video Plugin - Description (1024 characters max)"
       },
+      "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
       "resetToDefault": "Reset to default value",
       "systemInstructions": "System instructions"
     },
