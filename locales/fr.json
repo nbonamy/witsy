@@ -38,7 +38,7 @@
     "documents": "Documents",
     "done": "Terminé !",
     "edit": "Modifier",
-    "embeddings": "Embeddings",
+    "embeddings": "Vecteurs",
     "enabled": "Activé",
     "error": "Erreur !",
     "esc": "Échap",
@@ -160,7 +160,7 @@
     },
     "create": {
       "defaultName": "Dépôt de documents",
-      "embeddingWarning": "le modèle d'intégration ne peut pas être modifié une fois le dépôt créé",
+      "embeddingWarning": "le modèle ne peut pas être modifié une fois le dépôt créé",
       "title": "Créer un dépôt de documents"
     },
     "repositories": {
@@ -172,8 +172,8 @@
   "embedding": {
     "apiKeyReminder": "Assurez-vous d'entrer votre clé API dans l'onglet Modèles des paramètres de Witsy.",
     "browse": "Parcourir les modèles",
-    "model": "Modèle d'embedding",
-    "provider": "Fournisseur d'embedding"
+    "model": "Modèle",
+    "provider": "Fournisseur"
   },
   "emptyChat": {
     "settings": {
