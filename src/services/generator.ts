@@ -1,8 +1,7 @@
-
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { countryCodeToName } from './i18n'
+import { countryCodeToName, t } from './i18n'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
@@ -119,27 +118,27 @@ export type GenerationResult =
         
         // missing api key
         if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
-          response.setText('You need to enter your API key in the Models tab of <a href="#settings_models">Settings</a> in order to chat.')
+          response.setText(t('generator.errors.missingApiKey'))
           rc = 'missing_api_key'
         }
         
         // out of credits
         else if ([400, 402].includes(error.status) && (message.includes('credit') || message.includes('balance'))) {
-          response.setText('Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.')
+          response.setText(t('generator.errors.outOfCredits'))
           rc = 'out_of_credits'
         
         // quota exceeded
         } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
-          response.setText('Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.')
+          response.setText(t('generator.errors.quotaExceeded'))
           rc = 'quota_exceeded'
 
         // context length or function description too long
         } else if ([400].includes(error.status) && (message.includes('context length') || message.includes('too long'))) {
           if (message.includes('function.description')) {
-            response.setText('Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.')
+            response.setText(t('generator.errors.pluginDescriptionTooLong'))
             rc = 'function_description_too_long'
           } else {
-            response.setText('Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.')
+            response.setText(t('generator.errors.contextTooLong'))
             rc = 'context_too_long'
           }
         
@@ -155,21 +154,21 @@ export type GenerationResult =
 
         // invalid model
         } else if ([404].includes(error.status) && message.includes('model')) {
-          response.setText('Sorry, it seems this model is not available.')
+          response.setText(t('generator.errors.invalidModel'))
           rc = 'invalid_model'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
           if (response.content === '') {
             if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p) {
-              response.setText('Sorry, I could not generate text for that prompt. Do you want to <a href="#retry_without_params">try again without model parameters</a>?')
+              response.setText(t('generator.errors.tryWithoutParams'))
             } else if (llm.plugins.length > 0) {
-              response.setText('Sorry, I could not generate text for that prompt. Do you want to <a href="#retry_without_plugins">try again without plugins</a>?')
+              response.setText(t('generator.errors.tryWithoutPlugins'))
             } else {
-              response.setText('Sorry, I could not generate text for that prompt.')
+              response.setText(t('generator.errors.couldNotGenerate'))
             }
           } else {
-            response.appendText({ type: 'content', text: '\n\nSorry, I am not able to continue here.', done: true })
+            response.appendText({ type: 'content', text: t('generator.errors.cannotContinue'), done: true })
           }
           rc = 'error'
         }

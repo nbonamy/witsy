@@ -271,7 +271,7 @@ dialog.settings .list-panel {
   
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);
-    width: 140px;
+    width: 150px;
     padding: 0px 12px;
     overflow-y: auto;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
@@ -279,8 +279,8 @@ dialog.settings .list-panel {
     .item {
       flex-direction: row;
       align-items: center;
-      height: 24px;
-      padding: 0px 8px;
+      height: auto;
+      padding: 4px 8px;
       margin: 2px 0px;
       display: flex;
       border-radius: 4px;
@@ -288,7 +288,7 @@ dialog.settings .list-panel {
 
       .logo {
         height: 10pt;
-        margin-right: 4px;
+        margin-right: 6px;
       }
 
       .icon {

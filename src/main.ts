@@ -36,6 +36,7 @@ import * as window from './main/window';
 import * as markdown from './main/markdown';
 import * as menu from './main/menu';
 import * as text from './main/text';
+import * as i18n from './main/i18n';
 import Automator, { AutomationAction } from 'automations/automator';
 
 let commander: Commander = null
@@ -172,18 +173,21 @@ app.whenReady().then(() => {
     app.dock?.hide();
   }
 
-  // new icon warning
-  if (!settings.general.firstRun && settings.general.hideOnStartup && settings.general.tips.newTrayIcon === undefined) {
-    dialog.showMessageBox(null, {
-      message: process.platform === 'win32' ? 'New system tray icon!' : 'New menu bar icon!',
-      detail: process.platform === 'win32'
-        ? 'The old lightbulb tray icon has been replaced with the Witsy application icon.'
-        : 'The old lightbulb menu bar icon has been replaed with a fountain pen icon.'
+  // on config change
+  config.setOnSettingsChange(() => {
 
-    });
-    settings.general.tips.newTrayIcon = false;
-    config.saveSettings(app, settings);
-  }
+    console.log('Settings changed');
+
+    // notify browser windows
+    window.notifyBrowserWindows('file-modified', 'settings');
+
+    // update tray icon
+    trayIconManager.install();
+
+    // update main menu
+    installMenu();
+
+  });
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -298,6 +302,10 @@ ipcMain.on('clipboard-write-text', (event, payload) => {
 ipcMain.on('clipboard-write-image', (event, payload) => {
   const image = nativeImage.createFromPath(payload.replace('file://', ''))
   clipboard.writeImage(image);
+});
+
+ipcMain.on('config-get-locale', (event) => {
+  event.returnValue = i18n.getLocale(app);
 });
 
 ipcMain.on('config-load', (event) => {

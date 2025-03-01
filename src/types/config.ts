@@ -36,6 +36,7 @@ export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
+  locale?: string
   language: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}

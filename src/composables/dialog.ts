@@ -1,5 +1,6 @@
 
 import Swal, { DialogResult as SwalDialogResult } from 'sweetalert2/dist/sweetalert2.js'
+import { t } from '../services/i18n'
 
 export type DialogResult = {
   isConfirmed: boolean,
@@ -38,6 +39,17 @@ const Dialog = {
       ...opts.customClass
     }
 
+    // i18n labels
+    if (!opts.confirmButtonText) {
+      opts.confirmButtonText = t('common.ok')
+    }
+    if (opts.showCancelButton && !opts.cancelButtonText) {
+      opts.cancelButtonText = t('common.cancel')
+    }
+    if (opts.showDenyButton && !opts.denyButtonText) {
+      opts.denyButtonText = t('common.no')
+    }
+
     // this is not very nice but don't want to go through the hassle
     // of getting base64 from file through preload and all of this!
     // also tried with a hardcoded base64 but it was ugly
@@ -67,14 +79,14 @@ const Dialog = {
 
   system: async (opts: any): Promise<DialogResult> => {
 
-    const buttons  = [ opts.confirmButtonText ?? 'OK' ]
+    const buttons  = [ opts.confirmButtonText ?? t('common.ok') ]
     const indices = { 'confirm': 0, 'deny': -1, 'cancel': -1 }
     if (opts.showDenyButton) {
       buttons.push(opts.denyButtonText)
       indices.deny = buttons.length - 1
     }
     if (opts.showCancelButton) {
-      buttons.push(opts.cancelButtonText ?? 'Cancel')
+      buttons.push(opts.cancelButtonText ?? t('common.cancel'))
       indices.cancel = buttons.length - 1
     }
 

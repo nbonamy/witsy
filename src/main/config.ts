@@ -2,14 +2,21 @@
 import { anyDict } from 'types/index';
 import { Configuration } from 'types/config';
 import { App } from 'electron'
-import { notifyBrowserWindows } from './windows';
 import defaultSettings from '../../defaults/settings.json'
 import Monitor from './monitor'
 import path from 'path'
 import fs from 'fs'
 
 let firstLoad = true
-const monitor: Monitor = new Monitor(() => notifyBrowserWindows('file-modified', 'settings'))
+let onSettingsChange: CallableFunction = () => {}
+
+const monitor: Monitor = new Monitor(() => {
+  onSettingsChange()
+})
+
+export const setOnSettingsChange = (callback: CallableFunction) => {
+  onSettingsChange = callback
+}
 
 export const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')

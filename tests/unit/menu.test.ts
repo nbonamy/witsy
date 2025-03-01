@@ -4,7 +4,10 @@ import { app, Menu } from 'electron'
 import { installMenu } from '../../src/main/menu'
 
 vi.mock('electron', () => ({
-  app: { },
+  app: {
+    getPath: vi.fn(() => ''),
+    getLocale: vi.fn(() => 'en'),
+  },
   BrowserWindow: {
     getAllWindows: vi.fn(() => [])
   },

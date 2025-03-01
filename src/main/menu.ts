@@ -1,8 +1,8 @@
-
 import { ShortcutsConfig } from 'types/config'
 import { App, BrowserWindow, Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
 import * as window from './window'
+import { useI18n } from './i18n';
 
 export type MenuCallbacks = { [key: string]: () => void }
 
@@ -10,6 +10,9 @@ const isMac = process.platform === 'darwin'
 const isMas = process.mas
 
 const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig) => {
+
+  // i18n
+  const t = useI18n(app)
 
   // get all windows
   const windowsMenu = []
@@ -43,13 +46,13 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           { role: 'about' },
           ...(!isMas ? [
             {
-              label: 'Check for Updates…',
+              label: t('menu.app.checkForUpdates'),
               click: async () => callbacks.checkForUpdates()
             },
             { type: 'separator' },
           ] : []),
           {
-            label: 'Settings…',
+            label: t('menu.app.settings'),
             accelerator: 'CmdOrCtrl+,',
             click: async () => callbacks.settings()
           },
@@ -61,7 +64,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           { role: 'unhide' },
           { type: 'separator' },
           {
-            label: 'Quit Witsy',
+            label: t('menu.app.quit'),
             accelerator: 'CmdOrCtrl+Q',
             click: () => callbacks.quit()
           }
@@ -69,20 +72,20 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       }
     ] : []),
     {
-      label: 'File',
+      label: t('menu.file.title'),
       submenu: [
         {
-          label: 'New Prompt',
+          label: t('menu.file.newPrompt'),
           accelerator: shortcutAccelerator(shortcuts?.prompt),
           click: () => callbacks.newPrompt()
         },
         {
-          label: 'New Chat',
+          label: t('menu.file.newChat'),
           accelerator: shortcutAccelerator(shortcuts?.chat),
           click: () => callbacks.newChat()
         },
         {
-          label: 'New Scratchpad',
+          label: t('menu.file.newScratchpad'),
           accelerator: shortcutAccelerator(shortcuts?.scratchpad),
           click: () => callbacks.newScratchpad()
         },
@@ -92,7 +95,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     },
     // { role: 'editMenu' }
     {
-      label: 'Edit',
+      label: t('menu.edit.title'),
       submenu: [
         { role: 'undo' },
         { role: 'redo' },
@@ -104,7 +107,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           ? [
             { role: 'pasteAndMatchStyle' },
             {
-              label: 'Delete Chat',
+              label: t('menu.edit.deleteChat'),
               accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
               click: () => window.notifyBrowserWindows('delete-chat')
             },
@@ -119,7 +122,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     },
     // { role: 'viewMenu' }
     {
-      label: 'View',
+      label: t('menu.view.title'),
       submenu: [
         ...process.env.DEBUG ? [
           { role: 'reload' },
@@ -136,7 +139,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     },
     // { role: 'windowMenu' }
     {
-      label: 'Window',
+      label: t('menu.window.title'),
       submenu: [
         { role: 'minimize' },
         { role: 'zoom' },
@@ -152,23 +155,23 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       ]
     },
     {
-      role: 'help',
+      label: t('menu.help.title'),
       submenu: [
         {
-          label: 'Go to Data Folder',
+          label: t('menu.help.goToDataFolder'),
           click: async () => {
             await shell.openPath(app.getPath('userData'))
           }
         },
         {
-          label: 'Go to Log Folder',
+          label: t('menu.help.goToLogFolder'),
           click: async () => {
             await shell.openPath(app.getPath('logs'))
           }
         },
         { type: 'separator' },
         {
-          label: 'Learn More',
+          label: t('menu.help.learnMore'),
           click: async () => {
             await shell.openExternal('https://github.com/nbonamy/witsy')
           }

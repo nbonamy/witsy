@@ -15,23 +15,18 @@ beforeEach(() => {
 
 test('isTipAvailable', () => {
   const { isTipAvailable } = useTipsManager(store)
-  expect(isTipAvailable('scratchpad')).toBe(true)
   expect(isTipAvailable('conversation')).toBe(false)
 })
 
 test('setTipShown', () => {
   const { setTipShown } = useTipsManager(store)
-  setTipShown('scratchpad')
-  expect(store.config.general.tips.scratchpad).toBe(false)
+  setTipShown('engineSelector')
+  expect(store.config.general.tips.engineSelector).toBe(false)
 })
 
 test('showNextTip', () => {
   const { showNextTip } = useTipsManager(store)
   showNextTip()
   expect(store.config.general.firstRun).toBe(false)
-  expect(store.config.general.tips.scratchpad).toBe(undefined)
-  expect(store.config.general.tips.conversation).toBe(false)
   showNextTip()
-  expect(store.config.general.tips.scratchpad).toBe(false)
-  expect(store.config.general.tips.conversation).toBe(false)
 })

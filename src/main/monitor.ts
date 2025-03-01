@@ -7,6 +7,7 @@ export default class {
   filepath: string
   filesize: number
   callback: CallableFunction
+  timeout: NodeJS.Timeout
   watcher: FSWatcher
   
   constructor(callback: CallableFunction) {
@@ -19,15 +20,19 @@ export default class {
     this.stop()
     
     // init
+    this.timeout = null
     this.filepath = filepath
     this.filesize = this.size()
 
     // start
-    this.watcher = fs.watch(filepath, () => {
+    this.watcher = fs.watch(filepath, async () => {
       const size = this.size()
       if (size !== this.filesize) {
         this.filesize = size
-        this.notify(filepath)
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.notify(filepath)
+        }, 200)
       }
     })
   }
