@@ -14,7 +14,7 @@ vi.mock('electron', () => {
   //Tray.prototype.show = vi.fn();
   return {
     app: {
-      getLocale: vi.fn(() => 'en'),
+      getLocale: vi.fn(() => 'en-US'),
       getVersion: vi.fn(() => '1.0.0'),
       getPath: vi.fn(() => ''),
     },

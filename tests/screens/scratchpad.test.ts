@@ -69,8 +69,8 @@ beforeAll(() => {
 beforeEach(() => {
   vi.clearAllMocks()
   store.config = defaultSettings
-  store.config.general.locale = 'en'
-  store.config.llm.locale = 'fr'
+  store.config.general.locale = 'en-US'
+  store.config.llm.locale = 'fr-FR'
 })
 
 test('Renders correctly', () => {
@@ -81,7 +81,7 @@ test('Renders correctly', () => {
   expect(wrapper.findComponent(EditableText).exists()).toBe(true)
   expect(wrapper.findComponent(ActionBar).exists()).toBe(true)
   expect(wrapper.findComponent(Prompt).exists()).toBe(true)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
 })
 
 test('Initalizes correctly', async () => {
@@ -102,7 +102,7 @@ test('Sends prompt and sets modified', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
@@ -110,7 +110,7 @@ test('Sends prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr"},{"role":"user","content":"prompt1\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"prompt1\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
@@ -121,7 +121,7 @@ test('Clears chat', async () => {
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   emitEvent('action', 'clear')
   await vi.waitUntil(async () => !wrapper.vm.modified)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
 })
 
 test('Undo/redo', async () => {
@@ -132,12 +132,12 @@ test('Undo/redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
   emitEvent('action', 'undo')
   await vi.waitUntil(async () => wrapper.vm.undoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
   emitEvent('action', 'redo')
   await vi.waitUntil(async () => wrapper.vm.redoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 })
@@ -171,10 +171,10 @@ test('Replaces selection', async () => {
   wrapper.vm.editor.setContent({ content: 'Hello SELECTED LLM', start: 6, end: 14})
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"instructions.scratchpad.system.fr"},{"role":"user","content":"instructions.scratchpad.prompt.fr"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
+  expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"instructions.scratchpad.prompt.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
   const content = wrapper.vm.editor.getContent()
   expect(content.start).toBe(6)
-  expect(content.end).toBe(189)
+  expect(content.end).toBe(195)
 })
 
 test('Copies text', async () => {

@@ -9,7 +9,7 @@ let i18nLlm: I18n|null = null
 if (!i18n) {
 
   // load locale
-  const locale = window.api?.config?.localeUi() || 'en'
+  const locale = window.api?.config?.localeUI() || 'en-US'
   console.log('Creating i18n', locale)
 
   // now do it
@@ -24,7 +24,7 @@ if (!i18n) {
 if (!i18nLlm) {
 
   // load locale
-  const locale = window.api?.config?.localeLlm() || 'en'
+  const locale = window.api?.config?.localeLLM() || 'en-US'
   console.log('Creating i18n for Llm', locale)
 
   // now do it
@@ -36,7 +36,8 @@ if (!i18nLlm) {
   })
 }
 
-const countryCodeToLangName = (code: string): string => {
+const localeToLangName = (locale: string): string => {
+  const code = locale.split('-')[0]
   if (code == 'en') return 'English'
   if (code == 'es') return 'Español'
   if (code == 'fr') return 'Français'
@@ -56,7 +57,6 @@ const countryCodeToLangName = (code: string): string => {
   if (code == 'ar') return 'العربية'
   if (code == 'tr') return 'Türkçe'
   if (code == 'ms') return 'Bahasa Melayu'
-  if (code == 'fi') return 'Filipino'
   if (code == 'sw') return 'Kiswahili'
   console.error(`Unknown language code: ${code}`)
   return '' 
@@ -83,5 +83,5 @@ export {
   i18nLlm,
   t,
   i18nInstructions,
-  countryCodeToLangName
+  localeToLangName
 }
