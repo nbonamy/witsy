@@ -28,12 +28,12 @@ beforeEach(() => {
 
 test('Open transcriber window', async () => {
   await Transcriber.initTranscription()
-  expect(window.openTranscribePalette).toHaveBeenCalledWith()
+  expect(window.openTranscribePalette).toHaveBeenLastCalledWith()
 })
 
 test('Insert transcription', async () => {
   await Transcriber.insertTranscription('Hello, World!')
   expect(window.closeTranscribePalette).toHaveBeenCalled()
   expect(window.releaseFocus).toHaveBeenCalled()
-  expect(Automator.prototype.pasteText).toHaveBeenCalledWith('Hello, World!')
+  expect(Automator.prototype.pasteText).toHaveBeenLastCalledWith('Hello, World!')
 })

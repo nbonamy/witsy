@@ -25,5 +25,5 @@ test('installMenu', () => {
     settings: vi.fn(),
   }, null)
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
-  expect(Menu.setApplicationMenu).toHaveBeenCalledWith({})
+  expect(Menu.setApplicationMenu).toHaveBeenLastCalledWith({})
 })

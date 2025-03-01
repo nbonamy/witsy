@@ -182,7 +182,7 @@ test('Settings Appearance', async () => {
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')
   expect(store.config.appearance.theme).toBe('dark')
-  expect(window.api.setAppearanceTheme).toHaveBeenCalledWith('dark')
+  expect(window.api.setAppearanceTheme).toHaveBeenLastCalledWith('dark')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

@@ -73,7 +73,7 @@ test('Instanciates OpenAI by default', async () => {
   expect(engine.isReady()).toBe(true)
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
-  expect(initCallback).toHaveBeenCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
@@ -86,7 +86,7 @@ test('Instanciates Groq', async () => {
   expect(engine.isReady()).toBe(true)
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
-  expect(initCallback).toHaveBeenCalledWith({ task: 'groq', status: 'ready', model: expect.any(String) })
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'groq', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
@@ -99,7 +99,7 @@ test('Instanciates Whisper', async () => {
   expect(engine.isReady()).toBe(false)
   expect(engine.requiresDownload()).toBe(true)
   await engine.initialize(initCallback)
-  expect(initCallback).toHaveBeenCalledWith(expect.objectContaining({ task:'automatic-speech-recognition', status: 'initiate', model: expect.any(String) }))
+  expect(initCallback).toHaveBeenLastCalledWith(expect.objectContaining({ task:'automatic-speech-recognition', status: 'initiate', model: expect.any(String) }))
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 

@@ -263,7 +263,7 @@ test('Toggle actions', async () => {
 test('Run user actions', async () => {
   const wrapper = await mount(userMessage)
   await wrapper.find('.actions .edit').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('set-prompt', userMessage)
+  expect(emitEventMock).toHaveBeenLastCalledWith('set-prompt', userMessage)
 })
 
 test('Run assistant text actions', async () => {
@@ -271,7 +271,7 @@ test('Run assistant text actions', async () => {
   
   // copy
   await wrapper.find('.actions .copy').trigger('click')
-  expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hi')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi')
   expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
 
   // usage
@@ -286,7 +286,7 @@ test('Run assistant text actions', async () => {
   await wrapper.find('.actions .retry').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(2)
   expect(store.config.general.confirm.retryGeneration).toBe(false)
-  expect(emitEventMock).toHaveBeenCalledWith('retry-generation', botMessageText)
+  expect(emitEventMock).toHaveBeenLastCalledWith('retry-generation', botMessageText)
 
   // retry again
   await wrapper.find('.actions .retry').trigger('click')
@@ -294,7 +294,7 @@ test('Run assistant text actions', async () => {
 
   // fork
   await wrapper.find('.actions .fork').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('fork-chat', botMessageText)
+  expect(emitEventMock).toHaveBeenLastCalledWith('fork-chat', botMessageText)
 
 
   // await wait(1500)
@@ -310,7 +310,7 @@ test('Run assistant legacy image actions', async () => {
   // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
 
   await wrapper.find('.body .download').trigger('click')
-  expect(window.api.file.download).toHaveBeenCalledWith({
+  expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
       directory: 'downloads',
@@ -324,7 +324,7 @@ test('Run assistant legacy image actions', async () => {
 test('Run assistant image actions', async () => {
   const wrapper = await mount(botMessageImage)
   await wrapper.find('.body .download').trigger('click')
-  expect(window.api.file.download).toHaveBeenCalledWith({
+  expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'https://example.com/image.jpg',
     properties: {
       directory: 'downloads',
@@ -338,7 +338,7 @@ test('Run assistant image actions', async () => {
 test('Run assistant video actions', async () => {
   const wrapper = await mount(botMessageVideoMd)
   await wrapper.find('.body .download').trigger('click')
-  expect(window.api.file.download).toHaveBeenCalledWith({
+  expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file:///data/video.mp4',
     properties: {
       directory: 'downloads',

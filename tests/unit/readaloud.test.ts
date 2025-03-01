@@ -52,8 +52,8 @@ test('Open readaloud window', async () => {
   selectedText = 'Grabbed text'
   
   await ReadAloud.read(app, 100)
-  expect(utils.putCachedText).toHaveBeenCalledWith('Grabbed text')
-  expect(window.openReadAloudPalette).toHaveBeenCalledWith({
+  expect(utils.putCachedText).toHaveBeenLastCalledWith('Grabbed text')
+  expect(window.openReadAloudPalette).toHaveBeenLastCalledWith({
     textId: 'textId',
     sourceApp: "{\"id\":\"appId\",\"name\":\"appName\",\"path\":\"appPath\",\"window\":\"title\"}"
   })
@@ -67,7 +67,7 @@ test('Show no text error notification', async () => {
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
-    expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: 'Please highlight the text you want to read aloud.' })
+    expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'Please highlight the text you want to read aloud.' })
 
   })
 
@@ -78,6 +78,6 @@ test('Show no grab error notification', async () => {
   await ReadAloud.read(app, 100)
   expect(utils.putCachedText).not.toHaveBeenCalled()
   expect(window.openReadAloudPalette).not.toHaveBeenCalled()
-  expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.' })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.' })
 
 })

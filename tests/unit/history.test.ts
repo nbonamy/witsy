@@ -45,7 +45,7 @@ test('load history', async () => {
 test('save history', async () => {
   const history = await loadHistory(app)
   await saveHistory(app, history)
-  expect(fs.writeFileSync).toHaveBeenCalledWith('tests/fixtures/history.json', expect.any(String))
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/history.json', expect.any(String))
 })
 
 test('extract attachments - invalid', async () => {

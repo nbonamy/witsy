@@ -35,5 +35,5 @@ test('Save settings', () => {
   const loaded = config.loadSettings('')
   config.saveSettings('settings.json', loaded)
   const saved = JSON.parse(JSON.stringify(loaded))
-  expect(fs.writeFileSync).toHaveBeenCalledWith('settings.json', JSON.stringify(saved, null, 2))
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('settings.json', JSON.stringify(saved, null, 2))
 })

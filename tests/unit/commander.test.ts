@@ -113,7 +113,7 @@ test('Error while grabbing', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
 
 })
 
@@ -123,7 +123,7 @@ test('No text to grab', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
 
 })
 

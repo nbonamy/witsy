@@ -64,7 +64,7 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
     attachment: null,
     docrepo: null,
@@ -78,7 +78,7 @@ test('Sends on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
     attachment: null,
     docrepo: null,
@@ -95,7 +95,7 @@ test('Sends with right parameters', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenCalledWith('send-prompt', {
+  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
     attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false },
     expert: { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
@@ -127,14 +127,14 @@ test('Show stop button when working', async () => {
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
   await wrapper.find('.icon.stop').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('stop-prompting', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('stop-prompting', null)
 })
 
 test('Stores attachment', async () => {
   const attach = wrapper.find('.attach')
   await attach.trigger('click')
   expect(window.api.file.pick).toHaveBeenCalled()
-  expect(window.api.file.pick).toHaveBeenCalledWith({
+  expect(window.api.file.pick).toHaveBeenLastCalledWith({
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
   expect(wrapper.vm.attachment).toEqual({
@@ -246,13 +246,13 @@ test('Document repository', async () => {
 
   // manage
   await menu.find('.item:nth-child(4)').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-doc-repos', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-doc-repos', null)
 
   // connect
   await trigger.trigger('click')
   menu = wrapper.find('.context-menu')
   await menu.find('.item:nth-child(1)').trigger('click')
-  expect(window.api.docrepo.connect).toHaveBeenCalledWith('uuid1')
+  expect(window.api.docrepo.connect).toHaveBeenLastCalledWith('uuid1')
 
   // trigger again
   await trigger.trigger('click')
@@ -263,5 +263,5 @@ test('Document repository', async () => {
 
   // disconnect
   await menu.find('.item:nth-child(4)').trigger('click')
-  expect(window.api.docrepo.disconnect).toHaveBeenCalledWith()
+  expect(window.api.docrepo.disconnect).toHaveBeenLastCalledWith()
 })

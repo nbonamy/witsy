@@ -1,5 +1,5 @@
 
-import { vi, expect, test, beforeEach } from 'vitest'
+import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { clipboard } from 'electron'
 import Automator, { AutomationAction } from '../../src/automations/automator'
 import MacosAutomator from '../../src/automations/macos'
@@ -19,6 +19,7 @@ vi.mock(`../../src/automations/${process.platform === 'darwin' ? 'macos' : 'robo
   MockAutomator.prototype.selectAll = vi.fn()
   MockAutomator.prototype.moveCaretBelow = vi.fn()
   MockAutomator.prototype.copySelectedText = vi.fn()
+  MockAutomator.prototype.deleteSelectedText = vi.fn()
   MockAutomator.prototype.pasteText = vi.fn()
   return { default: MockAutomator }
 })
@@ -77,7 +78,7 @@ test('Paste text', async () => {
 test('Copy to clipboard', async () => {
   const automator = new Automator()
   await automator.copyToClipboard('text')
-  expect(clipboard.writeText).toHaveBeenCalledWith('text')
+  expect(clipboard.writeText).toHaveBeenLastCalledWith('text')
 })
 
 test('Insert below', async () => {
@@ -88,9 +89,10 @@ test('Insert below', async () => {
 
   expect(prototype.moveCaretBelow).toHaveBeenCalled()
 
-  expect(clipboard.readText).toHaveBeenCalledWith()
-  expect(clipboard.writeText).toHaveBeenCalledWith('Explain this')
-  expect(prototype.pasteText).toHaveBeenCalledWith()
+  expect(clipboard.readText).toHaveBeenLastCalledWith()
+  expect((clipboard.writeText as Mock).mock.calls[0]).toStrictEqual(['Explain this'])
+  expect((clipboard.writeText as Mock).mock.calls[1]).toStrictEqual([undefined])
+  expect(prototype.pasteText).toHaveBeenLastCalledWith()
 
 })
 
@@ -102,8 +104,9 @@ test('Replace', async () => {
 
   expect(prototype.moveCaretBelow).not.toHaveBeenCalled()
 
-  expect(clipboard.readText).toHaveBeenCalledWith()
-  expect(clipboard.writeText).toHaveBeenCalledWith('Explain this')
-  expect(prototype.pasteText).toHaveBeenCalledWith()
+  expect(clipboard.readText).toHaveBeenLastCalledWith()
+  expect((clipboard.writeText as Mock).mock.calls[0]).toStrictEqual(['Explain this'])
+  expect((clipboard.writeText as Mock).mock.calls[1]).toStrictEqual([undefined])
+  expect(prototype.pasteText).toHaveBeenLastCalledWith()
 
 })

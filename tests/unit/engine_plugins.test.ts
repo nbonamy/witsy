@@ -145,7 +145,7 @@ test('Image Plugin OpenAI', async () => {
   store.config.plugins.image.engine = 'openai'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(OpenAI.prototype.images.generate).toHaveBeenCalledWith(expect.objectContaining({
+  expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'dall-e-2',
     prompt: 'test prompt',
     response_format: 'b64_json',
@@ -161,7 +161,7 @@ test('Image Plugin HuggingFace', async () => {
   store.config.plugins.image.engine = 'huggingface'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(HfInference.prototype.textToImage).toHaveBeenCalledWith(expect.objectContaining({
+  expect(HfInference.prototype.textToImage).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'test-model',
     inputs: 'test prompt',
   }))
@@ -177,7 +177,7 @@ test('Image Plugin Replicate', async () => {
   store.config.engines.replicate.model.image = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(Replicate.prototype.run).toHaveBeenCalledWith('image/model', expect.objectContaining({
+  expect(Replicate.prototype.run).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
       output_format: 'jpg',
@@ -213,7 +213,7 @@ test('Video Plugin Replicate', async () => {
   store.config.engines.replicate.model.video = 'video/model'
   const video = new Video(store.config.plugins.video)
   const result = await video.execute({ prompt: 'test prompt' })
-  expect(Replicate.prototype.run).toHaveBeenCalledWith('video/model', expect.objectContaining({
+  expect(Replicate.prototype.run).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
     }
@@ -256,7 +256,7 @@ test('Search Plugin Local', async () => {
       { title: 'title2', url: 'url2', content: 'page_con' }
     ]
   })
-  expect(window.api.search.query).toHaveBeenCalledWith('test', 5)
+  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
 })
 
 test('Search Plugin Tavily', async () => {
@@ -326,9 +326,9 @@ test('Memory Plugin', async () => {
   expect(memory.getParameters()[2].description).not.toBeFalsy()
   expect(memory.getParameters()[2].required).toBe(false)
   expect(await memory.execute({ action: 'store', content: ['test'] })).toStrictEqual({ success: true })
-  expect(window.api.memory.store).toHaveBeenCalledWith(['test'])
+  expect(window.api.memory.store).toHaveBeenLastCalledWith(['test'])
   expect(await memory.execute({ action: 'retrieve', query: 'fact' })).toStrictEqual({ content: ['fact1'] })
-  expect(window.api.memory.retrieve).toHaveBeenCalledWith('fact')
+  expect(window.api.memory.retrieve).toHaveBeenLastCalledWith('fact')
   expect(await memory.execute({ action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
   expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
 })

@@ -181,7 +181,7 @@ test('Copies text', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
   emitEvent('action', 'copy')
-  expect(window.api.clipboard.writeText).toHaveBeenCalledWith('Hello LLM')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hello LLM')
 })
 
 // test('Reads text', async () => {

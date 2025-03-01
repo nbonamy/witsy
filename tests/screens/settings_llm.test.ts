@@ -60,7 +60,7 @@ test('openai settings', async () => {
   await openai.findAll('input')[0].setValue('api-key')
   await openai.findAll('input')[0].trigger('blur')
   expect(store.config.engines.openai.apiKey).toBe('api-key')
-  expect(loadOpenAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOpenAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
@@ -74,7 +74,7 @@ test('anthropic settings', async () => {
   await anthropic.find('input').trigger('blur')
   await tab.vm.$nextTick()
   expect(store.config.engines.anthropic.apiKey).toBe('api-key')
-  expect(loadAnthropicModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
 })
@@ -87,7 +87,7 @@ test('google settings', async () => {
   await google.find('input').setValue('api-key')
   await google.find('input').trigger('blur')
   expect(store.config.engines.google.apiKey).toBe('api-key')
-  expect(loadGoogleModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -100,7 +100,7 @@ test('xai settings', async () => {
   await xai.find('input').setValue('api-key')
   await xai.find('input').trigger('blur')
   expect(store.config.engines.xai.apiKey).toBe('api-key')
-  expect(loadXAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -115,7 +115,7 @@ test('ollama settings', async () => {
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
   await ollama.findAll('button')[1].trigger('click')
   await wait(750) //timeout
-  expect(loadOllamaModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
 })
 
@@ -127,7 +127,7 @@ test('mistralai settings', async () => {
   await mistralai.find('input').setValue('api-key')
   await mistralai.find('input').trigger('blur')
   expect(store.config.engines.mistralai.apiKey).toBe('api-key')
-  expect(loadMistralAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -140,7 +140,7 @@ test('deepseek settings', async () => {
   await deepseek.find('input').setValue('api-key')
   await deepseek.find('input').trigger('blur')
   expect(store.config.engines.deepseek.apiKey).toBe('api-key')
-  expect(loadDeepSeekModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -153,7 +153,7 @@ test('openrouter settings', async () => {
   await openrouter.find('input').setValue('api-key')
   await openrouter.find('input').trigger('blur')
   expect(store.config.engines.openrouter.apiKey).toBe('api-key')
-  expect(loadOpenRouterModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -166,7 +166,7 @@ test('groq settings', async () => {
   await groq.find('input').setValue('api-key')
   await groq.find('input').trigger('blur')
   expect(store.config.engines.groq.apiKey).toBe('api-key')
-  expect(loadGroqModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
@@ -179,7 +179,7 @@ test('cerebras settings', async () => {
   await cerebras.find('input').setValue('api-key')
   await cerebras.find('input').trigger('blur')
   expect(store.config.engines.cerebras.apiKey).toBe('api-key')
-  expect(loadCerebrasModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
 })
