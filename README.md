@@ -15,7 +15,12 @@
 [![Test Badge](https://github.com/nbonamy/witsy/actions/workflows/test.yml/badge.svg)](https://github.com/nbonamy/witsy/blob/main/.github/workflows/test.yml)
 [![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nbonamy/8febadb1ecb32078db4c003d0c09f565/raw/witsy__main.json)](https://github.com/nbonamy/witsy/blob/main/.github/workflows/test.yml)
 
-<iframe src="https://github.com/sponsors/nbonamy/button" title="Sponsor nbonamy" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+</div>
+
+<div align="center">
+
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/nbonamy)
+
 
 </div>
 
