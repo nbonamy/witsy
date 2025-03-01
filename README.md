@@ -152,11 +152,11 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
-- [ ] i18n
 - [ ] Proper database (SQLite3) storage (??)
 
 ## WIP
 
+- [ ] i18n
 
 ## DONE
 
