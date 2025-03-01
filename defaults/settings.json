@@ -13,6 +13,7 @@
   },
   "llm": {
     "locale": "",
+    "forceLocale": false,
     "engine": "openai",
     "favorites": [],
     "autoVisionSwitch": true,
@@ -95,7 +96,7 @@
   "stt": {
     "engine": "openai",
     "model": "whisper-1",
-    "language": "",
+    "locale": "",
     "silenceDetection": true,
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe"

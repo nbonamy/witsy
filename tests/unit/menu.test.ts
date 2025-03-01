@@ -6,7 +6,7 @@ import { installMenu } from '../../src/main/menu'
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(() => ''),
-    getLocale: vi.fn(() => 'en'),
+    getLocale: vi.fn(() => 'en-US'),
   },
   BrowserWindow: {
     getAllWindows: vi.fn(() => [])

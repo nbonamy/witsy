@@ -79,7 +79,7 @@ export default class STTWhisper implements STTEngine {
 
           // now we can send the audio data to the transcriber
           const output = await this.transcriber(decoded.getChannelData(0), {
-            language: this.config.stt.language,
+            language: this.config.stt.locale?.substring(0, 2),
           })
           resolve(output)
 

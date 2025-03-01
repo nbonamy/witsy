@@ -105,10 +105,10 @@ test('Settings General', async () => {
   expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
-  expect(store.config.general.locale).not.toBe('fr')
+  expect(store.config.general.locale).not.toBe('fr-FR')
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
-  tab.find('.group.localeUI select').setValue('fr')
-  expect(store.config.general.locale).toBe('fr')
+  tab.find('.group.localeUI select').setValue('fr-FR')
+  expect(store.config.general.locale).toBe('fr-FR')
   
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
@@ -121,17 +121,25 @@ test('Settings General', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.llm.locale).not.toBe('es')
-  expect(tab.findAll('.group.localeLlm select option')).toHaveLength(22)
-  tab.find('.group.localeLlm select').setValue('es')
-  expect(store.config.llm.locale).toBe('es')
+  expect(store.config.llm.locale).not.toBe('es-ES')
+  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
+  tab.find('.group.localeLLM select').setValue('es-ES')
+  expect(store.config.llm.locale).toBe('es-ES')
   
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
+  expect(store.config.llm.forceLocale).toBe(false)
+  tab.find('.group.localeLLM input').setValue(true)
+  expect(store.config.llm.forceLocale).toBe(true)
+
+  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
   expect(window.api.runAtLogin.get()).not.toBe(true)
-  tab.find('.group.run-at-login input').setValue('true')
+  tab.find('.group.run-at-login input').setValue(true)
   expect(window.api.runAtLogin.get()).toBe(true)
   expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
   expect(store.saveSettings).toHaveBeenCalledOnce()

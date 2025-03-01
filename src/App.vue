@@ -63,20 +63,20 @@ const setTint = (tint?: string) => {
 const setLocale = () => {
   
   // ui locale
-  const localeUi = window.api.config.localeUi()
-  console.log('Changing locale to', localeUi)
+  const localeUI = window.api.config.localeUI()
+  console.log('Changing locale to', localeUI)
   // @ts-expect-error not sure why
-  i18n.global.locale.value = localeUi
+  i18n.global.locale.value = localeUI
 
   // llm locale
-  const localeLlm = window.api.config.localeLlm()
-  console.log('Changing llm locale to', localeLlm)
+  const localeLLM = window.api.config.localeLLM()
+  console.log('Changing llm locale to', localeLLM)
   // @ts-expect-error not sure why
-  i18nLlm.global.locale.value = localeLlm
+  i18nLlm.global.locale.value = localeLLM
 
   // dom
   const body = document.querySelector('body')
-  body.setAttribute('data-locale', localeUi)
+  body.setAttribute('data-locale', localeUI)
   body.classList.remove('colon-spaced', 'colon-notspaced')
   body.classList.add(`colon-${t('common.colon')}`)
 }

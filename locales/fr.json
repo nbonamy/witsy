@@ -561,10 +561,11 @@
       "unselectAll": "Tout désélectionner"
     },
     "general": {
+      "forceLocale": "Demander au modèle de toujours parler cette langue (résultats peuvent varier)",
       "hideOnStartup": "Masquer au démarrage",
       "keepInStatusBar": "Garder dans la barre d'état",
       "lastOneUsed": "Dernier utilisé",
-      "localeLlm": "Langue des modèles",
+      "localeLLM": "Langue des modèles",
       "localeUI": "Langue de l'interface",
       "promptLLMModel": "Modèle pour les requêtes rapides",
       "resetTips": "Réinitialiser les conseils",

@@ -93,7 +93,7 @@ vi.mock('replicate', async () => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
-  store.config.llm.locale = 'fr'
+  store.config.llm.locale = 'fr-FR'
   store.config.llm.engine = 'mock'
   store.config.plugins.browse = {
     enabled: true,
@@ -130,7 +130,7 @@ test('Image Plugin', async () => {
   const image = new Image(store.config.plugins.image)
   expect(image.isEnabled()).toBe(true)
   expect(image.getName()).toBe('image_generation')
-  expect(image.getDescription()).toBe('plugins.image.description.fr')
+  expect(image.getDescription()).toBe('plugins.image.description.fr-FR')
   expect(image.getPreparationDescription()).toBe(image.getRunningDescription())
   expect(image.getRunningDescription()).toBe('Painting pixels…')
   expect(image.getParameters()[0].name).toBe('prompt')
@@ -194,7 +194,7 @@ test('Video Plugin', async () => {
   const video = new Video(store.config.plugins.video)
   expect(video.isEnabled()).toBe(true)
   expect(video.getName()).toBe('video_generation')
-  expect(video.getDescription()).toBe('plugins.video.description.fr')
+  expect(video.getDescription()).toBe('plugins.video.description.fr-FR')
   expect(video.getPreparationDescription()).toBe(video.getRunningDescription())
   expect(video.getRunningDescription()).toBe('Animating frames…')
   expect(video.getParameters()[0].name).toBe('prompt')
@@ -308,7 +308,7 @@ test('Memory Plugin', async () => {
   const memory = new Memory(store.config.plugins.memory)
   expect(memory.isEnabled()).toBe(false)
   expect(memory.getName()).toBe('long_term_memory')
-  expect(memory.getDescription()).toBe('plugins.memory.description.fr')
+  expect(memory.getDescription()).toBe('plugins.memory.description.fr-FR')
   expect(memory.getPreparationDescription()).toBe('Personnalizing…')
   expect(memory.getRunningDescription()).toBe('Personnalizing…')
   expect(memory.getParameters()[0].name).toBe('action')

@@ -1,7 +1,7 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { t , i18nInstructions, countryCodeToLangName } from './i18n'
+import { t , i18nInstructions, localeToLangName } from './i18n'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
@@ -215,12 +215,11 @@ export type GenerationResult =
     // default
     let instr = instructions || i18nInstructions(this.config, 'instructions.default')
 
-    // language. asking the LLM to talk in the user language confuses them more than often!
-    if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.locale.length) {
-      const lang = countryCodeToLangName(this.config.llm.locale)
+    // forced locale
+    if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.forceLocale) {
+      const lang = localeToLangName(this.config.llm.locale)
       if (lang) instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang }) + '.'
     }
-    //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
 
     // // add date and time
     // if (Generator.addDateAndTimeToSystemInstr) {

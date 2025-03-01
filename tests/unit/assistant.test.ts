@@ -29,7 +29,7 @@ vi.mock('../../src/services/download.ts', async () => {
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}.${store.config.general.locale}`,
-    countryCodeToLangName: (code: string) => code == 'xx' ? '' : code,
+    localeToLangName: (code: string) => code == 'xx-XX' ? '' : code,
     i18nInstructions: (config: any, key: string) => {
 
       // get instructions
@@ -80,9 +80,11 @@ beforeEach(() => {
 
   // init store
   store.config = defaults
-  store.config.general.locale = 'en'
-  store.config.llm.locale = 'fr'
+  store.config.general.locale = 'en-US'
+  store.config.llm.locale = 'fr-FR'
+  store.config.llm.forceLocale = false
   store.config.llm.engine = 'mock'
+  store.config.instructions = {}
   store.config.engines.mock = {
     models: { chat: [ 'chat1', 'chat2' ] },
     model: { chat: 'chat'  }
@@ -118,32 +120,50 @@ test('Assistant parameters', async () => {
 
 test('Asistant language default', async () => {
   store.config.llm.locale = ''
-  const content = await prompt('Hello LLM')
-  expect(content).toContain('instructions.default.en')
-  expect(content).not.toContain('instructions.setlang.en')
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toContain('instructions.default.en-US')
+  expect(instructions).not.toContain('instructions.setlang.en-US')
 })
 
 test('Asistant language override', async () => {
-  store.config.llm.locale = 'fr'
-  const content = await prompt('Hello LLM')
-  expect(content).toContain('instructions.default.fr')
-  expect(content).toContain('instructions.setlang.fr')
+  store.config.llm.locale = 'fr-FR'
+  store.config.llm.forceLocale = true
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toContain('instructions.default.fr-FR')
+  expect(instructions).toContain('instructions.setlang.fr-FR')
 })
 
 test('Asistant language unknown', async () => {
-  store.config.llm.locale = 'xx'
-  const content = await prompt('Hello LLM')
-  expect(content).toContain('instructions.default.xx')
-  expect(content).not.toContain('instructions.setlang.fr')
+  store.config.llm.locale = 'xx-XX'
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toContain('instructions.default.xx-XX')
+  expect(instructions).not.toContain('instructions.setlang.fr-FR')
+})
+
+test('User-defined instructions', async () => {
+  store.config.instructions = {
+    default: 'You are a chat assistant',
+    titling: 'You are a titling assistant',
+    titling_user: 'Provide a title',
+    docquery: '{context} / {query}'
+  }
+  store.config.llm.forceLocale = true
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('You are a chat assistant')
+  expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 
 test('Assistant Chat', async () => {
   const content = await prompt('Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.default.fr instructions.setlang.fr."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
 })
 
 test('Assistant Attachment', async () => {
@@ -158,11 +178,11 @@ test('Assistant Attachment', async () => {
 test('Asistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenCalledWith('docrepo', 'Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.default.fr instructions.setlang.fr."},{"role":"user","content":"instructions.docquery.fr"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"instructions.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
 })
 
 test('Conversaton Length 1', async () => {
@@ -184,42 +204,22 @@ test('Conversaton Length 2', async () => {
   expect(thread.map((m: Message) => m.role)).toEqual(['system', 'user', 'assistant', 'user', 'assistant'])
 })
 
-test('Llm language', async () => {
-  store.config.llm.locale = 'es'
-  await prompt('Hello LLM')
-  const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('instructions.default.es instructions.setlang.es.')
-})
-
-test('User-defined instructions', async () => {
-  store.config.instructions = {
-    default: 'You are a chat assistant',
-    titling: 'You are a titling assistant',
-    titling_user: 'Provide a title',
-    docquery: '{context} / {query}'
-  }
-  await prompt('Hello LLM')
-  const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('You are a chat assistant')
-  expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
-})
-
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.missingApiKey.en')
+  expect(content).toBe('generator.errors.missingApiKey.en-US')
 })
 
 test('Low balance', async () => {
   await prompt('no credit left')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.outOfCredits.en')
+  expect(content).toBe('generator.errors.outOfCredits.en-US')
 })
 
 test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.quotaExceeded.en')
+  expect(content).toBe('generator.errors.quotaExceeded.en-US')
 })
 
 test('Stop generation', async () => {

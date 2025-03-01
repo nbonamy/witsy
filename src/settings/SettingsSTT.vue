@@ -2,7 +2,7 @@
   <div>
     <div class="group language">
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
-      <LangSelect v-model="language" default-text="settings.voice.automatic" @change="save" />
+      <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
     </div>
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>
@@ -77,7 +77,7 @@ let initMode: InitModelMode = 'download'
 
 type FilesProgressInfo = { [key: string]: DownloadProgress }
 
-const language = ref('')
+const locale = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
 const duration = ref(null)
@@ -132,14 +132,14 @@ const progressText = computed(() => {
 const load = () => {
   const detection = store.config.stt.silenceDetection
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
-  language.value = store.config.stt.language || ''
+  locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
 const save = () => {
-  store.config.stt.language = language.value
+  store.config.stt.locale = locale.value
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
   //store.config.stt.silenceAction = action.value

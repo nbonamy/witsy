@@ -572,10 +572,11 @@
       "unselectAll": "Unselect All"
     },
     "general": {
+      "forceLocale": "Ask model to always speak this language (results may vary)",
       "hideOnStartup": "Hide main window on start",
       "keepInStatusBar": "Keep in Status Bar",
       "lastOneUsed": "Last one used",
-      "localeLlm": "LLM language",
+      "localeLLM": "LLM language",
       "localeUI": "Interface language",
       "promptLLMModel": "Prompt LLM Model",
       "resetTips": "Reset tips",

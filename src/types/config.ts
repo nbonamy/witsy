@@ -56,6 +56,7 @@ export type ModelDefaults = {
 export type LLMConfig = {
   engine: string
   locale: string
+  forceLocale: boolean
   favorites: FavoriteModel[]
   autoVisionSwitch: boolean
   conversationLength: number
@@ -124,7 +125,7 @@ export type ScratchpadConfig = {
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
 export type STTConfig = {
-  language: string
+  locale: string
   engine: string
   model: string
   silenceDetection: boolean

@@ -60,8 +60,8 @@ contextBridge.exposeInMainWorld(
       unregister: (): void => { return ipcRenderer.send('shortcuts-unregister') },
     },
     config: {
-      localeUi(): string { return ipcRenderer.sendSync('config-get-locale-ui') },
-      localeLlm(): string { return ipcRenderer.sendSync('config-get-locale-llm') },
+      localeUI(): string { return ipcRenderer.sendSync('config-get-locale-ui') },
+      localeLLM(): string { return ipcRenderer.sendSync('config-get-locale-llm') },
       load: (): Configuration => { return JSON.parse(ipcRenderer.sendSync('config-load')) },
       save: (data: Configuration) => { return ipcRenderer.send('config-save', JSON.stringify(data)) },
     },

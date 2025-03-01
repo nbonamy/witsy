@@ -12,12 +12,9 @@ export const getLocaleUi = (app: App): string => {
     return config.general.locale
   }
 
-  // get system language
+  // get system locale
   const locale = app.getLocale()
-  const lang = locale.substring(0, 2)
-
-  // vue-i18n will fallback if invalid
-  return lang
+  return locale
 
 }
 
@@ -29,7 +26,7 @@ export const getLocaleLlm = (app: App): string => {
     return config.llm.locale
   }
 
-  // default to UI language
+  // default to UI locale
   return getLocaleUi(app)
 
 }

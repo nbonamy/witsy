@@ -9,13 +9,19 @@
       <label>{{ t('settings.general.localeUI') }}</label>
       <select v-model="localeUI" @change="save">
         <option value="">{{ t('common.language.system') }}</option>
-        <option value="en">🇬🇧 English</option>
-        <option value="fr">🇫🇷 Français</option>
+        <option value="en-US">🇬🇧 English</option>
+        <option value="fr-FR">🇫🇷 Français</option>
       </select>
     </div>
-    <div class="group localeLlm">
-      <label>{{ t('settings.general.localeLlm') }}</label>
-      <LangSelect v-model="localeLlm" @change="save" />
+    <div class="group localeLLM">
+      <label>{{ t('settings.general.localeLLM') }}</label>
+      <div class="subgroup">
+        <LangSelect v-model="localeLLM" @change="save" />
+        <div class="checkbox">
+          <input type="checkbox" v-model="forceLocale" @change="save" />
+          <div class="label">{{ t('settings.general.forceLocale') }}</div>
+        </div>
+      </div>
     </div>
     <div class="group reset-tips">
       <label>{{ t('settings.general.resetTips') }}</label>
@@ -48,7 +54,8 @@ import LangSelect from '../components/LangSelect.vue'
 const engine = ref(null)
 const model = ref(null)
 const localeUI = ref(null)
-const localeLlm = ref(null)
+const localeLLM = ref(null)
+const forceLocale = ref(false)
 const runAtLogin = ref(false)
 const hideOnStartup = ref(false)
 const keepRunning = ref(false)
@@ -68,7 +75,8 @@ const load = () => {
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
   localeUI.value = store.config.general.locale
-  localeLlm.value = store.config.llm.locale
+  localeLLM.value = store.config.llm.locale
+  forceLocale.value = store.config.llm.forceLocale
   runAtLogin.value = window.api.runAtLogin.get()
   hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
@@ -93,7 +101,8 @@ const save = () => {
   store.config.prompt.engine = engine.value
   store.config.prompt.model = model.value
   store.config.general.locale = localeUI.value
-  store.config.llm.locale = localeLlm.value
+  store.config.llm.locale = localeLLM.value
+  store.config.llm.forceLocale = forceLocale.value
   window.api.runAtLogin.set(runAtLogin.value)
   store.config.general.hideOnStartup = hideOnStartup.value
   store.config.general.keepRunning = keepRunning.value
@@ -111,7 +120,29 @@ defineExpose({ load })
 </style>
 
 <style scoped>
+
+dialog.settings .content {
+  width: 480px;
+}
+
 form .group label {
   min-width: 170px;
 }
+
+.localeLLM div.checkbox {
+  display: flex;
+  align-items: start;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.localeLLM div.checkbox input[type="checkbox"] {
+  flex-basis: 25px;
+  margin-left: 0px;
+}
+
+.localeLLM div.checkbox div.label {
+  margin-top: 2px;
+}
+
 </style>
