@@ -12,8 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { t, i18nInstructions } from '../services/i18n'
 
 // components
 import { FileContents } from 'types'
@@ -29,7 +28,6 @@ import DocRepos from '../screens/DocRepos.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
 import Generator, { GenerationResult } from '../services/generator'
-import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
@@ -138,10 +136,6 @@ onMounted(() => {
     resetModifiedCheckTimeout()
   })
 
-  // no need to show the tip
-  store.config.general.tips.scratchpad = false
-  store.saveSettings()
-
   // init
   resetState()
 
@@ -177,7 +171,7 @@ const resetState = () => {
 
   // init new chat
   chat.value = new Chat()
-  chat.value.addMessage(new Message('system', store.config.instructions.scratchpad.system))
+  chat.value.addMessage(new Message('system', i18nInstructions(store.config, 'instructions.scratchpad.system')))
 
   // init llm
   initLlm()
@@ -300,7 +294,7 @@ const onAction = (action: string|ToolbarAction) => {
     case 'magic':
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
-        const prompt = store.config.instructions.scratchpad[toolbarAction.value]
+        const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
         onSendPrompt({ prompt: prompt, attachment: null, docrepo: null, expert: null })
       } else {
         emitEvent('llm-done', null)
@@ -465,7 +459,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // now build the prompt
   let finalPrompt = prompt
   if (subject.length > 0) {
-    const template = store.config.instructions.scratchpad.prompt
+    const template = i18nInstructions(store.config, 'instructions.scratchpad.prompt')
     finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
   }
 

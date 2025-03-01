@@ -14,7 +14,7 @@ import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
-import i18n, { t } from './services/i18n'
+import i18n, { i18nLlm, t } from './services/i18n'
 
 // events
 import useEventBus from './composables/event_bus'
@@ -61,14 +61,22 @@ const setTint = (tint?: string) => {
 }
 
 const setLocale = () => {
-  const locale = window.api.config.locale()
-  console.log('Changing locale to', locale)
+  
+  // ui locale
+  const localeUi = window.api.config.localeUi()
+  console.log('Changing locale to', localeUi)
   // @ts-expect-error not sure why
-  i18n.global.locale.value = window.api.config.locale()
+  i18n.global.locale.value = localeUi
+
+  // llm locale
+  const localeLlm = window.api.config.localeLlm()
+  console.log('Changing llm locale to', localeLlm)
+  // @ts-expect-error not sure why
+  i18nLlm.global.locale.value = localeLlm
 
   // dom
   const body = document.querySelector('body')
-  body.setAttribute('data-locale', locale)
+  body.setAttribute('data-locale', localeUi)
   body.classList.remove('colon-spaced', 'colon-notspaced')
   body.classList.add(`colon-${t('common.colon')}`)
 }

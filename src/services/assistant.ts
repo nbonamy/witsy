@@ -9,6 +9,7 @@ import LlmFactory from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
+import { i18nInstructions } from './i18n'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
@@ -80,7 +81,7 @@ export default class extends Generator {
       docrepo: null,
       expert: null,
       sources: true,
-      systemInstructions: this.config.instructions.default,
+      //systemInstructions: i18nInstructions(this.config, 'instructions.default'),
       citations: true,
     }
     opts = {...defaults, ...opts }
@@ -224,10 +225,10 @@ export default class extends Generator {
 
       // build messages
       const messages = [
-        new Message('system', this.getSystemInstructions(this.config.instructions.titling)),
+        new Message('system', i18nInstructions(this.config, 'instructions.titling')),
         this.chat.messages[1],
         this.chat.messages[2],
-        new Message('user', this.config.instructions.titling_user)
+        new Message('user', i18nInstructions(this.config, 'instructions.titling_user'))
       ]
 
       // now get it
@@ -253,7 +254,9 @@ export default class extends Generator {
       }
 
       // remove quotes
-      title = title.trim().replace(/^"|"$/g, '').trim()
+      if (title.startsWith('"') && title.endsWith('"')) {
+        title = title.substring(1, title.length - 1)
+      }
       
       // done
       return title

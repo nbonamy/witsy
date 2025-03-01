@@ -16,6 +16,7 @@ export default class Chat implements ChatBase {
   disableStreaming: boolean = false
   disableTools: boolean = false
   modelOpts: LlmModelOpts|null = null
+  locale: string|null
   docrepo: string|null
   messages: Message[]
   temporary: boolean
@@ -31,6 +32,7 @@ export default class Chat implements ChatBase {
     this.model = null
     this.disableTools = false
     this.modelOpts = null
+    this.locale = null
     this.docrepo = null
     this.messages = []
     this.temporary = false
@@ -47,6 +49,7 @@ export default class Chat implements ChatBase {
     chat.model = obj.model
     chat.disableTools = obj.disableTools
     chat.modelOpts = obj.modelOpts
+    chat.locale = obj.locale
     chat.docrepo = obj.docrepo
     chat.messages = []
     for (const msg of obj.messages) {
@@ -69,6 +72,7 @@ export default class Chat implements ChatBase {
     this.lastModified = obj.lastModified
     this.disableTools = obj.disableTools
     this.modelOpts = obj.modelOpts
+    this.locale = obj.locale
     this.docrepo = obj.docrepo
 
     // messages

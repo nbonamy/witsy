@@ -1,7 +1,7 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { countryCodeToName, t } from './i18n'
+import { t , i18nInstructions, countryCodeToLangName } from './i18n'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
@@ -57,7 +57,7 @@ export type GenerationResult =
         //console.log('Sources', JSON.stringify(sources, null, 2));
         if (sources.length > 0) {
           const context = sources.map((source) => source.content).join('\n\n');
-          const prompt = this.config.instructions.docquery.replace('{context}', context).replace('{query}', userMessage.content);
+          const prompt = i18nInstructions(this.config, 'instructions.docquery').replace('{context}', context).replace('{query}', userMessage.content);
           conversation[conversation.length - 1] = new Message('user', prompt);
         }
       }
@@ -213,16 +213,18 @@ export type GenerationResult =
   getSystemInstructions(instructions?: string) {
 
     // default
-    let instr = instructions || this.config.instructions.default
+    let instr = instructions || i18nInstructions(this.config, 'instructions.default')
 
     // language. asking the LLM to talk in the user language confuses them more than often!
-    if (this.config.general.language) instr += ' Always answer in ' + countryCodeToName(this.config.general.language) + '.'
+    if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.locale.length) {
+      instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang: countryCodeToLangName(window.api.config.localeLlm()) }) + '.'
+    }
     //else instr += ' Always reply in the user language unless expicitely asked to do otherwise.'
 
-    // add date and time
-    if (Generator.addDateAndTimeToSystemInstr) {
-      instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
-    }
+    // // add date and time
+    // if (Generator.addDateAndTimeToSystemInstr) {
+    //   instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
+    // }
 
     // done
     return instr

@@ -25,9 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-
+import { i18nInstructions, t } from '../services/i18n'
 import { anyDict, ExternalApp } from 'types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
@@ -419,7 +417,7 @@ const saveChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', store.config.instructions.titling_user)])
+    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', i18nInstructions(store.config, 'instructions.titling_user'))])
     chat.value.title = title.content
   }
 
