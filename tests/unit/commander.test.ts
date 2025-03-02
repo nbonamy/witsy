@@ -58,6 +58,14 @@ vi.mock('../../src/llms/llm.ts', async () => {
 	return { default: LlmFactory }
 })
 
+// mock i18n
+vi.mock('../../src/main/i18n.ts', async () => {
+  return {
+    useI18n: vi.fn(() => (key: string) => key),
+    useI18nLlm: vi.fn(() => (key: string) => `${key}:"{input}"`)
+  }
+})
+
 beforeAll(() => {
   store.config = JSON.parse(JSON.stringify(defaults))
 })
@@ -72,14 +80,14 @@ beforeEach(() => {
 
 })
 
-const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' | 'clipboard_copy'): Command => {
+const buildCommand = (action: 'chat_window' | 'paste_below' | 'paste_in_place' | 'clipboard_copy', template?: string): Command => {
   return {
-    id: '',
+    id: 'id',
     type: 'system',
     icon: '',
     label: '',
     action: action,
-    template: 'Explain this:\n"""{input}"""',
+    template: template,
     shortcut: '',
     state: 'enabled',
     engine: '',
@@ -113,7 +121,7 @@ test('Error while grabbing', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: expect.stringMatching(/error/) })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'automation.grabError' })
 
 })
 
@@ -123,7 +131,7 @@ test('No text to grab', async () => {
 
   await Commander.initCommand(app, 100)
   expect(Automator.prototype.getSelectedText).toHaveBeenCalled()
-  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: expect.stringMatching(/highlight/) })
+  expect(Notification).toHaveBeenLastCalledWith({ title: 'Witsy', body: 'automation.commander.emptyText' })
 
 })
 
@@ -142,7 +150,7 @@ test('Prompt command', async () => {
 
   const args = (window.openPromptAnywhere as Mock).mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
-  expect(prompt).toBe('Explain this:\n"""Grabbed text"""')
+  expect(prompt).toBe('commands.commands.00000000-0000-0000-0000-000000000000.template:"Grabbed text"')
   expect(args.sourceApp).toBe('appPath')
   expect(args.engine).toBe('mock')
   expect(args.model).toBe('chat')
@@ -154,7 +162,7 @@ test('Prompt command', async () => {
 test('Other commands', async () => {
 
   const commander = new Commander()
-  const command = buildCommand('chat_window')
+  const command = buildCommand('chat_window', 'Explain this:\n"""{input}"""')
   await commander.execCommand(app, { textId: cachedTextId!, sourceApp: '', command })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()

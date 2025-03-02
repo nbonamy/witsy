@@ -5,7 +5,7 @@
     </div>
     <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
         <div class="icon">{{ command.icon }}</div>
-        <div class="label">{{ command.label }}</div>
+        <div class="label">{{ command.label ?? commandI18n(command, 'label') }}</div>
         <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
       </div>
     </div>
@@ -17,7 +17,7 @@
 import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { t, commandI18n } from '../services/i18n'
 
 // load store
 store.loadSettings()

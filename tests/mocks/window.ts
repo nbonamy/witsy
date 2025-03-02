@@ -108,7 +108,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     commands: {
       load: vi.fn(() => [
-        { id: 1, icon: '1', label: 'Command 1', shortcut: '1', action: 'chat_window', state: 'enabled' },
+        { id: 1, icon: '1', shortcut: '1', action: 'chat_window', state: 'enabled' },
         { id: 2, icon: '2', label: 'Command 2', shortcut: '2', action: 'paste_below', state: 'enabled' },
         { id: 3, icon: '3', label: 'Command 3', shortcut: '3', action: 'paste_in_place', state: 'enabled' },
         { id: 4, icon: '4', label: 'Command 4', shortcut: '4', action: 'clipboard_copy', state: 'enabled' },
