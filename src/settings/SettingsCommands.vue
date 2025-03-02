@@ -13,7 +13,7 @@
           >
             <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
-            <td class="label">{{ command.label }}</td>
+            <td class="label">{{ label(command) }}</td>
             <td class="shortcut">{{ command.shortcut }}</td>
             <td class="move">
               <button @click.prevent="onMoveDown(command)" @dblclick.stop>▼</button>
@@ -24,11 +24,11 @@
       </table>
     </div>
     <div class="actions">
-      <button @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
-      <button @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
-      <button @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
+      <button name="new" @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
+      <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+      <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
       <div class="right">
-        <button @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+        <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
@@ -42,7 +42,7 @@
 import { Command } from 'types'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { t, commandI18n } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
@@ -69,6 +69,10 @@ const contextMenuActions = [
 ]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
+
+const label = (command: Command) => {
+  return command.label || commandI18n(command, 'label')
+}
 
 const columns = [
   { field: 'enabled', title: '' },

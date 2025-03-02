@@ -59,6 +59,10 @@ form .group label:not(:empty)::after {
   content: '\00a0\00a0:';
 }
 
+form .group label.no-colon::after {
+  content: none !important;
+}
+
 form .group:has(.subgroup) label {
   margin-top: 4px;
 }

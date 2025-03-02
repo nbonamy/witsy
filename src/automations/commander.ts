@@ -4,7 +4,7 @@ import { RunCommandParams } from '../types/automation'
 import { App, Notification } from 'electron'
 import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
-import { useI18n } from '../main/i18n'
+import { useI18n, useI18nLlm } from '../main/i18n'
 import LlmFactory from '../llms/llm'
 import Automator from './automator'
 import Automation from './automation'
@@ -88,11 +88,17 @@ export default class Commander {
       const llmFactory = new LlmFactory(config);
 
       // extract what we need
-      const template = command.template;
       let engine = command.engine || config.commands.engine;
       let model = command.model || config.commands.model;
       if (!engine?.length || !model?.length) {
         ({ engine, model } = llmFactory.getChatEngineModel(false));
+      }
+
+      // template may be localized
+      let template = command.template
+      if (!template) {
+        const t = useI18nLlm(app);
+        template = t(`commands.commands.${command.id}.template`)
       }
 
       // build prompt

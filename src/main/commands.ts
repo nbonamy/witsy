@@ -1,5 +1,6 @@
 import { Command } from 'types/index'
 import { App } from 'electron'
+import { createI18n } from './i18n.base'
 import defaultCommands from '../../defaults/commands.json'
 import * as file from './file'
 import path from 'path'
@@ -26,8 +27,24 @@ export const loadCommands = (source: App|string): Command[] => {
     }
   }
 
-  // now add new commands
+  // migrations can update
   let updated = false
+
+  // i18n migrate label and template
+  const t = createI18n('en').global.t as CallableFunction
+  for (const command of commands) {
+    const key = `commands.commands.${command.id}`
+    if (command.label === t(`${key}.label`)) {
+      delete command.label
+      updated = true
+    }
+    if (command.template === t(`${key}.template`)) {
+      delete command.template
+      updated = true
+    }
+  }
+
+  // now add new commands
   for (const command of defaultCommands) {
     const c = commands.find((cmd: Command) => cmd.id === command.id)
     if (c == null) {

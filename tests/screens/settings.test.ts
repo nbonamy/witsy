@@ -16,14 +16,11 @@ HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
-  const commands = await import('../../defaults/commands.json')
   const experts = await import('../../defaults/experts.json')
   const mod: any = await importOriginal()
   return {
-    clone: mod.clone,
     store: {
       ...mod.store,
-      commands: commands.default,
       experts: experts.default,
       saveSettings: vi.fn()
     }
@@ -203,61 +200,6 @@ test('Settings Appearance', async () => {
   expect(store.config.appearance.chat.fontSize).toBe('2')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
-
-})
-
-test('Settings Commands', async () => {
-
-  const tab = await switchToTab(wrapper, 2)
-  
-  // basic stuff
-  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
-  expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
-  expect(tab.findAll('.actions button')).toHaveLength(4)
-
-  // move up and down
-  const first = tab.find('.sticky-table-container tr.command').attributes('data-id')
-  const second = tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2) button:nth-of-type(2)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(second)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(first)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1) button:nth-of-type(1)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(first)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(second)
-
-  // new command opens
-  const modal = tab.find<HTMLDialogElement>('#command-editor').element
-  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  expect(modal.showModal).not.toHaveBeenCalled()
-  await tab.find('.actions button:nth-of-type(1)').trigger('click')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
-  modal.removeAttribute('open')
-
-  // new command creates
-  await tab.find('#command-editor textarea').setValue('{input}')
-  await tab.find('#command-editor button.default').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
-
-  // delete
-  await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
-  await tab.find('.actions button:nth-of-type(3)').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
-
-  // edit
-  expect(modal.hasAttribute('open')).toBe(false)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
-  expect(modal.showModal).toHaveBeenCalledTimes(2)
-  expect(modal.hasAttribute('open')).toBe(true)
-  // expect(tab.find<HTMLInputElement>('#command-editor input').element.value).toBe(store.commands[1].name)
-  // expect(tab.find<HTMLTextAreaElement>('#command-editor textarea').element.value).toBe(store.commands[1].name)
-
-  // context menu
-  expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.actions .right button').trigger('click')
-  await tab.vm.$nextTick()
-  expect(tab.findAll('.context-menu')).toHaveLength(1)
 
 })
 

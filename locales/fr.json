@@ -34,6 +34,7 @@
     "create": "Créer",
     "default": "Défaut",
     "delete": "Supprimer",
+    "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
     "disabled": "Désactivé",
     "documents": "Documents",
     "done": "Terminé !",
@@ -158,8 +159,174 @@
       "title": "Détails de la commande",
       "useDefault": "Utiliser les paramètres par défaut",
       "validation": {
-        "inputPlaceholder": "Le template doit contenir le marqueur {input}.",
+        "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
+      }
+    },
+    "commands" : {
+      "00000000-0000-0000-0000-000000000000": {
+        "label": "Demandez-moi n'importe quoi",
+        "template": "En fonction du texte entre triple guillemets ci-dessous :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nRépondez à la question suivante : "
+      },
+      "90dd1cd3-903a-4f60-bccf-0542fa78d8ef": {
+        "label": "Expliquer ceci",
+        "template": "Expliquez le texte entre triple guillemets ci-dessous :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que l'explication. N'entourez pas les réponses de guillemets."
+      },
+      "3e629079-6a0b-4096-9e5d-e2dd39268fa7": {
+        "label": "Corriger l'orthographe et la grammaire",
+        "template": "Corrigez le texte entre triple guillemets ci-dessous en français standard et corrigez la grammaire. Faites de votre mieux.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte corrigé. N'entourez pas les réponses de guillemets."
+      },
+      "adfabf0c-7ae2-4b54-9083-0abdae84a859": {
+        "label": "Améliorer l'écriture",
+        "template": "Améliorez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "ae93b6e7-5d19-43dd-a859-967194523550": {
+        "label": "Développer mon texte",
+        "template": "Le texte suivant entre triple guillemets a déjà été écrit :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nDéveloppez le texte. Écrivez au moins 3 paragraphes. Ne retournez rien d'autre que le texte développé. N'entourez pas les réponses de guillemets."
+      },
+      "9bbae0f1-afde-41f8-b423-c5d8db1a264d": {
+        "label": "Simplifier mon texte",
+        "template": "Le texte suivant entre triple guillemets a déjà été écrit :\n\n\"\"\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nSimplifiez et condensez le texte. Ne retournez rien d'autre que le texte simplifié. N'entourez pas les réponses de guillemets."
+      },
+      "c57f4afd-2524-4914-be65-f18eb8566544": {
+        "label": "Lister les points clés",
+        "template": "Mes notes sont ci-dessous entre triple guillemets :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nÉcrivez une liste markdown (en utilisant des tirets) des points clés de mes notes. Écrivez au moins 10 éléments. N'entourez pas les réponses de guillemets."
+      },
+      "177bf65e-20ec-46ee-ae0e-84f9b0eb7490": {
+        "label": "Écrire un résumé court",
+        "template": "Résumez le texte entre triple guillemets mais restez concis. Résumez en utilisant un langage simple et clair, et gardez le même temps de conjugaison.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le résumé. N'entourez pas les réponses de guillemets."
+      },
+      "1fc4e041-f4bc-471f-a02e-82cf20d12ea1": {
+        "label": "Écrire un résumé plus long",
+        "template": "Résumez le texte entre triple guillemets ci-dessous en trois longs paragraphes. Résumez en utilisant un langage simple et clair, et gardez le même temps de conjugaison.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le résumé. N'entourez pas les réponses de guillemets."
+      },
+      "49de2329-9863-4fb4-beea-ad2677408e3f": {
+        "label": "Réécrire avec un ton amical",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton amical.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "d0306fbe-f1c4-497c-a356-a8fd4b5cbf0c": {
+        "label": "Réécrire avec un ton professionnel",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton professionnel.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "9ca7d996-4490-4c86-99c2-223686fdd48e": {
+        "label": "Réécrire avec un ton persuasif",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton persuasif.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "84fd2995-946a-4d42-81d3-dfe150212529": {
+        "label": "Réécrire avec un ton instructif",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton instructif.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "7556325e-ece7-45f2-acbb-c0d78cfa3e9b": {
+        "label": "Réécrire avec un ton humoristique",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton humoristique.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "7a213d4a-9ba9-4bc9-ada8-b6bab611d4ee": {
+        "label": "Réécrire avec un ton sarcastique",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton sarcastique.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "c29ef79c-d850-4ca5-8c14-089156154f70": {
+        "label": "Réécrire avec un ton empathique",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton empathique.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "b1c563a9-0d8e-4295-87b1-b78c283c19e6": {
+        "label": "Réécrire avec un ton autoritaire",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton autoritaire.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "56a4da10-8aad-4830-8e7a-a70780bd6abe": {
+        "label": "Réécrire avec un ton inspirant",
+        "template": "Réécrivez le texte entre triple guillemets ci-dessous avec vos propres mots. Reformulez le texte avec un ton inspirant.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte reformulé. N'entourez pas les réponses de guillemets."
+      },
+      "a78a9a9c-4264-4a03-a0ab-db7e864d0729": {
+        "label": "Traduire en anglais",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en anglais.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "1f2618d3-9b5b-44be-8829-0456fd392c5c": {
+        "label": "Traduire en français",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en français.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "13635570-7d09-478a-9e87-8163c96c421c": {
+        "label": "Traduire en espagnol",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en espagnol.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "4b0d6229-f539-4ffd-bb30-eaee456592bb": {
+        "label": "Traduire en allemand",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en allemand.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "8249950f-7fc3-4897-b08a-1d107ead14d8": {
+        "label": "Traduire en néerlandais",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en néerlandais.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "371513af-c68a-4dd1-b513-73c8eb61e525": {
+        "label": "Traduire en russe",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en russe.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "337adf45-3614-42f0-80e4-414f193f74fd": {
+        "label": "Traduire en chinois",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en chinois.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "840d3be0-1ce2-41ed-98b1-2fb25e1f4fef": {
+        "label": "Traduire en vietnamien",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en vietnamien.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "72bffaad-28aa-47a8-90df-1f3e6cc511e5": {
+        "label": "Traduire en hindi",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en hindi.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "5d538c6e-90ed-4533-9ecc-e14bdedc7f49": {
+        "label": "Traduire en thaï",
+        "template": "Traduisez le texte entre triple guillemets ci-dessous en thaï.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le texte traduit. N'entourez pas les réponses de guillemets."
+      },
+      "a0bb82a3-7c81-43f8-977f-0a327913d1c8": {
+        "label": "Écrire un désaccord",
+        "template": "Le texte suivant entre triple guillemets a déjà été écrit :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nÉcrivez une réponse qui conteste le point principal de manière respectueuse. Incluez des raisons spécifiques pour votre désaccord. N'entourez pas les réponses de guillemets."
+      },
+      "8b3ecb01-75c2-4902-998d-04d619abd147": {
+        "label": "Éditer comme un correcteur",
+        "template": "Agissez comme un correcteur. Parcourez le texte entre triple guillemets ci-dessous. Corrigez les fautes d'orthographe, les problèmes de grammaire, la ponctuation, et généralement pour la lisibilité et le flux.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez que le texte édité. N'entourez pas votre réponse de guillemets."
+      },
+      "e245e8cc-6c0a-40a5-8c1e-faf96aabfa3b": {
+        "label": "Suggérer quelques options de titres",
+        "template": "L'article de blog ci-dessous a déjà été écrit :\n\n\"\"\"BLOG POST: {'{'}input{'}'}\"\"\"\n\nGénérez une liste markdown (en utilisant des tirets) de cinq titres appropriés pour l'article de blog. Ne retournez rien d'autre que les titres. N'entourez pas les réponses de guillemets."
+      },
+      "624bfd2a-3a98-4575-bee0-1e28d12deafa": {
+        "label": "Suggérer quelques tweets basés sur mon texte",
+        "template": "L'article de blog ci-dessous a déjà été écrit :\n\n\"\"\"BLOG POST: {'{'}input{'}'}\"\"\"\n\nGénérez une liste markdown (en utilisant des tirets) de cinq tweets basés sur l'article de blog :"
+      },
+      "5c83e343-3305-435f-8ecc-c5406f9cf05b": {
+        "label": "Générer un aperçu pour un article",
+        "template": "L'article est ci-dessous entre triple guillemets :\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nFournissez un aperçu de l'article. Utilisez le format suivant :\n\"\"\"\nRésumé :\n\n< résumé en une ou deux lignes >\n\nPoints clés :\n1. < premier point clé >\n2. < deuxième point clé >\n3. < troisième point clé >\n\nContre-arguments :\n1. < premier contre-argument principal >\n2. < deuxième contre-argument principal >\n\"\"\"\n\nNe retournez rien d'autre que l'aperçu. N'entourez pas les réponses de guillemets."
+      },
+      "e4583555-85f3-441e-b199-05bdcd0e374d": {
+        "label": "Générer un contre-argument",
+        "template": "Donnez le contre-argument au texte ci-dessous :\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que le contre-argument. N'entourez pas les réponses de guillemets."
+      },
+      "0979ebe7-f71f-44a3-b76b-2841cb00a5b6": {
+        "label": "Générer un email",
+        "template": "Écrivez un email professionnel et articulé pour le sujet ci-dessous :\n\"\"\"\nSujet : {'{'}input{'}'}\n\"\"\"\n\nNe retournez rien d'autre que l'email. N'entourez pas les réponses de guillemets."
+      },
+      "a6f1a4bf-6c3d-4f10-be6f-a7c72c06ec22": {
+        "label": "Lister les actions à faire",
+        "template": "Ma note est ci-dessous entre triple guillemets :\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nÉcrivez une liste de tâches à partir de mes notes en utilisant le format suivant :\n\n- [ ] <première action>\n- [ ] <deuxième action>\n- [ ] <troisième action>\n- [ ] <quatrième action>\n\nNe retournez rien d'autre que la liste de tâches. N'entourez pas les réponses de guillemets."
+      },
+      "35847b3b-0ff6-44b2-aa59-5d8ad5e17f5c": {
+        "label": "Écrire un article de blog",
+        "template": "Écrivez un article de blog en utilisant le plan entre triple guillemets ci-dessous. Utilisez un langage simple et clair. Ne retournez rien d'autre que l'article de blog. N'entourez pas les réponses de guillemets.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n"
+      },
+      "2015c27c-6b97-461f-acb7-6fc9886be376": {
+        "label": "Formater en paragraphes",
+        "template": "Formatez le texte entre triple guillemets ci-dessous en paragraphes. Ne retournez rien d'autre que le texte formaté. N'entourez pas les réponses de guillemets.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "57c9ccec-1da3-443b-a3db-5626728d20e8": {
+        "label": "Écrire des analogies",
+        "template": "Écrivez trois analogies différentes pour le texte entre guillemets ci-dessous. Utilisez un langage simple et clair. Ne retournez rien d'autre que les analogies. N'entourez pas les réponses de guillemets.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "c4a3bedb-87bf-4125-9edc-c75c02633806": {
+        "label": "Compléter ce code",
+        "template": "Complétez le code ci-dessous. Répondez strictement avec le nouveau code, n'expliquez pas.\n\n```\n{'{'}input{'}'}\n```"
+      },
+      "e8ab9860-b99a-4763-bbaa-8cc3b7fe9dc4": {
+        "label": "Commenter ce code",
+        "template": "Créez des commentaires pour le code ci-dessous. Répondez avec tout le code avec les commentaires ajoutés. N'incluez pas d'explications.\n\n```\n{'{'}input{'}'}\n```"
       }
     }
   },
