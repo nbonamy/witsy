@@ -37,8 +37,8 @@
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">{{ t('common.save') }}</button>
-        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
