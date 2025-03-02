@@ -12,7 +12,7 @@ export const createI18n = (locale: string): I18n => {
     fallbackLocale: 'en',
     missingWarn: false, 
     fallbackWarn: false,
-    silentTranslationWarn: true,
+    warnHtmlMessage: false,
     messages
   })
 
