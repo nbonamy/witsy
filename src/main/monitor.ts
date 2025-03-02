@@ -16,6 +16,11 @@ export default class {
 
   start(filepath: string): void {
 
+    // same?
+    if (this.filepath === filepath) {
+      return
+    }
+
     // clear
     this.stop()
     
