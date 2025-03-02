@@ -24,7 +24,7 @@ test('Renders correctly', async () => {
   for (let i=0; i<4; i++) {
     const command = wrapper.findAll('.command').at(i)
     expect(command!.find('.icon').text()).toBe(`${i+1}`)
-    expect(command!.find('.label').text()).toBe(`Command ${i+1}`)
+    expect(command!.find('.label').text()).toBe(i < 1 ? `commands.commands.${i+1}.label` : `Command ${i+1}`)
   }
 })
 
@@ -37,22 +37,22 @@ test('Closes on Escape', async () => {
 test('Changes selection on arrow keys', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: {  } } } )
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.selected .label').text()).toBe('Command 2')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
 })
 
 test('Runs on Enter', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('Command 1')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
@@ -62,7 +62,6 @@ test('Runs on Enter', async () => {
       icon: '1',
       id: 1,
       shortcut: '1',
-      label: 'Command 1',
       state: 'enabled',
     },
   })
@@ -82,7 +81,6 @@ test('Runs command on click', async () => {
       icon: '1',
       id: 1,
       shortcut: '1',
-      label: 'Command 1',
       state: 'enabled',
     },
   })
@@ -91,17 +89,17 @@ test('Runs command on click', async () => {
 test('Runs command on click', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } }}})
   await wrapper.vm.$nextTick()
-  const command = wrapper.findAll('.command').at(0)
+  const command = wrapper.findAll('.command').at(1)
   await command!.trigger('click')
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
     command: {
-      action: 'chat_window',
-      icon: '1',
-      id: 1,
-      shortcut: '1',
-      label: 'Command 1',
+      action: 'paste_below',
+      icon: '2',
+      id: 2,
+      label: 'Command 2',
+      shortcut: '2',
       state: 'enabled',
     },
   })
