@@ -36,11 +36,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import defaultSettings from '../../defaults/settings.json'
 
 // bus

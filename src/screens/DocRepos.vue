@@ -60,12 +60,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { ref, onMounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import DialogHeader from '../components/DialogHeader.vue'

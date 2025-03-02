@@ -10,6 +10,12 @@ enableAutoUnmount(afterAll)
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+  }
+})
+
 vi.mock('../../src/composables/event_bus', async () => {
   return { default: () => ({
     onEvent: onEventMock,

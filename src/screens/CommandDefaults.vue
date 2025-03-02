@@ -23,11 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 

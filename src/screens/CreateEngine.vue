@@ -34,10 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { ref, onMounted } from 'vue'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import AlertDialog from '../components/AlertDialog.vue'
