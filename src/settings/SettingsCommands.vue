@@ -33,7 +33,7 @@
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
     <CommandDefaults id="defaults" ref="defaults" />
-    <CommandEditor id="command-editor" :command="edited" @command-modified="onCommandModified"/>
+    <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
 </template>
 
@@ -54,7 +54,7 @@ const commands: Ref<Command[]> = ref(null)
 const selected: Ref<Command> = ref(null)
 const edited: Ref<Command> = ref(null)
 const defaults: Ref<typeof CommandDefaults> = ref(null)
-
+const editor = ref(null)
 const moreButton: Ref<HTMLElement> = ref(null)
 const showMenu = ref(false)
 const menuX = ref(0)
@@ -190,13 +190,13 @@ const onSelect = (command: Command) => {
 const onNew = () => {
   selected.value = null
   edited.value = newCommand()
-  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
+  editor.value.show()
 }
 
 const onEdit = (command: Command) => {
   edited.value = command
   selected.value = command
-  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
+  editor.value.show()
 }
 
 const onDelete = () => {
@@ -226,6 +226,12 @@ const onEnabled = (command: Command) => {
 }
 
 const onCommandModified = (payload: Command) => {
+
+  // cancel
+  if (!payload) {
+    edited.value = null
+    return
+  }
 
   // new command?
   let command = null
@@ -261,6 +267,8 @@ const onCommandModified = (payload: Command) => {
 
   // done
   selected.value = command
+  editor.value.close()
+  edited.value = null
   save()
 
 }
