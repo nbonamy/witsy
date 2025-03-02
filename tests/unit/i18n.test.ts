@@ -73,7 +73,7 @@ test('Init i18n', async () => {
     fallbackLocale: 'en',
     missingWarn: false, 
     fallbackWarn: false,
-    silentTranslationWarn: true,
+    warnHtmlMessage: false,
     messages: expect.any(Object)
   })
 
