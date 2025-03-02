@@ -1,8 +1,7 @@
 
 import { App } from 'electron'
-import { createI18n } from 'vue-i18n'
+import { createI18n } from './i18n.base'
 import { loadSettings } from './config'
-import messages from '../../locales/index'
 
 export const getLocaleUI = (app: App): string => {
 
@@ -32,17 +31,11 @@ export const getLocaleLLM = (app: App): string => {
 }
 
 export const useI18n = (app: App): CallableFunction => {
-
-  // load settings
   const locale = getLocaleUI(app)
+  return createI18n(locale).global.t as CallableFunction
+}
 
-  // now do it
-  //console.log('Creating i18n', locale)
-  return createI18n({
-    legacy: false,
-    locale: locale,
-    fallbackLocale: 'en',
-    messages
-  }).global.t as CallableFunction
-
+export const useI18nLlm = (app: App): CallableFunction => {
+  const locale = getLocaleLLM(app)
+  return createI18n(locale).global.t as CallableFunction
 }

@@ -1,39 +1,19 @@
 
-import { anyDict } from '../types/index'
-import { createI18n, I18n } from 'vue-i18n'
-import messages from '../../locales/index'
+import { anyDict, Command } from '../types/index'
+import { createI18n, hasLocalization } from '../main/i18n.base'
+import { I18n } from 'vue-i18n'
 
 let i18n: I18n|null = null
 let i18nLlm: I18n|null = null
 
 if (!i18n) {
-
-  // load locale
   const locale = window.api?.config?.localeUI() || 'en-US'
-  //console.log('Creating i18n', locale)
-
-  // now do it
-  i18n = createI18n({
-    legacy: false,
-    locale: locale,
-    fallbackLocale: 'en',
-    messages
-  })
+  i18n = createI18n(locale)
 }
 
 if (!i18nLlm) {
-
-  // load locale
   const locale = window.api?.config?.localeLLM() || 'en-US'
-  //console.log('Creating i18n for Llm', locale)
-
-  // now do it
-  i18nLlm = createI18n({
-    legacy: false,
-    locale: locale,
-    fallbackLocale: 'en',
-    messages
-  })
+  i18nLlm = createI18n(locale)
 }
 
 const localeToLangName = (locale: string): string => {
@@ -41,8 +21,6 @@ const localeToLangName = (locale: string): string => {
   const language = t(`common.language.${locale}`)
   return language.startsWith('common.language.') ? locale : language
 }
-
-const t: CallableFunction = i18n?.global?.t
 
 const i18nInstructions = (config: anyDict, key: string, params?: any): string => {
 
@@ -58,15 +36,21 @@ const i18nInstructions = (config: anyDict, key: string, params?: any): string =>
 
 }
 
-const hasLocalization = (locale: string): boolean => {
-  return Object.keys(messages).includes(locale.substring(0, 2))
+const t: CallableFunction = i18n?.global?.t
+const tllm: CallableFunction = i18nLlm?.global?.t
+
+const commandI18n = (command: Command, attr: 'label'|'template'): string => {
+  if (!command?.id) return ''
+  return command ? tllm(`commands.commands.${command.id}.${attr}`) : ''
 }
 
 export {
   i18n as default,
   i18nLlm,
   t,
+  tllm,
   i18nInstructions,
   localeToLangName,
-  hasLocalization
+  hasLocalization,
+  commandI18n
 }

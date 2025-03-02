@@ -71,6 +71,9 @@ test('Init i18n', async () => {
     legacy: false,
     locale: 'de-DE',
     fallbackLocale: 'en',
+    missingWarn: false, 
+    fallbackWarn: false,
+    silentTranslationWarn: true,
     messages: expect.any(Object)
   })
 
