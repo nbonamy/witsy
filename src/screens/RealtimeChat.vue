@@ -44,12 +44,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { type RealtimeVoice } from '../types/config'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import AnimatedBlob from '../components/AnimatedBlob.vue'
 import NumberFlip from '../components/NumberFlip.vue'
 import useTipsManager from '../composables/tips_manager'

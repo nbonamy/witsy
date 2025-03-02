@@ -22,6 +22,7 @@ enableAutoUnmount(afterEach)
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
+    commandI18n: vi.fn(() => {})
   }
 })
 

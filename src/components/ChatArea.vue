@@ -30,11 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'

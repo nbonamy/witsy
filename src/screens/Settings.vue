@@ -8,8 +8,8 @@
             <ul>
               <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
               <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
-              <SettingsTab class="commands" :title="t('settings.tabs.commands')"><BIconMagic class="icon" /></SettingsTab>
-              <SettingsTab class="experts" :title="t('settings.tabs.experts')"><BIconMortarboard class="icon" /></SettingsTab>
+              <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
+              <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
               <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
               <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
               <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
@@ -33,10 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { Ref, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { t } from '../services/i18n'
 import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'

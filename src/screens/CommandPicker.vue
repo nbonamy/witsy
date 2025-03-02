@@ -13,12 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 
 // load store
 store.loadSettings()

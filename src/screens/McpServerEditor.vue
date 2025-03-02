@@ -85,11 +85,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n' 
-const { t } = useI18n()
 
 import { Ref, ref, onMounted, watch, PropType } from 'vue'
 import { McpServer } from '../types/mcp'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
 import McpVariableEditor from './McpVariableEditor.vue'
