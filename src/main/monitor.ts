@@ -1,5 +1,4 @@
 
-import path from 'path'
 import fs, { FSWatcher, Stats } from 'fs'
 
 export default class {
