@@ -156,6 +156,7 @@
       "inputPlaceholder": "{'{'}input{'}'} sera remplacé par le texte sélectionné.",
       "notEditable": "Cette commande n'est pas modifiable. Le contenu capturé sera disponible dans le prompt pour que vous puissiez poser des questions à son sujet !",
       "prompt": "Prompt",
+      "resetToDefault": "Réinitialiser nom et prompt aux valeurs par défaut",
       "title": "Détails de la commande",
       "useDefault": "Utiliser les paramètres par défaut",
       "validation": {
@@ -165,7 +166,7 @@
     },
     "commands" : {
       "00000000-0000-0000-0000-000000000000": {
-        "label": "Demandez-moi n'importe quoi",
+        "label": "Demandez-moi ce que vous voulez !",
         "template": "En fonction du texte entre triple guillemets ci-dessous :\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nRépondez à la question suivante : "
       },
       "90dd1cd3-903a-4f60-bccf-0542fa78d8ef": {

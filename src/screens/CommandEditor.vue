@@ -1,5 +1,5 @@
 <template>
-  <dialog class="editor">
+  <dialog id="command-editor" class="editor">
     <form method="dialog">
       <header>
         <div class="title">{{ t('commands.editor.title') }}</div>
@@ -16,7 +16,7 @@
         <div class="group">
           <label>{{ t('commands.editor.prompt') }}</label>
           <div class="subgroup">
-            <textarea name="template" v-model="template" v-if="isEditable" @keyup="onChangeText"></textarea>
+            <textarea name="template" v-model="template" required @keyup="onChangeText" v-if="isEditable"></textarea>
             <textarea name="template" disabled="true" v-else>{{ t('commands.editor.notEditable') }}</textarea>
             <span>{{ t('commands.editor.inputPlaceholder') }}</span>
             <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
@@ -138,8 +138,13 @@ const onShortcutKeyUp = (event: KeyboardEvent) => {
 
 }
 
+const close = () => {
+  document.querySelector<HTMLDialogElement>('#command-editor').close()
+}
+
 const onCancel = () => {
-  load()
+  emit('command-modified')
+  close()
 }
 
 const onReset = () => {
@@ -176,6 +181,12 @@ const onSave = (event: Event) => {
     model: model.value
   })
 }
+
+defineExpose({
+  show: () => document.querySelector<HTMLDialogElement>('#command-editor').showModal(),
+  close,
+})
+
 
 </script>
 
