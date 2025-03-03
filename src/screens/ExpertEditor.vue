@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp } from 'types/index'
+import { Expert, ExternalApp } from '../types/index'
 import { ref, computed, watch } from 'vue'
 import { expertI18n, t } from '../services/i18n'
 import Dialog from '../composables/dialog'
