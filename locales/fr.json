@@ -148,22 +148,6 @@
     }
   },
   "commands": {
-    "defaults": {
-      "lastOneUsed": "Dernier utilisé",
-      "title": "Paramètres par défaut des commandes"
-    },
-    "editor": {
-      "inputPlaceholder": "{'{'}input{'}'} sera remplacé par le texte sélectionné.",
-      "notEditable": "Cette commande n'est pas modifiable. Le contenu capturé sera disponible dans le prompt pour que vous puissiez poser des questions à son sujet !",
-      "prompt": "Prompt",
-      "resetToDefault": "Réinitialiser nom et prompt aux valeurs par défaut",
-      "title": "Détails de la commande",
-      "useDefault": "Utiliser les paramètres par défaut",
-      "validation": {
-        "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
-        "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
-      }
-    },
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
         "label": "Demandez-moi ce que vous voulez !",
@@ -329,6 +313,22 @@
         "label": "Commenter ce code",
         "template": "Créez des commentaires pour le code ci-dessous. Répondez avec tout le code avec les commentaires ajoutés. N'incluez pas d'explications.\n\n```\n{'{'}input{'}'}\n```"
       }
+    },
+    "defaults": {
+      "lastOneUsed": "Dernier utilisé",
+      "title": "Paramètres par défaut des commandes"
+    },
+    "editor": {
+      "inputPlaceholder": "{'{'}input{'}'} sera remplacé par le texte sélectionné.",
+      "notEditable": "Cette commande n'est pas modifiable. Le contenu capturé sera disponible dans le prompt pour que vous puissiez poser des questions à son sujet !",
+      "prompt": "Prompt",
+      "resetToDefault": "Réinitialiser nom et prompt aux valeurs par défaut",
+      "title": "Détails de la commande",
+      "useDefault": "Utiliser les paramètres par défaut",
+      "validation": {
+        "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
+        "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
+      }
     }
   },
   "docRepo": {
@@ -383,7 +383,6 @@
   },
   "experts": {
     "editor": {
-      "systemExpertNotice": "Les experts système ne peuvent pas être modifiés. Faites une copie pour personnaliser cet expert.",
       "title": "Détails de l'expert",
       "triggerApps": "Applications déclencheuses",
       "triggerAppsDescription": "Le prompt sera automatiquement sélectionné lorsque Prompt Anywhere est appelé depuis l'une de ces applications",
