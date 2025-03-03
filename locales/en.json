@@ -167,22 +167,6 @@
     }
   },
   "commands": {
-    "defaults": {
-      "lastOneUsed": "Last one used",
-      "title": "Commands defaults"
-    },
-    "editor": {
-      "inputPlaceholder": "{'{'}input{'}'} will be subsituted with highlighted text",
-      "notEditable": "This command is not editable. The content captured will be available in the prompt for you to ask anything about it!",
-      "prompt": "Prompt",
-      "resetToDefault": "Reset name and prompt to default values",
-      "title": "Command details",
-      "useDefault": "Use commands default",
-      "validation": {
-        "inputPlaceholder": "The template must contain the {'{'}input{'}'} placeholder.",
-        "requiredFields": "All fields marked with * are required."
-      }
-    },
     "commands": {
       "00000000-0000-0000-0000-000000000000": {
         "label": "Ask me anything",
@@ -348,6 +332,22 @@
         "label": "Comment this code",
         "template": "Create comments for the code below. Answer with the whole code with comments added. Do not include any explanations.\n\n```\n{'{'}input{'}'}\n```"
       }
+    },
+    "defaults": {
+      "lastOneUsed": "Last one used",
+      "title": "Commands defaults"
+    },
+    "editor": {
+      "inputPlaceholder": "{'{'}input{'}'} will be subsituted with highlighted text",
+      "notEditable": "This command is not editable. The content captured will be available in the prompt for you to ask anything about it!",
+      "prompt": "Prompt",
+      "resetToDefault": "Reset name and prompt to default values",
+      "title": "Command details",
+      "useDefault": "Use commands default",
+      "validation": {
+        "inputPlaceholder": "The template must contain the {'{'}input{'}'} placeholder.",
+        "requiredFields": "All fields marked with * are required."
+      }
     }
   },
   "docRepo": {
@@ -402,7 +402,6 @@
   },
   "experts": {
     "editor": {
-      "systemExpertNotice": "System Experts cannot be edited. Make a copy to customize this expert.",
       "title": "Expert details",
       "triggerApps": "Trigger Apps",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",

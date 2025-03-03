@@ -4,8 +4,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 // Function to sort a dictionary recursively
-function sortObjectRecursively(obj: any): any {
+function sortObjectRecursively(path: string, obj: any): any {
+  
   if (typeof obj !== 'object' || obj === null) {
+    return obj
+  }
+
+  if ([ 'common.language', 'commands.commands', 'experts.experts' ].includes(path.substring(1))) {
     return obj
   }
 
@@ -26,7 +31,7 @@ function sortObjectRecursively(obj: any): any {
   const result: any = {}
 
   for (const key of sortedKeys) {
-    result[key] = sortObjectRecursively(obj[key])
+    result[key] = sortObjectRecursively(`${path}.${key}`, obj[key])
   }
 
   return result
@@ -37,7 +42,7 @@ function processJsonFile(filePath: string): void {
   try {
     const data = fs.readFileSync(filePath, 'utf8')
     const json = JSON.parse(data)
-    const sortedJson = sortObjectRecursively(json)
+    const sortedJson = sortObjectRecursively('', json)
     fs.writeFileSync(filePath, JSON.stringify(sortedJson, null, 2) + '\n', 'utf8')
     console.log(`Processed: ${filePath}`)
   } catch (error) {
