@@ -3,8 +3,7 @@
     <div class="app" v-if="sourceApp">
       <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
     </div>
-    <div class="list">
-      <div class="command" v-for="command in enabledCommands" :key="command.id" @click="onRunCommand($event, command)">
+    <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
         <div class="icon">{{ command.icon }}</div>
         <div class="label">{{ command.label }}</div>
         <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
@@ -16,7 +15,7 @@
 <script setup lang="ts">
 
 import { anyDict, Command, ExternalApp } from '../types'
-import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 
 // load store
@@ -28,8 +27,10 @@ const props = defineProps({
   extra: Object
 })
 
-const overrideAction = ref(false)
-const sourceApp: Ref<ExternalApp|null> = ref(null)
+const list: Ref<HTMLElement | null> = ref(null)
+const commands: Ref<Command[]> = ref([])
+const selected: Ref<Command | null> = ref(null)
+const sourceApp: Ref<ExternalApp | null> = ref(null)
 
 const iconData = computed(() => {
   const iconContents = window.api.file.readIcon(sourceApp.value.icon)
@@ -64,22 +65,45 @@ const onShow = (params?: anyDict) => {
   store.loadCommands()
   showParams = params
   sourceApp.value = showParams?.sourceApp ? window.api.file.getAppInfo(showParams.sourceApp.path) : null
+  commands.value = store.commands.filter(command => command.state == 'enabled')
+  selected.value = commands.value[0]
 }
 
-const enabledCommands = computed(() => store.commands.filter(command => command.state == 'enabled'))
-
 const onKeyDown = (event: KeyboardEvent) => {
-  if (event.key == 'Shift') {
-    overrideAction.value = true
+  if (event.key == 'Enter') {
+    if (selected.value) {
+      onRunCommand(event, selected.value)
+    }
+  } else if (event.key == 'ArrowDown') {
+    const index = commands.value.indexOf(selected.value)
+    if (index < commands.value.length - 1) {
+      selected.value = commands.value[index + 1]
+    }
+  } else if (event.key == 'ArrowUp') {
+    const index = commands.value.indexOf(selected.value)
+    if (index > 0) {
+      selected.value = commands.value[index - 1]
+    }
   }
+
+
+  ensureVisible()
+}
+
+const ensureVisible = () => {
+  nextTick(() => {
+    const selectedEl = list.value?.querySelector('.selected')
+    if (selectedEl) {
+      scrollToBeVisible(selectedEl, list.value)
+    }
+  })
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
-  overrideAction.value = false
   if (event.key == 'Escape') {
     onClose()
   } else {
-    for (const command of enabledCommands.value) {
+    for (const command of commands.value) {
       if (command.shortcut?.toLowerCase() === event.key.toLowerCase()) {
         onRunCommand(event, command)
         break
@@ -88,11 +112,18 @@ const onKeyUp = (event: KeyboardEvent) => {
   }
 }
 
+const onMouseMove = (command: Command) => {
+  if (selected.value?.id != command.id) {
+    selected.value = command
+    ensureVisible()
+  }
+}
+
 const onClose = () => {
   window.api.commands.closePicker(showParams.sourceApp)
 }
 
-const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
+const onRunCommand = (event: MouseEvent | KeyboardEvent, command: Command) => {
   window.api.commands.run({
     textId: showParams.textId,
     sourceApp: showParams.sourceApp,
@@ -100,10 +131,25 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   })
 }
 
+const scrollToBeVisible = function (ele, container) {
+  const eleTop = ele.offsetTop - container.offsetTop;
+  const eleBottom = eleTop + ele.clientHeight;
+
+  const containerTop = container.scrollTop;
+  const containerBottom = containerTop + container.clientHeight;
+
+  if (eleTop < containerTop) {
+    // Scroll to the top of container
+    container.scrollTop -= containerTop - eleTop;
+  } else if (eleBottom > containerBottom) {
+    // Scroll to the bottom of container
+    container.scrollTop += eleBottom - containerBottom;
+  }
+};
+
 </script>
 
 <style scoped>
-
 ::-webkit-scrollbar {
   display: none;
 }
@@ -129,6 +175,7 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   margin-bottom: 8px;
   font-size: 10pt;
   font-weight: 500;
+
   .icon {
     width: 24px;
     height: 24px;
@@ -153,7 +200,7 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   padding-top: 2px;
 }
 
-.command:hover {
+.command.selected {
   background-color: var(--highlight-color);
   color: var(--highlighted-color);
   border-radius: 6px;
@@ -194,13 +241,15 @@ const onRunCommand = (event: MouseEvent|KeyboardEvent, command: Command) => {
   color: var(--icon-color);
 }
 
-.command:hover {
-  .shortcut, .action {
+.command.selected {
+
+  .shortcut,
+  .action {
     color: var(--highlighted-color);
   }
+
   .shortcut {
     border-color: var(--highlighted-color);
   }
 }
-
 </style>
