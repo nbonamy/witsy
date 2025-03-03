@@ -1085,7 +1085,8 @@
       "takeaways": "Écrivez une liste (avec des tirets) des points clés de l'EXTRAIT. Gardez entre 3 et 5 points clés pour un EXTRAIT court, jusqu'à 10 pour un EXTRAIT plus long.",
       "title": "Suggérez un titre pour l'EXTRAIT. Retournez le titre suivi du texte complet de l'EXTRAIT."
     },
-    "setlang": "Toujours répondre en {lang} même si le reste de la conversation est dans une autre langue y compris les messages de l'utilisateur.",
+    "setDate": "La date est l'heure courante sont {date}",
+    "setLang": "Toujours répondre en {lang} même si le reste de la conversation est dans une autre langue y compris les messages de l'utilisateur.",
     "titling": "Vous êtes un assistant dont la tâche est de trouver le meilleur titre pour la conversation ci-dessous. Le titre doit être composé de quelques mots seulement.",
     "titllingUser": "Donnez un titre à la conversation ci-dessus. Ne renvoyez rien d'autre que le titre. N'entourez pas les réponses de guillemets."
   },
@@ -1215,11 +1216,15 @@
       }
     },
     "extendedThinking": "Réflexion étendue",
+    "locale": "Langue de la conversation",
+    "localeDefault": "🤖 Langue par défaut",
     "maxCompletionTokens": "Tokens maximum de complétion",
     "placeholder": {
       "defaultModelValue": "Valeur par défaut du modèle si vide"
     },
     "plugins": "Plugins",
+    "prompt": "Prompt",
+    "promptPlaceholder": "Laisser vide pour utiliser le prompt par défault",
     "reasoningEffort": "Effort de raisonnement",
     "temperature": "Température [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 20]",
@@ -1299,7 +1304,7 @@
         "scratchpad_takeaways": "Bloc-notes - Points clés",
         "scratchpad_title": "Bloc-notes - Titre",
         "titling": "Titre de conversation - Instructions",
-        "titling_user": "Titre de conversation - Prompt",
+        "titllingUser": "Titre de conversation - Prompt",
         "video_plugin": "Plugin Vidéo - Description (1024 caractères max)"
       },
       "overridingHelp": "Les prompts et instructions personnalisés s'appliquent à toutes les langues.",

@@ -223,6 +223,8 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('openai')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
+  expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
@@ -230,12 +232,15 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
   
+  await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings input[name=maxTokens]').setValue('1000')
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings input[name=top_p]').setValue('0.8')
   await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('high')
 
+  expect(chat?.locale).toBe('fr-FR')
+  expect(chat?.prompt).toBeUndefined()
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBe(0.7)
@@ -243,11 +248,15 @@ test('Model settings update chat', async () => {
   expect(chat?.modelOpts?.top_p).toBe(0.8)
   expect(chat?.modelOpts?.reasoningEffort).toBe('high')
 
+  await wrapper.find('.model-settings select[name=locale]').setValue('')
+  await wrapper.find('.model-settings textarea[name=prompt]').setValue('Prompt')
   await wrapper.find('.model-settings input[name=temperature]').setValue('5.0')
   await wrapper.find('.model-settings input[name=top_k]').setValue('50')
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
   await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('unknown')
 
+  expect(chat?.locale).toBeUndefined()
+  expect(chat?.prompt).toBe('Prompt')
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBeUndefined()
@@ -290,12 +299,14 @@ test('Model settings defaults', async () => {
     temperature: 0.7
   })
 
-  // add one element
+  // add stuff
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
+  await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings button[name=save]').trigger('click')
   expect(store.config.llm.defaults[1]).toStrictEqual({
     engine: 'openai',
     model: 'chat',
+    locale: 'fr-FR',
     disableTools: false,
     temperature: 0.7,
     top_k: 15
@@ -308,6 +319,7 @@ test('Model settings defaults', async () => {
   expect(store.config.llm.defaults[1]).toStrictEqual({
     engine: 'openai',
     model: 'chat',
+    locale: 'fr-FR',
     disableTools: false,
     temperature: 0.7,
     top_k: 15

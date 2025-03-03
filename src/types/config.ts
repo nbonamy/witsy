@@ -51,6 +51,8 @@ export type ModelDefaults = {
   engine: string
   model: string
   disableTools: boolean
+  locale: string
+  prompt: string
 } & LlmModelOpts
 
 export type LLMConfig = {

@@ -11,9 +11,34 @@
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
-        <select name="plugins" v-model="disableTools" @change="save()">
+        <select name="plugins" v-model="disableTools" @change="save">
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
+        </select>
+      </div>
+      <div class="group">
+        <label>{{ t('modelSettings.locale') }}</label>
+        <LangSelect name="locale" v-model="locale" default-text="modelSettings.localeDefault" @change="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('modelSettings.prompt') }}</label>
+        <textarea name="prompt" v-model="prompt" :placeholder="t('modelSettings.promptPlaceholder')" rows="4" @change="save"></textarea>
+      </div>
+      <div class="group" v-if="isReasoningFlagSupported">
+        <label>{{ t('modelSettings.extendedThinking') }}</label>
+        <select name="reasoning" v-model="reasoning" @change="save">
+          <option :value="undefined">{{ t('common.default') }}</option>
+          <option :value="true">{{ t('common.enabled') }}</option>
+          <option :value="false">{{ t('common.disabled') }}</option>
+        </select>
+      </div>
+      <div class="group" v-if="isReasoningEffortSupported">
+        <label>{{ t('modelSettings.reasoningEffort') }}</label>
+        <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
+          <option :value="undefined">{{ t('common.default') }}</option>
+          <option value="low">{{ t('common.low') }}</option>
+          <option value="medium">{{ t('common.medium') }}</option>
+          <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
       <div class="group" v-if="isContextWindowSupported">
@@ -35,23 +60,6 @@
       <div class="group" v-if="isTopPSupported">
         <label>{{ t('modelSettings.topP') }}</label>
         <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
-      </div>
-      <div class="group" v-if="isReasoningFlagSupported">
-        <label>{{ t('modelSettings.extendedThinking') }}</label>
-        <select name="reasoning" v-model="reasoning" @change="save">
-          <option :value="undefined">{{ t('common.default') }}</option>
-          <option :value="true">{{ t('common.enabled') }}</option>
-          <option :value="false">{{ t('common.disabled') }}</option>
-        </select>
-      </div>
-      <div class="group" v-if="isReasoningEffortSupported">
-        <label>{{ t('modelSettings.reasoningEffort') }}</label>
-        <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
-          <option :value="undefined">{{ t('common.default') }}</option>
-          <option value="low">{{ t('common.low') }}</option>
-          <option value="medium">{{ t('common.medium') }}</option>
-          <option value="high">{{ t('common.high') }}</option>
-        </select>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.defaultForModel') }}</label>
@@ -78,6 +86,7 @@ import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
+import LangSelect from '../components/LangSelect.vue'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
@@ -87,6 +96,8 @@ const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableTools: Ref<boolean> = ref(false)
+const locale = ref('')
+const prompt = ref('')
 const contextWindowSize: Ref<number> = ref(undefined)
 const maxTokens: Ref<number> = ref(undefined)
 const temperature: Ref<number> = ref(undefined)
@@ -109,6 +120,8 @@ const modelHasDefaults = computed(() => {
 const canSaveAsDefaults = computed(() => {
   return (
     disableTools.value === true ||
+    locale.value !== '' ||
+    prompt.value !== '' ||
     contextWindowSize.value !== undefined ||
     maxTokens.value !== undefined ||
     temperature.value !== undefined ||
@@ -163,6 +176,8 @@ onMounted(async () => {
     engine.value = props.chat.engine
     model.value = props.chat.model
     disableTools.value = props.chat.disableTools
+    locale.value = props.chat.locale || ''
+    prompt.value = props.chat.prompt || ''
     contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
     maxTokens.value = props.chat.modelOpts?.maxTokens
     temperature.value = props.chat.modelOpts?.temperature
@@ -191,6 +206,8 @@ const loadDefaults = () => {
   const defaults = store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value)
   if (defaults) {
     disableTools.value = defaults.disableTools
+    locale.value = defaults.locale || ''
+    prompt.value = defaults.prompt || ''
     contextWindowSize.value = defaults.contextWindowSize
     maxTokens.value = defaults.maxTokens
     temperature.value = defaults.temperature
@@ -200,6 +217,8 @@ const loadDefaults = () => {
     reasoningEffort.value = defaults.reasoningEffort
   } else {
     disableTools.value = false
+    locale.value = ''
+    prompt.value = ''
     contextWindowSize.value = undefined
     maxTokens.value = undefined
     temperature.value = undefined
@@ -216,6 +235,8 @@ const saveAsDefaults = () => {
     engine: engine.value,
     model: model.value,
     disableTools: disableTools.value,
+    locale: locale.value.trim() || undefined,
+    prompt: prompt.value.trim() || undefined,
     contextWindowSize: contextWindowSize.value,
     maxTokens: maxTokens.value,
     temperature: temperature.value,
@@ -262,7 +283,6 @@ const save = () => {
     })
     return
   }
-
 
   // to check data input
   const parseUserInput = (name: string, ref: any, type: string, min?: number, max?: number): any => {
@@ -314,6 +334,8 @@ const save = () => {
     // update chat
     props.chat.setEngineModel(engine.value, model.value)
     props.chat.disableTools = disableTools.value
+    props.chat.locale = locale.value.trim() || undefined,
+    props.chat.prompt = prompt.value.trim() || undefined,
     props.chat.modelOpts = {
       contextWindowSize: contextWindowSizeValue,
       maxTokens: maxTokensValue,
@@ -401,8 +423,16 @@ const onCreateOllamaModel = async () => {
 
 .model-settings {
   background-color: var(--sidebar-bg-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
   form {
     padding: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+    flex: 1;
 
     .subgroup {
       white-space: nowrap;
