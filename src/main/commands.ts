@@ -31,7 +31,7 @@ export const loadCommands = (source: App|string): Command[] => {
   let updated = false
 
   // i18n migrate label and template
-  const t = createI18n('en').global.t as CallableFunction
+  const t = createI18n('en', { missingWarn: false }).global.t as CallableFunction
   for (const command of commands) {
     const key = `commands.commands.${command.id}`
     if (command.label === t(`${key}.label`)) {

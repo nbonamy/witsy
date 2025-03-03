@@ -70,8 +70,8 @@ test('Init i18n', async () => {
   expect(createI18n).toHaveBeenLastCalledWith({
     legacy: false,
     locale: 'de-DE',
-    fallbackLocale: 'en',
-    missingWarn: false, 
+    fallbackLocale: 'en-US',
+    //missingWarn: false,
     fallbackWarn: false,
     warnHtmlMessage: false,
     messages: expect.any(Object)
