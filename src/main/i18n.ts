@@ -32,10 +32,12 @@ export const getLocaleLLM = (app: App): string => {
 
 export const useI18n = (app: App): CallableFunction => {
   const locale = getLocaleUI(app)
-  return createI18n(locale).global.t as CallableFunction
+  const i18n = createI18n(locale)
+  return i18n.global.t as CallableFunction
 }
 
 export const useI18nLlm = (app: App): CallableFunction => {
   const locale = getLocaleLLM(app)
-  return createI18n(locale).global.t as CallableFunction
+  const i18n = createI18n(locale)
+  return i18n.global.t as CallableFunction
 }

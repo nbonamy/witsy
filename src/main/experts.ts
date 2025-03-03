@@ -32,7 +32,7 @@ export const loadExperts = (source: App|string): Expert[] => {
   let updated = false
 
   // i18n migrate label and template
-  const t = createI18n('en').global.t as CallableFunction
+  const t = createI18n('en', { missingWarn: false }).global.t as CallableFunction
   for (const expert of experts) {
     const key = `experts.experts.${expert.id}`
     if (expert.name === t(`${key}.name`)) {

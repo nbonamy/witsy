@@ -2,18 +2,19 @@
 import { I18n, createI18n as _createI18n } from 'vue-i18n'
 import messages from '../../locales/index'
 
-export const createI18n = (locale: string): I18n => {
+export const createI18n = (locale: string, opts?: any): I18n => {
 
   // now do it
   //console.log('Creating i18n', locale)
   return _createI18n({
     legacy: false,
     locale: locale,
-    fallbackLocale: 'en',
-    missingWarn: false, 
+    fallbackLocale: 'en-US',
+    // missingWarn: false, 
     fallbackWarn: false,
     warnHtmlMessage: false,
-    messages
+    messages,
+    ...opts
   })
 
 }
