@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 
-import { Command } from 'types'
+import { Command } from '../types'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'

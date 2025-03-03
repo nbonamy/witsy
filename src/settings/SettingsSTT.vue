@@ -61,6 +61,7 @@
 
 <script setup lang="ts">
 
+import { Configuration } from '../types/config'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -70,7 +71,6 @@ import STTGroq from '../voice/stt-groq'
 import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
-import { Configuration } from 'types/config'
 
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
