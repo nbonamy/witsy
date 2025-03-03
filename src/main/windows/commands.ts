@@ -2,19 +2,16 @@
 import { anyDict } from '../../types/index';
 import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen } from './index';
-import WindowsAutomator from '../../automations/windows';
 
 export let commandPicker: BrowserWindow = null;
 
 const width = 300;
 const height = 320;
-const title = 'Witsy - Command Picker';
 
 export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
   // open a new one
   commandPicker = createWindow({
-    title: title,
     hash: '/commands',
     x: 0, y: 0,
     width: width,
