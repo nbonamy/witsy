@@ -9,7 +9,7 @@ import LlmFactory from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
-import { i18nInstructions } from './i18n'
+import { expertI18n, i18nInstructions } from './i18n'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
@@ -125,9 +125,9 @@ export default class extends Generator {
 
     // add user message
     const userMessage = new Message('user', prompt)
+    userMessage.setExpert(opts.expert, expertI18n(opts.expert, 'prompt'))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
-    userMessage.expert = opts.expert
     userMessage.attach(opts.attachment)
     this.chat.addMessage(userMessage)
 

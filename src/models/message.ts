@@ -58,6 +58,12 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
+  setExpert(expert: Expert, fallbackPrompt: string): void {
+    if (!expert) return
+    this.expert = JSON.parse(JSON.stringify(expert))
+    this.expert.prompt = this.expert.prompt || fallbackPrompt
+  }
+
   setText(text: string): void {
     this.content = text || ''
     this.transient = (text == null)

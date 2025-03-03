@@ -11,7 +11,7 @@
         </div>
         <div class="group">
           <label>{{ t('common.name') }}</label>
-          <input type="text" name="label" v-model="label" @keyup="onChangeText" required />
+          <input type="text" name="label" v-model="label" required @keyup="onChangeText" />
         </div>
         <div class="group">
           <label>{{ t('commands.editor.prompt') }}</label>
@@ -68,12 +68,12 @@ const props = defineProps({
 const icon = ref(null)
 const label = ref(null)
 const template = ref(null)
-const diffLang = ref(false)
-const isEdited = ref(false)
 const action = ref(null)
 const shortcut = ref(null)
 const engine = ref(null)
 const model = ref(null)
+const diffLang = ref(false)
+const isEdited = ref(false)
 
 const models = computed(() => {
   if (!engine.value || engine.value == '') return []
@@ -139,11 +139,11 @@ const onShortcutKeyUp = (event: KeyboardEvent) => {
 }
 
 const close = () => {
+  emit('command-modified')
   document.querySelector<HTMLDialogElement>('#command-editor').close()
 }
 
 const onCancel = () => {
-  emit('command-modified')
   close()
 }
 
@@ -186,7 +186,6 @@ defineExpose({
   show: () => document.querySelector<HTMLDialogElement>('#command-editor').showModal(),
   close,
 })
-
 
 </script>
 

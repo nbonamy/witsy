@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { t, i18nInstructions } from '../services/i18n'
+import { t, i18nInstructions, expertI18n } from '../services/i18n'
 
 // components
 import { FileContents } from 'types'
@@ -468,7 +468,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // add to thead
   const userMessage = new Message('user', finalPrompt)
-  userMessage.expert = expert
+  userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
   if (attachment) {
     attachment.loadContents()
     userMessage.attach(attachment)

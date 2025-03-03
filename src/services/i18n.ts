@@ -44,6 +44,11 @@ const commandI18n = (command: Command, attr: 'label'|'template'): string => {
   return command ? tllm(`commands.commands.${command.id}.${attr}`) : ''
 }
 
+const expertI18n = (expert: any, attr: 'name'|'prompt'): string => {
+  if (!expert?.id) return ''
+  return expert ? tllm(`experts.experts.${expert.id}.${attr}`) : ''
+}
+
 export {
   i18n as default,
   i18nLlm,
@@ -52,5 +57,6 @@ export {
   i18nInstructions,
   localeToLangName,
   hasLocalization,
-  commandI18n
+  commandI18n,
+  expertI18n,
 }

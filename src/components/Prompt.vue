@@ -37,7 +37,7 @@ import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
 import { ref, computed, onMounted, nextTick, watch, Ref } from 'vue'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { expertI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
@@ -161,14 +161,14 @@ const docReposMenuItems = computed(() => {
 
 const expertsMenuItems = computed(() => {
   return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
-    return { label: p.name, action: p.name, icon: BIconStars }
+    return { label: p.name || expertI18n(p, 'name'), action: p.id, icon: BIconStars }
   })
 })
 
 const activeExpertMenuItems = computed(() => {
   return [
-    { label: expert.value.name, icon: BIconStars },
-    { label: expert.value.prompt, disabled: true, wrap: true },
+    { label: expert.value.name || expertI18n(expert.value, 'name'), icon: BIconStars },
+    { label: expert.value.prompt || expertI18n(expert.value, 'prompt'), disabled: true, wrap: true },
     { separator: true },
     { label: t('prompt.expert.clear'), action: 'clear' },
   ];
@@ -560,7 +560,7 @@ const handleExpertClick = (action: string) => {
     disableExpert()
     return
   } else if (action) {
-    setExpert(store.experts.find(p => p.name === action))
+    setExpert(store.experts.find(p => p.id === action))
   }
 }
 

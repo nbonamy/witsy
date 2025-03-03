@@ -95,7 +95,7 @@ export type GenerationResult =
       }
 
       // append sources
-      if (opts.sources && sources && sources.length > 0) {
+      if (opts.docrepo && opts.sources && sources && sources.length > 0) {
 
         // reduce to unique sources based on metadata.id
         const uniqueSourcesMap = new Map();

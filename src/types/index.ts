@@ -39,6 +39,7 @@ export interface Message extends IMessageBase {
   expert?: Expert
   toolCall?: ToolCallInfo
   attachment: Attachment
+  setExpert(expert: Expert, fallbackPrompt: string): void
   setText(text: string): void
   setImage(url: string): void
   setToolCall(toolCall: LlmChunkTool): void
@@ -135,8 +136,8 @@ export type ExternalApp = {
 export type Expert = {
   id: string,
   type: 'system' | 'user',
-  name: string
-  prompt: string
+  name?: string
+  prompt?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
 }
