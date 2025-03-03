@@ -1,5 +1,5 @@
 
-import { anyDict } from 'types/index'
+import { anyDict } from '../types/index'
 import { store } from '../services/store'
 import { i18nInstructions } from '../services/i18n'
 import { saveFileContents } from '../services/download'
