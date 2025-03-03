@@ -21,6 +21,7 @@ const emitEventMock = vi.fn((event, ...args) => {
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
+    expertI18n: vi.fn((expert, attr) => `${expert?.id}.${attr}`),
   }
 })
 
@@ -89,7 +90,7 @@ test('Sends on enter', async () => {
 
 test('Sends with right parameters', async () => {
   wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
-  wrapper.vm.expert = store.experts[0]
+  wrapper.vm.expert = store.experts[2]
   wrapper.vm.docrepo = 'docrepo'
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   expect(prompt.element.value).not.toBe('this is my prompt')
@@ -98,7 +99,7 @@ test('Sends with right parameters', async () => {
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
     attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false },
-    expert: { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
+    expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
   })
   expect(prompt.element.value).toBe('')
@@ -224,8 +225,8 @@ test('Clears expert', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('actor1')
-  expect(menu.find('.item:nth-child(2)').text()).toBe('prompt1')
+  expect(menu.find('.item:nth-child(1)').text()).toBe('uuid1.name')
+  expect(menu.find('.item:nth-child(2)').text()).toBe('uuid1.prompt')
   expect(menu.find('.item:nth-child(3)').text()).toBe('')
   expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.expert.clear')
   await menu.find('.item:nth-child(4)').trigger('click')

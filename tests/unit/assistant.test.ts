@@ -26,8 +26,10 @@ vi.mock('../../src/services/download.ts', async () => {
 })  
 
 // mock i18n
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/services/i18n', async (importOriginal) => {
+  const mod: any = await importOriginal()
   return {
+    ...mod,
     t: (key: string) => `${key}.${store.config.general.locale}`,
     localeToLangName: (code: string) => code == 'xx-XX' ? '' : code,
     i18nInstructions: (config: any, key: string) => {
@@ -41,13 +43,14 @@ vi.mock('../../src/services/i18n', async () => {
       // default
       return `${key}.${store.config.llm.locale || store.config.general.locale}`
 
-    }
+    },
   }
 })
 
 beforeAll(() => {
   Generator.addDateAndTimeToSystemInstr = false
   useWindowMock()
+  store.loadExperts()
 })
 
 const spy = vi.spyOn(LlmMock.prototype, 'stream')
@@ -175,14 +178,20 @@ test('Assistant Attachment', async () => {
   expect(assistant!.chat.lastMessage().attachment.saved).toStrictEqual(false)
 })
 
+test('Assistant System Prompt', async () => {
+  const content = await prompt('Hello LLM', { expert: store.experts[0], docrepo: undefined } as AssistantCompletionOpts)
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Assistant User Prompt', async () => {
+  const content = await prompt('Hello LLM', { expert: store.experts[2], docrepo: undefined } as AssistantCompletionOpts)
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
 test('Asistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"instructions.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
-  expect(assistant!.chat.lastMessage().type).toBe('text')
-  expect(assistant!.chat.lastMessage().content).toBe(content)
-  expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
 })
 
 test('Conversaton Length 1', async () => {

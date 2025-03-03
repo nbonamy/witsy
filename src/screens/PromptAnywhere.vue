@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { i18nInstructions, t } from '../services/i18n'
+import { expertI18n, i18nInstructions, t } from '../services/i18n'
 import { anyDict, ExternalApp } from 'types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
@@ -382,7 +382,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
     // update thread
     const userMessage = new Message('user', finalPrompt)
-    userMessage.expert = expert
+    userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
     if (attachment) {
       attachment.loadContents()
       userMessage.attach(attachment)

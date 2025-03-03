@@ -9,10 +9,9 @@
         </thead>
         <tbody>
           <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
-              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
-          >
+              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd">
             <td class="enabled"><input type="checkbox" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
-            <td class="name">{{ expert.name }}</td>
+            <td class="name">{{ name(expert) }}</td>
             <td class="move">
               <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
               <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
@@ -22,16 +21,16 @@
       </table>
     </div>
     <div class="actions">
-      <button @click.prevent="onNew">{{ t('settings.experts.new') }}</button>
-      <button @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
-      <button @click.prevent="onCopy(selected)" :disabled="!selected">{{ t('settings.experts.copy') }}</button>
-      <button @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
+      <button name="new" @click.prevent="onNew">{{ t('settings.experts.new') }}</button>
+      <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+      <button name="copy" @click.prevent="onCopy(selected)" :disabled="!selected">{{ t('settings.experts.copy') }}</button>
+      <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
       <div class="right">
-        <button @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.experts.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+        <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.experts.more') }} {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-    <ExpertEditor id="expert-editor" :expert="edited" @expert-modified="onExpertModified"/>
+    <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
   </div>
 </template>
 
@@ -41,7 +40,7 @@ import { Expert } from 'types/index'
 import { Ref, ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
+import { expertI18n, t } from '../services/i18n'
 import { newExpert, saveExperts } from '../services/experts'
 import ExpertEditor from '../screens/ExpertEditor.vue'
 import ContextMenu from '../components/ContextMenu.vue'
@@ -50,7 +49,7 @@ import Dialog from '../composables/dialog'
 const experts: Ref<Expert[]> = ref(null)
 const selected: Ref<Expert> = ref(null)
 const edited: Ref<Expert> = ref(null)
-
+const editor = ref(null)
 const moreButton: Ref<HTMLElement> = ref(null)
 const showMenu = ref(false)
 const menuX = ref(0)
@@ -61,10 +60,15 @@ const contextMenuActions = [
   { label: t('settings.experts.import'), action: 'import' },
   { label: t('settings.experts.selectAll'), action: 'select' },
   { label: t('settings.experts.unselectAll'), action: 'unselect' },
-  { label: t('settings.experts.sortAlphabetically'), action: 'sort' },
+  { label: t('settings.experts.sortAlpha'), action: 'sortAlpha' },
+  { label: t('settings.experts.sortState'), action: 'sortEnabled' },
 ]
 
 const visibleExperts = computed(() => experts.value?.filter((expert: Expert) => expert.state != 'deleted'))
+
+const name = (expert: Expert) => {
+  return expert.name || expertI18n(expert, 'name')
+}
 
 const columns = [
   { field: 'enabled', title: '' },
@@ -144,8 +148,23 @@ const handleActionClick = async (action: string) => {
     onImport()
   } else if (action === 'export') {
     onExport()
-  } else if (action === 'sort') {
-    experts.value.sort((a, b) => a.name.localeCompare(b.name))
+  } else if (action === 'sortAlpha') {
+    experts.value.sort((a, b) => {
+      const aName = a.name || expertI18n(a, 'name')
+      const bName = b.name || expertI18n(b, 'name')
+      return aName.localeCompare(bName)
+    })
+    save()
+  } else if (action === 'sortEnabled') {
+    experts.value.sort((a, b) => {
+      if (!b.state && !a.state) {
+        const aName = a.name || expertI18n(a, 'name')
+        const bName = b.name || expertI18n(b, 'name')
+        return aName.localeCompare(bName)
+      } else {
+        return b.state.localeCompare(a.state)
+      }
+    })
     save()
   }
 
@@ -176,15 +195,15 @@ const onSelect = (expert: Expert) => {
 const onNew = () => {
   //selected.value = null
   edited.value =  newExpert()
-  document.querySelector<HTMLDialogElement>('#expert-editor').showModal()
+  editor.value.show()
 }
 
 const onCopy = (expert: Expert) => {
 
   const copy = newExpert()
   copy.id = uuidv4()
-  copy.name = expert.name + ' (' + t('settings.experts.copy') + ')'
-  copy.prompt = expert.prompt
+  copy.name = (expert.name || expertI18n(expert, 'name')) + ' (' + t('settings.experts.copy') + ')'
+  copy.prompt = expert.prompt || expertI18n(expert, 'prompt')
   copy.triggerApps = expert.triggerApps
 
   const index = experts.value.indexOf(expert)
@@ -198,7 +217,7 @@ const onCopy = (expert: Expert) => {
 const onEdit = (expert: Expert) => {
   edited.value = expert
   selected.value = expert
-  document.querySelector<HTMLDialogElement>('#expert-editor').showModal()
+  editor.value.show()
 }
 
 const onDelete = () => {
@@ -228,6 +247,13 @@ const onEnabled = (expert: Expert) => {
 }
 
 const onExpertModified = (payload: Expert) => {
+
+  // cancel
+  if (!payload) {
+    edited.value = null
+    return
+  }
+  
   // new expert?
   let expert = null
   if (payload.id == null) {
@@ -236,7 +262,7 @@ const onExpertModified = (payload: Expert) => {
     expert = newExpert()
     expert.id = uuidv4()
     
-    // dind the index of the currently selected
+    // find the index of the currently selected
     const selectedIndex = experts.value.findIndex(p => p.id === selected.value?.id)
     if (selectedIndex !== -1) {
       experts.value.splice(selectedIndex, 0, expert)
@@ -249,7 +275,6 @@ const onExpertModified = (payload: Expert) => {
 
   // update
   if (expert) {
-    // now update
     expert.name = payload.name
     expert.prompt = payload.prompt
     expert.triggerApps = payload.triggerApps
@@ -257,6 +282,8 @@ const onExpertModified = (payload: Expert) => {
 
   // done
   selected.value = expert
+  editor.value.close()
+  edited.value = null
   save()
 }
 

@@ -14,7 +14,8 @@ HTMLDialogElement.prototype.close = vi.fn()
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
-    commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`)
+    commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
+    expertI18n: vi.fn(() => {}),
   }
 })
 
@@ -64,6 +65,17 @@ test('Renders', async () => {
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
   expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
   expect(tab.findAll('.actions button')).toHaveLength(4)
+
+})
+
+test('Disable items', async () => {
+
+  const tab = await switchToTab(wrapper, commandsIndex)
+  expect(store.commands[0].state).toBe('enabled')
+  await tab.find('.sticky-table-container tr.command:nth-of-type(1) input[type=checkbox]').trigger('click')
+  expect(store.commands[0].state).toBe('disabled')
+  await tab.find('.sticky-table-container tr.command:nth-of-type(1) input[type=checkbox]').trigger('click')
+  expect(store.commands[0].state).toBe('enabled')
 
 })
 
@@ -234,7 +246,7 @@ test('Delete command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
-  await tab.find('.actions button:nth-of-type(3)').trigger('click')
+  await tab.find('.actions button[name=delete]').trigger('click')
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
   expect(store.commands).toHaveLength(41)
 
