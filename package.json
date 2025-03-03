@@ -122,6 +122,7 @@
     "pdf2json": "^3.1.4",
     "plist": "^3.1.0",
     "portfinder": "^1.0.32",
+    "powershell": "^2.3.3",
     "python-shell": "^5.0.0",
     "replicate": "^1.0.1",
     "sweetalert2": "^11.15.1",
