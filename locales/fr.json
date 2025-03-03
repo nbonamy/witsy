@@ -1087,7 +1087,7 @@
     },
     "setlang": "Toujours répondre en {lang} même si le reste de la conversation est dans une autre langue y compris les messages de l'utilisateur.",
     "titling": "Vous êtes un assistant dont la tâche est de trouver le meilleur titre pour la conversation ci-dessous. Le titre doit être composé de quelques mots seulement.",
-    "titling_user": "Donnez un titre à la conversation ci-dessus. Ne renvoyez rien d'autre que le titre. N'entourez pas les réponses de guillemets."
+    "titllingUser": "Donnez un titre à la conversation ci-dessus. Ne renvoyez rien d'autre que le titre. N'entourez pas les réponses de guillemets."
   },
   "main": {
     "chat": {

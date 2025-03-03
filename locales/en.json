@@ -1106,7 +1106,7 @@
     },
     "setlang": "Always respond in {lang} even if the rest of the conversation is in another language including the user's questions.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
-    "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
+    "titllingUser": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
   },
   "main": {
     "chat": {

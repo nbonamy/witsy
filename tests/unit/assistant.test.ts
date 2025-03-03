@@ -150,7 +150,7 @@ test('User-defined instructions', async () => {
   store.config.instructions = {
     default: 'You are a chat assistant',
     titling: 'You are a titling assistant',
-    titling_user: 'Provide a title',
+    titllingUser: 'Provide a title',
     docquery: '{context} / {query}'
   }
   store.config.llm.forceLocale = true

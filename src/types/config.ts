@@ -67,7 +67,7 @@ export type LLMConfig = {
 export type InstructionsConfig = {
   default: string
   titling: string
-  titling_user: string
+  titllingUser: string
   docquery: string
   scratchpad: strDict
 }

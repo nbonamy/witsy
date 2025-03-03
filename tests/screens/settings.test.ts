@@ -235,7 +235,7 @@ test('Settings Advanced', async () => {
     key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
-    'instructions.default', 'instructions.titling', 'instructions.titling_user', 'instructions.docquery',
+    'instructions.default', 'instructions.titling', 'instructions.titllingUser', 'instructions.docquery',
     'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
     'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
     'instructions.scratchpad.simplify', 'instructions.scratchpad.expand', 'instructions.scratchpad.complete',
