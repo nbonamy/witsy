@@ -1,10 +1,10 @@
-
-import fs, { FSWatcher, Stats } from 'fs'
+import fs, { FSWatcher } from 'fs'
+import crypto from 'crypto'
 
 export default class {
 
   filepath: string
-  filestats: Stats
+  fileDigest: string
   callback: CallableFunction
   timeout: NodeJS.Timeout
   watcher: FSWatcher
@@ -26,13 +26,13 @@ export default class {
     // init
     this.timeout = null
     this.filepath = filepath
-    this.filestats = this.stats()
+    this.fileDigest = this.calculateDigest()
 
     // start
     this.watcher = fs.watch(filepath, async () => {
-      const stats = this.stats()
-      if (stats.size !== this.filestats.size || stats.mtimeMs !== this.filestats.mtimeMs) {
-        this.filestats = stats
+      const digest = this.calculateDigest()
+      if (digest !== this.fileDigest) {
+        this.fileDigest = digest
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           this.notify(filepath)
@@ -47,12 +47,12 @@ export default class {
     this.filepath = null
   }
 
-  stats(): Stats {
+  calculateDigest(): string {
     try {
-      return fs.statSync(this.filepath)
+      const fileContent = fs.readFileSync(this.filepath, 'utf8')
+      return crypto.createHash('md5').update(fileContent).digest('hex')
     } catch {
-      //console.error('Error while getting file size', error)
-      return { size: 0, mtimeMs: 0 } as Stats
+      return ''
     }
   }
 
