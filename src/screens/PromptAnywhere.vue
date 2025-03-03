@@ -417,7 +417,7 @@ const saveChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', i18nInstructions(store.config, 'instructions.titling_user'))])
+    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', i18nInstructions(store.config, 'instructions.titllingUser'))])
     chat.value.title = title.content
   }
 
