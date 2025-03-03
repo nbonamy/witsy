@@ -1,7 +1,7 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { t , i18nInstructions, localeToLangName } from './i18n'
+import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
@@ -199,7 +199,7 @@ export type GenerationResult =
     const conversationLength = this.config.llm.conversationLength
     const chatMessages = messages.filter((msg) => msg.role !== 'system')
     const conversation = [
-      new Message('system', this.patchSystemInstructions(messages[0].content)),
+      messages[0],
       ...chatMessages.slice(-conversationLength * 2, -1)
     ]
     for (const message of conversation) {
@@ -210,30 +210,26 @@ export type GenerationResult =
     return conversation
   }
 
-  getSystemInstructions(instructions?: string) {
+  getSystemInstructions(instructions?: string): string {
 
     // default
     let instr = instructions || i18nInstructions(this.config, 'instructions.default')
 
     // forced locale
     if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.forceLocale) {
-      const lang = localeToLangName(this.config.llm.locale)
+      const lang = localeToLangName(getLlmLocale())
       if (lang.length) {
-        instr += ' ' + i18nInstructions(this.config, 'instructions.setlang', { lang })
+        instr += ' ' + i18nInstructions(this.config, 'instructions.setLang', { lang })
       }
     }
 
     // // add date and time
-    // if (Generator.addDateAndTimeToSystemInstr) {
-    //   instr += ' Current date and time is ' + new Date().toLocaleString() + '.'
-    // }
+    if (Generator.addDateAndTimeToSystemInstr) {
+      instr += ' ' + i18nInstructions(this.config, 'instructions.setDate', { date: new Date().toLocaleString() })
+    }
 
     // done
     return instr
-  }
-
-  patchSystemInstructions(instructions: string) {
-    return instructions.replace(/Current date and time is [^.]+/, 'Current date and time is ' + new Date().toLocaleString())
   }
 
 }

@@ -1,7 +1,8 @@
 
 import { anyDict, Command } from '../types/index'
 import { createI18n, hasLocalization } from '../main/i18n.base'
-import { I18n } from 'vue-i18n'
+import { WritableComputedRef } from 'vue'
+import { I18n, Locale } from 'vue-i18n'
 
 let i18n: I18n|null = null
 let i18nLlm: I18n|null = null
@@ -36,6 +37,16 @@ const i18nInstructions = (config: anyDict, key: string, params?: any): string =>
 
 }
 
+const getLlmLocale = (): string => {
+  const i18nLlmLocale = (i18nLlm.global.locale as WritableComputedRef<Locale>)
+  return i18nLlmLocale.value
+}
+
+const setLlmLocale = (locale: string): void => {
+  const i18nLlmLocale = (i18nLlm.global.locale as WritableComputedRef<Locale>)
+  i18nLlmLocale.value = locale
+}
+
 const t: CallableFunction = i18n?.global?.t
 const tllm: CallableFunction = i18nLlm?.global?.t
 
@@ -54,6 +65,8 @@ export {
   i18nLlm,
   t,
   tllm,
+  getLlmLocale,
+  setLlmLocale,
   i18nInstructions,
   localeToLangName,
   hasLocalization,

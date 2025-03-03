@@ -52,6 +52,7 @@ export interface Chat {
   lastModified: number
   engine: string|null
   model: string|null
+  prompt: string|null
   messages: Message[]
   temporary: boolean
   disableTools: boolean

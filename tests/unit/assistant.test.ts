@@ -8,7 +8,6 @@ import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant
 import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
-import Chat from '../../src/models/chat'
 import LlmMock from '../mocks/llm'
 
 // mock config
@@ -126,7 +125,7 @@ test('Asistant language default', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   expect(instructions).toContain('instructions.default.en-US')
-  expect(instructions).not.toContain('instructions.setlang.en-US')
+  expect(instructions).not.toContain('instructions.setLang.en-US')
 })
 
 test('Asistant language override', async () => {
@@ -135,7 +134,7 @@ test('Asistant language override', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   expect(instructions).toContain('instructions.default.fr-FR')
-  expect(instructions).toContain('instructions.setlang.fr-FR')
+  expect(instructions).toContain('instructions.setLang.fr-FR')
 })
 
 test('Asistant language unknown', async () => {
@@ -143,7 +142,7 @@ test('Asistant language unknown', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   expect(instructions).toContain('instructions.default.xx-XX')
-  expect(instructions).not.toContain('instructions.setlang.fr-FR')
+  expect(instructions).not.toContain('instructions.setLang.fr-FR')
 })
 
 test('User-defined instructions', async () => {
@@ -170,7 +169,6 @@ test('Assistant Chat', async () => {
 })
 
 test('Assistant Attachment', async () => {
-  assistant!.setChat(new Chat())
   await assistant!.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
   expect(assistant!.chat.lastMessage().attachment.content).toStrictEqual('image_content')
   expect(assistant!.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
@@ -178,12 +176,12 @@ test('Assistant Attachment', async () => {
   expect(assistant!.chat.lastMessage().attachment.saved).toStrictEqual(false)
 })
 
-test('Assistant System Prompt', async () => {
+test('Assistant System Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[0], docrepo: undefined } as AssistantCompletionOpts)
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
-test('Assistant User Prompt', async () => {
+test('Assistant User Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[2], docrepo: undefined } as AssistantCompletionOpts)
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
@@ -192,6 +190,18 @@ test('Asistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"instructions.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+})
+
+// test('Assistant Locale Override', async () => {
+//   assistant!.chat.locale = 'es-ES'
+//   const content = await prompt('Hello LLM')
+//   expect(content).toBe('[{"role":"system","content":"instructions.default.es-ES instructions.setLang.es-ES"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+// })
+
+test('Assistant prompt override', async () => {
+  assistant!.chat.prompt = 'UserPrompt'
+  const content = await prompt('Hello LLM')
+  expect(content).toBe('[{"role":"system","content":"UserPrompt"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Conversaton Length 1', async () => {

@@ -9,14 +9,13 @@ import LlmFactory from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
-import { expertI18n, i18nInstructions } from './i18n'
+import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   titling?: boolean
   attachment?: Attachment
   expert?: Expert
-  systemInstructions?: string
 }
 
 export default class extends Generator {
@@ -73,6 +72,15 @@ export default class extends Generator {
       return null
     }
 
+    // set llm locale
+    let llmLocale = null
+    const forceLocale = this.config.llm.forceLocale
+    if (this.chat.locale) {
+      llmLocale = getLlmLocale()
+      setLlmLocale(this.chat.locale)
+      this.config.llm.forceLocale = true
+    }
+
     // merge with defaults
     const defaults: AssistantCompletionOpts = {
       titling: true,
@@ -81,7 +89,6 @@ export default class extends Generator {
       docrepo: null,
       expert: null,
       sources: true,
-      //systemInstructions: i18nInstructions(this.config, 'instructions.default'),
       citations: true,
     }
     opts = {...defaults, ...opts }
@@ -93,7 +100,9 @@ export default class extends Generator {
 
     // we need messages
     if (this.chat.messages.length === 0) {
-      this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
+      this.chat.addMessage(new Message('system', this.chat.prompt || this.getSystemInstructions()))
+    } else {
+      this.chat.messages[0].content = this.chat.prompt || this.getSystemInstructions()
     }
 
     // make sure we have the right engine and model
@@ -162,6 +171,12 @@ export default class extends Generator {
     if (opts.titling && !this.chat.hasTitle()) {
       beforeTitleCallback?.call(null)
       this.chat.title = await this.getTitle() || this.chat.title
+    }
+
+    // restore llm locale
+    if (llmLocale) {
+      setLlmLocale(llmLocale)
+      this.config.llm.forceLocale = forceLocale
     }
   
   }

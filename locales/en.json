@@ -1104,7 +1104,8 @@
       "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
       "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT."
     },
-    "setlang": "Always respond in {lang} even if the rest of the conversation is in another language including the user's questions.",
+    "setDate": "Current date and time is {date}",
+    "setLang": "Always respond in {lang} even if the rest of the conversation is in another language including the user's questions.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
     "titllingUser": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
   },
@@ -1234,11 +1235,15 @@
       }
     },
     "extendedThinking": "Extended Thinking",
+    "locale": "Chat Language",
+    "localeDefault": "🤖 Default language",
     "maxCompletionTokens": "Max Completion Tokens",
     "placeholder": {
       "defaultModelValue": "Default model value when empty"
     },
     "plugins": "Plugins",
+    "prompt": "Prompt",
+    "promptPlaceholder": "Leave empty to use default prompt",
     "reasoningEffort": "Reasoning Effort",
     "temperature": "Temperature [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 20]",
@@ -1329,7 +1334,7 @@
         "scratchpad_takeaways": "Scratchpad - Takeaways",
         "scratchpad_title": "Scratchpad - Title",
         "titling": "Chat title - Instructions",
-        "titling_user": "Chat title - Prompt",
+        "titllingUser": "Chat title - Prompt",
         "video_plugin": "Video Plugin - Description (1024 characters max)"
       },
       "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
