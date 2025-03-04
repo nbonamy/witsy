@@ -15,7 +15,7 @@
 import { t, i18nInstructions, expertI18n } from '../services/i18n'
 
 // components
-import { FileContents } from 'types'
+import { FileContents } from '../types'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'

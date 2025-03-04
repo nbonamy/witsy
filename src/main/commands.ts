@@ -1,6 +1,7 @@
 import { Command } from 'types/index'
-import { App } from 'electron'
+import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
+import { getLocaleMessages } from './i18n'
 import defaultCommands from '../../defaults/commands.json'
 import * as file from './file'
 import path from 'path'
@@ -31,7 +32,7 @@ export const loadCommands = (source: App|string): Command[] => {
   let updated = false
 
   // i18n migrate label and template
-  const t = createI18n('en', { missingWarn: false }).global.t as CallableFunction
+  const t = createI18n(getLocaleMessages(app), 'en', { missingWarn: false }).global.t as CallableFunction
   for (const command of commands) {
     const key = `commands.commands.${command.id}`
     if (command.label === t(`${key}.label`)) {

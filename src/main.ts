@@ -312,6 +312,10 @@ ipcMain.on('config-get-locale-llm', (event) => {
   event.returnValue = i18n.getLocaleLLM(app);
 });
 
+ipcMain.on('config-get-i18n-messages', (event) => {
+  event.returnValue = i18n.getLocaleMessages(app);
+});
+
 ipcMain.on('config-load', (event) => {
   event.returnValue = JSON.stringify(config.loadSettings(app));
 });

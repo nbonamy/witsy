@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 
-import { Expert } from 'types/index'
+import { Expert } from '../types/index'
 import { Ref, ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'

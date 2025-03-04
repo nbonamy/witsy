@@ -7,8 +7,8 @@ import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
 import { McpServer, McpStatus } from './mcp'
 
-export type strDict = { [key: string]: string }
-export type anyDict = { [key: string]: any }
+export type strDict = Record<string, string>
+export type anyDict = Record<string, any>
 
 export interface Attachment extends IAttachmentBase {
   url: string
@@ -219,6 +219,7 @@ declare global {
       config: {
         localeUI(): string
         localeLLM(): string
+        getI18nMessages(): anyDict
         load(): Configuration
         save(config: Configuration): void
       }
