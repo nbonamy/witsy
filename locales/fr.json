@@ -1611,11 +1611,16 @@
     "conversation": {
       "title": "Découvrez les options de conversation en faisant un clic droit sur l'icône du microphone dans la fenêtre de chat."
     },
+    "doNotShowAgain": "Ne plus afficher",
     "favoriteModels": {
       "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
     },
     "folderList": {
       "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."
+    },
+    "pluginsDisabled": {
+      "text": "Ce modèle ne prend pas en charge les plugins. Ils ont été désactivés automatiquement afin que vous puissiez continuer votre conversation.",
+      "title": "Les plugins ont été désactivés."
     },
     "realtime": {
       "title": "Le chat en temps réel peut rapidement devenir coûteux. Le coût estimé fourni n'est qu'une estimation et peut ne pas être correct. Cliquez sur le blob pour démarrer et arrêter la discussion !"
