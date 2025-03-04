@@ -1,0 +1,31 @@
+{
+  "name": "autolib",
+  "version": "1.0.0",
+  "description": "Witsy native automation library",
+  "module": "true",
+  "main": "index.js",
+  "scripts": {
+    "install": "npx node-gyp-build",
+    "prebuild": "npx prebuildify --napi",
+    "build": "node-gyp rebuild",
+    "test": "mocha test/test.js"
+  },
+  "devDependencies": {
+    "mocha": "^11.1.0",
+    "node-gyp": "^8.0.0",
+    "node-gyp-build": "^4.8.4",
+    "prebuildify": "^6.0.1"
+  },
+  "keywords": [
+    "node",
+    "native",
+    "witsy",
+    "automation",
+    "keyboard"
+  ],
+  "author": {
+    "name": "Nicolas Bonamy",
+    "email": "nicolas@bonamy.fr"
+  },
+  "license": "Apache-2.0"
+}

@@ -89,6 +89,7 @@
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@nut-tree-fork/nut-js": "^4.2.2",
     "applescript": "^1.0.0",
+    "autolib": "file:autolib",
     "bootstrap-icons-vue": "^1.11.3",
     "compute-cosine-similarity": "^1.1.0",
     "cross-env": "^7.0.3",

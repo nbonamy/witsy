@@ -1,6 +1,7 @@
 
 import { Application } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
+import AutolibAutomator from './autolib';
 import PowerShell from 'powershell'
 import NutAutomator from './nut';
 
@@ -124,9 +125,13 @@ public class KeySender
 
 export default class extends NutAutomator {
 
+  autolib: AutolibAutomator;
+
   constructor() {
     super();
     this.setup();
+    this.autolib = new AutolibAutomator();
+    this.autolib.setup();
   }
 
   async getForemostApp(): Promise<Application|null> {
@@ -163,32 +168,41 @@ export default class extends NutAutomator {
 
     try {
 
-      // this should work on all keyboards
-      await this.sendControlKey('C')
-    
+      if (!this.autolib.setup()) throw new Error('autolib not loaded');
+      await this.autolib.sendCtrlKey('C');
+
     } catch {
 
       try {
-        
-        // nut is faster but not always available
-        if (!await this.setup()) throw new Error('nutjs not loaded');
-        await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
-        await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
 
+        // this should work on all keyboards
+        await this.sendControlKey('C')
+      
       } catch {
 
-        // fallback to vbs
-        const script = `
-          Set WshShell = WScript.CreateObject("WScript.Shell")
-          WshShell.SendKeys "^c"
-          WScript.Sleep 20
-      `
+        try {
+          
+          // nut is faster but not always available
+          if (!await this.setup()) throw new Error('nutjs not loaded');
+          await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
+          await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
 
-        // run it
-        await runVbs({ vbs: script }) 
+        } catch {
+
+          // fallback to vbs
+          const script = `
+            Set WshShell = WScript.CreateObject("WScript.Shell")
+            WshShell.SendKeys "^c"
+            WScript.Sleep 20
+          `
+
+          // run it
+          await runVbs({ vbs: script }) 
+
+        }
 
       }
-
+    
     }
   
   }
@@ -197,29 +211,38 @@ export default class extends NutAutomator {
 
     try {
 
-      // this should work on all keyboards
-      await this.sendControlKey('V')
-    
+      if (!this.autolib.setup()) throw new Error('autolib not loaded');
+      await this.autolib.sendCtrlKey('V');
+
     } catch {
 
       try {
-        
-        // nut is faster but not always available
-        if (!await this.setup()) throw new Error('nutjs not loaded');
-        await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.V);
-        await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.V);
 
+        // this should work on all keyboards
+        await this.sendControlKey('V')
+      
       } catch {
 
-        // fallback to vbs
-        const script = `
-          Set WshShell = WScript.CreateObject("WScript.Shell")
-          WshShell.SendKeys "^v"
-          WScript.Sleep 20
-      `
+        try {
+          
+          // nut is faster but not always available
+          if (!await this.setup()) throw new Error('nutjs not loaded');
+          await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.V);
+          await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.V);
 
-        // run it
-        await runVbs({ vbs: script }) 
+        } catch {
+
+          // fallback to vbs
+          const script = `
+            Set WshShell = WScript.CreateObject("WScript.Shell")
+            WshShell.SendKeys "^v"
+            WScript.Sleep 20
+        `
+
+          // run it
+          await runVbs({ vbs: script }) 
+
+        }
 
       }
 
