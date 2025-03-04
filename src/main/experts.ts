@@ -1,7 +1,8 @@
 
 import { Expert } from 'types/index'
-import { App } from 'electron'
+import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
+import { getLocaleMessages } from './i18n'
 import defaultExperts from '../../defaults/experts.json'
 import * as file from './file'
 import path from 'path'
@@ -32,7 +33,7 @@ export const loadExperts = (source: App|string): Expert[] => {
   let updated = false
 
   // i18n migrate label and template
-  const t = createI18n('en', { missingWarn: false }).global.t as CallableFunction
+  const t = createI18n(getLocaleMessages(app), 'en', { missingWarn: false }).global.t as CallableFunction
   for (const expert of experts) {
     const key = `experts.experts.${expert.id}`
     if (expert.name === t(`${key}.name`)) {

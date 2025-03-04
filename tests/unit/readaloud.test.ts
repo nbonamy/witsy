@@ -13,6 +13,7 @@ vi.mock('electron', async() => {
   Notification.prototype.show = vi.fn();
   return {
     app: {
+      getPath: vi.fn(() => ''),
       getLocale: vi.fn(() => 'en-US'),
     },
     Notification

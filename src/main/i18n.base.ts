@@ -1,8 +1,8 @@
 
+import { anyDict } from '../types/index'
 import { I18n, createI18n as _createI18n } from 'vue-i18n'
-import messages from '../../locales/index'
 
-export const createI18n = (locale: string, opts?: any): I18n => {
+export const createI18n = (messages: anyDict, locale: string, opts?: any): I18n => {
 
   // now do it
   //console.log('Creating i18n', locale)
@@ -10,7 +10,7 @@ export const createI18n = (locale: string, opts?: any): I18n => {
     legacy: false,
     locale: locale,
     fallbackLocale: 'en-US',
-    // missingWarn: false, 
+    missingWarn: (typeof(process) === 'undefined') ? true : process.env.TEST ? false : true,
     fallbackWarn: false,
     warnHtmlMessage: false,
     messages,
@@ -19,6 +19,6 @@ export const createI18n = (locale: string, opts?: any): I18n => {
 
 }
 
-export const hasLocalization = (locale: string): boolean => {
+export const hasLocalization = (messages: anyDict, locale: string): boolean => {
   return Object.keys(messages).includes(locale.substring(0, 2))
 }

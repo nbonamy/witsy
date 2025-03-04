@@ -7,11 +7,7 @@
     </div>
     <div class="group localeUI">
       <label>{{ t('settings.general.localeUI') }}</label>
-      <select v-model="localeUI" @change="save">
-        <option value="">{{ t('common.language.system') }}</option>
-        <option value="en-US">🇬🇧 English</option>
-        <option value="fr-FR">🇫🇷 Français</option>
-      </select>
+      <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
     </div>
     <div class="group localeLLM">
       <label>{{ t('settings.general.localeLLM') }}</label>
@@ -53,6 +49,7 @@ import LangSelect from '../components/LangSelect.vue'
 
 const engine = ref(null)
 const model = ref(null)
+const locales = ref([])
 const localeUI = ref(null)
 const localeLLM = ref(null)
 const isLocalized = ref(false)
@@ -75,6 +72,7 @@ const models = computed(() => {
 const load = () => {
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
+  locales.value = Object.keys(window.api.config.getI18nMessages())
   localeUI.value = store.config.general.locale
   localeLLM.value = store.config.llm.locale
   forceLocale.value = store.config.llm.forceLocale
@@ -101,7 +99,7 @@ const onChangeModel = () => {
 
 const onChangeLocaleLLM = () => {
   save()
-  isLocalized.value = hasLocalization(window.api.config.localeLLM())
+  isLocalized.value = hasLocalization(window.api.config.getI18nMessages(), window.api.config.localeLLM())
   if (!isLocalized.value) {
     forceLocale.value = true
     save()

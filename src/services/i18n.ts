@@ -9,12 +9,14 @@ let i18nLlm: I18n|null = null
 
 if (!i18n) {
   const locale = window.api?.config?.localeUI() || 'en-US'
-  i18n = createI18n(locale)
+  const messages = window.api?.config?.getI18nMessages()
+  i18n = createI18n(messages, locale)
 }
 
 if (!i18nLlm) {
   const locale = window.api?.config?.localeLLM() || 'en-US'
-  i18nLlm = createI18n(locale)
+  const messages = window.api?.config?.getI18nMessages()
+  i18nLlm = createI18n(messages, locale)
 }
 
 const localeToLangName = (locale: string): string => {
