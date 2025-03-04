@@ -5,7 +5,9 @@ import Dialog from './dialog'
 export type TipId = 
   'engineSelector' | 'modelSelector' | 'conversation' |
   'computerUse' | 'realtime' | 'folderList' |
-  'favoriteModels'
+  'favoriteModels' | 'pluginsDisabled'
+
+type TipHandler = () => Promise<boolean>
 
 class TipsManager {
 
@@ -44,19 +46,20 @@ class TipsManager {
 
   }
 
-  showTip = (tip: TipId, anyway: boolean = false) => {
+  showTip = async (tip: TipId, anyway: boolean = false) => {
 
     if (!anyway && !this.isTipAvailable(tip)) {
       return
     }
 
     // callbacks
-    const callbacks: { [key: string]: CallableFunction } = {
+    const callbacks: Record<string, TipHandler> = {
       'conversation': this.showConversationTip,
       'computerUse': this.showComputerUseWarning,
       'realtime': this.showRealtimeTip,
       'folderList': this.showFolderListTip,
       'favoriteModels': this.showFavoriteModelsTip,
+      'pluginsDisabled': this.showPluginsDisabledTip,
     }
 
     // get the callback
@@ -67,40 +70,56 @@ class TipsManager {
     }
 
     // call and done
-    this.setTipShown(tip)
-    callback()
+    if (await callback()) {
+      this.setTipShown(tip)
+    }
 
   }
 
-  showConversationTip = () => {
-    Dialog.show({
+  showConversationTip = async () => {
+    await Dialog.show({
       title: t('tips.conversation.title'),
     })
+    return true
   }
 
-  showComputerUseWarning = () => {
-    Dialog.show({
+  showComputerUseWarning = async () => {
+    await Dialog.show({
       title: t('tips.computerUse.title'),
       text: t('tips.computerUse.text'),
     })
+    return true
   }
 
-  showRealtimeTip = () => {
-    Dialog.show({
+  showRealtimeTip = async () => {
+    await Dialog.show({
       title: t('tips.realtime.title'),
     })
+    return true
   }
   
-  showFolderListTip = () => {
-    Dialog.show({
+  showFolderListTip = async () => {
+    await Dialog.show({
       title: t('tips.folderList.title'),
     })
+    return true
   }
 
-  showFavoriteModelsTip = () => {
-    Dialog.show({
+  showFavoriteModelsTip = async () => {
+    await Dialog.show({
       title: t('tips.favoriteModels.title'),
     })
+    return true
+  }
+
+  showPluginsDisabledTip = async () => {
+    const response = await Dialog.show({
+      title: t('tips.pluginsDisabled.title'),
+      text: t('tips.pluginsDisabled.text'),
+      input: 'checkbox',
+      inputLabel: t('tips.doNotShowAgain'),
+    })
+    return response.value
   }
 
 }
