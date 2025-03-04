@@ -23,7 +23,7 @@ import ChatArea from '../components/ChatArea.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import DocRepos from './DocRepos.vue'
 import Settings from './Settings.vue'
-import Assistant from '../services/assistant'
+import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
@@ -424,8 +424,12 @@ const onSendPrompt = async (params: SendPromptParams) => {
     expert: expert || null,
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
-  }, () => {
-    store.saveHistory()
+  }, async (event: GenerationEvent) => {
+    if (event === 'plugins_disabled') {
+      tipsManager.showTip('pluginsDisabled')
+    } else if (event === 'before_title') {
+      store.saveHistory()
+    }
   })
 
   // save

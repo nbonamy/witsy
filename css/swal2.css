@@ -83,7 +83,7 @@ div:where(.swal2-container) h2:where(.swal2-title) {
 
 div:where(.swal2-container) .swal2-html-container {
   text-align: center;
-  color: var(--window-bg-color);
+  color: var(--text-color);
   font-size: 9pt;
   line-height: 150%;
 }
@@ -113,6 +113,16 @@ div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
 div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-select {
   height: auto;
   padding: 2px;
+}
+
+div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-checkbox {
+  background-color: transparent;
+  color: var(--control-text-color) !important;
+  font-size: 9pt;
+  input {
+    outline: none;
+    margin-right: 8px;
+  }
 }
 
 div:where(.swal2-container) div:where(.swal2-actions) {

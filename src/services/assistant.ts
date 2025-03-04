@@ -11,6 +11,10 @@ import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
 import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
 
+export type GenerationEvent = 'plugins_disabled' | 'before_title'
+
+export type GenerationCallback = (event: GenerationEvent) => void
+
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   titling?: boolean
@@ -64,7 +68,7 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, beforeTitleCallback?: () => void): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, generationCallback?: GenerationCallback): Promise<void> {
 
     // check
     prompt = prompt.trim()
@@ -164,12 +168,13 @@ export default class extends Generator {
 
     // check if generator disabled plugins
     if (hadPlugins && this.llm.plugins.length === 0) {
+      generationCallback?.call(null, 'plugins_disabled')
       this.chat.disableTools = true
     }
 
     // check if we need to update title
     if (opts.titling && !this.chat.hasTitle()) {
-      beforeTitleCallback?.call(null)
+      generationCallback?.call(null, 'before_title')
       this.chat.title = await this.getTitle() || this.chat.title
     }
 
