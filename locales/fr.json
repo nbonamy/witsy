@@ -1196,6 +1196,7 @@
     "progress": "Téléchargement du modèle..."
   },
   "modelSettings": {
+    "advancedSettings": "Paramètres avancés",
     "contextWindowSize": "Taille de la fenêtre de contexte",
     "createNewModel": "Créer un nouveau modèle",
     "createOllama": {
