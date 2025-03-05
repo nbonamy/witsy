@@ -168,6 +168,7 @@ export default class extends NutAutomator {
 
     try {
 
+      throw new Error('autolib not working yet');
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('C');
 
@@ -211,6 +212,7 @@ export default class extends NutAutomator {
 
     try {
 
+      throw new Error('autolib not working yet');
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('V');
 
