@@ -168,6 +168,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       throw new Error('autolib not working yet');
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('C');
@@ -176,6 +177,7 @@ export default class extends NutAutomator {
 
       try {
 
+        // powershell
         // this should work on all keyboards
         await this.sendControlKey('C')
       
@@ -212,6 +214,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       throw new Error('autolib not working yet');
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('V');
@@ -220,6 +223,7 @@ export default class extends NutAutomator {
 
       try {
 
+        // powershell
         // this should work on all keyboards
         await this.sendControlKey('V')
       

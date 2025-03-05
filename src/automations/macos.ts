@@ -140,6 +140,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('C');
 
@@ -147,6 +148,7 @@ export default class extends NutAutomator {
 
       try {
 
+        // nut (custom)
         //await super.copySelectedText();
         if (!await this.setup()) throw new Error('nutjs not loaded');
         await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
@@ -154,6 +156,7 @@ export default class extends NutAutomator {
 
       } catch {
 
+        // applescript
         const script = `
           repeat 20 times
             try
@@ -180,6 +183,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       if (!this.autolib.setup()) throw new Error('autolib not loaded');
       await this.autolib.sendCtrlKey('V');
 
@@ -187,10 +191,12 @@ export default class extends NutAutomator {
 
       try {
 
+        // nut
         await super.pasteText();
 
       } catch {
 
+        // applescript
         const script = `
           tell application "System Events" to keystroke "v" using command down
           delay 0.1
