@@ -10,35 +10,52 @@
 uint32_t SendCtrlKey(const char *key)
 {
 #ifdef _WIN32
+  
   BYTE keyCode = 0;
-
-  if (strcmp(key, "C") == 0)
-  {
+  if (strcmp(key, "C") == 0) {
     keyCode = 0x43; // VK_C
-  }
-  else if (strcmp(key, "V") == 0)
-  {
+  } else if (strcmp(key, "V") == 0) {
     keyCode = 0x56; // VK_V
-  }
-  else
-  {
+  } else {
     return 0; // Error: Unsupported key
   }
 
+  WORD scanCtrl = MapVirtualKey(VK_CONTROL, 0);
+  WORD scanKey = MapVirtualKey(keyCode, 0);
+
   INPUT inputs[4] = {0};
+
+  // key down control
   inputs[0].type = INPUT_KEYBOARD;
   inputs[0].ki.wVk = VK_CONTROL;
+  inputs[0].ki.wScan = scanCtrl;
+  inputs[0].ki.dwFlags = 0;
+  inputs[0].ki.time = 0;
+  inputs[0].ki.dwExtraInfo = 0;
 
+  // key down key
   inputs[1].type = INPUT_KEYBOARD;
   inputs[1].ki.wVk = keyCode;
+  inputs[1].ki.wScan = scanKey;
+  inputs[1].ki.dwFlags = 0;
+  inputs[1].ki.time = 0;
+  inputs[1].ki.dwExtraInfo = 0;
 
+  // key up control
   inputs[2].type = INPUT_KEYBOARD;
-  inputs[2].ki.wVk = keyCode;
+  inputs[2].ki.wVk = VK_CONTROL;
+  inputs[2].ki.wScan = scanCtrl;
   inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+  inputs[2].ki.time = 0;
+  inputs[2].ki.dwExtraInfo = 0;
 
+  // key up key
   inputs[3].type = INPUT_KEYBOARD;
-  inputs[3].ki.wVk = VK_CONTROL;
+  inputs[3].ki.wVk = keyCode;
+  inputs[3].ki.wScan = scanKey;
   inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+  inputs[3].ki.time = 0;
+  inputs[3].ki.dwExtraInfo = 0;
 
   UINT numSent = SendInput(4, inputs, sizeof(INPUT));
   return numSent == 4 ? 1 : 0;
