@@ -41,8 +41,8 @@
           <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
-      <div class="toggle">
-        <span @click="showAdvanced = !showAdvanced">
+      <div class="toggle" @click="showAdvanced = !showAdvanced">
+        <span>
           <span v-if="showAdvanced" class="expand">▼</span>
           <span v-else class="expand">▶</span>
           {{ t('modelSettings.advancedSettings') }}
