@@ -220,6 +220,20 @@ test('Model settings update chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
 
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
+  expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').exists()).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').exists()).toBe(true)
+
+  await wrapper.find('.model-settings .toggle').trigger('click')
+
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('openai')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
@@ -275,6 +289,7 @@ test('Model settings defaults', async () => {
 
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
+  await wrapper.find('.model-settings .toggle').trigger('click')
 
   // initial state: all disabled
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(true)
