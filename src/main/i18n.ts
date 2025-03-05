@@ -5,6 +5,7 @@ import { createI18n } from './i18n.base'
 import { loadSettings } from './config'
 import en from '../../locales/en.json'
 import fr from '../../locales/fr.json'
+import pt from '../../locales/pt.json'
 import path from 'path'
 import fs from 'fs'
 
@@ -58,7 +59,7 @@ export const getLocaleMessages = (app: App): anyDict => {
   
   // standard messages
   messages = {
-    en, fr
+    en, fr, pt
   }
 
   const userDataPath = app.getPath('userData')
