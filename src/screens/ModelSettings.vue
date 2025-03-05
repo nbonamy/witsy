@@ -41,23 +41,30 @@
           <option value="high">{{ t('common.high') }}</option>
         </select>
       </div>
-      <div class="group" v-if="isContextWindowSupported">
+      <div class="toggle">
+        <span @click="showAdvanced = !showAdvanced">
+          <span v-if="showAdvanced" class="expand">▼</span>
+          <span v-else class="expand">▶</span>
+          {{ t('modelSettings.advancedSettings') }}
+        </span>
+      </div>
+      <div class="group" v-if="showAdvanced && isContextWindowSupported">
         <label>{{ t('modelSettings.contextWindowSize') }}</label>
         <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="isMaxTokensSupported">
+      <div class="group" v-if="showAdvanced && isMaxTokensSupported">
         <label>{{ t('modelSettings.maxCompletionTokens') }}</label>
         <input type="text" name="maxTokens" v-model="maxTokens" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="isTemperatureSupported">
+      <div class="group" v-if="showAdvanced && isTemperatureSupported">
         <label>{{ t('modelSettings.temperature') }}</label>
         <input type="text" name="temperature" v-model="temperature" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="isTopKSupported">
+      <div class="group" v-if="showAdvanced && isTopKSupported">
         <label>{{ t('modelSettings.topK') }}</label>
         <input type="text" name="top_k" v-model="top_k" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="isTopPSupported">
+      <div class="group" v-if="showAdvanced && isTopPSupported">
         <label>{{ t('modelSettings.topP') }}</label>
         <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
       </div>
@@ -98,6 +105,7 @@ const model: Ref<string> = ref(null)
 const disableTools: Ref<boolean> = ref(false)
 const locale = ref('')
 const prompt = ref('')
+const showAdvanced = ref(false)
 const contextWindowSize: Ref<number> = ref(undefined)
 const maxTokens: Ref<number> = ref(undefined)
 const temperature: Ref<number> = ref(undefined)
@@ -433,6 +441,13 @@ const onCreateOllamaModel = async () => {
     overflow-x: hidden;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
     flex: 1;
+
+    .toggle {
+      align-self: flex-start;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
 
     .subgroup {
       white-space: nowrap;

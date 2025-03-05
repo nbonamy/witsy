@@ -1215,6 +1215,7 @@
     "progress": "Pulling model..."
   },
   "modelSettings": {
+    "advancedSettings": "Advanced settings",
     "contextWindowSize": "Context Window Size",
     "createNewModel": "Create new model",
     "createOllama": {

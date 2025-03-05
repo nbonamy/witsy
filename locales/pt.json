@@ -1214,6 +1214,7 @@
     "progress": "Puxando modelo..."
   },
   "modelSettings": {
+    "advancedSettings": "Configurações avançadas",
     "contextWindowSize": "Tamanho da Janela de Contexto",
     "createNewModel": "Criar novo modelo",
     "createOllama": {
