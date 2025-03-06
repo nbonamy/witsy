@@ -281,7 +281,7 @@ const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     if (prompt.value?.getPrompt()?.length) {
       prompt.value.setPrompt('')
-    } else {
+    } else if (!prompt.value.isContextMenuOpen()) {
       onClose()
     }
   }
