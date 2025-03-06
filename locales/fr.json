@@ -1203,6 +1203,7 @@
       "title": "Entrez un nom pour le nouveau modèle"
     },
     "defaultForModel": "Valeurs par défaut pour ce modèle",
+    "defaultModelValue": "Valeur par défaut du modèle si vide",
     "errors": {
       "invalid": {
         "mustBeBetween": "Doit être entre {min} et {max}",
@@ -1220,9 +1221,6 @@
     "locale": "Langue de la conversation",
     "localeDefault": "🤖 Langue par défaut",
     "maxCompletionTokens": "Tokens maximum de complétion",
-    "placeholder": {
-      "defaultModelValue": "Valeur par défaut du modèle si vide"
-    },
     "plugins": "Plugins",
     "prompt": "Prompt",
     "promptPlaceholder": "Laisser vide pour utiliser le prompt par défault",

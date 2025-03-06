@@ -1222,6 +1222,7 @@
       "title": "Enter new model name"
     },
     "defaultForModel": "Defaults for this model",
+    "defaultModelValue": "Default model value when empty",
     "errors": {
       "invalid": {
         "mustBeBetween": "Must be between {min} and {max}",
@@ -1239,9 +1240,6 @@
     "locale": "Chat Language",
     "localeDefault": "🤖 Default language",
     "maxCompletionTokens": "Max Completion Tokens",
-    "placeholder": {
-      "defaultModelValue": "Default model value when empty"
-    },
     "plugins": "Plugins",
     "prompt": "Prompt",
     "promptPlaceholder": "Leave empty to use default prompt",

@@ -50,23 +50,23 @@
       </div>
       <div class="group" v-if="showAdvanced && isContextWindowSupported">
         <label>{{ t('modelSettings.contextWindowSize') }}</label>
-        <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
+        <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="showAdvanced && isMaxTokensSupported">
         <label>{{ t('modelSettings.maxCompletionTokens') }}</label>
-        <input type="text" name="maxTokens" v-model="maxTokens" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
+        <input type="text" name="maxTokens" v-model="maxTokens" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="showAdvanced && isTemperatureSupported">
         <label>{{ t('modelSettings.temperature') }}</label>
-        <input type="text" name="temperature" v-model="temperature" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
+        <input type="text" name="temperature" v-model="temperature" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="showAdvanced && isTopKSupported">
         <label>{{ t('modelSettings.topK') }}</label>
-        <input type="text" name="top_k" v-model="top_k" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
+        <input type="text" name="top_k" v-model="top_k" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
       <div class="group" v-if="showAdvanced && isTopPSupported">
         <label>{{ t('modelSettings.topP') }}</label>
-        <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.placeholder.defaultModelValue')" @change="save"/>
+        <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.defaultForModel') }}</label>
