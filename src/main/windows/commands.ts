@@ -34,7 +34,6 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
   commandPicker.on('show', () => {
     app.focus({ steal: true });
     commandPicker.moveTop();
-    //commandPicker.focus();
     commandPicker.focusOnWebView();
   });
 
