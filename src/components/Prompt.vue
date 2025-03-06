@@ -277,6 +277,9 @@ const onSetPrompt = (message: Message) => {
 
 const setExpert = (xpert: Expert) => {
   expert.value = xpert
+  if (prompt.value == '@') {
+    prompt.value = ''
+  }
   nextTick(() => {
     input.value.focus()
   })
@@ -667,6 +670,7 @@ const onKeyDown = (event: KeyboardEvent) => {
     if (prompt.value === '') {
       onClickExperts()
       event.preventDefault()
+      prompt.value = '@'
       return false
     }
   } else if (event.key === 'Backspace') {
