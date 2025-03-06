@@ -126,6 +126,7 @@ export default class extends NutAutomator {
       // autolib
       await autolib.sendKey('Down', false);
       await autolib.sendKey('Enter', false);
+      await autolib.sendKey('Enter', false);
 
     } catch (err) {
 
