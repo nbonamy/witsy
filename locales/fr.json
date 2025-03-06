@@ -1370,6 +1370,7 @@
       "deepseek": {
         "aboutModels": "A propos des modèles DeepSeek"
       },
+      "disableTools": "Désactiver les plugins pour tous les modèles",
       "getApiKey": "Obtenir votre clé API",
       "google": {
         "aboutModels": "A propos des modèles Google",

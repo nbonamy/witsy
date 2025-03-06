@@ -1104,9 +1104,10 @@
       "takeaways": "Escreva uma lista (usando traços) de principais conclusões do EXTRATO. Mantenha entre 3 e 5 conclusões para um EXTRATO curto, até 10 para um EXTRATO mais longo.",
       "title": "Sugira um título para o EXTRATO. Retorne o título seguido do texto completo do EXTRATO."
     },
-    "setlang": "Sempre responda em {lang} mesmo que o resto da conversa esteja em outro idioma, incluindo as perguntas do usuário.",
+    "setDate": "A data e hora atual é {date}",
+    "setLang": "Sempre responda em {lang} mesmo que o resto da conversa esteja em outro idioma, incluindo as perguntas do usuário.",
     "titling": "Você é um assistente cuja tarefa é encontrar o melhor título para a conversa abaixo. O título deve ter apenas algumas palavras.",
-    "titling_user": "Forneça um título para a conversa acima. Não retorne nada além do título. Não coloque as respostas entre aspas."
+    "titlingUser": "Forneça um título para a conversa acima. Não retorne nada além do título. Não coloque as respostas entre aspas."
   },
   "main": {
     "chat": {
@@ -1221,6 +1222,7 @@
       "title": "Insira o novo nome do modelo"
     },
     "defaultForModel": "Padrões para este modelo",
+    "defaultModelValue": "Valor padrão do modelo quando vazio",
     "errors": {
       "invalid": {
         "mustBeBetween": "Deve estar entre {min} e {max}",
@@ -1235,11 +1237,12 @@
       }
     },
     "extendedThinking": "Pensamento Extendido",
+    "locale": "Idioma do Chat",
+    "localeDefault": "🤖 Idioma Padrão",
     "maxCompletionTokens": "Número máximo de tokens",
-    "placeholder": {
-      "defaultModelValue": "Valor padrão do modelo quando vazio"
-    },
     "plugins": "Plugins",
+    "prompt": "Prompt",
+    "promptPlaceholder": "Deixe vazio para usar o prompt padrão",
     "reasoningEffort": "Esforço de Raciocínio",
     "temperature": "Temperatura [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 20]",
@@ -1330,7 +1333,7 @@
         "scratchpad_takeaways": "Scratchpad - Conclusões",
         "scratchpad_title": "Scratchpad - Título",
         "titling": "Título do chat - Instruções",
-        "titling_user": "Título do chat - Prompt",
+        "titlingUser": "Título do chat - Prompt",
         "video_plugin": "Plugin de Vídeo - Descrição (máximo de 1024 caracteres)"
       },
       "overridingHelp": "Prompts ou instruções personalizadas são aplicáveis para todos os idiomas.",
@@ -1397,6 +1400,7 @@
       "deepseek": {
         "aboutModels": "Mais sobre os modelos DeepSeek"
       },
+      "disableTools": "Desativar plugins para todos os modelos",
       "getApiKey": "Obtenha sua chave de API",
       "google": {
         "aboutModels": "Mais sobre os modelos Google",
@@ -1637,11 +1641,16 @@
     "conversation": {
       "title": "Verifique as opções de conversa clicando com o botão direito no ícone do microfone na janela de chat."
     },
+    "doNotShowAgain": "Não mostrar novamente",
     "favoriteModels": {
       "title": "Clique no ícone LLM: seus modelos preferidos serão agrupados sob o ícone de estrela!"
     },
     "folderList": {
       "title": "A lista de pastas é uma ótima maneira de organizar suas sessões de chat. Clique no ícone de pasta na parte inferior da barra lateral para criar novas pastas.\n\nO menu à direita de cada pasta permite que você gerencie suas pastas.\n\nO menu de contexto de seus chats permite que você os mova para uma pasta."
+    },
+    "pluginsDisabled": {
+      "text": "Este modelo não suporta plugins. Eles foram desativados automaticamente para que você possa continuar sua conversa.",
+      "title": "Plugins foram desativados."
     },
     "realtime": {
       "title": "O chat em tempo real pode rapidamente se tornar caro. O custo estimado fornecido é apenas uma estimativa e pode não estar correto. Clique no blob para iniciar e parar de conversar!"
