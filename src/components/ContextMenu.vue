@@ -7,7 +7,7 @@
           <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
         </div>
       </form>
-      <div class="actions">
+      <div class="actions" ref="list">
         <template v-for="action in visibleActions" :key="action.action">
           <div class="item separator disabled" v-if="action.separator">
             <hr />
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
 
@@ -59,6 +59,7 @@ const props = defineProps({
 
 const emit = defineEmits(['action-clicked'])
 
+const list = ref(null)
 const filter = ref('')
 const selected = ref(null)
 
@@ -124,6 +125,7 @@ const onOverlay = () => {
 
 const onMouseMove = (action: MenuAction) => {
   selected.value = action.disabled ? null : action
+  ensureVisible()
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
@@ -141,6 +143,7 @@ const onKeyDown = (event: KeyboardEvent) => {
       selected.value = enabledActions[(currentIndex - 1 + enabledActions.length) % enabledActions.length];
       }
     }
+    ensureVisible()
   } else if (event.key === 'Enter') {
     if (selected.value) {
       event.preventDefault()
@@ -162,6 +165,31 @@ const onKeyUp = (event: KeyboardEvent) => {
 const onAction = (action: MenuAction) => {
   if (!action.disabled) {  
     emit('action-clicked', action.action)
+  }
+};
+
+const ensureVisible = () => {
+  nextTick(() => {
+    const selectedEl = list.value?.querySelector('.selected') as HTMLElement
+    if (selectedEl) {
+      scrollToBeVisible(selectedEl, list.value)
+    }
+  })
+}
+
+const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
+  const eleTop = ele.offsetTop - container.offsetTop;
+  const eleBottom = eleTop + ele.clientHeight;
+
+  const containerTop = container.scrollTop;
+  const containerBottom = containerTop + container.clientHeight;
+
+  if (eleTop < containerTop) {
+    // Scroll to the top of container
+    container.scrollTop -= containerTop - eleTop;
+  } else if (eleBottom > containerBottom) {
+    // Scroll to the bottom of container
+    container.scrollTop += eleBottom - containerBottom;
   }
 };
 
