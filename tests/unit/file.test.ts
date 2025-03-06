@@ -169,12 +169,16 @@ test('Get icon contents', async () => {
 
 test('Get app info', async () => {
   if (process.platform == 'darwin') {
-    expect(file.getAppInfo(app, '/Terminal.app')).toBeNull()
-    const info = file.getAppInfo(app, '/System/Applications/Utilities/Terminal.app')
+    expect(await file.getAppInfo(app, '/Terminal.app')).toBeNull()
+    const info = await file.getAppInfo(app, '/System/Applications/Utilities/Terminal.app')
     expect(info).toStrictEqual({
       name: 'Terminal',
       identifier: 'com.apple.Terminal',
-      icon: '/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns',
+      icon: {
+        url: 'file:///System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns',
+        mimeType: 'image/png',
+        contents: expect.any(String),
+      }
     })
   }
 })
