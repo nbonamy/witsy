@@ -1107,7 +1107,7 @@
     "setDate": "Current date and time is {date}",
     "setLang": "Always respond in {lang} even if the rest of the conversation is in another language including the user's questions.",
     "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
-    "titllingUser": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
+    "titlingUser": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes."
   },
   "main": {
     "chat": {
@@ -1335,7 +1335,7 @@
         "scratchpad_takeaways": "Scratchpad - Takeaways",
         "scratchpad_title": "Scratchpad - Title",
         "titling": "Chat title - Instructions",
-        "titllingUser": "Chat title - Prompt",
+        "titlingUser": "Chat title - Prompt",
         "video_plugin": "Video Plugin - Description (1024 characters max)"
       },
       "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
