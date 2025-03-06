@@ -27,7 +27,12 @@
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
-  </div>  
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -53,6 +58,7 @@ const api = ref(null)
 const apiKey = ref(null)
 const baseURL = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -68,6 +74,7 @@ const load = () => {
   baseURL.value = engineConfig?.baseURL || ''
   chat_models.value = engineConfig?.models?.chat || []
   chat_model.value = engineConfig?.model?.chat || ''
+  disableTools.value = engineConfig?.disableTools || false
 }
 
 const onRefresh = async () => {
@@ -130,6 +137,7 @@ const save = () => {
   engineConfig.apiKey = apiKey.value
   engineConfig.baseURL = baseURL.value
   engineConfig.model.chat = chat_model.value
+  engineConfig.disableTools = disableTools.value
 
   // now add model to models if it does not exist
   if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {
