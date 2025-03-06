@@ -136,6 +136,8 @@ export default class extends NutAutomator {
 
     try {
 
+
+      throw new Error('autolib not working in release mode');
       await autolib.sendCtrlKey('C');
 
     } catch {
@@ -177,6 +179,7 @@ export default class extends NutAutomator {
 
     try {
 
+      throw new Error('autolib not working in release mode');
       await autolib.sendCtrlKey('V');
 
     } catch {
