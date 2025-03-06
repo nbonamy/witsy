@@ -92,17 +92,27 @@ export default class extends NutAutomator {
 
     try {
 
-      await super.selectAll();
+      await autolib.sendKey('A', true);
 
-    } catch {
+    } catch (err) {
 
-      const script = `
-        tell application "System Events" to keystroke "a" using command down      
-        delay 0.1
-      `
+      console.error('Error while selecting all with autolib', err);
 
-      // run it
-      await this.runScript(script);
+      try {
+
+        await super.selectAll();
+
+      } catch {
+
+        const script = `
+          tell application "System Events" to keystroke "a" using command down      
+          delay 0.1
+        `
+
+        // run it
+        await this.runScript(script);
+
+      }
 
     }
 
@@ -112,20 +122,31 @@ export default class extends NutAutomator {
 
     try {
 
-      await super.moveCaretBelow();
+      await autolib.sendKey('Down', false);
+      await autolib.sendKey('Enter', false);
 
-    } catch {
+    } catch (err) {
 
-      const script = `
-      tell application "System Events"
-          key code 124
-          key code 36
-          key code 36
-        end tell
-      `
+      console.error('Error while moving caret with autolib', err);
 
-      // run it
-      await this.runScript(script);
+      try {
+
+        await super.moveCaretBelow();
+
+      } catch {
+
+        const script = `
+        tell application "System Events"
+            key code 124
+            key code 36
+            key code 36
+          end tell
+        `
+
+        // run it
+        await this.runScript(script);
+
+      }
 
     }
 
@@ -136,9 +157,7 @@ export default class extends NutAutomator {
 
     try {
 
-
-      //throw new Error('autolib not working in release mode');
-      await autolib.sendCtrlKey('C');
+      await autolib.sendKey('C', true);
 
     } catch (err) {
 
@@ -181,8 +200,7 @@ export default class extends NutAutomator {
 
     try {
 
-      //throw new Error('autolib not working in release mode');
-      await autolib.sendCtrlKey('V');
+      await autolib.sendKey('V', true);
 
     } catch (err) {
 
@@ -214,18 +232,28 @@ export default class extends NutAutomator {
 
     try {
 
-      await super.deleteSelectedText();
+      await autolib.sendKey('Delete', false);
 
-    } catch {
+    } catch (err) {
 
-      const script = `
-        tell application "System Events"
-            key code 117
-          end tell
-        `
+      console.error('Error while deleting text with autolib', err);
 
-      // run it
-      await this.runScript(script);
+      try {
+
+        await super.deleteSelectedText();
+
+      } catch {
+
+        const script = `
+          tell application "System Events"
+              key code 117
+            end tell
+          `
+
+        // run it
+        await this.runScript(script);
+
+      }
 
     }
 
