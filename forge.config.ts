@@ -98,7 +98,8 @@ const config: ForgeConfig = {
           // we sign libnut on mas but feature is disabled anyway
           if (platform === 'darwin' || platform === 'mas') {
             const binaries = [
-              'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node'
+              'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
+              `node_modules/autolib/prebuilds/darwin-${arch}/autolib.node`,
             ];
 
             binaries.forEach((binary) => {
@@ -110,7 +111,7 @@ const config: ForgeConfig = {
                   stdio: 'inherit',
                 });
               } else {
-                console.error(`Binary not found: ${binaryPath}`);
+                throw new Error(`Binary not found: ${binaryPath}`);
               }
             });
           }

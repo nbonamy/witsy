@@ -137,10 +137,12 @@ export default class extends NutAutomator {
     try {
 
 
-      throw new Error('autolib not working in release mode');
+      //throw new Error('autolib not working in release mode');
       await autolib.sendCtrlKey('C');
 
-    } catch {
+    } catch (err) {
+
+      console.error('Error while copying text with autolib', err);
 
       try {
 
@@ -179,10 +181,12 @@ export default class extends NutAutomator {
 
     try {
 
-      throw new Error('autolib not working in release mode');
+      //throw new Error('autolib not working in release mode');
       await autolib.sendCtrlKey('V');
 
-    } catch {
+    } catch (err) {
+
+      console.error('Error while pasting text with autolib', err);
 
       try {
 
