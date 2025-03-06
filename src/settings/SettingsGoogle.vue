@@ -20,7 +20,12 @@
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
-  </div>  
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +38,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 //const image_model = ref(null)
 const chat_models = ref([])
@@ -44,6 +50,7 @@ const load = () => {
   //image_models.value = store.config.engines.google?.models?.image || []
   chat_model.value = store.config.engines.google?.model?.chat || ''
   //image_model.value = store.config.engines.google?.model?.image || ''
+  disableTools.value = store.config.engines.google?.disableTools || false
 }
 
 const onRefresh = async () => {
@@ -90,6 +97,7 @@ const save = () => {
     chat: chat_model.value,
     image: ''
   }
+  store.config.engines.google.disableTools = disableTools.value
   store.saveSettings()
 }
 

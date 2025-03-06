@@ -25,6 +25,7 @@ export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
   realtime?: RealtimeConfig
+  disableTools?: boolean
 }
 
 export type CustomEngineConfig = EngineConfig & {
@@ -69,7 +70,7 @@ export type LLMConfig = {
 export type InstructionsConfig = {
   default: string
   titling: string
-  titllingUser: string
+  titlingUser: string
   docquery: string
   scratchpad: strDict
 }

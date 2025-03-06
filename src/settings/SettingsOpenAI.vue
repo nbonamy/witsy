@@ -20,6 +20,11 @@
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
     <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
+    <div class="group">
       <label>{{ t('settings.engines.openai.apiBaseURL') }}</label>
       <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
@@ -38,6 +43,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 const apiKey = ref(null)
 const baseURL = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -46,6 +52,7 @@ const load = () => {
   baseURL.value = store.config.engines.openai?.baseURL || ''
   chat_models.value = store.config.engines.openai?.models?.chat || []
   chat_model.value = store.config.engines.openai?.model?.chat || ''
+  disableTools.value = store.config.engines.openai?.disableTools || false
 }
 
 const onRefresh = async () => {
@@ -89,6 +96,7 @@ const save = () => {
   store.config.engines.openai.apiKey = apiKey.value
   store.config.engines.openai.baseURL = baseURL.value
   store.config.engines.openai.model.chat = chat_model.value
+  store.config.engines.openai.disableTools = disableTools.value
   store.saveSettings()
 }
 

@@ -97,7 +97,7 @@ export const store: Store = reactive({
         reasoningEffort: defaults.reasoningEffort,
       }
     } else {
-      chat.disableTools = false
+      chat.disableTools = store.config.engines[chat.engine]?.disableTools || false
       chat.locale = null
       chat.prompt = null
       chat.modelOpts = undefined

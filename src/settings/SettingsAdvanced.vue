@@ -30,7 +30,7 @@
           <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
           <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
           <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
-          <option value="instructions.titllingUser">{{ t('settings.advanced.instructions.titllingUser') }}</option>
+          <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
           <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
           <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
           <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>

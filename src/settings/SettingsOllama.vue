@@ -10,6 +10,11 @@
       <button @click.prevent="onDelete"><BIconTrash /></button>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
     <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
       <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
@@ -32,6 +37,7 @@ import OllamaModelPull from '../components/OllamaModelPull.vue'
 
 const baseURL = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -39,6 +45,7 @@ const load = () => {
   baseURL.value = store.config.engines.ollama?.baseURL || ''
   chat_models.value = store.config.engines.ollama?.models?.chat || []
   chat_model.value = store.config.engines.ollama?.model?.chat || ''
+  disableTools.value = store.config.engines.ollama?.disableTools || false
 }
 
 const onDelete = () => {
@@ -92,6 +99,7 @@ const getModels = async () => {
 const save = () => {
   store.config.engines.ollama.baseURL = baseURL.value
   store.config.engines.ollama.model.chat = chat_model.value
+  store.config.engines.ollama.disableTools = disableTools.value
   store.saveSettings()
 }
 

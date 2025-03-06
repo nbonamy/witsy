@@ -20,6 +20,11 @@
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
   </div>
 </template>
 
@@ -33,6 +38,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -40,6 +46,7 @@ const load = () => {
   apiKey.value = store.config.engines.groq?.apiKey || ''
   chat_models.value = store.config.engines.groq?.models?.chat || []
   chat_model.value = store.config.engines.groq?.model?.chat || ''
+  disableTools.value = store.config.engines.groq?.disableTools || false
 }
 
 const onRefresh = async () => {
@@ -82,6 +89,7 @@ const onKeyChange = () => {
 const save = () => {
   store.config.engines.groq.apiKey = apiKey.value
   store.config.engines.groq.model.chat = chat_model.value
+  store.config.engines.groq.disableTools = disableTools.value
   store.saveSettings()
 }
 
