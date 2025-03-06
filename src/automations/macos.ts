@@ -1,18 +1,14 @@
 
 import { Application } from '../types/automation';
 import applescript from 'applescript';
-import AutolibAutomator from './autolib';
+import autolib from 'autolib';
 import NutAutomator from './nut';
 
 export default class extends NutAutomator {
 
-  autolib: AutolibAutomator;
-
   constructor() {
     super();
     this.setupNut();
-    this.autolib = new AutolibAutomator();
-    this.autolib.setup();
   }
 
   async getForemostApp(): Promise<Application | null> {
@@ -140,9 +136,7 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      if (!this.autolib.setup()) throw new Error('autolib not loaded');
-      await this.autolib.sendCtrlKey('C');
+      await autolib.sendCtrlKey('C');
 
     } catch {
 
@@ -183,9 +177,7 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      if (!this.autolib.setup()) throw new Error('autolib not loaded');
-      await this.autolib.sendCtrlKey('V');
+      await autolib.sendCtrlKey('V');
 
     } catch {
 

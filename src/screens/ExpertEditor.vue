@@ -68,11 +68,10 @@ const selectedApp = ref(null)
 const diffLang = ref(false)
 const isEdited = ref(false)
 
-const supportTriggerApps = computed(() => window.api.platform == 'darwin')
+const supportTriggerApps = computed(() => window.api.platform !== 'linux')
 
 const iconData = (app: ExternalApp) => {
-  const iconContents = window.api.file.readIcon(app.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${app.icon.mimeType};base64,${app.icon.contents}`
 }
 
 const onChangeText = () => {
@@ -86,6 +85,7 @@ const load = () => {
   prompt.value = props.expert?.prompt || expertI18n(props.expert, 'prompt')
   triggerApps.value = props.expert?.triggerApps || []
   diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
+  selectedApp.value = null
   onChangeText()
 }
 
@@ -200,6 +200,10 @@ dialog.editor form .group input.shortcut {
       }
     }
   }
+}
+
+.windows .list-with-actions .list .item .icon {
+  transform: scale(0.8);
 }
 
 </style>

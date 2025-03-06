@@ -131,7 +131,7 @@ export interface Store {
 export type ExternalApp = {
   name: string
   identifier: string
-  icon: string
+  icon: FileContents
 }
 
 export type Expert = {

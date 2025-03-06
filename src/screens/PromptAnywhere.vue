@@ -79,8 +79,7 @@ let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
 
 const iconData = computed(() => {
-  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${sourceApp.value.icon.mimeType};base64,${sourceApp.value.icon.contents}`
 })
 
 onMounted(() => {
@@ -486,7 +485,6 @@ const onResponseResize = (deltaX: number) => {
     }
   }
 
-
   .prompt {
 
     flex-direction: column-reverse;
@@ -596,6 +594,12 @@ const onResponseResize = (deltaX: number) => {
     }
   }
 
+}
+
+.windows .app {
+  .icon {
+    transform: scale(0.75);
+  }
 }
 
 dialog#engine-model-picker {

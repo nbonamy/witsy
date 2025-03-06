@@ -459,8 +459,8 @@ ipcMain.on('get-text-content', async (event, contents, format) => {
   event.returnValue = await text.getTextContent(contents, format);
 });
 
-ipcMain.on('get-app-info', (event, payload) => {
-  event.returnValue = file.getAppInfo(app, payload);
+ipcMain.on('get-app-info', async (event, payload) => {
+  event.returnValue = await file.getAppInfo(app, payload);
 });
 
 ipcMain.on('markdown-render', (event, payload) => {

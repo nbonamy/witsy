@@ -20,15 +20,13 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     skipTaskbar: true,
     alwaysOnTop: true,
     resizable: process.env.DEBUG ? true : false,
-    movable: process.env.DEBUG ? true : false,
-    focusable: true,
     hiddenInMissionControl: true,
     queryParams: queryParams,
     keepHidden: true,
     hasShadow: false,
   });
 
-  // // open the DevTools
+  // open the DevTools
   // if (process.env.DEBUG) {
   //   commandPicker.webContents.openDevTools({ mode: 'right' });
   // }
@@ -36,7 +34,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
   commandPicker.on('show', () => {
     app.focus({ steal: true });
     commandPicker.moveTop();
-    commandPicker.focus();
+    //commandPicker.focus();
     commandPicker.focusOnWebView();
   });
 
