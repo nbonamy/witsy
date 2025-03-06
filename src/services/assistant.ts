@@ -248,7 +248,7 @@ export default class extends Generator {
         new Message('system', i18nInstructions(this.config, 'instructions.titling')),
         this.chat.messages[1],
         this.chat.messages[2],
-        new Message('user', i18nInstructions(this.config, 'instructions.titllingUser'))
+        new Message('user', i18nInstructions(this.config, 'instructions.titlingUser'))
       ]
 
       // now get it
