@@ -99,7 +99,7 @@ const config: ForgeConfig = {
           if (platform === 'darwin' || platform === 'mas') {
             const binaries = [
               'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
-              `node_modules/autolib/prebuilds/darwin-${arch}/autolib.node`,
+              `node_modules/autolib/build/Release/autolib.node`,
             ];
 
             binaries.forEach((binary) => {
