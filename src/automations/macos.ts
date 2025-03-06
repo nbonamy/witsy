@@ -92,6 +92,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       await autolib.sendKey('A', true);
 
     } catch (err) {
@@ -122,6 +123,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       await autolib.sendKey('Down', false);
       await autolib.sendKey('Enter', false);
 
@@ -157,6 +159,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       await autolib.sendKey('C', true);
 
     } catch (err) {
@@ -200,6 +203,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       await autolib.sendKey('V', true);
 
     } catch (err) {
@@ -232,6 +236,7 @@ export default class extends NutAutomator {
 
     try {
 
+      // autolib
       await autolib.sendKey('Delete', false);
 
     } catch (err) {
