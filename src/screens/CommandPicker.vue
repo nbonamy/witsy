@@ -1,5 +1,9 @@
 <template>
   <div class="commands">
+    <div class="close">
+      <div class="decoration"></div>
+      <BIconX class="icon" @click="onClose"/>
+    </div>
     <div class="app" v-if="sourceApp">
       <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
     </div>
@@ -18,6 +22,7 @@ import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
+import { BIconX } from 'bootstrap-icons-vue'
 
 // load store
 store.loadSettings()
@@ -34,8 +39,7 @@ const selected: Ref<Command | null> = ref(null)
 const sourceApp: Ref<ExternalApp | null> = ref(null)
 
 const iconData = computed(() => {
-  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${sourceApp.value.icon?.mimeType};base64,${sourceApp.value.icon?.contents}`
 })
 
 onMounted(() => {
@@ -165,6 +169,31 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   padding: 10px;
 }
 
+.close {
+  display: none;
+  flex-direction: row;
+  margin-bottom: 8px;
+
+  .decoration {
+    flex: 1;
+    height: 3px;
+    margin-top: 6px;
+    border-top: 0.5px solid var(--icon-color);
+    border-bottom: 0.5px solid var(--icon-color);
+    margin-left: 8px;
+    margin-right: 4px;
+    opacity: 0.7;
+  }
+
+  .icon {
+    cursor: pointer;
+  }
+}
+
+.windows .close {
+  display: flex;
+}
+
 .app {
   display: flex;
   flex-direction: row;
@@ -186,6 +215,12 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 
 .list {
   overflow: auto;
+}
+
+.windows .app {
+  .icon {
+    transform: scale(0.8);
+  }
 }
 
 .command {
@@ -243,9 +278,7 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 }
 
 .command.selected {
-
-  .shortcut,
-  .action {
+  .shortcut, .action {
     color: var(--highlighted-color);
   }
 

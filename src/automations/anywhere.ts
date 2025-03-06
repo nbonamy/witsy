@@ -16,7 +16,7 @@ export default class PromptAnywhere {
 
     // get foremost app
     let sourceApp = null;
-    if (process.platform === 'darwin') {
+    if (process.platform !== 'linux') {
       const automator = new Automator();
       sourceApp = await automator.getForemostApp();
     }

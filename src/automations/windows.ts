@@ -1,8 +1,8 @@
 
 import { Application } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
-import AutolibAutomator from './autolib';
 import PowerShell from 'powershell'
+import autolib from 'autolib';
 import NutAutomator from './nut';
 
 const pscript = `
@@ -125,18 +125,24 @@ public class KeySender
 
 export default class extends NutAutomator {
 
-  autolib: AutolibAutomator;
-
   constructor() {
     super();
     this.setup();
-    this.autolib = new AutolibAutomator();
-    this.autolib.setup();
   }
 
   async getForemostApp(): Promise<Application|null> {
-    console.warn('getForemostApp not implemented (expected)');
-    return null;
+    try {
+      const app = await autolib.getForemostWindow();
+      return {
+        id: app.exePath,
+        name: app.productName,
+        path: app.exePath,
+        window: app.title,
+      }
+    } catch {
+      console.warn('getForemostApp not implemented (expected)');
+      return null;
+    }
   }
 
   async selectAll() {
@@ -168,10 +174,8 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      throw new Error('autolib not working yet');
-      if (!this.autolib.setup()) throw new Error('autolib not loaded');
-      await this.autolib.sendCtrlKey('C');
+      throw new Error('autolib not working in release mode');
+      await autolib.sendCtrlKey('C');
 
     } catch {
 
@@ -214,10 +218,8 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      throw new Error('autolib not working yet');
-      if (!this.autolib.setup()) throw new Error('autolib not loaded');
-      await this.autolib.sendCtrlKey('V');
+      throw new Error('autolib not working in release mode');
+      await autolib.sendCtrlKey('V');
 
     } catch {
 
