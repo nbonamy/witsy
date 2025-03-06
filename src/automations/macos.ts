@@ -1,7 +1,6 @@
 
 import { Application } from '../types/automation';
 import applescript from 'applescript';
-import autolib from 'autolib';
 import NutAutomator from './nut';
 
 export default class extends NutAutomator {
@@ -92,28 +91,17 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      await autolib.sendKey('A', true);
+      await super.selectAll();
 
-    } catch (err) {
+    } catch {
 
-      console.error('Error while selecting all with autolib', err);
+      const script = `
+        tell application "System Events" to keystroke "a" using command down      
+        delay 0.1
+      `
 
-      try {
-
-        await super.selectAll();
-
-      } catch {
-
-        const script = `
-          tell application "System Events" to keystroke "a" using command down      
-          delay 0.1
-        `
-
-        // run it
-        await this.runScript(script);
-
-      }
+      // run it
+      await this.runScript(script);
 
     }
 
@@ -123,36 +111,22 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      await autolib.sendKey('Down', false);
-      await autolib.sendKey('Enter', false);
-      await autolib.sendKey('Enter', false);
+      await super.moveCaretBelow();
 
-    } catch (err) {
+    } catch {
 
-      console.error('Error while moving caret with autolib', err);
+      const script = `
+      tell application "System Events"
+          key code 124
+          key code 36
+          key code 36
+        end tell
+      `
 
-      try {
-
-        await super.moveCaretBelow();
-
-      } catch {
-
-        const script = `
-        tell application "System Events"
-            key code 124
-            key code 36
-            key code 36
-          end tell
-        `
-
-        // run it
-        await this.runScript(script);
-
-      }
+      // run it
+      await this.runScript(script);
 
     }
-
 
   }
 
@@ -160,41 +134,30 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      await autolib.sendKey('C', true);
+      // nut (custom)
+      //await super.copySelectedText();
+      if (!await this.setup()) throw new Error('nutjs not loaded');
+      await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
+      await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
 
-    } catch (err) {
+    } catch {
 
-      console.error('Error while copying text with autolib', err);
+      // applescript
+      const script = `
+        repeat 20 times
+          try
+            tell application "System Events" to keystroke "c" using command down
+            delay 0.02
+            set clipboardContents to the clipboard
+            if length of clipboardContents is not 0 then exit repeat
+            delay 0.1
+          on error
+          end try
+        end repeat
+      `
 
-      try {
-
-        // nut (custom)
-        //await super.copySelectedText();
-        if (!await this.setup()) throw new Error('nutjs not loaded');
-        await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
-        await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
-
-      } catch {
-
-        // applescript
-        const script = `
-          repeat 20 times
-            try
-              tell application "System Events" to keystroke "c" using command down
-              delay 0.02
-              set clipboardContents to the clipboard
-              if length of clipboardContents is not 0 then exit repeat
-              delay 0.1
-            on error
-            end try
-          end repeat
-        `
-
-        // run it
-        await this.runScript(script);
-
-      }
+      // run it
+      await this.runScript(script);
 
     }
 
@@ -204,33 +167,19 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      // not sure why but maybe too fast?
-      throw new Error('autolib too fast');
-      await autolib.sendKey('V', true);
+      // nut
+      await super.pasteText();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
 
-      //console.error('Error while pasting text with autolib', err);
+      // applescript
+      const script = `
+        tell application "System Events" to keystroke "v" using command down
+        delay 0.1
+      `
 
-      try {
-
-        // nut
-        await super.pasteText();
-
-      } catch {
-
-        // applescript
-        const script = `
-          tell application "System Events" to keystroke "v" using command down
-          delay 0.1
-        `
-
-        // run it
-        await this.runScript(script);
-
-      }
+      // run it
+      await this.runScript(script);
 
     }
 
@@ -240,29 +189,18 @@ export default class extends NutAutomator {
 
     try {
 
-      // autolib
-      await autolib.sendKey('Delete', false);
+      await super.deleteSelectedText();
 
-    } catch (err) {
+    } catch {
 
-      console.error('Error while deleting text with autolib', err);
+      const script = `
+        tell application "System Events"
+            key code 117
+          end tell
+        `
 
-      try {
-
-        await super.deleteSelectedText();
-
-      } catch {
-
-        const script = `
-          tell application "System Events"
-              key code 117
-            end tell
-          `
-
-        // run it
-        await this.runScript(script);
-
-      }
+      // run it
+      await this.runScript(script);
 
     }
 
