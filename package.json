@@ -115,7 +115,6 @@
     "mitt": "^3.0.1",
     "multi-llm-ts": "^2.14.2",
     "nestor-client": "^0.3.1",
-    "node-mac-permissions": "^2.4.0",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",
     "ollama": "^0.5.13",
