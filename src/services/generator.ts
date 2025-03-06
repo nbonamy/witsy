@@ -128,7 +128,7 @@ export type GenerationResult =
           rc = 'out_of_credits'
         
         // quota exceeded
-        } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('too many'))) {
+        } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
           response.setText(t('generator.errors.quotaExceeded'))
           rc = 'quota_exceeded'
 

@@ -212,7 +212,7 @@ export default class LlmFactory {
     if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
     if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
     if (engine === 'google') return new llm.Google(this.config.engines.google)
-    if (engine === 'groq') return new llm.Groq(this.config.engines.groq)
+    if (engine === 'groq') return new llm.Groq({ ...this.config.engines.groq, maxRetries: 0 })
     if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
     if (engine === 'ollama') return new llm.Ollama(this.config.engines.ollama)
     if (engine === 'openai') return new OpenAI(this.config.engines.openai)
