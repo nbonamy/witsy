@@ -190,9 +190,9 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   }
 }
 
-.windows .close {
+/*.windows .close {
   display: flex;
-}
+}*/
 
 .app {
   display: flex;
