@@ -301,8 +301,12 @@ const useBrowserMock = () => {
   navigator = {
     // @ts-expect-error mock
     mediaDevices: {
-      getUserMedia: vi.fn()
-    }
+      getUserMedia: vi.fn(),
+      getSupportedConstraints: vi.fn(() => ({
+        echoCancellation: true,
+        autoGainControl: true,
+      })),
+    },
   }
 
   // eslint-disable-next-line no-global-assign
