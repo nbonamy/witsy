@@ -128,6 +128,9 @@ const menuY = ref(0)
 const engine = () => props.chat?.engine || llmFactory.getChatEngineModel().engine
 const model = () => props.chat?.model || llmFactory.getChatEngineModel().model
 
+const backSpaceHitsToClearExpert = 1
+let backSpaceHitsWhenEmpty = 0
+
 const actionsCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
   return `actions-${count > 1 ? 'many' : count}`
@@ -546,12 +549,19 @@ const handleDocRepoClick = (action: string) => {
   }
 }
 
+const isContextMenuOpen = () => {
+  return showDocRepo.value || showExperts.value || showCommands.value || showActiveExpert.value || showConversationMenu.value
+}
+
 const closeContextMenu = () => {
   showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
   showActiveExpert.value = false
   showConversationMenu.value = false
+  nextTick(() => {
+    input.value.focus()
+  })
 }
 
 const handleExpertClick = (action: string) => {
@@ -653,6 +663,21 @@ const onKeyDown = (event: KeyboardEvent) => {
       event.stopPropagation()
       return false
     }
+  } else if (event.key === '@') {
+    if (prompt.value === '') {
+      onClickExperts()
+      event.preventDefault()
+      return false
+    }
+  } else if (event.key === 'Backspace') {
+    if (prompt.value === '') {
+      if (++backSpaceHitsWhenEmpty === backSpaceHitsToClearExpert) {
+        backSpaceHitsWhenEmpty = 0
+        disableExpert()
+      }
+    } else {
+      backSpaceHitsWhenEmpty = 0
+    }
   }
 }
 
@@ -690,6 +715,8 @@ defineExpose({
   focus: () => {
     input.value.focus()
   },
+
+  isContextMenuOpen,
 
 })
 
