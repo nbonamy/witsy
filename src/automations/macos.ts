@@ -204,11 +204,14 @@ export default class extends NutAutomator {
     try {
 
       // autolib
+      // not sure why but maybe too fast?
+      throw new Error('autolib too fast');
       await autolib.sendKey('V', true);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
 
-      console.error('Error while pasting text with autolib', err);
+      //console.error('Error while pasting text with autolib', err);
 
       try {
 
