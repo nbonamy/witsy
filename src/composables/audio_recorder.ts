@@ -1,5 +1,3 @@
-
-
 import { type Configuration } from '../types/config'
 
 export interface AudioRecorderListener {
@@ -14,10 +12,32 @@ const closeStream = (stream: MediaStream) => {
   });
 }
 
-export const isAudioRecordingSupported = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-  closeStream(stream)
-  return stream != null
+export const isAudioRecordingSupported = (): boolean => {
+  // First check if the API is available
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    return false;
+  }
+  
+  // Then check if the browser supports audio constraints
+  const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+  if (!supportedConstraints.echoCancellation || !supportedConstraints.autoGainControl) {
+    // These are common audio constraints that should be supported
+    return false;
+  }
+  
+  // Check for MediaRecorder API support
+  if (typeof MediaRecorder === 'undefined') {
+    return false;
+  }
+  
+  // Check MIME type support if possible
+  if (MediaRecorder.isTypeSupported && 
+      !MediaRecorder.isTypeSupported('audio/webm') && 
+      !MediaRecorder.isTypeSupported('audio/mp4')) {
+    return false;
+  }
+  
+  return true;
 }
 
 class AudioRecorder {
