@@ -1,6 +1,6 @@
 
 import { anyDict } from '../../types/index';
-import { app, BrowserWindow, screen } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen } from './index';
 
 export let commandPicker: BrowserWindow = null;
@@ -26,19 +26,27 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     hasShadow: false,
   });
 
+  commandPicker.setOpacity(0);
+
   // open the DevTools
   // if (process.env.DEBUG) {
   //   commandPicker.webContents.openDevTools({ mode: 'right' });
   // }
 
   commandPicker.on('show', () => {
-    app.focus({ steal: true });
-    commandPicker.moveTop();
-    commandPicker.focusOnWebView();
-  });
 
-  commandPicker.on('blur', () => {
-    closeCommandPicker();
+    // ugly trick to get focus in window
+    // we added the opacity trick to hide the animation
+    // https://github.com/electron/electron/issues/2867
+    commandPicker.minimize();
+    commandPicker.restore();
+    commandPicker.focus();
+
+    setTimeout(() => {
+      commandPicker.setOpacity(1);
+      commandPicker.on('blur', closeCommandPicker);
+    }, process.platform === 'win32' ? 250 : 0);
+
   });
 
   // done
@@ -78,6 +86,8 @@ export const closeCommandPicker = async () => {
   // just hide so we reuse it
   try {
     if (commandPicker && !commandPicker.isDestroyed() && commandPicker.isVisible()) {
+      commandPicker.off('blur', closeCommandPicker);
+      commandPicker.setOpacity(0);
       commandPicker.hide();
     }
   } catch (error) {

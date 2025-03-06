@@ -65,7 +65,6 @@ export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
     }
   });
 
-
   // done
   return promptAnywhereWindow;
   
