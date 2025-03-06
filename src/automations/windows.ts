@@ -147,43 +147,72 @@ export default class extends NutAutomator {
 
   async selectAll() {
 
-    const script = `
-      Set WshShell = WScript.CreateObject("WScript.Shell")
-      WshShell.SendKeys "^a"
-      WScript.Sleep 200
-    `
+    try {
 
-    // run it
-    await runVbs({ vbs: script }) 
+      throw new Error('autolib not working');
+      await autolib.sendKey('A', true);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+
+      //console.error('Error while selecting all with autolib', err);
+
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
+        WshShell.SendKeys "^a"
+        WScript.Sleep 200
+      `
+
+      // run it
+      await runVbs({ vbs: script }) 
+
+    }
     
   }
   
   async moveCaretBelow() {
 
-    const script = `
-      Set WshShell = WScript.CreateObject("WScript.Shell")
-      WshShell.SendKeys "{DOWN}{ENTER}"
-      WScript.Sleep 200
-    `
+    try {
 
-    // run it
-    await runVbs({ vbs: script }) 
+      throw new Error('autolib not working');
+      await autolib.sendKey('Down', false);
+      await autolib.sendKey('Enter', false);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    }  catch (err) {
+
+      //console.error('Error while moving caret with autolib', err);
+
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
+        WshShell.SendKeys "{DOWN}{ENTER}"
+        WScript.Sleep 200
+      `
+
+      // run it
+      await runVbs({ vbs: script }) 
+
+    }
+  
   }
 
   async copySelectedText() {
 
     try {
 
-      throw new Error('autolib not working in release mode');
-      await autolib.sendCtrlKey('C');
+      throw new Error('autolib not working');
+      const rc = await autolib.sendKey('C', true);
+      console.log('autolib copy rc', rc);
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
 
-    } catch {
-
+      //console.error('Error while copying text with autolib', err);
+      
       try {
 
-        // powershell
         // this should work on all keyboards
-        await this.sendControlKey('C')
+        await this.executeControlKeyPowerShell('C')
       
       } catch {
 
@@ -218,16 +247,18 @@ export default class extends NutAutomator {
 
     try {
 
-      throw new Error('autolib not working in release mode');
-      await autolib.sendCtrlKey('V');
+      throw new Error('autolib not working');
+      await autolib.sendKey('V', true);
 
-    } catch {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+
+      //console.error('Error while pasting text with autolib', err);
 
       try {
 
-        // powershell
         // this should work on all keyboards
-        await this.sendControlKey('V')
+        await this.executeControlKeyPowerShell('V')
       
       } catch {
 
@@ -260,14 +291,27 @@ export default class extends NutAutomator {
 
   async deleteSelectedText() {
 
-    const script = `
-      Set WshShell = WScript.CreateObject("WScript.Shell")
-      WshShell.SendKeys "{DELETE}"
-      WScript.Sleep 200
-    `
+    try {
 
-    // run it
-    await runVbs({ vbs: script }) 
+      throw new Error('autolib not working');
+      await autolib.sendKey('Delete', false);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+
+      //console.error('Error while deleting text with autolib', err);
+
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
+        WshShell.SendKeys "{DELETE}"
+        WScript.Sleep 200
+      `
+
+      // run it
+      await runVbs({ vbs: script }) 
+
+    }
+  
   }
 
   async activateApp(title: string) {
@@ -283,7 +327,7 @@ export default class extends NutAutomator {
   
   }
 
-  async sendControlKey(key: string) {
+  async executeControlKeyPowerShell(key: string) {
 
     return new Promise<void>((resolve, reject) => {
       const script = pscript.replace('@@KEY@@', `VK_${key.toUpperCase()}`)
