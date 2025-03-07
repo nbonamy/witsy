@@ -52,6 +52,10 @@ onMounted(() => {
   // events
   window.api.on('show', onShow)
 
+  // load commands and make sure they are updated
+  store.loadCommands()
+  window.api.on('file-modified', onFileModified)
+
   // query params
   if (props.extra) {
     onShow(props.extra)
@@ -62,12 +66,18 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
+  window.api.off('file-modified', onFileModified)
   window.api.off('show', onShow)
 })
 
+const onFileModified = (file: string) => {
+  if (file == 'commands') {
+    store.loadCommands()
+  }
+}
+
 const onShow = (params?: anyDict) => {
   //console.log('CommandPicker.onShow', JSON.stringify(params))
-  store.loadCommands()
   showParams = params
   sourceApp.value = showParams?.sourceApp ? window.api.file.getAppInfo(showParams.sourceApp.path) : null
   commands.value = store.commands.filter(command => command.state == 'enabled')

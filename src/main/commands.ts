@@ -7,7 +7,7 @@ import * as file from './file'
 import path from 'path'
 import fs from 'fs'
 
-const commandsFilePath = (app: App): string => {
+export const commandsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const commandsFilePath = path.join(userDataPath, 'commands.json')
   return commandsFilePath

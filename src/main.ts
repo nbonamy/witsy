@@ -25,6 +25,7 @@ import Embedder from './rag/embedder';
 import Mcp from './main/mcp';
 import Computer from './main/computer';
 import TrayIconManager from './main/tray';
+import Monitor from 'main/monitor';
 
 import * as config from './main/config';
 import * as history from './main/history';
@@ -39,6 +40,8 @@ import * as text from './main/text';
 import * as i18n from './main/i18n';
 import Automator, { AutomationAction } from 'automations/automator';
 
+let monitorCommands: Monitor = null
+let monitorExperts: Monitor = null
 let commander: Commander = null
 let docRepo: DocumentRepository = null
 let memoryManager: MemoryManager = null
@@ -57,6 +60,8 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
 
 // set up logging
 Object.assign(console, log.functions);
+log.eventLogger.startLogging();
+console.log('Log file:',log.transports.file.getFile().path);
 
 // fix path
 fixPath();
@@ -188,6 +193,16 @@ app.whenReady().then(() => {
     installMenu();
 
   });
+
+  // and monitor other data files
+  monitorCommands = new Monitor(() => {
+    window.notifyBrowserWindows('file-modified', 'commands');
+  });
+  monitorCommands.start(commands.commandsFilePath(app));
+  monitorExperts = new Monitor(() => {
+    window.notifyBrowserWindows('file-modified', 'experts');
+  });
+  monitorExperts.start(experts.expertsFilePath(app));
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.

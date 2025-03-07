@@ -95,8 +95,8 @@ onMounted(() => {
   })
 
   // config change may lead to tint change
-  window.api.on('file-modified', (signal) => {
-    if (signal === 'settings') {
+  window.api.on('file-modified', (file) => {
+    if (file === 'settings') {
       setTint()
       setLocale()
     }

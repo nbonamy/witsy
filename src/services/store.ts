@@ -49,10 +49,10 @@ export const store: Store = reactive({
     store.loadExperts()
 
     // subscribe to file changes
-    window.api.on('file-modified', (signal) => {
-      if (signal === 'settings') {
+    window.api.on('file-modified', (file) => {
+      if (file === 'settings') {
         loadSettings()
-      } else if (signal === 'history') {
+      } else if (file === 'history') {
         mergeHistory(window.api.history.load())
       }
     })
