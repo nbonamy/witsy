@@ -177,6 +177,13 @@ export type GenerationResult =
       }
     }
 
+    // make sure the message is terminated correctly
+    // https://github.com/nbonamy/witsy/issues/104
+    if (response.transient) {
+      console.warn('Response is still transient. Appending empty text.')
+      response.appendText({ type: 'content', text: '', done: true })
+    }
+
     // cleanup
     this.stream = null
     //callback?.call(null, null)
