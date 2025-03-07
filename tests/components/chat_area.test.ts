@@ -14,6 +14,12 @@ const emitEventMock = vi.fn()
 
 const stubTeleport = { global: { stubs: { teleport: true } } }
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+  }
+})
+
 vi.mock('../../src/composables/event_bus', async () => {
   return { default: () => ({
     onEvent: onEventMock,
@@ -81,10 +87,10 @@ test('Context menu empty chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: true },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: true },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -93,10 +99,10 @@ test('Context menu normal chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Temporary Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -106,10 +112,10 @@ test('Context menu temporary chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
-    { label: 'Save Chat', action: 'toggle_temp', disabled: false },
-    { label: 'Rename Chat', action: 'rename', disabled: false },
-    { label: 'Export as PDF', action: 'exportPdf', disabled: false },
-    { label: 'Delete', action: 'delete', disabled: true }
+    { label: 'chat.actions.saveChat', action: 'toggle_temp', disabled: false },
+    { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
+    { label: 'common.delete', action: 'delete', disabled: true }
   ])
 })
 
@@ -148,7 +154,7 @@ test('Context menu rename', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=rename]').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('rename-chat', chat)
+  expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
 })
 
 // test('Context menu export', async () => {
@@ -157,7 +163,7 @@ test('Context menu rename', async () => {
 //   await wrapper.find('.toolbar .menu').trigger('click')
 //   await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
 //   await wrapper.findAll('.context-menu .item')[4].trigger('click')
-//   expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat)
+//   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat)
 // })
 
 test('Context menu delete', async () => {
@@ -166,7 +172,7 @@ test('Context menu delete', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')
   await wrapper.find('.context-menu .item[data-action=delete]').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', chat!.uuid)
+  expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat!.uuid)
 })
 
 test('Model settings visibility', async () => {
@@ -214,22 +220,41 @@ test('Model settings update chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
 
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
+  expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').exists()).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').exists()).toBe(true)
+
+  await wrapper.find('.model-settings .toggle').trigger('click')
+
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('openai')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
+  expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('Default')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
   
+  await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings input[name=maxTokens]').setValue('1000')
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings input[name=top_p]').setValue('0.8')
   await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('high')
 
+  expect(chat?.locale).toBe('fr-FR')
+  expect(chat?.prompt).toBeUndefined()
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBe(0.7)
@@ -237,11 +262,15 @@ test('Model settings update chat', async () => {
   expect(chat?.modelOpts?.top_p).toBe(0.8)
   expect(chat?.modelOpts?.reasoningEffort).toBe('high')
 
+  await wrapper.find('.model-settings select[name=locale]').setValue('')
+  await wrapper.find('.model-settings textarea[name=prompt]').setValue('Prompt')
   await wrapper.find('.model-settings input[name=temperature]').setValue('5.0')
   await wrapper.find('.model-settings input[name=top_k]').setValue('50')
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
   await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('unknown')
 
+  expect(chat?.locale).toBeUndefined()
+  expect(chat?.prompt).toBe('Prompt')
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBeUndefined()
@@ -260,6 +289,7 @@ test('Model settings defaults', async () => {
 
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
+  await wrapper.find('.model-settings .toggle').trigger('click')
 
   // initial state: all disabled
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(true)
@@ -284,12 +314,14 @@ test('Model settings defaults', async () => {
     temperature: 0.7
   })
 
-  // add one element
+  // add stuff
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
+  await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings button[name=save]').trigger('click')
   expect(store.config.llm.defaults[1]).toStrictEqual({
     engine: 'openai',
     model: 'chat',
+    locale: 'fr-FR',
     disableTools: false,
     temperature: 0.7,
     top_k: 15
@@ -302,6 +334,7 @@ test('Model settings defaults', async () => {
   expect(store.config.llm.defaults[1]).toStrictEqual({
     engine: 'openai',
     model: 'chat',
+    locale: 'fr-FR',
     disableTools: false,
     temperature: 0.7,
     top_k: 15
@@ -314,7 +347,7 @@ test('Model settings defaults', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('Default')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
 
 
 

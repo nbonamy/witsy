@@ -1,4 +1,3 @@
-
 <template>
   <div class="scratchpad">
     <ScratchpadToolbar :engine="engine" :model="model" :fontFamily="fontFamily" :fontSize="fontSize" />
@@ -13,9 +12,10 @@
 </template>
 
 <script setup lang="ts">
+import { t, i18nInstructions, expertI18n } from '../services/i18n'
 
 // components
-import { FileContents } from 'types'
+import { FileContents } from '../types'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
@@ -28,7 +28,6 @@ import DocRepos from '../screens/DocRepos.vue'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
 import Generator, { GenerationResult } from '../services/generator'
-import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 
@@ -39,19 +38,7 @@ const { onEvent, emitEvent } = useEventBus()
 // load store
 store.load()
 
-const placeholder = ref(`Start typing your document or
-ask Witsy to write something for you!
-
-Once you started you can ask Witsy
-to make modification on your document.
-
-If you highligh a portion of your text,
-Witsy will only update this portion.
-
-Also check out the Writing Assistant
-in the action bar in the lower right corner!
-
-Give it a go!`.replaceAll('\n', '<br/>'))
+const placeholder = ref(t('scratchpad.placeholder').replaceAll('\n', '<br/>'))
 
 const chat = ref(null)
 const editor = ref(null)
@@ -101,10 +88,10 @@ onMounted(() => {
       e.returnValue = false
       setTimeout(() => {
         Dialog.show({
-          title: 'You have unsaved changes. You will lose your work if you close this window.',
+          title: t('common.confirmation.unsavedChanges'),
           showCancelButton: true,
-          confirmButtonText: 'Do not close',
-          cancelButtonText: 'Close anyway',
+          confirmButtonText: t('common.confirmation.doNotClose'),
+          cancelButtonText: t('common.confirmation.closeAnyway'),
           reverseButtons: true
         }).then((result) => {
           if (result.isDismissed) {
@@ -149,10 +136,6 @@ onMounted(() => {
     resetModifiedCheckTimeout()
   })
 
-  // no need to show the tip
-  store.config.general.tips.scratchpad = false
-  store.saveSettings()
-
   // init
   resetState()
 
@@ -188,7 +171,7 @@ const resetState = () => {
 
   // init new chat
   chat.value = new Chat()
-  chat.value.addMessage(new Message('system', store.config.instructions.scratchpad.system))
+  chat.value.addMessage(new Message('system', i18nInstructions(store.config, 'instructions.scratchpad.system')))
 
   // init llm
   initLlm()
@@ -311,7 +294,7 @@ const onAction = (action: string|ToolbarAction) => {
     case 'magic':
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
-        const prompt = store.config.instructions.scratchpad[toolbarAction.value]
+        const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
         onSendPrompt({ prompt: prompt, attachment: null, docrepo: null, expert: null })
       } else {
         emitEvent('llm-done', null)
@@ -329,10 +312,10 @@ const confirmOverwrite = (callback: CallableFunction) => {
   }
 
   Dialog.show({
-    title: 'You have unsaved changes. You will lose your work if you continue.',
+    title: t('common.confirmation.continueQuestion'),
     showCancelButton: true,
-    confirmButtonText: 'Cancel',
-    cancelButtonText: 'Continue',
+    confirmButtonText: t('common.cancel'),
+    cancelButtonText: t('common.confirmation.continue'),
     reverseButtons: true
   }).then((result) => {
     if (result.isDismissed) {
@@ -362,7 +345,7 @@ const onLoad = () => {
       const fileContents = file as FileContents
       const scratchpad = JSON.parse(window.api.base64.decode(fileContents.contents))
       if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
-        Dialog.alert('This file is not a scratchpad file. Please try again with another file.')
+        Dialog.alert(t('scratchpad.fileError'))
       }
 
       // reset
@@ -384,7 +367,7 @@ const onLoad = () => {
 
     } catch (err) {
       console.error(err)
-      Dialog.alert('Error while loading scratchpad file')
+      Dialog.alert(t('scratchpad.loadingError'))
     }
   })
 
@@ -476,7 +459,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // now build the prompt
   let finalPrompt = prompt
   if (subject.length > 0) {
-    const template = store.config.instructions.scratchpad.prompt
+    const template = i18nInstructions(store.config, 'instructions.scratchpad.prompt')
     finalPrompt = template.replace('{ask}', prompt).replace('{document}', subject)
   }
 
@@ -485,7 +468,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // add to thead
   const userMessage = new Message('user', finalPrompt)
-  userMessage.expert = expert
+  userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
   if (attachment) {
     attachment.loadContents()
     userMessage.attach(attachment)
@@ -543,7 +526,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   } catch (err) {
     console.error(err)
-    Dialog.alert('Error while generating text')
+    Dialog.alert(t('scratchpad.generationError'))
   }
 
   // done

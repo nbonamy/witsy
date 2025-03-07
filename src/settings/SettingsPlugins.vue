@@ -1,4 +1,3 @@
-
 <template>
   <div class="content">
     <div class="list-panel">
@@ -18,6 +17,7 @@
 
 import { ref, computed, nextTick } from 'vue'
 import { availablePlugins } from '../plugins/plugins'
+import { t } from '../services/i18n'
 import SettingsBrowse from './SettingsBrowse.vue'
 import SettingsPython from './SettingsPython.vue'
 import SettingsSearch from './SettingsSearch.vue'
@@ -56,18 +56,7 @@ const plugins = computed((): PluginUI[] => {
   let res = Object.keys(plugins).map(plugin => {
     return {
       id: plugin,
-      label: {
-        browse: 'Download',
-        search: 'Web Search',
-        python: 'Python',
-        image: 'Text-to-Image',
-        memory: 'Memory',
-        video: 'Text-to-Video',
-        youtube: 'YouTube',
-        vega: 'Vega',
-        mcp: 'MCP',
-        nestor: 'Nestor',
-      }[plugin],
+      label: t(`settings.plugins.${plugin}.title`),
       logo: {
         browse: { icon: BIconCloudArrowDownFill },
         search: { icon: BIconBinocularsFill },

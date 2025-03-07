@@ -33,10 +33,11 @@
 
 <script setup lang="ts">
 
-import { type FileContents, type Expert } from '../types/index'
-import { type DocumentBase } from '../types/rag'
-import { ref, computed, onMounted, nextTick, watch, type Ref } from 'vue'
+import { FileContents, Expert } from '../types/index'
+import { DocumentBase } from '../types/rag'
+import { ref, computed, onMounted, nextTick, watch, Ref } from 'vue'
 import { store } from '../services/store'
+import { expertI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
@@ -127,6 +128,9 @@ const menuY = ref(0)
 const engine = () => props.chat?.engine || llmFactory.getChatEngineModel().engine
 const model = () => props.chat?.model || llmFactory.getChatEngineModel().model
 
+const backSpaceHitsToClearExpert = 1
+let backSpaceHitsWhenEmpty = 0
+
 const actionsCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
   return `actions-${count > 1 ? 'many' : count}`
@@ -160,16 +164,16 @@ const docReposMenuItems = computed(() => {
 
 const expertsMenuItems = computed(() => {
   return store.experts.filter((p: Expert) => p.state == 'enabled').map(p => {
-    return { label: p.name, action: p.name, icon: BIconStars }
+    return { label: p.name || expertI18n(p, 'name'), action: p.id, icon: BIconStars }
   })
 })
 
 const activeExpertMenuItems = computed(() => {
   return [
-    { label: expert.value.name, icon: BIconStars },
-    { label: expert.value.prompt, disabled: true, wrap: true },
+    { label: expert.value.name || expertI18n(expert.value, 'name'), icon: BIconStars },
+    { label: expert.value.prompt || expertI18n(expert.value, 'prompt'), disabled: true, wrap: true },
     { separator: true },
-    { label: 'Clear expert', action: 'clear' },
+    { label: t('prompt.expert.clear'), action: 'clear' },
   ];
 })
 
@@ -182,12 +186,12 @@ const commands = computed(() => {
 const conversationMenu = computed(() => {
   if (props.conversationMode) {
     return [
-      { label: 'Stop conversation', action: null }
+      { label: t('prompt.conversation.stop'), action: null }
     ]
   } else {
     return [
-      { label: 'Start automatic conversation', action: 'auto' },
-      { label: 'Start push-to-talk conversation', action: 'ptt' },
+      { label: t('prompt.conversation.startAuto'), action: 'auto' },
+      { label: t('prompt.conversation.startPTT'), action: 'ptt' },
     ]
   }
 })
@@ -212,9 +216,9 @@ onMounted(() => {
 
 const defaultPrompt = (conversationMode: string) => {
   if (conversationMode === 'auto') {
-    return 'You can start talking now...'
+    return t('prompt.conversation.placeholders.auto')
   } else if (conversationMode === 'ptt') {
-    return 'Press and hold space to talk...'
+    return t('prompt.conversation.placeholders.ptt')
   } else {
     return ''
   }
@@ -273,6 +277,9 @@ const onSetPrompt = (message: Message) => {
 
 const setExpert = (xpert: Expert) => {
   expert.value = xpert
+  if (prompt.value == '@') {
+    prompt.value = ''
+  }
   nextTick(() => {
     input.value.focus()
   })
@@ -545,12 +552,19 @@ const handleDocRepoClick = (action: string) => {
   }
 }
 
+const isContextMenuOpen = () => {
+  return showDocRepo.value || showExperts.value || showCommands.value || showActiveExpert.value || showConversationMenu.value
+}
+
 const closeContextMenu = () => {
   showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
   showActiveExpert.value = false
   showConversationMenu.value = false
+  nextTick(() => {
+    input.value.focus()
+  })
 }
 
 const handleExpertClick = (action: string) => {
@@ -559,7 +573,7 @@ const handleExpertClick = (action: string) => {
     disableExpert()
     return
   } else if (action) {
-    setExpert(store.experts.find(p => p.name === action))
+    setExpert(store.experts.find(p => p.id === action))
   }
 }
 
@@ -652,6 +666,22 @@ const onKeyDown = (event: KeyboardEvent) => {
       event.stopPropagation()
       return false
     }
+  } else if (event.key === '@') {
+    if (prompt.value === '') {
+      onClickExperts()
+      event.preventDefault()
+      prompt.value = '@'
+      return false
+    }
+  } else if (event.key === 'Backspace') {
+    if (prompt.value === '') {
+      if (++backSpaceHitsWhenEmpty === backSpaceHitsToClearExpert) {
+        backSpaceHitsWhenEmpty = 0
+        disableExpert()
+      }
+    } else {
+      backSpaceHitsWhenEmpty = 0
+    }
   }
 }
 
@@ -689,6 +719,8 @@ defineExpose({
   focus: () => {
     input.value.focus()
   },
+
+  isContextMenuOpen,
 
 })
 

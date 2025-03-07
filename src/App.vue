@@ -5,7 +5,8 @@
 <script setup lang="ts">
 
 import { strDict } from 'types'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, WritableComputedRef } from 'vue'
+import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
 import CommandPicker from './screens/CommandPicker.vue'
@@ -14,6 +15,7 @@ import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
+import i18n, { i18nLlm, t } from './services/i18n'
 
 // events
 import useEventBus from './composables/event_bus'
@@ -59,6 +61,31 @@ const setTint = (tint?: string) => {
   document.querySelector('body').setAttribute('data-tint', tint)
 }
 
+const setLocale = () => {
+  
+  // ui locale
+  const localeUI = window.api.config.localeUI()
+  const i18nLocale = (i18n.global.locale as WritableComputedRef<Locale>)
+  if (i18nLocale.value !== localeUI) {
+    console.log('Changing UI locale to', localeUI)
+    i18nLocale.value = localeUI
+  }
+
+  // llm locale
+  const localeLLM = window.api.config.localeLLM()
+  const i18nLlmLocale = (i18nLlm.global.locale as WritableComputedRef<Locale>)
+  if (i18nLlmLocale.value !== localeLLM) {
+    console.log('Changing LLM locale to', localeLLM)
+    i18nLlmLocale.value = localeLLM
+  }
+
+  // dom
+  const body = document.querySelector('body')
+  body.setAttribute('data-locale', localeUI)
+  body.classList.remove('colon-spaced', 'colon-notspaced')
+  body.classList.add(`colon-${t('common.colon')}`)
+}
+
 // add platform name
 onMounted(() => {
 
@@ -71,6 +98,7 @@ onMounted(() => {
   window.api.on('file-modified', (signal) => {
     if (signal === 'settings') {
       setTint()
+      setLocale()
     }
   })  
 
@@ -86,6 +114,9 @@ onMounted(() => {
   // init theme
   theme.value = appearanceTheme.getTheme()
   setTint()
+
+  // init locale
+  setLocale()
 
   // watch for theme change
   if (window.matchMedia) {

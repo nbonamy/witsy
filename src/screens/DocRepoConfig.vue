@@ -2,34 +2,34 @@
   <dialog class="editor" id="docrepoconfig">
     <form method="dialog">
       <header>
-        <div class="title">Document Repositories defaults</div>
+        <div class="title">{{ t('docRepo.config.title') }}</div>
       </header>
       <main>
         <div class="group">
-          <label>Max document size</label>
-          <input v-model="maxDocumentSizeMB" />&nbsp;&nbsp;million characters
+          <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
+          <input v-model="maxDocumentSizeMB" />&nbsp;&nbsp;{{ t('docRepo.config.millionCharacters') }}
         </div>
         <div class="group">
-          <label>Chunk size</label>
-          <input v-model="chunkSize" />&nbsp;&nbsp;characters
+          <label>{{ t('docRepo.config.chunkSize') }}</label>
+          <input v-model="chunkSize" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
         </div>
         <div class="group">
-          <label>Chunk overlap</label>
-          <input v-model="chunkOverlap" />&nbsp;&nbsp;characters
+          <label>{{ t('docRepo.config.chunkOverlap') }}</label>
+          <input v-model="chunkOverlap" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
         </div>
         <div class="group">
-          <label>Search result count</label>
+          <label>{{ t('docRepo.config.searchResultCount') }}</label>
           <input v-model="searchResultCount" />
         </div>
         <div class="group">
-          <label>Search relevance cut-off</label>
+          <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
           <input v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click.prevent="onReset" formnovalidate>Reset</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button @click.prevent="onReset" formnovalidate>{{ t('common.reset') }}</button>
+        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
@@ -39,6 +39,7 @@
 
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import defaultSettings from '../../defaults/settings.json'
 
 // bus

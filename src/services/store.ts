@@ -85,6 +85,8 @@ export const store: Store = reactive({
     const defaults = store.config.llm.defaults.find(d => d.engine === chat.engine && d.model === chat.model)
     if (defaults) {
       chat.disableTools = defaults.disableTools
+      chat.locale = defaults.locale
+      chat.prompt = defaults.prompt
       chat.modelOpts = {
         contextWindowSize: defaults.contextWindowSize,
         maxTokens: defaults.maxTokens,
@@ -95,7 +97,9 @@ export const store: Store = reactive({
         reasoningEffort: defaults.reasoningEffort,
       }
     } else {
-      chat.disableTools = false
+      chat.disableTools = store.config.engines[chat.engine]?.disableTools || false
+      chat.locale = null
+      chat.prompt = null
       chat.modelOpts = undefined
     }
   },

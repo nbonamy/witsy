@@ -1,6 +1,8 @@
 
 import { Expert } from 'types/index'
-import { App } from 'electron'
+import { app, App } from 'electron'
+import { createI18n } from './i18n.base'
+import { getLocaleMessages } from './i18n'
 import defaultExperts from '../../defaults/experts.json'
 import * as file from './file'
 import path from 'path'
@@ -27,15 +29,28 @@ export const loadExperts = (source: App|string): Expert[] => {
     }
   }
 
-  // now add new experts
+  // migrations can update
   let updated = false
+
+  // i18n migrate label and template
+  const t = createI18n(getLocaleMessages(app), 'en', { missingWarn: false }).global.t as CallableFunction
+  for (const expert of experts) {
+    const key = `experts.experts.${expert.id}`
+    if (expert.name === t(`${key}.name`)) {
+      delete expert.name
+      updated = true
+    }
+    if (expert.prompt === t(`${key}.prompt`)) {
+      delete expert.prompt
+      updated = true
+    }
+  }
+  
+  // now add new experts
   for (const prompt of defaultExperts) {
     const p = experts.find((prt: Expert) => prt.id === prompt.id)
     if (p == null) {
       experts.push(prompt as Expert)
-      updated = true
-    } else if (p.type == 'system') {
-      p.prompt = prompt.prompt
       updated = true
     }
   }

@@ -18,13 +18,13 @@ test('Load default settings', () => {
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
-  expect(loaded.general.language).toBe('')
+  expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
 })
 
 test('Load overridden settings', () => {
   const loaded1: Configuration = config.loadSettings('./tests/fixtures/config1.json')
-  expect(loaded1.general.language).toBe('fr')
+  expect(loaded1.general.locale).toBe('fr')
   expect(loaded1.general.keepRunning).toBe(true)
 
   const loaded2 = config.loadSettings('./tests/fixtures/config2.json')
@@ -35,77 +35,5 @@ test('Save settings', () => {
   const loaded = config.loadSettings('')
   config.saveSettings('settings.json', loaded)
   const saved = JSON.parse(JSON.stringify(loaded))
-  saved.instructions = {}
-  expect(fs.writeFileSync).toHaveBeenCalledWith('settings.json', JSON.stringify(saved, null, 2))
-})
-
-test('Nullify instructions', () => {
-
-  const defaults = {
-    key1: 'value1',
-    key2: 'value2',
-    dict1: {
-      key1: 'value1',
-      key2: 'value2',
-    }
-  }
-
-  let input = JSON.parse(JSON.stringify(defaults))
-  let reference = JSON.parse(JSON.stringify(defaults))
-  config.nullifyInstructions(input, reference)
-  expect(input).toStrictEqual({})
-
-  input = JSON.parse(JSON.stringify(defaults))
-  reference = JSON.parse(JSON.stringify(defaults))
-  input.key1 = 'value3'
-  config.nullifyInstructions(input, reference)
-  expect(input).toStrictEqual({key1: 'value3'})
-
-  input = JSON.parse(JSON.stringify(defaults))
-  reference = JSON.parse(JSON.stringify(defaults))
-  input.dict1.key1 = 'value3'
-  config.nullifyInstructions(input, reference)
-  expect(input).toStrictEqual({dict1: {key1: 'value3'}})
-
-  input = JSON.parse(JSON.stringify(defaults))
-  reference = JSON.parse(JSON.stringify(defaults))
-  input.key2 = 'value3'
-  input.dict1.key2 = 'value4'
-  config.nullifyInstructions(input, reference)
-  expect(input).toStrictEqual({key2: 'value3', dict1: {key2: 'value4'}})
-
-})
-
-test('Nullify descriptions', () => {
-
-  const defaults = {
-    image: {
-      description: 'image',
-    },
-    video: {
-      description: 'video',
-    },
-    memory: {
-      apiKey: '123',
-      description: 'memory',
-    }
-  }
-
-  let input = JSON.parse(JSON.stringify(defaults))
-  let reference = JSON.parse(JSON.stringify(defaults))
-  config.nullifyPluginDescriptions(input, reference)
-  expect(input).toStrictEqual({ image: {}, video: {}, memory: { apiKey: '123' } })
-
-  input = JSON.parse(JSON.stringify(defaults))
-  reference = JSON.parse(JSON.stringify(defaults))
-  input.image.description = 'custom'
-  config.nullifyPluginDescriptions(input, reference)
-  expect(input).toStrictEqual({image: { description: 'custom' }, video: {}, memory: { apiKey: '123' }})
-
-  input = JSON.parse(JSON.stringify(defaults))
-  reference = JSON.parse(JSON.stringify(defaults))
-  input.memory.description = 'custom'
-  config.nullifyPluginDescriptions(input, reference)
-  expect(input).toStrictEqual({image: { }, video: {}, memory: { apiKey: '123', description: 'custom' }})
-
+  expect(fs.writeFileSync).toHaveBeenLastCalledWith('settings.json', JSON.stringify(saved, null, 2))
 })

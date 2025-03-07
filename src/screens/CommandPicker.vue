@@ -1,11 +1,15 @@
 <template>
   <div class="commands">
+    <div class="close">
+      <div class="decoration"></div>
+      <BIconX class="icon" @click="onClose"/>
+    </div>
     <div class="app" v-if="sourceApp">
-      <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+      <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
     </div>
     <div class="list" ref="list"> <div class="command" v-for="command in commands" :key="command.id" :class="{ selected: selected?.id == command.id }" @mousemove="onMouseMove(command)" @click="onRunCommand($event, command)">
         <div class="icon">{{ command.icon }}</div>
-        <div class="label">{{ command.label }}</div>
+        <div class="label">{{ command.label ?? commandI18n(command, 'label') }}</div>
         <div class="shortcut" v-if="command.shortcut">{{ command.shortcut }}</div>
       </div>
     </div>
@@ -17,6 +21,8 @@
 import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t, commandI18n } from '../services/i18n'
+import { BIconX } from 'bootstrap-icons-vue'
 
 // load store
 store.loadSettings()
@@ -33,8 +39,7 @@ const selected: Ref<Command | null> = ref(null)
 const sourceApp: Ref<ExternalApp | null> = ref(null)
 
 const iconData = computed(() => {
-  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${sourceApp.value.icon?.mimeType};base64,${sourceApp.value.icon?.contents}`
 })
 
 onMounted(() => {
@@ -92,7 +97,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 const ensureVisible = () => {
   nextTick(() => {
-    const selectedEl = list.value?.querySelector('.selected')
+    const selectedEl = list.value?.querySelector('.selected') as HTMLElement
     if (selectedEl) {
       scrollToBeVisible(selectedEl, list.value)
     }
@@ -131,7 +136,7 @@ const onRunCommand = (event: MouseEvent | KeyboardEvent, command: Command) => {
   })
 }
 
-const scrollToBeVisible = function (ele, container) {
+const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   const eleTop = ele.offsetTop - container.offsetTop;
   const eleBottom = eleTop + ele.clientHeight;
 
@@ -164,6 +169,31 @@ const scrollToBeVisible = function (ele, container) {
   padding: 10px;
 }
 
+.close {
+  display: none;
+  flex-direction: row;
+  margin-bottom: 8px;
+
+  .decoration {
+    flex: 1;
+    height: 3px;
+    margin-top: 6px;
+    border-top: 0.5px solid var(--icon-color);
+    border-bottom: 0.5px solid var(--icon-color);
+    margin-left: 8px;
+    margin-right: 4px;
+    opacity: 0.7;
+  }
+
+  .icon {
+    cursor: pointer;
+  }
+}
+
+/*.windows .close {
+  display: flex;
+}*/
+
 .app {
   display: flex;
   flex-direction: row;
@@ -185,6 +215,12 @@ const scrollToBeVisible = function (ele, container) {
 
 .list {
   overflow: auto;
+}
+
+.windows .app {
+  .icon {
+    transform: scale(0.8);
+  }
 }
 
 .command {
@@ -242,9 +278,7 @@ const scrollToBeVisible = function (ele, container) {
 }
 
 .command.selected {
-
-  .shortcut,
-  .action {
+  .shortcut, .action {
     color: var(--highlighted-color);
   }
 

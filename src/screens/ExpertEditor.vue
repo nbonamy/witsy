@@ -1,24 +1,27 @@
 <template>
-  <dialog class="editor">
+  <dialog id="expert-editor" class="editor">
     <form method="dialog">
       <header>
-        <div class="title">Expert details</div>
+        <div class="title">{{ t('experts.editor.title') }}</div>
       </header>
       <main>
-        <div class="group">
-          <label>Name</label>
-          <input type="text" v-model="name" required />
+        <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+          <label class="no-colon"><BIconExclamationCircle /></label>
+          <div>{{ t('common.differentLocales') }}</div>
         </div>
         <div class="group">
-          <label>Prompt</label>
-          <textarea v-model="prompt" required :disabled="isSystem"></textarea>
+          <label>{{ t('common.name') }}</label>
+          <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
         </div>
-        <div class="group" v-if="isSystem">
-          <label></label>
-          <div>System Experts cannot be edited. Make a copy to customize this expert.</div>
+        <div class="group">
+          <label>{{ t('common.prompt') }}</label>
+          <div class="subgroup">
+            <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
+            <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
+          </div>
         </div>
         <div class="group" v-if="supportTriggerApps">
-          <label>Trigger Apps</label>
+          <label>{{ t('experts.editor.triggerApps') }}</label>
           <div class="subgroup list-with-actions">
             <div class="list">
               <template v-for="app in triggerApps" :key="app.identifier">
@@ -32,13 +35,13 @@
               <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
               <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
             </div>
-            <span v-pre>The prompt will be automatically selected when Prompt Anywhere is called from one of these applications</span>
+            <span> {{ t('experts.editor.triggerAppsDescription') }}</span>
           </div>
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
@@ -46,8 +49,9 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp } from 'types/index'
+import { Expert, ExternalApp } from '../types/index'
 import { ref, computed, watch } from 'vue'
+import { expertI18n, t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
@@ -59,23 +63,30 @@ const props = defineProps<{
 const type = ref(null)
 const name = ref(null)
 const prompt = ref(null)
-const triggerApps = ref(null)
+const triggerApps = ref([])
 const selectedApp = ref(null)
+const diffLang = ref(false)
+const isEdited = ref(false)
 
-const isSystem = computed(() => type.value == 'system')
-
-const supportTriggerApps = computed(() => window.api.platform == 'darwin')
+const supportTriggerApps = computed(() => window.api.platform !== 'linux')
 
 const iconData = (app: ExternalApp) => {
-  const iconContents = window.api.file.readIcon(app.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${app.icon.mimeType};base64,${app.icon.contents}`
+}
+
+const onChangeText = () => {
+  if (!props.expert) isEdited.value = false
+  isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18n(props.expert, 'name') || prompt.value !== expertI18n(props.expert, 'prompt')))
 }
 
 const load = () => {
   type.value = props.expert?.type || 'user'
-  name.value = props.expert?.name || ''
-  prompt.value = props.expert?.prompt || ''
+  name.value = props.expert?.name || expertI18n(props.expert, 'name')
+  prompt.value = props.expert?.prompt || expertI18n(props.expert, 'prompt')
   triggerApps.value = props.expert?.triggerApps || []
+  diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
+  selectedApp.value = null
+  onChangeText()
 }
 
 const selectApp = (app: ExternalApp) => {
@@ -97,8 +108,19 @@ const onDelApp = () => {
 // but at least it works!
 watch(() => props.expert || {}, load, { immediate: true })
 
+const close = () => {
+  emit('expert-modified')
+  document.querySelector<HTMLDialogElement>('#expert-editor').close()
+}
+
 const onCancel = () => {
-  load()
+  close()
+}
+
+const onReset = () => {
+  name.value = expertI18n(props.expert, 'name')
+  prompt.value = expertI18n(props.expert, 'prompt')
+  isEdited.value = false
 }
 
 const onSave = (event: Event) => {
@@ -106,18 +128,23 @@ const onSave = (event: Event) => {
   // check
   if (!name.value || !prompt.value) {
     event.preventDefault()
-    Dialog.alert('All fields marked with * are required.')
+    Dialog.alert(t('experts.editor.validation.requiredFields'))
     return
   }
 
   // save it
   emit('expert-modified', {
     id: props.expert.id,
-    name: name.value,
-    prompt: prompt.value,
+    name: name.value === expertI18n(props.expert, 'name') ? undefined : name.value,
+    prompt: prompt.value === expertI18n(props.expert, 'prompt') ? undefined : prompt.value,
     triggerApps: triggerApps.value
   })
 }
+
+defineExpose({
+  show: () => document.querySelector<HTMLDialogElement>('#expert-editor').showModal(),
+  close,
+})
 
 </script>
 
@@ -173,6 +200,10 @@ dialog.editor form .group input.shortcut {
       }
     }
   }
+}
+
+.windows .list-with-actions .list .item .icon {
+  transform: scale(0.8);
 }
 
 </style>

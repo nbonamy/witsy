@@ -4,37 +4,22 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
-    "language": "",
     "tips": {
     },
     "confirm": {
       "retryGeneration": true
-    }
+    },
+    "locale": ""
   },
   "llm": {
+    "locale": "",
+    "forceLocale": false,
     "engine": "openai",
     "favorites": [],
     "autoVisionSwitch": true,
     "conversationLength": 20,
     "imageResize": 768,
     "defaults": []
-  },
-  "instructions": {
-    "default": "You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user's needs, communicate clearly, and provide responses that are informative, concise, and relevant.",
-    "titling": "You are an assistant whose task is to find the best title for the conversation below. The title should be just a few words.",
-    "titling_user": "Provide a title for the conversation above. Do not return anything other than the title. Do not wrap responses in quotes.",
-    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{context}\n\nQUERY: {query}",
-    "scratchpad": {
-      "system": "You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the...'",
-      "prompt": "EXTRACT:\n{document}\n\nASK: {ask}",
-      "spellcheck": "Correct the EXTRACT by fixing spelling errors and grammar. Do not modify the EXTRACT beyond spelling and grammar. Do not list the corrections you made.",
-      "improve": "Improve the EXTRACT in your own words. Make it more clear, concise, and engaging. Do not explain the changes you made.",
-      "takeaways": "Write a list (using dashes) of key takeaways from the EXTRACT. Keep in between 3 and 5 takeaways for a short EXTRACT, up to 10 for a longer EXTRACT.",
-      "title": "Suggest a title for the EXTRACT. Return the title followed by the full text of the EXTRACT.",
-      "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
-      "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
-      "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response."      
-    }
   },
   "appearance": {
     "theme": "system",
@@ -111,7 +96,7 @@
   "stt": {
     "engine": "openai",
     "model": "whisper-1",
-    "language": "",
+    "locale": "",
     "silenceDetection": true,
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe"
@@ -289,17 +274,14 @@
     },
     "image": {
       "enabled": true,
-      "engine": "openai",
-      "description": "Generate an image based on a prompt. Returns the url of the image starting with the \"file://\" scheme which is OK. Create only one image at a time unless explicitely asked to do otherwise. Always embed the image visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the image."
+      "engine": "openai"
     },
     "memory": {
-      "enabled": false,
-      "description": "Use this tool to save and retrieve user information, preferences, tastes in order to make your answers more personalized. When user asks for suggestions, retrieve any releveant preferences stored in memory and use them to build the suggestions. When you save information, make sure the content includes enough description to be easily retrieved later. For instance don't just store \"User likes U2\" but \"User musical tastes includes U2\". Avoid storing unrelated facts together: split them into different facts and store them separately. Don't be shy about storing information, the more you store, the more you can personalize the user experience. You can save multiple facts at once by providing an array of strings as the content parameter. There's no need to explicitly mention your memory capabilities. Instead, seamlessly incorporate your understanding of the user into your responses."
+      "enabled": false
     },
     "video": {
       "enabled": true,
-      "engine": "replicate",
-      "description": "Generate a video based on a prompt. Returns the url of the video starting with the \"file://\" scheme which is OK. Create only one video at a time unless explicitely asked to do otherwise. Always embed the video visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the video."
+      "engine": "replicate"
     },
     "vega": {
       "enabled": false

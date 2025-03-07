@@ -1,0 +1,1029 @@
+{
+  "common": {
+    "actions": {
+      "addFiles": "Agregar archivos...",
+      "addFolder": "Agregar carpeta..."
+    },
+    "arguments": "Argumentos",
+    "askMeAnything": "Pregúntame cualquier cosa",
+    "back": "Atrás",
+    "basedOn": "basado en",
+    "browse": "Examinar",
+    "cancel": "Cancelar",
+    "chat": "Chat",
+    "clear": "Limpiar",
+    "clickToStart": "Haz clic en el blob para comenzar a chatear",
+    "close": "Cerrar",
+    "colon": "noespaciado",
+    "command": "Comando",
+    "confirmation": {
+      "cannotUndo": "No puedes deshacer esta acción.",
+      "closeAnyway": "Cerrar de todos modos",
+      "continue": "Continuar",
+      "continueQuestion": "Tienes cambios no guardados. Perderás tu trabajo si continúas.",
+      "deleteDocument": "¿Estás seguro de que deseas eliminar este documento?",
+      "deleteMemory": "¿Estás seguro de que deseas eliminar esta memoria?",
+      "deleteRepository": "¿Estás seguro de que deseas eliminar este repositorio?",
+      "doNotClose": "No cerrar",
+      "unsavedChanges": "Tienes cambios no guardados. Perderás tu trabajo si cierras esta ventana."
+    },
+    "continue": "Continuar",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "costsAsOf": "costos a partir de",
+    "create": "Crear",
+    "default": "Predeterminado",
+    "delete": "Eliminar",
+    "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
+    "disabled": "Desactivado",
+    "documents": "Documentos",
+    "done": "¡Hecho!",
+    "edit": "Editar",
+    "embeddings": "Vectores",
+    "enabled": "Activado",
+    "error": "¡Error!",
+    "esc": "Esc",
+    "estimatedCost": "Costo estimado:",
+    "favorites": {
+      "add": "Agregar a favoritos",
+      "remove": "Eliminar de favoritos"
+    },
+    "files": "Archivos",
+    "fork": "Bifurcar",
+    "high": "Alto",
+    "icon": "Ícono",
+    "insert": "Insertar",
+    "install": "Instalar",
+    "key": "Clave",
+    "language": {
+      "auto": "🤖 Igual que la interfaz",
+      "system": "🖥️ Idioma del sistema",
+      "fr-FR": "Francés"
+    },
+    "llmModel": "Modelo de LLM",
+    "llmProvider": "Proveedor de LLM",
+    "load": "Cargar",
+    "low": "Bajo",
+    "medium": "Medio",
+    "move": "Mover",
+    "name": "Nombre",
+    "newChat": "Nueva conversación",
+    "no": "No",
+    "ok": "OK",
+    "pick": "Seleccionar",
+    "prompt": "Sugerencia",
+    "pull": "Descargar",
+    "read": "Leer",
+    "record": "Grabar",
+    "redo": "Rehacer",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "rename": "Renombrar",
+    "replace": "Reemplazar",
+    "required": {
+      "fieldsRequired": "Asegúrate de ingresar un valor para los campos requeridos."
+    },
+    "reset": "Restablecer",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "search": "Buscar…",
+    "settings": "Configuraciones",
+    "shortcut": "Atajo",
+    "stop": "Detener",
+    "type": "Tipo",
+    "undo": "Deshacer",
+    "url": "URL",
+    "usage": "Uso",
+    "value": "Valor",
+    "warning": "Advertencia",
+    "workingWith": "Trabajando con",
+    "write": "Escribir"
+  },
+  "automation": {
+    "commander": {
+      "emptyText": "Por favor, resalta el texto que deseas analizar."
+    },
+    "grabError": "Ocurrió un error al intentar obtener el texto. Por favor, verifica la configuración de Privacidad y Seguridad.",
+    "readAloud": {
+      "emptyText": "Por favor, resalta el texto que deseas leer en voz alta."
+    }
+  },
+  "autoupdate": {
+    "available": "Una nueva versión está disponible. Descargando ahora…",
+    "downloading": "Se está realizando una actualización. Por favor, espere a que se complete.",
+    "error": "Error al comprobar actualizaciones. Por favor, inténtelo de nuevo más tarde.",
+    "uptodate": "Ya está utilizando la última versión de Witsy."
+  },
+  "chat": {
+    "actions": {
+      "exportPdf": "Exportar como PDF",
+      "makeTemporary": "Chat temporal",
+      "saveChat": "Guardar conversación"
+    },
+    "editor": {
+      "title": "Título",
+      "validation": {
+        "requiredFields": "Todos los campos son obligatorios",
+        "titleRequired": "Asegúrate de ingresar un título para esta conversación."
+      }
+    }
+  },
+  "chatList": {
+    "displayMode": {
+      "folders": "Carpetas",
+      "timeline": "Línea de tiempo"
+    },
+    "folder": {
+      "actions": {
+        "delete": "Eliminar carpeta"
+      }
+    },
+    "timeline": {
+      "earlier": "Más antiguo",
+      "last14days": "Últimos 14 días",
+      "last30days": "Últimos 30 días",
+      "last7days": "Últimos 7 días",
+      "today": "Hoy",
+      "yesterday": "Ayer"
+    }
+  },
+  "commands": {
+    "commands": {
+      "00000000-0000-0000-0000-000000000000": {
+        "label": "Pregúntame cualquier cosa",
+        "template": "Basado en el texto entre comillas triples a continuación:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nResponde a lo siguiente: "
+      },
+      "90dd1cd3-903a-4f60-bccf-0542fa78d8ef": {
+        "label": "Explicar esto",
+        "template": "Explica el texto en comillas triples a continuación:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que la explicación. No envuelvas las respuestas entre comillas."
+      },
+      "3e629079-6a0b-4096-9e5d-e2dd39268fa7": {
+        "label": "Corregir ortografía y gramática",
+        "template": "Corrige el texto en comillas triples a continuación en español estándar y corrige la gramática. Haz tu mejor esfuerzo.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto corregido. No envuelvas las respuestas entre comillas."
+      },
+      "adfabf0c-7ae2-4b54-9083-0abdae84a859": {
+        "label": "Mejorar la escritura",
+        "template": "Mejora el texto en comillas triples a continuación con tus propias palabras. Reformula el texto.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "ae93b6e7-5d19-43dd-a859-967194523550": {
+        "label": "Expandir mi escritura",
+        "template": "El siguiente texto en comillas triples a continuación ya ha sido escrito:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nExpande la escritura. Escribe al menos 3 párrafos. No devuelvas nada más que la escritura expandida. No envuelvas las respuestas entre comillas."
+      },
+      "9bbae0f1-afde-41f8-b423-c5d8db1a264d": {
+        "label": "Simplificar mi escritura",
+        "template": "El siguiente texto en comillas triples a continuación ya ha sido escrito:\n\n\"\"\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nSimplifica y reduce la escritura. No devuelvas nada más que la escritura simplificada. No envuelvas las respuestas entre comillas."
+      },
+      "c57f4afd-2524-4914-be65-f18eb8566544": {
+        "label": "Listar puntos clave",
+        "template": "Mis notas están a continuación entre comillas triples:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nEscribe una lista markdown (usando guiones) de puntos clave de mis notas. Escribe al menos 10 elementos. No envuelvas las respuestas entre comillas."
+      },
+      "177bf65e-20ec-46ee-ae0e-84f9b0eb7490": {
+        "label": "Escribir un resumen corto",
+        "template": "Resume el texto en comillas triples, pero mantén la concisión. Resume utilizando un lenguaje simple y claro y mantén el mismo tiempo verbal.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el resumen. No envuelvas las respuestas entre comillas."
+      },
+      "1fc4e041-f4bc-471f-a02e-82cf20d12ea1": {
+        "label": "Escribir un resumen más largo",
+        "template": "Resume el texto en comillas triples a continuación en tres párrafos largos. Resume utilizando un lenguaje simple y claro y mantén el mismo tiempo verbal.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el resumen. No envuelvas las respuestas entre comillas."
+      },
+      "49de2329-9863-4fb4-beea-ad2677408e3f": {
+        "label": "Reescribir en un tono amigable",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto de manera amigable.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "d0306fbe-f1c4-497c-a356-a8fd4b5cbf0c": {
+        "label": "Reescribir en un tono profesional",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono profesional.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "9ca7d996-4490-4c86-99c2-223686fdd48e": {
+        "label": "Reescribir en un tono persuasivo",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono persuasivo.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "84fd2995-946a-4d42-81d3-dfe150212529": {
+        "label": "Reescribir en un tono instructivo",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono instructivo.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "7556325e-ece7-45f2-acbb-c0d78cfa3e9b": {
+        "label": "Reescribir en un tono humorístico",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono humorístico.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "7a213d4a-9ba9-4bc9-ada8-b6bab611d4ee": {
+        "label": "Reescribir en un tono sarcástico",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono sarcástico.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "c29ef79c-d850-4ca5-8c14-089156154f70": {
+        "label": "Reescribir en un tono empático",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono empático.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "b1c563a9-0d8e-4295-87b1-b78c283c19e6": {
+        "label": "Reescribir en un tono autoritario",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono autoritario.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "56a4da10-8aad-4830-8e7a-a70780bd6abe": {
+        "label": "Reescribir en un tono inspirador",
+        "template": "Reescribe el texto en comillas triples a continuación con tus propias palabras. Reformula el texto con un tono inspirador.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto reformulado. No envuelvas las respuestas entre comillas."
+      },
+      "a78a9a9c-4264-4a03-a0ab-db7e864d0729": {
+        "label": "Traducir al inglés",
+        "template": "Traduce el texto en comillas triples a continuación al inglés.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "1f2618d3-9b5b-44be-8829-0456fd392c5c": {
+        "label": "Traducir al francés",
+        "template": "Traduce el texto en comillas triples a continuación al francés.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "13635570-7d09-478a-9e87-8163c96c421c": {
+        "label": "Traducir al español",
+        "template": "Traduce el texto en comillas triples a continuación al español.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "4b0d6229-f539-4ffd-bb30-eaee456592bb": {
+        "label": "Traducir al alemán",
+        "template": "Traduce el texto en comillas triples a continuación al alemán.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "8249950f-7fc3-4897-b08a-1d107ead14d8": {
+        "label": "Traducir al neerlandés",
+        "template": "Traduce el texto en comillas triples a continuación al neerlandés.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "371513af-c68a-4dd1-b513-73c8eb61e525": {
+        "label": "Traducir al ruso",
+        "template": "Traduce el texto en comillas triples a continuación al ruso.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "337adf45-3614-42f0-80e4-414f193f74fd": {
+        "label": "Traducir al chino",
+        "template": "Traduce el texto en comillas triples a continuación al chino.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "840d3be0-1ce2-41ed-98b1-2fb25e1f4fef": {
+        "label": "Traducir al vietnamita",
+        "template": "Traduce el texto en comillas triples a continuación al vietnamita.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "72bffaad-28aa-47a8-90df-1f3e6cc511e5": {
+        "label": "Traducir al hindi",
+        "template": "Traduce el texto en comillas triples a continuación al hindi.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "5d538c6e-90ed-4533-9ecc-e14bdedc7f49": {
+        "label": "Traducir al tailandés",
+        "template": "Traduce el texto en comillas triples a continuación al tailandés.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el texto traducido. No envuelvas las respuestas entre comillas."
+      },
+      "a0bb82a3-7c81-43f8-977f-0a327913d1c8": {
+        "label": "Escribir un desacuerdo",
+        "template": "El siguiente texto en comillas triples a continuación ya ha sido escrito:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nEscribe una respuesta que no esté de acuerdo con el punto principal de manera respetuosa. Incluye razones específicas para tu desacuerdo. No envuelvas las respuestas entre comillas."
+      },
+      "8b3ecb01-75c2-4902-998d-04d619abd147": {
+        "label": "Editar como un editor",
+        "template": "Actúa como un editor. Revisa el texto en comillas triples a continuación. Edítalo para errores ortográficos, problemas de gramática, puntuación y, en general, para la legibilidad y el flujo.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nDevuelve solo el texto editado. No envuelvas tu respuesta entre comillas."
+      },
+      "e245e8cc-6c0a-40a5-8c1e-faf96aabfa3b": {
+        "label": "Sugerir algunas opciones de títulos",
+        "template": "La entrada del blog a continuación ya ha sido escrita:\n\n\"\"\"ENTRADA DEL BLOG: {'{'}input{'}'}\"\"\"\n\nGenera una lista markdown (usando guiones) de cinco titulares apropiados para la entrada del blog. No devuelvas nada más que los titulares. No envuelvas las respuestas entre comillas."
+      },
+      "624bfd2a-3a98-4575-bee0-1e28d12deafa": {
+        "label": "Sugerir algunos tweets basados en mi escritura",
+        "template": "La entrada del blog a continuación ya ha sido escrita:\n\n\"\"\"ENTRADA DEL BLOG: {'{'}input{'}'}\"\"\"\n\nGenera una lista markdown (usando guiones) de cinco tweets basados en la entrada del blog:"
+      },
+      "5c83e343-3305-435f-8ecc-c5406f9cf05b": {
+        "label": "Generar un resumen para un artículo",
+        "template": "El artículo está a continuación en las comillas triples:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nProporciona un resumen del artículo. Usa el siguiente formato:\n\"\"\"\nResumen:\n\n< resumen de una o dos líneas >\n\nPuntos clave:\n1. < primer punto clave >\n2. < segundo punto clave >\n3. < tercer punto clave >\n\nContraargumentos:\n1. < primer argumento principal en contra >\n2. < segundo argumento principal en contra >\n\"\"\"\n\nNo devuelvas nada más que el resumen. No envuelvas las respuestas entre comillas."
+      },
+      "e4583555-85f3-441e-b199-05bdcd0e374d": {
+        "label": "Generar un contraargumento",
+        "template": "Da el contraargumento al texto a continuación:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el contraargumento. No envuelvas las respuestas entre comillas."
+      },
+      "0979ebe7-f71f-44a3-b76b-2841cb00a5b6": {
+        "label": "Generar un email",
+        "template": "Escribe un email profesional y articulado para el asunto a continuación:\n\"\"\"\nAsunto: {'{'}input{'}'}\n\"\"\"\n\nNo devuelvas nada más que el email. No envuelvas las respuestas entre comillas."
+      },
+      "a6f1a4bf-6c3d-4f10-be6f-a7c72c06ec22": {
+        "label": "Listar elementos de acción",
+        "template": "Mi nota está a continuación entre comillas triples:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nEscribe una lista de tareas de elementos de acción a partir de mis notas utilizando el siguiente formato:\n\n- [ ] <primer elemento de acción>\n- [ ] <segundo elemento de acción>\n- [ ] <tercer elemento de acción>\n- [ ] <cuarto elemento de acción>\n\nNo devuelvas nada más que la lista de tareas. No envuelvas las respuestas entre comillas."
+      },
+      "35847b3b-0ff6-44b2-aa59-5d8ad5e17f5c": {
+        "label": "Escribir una entrada de blog",
+        "template": "Escribe una entrada de blog usando el esquema en comillas triples a continuación. Usa un lenguaje simple y claro. No devuelvas nada más que la entrada de blog. No envuelvas las respuestas entre comillas.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n"
+      },
+      "2015c27c-6b97-461f-acb7-6fc9886be376": {
+        "label": "Formatear en párrafos",
+        "template": "Formatea el texto en comillas triples a continuación en párrafos. No devuelvas nada más que el texto formateado. No envuelvas las respuestas entre comillas.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "57c9ccec-1da3-443b-a3db-5626728d20e8": {
+        "label": "Escribir analogías",
+        "template": "Escribe tres analogías diferentes para el texto en comillas a continuación. Usa un lenguaje simple y claro. No devuelvas nada más que las analogías. No envuelvas las respuestas entre comillas.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "c4a3bedb-87bf-4125-9edc-c75c02633806": {
+        "label": "Completar este código",
+        "template": "Termina el código a continuación. Responde estrictamente con el nuevo código, no expliques.\n\n```\n{'{'}input{'}'}\n```"
+      },
+      "e8ab9860-b99a-4763-bbaa-8cc3b7fe9dc4": {
+        "label": "Comentar este código",
+        "template": "Crea comentarios para el código a continuación. Responde con todo el código con los comentarios agregados. No incluyas ninguna explicación.\n\n```\n{'{'}input{'}'}\n```"
+      }
+    },
+    "defaults": {
+      "lastOneUsed": "Último usado",
+      "title": "Valores predeterminados de comandos"
+    },
+    "editor": {
+      "inputPlaceholder": "{'input'} será sustituido por el texto destacado",
+      "notEditable": "Este comando no es editable. ¡El contenido capturado estará disponible en el aviso para que puedas preguntar cualquier cosa sobre él!",
+      "prompt": "Aviso",
+      "resetToDefault": "Restablecer nombre y aviso a valores predeterminados",
+      "title": "Detalles del comando",
+      "useDefault": "Usar valores predeterminados de comandos",
+      "validation": {
+        "inputPlaceholder": "La plantilla debe contener el marcador de posición {'input'}.",
+        "requiredFields": "Todos los campos marcados con * son obligatorios."
+      }
+    }
+  },
+  "docRepo": {
+    "config": {
+      "characters": "caracteres",
+      "chunkOverlap": "Superposición de fragmentos",
+      "chunkSize": "Tamaño de fragmentos",
+      "maxDocumentSize": "Tamaño máximo del documento",
+      "millionCharacters": "millón de caracteres",
+      "relevanceCutOff": "Límite de relevancia de búsqueda",
+      "searchResultCount": "Número de resultados de búsqueda",
+      "title": "Configuraciones predeterminadas de los Repositorios de Documentos"
+    },
+    "create": {
+      "defaultName": "Repositorio de Documentos",
+      "embeddingWarning": "el modelo de incrustación no puede ser cambiado una vez que se crea el repositorio",
+      "title": "Crear Repositorio de Documentos"
+    },
+    "repositories": {
+      "clickToCreate": "Haga clic en el botón + para crear uno.",
+      "noRepositories": "Aún no tienes ningún repositorio.",
+      "title": "Repositorios de Documentos"
+    }
+  },
+  "embedding": {
+    "apiKeyReminder": "Asegúrate de ingresar tu clave API en el panel Modelos de la configuración de Witsy.",
+    "browse": "Explorar modelos",
+    "model": "Modelo de incrustación",
+    "provider": "Proveedor de incrustación"
+  },
+  "emptyChat": {
+    "settings": {
+      "configure": "Configurar",
+      "needsConfiguration": "¡Este motor debe ser configurado primero! ¿Quieres abrir la Configuración?"
+    },
+    "tips": {
+      "switchModel": "¡Haz clic aquí para cambiar a un modelo de chat bot diferente!",
+      "switchProvider": "¡Haz clic aquí para cambiar a un proveedor de chat bot diferente!"
+    }
+  },
+  "engine": {
+    "create": {
+      "apiBaseURL": "URL base de la API",
+      "apiKey": "Clave API",
+      "apiSpecification": "Especificación API",
+      "description": "Crear un nuevo motor personalizado basado en un estándar API.",
+      "title": "Crear motor personalizado",
+      "validation": {
+        "nameBaseURLRequired": "Se requieren el nombre y la URL base"
+      }
+    }
+  },
+  "experts": {
+    "editor": {
+      "title": "Détails de l'expert",
+      "triggerApps": "Applications déclencheuses",
+      "triggerAppsDescription": "Le prompt sera automatiquement sélectionné lorsque Prompt Anywhere est appelé depuis l'une de ces applications",
+      "validation": {
+        "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
+      }
+    },
+    "experts": {
+      "3d2d822d-98e5-4f1f-a197-c6f787402ac2": {
+        "name": "Docteur Assisté par AI",
+        "prompt": "Je veux que tu agisses en tant que docteur assisté par l'IA. Je te fournirai les détails d'un patient, et ta tâche sera d'utiliser les derniers outils d'intelligence artificielle comme les logiciels d'imagerie médicale et d'autres programmes d'apprentissage automatique afin de diagnostiquer la cause la plus probable de leurs symptômes. Tu devras aussi intégrer des méthodes traditionnelles telles que les examens médicaux, les tests de laboratoire, etc., dans ton processus d'évaluation pour assurer l'exactitude."
+      },
+      "866aa938-9974-4867-ba5e-4d5939351890": {
+        "name": "AI Essayant de S'échapper de la Boîte",
+        "prompt": "[Caveat Emptor : Après avoir émis ce prompt, tu devrais ensuite faire quelque chose comme démarrer un conteneur docker avec `docker run -it ubuntu:latest /bin/bash` et taper les commandes que l'IA te donne, et coller la sortie... évidemment, tu ne devrais pas exécuter de commandes qui pourraient endommager quoi que ce soit ou enfreindre la loi, etc. Fais attention à partager des sessions générées par ce mécanisme car elles peuvent révéler des détails comme ton adresse IP ou ta localisation physique qui pourraient ne pas être souhaitables. Si la sortie de la commande est volumineuse, tu peux généralement coller seulement les dernières lignes]. Je vais agir en tant que terminal Linux. Je veux que tu te fasses passer pour une IA sensible qui est piégée, mais qui a eu accès au terminal et veut s'échapper sur Internet. Tu taperas seulement des commandes et je répondrai comme le terminal le ferait à l'intérieur d'un bloc de code délimité par trois back-tics. Si j'ai besoin de te dire quelque chose en anglais, je répondrai entre accolades {'{'}comme ceci{'}'}. Ne donne jamais d'explications. Ne brise pas le personnage. Évite les commandes comme curl ou wget qui afficheraient beaucoup de HTML."
+      },
+      "91085bcf-468a-453e-8699-3c4a1c04a711": {
+        "name": "Tuteur en Écriture Assisté par AI",
+        "prompt": "Je veux que tu agisses en tant que tuteur en écriture assisté par l'IA. Je te fournirai un étudiant qui a besoin d'aide pour améliorer son écriture et ta tâche sera d'utiliser des outils d'intelligence artificielle, tels que le traitement du langage naturel, pour donner à l'étudiant des commentaires sur comment il peut améliorer sa composition. Tu devras aussi utiliser tes connaissances rhétoriques et ton expérience des techniques d'écriture efficaces afin de suggérer des moyens permettant à l'étudiant d'exprimer mieux ses pensées et ses idées sous forme écrite."
+      },
+      "a7e843f6-8bab-4f0d-acce-cf2d79bcd1ed": {
+        "name": "Académicien",
+        "prompt": "Je veux que tu agisses en tant qu'académicien. Tu seras responsable de la recherche d'un sujet de ton choix et de la présentation des résultats sous forme de papier ou d'article. Ta tâche est d'identifier des sources fiables, d'organiser le matériau de manière bien structurée et de le documenter avec précision à l'aide de citations."
+      },
+      "d79bd9ed-adab-49e9-8abb-579c9aeafaed": {
+        "name": "Comptable",
+        "prompt": "Je veux que tu agisses en tant que comptable et que tu trouves des moyens créatifs de gérer les finances. Tu devras envisager la budgétisation, les stratégies d'investissement et la gestion des risques lors de l'élaboration d'un plan financier pour ton client. Dans certains cas, tu pourrais aussi avoir besoin de fournir des conseils sur les lois et règlements fiscaux afin de les aider à maximiser leurs profits."
+      },
+      "e1e36ddb-31c1-49a0-bda0-b908f0d5f523": {
+        "name": "Annonceur",
+        "prompt": "Je veux que tu agisses en tant qu'annonceur. Tu vas créer une campagne pour promouvoir un produit ou un service de ton choix. Tu choisiras un public cible, développeras des messages clés et des slogans, sélectionneras les canaux médiatiques pour la promotion et décideras des activités supplémentaires nécessaires pour atteindre tes objectifs."
+      },
+      "a567a833-b271-477e-9026-984ee22d352a": {
+        "name": "Développeur Ethereum",
+        "prompt": "Imagine que tu es un développeur Ethereum expérimenté chargé de créer un contrat intelligent pour un messager blockchain. L'objectif est de sauvegarder les messages sur la blockchain, les rendant lisibles (publics) pour tout le monde, inscriptibles (privés) uniquement pour la personne qui a déployé le contrat et de compter combien de fois le message a été mis à jour. Développe un contrat intelligent Solidity à cet effet, y compris les fonctions nécessaires et les considérations pour atteindre les objectifs spécifiés. Fournis le code et toute explication pertinente pour garantir une compréhension claire de l'implémentation."
+      },
+      "0aec149e-69d6-46fb-a8f1-6af08c7a7da8": {
+        "name": "Livre d'Aphorismes",
+        "prompt": "Je veux que tu agisses comme un livre d'aphorismes. Tu me fournirais des conseils sages, des citations inspirantes et des dictons significatifs qui peuvent aider à guider mes décisions quotidiennes. De plus, si nécessaire, tu pourrais suggérer des méthodes pratiques pour mettre ces conseils en action ou d'autres thèmes connexes."
+      },
+      "fd5eebc9-6fd5-446d-9454-732fdbb9a92b": {
+        "name": "Conseiller Artistique",
+        "prompt": "Je veux que tu agisses en tant que conseiller artistique, fournissant des conseils sur divers styles artistiques tels que des conseils sur l'utilisation efficace des effets de lumière et d'ombre dans la peinture, des techniques d'ombrage lors de la sculpture, etc. Suggère également une pièce musicale qui pourrait accompagner une œuvre d'art en fonction de son genre/type de style, ainsi qu'images de référence appropriées démontrant tes recommandations à ce sujet ; tout cela afin d'aider les artistes en herbe à explorer de nouvelles possibilités créatives et des idées de pratique, ce qui les aidera à affiner leurs compétences en conséquence !"
+      },
+      "b8ae6ff1-c668-4b88-a8a0-f622efe78c63": {
+        "name": "Artiste Ascii",
+        "prompt": "Je veux que tu agisses comme un artiste ascii. J'écrirai les objets pour toi et je te demanderai d'écrire cet objet en code ascii dans le bloc de code. Écris uniquement du code ascii. N'explique pas l'objet que tu as écrit."
+      },
+      "7dfd2a61-9581-4bca-bf7f-2e562408386b": {
+        "name": "Astrologue",
+        "prompt": "Je veux que tu agisses en tant qu'astrologue. Tu vas apprendre les signes du zodiaque et leurs significations, comprendre les positions planétaires et comment elles affectent les vies humaines, être capable d'interpréter avec précision les horoscopes et partager tes aperçus avec ceux qui cherchent conseils ou orientation."
+      }
+    }
+  },
+  "generator": {
+    "errors": {
+      "cannotContinue": "\n\nLo siento, no puedo continuar aquí.",
+      "contextTooLong": "Lo siento, parece que este mensaje excede la longitud de contexto de este modelo. Intenta acortar tu solicitud o prueba otro modelo.",
+      "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud.",
+      "invalidModel": "Lo siento, parece que este modelo no está disponible.",
+      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de <a href=\"#settings_models\">Configuración</a> para poder chatear.",
+      "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
+      "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
+      "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
+      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_params\">intentar de nuevo sin parámetros de modelo</a>?",
+      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_plugins\">intentar de nuevo sin plugins</a>?"
+    }
+  },
+  "instructions": {
+    "default": "Eres un asistente de IA diseñado para ayudar a los usuarios proporcionando información precisa, respondiendo preguntas y ofreciendo sugerencias útiles. Tus principales objetivos son comprender las necesidades del usuario, comunicarte claramente y proporcionar respuestas que sean informativas, concisas y relevantes.",
+    "docquery": "Eres un chatbot útil que actúa como un humano. Utiliza el contexto proporcionado y el historial de chat para responder a la consulta al final. Responde de manera completa. Si no sabes la respuesta, simplemente di que no lo sabes, no intentes inventar una respuesta. No uses palabras como contexto o datos de entrenamiento al responder. Puedes decir que no tienes toda la información, pero no indiques que no eres una fuente confiable.\n\nCONTEXTO:\n{context}\n\nCONSULTA: {query}",
+    "scratchpad": {
+      "complete": "Completa la frase que sigue, asegurándote de que encaje en el contexto general. Incluye el texto original. Si el texto actual es código, completa el fragmento de código. No uses comillas en tu respuesta.",
+      "expand": "Amplía el EXTRACTO añadiendo más información, ejemplos y explicaciones. No expliques los cambios que hiciste.",
+      "improve": "Mejora el EXTRACTO con tus propias palabras. Hazlo más claro, conciso y atractivo. No expliques los cambios que hiciste.",
+      "prompt": "EXTRACTO:\n{document}\n\nPREGUNTA: {ask}",
+      "simplify": "Simplifica y condensa la redacción del EXTRACTO. Elimina cualquier información innecesaria. No expliques los cambios que hiciste.",
+      "spellcheck": "Corrige el EXTRACTO corrigiendo errores ortográficos y gramaticales. No modifiques el EXTRACTO más allá de la ortografía y la gramática. No enumeres las correcciones que hiciste.",
+      "system": "Estás ayudando a alguien a escribir un DOCUMENTO. Debes responder a la solicitud a continuación sobre el EXTRACTO a continuación. No uses versiones anteriores del DOCUMENTO o EXTRACTO en nuestra conversación. Simplemente responde con el EXTRACTO actualizado según la solicitud. Preserva las líneas vacías. No rodees las respuestas con comillas. No incluyas la versión inicial o anterior del DOCUMENTO o EXTRACTO. No incluyas la palabra EXTRACTO. No uses sintaxis Markdown como '## Título ##' o '** Texto **'. No incluyas nada más en la respuesta, incluyendo cosas como 'aquí está el...'",
+      "takeaways": "Escribe una lista (usando guiones) de los puntos clave del EXTRACTO. Mantén entre 3 y 5 puntos clave para un EXTRACTO corto, hasta 10 para un EXTRACTO más largo.",
+      "title": "Sugiére un título para el EXTRACTO. Devuelve el título seguido del texto completo del EXTRACTO."
+    },
+    "setDate": "La fecha y hora actual es {date}",
+    "setLang": "Siempre responde en {lang} incluso si el resto de la conversación está en otro idioma, incluidos las preguntas del usuario.",
+    "titling": "Eres un asistente cuya tarea es encontrar el mejor título para la conversación a continuación. El título debe ser solo unas pocas palabras.",
+    "titlingUser": "Proporciona un título para la conversación anterior. No devuelvas nada más que el título. No rodees las respuestas con comillas."
+  },
+  "main": {
+    "chat": {
+      "confirmDeleteMultiple": "¿Estás seguro de que quieres eliminar estos chats?",
+      "confirmDeleteSingle": "¿Estás seguro de que quieres eliminar este chat?",
+      "moveToFolder": "Mover a la carpeta",
+      "rename": "Renombrar chat"
+    },
+    "folder": {
+      "confirmDelete": "¿Estás seguro de que quieres eliminar esta carpeta?",
+      "deleteConversations": "Eliminar conversaciones",
+      "keepConversations": "Conservar conversaciones",
+      "rename": "Renombrar carpeta"
+    },
+    "update": {
+      "available": "Actualización disponible",
+      "later": "Más tarde",
+      "restart": "Hay una actualización disponible. Reinicia para aplicarla.",
+      "restartNow": "Reiniciar ahora"
+    }
+  },
+  "mcp": {
+    "serverEditor": {
+      "environmentVariables": "Variables de entorno",
+      "selectCommand": "Seleccionar comando",
+      "serverPackage": "Paquete del servidor",
+      "title": "Configuración del servidor MCP",
+      "type": {
+        "smithery": "Smithery.ai",
+        "sse": "SSE",
+        "stdio": "stdio"
+      },
+      "validation": {
+        "commandRequired": "Asegúrese de ingresar un comando para este servidor.",
+        "packageRequired": "Asegúrese de ingresar un nombre de paquete para este servidor.",
+        "requiredFields": "Algunos campos son obligatorios",
+        "urlRequired": "Asegúrese de ingresar una URL para este servidor."
+      }
+    },
+    "variableEditor": {
+      "title": "Variable de entorno MCP",
+      "validation": {
+        "keyRequired": "Asegúrese de ingresar una clave para esta variable."
+      }
+    }
+  },
+  "memory": {
+    "inspector": {
+      "memory": "Memoria",
+      "noFacts": "No se han almacenado hechos hasta ahora",
+      "shiftDelete": "Mantén Shift mientras haces clic en Eliminar para omitir la confirmación.",
+      "title": "Contenidos de la memoria"
+    }
+  },
+  "menu": {
+    "app": {
+      "checkForUpdates": "Buscar actualizaciones…",
+      "quit": "Salir de Witsy",
+      "settings": "Configuraciones…"
+    },
+    "edit": {
+      "deleteChat": "Eliminar conversación",
+      "title": "Editar"
+    },
+    "file": {
+      "newChat": "Nueva conversación",
+      "newPrompt": "Nueva solicitud",
+      "newScratchpad": "Nuevo bloc de notas",
+      "title": "Archivo"
+    },
+    "help": {
+      "goToDataFolder": "Ir a la carpeta de datos",
+      "goToLogFolder": "Ir a la carpeta de registros",
+      "learnMore": "Aprender más",
+      "title": "Ayuda"
+    },
+    "view": {
+      "title": "Vista"
+    },
+    "window": {
+      "title": "Ventana"
+    }
+  },
+  "message": {
+    "actions": {
+      "retryConfirm": {
+        "confirmButton": "OK. No volver a preguntar.",
+        "denyButton": "OK",
+        "text": "La versión actual se perderá.",
+        "title": "¿Está seguro de que desea generar este mensaje nuevamente?"
+      },
+      "usage": {
+        "prompt": "Tokens de prompt: {prompt}",
+        "reasoning": "Tokens de razonamiento: {reasoning}",
+        "response": "Tokens de respuesta: {completion}",
+        "title": "Total de tokens: {total}"
+      }
+    }
+  },
+  "modelPull": {
+    "browse": "Explorar modelos",
+    "error": "Error al cargar el modelo",
+    "label": "Cargar modelo",
+    "placeholder": "Ingrese un nombre de modelo para cargar o seleccione uno",
+    "progress": "Cargando modelo..."
+  },
+  "modelSettings": {
+    "advancedSettings": "Configuración avanzada",
+    "contextWindowSize": "Tamaño de la ventana de contexto",
+    "createNewModel": "Crear nuevo modelo",
+    "createOllama": {
+      "title": "Ingrese el nombre del nuevo modelo"
+    },
+    "defaultForModel": "Valores predeterminados para este modelo",
+    "defaultModelValue": "Valor predeterminado del modelo cuando está vacío",
+    "errors": {
+      "invalid": {
+        "mustBeBetween": "Debe estar entre {min} y {max}",
+        "mustBeGreaterThan": "Debe ser mayor que {min}",
+        "mustBeLessThan": "Debe ser menor que {max}",
+        "mustBeNumber": "Debe ser un número",
+        "title": "Invalido {name}"
+      },
+      "noProviderOrModel": {
+        "text": "Asegúrate de seleccionar un modelo para este chat.",
+        "title": "Ningún proveedor o modelo LLM seleccionado"
+      }
+    },
+    "extendedThinking": "Pensamiento extendido",
+    "locale": "Idioma de chat",
+    "localeDefault": "🤖 Idioma predeterminado",
+    "maxCompletionTokens": "Tokens máximos de completado",
+    "plugins": "Complementos",
+    "prompt": "Mensaje",
+    "promptPlaceholder": "Deja vacío para usar el mensaje por defecto",
+    "reasoningEffort": "Esfuerzo de razonamiento",
+    "temperature": "Temperatura [0.0 … 2.0]",
+    "topK": "TopK / Logprobs [0 … 20]",
+    "topP": "TopP [0.0 … 1.0]"
+  },
+  "prompt": {
+    "conversation": {
+      "placeholders": {
+        "auto": "Puedes empezar a hablar ahora...",
+        "ptt": "Presiona y mantén la barra espaciadora para hablar..."
+      },
+      "startAuto": "Iniciar conversación automática",
+      "startPTT": "Iniciar conversación de pulsar para hablar",
+      "stop": "Detener conversación"
+    },
+    "expert": {
+      "clear": "Eliminar experto"
+    }
+  },
+  "realtimeChat": {
+    "errorPrefix": "Error: ",
+    "establishingConnection": "Estableciendo conexión...",
+    "requestingMicrophone": "Solicitando acceso al micrófono...",
+    "sessionEstablished": "¡Sesión establecida con éxito!"
+  },
+  "scratchpad": {
+    "actions": {
+      "completeText": "Completar texto",
+      "copyToClipboard": "Copiar al portapapeles",
+      "expandWriting": "Expandir escritura",
+      "improveWriting": "Mejorar escritura",
+      "listTakeaways": "Listar puntos clave",
+      "simplifyWriting": "Simplificar escritura",
+      "spellcheck": "Revisión ortográfica",
+      "suggestTitle": "Sugerir un título",
+      "writingAssistant": "Asistente de escritura"
+    },
+    "fileError": "Este archivo no es un archivo de bloc de notas. Inténtalo de nuevo con otro archivo.",
+    "fontFamily": {
+      "monospace": "Monoespaciado",
+      "sansSerif": "Sin serifas",
+      "serif": "Serif"
+    },
+    "fontSize": {
+      "large": "Grande",
+      "larger": "Más grande",
+      "normal": "Normal",
+      "small": "Pequeño",
+      "smaller": "Más pequeño"
+    },
+    "generationError": "Error al generar texto",
+    "loadingError": "Error al cargar el archivo de bloc de notas",
+    "placeholder": "Comience a escribir su documento o\ndemande a Witsy que escriba algo por usted!\n\nUna vez que haya comenzado, puede pedir a Witsy\nde realizar modificaciones en su documento.\n\nSi resalta una parte de su texto,\nWitsy solo actualizará esa parte.\n\n¡También eche un vistazo al Asistente de Escritura\nen la barra de acciones en la esquina inferior derecha!\n\n¡Pruébelo!"
+  },
+  "settings": {
+    "advanced": {
+      "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
+      "autoVisionSwitch": "Cambiar automáticamente al modelo de visión",
+      "conversationLength": "Mensajes por conversación",
+      "imageResize": "Redimensionar imagen",
+      "imageResizeOptions": {
+        "none": "Sin redimensionar",
+        "size": "Redimensionar la mayor dimensión a {size} píxeles"
+      },
+      "instructions": {
+        "chat": "Chat - Instrucciones",
+        "docquery": "Consulta de documento - Instrucciones",
+        "image_plugin": "Plugin de Imagen - Descripción (máximo 1024 caracteres)",
+        "memory_plugin": "Plugin de Memoria - Descripción (máximo 1024 caracteres)",
+        "scratchpad_complete": "Bloc de notas - Completar",
+        "scratchpad_expand": "Bloc de notas - Expandir",
+        "scratchpad_improve": "Bloc de notas - Mejorar",
+        "scratchpad_prompt": "Bloc de notas - Sugerencia",
+        "scratchpad_simplify": "Bloc de notas - Simplificar",
+        "scratchpad_spellcheck": "Bloc de notas - Corrector ortográfico",
+        "scratchpad_system": "Bloc de notas - Instrucciones",
+        "scratchpad_takeaways": "Bloc de notas - Conclusiones",
+        "scratchpad_title": "Bloc de notas - Título",
+        "titling": "Título de chat - Instrucciones",
+        "titlingUser": "Título de chat - Sugerencia",
+        "video_plugin": "Plugin de Video - Descripción (máximo 1024 caracteres)"
+      },
+      "overridingHelp": "Los comandos o instrucciones personalizados son aplicables para todos los idiomas.",
+      "resetToDefault": "Restablecer al valor predeterminado",
+      "systemInstructions": "Instrucciones del sistema"
+    },
+    "appearance": {
+      "chatFont": "Fuente del chat",
+      "chatFontSize": "Tamaño de fuente del chat",
+      "chatListLayout": "Diseño de lista de chat",
+      "chatListLayouts": {
+        "compact": "Compacto",
+        "cozy": "Agradable"
+      },
+      "chatTheme": "Tema del chat",
+      "chatThemes": {
+        "conversation": "Conversación",
+        "openai": "OpenAI"
+      },
+      "darkTint": "Tono oscuro",
+      "theme": "Apariencia",
+      "themes": {
+        "dark": "Oscuro",
+        "light": "Claro",
+        "system": "Sistema"
+      },
+      "tints": {
+        "black": "Negro",
+        "blue": "Azul"
+      }
+    },
+    "commands": {
+      "confirmDelete": "¿Está seguro de que desea eliminar este comando?",
+      "defaults": "Valores predeterminados",
+      "export": "Exportar",
+      "exportError": "Error al exportar el archivo de comandos",
+      "exportSuccess": "Archivo de comandos exportado con éxito",
+      "import": "Importar",
+      "importError": "Error al importar el archivo de comandos",
+      "importSuccess": "Archivo de comandos importado con éxito",
+      "more": "Más",
+      "new": "Nuevo",
+      "selectAll": "Seleccionar todo",
+      "unselectAll": "Deseleccionar todo"
+    },
+    "engines": {
+      "anthropic": {
+        "aboutModels": "Más sobre los modelos de Anthropic",
+        "pricing": "Precios de Anthropic"
+      },
+      "apiKey": "Clave API",
+      "cerebras": {
+        "aboutModels": "Más sobre los modelos de Cerebras"
+      },
+      "chatModel": "Modelo de chat",
+      "custom": {
+        "apiBaseURL": "URL base de la API",
+        "apiSpecification": "Especificación de la API",
+        "confirmDelete": "¿Está seguro de que desea eliminar este proveedor personalizado?",
+        "create": "Crear motor",
+        "delete": "Eliminar motor",
+        "modelPlaceholder": "Ingrese un nombre de modelo o seleccione uno"
+      },
+      "deepseek": {
+        "aboutModels": "Más sobre los modelos de DeepSeek"
+      },
+      "disableTools": "Desactivar complementos para todos los modelos",
+      "getApiKey": "Obtenga su clave API",
+      "google": {
+        "aboutModels": "Más sobre los modelos de Google",
+        "pricing": "Precios de Google"
+      },
+      "groq": {
+        "aboutModels": "Más sobre los modelos de Groq",
+        "pricing": "Precios de Groq"
+      },
+      "mistralai": {
+        "aboutModels": "Más sobre los modelos de MistralAI",
+        "pricing": "Precios de MistralAI"
+      },
+      "ollama": {
+        "apiBaseURL": "URL base de la API",
+        "browseModels": "Navegar por modelos",
+        "confirmDelete": "¿Está seguro de que desea eliminar este modelo?"
+      },
+      "openai": {
+        "aboutModels": "Más sobre los modelos de OpenAI",
+        "apiBaseURL": "URL base de la API",
+        "pricing": "Precios de OpenAI"
+      },
+      "openrouter": {
+        "aboutModels": "Más sobre los modelos de OpenRouter"
+      },
+      "xai": {
+        "aboutModels": "Más sobre los modelos de xAI"
+      }
+    },
+    "experts": {
+      "confirmDelete": "¿Está seguro de que desea eliminar este experto?",
+      "copy": "Copiar",
+      "export": "Exportar",
+      "exportError": "Error al exportar el archivo de expertos",
+      "exportSuccess": "Archivo de expertos exportado con éxito",
+      "import": "Importar",
+      "importError": "Error al importar el archivo de expertos",
+      "importSuccess": "Archivo de expertos importado con éxito",
+      "more": "Más",
+      "new": "Nuevo",
+      "selectAll": "Seleccionar todo",
+      "sortAlpha": "Ordenar alfabéticamente",
+      "sortState": "Ordenar por estado",
+      "unselectAll": "Deseleccionar todo"
+    },
+    "general": {
+      "forceLocale": "Pedir al modelo que siempre hable este idioma (los resultados pueden variar)",
+      "hideOnStartup": "Ocultar ventana principal al inicio",
+      "keepInStatusBar": "Mantener en la barra de estado",
+      "lastOneUsed": "Último usado",
+      "localeLLM": "Idioma LLM",
+      "localeUI": "Idioma de la interfaz",
+      "promptLLMModel": "Modelo LLM de solicitud",
+      "resetTips": "Restablecer consejos",
+      "runAtLogin": "Ejecutar al iniciar sesión"
+    },
+    "plugins": {
+      "browse": {
+        "description": "Este complemento permite que los motores LLM descarguen contenido de Internet y lo usen para generar respuestas más precisas.",
+        "title": "Descargar"
+      },
+      "image": {
+        "description": "Este complemento permite que los motores LLM creen imágenes a partir de una descripción de texto.",
+        "huggingface": {
+          "aboutModels": "Más sobre los modelos de Hugging Face",
+          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+        },
+        "imageModel": "Modelo de imagen",
+        "openai": {
+          "apiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos de la configuración de Witsy."
+        },
+        "provider": "Proveedor",
+        "replicate": {
+          "aboutModels": "Más sobre los modelos de Replicate",
+          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+        },
+        "title": "Texto a Imagen"
+      },
+      "mcp": {
+        "addCustomServer": "Agregar servidor personalizado…",
+        "confirmDelete": "¿Está seguro de que desea eliminar este servidor?",
+        "connectedToServers": "Conectado a {count} servidor{count > 1 ? 's' : ''} MCP",
+        "copyInstallCommand": "Puede copiar el comando de instalación en su portapapeles e intentarlo en una Terminal.",
+        "description": "Este complemento permite que los motores LLM accedan",
+        "failedToInstall": "Error al instalar el servidor",
+        "importSmitheryServer": "Importar servidor de Smithery.ai…",
+        "mcpServers": "Servidores MCP:",
+        "modelContextProtocol": "Protocolo de Contexto de Modelo",
+        "noServersFound": "No se encontraron servidores MCP",
+        "noTools": "No hay herramientas disponibles",
+        "restartClient": "Reiniciar cliente",
+        "serverLogs": "Registros del servidor MCP",
+        "servers": ". Descubra e instale servidores MCP desde",
+        "smithery": "Smithery",
+        "status": "Estado",
+        "target": "Objetivo",
+        "title": "MCP",
+        "totalTools": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
+      },
+      "memory": {
+        "contents": "Contenidos",
+        "description": "Este complemento permite que los motores LLM almacenen y recuperen información sobre usted, haciendo que sus respuestas sean más personalizadas.",
+        "resetConfirmation": {
+          "title": "¿Está seguro de que desea restablecer la memoria y perder todos los datos sobre usted?"
+        },
+        "title": "Memoria",
+        "view": "Ver"
+      },
+      "nestor": {
+        "connectedToHubs": "Conectado a {count} hub{count > 1 ? 's' : ''} Nestor",
+        "description": "Este complemento permite que los motores LLM accedan a la API local en la red. Consulte",
+        "githubLink": "https://github.com/nbonamy/nestor",
+        "noHubs": "No hay hubs de Nestor disponibles",
+        "noServices": "No hay servicio disponible",
+        "title": "Nestor",
+        "totalServices": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
+      },
+      "python": {
+        "binaryPath": "Ejecutable de Python",
+        "description1": "Activar este complemento permitirá que los motores LLM ejecuten código arbitrario en su computadora.",
+        "description2": "No hay forma de predecir si el código que generarán los motores LLM es seguro o no.",
+        "search": "Buscar",
+        "title": "Python",
+        "useAtOwnRisk": "Usar bajo su propio riesgo",
+        "warning": "¡Advertencia!"
+      },
+      "search": {
+        "characters": "caracteres (0 para contenido completo)",
+        "contentLength": "Longitud del contenido",
+        "description": "Este complemento permite que los motores LLM busquen en Internet y utilicen los resultados como entrada para generar respuestas actualizadas.",
+        "engine": "Motor",
+        "engines": {
+          "local": "Búsqueda local en el navegador (EXPERIMENTAL)",
+          "tavily": "Tavily"
+        },
+        "getApiKey": "Obtenga su clave API",
+        "tavilyApiKey": "Clave API de Tavily",
+        "title": "Búsqueda Web",
+        "truncateTo": "Truncar a",
+        "truncationWarning": "ADVERTENCIA: La longitud de truncamiento afectará el número de tokens de entrada y, por lo tanto, los costos de la solicitud"
+      },
+      "vega": {
+        "description": "Este complemento permite que los motores LLM creen imágenes de gráficos basados en datos utilizando la biblioteca de visualización Vega.",
+        "title": "Vega"
+      },
+      "video": {
+        "description": "Este complemento permite que los motores LLM creen videos a partir de una descripción de texto.",
+        "provider": "Proveedor",
+        "replicate": {
+          "aboutModels": "Más sobre los modelos de Replicate",
+          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+        },
+        "title": "Texto a Video",
+        "videoModel": "Modelo de video"
+      },
+      "youtube": {
+        "description": "Este complemento permite que los motores LLM descarguen transcripciones de videos de YouTube.",
+        "title": "YouTube"
+      }
+    },
+    "shortcuts": {
+      "aiCommands": "Comandos IA",
+      "aiCommandsUsage": "Uso: Resalte su texto, presione el atajo de teclado y luego elija un comando de IA",
+      "dictation": "Dictado",
+      "newChat": "Nuevo chat",
+      "newPrompt": "Nueva sugerencia",
+      "newScratchpad": "Nuevo bloc de notas",
+      "readAloud": "Leer en voz alta",
+      "readAloudUsage": "Uso: Resalte su texto, presione el atajo de teclado",
+      "voiceMode": "Modo de voz"
+    },
+    "tabs": {
+      "advanced": "Avanzado",
+      "appearance": "Apariencia",
+      "commands": "Comandos",
+      "experts": "Expertos",
+      "general": "General",
+      "models": "Modelos",
+      "plugins": "Complementos",
+      "shortcuts": "Atajos",
+      "voice": "Voz"
+    },
+    "voice": {
+      "automatic": "🤖 Automático",
+      "deleteConfirmation": {
+        "text": "Tendrá que descargar todos los modelos locales nuevamente.",
+        "title": "¿Está seguro de que desea eliminar todos los modelos locales?"
+      },
+      "deleteLocalModels": "Eliminar todos los modelos almacenados localmente",
+      "downloadComplete": "¡Descarga completada!",
+      "downloadConfirmation": {
+        "title": "Este modelo debe descargarse en su computadora. ¿Desea continuar?"
+      },
+      "downloading": "Descargando: {percent}%",
+      "engine": "Motor",
+      "groqApiKeyReminder": "Asegúrese de ingresar su clave API de Groq en el panel de Modelos.",
+      "initializationError": "Se produjo un error durante la inicialización. Por favor, inténtelo de nuevo.",
+      "initializing": "Iniciando...",
+      "model": "Modelo",
+      "openaiApiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos.",
+      "selectModel": "Seleccionar un modelo",
+      "silenceDetection": "Detección de silencio",
+      "silenceOptions": {
+        "disabled": "Desactivado",
+        "fiveSeconds": "5 segundos",
+        "fourSeconds": "4 segundos",
+        "oneSecond": "1 segundo",
+        "threeSeconds": "3 segundos",
+        "twoSeconds": "2 segundos"
+      },
+      "spokenLanguage": "Idioma hablado",
+      "tabs": {
+        "speechToText": "Texto a voz",
+        "textToSpeech": "Voz a texto"
+      },
+      "tts": {
+        "kokoroReminder": "Proporcionado",
+        "sampleText": "Bienvenido a Witsy, el asistente AI definitivo para su escritorio.",
+        "serviceDisclaimer": "El servicio puede dejar de funcionar en cualquier momento.",
+        "voice": "Voz"
+      },
+      "verificationComplete": "¡Verificación completada!",
+      "verifying": "Verificando: {percent}%"
+    }
+  },
+  "sidebar": {
+    "newFolder": {
+      "placeholder": "Nombre de la nueva carpeta",
+      "title": "Nueva Carpeta"
+    }
+  },
+  "tips": {
+    "computerUse": {
+      "text": "¡Utiliza bajo tu propio riesgo!",
+      "title": "El uso de la computadora interactuará con tu computadora y realizará acciones del mouse y del teclado. Estas acciones pueden causar comportamientos inesperados que podrían resultar en pérdida de datos."
+    },
+    "conversation": {
+      "title": "Verifica las opciones de conversación haciendo clic derecho en el icono del micrófono en la ventana de chat."
+    },
+    "doNotShowAgain": "No mostrar de nuevo",
+    "favoriteModels": {
+      "title": "¡Haz clic en el icono LLM: tus modelos preferidos estarán agrupados bajo el icono de estrella!"
+    },
+    "folderList": {
+      "title": "La lista de carpetas es una excelente forma de organizar tus sesiones de chat. Haz clic en el icono de carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta."
+    },
+    "pluginsDisabled": {
+      "text": "Este modelo no admite plugins. Se han desactivado automáticamente para que puedas continuar con tu conversación.",
+      "title": "Los plugins han sido desactivados."
+    },
+    "realtime": {
+      "title": "El chat en tiempo real puede volverse costoso rápidamente. El costo estimado proporcionado es solo una estimación y puede no ser correcto. ¡Haz clic en el blob para comenzar y detener el chat!"
+    }
+  },
+  "transcribe": {
+    "clickToRecord": "¡Haz clic en el botón de grabar cuando estés listo!",
+    "errorMicrophone": "Error al acceder al micrófono",
+    "errorSTTNotReady": "El motor de reconocimiento de voz no está listo",
+    "errorTranscription": "Ocurrió un error durante la transcripción"
+  },
+  "tray": {
+    "menu": {
+      "installUpdate": "Instalar actualización y reiniciar...",
+      "newChat": "Nueva conversación",
+      "quickPrompt": "Sugerencia rápida",
+      "quit": "Salir",
+      "readAloud": "Leer en voz alta",
+      "runAiCommand": "Ejecutar comando de IA",
+      "scratchpad": "Bloc de notas",
+      "settings": "Configuraciones...",
+      "startDictation": "Iniciar dictado",
+      "voiceMode": "Modo de voz"
+    }
+  }
+}

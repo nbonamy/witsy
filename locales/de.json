@@ -1,0 +1,973 @@
+{
+  "common": {
+    "actions": {
+      "addFiles": "Dateien hinzufügen...",
+      "addFolder": "Ordner hinzufügen..."
+    },
+    "arguments": "Argumente",
+    "askMeAnything": "Frag mich alles",
+    "back": "Zurück",
+    "basedOn": "basierend auf",
+    "browse": "Durchsuchen",
+    "cancel": "Abbrechen",
+    "chat": "Chat",
+    "clear": "Löschen",
+    "clickToStart": "Klicken Sie auf den Blob, um mit dem Chatten zu beginnen",
+    "close": "Schließen",
+    "colon": "nichtabstand",
+    "command": "Befehl",
+    "confirmation": {
+      "cannotUndo": "Sie können diese Aktion nicht rückgängig machen.",
+      "closeAnyway": "Trotzdem schließen",
+      "continue": "Fortfahren",
+      "continueQuestion": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Arbeit, wenn Sie fortfahren.",
+      "deleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
+      "deleteMemory": "Sind Sie sicher, dass Sie dieses Gedächtnis löschen möchten?",
+      "deleteRepository": "Sind Sie sicher, dass Sie dieses Repository löschen möchten?",
+      "doNotClose": "Nicht schließen",
+      "unsavedChanges": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Arbeit, wenn Sie dieses Fenster schließen."
+    },
+    "continue": "Fortfahren",
+    "copied": "Kopiert",
+    "copy": "Kopieren",
+    "costsAsOf": "Kosten ab",
+    "create": "Erstellen",
+    "default": "Standard",
+    "delete": "Löschen",
+    "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
+    "disabled": "Deaktiviert",
+    "documents": "Dokumente",
+    "done": "Fertig!",
+    "edit": "Bearbeiten",
+    "embeddings": "Einbettungen",
+    "enabled": "Aktiviert",
+    "error": "Fehler!",
+    "esc": "Esc",
+    "estimatedCost": "Geschätzte Kosten:",
+    "favorites": {
+      "add": "Zu Favoriten hinzufügen",
+      "remove": "Von Favoriten entfernen"
+    },
+    "files": "Dateien",
+    "fork": "Fork",
+    "high": "Hoch",
+    "icon": "Symbol",
+    "insert": "Einfügen",
+    "install": "Installieren",
+    "key": "Schlüssel",
+    "language": {
+      "auto": "🤖 Gleich wie die Schnittstelle",
+      "system": "🖥️ Systemsprache",
+      "fr-FR": "Französisch"
+    },
+    "llmModel": "LLM-Modell",
+    "llmProvider": "LLM-Anbieter",
+    "load": "Laden",
+    "low": "Niedrig",
+    "medium": "Mittel",
+    "move": "Verschieben",
+    "name": "Name",
+    "newChat": "Neuer Chat",
+    "no": "Nein",
+    "ok": "OK",
+    "pick": "Auswählen",
+    "prompt": "Eingabeaufforderung",
+    "pull": "Abrufen",
+    "read": "Lesen",
+    "record": "Aufzeichnen",
+    "redo": "Wiederherstellen",
+    "refresh": "Aktualisieren",
+    "refreshing": "Aktualisieren…",
+    "rename": "Umbenennen",
+    "replace": "Ersetzen",
+    "required": {
+      "fieldsRequired": "Stellen Sie sicher, dass Sie einen Wert für die erforderlichen Felder eingeben."
+    },
+    "reset": "Zurücksetzen",
+    "retry": "Erneut versuchen",
+    "save": "Speichern",
+    "search": "Suchen…",
+    "settings": "Einstellungen",
+    "shortcut": "Tastenkombination",
+    "stop": "Stop",
+    "type": "Typ",
+    "undo": "Rückgängig",
+    "url": "URL",
+    "usage": "Nutzung",
+    "value": "Wert",
+    "warning": "Warnung",
+    "workingWith": "Arbeiten mit",
+    "write": "Schreiben"
+  },
+  "automation": {
+    "commander": {
+      "emptyText": "Bitte heben Sie den Text hervor, den Sie analysieren möchten."
+    },
+    "grabError": "Beim Versuch, den Text zu erfassen, ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen für Datenschutz und Sicherheit.",
+    "readAloud": {
+      "emptyText": "Bitte heben Sie den Text hervor, den Sie laut vorlesen möchten."
+    }
+  },
+  "autoupdate": {
+    "available": "Eine neue Version ist verfügbar. Jetzt herunterladen…",
+    "downloading": "Ein Update wird durchgeführt. Bitte warten Sie, bis es abgeschlossen ist.",
+    "error": "Fehler bei der Überprüfung auf Updates. Bitte versuchen Sie es später erneut.",
+    "uptodate": "Sie verwenden bereits die neueste Version von Witsy."
+  },
+  "chat": {
+    "actions": {
+      "exportPdf": "Als PDF exportieren",
+      "makeTemporary": "Temporärer Chat",
+      "saveChat": "Chat speichern"
+    },
+    "editor": {
+      "title": "Titel",
+      "validation": {
+        "requiredFields": "Alle Felder sind erforderlich",
+        "titleRequired": "Bitte geben Sie einen Titel für diesen Chat ein."
+      }
+    }
+  },
+  "chatList": {
+    "displayMode": {
+      "folders": "Ordner",
+      "timeline": "Zeitachse"
+    },
+    "folder": {
+      "actions": {
+        "delete": "Ordner löschen"
+      }
+    },
+    "timeline": {
+      "earlier": "Früher",
+      "last14days": "Letzte 14 Tage",
+      "last30days": "Letzte 30 Tage",
+      "last7days": "Letzte 7 Tage",
+      "today": "Heute",
+      "yesterday": "Gestern"
+    }
+  },
+  "commands": {
+    "commands": {
+      "00000000-0000-0000-0000-000000000000": {
+        "label": "Frag mich alles",
+        "template": "Basierend auf dem Text, der unten in dreifachen Anführungszeichen steht:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nBeantworten Sie Folgendes: "
+      },
+      "90dd1cd3-903a-4f60-bccf-0542fa78d8ef": {
+        "label": "Erkläre das",
+        "template": "Erklären Sie den Text in dreifachen Anführungszeichen unten:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als die Erklärung zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "3e629079-6a0b-4096-9e5d-e2dd39268fa7": {
+        "label": "Rechtschreibung und Grammatik korrigieren",
+        "template": "Korrigieren Sie den Text in dreifachen Anführungszeichen unten auf ein standardmäßiges Englisch und verbessern Sie die Grammatik. Geben Sie Ihr Bestes.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den korrigierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "adfabf0c-7ae2-4b54-9083-0abdae84a859": {
+        "label": "Schreiben verbessern",
+        "template": "Verbessern Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten. Formulieren Sie den Text um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "ae93b6e7-5d19-43dd-a859-967194523550": {
+        "label": "Meinen Text erweitern",
+        "template": "Der folgende Text in dreifachen Anführungszeichen unten wurde bereits geschrieben:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nErweitern Sie das Schreiben. Schreiben Sie mindestens 3 Absätze. Geben Sie nichts anderes als das erweiterte Schreiben zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "9bbae0f1-afde-41f8-b423-c5d8db1a264d": {
+        "label": "Vereinfachen Sie mein Schreiben",
+        "template": "Der folgende Text in dreifachen Anführungszeichen unten wurde bereits geschrieben:\n\n\"\"\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nVereinfachen und verdichten Sie das Schreiben. Geben Sie nichts anderes als das vereinfachte Schreiben zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "c57f4afd-2524-4914-be65-f18eb8566544": {
+        "label": "Liste der wichtigsten Erkenntnisse",
+        "template": "Meine Notizen sind unten in dreifachen Anführungszeichen:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nSchreiben Sie eine Markdown-Liste (mit Bindestrichen) von wichtigsten Erkenntnissen aus meinen Notizen. Schreiben Sie mindestens 10 Punkte. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "177bf65e-20ec-46ee-ae0e-84f9b0eb7490": {
+        "label": "Schreiben Sie eine kurze Zusammenfassung",
+        "template": "Fassen Sie den Text in dreifachen Anführungszeichen zusammen, halten Sie ihn jedoch prägnant. Fassen Sie mit einfacher und klarer Sprache zusammen und halten Sie die gleiche Zeitform bei.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als die Zusammenfassung zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "1fc4e041-f4bc-471f-a02e-82cf20d12ea1": {
+        "label": "Schreiben Sie eine längere Zusammenfassung",
+        "template": "Fassen Sie den Text in dreifachen Anführungszeichen unten in drei langen Absätzen zusammen. Fassen Sie mit einfacher und klarer Sprache zusammen und halten Sie die gleiche Zeitform bei.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als die Zusammenfassung zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "49de2329-9863-4fb4-beea-ad2677408e3f": {
+        "label": "Freundlichen Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in freundlichem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "d0306fbe-f1c4-497c-a356-a8fd4b5cbf0c": {
+        "label": "Professionellen Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in professionellem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "9ca7d996-4490-4c86-99c2-223686fdd48e": {
+        "label": "Überzeugenden Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in überzeugendem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "84fd2995-946a-4d42-81d3-dfe150212529": {
+        "label": "Instruierenden Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in instruierendem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "7556325e-ece7-45f2-acbb-c0d78cfa3e9b": {
+        "label": "Humorvollen Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in humorvollem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "7a213d4a-9ba9-4bc9-ada8-b6bab611d4ee": {
+        "label": "Sarkastischen Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in sarkastischem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "c29ef79c-d850-4ca5-8c14-089156154f70": {
+        "label": "Empathischen Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in empathischem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "b1c563a9-0d8e-4295-87b1-b78c283c19e6": {
+        "label": "Autoritären Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in autoritärem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "56a4da10-8aad-4830-8e7a-a70780bd6abe": {
+        "label": "Inspirierenden Ton umschreiben",
+        "template": "Schreiben Sie den Text in dreifachen Anführungszeichen unten in Ihren eigenen Worten um. Formulieren Sie den Text in inspirierendem Ton um.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den umformulierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "a78a9a9c-4264-4a03-a0ab-db7e864d0729": {
+        "label": "Ins Englische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Englische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "1f2618d3-9b5b-44be-8829-0456fd392c5c": {
+        "label": "Ins Französische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Französische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "13635570-7d09-478a-9e87-8163c96c421c": {
+        "label": "Ins Spanische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Spanische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "4b0d6229-f539-4ffd-bb30-eaee456592bb": {
+        "label": "Ins Deutsche übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Deutsche.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "8249950f-7fc3-4897-b08a-1d107ead14d8": {
+        "label": "Ins Niederländische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Niederländische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "371513af-c68a-4dd1-b513-73c8eb61e525": {
+        "label": "Ins Russische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Russische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "337adf45-3614-42f0-80e4-414f193f74fd": {
+        "label": "Ins Chinesische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Chinesische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "840d3be0-1ce2-41ed-98b1-2fb25e1f4fef": {
+        "label": "Ins Vietnamesische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Vietnamesische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "72bffaad-28aa-47a8-90df-1f3e6cc511e5": {
+        "label": "Ins Hindi übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Hindi.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "5d538c6e-90ed-4533-9ecc-e14bdedc7f49": {
+        "label": "Ins Thailändische übersetzen",
+        "template": "Übersetzen Sie den Text in dreifachen Anführungszeichen unten ins Thailändische.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als den übersetzten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "a0bb82a3-7c81-43f8-977f-0a327913d1c8": {
+        "label": "Schreiben Sie eine Meinungsverschiedenheit",
+        "template": "Der folgende Text in dreifachen Anführungszeichen unten wurde bereits geschrieben:\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nSchreiben Sie eine Antwort, die dem Hauptpunkt auf respektvolle Weise widerspricht. Fügen Sie spezifische Gründe für Ihre Meinungsverschiedenheit hinzu. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "8b3ecb01-75c2-4902-998d-04d619abd147": {
+        "label": "Wie ein Lektor bearbeiten",
+        "template": "Handeln Sie als Lektor. Gehen Sie den Text in dreifachen Anführungszeichen unten durch. Bearbeiten Sie ihn auf Rechtschreibfehler, Grammatikprobleme, Interpunktion und allgemein für Lesbarkeit und Fluss.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nur den bearbeiteten Text zurück. Wickeln Sie Ihre Antwort nicht in Anführungszeichen."
+      },
+      "e245e8cc-6c0a-40a5-8c1e-faf96aabfa3b": {
+        "label": "Einige Titeloptionen vorschlagen",
+        "template": "Der Blogbeitrag unten wurde bereits geschrieben:\n\n\"\"\"BLOG POST: {'{'}input{'}'}\"\"\"\n\nGenerieren Sie eine Markdown-Liste (mit Bindestrichen) von fünf passenden Überschriften für den Blogbeitrag. Geben Sie nichts anderes als die Überschriften zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "624bfd2a-3a98-4575-bee0-1e28d12deafa": {
+        "label": "Einige Tweets basierend auf meinem Schreiben vorschlagen",
+        "template": "Der Blogbeitrag unten wurde bereits geschrieben:\n\n\"\"\"BLOG POST: {'{'}input{'}'}\"\"\"\n\nGenerieren Sie eine Markdown-Liste (mit Bindestrichen) von fünf Tweets basierend auf dem Blogbeitrag:"
+      },
+      "5c83e343-3305-435f-8ecc-c5406f9cf05b": {
+        "label": "Überblick für einen Artikel generieren",
+        "template": "Der Artikel ist unten in den dreifachen Anführungszeichen:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie einen Überblick über den Artikel. Verwenden Sie das folgende Format:\n\"\"\"\nZusammenfassung:\n\n< eine bis zwei Zeilen Zusammenfassung >\n\nWichtigste Erkenntnisse:\n1. < erste wichtige Erkenntnis >\n2. < zweite wichtige Erkenntnis >\n3. < dritte wichtige Erkenntnis >\n\nGegenargumente:\n1. < erstes wichtiges Gegenargument >\n2. < zweites wichtiges Gegenargument >\n\"\"\"\n\nGeben Sie nichts anderes als die Übersicht zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "e4583555-85f3-441e-b199-05bdcd0e374d": {
+        "label": "Gegenargument generieren",
+        "template": "Geben Sie das Gegenargument zum folgenden Text:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als das Gegenargument zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "0979ebe7-f71f-44a3-b76b-2841cb00a5b6": {
+        "label": "E-Mail generieren",
+        "template": "Schreiben Sie eine professionelle und artikulierte E-Mail für das folgende Thema:\n\"\"\"\nBetreff: {'{'}input{'}'}\n\"\"\"\n\nGeben Sie nichts anderes als die E-Mail zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "a6f1a4bf-6c3d-4f10-be6f-a7c72c06ec22": {
+        "label": "Aktionspunkte auflisten",
+        "template": "Meine Notiz ist unten in dreifachen Anführungszeichen:\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n\nSchreiben Sie eine To-Do-Liste von Aktionspunkten aus meinen Notizen im folgenden Format:\n\n- [ ] <erste Aktion>\n- [ ] <zweite Aktion>\n- [ ] <dritte Aktion>\n- [ ] <vierte Aktion>\n\nGeben Sie nichts anderes als die To-Do-Liste zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+      },
+      "35847b3b-0ff6-44b2-aa59-5d8ad5e17f5c": {
+        "label": "Einen Blogbeitrag schreiben",
+        "template": "Schreiben Sie einen Blogbeitrag unter Verwendung des Gliederung in dreifachen Anführungszeichen unten. Verwenden Sie einfache und klare Sprache. Geben Sie nichts anderes als den Blogbeitrag zurück. Wickeln Sie die Antworten nicht in Anführungszeichen.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\"\n"
+      },
+      "2015c27c-6b97-461f-acb7-6fc9886be376": {
+        "label": "Absätze formatieren",
+        "template": "Formatieren Sie den Text in dreifachen Anführungszeichen unten in Absätzen. Geben Sie nichts anderes als den formatierten Text zurück. Wickeln Sie die Antworten nicht in Anführungszeichen.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "57c9ccec-1da3-443b-a3db-5626728d20e8": {
+        "label": "Analogien schreiben",
+        "template": "Schreiben Sie drei verschiedene Analogien für den Text in Anführungszeichen unten. Verwenden Sie einfache und klare Sprache. Geben Sie nichts anderes als die Analogien zurück. Wickeln Sie die Antworten nicht in Anführungszeichen.\n\n\"\"\"\n{'{'}input{'}'}\n\"\"\""
+      },
+      "c4a3bedb-87bf-4125-9edc-c75c02633806": {
+        "label": "Diesen Code vervollständigen",
+        "template": "Vervollständigen Sie den folgenden Code. Antworten Sie strikt mit dem neuen Code, erklären Sie nicht.\n\n```\n{'{'}input{'}'}\n```"
+      },
+      "e8ab9860-b99a-4763-bbaa-8cc3b7fe9dc4": {
+        "label": "Kommentieren Sie diesen Code",
+        "template": "Erstellen Sie Kommentare für den folgenden Code. Antworten Sie mit dem gesamten Code mit hinzugefügten Kommentaren. Fügen Sie keine Erklärungen hinzu.\n\n```\n{'{'}input{'}'}\n```"
+      }
+    },
+    "defaults": {
+      "lastOneUsed": "Zuletzt verwendet",
+      "title": "Befehlsstandards"
+    },
+    "editor": {
+      "inputPlaceholder": "{input} wird durch den hervorgehobenen Text ersetzt",
+      "notEditable": "Dieser Befehl ist nicht bearbeitbar. Der erfasste Inhalt steht Ihnen im Prompt zur Verfügung, damit Sie alles darüber fragen können!",
+      "prompt": "Eingabeaufforderung",
+      "resetToDefault": "Name und Eingabeaufforderung auf Standardwerte zurücksetzen",
+      "title": "Befehlsdetails",
+      "useDefault": "Verwenden Sie die Standardeinstellungen für Befehle",
+      "validation": {
+        "inputPlaceholder": "Die Vorlage muss den Platzhalter {input} enthalten.",
+        "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."
+      }
+    }
+  },
+  "docRepo": {
+    "config": {
+      "characters": "Zeichen",
+      "chunkOverlap": "Fragmentüberlappung",
+      "chunkSize": "Fragmentgröße",
+      "maxDocumentSize": "Maximale Dokumentgröße",
+      "millionCharacters": "Millionen Zeichen",
+      "relevanceCutOff": "Suchrelevanzschwelle",
+      "searchResultCount": "Anzahl der Suchergebnisse",
+      "title": "Standardwerte für Dokumentenrepositorien"
+    },
+    "create": {
+      "defaultName": "Dokumentenrepository",
+      "embeddingWarning": "Das Einbettungsmodell kann nicht geändert werden, sobald das Repository erstellt wurde.",
+      "title": "Dokumentenrepository erstellen"
+    },
+    "repositories": {
+      "clickToCreate": "Klicken Sie auf die Schaltfläche +, um eines zu erstellen.",
+      "noRepositories": "Sie haben noch keine Repositorien.",
+      "title": "Dokumentenrepositorien"
+    }
+  },
+  "embedding": {
+    "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Bereich Modelle der Witsy-Einstellungen eingeben.",
+    "browse": "Modelle durchsuchen",
+    "model": "Einbettungsmodell",
+    "provider": "Einbettungsanbieter"
+  },
+  "emptyChat": {
+    "settings": {
+      "configure": "Konfigurieren",
+      "needsConfiguration": "Dieser Motor muss zuerst konfiguriert werden! Möchten Sie die Einstellungen öffnen?"
+    },
+    "tips": {
+      "switchModel": "Klicken Sie hier, um zu einem anderen Chatbot-Modell zu wechseln!",
+      "switchProvider": "Klicken Sie hier, um zu einem anderen Chatbot-Anbieter zu wechseln!"
+    }
+  },
+  "engine": {
+    "create": {
+      "apiBaseURL": "API-Basis-URL",
+      "apiKey": "API-Schlüssel",
+      "apiSpecification": "API-Spezifikation",
+      "description": "Erstellen Sie eine neue benutzerdefinierte Engine basierend auf einem API-Standard.",
+      "title": "Benutzerdefinierte Engine erstellen",
+      "validation": {
+        "nameBaseURLRequired": "Name und Basis-URL sind erforderlich"
+      }
+    }
+  },
+  "generator": {
+    "errors": {
+      "cannotContinue": "\n\nEntschuldigung, ich kann hier nicht fortfahren.",
+      "contextTooLong": "Entschuldigung, es scheint, dass diese Nachricht die Kontextlänge dieses Modells überschreitet. Versuchen Sie, Ihren Prompt zu verkürzen oder ein anderes Modell auszuprobieren.",
+      "couldNotGenerate": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen.",
+      "invalidModel": "Entschuldigung, es scheint, dass dieses Modell nicht verfügbar ist.",
+      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter <a href=\"#settings_models\">Einstellungen</a> eingeben, um zu chatten.",
+      "outOfCredits": "Entschuldigung, es scheint, dass Sie keine Credits mehr haben. Überprüfen Sie den Kontostand Ihres LLM-Anbieters.",
+      "pluginDescriptionTooLong": "Entschuldigung, es scheint, dass die Beschreibung eines der Plugins zu lang ist. Wenn Sie sie in Einstellungen | Erweitert geändert haben, versuchen Sie es bitte erneut.",
+      "quotaExceeded": "Entschuldigung, es scheint, dass Sie das Limit Ihres LLM-Anbieterkontos erreicht haben. Versuchen Sie es später erneut.",
+      "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_params\">es erneut ohne Modellparameter versuchen</a>?",
+      "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_plugins\">es erneut ohne Plugins versuchen</a>?"
+    }
+  },
+  "instructions": {
+    "default": "Sie sind ein KI-Assistent, der darauf ausgelegt ist, Benutzern zu helfen, indem er genaue Informationen bereitstellt, Fragen beantwortet und hilfreiche Vorschläge macht. Ihre Hauptziele sind es, die Bedürfnisse des Benutzers zu verstehen, klar zu kommunizieren und Antworten zu geben, die informativ, prägnant und relevant sind.",
+    "docquery": "Sie sind ein hilfreicher, menschenähnlicher Chatbot. Verwenden Sie den bereitgestellten relevanten Kontext und den Chatverlauf, um die abschließende Anfrage zu beantworten. Antworten Sie vollständig. Wenn Sie die Antwort nicht wissen, sagen Sie einfach, dass Sie es nicht wissen, und versuchen Sie nicht, eine Antwort zu erfinden. Verwenden Sie keine Wörter wie Kontext oder Trainingsdaten, wenn Sie antworten. Sie können sagen, dass Sie nicht alle Informationen haben, geben Sie jedoch nicht an, dass Sie keine zuverlässige Quelle sind.\n\nKONTEXT:\n{context}\n\nANFRAGE: {query}",
+    "scratchpad": {
+      "complete": "Vervollständigen Sie den folgenden Satz und stellen Sie sicher, dass er in den Gesamtkontext passt. Fügen Sie den Originaltext ein. Wenn der aktuelle Text Code ist, vervollständigen Sie den Codeauszug. Verwenden Sie keine Anführungszeichen in Ihrer Antwort.",
+      "expand": "Erweitern Sie den AUSZUG, indem Sie mehr Informationen, Beispiele und Erklärungen hinzufügen. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
+      "improve": "Verbessern Sie den AUSZUG in Ihren eigenen Worten. Machen Sie es klarer, prägnanter und ansprechender. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
+      "prompt": "AUSZUG:\n{document}\n\nFRAGE: {ask}",
+      "simplify": "Vereinfachen und verkürzen Sie das Schreiben des AUSZUGS. Entfernen Sie alle unnötigen Informationen. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
+      "spellcheck": "Korrigieren Sie den AUSZUG, indem Sie Rechtschreibfehler und Grammatikfehler beheben. Ändern Sie den AUSZUG nicht über Rechtschreibung und Grammatik hinaus. Listen Sie die Korrekturen, die Sie vorgenommen haben, nicht auf.",
+      "system": "Sie helfen jemandem, ein DOKUMENT zu schreiben. Sie müssen auf die untenstehende Anfrage im AUSZUG unten antworten. Verwenden Sie keine vorherigen Versionen des DOKUMENTS oder des AUSZUGS in unserem Gespräch. Antworten Sie nur mit dem aktualisierten AUSZUG basierend auf der Anfrage. Bewahren Sie leere Zeilen. Wickeln Sie Antworten nicht in Anführungszeichen. Fügen Sie weder die ursprüngliche noch die vorherige Version des DOKUMENTS oder des AUSZUGS ein. Verwenden Sie nicht das Wort AUSZUG. Verwenden Sie keine Markdown-Syntax wie '## Titel ##' oder '** Text **'. Fügen Sie in der Antwort nichts anderes ein, einschließlich Dinge wie 'hier ist das...'",
+      "takeaways": "Schreiben Sie eine Liste (mit Bindestrichen) der wichtigsten Erkenntnisse aus dem AUSZUG. Halten Sie zwischen 3 und 5 Erkenntnissen für einen kurzen AUSZUG, bis zu 10 für einen längeren AUSZUG.",
+      "title": "Schlagen Sie einen Titel für den AUSZUG vor. Geben Sie den Titel gefolgt vom vollständigen Text des AUSZUGS zurück."
+    },
+    "setDate": "Das aktuelle Datum und die Uhrzeit sind {date}",
+    "setLang": "Antworten Sie immer in {lang}, auch wenn der Rest des Gesprächs in einer anderen Sprache ist, einschließlich der Fragen des Benutzers.",
+    "titling": "Sie sind ein Assistent, dessen Aufgabe es ist, den besten Titel für das unten stehende Gespräch zu finden. Der Titel sollte nur aus wenigen Worten bestehen.",
+    "titlingUser": "Geben Sie einen Titel für das obige Gespräch an. Geben Sie nichts anderes als den Titel zurück. Wickeln Sie die Antworten nicht in Anführungszeichen."
+  },
+  "main": {
+    "chat": {
+      "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Chats löschen möchten?",
+      "confirmDeleteSingle": "Sind Sie sicher, dass Sie diesen Chat löschen möchten?",
+      "moveToFolder": "In den Ordner verschieben",
+      "rename": "Chat umbenennen"
+    },
+    "folder": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Ordner löschen möchten?",
+      "deleteConversations": "Konversationen löschen",
+      "keepConversations": "Konversationen behalten",
+      "rename": "Ordner umbenennen"
+    },
+    "update": {
+      "available": "Update verfügbar",
+      "later": "Später",
+      "restart": "Ein Update ist verfügbar. Neustart zur Anwendung.",
+      "restartNow": "Jetzt neu starten"
+    }
+  },
+  "mcp": {
+    "serverEditor": {
+      "environmentVariables": "Umgebungsvariablen",
+      "selectCommand": "Befehl auswählen",
+      "serverPackage": "Serverpaket",
+      "title": "MCP-Serverkonfiguration",
+      "type": {
+        "smithery": "Smithery.ai",
+        "sse": "SSE",
+        "stdio": "stdio"
+      },
+      "validation": {
+        "commandRequired": "Stellen Sie sicher, dass Sie einen Befehl für diesen Server eingeben.",
+        "packageRequired": "Stellen Sie sicher, dass Sie einen Paketnamen für diesen Server eingeben.",
+        "requiredFields": "Einige Felder sind erforderlich",
+        "urlRequired": "Stellen Sie sicher, dass Sie eine URL für diesen Server eingeben."
+      }
+    },
+    "variableEditor": {
+      "title": "MCP-Umgebungsvariable",
+      "validation": {
+        "keyRequired": "Stellen Sie sicher, dass Sie einen Schlüssel für diese Variable eingeben."
+      }
+    }
+  },
+  "memory": {
+    "inspector": {
+      "memory": "Speicher",
+      "noFacts": "Bisher keine Fakten gespeichert",
+      "shiftDelete": "Halten Sie die Umschalttaste gedrückt, während Sie auf Löschen klicken, um die Bestätigung zu überspringen.",
+      "title": "Speicherinhalt"
+    }
+  },
+  "menu": {
+    "app": {
+      "checkForUpdates": "Auf Updates überprüfen…",
+      "quit": "Witsy beenden",
+      "settings": "Einstellungen…"
+    },
+    "edit": {
+      "deleteChat": "Chat löschen",
+      "title": "Bearbeiten"
+    },
+    "file": {
+      "newChat": "Neuer Chat",
+      "newPrompt": "Neue Eingabeaufforderung",
+      "newScratchpad": "Neues Notizblatt",
+      "title": "Datei"
+    },
+    "help": {
+      "goToDataFolder": "Zum Datenordner gehen",
+      "goToLogFolder": "Zum Protokollordner gehen",
+      "learnMore": "Mehr erfahren",
+      "title": "Hilfe"
+    },
+    "view": {
+      "title": "Ansicht"
+    },
+    "window": {
+      "title": "Fenster"
+    }
+  },
+  "message": {
+    "actions": {
+      "retryConfirm": {
+        "confirmButton": "OK. Nicht wieder fragen.",
+        "denyButton": "OK",
+        "text": "Die aktuelle Version geht verloren.",
+        "title": "Sind Sie sicher, dass Sie diese Nachricht erneut generieren möchten?"
+      },
+      "usage": {
+        "prompt": "Prompt-Token: {prompt}",
+        "reasoning": "Begründungs-Token: {reasoning}",
+        "response": "Antwort-Token: {completion}",
+        "title": "Insgesamt Tokens: {total}"
+      }
+    }
+  },
+  "modelPull": {
+    "browse": "Modelle durchsuchen",
+    "error": "Fehler beim Abrufen des Modells",
+    "label": "Modell abrufen",
+    "placeholder": "Geben Sie einen Modellnamen ein, um ihn abzurufen oder wählen Sie einen aus",
+    "progress": "Modell wird abgerufen..."
+  },
+  "modelSettings": {
+    "advancedSettings": "Erweiterte Einstellungen",
+    "contextWindowSize": "Kontextfenstergröße",
+    "createNewModel": "Neues Modell erstellen",
+    "createOllama": {
+      "title": "Neuen Modellnamen eingeben"
+    },
+    "defaultForModel": "Voreinstellungen für dieses Modell",
+    "defaultModelValue": "Standardmodellwert, wenn leer",
+    "errors": {
+      "invalid": {
+        "mustBeBetween": "Muss zwischen {min} und {max} liegen",
+        "mustBeGreaterThan": "Muss größer als {min} sein",
+        "mustBeLessThan": "Muss kleiner als {max} sein",
+        "mustBeNumber": "Muss eine Zahl sein",
+        "title": "Ungültig {name}"
+      },
+      "noProviderOrModel": {
+        "text": "Stellen Sie sicher, dass Sie ein Modell für diesen Chat auswählen.",
+        "title": "Kein LLM-Anbieter oder Modell ausgewählt"
+      }
+    },
+    "extendedThinking": "Erweiterte Überlegung",
+    "locale": "Chat-Sprache",
+    "localeDefault": "🤖 Standardsprache",
+    "maxCompletionTokens": "Maximale Abschluss-Tokens",
+    "plugins": "Plugins",
+    "prompt": "Aufforderung",
+    "promptPlaceholder": "Leer lassen, um die Standardaufforderung zu verwenden",
+    "reasoningEffort": "Überlegungsaufwand",
+    "temperature": "Temperatur [0.0 … 2.0]",
+    "topK": "TopK / Logprobs [0 … 20]",
+    "topP": "TopP [0.0 … 1.0]"
+  },
+  "prompt": {
+    "conversation": {
+      "placeholders": {
+        "auto": "Du kannst jetzt anfangen zu sprechen...",
+        "ptt": "Drücke und halte die Leertaste, um zu sprechen..."
+      },
+      "startAuto": "Automatische Konversation starten",
+      "startPTT": "Push-to-Talk-Konversation starten",
+      "stop": "Konversation stoppen"
+    },
+    "expert": {
+      "clear": "Experte löschen"
+    }
+  },
+  "realtimeChat": {
+    "errorPrefix": "Fehler: ",
+    "establishingConnection": "Verbindung wird hergestellt...",
+    "requestingMicrophone": "Anforderung des Mikrofonzugriffs...",
+    "sessionEstablished": "Sitzung erfolgreich hergestellt!"
+  },
+  "scratchpad": {
+    "actions": {
+      "completeText": "Text vervollständigen",
+      "copyToClipboard": "In die Zwischenablage kopieren",
+      "expandWriting": "Schreiben erweitern",
+      "improveWriting": "Schreiben verbessern",
+      "listTakeaways": "Wichtige Ergebnisse auflisten",
+      "simplifyWriting": "Schreiben vereinfachen",
+      "spellcheck": "Rechtschreibprüfung",
+      "suggestTitle": "Einen Titel vorschlagen",
+      "writingAssistant": "Schreibassistent"
+    },
+    "fileError": "Diese Datei ist keine Notizdatei. Bitte versuchen Sie es mit einer anderen Datei erneut.",
+    "fontFamily": {
+      "monospace": "Monospace",
+      "sansSerif": "Sans-Serif",
+      "serif": "Serif"
+    },
+    "fontSize": {
+      "large": "Groß",
+      "larger": "Größer",
+      "normal": "Normal",
+      "small": "Klein",
+      "smaller": "Kleiner"
+    },
+    "generationError": "Fehler beim Generieren von Text",
+    "loadingError": "Fehler beim Laden der Notizdatei",
+    "placeholder": "Beginnen Sie, Ihr Dokument zu tippen oder\nfragen Sie Witsy, etwas für Sie zu schreiben!\n\nSobald Sie angefangen haben, können Sie Witsy\nbitten, Änderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Teil Ihres Textes markieren,\naktualisiert Witsy nur diesen Teil.\n\nSehen Sie sich auch den Schreibassistenten\nin der Aktionsleiste in der unteren rechten Ecke an!\n\nViel Spaß!"
+  },
+  "settings": {
+    "advanced": {
+      "autoSavePrompt": "Immer Prompt-Sitzungen im Chatverlauf speichern",
+      "autoVisionSwitch": "Automatisch zum Vision-Modell wechseln",
+      "conversationLength": "Nachrichten pro Unterhaltung",
+      "imageResize": "Bildgröße",
+      "imageResizeOptions": {
+        "none": "Keine Größe",
+        "size": "Größte Dimension auf {size} Pixel ändern"
+      },
+      "instructions": {
+        "chat": "Chat - Anweisungen",
+        "docquery": "Dokumentabfrage - Anweisungen",
+        "image_plugin": "Bild-Plugin - Beschreibung (maximal 1024 Zeichen)",
+        "memory_plugin": "Speicher-Plugin - Beschreibung (maximal 1024 Zeichen)",
+        "scratchpad_complete": "Scratchpad - Abschließen",
+        "scratchpad_expand": "Scratchpad - Erweitern",
+        "scratchpad_improve": "Scratchpad - Verbessern",
+        "scratchpad_prompt": "Scratchpad - Eingabeaufforderung",
+        "scratchpad_simplify": "Scratchpad - Vereinfachen",
+        "scratchpad_spellcheck": "Scratchpad - Rechtschreibprüfung",
+        "scratchpad_system": "Scratchpad - Anweisungen",
+        "scratchpad_takeaways": "Scratchpad - Erkenntnisse",
+        "scratchpad_title": "Scratchpad - Titel",
+        "titling": "Chat-Titel - Anweisungen",
+        "titlingUser": "Chat-Titel - Eingabeaufforderung",
+        "video_plugin": "Video-Plugin - Beschreibung (maximal 1024 Zeichen)"
+      },
+      "overridingHelp": "Benutzerdefinierte Eingabeaufforderungen oder Anweisungen gelten für alle Sprachen.",
+      "resetToDefault": "Auf Standardwert zurücksetzen",
+      "systemInstructions": "Systemanweisungen"
+    },
+    "appearance": {
+      "chatFont": "Chat-Schriftart",
+      "chatFontSize": "Chat-Schriftgröße",
+      "chatListLayout": "Layout der Chatliste",
+      "chatListLayouts": {
+        "compact": "Kompakt",
+        "cozy": "Gemütlich"
+      },
+      "chatTheme": "Chat-Thema",
+      "chatThemes": {
+        "conversation": "Unterhaltung",
+        "openai": "OpenAI"
+      },
+      "darkTint": "Dunkler Farbton",
+      "theme": "Erscheinungsbild",
+      "themes": {
+        "dark": "Dunkel",
+        "light": "Hell",
+        "system": "System"
+      },
+      "tints": {
+        "black": "Schwarz",
+        "blue": "Blau"
+      }
+    },
+    "commands": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Befehl löschen möchten?",
+      "defaults": "Standardwerte",
+      "export": "Exportieren",
+      "exportError": "Fehler beim Exportieren der Befehlsdatei",
+      "exportSuccess": "Befehlsdatei erfolgreich exportiert",
+      "import": "Importieren",
+      "importError": "Fehler beim Importieren der Befehlsdatei",
+      "importSuccess": "Befehlsdatei erfolgreich importiert",
+      "more": "Mehr",
+      "new": "Neu",
+      "selectAll": "Alle auswählen",
+      "unselectAll": "Alle abwählen"
+    },
+    "engines": {
+      "anthropic": {
+        "aboutModels": "Mehr über Anthropic-Modelle",
+        "pricing": "Anthropic-Preise"
+      },
+      "apiKey": "API-Schlüssel",
+      "cerebras": {
+        "aboutModels": "Mehr über Cerebras-Modelle"
+      },
+      "chatModel": "Chat-Modell",
+      "custom": {
+        "apiBaseURL": "API-Basis-URL",
+        "apiSpecification": "API-Spezifikation",
+        "confirmDelete": "Sind Sie sicher, dass Sie diesen benutzerdefinierten Anbieter löschen möchten?",
+        "create": "Motor erstellen",
+        "delete": "Motor löschen",
+        "modelPlaceholder": "Geben Sie einen Modellnamen ein oder wählen Sie einen aus"
+      },
+      "deepseek": {
+        "aboutModels": "Mehr über DeepSeek-Modelle"
+      },
+      "disableTools": "Plugins für alle Modelle deaktivieren",
+      "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
+      "google": {
+        "aboutModels": "Mehr über Google-Modelle",
+        "pricing": "Google-Preise"
+      },
+      "groq": {
+        "aboutModels": "Mehr über Groq-Modelle",
+        "pricing": "Groq-Preise"
+      },
+      "mistralai": {
+        "aboutModels": "Mehr über MistralAI-Modelle",
+        "pricing": "MistralAI-Preise"
+      },
+      "ollama": {
+        "apiBaseURL": "API-Basis-URL",
+        "browseModels": "Modelle durchsuchen",
+        "confirmDelete": "Sind Sie sicher, dass Sie dieses Modell löschen möchten?"
+      },
+      "openai": {
+        "aboutModels": "Mehr über OpenAI-Modelle",
+        "apiBaseURL": "API-Basis-URL",
+        "pricing": "OpenAI-Preise"
+      },
+      "openrouter": {
+        "aboutModels": "Mehr über OpenRouter-Modelle"
+      },
+      "xai": {
+        "aboutModels": "Mehr über xAI-Modelle"
+      }
+    },
+    "experts": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Experten löschen möchten?",
+      "copy": "Kopieren",
+      "export": "Exportieren",
+      "exportError": "Fehler beim Exportieren der Expertendatei",
+      "exportSuccess": "Experten-Datei erfolgreich exportiert",
+      "import": "Importieren",
+      "importError": "Fehler beim Importieren der Experten-Datei",
+      "importSuccess": "Experten-Datei erfolgreich importiert",
+      "more": "Mehr",
+      "new": "Neu",
+      "selectAll": "Alle auswählen",
+      "sortAlpha": "Alphabetisch sortieren",
+      "sortState": "Nach Status sortieren",
+      "unselectAll": "Alle abwählen"
+    },
+    "general": {
+      "forceLocale": "Modell auffordern, immer diese Sprache zu sprechen (Ergebnisse können variieren)",
+      "hideOnStartup": "Hauptfenster beim Start ausblenden",
+      "keepInStatusBar": "In der Statusleiste behalten",
+      "lastOneUsed": "Zuletzt verwendet",
+      "localeLLM": "LLM-Sprache",
+      "localeUI": "Oberflächensprache",
+      "promptLLMModel": "Eingabeaufforderung LLM-Modell",
+      "resetTips": "Tipps zurücksetzen",
+      "runAtLogin": "Beim Anmelden ausführen"
+    },
+    "plugins": {
+      "browse": {
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
+        "title": "Herunterladen"
+      },
+      "image": {
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
+        "huggingface": {
+          "aboutModels": "Mehr über Hugging Face-Modelle",
+          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+        },
+        "imageModel": "Bildmodell",
+        "openai": {
+          "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben."
+        },
+        "provider": "Anbieter",
+        "replicate": {
+          "aboutModels": "Mehr über Replicate-Modelle",
+          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+        },
+        "title": "Text zu Bild"
+      },
+      "mcp": {
+        "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
+        "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
+        "connectedToServers": "Verbunden mit {count} MCP-Server{count > 1 ? 'n' : ''}",
+        "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
+        "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
+        "failedToInstall": "Fehler beim Installieren des Servers",
+        "importSmitheryServer": "Smithery.ai-Server importieren…",
+        "mcpServers": "MCP-Server:",
+        "modelContextProtocol": "Modellkontextprotokoll",
+        "noServersFound": "Keine MCP-Server gefunden",
+        "noTools": "Keine Tools verfügbar",
+        "restartClient": "Client neu starten",
+        "serverLogs": "MCP-Serverprotokolle",
+        "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
+        "smithery": "Smithery",
+        "status": "Status",
+        "target": "Ziel",
+        "title": "MCP",
+        "totalTools": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
+      },
+      "memory": {
+        "contents": "Inhalt",
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Informationen über Sie zu speichern und abzurufen, wodurch ihre Antworten persönlicher werden.",
+        "resetConfirmation": {
+          "title": "Sind Sie sicher, dass Sie das Gedächtnis zurücksetzen und alle Fakten über Sie verlieren möchten?"
+        },
+        "title": "Gedächtnis",
+        "view": "Anzeigen"
+      },
+      "nestor": {
+        "connectedToHubs": "Verbunden mit {count} Nestor-Hub{count > 1 ? 's' : ''}",
+        "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf lokale APIs im Netzwerk. Überprüfen Sie",
+        "githubLink": "https://github.com/nbonamy/nestor",
+        "noHubs": "Keine Nestor-Hubs verfügbar",
+        "noServices": "Kein Dienst verfügbar",
+        "title": "Nestor",
+        "totalServices": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
+      },
+      "python": {
+        "binaryPath": "Python-Binärdatei",
+        "description1": "Durch die Aktivierung dieses Plugins können LLM-Engines beliebigen Code auf Ihrem Computer ausführen.",
+        "description2": "Es ist nicht vorhersehbar, ob der Code, den LLM-Engines generieren, sicher ist oder nicht.",
+        "search": "Suche",
+        "title": "Python",
+        "useAtOwnRisk": "Auf eigene Gefahr verwenden",
+        "warning": "Warnung!"
+      },
+      "search": {
+        "characters": "Zeichen (0 für den vollständigen Inhalt)",
+        "contentLength": "Inhaltslänge",
+        "description": "Dieses Plugin ermöglicht LLM-Engines die Suche im Internet und die Verwendung der Ergebnisse als Eingabe zur Erzeugung aktueller Antworten.",
+        "engine": "Engine",
+        "engines": {
+          "local": "Lokale Browsersuche (EXPERIMENTAL)",
+          "tavily": "Tavily"
+        },
+        "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
+        "tavilyApiKey": "Tavily API-Schlüssel",
+        "title": "Websuche",
+        "truncateTo": "Truncate auf",
+        "truncationWarning": "WARNUNG: Die Trunkierungslänge beeinflusst die Anzahl der Eingabetokens und damit die Kosten der Anfrage"
+      },
+      "vega": {
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Diagrammbilder basierend auf Daten unter Verwendung der Vega-Visualisierungsbibliothek zu erstellen.",
+        "title": "Vega"
+      },
+      "video": {
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Videos aus einer Textbeschreibung zu erstellen.",
+        "provider": "Anbieter",
+        "replicate": {
+          "aboutModels": "Mehr über Replicate-Modelle",
+          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+        },
+        "title": "Text zu Video",
+        "videoModel": "Videomodell"
+      },
+      "youtube": {
+        "description": "Dieses Plugin ermöglicht LLM-Engines, Transkripte von YouTube-Videos herunterzuladen.",
+        "title": "YouTube"
+      }
+    },
+    "shortcuts": {
+      "aiCommands": "AI-Befehle",
+      "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus",
+      "dictation": "Diktat",
+      "newChat": "Neuer Chat",
+      "newPrompt": "Neue Eingabeaufforderung",
+      "newScratchpad": "Neues Scratchpad",
+      "readAloud": "Laut vorlesen",
+      "readAloudUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination",
+      "voiceMode": "Sprachmodus"
+    },
+    "tabs": {
+      "advanced": "Erweitert",
+      "appearance": "Aussehen",
+      "commands": "Befehle",
+      "experts": "Experten",
+      "general": "Allgemein",
+      "models": "Modelle",
+      "plugins": "Plugins",
+      "shortcuts": "Tastenkürzel",
+      "voice": "Stimme"
+    },
+    "voice": {
+      "automatic": "🤖 Automatisch",
+      "deleteConfirmation": {
+        "text": "Sie müssen alle lokalen Modelle erneut herunterladen.",
+        "title": "Sind Sie sicher, dass Sie alle lokalen Modelle löschen möchten?"
+      },
+      "deleteLocalModels": "Alle lokal gespeicherten Modelle löschen",
+      "downloadComplete": "Download abgeschlossen!",
+      "downloadConfirmation": {
+        "title": "Dieses Modell muss auf Ihrem Computer heruntergeladen werden. Möchten Sie fortfahren?"
+      },
+      "downloading": "Herunterladen: {percent}%",
+      "engine": "Motor",
+      "groqApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Groq-API-Schlüssel im Modellbereich eingegeben haben.",
+      "initializationError": "Während der Initialisierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "initializing": "Initialisiere...",
+      "model": "Modell",
+      "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
+      "selectModel": "Wählen Sie ein Modell aus",
+      "silenceDetection": "Schweigenserkennung",
+      "silenceOptions": {
+        "disabled": "Deaktiviert",
+        "fiveSeconds": "5 Sekunden",
+        "fourSeconds": "4 Sekunden",
+        "oneSecond": "1 Sekunde",
+        "threeSeconds": "3 Sekunden",
+        "twoSeconds": "2 Sekunden"
+      },
+      "spokenLanguage": "Gesprochene Sprache",
+      "tabs": {
+        "speechToText": "Sprache zu Text",
+        "textToSpeech": "Text zu Sprache"
+      },
+      "tts": {
+        "kokoroReminder": "Bereitgestellt",
+        "sampleText": "Willkommen bei Witsy, dem ultimativen KI-Desktop-Assistenten.",
+        "serviceDisclaimer": "Der Dienst kann jederzeit eingestellt werden.",
+        "voice": "Stimme"
+      },
+      "verificationComplete": "Verifizierung abgeschlossen!",
+      "verifying": "Verifying: {percent}%"
+    }
+  },
+  "sidebar": {
+    "newFolder": {
+      "placeholder": "Neuer Ordnername",
+      "title": "Neuer Ordner"
+    }
+  },
+  "tips": {
+    "computerUse": {
+      "text": "Benutzen Sie auf eigene Gefahr!",
+      "title": "Die Computerbenutzung interagiert mit Ihrem Computer und führt Maus- und Tastatureingaben aus. Diese Aktionen können unerwartetes Verhalten verursachen, was zu Datenverlust führen kann."
+    },
+    "conversation": {
+      "title": "Überprüfen Sie die Gesprächsoptionen, indem Sie mit der rechten Maustaste auf das Mikrofonsymbol im Chatfenster klicken."
+    },
+    "doNotShowAgain": "Nicht mehr anzeigen",
+    "favoriteModels": {
+      "title": "Klicken Sie auf das LLM-Symbol: Ihre bevorzugten Modelle werden unter dem Sternsymbol gruppiert!"
+    },
+    "folderList": {
+      "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
+    },
+    "pluginsDisabled": {
+      "text": "Dieses Modell unterstützt keine Plugins. Sie wurden automatisch deaktiviert, damit Sie Ihr Gespräch fortsetzen können.",
+      "title": "Plugins wurden deaktiviert."
+    },
+    "realtime": {
+      "title": "Echtzeit-Chat kann schnell teuer werden. Die angegebene Kostenschätzung ist nur eine Schätzung und möglicherweise nicht richtig. Klicken Sie auf die Blase, um das Chatten zu starten und zu stoppen!"
+    }
+  },
+  "transcribe": {
+    "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
+    "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
+    "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
+    "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten"
+  },
+  "tray": {
+    "menu": {
+      "installUpdate": "Update installieren und neu starten...",
+      "newChat": "Neuer Chat",
+      "quickPrompt": "Schnelle Eingabe",
+      "quit": "Beenden",
+      "readAloud": "Laut vorlesen",
+      "runAiCommand": "KI-Befehl ausführen",
+      "scratchpad": "Notizblock",
+      "settings": "Einstellungen…",
+      "startDictation": "Diktat starten",
+      "voiceMode": "Sprachmodus"
+    }
+  }
+}

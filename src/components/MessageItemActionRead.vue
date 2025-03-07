@@ -1,13 +1,14 @@
 <template>
   <div class="action read" v-if="message.role == 'assistant' && message.type == 'text' && !message.transient" @click="onToggleRead(message)">
-    <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> Stop</span>
-    <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> Cancel</span>
-    <span v-else><BIconPlayCircle /> Read</span>
+    <span v-if="mgsAudioState(message) == 'playing'"><BIconStopCircle/> {{ t('common.stop') }}</span>
+    <span v-else-if="mgsAudioState(message) == 'loading'"><BIconXCircle/> {{ t('common.cancel') }}</span>
+    <span v-else><BIconPlayCircle /> {{ t('common.read') }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { t } from '../services/i18n'
 import Message from '../models/message'
 
 const props = defineProps({

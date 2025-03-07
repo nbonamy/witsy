@@ -1,5 +1,6 @@
 
 import { store } from '../services/store'
+import { i18nInstructions } from '../services/i18n'
 import { saveFileContents } from '../services/download'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
@@ -22,7 +23,7 @@ export default class extends Plugin {
   }
 
   getDescription(): string {
-    return this.config.description
+    return i18nInstructions({ plugins: { video: this.config } }, 'plugins.video.description')
   }
 
   getPreparationDescription(): string {

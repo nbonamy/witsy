@@ -10,6 +10,12 @@ enableAutoUnmount(afterAll)
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+  }
+})
+
 vi.mock('../../src/composables/event_bus', async () => {
   return { default: () => ({
     onEvent: onEventMock,
@@ -63,24 +69,24 @@ test('Selects correctly', async () => {
   expect(wrapper.find<HTMLInputElement>('.details .embeddings input').element.value).toBe('openai / text-embedding-ada-002')
   expect(wrapper.findAll('.details .documents .item')).toHaveLength(2)
   expect(wrapper.find('.details .documents .item:nth-child(1)').text()).toBe('file1 (/tmp/file1)')
-  expect(wrapper.find('.details .documents .item:nth-child(2)').text()).toBe('folder1 (2 files) (/tmp/folder1)')
+  expect(wrapper.find('.details .documents .item:nth-child(2)').text()).toBe('folder1 (2 common.files) (/tmp/folder1)')
   expect(wrapper.findAll('.details .documents .item.selected')).toHaveLength(1)
   expect(wrapper.find('.details .documents .item.selected').text()).toBe('file1 (/tmp/file1)')
   await wrapper.find('.details .documents .item:nth-child(2)').trigger('click')
   expect(wrapper.findAll('.details .documents .item.selected')).toHaveLength(1)
-  expect(wrapper.find('.details .documents .item.selected').text()).toBe('folder1 (2 files) (/tmp/folder1)')
+  expect(wrapper.find('.details .documents .item.selected').text()).toBe('folder1 (2 common.files) (/tmp/folder1)')
 })
 
 test('Shows create editor', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.create').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-create', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-docrepo-create', null)
 })
 
 test('Shows configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.config').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-docrepo-config', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-docrepo-config', null)
 })
 
 test('Deletes base', async () => {
@@ -88,14 +94,14 @@ test('Deletes base', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.master .actions button.delete').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalled()
-  expect(window.api.docrepo.delete).toHaveBeenCalledWith('uuid1')
+  expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid1')
 })
 
 test('Renames base', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.details .name input').setValue('docrepo1-new')
-  expect(window.api.docrepo.rename).toHaveBeenCalledWith('uuid1', 'docrepo1-new')
+  expect(window.api.docrepo.rename).toHaveBeenLastCalledWith('uuid1', 'docrepo1-new')
 })
 
 test('Adds documents', async () => {
@@ -122,5 +128,5 @@ test('Deletes documents', async () => {
   await wrapper.find('.master .item:nth-child(2)').trigger('click')
   await wrapper.find('.details .actions button.remove').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalled()
-  expect(window.api.docrepo.removeDocument).toHaveBeenCalledWith('uuid2', 'uuid3')
+  expect(window.api.docrepo.removeDocument).toHaveBeenLastCalledWith('uuid2', 'uuid3')
 })

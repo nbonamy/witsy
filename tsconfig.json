@@ -16,7 +16,8 @@
     }
   },
   "exclude": [
-    "./tests/**/*.ts"
+    "./tests/**/*.ts",
+    "./tools/**/*.ts",
   ]
   // "files": [],
   // "references": [

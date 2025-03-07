@@ -1,15 +1,14 @@
-
 <template>
   <div class="group pull">
-    <label>Pull model</label>
+    <label>{{ t('modelPull.label') }}</label>
     <div class="subgroup">
-      <Combobox class="combobox" :items="pullableModels" placeholder="Enter a model name to pull or select one" v-model="pull_model" />
-      <a :href="props.infoUrl" target="_blank">{{ props.infoText }}</a>
+      <Combobox class="combobox" :items="pullableModels" :placeholder="t('modelPull.placeholder')" v-model="pull_model" />
+      <a :href="props.infoUrl" target="_blank">{{ t('modelPull.browse') }}</a>
     </div>
     <div>
-      <button @click.prevent="onStop" v-if="pullStream">Stop</button>
-      <button @click.prevent="onPull" v-else>Pull</button>
-      <div class="progress" v-if="pull_progress">{{  pull_progress }}</div>
+      <button @click.prevent="onStop" v-if="pullStream">{{ t('common.stop') }}</button>
+      <button @click.prevent="onPull" v-else>{{ t('common.pull') }}</button>
+      <div class="progress" v-if="pull_progress">{{ pull_progress }}</div>
     </div>
   </div>
 </template>
@@ -19,11 +18,12 @@
 import { ref, nextTick, Ref } from 'vue'
 import { Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
 import { ProgressResponse, AbortableAsyncIterator } from 'ollama'
 
- type Model = {
+type Model = {
   id: string,
   name: string,
 }
@@ -49,7 +49,7 @@ const onPull = () => {
   // need a model and can pull only one at a time
   if (!pull_model.value) return
   if (pullStream.value) return
-  pull_progress.value = '…'
+  pull_progress.value = t('modelPull.progress')
   
   // do it
   nextTick(async () => {
@@ -60,7 +60,7 @@ const onPull = () => {
 
     // TODO: handle error (this is not working)
     if (!pullStream.value) {
-      Dialog.alert('Error pulling model')
+      Dialog.alert(t('modelPull.error'))
       pull_progress.value = null
       return
     }
@@ -80,7 +80,6 @@ const onPull = () => {
     pull_model.value = null
     pullStream.value = null
     emit('done')
-
   })
 }
 
@@ -89,7 +88,6 @@ const onStop = async () => {
   pull_progress.value = null
   pullStream.value = null
 }
-
 </script>
 
 <style scoped>

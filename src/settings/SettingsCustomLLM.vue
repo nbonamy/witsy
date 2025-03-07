@@ -1,36 +1,42 @@
 <template>
   <div>
     <div class="group">
-      <label>Name</label>
+      <label>{{ t('common.name') }}</label>
       <input v-model="label" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="group">
-      <label>API Specification</label>
+      <label>{{ t('settings.engines.custom.apiSpecification') }}</label>
       <select v-model="api" @change="save">
         <option value="openai">OpenAI</option>
       </select>
     </div>
     <div class="group">
-      <label>API Base URL</label>
+      <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
       <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="group">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <div class="subgroup">
         <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
       </div>
     </div>
     <div class="group">
-      <label>Chat model</label>
+      <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
-        <Combobox class="combobox" :items="chat_models" placeholder="Enter a model name or select one" v-model="chat_model" @change="save" />
+        <Combobox class="combobox" :items="chat_models" :placeholder="t('settings.engines.custom.modelPlaceholder')" v-model="chat_model" @change="save" />
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
-  </div>  
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { t } from '../services/i18n'
 
 import { CustomEngineConfig } from '../types/config'
 import { ref, onMounted, watch } from 'vue'
@@ -51,7 +57,8 @@ const label = ref(null)
 const api = ref(null)
 const apiKey = ref(null)
 const baseURL = ref(null)
-const refreshLabel = ref('Refresh')
+const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -67,16 +74,17 @@ const load = () => {
   baseURL.value = engineConfig?.baseURL || ''
   chat_models.value = engineConfig?.models?.chat || []
   chat_model.value = engineConfig?.model?.chat || ''
+  disableTools.value = engineConfig?.disableTools || false
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing…'
+  refreshLabel.value = t('common.refreshing')
   setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
 }
 
 const getModels = async () => {
@@ -91,7 +99,7 @@ const getModels = async () => {
   let success = await llmFactory.loadModelsCustom(props.engine)
   if (!success) {
     chat_models.value = []
-    setEphemeralRefreshLabel('Error!')
+    setEphemeralRefreshLabel(t('common.error'))
     return
   }
 
@@ -108,7 +116,7 @@ const getModels = async () => {
   // }
 
   // done
-  setEphemeralRefreshLabel('Done!')
+  setEphemeralRefreshLabel(t('common.done'))
 
 }
 
@@ -129,6 +137,7 @@ const save = () => {
   engineConfig.apiKey = apiKey.value
   engineConfig.baseURL = baseURL.value
   engineConfig.model.chat = chat_model.value
+  engineConfig.disableTools = disableTools.value
 
   // now add model to models if it does not exist
   if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {

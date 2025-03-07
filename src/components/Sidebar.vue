@@ -2,7 +2,7 @@
   <div class="sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
     <div class="toolbar">
       <form><div class="group search">
-        <input id="filter" v-model="filter" placeholder="Search…" @keyup="onFilterChange" />
+        <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
       </div></form>
       <div id="new-chat" class="icon-text" @click="onNewChat">
@@ -11,14 +11,14 @@
     </div>
     <ChatList :displayMode="chatListDisplayMode" :chat="chat" :filter="filter" :select-mode="selectMode" ref="chatList" />
     <div class="footer actions" v-if="selectMode">
-      <button id="cancel-delete" @click="onCancelSelect">Cancel</button>
-      <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">Move</button>
-      <button id="delete" @click="onDelete" class="destructive">Delete</button>
+      <button id="cancel-delete" @click="onCancelSelect">{{ t('common.cancel') }}</button>
+      <button id="move" @click="onMove" v-if="chatListDisplayMode == 'folder'">{{ t('common.move') }}</button>
+      <button id="delete" @click="onDelete" class="destructive">{{ t('common.delete') }}</button>
     </div>
     <div class="footer" v-else>
       <div class="icon-text" id="open-settings" @click="onSettings">
         <BIconGearFill />
-        <span>Settings</span>
+        <span>{{ t('common.settings') }}</span>
       </div>
       <div id="new-folder" class="icon-text" @click="onNewFolder" v-if="chatListDisplayMode == 'folder'">
         <BIconFolderPlus />
@@ -34,8 +34,9 @@
 <script setup lang="ts">
 
 import { ChatListMode } from '../types/config'
-import { ref, onMounted, type Ref } from 'vue'
+import { ref, onMounted, Ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
 import Dialog from '../composables/dialog'
 import ChatList from './ChatList.vue'
@@ -96,10 +97,10 @@ const onClearFilter = () => {
 
 const onNewFolder = async () => {
   const { value: name } = await Dialog.show({
-    title: 'New Folder',
+    title: t('sidebar.newFolder.title'),
     input: 'text',
     inputValue: '',
-    inputPlaceholder: 'New Folder Name',
+    inputPlaceholder: t('sidebar.newFolder.placeholder'),
     showCancelButton: true,
   });
   if (name) {

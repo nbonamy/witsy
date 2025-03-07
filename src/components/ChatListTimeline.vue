@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 
+import { t } from '../services/i18n'
 import ChatListItem from './ChatListItem.vue'
 import Chat from '../models/chat'
 
@@ -32,22 +33,21 @@ defineProps({
 let currDay: string|null = null
 let chatDay: string
 
-const emit = defineEmits(['select', 'menu']);
+const emit = defineEmits(['select', 'menu'])
 
 const getDay = (chat: Chat) => {
   const now = new Date()
   const oneDay = 24 * 60 * 60 * 1000
   const diff = Date.now() - chat.lastModified
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const yesterdayStart = todayStart - 86400000;
-  if (chat.lastModified >= todayStart) return 'Today'
-  if (chat.lastModified >= yesterdayStart) return 'Yesterday'
-  if (diff < 7 * oneDay) return 'Last 7 days'
-  if (diff < 14 * oneDay) return 'Last 14 days'
-  if (diff < 30 * oneDay) return 'Last 30 days'
-  // if (diff < 60 * oneDay) return 'Last Month'
-  // if (diff < 365 * oneDay) return 'This Year'
-  return 'Earlier'
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+  const yesterdayStart = todayStart - 86400000
+
+  if (chat.lastModified >= todayStart) return t('chatList.timeline.today')
+  if (chat.lastModified >= yesterdayStart) return t('chatList.timeline.yesterday')
+  if (diff < 7 * oneDay) return t('chatList.timeline.last7days')
+  if (diff < 14 * oneDay) return t('chatList.timeline.last14days')
+  if (diff < 30 * oneDay) return t('chatList.timeline.last30days')
+  return t('chatList.timeline.earlier')
 }
 
 const onSelectChat = (chat: Chat) => {

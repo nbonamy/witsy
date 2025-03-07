@@ -47,15 +47,14 @@ export default class LlmMock extends LlmEngine {
       { id: 'vision', name: 'Vision' }
     ]
   }
-
    
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async complete(model: string, thread: Message[]): Promise<LlmResponse> {
     // this is only used for titling so we pack all the processing that needs to be done:
     // remove <think> content, remove html and markdown, remove prefixes and quotes
     return {
       type: 'text',
-      content: '<think>Reasoning...</think># <b>Title:\n"Title"</b>',
+      content: `<think>Reasoning...</think># <b>${thread[0].content}:\n"Title"</b>`,
     }
   }
 

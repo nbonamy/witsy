@@ -1,37 +1,37 @@
 <template>
   <div class="content">
     <div class="group">
-      <label>New prompt</label>
+      <label>{{ t('settings.shortcuts.newPrompt') }}</label>
       <InputShortcut v-model="prompt" @change="save" />
     </div>
     <div class="group">
-      <label>New chat</label>
+      <label>{{ t('settings.shortcuts.newChat') }}</label>
       <InputShortcut v-model="chat" @change="save "/>
     </div>
     <div class="group">
-      <label>New Scratchpad</label>
+      <label>{{ t('settings.shortcuts.newScratchpad') }}</label>
       <InputShortcut v-model="scratchpad" @change="save "/>
     </div>
     <div class="group">
-      <label>AI Commands</label>
+      <label>{{ t('settings.shortcuts.aiCommands') }}</label>
       <div class="subgroup">
         <InputShortcut v-model="command" @change="save" />
-        <span>Usage: Highlight your text, press keyboard shortcut then choose an Al command</span>
+        <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
       </div>
     </div>
     <div class="group">
-      <label>Read Aloud</label>
+      <label>{{ t('settings.shortcuts.readAloud') }}</label>
       <div class="subgroup">
         <InputShortcut v-model="readaloud" @change="save" />
-        <span>Usage: Highlight your text, press keyboard shortcut</span>
+        <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
       </div>
     </div>
     <div class="group">
-      <label>Dictation</label>
+      <label>{{ t('settings.shortcuts.dictation') }}</label>
       <InputShortcut v-model="transcribe" @change="save" />
     </div>
     <div class="group">
-      <label>Voice Mode</label>
+      <label>{{ t('settings.shortcuts.voiceMode') }}</label>
       <InputShortcut v-model="realtime" @change="save" />
     </div>
   </div>
@@ -41,6 +41,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import InputShortcut from '../components/InputShortcut.vue'
 
 const prompt = ref(null)

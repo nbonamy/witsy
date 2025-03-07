@@ -1,12 +1,10 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to download content from the Internet and use it to
-      generate more accurate responses.
+      {{ t('settings.plugins.browse.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
   </div>
@@ -16,6 +14,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 
 const enabled = ref(false)
 

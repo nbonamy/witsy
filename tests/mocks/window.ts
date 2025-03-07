@@ -54,6 +54,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       unregister: vi.fn(),
     },
     config: {
+      localeUI: vi.fn(() => 'en-US'),
+      localeLLM: vi.fn(() => 'en-US'),
+      getI18nMessages: vi.fn(() => ({ en: {}, fr: {} })),
       load: vi.fn(() => {
         const config = JSON.parse(JSON.stringify(defaultSettings))
         if (opts.favoriteModels) {
@@ -106,7 +109,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     commands: {
       load: vi.fn(() => [
-        { id: 1, icon: '1', label: 'Command 1', shortcut: '1', action: 'chat_window', state: 'enabled' },
+        { id: 1, icon: '1', shortcut: '1', action: 'chat_window', state: 'enabled' },
         { id: 2, icon: '2', label: 'Command 2', shortcut: '2', action: 'paste_below', state: 'enabled' },
         { id: 3, icon: '3', label: 'Command 3', shortcut: '3', action: 'paste_in_place', state: 'enabled' },
         { id: 4, icon: '4', label: 'Command 4', shortcut: '4', action: 'clipboard_copy', state: 'enabled' },
@@ -116,13 +119,13 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       cancel: vi.fn(),
       closePicker: vi.fn(),
       run: vi.fn(),
-      isPromptEditable: vi.fn(() => true),
+      isPromptEditable: vi.fn((id) => id != '00000000-0000-0000-0000-000000000000'),
       import: vi.fn(),
       export: vi.fn(),
     },
     experts: {
       load: vi.fn(() => [
-        { id: 'uuid1', type: 'system', name: 'actor1', prompt: 'prompt1', state: 'enabled' },
+        { id: 'uuid1', type: 'system', state: 'enabled' },
         { id: 'uuid2', type: 'system', name: 'actor2', prompt: 'prompt2', state: 'disabled' },
         { id: 'uuid3', type: 'user', name: 'actor3', prompt: 'prompt3', state: 'enabled', triggerApps: [ { identifier: 'app' }] }
       ] as Expert[]),
@@ -298,8 +301,12 @@ const useBrowserMock = () => {
   navigator = {
     // @ts-expect-error mock
     mediaDevices: {
-      getUserMedia: vi.fn()
-    }
+      getUserMedia: vi.fn(),
+      getSupportedConstraints: vi.fn(() => ({
+        echoCancellation: true,
+        autoGainControl: true,
+      })),
+    },
   }
 
   // eslint-disable-next-line no-global-assign

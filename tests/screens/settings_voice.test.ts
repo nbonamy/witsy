@@ -36,9 +36,9 @@ test('stt settings', async () => {
   expect(stt.find<HTMLSelectElement>('select[name=engine]').element.value).toBe('openai')
 
   // language
-  expect(stt.find<HTMLSelectElement>('select[name=language]').element.value).toBe('')
-  await stt.find('select[name=language]').setValue('fr')
-  expect(store.config.stt.language).toBe('fr')
+  expect(stt.find<HTMLSelectElement>('select[name=locale]').element.value).toBe('')
+  await stt.find('select[name=locale]').setValue('fr-FR')
+  expect(store.config.stt.locale).toBe('fr-FR')
 
   // silence detection
   expect(stt.find<HTMLSelectElement>('select[name=duration]').element.value).toBe('2000')

@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to create images from a text description.
+      {{ t('settings.plugins.image.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
     <div class="group">
-      <label>Provider</label>
+      <label>{{ t('settings.plugins.image.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option value="openai">OpenAI</option>
         <option value="huggingface">Hugging Face</option>
@@ -16,36 +16,36 @@
       </select>
     </div>
     <div class="group" v-if="engine == 'openai'">
-      <label>Image model</label>
+      <label>{{ t('settings.plugins.image.imageModel') }}</label>
       <div class="subgroup">
         <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
           <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select>
-        <span>Make sure you enter your OpenAI API key in the Models pane of Witsy Settings.</span>
+        <span>{{ t('settings.plugins.image.openai.apiKeyReminder') }}</span>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
     <div class="group" v-if="engine == 'replicate'">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="replicateAPIKey" @blur="save" />
     </div>
     <div class="group" v-if="engine == 'replicate'">
-      <label>Image model</label>
+      <label>{{ t('settings.plugins.image.imageModel') }}</label>
       <div class="subgroup">
-        <Combobox :items="replicate_models" placeholder="Enter a model or select from the list" v-model="image_model" @change="save"/>
-        <a href="https://replicate.com/collections/text-to-image" target="_blank">More about Replicate models</a><br/>
+        <Combobox :items="replicate_models" :placeholder="t('settings.plugins.image.replicate.modelPlaceholder')" v-model="image_model" @change="save"/>
+        <a href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a><br/>
       </div>
     </div>
     <div class="group" v-if="engine == 'huggingface'">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="huggingAPIKey" @blur="save" />
     </div>
     <div class="group" v-if="engine == 'huggingface'">
-      <label>Image model</label>
+      <label>{{ t('settings.plugins.image.imageModel') }}</label>
       <div class="subgroup">
-        <Combobox :items="hf_models" placeholder="Enter a model or select from the list" v-model="image_model" @change="save"/>
-        <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">More about Hugging Face models</a><br/>
+        <Combobox :items="hf_models" :placeholder="t('settings.plugins.image.huggingface.modelPlaceholder')" v-model="image_model" @change="save"/>
+        <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a><br/>
       </div>
     </div>
   </div>  
@@ -55,6 +55,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import LlmFactory from '../llms/llm'
@@ -63,7 +64,7 @@ const enabled = ref(false)
 const engine = ref(null)
 const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
-const refreshLabel = ref('Refresh')
+const refreshLabel = ref(t('common.refresh'))
 const image_model = ref(null)
 const image_models = ref([])
 
@@ -98,13 +99,13 @@ const onChangeEngine = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing…'
+  refreshLabel.value = t('common.refreshing')
   setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
 }
 
 const getModels = async () => {
@@ -114,7 +115,7 @@ const getModels = async () => {
   let success = await llmFactory.loadModels('openai')
   if (!success) {
     image_models.value = []
-    setEphemeralRefreshLabel('Error!')
+    setEphemeralRefreshLabel(t('common.error'))
     return
   }
 
@@ -122,7 +123,7 @@ const getModels = async () => {
   load()
 
   // done
-  setEphemeralRefreshLabel('Done!')
+  setEphemeralRefreshLabel(t('common.done'))
 
 }
 

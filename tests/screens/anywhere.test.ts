@@ -114,7 +114,7 @@ test('Changes engine model', async () => {
   await wrapper.vm.$nextTick()
   wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2' })
   await wrapper.vm.$nextTick()
-  expect(LlmFactory.prototype.igniteEngine).toHaveBeenCalledWith('openai')
+  expect(LlmFactory.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat2')
 })
@@ -136,13 +136,19 @@ test('Renders prompt response', async () => {
 test('Submits prompt', async () => {
   const wrapper = await prompt()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
-test('Submits prompt with params', async () => {
+test('Submits system prompt with params', async () => {
   const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[0])
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"prompt1\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Submits system user with params', async () => {
+  const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[2])
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Does not execute command response', async () => {
@@ -164,7 +170,7 @@ test('Executes command response', async () => {
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.find('.response').exists()).toBe(true)
   expect(wrapper.findComponent(MessageItem).exists()).toBe(true)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.find('.response .copy').exists()).toBe(true)
   expect(wrapper.find('.response .insert').exists()).toBe(true)
   expect(wrapper.find('.response .replace').exists()).toBe(true)
@@ -179,7 +185,7 @@ test('Copies response', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.copy').trigger('click')
-  expect(window.api.clipboard.writeText).toHaveBeenCalledWith('This is a response')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('This is a response')
 })
 
 test('Replaces always when only insert available', async () => {
@@ -187,7 +193,7 @@ test('Replaces always when only insert available', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   await wrapper.find('.insert').trigger('click')
-  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.replace).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Replaces always when only insert available', async () => {
@@ -195,9 +201,9 @@ test('Replaces always when only insert available', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   await wrapper.find('.insert').trigger('click')
-  expect(window.api.automation.insert).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.insert).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
   await wrapper.find('.replace').trigger('click')
-  expect(window.api.automation.replace).toHaveBeenCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.automation.replace).toHaveBeenLastCalledWith('This is a response', { id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Closes when click on icon', async () => {
@@ -205,21 +211,21 @@ test('Closes when click on icon', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere.close).toHaveBeenCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
+  expect(window.api.anywhere.close).toHaveBeenLastCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Manages conversation', async () => {
   const wrapper = await prompt()
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Resets chat with defaults', async () => {
   const wrapper = await prompt()
   setLlmDefaults('mock', 'chat')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   wrapper.find('.clear').trigger('click')
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
@@ -231,7 +237,7 @@ test('Resets chat with defaults', async () => {
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user\'s needs, communicate clearly, and provide responses that are informative, concise, and relevant."},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Brings back chat', async () => {
@@ -254,7 +260,7 @@ test('Saves chat', async () => {
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.history.chats).toHaveLength(1)
   expect(window.api.history.save).toHaveBeenCalled()
-  //expect(window.api.chat.open).toHaveBeenCalledWith(chatId)
+  //expect(window.api.chat.open).toHaveBeenLastCalledWith(chatId)
 })
 
 test('Auto saves chat', async () => {

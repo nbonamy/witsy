@@ -1,4 +1,3 @@
-
 <template>
   <div class="content large" @click="closeContextMenu">
     <div class="commands sticky-table-container">
@@ -14,7 +13,7 @@
           >
             <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
             <td class="icon">{{ command.icon }}</td>
-            <td class="label">{{ command.label }}</td>
+            <td class="label">{{ label(command) }}</td>
             <td class="shortcut">{{ command.shortcut }}</td>
             <td class="move">
               <button @click.prevent="onMoveDown(command)" @dblclick.stop>▼</button>
@@ -25,24 +24,25 @@
       </table>
     </div>
     <div class="actions">
-      <button @click.prevent="onNew">New</button>
-      <button @click.prevent="onEdit(selected)" :disabled="!selected">Edit</button>
-      <button @click.prevent="onDelete" :disabled="!selected">Delete</button>
+      <button name="new" @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
+      <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+      <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
       <div class="right">
-        <button @click.prevent.stop="onMore" ref="moreButton">More {{ showMenu ? '▼' : '▲'}}</button>
+        <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
       </div>
     </div>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
     <CommandDefaults id="defaults" ref="defaults" />
-    <CommandEditor id="command-editor" :command="edited" @command-modified="onCommandModified"/>
+    <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { Command } from 'types'
+import { Command } from '../types'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
+import { t, commandI18n } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
 import { newCommand, saveCommands } from '../services/commands'
 import CommandDefaults from '../screens/CommandDefaults.vue'
@@ -54,28 +54,32 @@ const commands: Ref<Command[]> = ref(null)
 const selected: Ref<Command> = ref(null)
 const edited: Ref<Command> = ref(null)
 const defaults: Ref<typeof CommandDefaults> = ref(null)
-
+const editor = ref(null)
 const moreButton: Ref<HTMLElement> = ref(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
 const contextMenuActions = [
-  { label: 'Defaults', action: 'defaults' },
-  { label: 'Export', action: 'export' },
-  { label: 'Import', action: 'import' },
-  { label: 'Select All', action: 'select' },
-  { label: 'Unselect All', action: 'unselect' },
+  { label: t('settings.commands.defaults'), action: 'defaults' },
+  { label: t('settings.commands.export'), action: 'export' },
+  { label: t('settings.commands.import'), action: 'import' },
+  { label: t('settings.commands.selectAll'), action: 'select' },
+  { label: t('settings.commands.unselectAll'), action: 'unselect' },
 ]
 
 const visibleCommands = computed(() => commands.value?.filter((command: Command) => command.state != 'deleted'))
 
+const label = (command: Command) => {
+  return command.label || commandI18n(command, 'label')
+}
+
 const columns = [
   { field: 'enabled', title: '' },
-  { field: 'icon', title: 'Icon' },
-  { field: 'label', title: 'Name', },
-  { field: 'shortcut', title: 'Shortcut', },
-  { field: 'move', title: 'Move', },
+  { field: 'icon', title: t('common.icon') },
+  { field: 'label', title: t('common.name'), },
+  { field: 'shortcut', title: t('common.shortcut'), },
+  { field: 'move', title: t('common.move'), },
 ]
 
 const onMoveDown = (command: Command) => {
@@ -165,17 +169,17 @@ const onImport = () => {
   if (window.api.commands.import()) {
     store.loadCommands()
     load()
-    Dialog.alert('Commands file imported successfully')
+    Dialog.alert(t('settings.commands.importSuccess'))
   } else {
-    Dialog.alert('Failed to import commands file')
+    Dialog.alert(t('settings.commands.importError'))
   }
 }
 
 const onExport = () => {
   if (window.api.commands.export()) {
-    Dialog.alert('Commands file exported successfully')
+    Dialog.alert(t('settings.commands.exportSuccess'))
   } else {
-    Dialog.alert('Failed to export commands file')
+    Dialog.alert(t('settings.commands.exportError'))
   }
 }
 
@@ -186,21 +190,21 @@ const onSelect = (command: Command) => {
 const onNew = () => {
   selected.value = null
   edited.value = newCommand()
-  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
+  editor.value.show()
 }
 
 const onEdit = (command: Command) => {
   edited.value = command
   selected.value = command
-  document.querySelector<HTMLDialogElement>('#command-editor').showModal()
+  editor.value.show()
 }
 
 const onDelete = () => {
   Dialog.show({
     target: document.querySelector('.settings .commands'),
-    title: 'Are you sure you want to delete this command?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('settings.commands.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
@@ -222,6 +226,12 @@ const onEnabled = (command: Command) => {
 }
 
 const onCommandModified = (payload: Command) => {
+
+  // cancel
+  if (!payload) {
+    edited.value = null
+    return
+  }
 
   // new command?
   let command = null
@@ -257,6 +267,8 @@ const onCommandModified = (payload: Command) => {
 
   // done
   selected.value = command
+  editor.value.close()
+  edited.value = null
   save()
 
 }

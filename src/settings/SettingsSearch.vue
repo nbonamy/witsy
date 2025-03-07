@@ -1,33 +1,31 @@
-
 <template>
   <div>
     <div class="description">
-      This plugin allows LLM engines to search the Internet and use the results as input to
-      generate up-to-date responses.
+      {{ t('settings.plugins.search.description') }}
     </div>
     <div class="group">
-      <label>Enabled</label>
+      <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
     </div>
     <div class="group">
-      <label>Engine</label>
+      <label>{{ t('settings.plugins.search.engine') }}</label>
       <select v-model="engine" name="engine" @change="save">
-        <option value="local">Local Browser Search (EXPERIMENTAL)</option>
-        <option value="tavily">Tavily</option>
+        <option value="local">{{ t('settings.plugins.search.engines.local') }}</option>
+        <option value="tavily">{{ t('settings.plugins.search.engines.tavily') }}</option>
       </select>
     </div>
     <div class="group" v-if="engine == 'tavily'">
-      <label>Tavily API Key</label>
+      <label>{{ t('settings.plugins.search.tavilyApiKey') }}</label>
       <div class="subgroup">
         <InputObfuscated v-model="tavilyApiKey" name="tavilyApiKey" @change="save" />
-        <a href="https://app.tavily.com/home" target="_blank">Get your API key</a>
+        <a href="https://app.tavily.com/home" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
       </div>
     </div>
     <div class="group">
-      <label>Content Length</label>
+      <label>{{ t('settings.plugins.search.contentLength') }}</label>
       <div class="subgroup">
-        <div>Truncate to&nbsp; <input type="text" name="contentLength" v-model="contentLength" @change="save" />&nbsp; characters (0 for full content)</div>
-        <div>WARNING: Truncation length will impact input tokens count and therefore request costs</div>
+        <div>{{ t('settings.plugins.search.truncateTo') }}&nbsp; <input type="text" name="contentLength" v-model="contentLength" @change="save" />&nbsp; {{ t('settings.plugins.search.characters') }}</div>
+        <p>{{ t('settings.plugins.search.truncationWarning') }}</p>
       </div>
     </div>
   </div>
@@ -37,6 +35,7 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const enabled = ref(false)

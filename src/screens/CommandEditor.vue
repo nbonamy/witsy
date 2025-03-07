@@ -1,43 +1,48 @@
 <template>
-  <dialog class="editor">
+  <dialog id="command-editor" class="editor">
     <form method="dialog">
       <header>
-        <div class="title">Command details</div>
+        <div class="title">{{ t('commands.editor.title') }}</div>
       </header>
       <main>
-        <div class="group">
-          <label>Label</label>
-          <input type="text" v-model="label" required />
+        <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+          <label class="no-colon"><BIconExclamationCircle /></label>
+          <div>{{ t('common.differentLocales') }}</div>
         </div>
         <div class="group">
-          <label>Prompt</label>
+          <label>{{ t('common.name') }}</label>
+          <input type="text" name="label" v-model="label" required @keyup="onChangeText" />
+        </div>
+        <div class="group">
+          <label>{{ t('commands.editor.prompt') }}</label>
           <div class="subgroup">
-            <textarea v-model="template" v-if="isEditable"></textarea>
-            <textarea v-else disabled="true">This command is not editable. The content captured will be available in the prompt for you to ask anything about it!</textarea>
-            <span v-pre>{input} will be subsituted with highlighted text</span>
+            <textarea name="template" v-model="template" required @keyup="onChangeText" v-if="isEditable"></textarea>
+            <textarea name="template" disabled="true" v-else>{{ t('commands.editor.notEditable') }}</textarea>
+            <span>{{ t('commands.editor.inputPlaceholder') }}</span>
+            <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
           </div>
         </div>
         <div class="group">
-          <label>LLM Provider</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" default-text="Use commands default" />
+          <label>{{ t('common.llmProvider') }}</label>
+          <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.editor.useDefault')" />
         </div>
         <div class="group">
-          <label>LLM Model</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? 'Use commands default' : ''" />
+          <label>{{ t('common.llmModel') }}</label>
+          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
         </div>
         <div class="group">
-          <label>Icon</label>
+          <label>{{ t('common.icon') }}</label>
           <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
-          <input type="text" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
+          <input type="text" name="icon" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
         </div>
         <div class="group">
-          <label>Shortcut</label>
-          <input type="text" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
+          <label>{{ t('common.shortcut') }}</label>
+          <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">Save</button>
-        <button @click="onCancel" formnovalidate>Cancel</button>
+        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
@@ -45,16 +50,19 @@
 
 <script setup lang="ts">
 
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, PropType } from 'vue'
+import { Command } from '../types/index'
 import { store } from '../services/store'
+import { t, commandI18n } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import Dialog from '../composables/dialog'
+import { BIconExclamationCircle } from 'bootstrap-icons-vue'
 
 const emit = defineEmits(['command-modified']);
 
 const props = defineProps({
-  command: Object
+  command: Object as PropType<Command>,
 })
 
 const icon = ref(null)
@@ -64,6 +72,8 @@ const action = ref(null)
 const shortcut = ref(null)
 const engine = ref(null)
 const model = ref(null)
+const diffLang = ref(false)
+const isEdited = ref(false)
 
 const models = computed(() => {
   if (!engine.value || engine.value == '') return []
@@ -74,14 +84,21 @@ const isEditable = computed(() => {
   return window.api.commands.isPromptEditable(props.command?.id)
 })
 
+const onChangeText = () => {
+  if (!props.command) isEdited.value = false
+  isEdited.value = ((props.command?.type === 'system') && (label.value !== commandI18n(props.command, 'label') || template.value !== commandI18n(props.command, 'template')))
+}
+
 const load = () => {
   icon.value = props.command?.icon || '⚡️'
-  label.value = props.command?.label || ''
-  template.value = props.command?.template || ''
+  label.value = props.command?.label || commandI18n(props.command, 'label')
+  template.value = props.command?.template || commandI18n(props.command, 'template')
   action.value = props.command?.action || 'chat_window'
   shortcut.value = props.command?.shortcut
   engine.value = props.command?.engine
   model.value = props.command?.model
+  diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
+  onChangeText()
 }
 
 // not really sure this is how it supposed to be done
@@ -121,8 +138,19 @@ const onShortcutKeyUp = (event: KeyboardEvent) => {
 
 }
 
+const close = () => {
+  emit('command-modified')
+  document.querySelector<HTMLDialogElement>('#command-editor').close()
+}
+
 const onCancel = () => {
-  load()
+  close()
+}
+
+const onReset = () => {
+  label.value = commandI18n(props.command, 'label')
+  template.value = commandI18n(props.command, 'template')
+  isEdited.value = false
 }
 
 const onSave = (event: Event) => {
@@ -130,14 +158,14 @@ const onSave = (event: Event) => {
   // check
   if (!label.value || !template.value || !action.value) {
     event.preventDefault()
-    Dialog.alert('All fields marked with * are required.')
+    Dialog.alert(t('commands.editor.validation.requiredFields'))
     return
   }
 
   // check
   if (!template.value.includes('{input}')) {
     event.preventDefault()
-    Dialog.alert('The template must contain the {input} placeholder.')
+    Dialog.alert(t('commands.editor.validation.inputPlaceholder'))
     return
   }
 
@@ -145,14 +173,19 @@ const onSave = (event: Event) => {
   emit('command-modified', {
     id: props.command.id,
     icon: icon.value,
-    label: label.value,
-    template: template.value,
+    label: label.value === commandI18n(props.command, 'label') ? undefined : label.value,
+    template: template.value === commandI18n(props.command, 'template') ? undefined : template.value,
     action: action.value,
     shortcut: shortcut.value?.toUpperCase() || '',
     engine: engine.value,
     model: model.value
   })
 }
+
+defineExpose({
+  show: () => document.querySelector<HTMLDialogElement>('#command-editor').showModal(),
+  close,
+})
 
 </script>
 

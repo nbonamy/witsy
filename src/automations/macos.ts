@@ -7,10 +7,10 @@ export default class extends NutAutomator {
 
   constructor() {
     super();
-    this.setup();
+    this.setupNut();
   }
 
-  async getForemostApp(): Promise<Application|null> {
+  async getForemostApp(): Promise<Application | null> {
 
     const script = `
       tell application "System Events"
@@ -36,13 +36,13 @@ export default class extends NutAutomator {
   async focusApp(application: Application): Promise<boolean> {
 
     try {
-      
+
       // check
       if (!application.id) {
         console.error('Application ID is required');
         return false
       }
-      
+
       // now focus window
       if (application.window?.length) {
 
@@ -71,7 +71,7 @@ export default class extends NutAutomator {
             end tell
           end tell
         `
-        
+
         // run it
         await this.runScript(script);
 
@@ -92,9 +92,9 @@ export default class extends NutAutomator {
     try {
 
       await super.selectAll();
-    
+
     } catch {
-      
+
       const script = `
         tell application "System Events" to keystroke "a" using command down      
         delay 0.1
@@ -112,7 +112,7 @@ export default class extends NutAutomator {
     try {
 
       await super.moveCaretBelow();
-    
+
     } catch {
 
       const script = `
@@ -128,20 +128,21 @@ export default class extends NutAutomator {
 
     }
 
-
   }
 
   async copySelectedText(): Promise<void> {
 
     try {
 
+      // nut (custom)
       //await super.copySelectedText();
       if (!await this.setup()) throw new Error('nutjs not loaded');
       await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
       await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
-      
+
     } catch {
 
+      // applescript
       const script = `
         repeat 20 times
           try
@@ -162,12 +163,34 @@ export default class extends NutAutomator {
 
   }
 
+  async pasteText(): Promise<void> {
+
+    try {
+
+      // nut
+      await super.pasteText();
+
+    } catch {
+
+      // applescript
+      const script = `
+        tell application "System Events" to keystroke "v" using command down
+        delay 0.1
+      `
+
+      // run it
+      await this.runScript(script);
+
+    }
+
+  }
+
   async deleteSelectedText(): Promise<void> {
 
     try {
 
       await super.deleteSelectedText();
-    
+
     } catch {
 
       const script = `
@@ -177,28 +200,8 @@ export default class extends NutAutomator {
         `
 
       // run it
-      await this.runScript(script);    
-
-    }
-
-  }
-
-  async pasteText(): Promise<void> {
-
-    try {
-
-      await super.pasteText();
-    
-    } catch {
-
-      const script = `
-        tell application "System Events" to keystroke "v" using command down      
-        delay 0.1
-      `
-
-      // run it
       await this.runScript(script);
-    
+
     }
 
   }
@@ -215,7 +218,7 @@ export default class extends NutAutomator {
     });
   }
 
-  protected async setup() {
+  protected async setupNut() {
     const rc = await super.setup();
     if (rc) {
       this.nut().keyboard.config.autoDelayMs = 25
@@ -226,7 +229,7 @@ export default class extends NutAutomator {
   protected delay() {
     return 50;
   }
-  
+
   protected commandKey() {
     return this.nut().Key.LeftCmd;
   }

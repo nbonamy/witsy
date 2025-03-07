@@ -2,15 +2,15 @@
   <dialog class="memory">
     <form method="dialog">
       <header>
-        <div class="title">Memory Contents</div>
+        <div class="title">{{ t('memory.inspector.title') }}</div>
       </header>
       <main>
-        <div class="empty" v-if="contents.length == 0">No facts stored so far</div>
+        <div class="empty" v-if="contents.length == 0">{{ t('memory.inspector.noFacts') }}</div>
         <div class="sticky-table-container" v-else>
           <table>
             <thead>
               <tr>
-                <th>Memory</th>
+                <th>{{ t('memory.inspector.memory') }}</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -18,15 +18,16 @@
               <tr v-for="fact in contents">
                 <td>{{ fact.content }}</td>
                 <td>
-                  <button @click.prevent="onDelete(fact)">Delete</button>
+                  <button @click.prevent="onDelete($event, fact)">{{ t('common.delete') }}</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <div>{{ t('memory.inspector.shiftDelete') }}</div>
       </main>
       <footer>
-        <button @click.prevent="onClose">Close</button>
+        <button @click.prevent="onClose">{{ t('common.close') }}</button>
       </footer>
     </form>
   </dialog>
@@ -35,6 +36,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
+import { t } from '../services/i18n'
 import { MemoryFact } from '../types/index'
 import Dialog from '../composables/dialog'
 
@@ -42,17 +44,27 @@ const contents = ref([])
 
 const emit = defineEmits(['close'])
 
-const onDelete = (fact: MemoryFact) => {
+const onDelete = (event: MouseEvent, fact: MemoryFact) => {
+
+  const deleteFact = (fact: MemoryFact) => {
+    window.api.memory.delete(fact.uuid)
+    contents.value = window.api.memory.facts()
+  }
+
+  if (event.shiftKey) {
+    deleteFact(fact)
+    return
+  }
+
   Dialog.show({
     target: document.querySelector('.settings .memory'),
-    title: 'Are you sure you want to delete this memory?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('common.confirmation.deleteMemory'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      window.api.memory.delete(fact.uuid)
-      contents.value = window.api.memory.facts()
+      deleteFact(fact)
     }
   })
 }

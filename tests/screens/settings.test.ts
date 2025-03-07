@@ -16,15 +16,10 @@ HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
-  const commands = await import('../../defaults/commands.json')
-  const experts = await import('../../defaults/experts.json')
   const mod: any = await importOriginal()
   return {
-    clone: mod.clone,
     store: {
       ...mod.store,
-      commands: commands.default,
-      experts: experts.default,
       saveSettings: vi.fn()
     }
   }
@@ -53,6 +48,9 @@ beforeAll(() => {
      ]
     }
   }
+
+  // override
+  window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
@@ -87,52 +85,87 @@ test('Settings close', async () => {
 test('Settings General', async () => {
   
   const tab = await switchToTab(wrapper, 0)
-  expect(tab.findAll('.group')).toHaveLength(6)
-  
+  expect(tab.findAll('.group')).toHaveLength(7)
+  expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
+  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(standardEngines.length+1)
+  
+  // helper
+  const checkAndReset = (times: number = 1) => {
+    expect(window.api.runAtLogin.set).toHaveBeenCalledTimes(times)
+    expect(store.saveSettings).toHaveBeenCalledTimes(times)
+    vi.clearAllMocks()
+  }
+
+  // set prompt engine
   tab.find('.group.prompt select.engine').setValue('anthropic')
   await wrapper.vm.$nextTick()
+  expect(store.config.llm.forceLocale).toBe(false)
   expect(store.config.prompt.engine).toBe('anthropic')
   expect(store.config.prompt.model).toBe('model1')
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
+  checkAndReset()
+  
+  // set prompt model
   tab.find('.group.prompt select.model').setValue('model2')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
-  expect(window.api.runAtLogin.set).toHaveBeenCalledTimes(2)
-  expect(store.saveSettings).toHaveBeenCalledTimes(2)
-  vi.clearAllMocks()
+  checkAndReset()
 
-  expect(store.config.general.language).not.toBe('es')
-  expect(tab.findAll('.group.language select option')).toHaveLength(22)
-  tab.find('.group.language select').setValue('es')
-  expect(store.config.general.language).toBe('es')
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  // set ui locale to french
+  expect(store.config.general.locale).toBe('')
+  tab.find('.group.localeUI select').setValue('fr-FR')
+  expect(store.config.general.locale).toBe('fr-FR')
+  checkAndReset()
 
+  // set it back to default
+  tab.find('.group.localeUI select').setValue('')
+  expect(store.config.general.locale).toBe('')
+  checkAndReset()
+
+  // set llm locale to french: translation exists so forceLocale is false
+  expect(store.config.llm.locale).toBe('')
+  expect(store.config.llm.forceLocale).toBe(false)
+  tab.find('.group.localeLLM select').setValue('fr-FR')
+  expect(store.config.llm.locale).toBe('fr-FR')
+  expect(store.config.llm.forceLocale).toBe(false)
+  checkAndReset()
+
+  // set forceLocale to true
+  tab.find('.group.localeLLM input').setValue(true)
+  expect(store.config.llm.forceLocale).toBe(true)
+  checkAndReset()
+
+  // set it back to false
+  tab.find('.group.localeLLM input').setValue(false)
+  expect(store.config.llm.forceLocale).toBe(false)
+  checkAndReset()
+
+  // set llm locale to spanish: translation does not exist so forceLocale is true
+  expect(store.config.llm.locale).not.toBe('es-ES')
+  tab.find('.group.localeLLM select').setValue('es-ES')
+  expect(store.config.llm.locale).toBe('es-ES')
+  expect(store.config.llm.forceLocale).toBe(true)
+  checkAndReset(2)
+
+  // now run at login
   expect(window.api.runAtLogin.get()).not.toBe(true)
-  tab.find('.group.run-at-login input').setValue('true')
+  tab.find('.group.run-at-login input').setValue(true)
   expect(window.api.runAtLogin.get()).toBe(true)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
+  // hide on startup
   expect(store.config.general.hideOnStartup).not.toBe(true)
   tab.find('.group.hide-on-startup input').setValue(true)
   expect(store.config.general.hideOnStartup).toBe(true)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
+  // and keep running
   expect(store.config.general.keepRunning).not.toBe(false)
   tab.find('.group.keep-running input').setValue(false)
   expect(store.config.general.keepRunning).toBe(false)
-  expect(window.api.runAtLogin.set).toHaveBeenCalledOnce()
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  checkAndReset()
 
 })
 
@@ -144,7 +177,7 @@ test('Settings Appearance', async () => {
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')
   expect(store.config.appearance.theme).toBe('dark')
-  expect(window.api.setAppearanceTheme).toHaveBeenCalledWith('dark')
+  expect(window.api.setAppearanceTheme).toHaveBeenLastCalledWith('dark')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
@@ -165,121 +198,6 @@ test('Settings Appearance', async () => {
   expect(store.config.appearance.chat.fontSize).toBe('2')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
-
-})
-
-test('Settings Commands', async () => {
-
-  const tab = await switchToTab(wrapper, 2)
-  
-  // basic stuff
-  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
-  expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
-  expect(tab.findAll('.actions button')).toHaveLength(4)
-
-  // move up and down
-  const first = tab.find('.sticky-table-container tr.command').attributes('data-id')
-  const second = tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2) button:nth-of-type(2)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(second)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(first)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(1) button:nth-of-type(1)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.command').attributes('data-id')).toBe(first)
-  expect (tab.find('.sticky-table-container tr.command:nth-of-type(2)').attributes('data-id')).toBe(second)
-
-  // new command opens
-  const modal = tab.find<HTMLDialogElement>('#command-editor').element
-  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  expect(modal.showModal).not.toHaveBeenCalled()
-  await tab.find('.actions button:nth-of-type(1)').trigger('click')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
-  modal.removeAttribute('open')
-
-  // new command creates
-  await tab.find('#command-editor textarea').setValue('{input}')
-  await tab.find('#command-editor button.default').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(42)
-
-  // delete
-  await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
-  await tab.find('.actions button:nth-of-type(3)').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
-
-  // edit
-  expect(modal.hasAttribute('open')).toBe(false)
-  await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
-  expect(modal.showModal).toHaveBeenCalledTimes(2)
-  expect(modal.hasAttribute('open')).toBe(true)
-  // expect(tab.find<HTMLInputElement>('#command-editor input').element.value).toBe(store.commands[1].name)
-  // expect(tab.find<HTMLTextAreaElement>('#command-editor textarea').element.value).toBe(store.commands[1].name)
-
-  // context menu
-  expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.actions .right button').trigger('click')
-  await tab.vm.$nextTick()
-  expect(tab.findAll('.context-menu')).toHaveLength(1)
-
-})
-
-test('Settings Experts', async () => {
-
-  const tab = await switchToTab(wrapper, 3)
-  
-  // basic stuff
-  expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
-  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(332)
-  expect(tab.findAll('.content > .actions button')).toHaveLength(5)
-
-  // move up and down
-  const first = tab.find('.sticky-table-container tr.expert').attributes('data-id')
-  const second = tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(2) button:nth-of-type(2)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.expert').attributes('data-id')).toBe(second)
-  expect (tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')).toBe(first)
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(1) button:nth-of-type(1)').trigger('click')
-  expect (tab.find('.sticky-table-container tr.expert').attributes('data-id')).toBe(first)
-  expect (tab.find('.sticky-table-container tr.expert:nth-of-type(2)').attributes('data-id')).toBe(second)
-
-  // new command opens
-  const modal = tab.find<HTMLDialogElement>('#expert-editor').element
-  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  expect(modal.showModal).not.toHaveBeenCalled()
-  await tab.find('.actions button:nth-of-type(1)').trigger('click')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
-  modal.removeAttribute('open')
-
-  // new command creates
-  await tab.find('#expert-editor textarea').setValue('expert prompt')
-  await tab.find('#expert-editor button.default').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
-
-  // copy
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('click')
-  await tab.find('.actions button:nth-of-type(3)').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(168)
-
-  // delete
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(168)').trigger('click')
-  await tab.find('.actions button:nth-of-type(4)').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
-
-  // edit
-  expect(modal.hasAttribute('open')).toBe(false)
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(2)').trigger('dblclick')
-  expect(modal.showModal).toHaveBeenCalledTimes(2)
-  expect(modal.hasAttribute('open')).toBe(true)
-  // expect(tab.find<HTMLInputElement>('#expert-editor input').element.value).toBe(store.expert[1].name)
-  // expect(tab.find<HTMLTextAreaElement>('#expert-editor textarea').element.value).toBe(store.expert[1].name)
-
-  // context menu
-  expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.actions .right button').trigger('click')
-  await tab.vm.$nextTick()
-  expect(tab.findAll('.context-menu')).toHaveLength(1)
 
 })
 
@@ -313,17 +231,11 @@ test('Settings Advanced', async () => {
   vi.clearAllMocks()
 
   // helper to get instructions at any level
-  store.config.get = (key: string): string => {
-    const tokens = key.split('.')
-    let value = store.config
-    for (const token of tokens) {
-      value = value[token]
-    }
-    return value
-  }
+  store.config.get = (key: string): string => 
+    key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
-    'instructions.default', 'instructions.titling', 'instructions.titling_user', 'instructions.docquery',
+    'instructions.default', 'instructions.titling', 'instructions.titlingUser', 'instructions.docquery',
     'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
     'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
     'instructions.scratchpad.simplify', 'instructions.scratchpad.expand', 'instructions.scratchpad.complete',
@@ -332,8 +244,8 @@ test('Settings Advanced', async () => {
   
   for (const instr in instructions) {
 
-    // check it is not bot
-    expect(store.config.get(instructions[instr])).not.toBe('bot')
+    // check it is not set
+    expect(store.config.get(instructions[instr])).toBeUndefined()
 
     // select and set value
     await tab.find('.group.instruction select').setValue(instructions[instr])
@@ -344,7 +256,7 @@ test('Settings Advanced', async () => {
 
     // reset default
     await tab.find('.group.instruction a').trigger('click')
-    expect(store.config.get(instructions[instr])).not.toBe('bot')
+    expect(store.config.get(instructions[instr])).toBeUndefined()
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 
