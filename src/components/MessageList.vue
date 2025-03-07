@@ -17,9 +17,10 @@
 
 <script setup lang="ts">
 
-import { type Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
+import { strDict } from '../types/index'
+import { Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
-import { type LlmChunk } from 'multi-llm-ts'
+import { LlmChunk } from 'multi-llm-ts'
 import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
 
@@ -60,7 +61,9 @@ onMounted(() => {
 
 const onFullscreen = (payload: string|strDict) => {
   document.addEventListener('keydown', onCloseFullScreen)
+  // @ts-expect-error yeah that's not super elegant
   fullScreenImageUrl.value = payload.url ?? payload
+  // @ts-expect-error yeah that's not super elegant
   fullScreenTheme.value = payload.theme
   window.api.fullscreen(true)
 }

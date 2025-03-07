@@ -3,16 +3,16 @@
     <MessageItemActionCopy :message="message" />
     <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
     <div class="action usage" v-if="message.usage" @click="onUsage(message)">
-      <BIconBarChartFill /> Usage
+      <BIconBarChartFill /> {{ t('common.usage') }}
     </div>
     <div class="action retry" v-if="message.role == 'assistant' && !message.transient" @click="onRetry(message)">
-      <BIconArrowCounterclockwise /> Retry
+      <BIconArrowCounterclockwise /> {{ t('common.retry') }}
     </div>
     <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
-      <BIconPencil /> Edit
+      <BIconPencil /> {{ t('common.edit') }}
     </div>
     <div class="action fork" v-if="!message.transient" @click="onFork(message)">
-      <ForIcon /> Fork
+      <ForIcon /> {{ t('common.fork') }}
     </div>
   </div>
 </template>
@@ -20,6 +20,7 @@
 <script setup lang="ts">
 
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
@@ -49,7 +50,6 @@ const onReadAloud = async (message: Message) => {
 }
 
 const onRetry = (message: Message) => {
-
   // if already confirmed
   if (!store.config.general.confirm.retryGeneration) {
     emitEvent('retry-generation', message)
@@ -58,11 +58,11 @@ const onRetry = (message: Message) => {
 
   // ask
   Dialog.show({
-    title: 'Are you sure you want to generate this message again?',
-    text: 'Current version will be lost.',
+    title: t('message.actions.retryConfirm.title'),
+    text: t('message.actions.retryConfirm.text'),
     customClass: { denyButton: 'alert-neutral' },
-    confirmButtonText: 'OK. Don\'t ask again.',
-    denyButtonText: 'OK',
+    confirmButtonText: t('message.actions.retryConfirm.confirmButton'),
+    denyButtonText: t('message.actions.retryConfirm.denyButton'),
     showCancelButton: true,
     showDenyButton: true,
   }).then((result) => {
@@ -91,15 +91,16 @@ const onUsage = (message: Message) => {
   
   // build text
   const totalTokens = message.usage.prompt_tokens + message.usage.completion_tokens
-  let text = `Prompt tokens: ${message.usage.prompt_tokens}`
-  text += `\nResponse tokens: ${message.usage.completion_tokens}`
-  if (message.usage.completion_tokens_details?.reasoning_tokens) {
-    text += `\nReasoning tokens: ${message.usage.completion_tokens_details.reasoning_tokens}`
-  }
+  const text = [
+    t('message.actions.usage.prompt', { prompt: message.usage.prompt_tokens }),
+    t('message.actions.usage.response', { completion: message.usage.completion_tokens }),
+    message.usage.completion_tokens_details?.reasoning_tokens ? 
+      t('message.actions.usage.reasoning', { reasoning: message.usage.completion_tokens_details.reasoning_tokens }) : 
+      null
+  ].filter(Boolean).join('\n')
 
-  // show
   Dialog.show({
-    title: `Total tokens: ${totalTokens}`,
+    title: t('message.actions.usage.title', { total: totalTokens }),
     text: text,
   })
 }

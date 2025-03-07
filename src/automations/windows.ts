@@ -2,6 +2,7 @@
 import { Application } from '../types/automation';
 import { runVbs } from '@el3um4s/run-vbs'
 import PowerShell from 'powershell'
+import autolib from 'autolib';
 import NutAutomator from './nut';
 
 const pscript = `
@@ -130,8 +131,18 @@ export default class extends NutAutomator {
   }
 
   async getForemostApp(): Promise<Application|null> {
-    console.warn('getForemostApp not implemented (expected)');
-    return null;
+    try {
+      const app = await autolib.getForemostWindow();
+      return {
+        id: app.exePath,
+        name: app.productName,
+        path: app.exePath,
+        window: app.title,
+      }
+    } catch {
+      console.warn('getForemostApp not implemented (expected)');
+      return null;
+    }
   }
 
   async selectAll() {
@@ -144,7 +155,7 @@ export default class extends NutAutomator {
 
     // run it
     await runVbs({ vbs: script }) 
-    
+
   }
   
   async moveCaretBelow() {
@@ -157,6 +168,7 @@ export default class extends NutAutomator {
 
     // run it
     await runVbs({ vbs: script }) 
+
   }
 
   async copySelectedText() {
@@ -164,7 +176,7 @@ export default class extends NutAutomator {
     try {
 
       // this should work on all keyboards
-      await this.sendControlKey('C')
+      await this.executeControlKeyPowerShell('C')
     
     } catch {
 
@@ -182,7 +194,7 @@ export default class extends NutAutomator {
           Set WshShell = WScript.CreateObject("WScript.Shell")
           WshShell.SendKeys "^c"
           WScript.Sleep 20
-      `
+        `
 
         // run it
         await runVbs({ vbs: script }) 
@@ -190,7 +202,7 @@ export default class extends NutAutomator {
       }
 
     }
-  
+    
   }
 
   async pasteText() {
@@ -198,7 +210,7 @@ export default class extends NutAutomator {
     try {
 
       // this should work on all keyboards
-      await this.sendControlKey('V')
+      await this.executeControlKeyPowerShell('V')
     
     } catch {
 
@@ -237,6 +249,7 @@ export default class extends NutAutomator {
 
     // run it
     await runVbs({ vbs: script }) 
+
   }
 
   async activateApp(title: string) {
@@ -252,7 +265,7 @@ export default class extends NutAutomator {
   
   }
 
-  async sendControlKey(key: string) {
+  async executeControlKeyPowerShell(key: string) {
 
     return new Promise<void>((resolve, reject) => {
       const script = pscript.replace('@@KEY@@', `VK_${key.toUpperCase()}`)

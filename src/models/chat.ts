@@ -13,9 +13,11 @@ export default class Chat implements ChatBase {
   lastModified: number
   engine: string|null
   model: string|null
+  prompt: string|null
   disableStreaming: boolean = false
   disableTools: boolean = false
   modelOpts: LlmModelOpts|null = null
+  locale: string|null
   docrepo: string|null
   messages: Message[]
   temporary: boolean
@@ -29,8 +31,10 @@ export default class Chat implements ChatBase {
     this.lastModified = Date.now()
     this.engine = null
     this.model = null
+    this.prompt = null
     this.disableTools = false
     this.modelOpts = null
+    this.locale = null
     this.docrepo = null
     this.messages = []
     this.temporary = false
@@ -45,8 +49,10 @@ export default class Chat implements ChatBase {
     chat.lastModified = obj.lastModified || obj.createdAt
     chat.engine = obj.engine || 'openai'
     chat.model = obj.model
+    chat.prompt = obj.prompt
     chat.disableTools = obj.disableTools
     chat.modelOpts = obj.modelOpts
+    chat.locale = obj.locale
     chat.docrepo = obj.docrepo
     chat.messages = []
     for (const msg of obj.messages) {
@@ -67,8 +73,10 @@ export default class Chat implements ChatBase {
     // header
     this.title = obj.title
     this.lastModified = obj.lastModified
+    this.prompt = obj.prompt
     this.disableTools = obj.disableTools
     this.modelOpts = obj.modelOpts
+    this.locale = obj.locale
     this.docrepo = obj.docrepo
 
     // messages

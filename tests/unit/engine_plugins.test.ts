@@ -15,10 +15,30 @@ import { HfInference } from '@huggingface/inference'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
+// @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
   text: () => 'fetched_content',
 }))
 
+// mock i18n
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    i18nInstructions: (config: any, key: string) => {
+
+      // get instructions
+      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
+      if (typeof instructions === 'string' && (instructions as string)?.length) {
+        return instructions
+      }
+
+      // default
+      return `${key}.${store.config.llm.locale}`
+
+    }
+  }
+})
+
+// tavily
 vi.mock('../../src/vendor/tavily', async () => {
   const Tavily = vi.fn()
   Tavily.prototype.search = vi.fn(() => ({ results: [
@@ -27,18 +47,21 @@ vi.mock('../../src/vendor/tavily', async () => {
   return { default: Tavily }
 })
 
+// youtube transcript
 vi.mock('youtube-transcript', async () => {
   return { YoutubeTranscript: {
     fetchTranscript: vi.fn(() => [ { text: 'line1' } ])
   } }
 })
 
+// youtube info
 vi.mock('ytv', async () => {
   return { default: {
     get_info: vi.fn(() => ({ title: 'title', channel_name: 'channel' }))
   } }
 })
 
+// openai
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
   OpenAI.prototype.images = {
@@ -47,12 +70,14 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
+// huggingface
 vi.mock('@huggingface/inference', async () => {
   const HfInference = vi.fn()
   HfInference.prototype.textToImage = vi.fn(() => new Blob(['image'], { type: 'image/jpeg' }))
   return { HfInference }
 })
 
+// replicate
 vi.mock('replicate', async () => {
   const Replicate = vi.fn()
   Replicate.prototype.run = vi.fn((model) => {
@@ -68,6 +93,7 @@ vi.mock('replicate', async () => {
 beforeAll(() => {
   useWindowMock()
   store.loadSettings()
+  store.config.llm.locale = 'fr-FR'
   store.config.llm.engine = 'mock'
   store.config.plugins.browse = {
     enabled: true,
@@ -104,7 +130,7 @@ test('Image Plugin', async () => {
   const image = new Image(store.config.plugins.image)
   expect(image.isEnabled()).toBe(true)
   expect(image.getName()).toBe('image_generation')
-  expect(image.getDescription()).not.toBeFalsy()
+  expect(image.getDescription()).toBe('plugins.image.description.fr-FR')
   expect(image.getPreparationDescription()).toBe(image.getRunningDescription())
   expect(image.getRunningDescription()).toBe('Painting pixels…')
   expect(image.getParameters()[0].name).toBe('prompt')
@@ -119,7 +145,7 @@ test('Image Plugin OpenAI', async () => {
   store.config.plugins.image.engine = 'openai'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(OpenAI.prototype.images.generate).toHaveBeenCalledWith(expect.objectContaining({
+  expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'dall-e-2',
     prompt: 'test prompt',
     response_format: 'b64_json',
@@ -135,7 +161,7 @@ test('Image Plugin HuggingFace', async () => {
   store.config.plugins.image.engine = 'huggingface'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(HfInference.prototype.textToImage).toHaveBeenCalledWith(expect.objectContaining({
+  expect(HfInference.prototype.textToImage).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'test-model',
     inputs: 'test prompt',
   }))
@@ -151,7 +177,7 @@ test('Image Plugin Replicate', async () => {
   store.config.engines.replicate.model.image = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(Replicate.prototype.run).toHaveBeenCalledWith('image/model', expect.objectContaining({
+  expect(Replicate.prototype.run).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
       output_format: 'jpg',
@@ -168,13 +194,16 @@ test('Video Plugin', async () => {
   const video = new Video(store.config.plugins.video)
   expect(video.isEnabled()).toBe(true)
   expect(video.getName()).toBe('video_generation')
-  expect(video.getDescription()).not.toBeFalsy()
+  expect(video.getDescription()).toBe('plugins.video.description.fr-FR')
   expect(video.getPreparationDescription()).toBe(video.getRunningDescription())
   expect(video.getRunningDescription()).toBe('Animating frames…')
   expect(video.getParameters()[0].name).toBe('prompt')
   expect(video.getParameters()[0].type).toBe('string')
   expect(video.getParameters()[0].description).not.toBeFalsy()
   expect(video.getParameters()[0].required).toBe(true)
+
+  store.config.plugins.video.description = 'test description'
+  expect(video.getDescription()).toBe('test description')
 
 })
 
@@ -184,7 +213,7 @@ test('Video Plugin Replicate', async () => {
   store.config.engines.replicate.model.video = 'video/model'
   const video = new Video(store.config.plugins.video)
   const result = await video.execute({ prompt: 'test prompt' })
-  expect(Replicate.prototype.run).toHaveBeenCalledWith('video/model', expect.objectContaining({
+  expect(Replicate.prototype.run).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
     }
@@ -227,7 +256,7 @@ test('Search Plugin Local', async () => {
       { title: 'title2', url: 'url2', content: 'page_con' }
     ]
   })
-  expect(window.api.search.query).toHaveBeenCalledWith('test', 5)
+  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
 })
 
 test('Search Plugin Tavily', async () => {
@@ -279,7 +308,7 @@ test('Memory Plugin', async () => {
   const memory = new Memory(store.config.plugins.memory)
   expect(memory.isEnabled()).toBe(false)
   expect(memory.getName()).toBe('long_term_memory')
-  expect(memory.getDescription()).not.toBeFalsy()
+  expect(memory.getDescription()).toBe('plugins.memory.description.fr-FR')
   expect(memory.getPreparationDescription()).toBe('Personnalizing…')
   expect(memory.getRunningDescription()).toBe('Personnalizing…')
   expect(memory.getParameters()[0].name).toBe('action')
@@ -297,9 +326,9 @@ test('Memory Plugin', async () => {
   expect(memory.getParameters()[2].description).not.toBeFalsy()
   expect(memory.getParameters()[2].required).toBe(false)
   expect(await memory.execute({ action: 'store', content: ['test'] })).toStrictEqual({ success: true })
-  expect(window.api.memory.store).toHaveBeenCalledWith(['test'])
+  expect(window.api.memory.store).toHaveBeenLastCalledWith(['test'])
   expect(await memory.execute({ action: 'retrieve', query: 'fact' })).toStrictEqual({ content: ['fact1'] })
-  expect(window.api.memory.retrieve).toHaveBeenCalledWith('fact')
+  expect(window.api.memory.retrieve).toHaveBeenLastCalledWith('fact')
   expect(await memory.execute({ action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
   expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
 })

@@ -1,12 +1,12 @@
-
-import path from 'path'
 import fs, { FSWatcher } from 'fs'
+import crypto from 'crypto'
 
 export default class {
 
   filepath: string
-  filesize: number
+  fileDigest: string
   callback: CallableFunction
+  timeout: NodeJS.Timeout
   watcher: FSWatcher
   
   constructor(callback: CallableFunction) {
@@ -15,19 +15,28 @@ export default class {
 
   start(filepath: string): void {
 
+    // same?
+    if (this.filepath === filepath) {
+      return
+    }
+
     // clear
     this.stop()
     
     // init
+    this.timeout = null
     this.filepath = filepath
-    this.filesize = this.size()
+    this.fileDigest = this.calculateDigest()
 
     // start
-    this.watcher = fs.watch(filepath, () => {
-      const size = this.size()
-      if (size !== this.filesize) {
-        this.filesize = size
-        this.notify(filepath)
+    this.watcher = fs.watch(filepath, async () => {
+      const digest = this.calculateDigest()
+      if (digest !== this.fileDigest) {
+        this.fileDigest = digest
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.notify(filepath)
+        }, 200)
       }
     })
   }
@@ -36,23 +45,23 @@ export default class {
     this.watcher?.close()
     this.watcher = null
     this.filepath = null
-    this.filesize = 0
   }
 
-  size(): number {
+  calculateDigest(): string {
     try {
-      return fs.statSync(this.filepath).size
+      const fileContent = fs.readFileSync(this.filepath, 'utf8')
+      return crypto.createHash('md5').update(fileContent).digest('hex')
     } catch {
-      //console.error('Error while getting file size', error)
-      return 0
+      return ''
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   notify(filepath: string): void {
 
     // log
-    const filename = path.basename(filepath)
-    console.log(`File ${filename} modified. Notifying`)
+    // const filename = path.basename(filepath)
+    // console.log(`File ${filename} modified. Notifying`)
 
     // callback
     this.callback()

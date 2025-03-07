@@ -1,5 +1,6 @@
 
-import { Notification } from 'electron'
+import { App, Notification } from 'electron'
+import { useI18n } from '../main/i18n'
 import Automator from './automator'
 import Automation from './automation'
 import * as window from '../main/window'
@@ -7,13 +8,16 @@ import { putCachedText } from '../main/utils'
 
 export default class ReadAloud {
 
-  static read = async (timeout?: number): Promise<void> => {
+  static read = async (app: App, timeout?: number): Promise<void> => {
 
     // not available in mas
     if (process.mas) {
       window.showMasLimitsDialog()
       return
     }
+
+    // localization
+    const t = useI18n(app);
 
     // get selected text
     const automator = new Automator();
@@ -24,7 +28,7 @@ export default class ReadAloud {
       try {
         new Notification({
           title: 'Witsy',
-          body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
+          body: t('automation.grabError')
         }).show()
       } catch (error) {
         console.error('Error showing notification', error);
@@ -37,7 +41,7 @@ export default class ReadAloud {
       try {
         new Notification({
           title: 'Witsy',
-          body: 'Please highlight the text you want to read aloud'
+          body: t('automation.readAloud.emptyText')
         }).show()
         console.log('No text selected');
       } catch (error) {

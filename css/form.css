@@ -5,13 +5,13 @@
 
 form {
   --form-font-size: 9.5pt;
+  font-size: var(--form-font-size);
 }
 
 form .group {
   display: flex;
   flex-direction: row;
   align-items: center;
-  font-size: var(--form-font-size);
   margin: 8px;
 }
 
@@ -29,7 +29,7 @@ form .group:has(.subgroup) {
 }
 
 form .group label {
-  min-width: 150px;
+  min-width: 160px;
   margin-right: 10px;
   text-align: right;
 }
@@ -49,6 +49,18 @@ form .group:has([required]) label:not(:empty)::after {
 
 form .group label:not(:empty)::after {
   content: ':';
+}
+
+.colon-spaced form .group:has([required]) label:not(:empty)::after {
+  content: '\00a0\00a0:\00a0\00a0*';
+}
+
+.colon-spaced form .group label:not(:empty)::after {
+  content: '\00a0\00a0:';
+}
+
+form .group label.no-colon::after {
+  content: none !important;
 }
 
 form .group:has(.subgroup) label {
@@ -95,6 +107,10 @@ form .group input[type=checkbox] {
 .macos form .group input[type=checkbox]:checked {
   border: none;
   background: linear-gradient(#2991FF, #057AFF);
+}
+
+.macos form .group input[type=checkbox]:disabled {
+  background: linear-gradient(#a0a0a0, #808080);
 }
 
 .macos form .group input[type=checkbox]:checked:after {

@@ -10,6 +10,7 @@ import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
   loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
 } from 'multi-llm-ts'
+import exp from 'constants'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -54,16 +55,19 @@ test('should render', async () => {
 test('openai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   const openai = tab.findComponent({ name: 'SettingsOpenAI' })
-  await openai.findAll('input')[1].setValue('base-url')
-  await openai.findAll('input')[1].trigger('blur')
+  await openai.findAll('input')[2].setValue('base-url')
+  await openai.findAll('input')[2].trigger('blur')
   expect(store.config.engines.openai.baseURL).toBe('base-url')
   await openai.findAll('input')[0].setValue('api-key')
   await openai.findAll('input')[0].trigger('blur')
   expect(store.config.engines.openai.apiKey).toBe('api-key')
-  expect(loadOpenAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOpenAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
+  expect(store.config.engines.openai.disableTools).toBeFalsy()
+  await openai.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.openai.disableTools).toBeTruthy()
 })
 
 test('anthropic settings', async () => {
@@ -74,9 +78,12 @@ test('anthropic settings', async () => {
   await anthropic.find('input').trigger('blur')
   await tab.vm.$nextTick()
   expect(store.config.engines.anthropic.apiKey).toBe('api-key')
-  expect(loadAnthropicModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
+  expect(store.config.engines.anthropic.disableTools).toBeFalsy()
+  await anthropic.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.anthropic.disableTools).toBeTruthy()
 })
 
 test('google settings', async () => {
@@ -87,9 +94,12 @@ test('google settings', async () => {
   await google.find('input').setValue('api-key')
   await google.find('input').trigger('blur')
   expect(store.config.engines.google.apiKey).toBe('api-key')
-  expect(loadGoogleModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.google.disableTools).toBeFalsy()
+  await google.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.google.disableTools).toBeTruthy()
 })
 
 test('xai settings', async () => {
@@ -100,9 +110,12 @@ test('xai settings', async () => {
   await xai.find('input').setValue('api-key')
   await xai.find('input').trigger('blur')
   expect(store.config.engines.xai.apiKey).toBe('api-key')
-  expect(loadXAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.xai.disableTools).toBeFalsy()
+  await xai.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.xai.disableTools).toBeTruthy()
 })
 
 test('ollama settings', async () => {
@@ -110,13 +123,16 @@ test('ollama settings', async () => {
   await tab.find('.list-panel .list .item:nth-child(5)').trigger('click')
   await tab.vm.$nextTick()
   const ollama = tab.findComponent({ name: 'SettingsOllama' })
-  await ollama.findAll('input')[1].setValue('base-url')
-  await ollama.findAll('input')[1].trigger('blur')
+  await ollama.findAll('input')[2].setValue('base-url')
+  await ollama.findAll('input')[2].trigger('blur')
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
   await ollama.findAll('button')[1].trigger('click')
   await wait(750) //timeout
-  expect(loadOllamaModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
+  expect(store.config.engines.ollama.disableTools).toBeFalsy()
+  await ollama.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.ollama.disableTools).toBeTruthy()
 })
 
 test('mistralai settings', async () => {
@@ -127,9 +143,12 @@ test('mistralai settings', async () => {
   await mistralai.find('input').setValue('api-key')
   await mistralai.find('input').trigger('blur')
   expect(store.config.engines.mistralai.apiKey).toBe('api-key')
-  expect(loadMistralAIModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.mistralai.disableTools).toBeFalsy()
+  await mistralai.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.mistralai.disableTools).toBeTruthy()
 })
 
 test('deepseek settings', async () => {
@@ -140,9 +159,12 @@ test('deepseek settings', async () => {
   await deepseek.find('input').setValue('api-key')
   await deepseek.find('input').trigger('blur')
   expect(store.config.engines.deepseek.apiKey).toBe('api-key')
-  expect(loadDeepSeekModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.deepseek.disableTools).toBeFalsy()
+  await deepseek.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.deepseek.disableTools).toBeTruthy()
 })
 
 test('openrouter settings', async () => {
@@ -153,9 +175,12 @@ test('openrouter settings', async () => {
   await openrouter.find('input').setValue('api-key')
   await openrouter.find('input').trigger('blur')
   expect(store.config.engines.openrouter.apiKey).toBe('api-key')
-  expect(loadOpenRouterModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.openrouter.disableTools).toBeFalsy()
+  await openrouter.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.openrouter.disableTools).toBeTruthy()
 })
 
 test('groq settings', async () => {
@@ -166,9 +191,12 @@ test('groq settings', async () => {
   await groq.find('input').setValue('api-key')
   await groq.find('input').trigger('blur')
   expect(store.config.engines.groq.apiKey).toBe('api-key')
-  expect(loadGroqModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.groq.disableTools).toBeFalsy()
+  await groq.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.groq.disableTools).toBeTruthy()
 })
 
 test('cerebras settings', async () => {
@@ -179,8 +207,11 @@ test('cerebras settings', async () => {
   await cerebras.find('input').setValue('api-key')
   await cerebras.find('input').trigger('blur')
   expect(store.config.engines.cerebras.apiKey).toBe('api-key')
-  expect(loadCerebrasModels).toHaveBeenCalledWith(expect.objectContaining({
+  expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  expect(store.config.engines.cerebras.disableTools).toBeFalsy()
+  await cerebras.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.cerebras.disableTools).toBeTruthy()
 })
 

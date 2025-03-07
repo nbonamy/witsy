@@ -19,6 +19,14 @@ const { emitEvent } = useEventBus()
 
 enableAutoUnmount(afterEach)
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+    commandI18n: vi.fn(() => {}),
+    expertI18n: vi.fn(() => {}),
+  }
+})
+
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()
   Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder' : 'user-input' }))
@@ -82,7 +90,7 @@ test('Resets assistant', async () => {
   // load witb defaults
   setLlmDefaults('mock', 'chat')
   emitEvent('new-chat', null)
-  expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
+  expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeNull()
   expect(wrapper.vm.assistant.chat.engine).toBe('mock')
   expect(wrapper.vm.assistant.chat.model).toBe('chat')
@@ -100,7 +108,7 @@ test('Resets assistant', async () => {
   // load witbout defaults
   setLlmDefaults('openai', 'gpt-4o-mini')
   emitEvent('new-chat', null)
-  expect(Assistant.prototype.initChat).toHaveBeenCalledWith()
+  expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeNull()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(wrapper.vm.assistant.chat.model).toBe('gpt-4o-mini')
@@ -112,7 +120,7 @@ test('Saves text attachment', async () => {
   mount(Main)
   const attachment = new Attachment('text', 'text/plain', 'file://text', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
-  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
+  expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
@@ -121,7 +129,7 @@ test('Saves pdf attachment', async () => {
   mount(Main)
   const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
-  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
+  expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
@@ -130,7 +138,7 @@ test('Saves image attachment', async () => {
   mount(Main)
   const attachment = new Attachment('image', 'image/png', 'file://image', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
-  expect(window.api.file.save).toHaveBeenCalledWith({ contents: 'image', properties: expect.any(Object) })
+  expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
@@ -148,7 +156,7 @@ test('Sends prompt', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
     model: 'gpt-4o', attachment: null, docrepo: null, expert: null
   }, expect.any(Function), expect.any(Function))
 })
@@ -157,7 +165,7 @@ test('Sends prompt with attachment', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
     model: 'gpt-4o', attachment: 'file', docrepo: null, expert: null
   }, expect.any(Function), expect.any(Function))
 })
@@ -166,7 +174,7 @@ test('Sends prompt with doc repo', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
     model: 'gpt-4o', attachment: null, docrepo: 'docrepo', expert: null
   }, expect.any(Function), expect.any(Function))
 })
@@ -175,7 +183,7 @@ test('Sends prompt with expert', async () => {
   mount(Main)
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt', {
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
     model: 'gpt-4o', attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' }
   }, expect.any(Function), expect.any(Function))
 })
@@ -203,8 +211,8 @@ test('New chat in folder', async () => {
 test('Rename chat', async () => {
   mount(Main)
   emitEvent('rename-chat', store.history.chats[0])
-  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Rename Chat',
+  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'main.chat.rename',
     showCancelButton: true,
     input: 'text',
     inputValue: 'title',
@@ -217,8 +225,8 @@ test('Move chat', async () => {
   expect(store.history.folders[0].chats).not.toHaveLength(1)
   mount(Main)
   emitEvent('move-chat', 'chat')
-  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Select Destination Folder',
+  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'main.chat.moveToFolder',
     showCancelButton: true,
     input: 'select',
     inputValue: 'root',
@@ -234,9 +242,9 @@ test('Move chat', async () => {
 test('Delete chat', async () => {
   mount(Main)
   emitEvent('delete-chat', 'chat')
-  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
-    message: 'Are you sure you want to delete this conversation?',
-    detail: 'You can\'t undo this action.',
+  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
+    message: 'main.chat.confirmDeleteSingle',
+    detail: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.chats).toHaveLength(0) 
@@ -245,8 +253,8 @@ test('Delete chat', async () => {
 test('Rename folder', async () => {
   mount(Main)
   emitEvent('rename-folder', 'folder')
-  expect(Swal.fire).toHaveBeenCalledWith(expect.objectContaining({
-    title: 'Rename Folder',
+  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'main.folder.rename',
     showCancelButton: true,
     input: 'text',
     inputValue: 'Folder',
@@ -258,9 +266,9 @@ test('Rename folder', async () => {
 test('Delete folder', async () => {
   mount(Main)
   emitEvent('delete-folder', 'folder')
-  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({
-    message: 'Are you sure you want to delete this folder?',
-    detail: 'You can\'t undo this action.',
+  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
+    message: 'main.folder.confirmDelete',
+    detail: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.folders).toHaveLength(0)
@@ -269,7 +277,7 @@ test('Delete folder', async () => {
 test('Select chat', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('select-chat', store.history.chats[0])
-  expect(Assistant.prototype.setChat).toHaveBeenCalledWith(store.history.chats[0])
+  expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.disableTools).toBeFalsy()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
@@ -300,7 +308,7 @@ test('Fork Chat on User Message', async () => {
   expect(store.history.chats[1].model).toBe('model2')
   expect(store.history.chats[1].messages).toHaveLength(3)
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
-  expect(Assistant.prototype.prompt).toHaveBeenCalledWith('prompt2', {
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt2', {
     model: 'model2',
     attachment: expect.objectContaining({
       content: 'attachment',

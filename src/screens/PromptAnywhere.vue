@@ -1,12 +1,11 @@
-
 <template>
   <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
-        <Prompt ref="prompt" :chat="chat" placeholder="Ask me anything" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
+        <Prompt ref="prompt" :chat="chat" :placeholder="t('common.askMeAnything')" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
           <template v-slot:after>
             <div class="app" v-if="sourceApp">
-              <img class="icon" :src="iconData" /> Working with {{ sourceApp.name }}
+              <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
             </div>
           </template>
           <template v-slot:actions>
@@ -26,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-
+import { expertI18n, i18nInstructions, t } from '../services/i18n'
 import { anyDict, ExternalApp } from 'types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
@@ -80,8 +79,7 @@ let lastSeenChat: LastViewed = null
 let mouseDownToClose = false
 
 const iconData = computed(() => {
-  const iconContents = window.api.file.readIcon(sourceApp.value.icon)
-  return `data:${iconContents.mimeType};base64,${iconContents.contents}`
+  return `data:${sourceApp.value.icon.mimeType};base64,${sourceApp.value.icon.contents}`
 })
 
 onMounted(() => {
@@ -283,7 +281,7 @@ const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     if (prompt.value?.getPrompt()?.length) {
       prompt.value.setPrompt('')
-    } else {
+    } else if (!prompt.value.isContextMenuOpen()) {
       onClose()
     }
   }
@@ -377,13 +375,13 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // final prompt
-    const finalPrompt = hiddenPrompt ? `${hiddenPrompt} ${prompt}` : prompt;
+    const finalPrompt = hiddenPrompt ? `${hiddenPrompt} ${prompt||''}` : prompt;
     sourceApp.value = null
     hiddenPrompt = null
 
     // update thread
     const userMessage = new Message('user', finalPrompt)
-    userMessage.expert = expert
+    userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
     if (attachment) {
       attachment.loadContents()
       userMessage.attach(attachment)
@@ -418,7 +416,7 @@ const saveChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', store.config.instructions.titling_user)])
+    const title = await llm.complete(chat.value.model, [...chat.value.messages, new Message('user', i18nInstructions(store.config, 'instructions.titlingUser'))])
     chat.value.title = title.content
   }
 
@@ -486,7 +484,6 @@ const onResponseResize = (deltaX: number) => {
       opacity: 1.0;
     }
   }
-
 
   .prompt {
 
@@ -597,6 +594,12 @@ const onResponseResize = (deltaX: number) => {
     }
   }
 
+}
+
+.windows .app {
+  .icon {
+    transform: scale(0.75);
+  }
 }
 
 dialog#engine-model-picker {

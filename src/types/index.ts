@@ -7,8 +7,8 @@ import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
 import { McpServer, McpStatus } from './mcp'
 
-export type strDict = { [key: string]: string }
-export type anyDict = { [key: string]: any }
+export type strDict = Record<string, string>
+export type anyDict = Record<string, any>
 
 export interface Attachment extends IAttachmentBase {
   url: string
@@ -39,6 +39,7 @@ export interface Message extends IMessageBase {
   expert?: Expert
   toolCall?: ToolCallInfo
   attachment: Attachment
+  setExpert(expert: Expert, fallbackPrompt: string): void
   setText(text: string): void
   setImage(url: string): void
   setToolCall(toolCall: LlmChunkTool): void
@@ -51,10 +52,12 @@ export interface Chat {
   lastModified: number
   engine: string|null
   model: string|null
+  prompt: string|null
   messages: Message[]
   temporary: boolean
   disableTools: boolean
   disableStreaming: boolean
+  locale: string|null
   docrepo: string|null
   modelOpts: LlmModelOpts|null
   patchFromJson(jsonChat: any): boolean
@@ -84,9 +87,9 @@ export type Command = {
   id: string,
   type: 'system' | 'user',
   icon: string,
-  label: string,
+  label?: string,
   action: 'chat_window' | 'paste_below' | 'paste_in_place' | 'clipboard_copy',
-  template: string,
+  template?: string,
   shortcut: string,
   state: 'enabled' | 'disabled' | 'deleted',
   engine: string,
@@ -128,14 +131,14 @@ export interface Store {
 export type ExternalApp = {
   name: string
   identifier: string
-  icon: string
+  icon: FileContents
 }
 
 export type Expert = {
   id: string,
   type: 'system' | 'user',
-  name: string
-  prompt: string
+  name?: string
+  prompt?: string
   state: 'enabled' | 'disabled' | 'deleted',
   triggerApps: ExternalApp[]
 }
@@ -214,6 +217,9 @@ declare global {
         apply(): void
       }
       config: {
+        localeUI(): string
+        localeLLM(): string
+        getI18nMessages(): anyDict
         load(): Configuration
         save(config: Configuration): void
       }

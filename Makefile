@@ -11,6 +11,7 @@
 VERSION := $(shell grep "version" package.json | cut -d '"' -f 4)
 #IDENTITY := $(shell if [ -f .env ]; then grep IDENTITY .env | cut -d'=' -f2 || echo "-"; else echo "-"; fi)
 #CODESIGN_OPTS := --force --deep --entitlements ./assets/Entitlements.plist --sign $(IDENTITY)
+CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 BUILD_NUMBER_FILE := ./build/build_number.txt
 
 default: increment-build-number mac-arm64
@@ -82,10 +83,10 @@ publish:
 	@$(MAKE) increment-build-number
 	@$(MAKE) commit-build-number
 	gh release create v$(VERSION) --title $(VERSION) --generate-notes --draft
-	gh workflow run build-darwin-x64.yml
-	gh workflow run build-darwin-arm64.yml
-	gh workflow run build-windows.yml
-	gh workflow run build-linux.yml
+	gh workflow run build-darwin-x64.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-darwin-arm64.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-windows.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-linux.yml --ref $(CURRENT_BRANCH)
 	node build/monitor_gh_builds.mjs
 	gh release edit v$(VERSION) --draft=false
 	@echo "{\"schemaVersion\":1,\"label\":\"Version\",\"message\":\"$(VERSION)\",\"labelColor\":\"rgb(61, 70, 78)\",\"color\":\"blue\"}" > $(TMPDIR)/version.json

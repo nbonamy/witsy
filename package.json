@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "1.41.2",
+  "version": "2.0.0-rc1",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "@electron-forge/maker-rpm": "^7.4.0",
     "@electron-forge/maker-squirrel": "^7.4.0",
     "@electron-forge/maker-zip": "^7.4.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron-forge/plugin-vite": "^7.4.0",
     "@electron-forge/publisher-github": "^7.4.0",
@@ -89,6 +89,7 @@
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@nut-tree-fork/nut-js": "^4.2.2",
     "applescript": "^1.0.0",
+    "autolib": "github:nbonamy/witsy-autolib",
     "bootstrap-icons-vue": "^1.11.3",
     "compute-cosine-similarity": "^1.1.0",
     "cross-env": "^7.0.3",
@@ -112,7 +113,7 @@
     "mermaid": "^11.4.1",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^2.14.2",
+    "multi-llm-ts": "^2.14.4",
     "nestor-client": "^0.3.1",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",
@@ -131,6 +132,7 @@
     "vectra": "^0.9.0",
     "vega": "^5.30.0",
     "vue": "^3.5.13",
+    "vue-i18n": "^11.1.1",
     "youtube-transcript": "^1.2.1",
     "ytv": "^1.0.3"
   },

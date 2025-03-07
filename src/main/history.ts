@@ -8,7 +8,10 @@ import fs from 'fs'
 
 export const kUnusedDelay = 3600000
 
-const monitor: Monitor = new Monitor(() => notifyBrowserWindows('file-modified', 'history'))
+const monitor: Monitor = new Monitor(() => {
+  //console.log('History file modified')
+  notifyBrowserWindows('file-modified', 'history')
+})
 
 export const historyFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')

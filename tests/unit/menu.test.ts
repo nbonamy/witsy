@@ -4,7 +4,10 @@ import { app, Menu } from 'electron'
 import { installMenu } from '../../src/main/menu'
 
 vi.mock('electron', () => ({
-  app: { },
+  app: {
+    getPath: vi.fn(() => ''),
+    getLocale: vi.fn(() => 'en-US'),
+  },
   BrowserWindow: {
     getAllWindows: vi.fn(() => [])
   },
@@ -22,5 +25,5 @@ test('installMenu', () => {
     settings: vi.fn(),
   }, null)
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
-  expect(Menu.setApplicationMenu).toHaveBeenCalledWith({})
+  expect(Menu.setApplicationMenu).toHaveBeenLastCalledWith({})
 })

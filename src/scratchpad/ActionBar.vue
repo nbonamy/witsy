@@ -3,28 +3,28 @@
     
     <div class="actionbar" v-if="activeBar == 'standard'">
       
-      <div class="action" @click="emitEvent('action', 'undo')" v-tooltip="'Undo'" :class="{ disabled: !undoStack.length }">
+      <div class="action" @click="emitEvent('action', 'undo')" v-tooltip="t('common.undo')" :class="{ disabled: !undoStack.length }">
         <BIconReplyFill />
       </div>
       
-      <div class="action" @click="emitEvent('action', 'redo')" v-tooltip="'Redo'" :class="{ disabled: !redoStack.length }">
+      <div class="action" @click="emitEvent('action', 'redo')" v-tooltip="t('common.redo')" :class="{ disabled: !redoStack.length }">
         <BIconReplyFill style="transform: scaleX(-1)"/>
       </div>
       
-      <div class="action" @click="emitEvent('action', 'copy')" v-tooltip="'Copy to clipboard'">
+      <div class="action" @click="emitEvent('action', 'copy')" v-tooltip="t('scratchpad.actions.copyToClipboard')">
         <BIconClipboard v-if="copyState == 'idle'"/>
         <BIconClipboardCheck style="color: var(--scratchpad-actionbar-active-icon-color)" v-else/>
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="'Spellcheck'">
+      <div class="action" @click="onMagicAction($event, 'spellcheck')" v-tooltip="t('scratchpad.actions.spellcheck')">
         <BIconSpellcheck />
       </div>
       
-      <div class="action" @click="onMagicBar" v-tooltip="'Writing assistant'">
+      <div class="action" @click="onMagicBar" v-tooltip="t('scratchpad.actions.writingAssistant')">
         <BIconStars />
       </div>
       
-      <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="'Read aloud'">
+      <div :class="{ action: true, active: audioState == 'playing', static: true }" @click="emitEvent('action', 'read')" v-tooltip="t('common.read')">
         <span v-if="audioState == 'playing'"><BIconStopCircle/></span>
         <span v-else-if="audioState == 'loading'"><BIconXCircle/></span>
         <span v-else><BIconVolumeUp /></span>
@@ -34,31 +34,31 @@
     
     <div class="actionbar" v-if="activeBar == 'magic'">
       
-      <div class="action" @click="onStandardBar" v-tooltip="'Back'">
+      <div class="action" @click="onStandardBar" v-tooltip="t('common.back')">
         <BIconArrowLeft />
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'improve')" v-tooltip="'Improve writing'">
+      <div class="action" @click="onMagicAction($event, 'improve')" v-tooltip="t('scratchpad.actions.improveWriting')">
         <BIconMortarboard />
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'takeaways')" v-tooltip="'List key takeaways'">
+      <div class="action" @click="onMagicAction($event, 'takeaways')" v-tooltip="t('scratchpad.actions.listTakeaways')">
         <BIconListUl />
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'title')" v-tooltip="'Suggest a title'">
+      <div class="action" @click="onMagicAction($event, 'title')" v-tooltip="t('scratchpad.actions.suggestTitle')">
         <BIconFonts />
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'simplify')" v-tooltip="'Simplify writing'">
+      <div class="action" @click="onMagicAction($event, 'simplify')" v-tooltip="t('scratchpad.actions.simplifyWriting')">
         <BIconChevronBarContract />
       </div>
       
-      <div class="action" @click="onMagicAction($event, 'expand')" v-tooltip="'Expand writing'">
+      <div class="action" @click="onMagicAction($event, 'expand')" v-tooltip="t('scratchpad.actions.expandWriting')">
         <BIconChevronBarExpand />
       </div>
     
-      <div class="action" @click="onMagicAction($event, 'complete')" v-tooltip="'Complete text'" >
+      <div class="action" @click="onMagicAction($event, 'complete')" v-tooltip="t('scratchpad.actions.completeText')" >
         <BIconPen />
       </div>
     
@@ -69,9 +69,9 @@
 
 <script setup lang="ts">
 
-// components
 import { ref, onMounted } from 'vue'
 import FloatingVue, { vTooltip } from 'floating-vue'
+import { t } from '../services/i18n'
 
 // bus
 import useEventBus from '../composables/event_bus'

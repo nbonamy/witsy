@@ -1,4 +1,3 @@
-
 <template>
   <div class="content">
     <div class="list-panel">
@@ -10,8 +9,8 @@
           </div>
         </div>
         <div class="actions">
-          <button class="button create" @click.prevent="showCreateCustom"><BIconPlusLg /> <span v-if="!isCustom">Create engine</span></button>
-          <button class="button delete" @click.prevent="onDeleteCustom" v-if="isCustom"><BIconTrash /> Delete engine</button>
+          <button class="button create" @click.prevent="showCreateCustom"><BIconPlusLg /> <span v-if="!isCustom">{{ t('settings.engines.custom.create') }}</span></button>
+          <button class="button delete" @click.prevent="onDeleteCustom" v-if="isCustom"><BIconTrash /> {{ t('settings.engines.custom.delete') }}</button>
         </div>
       </div>
       <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" />
@@ -25,6 +24,7 @@
 import { CustomEngineConfig } from '../types/config'
 import { Ref, ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineLogo from '../components/EngineLogo.vue'
 import CreateEngine from '../screens/CreateEngine.vue'
@@ -122,9 +122,9 @@ const onCreateCustom = (payload: { label: string, api: string, baseURL: string, 
 const onDeleteCustom = () => {
   Dialog.show({
     target: document.querySelector('.settings .plugins'),
-    title: 'Are you sure you want to delete this custom provider?',
-    text: 'You can\'t undo this action.',
-    confirmButtonText: 'Delete',
+    title: t('settings.engines.custom.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {

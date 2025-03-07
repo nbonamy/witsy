@@ -9,13 +9,17 @@ import LlmFactory from '../llms/llm'
 import { availablePlugins } from '../plugins/plugins'
 import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
+import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
+
+export type GenerationEvent = 'plugins_disabled' | 'before_title'
+
+export type GenerationCallback = (event: GenerationEvent) => void
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   titling?: boolean
   attachment?: Attachment
   expert?: Expert
-  systemInstructions?: string
 }
 
 export default class extends Generator {
@@ -64,12 +68,21 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, beforeTitleCallback?: () => void): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, generationCallback?: GenerationCallback): Promise<void> {
 
     // check
     prompt = prompt.trim()
     if (prompt === '') {
       return null
+    }
+
+    // set llm locale
+    let llmLocale = null
+    const forceLocale = this.config.llm.forceLocale
+    if (this.chat.locale) {
+      llmLocale = getLlmLocale()
+      setLlmLocale(this.chat.locale)
+      this.config.llm.forceLocale = true
     }
 
     // merge with defaults
@@ -80,7 +93,6 @@ export default class extends Generator {
       docrepo: null,
       expert: null,
       sources: true,
-      systemInstructions: this.config.instructions.default,
       citations: true,
     }
     opts = {...defaults, ...opts }
@@ -92,7 +104,9 @@ export default class extends Generator {
 
     // we need messages
     if (this.chat.messages.length === 0) {
-      this.chat.addMessage(new Message('system', this.getSystemInstructions(opts.systemInstructions)))
+      this.chat.addMessage(new Message('system', this.chat.prompt || this.getSystemInstructions()))
+    } else {
+      this.chat.messages[0].content = this.chat.prompt || this.getSystemInstructions()
     }
 
     // make sure we have the right engine and model
@@ -124,9 +138,9 @@ export default class extends Generator {
 
     // add user message
     const userMessage = new Message('user', prompt)
+    userMessage.setExpert(opts.expert, expertI18n(opts.expert, 'prompt'))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
-    userMessage.expert = opts.expert
     userMessage.attach(opts.attachment)
     this.chat.addMessage(userMessage)
 
@@ -154,13 +168,20 @@ export default class extends Generator {
 
     // check if generator disabled plugins
     if (hadPlugins && this.llm.plugins.length === 0) {
+      generationCallback?.call(null, 'plugins_disabled')
       this.chat.disableTools = true
     }
 
     // check if we need to update title
     if (opts.titling && !this.chat.hasTitle()) {
-      beforeTitleCallback?.call(null)
+      generationCallback?.call(null, 'before_title')
       this.chat.title = await this.getTitle() || this.chat.title
+    }
+
+    // restore llm locale
+    if (llmLocale) {
+      setLlmLocale(llmLocale)
+      this.config.llm.forceLocale = forceLocale
     }
   
   }
@@ -224,10 +245,10 @@ export default class extends Generator {
 
       // build messages
       const messages = [
-        new Message('system', this.getSystemInstructions(this.config.instructions.titling)),
+        new Message('system', i18nInstructions(this.config, 'instructions.titling')),
         this.chat.messages[1],
         this.chat.messages[2],
-        new Message('user', this.config.instructions.titling_user)
+        new Message('user', i18nInstructions(this.config, 'instructions.titlingUser'))
       ]
 
       // now get it
@@ -253,7 +274,9 @@ export default class extends Generator {
       }
 
       // remove quotes
-      title = title.trim().replace(/^"|"$/g, '').trim()
+      if (title.startsWith('"') && title.endsWith('"')) {
+        title = title.substring(1, title.length - 1)
+      }
       
       // done
       return title

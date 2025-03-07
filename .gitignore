@@ -100,3 +100,7 @@ dist/
 
 # office parser
 officeParserTemp
+
+#
+autolib/bin
+autolib/build

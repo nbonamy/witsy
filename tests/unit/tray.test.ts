@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, expect, test } from 'vitest'
+import { vi, beforeAll, expect, test, Mock } from 'vitest'
 import { app, Menu } from 'electron'
 import AutoUpdater from '../../src/main/autoupdate'
 import Tray from '../../src/main/tray'
@@ -14,6 +14,7 @@ vi.mock('electron', () => {
   //Tray.prototype.show = vi.fn();
   return {
     app: {
+      getLocale: vi.fn(() => 'en-US'),
       getVersion: vi.fn(() => '1.0.0'),
       getPath: vi.fn(() => ''),
     },
@@ -40,12 +41,12 @@ beforeAll(() => {
 })
 
 test('Creates tray', async () => {
-  const tray = new Tray(app, new AutoUpdater({ onUpdateAvailable: () => {}, preInstall: () => {} }), () => {})
+  const tray = new Tray(app, new AutoUpdater(app, { onUpdateAvailable: () => {}, preInstall: () => {} }), () => {})
   tray.install()
   expect(tray.tray).toBeDefined()
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
-  expect(Menu.buildFromTemplate.mock.calls[0][0]).toHaveLength(12)
-  expect(Menu.buildFromTemplate.mock.calls[0][0].map((item: any) => item.label)).toEqual([
+  expect((Menu.buildFromTemplate as Mock).mock.calls[0][0]).toHaveLength(12)
+  expect((Menu.buildFromTemplate as Mock).mock.calls[0][0].map((item: any) => item.label)).toEqual([
     'Quick Prompt', 'New Chat', 'Scratchpad', 'Run AI Command', undefined, 'Read Aloud', 'Start Dictation', 'Voice Mode', undefined, 'Settings…', undefined, 'Quit'
   ]);
   expect(tray.tray.setContextMenu).toHaveBeenCalled()

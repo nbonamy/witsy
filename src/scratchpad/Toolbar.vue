@@ -3,30 +3,33 @@
 
     <div class="toolbar group">
     
-      <button class="tool" @click="emitEvent('action', 'clear')"><BIconFileEarmark /><span>New</span></button>
+      <button class="tool" @click="emitEvent('action', 'clear')">
+        <BIconFileEarmark /><span>{{ t('common.clear') }}</span>
+      </button>
       
-      <button class="tool" @click="emitEvent('action', 'load')"><BIconFileArrowUp /><span>Load</span></button>
+      <button class="tool" @click="emitEvent('action', 'load')">
+        <BIconFileArrowUp /><span>{{ t('common.load') }}</span>
+      </button>
       
-      <button class="tool" @click="emitEvent('action', 'save')"><BIconFileArrowDown /><span>Save</span></button>
-      
-      <!-- <button class="tool" @click="emitEvent('action', 'undo')" :disabled="!undoStack.length"><BIconArrowLeft /><span>Undo</span></button>
-      <button class="tool" @click="emitEvent('action', 'redo')" :disabled="!redoStack.length"><BIconArrowRight /><span>Redo</span></button> -->
+      <button class="tool" @click="emitEvent('action', 'save')">
+        <BIconFileArrowDown /><span>{{ t('common.save') }}</span>
+      </button>
       
       <EngineSelect class="tool" v-model="engine" @change="onChangeEngine" />
       <ModelSelect class="tool" v-model="model" :engine="engine" @change="onChangeModel"/>
       
       <select class="tool" v-model="fontFamily" @change="onChangeFontFamily">
-        <option value="serif">Serif</option>
-        <option value="sans-serif">Sans-Serif</option>
-        <option value="monospace">Monospace</option>
+        <option value="serif">{{ t('scratchpad.fontFamily.serif') }}</option>
+        <option value="sans-serif">{{ t('scratchpad.fontFamily.sansSerif') }}</option>
+        <option value="monospace">{{ t('scratchpad.fontFamily.monospace') }}</option>
       </select>
       
       <select class="tool" v-model="fontSize" @change="onChangeFontSize">
-        <option value="1">Smaller</option>
-        <option value="2">Small</option>
-        <option value="3">Normal</option>
-        <option value="4">Large</option>
-        <option value="5">Larger</option>
+        <option value="1">{{ t('scratchpad.fontSize.smaller') }}</option>
+        <option value="2">{{ t('scratchpad.fontSize.small') }}</option>
+        <option value="3">{{ t('scratchpad.fontSize.normal') }}</option>
+        <option value="4">{{ t('scratchpad.fontSize.large') }}</option>
+        <option value="5">{{ t('scratchpad.fontSize.larger') }}</option>
       </select>
 
     </div>
@@ -36,9 +39,9 @@
 
 <script setup lang="ts">
 
-// components
 import { ref, watch, onMounted } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'

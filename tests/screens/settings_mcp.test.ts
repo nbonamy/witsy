@@ -12,6 +12,14 @@ HTMLDialogElement.prototype.close = vi.fn()
 let wrapper: VueWrapper<any>
 let mcp: VueWrapper<any>
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    t: (key: string) => `${key}`,
+    commandI18n: vi.fn(() => {}),
+    expertI18n: vi.fn(() => {}),
+  }
+})
+
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
@@ -67,16 +75,16 @@ test('actions', async () => {
 
 test('server enablement', async () => {
   await mcp.find<HTMLInputElement>('.list tbody tr:nth-child(1) input[type=checkbox]').setValue(false)
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
   await mcp.find<HTMLInputElement>('.list tbody tr:nth-child(5) input[type=checkbox]').setValue(true)
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
 })
 
 test('server delete', async () => {
   await mcp.find<HTMLTableRowElement>('.list tbody tr:nth-child(4)').trigger('click')
   await mcp.find<HTMLButtonElement>('button.remove').trigger('click')
   await mcp.vm.$nextTick()
-  expect(window.api.mcp.deleteServer).toHaveBeenCalledWith('@mcp1')
+  expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('@mcp1')
 })
 
 test('server edit', async () => {
@@ -89,7 +97,7 @@ test('server edit', async () => {
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://localhost:3000')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith({
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: '1',
     registryId: '1',
     state: 'enabled',
@@ -117,7 +125,7 @@ test('normal server add', async () => {
   
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith({
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
     state: 'enabled',
@@ -144,7 +152,7 @@ test('normal server add', async () => {
 
   // save
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith({
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
     state: 'enabled',
@@ -168,7 +176,7 @@ test('normal server add', async () => {
   await editor.find<HTMLButtonElement>('button.remove').trigger('click')
 
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.mcp.editServer).toHaveBeenCalledWith({
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
     registryId: null,
     state: 'enabled',
@@ -194,7 +202,7 @@ test('smithery server add', async () => {
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('smithery')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('package')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.mcp.installServer).toHaveBeenCalledWith('smithery', 'package')
+  expect(window.api.mcp.installServer).toHaveBeenLastCalledWith('smithery', 'package')
 
 })
 
@@ -208,7 +216,7 @@ test('error server add', async () => {
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(window.api.showDialog).toHaveBeenCalledWith(expect.objectContaining({ message: 'Some fields are required' }))
+  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: 'mcp.serverEditor.validation.requiredFields' }))
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')

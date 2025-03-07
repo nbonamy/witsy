@@ -1,15 +1,16 @@
-  
+
 import { ExternalApp, FileContents, anyDict } from 'types/index';
 import { App, dialog } from 'electron';
 import { extensionToMimeType } from 'multi-llm-ts';
 import { execSync } from 'child_process';
+import autolib from 'autolib';
 import icns from 'icns-lib';
 import plist from 'plist';
 import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
- export const getFileContents = (app: App, filepath: string): FileContents => {
+export const getFileContents = (app: App, filepath: string): FileContents => {
 
   try {
     const fileContents = fs.readFileSync(filepath);
@@ -54,7 +55,7 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
 
 }
 
- export const deleteFile = (app: App, filepath: string) => {
+export const deleteFile = (app: App, filepath: string) => {
 
   try {
     let path = filepath;
@@ -70,12 +71,12 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict): string|string[]|FileContents => {
+export const pickFile = (app: App, payload: anyDict): string | string[] | FileContents => {
 
   try {
-    
+
     // build dialog propertis
-    const dialogProperties: ('openFile' | 'treatPackageAsDirectory' | 'noResolveAliases' | 'multiSelections')[] = [ 'openFile' ];
+    const dialogProperties: ('openFile' | 'treatPackageAsDirectory' | 'noResolveAliases' | 'multiSelections')[] = ['openFile'];
     if (!payload.packages) {
       dialogProperties.push('treatPackageAsDirectory');
     }
@@ -85,11 +86,11 @@ export const pickFile = (app: App, payload: anyDict): string|string[]|FileConten
     if (payload.multiselection) {
       dialogProperties.push('multiSelections');
     }
-    
+
     // show it and pick
     const fileURL = dialog.showOpenDialogSync({
       properties: dialogProperties,
-      filters: payload?.filters || [ { name: 'All Files', extensions: ['*'] } ]
+      filters: payload?.filters || [{ name: 'All Files', extensions: ['*'] }]
     });
 
     // return
@@ -98,7 +99,7 @@ export const pickFile = (app: App, payload: anyDict): string|string[]|FileConten
       else if (payload.location) return fileURL[0];
       else return getFileContents(app, fileURL[0]);
     }
-    
+
   } catch (error) {
     console.error('Error while picking file', error);
   }
@@ -112,10 +113,10 @@ export const pickFile = (app: App, payload: anyDict): string|string[]|FileConten
 export const pickDirectory = (app: App): string => {
 
   try {
-    
+
     // build dialog propertis
-    const dialogProperties: ('openDirectory' | 'treatPackageAsDirectory')[] = [ 'openDirectory', 'treatPackageAsDirectory' ];
-    
+    const dialogProperties: ('openDirectory' | 'treatPackageAsDirectory')[] = ['openDirectory', 'treatPackageAsDirectory'];
+
     // show it and pick
     const fileURL = dialog.showOpenDialogSync({
       properties: dialogProperties,
@@ -125,7 +126,7 @@ export const pickDirectory = (app: App): string => {
     if (fileURL) {
       return fileURL[0];
     }
-    
+
   } catch (error) {
     console.error('Error while picking directory', error);
   }
@@ -136,7 +137,7 @@ export const pickDirectory = (app: App): string => {
 }
 
 export const listFilesRecursively = (directoryPath: string): string[] => {
-  
+
   let fileList: string[] = []
 
   try {
@@ -164,13 +165,13 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
   return fileList;
 }
 
- 
+
 export const findProgram = (app: App, program: string) => {
   try {
     const which = process.platform === 'win32' ? 'where' : 'which';
     const path = execSync(`${which} ${program}`).toString().split('\n')[0].trim();
     return path;
-  } catch(error) {
+  } catch (error) {
     console.error(`Error while finding program ${program}`, error);
   }
   return null;
@@ -186,7 +187,7 @@ export const writeFileContents = (app: App, payload: anyDict): string => {
       subdir: false,
     }
   }
-  payload = {...defaults, ...payload }
+  payload = { ...defaults, ...payload }
 
   // parse properties
   const properties = payload.properties;
@@ -225,7 +226,7 @@ export const writeFileContents = (app: App, payload: anyDict): string => {
 export const downloadFile = async (app: App, payload: anyDict) => {
 
   try {
-  
+
     // get contents
     let contents = null
     if (payload.url.startsWith('file://')) {
@@ -248,8 +249,8 @@ export const downloadFile = async (app: App, payload: anyDict) => {
 
 }
 
- 
-export const getAppInfo = (app: App, filepath: string): ExternalApp | null => {
+
+export const getAppInfo = async (app: App, filepath: string): Promise<ExternalApp | null> => {
 
   // for macos
   if (process.platform == 'darwin') {
@@ -263,8 +264,37 @@ export const getAppInfo = (app: App, filepath: string): ExternalApp | null => {
       return {
         name: plistInfo.CFBundleName,
         identifier: plistInfo.CFBundleIdentifier,
-        icon: path.join(filepath, 'Contents', 'Resources', plistIcon)
+        icon: getIconContents(app, path.join(filepath, 'Contents', 'Resources', plistIcon))
       };
+    } catch (err) {
+      console.error('Error while getting app info', err);
+    }
+  }
+
+  // for windows
+  if (process.platform == 'win32') {
+    try {
+
+      const exePath = filepath;
+      const productName = autolib.getProductName(exePath);
+      const iconInfo = autolib.getApplicationIcon(exePath);
+
+      // convert iconInfo to base64 encoded string
+      let iconData = null;
+      if (iconInfo && iconInfo.iconData) {
+        iconData = {
+          url: `file://${exePath}#icon`,
+          mimeType: 'image/x-icon',
+          contents: Buffer.from(iconInfo.iconData).toString('base64')
+        };
+      }
+
+      return {
+        name: productName,
+        identifier: exePath,
+        icon: iconData
+      }
+
     } catch (err) {
       console.error('Error while getting app info', err);
     }

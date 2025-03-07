@@ -4,6 +4,7 @@ import { RunCommandParams } from '../types/automation'
 import { App, Notification } from 'electron'
 import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
+import { useI18n, useI18nLlm } from '../main/i18n'
 import LlmFactory from '../llms/llm'
 import Automator from './automator'
 import Automation from './automation'
@@ -17,13 +18,16 @@ export const notEditablePrompts = [
 
 export default class Commander {
 
-  static initCommand = async (timeout?: number): Promise<void> => {
+  static initCommand = async (app: App, timeout?: number): Promise<void> => {
 
     // not available in mas
     if (process.mas) {
       window.showMasLimitsDialog()
       return
     }
+
+    // localization
+    const t = useI18n(app);
 
     // get selected text
     const automator = new Automator();
@@ -34,7 +38,7 @@ export default class Commander {
       try {
         new Notification({
           title: 'Witsy',
-          body: 'An error occurred while trying to grab the text. Please check Privacy & Security settings.'
+          body: t('automation.grabError')
         }).show()
       } catch (error) {
         console.error('Error showing notification', error);
@@ -47,7 +51,7 @@ export default class Commander {
       try {
         new Notification({
           title: 'Witsy',
-          body: 'Please highlight the text you want to analyze'
+          body: t('automation.commander.emptyText')
         }).show()
         console.log('No text selected');
       } catch (error) {
@@ -84,11 +88,17 @@ export default class Commander {
       const llmFactory = new LlmFactory(config);
 
       // extract what we need
-      const template = command.template;
       let engine = command.engine || config.commands.engine;
       let model = command.model || config.commands.model;
       if (!engine?.length || !model?.length) {
         ({ engine, model } = llmFactory.getChatEngineModel(false));
+      }
+
+      // template may be localized
+      let template = command.template
+      if (!template) {
+        const t = useI18nLlm(app);
+        template = t(`commands.commands.${command.id}.template`)
       }
 
       // build prompt

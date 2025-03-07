@@ -25,6 +25,7 @@ export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
   realtime?: RealtimeConfig
+  disableTools?: boolean
 }
 
 export type CustomEngineConfig = EngineConfig & {
@@ -36,7 +37,7 @@ export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
-  language: string
+  locale: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}
 }
@@ -51,10 +52,14 @@ export type ModelDefaults = {
   engine: string
   model: string
   disableTools: boolean
+  locale: string
+  prompt: string
 } & LlmModelOpts
 
 export type LLMConfig = {
   engine: string
+  locale: string
+  forceLocale: boolean
   favorites: FavoriteModel[]
   autoVisionSwitch: boolean
   conversationLength: number
@@ -65,7 +70,7 @@ export type LLMConfig = {
 export type InstructionsConfig = {
   default: string
   titling: string
-  titling_user: string
+  titlingUser: string
   docquery: string
   scratchpad: strDict
 }
@@ -123,7 +128,7 @@ export type ScratchpadConfig = {
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
 export type STTConfig = {
-  language: string
+  locale: string
   engine: string
   model: string
   silenceDetection: boolean

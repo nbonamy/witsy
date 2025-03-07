@@ -2,19 +2,19 @@
   <dialog class="settings" ref="dialog">
     <form method="dialog">
       <div class="wrapper">
-        <DialogHeader title="Settings" @close="onClose" />
+        <DialogHeader :title="t('common.settings')" @close="onClose" />
         <main>
           <div class="tabs">
             <ul>
-              <SettingsTab class="general" title="General" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-              <SettingsTab class="appearance" title="Appearance"><BIconPalette class="icon" /></SettingsTab>
-              <SettingsTab class="commands" title="Commands"><BIconMagic class="icon" /></SettingsTab>
-              <SettingsTab class="experts" title="Experts"><BIconMortarboard class="icon" /></SettingsTab>
-              <SettingsTab class="shortcuts" title="Shortcuts"><BIconCommand class="icon" /></SettingsTab>
-              <SettingsTab class="models" title="Models" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-              <SettingsTab class="plugins" title="Plugins" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-              <SettingsTab class="voice" title="Voice" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-              <SettingsTab class="advanced" title="Advanced"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
+              <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
+              <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
+              <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
+              <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
+              <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+              <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
+              <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
+              <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
             </ul>
             <SettingsGeneral ref="settingsGeneral" />
             <SettingsAppearance ref="settingsAppearance" />
@@ -35,6 +35,7 @@
 <script setup lang="ts">
 
 import { Ref, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { t } from '../services/i18n'
 import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
@@ -57,7 +58,7 @@ export interface OpenSettingsPayload {
   engine?: string
 }
 
-const props = defineProps({
+defineProps({
   initialTab: {
     type: String,
     default: 'general'
@@ -147,6 +148,10 @@ const onClose = () => {
   document.querySelector<HTMLDialogElement>('#settings').close()
 }
 
+const load = (tab: any) => {
+  tab.load()
+}
+
 </script>
 
 <style scoped>
@@ -212,6 +217,7 @@ dialog.settings .tabs label .icon {
   margin: 0 auto;
   width: 15pt;
   height: 15pt;
+  margin-bottom: 4px;
   color: var(--tabs-header-normal-text-color);
   filter: invert(48%) sepia(6%) saturate(86%) hue-rotate(349deg) brightness(86%) contrast(90%);
 }
@@ -269,7 +275,7 @@ dialog.settings .list-panel {
   
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);
-    width: 140px;
+    width: 150px;
     padding: 0px 12px;
     overflow-y: auto;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
@@ -277,8 +283,8 @@ dialog.settings .list-panel {
     .item {
       flex-direction: row;
       align-items: center;
-      height: 24px;
-      padding: 0px 8px;
+      height: auto;
+      padding: 4px 8px;
       margin: 2px 0px;
       display: flex;
       border-radius: 4px;
@@ -286,7 +292,7 @@ dialog.settings .list-panel {
 
       .logo {
         height: 10pt;
-        margin-right: 4px;
+        margin-right: 6px;
       }
 
       .icon {

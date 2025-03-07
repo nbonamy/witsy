@@ -1,4 +1,3 @@
-
 <template>
   <div class="content">
     <div class="list-panel">
@@ -16,6 +15,7 @@
 <script setup lang="ts">
 
 import { ref, computed, nextTick } from 'vue'
+import { t } from '../services/i18n'
 import { BIconMicFill, BIconVolumeUpFill } from 'bootstrap-icons-vue'
 import SettingsTTS from './SettingsTTS.vue'
 import SettingsSTT from './SettingsSTT.vue'
@@ -25,8 +25,8 @@ const settings = ref(null)
 
 const available = computed(() => {
   return [
-    { id: 'stt', label: 'Speech-to-Text', icon: BIconMicFill },
-    { id: 'tts', label: 'Text-to-Speech', icon: BIconVolumeUpFill },
+    { id: 'stt', label: t('settings.voice.tabs.speechToText'), icon: BIconMicFill },
+    { id: 'tts', label: t('settings.voice.tabs.textToSpeech'), icon: BIconVolumeUpFill },
   ]
 })
 

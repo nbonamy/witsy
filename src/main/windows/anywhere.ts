@@ -40,6 +40,13 @@ export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
     movable: true,
   });
 
+  // // open the DevTools
+  // if (process.env.DEBUG) {
+  //   promptAnywhereWindow.webContents.openDevTools({ mode: 'right' });
+  // }
+
+  // get focus
+  // opacity trick is to avoid flickering on Windows
   promptAnywhereWindow.on('show', () => {
     app.focus({ steal: true });
     promptAnywhereWindow.moveTop();
@@ -51,12 +58,12 @@ export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
     }
   });
 
+  // opacity trick is to avoid flickering on Windows
   promptAnywhereWindow.on('hide', () => {
     if (process.platform === 'win32') {
       promptAnywhereWindow.setOpacity(0);
     }
   });
-
 
   // done
   return promptAnywhereWindow;

@@ -6,10 +6,9 @@ let robot: any|null = null;
 
 const delay = 500;
 
-
 export default class RobotAutomator implements Automator {
 
-    async setup() {
+  async setup() {
     if (robot) {
       return true;
     }

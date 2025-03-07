@@ -1,14 +1,18 @@
 <template>
   <Teleport to="body" :disabled="!teleport">
     <Overlay @click="onOverlay" />
-    <div class="context-menu" :style="position">
-      <form v-if="showFilter"><div class="group filter"><input v-model="filter" placeholder="Search…" autofocus="true" /></div></form>
-      <div class="actions">
+    <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp">
+      <form v-if="showFilter">
+        <div class="group filter">
+          <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
+        </div>
+      </form>
+      <div class="actions" ref="list">
         <template v-for="action in visibleActions" :key="action.action">
           <div class="item separator disabled" v-if="action.separator">
-            <hr  />
+            <hr />
           </div>
-          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap }" :data-action="action.action" @click="onAction(action)" v-else>
+          <div :class="{ item: true, right: isRightAligned, disabled: action.disabled, wrap: action.wrap, selected: selected && action.action && selected.action === action.action }" :data-action="action.action" @click="onAction(action)" @mousemove="onMouseMove(action)" v-else>
             <span v-if="typeof action.icon === 'string'" class="icon text">{{ action.icon }}</span>
             <component :is="action.icon" v-else-if="typeof action.icon === 'object'" class="icon" />
             {{ action.label }}
@@ -21,8 +25,9 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import Overlay from '../components/Overlay.vue'
+import { t } from '../services/i18n'
 
 export type MenuAction = {
   label?: string
@@ -54,7 +59,9 @@ const props = defineProps({
 
 const emit = defineEmits(['action-clicked'])
 
+const list = ref(null)
 const filter = ref('')
+const selected = ref(null)
 
 const visibleActions = computed(() => {
   if (props.showFilter && filter.value?.length) {
@@ -102,15 +109,87 @@ onMounted(() => {
     const input = document.querySelector<HTMLElement>('.context-menu input');
     input?.focus();
   }
+  
+  document.addEventListener('keydown', onKeyUp)
+  document.addEventListener('keyup', onKeyDown)
 });
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyUp)
+  document.removeEventListener('keyup', onKeyDown)
+})
 
 const onOverlay = () => {
   props.onClose()
 }
 
+const onMouseMove = (action: MenuAction) => {
+  selected.value = action.disabled ? null : action
+  ensureVisible()
+}
+
+const onKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault()
+    const enabledActions = visibleActions.value.filter(action => !action.disabled);
+    const index = enabledActions.map(a => a.action).indexOf(selected.value?.action)
+    if (index === -1) {
+      selected.value = enabledActions[0];
+    } else {
+      const currentIndex = enabledActions.findIndex(action => action.action === selected.value?.action);
+      if (event.key === 'ArrowDown') {
+      selected.value = enabledActions[(currentIndex + 1) % enabledActions.length];
+      } else {
+      selected.value = enabledActions[(currentIndex - 1 + enabledActions.length) % enabledActions.length];
+      }
+    }
+    ensureVisible()
+  } else if (event.key === 'Enter') {
+    if (selected.value) {
+      event.preventDefault()
+      event.stopPropagation()
+      onAction(selected.value)
+    }
+  }
+}
+ 
+const onKeyUp = (event: KeyboardEvent) => {
+ if (event.key === 'Escape') {
+    props.onClose()
+    event.preventDefault()
+    event.stopPropagation()
+    return false
+  }
+}
+
 const onAction = (action: MenuAction) => {
   if (!action.disabled) {  
     emit('action-clicked', action.action)
+  }
+};
+
+const ensureVisible = () => {
+  nextTick(() => {
+    const selectedEl = list.value?.querySelector('.selected') as HTMLElement
+    if (selectedEl) {
+      scrollToBeVisible(selectedEl, list.value)
+    }
+  })
+}
+
+const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
+  const eleTop = ele.offsetTop - container.offsetTop;
+  const eleBottom = eleTop + ele.clientHeight;
+
+  const containerTop = container.scrollTop;
+  const containerBottom = containerTop + container.clientHeight;
+
+  if (eleTop < containerTop) {
+    // Scroll to the top of container
+    container.scrollTop -= containerTop - eleTop;
+  } else if (eleBottom > containerBottom) {
+    // Scroll to the bottom of container
+    container.scrollTop += eleBottom - containerBottom;
   }
 };
 
@@ -188,7 +267,7 @@ const onAction = (action: MenuAction) => {
   color: gray;
 }
 
-.context-menu .item:not(.disabled):hover {
+.context-menu .item.selected {
   background-color: var(--context-menu-selected-bg-color);
   color: var(--highlighted-color);
   border-radius: 4px;

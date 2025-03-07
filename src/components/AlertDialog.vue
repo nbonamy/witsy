@@ -3,7 +3,7 @@
   <dialog class="alert-dialog show">
     <form class="vertical" method="dialog" @submit.prevent>
       <div class="icon">
-        <img src="/assets/icon.png" alt="RAG Logo" />
+        <img src="/assets/icon.png" />
       </div>
       <div class="header">
         <slot name="header"></slot>

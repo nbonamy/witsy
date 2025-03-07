@@ -1,64 +1,66 @@
-
 <template>
   <div class="content large">
     <div class="group vision top checkbox">
-      <label>Automatically switch to vision model</label>
+      <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
       <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
     </div>
     <div class="group autosave checkbox">
-      <label>Always save prompt sessions in chat history</label>
+      <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       <input type="checkbox" v-model="autoSavePrompt" @change="save" />
     </div>
     <hr/>
     <div class="group length">
-      <label>Conversation length</label>
+      <label>{{ t('settings.advanced.conversationLength') }}</label>
       <input type="number" min="1" v-model="conversationLength" @change="save">
     </div>
     <div class="group size">
-      <label>Image resize</label>
+      <label>{{ t('settings.advanced.imageResize') }}</label>
       <select v-model="imageResize" @change="save">
-        <option value="0">No resize</option>
-        <option value="512">Resize largest dimension to 512 pixels</option>
-        <option value="768">Resize largest dimension to 768 pixels</option>
-        <option value="1024">Resize largest dimension to 1024 pixels</option>
-        <option value="2048">Resize largest dimension to 2048 pixels</option>
+        <option value="0">{{ t('settings.advanced.imageResizeOptions.none') }}</option>
+        <option value="512">{{ t('settings.advanced.imageResizeOptions.size', { size: 512 }) }}</option>
+        <option value="768">{{ t('settings.advanced.imageResizeOptions.size', { size: 768 }) }}</option>
+        <option value="1024">{{ t('settings.advanced.imageResizeOptions.size', { size: 1024 }) }}</option>
+        <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
       </select>
     </div>
     <div class="group instruction">
-      <label>System instructions</label>
+      <label>{{ t('settings.advanced.systemInstructions') }}</label>
       <div class="subgroup">
         <select v-model="instructions" @change="onChangeInstructions">
-          <option value="instructions.default">Chat - Instructions</option>
-          <option value="instructions.docquery">Document query - Instructions</option>
-          <option value="instructions.titling">Chat title - Instructions</option>
-          <option value="instructions.titling_user">Chat title - Prompt</option>
-          <option value="plugins.image.description">Image Plugin - Description (1024 characters max)</option>
-          <option value="plugins.video.description">Video Plugin - Description (1024 characters max)</option>
-          <option value="plugins.memory.description">Memory Plugin - Description (1024 characters max)</option>
-          <option value="instructions.scratchpad.system">Scratchpad - Instructions</option>
-          <option value="instructions.scratchpad.prompt">Scratchpad - Prompt</option>
-          <option value="instructions.scratchpad.spellcheck">Scratchpad - Spellcheck</option>
-          <option value="instructions.scratchpad.improve">Scratchpad - Improve</option>
-          <option value="instructions.scratchpad.takeaways">Scratchpad - Takeaways</option>
-          <option value="instructions.scratchpad.title">Scratchpad - Title</option>
-          <option value="instructions.scratchpad.simplify">Scratchpad - Simplify</option>
-          <option value="instructions.scratchpad.expand">Scratchpad - Expand</option>
-          <option value="instructions.scratchpad.complete">Scratchpad - Complete</option>
+          <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
+          <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
+          <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
+          <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
+          <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
+          <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
+          <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>
+          <option value="instructions.scratchpad.system">{{ t('settings.advanced.instructions.scratchpad_system') }}</option>
+          <option value="instructions.scratchpad.prompt">{{ t('settings.advanced.instructions.scratchpad_prompt') }}</option>
+          <option value="instructions.scratchpad.spellcheck">{{ t('settings.advanced.instructions.scratchpad_spellcheck') }}</option>
+          <option value="instructions.scratchpad.improve">{{ t('settings.advanced.instructions.scratchpad_improve') }}</option>
+          <option value="instructions.scratchpad.takeaways">{{ t('settings.advanced.instructions.scratchpad_takeaways') }}</option>
+          <option value="instructions.scratchpad.title">{{ t('settings.advanced.instructions.scratchpad_title') }}</option>
+          <option value="instructions.scratchpad.simplify">{{ t('settings.advanced.instructions.scratchpad_simplify') }}</option>
+          <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
+          <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
         </select>
-        <textarea v-model="prompt" @change="save" />
-        <a href="#" @click="onResetDefaultInstructions">Reset to default value</a>
+        <textarea v-model="prompt" @change="save" @keyup="save" />
+        <a href="#" @click="onResetDefaultInstructions" v-if="isPromptOverridden">{{ t('settings.advanced.resetToDefault') }}</a>
+        <span v-else>{{ t('settings.advanced.overridingHelp') }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { t, i18nInstructions } from '../services/i18n'
 
-import { ref, } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
-import defaults from '../../defaults/settings.json'
+import { anyDict } from '../types/index'
 
 const prompt = ref(null)
+const isPromptOverridden = ref(false)
 const instructions = ref('instructions.default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
@@ -74,23 +76,12 @@ const load = () => {
 }
 
 const onChangeInstructions = () => {
-  const tokens = instructions.value.split('.')
-  let promptValue = store.config
-  for (const token of tokens) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
-    promptValue = promptValue[token]
-  }
-  prompt.value = promptValue
+  prompt.value = i18nInstructions(store.config, instructions.value)
+  isPromptOverridden.value = (prompt.value !== i18nInstructions(null, instructions.value));
 }
 
 const onResetDefaultInstructions = () => {
-  const tokens = instructions.value.split('.')
-  let defaultValue = defaults
-  for (const token of tokens) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
-    defaultValue = defaultValue[token]
-  }
-  prompt.value = defaultValue
+  prompt.value = i18nInstructions(null, instructions.value)
   save()
 }
 
@@ -103,21 +94,26 @@ const save = () => {
   store.config.llm.imageResize = parseInt(imageResize.value)
 
   // update prompt
-  const tokens = instructions.value.split('.')
-  let config = store.config
-  for (let i = 0; i < tokens.length - 1; i++) {
-    // @ts-expect-error - instructions are InstructionsConfig keys
-    config = config[tokens[i]]
-  }
-  // @ts-expect-error - instructions are InstructionsConfig keys
-  config[tokens[tokens.length - 1]] = prompt.value
+  const defaultInstructions = i18nInstructions(null, instructions.value)
+  isPromptOverridden.value = (prompt.value !== defaultInstructions);
+  instructions.value.split('.').reduce((acc, key, i, arr) => {
+    if (i === arr.length - 1) {
+      if (isPromptOverridden.value) {
+        acc[key] = prompt.value
+      } else {
+        delete acc[key]
+      }
+    } else if (!acc[key]) {
+      acc[key] = {}
+    } 
+    return acc[key]
+  }, store.config as anyDict)
 
   // save
   store.saveSettings()
 }
 
 defineExpose({ load })
-
 </script>
 
 <style scoped>
@@ -127,7 +123,6 @@ defineExpose({ load })
 </style>
 
 <style scoped>
-
 .checkbox label {
   width: 370px;
 }
@@ -139,13 +134,16 @@ hr {
   border-top: 1px solid var(--control-bg-color);
   margin: 1em 0;
   padding: 0;
-
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+form .group label {
+  min-width: 180px;
 }
 
 .subgroup select {
@@ -156,5 +154,4 @@ input::-webkit-inner-spin-button {
   width: 100%;
   height: 100px;
 }
-
 </style>

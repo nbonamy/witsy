@@ -1,24 +1,28 @@
-
 <template>
   <div>
     <div class="group">
-      <label>API key</label>
+      <label>{{ t('settings.engines.apiKey') }}</label>
       <div class="subgroup">
         <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
-        <a href="https://cloud.cerebras.ai/platform/" target="_blank">Get your API key</a>
+        <a href="https://cloud.cerebras.ai/platform/" target="_blank">{{ t('settings.engines.getApiKey') }}</a>
       </div>
     </div>
     <div class="group">
-      <label>Chat model</label>
+      <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
           <option v-for="model in chat_models" :key="model.id" :value="model.id">
             {{ model.name }}
           </option>
         </select>
-        <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">More about Cerebras models</a>
+        <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">{{ t('settings.engines.cerebras.aboutModels') }}</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+    </div>
+    <div class="group">
+      <label></label>
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
+      {{  t('settings.engines.disableTools') }}
     </div>
   </div>
 </template>
@@ -27,11 +31,13 @@
 
 import { ref } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
-const refreshLabel = ref('Refresh')
+const refreshLabel = ref(t('common.refresh'))
+const disableTools = ref(false)
 const chat_model = ref(null)
 const chat_models = ref([])
 
@@ -39,16 +45,17 @@ const load = () => {
   apiKey.value = store.config.engines.cerebras?.apiKey || ''
   chat_models.value = store.config.engines.cerebras?.models?.chat || []
   chat_model.value = store.config.engines.cerebras?.model?.chat || ''
+  disableTools.value = store.config.engines.cerebras?.disableTools || false
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing…'
+  refreshLabel.value = t('common.refreshing')
   setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
 }
 
 const getModels = async () => {
@@ -58,7 +65,7 @@ const getModels = async () => {
   let success = await llmFactory.loadModels('cerebras')
   if (!success) {
     chat_models.value = []
-    setEphemeralRefreshLabel('Error!')
+    setEphemeralRefreshLabel(t('common.error'))
     return
   }
 
@@ -66,7 +73,7 @@ const getModels = async () => {
   load()
 
   // done
-  setEphemeralRefreshLabel('Done!')
+  setEphemeralRefreshLabel(t('common.done'))
 
 }
 
@@ -81,6 +88,7 @@ const onKeyChange = () => {
 const save = () => {
   store.config.engines.cerebras.apiKey = apiKey.value
   store.config.engines.cerebras.model.chat = chat_model.value
+  store.config.engines.cerebras.disableTools = disableTools.value
   store.saveSettings()
 }
 

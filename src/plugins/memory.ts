@@ -2,6 +2,7 @@
 import { anyDict } from 'types/index'
 import { PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
+import { i18nInstructions } from '../services/i18n'
 
 export default class extends Plugin {
 
@@ -19,7 +20,7 @@ export default class extends Plugin {
 
   getDescription(): string {
     // https://python.langchain.com/docs/versions/migrating_memory/long_term_memory_agent/
-    return this.config.description
+    return i18nInstructions({ plugins: { memory: this.config } }, 'plugins.memory.description')
   }
 
   getPreparationDescription(): string {

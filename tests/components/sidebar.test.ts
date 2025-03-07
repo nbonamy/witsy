@@ -44,13 +44,13 @@ test('No chat', async () => {
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .toolbar #new-chat').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('new-chat', null)
+  expect(emitEventMock).toHaveBeenLastCalledWith('new-chat', null)
 })
 
 test('Open Settings', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .footer #open-settings').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('open-settings', { initialTab: 'general'})
+  expect(emitEventMock).toHaveBeenLastCalledWith('open-settings', { initialTab: 'general'})
 })
 
 // test('Switch to Folder Mode', async () => {
@@ -75,7 +75,7 @@ test('Delete Chat', async () => {
   await wrapper.find('.sidebar .footer #select').trigger('click')
   await wrapper.findAll('.sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sidebar .footer.actions #delete').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('delete-chat', [store.history.chats[0].uuid])
+  expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)
@@ -88,7 +88,7 @@ test('Move Chat', async () => {
   await wrapper.find('.sidebar .footer #select').trigger('click')
   await wrapper.findAll('.sidebar .chats .chat')[0].trigger('click')
   await wrapper.find('.sidebar .footer.actions #move').trigger('click')
-  expect(emitEventMock).toHaveBeenCalledWith('move-chat', [store.history.chats[0].uuid])
+  expect(emitEventMock).toHaveBeenLastCalledWith('move-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)

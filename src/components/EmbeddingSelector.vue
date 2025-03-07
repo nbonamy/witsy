@@ -1,12 +1,12 @@
 <template>
   <div class="group">
-    <label>Embedding Provider</label>
+    <label>{{ t('embedding.provider') }}</label>
     <select v-model="engine" @change="onChangeEngine" required :disabled="disabled">
       <option v-for="e in engines" :key="e.id" :value="e.id">{{ e.name }}</option>
     </select>
   </div>
   <div class="group">
-    <label>Embedding Model</label>
+    <label>{{ t('embedding.model') }}</label>
     <select v-model="model" @change="onChangeModel" required :disabled="disabled">
       <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
     </select>
@@ -14,9 +14,15 @@
   </div>
   <div class="group" style="margin-top: -8px" v-if="engine !== 'ollama'">
     <label></label>
-    <span>Make sure you enter your API key in the Models pane of Witsy Settings.</span>
+    <span>{{ t('embedding.apiKeyReminder') }}</span>
   </div>
-  <OllamaModelPull v-if="engine === 'ollama'" :pullable-models="getEmbeddingModels" info-url="https://ollama.com/blog/embedding-models" info-text="Browse models" @done="onRefresh"/>
+  <OllamaModelPull 
+    v-if="engine === 'ollama'" 
+    :pullable-models="getEmbeddingModels" 
+    info-url="https://ollama.com/blog/embedding-models" 
+    :info-text="t('embedding.browse')" 
+    @done="onRefresh"
+  />
 </template>
 
 <script setup lang="ts">
@@ -25,6 +31,7 @@ import { CustomEngineConfig } from '../types/config'
 import { Model } from 'multi-llm-ts'
 import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import { getEmbeddingModels } from '../llms/ollama'
 import LlmFactory from '../llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
@@ -89,13 +96,13 @@ const onChangeModel = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = 'Refreshing…'
+  refreshLabel.value = t('common.refreshing')
   setTimeout(() => getModels(), 500)
 }
 
 const setEphemeralRefreshLabel = (text: string) => {
   refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = 'Refresh', 2000)
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
 }
 
 const getModels = async () => {
@@ -104,7 +111,7 @@ const getModels = async () => {
   const llmFactory = new LlmFactory(store.config)
   const success = await llmFactory.loadModels('ollama')
   if (!success) {
-    setEphemeralRefreshLabel('Error!')
+    setEphemeralRefreshLabel(t('common.error'))
     return
   }
 
@@ -115,7 +122,7 @@ const getModels = async () => {
   onChangeEngine()
 
   // done
-  setEphemeralRefreshLabel('Done!')
+  setEphemeralRefreshLabel(t('common.done'))
 
 }
 

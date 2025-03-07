@@ -1,31 +1,30 @@
-
 <template>
   <div class="response messages openai size4">
     <MessageItem :message="message" :show-role="false" :show-actions="false"/>
     <div class="actions">
       <MessageItemActionCopy :message="message" ref="actionCopy" />
       <div class="action replace" v-if="!isMas && showReplace && !message.transient" @click="onReplace">
-        <BIconArrowLeftRight /> Replace
+        <BIconArrowLeftRight /> {{ t('common.replace') }}
       </div>
       <div class="action insert" v-if="!isMas && !message.transient" @click="onInsert">
-        <BIconArrowReturnLeft /> Insert
+        <BIconArrowReturnLeft /> {{ t('common.insert') }}
       </div>
       <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
       <div class="action continue" v-if="!message.transient" @click="onChat">
-        <BIconChatSquare /> Chat
+        <BIconChatSquare /> {{ t('common.chat') }}
       </div>
       <div class="action scratchpad" v-if="!message.transient" @click="onScratchPad">
-        <BIconPen /> Write
+        <BIconPen /> {{ t('common.write') }}
       </div>
       <div class="action retry" v-if="!message.transient" @click="onRetry(message)">
-        <BIconArrowCounterclockwise /> Retry
+        <BIconArrowCounterclockwise /> {{ t('common.retry') }}
       </div>
       <div class="action spacer" />
       <div class="action clear" @click="onClear" v-if="showClear">
-        <BIconXCircle />  Clear
+        <BIconXCircle /> {{ t('common.clear') }}
       </div>
       <div class="action close" @click="onClose">
-        <span class="narrow">Esc</span> Close
+        <span class="narrow">{{ t('common.esc') }}</span> {{ t('common.close') }}
       </div>
     </div>
   </div>
@@ -36,6 +35,7 @@
 
 import { ref, onMounted, onUnmounted, PropType } from 'vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'

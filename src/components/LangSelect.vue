@@ -1,41 +1,63 @@
 
 <template>
-  <select name="language" v-model="language" @change="emit('change')">
-    <option value="">{{ defaultText }}</option>
-    <option value="en">🇬🇧 English</option>
-    <option value="es">🇪🇸 Spanish</option>
-    <option value="fr">🇫🇷 French</option>
-    <option value="de">🇩🇪 German</option>
-    <option value="it">🇮🇹 Italian</option>
-    <option value="pt">🇵🇹 Portuguese</option>
-    <option value="nl">🇳🇱 Dutch</option>
-    <option value="pl">🇵🇱 Polish</option>
-    <option value="ru">🇷🇺 Russian</option>
-    <option value="ja">🇯🇵 Japanese</option>
-    <option value="ko">🇰🇷 Korean</option>
-    <option value="zh">🇨🇳 Chinese</option>
-    <option value="vi">🇻🇳 Vietnamese</option>
-    <option value="th">🇹🇭 Thai</option>
-    <option value="id">🇮🇩 Indonesian</option>
-    <option value="hi">🇮🇳 Hindi</option>
-    <option value="ar">🇸🇦 Arabic</option>
-    <option value="tr">🇹🇷 Turkish</option>
-    <option value="ms">🇲🇾 Malay</option>
-    <option value="fil">🇵🇭 Filipino</option>
-    <option value="sw">🇰🇪 Swahili</option>
+  <select name="locale" v-model="locale" @change="emit('change')">
+    <option value="">{{ $t(defaultText) }}</option>
+    <option v-for="language in languages" :key="language.locale" :value="language.locale">
+      {{ $t(language.label) }}
+    </option>
   </select>
 </template>
 
 <script setup lang="ts">
 
-const language = defineModel()
+import { computed } from 'vue'
+
+const allLanguages = [
+  { locale: 'en-US', label: '🇬🇧 English' },
+  { locale: 'fr-FR', label: '🇫🇷 Français' },
+  { locale: 'es-ES', label: '🇪🇸 Español' },
+  { locale: 'de-DE', label: '🇩🇪 Deutsch' },
+  { locale: 'it-IT', label: '🇮🇹 Italiano' },
+  { locale: 'pt-PT', label: '🇵🇹 Português' },
+  { locale: 'nl-NL', label: '🇳🇱 Nederlands' },
+  { locale: 'pl-PL', label: '🇵🇱 Polski' },
+  { locale: 'ru-RU', label: '🇷🇺 Русский' },
+  { locale: 'ja-JP', label: '🇯🇵 日本語' },
+  { locale: 'ko-KR', label: '🇰🇷 한국어' },
+  { locale: 'zh-CN', label: '🇨🇳 中文' },
+  { locale: 'vi-VN', label: '🇻🇳 Tiếng Việt' },
+  { locale: 'th-TH', label: '🇹🇭 ไทย' },
+  { locale: 'id-ID', label: '🇮🇩 Bahasa Indonesia' },
+  { locale: 'hi-IN', label: '🇮🇳 हिन्दी' },
+  { locale: 'ar-SA', label: '🇸🇦 العربية' },
+  { locale: 'tr-TR', label: '🇹🇷 Türkçe' },
+  { locale: 'ms-MY', label: '🇲🇾 Bahasa Melayu' },
+  { locale: 'sw-KE', label: '🇰🇪 Kiswahili' },
+]
+
+const locale = defineModel()
 
 const props = defineProps({
   defaultText: {
     type: String,
-    default: '🤖 Let LLM decide'
+    default: 'common.language.auto'
+  },
+  filter: {
+    type: Array<String>,
+    default: []
   }
 })
+
+const isVisible = (locale: string): boolean => {
+  try {
+    if (props.filter.length == 0) return true
+    return props.filter.includes(locale.substring(0, 2))
+  } catch (e) {
+    return true
+  }
+}
+
+const languages = computed(() => allLanguages.filter(language => isVisible(language.locale)))
 
 const emit = defineEmits(['change']);
 

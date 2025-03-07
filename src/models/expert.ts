@@ -6,8 +6,8 @@ export default class Expert implements ExpertBase {
   
   id: string;
   type: 'system' | 'user';
-  name: string;
-  prompt: string;
+  name?: string;
+  prompt?: string;
   state: 'enabled' | 'disabled' | 'deleted';
   triggerApps: ExternalApp[];
 
