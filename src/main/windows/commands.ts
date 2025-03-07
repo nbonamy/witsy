@@ -1,12 +1,14 @@
 
 import { anyDict } from '../../types/index';
-import { BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen } from './index';
 
 export let commandPicker: BrowserWindow = null;
 
 const width = 300;
 const height = 320;
+
+let commanderStartTime: number|undefined
 
 export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
@@ -43,8 +45,20 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     commandPicker.focus();
 
     setTimeout(() => {
+
+      // not working on windows
+      // but needed for macos
+      app.focus({ steal: true });
+
+      // show
       commandPicker.setOpacity(1);
       commandPicker.on('blur', closeCommandPicker);
+      
+      // log
+      if (commanderStartTime) {
+        console.log(`Command picker total time: ${Date.now() - commanderStartTime}ms`);
+      }
+
     }, process.platform === 'win32' ? 250 : 0);
 
   });
@@ -55,6 +69,9 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 }
 
 export const openCommandPicker = (params: anyDict): BrowserWindow => {
+
+  // save
+  commanderStartTime = params.startTime;
 
   // if we don't have a window, create one
   if (!commandPicker || commandPicker.isDestroyed()) {

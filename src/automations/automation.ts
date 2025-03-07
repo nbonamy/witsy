@@ -29,7 +29,7 @@ export default class {
 
     // log
     if (text?.length) {
-      console.debug(`Text grabbed: ${text.slice(0, 50)}… [${new Date().getTime() - start}ms]`);
+      console.debug(`Text grabbed: ${text.trimEnd().slice(0, 50)}… [${new Date().getTime() - start}ms]`);
     }
 
     // done

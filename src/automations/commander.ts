@@ -26,6 +26,9 @@ export default class Commander {
       return
     }
 
+    // start time
+    const startTime = Date.now();
+
     // localization
     const t = useI18n(app);
 
@@ -63,7 +66,7 @@ export default class Commander {
     // go on with a cached text id
     const textId = putCachedText(text);
     const sourceApp = await automator.getForemostApp();
-    window.openCommandPicker({ textId, sourceApp });
+    window.openCommandPicker({ textId, sourceApp, startTime });
 
   }
 
