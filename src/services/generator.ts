@@ -118,47 +118,55 @@ export type GenerationResult =
         
         // missing api key
         if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
+          console.error('Missing API key:', error.status, message)
           response.setText(t('generator.errors.missingApiKey'))
           rc = 'missing_api_key'
         }
         
         // out of credits
         else if ([400, 402].includes(error.status) && (message.includes('credit') || message.includes('balance'))) {
+          console.error('Out of credits:', error.status, message)
           response.setText(t('generator.errors.outOfCredits'))
           rc = 'out_of_credits'
         
         // quota exceeded
         } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
+          console.error('Quota exceeded:', error.status, message)
           response.setText(t('generator.errors.quotaExceeded'))
           rc = 'quota_exceeded'
 
         // context length or function description too long
-        } else if ([400].includes(error.status) && (message.includes('context length') || message.includes('too long'))) {
+        } else if ([400, 429].includes(error.status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
           if (message.includes('function.description')) {
+            console.error('Function description too long:', error.status, message)
             response.setText(t('generator.errors.pluginDescriptionTooLong'))
             rc = 'function_description_too_long'
           } else {
+            console.error('Context too long:', error.status, message)
             response.setText(t('generator.errors.contextTooLong'))
             rc = 'context_too_long'
           }
         
         // function call not supported
         } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool use') || message.includes('tool choice'))) {
-          console.log('Model does not support function calling: removing tool and retrying')
+          console.warn('Model does not support function calling:', error.status, message)
           llm.clearPlugins()
           return this.generate(llm, messages, opts, callback)
 
         // streaming not supported
         } else if ([400].includes(error.status) && message.includes('\'stream\' does not support true')) {
+          console.warn('Model does not support streaming:', error.status, message)
           rc = 'streaming_not_supported'
 
         // invalid model
         } else if ([404].includes(error.status) && message.includes('model')) {
+          console.error('Provider reports invalid model:', error.status, message)
           response.setText(t('generator.errors.invalidModel'))
           rc = 'invalid_model'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
+          console.error('Error while generating text:', error.status, error.message)
           if (response.content === '') {
             if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p) {
               response.setText(t('generator.errors.tryWithoutParams'))
