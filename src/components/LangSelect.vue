@@ -3,7 +3,10 @@
   <select name="locale" v-model="locale" @change="emit('change')">
     <option value="">{{ $t(defaultText) }}</option>
     <option v-for="language in languages" :key="language.locale" :value="language.locale">
-      {{ $t(language.label) }}
+      {{ language.label }}
+    </option>
+    <option v-for="language in extraLanguages" :key="language.locale" :value="language.locale">
+      {{ language.label }}
     </option>
   </select>
 </template>
@@ -43,7 +46,7 @@ const props = defineProps({
     default: 'common.language.auto'
   },
   filter: {
-    type: Array<String>,
+    type: Array<string>,
     default: []
   }
 })
@@ -58,6 +61,11 @@ const isVisible = (locale: string): boolean => {
 }
 
 const languages = computed(() => allLanguages.filter(language => isVisible(language.locale)))
+
+const extraLanguages = computed(() => {
+  return props.filter.filter(locale => !allLanguages.map(language => language.locale.substring(0, 2)).includes(locale))
+    .map(locale => ({ locale, label: locale }))
+})
 
 const emit = defineEmits(['change']);
 
