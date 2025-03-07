@@ -42,6 +42,7 @@ const video_model = ref(null)
 const video_models = ref([])
 
 const replicate_models = ref([
+  'wavespeedai/wan-2.1-t2v-480p',
   'minimax/video-01',
   'minimax/video-01-live',
   'tencent/hunyuan-video',

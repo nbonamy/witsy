@@ -247,7 +247,7 @@
       "model": {
         "chat": "",
         "image": "black-forest-labs/flux-schnell",
-        "video": "minimax/video-01"
+        "video": "wavespeedai/wan-2.1-t2v-480p"
       }
     },
     "elevenlabs": {
