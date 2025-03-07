@@ -1,6 +1,6 @@
 
 import { ToolCallInfo, MessageType, Message as IMessage } from 'types'
-import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase } from 'multi-llm-ts'
+import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase, LlmChunkContent } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'
 
@@ -14,6 +14,7 @@ export default class Message extends MessageBase implements IMessage {
   expert?: Expert
   toolCall?: ToolCallInfo
   usage?: LlmUsage
+  transient: boolean
   declare attachment: Attachment
 
   constructor(role: LlmRole, content?: string) {
@@ -27,6 +28,7 @@ export default class Message extends MessageBase implements IMessage {
     this.toolCall = null
     this.attachment = null
     this.usage = null
+    this.transient = (content == null)
     if (content === undefined) {
       this.setText(null)
     } else if (typeof content === 'string') {
@@ -73,6 +75,13 @@ export default class Message extends MessageBase implements IMessage {
     this.type = 'image'
     this.content = url
     this.transient = false
+  }
+
+  appendText(chunk: LlmChunkContent) {
+    super.appendText(chunk)
+    if (chunk?.done) {
+      this.transient = false
+    }
   }
 
   setToolCall(toolCall: LlmChunkTool): void {
