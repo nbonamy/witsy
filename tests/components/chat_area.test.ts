@@ -349,6 +349,4 @@ test('Model settings defaults', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
 
-
-
 })
