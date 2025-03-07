@@ -91,20 +91,58 @@ export default class {
     }
   
     // add common stuff
-    //@ts-expect-error uknown
     menuItems = menuItems.concat([
-      { label: t('tray.menu.quickPrompt'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt), click: PromptAnywhere.open },
-      { label: t('tray.menu.newChat'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat), click: window.openMainWindow },
-      { label: t('tray.menu.scratchpad'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad), click: () => window.openScratchPad() },
-      { label: t('tray.menu.runAiCommand'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command), click: Commander.initCommand },
-      { type: 'separator' },
-      { label: t('tray.menu.readAloud'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud), click: ReadAloud.read },
-      { label: t('tray.menu.startDictation'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe), click: Transcriber.initTranscription },
-      { label: t('tray.menu.voiceMode'), accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime), click: window.openRealtimeChatWindow },
-      { type: 'separator' },
-      { label: t('tray.menu.settings'), click: window.openSettingsWindow },
-      { type: 'separator' },
-      { label: t('tray.menu.quit'), /*accelerator: 'Command+Q', */click: () => this.quit() }
+      {
+        label: t('tray.menu.quickPrompt'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt),
+        click: () => PromptAnywhere.open(),
+      },
+      {
+        label: t('tray.menu.newChat'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat),
+        click: () => window.openMainWindow(),
+      },
+      {
+        label: t('tray.menu.scratchpad'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad),
+        click: () => window.openScratchPad()
+      },
+      {
+        label: t('tray.menu.runAiCommand'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command),
+        click: () => Commander.initCommand(this.app),
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: t('tray.menu.readAloud'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud),
+        click: () => ReadAloud.read(this.app),
+      },
+      {
+        label: t('tray.menu.startDictation'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.transcribe),
+        click: () => Transcriber.initTranscription(),
+      },
+      {
+        label: t('tray.menu.voiceMode'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.realtime),
+        click: () => window.openRealtimeChatWindow(),
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: t('tray.menu.settings'),
+        click: window.openSettingsWindow },
+      {
+        type: 'separator'
+      },
+      {
+        label: t('tray.menu.quit'),
+        /*accelerator: 'Command+Q', */
+        click: () => this.quit() }
     ]);
 
     // return
