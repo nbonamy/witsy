@@ -75,9 +75,13 @@ export const getLocaleMessages = (app: App): anyDict => {
     const files = fs.readdirSync(localesPath)
     for (const file of files) {
       if (file.endsWith('.json')) {
-        const locale = file.replace('.json', '')
-        const data = fs.readFileSync(path.join(localesPath, file), 'utf8')
-        messages[locale] = JSON.parse(data)
+        try {
+          const locale = file.replace('.json', '')
+          const data = fs.readFileSync(path.join(localesPath, file), 'utf8')
+          messages[locale] = JSON.parse(data)
+        } catch (err: any) {
+          console.error(`Failed to load locale file "${file}":`, err.message)
+        }
       }
     }
   }
