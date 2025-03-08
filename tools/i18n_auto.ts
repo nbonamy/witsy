@@ -3,8 +3,9 @@
 import * as llm from 'multi-llm-ts'
 import fs from 'fs'
 
-const DEFAULT_ENGINE = 'anthropic'
-const DEFAULT_MODEL = 'claude-3-7-sonnet-20250219'
+const DEFAULT_ENGINE = 'openai'
+const DEFAULT_MODEL = 'gpt-4o-mini'
+const PROCESS_SIZE = 20
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -24,6 +25,8 @@ const langCode = args[0];
 const langName = args[1];
 
 console.log(`Translating to ${langName} (${langCode})...`);
+
+const engine = llm.igniteEngine(process.env.ENGINE || DEFAULT_ENGINE, { apiKey: process.env.API_KEY })
 
 const system = `You are an assistant helping to translate software strings across languages.
 You are given a list of strings to translate described as a JSON object containing:
@@ -45,12 +48,94 @@ Example response:
 ]
 `;
 
+type TranslationEntry = {
+  key: string
+  en: string
+  fr: string
+}
+
+const translate = async (entries: TranslationEntry[], tr: Record<string, any>) => {
+  
+  let result: llm.LlmResponse|undefined = undefined
+
+  try {
+
+    if (entries.length === 0) {
+      return
+    }
+    
+    result = await engine.complete(process.env.MODEL || DEFAULT_MODEL, [
+      new llm.Message('system', system),
+      new llm.Message('user', JSON.stringify(entries)),
+    ])
+
+    const parsedResult = JSON.parse(result.content!)
+      
+    for (const entry of parsedResult) {
+
+      entry.key.split('.').reduce((acc: any, key: string, index: number, arr: string[]) => {
+        if (index === arr.length - 1) {
+          acc[key] = entry.translation
+        } else {
+          if (!acc[key]) {
+            acc[key] = {}
+          }
+        }
+        return acc[key]
+      }, tr)
+
+    }
+  
+  } catch (e) {
+    if (result) {
+      console.error('Error parsing translation:', result)
+    } else {
+      console.error('Error translating:', e)
+    }
+  }
+
+}
+
+const translateLevel = async (
+  root: string,
+  en: Record<string, any>,
+  fr: Record<string, any>,
+  tr: Record<string, any>,
+  queue: TranslationEntry[],
+): Promise<void> => {
+
+  // get keys
+  const keys: string[] = []
+  for (const key of Object.keys(en)) {
+    if (typeof en[key] === 'string') {
+      keys.push(key)
+    } else if (fr[key]) {
+      if (!tr[key]) {
+        tr[key] = {}
+      }
+      await translateLevel(root === '' ? key : `${root}.${key}`, en[key], fr[key], tr[key], queue)
+      continue
+    }
+  }
+
+  // now remove the ones who are not translated in french or already exist in tr
+  for (const key of keys) {
+
+    // if not needed or already translated
+    if (tr[key] || !fr[key]) {
+      continue
+    }
+
+    // add to queue
+    queue.push({ key: `${root}.${key}`, en: en[key], fr: fr[key] })
+
+  }
+
+}
 
 (async () => {
   
   llm.logger.set(() => { /* empty */ })
-
-  const engine = llm.igniteEngine(process.env.ENGINE || DEFAULT_ENGINE, { apiKey: process.env.API_KEY })
 
   const en = JSON.parse(await fs.promises.readFile('locales/en.json', 'utf8'))
   const fr = JSON.parse(await fs.promises.readFile('locales/fr.json', 'utf8'))
@@ -65,84 +150,33 @@ Example response:
     console.log(`Creating new translation file for ${langName} (${langCode})`)
   }
 
-  const firstLevelKeys = Object.keys(en)
-
-  for (const key of firstLevelKeys) {
-
-    if (translations[key]) {
-      console.log(`Skipping ${key} (already translated)`)
-      continue
-    }
-
-    const flatten = (obj: Record<string, any>, prefix: string = '') => {
-      if (!obj) {
-        return {}
-      }
-      return Object.keys(obj).reduce((acc, k: string) => {
-        const pre = prefix.length ? (prefix + '.') : ''
-        if (typeof obj[k] === 'string') {
-          acc[pre + k] = obj[k]
-        } else if (typeof obj[k] === 'object') {
-          Object.assign(acc, flatten(obj[k], pre + k))
-        }
-        return acc
-      }, {} as Record<string, any>)
-    }
-
-    const enFlat = flatten(en[key])
-    const frFlat = flatten(fr[key])
-
-    const entries: any[] = []
-    for (const k in enFlat) {
-      if (!frFlat[k]) {
-        continue
-      }
-      entries.push({
-        key: k,
-        en: enFlat[k],
-        fr: frFlat[k]
-      })
-    }
-
-    if (entries.length === 0) {
-      console.log(`No strings to translate in ${key}`)
-      continue
-    }
-
-    console.log(`Translating ${entries.length} strings in ${key}...`)
-    
-    const result = await engine.complete(process.env.MODEL || DEFAULT_MODEL, [
-      new llm.Message('system', system),
-      new llm.Message('user', JSON.stringify(entries)),
-    ])
-
-    try {
-      
-      const parsedResult = JSON.parse(result.content!)
-      
-      translations[key] = {}
-      for (const entry of parsedResult) {
-        const keys = entry.key.split('.')
-        let current = translations[key]
-        while (keys.length > 1) {
-          const k = keys.shift()!
-          if (!current[k]) {
-            current[k] = {}
-          }
-          current = current[k]
-        }
-        current[keys[0]] = entry.translation
-      }
-
-      await fs.promises.writeFile(targetFile, JSON.stringify(translations, null, 2))
-      //console.log(`Updated ${targetFile} with new translations for ${key}`)
-
-    } catch (error) {
-      console.error(`Failed to parse result for ${key}:`, error)
-      console.error('Raw response:', result.content)
-    }
+  // let's start
+  const entries: TranslationEntry[] = [];
+  await translateLevel('', en, fr, translations, entries)
+  if (entries.length === 0) {
+    console.log('No strings to translate!')
+    process.exit(0)
   }
 
+  // log
+  let remaining = entries.length
+  console.log(`Found ${remaining} strings to translate...`)
+
+  // build chunks of PROCESS_SIZE
+  const chunks: any[] = []
+  while (entries.length > 0) {
+    chunks.push(entries.splice(0, PROCESS_SIZE))
+  }
+
+  // now process each chunk
+  for (const chunk of chunks) {
+    remaining -= chunk.length
+    console.log(`Translating ${chunk.length} strings. ${remaining} remaining...`)
+    await translate(chunk, translations)
+    await fs.promises.writeFile(targetFile, JSON.stringify(translations, null, 2))
+  }
+
+  // done
   console.log(`\nDONE! Successfully translated to ${langName} (${langCode})`)
   process.exit(0)
 

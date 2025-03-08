@@ -88,7 +88,31 @@ async function checkMissingTranslations() {
     
     }
     
-    const allKeys = Array.from(keyUsages.keys())
+    let allKeys = Array.from(keyUsages.keys())
+
+    // add keys from en.json
+    const flatten = (obj: Record<string, any>, prefix: string = '') => {
+      if (!obj) {
+        return {}
+      }
+      return Object.keys(obj).reduce((acc, k: string) => {
+        const pre = prefix.length ? (prefix + '.') : ''
+        if (typeof obj[k] === 'string') {
+          acc[pre + k] = obj[k]
+        } else if (typeof obj[k] === 'object') {
+          Object.assign(acc, flatten(obj[k], pre + k))
+        }
+        return acc
+      }, {} as Record<string, any>)
+    }
+    const enKeys = flatten(locales.en)
+    Object.keys(enKeys).forEach(key => {
+      if (!allKeys.includes(key) && !key.startsWith('common.language.')) {
+        keyUsages.set(key, { key, files: [] })
+      }
+    })
+
+    allKeys = Array.from(keyUsages.keys())
     console.log(`Found ${allKeys.length} unique i18n keys in source files.`)
 
     // Check for missing translations
