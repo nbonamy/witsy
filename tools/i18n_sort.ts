@@ -2,36 +2,61 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
+import en from '../locales/en.json'
 
 // Function to sort a dictionary recursively
-function sortObjectRecursively(path: string, obj: any): any {
+function sortObjectRecursively(locale: string, path: string, obj: any): any {
   
   if (typeof obj !== 'object' || obj === null) {
     return obj
   }
 
-  if ([ 'common.language', 'commands.commands', 'experts.experts' ].includes(path.substring(1))) {
+  if ([ 'common.language' ].includes(path.substring(1))) {
+    return obj
+  }
+
+  if (locale === 'en' && [ 'commands.commands', 'experts.experts' ].includes(path.substring(1))) {
     return obj
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(sortObjectRecursively)
+    return obj.map((item: any) => sortObjectRecursively(locale, path, item))
   }
 
-  // Get all keys and sort them with special treatment for "common"
+  // Get all keys and sort:
+  // - "common" should be first
+  // - commands and experts are sorted as in English version
   const keys = Object.keys(obj)
   const sortedKeys = keys.sort((a, b) => {
+
+    // commands
+    if (path.startsWith('.commands.commands')) {
+      const aIndex = Object.keys(en.commands.commands).indexOf(a)
+      const bIndex = Object.keys(en.commands.commands).indexOf(b)
+      return aIndex - bIndex
+    }
+
+    // experts
+    if (path.startsWith('.experts.experts')) {
+      const aIndex = Object.keys(en.experts.experts).indexOf(a)
+      const bIndex = Object.keys(en.experts.experts).indexOf(b)
+      return aIndex - bIndex
+    }
+
     // If one of the keys is "common", it should come first
     if (a === 'common') return -1
     if (b === 'common') return 1
+
     // Otherwise, sort alphabetically
     return a.localeCompare(b)
+  
   })
+
 
   const result: any = {}
 
   for (const key of sortedKeys) {
-    result[key] = sortObjectRecursively(`${path}.${key}`, obj[key])
+    result[key] = sortObjectRecursively(locale, `${path}.${key}`, obj[key])
   }
 
   return result
@@ -41,8 +66,9 @@ function sortObjectRecursively(path: string, obj: any): any {
 function processJsonFile(filePath: string): void {
   try {
     const data = fs.readFileSync(filePath, 'utf8')
+    const locale = path.basename(filePath, '.json')
     const json = JSON.parse(data)
-    const sortedJson = sortObjectRecursively('', json)
+    const sortedJson = sortObjectRecursively(locale, '', json)
     fs.writeFileSync(filePath, JSON.stringify(sortedJson, null, 2) + '\n', 'utf8')
     console.log(`Processed: ${filePath}`)
   } catch (error) {
