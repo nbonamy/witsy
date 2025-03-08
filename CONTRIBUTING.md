@@ -28,6 +28,7 @@ Use [nvm](https://github.com/nvm-sh/nvm) to switch between Node.js versions.
   - **Linux**: `~/.config/Witsy`
 3. **Reload the App**: Reload the application to review the translation.
 4. **Select your language**: You should see your language in Settings | General. If you do not see the proper flag and name for your language you can add it to `src/components/LangSelect.vue`
-5. **Create a Pull Request**: Once you are satisfied with the translation, create a pull request for review.
+5. **Final Review**: Before committing you can run `./tools/i18n_check.ts` whcih should return no errors and finally `./tools/i18n_sort.ts` to clean your file!
+6. **Create a Pull Request**: Once you are satisfied with the translation, create a pull request for review.
 
 Thank you for your contributions!
