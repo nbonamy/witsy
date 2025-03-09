@@ -8,6 +8,8 @@ export let commandPicker: BrowserWindow = null;
 const width = 300;
 const height = 320;
 
+let commanderStartTime: number|undefined
+
 export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
   // open a new one
@@ -27,10 +29,18 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
   });
 
   commandPicker.on('show', () => {
+
+    // focus
     app.focus({ steal: true });
     commandPicker.moveTop();
     commandPicker.focusOnWebView();
-  });
+
+    // Log
+    if (commanderStartTime) {
+      console.log(`Command picker total time: ${Date.now() - commanderStartTime}ms`);
+    }
+
+  })
 
   commandPicker.on('blur', () => {
     closeCommandPicker();
@@ -42,6 +52,9 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 }
 
 export const openCommandPicker = (params: anyDict): BrowserWindow => {
+
+  // save
+  commanderStartTime = params.startTime;
 
   // if we don't have a window, create one
   if (!commandPicker || commandPicker.isDestroyed()) {
