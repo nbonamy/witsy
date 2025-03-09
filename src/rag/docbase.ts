@@ -1,9 +1,10 @@
 
 import { App } from 'electron'
-import { Configuration } from 'types/config'
-import { SourceType, DocRepoQueryResponseItem } from 'types/rag'
+import { Configuration } from '../types/config'
+import { SourceType, DocRepoQueryResponseItem } from '../types/rag'
 import defaultSettings from '../../defaults/settings.json'
 import DocumentSourceImpl from './docsource'
+import { loadSettings } from '../main/config'
 import VectorDB from './vectordb'
 import Embedder from './embedder'
 import Loader from './loader'
@@ -20,7 +21,6 @@ const EMBED_BATCH_SIZE = 20
 export default class DocumentBaseImpl {
 
   app: App
-  config: Configuration
   db: VectorDB
 
   uuid: string
@@ -29,9 +29,8 @@ export default class DocumentBaseImpl {
   embeddingModel: string
   documents: DocumentSourceImpl[]
 
-  constructor(app: App, config: Configuration, uuid: string, name: string, embeddingEngine: string, embeddingModel: string) {
+  constructor(app: App, uuid: string, name: string, embeddingEngine: string, embeddingModel: string) {
     this.app = app
-    this.config = config
     this.uuid = uuid
     this.name = name
     this.embeddingEngine = embeddingEngine
@@ -101,7 +100,8 @@ export default class DocumentBaseImpl {
     await this.connect()
 
     // needed
-    const loader = new Loader(this.config)
+    const config: Configuration = loadSettings(this.app)
+    const loader = new Loader(config)
     if (!loader.isParseable(source.type, source.origin)) {
       throw new Error('Unsupported document type')
     }
@@ -124,7 +124,7 @@ export default class DocumentBaseImpl {
     }
 
     // check the size
-    const maxDocumentSizeMB = this.config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
+    const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {
       console.log(`Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
       throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
@@ -139,7 +139,7 @@ export default class DocumentBaseImpl {
     }
 
     // now split
-    const splitter = new Splitter(this.config)
+    const splitter = new Splitter(config)
     const chunks = await splitter.split(text)
 
     // loose estimate of the batch size based on:
@@ -150,7 +150,7 @@ export default class DocumentBaseImpl {
     
     // now embed
     const documents = []
-    const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
+    const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
     while (chunks.length > 0) {
       const batch = chunks.splice(0, batchSize)
       //console.log(`Embedding ${batch.length} chunks`)
@@ -278,11 +278,12 @@ export default class DocumentBaseImpl {
   async query(text: string): Promise<DocRepoQueryResponseItem[]> {
 
     // needed
-    const searchResultCount = this.config.rag?.searchResultCount ?? defaultSettings.rag.searchResultCount
-    const relevanceCutOff = this.config.rag?.relevanceCutOff ?? defaultSettings.rag.relevanceCutOff
+    const config: Configuration = loadSettings(this.app)
+    const searchResultCount = config.rag?.searchResultCount ?? defaultSettings.rag.searchResultCount
+    const relevanceCutOff = config.rag?.relevanceCutOff ?? defaultSettings.rag.relevanceCutOff
 
     // now embed
-    const embedder = await Embedder.init(this.app, this.config, this.embeddingEngine, this.embeddingModel)
+    const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
     const query = await embedder.embed([text])
     //console.log('query', query)
 
