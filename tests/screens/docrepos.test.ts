@@ -4,6 +4,7 @@ import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import DocRepos from '../../src/screens/DocRepos.vue'
+import DocRepoConfig from '../../src/screens/DocRepoConfig.vue'
 
 enableAutoUnmount(afterAll)
 
@@ -87,6 +88,39 @@ test('Shows configuration', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await wrapper.find('.master .actions button.config').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('open-docrepo-config', null)
+})
+
+test('Updates configuration', async () => {
+  const wrapper: VueWrapper<any> = mount(DocRepoConfig)
+  wrapper.vm.load()
+  await wrapper.vm.$nextTick()
+  expect(wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
+  expect(wrapper.find<HTMLInputElement>('[name=chunkSize]').element.value).toBe('500')
+  expect(wrapper.find<HTMLInputElement>('[name=chunkOverlap]').element.value).toBe('50')
+  expect(wrapper.find<HTMLInputElement>('[name=searchResultCount]').element.value).toBe('5')
+  expect(wrapper.find<HTMLInputElement>('[name=relevanceCutOff]').element.value).toBe('0.2')
+
+  wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('2')
+  await wrapper.find('button[name=reset]').trigger('click')
+  expect(wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
+
+  wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('2')
+  wrapper.find<HTMLInputElement>('[name=chunkSize]').setValue('600')
+  wrapper.find<HTMLInputElement>('[name=chunkOverlap]').setValue('60')
+  wrapper.find<HTMLInputElement>('[name=searchResultCount]').setValue('6')
+  wrapper.find<HTMLInputElement>('[name=relevanceCutOff]').setValue('0.3')
+  await wrapper.find('button[name=save]').trigger('click')
+
+  expect(store.config.rag.maxDocumentSizeMB).toBe(2)
+  expect(store.config.rag.chunkSize).toBe(600)
+  expect(store.config.rag.chunkOverlap).toBe(60)
+  expect(store.config.rag.searchResultCount).toBe(6)
+  expect(store.config.rag.relevanceCutOff).toBe(0.3)
+
+  wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').setValue('3')
+  await wrapper.find('button[name=cancel]').trigger('click')
+  expect(store.config.rag.maxDocumentSizeMB).toBe(2)
+
 })
 
 test('Deletes base', async () => {
