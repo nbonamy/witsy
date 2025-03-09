@@ -108,6 +108,10 @@ const onChangeModel = () => {
   padding-top: 32px;
 }
 
+.linux form .toolbar {
+  padding-top: 24px;
+}
+
 form .toolbar {
   
   display: flex;
