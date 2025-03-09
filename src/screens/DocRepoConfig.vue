@@ -7,29 +7,29 @@
       <main>
         <div class="group">
           <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
-          <input v-model="maxDocumentSizeMB" />&nbsp;&nbsp;{{ t('docRepo.config.millionCharacters') }}
+          <input name="maxDocumentSizeMB" v-model="maxDocumentSizeMB" />&nbsp;&nbsp;{{ t('docRepo.config.millionCharacters') }}
         </div>
         <div class="group">
           <label>{{ t('docRepo.config.chunkSize') }}</label>
-          <input v-model="chunkSize" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
+          <input name="chunkSize" v-model="chunkSize" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
         </div>
         <div class="group">
           <label>{{ t('docRepo.config.chunkOverlap') }}</label>
-          <input v-model="chunkOverlap" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
+          <input name="chunkOverlap" v-model="chunkOverlap" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
         </div>
         <div class="group">
           <label>{{ t('docRepo.config.searchResultCount') }}</label>
-          <input v-model="searchResultCount" />
+          <input name="searchResultCount" v-model="searchResultCount" />
         </div>
         <div class="group">
           <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
-          <input v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
+          <input name="relevanceCutOff" v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
         </div>
       </main>
       <footer>
-        <button @click="onSave" class="default">{{ t('common.save') }}</button>
-        <button @click.prevent="onReset" formnovalidate>{{ t('common.reset') }}</button>
-        <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click="onSave" class="default">{{ t('common.save') }}</button>
+        <button name="reset" @click.prevent="onReset" formnovalidate>{{ t('common.reset') }}</button>
+        <button name="cancel" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </footer>
     </form>
   </dialog>
@@ -57,7 +57,11 @@ onMounted(() => {
 })
 
 const onOpen = () => {
-  document.querySelector<HTMLDialogElement>('#docrepoconfig').showModal()
+  document.querySelector<HTMLDialogElement>('#docrepoconfig')?.showModal()
+  load()
+}
+
+const load = () => {
   maxDocumentSizeMB.value = store.config.rag.maxDocumentSizeMB
   chunkSize.value = store.config.rag.chunkSize
   chunkOverlap.value = store.config.rag.chunkOverlap
@@ -83,7 +87,7 @@ const onSave = () => {
 }
 
 const onCancel = () => {
-  document.querySelector<HTMLDialogElement>('#docrepoconfig').close()
+  document.querySelector<HTMLDialogElement>('#docrepoconfig')?.close()
 }
 
 </script>
