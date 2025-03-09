@@ -334,6 +334,7 @@
       }
     },
     "defaults": {
+      "altWindowsCopy": "Alternate Copy Text Method",
       "lastOneUsed": "Last one used",
       "title": "Commands defaults"
     },
@@ -349,6 +350,10 @@
         "requiredFields": "All fields marked with * are required."
       }
     }
+  },
+  "createMedia": {
+    "image": "Image",
+    "video": "Video"
   },
   "docRepo": {
     "config": {
@@ -1664,6 +1669,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "Create Media...",
       "installUpdate": "Install update and restart...",
       "newChat": "New Chat",
       "quickPrompt": "Quick Prompt",

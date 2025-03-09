@@ -1,5 +1,8 @@
 
 import { Application } from '../types/automation';
+import { Configuration } from '../types/config';
+import { app } from 'electron';
+import { loadSettings } from '../main/config';
 import { runVbs } from '@el3um4s/run-vbs'
 import PowerShell from 'powershell'
 import autolib from 'autolib';
@@ -125,9 +128,12 @@ public class KeySender
 
 export default class extends NutAutomator {
 
+  config: Configuration
+  
   constructor() {
     super();
     this.setup();
+    this.config = loadSettings(app)
   }
 
   async getForemostApp(): Promise<Application|null> {
@@ -175,34 +181,34 @@ export default class extends NutAutomator {
 
     try {
 
-      // this should work on all keyboards
-      await this.executeControlKeyPowerShell('C')
-    
-    } catch {
+      if (this.config.automation.altWindowsCopy) {
 
-      try {
-        
+        // this should work on all keyboards
+        await this.executeControlKeyPowerShell('C')
+    
+      } else {
+
         // nut is faster but not always available
         if (!await this.setup()) throw new Error('nutjs not loaded');
         await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.C);
         await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.C);
 
-      } catch {
-
-        // fallback to vbs
-        const script = `
-          Set WshShell = WScript.CreateObject("WScript.Shell")
-          WshShell.SendKeys "^c"
-          WScript.Sleep 20
-        `
-
-        // run it
-        await runVbs({ vbs: script }) 
-
       }
 
+    } catch {
+
+      // fallback to vbs
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
+        WshShell.SendKeys "^c"
+        WScript.Sleep 20
+      `
+
+      // run it
+      await runVbs({ vbs: script }) 
+
     }
-    
+
   }
 
   async pasteText() {

@@ -13,6 +13,10 @@
           <label>{{ t('common.llmModel') }}</label>
           <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
         </div>
+        <div class="group" v-if="isWindows">
+          <label>{{ t('commands.defaults.altWindowsCopy') }}</label>
+          <input type="checkbox" v-model="altWindowsCopy" />
+        </div>
       </main>
       <footer>
         <button @click="onSave" class="default">{{ t('common.save') }}</button>
@@ -32,6 +36,9 @@ import ModelSelect from '../components/ModelSelect.vue'
 
 const engine = ref(null)
 const model = ref(null)
+const altWindowsCopy = ref(false)
+
+const isWindows = computed(() => window.api.platform == 'win32')
 
 const models = computed(() => {
   if (!engine.value || engine.value == '') return []
@@ -41,6 +48,7 @@ const models = computed(() => {
 const load = () => {
   engine.value = store.config.commands?.engine || ''
   model.value = store.config.commands?.model || ''
+  altWindowsCopy.value = store.config.automation?.altWindowsCopy || false
 }
 
 const onChangeEngine = () => {
@@ -55,6 +63,7 @@ const onCancel = () => {
 const onSave = () => {
   store.config.commands.engine = engine.value
   store.config.commands.model = model.value
+  store.config.automation.altWindowsCopy = altWindowsCopy.value
   store.saveSettings()
 }
 
@@ -66,4 +75,13 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/form.css';
 @import '../../css/editor.css';
+</style>
+
+<style scoped>
+
+dialog.editor form .group label {
+  min-width: 200px;
+  max-width: 200px;
+}
+
 </style>

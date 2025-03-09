@@ -49,6 +49,9 @@
     "engine": "",
     "model": ""
   },
+  "automation": {
+    "altWindowsCopy": false
+  },
   "shortcuts": {
     "chat": {
       "key": "Space",

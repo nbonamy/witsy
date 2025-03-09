@@ -9,6 +9,7 @@ export type Configuration = {
   llm: LLMConfig
   prompt: PromptConfig
   commands: CommandsConfig
+  automation: AutomationConfig
   instructions: InstructionsConfig
   appearance: AppearanceConfig
   shortcuts: ShortcutsConfig
@@ -91,6 +92,10 @@ export type PromptConfig = {
 export type CommandsConfig = {
   engine: string
   model: string
+}
+
+export type AutomationConfig = {
+  altWindowsCopy: boolean
 }
 
 export type ChatAppearance = {

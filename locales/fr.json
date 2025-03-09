@@ -315,6 +315,7 @@
       }
     },
     "defaults": {
+      "altWindowsCopy": "Méthode de Copie de Texte alternative",
       "lastOneUsed": "Dernier utilisé",
       "title": "Paramètres par défaut des commandes"
     },
