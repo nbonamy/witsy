@@ -106,6 +106,7 @@ onMounted(() => {
   let platform = {
     'win32': 'windows',
     'darwin': 'macos',
+    'linux': 'linux',
   }[window.api.platform]||'generic'
 
   // add it to the body class
