@@ -8,8 +8,6 @@ export let commandPicker: BrowserWindow = null;
 const width = 300;
 const height = 320;
 
-let commanderStartTime: number|undefined
-
 export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 
   // open a new one
@@ -28,39 +26,14 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     hasShadow: false,
   });
 
-  commandPicker.setOpacity(0);
-
-  // open the DevTools
-  // if (process.env.DEBUG) {
-  //   commandPicker.webContents.openDevTools({ mode: 'right' });
-  // }
-
   commandPicker.on('show', () => {
+    app.focus({ steal: true });
+    commandPicker.moveTop();
+    commandPicker.focusOnWebView();
+  });
 
-    // ugly trick to get focus in window
-    // we added the opacity trick to hide the animation
-    // https://github.com/electron/electron/issues/2867
-    commandPicker.minimize();
-    commandPicker.restore();
-    commandPicker.focus();
-
-    setTimeout(() => {
-
-      // not working on windows
-      // but needed for macos
-      app.focus({ steal: true });
-
-      // show
-      commandPicker.setOpacity(1);
-      commandPicker.on('blur', closeCommandPicker);
-      
-      // log
-      if (commanderStartTime) {
-        console.log(`Command picker total time: ${Date.now() - commanderStartTime}ms`);
-      }
-
-    }, process.platform === 'win32' ? 250 : 0);
-
+  commandPicker.on('blur', () => {
+    closeCommandPicker();
   });
 
   // done
@@ -69,9 +42,6 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
 }
 
 export const openCommandPicker = (params: anyDict): BrowserWindow => {
-
-  // save
-  commanderStartTime = params.startTime;
 
   // if we don't have a window, create one
   if (!commandPicker || commandPicker.isDestroyed()) {
@@ -103,8 +73,6 @@ export const closeCommandPicker = async () => {
   // just hide so we reuse it
   try {
     if (commandPicker && !commandPicker.isDestroyed() && commandPicker.isVisible()) {
-      commandPicker.off('blur', closeCommandPicker);
-      commandPicker.setOpacity(0);
       commandPicker.hide();
     }
   } catch (error) {
@@ -113,4 +81,3 @@ export const closeCommandPicker = async () => {
   }
 
 };
-
