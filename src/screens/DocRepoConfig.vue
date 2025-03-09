@@ -74,11 +74,11 @@ const onReset = () => {
 }
 
 const onSave = () => {
-  store.config.rag.maxDocumentSizeMB = maxDocumentSizeMB.value
-  store.config.rag.chunkSize = chunkSize.value
-  store.config.rag.chunkOverlap = chunkOverlap.value
-  store.config.rag.searchResultCount = searchResultCount.value
-  store.config.rag.relevanceCutOff = relevanceCutOff.value
+  store.config.rag.maxDocumentSizeMB = parseInt(maxDocumentSizeMB.value)
+  store.config.rag.chunkSize = parseInt(chunkSize.value)
+  store.config.rag.chunkOverlap = parseInt(chunkOverlap.value)
+  store.config.rag.searchResultCount = parseInt(searchResultCount.value)
+  store.config.rag.relevanceCutOff = parseFloat(relevanceCutOff.value)
   store.saveSettings()
 }
 

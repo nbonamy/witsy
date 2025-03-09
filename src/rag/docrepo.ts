@@ -5,7 +5,6 @@ import { notifyBrowserWindows } from '../main/window'
 import { docrepoFilePath } from './utils'
 import DocumentBaseImpl from './docbase'
 import DocumentSourceImpl from './docsource'
-import * as config from '../main/config'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
 import fs from 'fs'
@@ -99,7 +98,6 @@ export default class DocumentRepository {
     this.contents = []
 
     // init
-    const settings = config.loadSettings(this.app)
     const docrepoFile = docrepoFilePath(this.app)
 
     // load the file
@@ -107,7 +105,7 @@ export default class DocumentRepository {
 
       const repoJson = fs.readFileSync(docrepoFile, 'utf-8')
       for (const jsonDb of JSON.parse(repoJson)) {
-        const base = new DocumentBaseImpl(this.app, settings, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
+        const base = new DocumentBaseImpl(this.app, jsonDb.uuid, jsonDb.title, jsonDb.embeddingEngine, jsonDb.embeddingModel)
         for (const jsonDoc of jsonDb.documents) {
           const doc = new DocumentSourceImpl(jsonDoc.uuid, jsonDoc.type, jsonDoc.origin)
           base.documents.push(doc)
@@ -152,8 +150,7 @@ export default class DocumentRepository {
   async create(title: string, embeddingEngine: string, embeddingModel: string): Promise<string> {
 
     // now create the base
-    const settings = config.loadSettings(this.app)
-    const base = new DocumentBaseImpl(this.app, settings, uuidv4(), title, embeddingEngine, embeddingModel)
+    const base = new DocumentBaseImpl(this.app, uuidv4(), title, embeddingEngine, embeddingModel)
     await base.create()
     this.contents.push(base)
 
