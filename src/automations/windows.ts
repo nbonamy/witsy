@@ -181,7 +181,7 @@ export default class extends NutAutomator {
 
     try {
 
-      if (this.config.automation.altWindowsCopy) {
+      if (this.config.automation.altWinCopyPaste) {
 
         // this should work on all keyboards
         await this.executeControlKeyPowerShell('C')
@@ -215,34 +215,34 @@ export default class extends NutAutomator {
 
     try {
 
-      // this should work on all keyboards
-      await this.executeControlKeyPowerShell('V')
-    
-    } catch {
+      if (this.config.automation.altWinCopyPaste) {
 
-      try {
+        // this should work on all keyboards
+        await this.executeControlKeyPowerShell('V')
+    
+      } else {
         
         // nut is faster but not always available
         if (!await this.setup()) throw new Error('nutjs not loaded');
         await this.nut().keyboard.pressKey(this.commandKey(), this.nut().Key.V);
         await this.nut().keyboard.releaseKey(this.commandKey(), this.nut().Key.V);
 
-      } catch {
-
-        // fallback to vbs
-        const script = `
-          Set WshShell = WScript.CreateObject("WScript.Shell")
-          WshShell.SendKeys "^v"
-          WScript.Sleep 20
-      `
-
-        // run it
-        await runVbs({ vbs: script }) 
-
       }
 
+    } catch {
+
+      // fallback to vbs
+      const script = `
+        Set WshShell = WScript.CreateObject("WScript.Shell")
+        WshShell.SendKeys "^v"
+        WScript.Sleep 20
+    `
+
+      // run it
+      await runVbs({ vbs: script }) 
+
     }
-    
+
   }
 
   async deleteSelectedText() {

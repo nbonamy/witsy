@@ -334,7 +334,7 @@
       }
     },
     "defaults": {
-      "altWindowsCopy": "Alternate Copy Text Method",
+      "altWinCopyPaste": "Alternate Copy/Paste Method",
       "lastOneUsed": "Last one used",
       "title": "Commands defaults"
     },
