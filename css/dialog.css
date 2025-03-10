@@ -1,4 +1,8 @@
 
+dialog, dialog * {
+  -webkit-app-region: no-drag !important;
+}
+
 dialog {
   outline: none;
   user-select: none;
