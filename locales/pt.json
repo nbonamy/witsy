@@ -334,6 +334,7 @@
       }
     },
     "defaults": {
+      "altWinCopyPaste": "Método Alternativo de Copiar/Colar",
       "lastOneUsed": "Último usado",
       "title": "Padrões de comandos"
     },

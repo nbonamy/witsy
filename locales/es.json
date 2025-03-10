@@ -315,6 +315,7 @@
       }
     },
     "defaults": {
+      "altWinCopyPaste": "Método alternativo de copiar/pegar",
       "lastOneUsed": "Último usado",
       "title": "Valores predeterminados de comandos"
     },

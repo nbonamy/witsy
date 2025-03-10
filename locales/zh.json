@@ -334,6 +334,7 @@
       }
     },
     "defaults": { 
+      "altWinCopyPaste": "替代复制/粘贴方法",
       "lastOneUsed": "最近使用的",
       "title": "命令默认设置"
     },
