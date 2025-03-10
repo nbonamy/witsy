@@ -95,7 +95,7 @@ export type CommandsConfig = {
 }
 
 export type AutomationConfig = {
-  altWindowsCopy: boolean
+  altWinCopyPaste: boolean
 }
 
 export type ChatAppearance = {

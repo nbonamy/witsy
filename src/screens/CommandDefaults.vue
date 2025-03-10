@@ -14,8 +14,8 @@
           <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
         </div>
         <div class="group" v-if="isWindows">
-          <label>{{ t('commands.defaults.altWindowsCopy') }}</label>
-          <input type="checkbox" v-model="altWindowsCopy" />
+          <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>
+          <input type="checkbox" v-model="altWinCopyPaste" />
         </div>
       </main>
       <footer>
@@ -36,7 +36,7 @@ import ModelSelect from '../components/ModelSelect.vue'
 
 const engine = ref(null)
 const model = ref(null)
-const altWindowsCopy = ref(false)
+const altWinCopyPaste = ref(false)
 
 const isWindows = computed(() => window.api.platform == 'win32')
 
@@ -48,7 +48,7 @@ const models = computed(() => {
 const load = () => {
   engine.value = store.config.commands?.engine || ''
   model.value = store.config.commands?.model || ''
-  altWindowsCopy.value = store.config.automation?.altWindowsCopy || false
+  altWinCopyPaste.value = store.config.automation?.altWinCopyPaste || false
 }
 
 const onChangeEngine = () => {
@@ -63,7 +63,7 @@ const onCancel = () => {
 const onSave = () => {
   store.config.commands.engine = engine.value
   store.config.commands.model = model.value
-  store.config.automation.altWindowsCopy = altWindowsCopy.value
+  store.config.automation.altWinCopyPaste = altWinCopyPaste.value
   store.saveSettings()
 }
 
