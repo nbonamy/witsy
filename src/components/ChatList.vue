@@ -16,7 +16,7 @@
 
 import { ChatListMode } from '../types/config'
 import { type Ref, ref, computed, onMounted, PropType } from 'vue'
-import { store } from '../services/store'
+import { store, mediaChatId } from '../services/store'
 import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
 import ChatListTimeline from './ChatListTimeline.vue'
@@ -55,6 +55,7 @@ defineExpose({
 })
 
 const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
+  if (c.uuid === mediaChatId) return false
   if (props.filter === null || props.filter.length === 0) return true
   if (c.title?.toLowerCase().includes(props.filter.toLowerCase())) return true
   if (c.messages.some(m => m.content?.toLowerCase().includes(props.filter.toLowerCase()))) return true
