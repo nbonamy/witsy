@@ -434,8 +434,12 @@ ipcMain.on('shortcuts-unregister', () => {
   shortcuts.unregisterShortcuts();
 });
 
-ipcMain.on('fullscreen', (_, flag) => {
-  window.mainWindow.setFullScreen(flag);
+ipcMain.on('fullscreen', (_, payload) => {
+  if (payload.window === 'main') {
+    window.mainWindow.setFullScreen(payload.state);
+  } else if (payload.window === 'create') {
+    window.createMediaWindow.setFullScreen(payload.state);
+  }
 });
 
 ipcMain.on('delete-file', (event, payload) => {

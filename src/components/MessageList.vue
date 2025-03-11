@@ -9,28 +9,23 @@
       <BIconArrowDown />
     </div>
   </div>
-  <div class="fullscreen" :class="fullScreenTheme" v-if="fullScreenImageUrl" @click="onCloseFullScreen">
-    <img :src="fullScreenImageUrl"/>
-    <BIconXLg class="close" />
-  </div>
+  <Fullscreen window="main" />
 </template>
 
 <script setup lang="ts">
 
-import { strDict } from '../types/index'
 import { Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
 import { LlmChunk } from 'multi-llm-ts'
-import Chat from '../models/chat'
 import MessageItem from './MessageItem.vue'
+import Fullscreen from './Fullscreen.vue'
+import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
 const divScroller: Ref<HTMLElement|null> = ref(null)
 const overflown = ref(false)
-const fullScreenImageUrl: Ref<string|null> = ref(null)
-const fullScreenTheme: Ref<string|null> = ref(null)
 
 const itemRefs = useTemplateRef('items')
 
@@ -55,24 +50,8 @@ const props = defineProps({
 
 onMounted(() => {
   onEvent('new-llm-chunk', onNewChunk)
-  onEvent('fullscreen', onFullscreen)
   scrollDown()
 })
-
-const onFullscreen = (payload: string|strDict) => {
-  document.addEventListener('keydown', onCloseFullScreen)
-  // @ts-expect-error yeah that's not super elegant
-  fullScreenImageUrl.value = payload.url ?? payload
-  // @ts-expect-error yeah that's not super elegant
-  fullScreenTheme.value = payload.theme
-  window.api.fullscreen(true)
-}
-
-const onCloseFullScreen = () => {
-  document.removeEventListener('keydown', onCloseFullScreen)
-  fullScreenImageUrl.value = null
-  window.api.fullscreen(false)
-}
 
 const onMediaLoaded = () => {
   if (!overflown.value) {
@@ -154,37 +133,6 @@ const onScroll = () => {
   font-size: 14pt;
   font-weight: bold;
   cursor: pointer;
-}
-
-.fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: black;
-  padding: 8px;
-  z-index: 100;
-  cursor: pointer;
-  -webkit-app-region: no-drag;
-}
-
-.fullscreen img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-}
-
-.fullscreen .close {
-  color: white;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-size: 14pt;
-}
-
-.fullscreen.light {
-  background-color: white;
 }
 
 </style>
