@@ -49,6 +49,7 @@ vi.mock('electron', async () => {
     openDevTools: vi.fn(),
   }
   const app = {
+    focus: vi.fn(),
     getPath: vi.fn(() => ''),
     dock: {
       show: vi.fn(),

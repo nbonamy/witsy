@@ -5,6 +5,8 @@ import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } f
 import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
 
+const storeBoundsId = 'main.bounds'
+
 export let mainWindow: BrowserWindow = null;
 
 export const openMainWindow = (opts: CreateWindowOpts = {}) => {
@@ -28,7 +30,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
   }
 
   // get bounds from here
-  const bounds: Electron.Rectangle = electronStore?.get('bounds') as Electron.Rectangle;
+  const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
 
   // else open a new one
   mainWindow = createWindow({
@@ -70,7 +72,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     }
 
     // save bounds    
-    electronStore.set('bounds', mainWindow.getBounds());
+    electronStore.set(storeBoundsId, mainWindow.getBounds());
 
   })
 

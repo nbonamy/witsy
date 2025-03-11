@@ -152,6 +152,7 @@ app.whenReady().then(() => {
       newChat: window.openMainWindow,
       newScratchpad: window.openScratchPad,
       settings: window.openSettingsWindow,
+      createMedia: window.openCreateMediaWindow,
     }, settings.shortcuts);
   }
   window.addWindowListener({
