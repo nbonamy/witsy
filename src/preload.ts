@@ -34,7 +34,7 @@ contextBridge.exposeInMainWorld(
       get: (): boolean => { return ipcRenderer.sendSync('run-at-login-get').openAtLogin },
       set: (state: boolean): void => { return ipcRenderer.send('run-at-login-set', state) }
     },
-    fullscreen: (state: boolean): void => { return ipcRenderer.send('fullscreen', state) },
+    fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send('fullscreen', { window, state }) },
     base64: {
       encode: (data: string): string => { return Buffer.from(data).toString('base64') },
       decode: (data: string): string => { return Buffer.from(data, 'base64').toString() },
