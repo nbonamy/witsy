@@ -10,9 +10,7 @@
     <div class="group">
       <label>{{ t('settings.plugins.image.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
-        <option value="openai">OpenAI</option>
-        <option value="huggingface">Hugging Face</option>
-        <option value="replicate">Replicate</option>
+        <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
       </select>
     </div>
     <div class="group" v-if="engine == 'openai'">
@@ -53,11 +51,12 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
+import ImageCreator from '../services/image'
 import LlmFactory from '../llms/llm'
 
 const enabled = ref(false)
@@ -68,21 +67,11 @@ const refreshLabel = ref(t('common.refresh'))
 const image_model = ref(null)
 const image_models = ref([])
 
-const hf_models = ref([
-  'black-forest-labs/FLUX.1-schnell',
-  'black-forest-labs/FLUX.1-dev',
-  'dreamlike-art/dreamlike-photoreal-2.0',
-  'prompthero/openjourney',
-  'stabilityai/stable-diffusion-3.5-large-turbo',
-].sort().map(name => ({ id: name, name })))
+const engines = computed(() => ImageCreator.getEngines(false))
 
-const replicate_models = ref([
-  'black-forest-labs/flux-1.1-pro',
-  'black-forest-labs/flux-schnell',
-  'ideogram-ai/ideogram-v2',
-  'recraft-ai/recraft-v3-svg',
-  'fofr/any-comfyui-workflow',
-].sort().map(name => ({ id: name, name })))
+const hf_models = computed(() => ImageCreator.getModels('huggingface'))
+
+const replicate_models = computed(() => ImageCreator.getModels('replicate'))
 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
