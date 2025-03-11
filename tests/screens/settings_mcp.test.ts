@@ -137,7 +137,7 @@ test('normal server add', async () => {
 
   // add variable
   await editor.find<HTMLButtonElement>('button.add').trigger('click')
-  const editor2 = mcp.findComponent({ name: 'McpVariableEditor' })
+  const editor2 = mcp.findComponent({ name: 'VariableEditor' })
   expect(editor2.find<HTMLInputElement>('input[name=key]').element.value).toBe('')
   expect(editor2.find<HTMLInputElement>('input[name=value]').element.value).toBe('')
   await editor2.find<HTMLInputElement>('input[name=key]').setValue('key1')
