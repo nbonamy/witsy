@@ -105,4 +105,14 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
+  isVideo(): boolean {
+    if (!this.attachment) return false
+    const url = this.attachment.url
+    return Message.isVideoUrl(url)
+  }
+
+  static isVideoUrl(url: string): boolean {
+    return url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg')
+  }
+
 }
