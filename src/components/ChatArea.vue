@@ -39,7 +39,6 @@ import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
 import Prompt from './Prompt.vue'
 import ModelSettings from '../screens/ModelSettings.vue'
-import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
@@ -47,8 +46,6 @@ import IconSideBar from '../../assets/sidebar.svg?component'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
-
-const llmFactory = new LlmFactory(store.config)
 
 const props = defineProps({
   chat: {
@@ -66,17 +63,7 @@ const chatMenuPosition = computed(() => {
 })
 
 const chatMenuActions = computed(() => {
-  // // show default is chat not setup yet
-  // let { engine, model } = llmFactory.getChatEngineModel()
-  // if (props.chat.engine) {
-  //   engine = llmFactory.getEngineName(props.chat.engine)
-  //   model = props.chat.model
-  // }
-
   return [
-    // { label: `${engine} ${model}`, disabled: true },
-    // { label: props.chat.disableTools ? 'Enable plugins' : 'Disable plugins', action: 'toogleTools', disabled: false },
-    // { label: 'Model Settings', action: 'modelSettings', disabled: false },
     { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
     { label: t('common.rename'), action: 'rename', disabled: false },
     { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
