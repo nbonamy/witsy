@@ -4,7 +4,15 @@ import { shortcutAccelerator } from './shortcuts'
 import * as window from './window'
 import { useI18n } from './i18n';
 
-export type MenuCallbacks = { [key: string]: () => void }
+export type MenuCallbacks = {
+  checkForUpdates: () => void
+  settings: () => void
+  quit: () => void
+  newPrompt: () => void
+  newChat: () => void
+  newScratchpad: () => void
+  createMedia: () => void
+}
 
 const isMac = process.platform === 'darwin'
 const isMas = process.mas
@@ -27,6 +35,9 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       })
     }
   }
+
+  // get focused window
+  const focusedWindow = BrowserWindow.getFocusedWindow()
 
   // sort by title
   windowsMenu.sort((a, b) => a.label.localeCompare(b.label))
@@ -90,6 +101,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           click: () => callbacks.newScratchpad()
         },
         { type: 'separator' },
+        {
+          label: t('menu.file.createMedia'),
+          click: () => callbacks.createMedia()
+        },
+        { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
       ]
     },
@@ -106,11 +122,16 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         ...(isMac
           ? [
             { role: 'pasteAndMatchStyle' },
-            {
+            ...(focusedWindow === window.mainWindow ? [{
               label: t('menu.edit.deleteChat'),
               accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
               click: () => window.notifyBrowserWindows('delete-chat')
-            },
+            }] : []),
+            ...(focusedWindow === window.createMediaWindow ? [{
+              label: t('menu.edit.deleteMedia'),
+              accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
+              click: () => window.notifyBrowserWindows('delete-media')
+            }] : []),
             { role: 'selectAll' },
           ]
           : [

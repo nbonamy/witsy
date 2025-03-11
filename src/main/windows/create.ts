@@ -1,5 +1,7 @@
 import { app, BrowserWindow } from 'electron';
-import { createWindow, ensureOnCurrentScreen, titleBarOptions } from './index';
+import { electronStore, createWindow, ensureOnCurrentScreen, titleBarOptions } from './index';
+
+const storeBoundsId = 'create.bounds'
 
 export let createMediaWindow: BrowserWindow = null;
 
@@ -8,15 +10,24 @@ export const openCreateMediaWindow = () => {
   // if we don't have a window, create one
   if (!createMediaWindow || createMediaWindow.isDestroyed()) {
     
+    // get bounds from here
+    const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
+
     createMediaWindow = createWindow({
       hash: '/create',
-      width: 1280,
-      height: 800,
+      x: bounds?.x,
+      y: bounds?.y,
+        width: bounds?.width || 1280,
+      height: bounds?.height || 800,
       minWidth: 800,
       minHeight: 400,
     ...titleBarOptions(),
       title: 'Media Creation'
     });
+
+    createMediaWindow.on('close', () => {
+      electronStore.set(storeBoundsId, createMediaWindow.getBounds());
+    })
 
     // handle window close
     createMediaWindow.on('closed', () => {
@@ -25,9 +36,11 @@ export const openCreateMediaWindow = () => {
   
   }
 
-  // ensure it's on the right screen and show it
+  // check
   ensureOnCurrentScreen(createMediaWindow);
-  createMediaWindow.show();
+
+  // and focus
+  app.focus({ steal: true });
   createMediaWindow.focus();
   
   // open the DevTools

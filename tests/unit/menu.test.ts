@@ -9,7 +9,8 @@ vi.mock('electron', () => ({
     getLocale: vi.fn(() => 'en-US'),
   },
   BrowserWindow: {
-    getAllWindows: vi.fn(() => [])
+    getAllWindows: vi.fn(() => []),
+    getFocusedWindow: vi.fn(() => null)
   },
   Menu: {
     buildFromTemplate: vi.fn(() => { return {}}),

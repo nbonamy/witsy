@@ -1,25 +1,17 @@
 <template>
   <div class="create-media">
     <div class="panel">
-
       <div class="navigation">
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
       </div>
-
       <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :is-generating="isGenerating" @generate="onMediaGenerationRequest" />
-    
       <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
-    
     </div>
-
     <Preview :message="message" :is-generating="isGenerating" @fullscreen="onFullScreen" @delete="onDelete"/>
-
   </div>
-
   <Fullscreen window="create" />
   <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
-
 </template>
 
 <script setup lang="ts">
@@ -81,6 +73,13 @@ onMounted(() => {
     chat.value.addMessage(new Message('system', 'Dummy chat to save created media'))
     store.history.chats.push(chat.value)
   }
+
+  // main event
+  window.api.on('delete-media', () => {
+    if (message.value) {
+      deleteMedia(message.value)
+    }
+  })
 })
 
 const selectMessage = (msg: Message) => {
@@ -157,7 +156,9 @@ const onMediaGenerationRequest = async (data: any) => {
 
     // we need to convert params who look like numbers to numbers
     Object.keys(data.params).forEach((key) => {
-      if (!isNaN(data.params[key])) {
+      if (!data.params[key]) {
+        delete data.params[key]
+      } else if (!isNaN(data.params[key])) {
         data.params[key] = parseFloat(data.params[key])
       }
     })
@@ -168,6 +169,11 @@ const onMediaGenerationRequest = async (data: any) => {
       prompt: data.prompt,
       ...data.params
     })
+
+    // check
+    if (!media?.url) {
+      throw new Error()
+    }
 
     // now the message
     const newMessage = new Message('user', data.prompt)
@@ -195,7 +201,7 @@ const onMediaGenerationRequest = async (data: any) => {
     store.saveHistory()
 
   } catch (e) {
-    
+
     // replicate special
     try {
       if (e.response?.status === 422) {
