@@ -13,6 +13,7 @@
 
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
+import Message from '../models/message'
 const { emitEvent } = useEventBus()
 
 const props = defineProps({
@@ -27,7 +28,7 @@ const props = defineProps({
 const emits = defineEmits(['media-loaded'])
 
 const isVideo = () => {
-  return props.url.endsWith('.mp4') || props.url.endsWith('.webm') || props.url.endsWith('.ogg')
+  return Message.isVideoUrl(props.url)
 }
 
 const onMediaLoaded = () => {
