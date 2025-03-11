@@ -17,6 +17,7 @@ test('Load default settings', () => {
   const loaded = config.loadSettings('')
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
+  loaded.engines.sdwebui.baseURL = defaultSettings.engines.sdwebui.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
   expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])

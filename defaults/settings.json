@@ -264,6 +264,17 @@
       "models": {
         "tts": []
       }
+    },
+    "sdwebui": {
+      "baseURL": "http://127.0.0.1:7860",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
     }
   },
   "plugins": {

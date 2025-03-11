@@ -117,8 +117,8 @@
     "value": "值",
     "variableEditor": {
       "validation": {
-      "keyRequired": "请确保为此变量输入一个键。",
-      "requiredFields": "一些字段是必填的"
+        "keyRequired": "请确保为此变量输入一个键。",
+        "requiredFields": "一些字段是必填的"
       }
     },
     "warning": "警告",
@@ -382,7 +382,17 @@
     "model": "模型",
     "modelDefaults": "此模型的默认值",
     "moreAboutReplicateModels": "了解此模型参数",
-    "parameters": "额外参数",
+    "moreAboutSDWebUIParameters": "了解 SDWebUI 参数",
+    "parameters": {
+      "height": "高度",
+      "negativePrompt": "负面提示",
+      "quality": "质量",
+      "size": "大小",
+      "style": "风格",
+      "supportWarning": "您选择的模型可能不支持某些参数。",
+      "title": "参数",
+      "width": "宽度"
+    },
     "promptPlaceholder": "你想创建什么？",
     "provider": "提供者",
     "title": "创建媒体",
@@ -1207,9 +1217,11 @@
     },
     "edit": {
       "deleteChat": "删除聊天",
+      "deleteMedia": "删除媒体",
       "title": "编辑"
     },
     "file": {
+      "createMedia": "创建媒体",
       "newChat": "新建聊天",
       "newPrompt": "新建提示",
       "newScratchpad": "新建便签",
@@ -1463,6 +1475,10 @@
       },
       "openrouter": {
         "aboutModels": "了解更多关于 OpenRouter 模型的信息"
+      },
+      "sdwebui": {
+        "baseURL": "API 基础 URL",
+        "ensureApiMode": "确保你处于 API 模式"
       },
       "xai": {
         "aboutModels": "了解更多关于 xAI 模型的信息"

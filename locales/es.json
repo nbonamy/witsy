@@ -98,8 +98,8 @@
     "value": "Valor",
     "variableEditor": {
       "validation": {
-      "keyRequired": "Asegúrate de ingresar una clave para esta variable.",
-      "requiredFields": "Algunos campos son obligatorios"
+        "keyRequired": "Asegúrate de ingresar una clave para esta variable.",
+        "requiredFields": "Algunos campos son obligatorios"
       }
     },
     "warning": "Advertencia",
@@ -363,7 +363,17 @@
     "model": "Modelo",
     "modelDefaults": "Valores predeterminados para este modelo",
     "moreAboutReplicateModels": "Aprende sobre los parámetros de este modelo",
-    "parameters": "Parámetros adicionales",
+    "moreAboutSDWebUIParameters": "Aprende sobre los parámetros de SDWebUI",
+    "parameters": {
+      "height": "Altura",
+      "negativePrompt": "Sugerencia Negativa",
+      "quality": "Calidad",
+      "size": "Tamaño",
+      "style": "Estilo",
+      "supportWarning": "Algunos parámetros pueden no ser compatibles con el modelo que seleccionaste.",
+      "title": "Parámetros",
+      "width": "Ancho"
+    },
     "promptPlaceholder": "¿Qué quieres crear?",
     "provider": "Proveedor",
     "title": "Crear Medio",
@@ -1188,9 +1198,11 @@
     },
     "edit": {
       "deleteChat": "Eliminar conversación",
+      "deleteMedia": "Eliminar Medio",
       "title": "Editar"
     },
     "file": {
+      "createMedia": "Crear Medio",
       "newChat": "Nueva conversación",
       "newPrompt": "Nueva solicitud",
       "newScratchpad": "Nuevo bloc de notas",
@@ -1433,6 +1445,10 @@
       },
       "openrouter": {
         "aboutModels": "Más sobre los modelos de OpenRouter"
+      },
+      "sdwebui": {
+        "baseURL": "URL base de la API",
+        "ensureApiMode": "Asegúrate de estar en modo API"
       },
       "xai": {
         "aboutModels": "Más sobre los modelos de xAI"

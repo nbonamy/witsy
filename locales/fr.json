@@ -98,8 +98,8 @@
     "value": "Valeur",
     "variableEditor": {
       "validation": {
-      "keyRequired": "Assurez-vous d'entrer une clé pour cette variable.",
-      "requiredFields": "Certains champs sont obligatoires"
+        "keyRequired": "Assurez-vous d'entrer une clé pour cette variable.",
+        "requiredFields": "Certains champs sont obligatoires"
       }
     },
     "warning": "Attention",
@@ -363,7 +363,17 @@
     "model": "Modèle",
     "modelDefaults": "Valeurs par défaut pour ce modèle",
     "moreAboutReplicateModels": "En savoir plus sur les paramètres de ce modèle",
-    "parameters": "Paramètres supplémentaires",
+    "moreAboutSDWebUIParameters": "En savoir plus sur les paramètres de SDWebUI",
+    "parameters": {
+      "height": "Hauteur",
+      "negativePrompt": "Prompt Négatif",
+      "quality": "Qualité",
+      "size": "Taille",
+      "style": "Style",
+      "supportWarning": "Certains paramètres peuvent ne pas être pris en charge par le modèle que vous avez sélectionné.",
+      "title": "Paramètres",
+      "width": "Largeur"
+    },
     "promptPlaceholder": "Que voulez-vous créer ?",
     "provider": "Fournisseur",
     "title": "Créer un média",
@@ -1188,9 +1198,11 @@
     },
     "edit": {
       "deleteChat": "Supprimer la conversation",
+      "deleteMedia": "Supprimer le média",
       "title": "Édition"
     },
     "file": {
+      "createMedia": "Créer un média",
       "newChat": "Nouvelle conversation",
       "newPrompt": "Nouvelle requête",
       "newScratchpad": "Nouveau bloc-notes",
@@ -1433,6 +1445,10 @@
       },
       "openrouter": {
         "aboutModels": "A propos des modèles OpenRouter"
+      },
+      "sdwebui": {
+        "baseURL": "URL de base de l'API",
+        "ensureApiMode": "Assurez-vous d'être en mode API"
       },
       "xai": {
         "aboutModels": "A propos des modèles xAI"

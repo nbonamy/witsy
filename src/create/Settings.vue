@@ -20,9 +20,12 @@
 
       <div class="group" v-if="hasFixedModels">
         <label>{{ t('createMedia.model') }}</label>
-        <select v-model="model" name="model" @change="onChangeModel">
-          <option v-for="model in models" :value="model.id">{{ model.name }}</option>
-        </select>
+        <div class="subgroup">
+          <select v-model="model" name="model" @change="onChangeModel">
+            <option v-for="model in models" :value="model.id">{{ model.name }}</option>
+          </select>
+          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+        </div>
       </div>
 
       <div class="group" v-else>
@@ -38,34 +41,57 @@
         </textarea>
       </div>
 
-      <div v-if="engine === 'replicate'" class="group extra">
-        <label @click="showParams = !showParams">
+      <div v-if="modelHasParams" class="group">
+        
+        <label class="expander" @click="showParams = !showParams">
           <span>
             <span v-if="showParams" class="expand">▼</span>
             <span v-else class="expand">▶</span>
-            {{ t('createMedia.parameters') }}
+            {{ t('createMedia.parameters.title') }}
           </span>
         </label>
-        <div v-if="showParams"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('createMedia.moreAboutReplicateModels') }}</a></div>
-        <div v-if="showParams" class="list-with-actions">
-          <VariableTable 
-            :variables="params"
-            :selectedVariable="selectedParam"
-            @select="onSelectParam"
-            @add="onAddParam"
-            @edit="onEditParam"
-            @delete="onDelParam"
-          />
-        </div>
+
       </div>
-      <div v-if="showParams" class="group">
-        <label>{{ t('createMedia.modelDefaults') }}</label>
-        <div class="subgroup">
-          <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
-          <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
-          <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">{{ t('common.clear') }}</button>
+
+      <template v-if="showParams">
+
+        <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('createMedia.moreAboutReplicateModels') }}</a></div>
+
+        <div v-if="engine == 'huggingface'" class="info">{{ t('createMedia.parameters.supportWarning') }}</div>
+
+        <div v-if="engine == 'sdwebui'" class="info"><a :href="`${new SDWebUI(store.config).baseUrl}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('createMedia.moreAboutSDWebUIParameters') }}</a></div>
+        
+        <template v-if="modelHasCustomParams">
+          <div class="group" v-for="param in customParams">
+            <label>{{ param.label }}</label>
+            <input v-if="param.type === 'input'" :name="`custom-${param.key}`" v-model="params[param.key]" type="text" />
+            <textarea v-if="param.type === 'textarea'" :name="`custom-${param.key}`" v-model="params[param.key]"></textarea>
+            <select v-if="param.type === 'select'" :name="`custom-${param.key}`" v-model="params[param.key]">
+              <option value="">{{ t('common.default') }}</option>
+              <option v-for="value in param.values" :value="value">{{ value }}</option>
+            </select>
+          </div>
+        </template>
+
+        <VariableTable v-if="modelHasUserParams" 
+          :variables="params"
+          :selectedVariable="selectedParam"
+          @select="onSelectParam"
+          @add="onAddParam"
+          @edit="onEditParam"
+          @delete="onDelParam"
+        />
+
+        <div v-if="modelHasParams" class="group">
+          <label>{{ t('createMedia.modelDefaults') }}</label>
+          <div class="subgroup">
+            <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
+            <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
+            <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">{{ t('common.clear') }}</button>
+          </div>
         </div>
-      </div>
+
+      </template>
 
       <div class="group">
         <button name="generate" class="generate-button" type="button" @click="generateMedia" :disabled="isGenerating">
@@ -93,6 +119,8 @@ import ComboBox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
 import VariableTable from '../components/VariableTable.vue'
+import SDWebUI from '../services/sdwebui'
+import LlmFactory from '../llms/llm'
 
 defineProps({
   isGenerating: {
@@ -111,6 +139,7 @@ const prompt = ref('')
 const params: Ref<Record<string, string>> = ref({})
 const showParams = ref(false)
 const selectedParam = ref(null)
+const refreshLabel = ref(t('common.refresh'))
 
 const imageCreator = new ImageCreator()
 const videoCreator = new VideoCreator()
@@ -120,7 +149,7 @@ const creator: Record<string, MediaCreator> = {
 }
 
 const hasFixedModels = computed(() => {
-  return mediaType.value === 'image' && engine.value === 'openai'
+  return mediaType.value === 'image' && (['openai', 'sdwebui'].includes(engine.value))
 })
 
 const engines = computed(() => {
@@ -140,7 +169,65 @@ const modelHasDefaults = computed(() => {
 })
 
 const canSaveAsDefaults = computed(() => {
-  return Object.keys(params.value).length > 0
+  for (const key in params.value) {
+    if (params.value[key]) {
+      return true
+    }
+  }
+  return false
+})
+
+const customParams = computed(() => {
+
+  // openai dall-e-2
+  if (engine.value === 'openai' && model.value === 'dall-e-2') {
+    return [
+      { label: t('createMedia.parameters.size'),  key: 'size',  type: 'select', values: [ '256x256', '512x512', '1024x1024' ] },
+    ]
+  }
+
+  // openai dall-e-3
+  if (engine.value === 'openai' && model.value === 'dall-e-3') {
+    return [
+      { label: t('createMedia.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'standard', 'hd' ] },
+      { label: t('createMedia.parameters.size'),  key: 'size',  type: 'select', values: [ '1024x1024', '1792x1024', '1024x1792' ] },
+      { label: t('createMedia.parameters.style'),  key: 'style',  type: 'select', values: [ 'vivid', 'natural' ] },
+    ]
+  }
+
+  // hugingface all models
+  if (engine.value === 'huggingface') {
+    return [
+      { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+      { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
+      { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+    ]
+  }
+
+  // // sdwebui all models
+  // if (engine.value === 'sdwebui') {
+  //   return [
+  //     { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+  //     { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
+  //     { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+  //   ]
+  // }
+
+  // default
+  return []
+
+})
+
+const modelHasCustomParams = computed(() => {
+  return customParams.value.length > 0
+})
+
+const modelHasUserParams = computed(() => {
+  return ['replicate', 'sdwebui']. includes(engine.value)
+})
+
+const modelHasParams = computed(() => {
+  return modelHasUserParams.value || modelHasCustomParams.value
 })
 
 onMounted(() => {
@@ -165,11 +252,43 @@ const onChangeModel = () => {
   saveSettings()
 }
 
-const saveSettings = () => {
-  store.config.create.type = mediaType.value
-  store.config.create.engine = engine.value
-  store.config.create.model = model.value
-  store.saveSettings()
+const onRefresh = async () => {
+  refreshLabel.value = t('common.refreshing')
+  setTimeout(() => getModels(), 500)
+}
+
+const setEphemeralRefreshLabel = (text: string) => {
+  refreshLabel.value = text
+  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
+}
+
+const getModels = async () => {
+
+  // openai
+  if (engine.value === 'openai') {
+    const llmFactory = new LlmFactory(store.config)
+    let success = await llmFactory.loadModels('openai')
+    if (!success) {
+      image_models.value = []
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
+
+  // sdwebui
+  if (engine.value == 'sdwebui') {
+    const sdwebui = new SDWebUI(store.config)
+    let success = await sdwebui.loadModels()
+    if (!success) {
+      image_models.value = []
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
+
+  // done
+  setEphemeralRefreshLabel(t('common.done'))
+
 }
 
 const onSelectParam = (key: string) => {
@@ -236,6 +355,13 @@ const loadSettings = (settings: any) => {
   saveSettings()
 }
 
+const saveSettings = () => {
+  store.config.create.type = mediaType.value
+  store.config.create.engine = engine.value
+  store.config.create.model = model.value
+  store.saveSettings()
+}
+
 const generateMedia = async () => {
 
   const userPrompt = prompt.value.trim()
@@ -280,6 +406,11 @@ defineExpose({
   padding: 0px 24px;
 }
 
+.settings form .group .subgroup {
+  display: flex;
+  width: 100%;
+}
+
 .settings .title {
   font-weight: bold;
   font-size: 1.1em;
@@ -287,7 +418,7 @@ defineExpose({
   margin-bottom: 1rem;
 }
 
-.settings textarea.prompt {
+.settings form .group textarea {
   flex: auto;
   min-height: 2rem;
   height: 4rem;
@@ -295,12 +426,18 @@ defineExpose({
   background-color: var(--control-textarea-bg-color);
 }
 
+.settings .info {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
 .settings .list-with-actions {
   margin-top: 0.5rem;
   width: 100%;
 }
 
-.settings .group.extra label {
+.settings form .group label.expander {
   margin-top: -0.5rem;
   cursor: pointer;
 }

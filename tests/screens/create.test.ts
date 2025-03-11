@@ -27,13 +27,21 @@ beforeAll(() => {
   
   window.api.config.load = () => {
     const settings = defaultSettings as unknown as Configuration
-    settings.create.model = 'openai1'
+    settings.create.model = 'dall-e-2'
     settings.engines.openai = {
       apiKey: 'openai',
       // @ts-expect-error mock
       models: { image: [
-        { id: 'openai1', name: 'openai1' },
-        { id: 'openai2', name: 'openai2' }
+        { id: 'dall-e-2', name: 'dall-e-2' },
+        { id: 'dall-e-3', name: 'dall-e-3' }
+      ] }
+    }
+    settings.engines.huggingface = {
+      apiKey: 'huggingface',
+      // @ts-expect-error mock
+      models: { image: [
+        { id: 'huggingface1', name: 'huggingface1' },
+        { id: 'huggingface2', name: 'huggingface2' }
       ] }
     }
     settings.engines.replicate = {
@@ -61,7 +69,7 @@ beforeAll(() => {
             createdAt: 1,
             content: 'prompt1',
             engine: 'openai',
-            model: 'openai1',
+            model: 'dall-e-2',
             attachment: new Attachment('', 'image/jpeg', 'file://url1.jpg')
           }),
           Message.fromJson({
@@ -100,23 +108,23 @@ test('Settings', async () => {
   await wrapper.vm.$nextTick()
   expect(settings.find<HTMLSelectElement>('[name=type]').element.value).toBe('image')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('openai')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('openai1')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('dall-e-2')
   expect(settings.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('')
-  expect(settings.find('.expand').exists()).toBe(false)
+  expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
-  expect(settings.find('.expand').exists()).toBe(true)
-  await settings.find('.expand').trigger('click')
+  expect(settings.find('.expander').exists()).toBe(true)
+  await settings.find('.expander').trigger('click')
   expect(settings.find('.list-with-actions').exists()).toBe(true)
 
-  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
-  expect(settings.find('.expand').exists()).toBe(false)
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
+  expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=type]').setValue('video')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('replicate')
-  expect(settings.find('.expand').exists()).toBe(true)
+  expect(settings.find('.expander').exists()).toBe(true)
 })
   
 test('History', async () => {
@@ -167,14 +175,14 @@ test('Generates - Basic', async () => {
     expect.objectContaining({
       mediaType: 'image',
       engine: 'openai',
-      model: 'openai1',
+      model: 'dall-e-2',
       prompt: 'prompt',
       params: {}
     })
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'openai', 'openai1', { prompt: 'prompt' }
+    'openai', 'dall-e-2', { prompt: 'prompt' }
   )
 
   // @ts-expect-error mock
@@ -182,7 +190,7 @@ test('Generates - Basic', async () => {
     role: 'user',
     content: 'prompt',
     attachment: expect.objectContaining({
-      url: 'file://openai/openai1/prompt'
+      url: 'file://openai/dall-e-2/prompt'
     })
   })
 
@@ -192,13 +200,118 @@ test('Generates - Basic', async () => {
 
 })
 
-test('Generates - Params', async () => {
+test('Generates - Custom Params OpenAI', async () => {
+
+  const wrapper = mount(CreateMedia)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
+  await settings.find<HTMLSelectElement>('[name=model]').setValue('dall-e-3')
+  await settings.find('.expander').trigger('click')
+
+  expect(settings.find<HTMLSelectElement>('[name=custom-size]').exists()).toBe(true)
+  expect(settings.find<HTMLSelectElement>('[name=custom-style]').exists()).toBe(true)
+  expect(settings.find<HTMLSelectElement>('[name=custom-quality]').exists()).toBe(true)
+
+  await settings.find<HTMLSelectElement>('[name=custom-quality]').setValue('hd')
+  await settings.find<HTMLSelectElement>('[name=custom-style]').setValue('vivid')
+
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
+  await wrapper.vm.$nextTick()
+  expect(settings.emitted()['generate']).toHaveLength(1)
+  expect(settings.emitted()['generate'][0]).toStrictEqual([
+    expect.objectContaining({
+      mediaType: 'image',
+      engine: 'openai',
+      model: 'dall-e-3',
+      prompt: 'prompt',
+      params: { quality: 'hd', style: 'vivid' },
+    })
+  ])
+
+  expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
+    'openai', 'dall-e-3', { prompt: 'prompt', quality: 'hd', style: 'vivid' }
+  )
+
+  // @ts-expect-error mock
+  expect (wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    attachment: expect.objectContaining({
+      url: 'file://openai/dall-e-3/prompt'
+    }),
+    toolCall: {
+      status: expect.any(String),
+      calls: [ expect.objectContaining({ params: { quality: 'hd', style: 'vivid' } }) ]
+    }
+  })
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  // @ts-expect-error mock
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+})
+
+test('Generates - Custom Params HuggingFace', async () => {
+
+  const wrapper = mount(CreateMedia)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
+  await settings.find('.expander').trigger('click')
+
+  expect(settings.find<HTMLTextAreaElement>('[name=custom-negative_prompt]').exists()).toBe(true)
+  expect(settings.find<HTMLInputElement>('[name=custom-width]').exists()).toBe(true)
+  expect(settings.find<HTMLInputElement>('[name=custom-height]').exists()).toBe(true)
+
+  await settings.find<HTMLTextAreaElement>('[name=custom-negative_prompt]').setValue('no no no')
+  await settings.find<HTMLSelectElement>('[name=custom-width]').setValue('1000')
+
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
+  await wrapper.vm.$nextTick()
+  expect(settings.emitted()['generate']).toHaveLength(1)
+  expect(settings.emitted()['generate'][0]).toStrictEqual([
+    expect.objectContaining({
+      mediaType: 'image',
+      engine: 'huggingface',
+      model: 'black-forest-labs/FLUX.1-dev',
+      prompt: 'prompt',
+      params: { negative_prompt: 'no no no', width: 1000 },
+    })
+  ])
+
+  expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
+    'huggingface', 'black-forest-labs/FLUX.1-dev', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }
+  )
+
+  // @ts-expect-error mock
+  expect (wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    attachment: expect.objectContaining({
+      url: 'file://huggingface/black-forest-labs/FLUX.1-dev/prompt'
+    }),
+    toolCall: {
+      status: expect.any(String),
+      calls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
+    }
+  })
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  // @ts-expect-error mock
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+})
+
+test('Generates - User Params', async () => {
 
   const wrapper = mount(CreateMedia)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
-  await settings.find('.expand').trigger('click')
+  await settings.find('.expander').trigger('click')
 
   const table = settings.findComponent({ name: 'VariableTable' })
   await table.find<HTMLButtonElement>('.button.add').trigger('click')
@@ -261,7 +374,7 @@ test('Preview', async () => {
   await preview.find<HTMLElement>('.action.info').trigger('click')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'prompt1',
-    detail: 'Engine: openai\nModel: openai1',
+    detail: 'Engine: openai\nModel: dall-e-2',
   }))
 
   // fullscreen
