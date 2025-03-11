@@ -117,8 +117,8 @@
     "value": "Valor",
     "variableEditor": {
       "validation": {
-      "keyRequired": "Certifique-se de inserir uma chave para esta variável.",
-      "requiredFields": "Alguns campos são obrigatórios"
+        "keyRequired": "Certifique-se de inserir uma chave para esta variável.",
+        "requiredFields": "Alguns campos são obrigatórios"
       }
     },
     "warning": "Aviso",
@@ -382,7 +382,17 @@
     "model": "Modelo",
     "modelDefaults": "Padrões para este modelo",
     "moreAboutReplicateModels": "Saiba mais sobre os parâmetros deste modelo",
-    "parameters": "Parâmetros extras",
+    "moreAboutSDWebUIParameters": "Saiba mais sobre os parâmetros do SDWebUI",
+    "parameters": {
+      "height": "Altura",
+      "negativePrompt": "Prompt Negativo",
+      "quality": "Qualidade",
+      "size": "Tamanho",
+      "style": "Estilo",
+      "supportWarning": "Alguns parâmetros podem não ser suportados pelo modelo selecionado.",
+      "title": "Parâmetros",
+      "width": "Largura"
+    },
     "promptPlaceholder": "O que você quer criar?",
     "provider": "Provedor",
     "title": "Criar Mídia",
@@ -1207,9 +1217,11 @@
     },
     "edit": {
       "deleteChat": "Excluir Chat",
+      "deleteMedia": "Excluir Mídia",
       "title": "Editar"
     },
     "file": {
+      "createMedia": "Criar Mídia",
       "newChat": "Novo Chat",
       "newPrompt": "Novo Prompt",
       "newScratchpad": "Novo Scratchpad",
@@ -1463,6 +1475,10 @@
       },
       "openrouter": {
         "aboutModels": "Mais sobre os modelos OpenRouter"
+      },
+      "sdwebui": {
+        "baseURL": "URL Base da API",
+        "ensureApiMode": "Certifique-se de que está no modo API"
       },
       "xai": {
         "aboutModels": "Mais sobre os modelos xAI"

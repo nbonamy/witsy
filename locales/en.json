@@ -382,7 +382,17 @@
     "model": "Model",
     "modelDefaults": "Defaults for this model",
     "moreAboutReplicateModels": "Learn about this model parameters",
-    "parameters": "Extra parameters",
+    "moreAboutSDWebUIParameters": "Learn about SDWebUI parameters",
+    "parameters": {
+      "height": "Height",
+      "negativePrompt": "Negative Prompt",
+      "quality": "Quality",
+      "size": "Size",
+      "style": "Style",
+      "supportWarning": "Some parameters may not be supported by the model you selected.",
+      "title": "Parameters",
+      "width": "Width"
+    },
     "promptPlaceholder": "What do you want to create?",
     "provider": "Provider",
     "title": "Create Media",
@@ -1207,9 +1217,11 @@
     },
     "edit": {
       "deleteChat": "Delete Chat",
+      "deleteMedia": "Delete Media",
       "title": "Edit"
     },
     "file": {
+      "createMedia": "Create Media",
       "newChat": "New Chat",
       "newPrompt": "New Prompt",
       "newScratchpad": "New Scratchpad",
@@ -1463,6 +1475,10 @@
       },
       "openrouter": {
         "aboutModels": "More about OpenRouter models"
+      },
+      "sdwebui": {
+        "baseURL": "API Base URL",
+        "ensureApiMode": "Make sure you are in API mode"
       },
       "xai": {
         "aboutModels": "More about xAI models"

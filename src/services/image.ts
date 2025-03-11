@@ -5,6 +5,7 @@ import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
 import Replicate, { FileOutput } from 'replicate'
 import OpenAI from 'openai'
+import SDWebUI from './sdwebui';
 
 export default class ImageCreator {
 
@@ -19,6 +20,7 @@ export default class ImageCreator {
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: 'Replicate' })
     }
+    engines.push({ id: 'sdwebui', name: 'Stable Diffusion web UI' })
     return engines
   }
 
@@ -59,6 +61,8 @@ export default class ImageCreator {
       return this.huggingface(model, parameters)
     } else if (engine == 'replicate') {
       return this.replicate(model, parameters)
+    } else if (engine == 'sdwebui') {
+      return this.sdwebui(model, parameters)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -151,6 +155,22 @@ export default class ImageCreator {
       url: fileUrl,
     }
 
+  }
+
+  async sdwebui(model: string, parameters: anyDict): Promise<anyDict> {
+
+    const client = new SDWebUI(store.config)
+    const response = await client.generateImage(model, parameters.prompt, parameters)
+ 
+    // save the content on disk
+    const fileUrl = saveFileContents('png', response.images[0])
+    //console.log('[image] saved image to', fileUrl)
+
+    // return an object
+    return {
+      url: fileUrl,
+    }
+    
   }
   
   async blobToBase64(blob: Blob): Promise<string>{

@@ -13,40 +13,68 @@
         <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
       </select>
     </div>
-    <div class="group" v-if="engine == 'openai'">
-      <label>{{ t('settings.plugins.image.imageModel') }}</label>
-      <div class="subgroup">
+
+    <template v-if="engine == 'openai'">
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="subgroup">
+          <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
+            <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
+            </option>
+          </select>
+          <span>{{ t('settings.plugins.image.openai.apiKeyReminder') }}</span>
+        </div>
+        <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+      </div>
+    </template>
+
+    <template v-if="engine == 'replicate'">
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated v-model="replicateAPIKey" @blur="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="subgroup">
+          <Combobox :items="replicate_models" :placeholder="t('settings.plugins.image.replicate.modelPlaceholder')" v-model="image_model" @change="save"/>
+          <a href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a><br/>
+        </div>
+      </div>
+    </template>
+
+    <template v-if="engine == 'huggingface'">
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated v-model="huggingAPIKey" @blur="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="subgroup">
+          <Combobox :items="hf_models" :placeholder="t('settings.plugins.image.huggingface.modelPlaceholder')" v-model="image_model" @change="save"/>
+          <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a><br/>
+        </div>
+      </div>
+    </template>
+
+    <template v-if="engine == 'sdwebui'">
+      <div class="group">
+        <label>{{ t('settings.engines.sdwebui.baseURL') }}</label>
+        <div class="subgroup">
+          <input type="text" v-model="sdwebuiBaseURL" :placeholder="sdwebuiDefaultBaseURL" @blur="save" />
+          <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API" target="_blank">{{ t('settings.engines.sdwebui.ensureApiMode') }}</a>
+        </div>
+      </div>
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
           <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
           </option>
         </select>
-        <span>{{ t('settings.plugins.image.openai.apiKeyReminder') }}</span>
+        <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
-      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-    </div>
-    <div class="group" v-if="engine == 'replicate'">
-      <label>{{ t('settings.engines.apiKey') }}</label>
-      <InputObfuscated v-model="replicateAPIKey" @blur="save" />
-    </div>
-    <div class="group" v-if="engine == 'replicate'">
-      <label>{{ t('settings.plugins.image.imageModel') }}</label>
-      <div class="subgroup">
-        <Combobox :items="replicate_models" :placeholder="t('settings.plugins.image.replicate.modelPlaceholder')" v-model="image_model" @change="save"/>
-        <a href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a><br/>
-      </div>
-    </div>
-    <div class="group" v-if="engine == 'huggingface'">
-      <label>{{ t('settings.engines.apiKey') }}</label>
-      <InputObfuscated v-model="huggingAPIKey" @blur="save" />
-    </div>
-    <div class="group" v-if="engine == 'huggingface'">
-      <label>{{ t('settings.plugins.image.imageModel') }}</label>
-      <div class="subgroup">
-        <Combobox :items="hf_models" :placeholder="t('settings.plugins.image.huggingface.modelPlaceholder')" v-model="image_model" @change="save"/>
-        <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a><br/>
-      </div>
-    </div>
-  </div>  
+    </template>
+
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -57,12 +85,14 @@ import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
+import SDWebUI, { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
 import LlmFactory from '../llms/llm'
 
 const enabled = ref(false)
 const engine = ref(null)
 const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
+const sdwebuiBaseURL = ref('')
 const refreshLabel = ref(t('common.refresh'))
 const image_model = ref(null)
 const image_models = ref([])
@@ -78,6 +108,7 @@ const load = () => {
   engine.value = store.config.plugins.image.engine || 'openai'
   huggingAPIKey.value = store.config.engines.huggingface?.apiKey || ''
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
+  sdwebuiBaseURL.value = store.config.engines.sdwebui?.baseURL || ''
   onChangeEngine()
 }
 
@@ -99,13 +130,26 @@ const setEphemeralRefreshLabel = (text: string) => {
 
 const getModels = async () => {
 
-  // load
-  const llmFactory = new LlmFactory(store.config)
-  let success = await llmFactory.loadModels('openai')
-  if (!success) {
-    image_models.value = []
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+  // openai
+  if (engine.value === 'openai') {
+    const llmFactory = new LlmFactory(store.config)
+    let success = await llmFactory.loadModels('openai')
+    if (!success) {
+      image_models.value = []
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
+
+  // sdwebui
+  if (engine.value == 'sdwebui') {
+    const sdwebui = new SDWebUI(store.config)
+    let success = await sdwebui.loadModels()
+    if (!success) {
+      image_models.value = []
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
   }
 
   // reload
@@ -122,6 +166,7 @@ const save = () => {
   store.config.engines.huggingface.apiKey = huggingAPIKey.value
   store.config.engines.replicate.apiKey = replicateAPIKey.value
   store.config.engines[engine.value].model.image = image_model.value
+  store.config.engines.sdwebui.baseURL = sdwebuiBaseURL.value
   store.saveSettings()
 }
 
