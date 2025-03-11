@@ -21,6 +21,7 @@
       "closeAnyway": "无论如何关闭",
       "continue": "继续",
       "continueQuestion": "您有未保存的更改。如果您继续，您的工作将丢失。",
+      "delete": "您确定要删除此项目吗？",
       "deleteDocument": "您确定要删除此文档吗？",
       "deleteMemory": "您确定要删除此记忆吗？",
       "deleteRepository": "您确定要删除此仓库吗？",
@@ -114,6 +115,12 @@
     "url": "网址",
     "usage": "使用情况",
     "value": "值",
+    "variableEditor": {
+      "validation": {
+      "keyRequired": "请确保为此变量输入一个键。",
+      "requiredFields": "一些字段是必填的"
+      }
+    },
     "warning": "警告",
     "workingWith": "正在处理",
     "write": "写入"
@@ -333,7 +340,7 @@
         "template": "为以下代码创建注释。回答时附上添加注释后的完整代码。不要包含任何解释。\n\n```\n{'{'}input{'}'}\n```"
       }
     },
-    "defaults": { 
+    "defaults": {
       "altWinCopyPaste": "替代复制/粘贴方法",
       "lastOneUsed": "最近使用的",
       "title": "命令默认设置"
@@ -349,6 +356,38 @@
         "inputPlaceholder": "模板必须包含 {'{'}input{'}'} 占位符。",
         "requiredFields": "所有标记为 * 的字段均为必填项。"
       }
+    }
+  },
+  "createMedia": {
+    "confirmDelete": "你确定要删除这个媒体吗？",
+    "emptyPlaceholder": "让你的创造力尽情发挥吧！",
+    "error": {
+      "invalidParams": "关于你的参数报告了一个错误：{detail}。请检查参数并重试。",
+      "noDetailsProvided": "没有提供详细信息",
+      "promptRequired": "请确保输入提示。",
+      "unknown": "发生未知错误。请重试。"
+    },
+    "generate": "生成",
+    "generating": "正在生成…",
+    "history": {
+      "empty": "你还没有创建任何媒体。",
+      "title": "历史记录"
+    },
+    "loadMediaSettings": "加载设置",
+    "mediaType": {
+      "image": "图像",
+      "label": "媒体类型",
+      "video": "视频"
+    },
+    "model": "模型",
+    "modelDefaults": "此模型的默认值",
+    "moreAboutReplicateModels": "了解此模型参数",
+    "parameters": "额外参数",
+    "promptPlaceholder": "你想创建什么？",
+    "provider": "提供者",
+    "title": "创建媒体",
+    "variableEditor": {
+      "title": "额外参数"
     }
   },
   "docRepo": {
@@ -1149,10 +1188,7 @@
       }
     },
     "variableEditor": {
-      "title": "MCP 环境变量",
-      "validation": {
-        "keyRequired": "确保你为这个变量输入了一个键。"
-      }
+      "title": "MCP 环境变量"
     }
   },
   "memory": {
@@ -1665,6 +1701,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "创建媒体...",
       "installUpdate": "安装更新并重启...",
       "newChat": "新建聊天",
       "quickPrompt": "快速提示",

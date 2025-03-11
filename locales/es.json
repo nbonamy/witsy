@@ -21,6 +21,7 @@
       "closeAnyway": "Cerrar de todos modos",
       "continue": "Continuar",
       "continueQuestion": "Tienes cambios no guardados. Perderás tu trabajo si continúas.",
+      "delete": "¿Estás seguro de que deseas eliminar este elemento?",
       "deleteDocument": "¿Estás seguro de que deseas eliminar este documento?",
       "deleteMemory": "¿Estás seguro de que deseas eliminar esta memoria?",
       "deleteRepository": "¿Estás seguro de que deseas eliminar este repositorio?",
@@ -95,6 +96,12 @@
     "url": "URL",
     "usage": "Uso",
     "value": "Valor",
+    "variableEditor": {
+      "validation": {
+      "keyRequired": "Asegúrate de ingresar una clave para esta variable.",
+      "requiredFields": "Algunos campos son obligatorios"
+      }
+    },
     "warning": "Advertencia",
     "workingWith": "Trabajando con",
     "write": "Escribir"
@@ -330,6 +337,38 @@
         "inputPlaceholder": "La plantilla debe contener el marcador de posición {'input'}.",
         "requiredFields": "Todos los campos marcados con * son obligatorios."
       }
+    }
+  },
+  "createMedia": {
+    "confirmDelete": "¿Estás seguro de que deseas eliminar este medio?",
+    "emptyPlaceholder": "¡Deja volar tu creatividad!",
+    "error": {
+      "invalidParams": "Se reportó un error sobre tus parámetros: {detail}. Por favor, verifica los parámetros y vuelve a intentarlo.",
+      "noDetailsProvided": "no hay detalles disponibles",
+      "promptRequired": "Asegúrate de ingresar una solicitud.",
+      "unknown": "Ocurrió un error desconocido. Por favor, vuelve a intentarlo."
+    },
+    "generate": "Generar",
+    "generating": "Generando…",
+    "history": {
+      "empty": "Aún no has creado ningún medio.",
+      "title": "Historial"
+    },
+    "loadMediaSettings": "Cargar configuraciones",
+    "mediaType": {
+      "image": "Imagen",
+      "label": "Tipo de Medio",
+      "video": "Video"
+    },
+    "model": "Modelo",
+    "modelDefaults": "Valores predeterminados para este modelo",
+    "moreAboutReplicateModels": "Aprende sobre los parámetros de este modelo",
+    "parameters": "Parámetros adicionales",
+    "promptPlaceholder": "¿Qué quieres crear?",
+    "provider": "Proveedor",
+    "title": "Crear Medio",
+    "variableEditor": {
+      "title": "Parámetro Adicional"
     }
   },
   "docRepo": {
@@ -1130,10 +1169,7 @@
       }
     },
     "variableEditor": {
-      "title": "Variable de entorno MCP",
-      "validation": {
-        "keyRequired": "Asegúrese de ingresar una clave para esta variable."
-      }
+      "title": "Variable de entorno MCP"
     }
   },
   "memory": {
@@ -1635,6 +1671,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "Crear Medio...",
       "installUpdate": "Instalar actualización y reiniciar...",
       "newChat": "Nueva conversación",
       "quickPrompt": "Sugerencia rápida",

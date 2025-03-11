@@ -21,6 +21,7 @@
       "closeAnyway": "Fermer quand même",
       "continue": "Continuer",
       "continueQuestion": "Vous avez des modifications non enregistrées. Vous perdrez votre travail si vous continuez.",
+      "delete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
       "deleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
       "deleteMemory": "Êtes-vous sûr de vouloir supprimer cette mémoire ?",
       "deleteRepository": "Êtes-vous sûr de vouloir supprimer ce dépôt ?",
@@ -95,6 +96,12 @@
     "url": "URL",
     "usage": "Usage",
     "value": "Valeur",
+    "variableEditor": {
+      "validation": {
+      "keyRequired": "Assurez-vous d'entrer une clé pour cette variable.",
+      "requiredFields": "Certains champs sont obligatoires"
+      }
+    },
     "warning": "Attention",
     "workingWith": "Texte de",
     "write": "Écrire"
@@ -330,6 +337,38 @@
         "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
       }
+    }
+  },
+  "createMedia": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce média ?",
+    "emptyPlaceholder": "Laissez libre cours à votre créativité !",
+    "error": {
+      "invalidParams": "Une erreur a été signalée concernant vos paramètres : {detail}. Veuillez vérifier les paramètres et réessayer.",
+      "noDetailsProvided": "aucun détail disponible",
+      "promptRequired": "Assurez-vous de saisir une requête.",
+      "unknown": "Une erreur inconnue s'est produite. Veuillez réessayer."
+    },
+    "generate": "Générer",
+    "generating": "Génération…",
+    "history": {
+      "empty": "Vous n'avez encore créé aucun média.",
+      "title": "Historique"
+    },
+    "loadMediaSettings": "Charger les paramètres",
+    "mediaType": {
+      "image": "Image",
+      "label": "Type de média",
+      "video": "Vidéo"
+    },
+    "model": "Modèle",
+    "modelDefaults": "Valeurs par défaut pour ce modèle",
+    "moreAboutReplicateModels": "En savoir plus sur les paramètres de ce modèle",
+    "parameters": "Paramètres supplémentaires",
+    "promptPlaceholder": "Que voulez-vous créer ?",
+    "provider": "Fournisseur",
+    "title": "Créer un média",
+    "variableEditor": {
+      "title": "Paramètre supplémentaire"
     }
   },
   "docRepo": {
@@ -1130,10 +1169,7 @@
       }
     },
     "variableEditor": {
-      "title": "Variable d'environnement MCP",
-      "validation": {
-        "keyRequired": "Assurez-vous d'entrer une clé pour cette variable."
-      }
+      "title": "Variable d'environnement MCP"
     }
   },
   "memory": {
@@ -1635,6 +1671,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "Créer un média...",
       "installUpdate": "Installer la mise à jour et redémarrer...",
       "newChat": "Nouvelle conversation",
       "quickPrompt": "Requête rapide",
