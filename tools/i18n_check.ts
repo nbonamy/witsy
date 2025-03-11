@@ -10,6 +10,10 @@ const LOCALES_DIR = 'locales'
 const I18N_KEY_PATTERN_T = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
 const I18N_KEY_PATTERN_I = /i18nInstructions\((?:[^,]+),\s*['"]([^'"]+)['"]/g
 
+// Parse command line arguments
+const args = process.argv.slice(2)
+const shouldFix = args.includes('--fix')
+
 // Helper types
 interface LocaleData {
   [key: string]: any
@@ -25,6 +29,87 @@ interface KeyUsage {
     filename: string;
     line: number;
   }>;
+}
+
+// Helper function to set a nested value in an object
+function setNestedValue(obj: any, keyPath: string, value: any) {
+  const parts = keyPath.split('.')
+  let current = obj
+  
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i]
+    if (!current[part] || typeof current[part] !== 'object') {
+      current[part] = {}
+    }
+    current = current[part]
+  }
+  
+  current[parts[parts.length - 1]] = value
+}
+
+// Helper function to get a nested value from an object
+function getNestedValue(obj: any, keyPath: string): any {
+  const parts = keyPath.split('.')
+  let current = obj
+  
+  for (const part of parts) {
+    if (current[part] === undefined) {
+      return undefined
+    }
+    current = current[part]
+  }
+  
+  return current
+}
+
+// Helper function to check if a key exists in a nested object
+function keyExists(obj: any, keyPath: string): boolean {
+  return getNestedValue(obj, keyPath) !== undefined
+}
+
+// Helper function to remove a key from a nested object
+function removeNestedKey(obj: any, keyPath: string) {
+  const parts = keyPath.split('.')
+  const lastPart = parts.pop()!
+  let current = obj
+  
+  for (const part of parts) {
+    if (current[part] === undefined) {
+      return
+    }
+    current = current[part]
+  }
+  
+  if (current[lastPart] !== undefined) {
+    delete current[lastPart]
+  }
+  
+  // Clean up empty objects
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const checkPath = parts.slice(0, i + 1).join('.')
+    const objAtPath = getNestedValue(obj, checkPath)
+    if (objAtPath && Object.keys(objAtPath).length === 0) {
+      removeNestedKey(obj, checkPath)
+    } else {
+      break
+    }
+  }
+}
+
+// Helper function to flatten a nested object
+function flatten(obj: Record<string, any>, prefix: string = ''): Record<string, any> {
+  if (!obj) {
+    return {}
+  }
+  return Object.keys(obj).reduce((acc, k: string) => {
+    const pre = prefix.length ? (prefix + '.') : ''
+    if (typeof obj[k] === 'string') {
+      acc[pre + k] = obj[k]
+    } else if (typeof obj[k] === 'object' && obj[k] !== null) {
+      Object.assign(acc, flatten(obj[k], pre + k))
+    }
+    return acc
+  }, {} as Record<string, any>)
 }
 
 // Main function
@@ -91,20 +176,6 @@ async function checkMissingTranslations() {
     let allKeys = Array.from(keyUsages.keys())
 
     // add keys from en.json
-    const flatten = (obj: Record<string, any>, prefix: string = '') => {
-      if (!obj) {
-        return {}
-      }
-      return Object.keys(obj).reduce((acc, k: string) => {
-        const pre = prefix.length ? (prefix + '.') : ''
-        if (typeof obj[k] === 'string') {
-          acc[pre + k] = obj[k]
-        } else if (typeof obj[k] === 'object') {
-          Object.assign(acc, flatten(obj[k], pre + k))
-        }
-        return acc
-      }, {} as Record<string, any>)
-    }
     const enKeys = flatten(locales.en)
     Object.keys(enKeys).forEach(key => {
       if (!allKeys.includes(key) && !key.startsWith('common.language.')) {
@@ -122,21 +193,6 @@ async function checkMissingTranslations() {
       missingTranslations[locale] = []
     })
 
-    // Helper function to check if a key exists in a nested object
-    function keyExists(obj: any, keyPath: string): boolean {
-      const parts = keyPath.split('.')
-      let current = obj
-      
-      for (const part of parts) {
-        if (current[part] === undefined) {
-          return false
-        }
-        current = current[part]
-      }
-      
-      return true
-    }
-
     // Check each key against all locales
     for (const key of allKeys) {
       for (const locale in locales) {
@@ -146,6 +202,54 @@ async function checkMissingTranslations() {
           }
         }
       }
+    }
+
+    // Fix missing translations if --fix flag is provided
+    if (shouldFix) {
+      let fixesApplied = false
+      
+      Object.entries(missingTranslations).forEach(([locale, keys]) => {
+        if (keys.length > 0) {
+          console.log(`\n🔧 Fixing ${keys.length} missing translation keys in "${locale}"...`)
+          
+          keys.forEach(key => {
+            // For English, use the key itself as the value
+            if (locale === 'en') {
+              setNestedValue(locales[locale], key, key)
+              console.log(`  + Added "${key}" = "${key}"`)
+            } 
+            // For other languages, use the English value if available
+            else if (keyExists(locales.en, key)) {
+              const enValue = getNestedValue(locales.en, key)
+              setNestedValue(locales[locale], key, enValue)
+              console.log(`  + Added "${key}" = "${enValue}"`)
+            }
+            // If no English value, use the key itself
+            else {
+              setNestedValue(locales[locale], key, key)
+              console.log(`  + Added "${key}" = "${key}" (no English value found)`)
+            }
+          })
+          
+          // Save the updated locale file
+          fs.writeFileSync(
+            path.join(LOCALES_DIR, `${locale}.json`), 
+            JSON.stringify(locales[locale], null, 2) + '\n',
+            'utf8'
+          )
+          
+          fixesApplied = true
+        }
+      })
+      
+      if (fixesApplied) {
+        console.log('\n✅ Fixed all missing translation keys.')
+      } else {
+        console.log('\n✅ No missing translations to fix.')
+      }
+      
+      // After fixing, there should be no more missing translations
+      return false
     }
 
     // Report results
@@ -168,10 +272,11 @@ async function checkMissingTranslations() {
     })
 
     if (hasMissingTranslations) {
-      console.log('\n❌ Some translations are missing. Please update your locale files.')
-      process.exit(1)
+      console.log('\n❌ Some translations are missing. Please update your locale files or use --fix to automatically add them.')
+      return true
     } else {
       console.log('\n✅ All i18n keys are properly translated in all locale files!')
+      return false
     }
 
   } catch (error) {
@@ -179,7 +284,6 @@ async function checkMissingTranslations() {
     process.exit(1)
   }
 }
-
 
 async function checkUnusedTranslations() {
   try {
@@ -193,11 +297,13 @@ async function checkUnusedTranslations() {
     function getAllKeys(obj: any, prefix = ''): string[] {
       return Object.entries(obj).flatMap(([key, value]) => {
         const newKey = prefix ? `${prefix}.${key}` : key
-        return typeof value === 'object'
+        return typeof value === 'object' && value !== null
           ? getAllKeys(value, newKey)
           : [newKey]
       })
     }
+
+    let hasUnusedKeys = false
 
     // Load and process each locale file
     for (const file of localeFiles) {
@@ -225,8 +331,26 @@ async function checkUnusedTranslations() {
         })
       }
 
+      // Fix unused keys if --fix flag is provided
+      if (shouldFix && unusedKeys.size > 0) {
+        console.log(`\n🔧 Removing ${unusedKeys.size} unused keys from "${localeName}"...`)
+        
+        const updatedLocaleData = JSON.parse(JSON.stringify(localeData))
+        Array.from(unusedKeys).forEach(key => {
+          removeNestedKey(updatedLocaleData, key)
+          console.log(`  - Removed "${key}"`)
+        })
+        
+        // Save the updated locale file
+        fs.writeFileSync(
+          file, 
+          JSON.stringify(updatedLocaleData, null, 2) + '\n',
+          'utf8'
+        )
+      }
       // Report results
-      if (unusedKeys.size > 0) {
+      else if (unusedKeys.size > 0) {
+        hasUnusedKeys = true
         console.log(`\n⚠️ Found ${unusedKeys.size} unused keys in "${localeName}":`)
         Array.from(unusedKeys).sort().forEach(key => {
           console.log(`  - ${key}`)
@@ -236,8 +360,13 @@ async function checkUnusedTranslations() {
       }
     }
     
+    if (hasUnusedKeys && !shouldFix) {
+      console.log('\n⚠️ Some translations are unused. Use --fix to automatically remove them.')
+    } else if (shouldFix) {
+      console.log('\n✅ Removed all unused translation keys.')
+    }
 
-
+    return hasUnusedKeys
   } catch (error) {
     console.error('Error checking unused translations:', error)
     process.exit(1)
@@ -246,6 +375,10 @@ async function checkUnusedTranslations() {
 
 // do it
 (async () => {
-  await checkMissingTranslations()
-  await checkUnusedTranslations()
+  const hasMissingTranslations = await checkMissingTranslations()
+  const hasUnusedTranslations = await checkUnusedTranslations()
+  
+  if ((hasMissingTranslations || hasUnusedTranslations) && !shouldFix) {
+    process.exit(1)
+  }
 })()

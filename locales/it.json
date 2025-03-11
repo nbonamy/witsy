@@ -21,6 +21,7 @@
       "closeAnyway": "Chiudi comunque",
       "continue": "Continua",
       "continueQuestion": "Hai modifiche non salvate. Perderai il tuo lavoro se continui.",
+      "delete": "Sei sicuro di voler eliminare questo elemento?",
       "deleteDocument": "Sei sicuro di voler eliminare questo documento?",
       "deleteMemory": "Sei sicuro di voler eliminare questa memoria?",
       "deleteRepository": "Sei sicuro di voler eliminare questo repository?",
@@ -95,6 +96,12 @@
     "url": "URL",
     "usage": "Utilizzo",
     "value": "Valore",
+    "variableEditor": {
+      "validation": {
+      "keyRequired": "Assicurati di inserire una chiave per questa variabile.",
+      "requiredFields": "Alcuni campi sono obbligatori"
+      }
+    },
     "warning": "Attenzione",
     "workingWith": "Lavorare con",
     "write": "Scrivere"
@@ -330,6 +337,38 @@
         "inputPlaceholder": "Il template deve contenere il segnaposto {'{'}input{'}'}.",
         "requiredFields": "Tutti i campi contrassegnati con * sono obbligatori."
       }
+    }
+  },
+  "createMedia": {
+    "confirmDelete": "Sei sicuro di voler eliminare questo media?",
+    "emptyPlaceholder": "Lascia che la tua creatività si scateni!",
+    "error": {
+      "invalidParams": "È stato segnalato un errore sui tuoi parametri: {detail}. Controlla i parametri e riprova.",
+      "noDetailsProvided": "nessun dettaglio disponibile",
+      "promptRequired": "Assicurati di inserire un prompt.",
+      "unknown": "Si è verificato un errore sconosciuto. Riprova."
+    },
+    "generate": "Genera",
+    "generating": "Generazione in corso…",
+    "history": {
+      "empty": "Non hai ancora creato nessun media.",
+      "title": "Cronologia"
+    },
+    "loadMediaSettings": "Carica impostazioni",
+    "mediaType": {
+      "image": "Immagine",
+      "label": "Tipo di Media",
+      "video": "Video"
+    },
+    "model": "Modello",
+    "modelDefaults": "Valori predefiniti per questo modello",
+    "moreAboutReplicateModels": "Scopri di più sui parametri di questo modello",
+    "parameters": "Parametri extra",
+    "promptPlaceholder": "Cosa vuoi creare?",
+    "provider": "Fornitore",
+    "title": "Crea Media",
+    "variableEditor": {
+      "title": "Parametro Extra"
     }
   },
   "docRepo": {
@@ -1130,10 +1169,7 @@
       }
     },
     "variableEditor": {
-      "title": "Variabile di ambiente MCP",
-      "validation": {
-        "keyRequired": "Assicurati di inserire una chiave per questa variabile."
-      }
+      "title": "Variabile di ambiente MCP"
     }
   },
   "memory": {
@@ -1635,6 +1671,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "Crea Media...",
       "installUpdate": "Installa aggiornamento e riavvia...",
       "newChat": "Nuova chat",
       "quickPrompt": "Richiesta rapida",

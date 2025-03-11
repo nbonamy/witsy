@@ -21,6 +21,7 @@
       "closeAnyway": "Trotzdem schließen",
       "continue": "Fortfahren",
       "continueQuestion": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Arbeit, wenn Sie fortfahren.",
+      "delete": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
       "deleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
       "deleteMemory": "Sind Sie sicher, dass Sie dieses Gedächtnis löschen möchten?",
       "deleteRepository": "Sind Sie sicher, dass Sie dieses Repository löschen möchten?",
@@ -95,6 +96,12 @@
     "url": "URL",
     "usage": "Nutzung",
     "value": "Wert",
+    "variableEditor": {
+      "validation": {
+      "keyRequired": "Stellen Sie sicher, dass Sie einen Schlüssel für diese Variable eingeben.",
+      "requiredFields": "Einige Felder sind erforderlich"
+      }
+    },
     "warning": "Warnung",
     "workingWith": "Arbeiten mit",
     "write": "Schreiben"
@@ -330,6 +337,38 @@
         "inputPlaceholder": "Die Vorlage muss den Platzhalter {input} enthalten.",
         "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."
       }
+    }
+  },
+  "createMedia": {
+    "confirmDelete": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
+    "emptyPlaceholder": "Lassen Sie Ihrer Kreativität freien Lauf!",
+    "error": {
+      "invalidParams": "Ein Fehler wurde bezüglich Ihrer Parameter gemeldet: {detail}. Bitte überprüfen Sie die Parameter und versuchen Sie es erneut.",
+      "noDetailsProvided": "keine Details verfügbar",
+      "promptRequired": "Stellen Sie sicher, dass Sie eine Eingabeaufforderung eingeben.",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "generate": "Generieren",
+    "generating": "Generieren…",
+    "history": {
+      "empty": "Sie haben noch keine Medien erstellt.",
+      "title": "Verlauf"
+    },
+    "loadMediaSettings": "Einstellungen laden",
+    "mediaType": {
+      "image": "Bild",
+      "label": "Medientyp",
+      "video": "Video"
+    },
+    "model": "Modell",
+    "modelDefaults": "Standardwerte für dieses Modell",
+    "moreAboutReplicateModels": "Erfahren Sie mehr über die Modellparameter",
+    "parameters": "Zusätzliche Parameter",
+    "promptPlaceholder": "Was möchten Sie erstellen?",
+    "provider": "Anbieter",
+    "title": "Medien erstellen",
+    "variableEditor": {
+      "title": "Zusätzlicher Parameter"
     }
   },
   "docRepo": {
@@ -1130,10 +1169,7 @@
       }
     },
     "variableEditor": {
-      "title": "MCP-Umgebungsvariable",
-      "validation": {
-        "keyRequired": "Stellen Sie sicher, dass Sie einen Schlüssel für diese Variable eingeben."
-      }
+      "title": "MCP-Umgebungsvariable"
     }
   },
   "memory": {
@@ -1635,6 +1671,7 @@
   },
   "tray": {
     "menu": {
+      "createMedia": "Medien erstellen…",
       "installUpdate": "Update installieren und neu starten...",
       "newChat": "Neuer Chat",
       "quickPrompt": "Schnelle Eingabe",
