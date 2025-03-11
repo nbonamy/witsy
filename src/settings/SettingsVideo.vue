@@ -10,7 +10,7 @@
     <div class="group">
       <label>{{ t('settings.plugins.video.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
-        <option value="replicate">Replicate</option>
+        <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
       </select>
     </div>
     <div class="group" v-if="engine == 'replicate'">
@@ -29,11 +29,12 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
+import VideoCreator from '../services/video'
 
 const enabled = ref(false)
 const engine = ref(null)
@@ -41,16 +42,9 @@ const replicateAPIKey = ref(null)
 const video_model = ref(null)
 const video_models = ref([])
 
-const replicate_models = ref([
-  'wavespeedai/wan-2.1-t2v-480p',
-  'minimax/video-01',
-  'minimax/video-01-live',
-  'tencent/hunyuan-video',
-  'fofr/Itx-video',
-  'luma/ray',
-  'haiper-ai/haiper-video-2',
-  'genmoai/mochi-1'
-].map(name => ({ id: name, name })))
+const engines = computed(() => VideoCreator.getEngines(false))
+
+const replicate_models = computed(() => VideoCreator.getModels('replicate'))
 
 const load = () => {
   enabled.value = store.config.plugins.video.enabled || false
