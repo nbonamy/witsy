@@ -50,28 +50,14 @@
       </div>
       <div class="group" v-if="type === 'stdio'">
         <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
-        <div class="list-with-actions">
-          <div class="sticky-table-container">
-            <table class="list">
-              <thead>
-                <tr>
-                  <th>{{ t('common.key') }}</th>
-                  <th>{{ t('common.value') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(value, key) in env" :key="key" :class="{ selected: selectedVar?.key == key }" @click="onSelectVar(key as string)" @dblclick="onEditVar(key as string)">
-                  <td>{{ key }}</td>
-                  <td>{{ value }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="actions">
-            <button ref="addButton" class="button add" @click.prevent="onAddVar"><BIconPlus /></button>
-            <button class="button remove" @click.prevent="onDelVar" :disabled="!selectedVar"><BIconDash /></button>
-          </div>
-        </div>
+        <VariableTable 
+          :variables="env"
+          :selectedVariable="selectedVar"
+          @select="onSelectVar"
+          @add="onAddVar"
+          @edit="onEditVar"
+          @delete="onDelVar"
+        />
       </div>
     </template>
     <template v-slot:footer>
@@ -81,7 +67,7 @@
       </div>
     </template>
   </AlertDialog>
-  <McpVariableEditor ref="editor" :variable="selectedVar" @save="onSaveVar" />
+  <VariableEditor ref="editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
 </template>
 
 <script setup lang="ts">
@@ -91,7 +77,8 @@ import { McpServer } from '../types/mcp'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
-import McpVariableEditor from './McpVariableEditor.vue'
+import VariableEditor from './VariableEditor.vue'
+import VariableTable from '../components/VariableTable.vue'
 
 const dialog = ref(null)
 const editor = ref(null)

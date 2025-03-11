@@ -1,18 +1,16 @@
 <template>
-  <AlertDialog id="mcp-variable-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
+  <AlertDialog id="variable-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
     <template v-slot:header>
-      <div class="title">{{ t('mcp.variableEditor.title') }}</div>
+      <div class="title">{{ t(title) }}</div>
     </template>
     <template v-slot:body>
       <div class="group">
         <label>{{ t('common.key') }}</label>
-        <input type="text" name="key" v-model="key" autofocus spellcheck="false" autocapitalize="false"
-          autocomplete="false" autocorrect="false" />
+        <input type="text" name="key" v-model="key" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
       <div class="group">
         <label>{{ t('common.value') }}</label>
-        <input type="text" name="value" v-model="value" autofocus spellcheck="false" autocapitalize="false"
-          autocomplete="false" autocorrect="false" />
+        <input type="text" name="value" v-model="value" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
     </template>
     <template v-slot:footer>
@@ -36,6 +34,10 @@ const key = ref('')
 const value = ref('')
 
 const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
   variable: {
     type: Object as PropType<{ key: string, value: string }>,
     default: () => ({ key: '', value: '' }),
@@ -48,11 +50,18 @@ onMounted(async () => {
   watch(() => props.variable, () => {
     key.value = props.variable?.key || ''
     value.value = props.variable?.value || ''
+    if (key.value.length) {
+      const input =  document.querySelector<HTMLInputElement>('#variable-editor [name=value]')
+      input.focus()
+      input.select()
+    } else {
+      document.querySelector<HTMLElement>('#variable-editor [name=key]').focus()
+    }
   }, { immediate: true })
 })
 
 const close = () => {
-  dialog.value.close('#mcp-variable-editor')
+  dialog.value.close('#variable-editor')
 }
 
 const onCancel = () => {
@@ -63,8 +72,8 @@ const onSave = () => {
 
   if (!key.value.length) {
     Dialog.show({
-      title: t('mcp.serverEditor.validation.requiredFields'),
-      text: t('mcp.variableEditor.validation.keyRequired'),
+      title: t('common.variableEditor.validation.requiredFields'),
+      text: t('common.variableEditor.validation.keyRequired'),
       confirmButtonText: t('common.ok'),
     })
     return
@@ -80,7 +89,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#mcp-variable-editor'),
+  show: () => dialog.value.show('#variable-editor'),
   close,
 })
 
