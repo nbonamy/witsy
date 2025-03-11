@@ -273,6 +273,16 @@ test('Open Realtime window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
+test('Open Create Media window', async () => {
+  await window.openCreateMediaWindow()
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
+    hash: '/create',
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/create')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
 test('MAS build warning', async () => {
   window.showMasLimitsDialog()
   expect(dialog.showMessageBoxSync).toHaveBeenLastCalledWith(null, {

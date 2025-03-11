@@ -1,5 +1,5 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, Model } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -44,6 +44,7 @@ export interface Message extends IMessageBase {
   setText(text: string): void
   setImage(url: string): void
   setToolCall(toolCall: LlmChunkTool): void
+  isVideo(): boolean
 }
 
 export interface Chat {
@@ -172,6 +173,17 @@ export type MemoryFact = {
   content: string
 }
 
+export type MediaCreationEngine = {
+  id: string
+  name: string
+}
+
+export interface MediaCreator {
+  getEngines(checkApiKey: boolean): MediaCreationEngine[]
+  getModels(engine: string): Model[]
+  execute(engine: string, model: string, parameters: anyDict): Promise<any>
+}
+
 declare global {
   interface Window {
     api: {
@@ -184,7 +196,7 @@ declare global {
       setAppearanceTheme(theme: string): void
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]
-      fullscreen(state: boolean): void
+      fullscreen(window: string, state: boolean): void
       runAtLogin: {
         get(): boolean
         set(state: boolean): void

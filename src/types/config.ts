@@ -12,6 +12,7 @@ export type Configuration = {
   automation: AutomationConfig
   instructions: InstructionsConfig
   appearance: AppearanceConfig
+  create: MediaCreateConfig
   shortcuts: ShortcutsConfig
   scratchpad: ScratchpadConfig
   engines: {[key: string]: EngineConfig|CustomEngineConfig}
@@ -81,6 +82,19 @@ export type AppearanceConfig = {
   tint: 'black' | 'blue'
   chatList: ChatListAppearance
   chat: ChatAppearance
+}
+
+export type MediaCreateDefaults = {
+  engine: string
+  model: string
+  params: Record<string, string>
+}
+
+export type MediaCreateConfig = {
+  type: 'image' | 'video'
+  engine: string
+  model: string
+  defaults: MediaCreateDefaults[]
 }
 
 export type PromptConfig = {
