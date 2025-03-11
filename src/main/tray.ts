@@ -116,6 +116,13 @@ export default class {
         type: 'separator'
       },
       {
+        label: t('tray.menu.createMedia'),
+        click: () => window.openCreateMediaWindow(),
+      },
+      {
+        type: 'separator'
+      },
+      {
         label: t('tray.menu.readAloud'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.readaloud),
         click: () => ReadAloud.read(this.app),

@@ -52,6 +52,12 @@
   "automation": {
     "altWinCopyPaste": false
   },
+  "create": {
+    "type": "image",
+    "engine": "openai",
+    "model": "dall-e-2",
+    "defaults": []
+  },
   "shortcuts": {
     "chat": {
       "key": "Space",
