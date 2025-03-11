@@ -7,13 +7,13 @@
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
       </div>
 
-      <Settings v-if="mode === 'create'" ref="settingsPanel" :is-generating="isGenerating" @generate="onMediaGenerationRequest" />
+      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :is-generating="isGenerating" @generate="onMediaGenerationRequest" />
     
-      <History v-if="mode === 'history'" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
+      <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
     
     </div>
 
-    <Preview :message="message" :is-generating="isGenerating" @fullscreen="onFullScreen" />
+    <Preview :message="message" :is-generating="isGenerating" @fullscreen="onFullScreen" @delete="onDelete"/>
 
   </div>
 
@@ -121,23 +121,31 @@ const handleActionClick = async (action: string) => {
     })
   }
   else if (action === 'delete') {
-    Dialog.show({
-      title: t('createMedia.confirmDelete'),
-      text: t('common.confirmation.cannotUndo'),
-      confirmButtonText: t('common.delete'),
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.api.file.delete(msg.attachment.url)        
-        chat.value.messages = chat.value.messages.filter((m) => m.uuid !== msg.uuid)
-        store.saveHistory()
-        message.value = null
-        if (chat.value.messages.length === 1) {
-          mode.value = 'create'
-        }
-      }
-    })
+    deleteMedia(msg)
   }
+}
+
+const onDelete = (msg: Message) => {
+  deleteMedia(msg)
+}
+
+const deleteMedia = (msg: Message) => {
+  Dialog.show({
+    title: t('createMedia.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.api.file.delete(msg.attachment.url)        
+      chat.value.messages = chat.value.messages.filter((m) => m.uuid !== msg.uuid)
+      store.saveHistory()
+      message.value = null
+      if (chat.value.messages.length === 1) {
+        mode.value = 'create'
+      }
+    }
+  })
 }
 
 const onMediaGenerationRequest = async (data: any) => {
@@ -242,6 +250,10 @@ const onFullScreen = (url: string) => {
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+
+  > .hidden {
+    display: none;
+  }
 }
 
 .navigation {

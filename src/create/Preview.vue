@@ -12,6 +12,9 @@
         <div class="action save" @click="onDownload">
           <BIconDownload />
         </div>
+        <div class="action delete" @click="onDelete">
+          <BIconTrash />
+        </div>
       </template>
     </div>
     <div v-if="!message" class="empty">
@@ -41,7 +44,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['fullscreen'])
+const emit = defineEmits(['fullscreen', 'delete'])
 
 const onInfo = () => {
   if (!props.message) return
@@ -70,7 +73,6 @@ const onFullScreen = () => {
 }
 
 const onDownload = () => {
-  console.log(props.message)
   const url = props.message.attachment.url
   window.api.file.download({
     url: url,
@@ -81,6 +83,12 @@ const onDownload = () => {
     }
   })
 }
+
+const onDelete = () => {
+  if (!props.message) return
+  emit('delete', props.message)
+}
+
 </script>
 
 <style scoped>

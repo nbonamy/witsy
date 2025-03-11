@@ -88,7 +88,9 @@ test('Renders', async () => {
   const wrapper = mount(CreateMedia)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.findComponent({ name: 'Settings' }).exists()).toBe(true)
-  expect(wrapper.findComponent({ name: 'History' }).exists()).toBe(false)
+  expect(wrapper.findComponent({ name: 'Settings' }).classes()).not.toContain('hidden')
+  expect(wrapper.findComponent({ name: 'History' }).exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'History' }).classes()).toContain('hidden')
   expect(wrapper.findComponent({ name: 'Preview' }).exists()).toBe(true)
 })
 
@@ -121,7 +123,9 @@ test('History', async () => {
 
   const wrapper = mount(CreateMedia)
   await wrapper.find('.navigation > *').trigger('click')
+  expect(wrapper.findComponent({ name: 'Settings' }).classes()).toContain('hidden')
   const history = wrapper.findComponent({ name: 'History' })
+  expect(history.classes()).not.toContain('hidden')
   expect(history.exists()).toBe(true)
   expect(history.findAll('.message').length).toBe(2)
   expect(history.find<HTMLElement>('.message:nth-child(1) .content').text()).toBe('prompt2')
@@ -275,6 +279,10 @@ test('Preview', async () => {
       filename: 'image.jpg'
     }
   })
+
+  // delete
+  await preview.find<HTMLElement>('.action.delete').trigger('click')
+  expect(preview.emitted()['delete']).toHaveLength(1)
 
 })
 
