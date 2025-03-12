@@ -25,7 +25,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
   // get all windows
   const windowsMenu = []
   for (const win of BrowserWindow.getAllWindows()) {
-    if (win != window.promptAnywhereWindow) {
+    if (win != window.promptAnywhereWindow && win != window.commandPicker) {
       windowsMenu.push({
         label: win.getTitle(),
         click: () => {

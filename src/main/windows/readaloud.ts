@@ -1,8 +1,9 @@
 
 import { strDict } from '../../types/index';
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
+import { useI18n } from 'main/i18n';
 
 export let readAloudPalette: BrowserWindow = null;
 
@@ -31,6 +32,7 @@ export const openReadAloudPalette = async (params: strDict) => {
 
   // open a new one
   readAloudPalette = createWindow({
+    title: useI18n(app)('tray.menu.readAloud'),
     hash: '/readaloud',
     x, y, width, height,
     frame: false,
