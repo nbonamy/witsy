@@ -197,6 +197,10 @@ const onMediaGenerationRequest = async (data: any) => {
     Object.keys(data.params).forEach((key) => {
       if (!data.params[key]) {
         delete data.params[key]
+      } else if (data.params[key] === 'true') {
+        data.params[key] = true
+      } else if (data.params[key] === 'false') {
+        data.params[key] = false
       } else if (!isNaN(data.params[key])) {
         data.params[key] = parseFloat(data.params[key])
       }
