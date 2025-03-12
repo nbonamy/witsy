@@ -2,6 +2,7 @@
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates, titleBarOptions } from './index';
 import { wait } from '../utils';
+import { useI18n } from 'main/i18n';
 
 export let realtimeChatWindow: BrowserWindow = null;
 
@@ -30,12 +31,12 @@ export const openRealtimeChatWindow = async () => {
 
   // open a new one
   realtimeChatWindow = createWindow({
+    title: useI18n(app)('tray.menu.voiceMode'),
     hash: '/realtime',
     x, y, width, height,
     ...titleBarOptions({
       height: 48,
     }),
-    title: 'Realtime Chat',
     resizable: process.env.DEBUG ? true : false,
     movable: true,
   });

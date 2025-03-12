@@ -1,7 +1,8 @@
 
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
+import { useI18n } from 'main/i18n';
 
 export let transcribePalette: BrowserWindow = null;
 
@@ -30,6 +31,7 @@ export const openTranscribePalette = async () => {
 
   // open a new one
   transcribePalette = createWindow({
+    title: useI18n(app)('settings.shortcuts.dictation'),
     hash: '/transcribe',
     x, y, width, height,
     center: true,
@@ -37,7 +39,6 @@ export const openTranscribePalette = async () => {
     skipTaskbar: true,
     resizable: false,
     hiddenInMissionControl: true,
-    title: 'Dictation'
   });
 
 }

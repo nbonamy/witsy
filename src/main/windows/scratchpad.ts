@@ -3,6 +3,7 @@ import { anyDict } from '../../types/index';
 import { app } from 'electron';
 import { createWindow, titleBarOptions, getCenteredCoordinates } from './index';
 import { putCachedText } from '../../main/utils';
+import { useI18n } from 'main/i18n';
 
 export const openScratchPad = async (text?: string|null) => {
 
@@ -21,9 +22,9 @@ export const openScratchPad = async (text?: string|null) => {
 
   // open a new one
   const scratchpadWindow = createWindow({
+    title: useI18n(app)('tray.menu.scratchpad'),
     hash: '/scratchpad',
     x, y, width, height,
-    title: 'Scratchpad',
     ...titleBarOptions(),
     queryParams,
   });

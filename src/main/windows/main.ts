@@ -4,6 +4,7 @@ import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
+import { useI18n } from 'main/i18n';
 
 const storeBoundsId = 'main.bounds'
 
@@ -34,12 +35,12 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   // else open a new one
   mainWindow = createWindow({
+    title: useI18n(app)('common.chat'),
     x: bounds?.x,
     y: bounds?.y,
     width: bounds?.width ?? 1400,
     height: bounds?.height ?? 800,
     minWidth: 800,
-    title: 'Witsy',
     ...titleBarOptions({
       height: 48,
     }),
