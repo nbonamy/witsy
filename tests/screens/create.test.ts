@@ -317,8 +317,16 @@ test('Generates - User Params', async () => {
   await table.find<HTMLButtonElement>('.button.add').trigger('click')
 
   const editor = wrapper.findComponent({ name: 'VariableEditor' })
-  await editor.find<HTMLSelectElement>('[name=key]').setValue('key')
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('string')
   await editor.find<HTMLSelectElement>('[name=value]').setValue('value')
+  await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
+
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('number')
+  await editor.find<HTMLSelectElement>('[name=value]').setValue('100')
+  await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
+
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('boolean')
+  await editor.find<HTMLSelectElement>('[name=value]').setValue('true')
   await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
 
   await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
@@ -331,12 +339,12 @@ test('Generates - User Params', async () => {
       engine: 'replicate',
       model: 'black-forest-labs/flux-1.1-pro',
       prompt: 'prompt',
-      params: { key: 'value'}
+      params: { string: 'value', number: 100, boolean: true },
     })
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'replicate', 'black-forest-labs/flux-1.1-pro', { prompt: 'prompt', key: 'value' }
+    'replicate', 'black-forest-labs/flux-1.1-pro', { prompt: 'prompt', string: 'value', number: 100, boolean: true }
   )
 
   // @ts-expect-error mock
@@ -348,7 +356,7 @@ test('Generates - User Params', async () => {
     }),
     toolCall: {
       status: expect.any(String),
-      calls: [ expect.objectContaining({ params: { key: 'value' } }) ]
+      calls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
     }
   })
 
