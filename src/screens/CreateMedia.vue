@@ -1,5 +1,5 @@
 <template>
-  <div class="create-media">
+  <div class="create-media" @keydown="onKeyDown">
     <div class="panel">
       <div class="navigation">
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
@@ -80,6 +80,9 @@ onMounted(() => {
       deleteMedia(message.value)
     }
   })
+
+  // keyboard
+  document.addEventListener('keydown', onKeyDown)
 })
 
 const selectMessage = (msg: Message) => {
@@ -136,15 +139,51 @@ const deleteMedia = (msg: Message) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
+
+      // auto-select
+      let index = -1
+      if (mode.value === 'history') {
+        index = history.value.findIndex((m) => m.uuid === msg.uuid)
+      }
+
+      // delete
       window.api.file.delete(msg.attachment.url)        
       chat.value.messages = chat.value.messages.filter((m) => m.uuid !== msg.uuid)
       store.saveHistory()
-      message.value = null
-      if (chat.value.messages.length === 1) {
+      
+      // if no more history or in create mode or did not find the message
+      if (mode.value == 'create' || chat.value.messages.length === 1) {
+        message.value = null
         mode.value = 'create'
+        return
       }
+
+      // if we did not find the message then select the 1st one
+      index = Math.max(0, index - 1)
+      message.value = history.value[index]
+
     }
   })
+}
+
+const onKeyDown = (event: KeyboardEvent) => {
+
+  // escape to go back to create
+  if (event.key === 'Escape') {
+    mode.value = 'create'
+    return
+  }
+
+  // keyboard navigation
+  if (mode.value === 'history' && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+    const currentIndex = history.value.findIndex((m) => m.uuid === message.value?.uuid)
+    const newIndex = currentIndex === -1 ? 0 : event.key === 'ArrowDown' ? currentIndex + 1 : currentIndex - 1
+    if (newIndex >= 0 && newIndex < history.value.length) {
+      message.value = history.value[newIndex]
+    }
+    return
+  }
+
 }
 
 const onMediaGenerationRequest = async (data: any) => {
@@ -251,7 +290,7 @@ const onFullScreen = (url: string) => {
 }
 
 .panel {
-  flex: 0 0 300px;
+  flex: 0 0 var(--create-panel-width);
   background-color: var(--sidebar-bg-color);
   border-right: 1px solid var(--border-color);
   display: flex;
