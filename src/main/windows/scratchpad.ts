@@ -3,7 +3,7 @@ import { anyDict } from '../../types/index';
 import { app } from 'electron';
 import { createWindow, titleBarOptions, getCenteredCoordinates } from './index';
 import { putCachedText } from '../../main/utils';
-import { useI18n } from 'main/i18n';
+import { useI18n } from '../i18n';
 
 export const openScratchPad = async (text?: string|null) => {
 
