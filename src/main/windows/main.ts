@@ -4,7 +4,7 @@ import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
-import { useI18n } from 'main/i18n';
+import { useI18n } from '../i18n';
 
 const storeBoundsId = 'main.bounds'
 

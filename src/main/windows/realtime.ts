@@ -2,7 +2,7 @@
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates, titleBarOptions } from './index';
 import { wait } from '../utils';
-import { useI18n } from 'main/i18n';
+import { useI18n } from '../i18n';
 
 export let realtimeChatWindow: BrowserWindow = null;
 

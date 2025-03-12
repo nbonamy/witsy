@@ -47,10 +47,16 @@ vi.mock('electron', async () => {
     send: vi.fn(),
     setWindowOpenHandler: vi.fn(),
     openDevTools: vi.fn(),
+    debugger: {
+      attach: vi.fn(),
+      sendCommand: vi.fn(),
+      on: vi.fn(),
+    }
   }
   const app = {
     focus: vi.fn(),
     getPath: vi.fn(() => ''),
+    getLocale: vi.fn(() => 'en'),
     dock: {
       show: vi.fn(),
       hide: vi.fn(),
@@ -119,7 +125,7 @@ test('Create main window', async () => {
   await window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    title: 'Witsy'
+    title: 'Chat'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#')
 
@@ -169,7 +175,7 @@ test('Open Settings window in current main window', async () => {
 test('Open Settings window in new main window', async () => {
   await window.openSettingsWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    title: 'Witsy',
+    title: 'Chat',
     queryParams: { settings: true }
   }))
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
@@ -267,7 +273,7 @@ test('Open Realtime window', async () => {
   await window.openRealtimeChatWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/realtime',
-    title: 'Realtime Chat'
+    title: 'Voice Mode'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/realtime')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
