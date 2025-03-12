@@ -46,6 +46,7 @@ const selectMessage = (msg: Message) => {
 const showContextMenu = (event: MouseEvent, msg: Message) => {
   emit('context-menu', { event, message: msg })
 }
+
 </script>
 
 <style scoped>

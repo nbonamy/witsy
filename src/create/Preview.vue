@@ -97,6 +97,7 @@ const onDelete = () => {
   display: flex;
   flex-direction: column;
   background-color: var(--control-bg-color);
+  width: calc(100% - var(--create-panel-width));
 
   --toolbar-height: 48px;
   --toolbar-padding: 16px;
