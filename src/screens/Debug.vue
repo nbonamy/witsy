@@ -240,6 +240,7 @@ pre {
 .json {
   background-color: rgb(13,13,13);
   border-radius: 8px;
+  color: white;
 
   &:deep() {
     
