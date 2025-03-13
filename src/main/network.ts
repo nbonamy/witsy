@@ -23,7 +23,7 @@ export default (window: BrowserWindow) => {
       if (method === 'Network.requestWillBeSent') {
 
         // for all
-        if (params.request.url.startsWith('file://') || params.request.url.startsWith('chrome-extension://')) {
+        if (!params.request.url.startsWith('http://') && !params.request.url.startsWith('https://')) {
           return
         }
 
