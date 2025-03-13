@@ -1218,6 +1218,7 @@
       "title": "Visualizza"
     },
     "window": {
+      "debug": "Apri Console di Debug",
       "title": "Finestra"
     }
   },

@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest } from './types';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -20,8 +20,13 @@ contextBridge.exposeInMainWorld(
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
     off: (signal: string, callback: (value: any) => void): void => { ipcRenderer.off(signal, (_event, value) => callback(value)) },
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
-    showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('dialog-show', opts) },
+    showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('show-dialog', opts) },
     listFonts: (): string[] => { return ipcRenderer.sendSync('fonts-list') },
+    debug: {
+      showConsole: (): void => { return ipcRenderer.send('show-debug-console') },
+      getNetworkHistory: (): NetworkRequest[] => { return ipcRenderer.sendSync('get-network-history') },
+      clearNetworkHistory: (): void => { return ipcRenderer.send('clear-network-history') },
+    },
     update: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync('update-is-available') },
       apply: (): void => { return ipcRenderer.send('update-apply') },

@@ -1218,6 +1218,7 @@
       "title": "Ansicht"
     },
     "window": {
+      "debug": "Debug-Konsole öffnen",
       "title": "Fenster"
     }
   },
