@@ -14,7 +14,7 @@
         <BIconFilm class="thumbnail" v-if="msg.isVideo()"/>
         <img class="thumbnail" :src="msg.attachment.url" v-else/>
         <div class="description">
-          <div class="content">{{ msg.content }}</div>
+          <div class="prompt">{{ msg.content }}</div>
           <div class="info">{{ msg.engine }} - {{ msg.model }}</div>
         </div>
       </div>
@@ -50,23 +50,18 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
 </script>
 
 <style scoped>
+@import '../../css/panel-content.css';
+</style>
+
+<style scoped>
+
 .history {
-  flex: 1;
-  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
   overflow-y: auto;
   padding-bottom: 2rem;
-  -webkit-app-region: no-drag;
 }
 
 .history > * {
   padding: 0px 24px;
-}
-
-.history .title {
-  font-weight: bold;
-  font-size: 1.1em;
-  color: var(--text-color);
-  margin-bottom: 1rem;
 }
 
 .history .empty {
@@ -108,7 +103,7 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
   font-size: 11pt;
 }
 
-.history .message .description .content {
+.history .message .description .prompt {
   max-height: 3.3rem;
   text-overflow: ellipsis;
   overflow: hidden;

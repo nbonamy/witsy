@@ -33,7 +33,7 @@ export default (window: BrowserWindow) => {
         }
 
         // other stuff
-        if (params.request.url.includes('googlefonts')) {
+        if (params.request.url.includes('googlefonts') || params.request.url.includes('storage.googleapis.com')) {
           return
         }
 

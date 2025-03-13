@@ -130,15 +130,15 @@ test('Settings', async () => {
 test('History', async () => {
 
   const wrapper = mount(CreateMedia)
-  await wrapper.find('.navigation > *').trigger('click')
+  await wrapper.find('.actions > *').trigger('click')
   expect(wrapper.findComponent({ name: 'Settings' }).classes()).toContain('hidden')
   const history = wrapper.findComponent({ name: 'History' })
   expect(history.classes()).not.toContain('hidden')
   expect(history.exists()).toBe(true)
   expect(history.findAll('.message').length).toBe(2)
-  expect(history.find<HTMLElement>('.message:nth-child(1) .content').text()).toBe('prompt2')
+  expect(history.find<HTMLElement>('.message:nth-child(1) .prompt').text()).toBe('prompt2')
   expect(history.find<HTMLImageElement>('.message:nth-child(1) img').element.src).toBe('file://url2.jpg/')
-  expect(history.find<HTMLElement>('.message:nth-child(2) .content').text()).toBe('prompt1')
+  expect(history.find<HTMLElement>('.message:nth-child(2) .prompt').text()).toBe('prompt1')
   expect(history.find<HTMLImageElement>('.message:nth-child(2) img').element.src).toBe('file://url1.jpg/') // Updated to include .jpg
 
   await history.find('.message:nth-child(1)').trigger('click')

@@ -1,8 +1,8 @@
 <template>
-  <div class="debug">
+  <div class="debug window">
     
     <div class="panel">
-      <div class="navigation">
+      <div class="actions">
         <BIconTrash @click="clearRequests"/>
       </div>
       <div class="list">
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="details">
+    <div class="details content">
       <div class="toolbar">
         <template v-if="selected">
           <div class="title">{{ selected.method }} {{ selected.url }}</div>
@@ -120,43 +120,20 @@ const selectRequest = (request: NetworkRequest) => {
 </script>
 
 <style scoped>
+@import '../../css/panel-content.css';
+</style>
+
+<style scoped>
 
 :root {
   --debug-panel-width: 200px;
 }
 
-.debug {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  color: var(--text-color);
-}
-
 .panel {
   flex: 0 0 var(--debug-panel-width);
-  background-color: var(--sidebar-bg-color);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-}
-
-.navigation {
-  padding: 16px;
-  text-align: right;
-  -webkit-app-region: drag;
-
-  > * {
-    fill: var(--sidebar-icon-color);
-    -webkit-app-region: no-drag;
-    cursor: pointer;
-  }
-
 }
 
 .list {
-  background-color: var(--sidebar-bg-color);
-  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
   padding: 0px 0px;
   overflow-y: auto;
 }
@@ -203,34 +180,8 @@ const selectRequest = (request: NetworkRequest) => {
 }
 
 .details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--control-bg-color);
   width: calc(100% - var(--create-panel-width));
-
-  --toolbar-height: 48px;
-  --toolbar-padding: 16px;
   --preview-padding: 32px;
-}
-
-.details .toolbar {
-  padding: 16px;
-  flex-basis: calc(var(--toolbar-height) - var(--toolbar-padding) * 2); 
-  background-color: var(--chatarea-toolbar-bg-color);
-  -webkit-app-region: drag;
-  display: flex;
-  gap: 16px;
-}
-
-.details .toolbar .title {
-  flex: 1;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: 8px;
-  color: var(--chatarea-toolbar-text-color);
 }
 
 .tabs button {
@@ -252,24 +203,6 @@ const selectRequest = (request: NetworkRequest) => {
     color: var(--primary-color, #2196F3);
   }
 
-}
-
-.windows {
-  .toolbar {
-    padding-right: 148px;
-    .menu {
-      margin-top: 1px;
-    }
-  }
-}
-
-.linux {
-  .toolbar {
-    padding-right: 92px;
-    .menu {
-      margin-top: 0px;
-    }
-  }
 }
 
 .tab-content {
