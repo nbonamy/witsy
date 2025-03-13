@@ -193,16 +193,19 @@ const onMediaGenerationRequest = async (data: any) => {
 
   try {
 
+    // make a copy as we are going to change that
+    const params = JSON.parse(JSON.stringify(data.params))
+
     // we need to convert params who look like numbers to numbers
-    Object.keys(data.params).forEach((key) => {
-      if (!data.params[key]) {
-        delete data.params[key]
-      } else if (data.params[key] === 'true') {
-        data.params[key] = true
-      } else if (data.params[key] === 'false') {
-        data.params[key] = false
-      } else if (!isNaN(data.params[key])) {
-        data.params[key] = parseFloat(data.params[key])
+    Object.keys(params).forEach((key) => {
+      if (!params[key]) {
+        delete params[key]
+      } else if (params[key] === 'true') {
+        params[key] = true
+      } else if (params[key] === 'false') {
+        params[key] = false
+      } else if (!isNaN(params[key])) {
+        params[key] = parseFloat(params[key])
       }
     })
 
@@ -210,7 +213,7 @@ const onMediaGenerationRequest = async (data: any) => {
     const creator = data.mediaType === 'image' ? new ImageCreator() : new VideoCreator()
     const media = await creator.execute( data.engine, data.model, {
       prompt: data.prompt,
-      ...data.params
+      ...params
     })
 
     // check
@@ -230,7 +233,7 @@ const onMediaGenerationRequest = async (data: any) => {
         status: 'done',
         calls: [{
           name: 'create_media',
-          params: data.params,
+          params: params,
           result: 'success'
         }]
       }

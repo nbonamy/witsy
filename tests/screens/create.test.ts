@@ -278,7 +278,7 @@ test('Generates - Custom Params HuggingFace', async () => {
       engine: 'huggingface',
       model: 'black-forest-labs/FLUX.1-dev',
       prompt: 'prompt',
-      params: { negative_prompt: 'no no no', width: 1000 },
+      params: { negative_prompt: 'no no no', width: '1000' },
     })
   ])
 
@@ -339,7 +339,7 @@ test('Generates - User Params', async () => {
       engine: 'replicate',
       model: 'black-forest-labs/flux-1.1-pro',
       prompt: 'prompt',
-      params: { string: 'value', number: 100, boolean: true },
+      params: { string: 'value', number: '100', boolean: 'true' },
     })
   ])
 
