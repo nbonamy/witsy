@@ -184,6 +184,10 @@ const selectRequest = (request: NetworkRequest) => {
   --preview-padding: 32px;
 }
 
+.tabs {
+  padding-bottom: 8px;
+}
+
 .tabs button {
   padding: 8px 16px;
   background: none;
@@ -192,7 +196,7 @@ const selectRequest = (request: NetworkRequest) => {
   border-radius: 0;
   cursor: pointer;
   color: var(--text-color, #666);
-  font-size: 10pt;
+  font-size: 10.5pt;
 
   &:hover {
     background: none;
@@ -230,7 +234,7 @@ pre {
   color: #fff;
   padding: 12px;
   border-radius: 8px;
-  font-size: 9.5pt;
+  font-size: 10.5pt;
 }
 
 .json {
@@ -241,7 +245,7 @@ pre {
     
     span, a {
       font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-      font-size: 9.5pt;
+      font-size: 10.5pt;
     }
 
     .jv-code {
@@ -265,6 +269,7 @@ pre {
         left: 2px;
       }
     }
+  
   }
 
   &.expanded :deep() {
