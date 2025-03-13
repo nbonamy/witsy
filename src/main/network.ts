@@ -32,6 +32,11 @@ export default (window: BrowserWindow) => {
           return
         }
 
+        // other stuff
+        if (params.request.url.includes('googlefonts')) {
+          return
+        }
+
         const { requestId, request } = params
         requests.set(requestId, {
           id: requestId,

@@ -133,6 +133,24 @@ const onDelete = () => {
   fill: var(--chatarea-toolbar-icon-color);
 }
 
+.windows {
+  .toolbar {
+    padding-right: 148px;
+    .menu {
+      margin-top: 1px;
+    }
+  }
+}
+
+.linux {
+  .toolbar {
+    padding-right: 92px;
+    .menu {
+      margin-top: 0px;
+    }
+  }
+}
+
 .preview .empty {
   flex: 1;
   display: flex;
