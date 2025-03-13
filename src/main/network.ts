@@ -108,6 +108,14 @@ export default (window: BrowserWindow) => {
 
     })
 
+    window.on('close', () => {
+      try {
+        window.webContents.debugger.detach()
+      } catch (error) {
+        console.error('Error detaching debugger', error)
+      }
+    })
+
   } catch (error) {
     console.error('Error attaching debugger', error)
   }
