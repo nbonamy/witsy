@@ -44,6 +44,7 @@
     "@types/node": "^22.10.2",
     "@types/plist": "^3.0.5",
     "@types/uuid": "^10.0.0",
+    "@types/vue3-json-viewer": "^2.2.0",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
     "@vitejs/plugin-vue": "^5.2.1",
@@ -91,6 +92,7 @@
     "applescript": "^1.0.0",
     "autolib": "github:nbonamy/witsy-autolib",
     "bootstrap-icons-vue": "^1.11.3",
+    "clipboard": "^2.0.11",
     "compute-cosine-similarity": "^1.1.0",
     "cross-env": "^7.0.3",
     "electron-log": "^5.2.4",
@@ -133,6 +135,7 @@
     "vega": "^5.30.0",
     "vue": "^3.5.13",
     "vue-i18n": "^11.1.1",
+    "vue3-json-viewer": "^2.2.2",
     "youtube-transcript": "^1.2.1",
     "ytv": "^1.0.3"
   },

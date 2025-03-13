@@ -162,6 +162,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     {
       label: t('menu.window.title'),
       submenu: [
+        {
+          label: t('menu.window.debug'),
+          click: () => window.openDebugWindow()
+        },
+        { type: 'separator' },
         { role: 'minimize' },
         { role: 'zoom' },
         ...(isMac

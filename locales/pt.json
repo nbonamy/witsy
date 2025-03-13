@@ -1237,6 +1237,7 @@
       "title": "Visualizar"
     },
     "window": {
+      "debug": "Abrir Console de Depuração",
       "title": "Janela"
     }
   },

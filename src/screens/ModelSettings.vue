@@ -80,6 +80,9 @@
         <label>{{ t('modelSettings.createNewModel') }}</label>
         <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">{{ t('common.create') }}</button>
       </div>
+      <div class="group">
+        <a href="#" @click="openDebugConsole()">{{ t('menu.window.debug') }}</a>
+      </div>
     </form>
   </div>
 </template>
@@ -419,6 +422,10 @@ const onCreateOllamaModel = async () => {
 
   }
 
+}
+
+const openDebugConsole = () => {
+  window.api.debug.showConsole()
 }
 
 </script>

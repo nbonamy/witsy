@@ -197,6 +197,11 @@ declare global {
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]
       fullscreen(window: string, state: boolean): void
+      debug: {
+        showConsole(): void
+        getNetworkHistory(): NetworkRequest[]
+        clearNetworkHistory(): void
+      }
       runAtLogin: {
         get(): boolean
         set(state: boolean): void
@@ -344,4 +349,17 @@ declare global {
       }
     }
   }
+}
+
+export type NetworkRequest = {
+  id: string
+  url: string
+  method: string
+  headers: Record<string, string>
+  postData: string
+  statusCode?: number
+  statusText?: string
+  responseHeaders?: Record<string, string>
+  mimeType?: string
+  responseBody?: string
 }

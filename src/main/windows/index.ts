@@ -5,6 +5,7 @@ import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme,
 import MacosAutomator from '../../automations/macos';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
+import interceptNetwork from '../network';
 import * as config from '../config';
 import { wait } from '../utils';
 import Store from 'electron-store';
@@ -157,6 +158,9 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     return { action: 'deny' };
   });
 
+  // to log network traffic
+  interceptNetwork(window);
+  
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
 
@@ -193,8 +197,6 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 };
 
 // https://ashleyhindle.com/thoughts/electron-returning-focus
-
-
 
 export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
 

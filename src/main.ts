@@ -38,6 +38,7 @@ import * as markdown from './main/markdown';
 import * as menu from './main/menu';
 import * as text from './main/text';
 import * as i18n from './main/i18n';
+import * as debug from './main/network';
 import Automator, { AutomationAction } from 'automations/automator';
 
 let monitorCommands: Monitor = null
@@ -227,7 +228,7 @@ app.whenReady().then(() => {
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
   }
-
+  
   // some platforms have a one-time automator initialization to do so give them a chance
   new Automator();
 
@@ -291,9 +292,21 @@ ipcMain.on('set-appearance-theme', (event, theme) => {
   event.returnValue = theme;
 });
 
-ipcMain.handle('dialog-show', (event, payload): Promise<Electron.MessageBoxReturnValue> => {
+ipcMain.handle('show-dialog', (event, payload): Promise<Electron.MessageBoxReturnValue> => {
   return dialog.showMessageBox(payload);
 });
+
+ipcMain.on('show-debug-console', () => {
+  window.openDebugWindow();
+})
+
+ipcMain.on('get-network-history', (event) => {
+  event.returnValue = debug.getNetworkHistory();
+})
+
+ipcMain.on('clear-network-history', () => {
+  debug.clearNetworkHistory();
+})
 
 ipcMain.on('get-app-path', (event) => {
   event.returnValue = app.getPath('userData');
