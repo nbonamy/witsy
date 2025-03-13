@@ -1,7 +1,7 @@
 <template>
-  <div class="create-media" @keydown="onKeyDown">
+  <div class="create-media window" @keydown="onKeyDown">
     <div class="panel">
-      <div class="navigation">
+      <div class="actions">
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
       </div>
@@ -285,37 +285,16 @@ const onFullScreen = (url: string) => {
 </script>
 
 <style scoped>
-.create-media {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  color: var(--text-color);
-}
+@import '../../css/panel-content.css';
+</style>
+
+<style scoped>
 
 .panel {
   flex: 0 0 var(--create-panel-width);
-  background-color: var(--sidebar-bg-color);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-
   > .hidden {
     display: none;
   }
-}
-
-.navigation {
-  padding: 16px;
-  text-align: right;
-  -webkit-app-region: drag;
-
-  > * {
-    fill: var(--sidebar-icon-color);
-    -webkit-app-region: no-drag;
-    cursor: pointer;
-  }
-
 }
 
 </style>

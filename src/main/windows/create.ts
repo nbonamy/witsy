@@ -44,10 +44,10 @@ export const openCreateMediaWindow = () => {
   app.focus({ steal: true });
   createMediaWindow.focus();
 
-  // open the DevTools
-  if (process.env.DEBUG) {
-    createMediaWindow.webContents.openDevTools({ mode: 'right' });
-  }
+  // // open the DevTools
+  // if (process.env.DEBUG) {
+  //   createMediaWindow.webContents.openDevTools({ mode: 'right' });
+  // }
 
   // show in dock
   if (process.platform === 'darwin') {

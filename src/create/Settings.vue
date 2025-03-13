@@ -122,6 +122,13 @@ import VariableTable from '../components/VariableTable.vue'
 import SDWebUI from '../services/sdwebui'
 import LlmFactory from '../llms/llm'
 
+type Parameter = {
+  label: string
+  key: string
+  type: string
+  values?: string[]
+}
+
 defineProps({
   isGenerating: {
     type: Boolean,
@@ -177,7 +184,7 @@ const canSaveAsDefaults = computed(() => {
   return false
 })
 
-const customParams = computed(() => {
+const customParams = computed((): Parameter[] => {
 
   // openai dall-e-2
   if (engine.value === 'openai' && model.value === 'dall-e-2') {
@@ -389,13 +396,14 @@ defineExpose({
 
 <style scoped>
 @import '../../css/form.css';
-@import '../../css/dialog.css';
 @import '../../css/list-with-actions.css';
 @import '../../css/sticky-header-table.css';
+@import '../../css/panel-content.css';
+</style>
+
+<style scoped>
 
 .settings {
-  flex: 1;
-  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
   overflow-y: auto;
   padding-bottom: 2rem;
 }
@@ -407,13 +415,6 @@ defineExpose({
 .settings form .group .subgroup {
   display: flex;
   width: 100%;
-}
-
-.settings .title {
-  font-weight: bold;
-  font-size: 1.1em;
-  color: var(--text-color);
-  margin-bottom: 1rem;
 }
 
 .settings form .group textarea {

@@ -1,0 +1,109 @@
+
+.window {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.panel {
+  
+  /* concrete windows should probably override
+     the flex with their desired width */
+  
+  flex: 0 0 200px;
+  background-color: var(--sidebar-bg-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+
+  .actions {
+    padding: 16px;
+    text-align: right;
+    -webkit-app-region: drag;
+  
+    > * {
+      fill: var(--sidebar-icon-color);
+      -webkit-app-region: no-drag;
+      cursor: pointer;
+    }
+  }
+
+  * {
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+  }
+
+}
+
+.content {
+  
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--control-bg-color);
+
+  --toolbar-height: 48px;
+  --toolbar-padding: 16px;
+
+  .toolbar {
+    padding: 16px;
+    flex-basis: calc(var(--toolbar-height) - var(--toolbar-padding) * 2); 
+    background-color: var(--chatarea-toolbar-bg-color);
+    -webkit-app-region: drag;
+    display: flex;
+    gap: 16px;
+
+    .title {
+      flex: 1;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-left: 8px;
+      color: var(--chatarea-toolbar-text-color);
+    }
+
+    .action {
+      -webkit-app-region: no-drag;
+      cursor: pointer;
+      text-align: right;
+      width: 16px;
+      height: 16px;
+      color: var(--chatarea-toolbar-icon-color);
+      fill: var(--chatarea-toolbar-icon-color);
+    }
+  
+  }
+
+}
+
+.windows {
+  .content {
+    .toolbar {
+      padding-right: 148px;
+      .menu {
+        margin-top: 1px;
+      }
+    }
+  }
+}
+
+.linux {
+  .content {
+    .toolbar {
+      padding-right: 92px;
+      .menu {
+        margin-top: 0px;
+      }
+    }
+  }
+}
+
