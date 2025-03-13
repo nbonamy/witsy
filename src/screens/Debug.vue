@@ -254,6 +254,24 @@ const selectRequest = (request: NetworkRequest) => {
 
 }
 
+.windows {
+  .toolbar {
+    padding-right: 148px;
+    .menu {
+      margin-top: 1px;
+    }
+  }
+}
+
+.linux {
+  .toolbar {
+    padding-right: 92px;
+    .menu {
+      margin-top: 0px;
+    }
+  }
+}
+
 .tab-content {
   padding: 24px;
   padding-top: 0px;
