@@ -156,10 +156,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] Create Media screen
-
 ## DONE
 
+- [x] Debug console
+- [x] Create Media screen
 - [x] i18n
 - [x] Mermaid diagram rendering
 - [x] Model Context Protocol
