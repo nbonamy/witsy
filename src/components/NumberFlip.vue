@@ -6,7 +6,9 @@
 <script setup lang="ts">
 
 import { ref, watch, onMounted, PropType } from 'vue'
-import { NumberFlip, Formatter } from 'number-flip-animation'
+import { NumberFlip } from 'number-flip-animation'
+
+type Formatter = (num: number) => string;
 
 let flip: NumberFlip
 const flipRef = ref<HTMLElement>(null)
