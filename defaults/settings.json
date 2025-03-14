@@ -287,7 +287,8 @@
     "search": {
       "enabled": false,
       "engine": "local",
-      "contentLength": 5000
+      "contentLength": 5000,
+      "maxResults": 5
     },
     "youtube": {
       "enabled": true

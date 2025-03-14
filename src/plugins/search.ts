@@ -57,7 +57,7 @@ export default class extends Plugin {
 
   async local(parameters: anyDict): Promise<anyDict> {
     try {
-      const results = await window.api.search.query(parameters.query, 5)
+      const results = await window.api.search.query(parameters.query, this.config.maxResults || 5)
       const response = {
         query: parameters.query,
         results: results.map(result => ({

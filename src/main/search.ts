@@ -41,7 +41,7 @@ export default class LocalSearch {
         
           // get the results
           const googleResults: LocalSearchResult[] = await win.webContents.executeJavaScript(grabGoogleResults)
-          //console.log(googleResults)
+          console.log(`[search] found ${googleResults.length} results`)
 
           // now iterate
           const urls = new Set()
@@ -93,11 +93,14 @@ export default class LocalSearch {
 
     return new Promise((resolve, reject) => {
 
+      // log
+      console.log(`[search] getting contents for ${url}`)
+
       // open a new window
       const win = this.openHiddenWindow();
 
       // get ready to grab the contents
-      win.webContents.on('did-finish-load', async () => {
+      win.webContents.on('dom-ready', async () => {
         
         try {
           const html = await win.webContents.executeJavaScript(`document.body.outerHTML`)
@@ -106,6 +109,12 @@ export default class LocalSearch {
           reject(e)
         }
       
+      })
+
+      //  catch errors
+      win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+        console.error(`[search] failed to load ${url}: ${errorDescription} (${errorCode})`)
+        reject(new Error(errorDescription))
       })
 
       // now load
@@ -138,9 +147,4 @@ export default class LocalSearch {
 
   }
 
-
-
-
 }
-
-
