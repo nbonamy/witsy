@@ -76,21 +76,37 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 }
 
 export const loadSettings = (source: App|string): Configuration => {
+
   let data = '{}'
+  const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
+  if (firstLoad) {
+    console.log('Loading settings from', settingsFile)
+  }
+
+  let save = true
   try {
-    const settingsFile = typeof source === 'string' ? source : settingsFilePath(source)
-    if (firstLoad) {
-      console.log('Loading settings from', settingsFile)
-      firstLoad = false
-    }
-    monitor.start(settingsFile)
     data = fs.readFileSync(settingsFile, 'utf-8')
+    save = false
   } catch (error) {
     if (error.code !== 'ENOENT') {
       console.log('Error retrieving settings data', error)
     }
   }
-  return buildConfig(defaultSettings, JSON.parse(data))
+
+  // now build config
+  const config = buildConfig(defaultSettings, JSON.parse(data))
+
+  // save if needed
+  if (save && !process.env.TEST) {
+    saveSettings(settingsFile, config)
+  }
+
+  // start monitoring
+  monitor.start(settingsFile)
+
+  // done
+  firstLoad = false
+  return config
 }
 
 export const saveSettings = (dest: App|string, config: Configuration) => {
