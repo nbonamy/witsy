@@ -49,25 +49,24 @@
   display: flex;
   flex-direction: column;
   background-color: var(--control-bg-color);
+  min-width: 0;
 
   --toolbar-height: 48px;
   --toolbar-padding: 16px;
 
   .toolbar {
-    padding: 16px;
-    flex-basis: calc(var(--toolbar-height) - var(--toolbar-padding) * 2); 
-    background-color: var(--chatarea-toolbar-bg-color);
     -webkit-app-region: drag;
+    padding: var(--toolbar-padding);
+    flex: 0 0 calc(var(--toolbar-height) - (var(--toolbar-padding) * 2));
+    background-color: var(--chatarea-toolbar-bg-color);
     display: flex;
     gap: 16px;
 
     .title {
-      flex: 1;
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-left: 8px;
       color: var(--chatarea-toolbar-text-color);
     }
 
@@ -79,8 +78,12 @@
       height: 16px;
       color: var(--chatarea-toolbar-icon-color);
       fill: var(--chatarea-toolbar-icon-color);
+
+      &:first-of-type {
+        margin-left: auto;
+      }
+      
     }
-  
   }
 
 }
