@@ -389,9 +389,12 @@ test('Preview', async () => {
   await preview.find<HTMLElement>('.action.fullscreen').trigger('click')
   expect(preview.emitted()['fullscreen']).toHaveLength(1)
 
+  // copy
+  await preview.find<HTMLElement>('.action.copy').trigger('click')
+  expect(window.api.clipboard.writeImage).toHaveBeenLastCalledWith('file://url1.jpg')
+
   // save
   await preview.find<HTMLElement>('.action.save').trigger('click')
-  await wrapper.vm.$nextTick()
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file://url1.jpg',
     properties: {

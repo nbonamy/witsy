@@ -9,6 +9,10 @@
         <div class="action fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
           <BIconFullscreen />
         </div>
+        <div class="action copy" @click="onCopy" v-if="!message.isVideo()">
+          <BIconClipboardCheck v-if="copying" />
+          <BIconClipboard v-else />
+        </div>
         <div class="action save" @click="onDownload">
           <BIconDownload />
         </div>
@@ -29,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+
+import { ref } from 'vue'
 import { t } from '../services/i18n'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
@@ -43,6 +49,8 @@ const props = defineProps({
     default: false
   }
 })
+
+const copying = ref(false)
 
 const emit = defineEmits(['fullscreen', 'delete'])
 
@@ -70,6 +78,15 @@ const onInfo = () => {
 const onFullScreen = () => {
   if (!props.message) return
   emit('fullscreen', props.message.attachment.url)
+}
+
+const onCopy = async () => {
+  if (!props.message || props.message.isVideo()) return
+  copying.value = true
+  await window.api.clipboard.writeImage(props.message.attachment.url)
+  setTimeout(() => {
+    copying.value = false
+  }, 1000)
 }
 
 const onDownload = () => {

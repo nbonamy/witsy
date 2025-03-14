@@ -323,6 +323,8 @@ test('Run assistant legacy image actions', async () => {
 
 test('Run assistant image actions', async () => {
   const wrapper = await mount(botMessageImage)
+  await wrapper.find('.body .copy').trigger('click')
+  expect(window.api.clipboard.writeImage).toHaveBeenLastCalledWith('https://example.com/image.jpg')
   await wrapper.find('.body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'https://example.com/image.jpg',
@@ -332,11 +334,11 @@ test('Run assistant image actions', async () => {
       filename: 'image.jpg',
     }
   })
-
 })
 
 test('Run assistant video actions', async () => {
   const wrapper = await mount(botMessageVideoMd)
+  expect(wrapper.find('.body .copy').exists()).toBe(false)
   await wrapper.find('.body .download').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file:///data/video.mp4',
