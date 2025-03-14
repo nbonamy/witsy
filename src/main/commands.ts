@@ -3,9 +3,15 @@ import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
 import { getLocaleMessages } from './i18n'
 import defaultCommands from '../../defaults/commands.json'
+import Monitor from './monitor'
+import * as window from './window'
 import * as file from './file'
 import path from 'path'
 import fs from 'fs'
+
+const monitor: Monitor = new Monitor(() => {
+  window.notifyBrowserWindows('file-modified', 'commands');
+})
 
 export const commandsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -17,10 +23,10 @@ export const loadCommands = (source: App|string): Command[] => {
 
   // init
   let commands: Command[] = []
+  const commandsFile = typeof source === 'string' ? source : commandsFilePath(source)
 
   // read
   try {
-    const commandsFile = typeof source === 'string' ? source : commandsFilePath(source)
     commands = JSON.parse(fs.readFileSync(commandsFile, 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -62,6 +68,11 @@ export const loadCommands = (source: App|string): Command[] => {
   // save if needed
   if (updated) {
     saveCommands(source, commands)
+  }
+
+  // start monitoring
+  if (typeof source !== 'string') {
+    monitor.start(commandsFile)
   }
 
   // done

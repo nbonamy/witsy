@@ -20,6 +20,12 @@ export default class {
       return
     }
 
+    // does it exist
+    if (!fs.existsSync(filepath)) {
+      console.warn('Asked to monitor non-existing file', filepath)
+      return
+    }
+
     // clear
     this.stop()
     

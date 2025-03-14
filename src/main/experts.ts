@@ -4,9 +4,15 @@ import { app, App } from 'electron'
 import { createI18n } from './i18n.base'
 import { getLocaleMessages } from './i18n'
 import defaultExperts from '../../defaults/experts.json'
+import Monitor from './monitor'
+import * as window from './window'
 import * as file from './file'
 import path from 'path'
 import fs from 'fs'
+
+const monitor: Monitor = new Monitor(() => {
+  window.notifyBrowserWindows('file-modified', 'experts');
+});
 
 export const expertsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
@@ -18,10 +24,10 @@ export const loadExperts = (source: App|string): Expert[] => {
 
   // init
   let experts: Expert[] = []
+  const expertsFile = typeof source === 'string' ? source : expertsFilePath(source)
 
   // read
   try {
-    const expertsFile = typeof source === 'string' ? source : expertsFilePath(source)
     experts = JSON.parse(fs.readFileSync(expertsFile, 'utf-8'))
   } catch (error) {
     if (error.code !== 'ENOENT') {
@@ -58,6 +64,11 @@ export const loadExperts = (source: App|string): Expert[] => {
   // save if needed
   if (updated) {
     saveExperts(source, experts)
+  }
+
+  // start monitoring
+  if (typeof source !== 'string') {
+    monitor.start(expertsFile)
   }
 
   // done
