@@ -5,7 +5,11 @@ import LocalSearch from '../../src/main/search'
 vi.mock('electron', async () => {
   const BrowserWindow = vi.fn(function() {
     this.webContents = {
-      on: vi.fn((signal, callback) => callback()),
+      on: vi.fn((signal, callback) => {
+        if (signal === 'dom-ready' || signal === 'did-finish-load') {
+          callback()
+        }
+      }),
       executeJavaScript: vi.fn((script) => {
         if (script === 'document.body.outerHTML') {
           return `<html><body>test</body></html>`
