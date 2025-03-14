@@ -3,7 +3,9 @@
     <video :src="url" :alt="desc" class="media video" @load="onMediaLoaded" controls v-if="isVideo()"/>
     <img :src="url" :alt="desc" class="media image" @click="onFullscreen" @load="onMediaLoaded" v-else/>
     <div class="media-actions">
-      <BIconInfoCircle class="action info" v-if="prompt" @click="onInfo"/>
+      <BIconInfoCircle v-if="prompt" class="action info" @click="onInfo"/>
+      <BIconClipboard v-if="!isVideo() && !copying" class="action copy" @click="onCopy" />
+      <BIconClipboardCheck v-if="copying" class="action copy" />
       <BIconDownload class="action download" @click="onDownload" />
     </div>
   </div>
@@ -11,6 +13,7 @@
 
 <script setup lang="ts">
 
+import { ref } from 'vue'
 import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 import Message from '../models/message'
@@ -24,6 +27,8 @@ const props = defineProps({
   desc: String,
   prompt: String
 })
+
+const copying = ref(false)
 
 const emits = defineEmits(['media-loaded'])
 
@@ -44,6 +49,14 @@ const onInfo = () => {
     title: props.desc,
     text: props.prompt,
   })
+}
+
+const onCopy = () => {
+  copying.value = true
+  window.api.clipboard.writeImage(props.url)
+  setTimeout(() => {
+    copying.value = false
+  }, 1000)
 }
 
 const onDownload = () => {
