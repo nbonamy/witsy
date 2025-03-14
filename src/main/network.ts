@@ -38,16 +38,30 @@ export default (window: BrowserWindow) => {
         }
 
         const { requestId, request } = params
-        requests.set(requestId, {
+        const networkRequest = {
           id: requestId,
           url: request.url,
           method: request.method,
           headers: request.headers,
           postData: request.postData,
-        })
+        }
+
+        // hide api keys
+        // anthropic: x-api-key
+        // google: x-goog-api-key
+        // replicate/huggingface: Authorization
+        // others: authorization
+        for (const key of ['x-api-key', 'x-goog-api-key', 'authorization' ]) {
+          Object.keys(networkRequest.headers).filter((k) => k.toLocaleLowerCase() == key).forEach(k => {
+            networkRequest.headers[k] = '*** hidden ***'
+          })
+        }
+
+        // save
+        requests.set(requestId, networkRequest)
 
         // emit event
-        debugWindow?.webContents?.send('network', requests.get(requestId))
+        debugWindow?.webContents?.send('network', networkRequest)
 
         // done
         return
@@ -69,8 +83,11 @@ export default (window: BrowserWindow) => {
           request.statusText = response.statusText
           request.responseHeaders = response.headers
           request.mimeType = response.mimeType
-        }
 
+          // // emit event
+          // debugWindow?.webContents?.send('network', request)
+
+        }
       }
 
       // loadingFinished
