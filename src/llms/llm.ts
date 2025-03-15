@@ -223,10 +223,12 @@ export default class LlmFactory {
     if (this.isCustomEngine(engine)) {
       const engineConfig = this.config.engines[engine] as CustomEngineConfig
       if (engineConfig.api === 'openai') {
-        return new OpenAI({
+        const engine: OpenAI = new OpenAI({
           apiKey: engineConfig.apiKey,
           baseURL: engineConfig.baseURL
         })
+        engine.getName = () => engineConfig.label
+        return engine
       }
     }
 

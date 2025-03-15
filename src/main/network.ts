@@ -77,17 +77,19 @@ export default (window: BrowserWindow) => {
       if (method === 'Network.responseReceived') {
         const { requestId, response } = params
         const request = requests.get(requestId)
-        if (request) {
-          const statusCode = response.status
-          request.statusCode = statusCode
-          request.statusText = response.statusText
-          request.responseHeaders = response.headers
-          request.mimeType = response.mimeType
+        if (!request) return
+          
+        const statusCode = response.status
+        request.statusCode = statusCode
+        request.statusText = response.statusText
+        request.responseHeaders = response.headers
+        request.mimeType = response.mimeType
 
-          // // emit event
-          // debugWindow?.webContents?.send('network', request)
+        // // emit event
+        // debugWindow?.webContents?.send('network', request)
 
-        }
+        // done
+        return
       }
 
       // loadingFinished / loadingFailed
