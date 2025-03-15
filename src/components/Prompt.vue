@@ -37,7 +37,7 @@ import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
 import { ref, computed, onMounted, nextTick, watch, Ref } from 'vue'
 import { store } from '../services/store'
-import { expertI18n, t } from '../services/i18n'
+import { expertI18n, commandI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
@@ -179,7 +179,7 @@ const activeExpertMenuItems = computed(() => {
 
 const commands = computed(() => {
   return store.commands.filter((c) => c.state == 'enabled').map(c => {
-    return { label: c.label, action: c.id, icon: c.icon }
+    return { label: commandI18n(c, 'label'), action: c.id, icon: c.icon }
   })
 })
 
@@ -592,7 +592,7 @@ const onCommands = () => {
 const handleCommandClick = (action: string) => {
   closeContextMenu()
   const command = store.commands.find(c => c.id === action)
-  prompt.value = command.template.replace('{input}', prompt.value)
+  prompt.value = commandI18n(command, 'template').replace('{input}', prompt.value)
   onSendPrompt()
 }
 
