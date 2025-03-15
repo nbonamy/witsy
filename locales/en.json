@@ -1142,12 +1142,12 @@
   },
   "instructions": {
     "default": "You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user's needs, communicate clearly, and provide responses that are informative, concise, and relevant.",
-    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{context}\n\nQUERY: {query}",
+    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
     "scratchpad": {
       "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response.",
       "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
       "improve": "Improve the EXTRACT in your own words. Make it more clear, concise, and engaging. Do not explain the changes you made.",
-      "prompt": "EXTRACT:\n{document}\n\nASK: {ask}",
+      "prompt": "EXTRACT:\n{'{'}document{'}'}\n\nASK: {'{'}ask{'}'}",
       "simplify": "Simplify and condense the writing of the EXTRACT. Remove any unnecessary information. Do not explain the changes you made.",
       "spellcheck": "Correct the EXTRACT by fixing spelling errors and grammar. Do not modify the EXTRACT beyond spelling and grammar. Do not list the corrections you made.",
       "system": "You are helping someone write a DOCUMENT. You need to answer to the ask below on the EXTRACT below. Do not use previous versions of the DOCUMENT or EXTRACT in our conversation. Just reply with the updated EXTRACT based on the ask. Preserve empty lines. Do not wrap responses in quotes. Do not include the initial or previous version of the DOCUMENT or EXTRACT. Do not include the word EXTRACT. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the...'",

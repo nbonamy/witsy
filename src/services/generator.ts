@@ -57,7 +57,8 @@ export type GenerationResult =
         //console.log('Sources', JSON.stringify(sources, null, 2));
         if (sources.length > 0) {
           const context = sources.map((source) => source.content).join('\n\n');
-          const prompt = i18nInstructions(this.config, 'instructions.docquery').replace('{context}', context).replace('{query}', userMessage.content);
+          const instructions = i18nInstructions(this.config, 'instructions.docquery')
+          const prompt = instructions.replace('{context}', context).replace('{query}', userMessage.content);
           conversation[conversation.length - 1] = new Message('user', prompt);
         }
       }
