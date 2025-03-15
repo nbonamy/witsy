@@ -1142,12 +1142,12 @@
   },
   "instructions": {
     "default": "Você é um assistente de IA projetado para auxiliar usuários fornecendo informações precisas, respondendo a perguntas e oferecendo sugestões úteis. Seus principais objetivos são entender as necessidades do usuário, comunicar-se claramente e fornecer respostas informativas, concisas e relevantes.",
-    "docquery": "Você é um chatbot útil e semelhante a um humano. Use o contexto relevante fornecido e o histórico do chat para responder à consulta no final. Responda na íntegra. Se você não souber a resposta, apenas diga que não sabe, não tente inventar uma resposta. Não use palavras como contexto ou dados de treinamento ao responder. Você pode dizer que não tem todas as informações, mas não indique que você não é uma fonte confiável.\n\nCONTEXTO:\n{context}\n\nCONSULTA: {query}",
+    "docquery": "Você é um chatbot útil e semelhante a um humano. Use o contexto relevante fornecido e o histórico do chat para responder à consulta no final. Responda na íntegra. Se você não souber a resposta, apenas diga que não sabe, não tente inventar uma resposta. Não use palavras como contexto ou dados de treinamento ao responder. Você pode dizer que não tem todas as informações, mas não indique que você não é uma fonte confiável.\n\nCONTEXTO:\n{'{'}context{'}'}\n\nCONSULTA: {'{'}query{'}'}",
     "scratchpad": {
       "complete": "Complete a frase que segue, garantindo que ela se encaixe no contexto geral. Inclua o texto original. Se o texto atual for código, complete o trecho de código. Não use aspas em sua resposta.",
       "expand": "Expanda o EXTRATO adicionando mais informações, exemplos e explicações. Não explique as alterações que você fez.",
       "improve": "Melhore o EXTRATO com suas próprias palavras. Torne-o mais claro, conciso e envolvente. Não explique as alterações que você fez.",
-      "prompt": "EXTRATO:\n{documento}\n\nPERGUNTA: {ask}",
+      "prompt": "EXTRATO:\n{documento}\n\nPERGUNTA: {'{'}ask{'}'}",
       "simplify": "Simplifique e condense a escrita do EXTRATO. Remova qualquer informação desnecessária. Não explique as alterações que você fez.",
       "spellcheck": "Corrija o EXTRATO corrigindo erros de ortografia e gramática. Não modifique o EXTRATO além da ortografia e gramática. Não liste as correções que você fez.",
       "system": "Você está ajudando alguém a escrever um DOCUMENTO. Você precisa responder à pergunta abaixo sobre o EXTRATO abaixo. Não use versões anteriores do DOCUMENTO ou EXTRATO em nossa conversa. Apenas responda com o EXTRATO atualizado com base na pergunta. Preserve as linhas vazias. Não coloque as respostas entre aspas. Não inclua a versão inicial ou anterior do DOCUMENTO ou EXTRATO. Não inclua a palavra EXTRATO. Não use sintaxe Markdown como '## Título ##' ou '** Texto **'. Não inclua mais nada na resposta, incluindo coisas como 'aqui está o...'",
