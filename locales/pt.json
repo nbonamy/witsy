@@ -1147,7 +1147,7 @@
       "complete": "Complete a frase que segue, garantindo que ela se encaixe no contexto geral. Inclua o texto original. Se o texto atual for código, complete o trecho de código. Não use aspas em sua resposta.",
       "expand": "Expanda o EXTRATO adicionando mais informações, exemplos e explicações. Não explique as alterações que você fez.",
       "improve": "Melhore o EXTRATO com suas próprias palavras. Torne-o mais claro, conciso e envolvente. Não explique as alterações que você fez.",
-      "prompt": "EXTRATO:\n{documento}\n\nPERGUNTA: {'{'}ask{'}'}",
+      "prompt": "EXTRATO:\n{'{'}document{'}'}\n\nPERGUNTA: {'{'}ask{'}'}",
       "simplify": "Simplifique e condense a escrita do EXTRATO. Remova qualquer informação desnecessária. Não explique as alterações que você fez.",
       "spellcheck": "Corrija o EXTRATO corrigindo erros de ortografia e gramática. Não modifique o EXTRATO além da ortografia e gramática. Não liste as correções que você fez.",
       "system": "Você está ajudando alguém a escrever um DOCUMENTO. Você precisa responder à pergunta abaixo sobre o EXTRATO abaixo. Não use versões anteriores do DOCUMENTO ou EXTRATO em nossa conversa. Apenas responda com o EXTRATO atualizado com base na pergunta. Preserve as linhas vazias. Não coloque as respostas entre aspas. Não inclua a versão inicial ou anterior do DOCUMENTO ou EXTRATO. Não inclua a palavra EXTRATO. Não use sintaxe Markdown como '## Título ##' ou '** Texto **'. Não inclua mais nada na resposta, incluindo coisas como 'aqui está o...'",
