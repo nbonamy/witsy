@@ -39,15 +39,15 @@
             <div class="section" v-if="headers">
               <h3>Headers</h3>
               <div class="json expanded">
-                <JsonViewer :value="headers" :expand-depth="1" copyable sort theme="jv-dark" :expanded="true" />
+                <JsonViewer :value="headers" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
               </div>
             </div>
             <div class="section" v-if="data">
               <h3>Body</h3>
               <div class="json" v-if="jsonData(data)">
-                <JsonViewer :value="jsonData(data)" :expand-depth="1" copyable sort theme="jv-dark" :expanded="true" />
+                <JsonViewer :value="jsonData(data)" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
               </div>
-              <pre v-else>{{ data }}</pre>
+              <pre v-else>{{ data }}<div class="copy" :class="{ copying: copying }" @click="copyData(data)">{{ t(copying ? 'common.copied' : 'common.copy').toLowerCase() }}</div></pre>
             </div>
           </template>
         </div>
@@ -60,6 +60,7 @@
 
 import { NetworkRequest } from '../types'
 import { ref, Ref, computed, onMounted } from 'vue'
+import { t } from '../services/i18n'
 
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
@@ -67,6 +68,7 @@ import 'vue3-json-viewer/dist/index.css'
 const requests: Ref<NetworkRequest[]> = ref([])
 const selected: Ref<NetworkRequest | null> = ref(null)
 const activeTab: Ref<'request'|'response'> = ref('request')
+const copying = ref(false)
 
 const headers = computed(() => {
   if (activeTab.value === 'request') {
@@ -81,6 +83,14 @@ const data = computed(() => {
     return selected.value?.postData
   } else {
     return selected.value?.responseBody
+  }
+})
+
+const copyable = computed(() => {
+  return {
+    copyText: t('common.copy').toLowerCase(),
+    copiedText: t('common.copied').toLowerCase(),
+    timeout: 1000
   }
 })
 
@@ -105,6 +115,14 @@ const jsonData = (data: string) => {
   } catch (e) {
     return null
   }
+}
+
+const copyData = (data: string) => {
+  copying.value = true
+  window.api.clipboard.writeText(data)
+  setTimeout(() => {
+    copying.value = false
+  }, 1000)
 }
 
 const clearRequests = () => {
@@ -228,13 +246,27 @@ const selectRequest = (request: NetworkRequest) => {
 }
 
 pre {
+  position: relative;
   white-space: pre-wrap;
   word-break: break-all;
   background-color: rgb(13,13,13);
   color: #fff;
   padding: 12px;
+  padding-top: 36px;
   border-radius: 8px;
   font-size: 10.5pt;
+
+  .copy {
+    cursor: pointer;
+    position: absolute;
+    right: 24px;
+    top: 8px;
+    font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
+    font-size: 10.5pt;
+    &.copying {
+      opacity: 0.4;
+    }
+  }
 }
 
 .json {
