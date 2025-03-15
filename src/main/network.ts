@@ -90,8 +90,8 @@ export default (window: BrowserWindow) => {
         }
       }
 
-      // loadingFinished
-      if (method === 'Network.loadingFinished') {
+      // loadingFinished / loadingFailed
+      if (method === 'Network.loadingFinished' || method === 'Network.loadingFailed') {
         
         const request = requests.get(requestId)
         if (!request) return
@@ -107,7 +107,7 @@ export default (window: BrowserWindow) => {
             request.responseBody = 'Response body too large to display'
           }
         } catch (error) {
-          request.responseBody = 'Unable to get response body. Error unknown'
+          request.responseBody = `Unable to get response body. ${error.message}`
           console.log(`Couldn't get response body for request ${requestId} ${request.url}: ${error.message}`)
         }
 
@@ -122,6 +122,9 @@ export default (window: BrowserWindow) => {
         // done
         return
       }
+
+      // debug
+      //console.log('Unhandled Network event', method, params)
 
     })
 
