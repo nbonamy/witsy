@@ -35,19 +35,21 @@ const dmgOptions: MakerDMGConfig = {
 if (isDarwin) {
   if (!isMas) {
     osxPackagerConfig = {
-      osxSign: {
-        identity: process.env.IDENTIFY_DARWIN_CODE,
-        provisioningProfile: './build/Witsy_Darwin.provisionprofile',
-        optionsForFile: () => { return {
-          hardenedRuntime: true,
-          entitlements: './build/Entitlements.darwin.plist'
-        }; },
-      },
-      osxNotarize: {
-        appleId: process.env.APPLE_ID,
-        appleIdPassword: process.env.APPLE_PASSWORD,
-        teamId: process.env.APPLE_TEAM_ID
-      }
+      // osxSign: {
+      //   identity: process.env.IDENTIFY_DARWIN_CODE,
+      //   provisioningProfile: './build/Witsy_Darwin.provisionprofile',
+      //   optionsForFile: () => {
+      //     return {
+      //       hardenedRuntime: true,
+      //       entitlements: './build/Entitlements.darwin.plist'
+      //     };
+      //   },
+      // },
+      // osxNotarize: {
+      //   appleId: process.env.APPLE_ID,
+      //   appleIdPassword: process.env.APPLE_PASSWORD,
+      //   teamId: process.env.APPLE_TEAM_ID
+      // }
     }
   } else {
     osxPackagerConfig = {
@@ -56,7 +58,7 @@ if (isDarwin) {
       osxSign: {
         identity: process.env.IDENTITY_MAS_CODE,
         provisioningProfile: './build/Witsy_MAS.provisionprofile',
-        optionsForFile: (filePath: string) => { 
+        optionsForFile: (filePath: string) => {
           let entitlements = './build/Entitlements.mas.child.plist'
           if (filePath.endsWith('Witsy.app')) {
             entitlements = './build/Entitlements.mas.main.plist'
@@ -97,10 +99,31 @@ const config: ForgeConfig = {
         try {
           // we sign libnut on mas but feature is disabled anyway
           if (platform === 'darwin' || platform === 'mas') {
-            const binaries = [
-              'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
-              `node_modules/autolib/build/Release/autolib.node`,
+            const binaries: string[] = [
+              // 'node_modules/@nut-tree-fork/libnut-darwin/build/Release/libnut.node',
+              // `node_modules/autolib/build/Release/autolib.node`,
             ];
+
+            // // list files recursively in node_modules/autolib
+            // const findNodeFiles = (dir: string) => {
+            //   if (fs.existsSync(dir)) {
+            //     const files = fs.readdirSync(dir);
+            //     files.forEach((file) => {
+            //       const filePath = path.join(dir, file);
+            //       const stats = fs.statSync(filePath);
+
+            //       if (stats.isDirectory()) {
+            //         findNodeFiles(filePath);
+            //       } else if (file.endsWith('.node')) {
+            //         console.log(`Found binary: ${filePath}`);
+            //         binaries.push(filePath.replace(buildPath + path.sep, ''));
+            //       }
+            //     });
+            //   }
+            // };
+
+            // const autolibPath = path.join(buildPath, 'node_modules', 'autolib');
+            // findNodeFiles(autolibPath);
 
             binaries.forEach((binary) => {
               const binaryPath = path.join(buildPath, binary);

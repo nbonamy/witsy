@@ -16,6 +16,7 @@ import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
 import CreateMedia from './screens/CreateMedia.vue'
+import MagicBubble from './screens/MagicBubble.vue'
 import Debug from './screens/Debug.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
 
@@ -37,6 +38,7 @@ const routes: { [key: string]: any } = {
   '/transcribe': Transcribe,
   '/scratchpad': ScratchPad,
   '/create': CreateMedia,
+  '/bubble': MagicBubble,
   '/debug': Debug,
 }
 

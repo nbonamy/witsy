@@ -19,6 +19,7 @@ import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
 import DocumentRepository from './rag/docrepo';
+import InPlaceBubble from 'automations/bubble';
 import MemoryManager from './main/memory';
 import LocalSearch from './main/search';
 import Embedder from './rag/embedder';
@@ -43,6 +44,7 @@ import Automator, { AutomationAction } from 'automations/automator';
 let commander: Commander = null
 let docRepo: DocumentRepository = null
 let memoryManager: MemoryManager = null
+let inPlaceBubble: InPlaceBubble = null
 //const nestor: Nestor = null
 let mcp: Mcp = null
 
@@ -210,10 +212,15 @@ app.whenReady().then(() => {
   // create the memory manager
   memoryManager = new MemoryManager(app);
 
+  // create the in-place bubble
+  inPlaceBubble = new InPlaceBubble();
+  inPlaceBubble.start();
+
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
+    window.prepareBubble();
   }
   
   // some platforms have a one-time automator initialization to do so give them a chance
