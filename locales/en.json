@@ -1512,6 +1512,12 @@
       "resetTips": "Reset tips",
       "runAtLogin": "Run at login"
     },
+    "load": {
+      "error": {
+        "text": "A backup has been created. Settings are reset.",
+        "title": "There was an error loading your settings."
+      }
+    },
     "plugins": {
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",

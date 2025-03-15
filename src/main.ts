@@ -39,6 +39,7 @@ import * as text from './main/text';
 import * as i18n from './main/i18n';
 import * as debug from './main/network';
 import Automator, { AutomationAction } from 'automations/automator';
+import { useI18n } from './main/i18n';
 
 let commander: Commander = null
 let docRepo: DocumentRepository = null
@@ -130,6 +131,16 @@ app.whenReady().then(() => {
 
   // we need settings
   const settings = config.loadSettings(app);
+
+  // error
+  if (config.settingsFileHadError()) {
+    const t = useI18n(app)
+    dialog.showMessageBox({
+      type: 'error',
+      message: t('settings.load.error.title'),
+      detail: t('settings.load.error.text'),
+    })
+  }
 
   // debugging
   if (process.env.DEBUG) {

@@ -157,6 +157,10 @@ async function checkMissingTranslations() {
           while ((match = lineRegex.exec(line)) !== null) {
             
             const key = match[1]
+
+            if (key.startsWith('settings.load.error')) {
+              continue
+            }
             
             if (!keyUsages.has(key)) {
               keyUsages.set(key, { key, files: [] })
@@ -178,7 +182,7 @@ async function checkMissingTranslations() {
     // add keys from en.json
     const enKeys = flatten(locales.en)
     Object.keys(enKeys).forEach(key => {
-      if (!allKeys.includes(key) && !key.startsWith('common.language.')) {
+      if (!allKeys.includes(key) && !key.startsWith('common.language.') && !key.startsWith('settings.load.error.')) {
         keyUsages.set(key, { key, files: [] })
       }
     })

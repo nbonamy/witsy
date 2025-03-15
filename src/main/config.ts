@@ -8,6 +8,7 @@ import path from 'path'
 import fs from 'fs'
 
 let firstLoad = true
+let errorLoadingConfig = false
 let onSettingsChange: CallableFunction = () => {}
 
 const monitor: Monitor = new Monitor(() => {
@@ -23,6 +24,8 @@ export const settingsFilePath = (app: App): string => {
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
 }
+
+export const settingsFileHadError = (): boolean => errorLoadingConfig
 
 const mergeConfig = (defaults: anyDict, overrides: anyDict): anyDict => {
 
@@ -93,8 +96,37 @@ export const loadSettings = (source: App|string): Configuration => {
     }
   }
 
+  // now try to parse
+  let jsonConfig = null 
+  try {
+    jsonConfig = JSON.parse(data)
+  } catch (error) {
+
+    // log
+    console.log('Error parsing settings data', error)
+
+    // save a backup before starting from scratch
+    if (typeof source !== 'string' && firstLoad) {
+      const now = new Date()
+      const timestamp = now.getFullYear() + 
+               ('0' + (now.getMonth() + 1)).slice(-2) + 
+               ('0' + now.getDate()).slice(-2) + 
+               ('0' + now.getHours()).slice(-2) + 
+               ('0' + now.getMinutes()).slice(-2) + 
+               ('0' + now.getSeconds()).slice(-2)
+      const backupFile = settingsFilePath(source).replace('.json', `.${timestamp}.json`)
+      console.log('Saving backup of settings to', backupFile)
+      fs.writeFileSync(backupFile, data)
+      errorLoadingConfig = true
+    }
+
+    // start with defaults
+    jsonConfig = {}
+
+  }
+
   // now build config
-  const config = buildConfig(defaultSettings, JSON.parse(data))
+  const config = buildConfig(defaultSettings, jsonConfig)
 
   // save if needed
   if (save && !process.env.TEST) {
