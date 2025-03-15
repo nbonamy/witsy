@@ -58,14 +58,21 @@ beforeAll(() => {
     folders: [
       { id: 'folder', name: 'Folder', chats: [] }
     ], chats: [
-      Chat.fromJson({ uuid: 'chat', title: 'title', docrepo: 'docrepo', messages: [
-        new Message('system', 'instructions'),
-        new Message('user', 'prompt1'),
-        new Message('assistant', 'response1'),
-        Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
-        new Message('user', 'prompt2'),
-        new Message('assistant', 'response2'),  
-      ] })
+      Chat.fromJson({
+        uuid: 'chat',
+        title: 'title',
+        docrepo: 'docrepo',
+        engine: 'openai',
+        model: 'gpt-4o',
+        messages: [
+          new Message('system', 'instructions'),
+          new Message('user', 'prompt1'),
+          new Message('assistant', 'response1'),
+          Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
+          new Message('user', 'prompt2'),
+          new Message('assistant', 'response2'),  
+        ]
+      })
     ]
   })
 
@@ -275,11 +282,18 @@ test('Delete folder', async () => {
 })
 
 test('Select chat', async () => {
+  store.config.llm.engine = 'mock'
   const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('select-chat', store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.disableTools).toBeFalsy()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
+  emitEvent('send-prompt', { prompt: 'prompt' })
+  expect(Assistant.prototype.initLlm).toHaveBeenCalled()
+  expect(wrapper.vm.assistant.chat.engine).toBe('openai')
+  expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
+    model: 'gpt-4o', attachment: null, docrepo: null, expert: null
+  }, expect.any(Function), expect.any(Function))
 })
 
 test('Fork Chat on Assistant Message', async () => {
