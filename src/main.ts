@@ -106,7 +106,7 @@ const registerShortcuts = () => {
 let quitAnyway = false;
 const quitApp = () => {
   quitAnyway = true;
-  app.exit();
+  app.quit();
 }
 
 //  tray icon
@@ -273,6 +273,13 @@ app.on('before-quit', (ev) => {
   ev.preventDefault();
 
 });
+
+// real quit
+app.on('will-quit', () => {
+  try {
+    mcp?.shutdown();
+  } catch { /* empty */ }
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
