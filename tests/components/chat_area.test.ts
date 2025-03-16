@@ -157,14 +157,12 @@ test('Context menu rename', async () => {
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
 })
 
-// test('Context menu export', async () => {
-//   addMessagesToChat()
-//   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-//   await wrapper.find('.toolbar .menu').trigger('click')
-//   await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
-//   await wrapper.findAll('.context-menu .item')[4].trigger('click')
-//   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', chat)
-// })
+test('Context menu export', async () => {
+  addMessagesToChat()
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
+})
 
 test('Context menu delete', async () => {
   addMessagesToChat()
