@@ -202,17 +202,17 @@ export default class {
 
   }
 
-  reload = async (): Promise<void> => {
-
-    // clear clients
+  shutdown = async (): Promise<void> => {
     for (const client of this.clients) {
       await client.client.close()
     }
     this.clients = []
+  }
 
-    // connect to servers
+
+  reload = async (): Promise<void> => {
+    this.shutdown()
     await this.connect()
-
   }
 
   connect = async (): Promise<void> => {
