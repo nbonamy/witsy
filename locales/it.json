@@ -1491,15 +1491,13 @@
         "title": "Scarica"
       },
       "image": {
+        "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle impostazioni di Witsy.",
         "description": "Questo plugin consente ai motori LLM di creare immagini a partire da una descrizione testuale.",
         "huggingface": {
           "aboutModels": "Ulteriori informazioni sui modelli Hugging Face",
           "modelPlaceholder": "Inserisci un modello o seleziona dall'elenco"
         },
         "imageModel": "Modello immagine",
-        "openai": {
-          "apiKeyReminder": "Assicurati di inserire la tua chiave API OpenAI nel pannello Modelli delle impostazioni di Witsy."
-        },
         "provider": "Fornitore",
         "replicate": {
           "aboutModels": "Ulteriori informazioni sui modelli Replicate",

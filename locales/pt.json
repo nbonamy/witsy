@@ -1521,15 +1521,13 @@
         "title": "Download"
       },
       "image": {
+        "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",
         "description": "Este plugin permite que os mecanismos LLM criem imagens a partir de uma descrição de texto.",
         "huggingface": {
           "aboutModels": "Mais sobre os modelos Hugging Face",
           "modelPlaceholder": "Insira um modelo ou selecione na lista"
         },
         "imageModel": "Modelo de imagem",
-        "openai": {
-          "apiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos das Configurações do Witsy."
-        },
         "provider": "Provedor",
         "replicate": {
           "aboutModels": "Mais sobre os modelos Replicate",

@@ -1491,15 +1491,13 @@
         "title": "Herunterladen"
       },
       "image": {
+        "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben.",
         "description": "Dieses Plugin ermöglicht LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
         "huggingface": {
           "aboutModels": "Mehr über Hugging Face-Modelle",
           "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
         },
         "imageModel": "Bildmodell",
-        "openai": {
-          "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben."
-        },
         "provider": "Anbieter",
         "replicate": {
           "aboutModels": "Mehr über Replicate-Modelle",

@@ -81,6 +81,7 @@
   "dependencies": {
     "@el3um4s/run-vbs": "^1.1.2",
     "@excalidraw/markdown-to-text": "^0.1.2",
+    "@google/generative-ai": "^0.24.0",
     "@googleapis/drive": "^8.14.0",
     "@huggingface/inference": "^2.8.1",
     "@huggingface/transformers": "^3.3.2",
@@ -115,7 +116,7 @@
     "mermaid": "^11.4.1",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^2.15.5",
+    "multi-llm-ts": "file:../multi-llm-ts",
     "nestor-client": "^0.3.1",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",

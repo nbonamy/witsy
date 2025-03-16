@@ -57,6 +57,7 @@ const engines = computed(() => {
   // standard
   const engines = [
     { id: 'openai', name: 'OpenAI' },
+    //{ id: 'google', name: 'Google' },
     { id: 'ollama', name: 'Ollama' },
     //{ id: 'fastembed', name: 'FastEmbed-js' },
   ]
@@ -78,7 +79,7 @@ const models = computed(() => {
   return store.config?.engines?.[engine.value]?.models?.embedding?.map((m: Model) => ({ id: m.id, name: m.name }))
 })
 
-const canRefresh = computed(() => engine.value === 'ollama')
+const canRefresh = computed(() => ['ollama', 'google'].includes(engine.value))
 
 const onChangeEngine = () => {
   model.value = models.value?.[0]?.id
