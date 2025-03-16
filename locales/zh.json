@@ -152,6 +152,9 @@
         "requiredFields": "所有字段均为必填",
         "titleRequired": "请为此次聊天输入标题。"
       }
+    },
+    "exportPdf": {
+      "error": "尝试导出聊天时发生错误。"
     }
   },
   "chatList": {

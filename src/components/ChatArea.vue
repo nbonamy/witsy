@@ -142,63 +142,74 @@ const onToggleTemporary = () => {
 
 const onExportPdf = async () => {
 
-  // first take a screenshot so that theme flickering is invisible to user
-  const canvas = await html2canvas(document.documentElement)
-
-  // add to body
-  var t = canvas.toDataURL()
-  const image = document.createElement('img')
-  image.style.position = 'absolute'
-  image.style.top = '0'
-  image.style.left = '0'
-  image.style.width = '100%'
-  image.style.zIndex = '10000'
-  image.src = t
-  document.body.appendChild(image)
-
-  // switch to light for export
   const theme = store.config.appearance.theme
-  window.api.setAppearanceTheme('light')
+  const image = document.createElement('img')
 
-  // copy and clean-up
-  const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area')!.cloneNode(true) as HTMLElement
-  content.querySelectorAll('.toolbar .action')?.forEach(action => action.remove())
-  content.querySelector('.message .actions')?.remove()
-  content.querySelector('.overflow')?.remove()
-  content.querySelector('.prompt')?.remove()
+  try {
 
-  // now remove scroll
-  content.style.height = 'auto'
-  content.querySelector<HTMLElement>('.inside-content')!.style.height = 'auto'
-  content.querySelector<HTMLElement>('.inside-content')!.style.overflow = 'visible'
+    // first take a screenshot so that theme flickering is invisible to user
+    const canvas = await html2canvas(document.documentElement)
 
-  // adjust title
-  //content.querySelector<HTMLElement>('.toolbar')!.style.marginTop = '-12px'
-  content.querySelector<HTMLElement>('.toolbar')!.style.marginLeft = '12px'
-  content.querySelector<HTMLElement>('.toolbar')!.style.marginRight = '12px'
+    // add to body
+    image.style.position = 'absolute'
+    image.style.top = '0'
+    image.style.left = '0'
+    image.style.width = '100%'
+    image.style.zIndex = '10000'
+    image.src = canvas.toDataURL()
+    document.body.appendChild(image)
 
-  // replace images with their b64 version
-  content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
-    const src = img.src
-    if (src.startsWith('file://')) {
-      const path = decodeURIComponent(src.replace('file://', ''))
-      const data = window.api.file.read(path)
-      if (data) {
-        img.src = `data:${data.mimeType};base64,${data.contents}`
+    // switch to light for export
+    window.api.setAppearanceTheme('light')
+
+    // copy and clean-up
+    const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area').cloneNode(true) as HTMLElement
+    content.querySelectorAll('.toolbar .action')?.forEach(action => action.remove())
+    content.querySelector('.message .actions')?.remove()
+    content.querySelector('.overflow')?.remove()
+    content.querySelector('.prompt')?.remove()
+
+    // now remove scroll
+    content.style.height = 'auto'
+    content.querySelector<HTMLElement>('.inside-content').style.height = 'auto'
+    content.querySelector<HTMLElement>('.inside-content').style.overflow = 'visible'
+
+    // adjust title
+    //content.querySelector<HTMLElement>('.toolbar').style.marginTop = '-12px'
+    content.querySelector<HTMLElement>('.toolbar').style.marginLeft = '12px'
+    content.querySelector<HTMLElement>('.toolbar').style.marginRight = '12px'
+
+    // replace images with their b64 version
+    content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
+      const src = img.src
+      if (src.startsWith('file://')) {
+        const path = decodeURIComponent(src.replace('file://', ''))
+        const data = window.api.file.read(path)
+        if (data) {
+          img.src = `data:${data.mimeType};base64,${data.contents}`
+        }
       }
-    }
-  })
+    })
 
-  // now render
-  const opt = {
-    margin: [ 12, 4, 8, 4 ],
-    filename: `${props.chat.title}.pdf`,
-    image: { type: 'jpeg', quality: 1.0 },
-    html2canvas: { scale: 2 },
-    pagebreak: { mode: 'avoid-all' },
-    jsPDF: { compress: true, putOnlyUsedFonts: true }
+    // now render
+    const opt = {
+      margin: [ 12, 4, 8, 4 ],
+      filename: `${props.chat.title}.pdf`,
+      image: { type: 'jpeg', quality: 1.0 },
+      html2canvas: { scale: 2 },
+      pagebreak: { mode: 'avoid-all' },
+      jsPDF: { compress: true, putOnlyUsedFonts: true }
+    }
+    await html2pdf().from(content).set(opt).save()
+    
+
+  } catch (e) {
+    console.error('Error exporting PDF:', e)
+    window.api.showDialog({
+      message: t('common.error'),
+      detail: t('chat.exportPdf.error'),
+    })
   }
-  await html2pdf().from(content).set(opt).save()
 
   // restore theme
   window.api.setAppearanceTheme(theme)

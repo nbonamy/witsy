@@ -152,6 +152,9 @@
         "requiredFields": "Todos os campos são obrigatórios",
         "titleRequired": "Certifique-se de inserir um título para este chat."
       }
+    },
+    "exportPdf": {
+      "error": "Ocorreu um erro ao tentar exportar o chat."
     }
   },
   "chatList": {
