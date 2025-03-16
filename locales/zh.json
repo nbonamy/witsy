@@ -1521,15 +1521,13 @@
         "title": "下载"
       },
       "image": {
+        "apiKeyReminder": "确保你在 Witsy 设置的模型面板中输入了你的 API 密钥。",
         "description": "此插件允许 LLM 引擎根据文本描述创建图像。",
         "huggingface": {
           "aboutModels": "了解更多关于 Hugging Face 模型的信息",
           "modelPlaceholder": "输入模型名称或从列表中选择"
         },
         "imageModel": "图像模型",
-        "openai": {
-          "apiKeyReminder": "确保你在 Witsy 设置的模型面板中输入了你的 OpenAI API 密钥。"
-        },
         "provider": "提供者",
         "replicate": {
           "aboutModels": "了解更多关于 Replicate 模型的信息",

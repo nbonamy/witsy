@@ -1491,15 +1491,13 @@
         "title": "Descargar"
       },
       "image": {
+        "apiKeyReminder": "Asegúrese de ingresar su clave API en el panel de Modelos de la configuración de Witsy.",
         "description": "Este complemento permite que los motores LLM creen imágenes a partir de una descripción de texto.",
         "huggingface": {
           "aboutModels": "Más sobre los modelos de Hugging Face",
           "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
         },
         "imageModel": "Modelo de imagen",
-        "openai": {
-          "apiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos de la configuración de Witsy."
-        },
         "provider": "Proveedor",
         "replicate": {
           "aboutModels": "Más sobre los modelos de Replicate",

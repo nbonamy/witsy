@@ -6,6 +6,7 @@ import similarity from 'compute-cosine-similarity'
 //import { FlagEmbedding, EmbeddingModel } from 'fastembed'
 import { Ollama } from 'ollama'
 import OpenAI from 'openai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Embedding } from 'openai/resources'
 import LlmFactory from '../llms/llm'
 // import path from 'path'
@@ -29,6 +30,7 @@ export default class Embedder {
   model: string
   openai: OpenAI
   ollama: Ollama
+  google: GoogleGenerativeAI
   //fastembed: FlagEmbedding
 
   static async init(app: App, config: Configuration, engine: string, model: string): Promise<Embedder> {
@@ -56,12 +58,19 @@ export default class Embedder {
         baseURL: this.config.engines.openai.baseURL || defaults.engines.openai.baseURL,
         dangerouslyAllowBrowser: true
       })
+      return
+
+    } else if (this.engine === 'google') {
+
+      this.google = new GoogleGenerativeAI(this.config.engines.google.apiKey)
+      return
 
     } else if (this.engine === 'ollama') {
 
       this.ollama = new Ollama({
         host: this.config.engines.ollama.baseURL,
       })
+      return
 
     // } else if (thibas.engine === 'fastembed') {
 
@@ -96,14 +105,13 @@ export default class Embedder {
           baseURL: engineConfig.baseURL,
           dangerouslyAllowBrowser: true
         })
+        return
       }
     
     }
 
     // check
-    if (!this.openai && !this.ollama) {
-      throw new Error(`Unsupported embedding engine: ${this.engine}`)
-    }
+    throw new Error(`Unsupported embedding engine: ${this.engine}`)
   }
 
   async embed(texts: string[]): Promise<number[][]> {
@@ -112,6 +120,18 @@ export default class Embedder {
     if (this.openai) {
       const response = await this.openai.embeddings.create({ input: texts, model: this.model, })
       return response.data.map((item: Embedding) => item.embedding)
+    }
+
+    // google
+    if (this.google) {
+      const result: number[][] = []
+      const model = this.google.getGenerativeModel({ model: this.model })
+      // calling await model.embedContent(texts) returns only one embedding
+      for (const text of texts) {
+        const response = await model.embedContent(text)
+        result.push(response.embedding.values)
+      }
+      return result
     }
 
     // ollama

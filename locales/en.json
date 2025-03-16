@@ -1527,15 +1527,13 @@
         "title": "Download"
       },
       "image": {
+        "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
         "description": "This plugin allows LLM engines to create images from a text description.",
         "huggingface": {
           "aboutModels": "More about Hugging Face models",
           "modelPlaceholder": "Enter a model or select from the list"
         },
         "imageModel": "Image model",
-        "openai": {
-          "apiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane of Witsy Settings."
-        },
         "provider": "Provider",
         "replicate": {
           "aboutModels": "More about Replicate models",
