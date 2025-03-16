@@ -156,7 +156,7 @@ const creator: Record<string, MediaCreator> = {
 }
 
 const hasFixedModels = computed(() => {
-  return mediaType.value === 'image' && (['openai', 'sdwebui'].includes(engine.value))
+  return mediaType.value === 'image' && (['openai', 'google', 'sdwebui'].includes(engine.value))
 })
 
 const engines = computed(() => {
@@ -272,9 +272,9 @@ const setEphemeralRefreshLabel = (text: string) => {
 const getModels = async () => {
 
   // openai
-  if (engine.value === 'openai') {
+  if (engine.value === 'openai' || engine.value === 'google') {
     const llmFactory = new LlmFactory(store.config)
-    let success = await llmFactory.loadModels('openai')
+    let success = await llmFactory.loadModels(engine.value)
     if (!success) {
       setEphemeralRefreshLabel(t('common.error'))
       return
@@ -289,6 +289,11 @@ const getModels = async () => {
       setEphemeralRefreshLabel(t('common.error'))
       return
     }
+  }
+
+  // make sure we have a valid model
+  if (!models.value.find((m) => m.id === model.value)) {
+    model.value = models.value[0]?.id
   }
 
   // done
