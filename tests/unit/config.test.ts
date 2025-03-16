@@ -1,9 +1,18 @@
 
+import { app } from 'electron'
 import { Configuration } from '../../src/types/config'
 import { vi, expect, test } from 'vitest'
 import * as config from '../../src/main/config'
 import defaultSettings from '../../defaults/settings.json'
 import fs from 'fs'
+
+vi.mock('electron', async () => {
+  return {
+    app: {
+      getPath: vi.fn(() => '')
+    }
+  }
+})
 
 vi.mock('fs', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -14,13 +23,24 @@ vi.mock('fs', async (importOriginal) => {
 })
 
 test('Load default settings', () => {
-  const loaded = config.loadSettings('')
+  const loaded = config.loadSettings(app)
+  expect(config.settingsFileHadError()).toBe(false)
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
   loaded.engines.sdwebui.baseURL = defaultSettings.engines.sdwebui.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
   expect(loaded.general.locale).toBe('')
   expect(loaded.engines.openai.models.chat).toStrictEqual([])
+})
+
+test('Load settings with error', () => {
+  app.getPath = vi.fn(() => './tests/fixtures/invalid')
+  const loaded = config.loadSettings(app)
+  expect(config.settingsFileHadError()).toBe(true)
+  loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
+  loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
+  loaded.engines.sdwebui.baseURL = defaultSettings.engines.sdwebui.baseURL
+  expect(loaded).toStrictEqual(defaultSettings)
 })
 
 test('Load overridden settings', () => {

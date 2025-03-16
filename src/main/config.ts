@@ -117,10 +117,10 @@ export const loadSettings = (source: App|string): Configuration => {
       const backupFile = settingsFilePath(source).replace('.json', `.${timestamp}.json`)
       console.log('Saving backup of settings to', backupFile)
       fs.writeFileSync(backupFile, data)
-      errorLoadingConfig = true
     }
 
     // start with defaults
+    errorLoadingConfig = true
     jsonConfig = {}
 
   }
