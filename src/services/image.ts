@@ -3,6 +3,7 @@ import { anyDict, MediaCreationEngine } from '../types/index';
 import { saveFileContents } from '../services/download'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import Replicate, { FileOutput } from 'replicate'
 import OpenAI from 'openai'
 import SDWebUI from './sdwebui';
@@ -14,11 +15,14 @@ export default class ImageCreator {
     if (!checkApiKey || store.config.engines.openai.apiKey) {
       engines.push({ id: 'openai', name: 'OpenAI' })
     }
-    if (!checkApiKey || store.config.engines.huggingface.apiKey) {
-      engines.push({ id: 'huggingface', name: 'HuggingFace' })
-    }
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: 'Replicate' })
+    }
+    if (!checkApiKey || store.config.engines.google.apiKey) {
+      engines.push({ id: 'google', name: 'Google' })
+    }
+    if (!checkApiKey || store.config.engines.huggingface.apiKey) {
+      engines.push({ id: 'huggingface', name: 'HuggingFace' })
     }
     engines.push({ id: 'sdwebui', name: 'Stable Diffusion web UI' })
     return engines
@@ -63,6 +67,8 @@ export default class ImageCreator {
       return this.replicate(model, parameters)
     } else if (engine == 'sdwebui') {
       return this.sdwebui(model, parameters)
+    } else if (engine == 'google') {
+      return this.google(model, parameters)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -172,7 +178,42 @@ export default class ImageCreator {
     }
     
   }
+
+  // monitor https://github.com/googleapis/js-genai
+  async google(model: string, parameters: anyDict): Promise<anyDict> {
+
+    const client = new GoogleGenerativeAI(store.config.engines.google.apiKey)
   
+    const generativeModel = client.getGenerativeModel({
+      model: model,
+      generationConfig: {
+        // @ts-expect-error google
+        responseModalities: ['Text', 'Image']
+      },
+    });
+
+    try {
+      const response = await generativeModel.generateContent(parameters.prompt);
+      for (const part of  response.response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const imageData = part.inlineData.data;
+          const fileUrl = saveFileContents('png', imageData)
+          return {
+            url: fileUrl,
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error generating content:", error);
+    }
+
+    return { 
+      error: 'Failed to generate image with Google Generative AI'
+    }
+
+  }
+
+
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
         const reader = new FileReader()

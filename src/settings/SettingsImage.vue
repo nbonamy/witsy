@@ -14,7 +14,7 @@
       </select>
     </div>
 
-    <template v-if="engine == 'openai'">
+    <template v-if="engine == 'openai' || engine == 'google'">
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="subgroup">
@@ -22,7 +22,7 @@
             <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
             </option>
           </select>
-          <span>{{ t('settings.plugins.image.openai.apiKeyReminder') }}</span>
+          <span>{{ t('settings.plugins.image.apiKeyReminder') }}</span>
         </div>
         <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
@@ -131,9 +131,9 @@ const setEphemeralRefreshLabel = (text: string) => {
 const getModels = async () => {
 
   // openai
-  if (engine.value === 'openai') {
+  if (engine.value === 'openai' || engine.value === 'google') {
     const llmFactory = new LlmFactory(store.config)
-    let success = await llmFactory.loadModels('openai')
+    let success = await llmFactory.loadModels(engine.value)
     if (!success) {
       image_models.value = []
       setEphemeralRefreshLabel(t('common.error'))
