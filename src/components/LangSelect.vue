@@ -74,3 +74,13 @@ const emit = defineEmits(['change']);
 <style scoped>
 @import '../../css/form.css';
 </style>
+
+<style scoped>
+
+.windows {
+  select, select option {
+    font-family: 'NotoColorEmojiLimited', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+}
+
+</style>
