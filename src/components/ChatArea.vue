@@ -161,16 +161,16 @@ const onExportPdf = async () => {
   window.api.setAppearanceTheme('light')
 
   // copy and clean-up
-  const content: HTMLElement = document.querySelector<HTMLElement>('.content')!.cloneNode(true) as HTMLElement
-  content.querySelector('.toolbar .menu')?.remove()
+  const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area')!.cloneNode(true) as HTMLElement
+  content.querySelectorAll('.toolbar .action')?.forEach(action => action.remove())
   content.querySelector('.message .actions')?.remove()
   content.querySelector('.overflow')?.remove()
   content.querySelector('.prompt')?.remove()
 
   // now remove scroll
   content.style.height = 'auto'
-  content.querySelector<HTMLElement>('.container')!.style.height = 'auto'
-  content.querySelector<HTMLElement>('.container')!.style.overflow = 'visible'
+  content.querySelector<HTMLElement>('.inside-content')!.style.height = 'auto'
+  content.querySelector<HTMLElement>('.inside-content')!.style.overflow = 'visible'
 
   // adjust title
   //content.querySelector<HTMLElement>('.toolbar')!.style.marginTop = '-12px'
