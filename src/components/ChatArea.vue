@@ -21,7 +21,7 @@
       <div class="chat-content">
         <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
         <EmptyChat v-else />
-        <Prompt :chat="chat" :conversation-mode="conversationMode" class="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" class="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </div>
@@ -32,7 +32,7 @@
 <script setup lang="ts">
 
 import { Ref, ref, computed, onMounted } from 'vue'
-import { store } from '../services/store'
+import { mediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
@@ -77,6 +77,30 @@ const isSaved = () => {
 
 const hasMessages = () => {
   return props.chat.hasMessages()
+}
+
+const historyProvider = (event: KeyboardEvent): string[] => {
+
+  // start with chat messages
+  const chatMessages = props.chat?.messages.filter(m => m.role === 'user') || []
+
+  // add messages from other chats
+  const otherMessages = store.history.chats.reduce((acc, chat) => {
+    if (chat.uuid !== props.chat.uuid && chat.uuid != mediaChatId) {
+      return acc.concat(chat.messages.filter(m => m.role === 'user'))
+    }
+    return acc
+  }, []).sort((a, b) => a.createdAt - b.createdAt)
+
+  // we need only the content
+  const history: string[] = [
+    ...otherMessages,
+    ...chatMessages,
+  ].map((m) => m.content).filter((m) => m.trim() !== '')
+
+  // now dedup preserving the order
+  return Array.from(new Set(history))
+
 }
 
 const conversationMode: Ref<string> = ref('')

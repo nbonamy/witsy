@@ -34,7 +34,7 @@ chats[1].messages[1].model = 'model'
 
 beforeAll(() => {
   useWindowMock()
-  window.api.history.load = vi.fn(() => ({ folders: [], chats: chats }))
+  window.api.history.load = vi.fn(() => ({ folders: [], chats: chats, quickPrompts: [] }))
 })
 
 beforeEach(() => {
@@ -110,7 +110,8 @@ test('Save history', async () => {
         { uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', reasoning: null, expert: null, toolCall: null, attachment: null, usage: null, transient: false },
         { uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', reasoning: null, expert: null, toolCall: null, attachment: null, usage: null, transient: false }
       ]
-    } ]
+    } ],
+    quickPrompts: [],
   })
 })
 
@@ -127,4 +128,18 @@ test('Merge history', async () => {
   listeners[0]('history')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].messages).toHaveLength(3)
+})
+
+test('Add quick prompt', async () => {
+  store.load()
+  expect(store.history.quickPrompts).toHaveLength(0)
+  store.addQuickPrompt('my prompt')
+  expect(store.history.quickPrompts).toHaveLength(1)
+  expect(store.history.quickPrompts[0]).toBe('my prompt')
+  store.addQuickPrompt('my other prompt')
+  expect(store.history.quickPrompts).toHaveLength(2)
+  expect(store.history.quickPrompts[1]).toBe('my other prompt')
+  store.addQuickPrompt('my prompt')
+  expect(store.history.quickPrompts).toHaveLength(2)
+  expect(store.history.quickPrompts[1]).toBe('my prompt')
 })

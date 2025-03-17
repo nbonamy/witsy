@@ -5,7 +5,6 @@ import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import Chat from '../../src/models/chat'
-import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
 
 enableAutoUnmount(afterAll)
@@ -183,25 +182,21 @@ test('Remove attachment', async () => {
 
 test('History navigation', async () => {
   
-  await wrapper.setProps({ chat: Chat.fromJson({ messages: [ 
-    new Message('system', 'I am an assistant'),
-    new Message('user', 'Hello'),
-    new Message('assistant', 'Hi'),
-    new Message('user', 'Bonjour'),
-    new Message('assistant', 'Ciao'),
-  ]})})
-
+  await wrapper.setProps({ historyProvider: () => [ 'Hello', 'Bonjour' ] })
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
   await prompt.setValue('Hola')
-  await prompt.trigger('keydown.ArrowUp', { shiftKey: true })
+  // triggering ArrowUp does not move selection to the beginning
+  // as it does in real-life so we need to set it manually
+  await prompt.element.setSelectionRange(0, 0)
+  await prompt.trigger('keydown.ArrowUp')
   expect(prompt.element.value).toBe('Bonjour')
-  await prompt.trigger('keydown.ArrowUp', { shiftKey: true })
+  await prompt.trigger('keydown.ArrowUp')
   expect(prompt.element.value).toBe('Hello')
-  await prompt.trigger('keydown.ArrowUp', { shiftKey: true })
+  await prompt.trigger('keydown.ArrowUp')
   expect(prompt.element.value).toBe('Hello')
-  await prompt.trigger('keydown.ArrowDown', { shiftKey: true })
+  await prompt.trigger('keydown.ArrowDown')
   expect(prompt.element.value).toBe('Bonjour')
-  await prompt.trigger('keydown.ArrowDown', { shiftKey: true })
+  await prompt.trigger('keydown.ArrowDown')
   expect(prompt.element.value).toBe('Hola')
 
 })

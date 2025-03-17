@@ -83,6 +83,8 @@ export type Folder = {
 export type History = {
   folders: Folder[]
   chats: Chat[]
+  quickPrompts: string[]
+  //padPrompts: string[]
 }
 
 export type Command = {
@@ -126,6 +128,8 @@ export interface Store {
   initChatWithDefaults(chat: Chat): void
   addChat?(chat: Chat, folderId?: string): void
   removeChat?(chat: Chat): void
+  addQuickPrompt?(prompt: string): void
+  //addPadPrompt?(prompt: string): void
   mergeHistory?(chats: any[]): void
   dump?(): void
 }

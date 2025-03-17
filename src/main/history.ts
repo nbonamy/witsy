@@ -26,7 +26,7 @@ export const loadHistory = async (app: App): Promise<History> => {
 
   // check existence
   if (!fs.existsSync(filepath)) {
-    return { folders: [], chats: [] }
+    return { folders: [], chats: [], quickPrompts: [] }
   }
 
   // local

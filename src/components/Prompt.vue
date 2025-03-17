@@ -35,7 +35,7 @@
 
 import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
-import { ref, computed, onMounted, nextTick, watch, Ref } from 'vue'
+import { ref, computed, onMounted, nextTick, watch, Ref, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
@@ -60,13 +60,24 @@ export type SendPromptParams = {
   expert: Expert|null
 }
 
+export type HistoryProvider = (event: KeyboardEvent) => string[]
+
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
-  chat: Chat,
-  conversationMode: String,
-  placeholder: String,
+  chat: {
+    type: Object as PropType<Chat|null>,
+    required: true
+  },
+  conversationMode: {
+    type: String,
+    required: false
+  },
+  placeholder: {
+    type: String,
+    required: false
+  },
   enableDocRepo: {
     type: Boolean,
     default: true
@@ -98,6 +109,10 @@ const props = defineProps({
   processing: {
     type: Boolean,
     default: false
+  },
+  historyProvider: {
+    type: Function as PropType<HistoryProvider>,
+    default: (_: KeyboardEvent): string[] => []
   }
 })
 
@@ -610,57 +625,60 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
   } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
 
-    // need at list shift
-    if (!event.shiftKey) {
+    // need an history provider
+    if (!props.historyProvider) {
       return
     }
+
+    // get caret position
+    const caret = input.value.selectionStart
+    const atStart = (caret === 0)
+    const atEnd = (caret === prompt.value.length)
     
-    // get messages
-    let userMessages = props.chat?.messages.filter(m => m.role === 'user')
-    if (event.ctrlKey || event.metaKey) {
-      userMessages = store.history.chats.reduce((acc, chat) => {
-        return acc.concat(chat.messages.filter(m => m.role === 'user'))
-      }, [])
-      userMessages.sort((a, b) => a.createdAt - b.createdAt)
+    // when in the middle, we need shift
+    if (!atStart /*&& !atEnd*/ && !event.shiftKey) {
+      return
     }
 
-    // new prompt
-    let newPrompt = null
+    // get messages
+    const history = props.historyProvider(event)
+    if (!history?.length) {
+      return
+    }
 
     // now navigate
-    if (userMessages?.length) {
-      const index = userMessages.findIndex(m => m.content === prompt.value)
-      if (event.key === 'ArrowUp') {
-        if (index === -1) {
-          draftPrompt = prompt.value
-          newPrompt = userMessages[userMessages.length - 1].content
-        } else if (index > 0) {
-          newPrompt = userMessages[index - 1].content
-        } else {
-          // keydown moved caret at beginning
-          // so move it back to the end
-          // const length = prompt.value.length;
-          // input.value.setSelectionRange(length, length);
-        }
+    let newPrompt = null
+    const index = history.findIndex((m: string) => m === prompt.value)
+    if (event.key === 'ArrowUp') {
+      if (index === -1) {
+        draftPrompt = prompt.value
+        newPrompt = history[history.length - 1]
+      } else if (index > 0) {
+        newPrompt = history[index - 1]
       } else {
-        if (index >= 0 && index < userMessages.length - 1) {
-          newPrompt = userMessages[index + 1].content
-        } else if (index != -1) {
-          newPrompt = draftPrompt
-        }
+        // keydown moved caret at beginning
+        // so move it back to the end
+        // const length = prompt.value.length;
+        // input.value.setSelectionRange(length, length);
+      }
+    } else {
+      if (index >= 0 && index < history.length - 1) {
+        newPrompt = history[index + 1]
+      } else if (index != -1) {
+        newPrompt = draftPrompt
       }
     }
 
     // update
-    if (newPrompt) {
+    if (newPrompt !== null) {
       prompt.value = newPrompt
       nextTick(() => {
+        input.value.setSelectionRange(0, 0)
         autoGrow(input.value)
-        input.value.setSelectionRange(newPrompt.length, newPrompt.length)
-        if (input.value.scrollTo) {
-          // no scrollTo while testing
-          input.value.scrollTo(0, input.value.scrollHeight)
-        }
+        // if (input.value.scrollTo) {
+        //   // no scrollTo while testing
+        //   input.value.scrollTo(0, input.value.scrollHeight)
+        // }
       })
       event.preventDefault()
       event.stopPropagation()
