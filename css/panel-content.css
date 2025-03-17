@@ -78,9 +78,15 @@
       height: 16px;
       color: var(--chatarea-toolbar-icon-color);
       fill: var(--chatarea-toolbar-icon-color);
+      margin-left: auto;
 
-      &:first-of-type {
-        margin-left: auto;
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      ~ .action {
+        margin-left: 0px;
       }
       
     }

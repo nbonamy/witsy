@@ -119,10 +119,6 @@ const onDelete = () => {
   width: calc(100% - var(--create-panel-width));
   --preview-padding: 32px;
 
-  .action.info {
-    margin-left: auto;
-  }
- 
   .empty {
     flex: 1;
     display: flex;
