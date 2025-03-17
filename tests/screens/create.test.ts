@@ -1,6 +1,6 @@
 
 import { vi, beforeAll, expect, test, afterEach } from 'vitest'
-import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store, mediaChatId } from '../../src/services/store'
 import { Configuration } from '../../src/types/config'
@@ -34,6 +34,13 @@ beforeAll(() => {
       models: { image: [
         { id: 'dall-e-2', name: 'dall-e-2' },
         { id: 'dall-e-3', name: 'dall-e-3' }
+      ] }
+    }
+    settings.engines.google = {
+      apiKey: 'google ',
+      // @ts-expect-error mock
+      models: { image: [
+        { id: 'gemini-2', name: 'gemini-2' },
       ] }
     }
     settings.engines.huggingface = {
@@ -160,7 +167,7 @@ test('History', async () => {
 
 test('Generates - Basic', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(CreateMedia)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
 
@@ -174,6 +181,7 @@ test('Generates - Basic', async () => {
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
+      action: 'create',
       mediaType: 'image',
       engine: 'openai',
       model: 'dall-e-2',
@@ -183,10 +191,9 @@ test('Generates - Basic', async () => {
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'openai', 'dall-e-2', { prompt: 'prompt' }
+    'openai', 'dall-e-2', { prompt: 'prompt' }, undefined
   )
 
-  // @ts-expect-error mock
   expect (wrapper.vm.message).toMatchObject({
     role: 'user',
     content: 'prompt',
@@ -195,8 +202,10 @@ test('Generates - Basic', async () => {
     })
   })
 
+  expect(wrapper.vm.undoStack).toHaveLength(0)
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+
   expect(store.history.chats[0].messages).toHaveLength(4)
-  // @ts-expect-error mock
   expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
 
 })
@@ -223,6 +232,7 @@ test('Generates - Custom Params OpenAI', async () => {
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
+      action: 'create',
       mediaType: 'image',
       engine: 'openai',
       model: 'dall-e-3',
@@ -232,7 +242,7 @@ test('Generates - Custom Params OpenAI', async () => {
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'openai', 'dall-e-3', { prompt: 'prompt', quality: 'hd', style: 'vivid' }
+    'openai', 'dall-e-3', { prompt: 'prompt', quality: 'hd', style: 'vivid' }, undefined
   )
 
   // @ts-expect-error mock
@@ -275,16 +285,17 @@ test('Generates - Custom Params HuggingFace', async () => {
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
+      action: 'create',
       mediaType: 'image',
       engine: 'huggingface',
       model: 'black-forest-labs/FLUX.1-dev',
       prompt: 'prompt',
       params: { negative_prompt: 'no no no', width: '1000' },
-    })
+    }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'huggingface', 'black-forest-labs/FLUX.1-dev', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }
+    'huggingface', 'black-forest-labs/FLUX.1-dev', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
   )
 
   // @ts-expect-error mock
@@ -308,7 +319,7 @@ test('Generates - Custom Params HuggingFace', async () => {
 
 test('Generates - User Params', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(CreateMedia)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
@@ -336,19 +347,19 @@ test('Generates - User Params', async () => {
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
+      action: 'create',
       mediaType: 'image',
       engine: 'replicate',
       model: 'black-forest-labs/flux-1.1-pro',
       prompt: 'prompt',
       params: { string: 'value', number: '100', boolean: 'true' },
-    })
+    }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'replicate', 'black-forest-labs/flux-1.1-pro', { prompt: 'prompt', string: 'value', number: 100, boolean: true }
+    'replicate', 'black-forest-labs/flux-1.1-pro', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
   )
 
-  // @ts-expect-error mock
   expect (wrapper.vm.message).toMatchObject({
     role: 'user',
     content: 'prompt',
@@ -362,7 +373,6 @@ test('Generates - User Params', async () => {
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
-  // @ts-expect-error mock
   expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
 
 })
@@ -411,3 +421,174 @@ test('Preview', async () => {
 
 })
 
+test('Upload', async () => {
+
+  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
+  await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  expect(settings.emitted()['upload']).toHaveLength(1)
+  expect(window.api.file.pick).toHaveBeenLastCalledWith({ filters: [
+    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+  ] })
+  expect(window.api.file.save).toHaveBeenLastCalledWith({
+    contents: 'image64',
+    properties: {
+      filename: expect.any(String),
+      directory: 'userData',
+      subdir: 'images',
+      prompt: false
+    }
+  })
+  expect(wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: '',
+    engine: 'upload',
+    model: 'image.png',
+    attachment: expect.objectContaining({
+      url: 'file://file_saved'
+    }),
+    toolCall: null
+  })
+  expect(wrapper.vm.undoStack).toHaveLength(0)
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+
+
+})
+
+test('Edit', async () => {
+
+  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
+  await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLButtonElement>('[name=edit]').trigger('click')
+  expect(settings.emitted()['generate']).toHaveLength(1)
+  expect(settings.emitted()['generate'][0]).toStrictEqual([
+    expect.objectContaining({
+      action: 'edit',
+      mediaType: 'image',
+      engine: 'google',
+      model: 'gemini-2',
+      prompt: 'prompt',
+      params: { },
+    }),
+  ])
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+  expect(wrapper.vm.undoStack).toHaveLength(1)
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+
+  expect(wrapper.vm.undoStack[0]).toMatchObject({
+    role: 'user',
+    content: '',
+    engine: 'upload',
+    model: 'image.png',
+    attachment: expect.objectContaining({
+      url: 'file://file_saved',
+      content: 'file://file_saved_encoded'
+    }),
+    toolCall: null
+  })
+
+  expect(wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    engine: 'google',
+    model: 'gemini-2',
+    attachment: expect.objectContaining({
+      url: 'file://google/gemini-2/prompt'
+    }),
+    toolCall: null
+  })
+
+})
+
+test('Undo / Redo', async () => {
+
+  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
+  await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLButtonElement>('[name=edit]').trigger('click')
+
+  const preview = wrapper.findComponent({ name: 'Preview' })
+  expect(preview.find('.action.undo').exists()).toBe(true)
+  expect(preview.find('.action.redo').exists()).toBe(true)
+  expect(preview.find('.action.undo').classes()).not.toContain('disabled')
+  expect(preview.find('.action.redo').classes()).toContain('disabled')
+
+  await preview.find<HTMLElement>('.action.undo').trigger('click')
+
+  expect(wrapper.vm.undoStack).toHaveLength(0)
+  expect(wrapper.vm.redoStack).toHaveLength(1)
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+  expect(wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: '',
+    engine: 'upload',
+    model: 'image.png',
+    attachment: expect.objectContaining({
+      url: 'file://file_saved',
+      content: '',
+    }),
+    toolCall: null
+  })
+
+  expect(wrapper.vm.redoStack[0]).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    engine: 'google',
+    model: 'gemini-2',
+    attachment: expect.objectContaining({
+      url: 'file://google/gemini-2/prompt',
+      content: 'file://google/gemini-2/prompt_encoded',
+    }),
+    toolCall: null
+  })
+
+  expect(preview.find('.action.undo').classes()).toContain('disabled')
+  expect(preview.find('.action.redo').classes()).not.toContain('disabled')
+
+  await preview.find<HTMLElement>('.action.redo').trigger('click')
+
+  expect(wrapper.vm.undoStack).toHaveLength(1)
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+  expect(wrapper.vm.undoStack[0]).toMatchObject({
+    role: 'user',
+    content: '',
+    engine: 'upload',
+    model: 'image.png',
+    attachment: expect.objectContaining({
+      url: 'file://file_saved',
+      content: 'file://file_saved_encoded'
+    }),
+    toolCall: null
+  })
+
+  expect(wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    engine: 'google',
+    model: 'gemini-2',
+    attachment: expect.objectContaining({
+      url: 'file://file_saved'
+    }),
+    toolCall: null
+  })
+
+})
