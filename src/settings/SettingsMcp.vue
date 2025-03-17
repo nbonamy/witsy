@@ -89,7 +89,10 @@ const getType = (server: McpServer) => {
 
 const getDescription = (server: McpServer) => {
   if (server.type == 'sse') return server.url
-  if (server.url.includes('@smithery/cli')) return server.url.replace('-y @smithery/cli@latest run ', '').split(' ')[0]
+  if (server.url.includes('@smithery/cli')) {
+    const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0 
+    return server.url.replace('-y @smithery/cli@latest run ', '').split(' ')[index]
+  }
   if (server.type == 'stdio') return server.command.split('/').pop() + ' ' + server.url
 }
 
