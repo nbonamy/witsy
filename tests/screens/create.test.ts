@@ -478,6 +478,8 @@ test('Edit', async () => {
     }),
   ])
 
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
+
   expect(store.history.chats[0].messages).toHaveLength(4)
   expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
 
@@ -527,6 +529,8 @@ test('Undo / Redo', async () => {
 
   await preview.find<HTMLElement>('.action.undo').trigger('click')
 
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://google/gemini-2/prompt')
+
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
 
@@ -561,6 +565,8 @@ test('Undo / Redo', async () => {
   expect(preview.find('.action.redo').classes()).not.toContain('disabled')
 
   await preview.find<HTMLElement>('.action.redo').trigger('click')
+
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
