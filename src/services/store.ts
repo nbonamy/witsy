@@ -135,6 +135,20 @@ export const store: Store = reactive({
 
   },
 
+  addQuickPrompt: (prompt: string): void => {
+    store.history.quickPrompts = store.history.quickPrompts.filter((p) => p !== prompt)
+    store.history.quickPrompts.push(prompt)
+    store.history.quickPrompts = store.history.quickPrompts.slice(-100)
+    store.saveHistory()
+  },
+
+  // addPadPrompt: (prompt: string): void => {
+  //   store.history.padPrompts = store.history.padPrompts.filter((p) => p !== prompt)
+  //   store.history.padPrompts.push(prompt)
+  //   store.history.padPrompts = store.history.padPrompts.slice(-100)
+  //   store.saveHistory()
+  // },
+
   saveHistory: (): void => {
 
     try {
@@ -144,7 +158,9 @@ export const store: Store = reactive({
         folders: JSON.parse(JSON.stringify(store.history.folders)),
         chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
           return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
-        })
+        }),
+        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts)),
+        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts)),
       }
       for (const chat of history.chats) {
         for (const message of chat.messages) {
@@ -191,9 +207,11 @@ const loadSettings = (): void => {
 const loadHistory = (): void => {
 
   try {
-    store.history = { folders: [], chats: [] }
+    store.history = { folders: [], chats: [], quickPrompts: [], /*padPrompts: []*/ }
     const history = window.api.history.load()
-    store.history.folders = history.folders
+    store.history.folders = history.folders || []
+    store.history.quickPrompts = history.quickPrompts || []
+    //store.history.padPrompts = history.padPrompts || []
     for (const jsonChat of history.chats) {
       const chat = Chat.fromJson(jsonChat)
       store.history.chats.push(chat)
@@ -214,8 +232,10 @@ const mergeHistory = (jsonHistory: History): void => {
     return
   }
 
-  //TODO merge folders properly
-  store.history.folders = jsonHistory.folders
+  // overwrite folders and prompts
+  store.history.folders = jsonHistory.folders || []
+  store.history.quickPrompts = jsonHistory.quickPrompts || []
+  //store.history.padPrompts = jsonHistory.padPrompts || []
   
   // get the current ids and new ids
   const currentIds = store.history.chats.map((chat) => chat.uuid)

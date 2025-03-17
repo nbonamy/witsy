@@ -84,7 +84,8 @@ beforeAll(() => {
           })
         ]
       })      
-    ]
+    ],
+    quickPrompts: []
   }))
 
   // @ts-expect-error mock
