@@ -1,5 +1,5 @@
 import { Model } from 'multi-llm-ts';
-import { anyDict, MediaCreationEngine } from '../types/index';
+import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index';
 import { saveFileContents } from '../services/download'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
@@ -8,7 +8,7 @@ import Replicate, { FileOutput } from 'replicate'
 import OpenAI from 'openai'
 import SDWebUI from './sdwebui';
 
-export default class ImageCreator {
+export default class ImageCreator implements MediaCreator {
 
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
@@ -58,7 +58,7 @@ export default class ImageCreator {
     return ImageCreator.getModels(engine)
   }
 
-  async execute(engine: string, model: string, parameters: anyDict): Promise<anyDict> {
+  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
     if (engine == 'openai') {
       return this.openai(model, parameters)
     } else if (engine == 'huggingface') {
@@ -68,7 +68,7 @@ export default class ImageCreator {
     } else if (engine == 'sdwebui') {
       return this.sdwebui(model, parameters)
     } else if (engine == 'google') {
-      return this.google(model, parameters)
+      return this.google(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -180,7 +180,7 @@ export default class ImageCreator {
   }
 
   // monitor https://github.com/googleapis/js-genai
-  async google(model: string, parameters: anyDict): Promise<anyDict> {
+  async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
     const client = new GoogleGenerativeAI(store.config.engines.google.apiKey)
   
@@ -193,7 +193,20 @@ export default class ImageCreator {
     });
 
     try {
-      const response = await generativeModel.generateContent(parameters.prompt);
+      const response = await generativeModel.generateContent({
+        contents: [{
+          role: 'user',
+          parts: [
+            { text: parameters.prompt },
+            ...(reference ? [ {
+              inlineData: {
+                mimeType: reference.mimeType,
+                data: reference.contents
+              }
+            }] : [] )
+          ]
+      }]
+      });
       for (const part of  response.response.candidates[0].content.parts) {
         if (part.inlineData) {
           const imageData = part.inlineData.data;

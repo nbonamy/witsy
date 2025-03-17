@@ -3,6 +3,12 @@
     <div class="toolbar">
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
+        <div class="action undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
+          <BIconArrowCounterclockwise />
+        </div>
+        <div class="action redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
+          <BIconArrowClockwise />
+        </div>
         <div class="action info" @click="onInfo">
           <BIconInfoCircle />
         </div>
@@ -47,12 +53,20 @@ const props = defineProps({
   isGenerating: {
     type: Boolean,
     default: false
+  },
+  canUndo: {
+    type: Boolean,
+    default: false
+  },
+  canRedo: {
+    type: Boolean,
+    default: false
   }
 })
 
 const copying = ref(false)
 
-const emit = defineEmits(['fullscreen', 'delete'])
+const emit = defineEmits(['fullscreen', 'delete', 'undo', 'redo'])
 
 const onInfo = () => {
   if (!props.message) return

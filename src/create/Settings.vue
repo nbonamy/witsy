@@ -94,9 +94,13 @@
       </template>
 
       <div class="group">
-        <button name="generate" class="generate-button" type="button" @click="generateMedia" :disabled="isGenerating">
-          {{ isGenerating ? t('createMedia.generating') : t('createMedia.generate') }}
-        </button>
+        <div class="subgroup">
+          <button name="generate" class="generate-button" type="button" @click="generateMedia('create')" :disabled="isGenerating">
+            {{ isGenerating ? t('createMedia.generating') : t('createMedia.generate') }}
+          </button>
+          <button v-if="canEdit" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
+          <button v-if="canEdit && hasCurrentImage" name="edit" type="button" @click="generateMedia('edit')" :disabled="isGenerating">{{ t('common.edit') }}</button>
+        </div>
       </div>
     </form>
 
@@ -130,13 +134,17 @@ type Parameter = {
 }
 
 defineProps({
+  hasCurrentImage: {
+    type: Boolean,
+    default: false
+  },
   isGenerating: {
     type: Boolean,
     default: false
   }
 })
 
-const emit = defineEmits(['generate'])
+const emit = defineEmits(['upload', 'generate'])
 
 const editor = ref(null)
 const mediaType: Ref<'image'|'video'> = ref('image')
@@ -169,6 +177,10 @@ const models = computed(() => {
   } else {
     return creator[mediaType.value].getModels(engine.value)
   }
+})
+
+const canEdit = computed(() => {
+  return ['google'].includes(engine.value)
 })
 
 const modelHasDefaults = computed(() => {
@@ -372,7 +384,7 @@ const saveSettings = () => {
   store.saveSettings()
 }
 
-const generateMedia = async () => {
+const generateMedia = async (action: 'create'|'edit') => {
 
   const userPrompt = prompt.value.trim()
   if (!userPrompt) {
@@ -384,6 +396,7 @@ const generateMedia = async () => {
   }
 
   emit('generate', {
+    action: action,
     mediaType: mediaType.value,
     engine: engine.value,
     model: model.value,

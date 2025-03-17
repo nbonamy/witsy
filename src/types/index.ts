@@ -182,10 +182,15 @@ export type MediaCreationEngine = {
   name: string
 }
 
+export type MediaReference = {
+  mimeType: string
+  contents: string
+}
+
 export interface MediaCreator {
   getEngines(checkApiKey: boolean): MediaCreationEngine[]
   getModels(engine: string): Model[]
-  execute(engine: string, model: string, parameters: anyDict): Promise<any>
+  execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any>
 }
 
 declare global {

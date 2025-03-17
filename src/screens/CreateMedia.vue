@@ -5,19 +5,26 @@
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
       </div>
-      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :is-generating="isGenerating" @generate="onMediaGenerationRequest" />
+      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :has-current-image="message != null" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
       <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
     </div>
-    <Preview :message="message" :is-generating="isGenerating" @fullscreen="onFullScreen" @delete="onDelete"/>
+    <Preview
+      :message="message" :is-generating="isGenerating"
+      :can-undo="undoStack.length > 0" :can-redo="redoStack.length > 0"
+      @fullscreen="onFullScreen" @delete="onDelete"
+      @undo="onUndo" @redo="onRedo"
+    />
   </div>
   <Fullscreen window="create" />
   <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
+import { FileContents } from '../types/index'
 import { ref, Ref, onMounted, computed, nextTick } from 'vue'
 import { t } from '../services/i18n'
 import { store, mediaChatId } from '../services/store'
+import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
 import Fullscreen from '../components/Fullscreen.vue'
 import ContextMenu from '../components/ContextMenu.vue'
@@ -42,6 +49,8 @@ const mode: Ref<'create'|'history'> = ref('create')
 const chat: Ref<Chat> = ref(null)
 const message: Ref<Message> = ref(null)
 const isGenerating = ref(false)
+const undoStack: Ref<Message[]> = ref([])
+const redoStack: Ref<Message[]> = ref([])
 
 const showMenu = ref(false)
 const menuX = ref(0)
@@ -85,8 +94,14 @@ onMounted(() => {
   document.addEventListener('keydown', onKeyDown)
 })
 
+const clearStacks = () => {
+  undoStack.value = []
+  redoStack.value = []
+}
+
 const selectMessage = (msg: Message) => {
   message.value = msg
+  clearStacks()
 }
 
 const showContextMenu = ({ event, message: msg }: { event: MouseEvent, message: Message }) => {
@@ -102,6 +117,7 @@ const closeContextMenu = () => {
 }
 
 const handleActionClick = async (action: string) => {
+  
   // close
   closeContextMenu()
 
@@ -112,6 +128,7 @@ const handleActionClick = async (action: string) => {
   // process
   if (action === 'load') {
     mode.value = 'create'
+    clearStacks()
     nextTick(() => {
       settingsPanel.value.loadSettings({
         mediaType: msg.isVideo() ? 'video' : 'image',
@@ -155,12 +172,14 @@ const deleteMedia = (msg: Message) => {
       if (mode.value == 'create' || chat.value.messages.length === 1) {
         message.value = null
         mode.value = 'create'
+        clearStacks()
         return
       }
 
       // if we did not find the message then select the 1st one
       index = Math.max(0, index - 1)
       message.value = history.value[index]
+      clearStacks()
 
     }
   })
@@ -180,16 +199,91 @@ const onKeyDown = (event: KeyboardEvent) => {
     const newIndex = currentIndex === -1 ? 0 : event.key === 'ArrowDown' ? currentIndex + 1 : currentIndex - 1
     if (newIndex >= 0 && newIndex < history.value.length) {
       message.value = history.value[newIndex]
+      clearStacks()
     }
     return
   }
 
 }
 
+const backupCurrentMessage = (): Message => {
+  const backup = Message.fromJson(message.value)
+  if (!backup.attachment.content) {
+    backup.attachment.content = window.api.file.read(backup.attachment.url).contents
+  }
+  return backup
+}
+
+
+const onUndo = () => {
+  if (isGenerating.value) return
+  if (undoStack.value.length === 0) return
+  redoStack.value.push(backupCurrentMessage())
+  updateMessage(undoStack.value.pop()!)
+  store.saveHistory()
+}
+
+const onRedo = () => {
+  if (isGenerating.value) return
+  if (redoStack.value.length === 0) return
+  undoStack.value.push(backupCurrentMessage())
+  updateMessage(redoStack.value.pop()!)
+  store.saveHistory()
+}
+
+const updateMessage = (msg: Message) => {
+  if (!message.value || !msg) return
+  if (message.value.attachment?.url) {
+    window.api.file.delete(message.value.attachment.url)
+  }
+  message.value.content = msg.content
+  message.value.engine = msg.engine
+  message.value.model = msg.model
+  message.value.toolCall = msg.toolCall
+  message.value.attachment.mimeType = msg.attachment.mimeType
+  message.value.content = msg.content
+  message.value.attachment.url = window.api.file.save({
+    contents: msg.attachment.content,
+    properties: {
+      filename: msg.attachment.url.split('/').pop(),
+      directory: 'userData',
+      subdir: 'images',
+      prompt: false
+    }
+  })
+  message.value.usage = msg.usage
+}
+
+const onUpload = () => {
+  let file = window.api.file.pick({ filters: [
+    { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+  ] })
+  if (file) {
+    const fileContents = file as FileContents
+    const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
+    message.value = new Message('user', '')
+    message.value.engine = 'upload'
+    message.value.model = fileContents.url.split('/').pop()
+    message.value.attachment = new Attachment('', fileContents.mimeType, fileUrl)
+    clearStacks()
+  }
+}
+
 const onMediaGenerationRequest = async (data: any) => {
 
-  message.value = null
+  // save
+  const currentUrl = message.value?.attachment?.url
+  const isEditing = data.action === 'edit' && currentUrl
+
+  // reset
   isGenerating.value = true
+  if (!isEditing) {
+    message.value = null
+    clearStacks()
+  } else {
+    undoStack.value.push(backupCurrentMessage())
+    redoStack.value = []
+  }
 
   try {
 
@@ -214,22 +308,43 @@ const onMediaGenerationRequest = async (data: any) => {
     const media = await creator.execute( data.engine, data.model, {
       prompt: data.prompt,
       ...params
-    })
+    }, isEditing ? window.api.file.read(currentUrl) : undefined)
 
     // check
     if (!media?.url) {
       throw new Error()
     }
 
+    // if we are editing then delete the old media
+    if (!message.value) {
+      message.value = new Message('user', data.prompt)
+      chat.value.messages.push(message.value)
+    } else {
+
+      // update
+      message.value.content = message.value.content.length ? `${message.value.content} / ${data.prompt}` : data.prompt
+      message.value.createdAt = Date.now()
+
+      // delete attachment
+      if (message.value.attachment) {
+        window.api.file.delete(message.value.attachment.url)
+        message.value.attach(null)
+      }
+      
+      // push at the end of the chat
+      chat.value.messages = chat.value.messages.filter((m) => m.uuid !== message.value.uuid)
+      chat.value.messages.push(message.value)
+    }
+
     // now the message
-    const newMessage = new Message('user', data.prompt)
-    newMessage.engine = data.engine
-    newMessage.model = data.model
-    newMessage.attach(new Attachment('', data.mediaType === 'image' ? 'image/jpg' : 'video/mp4', media.url))
+    message.value.engine = data.engine
+    message.value.model = data.model
+    const attachment = new Attachment('', data.mediaType === 'image' ? 'image/jpg' : 'video/mp4', media.url)
+    message.value.attach(attachment)
 
     // extra params
     if (Object.keys(data.params).length > 0) {
-      newMessage.toolCall = {
+      message.value.toolCall = {
         status: 'done',
         calls: [{
           name: 'create_media',
@@ -240,10 +355,6 @@ const onMediaGenerationRequest = async (data: any) => {
     }
 
     // save
-    chat.value.messages.push(newMessage)
-    message.value = newMessage
-
-    // done
     store.saveHistory()
 
   } catch (e) {

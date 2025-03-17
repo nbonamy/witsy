@@ -13,6 +13,9 @@ import fs from 'node:fs';
 export const getFileContents = (app: App, filepath: string): FileContents => {
 
   try {
+    if (filepath.startsWith('file://')) {
+      filepath = filepath.slice(7);
+    }
     const fileContents = fs.readFileSync(filepath);
     if (fileContents) {
       return {
