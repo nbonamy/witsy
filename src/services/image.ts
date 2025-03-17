@@ -205,8 +205,15 @@ export default class ImageCreator implements MediaCreator {
               }
             }] : [] )
           ]
-      }]
+        }]
       });
+
+      if (response.response.promptFeedback?.blockReason) {
+        return { 
+          error: `Google Generative AI blocked the request: ${response.response.promptFeedback.blockReason}`
+        }
+      }
+
       for (const part of  response.response.candidates[0].content.parts) {
         if (part.inlineData) {
           const imageData = part.inlineData.data;
