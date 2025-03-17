@@ -3,7 +3,7 @@ import { anyDict } from '../types/index'
 import { App } from 'electron'
 import { McpServer, McpClient, McpStatus } from '../types/mcp'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
@@ -293,17 +293,17 @@ export default class {
 
     try {
 
-      // console.log('stdio env', {
-      //   ...server.env,
-      //   ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
-      // })
-
       // build command and args
       const command = process.platform === 'win32' ? 'cmd' : server.command
       const args = process.platform === 'win32' ? ['/C', `"${server.command}" ${server.url}`] : server.url.split(' ')
-      let env = process.platform === 'win32' ? server.env : {
+      let env = {
+        ...getDefaultEnvironment(),
         ...server.env,
-        ...(process.env.PATH ? { PATH: process.env.PATH } : {}),
+      }
+
+      // clean up double cmd /c with smithery on windows
+      if (command === 'cmd' && args.length > 0 && args[1].toLowerCase().startsWith('"cmd" /c')) {
+        args[1] = args[1].slice(9)
       }
 
       // if env is empty, remove it
