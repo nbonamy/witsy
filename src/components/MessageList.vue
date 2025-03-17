@@ -27,7 +27,7 @@ const { onEvent } = useEventBus()
 const divScroller: Ref<HTMLElement|null> = ref(null)
 const overflown = ref(false)
 
-const itemRefs = useTemplateRef('items')
+const itemRefs = useTemplateRef<typeof MessageItem>('items')
 
 const fontStyle = computed(() => {
   return {

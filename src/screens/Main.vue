@@ -425,7 +425,14 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }, (chunk) => {
     emitEvent('new-llm-chunk', chunk)
   }, async (event: GenerationEvent) => {
-    if (event === 'plugins_disabled') {
+    if (event === 'before_generation') {
+      // not very nice but gets the message list scrolling
+      emitEvent('new-llm-chunk', {
+        type: 'content',
+        content: '',
+        done: false,
+      })
+    } else if (event === 'plugins_disabled') {
       tipsManager.showTip('pluginsDisabled')
     } else if (event === 'before_title') {
       store.saveHistory()

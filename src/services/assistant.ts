@@ -11,7 +11,7 @@ import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { Expert } from 'types'
 import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
 
-export type GenerationEvent = 'plugins_disabled' | 'before_title'
+export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
 
 export type GenerationCallback = (event: GenerationEvent) => void
 
@@ -152,6 +152,7 @@ export default class extends Generator {
     callback?.call(null, null)
 
     // generate text
+    generationCallback?.call(null, 'before_generation')
     const hadPlugins = this.llm.plugins.length > 0
     let rc: GenerationResult = await this._prompt(opts, callback)
 
