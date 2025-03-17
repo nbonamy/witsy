@@ -312,7 +312,7 @@ const onMediaGenerationRequest = async (data: any) => {
 
     // check
     if (!media?.url) {
-      throw new Error()
+      throw new Error(media.error)
     }
 
     // if we are editing then delete the old media
