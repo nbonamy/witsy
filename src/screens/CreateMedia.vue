@@ -261,7 +261,7 @@ const onUpload = () => {
   if (file) {
     const fileContents = file as FileContents
     const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
-    message.value = new Message('user', '')
+    message.value = new Message('user', t('common.upload'))
     message.value.engine = 'upload'
     message.value.model = fileContents.url.split('/').pop()
     message.value.attachment = new Attachment('', fileContents.mimeType, fileUrl)
