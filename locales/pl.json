@@ -112,6 +112,7 @@
     "stop": "Stop",
     "type": "Typ",
     "undo": "Cofnij",
+    "upload": "Prześlij",
     "url": "URL",
     "usage": "Użycie",
     "value": "Wartość",
@@ -1655,6 +1656,37 @@
       },
       "verificationComplete": "Weryfikacja zakończona!",
       "verifying": "Weryfikacja: {percent}%"
+    },
+    "advanced": {
+      "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
+      "autoVisionSwitch": "Automatycznie przełączaj na model wizyjny",
+      "conversationLength": "Wiadomości na konwersację",
+      "imageResize": "Zmiana rozmiaru obrazu",
+      "imageResizeOptions": {
+        "none": "Bez zmiany rozmiaru",
+        "size": "Zmień rozmiar największego wymiaru do {size} pikseli"
+      },
+      "instructions": {
+        "chat": "Czat - Instrukcje",
+        "docquery": "Zapytanie o dokument - Instrukcje",
+        "image_plugin": "Wtyczka obrazu - Opis (maksymalnie 1024 znaków)",
+        "memory_plugin": "Wtyczka pamięci - Opis (maksymalnie 1024 znaków)",
+        "scratchpad_complete": "Notatnik - Uzupełnij",
+        "scratchpad_expand": "Notatnik - Rozwiń",
+        "scratchpad_improve": "Notatnik - Ulepsz",
+        "scratchpad_prompt": "Notatnik - Podpowiedź",
+        "scratchpad_simplify": "Notatnik - Uprość",
+        "scratchpad_spellcheck": "Notatnik - Sprawdzanie pisowni",
+        "scratchpad_system": "Notatnik - Instrukcje",
+        "scratchpad_takeaways": "Notatnik - Wnioski",
+        "scratchpad_title": "Notatnik - Tytuł",
+        "titling": "Tytuł czatu - Instrukcje",
+        "titlingUser": "Tytuł czatu - Podpowiedź",
+        "video_plugin": "Wtyczka wideo - Opis (maksymalnie 1024 znaków)"
+      },
+      "overridingHelp": "Niestandardowe podpowiedzi lub instrukcje są stosowane dla wszystkich języków.",
+      "resetToDefault": "Przywróć wartość domyślną",
+      "systemInstructions": "Instrukcje systemowe"
     }
   },
   "sidebar": {
