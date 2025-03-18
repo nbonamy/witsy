@@ -2,6 +2,8 @@
 import { vi, test, expect, beforeEach } from 'vitest'
 import { app } from 'electron'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import mcpConfig from '../fixtures/mcp.json'
 import Mcp from '../../src/main/mcp'
 
@@ -39,6 +41,16 @@ vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
   return { SSEClientTransport }
 })
 
+vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
+  const StdioClientTransport = vi.fn()
+  StdioClientTransport.prototype.start = vi.fn()
+  StdioClientTransport.prototype.close = vi.fn()
+  StdioClientTransport.prototype.send = vi.fn()
+  return { StdioClientTransport, getDefaultEnvironment: vi.fn(() => ({
+    PATH: '/tmp'
+  })) }
+})
+
 vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
   const Client = vi.fn()
   Client.prototype.connect = vi.fn()
@@ -65,6 +77,7 @@ test('init', async () => {
   const mcp = new Mcp(app)
   expect(mcp).toBeDefined()
   expect(mcp.clients).toBeDefined()
+  expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
   expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
     { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' } },
@@ -78,6 +91,13 @@ test('init', async () => {
 test('create server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
+  expect(mcp.getServers()).toHaveLength(6)
+  
+  expect(getDefaultEnvironment).not.toHaveBeenCalled()
+  expect(StdioClientTransport).not.toHaveBeenCalled()
+  expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'))
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith({})
+  
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
   expect(config.plugins.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
     uuid: expect.any(String),
@@ -112,6 +132,18 @@ test('edit normal server', async () => {
 test('edit mcp server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'node', url: '-f exec mcp1.js'})).toBe(true)
+  
+  expect(getDefaultEnvironment).toHaveBeenCalledTimes(1)
+  expect(StdioClientTransport).toHaveBeenLastCalledWith({
+    command: 'node',
+    args: ['-f', 'exec', 'mcp1.js'],
+    env: { PATH: '/tmp' },
+    stderr: 'pipe'
+  })
+  expect(StdioClientTransport.prototype.start).toHaveBeenLastCalledWith()
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith({ start: expect.any(Function) })
+  expect(SSEClientTransport.prototype.start).toHaveBeenCalledTimes(0)
+  
   expect(mcp.getServers()[3]).toMatchObject({
     uuid: 'mcp1',
     registryId: '@mcp1',
