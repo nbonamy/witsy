@@ -194,7 +194,7 @@ const activeExpertMenuItems = computed(() => {
 
 const commands = computed(() => {
   return store.commands.filter((c) => c.state == 'enabled').map(c => {
-    return { label: commandI18n(c, 'label'), action: c.id, icon: c.icon }
+    return { label: c.label ?? commandI18n(c, 'label'), action: c.id, icon: c.icon }
   })
 })
 
