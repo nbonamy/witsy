@@ -443,7 +443,7 @@ test('Upload', async () => {
   })
   expect(wrapper.vm.message).toMatchObject({
     role: 'user',
-    content: '',
+    content: 'common.upload',
     engine: 'upload',
     model: 'image.png',
     attachment: expect.objectContaining({
@@ -488,7 +488,7 @@ test('Edit', async () => {
 
   expect(wrapper.vm.undoStack[0]).toMatchObject({
     role: 'user',
-    content: '',
+    content: 'common.upload',
     engine: 'upload',
     model: 'image.png',
     attachment: expect.objectContaining({
@@ -500,7 +500,7 @@ test('Edit', async () => {
 
   expect(wrapper.vm.message).toMatchObject({
     role: 'user',
-    content: 'prompt',
+    content: 'common.upload / prompt',
     engine: 'google',
     model: 'gemini-2',
     attachment: expect.objectContaining({
@@ -539,7 +539,7 @@ test('Undo / Redo', async () => {
 
   expect(wrapper.vm.message).toMatchObject({
     role: 'user',
-    content: '',
+    content: 'common.upload',
     engine: 'upload',
     model: 'image.png',
     attachment: expect.objectContaining({
@@ -551,7 +551,7 @@ test('Undo / Redo', async () => {
 
   expect(wrapper.vm.redoStack[0]).toMatchObject({
     role: 'user',
-    content: 'prompt',
+    content: 'common.upload / prompt',
     engine: 'google',
     model: 'gemini-2',
     attachment: expect.objectContaining({
@@ -576,7 +576,7 @@ test('Undo / Redo', async () => {
 
   expect(wrapper.vm.undoStack[0]).toMatchObject({
     role: 'user',
-    content: '',
+    content: 'common.upload',
     engine: 'upload',
     model: 'image.png',
     attachment: expect.objectContaining({
@@ -588,7 +588,7 @@ test('Undo / Redo', async () => {
 
   expect(wrapper.vm.message).toMatchObject({
     role: 'user',
-    content: 'prompt',
+    content: 'common.upload / prompt',
     engine: 'google',
     model: 'gemini-2',
     attachment: expect.objectContaining({
