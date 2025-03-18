@@ -1,6 +1,5 @@
 {
   "common": {
-    "colon": "notspaced",
     "actions": {
       "addFiles": "Dodaj pliki...",
       "addFolder": "Dodaj folder..."
@@ -15,6 +14,7 @@
     "clear": "Wyczyść",
     "clickToStart": "Kliknij kropkę, aby rozpocząć czat",
     "close": "Zamknij",
+    "colon": "notspaced",
     "command": "Polecenie",
     "confirmation": {
       "cannotUndo": "Nie można cofnąć tej akcji.",
@@ -125,6 +125,57 @@
     "warning": "Ostrzeżenie",
     "workingWith": "Praca z",
     "write": "Napisz"
+  },
+  "automation": {
+    "commander": {
+      "emptyText": "Zaznacz tekst, który chcesz przeanalizować."
+    },
+    "grabError": "Wystąpił błąd podczas próby pobrania tekstu. Sprawdź ustawienia prywatności i bezpieczeństwa.",
+    "readAloud": {
+      "emptyText": "Zaznacz tekst, który chcesz przeczytać na głos."
+    }
+  },
+  "autoupdate": {
+    "available": "Nowa wersja jest już dostępna. Do pobrania już teraz...",
+    "downloading": "Aktualizacja jest w toku. Poczekaj na jej zakończenie.",
+    "error": "Błąd podczas sprawdzania aktualizacji. Spróbuj ponownie później.",
+    "uptodate": "Korzystasz już z najnowszej wersji Witsy."
+  },
+  "chat": {
+    "actions": {
+      "exportPdf": "Eksportuj jako PDF",
+      "makeTemporary": "Tymczasowy czat",
+      "saveChat": "Zapisz czat"
+    },
+    "editor": {
+      "title": "Tytuł",
+      "validation": {
+        "requiredFields": "Wszystkie pola są wymagane",
+        "titleRequired": "Upewnij się, że wprowadziłeś tytuł tego czatu."
+      }
+    },
+    "exportPdf": {
+      "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
+    }
+  },
+  "chatList": {
+    "displayMode": {
+      "folders": "Foldery",
+      "timeline": "Oś czasu"
+    },
+    "folder": {
+      "actions": {
+        "delete": "Usuń folder"
+      }
+    },
+    "timeline": {
+      "earlier": "Wcześniej",
+      "last14days": "Ostatnie 14 dni",
+      "last30days": "Ostatnie 30 dni",
+      "last7days": "Ostatnie 7 dni",
+      "today": "Dzisiaj",
+      "yesterday": "Wczoraj"
+    }
   },
   "commands": {
     "commands": {
@@ -309,57 +360,6 @@
         "inputPlaceholder": "Szablon musi zawierać symbol zastępczy {'{'}input{'}'}.",
         "requiredFields": "Wszystkie pola oznaczone * są wymagane."
       }
-    }
-  },
-  "automation": {
-    "commander": {
-      "emptyText": "Zaznacz tekst, który chcesz przeanalizować."
-    },
-    "grabError": "Wystąpił błąd podczas próby pobrania tekstu. Sprawdź ustawienia prywatności i bezpieczeństwa.",
-    "readAloud": {
-      "emptyText": "Zaznacz tekst, który chcesz przeczytać na głos."
-    }
-  },
-  "autoupdate": {
-    "available": "Nowa wersja jest już dostępna. Do pobrania już teraz...",
-    "downloading": "Aktualizacja jest w toku. Poczekaj na jej zakończenie.",
-    "error": "Błąd podczas sprawdzania aktualizacji. Spróbuj ponownie później.",
-    "uptodate": "Korzystasz już z najnowszej wersji Witsy."
-  },
-  "chat": {
-    "actions": {
-      "exportPdf": "Eksportuj jako PDF",
-      "makeTemporary": "Tymczasowy czat",
-      "saveChat": "Zapisz czat"
-    },
-    "editor": {
-      "title": "Tytuł",
-      "validation": {
-        "requiredFields": "Wszystkie pola są wymagane",
-        "titleRequired": "Upewnij się, że wprowadziłeś tytuł tego czatu."
-      }
-    },
-    "exportPdf": {
-      "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
-    }
-  },
-  "chatList": {
-    "displayMode": {
-      "folders": "Foldery",
-      "timeline": "Oś czasu"
-    },
-    "folder": {
-      "actions": {
-        "delete": "Usuń folder"
-      }
-    },
-    "timeline": {
-      "earlier": "Wcześniej",
-      "last14days": "Ostatnie 14 dni",
-      "last30days": "Ostatnie 30 dni",
-      "last7days": "Ostatnie 7 dni",
-      "today": "Dzisiaj",
-      "yesterday": "Wczoraj"
     }
   },
   "createMedia": {
@@ -1363,6 +1363,37 @@
     "placeholder": "Zacznij pisać tutaj..."
   },
   "settings": {
+    "advanced": {
+      "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
+      "autoVisionSwitch": "Automatycznie przełączaj na model wizyjny",
+      "conversationLength": "Wiadomości na konwersację",
+      "imageResize": "Zmiana rozmiaru obrazu",
+      "imageResizeOptions": {
+        "none": "Bez zmiany rozmiaru",
+        "size": "Zmień rozmiar największego wymiaru do {size} pikseli"
+      },
+      "instructions": {
+        "chat": "Czat - Instrukcje",
+        "docquery": "Zapytanie o dokument - Instrukcje",
+        "image_plugin": "Wtyczka obrazu - Opis (maksymalnie 1024 znaków)",
+        "memory_plugin": "Wtyczka pamięci - Opis (maksymalnie 1024 znaków)",
+        "scratchpad_complete": "Notatnik - Uzupełnij",
+        "scratchpad_expand": "Notatnik - Rozwiń",
+        "scratchpad_improve": "Notatnik - Ulepsz",
+        "scratchpad_prompt": "Notatnik - Podpowiedź",
+        "scratchpad_simplify": "Notatnik - Uprość",
+        "scratchpad_spellcheck": "Notatnik - Sprawdzanie pisowni",
+        "scratchpad_system": "Notatnik - Instrukcje",
+        "scratchpad_takeaways": "Notatnik - Wnioski",
+        "scratchpad_title": "Notatnik - Tytuł",
+        "titling": "Tytuł czatu - Instrukcje",
+        "titlingUser": "Tytuł czatu - Podpowiedź",
+        "video_plugin": "Wtyczka wideo - Opis (maksymalnie 1024 znaków)"
+      },
+      "overridingHelp": "Niestandardowe podpowiedzi lub instrukcje są stosowane dla wszystkich języków.",
+      "resetToDefault": "Przywróć wartość domyślną",
+      "systemInstructions": "Instrukcje systemowe"
+    },
     "appearance": {
       "chatFont": "Czcionka czatu",
       "chatFontSize": "Rozmiar czcionki czatu",
@@ -1656,37 +1687,6 @@
       },
       "verificationComplete": "Weryfikacja zakończona!",
       "verifying": "Weryfikacja: {percent}%"
-    },
-    "advanced": {
-      "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
-      "autoVisionSwitch": "Automatycznie przełączaj na model wizyjny",
-      "conversationLength": "Wiadomości na konwersację",
-      "imageResize": "Zmiana rozmiaru obrazu",
-      "imageResizeOptions": {
-        "none": "Bez zmiany rozmiaru",
-        "size": "Zmień rozmiar największego wymiaru do {size} pikseli"
-      },
-      "instructions": {
-        "chat": "Czat - Instrukcje",
-        "docquery": "Zapytanie o dokument - Instrukcje",
-        "image_plugin": "Wtyczka obrazu - Opis (maksymalnie 1024 znaków)",
-        "memory_plugin": "Wtyczka pamięci - Opis (maksymalnie 1024 znaków)",
-        "scratchpad_complete": "Notatnik - Uzupełnij",
-        "scratchpad_expand": "Notatnik - Rozwiń",
-        "scratchpad_improve": "Notatnik - Ulepsz",
-        "scratchpad_prompt": "Notatnik - Podpowiedź",
-        "scratchpad_simplify": "Notatnik - Uprość",
-        "scratchpad_spellcheck": "Notatnik - Sprawdzanie pisowni",
-        "scratchpad_system": "Notatnik - Instrukcje",
-        "scratchpad_takeaways": "Notatnik - Wnioski",
-        "scratchpad_title": "Notatnik - Tytuł",
-        "titling": "Tytuł czatu - Instrukcje",
-        "titlingUser": "Tytuł czatu - Podpowiedź",
-        "video_plugin": "Wtyczka wideo - Opis (maksymalnie 1024 znaków)"
-      },
-      "overridingHelp": "Niestandardowe podpowiedzi lub instrukcje są stosowane dla wszystkich języków.",
-      "resetToDefault": "Przywróć wartość domyślną",
-      "systemInstructions": "Instrukcje systemowe"
     }
   },
   "sidebar": {
