@@ -162,7 +162,7 @@ const onDelete = () => {
     padding: var(--preview-padding);
     -webkit-app-region: no-drag;
 
-    img {
+    img, video {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;

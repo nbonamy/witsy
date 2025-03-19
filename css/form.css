@@ -214,6 +214,23 @@ form.vertical {
     gap: 0.33rem !important;
     width: 100%;
 
+    &.horizontal {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 0.5rem !important;      
+    }
+
+    &.checkbox {
+      input {
+        flex: 0 0 14px;
+        padding: 0;
+        margin: 0;
+      }
+      label {
+        text-align: left;
+      }
+    }
+
     label {
       min-width: auto !important;
       margin-left: 2px;
