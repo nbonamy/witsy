@@ -12,7 +12,9 @@ const voiceIndex = 7
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
+
   store.loadSettings()
+  store.config.engines.falai.apiKey = 'falai-api-key'
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
@@ -59,6 +61,15 @@ test('stt settings', async () => {
   const groq2 = stt.find('select[name=model]').findAll('option')[2]
   await stt.find<HTMLSelectElement>('select[name=model]').setValue(groq2.element.value)
   expect(store.config.stt.model).toBe(groq2.element.value)
+
+  // fal.ai
+  await stt.find('select[name=engine]').setValue('fal.ai')
+  expect(store.config.stt.engine).toBe('fal.ai')
+  expect(stt.find<HTMLInputElement>('input').element.value).toBe('falai-api-key')
+  expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('fal-ai/whisper')
+  const falai2 = stt.find('select[name=model]').findAll('option')[1]
+  await stt.find<HTMLSelectElement>('select[name=model]').setValue(falai2.element.value)
+  expect(store.config.stt.model).toBe(falai2.element.value)
 
   // whisper
   await stt.find('select[name=engine]').setValue('whisper')

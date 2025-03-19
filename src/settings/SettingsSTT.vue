@@ -12,6 +12,10 @@
         </option>
       </select>
     </div>
+    <div class="group" v-if="engine == 'fal.ai'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="falAiAPIKey" @blur="save" />
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
@@ -65,9 +69,11 @@ import { Configuration } from '../types/config'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import InputObfuscated from '../components/InputObfuscated.vue'
 import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
+import STTFal from '../voice/stt-fal'
 import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
@@ -80,6 +86,7 @@ type FilesProgressInfo = { [key: string]: DownloadProgress }
 const locale = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
+const falAiAPIKey = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
@@ -87,6 +94,7 @@ const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 const engines = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'groq', label: 'Groq' },
+  { id: 'fal.ai', label: 'fal.ai' },
   { id: 'whisper', label: 'Whisper' },
 ]
 
@@ -98,6 +106,8 @@ const models = computed(() => {
       return STTOpenAI.models
     } else if (engine.value === 'groq') {
       return STTGroq.models
+    } else if (engine.value === 'fal.ai') {
+      return STTFal.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
     }
@@ -135,6 +145,7 @@ const load = () => {
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
+  falAiAPIKey.value = store.config.engines.falai.apiKey || null
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -142,6 +153,7 @@ const save = () => {
   store.config.stt.locale = locale.value
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
+  store.config.engines.falai.apiKey = falAiAPIKey.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }

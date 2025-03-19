@@ -5,7 +5,9 @@ import defaults from '../../defaults/settings.json'
 import getSTTEngine, { requiresDownload } from '../../src/voice/stt'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTGroq from '../../src/voice/stt-groq'
+import STTFal from '../../src/voice/stt-fal'
 import STTWhisper from '../../src/voice/stt-whisper'
+import { fal } from '@fal-ai/client'
 
 const initCallback = vi.fn()
 
@@ -35,6 +37,15 @@ vi.mock('groq-sdk', async () => {
   return { default : Groq }
 })
 
+vi.mock('@fal-ai/client', async () => {
+  return {
+    fal: {
+      config: vi.fn(),
+      subscribe: () => ({ data: { text: 'transcribed' } })
+    }
+  }
+})
+
 vi.mock('@huggingface/transformers', async () => {
   return {
     env: { allowLocalModels: false },
@@ -55,6 +66,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   store.config = defaults
+  store.config.engines.falai.apiKey = 'falai-api-key'
   vi.resetAllMocks()
 })
 
@@ -88,6 +100,20 @@ test('Instanciates Groq', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'groq', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instanciates fal.ai', async () => {
+  store.config.stt.engine = 'fal.ai'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTFal)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'fal.ai', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+  expect(fal.config).toHaveBeenCalledWith({ credentials: 'falai-api-key'  })
 })
 
 test('Instanciates Whisper', async () => {
