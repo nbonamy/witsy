@@ -30,15 +30,15 @@
       </div>
       <div class="action" @click="onScratchpad">
         <BIconJournalText />
-        {{ t('tray.menu.scratchpad') }}
+        {{ t('scratchpad.title') }}
       </div>
       <div class="action" @click="onDictation">
         <BIconMic />
-        {{ t('tray.menu.startDictation') }}
+        {{ t('transcribe.title') }}
       </div>
       <div class="action" @click="onVoiceMode">
         <BIconChatSquareDots />
-        {{ t('tray.menu.voiceMode') }}
+        {{ t('realtimeChat.title') }}
       </div>
       <div class="action" @click="onComputerUse" v-if="hasComputerUse">
         <BIconRobot />

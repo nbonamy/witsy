@@ -1335,7 +1335,8 @@
     "errorPrefix": "Błąd: ",
     "establishingConnection": "Nawiązywanie połączenia...",
     "requestingMicrophone": "Proszę o dostęp do mikrofonu...",
-    "sessionEstablished": "Sesja ustanowiona"
+    "sessionEstablished": "Sesja ustanowiona",
+    "title": "Tryb głosowy"
   },
   "scratchpad": {
     "actions": {
@@ -1742,7 +1743,7 @@
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Rozpocznij dyktowanie",
-      "voiceMode": "Tryb głosowy"
+      "voiceMode": "@:{'realtimeChat.title'}"
     }
   }
 }

@@ -31,7 +31,7 @@ export const openRealtimeChatWindow = async () => {
 
   // open a new one
   realtimeChatWindow = createWindow({
-    title: useI18n(app)('tray.menu.voiceMode'),
+    title: useI18n(app)('realtimeChat.title'),
     hash: '/realtime',
     x, y, width, height,
     ...titleBarOptions({
