@@ -27,7 +27,7 @@
           {{ voice.label }}
         </option>
       </select>
-      <button @click.prevent="onPlay">
+      <button class="control" @click.prevent="onPlay">
         <BIconPlayFill v-if="audioState.state === 'idle'"/>
         <BIconStopFill v-else />
       </button>
@@ -157,4 +157,13 @@ defineExpose({ load })
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
+</style>
+
+<style scoped>
+.control {
+  svg {
+    position: relative;
+    top: 1px;
+  }
+}
 </style>
