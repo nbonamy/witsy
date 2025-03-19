@@ -29,10 +29,10 @@ export default class LocalSearch {
 
     return new Promise((resolve, reject) => {
 
-      const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`
 
       // open a new window
-      const win = this.openHiddenWindow();
+      const win = this.openHiddenWindow()
 
       // get ready to grab the results
       win.webContents.on('did-finish-load', async () => {
@@ -42,6 +42,9 @@ export default class LocalSearch {
           // get the results
           const googleResults: LocalSearchResult[] = await win.webContents.executeJavaScript(grabGoogleResults)
           console.log(`[search] found ${googleResults.length} results`)
+
+          // close the window now
+          this.tryCloseWindow(win)
 
           // now iterate
           const urls = new Set()
@@ -76,14 +79,15 @@ export default class LocalSearch {
         } catch (e) {
 
           // done
+          this.tryCloseWindow(win)
           reject(e)
 
         }
-      
+
       })
 
       // now load
-      win.loadURL(url);
+      win.loadURL(url)
 
     })
 
@@ -97,7 +101,7 @@ export default class LocalSearch {
       console.log(`[search] getting contents for ${url}`)
 
       // open a new window
-      const win = this.openHiddenWindow();
+      const win = this.openHiddenWindow()
 
       // get ready to grab the contents
       win.webContents.on('dom-ready', async () => {
@@ -107,18 +111,20 @@ export default class LocalSearch {
           resolve(html)
         } catch (e) {
           reject(e)
+        } finally {
+          this.tryCloseWindow(win)
         }
-      
       })
 
       //  catch errors
       win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
         console.error(`[search] failed to load ${url}: ${errorDescription} (${errorCode})`)
+        this.tryCloseWindow(win)
         reject(new Error(errorDescription))
       })
 
       // now load
-      win.loadURL(url);
+      win.loadURL(url)
 
     })
 
@@ -139,12 +145,19 @@ export default class LocalSearch {
         nodeIntegration: false,
         contextIsolation: true,
         sandbox: true,
+        autoplayPolicy: 'user-gesture-required'
       },
-    });
+    })
 
     // done
-    return win;
+    return win
 
+  }
+
+  protected tryCloseWindow(win: BrowserWindow) {
+    try {
+      win?.close()
+    } catch { /* empty */ }
   }
 
 }
