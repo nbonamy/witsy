@@ -12,7 +12,7 @@
         </option>
       </select>
     </div>
-    <div class="group" v-if="engine == 'fal.ai'">
+    <div class="group" v-if="engine == 'falai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
@@ -73,7 +73,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
-import STTFal from '../voice/stt-fal'
+import STTFalAi from '../voice/stt-falai'
 import STTWhisper from '../voice/stt-whisper'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
@@ -94,7 +94,7 @@ const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 const engines = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'groq', label: 'Groq' },
-  { id: 'fal.ai', label: 'fal.ai' },
+  { id: 'falai', label: 'fal.ai' },
   { id: 'whisper', label: 'Whisper' },
 ]
 
@@ -106,8 +106,8 @@ const models = computed(() => {
       return STTOpenAI.models
     } else if (engine.value === 'groq') {
       return STTGroq.models
-    } else if (engine.value === 'fal.ai') {
-      return STTFal.models
+    } else if (engine.value === 'falai') {
+      return STTFalAi.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
     }

@@ -5,7 +5,7 @@ import defaults from '../../defaults/settings.json'
 import getSTTEngine, { requiresDownload } from '../../src/voice/stt'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTGroq from '../../src/voice/stt-groq'
-import STTFal from '../../src/voice/stt-fal'
+import STTFalAi from '../../src/voice/stt-falai'
 import STTWhisper from '../../src/voice/stt-whisper'
 import { fal } from '@fal-ai/client'
 
@@ -103,10 +103,10 @@ test('Instanciates Groq', async () => {
 })
 
 test('Instanciates fal.ai', async () => {
-  store.config.stt.engine = 'fal.ai'
+  store.config.stt.engine = 'falai'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
-  expect(engine).toBeInstanceOf(STTFal)
+  expect(engine).toBeInstanceOf(STTFalAi)
   expect(engine).toHaveProperty('transcribe')
   expect(engine.isReady()).toBe(true)
   expect(engine.requiresDownload()).toBe(false)
