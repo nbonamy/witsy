@@ -363,6 +363,7 @@
       "empty": "Vous n'avez encore créé aucun média.",
       "title": "Historique"
     },
+    "imageToVideo": "Utiliser l'image actuelle pour créer une vidéo. Assurez-vous de sélectionner un modèle image-vers-vidéo.",
     "loadMediaSettings": "Charger les paramètres",
     "mediaType": {
       "image": "Image",

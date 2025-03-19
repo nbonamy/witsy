@@ -382,6 +382,7 @@
       "empty": "你还没有创建任何媒体。",
       "title": "历史记录"
     },
+    "imageToVideo": "使用当前图像创建视频。请确保选择一个图像转视频模型。",
     "loadMediaSettings": "加载设置",
     "mediaType": {
       "image": "图像",
