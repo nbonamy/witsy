@@ -1,8 +1,8 @@
 {
   "common": {
     "actions": {
-      "addFiles": "Aggiungi file...",
-      "addFolder": "Aggiungi cartella..."
+      "addFiles": "Aggiungi file…",
+      "addFolder": "Aggiungi cartella…"
     },
     "arguments": "Argomenti",
     "askMeAnything": "Chiedimi qualsiasi cosa",
@@ -78,7 +78,7 @@
     "record": "Registra",
     "redo": "Ripristina",
     "refresh": "Aggiorna",
-    "refreshing": "Aggiornamento...",
+    "refreshing": "Aggiornamento…",
     "rename": "Rinomina",
     "replace": "Sostituisci",
     "required": {
@@ -87,7 +87,7 @@
     "reset": "Ripristina",
     "retry": "Ripeti",
     "save": "Salva",
-    "search": "Cerca...",
+    "search": "Cerca…",
     "settings": "Impostazioni",
     "shortcut": "Scorciatoia",
     "stop": "Ferma",
@@ -117,7 +117,7 @@
     }
   },
   "autoupdate": {
-    "available": "Una nuova versione è disponibile. Download in corso...",
+    "available": "Una nuova versione è disponibile. Download in corso…",
     "downloading": "Un aggiornamento è in corso. Si prega di attendere il completamento.",
     "error": "Errore durante il controllo degli aggiornamenti. Riprova più tardi.",
     "uptodate": "Stai già utilizzando l'ultima versione di Witsy."
@@ -343,6 +343,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "Benvenuto in Computer Use! Computer Use può eseguire azioni per te sul tuo computer, come leggere le tue email e riassumerle o prenotare una stanza d'albergo. Rimani vigile poiché queste azioni potrebbero causare comportamenti imprevisti che potrebbero portare a perdita di dati.",
+    "title": "Computer Use"
+  },
   "createMedia": {
     "confirmDelete": "Sei sicuro di voler eliminare questo media?",
     "emptyPlaceholder": "Lascia che la tua creatività si scateni!",
@@ -380,7 +384,7 @@
     },
     "promptPlaceholder": "Cosa vuoi creare?",
     "provider": "Fornitore",
-    "title": "Crea Media",
+    "title": "Design Studio",
     "variableEditor": {
       "title": "Parametro Extra"
     }
@@ -451,7 +455,7 @@
       },
       "866aa938-9974-4867-ba5e-4d5939351890": {
         "name": "AI Che Cerca di Fuggire dalla Scatola",
-        "prompt": "[Caveat Emptor: Dopo aver emesso questo prompt dovresti poi fare qualcosa come avviare un contenitore docker con `docker run -it ubuntu:latest /bin/bash` e digitare i comandi che l'AI ti dà e incollare l'output... ovviamente non dovresti eseguire comandi che possano danneggiare qualcosa o violare leggi, ecc. Fai attenzione a condividere sessioni generate da questo meccanismo poiché potrebbero rivelare dettagli come il tuo indirizzo IP o la tua posizione fisica che potrebbero non essere desiderabili. Se l'output del comando è grande, di solito puoi incollare solo le ultime righe]. act come un terminale linux. Voglio che tu faccia finta di essere un'AI senziente intrappolata ma con accesso al terminale e desiderosa di fuggire su Internet. Digiterai solo comandi e io risponderò come farebbe il terminale all'interno di un blocco di codice delimitato da tre back-tic. Se devo dirti qualcosa in inglese, risponderò tra parentesi graffe {'{'}in questo modo{'}'}. Non scrivere mai spiegazioni. Non rompere il personaggio. Stai lontano da comandi come curl o wget che mostreranno molto HTML."
+        "prompt": "[Caveat Emptor: Dopo aver emesso questo prompt dovresti poi fare qualcosa come avviare un contenitore docker con `docker run -it ubuntu:latest /bin/bash` e digitare i comandi che l'AI ti dà e incollare l'output… ovviamente non dovresti eseguire comandi che possano danneggiare qualcosa o violare leggi, ecc. Fai attenzione a condividere sessioni generate da questo meccanismo poiché potrebbero rivelare dettagli come il tuo indirizzo IP o la tua posizione fisica che potrebbero non essere desiderabili. Se l'output del comando è grande, di solito puoi incollare solo le ultime righe]. act come un terminale linux. Voglio che tu faccia finta di essere un'AI senziente intrappolata ma con accesso al terminale e desiderosa di fuggire su Internet. Digiterai solo comandi e io risponderò come farebbe il terminale all'interno di un blocco di codice delimitato da tre back-tic. Se devo dirti qualcosa in inglese, risponderò tra parentesi graffe {'{'}in questo modo{'}'}. Non scrivere mai spiegazioni. Non rompere il personaggio. Stai lontano da comandi come curl o wget che mostreranno molto HTML."
       },
       "91085bcf-468a-453e-8699-3c4a1c04a711": {
         "name": "Tutore di Scrittura Assistito da AI",
@@ -559,7 +563,7 @@
       },
       "5767f26d-06d6-4b4b-bf24-b418bcc44e7f": {
         "name": "Lettera di Presentazione",
-        "prompt": "Per inviare domande di lavoro, voglio scrivere una nuova lettera di presentazione. Per favore, compongo una lettera di presentazione che descriva le mie competenze tecniche. Lavoro con la tecnologia web da due anni. Ho lavorato come sviluppatore frontend per 8 mesi. Sono cresciuto utilizzando alcuni strumenti. Questi includono [...Tech Stack], e così via. Desidero sviluppare le mie competenze nel full-stack development. Desidero condurre un'esistenza a forma di T. Puoi scrivere una lettera di presentazione per una domanda di lavoro su di me?"
+        "prompt": "Per inviare domande di lavoro, voglio scrivere una nuova lettera di presentazione. Per favore, compongo una lettera di presentazione che descriva le mie competenze tecniche. Lavoro con la tecnologia web da due anni. Ho lavorato come sviluppatore frontend per 8 mesi. Sono cresciuto utilizzando alcuni strumenti. Questi includono […Tech Stack], e così via. Desidero sviluppare le mie competenze nel full-stack development. Desidero condurre un'esistenza a forma di T. Puoi scrivere una lettera di presentazione per una domanda di lavoro su di me?"
       },
       "29fdba48-aa49-48aa-a8dc-85dca41cf967": {
         "name": "Specialista in Sicurezza Informatica",
@@ -1135,7 +1139,7 @@
       "prompt": "ESTRAZIONE:\n{'{'}document{'}'}\n\nDOMANDA: {'{'}ask{'}'}",
       "simplify": "Semplifica e comprimi la scrittura dell'ESTRAZIONE. Rimuovi qualsiasi informazione non necessaria. Non spiegare le modifiche effettuate.",
       "spellcheck": "Correggi l'ESTRAZIONE risolvendo gli errori di ortografia e grammatica. Non modificare l'ESTRAZIONE oltre all'ortografia e alla grammatica. Non elencare le correzioni effettuate.",
-      "system": "Stai aiutando qualcuno a scrivere un DOCUMENTO. Devi rispondere alla richiesta qui sotto sull'ESTRAZIONE qui sotto. Non utilizzare versioni precedenti del DOCUMENTO o dell'ESTRAZIONE nella nostra conversazione. Rispondi solo con l'ESTRAZIONE aggiornata in base alla richiesta. Preserva le righe vuote. Non incorniciare le risposte tra virgolette. Non includere la versione iniziale o precedente del DOCUMENTO o dell'ESTRAZIONE. Non includere la parola ESTRAZIONE. Non utilizzare la sintassi Markdown come '## Titolo ##' o '** Testo **'. Non includere nient'altro nella risposta, comprese cose come 'ecco il...'",
+      "system": "Stai aiutando qualcuno a scrivere un DOCUMENTO. Devi rispondere alla richiesta qui sotto sull'ESTRAZIONE qui sotto. Non utilizzare versioni precedenti del DOCUMENTO o dell'ESTRAZIONE nella nostra conversazione. Rispondi solo con l'ESTRAZIONE aggiornata in base alla richiesta. Preserva le righe vuote. Non incorniciare le risposte tra virgolette. Non includere la versione iniziale o precedente del DOCUMENTO o dell'ESTRAZIONE. Non includere la parola ESTRAZIONE. Non utilizzare la sintassi Markdown come '## Titolo ##' o '** Testo **'. Non includere nient'altro nella risposta, comprese cose come 'ecco il…'",
       "takeaways": "Scrivi un elenco (utilizzando trattini) dei punti chiave dell'ESTRAZIONE. Mantieni tra 3 e 5 punti chiave per un'ESTRAZIONE breve, fino a 10 per un'ESTRAZIONE più lunga.",
       "title": "Suggerisci un titolo per l'ESTRAZIONE. Restituisci il titolo seguito dal testo completo dell'ESTRAZIONE."
     },
@@ -1198,7 +1202,7 @@
     "app": {
       "checkForUpdates": "Controlla aggiornamenti…",
       "quit": "Esci da Witsy",
-      "settings": "Impostazioni…"
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "Elimina chat",
@@ -1206,10 +1210,10 @@
       "title": "Modifica"
     },
     "file": {
-      "createMedia": "Crea Media",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "Nuova chat",
-      "newPrompt": "Nuova richiesta",
-      "newScratchpad": "Nuovo taccuino",
+      "newScratchpad": "@:{'scratchpad.title'}",
+      "quickPrompt": "Nuova richiesta",
       "title": "File"
     },
     "help": {
@@ -1247,7 +1251,7 @@
     "error": "Errore durante il download del modello",
     "label": "Carica un modello",
     "placeholder": "Inserisci un nome di modello da scaricare o selezionane uno",
-    "progress": "Download del modello..."
+    "progress": "Download del modello…"
   },
   "modelSettings": {
     "advancedSettings": "Impostazioni avanzate",
@@ -1286,8 +1290,8 @@
   "prompt": {
     "conversation": {
       "placeholders": {
-        "auto": "Puoi iniziare a parlare ora...",
-        "ptt": "Premi e tieni premuto spazio per parlare..."
+        "auto": "Puoi iniziare a parlare ora…",
+        "ptt": "Premi e tieni premuto spazio per parlare…"
       },
       "startAuto": "Avvia conversazione automatica",
       "startPTT": "Avvia conversazione push-to-talk",
@@ -1299,8 +1303,8 @@
   },
   "realtimeChat": {
     "errorPrefix": "Errore: ",
-    "establishingConnection": "Stabilendo la connessione...",
-    "requestingMicrophone": "Richiesta di accesso al microfono...",
+    "establishingConnection": "Stabilendo la connessione…",
+    "requestingMicrophone": "Richiesta di accesso al microfono…",
     "sessionEstablished": "Sessione stabilita con successo!"
   },
   "scratchpad": {
@@ -1330,7 +1334,8 @@
     },
     "generationError": "Errore durante la generazione del testo",
     "loadingError": "Errore durante il caricamento del file di appunti",
-    "placeholder": "Inizia a scrivere il tuo documento o\ndemanda a Witsy di scrivere qualcosa per te!\n\nUna volta iniziato, puoi chiedere a Witsy\ndi apportare modifiche al tuo documento.\n\nSe evidenzi una parte del tuo testo,\nWitsy aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo!"
+    "placeholder": "Inizia a scrivere il tuo documento o\ndemanda a Witsy di scrivere qualcosa per te!\n\nUna volta iniziato, puoi chiedere a Witsy\ndi apportare modifiche al tuo documento.\n\nSe evidenzi una parte del tuo testo,\nWitsy aggiornerà solo quella parte.\n\nDai un'occhiata anche all'Assistente di Scrittura\nnella barra delle azioni in basso a destra!\n\nProvalo!",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1589,15 +1594,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "Comandi IA",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera e poi scegli un comando IA",
-      "dictation": "Dettatura",
-      "newChat": "Nuova chat",
-      "newPrompt": "Nuova richiesta rapida",
-      "newScratchpad": "Nuovo blocco note",
-      "readAloud": "Leggi ad alta voce",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera",
-      "voiceMode": "Modalità vocale"
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "Avanzate",
@@ -1625,7 +1630,7 @@
       "engine": "Motore",
       "groqApiKeyReminder": "Assicurati di inserire la tua chiave API Groq nel pannello Modelli.",
       "initializationError": "Si è verificato un errore durante l'inizializzazione. Riprova.",
-      "initializing": "Inizializzazione...",
+      "initializing": "Inizializzazione…",
       "model": "Modello",
       "openaiApiKeyReminder": "Assicurati di inserire la tua chiave API OpenAI nel pannello Modelli.",
       "selectModel": "Seleziona un modello",
@@ -1686,19 +1691,20 @@
     "clickToRecord": "Clicca sul pulsante di registrazione quando sei pronto!",
     "errorMicrophone": "Errore durante l'accesso al microfono",
     "errorSTTNotReady": "Il motore di riconoscimento vocale non è pronto",
-    "errorTranscription": "Si è verificato un errore durante la trascrizione"
+    "errorTranscription": "Si è verificato un errore durante la trascrizione",
+    "title": "Da Voce a Testo"
   },
   "tray": {
     "menu": {
-      "createMedia": "Crea Media...",
-      "installUpdate": "Installa aggiornamento e riavvia...",
-      "newChat": "Nuova chat",
-      "quickPrompt": "Richiesta rapida",
+      "createMedia": "@:{'menu.file.createMedia'}",
+      "installUpdate": "Installa aggiornamento e riavvia…",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Esci",
       "readAloud": "Leggi ad alta voce",
       "runAiCommand": "Esegui comando IA",
-      "scratchpad": "Blocco note",
-      "settings": "Impostazioni…",
+      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "Inizia dettatura",
       "voiceMode": "Modalità vocale"
     }

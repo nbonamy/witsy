@@ -250,7 +250,7 @@ test('Open Transcribe window', async () => {
   expect(window.transcribePalette).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/transcribe',
-    title: 'Dictation',
+    title: 'Speech-to-Text',
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/transcribe')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]

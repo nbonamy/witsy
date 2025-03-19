@@ -8,7 +8,7 @@ export type MenuCallbacks = {
   checkForUpdates: () => void
   settings: () => void
   quit: () => void
-  newPrompt: () => void
+  quickPrompt: () => void
   newChat: () => void
   newScratchpad: () => void
   createMedia: () => void
@@ -86,9 +86,9 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       label: t('menu.file.title'),
       submenu: [
         {
-          label: t('menu.file.newPrompt'),
+          label: t('menu.file.quickPrompt'),
           accelerator: shortcutAccelerator(shortcuts?.prompt),
-          click: () => callbacks.newPrompt()
+          click: () => callbacks.quickPrompt()
         },
         {
           label: t('menu.file.newChat'),

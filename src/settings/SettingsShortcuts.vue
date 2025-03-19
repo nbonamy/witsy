@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="group">
-      <label>{{ t('settings.shortcuts.newPrompt') }}</label>
+      <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
       <InputShortcut v-model="prompt" @change="save" />
     </div>
     <div class="group">

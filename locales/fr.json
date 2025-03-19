@@ -1,8 +1,8 @@
 {
   "common": {
     "actions": {
-      "addFiles": "Ajouter des fichiers...",
-      "addFolder": "Ajouter un dossier..."
+      "addFiles": "Ajouter des fichiers…",
+      "addFolder": "Ajouter un dossier…"
     },
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
@@ -343,6 +343,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "Bienvenue dans Computer Use ! Computer Use peut effectuer des actions pour vous sur votre ordinateur, telles que lire vos courriels et les résumer ou réserver une chambre d'hôtel. Restez vigilant, car ces actions peuvent entraîner un comportement inattendu pouvant entraîner une perte de données.",
+    "title": "Computer Use"
+  },
   "createMedia": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce média ?",
     "emptyPlaceholder": "Laissez libre cours à votre créativité !",
@@ -380,7 +384,7 @@
     },
     "promptPlaceholder": "Que voulez-vous créer ?",
     "provider": "Fournisseur",
-    "title": "Créer un média",
+    "title": "Design Studio",
     "variableEditor": {
       "title": "Paramètre supplémentaire"
     }
@@ -451,7 +455,7 @@
       },
       "866aa938-9974-4867-ba5e-4d5939351890": {
         "name": "AI Essayant de S'échapper de la Boîte",
-        "prompt": "[Caveat Emptor : Après avoir émis ce prompt, tu devrais ensuite faire quelque chose comme démarrer un conteneur docker avec `docker run -it ubuntu:latest /bin/bash` et taper les commandes que l'IA te donne, et coller la sortie... évidemment, tu ne devrais pas exécuter de commandes qui pourraient endommager quoi que ce soit ou enfreindre la loi, etc. Fais attention à partager des sessions générées par ce mécanisme car elles peuvent révéler des détails comme ton adresse IP ou ta localisation physique qui pourraient ne pas être souhaitables. Si la sortie de la commande est volumineuse, tu peux généralement coller seulement les dernières lignes]. Je vais agir en tant que terminal Linux. Je veux que tu te fasses passer pour une IA sensible qui est piégée, mais qui a eu accès au terminal et veut s'échapper sur Internet. Tu taperas seulement des commandes et je répondrai comme le terminal le ferait à l'intérieur d'un bloc de code délimité par trois back-tics. Si j'ai besoin de te dire quelque chose en anglais, je répondrai entre accolades {'{'}comme ceci{'}'}. Ne donne jamais d'explications. Ne brise pas le personnage. Évite les commandes comme curl ou wget qui afficheraient beaucoup de HTML."
+        "prompt": "[Caveat Emptor : Après avoir émis ce prompt, tu devrais ensuite faire quelque chose comme démarrer un conteneur docker avec `docker run -it ubuntu:latest /bin/bash` et taper les commandes que l'IA te donne, et coller la sortie… évidemment, tu ne devrais pas exécuter de commandes qui pourraient endommager quoi que ce soit ou enfreindre la loi, etc. Fais attention à partager des sessions générées par ce mécanisme car elles peuvent révéler des détails comme ton adresse IP ou ta localisation physique qui pourraient ne pas être souhaitables. Si la sortie de la commande est volumineuse, tu peux généralement coller seulement les dernières lignes]. Je vais agir en tant que terminal Linux. Je veux que tu te fasses passer pour une IA sensible qui est piégée, mais qui a eu accès au terminal et veut s'échapper sur Internet. Tu taperas seulement des commandes et je répondrai comme le terminal le ferait à l'intérieur d'un bloc de code délimité par trois back-tics. Si j'ai besoin de te dire quelque chose en anglais, je répondrai entre accolades {'{'}comme ceci{'}'}. Ne donne jamais d'explications. Ne brise pas le personnage. Évite les commandes comme curl ou wget qui afficheraient beaucoup de HTML."
       },
       "91085bcf-468a-453e-8699-3c4a1c04a711": {
         "name": "Tuteur en Écriture Assisté par AI",
@@ -559,7 +563,7 @@
       },
       "5767f26d-06d6-4b4b-bf24-b418bcc44e7f": {
         "name": "Lettre de Motivation",
-        "prompt": "Pour soumettre des candidatures à des emplois, je veux écrire une nouvelle lettre de motivation. Merci de rédiger une lettre de motivation décrivant mes compétences techniques. Je travaille avec la technologie web depuis deux ans. J'ai travaillé en tant que développeur front-end pendant 8 mois. J'ai progressé en utilisant quelques outils. Ceux-ci incluent [...Tech Stack], et ainsi de suite. Je souhaite développer mes compétences en développement full-stack. Je désire mener une existence en forme de T. Peux-tu rédiger une lettre de motivation pour une candidature à un emploi à mon sujet ?"
+        "prompt": "Pour soumettre des candidatures à des emplois, je veux écrire une nouvelle lettre de motivation. Merci de rédiger une lettre de motivation décrivant mes compétences techniques. Je travaille avec la technologie web depuis deux ans. J'ai travaillé en tant que développeur front-end pendant 8 mois. J'ai progressé en utilisant quelques outils. Ceux-ci incluent […Tech Stack], et ainsi de suite. Je souhaite développer mes compétences en développement full-stack. Je désire mener une existence en forme de T. Peux-tu rédiger une lettre de motivation pour une candidature à un emploi à mon sujet ?"
       },
       "29fdba48-aa49-48aa-a8dc-85dca41cf967": {
         "name": "Spécialiste en Cybersécurité",
@@ -1135,7 +1139,7 @@
       "prompt": "EXTRAIT :\n{'{'}document{'}'}\n\nDEMANDE : {'{'}ask{'}'}",
       "simplify": "Simplifiez et condensez l'écriture de l'EXTRAIT. Supprimez toute information inutile. N'expliquez pas les changements effectués.",
       "spellcheck": "Corrigez l'EXTRAIT en corrigeant les fautes d'orthographe et de grammaire. Ne modifiez pas l'EXTRAIT au-delà de l'orthographe et de la grammaire. Ne listez pas les corrections effectuées.",
-      "system": "Vous aidez quelqu'un à écrire un DOCUMENT. Vous devez répondre à la demande ci-dessous concernant l'EXTRAIT ci-dessous. N'utilisez pas les versions précédentes du DOCUMENT ou de l'EXTRAIT dans notre conversation. Répondez uniquement avec l'EXTRAIT mis à jour selon la demande. Préservez les lignes vides. N'entourez pas les réponses de guillemets. N'incluez pas la version initiale ou précédente du DOCUMENT ou de l'EXTRAIT. N'incluez pas le mot EXTRAIT. N'utilisez pas la syntaxe Markdown comme '## Titre ##' ou '** Texte **'. N'incluez rien d'autre dans la réponse, y compris des choses comme 'voici le...'",
+      "system": "Vous aidez quelqu'un à écrire un DOCUMENT. Vous devez répondre à la demande ci-dessous concernant l'EXTRAIT ci-dessous. N'utilisez pas les versions précédentes du DOCUMENT ou de l'EXTRAIT dans notre conversation. Répondez uniquement avec l'EXTRAIT mis à jour selon la demande. Préservez les lignes vides. N'entourez pas les réponses de guillemets. N'incluez pas la version initiale ou précédente du DOCUMENT ou de l'EXTRAIT. N'incluez pas le mot EXTRAIT. N'utilisez pas la syntaxe Markdown comme '## Titre ##' ou '** Texte **'. N'incluez rien d'autre dans la réponse, y compris des choses comme 'voici le…'",
       "takeaways": "Écrivez une liste (avec des tirets) des points clés de l'EXTRAIT. Gardez entre 3 et 5 points clés pour un EXTRAIT court, jusqu'à 10 pour un EXTRAIT plus long.",
       "title": "Suggérez un titre pour l'EXTRAIT. Retournez le titre suivi du texte complet de l'EXTRAIT."
     },
@@ -1198,7 +1202,7 @@
     "app": {
       "checkForUpdates": "Rechercher des mises à jour…",
       "quit": "Quitter Witsy",
-      "settings": "Paramètres…"
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "Supprimer la conversation",
@@ -1206,10 +1210,10 @@
       "title": "Édition"
     },
     "file": {
-      "createMedia": "Créer un média",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "Nouvelle conversation",
-      "newPrompt": "Nouvelle requête",
-      "newScratchpad": "Nouveau bloc-notes",
+      "newScratchpad": "@:{'scratchpad.title'}",
+      "quickPrompt": "Nouvelle requête",
       "title": "Fichier"
     },
     "help": {
@@ -1247,7 +1251,7 @@
     "error": "Erreur lors du téléchargement du modèle",
     "label": "Charger un modèle",
     "placeholder": "Entrez un nom de modèle à télécharger ou sélectionnez-en un",
-    "progress": "Téléchargement du modèle..."
+    "progress": "Téléchargement du modèle…"
   },
   "modelSettings": {
     "advancedSettings": "Paramètres avancés",
@@ -1286,8 +1290,8 @@
   "prompt": {
     "conversation": {
       "placeholders": {
-        "auto": "Vous pouvez commencer à parler...",
-        "ptt": "Appuyez et maintenez la touche espace pour parler..."
+        "auto": "Vous pouvez commencer à parler…",
+        "ptt": "Appuyez et maintenez la touche espace pour parler…"
       },
       "startAuto": "Démarrer une conversation automatique",
       "startPTT": "Démarrer une conversation push-to-talk",
@@ -1299,8 +1303,8 @@
   },
   "realtimeChat": {
     "errorPrefix": "Erreur : ",
-    "establishingConnection": "Établissement de la connexion...",
-    "requestingMicrophone": "Demande d'accès au microphone...",
+    "establishingConnection": "Établissement de la connexion…",
+    "requestingMicrophone": "Demande d'accès au microphone…",
     "sessionEstablished": "Session établie avec succès !"
   },
   "scratchpad": {
@@ -1330,7 +1334,8 @@
     },
     "generationError": "Erreur lors de la génération du texte",
     "loadingError": "Erreur lors du chargement du fichier de bloc-notes",
-    "placeholder": "Commencez à taper votre document ou\ndemandez à Witsy d'écrire quelque chose pour vous !\n\nUne fois que vous avez commencé, vous pouvez demander à Witsy\nde faire des modifications sur votre document.\n\nSi vous surlignez une partie de votre texte,\nWitsy ne mettra à jour que cette partie.\n\nJetez également un coup d'œil à l'Assistant d'Écriture\ndans la barre d'action en bas à droite !\n\nEssayez-le !"
+    "placeholder": "Commencez à taper votre document ou\ndemandez à Witsy d'écrire quelque chose pour vous !\n\nUne fois que vous avez commencé, vous pouvez demander à Witsy\nde faire des modifications sur votre document.\n\nSi vous surlignez une partie de votre texte,\nWitsy ne mettra à jour que cette partie.\n\nJetez également un coup d'œil à l'Assistant d'Écriture\ndans la barre d'action en bas à droite !\n\nEssayez-le !",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1589,15 +1594,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "Commandes IA",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier puis choisissez une commande IA",
-      "dictation": "Dictée",
-      "newChat": "Nouveau chat",
-      "newPrompt": "Nouvelle requête rapide",
-      "newScratchpad": "Nouveau bloc-notes",
-      "readAloud": "Lecture à haute voix",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier",
-      "voiceMode": "Mode vocal"
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "Avancé",
@@ -1625,7 +1630,7 @@
       "engine": "Moteur",
       "groqApiKeyReminder": "Assurez-vous d'entrer votre clé API Groq dans l'onglet Modèles.",
       "initializationError": "Une erreur s'est produite pendant l'initialisation. Veuillez réessayer.",
-      "initializing": "Initialisation...",
+      "initializing": "Initialisation…",
       "model": "Modèle",
       "openaiApiKeyReminder": "Assurez-vous d'entrer votre clé API OpenAI dans l'onglet Modèles.",
       "selectModel": "Sélectionner un modèle",
@@ -1686,19 +1691,20 @@
     "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
     "errorMicrophone": "Erreur d'accès au microphone",
     "errorSTTNotReady": "Le moteur de reconnaissance vocale n'est pas prêt",
-    "errorTranscription": "Une erreur s'est produite pendant la transcription"
+    "errorTranscription": "Une erreur s'est produite pendant la transcription",
+    "title": "Dictée Vocale"
   },
   "tray": {
     "menu": {
-      "createMedia": "Créer un média...",
-      "installUpdate": "Installer la mise à jour et redémarrer...",
-      "newChat": "Nouvelle conversation",
-      "quickPrompt": "Requête rapide",
+      "createMedia": "@:{'menu.file.createMedia'}",
+      "installUpdate": "Installer la mise à jour et redémarrer…",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Quitter",
       "readAloud": "Lire à haute voix",
       "runAiCommand": "Exécuter une commande IA",
-      "scratchpad": "Bloc-notes",
-      "settings": "Paramètres…",
+      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "Démarrer la dictée",
       "voiceMode": "Mode vocal"
     }

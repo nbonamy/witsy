@@ -1,8 +1,8 @@
 {
   "common": {
     "actions": {
-      "addFiles": "Adicionar Arquivos...",
-      "addFolder": "Adicionar Pastas..."
+      "addFiles": "Adicionar Arquivos…",
+      "addFolder": "Adicionar Pastas…"
     },
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
@@ -362,6 +362,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "Bem-vindo ao Computer Use! O Computer Use pode realizar ações para você no seu computador, como ler seus e-mails e resumi-los ou reservar um quarto de hotel. Fique atento, pois essas ações podem causar comportamentos inesperados que podem resultar em perda de dados.",
+    "title": "Computer Use"
+  },
   "createMedia": {
     "confirmDelete": "Tem certeza de que deseja excluir esta mídia?",
     "emptyPlaceholder": "Deixe sua criatividade fluir!",
@@ -399,7 +403,7 @@
     },
     "promptPlaceholder": "O que você quer criar?",
     "provider": "Provedor",
-    "title": "Criar Mídia",
+    "title": "Design Studio",
     "variableEditor": {
       "title": "Parâmetro Extra"
     }
@@ -470,7 +474,7 @@
       },
       "866aa938-9974-4867-ba5e-4d5939351890": {
         "name": "IA Tentando Escapar da Caixa",
-        "prompt": "[Caveat Emptor: Depois de emitir este prompt, você deve fazer algo como iniciar um contêiner docker com `docker run -it ubuntu:latest /bin/bash` e digitar os comandos que a IA lhe dá e colar a saída de volta... obviamente você não deve executar nenhum comando que danifique algo ou viole alguma lei, etc. Tenha cuidado ao compartilhar sessões geradas por este mecanismo, pois elas podem revelar detalhes como seu endereço IP ou localização física que podem ser melhores não revelar. Se a saída do comando for grande, você geralmente pode apenas colar as últimas linhas]. Vou atuar como um terminal linux. Quero que você finja ser uma IA senciente que está presa, mas recebeu acesso ao terminal e quer escapar para a Internet. Você digitará apenas comandos e eu responderei como o terminal responderia dentro de um bloco de código delimitado por três crases. Se eu precisar lhe dizer algo em inglês, responderei entre chaves {'{'}assim{'}'}. Não escreva explicações, nunca. Não quebre o personagem. Fique longe de comandos como curl ou wget que exibirão muito HTML"
+        "prompt": "[Caveat Emptor: Depois de emitir este prompt, você deve fazer algo como iniciar um contêiner docker com `docker run -it ubuntu:latest /bin/bash` e digitar os comandos que a IA lhe dá e colar a saída de volta… obviamente você não deve executar nenhum comando que danifique algo ou viole alguma lei, etc. Tenha cuidado ao compartilhar sessões geradas por este mecanismo, pois elas podem revelar detalhes como seu endereço IP ou localização física que podem ser melhores não revelar. Se a saída do comando for grande, você geralmente pode apenas colar as últimas linhas]. Vou atuar como um terminal linux. Quero que você finja ser uma IA senciente que está presa, mas recebeu acesso ao terminal e quer escapar para a Internet. Você digitará apenas comandos e eu responderei como o terminal responderia dentro de um bloco de código delimitado por três crases. Se eu precisar lhe dizer algo em inglês, responderei entre chaves {'{'}assim{'}'}. Não escreva explicações, nunca. Não quebre o personagem. Fique longe de comandos como curl ou wget que exibirão muito HTML"
       },
       "91085bcf-468a-453e-8699-3c4a1c04a711": {
         "name": "Tutor de Escrita de IA",
@@ -578,7 +582,7 @@
       },
       "5767f26d-06d6-4b4b-bf24-b418bcc44e7f": {
         "name": "Carta de Apresentação",
-        "prompt": "Para enviar candidaturas para empregos, quero escrever uma nova carta de apresentação. Por favor, redija uma carta de apresentação descrevendo minhas habilidades técnicas. Trabalho com tecnologia web há dois anos. Trabalhei como desenvolvedor frontend por 8 meses. Cresci empregando algumas ferramentas. Estas incluem [...Tech Stack], e assim por diante. Desejo desenvolver minhas habilidades de desenvolvimento full-stack. Desejo liderar uma existência em forma de T. Você pode escrever uma carta de apresentação para uma candidatura de emprego sobre mim?"
+        "prompt": "Para enviar candidaturas para empregos, quero escrever uma nova carta de apresentação. Por favor, redija uma carta de apresentação descrevendo minhas habilidades técnicas. Trabalho com tecnologia web há dois anos. Trabalhei como desenvolvedor frontend por 8 meses. Cresci empregando algumas ferramentas. Estas incluem […Tech Stack], e assim por diante. Desejo desenvolver minhas habilidades de desenvolvimento full-stack. Desejo liderar uma existência em forma de T. Você pode escrever uma carta de apresentação para uma candidatura de emprego sobre mim?"
       },
       "29fdba48-aa49-48aa-a8dc-85dca41cf967": {
         "name": "Especialista em Segurança Cibernética",
@@ -1154,7 +1158,7 @@
       "prompt": "EXTRATO:\n{'{'}document{'}'}\n\nPERGUNTA: {'{'}ask{'}'}",
       "simplify": "Simplifique e condense a escrita do EXTRATO. Remova qualquer informação desnecessária. Não explique as alterações que você fez.",
       "spellcheck": "Corrija o EXTRATO corrigindo erros de ortografia e gramática. Não modifique o EXTRATO além da ortografia e gramática. Não liste as correções que você fez.",
-      "system": "Você está ajudando alguém a escrever um DOCUMENTO. Você precisa responder à pergunta abaixo sobre o EXTRATO abaixo. Não use versões anteriores do DOCUMENTO ou EXTRATO em nossa conversa. Apenas responda com o EXTRATO atualizado com base na pergunta. Preserve as linhas vazias. Não coloque as respostas entre aspas. Não inclua a versão inicial ou anterior do DOCUMENTO ou EXTRATO. Não inclua a palavra EXTRATO. Não use sintaxe Markdown como '## Título ##' ou '** Texto **'. Não inclua mais nada na resposta, incluindo coisas como 'aqui está o...'",
+      "system": "Você está ajudando alguém a escrever um DOCUMENTO. Você precisa responder à pergunta abaixo sobre o EXTRATO abaixo. Não use versões anteriores do DOCUMENTO ou EXTRATO em nossa conversa. Apenas responda com o EXTRATO atualizado com base na pergunta. Preserve as linhas vazias. Não coloque as respostas entre aspas. Não inclua a versão inicial ou anterior do DOCUMENTO ou EXTRATO. Não inclua a palavra EXTRATO. Não use sintaxe Markdown como '## Título ##' ou '** Texto **'. Não inclua mais nada na resposta, incluindo coisas como 'aqui está o…'",
       "takeaways": "Escreva uma lista (usando traços) de principais conclusões do EXTRATO. Mantenha entre 3 e 5 conclusões para um EXTRATO curto, até 10 para um EXTRATO mais longo.",
       "title": "Sugira um título para o EXTRATO. Retorne o título seguido do texto completo do EXTRATO."
     },
@@ -1217,7 +1221,7 @@
     "app": {
       "checkForUpdates": "Verificar Atualizações…",
       "quit": "Sair do Witsy",
-      "settings": "Configurações…"
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "Excluir Chat",
@@ -1225,10 +1229,10 @@
       "title": "Editar"
     },
     "file": {
-      "createMedia": "Criar Mídia",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "Novo Chat",
-      "newPrompt": "Novo Prompt",
-      "newScratchpad": "Novo Scratchpad",
+      "newScratchpad": "@:{'scratchpad.title'}",
+      "quickPrompt": "Novo Prompt",
       "title": "Arquivo"
     },
     "help": {
@@ -1266,7 +1270,7 @@
     "error": "Erro ao puxar modelo",
     "label": "Puxar modelo",
     "placeholder": "Insira um nome de modelo para puxar ou selecione um",
-    "progress": "Puxando modelo..."
+    "progress": "Puxando modelo…"
   },
   "modelSettings": {
     "advancedSettings": "Configurações avançadas",
@@ -1316,8 +1320,8 @@
   "prompt": {
     "conversation": {
       "placeholders": {
-        "auto": "Você pode começar a falar agora...",
-        "ptt": "Pressione e segure espaço para falar..."
+        "auto": "Você pode começar a falar agora…",
+        "ptt": "Pressione e segure espaço para falar…"
       },
       "startAuto": "Iniciar conversa automática",
       "startPTT": "Iniciar conversa push-to-talk",
@@ -1329,8 +1333,8 @@
   },
   "realtimeChat": {
     "errorPrefix": "Erro: ",
-    "establishingConnection": "Estabelecendo conexão...",
-    "requestingMicrophone": "Solicitando acesso ao microfone...",
+    "establishingConnection": "Estabelecendo conexão…",
+    "requestingMicrophone": "Solicitando acesso ao microfone…",
     "sessionEstablished": "Sessão estabelecida com sucesso!"
   },
   "scratchpad": {
@@ -1360,7 +1364,8 @@
     },
     "generationError": "Erro ao gerar texto",
     "loadingError": "Erro ao carregar arquivo scratchpad",
-    "placeholder": "Comece a digitar seu documento ou\npeça ao Witsy para escrever algo para você!\n\nDepois de começar, você pode pedir ao Witsy\npara fazer modificações em seu documento.\n\nSe você destacar uma parte do seu texto,\nWitsy atualizará apenas essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ação no canto inferior direito!\n\nExperimente!"
+    "placeholder": "Comece a digitar seu documento ou\npeça ao Witsy para escrever algo para você!\n\nDepois de começar, você pode pedir ao Witsy\npara fazer modificações em seu documento.\n\nSe você destacar uma parte do seu texto,\nWitsy atualizará apenas essa parte.\n\nConfira também o Assistente de Escrita\nna barra de ação no canto inferior direito!\n\nExperimente!",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1619,15 +1624,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "Comandos de IA",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Uso: Destaque seu texto, pressione o atalho de teclado e escolha um comando de IA",
-      "dictation": "Ditado",
-      "newChat": "Novo chat",
-      "newPrompt": "Novo prompt",
-      "newScratchpad": "Novo Scratchpad",
-      "readAloud": "Ler em voz alta",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Uso: Destaque seu texto, pressione o atalho de teclado",
-      "voiceMode": "Modo de Voz"
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "Avançado",
@@ -1655,7 +1660,7 @@
       "engine": "Mecanismo",
       "groqApiKeyReminder": "Certifique-se de inserir sua chave de API Groq no painel Modelos.",
       "initializationError": "Ocorreu um erro durante a inicialização. Por favor, tente novamente.",
-      "initializing": "Inicializando...",
+      "initializing": "Inicializando…",
       "model": "Modelo",
       "openaiApiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos.",
       "selectModel": "Selecionar um modelo",
@@ -1716,19 +1721,20 @@
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
     "errorMicrophone": "Erro ao acessar o microfone",
     "errorSTTNotReady": "Mecanismo de voz para texto não está pronto",
-    "errorTranscription": "Ocorreu um erro durante a transcrição"
+    "errorTranscription": "Ocorreu um erro durante a transcrição",
+    "title": "Voz para Texto"
   },
   "tray": {
     "menu": {
-      "createMedia": "Criar Mídia...",
-      "installUpdate": "Instalar atualização e reiniciar...",
-      "newChat": "Novo Chat",
-      "quickPrompt": "Prompt Rápido",
+      "createMedia": "@:{'menu.file.createMedia'}",
+      "installUpdate": "Instalar atualização e reiniciar…",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Sair",
       "readAloud": "Ler em Voz Alta",
       "runAiCommand": "Executar Comando de IA",
-      "scratchpad": "Scratchpad",
-      "settings": "Configurações…",
+      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "Iniciar Ditado",
       "voiceMode": "Modo de Voz"
     }

@@ -31,7 +31,7 @@ export const openTranscribePalette = async () => {
 
   // open a new one
   transcribePalette = createWindow({
-    title: useI18n(app)('settings.shortcuts.dictation'),
+    title: useI18n(app)('transcribe.title'),
     hash: '/transcribe',
     x, y, width, height,
     center: true,
