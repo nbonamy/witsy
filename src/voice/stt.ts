@@ -1,6 +1,7 @@
 
 import { Configuration } from 'types/config'
 import STTOpenAI from './stt-openai'
+import STTFal from './stt-fal'
 import STTGroq from './stt-groq'
 import STTWhisper from './stt-whisper'
 
@@ -51,6 +52,8 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTOpenAI(config)
   } else if (engine === 'groq') {
     return new STTGroq(config)
+  } else if (engine === 'fal.ai') {
+    return new STTFal(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
   } else {
@@ -63,6 +66,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTOpenAI.requiresDownload()
   } else if (engine === 'groq') {
     return STTGroq.requiresDownload()
+  } else if (engine === 'fal.ai') {
+    return STTFal.requiresDownload()
   } else if (engine === 'whisper') {
     return STTWhisper.requiresDownload()
   } else {
