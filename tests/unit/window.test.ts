@@ -273,7 +273,7 @@ test('Open Realtime window', async () => {
   await window.openRealtimeChatWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/realtime',
-    title: 'Interactive Chat'
+    title: 'Voice Chat'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/realtime')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
