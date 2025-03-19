@@ -1,9 +1,10 @@
 
-import { anyDict, MediaCreator, MediaCreationEngine } from '../types/index'
+import { anyDict, MediaCreator, MediaCreationEngine, MediaReference } from '../types/index'
 import { store } from '../services/store'
-import { saveFileContents } from '../services/download'
+import { saveFileContents, download } from '../services/download'
 import { Model } from 'multi-llm-ts'
 import Replicate, { FileOutput } from 'replicate'
+import { fal } from '@fal-ai/client'
 
 export default class VideoCreator implements MediaCreator {
 
@@ -11,6 +12,9 @@ export default class VideoCreator implements MediaCreator {
     const engines = []
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: 'Replicate' })
+    }
+    if (!checkApiKey || store.config.engines.falai.apiKey) {
+      engines.push({ id: 'falai', name: 'fal.ai' })
     }
     return engines
   }
@@ -27,6 +31,17 @@ export default class VideoCreator implements MediaCreator {
         'haiper-ai/haiper-video-2',
         'genmoai/mochi-1'
       ].map(name => ({ id: name, name }))
+    } else if (engine == 'falai') {
+      return [
+        'fal-ai/veo2',
+        'fal-ai/minimax/video-01',
+        'fal-ai/minimax/video-01-live',
+        'fal-ai/minimax/video-01-director',
+        'fal-ai/mochi-v1',
+        'fal-ai/stepfun-video',
+        'fal-ai/hunyuan-video',
+        'fal-ai/fast-svd/text-to-video',
+      ].map(name => ({ id: name, name }))
     } else {
       return []
     }
@@ -40,9 +55,11 @@ export default class VideoCreator implements MediaCreator {
     return VideoCreator.getModels(engine)
   }
 
-  async execute(engine: string, model: string, parameters: anyDict): Promise<any> {
+  async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any> {
     if (engine === 'replicate') {
       return this.replicate(model, parameters)
+    } else if (engine === 'falai') {
+      return this.falai(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -72,6 +89,37 @@ export default class VideoCreator implements MediaCreator {
       url: fileUrl,
     }
 
+  }
+  
+  async falai(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+
+    try {
+
+      // set api key
+      fal.config({
+        credentials: store.config.engines.falai.apiKey
+      });
+
+
+
+      // submit
+      const response = await fal.subscribe(model, {
+        input: {
+          ...(parameters.prompt ? { prompt: parameters.prompt } : {}),
+          ...(reference ? { image_url: new File([window.api.base64.decode(reference.contents)], 'image.png') } : {}),
+        }
+      })
+
+      // download
+      const video = response.data.video
+      const fileUrl = download(video.url)
+      return { url: fileUrl }
+
+    } catch (error) {
+      console.error("Error generating content:", error);
+      return { error: error.message }
+    }
+  
   }
   
   async blobToBase64(blob: Blob): Promise<string>{

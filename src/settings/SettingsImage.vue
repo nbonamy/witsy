@@ -36,8 +36,22 @@
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="subgroup">
-          <Combobox :items="replicate_models" :placeholder="t('settings.plugins.image.replicate.modelPlaceholder')" v-model="image_model" @change="save"/>
+          <Combobox :items="replicate_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save"/>
           <a href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a><br/>
+        </div>
+      </div>
+    </template>
+
+    <template v-if="engine == 'falai'">
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated v-model="falaiAPIKey" @blur="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="subgroup">
+          <Combobox :items="falai_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save"/>
+          <a href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a><br/>
         </div>
       </div>
     </template>
@@ -50,7 +64,7 @@
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="subgroup">
-          <Combobox :items="hf_models" :placeholder="t('settings.plugins.image.huggingface.modelPlaceholder')" v-model="image_model" @change="save"/>
+          <Combobox :items="hf_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save"/>
           <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a><br/>
         </div>
       </div>
@@ -87,11 +101,13 @@ import Combobox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import SDWebUI, { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
 import LlmFactory from '../llms/llm'
+import { fal } from '@fal-ai/client'
 
 const enabled = ref(false)
 const engine = ref(null)
 const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
+const falaiAPIKey = ref(null)
 const sdwebuiBaseURL = ref('')
 const refreshLabel = ref(t('common.refresh'))
 const image_model = ref(null)
@@ -100,7 +116,7 @@ const image_models = ref([])
 const engines = computed(() => ImageCreator.getEngines(false))
 
 const hf_models = computed(() => ImageCreator.getModels('huggingface'))
-
+const falai_models = computed(() => ImageCreator.getModels('falai'))
 const replicate_models = computed(() => ImageCreator.getModels('replicate'))
 
 const load = () => {
@@ -108,6 +124,7 @@ const load = () => {
   engine.value = store.config.plugins.image.engine || 'openai'
   huggingAPIKey.value = store.config.engines.huggingface?.apiKey || ''
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
+  falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   sdwebuiBaseURL.value = store.config.engines.sdwebui?.baseURL || ''
   onChangeEngine()
 }
@@ -165,6 +182,7 @@ const save = () => {
   store.config.plugins.image.engine = engine.value
   store.config.engines.huggingface.apiKey = huggingAPIKey.value
   store.config.engines.replicate.apiKey = replicateAPIKey.value
+  store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines[engine.value].model.image = image_model.value
   store.config.engines.sdwebui.baseURL = sdwebuiBaseURL.value
   store.saveSettings()

@@ -23,7 +23,7 @@
     <div class="group">
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
-        <Combobox class="combobox" :items="chat_models" :placeholder="t('settings.engines.custom.modelPlaceholder')" v-model="chat_model" @change="save" />
+        <Combobox class="combobox" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save" />
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>

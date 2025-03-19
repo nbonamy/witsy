@@ -277,7 +277,15 @@
       }
     },
     "falai": {
-      "apiKey": ""
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
     }
   },
   "plugins": {

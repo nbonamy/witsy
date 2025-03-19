@@ -66,6 +66,7 @@
     "load": "Carica",
     "low": "Basso",
     "medium": "Medio",
+    "modelPlaceholder": "Inserisci un nome di modello o seleziona uno",
     "move": "Sposta",
     "name": "Nome",
     "newChat": "Nuova chat",
@@ -1306,7 +1307,7 @@
     "establishingConnection": "Stabilendo la connessione…",
     "requestingMicrophone": "Richiesta di accesso al microfono…",
     "sessionEstablished": "Sessione stabilita con successo!",
-    "title": "Chat Interattiva"
+    "title": "Chat Vocale"
   },
   "scratchpad": {
     "actions": {
@@ -1424,8 +1425,7 @@
         "apiSpecification": "Specifiche API",
         "confirmDelete": "Sei sicuro di voler eliminare questo fornitore personalizzato?",
         "create": "Crea motore",
-        "delete": "Elimina motore",
-        "modelPlaceholder": "Inserisci un nome di modello o seleziona uno"
+        "delete": "Elimina motore"
       },
       "deepseek": {
         "aboutModels": "Ulteriori informazioni sui modelli DeepSeek"
@@ -1500,15 +1500,16 @@
       "image": {
         "apiKeyReminder": "Assicurati di inserire la tua chiave API nel pannello Modelli delle impostazioni di Witsy.",
         "description": "Questo plugin consente ai motori LLM di creare immagini a partire da una descrizione testuale.",
+        "falai": {
+          "aboutModels": "Ulteriori informazioni sui modelli fal.ai"
+        },
         "huggingface": {
-          "aboutModels": "Ulteriori informazioni sui modelli Hugging Face",
-          "modelPlaceholder": "Inserisci un modello o seleziona dall'elenco"
+          "aboutModels": "Ulteriori informazioni sui modelli Hugging Face"
         },
         "imageModel": "Modello immagine",
         "provider": "Fornitore",
         "replicate": {
-          "aboutModels": "Ulteriori informazioni sui modelli Replicate",
-          "modelPlaceholder": "Inserisci un modello o seleziona dall'elenco"
+          "aboutModels": "Ulteriori informazioni sui modelli Replicate"
         },
         "title": "Testo a Immagine"
       },
@@ -1583,8 +1584,7 @@
         "description": "Questo plugin consente ai motori LLM di creare video a partire da una descrizione testuale.",
         "provider": "Fornitore",
         "replicate": {
-          "aboutModels": "Ulteriori informazioni sui modelli Replicate",
-          "modelPlaceholder": "Inserisci un modello o seleziona dall'elenco"
+          "aboutModels": "Ulteriori informazioni sui modelli Replicate"
         },
         "title": "Testo a Video",
         "videoModel": "Modello video"

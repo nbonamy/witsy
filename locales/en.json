@@ -85,6 +85,7 @@
     "load": "Load",
     "low": "Low",
     "medium": "Medium",
+    "modelPlaceholder": "Enter a model or select from the list",
     "move": "Move",
     "name": "Name",
     "newChat": "New chat",
@@ -381,6 +382,7 @@
       "empty": "You haven't created any media yet.",
       "title": "History"
     },
+    "imageToVideo": "Use current image to create video. Make sure you select a image-to-video model.",
     "loadMediaSettings": "Load settings",
     "mediaType": {
       "image": "Image",
@@ -1336,7 +1338,7 @@
     "establishingConnection": "Establishing connection…",
     "requestingMicrophone": "Requesting microphone access…",
     "sessionEstablished": "Session established successfully!",
-    "title": "Interactive Chat"
+    "title": "Voice Chat"
   },
   "scratchpad": {
     "actions": {
@@ -1454,8 +1456,7 @@
         "apiSpecification": "API Specification",
         "confirmDelete": "Are you sure you want to delete this custom provider?",
         "create": "Create engine",
-        "delete": "Delete engine",
-        "modelPlaceholder": "Enter a model name or select one"
+        "delete": "Delete engine"
       },
       "deepseek": {
         "aboutModels": "More about DeepSeek models"
@@ -1536,15 +1537,16 @@
       "image": {
         "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
         "description": "This plugin allows LLM engines to create images from a text description.",
+        "falai": {
+          "aboutModels": "More about fal.ai models"
+        },
         "huggingface": {
-          "aboutModels": "More about Hugging Face models",
-          "modelPlaceholder": "Enter a model or select from the list"
+          "aboutModels": "More about Hugging Face models"
         },
         "imageModel": "Image model",
         "provider": "Provider",
         "replicate": {
-          "aboutModels": "More about Replicate models",
-          "modelPlaceholder": "Enter a model or select from the list"
+          "aboutModels": "More about Replicate models"
         },
         "title": "Text-to-Image"
       },
@@ -1619,8 +1621,7 @@
         "description": "This plugin allows LLM engines to create videos from a text description.",
         "provider": "Provider",
         "replicate": {
-          "aboutModels": "More about Replicate models",
-          "modelPlaceholder": "Enter a model or select from the list"
+          "aboutModels": "More about Replicate models"
         },
         "title": "Text-to-Video",
         "videoModel": "Video model"
