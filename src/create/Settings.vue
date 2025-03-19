@@ -31,7 +31,10 @@
       <div class="group" v-else>
         <label>{{ t('designStudio.model') }}</label>
         <ComboBox :items="models" v-model="model" @change="onChangeModel" />
-        <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a>
+        <a v-if="engine === 'replicate' && mediaType === 'image'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
+        <a v-if="engine === 'replicate' && mediaType === 'video'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
+        <a v-if="engine === 'falai' && mediaType === 'image'" href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
+        <a v-if="engine === 'falai' && mediaType === 'video'" href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
         <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
       </div>
 
@@ -40,6 +43,11 @@
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
+
+      <!-- <div class="group horizontal checkbox" v-if="hasCurrentImage && supportsImageToVideo">
+        <input type="checkbox" v-model="imageToVideo" name="image_to_video" />
+        <label>{{ t('designStudio.imageToVideo') }}</label>
+      </div> -->
 
       <div v-if="modelHasParams" class="group">
         
@@ -56,9 +64,7 @@
       <template v-if="showParams">
 
         <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('designStudio.moreAboutReplicateModels') }}</a></div>
-
         <div v-if="engine == 'huggingface'" class="info">{{ t('designStudio.parameters.supportWarning') }}</div>
-
         <div v-if="engine == 'sdwebui'" class="info"><a :href="`${new SDWebUI(store.config).baseUrl}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('designStudio.moreAboutSDWebUIParameters') }}</a></div>
         
         <template v-if="modelHasCustomParams">
@@ -98,7 +104,7 @@
           <button name="generate" class="generate-button" type="button" @click="generateMedia('create')" :disabled="isGenerating">
             {{ isGenerating ? t('designStudio.generating') : t('designStudio.generate') }}
           </button>
-          <button v-if="canEdit" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
+          <button v-if="canUpload" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
           <button v-if="canEdit && hasCurrentImage" name="edit" type="button" @click="generateMedia('edit')" :disabled="isGenerating">{{ t('common.edit') }}</button>
         </div>
       </div>
@@ -152,6 +158,7 @@ const engine = ref('')
 const model = ref('')
 const prompt = ref('')
 const params: Ref<Record<string, string>> = ref({})
+//const imageToVideo = ref(false)
 const showParams = ref(false)
 const selectedParam = ref(null)
 const refreshLabel = ref(t('common.refresh'))
@@ -249,6 +256,14 @@ const modelHasParams = computed(() => {
   return modelHasUserParams.value || modelHasCustomParams.value
 })
 
+const supportsImageToVideo = computed(() => {
+  return false//mediaType.value === 'video' && ['falai'].includes(engine.value)
+})
+
+const canUpload = computed(() => {
+  return canEdit.value || supportsImageToVideo.value
+})
+
 onMounted(() => {
   mediaType.value = store.config.create.type || 'image'
   engine.value = store.config.create.engine || 'openai'
@@ -267,6 +282,7 @@ const onChangeEngine = () => {
 }
 
 const onChangeModel = () => {
+  // imageToVideo.value = false
   onLoadDefaults()
   saveSettings()
 }
@@ -387,7 +403,7 @@ const saveSettings = () => {
 const generateMedia = async (action: 'create'|'edit') => {
 
   const userPrompt = prompt.value.trim()
-  if (!userPrompt) {
+  if (/*!imageToVideo.value && */!userPrompt) {
     Dialog.show({
       title: t('common.error'),
       text: t('designStudio.error.promptRequired'),
@@ -395,6 +411,12 @@ const generateMedia = async (action: 'create'|'edit') => {
     return
   }
 
+  // // overwrite
+  // if (imageToVideo.value) {
+  //   action = 'edit'
+  // }
+
+  // emit
   emit('generate', {
     action: action,
     mediaType: mediaType.value,

@@ -85,6 +85,7 @@
     "load": "Wczytaj",
     "low": "Niski",
     "medium": "Średni",
+    "modelPlaceholder": "Wprowadź nazwę modelu lub wybierz jedną z nich",
     "move": "Przenieś",
     "name": "Nazwa",
     "newChat": "Nowy czat",
@@ -1336,7 +1337,7 @@
     "establishingConnection": "Nawiązywanie połączenia...",
     "requestingMicrophone": "Proszę o dostęp do mikrofonu...",
     "sessionEstablished": "Sesja ustanowiona",
-    "title": "Tryb głosowy"
+    "title": "Czat głosowy"
   },
   "scratchpad": {
     "actions": {
@@ -1454,8 +1455,7 @@
         "apiSpecification": "Specyfikacja API",
         "confirmDelete": "Czy na pewno chcesz usunąć tego niestandardowego dostawcę?",
         "create": "Tworzenie silnika",
-        "delete": "Usuń silnik",
-        "modelPlaceholder": "Wprowadź nazwę modelu lub wybierz jedną z nich"
+        "delete": "Usuń silnik"
       },
       "deepseek": {
         "aboutModels": "Więcej informacji o modelach DeepSeek"
@@ -1536,15 +1536,16 @@
       "image": {
         "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie obrazów na podstawie opisu tekstowego.",
+        "falai": {
+          "aboutModels": "Więcej informacji o modelach fal.ai"
+        },
         "huggingface": {
-          "aboutModels": "Więcej informacji o modelach Hugging Face",
-          "modelPlaceholder": "Wprowadź model lub wybierz go z listy"
+          "aboutModels": "Więcej informacji o modelach Hugging Face"
         },
         "imageModel": "Model obrazu",
         "provider": "Dostawca",
         "replicate": {
-          "aboutModels": "Więcej informacji o powielaniu modeli",
-          "modelPlaceholder": "Wprowadź model lub wybierz go z listy"
+          "aboutModels": "Więcej informacji o powielaniu modeli"
         },
         "title": "Tekst na obraz"
       },
@@ -1619,8 +1620,7 @@
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie filmów na podstawie opisu tekstowego.",
         "provider": "Dostawca",
         "replicate": {
-          "aboutModels": "Więcej informacji o powielaniu modeli",
-          "modelPlaceholder": "Wprowadź model lub wybierz go z listy"
+          "aboutModels": "Więcej informacji o powielaniu modeli"
         },
         "title": "Tekst na wideo",
         "videoModel": "Model wideo"

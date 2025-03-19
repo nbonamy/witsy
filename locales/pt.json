@@ -85,6 +85,7 @@
     "load": "Carregar",
     "low": "Baixo",
     "medium": "Médio",
+    "modelPlaceholder": "Insira um nome de modelo ou selecione um",
     "move": "Mover",
     "name": "Nome",
     "newChat": "Novo chat",
@@ -1336,7 +1337,7 @@
     "establishingConnection": "Estabelecendo conexão…",
     "requestingMicrophone": "Solicitando acesso ao microfone…",
     "sessionEstablished": "Sessão estabelecida com sucesso!",
-    "title": "Chat Interativo"
+    "title": "Chat Vocal"
   },
   "scratchpad": {
     "actions": {
@@ -1454,8 +1455,7 @@
         "apiSpecification": "Especificação da API",
         "confirmDelete": "Tem certeza de que deseja excluir este provedor personalizado?",
         "create": "Criar mecanismo",
-        "delete": "Excluir mecanismo",
-        "modelPlaceholder": "Insira um nome de modelo ou selecione um"
+        "delete": "Excluir mecanismo"
       },
       "deepseek": {
         "aboutModels": "Mais sobre os modelos DeepSeek"
@@ -1530,15 +1530,16 @@
       "image": {
         "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",
         "description": "Este plugin permite que os mecanismos LLM criem imagens a partir de uma descrição de texto.",
+        "falai": {
+          "aboutModels": "Mais sobre os modelos fal.ai"
+        },
         "huggingface": {
-          "aboutModels": "Mais sobre os modelos Hugging Face",
-          "modelPlaceholder": "Insira um modelo ou selecione na lista"
+          "aboutModels": "Mais sobre os modelos Hugging Face"
         },
         "imageModel": "Modelo de imagem",
         "provider": "Provedor",
         "replicate": {
-          "aboutModels": "Mais sobre os modelos Replicate",
-          "modelPlaceholder": "Insira um modelo ou selecione na lista"
+          "aboutModels": "Mais sobre os modelos Replicate"
         },
         "title": "Texto para Imagem"
       },
@@ -1613,8 +1614,7 @@
         "description": "Este plugin permite que os mecanismos LLM criem vídeos a partir de uma descrição de texto.",
         "provider": "Provedor",
         "replicate": {
-          "aboutModels": "Mais sobre os modelos Replicate",
-          "modelPlaceholder": "Insira um modelo ou selecione na lista"
+          "aboutModels": "Mais sobre os modelos Replicate"
         },
         "title": "Texto para Vídeo",
         "videoModel": "Modelo de vídeo"

@@ -66,6 +66,7 @@
     "load": "Laden",
     "low": "Niedrig",
     "medium": "Mittel",
+    "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste",
     "move": "Verschieben",
     "name": "Name",
     "newChat": "Neuer Chat",
@@ -1306,7 +1307,7 @@
     "establishingConnection": "Verbindung wird hergestellt…",
     "requestingMicrophone": "Anforderung des Mikrofonzugriffs…",
     "sessionEstablished": "Sitzung erfolgreich hergestellt!",
-    "title": "Interaktiver Chat"
+    "title": "Sprachchat"
   },
   "scratchpad": {
     "actions": {
@@ -1424,8 +1425,7 @@
         "apiSpecification": "API-Spezifikation",
         "confirmDelete": "Sind Sie sicher, dass Sie diesen benutzerdefinierten Anbieter löschen möchten?",
         "create": "Motor erstellen",
-        "delete": "Motor löschen",
-        "modelPlaceholder": "Geben Sie einen Modellnamen ein oder wählen Sie einen aus"
+        "delete": "Motor löschen"
       },
       "deepseek": {
         "aboutModels": "Mehr über DeepSeek-Modelle"
@@ -1500,15 +1500,16 @@
       "image": {
         "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben.",
         "description": "Dieses Plugin ermöglicht LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
+        "falai": {
+          "aboutModels": "Mehr über fal.ai-Modelle"
+        },
         "huggingface": {
-          "aboutModels": "Mehr über Hugging Face-Modelle",
-          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+          "aboutModels": "Mehr über Hugging Face-Modelle"
         },
         "imageModel": "Bildmodell",
         "provider": "Anbieter",
         "replicate": {
-          "aboutModels": "Mehr über Replicate-Modelle",
-          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+          "aboutModels": "Mehr über Replicate-Modelle"
         },
         "title": "Text zu Bild"
       },
@@ -1583,8 +1584,7 @@
         "description": "Dieses Plugin ermöglicht LLM-Engines, Videos aus einer Textbeschreibung zu erstellen.",
         "provider": "Anbieter",
         "replicate": {
-          "aboutModels": "Mehr über Replicate-Modelle",
-          "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste"
+          "aboutModels": "Mehr über Replicate-Modelle"
         },
         "title": "Text zu Video",
         "videoModel": "Videomodell"

@@ -66,6 +66,7 @@
     "load": "Charger",
     "low": "Faible",
     "medium": "Moyen",
+    "modelPlaceholder": "Entrez un nom de modèle ou sélectionnez-en un",
     "move": "Déplacer",
     "name": "Nom",
     "newChat": "Nouvelle conversation",
@@ -1306,7 +1307,7 @@
     "establishingConnection": "Établissement de la connexion…",
     "requestingMicrophone": "Demande d'accès au microphone…",
     "sessionEstablished": "Session établie avec succès !",
-    "title": "Chat interactif"
+    "title": "Chat vocal"
   },
   "scratchpad": {
     "actions": {
@@ -1424,8 +1425,7 @@
         "apiSpecification": "Spécification API",
         "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fournisseur personnalisé ?",
         "create": "Créer un moteur",
-        "delete": "Supprimer le moteur",
-        "modelPlaceholder": "Entrez un nom de modèle ou sélectionnez-en un"
+        "delete": "Supprimer le moteur"
       },
       "deepseek": {
         "aboutModels": "A propos des modèles DeepSeek"
@@ -1500,15 +1500,16 @@
       "image": {
         "apiKeyReminder": "Assurez-vous d'entrer votre clé API dans l'onglet Modèles des paramètres de Witsy.",
         "description": "Ce plugin permet aux moteurs LLM de créer des images à partir d'une description textuelle.",
+        "falai": {
+          "aboutModels": "A propos des modèles fal.ai"
+        },
         "huggingface": {
-          "aboutModels": "A propos des modèles Hugging Face",
-          "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
+          "aboutModels": "A propos des modèles Hugging Face"
         },
         "imageModel": "Modèle d'image",
         "provider": "Fournisseur",
         "replicate": {
-          "aboutModels": "A propos des modèles Replicate",
-          "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
+          "aboutModels": "A propos des modèles Replicate"
         },
         "title": "Texte vers Image"
       },
@@ -1583,8 +1584,7 @@
         "description": "Ce plugin permet aux moteurs LLM de créer des vidéos à partir d'une description textuelle.",
         "provider": "Fournisseur",
         "replicate": {
-          "aboutModels": "A propos des modèles Replicate",
-          "modelPlaceholder": "Entrez un modèle ou sélectionnez dans la liste"
+          "aboutModels": "A propos des modèles Replicate"
         },
         "title": "Texte vers Vidéo",
         "videoModel": "Modèle de vidéo"

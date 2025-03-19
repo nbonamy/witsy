@@ -1,10 +1,11 @@
 import { Model } from 'multi-llm-ts';
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index';
-import { saveFileContents } from '../services/download'
+import { saveFileContents, download } from '../services/download'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import Replicate, { FileOutput } from 'replicate'
+import { fal } from '@fal-ai/client'
 import OpenAI from 'openai'
 import SDWebUI from './sdwebui';
 
@@ -23,6 +24,9 @@ export default class ImageCreator implements MediaCreator {
     }
     if (!checkApiKey || store.config.engines.huggingface.apiKey) {
       engines.push({ id: 'huggingface', name: 'HuggingFace' })
+    }
+    if (!checkApiKey || store.config.engines.falai.apiKey) {
+      engines.push({ id: 'falai', name: 'fal.ai' })
     }
     engines.push({ id: 'sdwebui', name: 'Stable Diffusion web UI' })
     return engines
@@ -44,6 +48,16 @@ export default class ImageCreator implements MediaCreator {
         'ideogram-ai/ideogram-v2',
         'recraft-ai/recraft-v3-svg',
         'fofr/any-comfyui-workflow',
+      ].sort().map(name => ({ id: name, name }))
+    } else if (engine == 'falai') {
+      return [
+        'fal-ai/recraft-v3',
+        'fal-ai/flux-pro/v1.1-ultra',
+        'fal-ai/ideogram/v2',
+        'fal-ai/flux-pro/v1.1-ultra-finetuned',
+        'fal-ai/minimax-image',
+        'fal-ai/aura-flow',
+        'fal-ai/flux/dev',
       ].sort().map(name => ({ id: name, name }))
     } else {
       return []
@@ -69,6 +83,8 @@ export default class ImageCreator implements MediaCreator {
       return this.sdwebui(model, parameters)
     } else if (engine == 'google') {
       return this.google(model, parameters, reference)
+    } else if (engine == 'falai') {
+      return this.falai(model, parameters)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -233,6 +249,31 @@ export default class ImageCreator implements MediaCreator {
 
   }
 
+  async falai(model: string, parameters: anyDict): Promise<anyDict> {
+
+    try {
+
+      // set api key
+      fal.config({
+        credentials: store.config.engines.falai.apiKey
+      });
+
+      // submit
+      const response = await fal.subscribe(model, {
+        input: parameters
+      })
+
+      // download
+      const image = response.data.images[0]
+      const fileUrl = download(image.url)
+      return { url: fileUrl }
+
+    } catch (error) {
+      console.error("Error generating content:", error);
+      return { error: error.message }
+    }
+  
+  }
 
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {

@@ -85,6 +85,7 @@
     "load": "加载",
     "low": "低",
     "medium": "中",
+    "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
     "name": "名称",
     "newChat": "新建聊天",
@@ -1336,7 +1337,7 @@
     "establishingConnection": "正在建立连接…",
     "requestingMicrophone": "正在请求麦克风访问权限…",
     "sessionEstablished": "会话成功建立！",
-    "title": "互动聊天"
+    "title": "语音聊天"
   },
   "scratchpad": {
     "actions": {
@@ -1454,8 +1455,7 @@
         "apiSpecification": "API 规范",
         "confirmDelete": "你确定要删除这个自定义提供程序吗？",
         "create": "创建引擎",
-        "delete": "删除引擎",
-        "modelPlaceholder": "输入模型名称或选择一个"
+        "delete": "删除引擎"
       },
       "deepseek": {
         "aboutModels": "了解更多关于 DeepSeek 模型的信息"
@@ -1530,15 +1530,16 @@
       "image": {
         "apiKeyReminder": "确保你在 Witsy 设置的模型面板中输入了你的 API 密钥。",
         "description": "此插件允许 LLM 引擎根据文本描述创建图像。",
+        "falai": {
+          "aboutModels": "了解更多关于 fal.ai 模型的信息"
+        },
         "huggingface": {
-          "aboutModels": "了解更多关于 Hugging Face 模型的信息",
-          "modelPlaceholder": "输入模型名称或从列表中选择"
+          "aboutModels": "了解更多关于 Hugging Face 模型的信息"
         },
         "imageModel": "图像模型",
         "provider": "提供者",
         "replicate": {
-          "aboutModels": "了解更多关于 Replicate 模型的信息",
-          "modelPlaceholder": "输入模型名称或从列表中选择"
+          "aboutModels": "了解更多关于 Replicate 模型的信息"
         },
         "title": "文本转图像"
       },
@@ -1613,8 +1614,7 @@
         "description": "此插件允许 LLM 引擎根据文本描述创建视频。",
         "provider": "提供者",
         "replicate": {
-          "aboutModels": "了解更多关于 Replicate 模型的信息",
-          "modelPlaceholder": "输入模型名称或从列表中选择"
+          "aboutModels": "了解更多关于 Replicate 模型的信息"
         },
         "title": "文本转视频",
         "videoModel": "视频模型"

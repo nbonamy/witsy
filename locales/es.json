@@ -66,6 +66,7 @@
     "load": "Cargar",
     "low": "Bajo",
     "medium": "Medio",
+    "modelPlaceholder": "Ingrese un nombre de modelo o seleccione uno",
     "move": "Mover",
     "name": "Nombre",
     "newChat": "Nueva conversación",
@@ -1306,7 +1307,8 @@
     "establishingConnection": "Estableciendo conexión…",
     "requestingMicrophone": "Solicitando acceso al micrófono…",
     "sessionEstablished": "¡Sesión establecida con éxito!",
-    "title": "Chat Interactivo"
+    "title": "Chat de Voz"
+
   },
   "scratchpad": {
     "actions": {
@@ -1424,8 +1426,7 @@
         "apiSpecification": "Especificación de la API",
         "confirmDelete": "¿Está seguro de que desea eliminar este proveedor personalizado?",
         "create": "Crear motor",
-        "delete": "Eliminar motor",
-        "modelPlaceholder": "Ingrese un nombre de modelo o seleccione uno"
+        "delete": "Eliminar motor"
       },
       "deepseek": {
         "aboutModels": "Más sobre los modelos de DeepSeek"
@@ -1500,15 +1501,16 @@
       "image": {
         "apiKeyReminder": "Asegúrese de ingresar su clave API en el panel de Modelos de la configuración de Witsy.",
         "description": "Este complemento permite que los motores LLM creen imágenes a partir de una descripción de texto.",
+        "falai": {
+          "aboutModels": "Más sobre los modelos de fal.ai"
+        },
         "huggingface": {
-          "aboutModels": "Más sobre los modelos de Hugging Face",
-          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+          "aboutModels": "Más sobre los modelos de Hugging Face"
         },
         "imageModel": "Modelo de imagen",
         "provider": "Proveedor",
         "replicate": {
-          "aboutModels": "Más sobre los modelos de Replicate",
-          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+          "aboutModels": "Más sobre los modelos de Replicate"
         },
         "title": "Texto a Imagen"
       },
@@ -1583,8 +1585,7 @@
         "description": "Este complemento permite que los motores LLM creen videos a partir de una descripción de texto.",
         "provider": "Proveedor",
         "replicate": {
-          "aboutModels": "Más sobre los modelos de Replicate",
-          "modelPlaceholder": "Ingrese un modelo o seleccione de la lista"
+          "aboutModels": "Más sobre los modelos de Replicate"
         },
         "title": "Texto a Video",
         "videoModel": "Modelo de video"
