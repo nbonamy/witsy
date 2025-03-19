@@ -35,7 +35,7 @@ interface KeyUsage {
 function setNestedValue(obj: any, keyPath: string, value: any) {
   const parts = keyPath.split('.')
   let current = obj
-  
+
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i]
     if (!current[part] || typeof current[part] !== 'object') {
@@ -43,7 +43,7 @@ function setNestedValue(obj: any, keyPath: string, value: any) {
     }
     current = current[part]
   }
-  
+
   current[parts[parts.length - 1]] = value
 }
 
@@ -51,14 +51,14 @@ function setNestedValue(obj: any, keyPath: string, value: any) {
 function getNestedValue(obj: any, keyPath: string): any {
   const parts = keyPath.split('.')
   let current = obj
-  
+
   for (const part of parts) {
     if (current[part] === undefined) {
       return undefined
     }
     current = current[part]
   }
-  
+
   return current
 }
 
@@ -72,18 +72,18 @@ function removeNestedKey(obj: any, keyPath: string) {
   const parts = keyPath.split('.')
   const lastPart = parts.pop()!
   let current = obj
-  
+
   for (const part of parts) {
     if (current[part] === undefined) {
       return
     }
     current = current[part]
   }
-  
+
   if (current[lastPart] !== undefined) {
     delete current[lastPart]
   }
-  
+
   // Clean up empty objects
   for (let i = parts.length - 1; i >= 0; i--) {
     const checkPath = parts.slice(0, i + 1).join('.')
@@ -119,7 +119,7 @@ async function checkMissingTranslations() {
     const localeFiles = fs.readdirSync(LOCALES_DIR)
       .filter(file => file.endsWith('.json'))
       .map(file => path.join(LOCALES_DIR, file))
-    
+
     if (localeFiles.length === 0) {
       console.error('No locale files found in the locales directory.')
       process.exit(1)
@@ -134,38 +134,38 @@ async function checkMissingTranslations() {
 
     // Find all source files
     const srcFiles = glob.sync(`${SRC_DIR}/**/*.{ts,vue}`)
-    
+
     // Extract all i18n keys from source files with their usage locations
     const keyUsages = new Map<string, KeyUsage>()
-    
+
     for (const file of srcFiles) {
       const content = fs.readFileSync(file, 'utf8')
       const lines = content.split('\n')
 
       for (const regex of [I18N_KEY_PATTERN_T, I18N_KEY_PATTERN_I]) {
-      
+
         // Need to reset the regex for each file
         regex.lastIndex = 0
-        
+
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i]
           let match
-          
+
           // Create a new regex for each line to avoid issues with stateful regex
           const lineRegex = new RegExp(regex.source, regex.flags)
-          
+
           while ((match = lineRegex.exec(line)) !== null) {
-            
+
             const key = match[1]
 
             if (key.startsWith('settings.load.error')) {
               continue
             }
-            
+
             if (!keyUsages.has(key)) {
               keyUsages.set(key, { key, files: [] })
             }
-            
+
             const usage = keyUsages.get(key)!
             usage.files.push({
               filename: file,
@@ -174,9 +174,9 @@ async function checkMissingTranslations() {
           }
         }
       }
-    
+
     }
-    
+
     let allKeys = Array.from(keyUsages.keys())
 
     // add keys from en.json
@@ -192,7 +192,7 @@ async function checkMissingTranslations() {
 
     // Check for missing translations
     const missingTranslations: MissingTranslations = {}
-    
+
     Object.keys(locales).forEach(locale => {
       missingTranslations[locale] = []
     })
@@ -211,17 +211,17 @@ async function checkMissingTranslations() {
     // Fix missing translations if --fix flag is provided
     if (shouldFix) {
       let fixesApplied = false
-      
+
       Object.entries(missingTranslations).forEach(([locale, keys]) => {
         if (keys.length > 0) {
           console.log(`\n🔧 Fixing ${keys.length} missing translation keys in "${locale}"...`)
-          
+
           keys.forEach(key => {
             // For English, use the key itself as the value
             if (locale === 'en') {
               setNestedValue(locales[locale], key, key)
               console.log(`  + Added "${key}" = "${key}"`)
-            } 
+            }
             // For other languages, use the English value if available
             else if (keyExists(locales.en, key)) {
               const enValue = getNestedValue(locales.en, key)
@@ -234,31 +234,31 @@ async function checkMissingTranslations() {
               console.log(`  + Added "${key}" = "${key}" (no English value found)`)
             }
           })
-          
+
           // Save the updated locale file
           fs.writeFileSync(
-            path.join(LOCALES_DIR, `${locale}.json`), 
+            path.join(LOCALES_DIR, `${locale}.json`),
             JSON.stringify(locales[locale], null, 2) + '\n',
             'utf8'
           )
-          
+
           fixesApplied = true
         }
       })
-      
+
       if (fixesApplied) {
         console.log('\n✅ Fixed all missing translation keys.')
       } else {
         console.log('\n✅ No missing translations to fix.')
       }
-      
+
       // After fixing, there should be no more missing translations
       return false
     }
 
     // Report results
     let hasMissingTranslations = false
-    
+
     Object.entries(missingTranslations).forEach(([locale, keys]) => {
       if (keys.length > 0) {
         hasMissingTranslations = true
@@ -291,7 +291,7 @@ async function checkMissingTranslations() {
 
 async function checkUnusedTranslations() {
   try {
-    
+
     // Get all locale files
     const localeFiles = fs.readdirSync(LOCALES_DIR)
       .filter(file => file.endsWith('.json'))
@@ -301,7 +301,7 @@ async function checkUnusedTranslations() {
 
     // Load and process each locale file
     for (const file of localeFiles) {
-      
+
       const localeName = path.basename(file, '.json')
       const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
       const allKeys = Object.keys(flatten(localeData))
@@ -328,16 +328,16 @@ async function checkUnusedTranslations() {
       // Fix unused keys if --fix flag is provided
       if (shouldFix && unusedKeys.size > 0) {
         console.log(`\n🔧 Removing ${unusedKeys.size} unused keys from "${localeName}"...`)
-        
+
         const updatedLocaleData = JSON.parse(JSON.stringify(localeData))
         Array.from(unusedKeys).forEach(key => {
           removeNestedKey(updatedLocaleData, key)
           console.log(`  - Removed "${key}"`)
         })
-        
+
         // Save the updated locale file
         fs.writeFileSync(
-          file, 
+          file,
           JSON.stringify(updatedLocaleData, null, 2) + '\n',
           'utf8'
         )
@@ -353,7 +353,7 @@ async function checkUnusedTranslations() {
         console.log(`\n✅ No unused keys found in "${localeName}"`)
       }
     }
-    
+
     if (hasUnusedKeys && !shouldFix) {
       console.log('\n⚠️ Some translations are unused. Use --fix to automatically remove them.')
     } else if (shouldFix) {
@@ -367,12 +367,79 @@ async function checkUnusedTranslations() {
   }
 }
 
+// Check for wrong linked translations
+async function checkWrongLinkedTranslations() {
+
+  // load en locale
+  const enLocalePath = path.join(LOCALES_DIR, 'en.json')
+  const enLocale = JSON.parse(fs.readFileSync(enLocalePath, 'utf8'))
+  const enData = flatten(enLocale)
+
+  // get linked translations
+  const linkedKeys: string[] = []
+  Object.keys(enData).forEach(key => {
+    if (enData[key].includes('@:{')) {
+      linkedKeys.push(key)
+    }
+  })
+
+  // Get all locale files
+  const localeFiles = fs.readdirSync(LOCALES_DIR)
+    .filter(file => file.endsWith('.json'))
+    .map(file => path.join(LOCALES_DIR, file))
+
+  // Load and process each locale file
+  for (const file of localeFiles) {
+
+    const localeName = path.basename(file, '.json')
+    if (localeName === 'en') {
+      continue
+    }
+    const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
+    const flattenedLocaleData = flatten(localeData)
+
+    const wrongLinkedKeys = linkedKeys.filter(key => {
+      const value = flattenedLocaleData[key]
+      return value && value !== enData[key]
+    })
+
+    if (wrongLinkedKeys.length > 0) {
+      console.log(`\n⚠️ Found ${wrongLinkedKeys.length} wrong linked translations in "${localeName}":`)
+      wrongLinkedKeys.forEach(key => console.log(`  - ${key}`))
+    } else {
+      console.log(`\n✅ No wrong linked translations found in "${localeName}"`)
+    }
+
+    // Fix wrong linked translations if --fix flag is provided
+    if (shouldFix && wrongLinkedKeys.length > 0) {
+      console.log(`\n🔧 Fixing ${wrongLinkedKeys.length} wrong linked translations in "${localeName}"...`)
+      const updatedLocaleData = JSON.parse(JSON.stringify(localeData))
+      wrongLinkedKeys.forEach(key => {
+        setNestedValue(updatedLocaleData, key, enData[key])
+        console.log(`  - Fixed "${key}" with "${enData[key]}"`)
+      })
+
+      // Save the updated locale file
+      fs.writeFileSync(
+        file,
+        JSON.stringify(updatedLocaleData, null, 2) + '\n',
+        'utf8'
+      )
+    }
+
+  }
+
+}
+
+
+
 // do it
 (async () => {
   const hasMissingTranslations = await checkMissingTranslations()
   const hasUnusedTranslations = await checkUnusedTranslations()
-  
-  if ((hasMissingTranslations || hasUnusedTranslations) && !shouldFix) {
+  const hasWrongLinkedTranslations = await checkWrongLinkedTranslations()
+
+  if ((hasMissingTranslations || hasUnusedTranslations || hasWrongLinkedTranslations) && !shouldFix) {
     process.exit(1)
   }
 })()
