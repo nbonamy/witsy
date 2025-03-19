@@ -1212,8 +1212,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Nouvelle conversation",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Nouvelle requête",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "Fichier"
     },
     "help": {
@@ -1598,10 +1598,10 @@
       "aiCommandsUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier puis choisissez une commande IA",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Utilisation : Surlignez votre texte, appuyez sur le raccourci clavier",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {

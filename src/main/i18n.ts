@@ -9,6 +9,7 @@ import fr from '../../locales/fr.json'
 import es from '../../locales/es.json'
 import de from '../../locales/de.json'
 import it from '../../locales/it.json'
+import pl from '../../locales/pl.json'
 import pt from '../../locales/pt.json'
 import zh from "../../locales/zh.json"
 
@@ -65,7 +66,7 @@ export const getLocaleMessages = (app: App): anyDict => {
   
   // standard messages
   messages = {
-    en, fr, es, de, it, pt, zh
+    en, fr, es, de, it, pl, pt, zh
   }
 
   const userDataPath = app.getPath('userData')

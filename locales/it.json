@@ -1212,8 +1212,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Nuova chat",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Nuova richiesta",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "File"
     },
     "help": {
@@ -1598,10 +1598,10 @@
       "aiCommandsUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera e poi scegli un comando IA",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
@@ -1707,7 +1707,6 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Inizia dettatura",
       "voiceMode": "Chat Interattiva"
-
     }
   }
 }

@@ -1212,8 +1212,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Neuer Chat",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Neue Eingabeaufforderung",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "Datei"
     },
     "help": {
@@ -1598,10 +1598,10 @@
       "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {

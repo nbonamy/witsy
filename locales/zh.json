@@ -1231,8 +1231,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "新建聊天",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "新建提示",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "文件"
     },
     "help": {
@@ -1628,10 +1628,10 @@
       "aiCommandsUsage": "使用方法：突出显示你的文本，按下键盘快捷键，然后选择一个 AI 命令",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "使用方法：突出显示你的文本，按下键盘快捷键",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {

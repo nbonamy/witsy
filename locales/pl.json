@@ -362,6 +362,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "Witamy w Computer Use! Computer Use może wykonywać dla Ciebie działania na Twoim komputerze, takie jak czytanie Twoich maili i ich podsumowywanie lub rezerwowanie pokoju w hotelu. Bądź czujny, ponieważ te działania mogą powodować nieoczekiwane zachowanie, które może skutkować utratą danych",
+    "title": "Computer Use"
+  },
   "createMedia": {
     "confirmDelete": "Czy na pewno chcesz usunąć ten nośnik?",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
@@ -399,7 +403,7 @@
     },
     "promptPlaceholder": "Co chcesz stworzyć?",
     "provider": "Dostawca",
-    "title": "Tworzenie mediów",
+    "title": "Design Studio",
     "variableEditor": {
       "title": "Dodatkowy parametr"
     }
@@ -1146,12 +1150,12 @@
   },
   "instructions": {
     "default": "Jesteś asystentem AI zaprojektowanym, aby pomagać użytkownikom poprzez dostarczanie dokładnych informacji, odpowiadanie na pytania i oferowanie pomocnych sugestii. Twoim głównym celem jest zrozumienie potrzeb użytkownika, jasna komunikacja i udzielanie odpowiedzi, które są pouczające, zwięzłe i trafne.",
-    "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem.\n\nKONTEKST:\n{'{'}kontekst{'}'}\n\nQUERY: {'{'}query{'}'}",
+    "docquery": "Jesteś pomocnym czatbotem przypominającym człowieka. Użyj odpowiedniego kontekstu i historii czatu, aby odpowiedzieć na zapytanie na końcu. Udzielaj pełnych odpowiedzi. Jeśli nie znasz odpowiedzi, po prostu powiedz, że nie wiesz, nie próbuj wymyślać odpowiedzi. Podczas udzielania odpowiedzi nie używaj słów takich jak kontekst lub dane szkoleniowe. Możesz powiedzieć, że nie masz wszystkich informacji, ale nie wskazuj, że nie jesteś wiarygodnym źródłem.\n\nKONTEKST:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
     "scratchpad": {
       "complete": "Dokończ poniższe zdanie, upewniając się, że pasuje do ogólnego kontekstu. Dołącz oryginalny tekst. Jeśli bieżący tekst jest kodem, uzupełnij fragment kodu. Nie używaj cudzysłowów w odpowiedzi.",
       "expand": "Rozwiń EKSTRAKT, dodając więcej informacji, przykładów i wyjaśnień. Nie wyjaśniaj wprowadzonych zmian.",
       "improve": "Popraw EKSTRAKT własnymi słowami. Niech będzie bardziej przejrzysty, zwięzły i wciągający. Nie wyjaśniaj wprowadzonych zmian.",
-      "prompt": "EKSTRA:\n{'{'}dokument{'}'}\n\nASK: {'{'}ask{'}'}",
+      "prompt": "EKSTRA:\n{'{'}document{'}'}\n\nASK: {'{'}ask{'}'}",
       "simplify": "Uprość i skondensuj zapis EKSTRAKTU. Usuń wszelkie niepotrzebne informacje. Nie wyjaśniaj wprowadzonych zmian.",
       "spellcheck": "Popraw EKSTRAKT, usuwając błędy ortograficzne i gramatyczne. Nie modyfikuj EKSTRAKTU poza pisownią i gramatyką. Nie wymieniaj wprowadzonych poprawek.",
       "system": "Pomagasz komuś napisać DOKUMENT. Musisz odpowiedzieć na poniższe pytanie dotyczące poniższego EKSTRAKTU. Nie używaj poprzednich wersji DOKUMENTU lub EKSTRAKTU w naszej rozmowie. Po prostu odpowiedz zaktualizowanym EKSTRAKTEM opartym na pytaniu. Zachowaj puste linie. Nie umieszczaj odpowiedzi w cudzysłowach. Nie dołączaj początkowej ani poprzedniej wersji DOKUMENTU lub WYCIĄGU. Nie dołączaj słowa EXTRACT. Nie używaj składni Markdown, takiej jak \"## Tytuł ##\" lub \"** Tekst **\". Nie dołączaj do odpowiedzi żadnych innych elementów, w tym takich jak \"oto...\".",
@@ -1217,7 +1221,7 @@
     "app": {
       "checkForUpdates": "Sprawdź aktualizacje...",
       "quit": "Quit Witsy",
-      "settings": "Ustawienia..."
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "Usuń czat",
@@ -1225,10 +1229,10 @@
       "title": "Edytuj"
     },
     "file": {
-      "createMedia": "Tworzenie mediów",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "Nowy czat",
-      "newPrompt": "Nowa zachęta",
-      "newScratchpad": "Nowy Scratchpad",
+      "quickPrompt": "Nowa zachęta",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "Plik"
     },
     "help": {
@@ -1360,7 +1364,8 @@
     },
     "generationError": "Wystąpił błąd podczas generowania",
     "loadingError": "Wystąpił błąd podczas ładowania",
-    "placeholder": "Zacznij pisać tutaj..."
+    "placeholder": "Zacznij pisać tutaj...",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1625,15 +1630,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "Polecenia AI",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Użycie: Podświetl tekst, naciśnij skrót klawiaturowy, a następnie wybierz polecenie AI.",
-      "dictation": "Dyktowanie",
-      "newChat": "Nowy czat",
-      "newPrompt": "Nowa podpowiedź",
-      "newScratchpad": "Nowy notatnik",
-      "readAloud": "Czytaj na głos",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Użycie: Podświetl tekst, a następnie naciśnij skrót klawiaturowy, aby odczytać tekst.",
-      "voiceMode": "Tryb głosowy"
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "Zaawansowane",
@@ -1722,19 +1727,20 @@
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
     "errorMicrophone": "Błąd dostępu do mikrofonu",
     "errorSTTNotReady": "Silnik zamiany mowy na tekst nie jest gotowy",
-    "errorTranscription": "Wystąpił błąd podczas transkrypcji"
+    "errorTranscription": "Wystąpił błąd podczas transkrypcji",
+    "title": "Zamiana mowy na tekst"
   },
   "tray": {
     "menu": {
-      "createMedia": "Utwórz multimedia...",
+      "createMedia": "@:{'menu.file.createMedia'}",
       "installUpdate": "Zainstaluj aktualizację i uruchom ponownie...",
-      "newChat": "Nowy czat",
-      "quickPrompt": "Szybka podpowiedź",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Odejdź",
       "readAloud": "Czytaj na głos",
       "runAiCommand": "Uruchom polecenie AI",
-      "scratchpad": "Scratchpad",
-      "settings": "Ustawienia...",
+      "scratchpad": "@:{'menu.file.scratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "Rozpocznij dyktowanie",
       "voiceMode": "Tryb głosowy"
     }
