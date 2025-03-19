@@ -64,11 +64,12 @@ form .group .wrapper {
 
   input {
     position: absolute;
-    top: 0;
     left: 0;
     background-color: transparent;
     border: none;
-    width: calc(100% - 28px) ;
+    width: calc(100% - 28px);
+    padding-left: 8px;
+    padding-top: 5.5px;
 
     &:focus {
       outline: none !important;
