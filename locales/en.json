@@ -1574,7 +1574,7 @@
       "memory": {
         "contents": "Contents",
         "description": "This plugin allows LLM engines to store and retrieve information about you, making their answers more personalized.",
-        "hasFacts": "You cannot change the embedding model once facts have been recorded in memory. Clear the memory if you want to change the the embedding model.",
+        "hasFacts": "You cannot change the embedding model once facts have been recorded in memory. Clear the memory if you want to change the embedding model.",
         "resetConfirmation": {
           "title": "Are you sure you want to reset the memory and lose all facts about you?"
         },
