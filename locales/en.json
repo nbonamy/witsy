@@ -1335,7 +1335,8 @@
     "errorPrefix": "Error: ",
     "establishingConnection": "Establishing connection…",
     "requestingMicrophone": "Requesting microphone access…",
-    "sessionEstablished": "Session established successfully!"
+    "sessionEstablished": "Session established successfully!",
+    "title": "Interactive Chat"
   },
   "scratchpad": {
     "actions": {
@@ -1742,7 +1743,7 @@
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Start Dictation",
-      "voiceMode": "Interactive Chat"
+      "voiceMode": "@:{'realtimeChat.title'}"
     }
   }
 }

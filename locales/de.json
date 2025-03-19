@@ -1305,7 +1305,8 @@
     "errorPrefix": "Fehler: ",
     "establishingConnection": "Verbindung wird hergestellt…",
     "requestingMicrophone": "Anforderung des Mikrofonzugriffs…",
-    "sessionEstablished": "Sitzung erfolgreich hergestellt!"
+    "sessionEstablished": "Sitzung erfolgreich hergestellt!",
+    "title": "Interaktiver Chat"
   },
   "scratchpad": {
     "actions": {
@@ -1706,7 +1707,7 @@
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Diktat starten",
-      "voiceMode": "Interaktiver Chat"
+      "voiceMode": "@:{'realtimeChat.title'}"
     }
   }
 }

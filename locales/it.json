@@ -1305,7 +1305,8 @@
     "errorPrefix": "Errore: ",
     "establishingConnection": "Stabilendo la connessione…",
     "requestingMicrophone": "Richiesta di accesso al microfono…",
-    "sessionEstablished": "Sessione stabilita con successo!"
+    "sessionEstablished": "Sessione stabilita con successo!",
+    "title": "Chat Interattiva"
   },
   "scratchpad": {
     "actions": {
@@ -1706,7 +1707,7 @@
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Inizia dettatura",
-      "voiceMode": "Chat Interattiva"
+      "voiceMode": "@:{'realtimeChat.title'}"
     }
   }
 }

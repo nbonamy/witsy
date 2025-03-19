@@ -1335,7 +1335,8 @@
     "errorPrefix": "错误：",
     "establishingConnection": "正在建立连接…",
     "requestingMicrophone": "正在请求麦克风访问权限…",
-    "sessionEstablished": "会话成功建立！"
+    "sessionEstablished": "会话成功建立！",
+    "title": "互动聊天"
   },
   "scratchpad": {
     "actions": {
@@ -1736,7 +1737,7 @@
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "开始听写",
-      "voiceMode": "互动聊天"
+      "voiceMode": "@:{'realtimeChat.title'}"
     }
   }
 }
