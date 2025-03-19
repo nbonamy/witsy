@@ -304,6 +304,7 @@ declare global {
         transcribe(audioBlob: Blob): Promise<{ text: string }>
       },
       transcribe: {
+        start(): void
         insert(text: string): void
         cancel(): void
       },
@@ -355,6 +356,12 @@ declare global {
       }
       search: {
         query(query: string, num: number): Promise<LocalSearchResult[]>
+      }
+      create: {
+        start(): void
+      }
+      voiceMode: {
+        start(): void
       }
     }
   }

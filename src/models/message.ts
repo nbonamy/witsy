@@ -15,6 +15,7 @@ export default class Message extends MessageBase implements IMessage {
   toolCall?: ToolCallInfo
   usage?: LlmUsage
   transient: boolean
+  uiOnly: boolean
   declare attachment: Attachment
 
   constructor(role: LlmRole, content?: string) {
@@ -28,6 +29,7 @@ export default class Message extends MessageBase implements IMessage {
     this.toolCall = null
     this.attachment = null
     this.usage = null
+    this.uiOnly = false
     this.transient = (content == null)
     if (content === undefined) {
       this.setText(null)
@@ -49,11 +51,14 @@ export default class Message extends MessageBase implements IMessage {
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
     message.toolCall = obj.toolCall || null
     message.usage = obj.usage || null
+    message.uiOnly = obj.uiOnly || false
     return message
   }
 
   get contentForModel(): string {
-    if (this.expert == null) {
+    if (this.uiOnly) {
+      return null
+    } else if (this.expert == null) {
       return this.content
     } else {
       return `${this.expert.prompt}\n${this.content}`

@@ -119,6 +119,7 @@ contextBridge.exposeInMainWorld(
       closePalette: (sourceApp: Application): void => { return ipcRenderer.send('readaloud-close-palette', sourceApp) },
     },
     transcribe: {
+      start: (): void => { return ipcRenderer.send('transcribe-start') },
       insert(text: string): void { return ipcRenderer.send('transcribe-insert', text) },
       cancel: (): void => { return ipcRenderer.send('transcribe-cancel') },
     },
@@ -166,6 +167,12 @@ contextBridge.exposeInMainWorld(
     },
     search: {
       query: (query: string, num: number = 5): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke('search-query', { query, num }) },
+    },
+    create: {
+      start: (): void => { return ipcRenderer.send('create-start') },
+    },
+    voiceMode: {
+      start: (): void => { return ipcRenderer.send('voice-mode-start') },
     }
   },
 );

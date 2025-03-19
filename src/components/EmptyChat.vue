@@ -1,6 +1,6 @@
 <template>
   <div class="empty">
-    <div class="tip engine" v-if="showEngineTip()">
+    <div class="tip engine" :class="{ hidden: !showEngineTip() }">
       {{ t('emptyChat.tips.switchProvider') }}<br/>
       <img src="/assets/arrow_dashed.svg" />
     </div>
@@ -17,10 +17,32 @@
           <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
           <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
         </div>
-        <div class="tip model" v-if="showModelTip()">
+        <div class="tip model" :class="{ hidden: !showModelTip() }">
           <img src="/assets/arrow_dashed.svg" /><br/>
           {{ t('emptyChat.tips.switchModel') }}
         </div>
+      </div>
+    </div>
+    <div class="actions" :class="{ hidden: showAllEngines }">
+      <div class="action" @click="onCreateMedia">
+        <BIconPaletteFill />
+        {{ t('createMedia.title') }}
+      </div>
+      <div class="action" @click="onScratchpad">
+        <BIconJournalText />
+        {{ t('tray.menu.scratchpad') }}
+      </div>
+      <div class="action" @click="onDictation">
+        <BIconMic />
+        {{ t('tray.menu.startDictation') }}
+      </div>
+      <div class="action" @click="onVoiceMode">
+        <BIconChatSquareDots />
+        {{ t('tray.menu.voiceMode') }}
+      </div>
+      <div class="action" @click="onComputerUse" v-if="hasComputerUse">
+        <BIconRobot />
+        {{ t('computerUse.title') }}
       </div>
     </div>
   </div>
@@ -37,6 +59,7 @@ import Dialog from '../composables/dialog'
 import LlmFactory from '../llms/llm'
 
 import useEventBus from '../composables/event_bus'
+import { BIconChatSquareDots } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const tipsManager = useTipsManager(store)
@@ -48,6 +71,10 @@ const engines = shallowReactive(store.config.engines)
 const models = computed(() => llmFactory.getChatModels(store.config.llm.engine))
 const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, true))
 const isFavoriteModel = computed(() => llmFactory.isFavoriteModel(store.config.llm.engine, model.value))
+
+const hasComputerUse = computed(() => {
+  return false//store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models.chat.find(m => m.id === 'computer-use')
+})
 
 const showEngineTip = () => {
   return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && Object.keys(engines).length > 1
@@ -64,18 +91,22 @@ onBeforeUpdate(() => {
 })
 
 onMounted(() => {
-  centerCurrentEngineLogo()
+  centerLogos()
 })
 
 onUpdated(() => {
-  centerCurrentEngineLogo()
+  centerLogos()
 })
 
-const centerCurrentEngineLogo = () => {
+const centerLogos = () => {
+
+  const verticalOffset = 0
 
   const engines = document.querySelector<HTMLElement>('.engines')
   const current = document.querySelector<HTMLElement>('.current')
-  if (!engines || !current) return
+  if (!engines || !current) {
+    return
+  }
   
   const logo = current.querySelector<HTMLElement>('.logo')
 
@@ -85,13 +116,18 @@ const centerCurrentEngineLogo = () => {
   const rc2 = logo.getBoundingClientRect()
   const midY2 = rc2.top + rc2.height / 2
 
-  let top = parseInt(current.style.top) || 0
-  current.style.top = `${top+midY1-midY2}px`
+  let top = parseInt(engines.style.top) || 0
+  engines.style.top = `-${top+midY1-midY2+verticalOffset}px`
 
-  const tip = document.querySelector<HTMLElement>('.tip.engine')
-  if (tip) {
-    top = parseInt(tip.style.top) || 0
-    tip.style.top = `${top+midY1-midY2}px`
+  // const tip = document.querySelector<HTMLElement>('.tip.engine')
+  // if (tip) {
+  //   top = parseInt(tip.style.top) || 0
+  //   tip.style.top = `${top+midY1-midY2+verticalOffset}px`
+  // }
+
+  const actions = document.querySelector<HTMLElement>('.actions')
+  if (actions) {
+    actions.style.top = `-${top+midY1-midY2+verticalOffset}px`
   }
 
 }
@@ -245,9 +281,33 @@ const removeFavorite = () => {
   llmFactory.removeFavoriteModel(store.config.llm.engine, model.value)
 }
 
+const onCreateMedia = () => {
+  window.api.create.start()
+}
+
+const onScratchpad = () => {
+  window.api.scratchpad.open()
+}
+
+const onDictation = () => {
+  window.api.transcribe.start()
+}
+
+const onVoiceMode = () => {
+  window.api.voiceMode.start()
+}
+
+const onComputerUse = () => {
+  emitEvent('activate-computer-use')
+}
+
 </script>
 
 <style scoped>
+
+.hidden {
+  visibility: hidden;
+}
 
 .empty {
   padding: 16px;
@@ -265,7 +325,7 @@ const removeFavorite = () => {
   font-style: italic;
   font-size: 11pt;
   color: var(--message-list-tip-text-color);
-  margin-bottom: 16px;
+  margin-bottom: 0px;
 
   img {
     margin-top: 4px;
@@ -280,9 +340,6 @@ const removeFavorite = () => {
     }
   }
 
-  &.engine {
-    top: 96px;
-  }
 }
 
 .windows .empty .tip {
@@ -326,17 +383,13 @@ const removeFavorite = () => {
   z-index: 2;
   border: none;
   outline: none;
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0px;
   font-size: 11pt;
   text-align: center;
   cursor: pointer;
   background-color: var(--message-list-bg-color);
   color: var(--message-list-text-color);
-}
-
-.empty .select-model.hidden {
-  visibility: hidden;
 }
 
 .favorite {
@@ -349,6 +402,44 @@ const removeFavorite = () => {
     display: flex;
     align-items: center;
     gap: .5rem;
+  }
+}
+
+.actions {
+  position: relative;
+  margin-top: 2rem;
+  margin-left: 4rem;
+  margin-right: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  --action-bg-color-alpha-normal: 97.5%;
+  --action-bg-color-alpha-hover: 92.5%;
+
+  .action {
+    display: flex;
+    align-items: center;
+    font-size: 10.5pt;
+    gap: 0.5rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--text-color), transparent var(--action-bg-color-alpha-normal));
+    border: 1px solid var(--control-border-color);
+    cursor: pointer;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--text-color), transparent var(--action-bg-color-alpha-hover));
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .actions {
+    --action-bg-color-alpha-normal: 92.5%;
+    --action-bg-color-alpha-hover: 85%;
   }
 }
 
