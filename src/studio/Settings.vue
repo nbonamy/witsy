@@ -262,6 +262,24 @@ const customParams = computed((): Parameter[] => {
     ]
   }
 
+  // hugingface all models
+  if (engine.value === 'huggingface') {
+      return [
+        { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+        { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
+        { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+      ]
+    }
+
+  // // sdwebui all models
+  // if (engine.value === 'sdwebui') {
+  //   return [
+  //     { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+  //     { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
+  //     { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+  //   ]
+  // }
+
   // default
   return []
 
