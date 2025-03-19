@@ -10,7 +10,7 @@ export type MenuCallbacks = {
   quit: () => void
   quickPrompt: () => void
   newChat: () => void
-  newScratchpad: () => void
+  scratchpad: () => void
   createMedia: () => void
 }
 
@@ -96,9 +96,9 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           click: () => callbacks.newChat()
         },
         {
-          label: t('menu.file.newScratchpad'),
+          label: t('menu.file.scratchpad'),
           accelerator: shortcutAccelerator(shortcuts?.scratchpad),
-          click: () => callbacks.newScratchpad()
+          click: () => callbacks.scratchpad()
         },
         { type: 'separator' },
         {

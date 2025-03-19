@@ -164,7 +164,7 @@ app.whenReady().then(() => {
       checkForUpdates: autoUpdater.check,
       quickPrompt: PromptAnywhere.open,
       newChat: window.openMainWindow,
-      newScratchpad: window.openScratchPad,
+      scratchpad: window.openScratchPad,
       settings: window.openSettingsWindow,
       createMedia: window.openCreateMediaWindow,
     }, settings.shortcuts);
