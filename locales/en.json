@@ -1231,8 +1231,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "New Chat",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Quick Prompt",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "File"
     },
     "help": {
@@ -1634,10 +1634,10 @@
       "aiCommandsUsage": "Usage: Highlight your text, press keyboard shortcut then choose an Al command",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Usage: Highlight your text, press keyboard shortcut",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {

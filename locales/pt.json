@@ -1231,8 +1231,8 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Novo Chat",
-      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Novo Prompt",
+      "scratchpad": "@:{'scratchpad.title'}",
       "title": "Arquivo"
     },
     "help": {
@@ -1628,10 +1628,10 @@
       "aiCommandsUsage": "Uso: Destaque seu texto, pressione o atalho de teclado e escolha um comando de IA",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Uso: Destaque seu texto, pressione o atalho de teclado",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
