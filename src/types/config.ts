@@ -135,6 +135,7 @@ export type ShortcutsConfig = {
   readaloud: Shortcut
   transcribe: Shortcut
   realtime: Shortcut
+  studio: Shortcut
 }
 
 export type ScratchpadConfig = {

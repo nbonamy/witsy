@@ -4,19 +4,19 @@ import { useI18n } from '../i18n';
 
 const storeBoundsId = 'create.bounds'
 
-export let createMediaWindow: BrowserWindow = null;
+export let designStudioWindow: BrowserWindow = null;
 
-export const openCreateMediaWindow = () => {
+export const openDesignStudioWindow = () => {
 
   // if we don't have a window, create one
-  if (!createMediaWindow || createMediaWindow.isDestroyed()) {
+  if (!designStudioWindow || designStudioWindow.isDestroyed()) {
 
     // get bounds from here
     const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
 
-    createMediaWindow = createWindow({
-      title: useI18n(app)('menu.file.createMedia'),
-      hash: '/create',
+    designStudioWindow = createWindow({
+      title: useI18n(app)('menu.file.designStudio'),
+      hash: '/studio',
       x: bounds?.x,
       y: bounds?.y,
       width: bounds?.width || 1280,
@@ -26,27 +26,27 @@ export const openCreateMediaWindow = () => {
       ...titleBarOptions(),
     });
 
-    createMediaWindow.on('close', () => {
-      electronStore.set(storeBoundsId, createMediaWindow.getBounds());
+    designStudioWindow.on('close', () => {
+      electronStore.set(storeBoundsId, designStudioWindow.getBounds());
     })
 
     // handle window close
-    createMediaWindow.on('closed', () => {
-      createMediaWindow = null;
+    designStudioWindow.on('closed', () => {
+      designStudioWindow = null;
     });
 
   }
 
   // check
-  ensureOnCurrentScreen(createMediaWindow);
+  ensureOnCurrentScreen(designStudioWindow);
 
   // and focus
   app.focus({ steal: true });
-  createMediaWindow.focus();
+  designStudioWindow.focus();
 
   // // open the DevTools
   // if (process.env.DEBUG) {
-  //   createMediaWindow.webContents.openDevTools({ mode: 'right' });
+  //   designStudioWindow.webContents.openDevTools({ mode: 'right' });
   // }
 
   // show in dock
@@ -55,6 +55,6 @@ export const openCreateMediaWindow = () => {
   }
 
   // done
-  return createMediaWindow;
+  return designStudioWindow;
 
 };

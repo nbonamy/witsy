@@ -104,6 +104,7 @@ const registerShortcuts = () => {
     transcribe: Transcriber.initTranscription,
     scratchpad: window.openScratchPad,
     realtime: window.openRealtimeChatWindow,
+    studio: window.openDesignStudioWindow,
   });
 }
 
@@ -166,7 +167,7 @@ app.whenReady().then(() => {
       newChat: window.openMainWindow,
       scratchpad: window.openScratchPad,
       settings: window.openSettingsWindow,
-      createMedia: window.openCreateMediaWindow,
+      studio: window.openDesignStudioWindow,
     }, settings.shortcuts);
   }
   window.addWindowListener({
@@ -462,7 +463,7 @@ ipcMain.on('fullscreen', (_, payload) => {
   if (payload.window === 'main') {
     window.mainWindow.setFullScreen(payload.state);
   } else if (payload.window === 'create') {
-    window.createMediaWindow.setFullScreen(payload.state);
+    window.designStudioWindow.setFullScreen(payload.state);
   }
 });
 
@@ -785,7 +786,7 @@ ipcMain.handle('search-query', async (_, payload) => {
 });
 
 ipcMain.on('create-start', () => {
-  window.openCreateMediaWindow();
+  window.openDesignStudioWindow();
 })
 
 ipcMain.on('voice-mode-start', () => {

@@ -8,7 +8,7 @@ export * from './windows/readaloud';
 export * from './windows/realtime';
 export * from './windows/transcribe';
 export * from './windows/scratchpad';
-export * from './windows/create';
+export * from './windows/studio';
 export * from './windows/debug';
 
 export const showMasLimitsDialog = () => {

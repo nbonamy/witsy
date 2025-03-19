@@ -26,7 +26,7 @@
     <div class="actions" :class="{ hidden: showAllEngines }">
       <div class="action" @click="onCreateMedia">
         <BIconPaletteFill />
-        {{ t('createMedia.title') }}
+        {{ t('designStudio.title') }}
       </div>
       <div class="action" @click="onScratchpad">
         <BIconJournalText />

@@ -11,6 +11,7 @@ export interface ShortcutCallbacks {
   transcribe: () => void
   scratchpad: () => void
   realtime: () => void
+  studio: () => void
 }
 
 export type Application = {

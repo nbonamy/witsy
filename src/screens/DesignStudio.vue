@@ -58,7 +58,7 @@ const menuY = ref(0)
 const targetRow: Ref<Message|null> = ref(null)
 
 const contextMenuActions = () => [
-  { label: t('createMedia.loadMediaSettings'), action: 'load' },
+  { label: t('designStudio.loadMediaSettings'), action: 'load' },
   { label: t('common.delete'), action: 'delete' },
 ]
 
@@ -150,7 +150,7 @@ const onDelete = (msg: Message) => {
 
 const deleteMedia = (msg: Message) => {
   Dialog.show({
-    title: t('createMedia.confirmDelete'),
+    title: t('designStudio.confirmDelete'),
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
@@ -368,12 +368,12 @@ const onMediaGenerationRequest = async (data: any) => {
           const message = JSON.parse(error)
           Dialog.show({
             title: t('common.error'),
-            text: t('createMedia.error.invalidParams', { detail: message.detail.trim() }),
+            text: t('designStudio.error.invalidParams', { detail: message.detail.trim() }),
           })
         } else {
           Dialog.show({
             title: t('common.error'),
-            text: t('createMedia.error.invalidParams', { detail: t('createMedia.error.noDetailsProvided') }),
+            text: t('designStudio.error.invalidParams', { detail: t('designStudio.error.noDetailsProvided') }),
           })
         }
         return
@@ -385,7 +385,7 @@ const onMediaGenerationRequest = async (data: any) => {
     // other errors
     Dialog.show({
       title: t('common.error'),
-      text: e.message || t('createMedia.error.unknown'),
+      text: e.message || t('designStudio.error.unknown'),
     })
   
   } finally {

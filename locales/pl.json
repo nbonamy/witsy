@@ -366,7 +366,7 @@
     "instructions": "Witamy w Computer Use! Computer Use może wykonywać dla Ciebie działania na Twoim komputerze, takie jak czytanie Twoich maili i ich podsumowywanie lub rezerwowanie pokoju w hotelu. Bądź czujny, ponieważ te działania mogą powodować nieoczekiwane zachowanie, które może skutkować utratą danych",
     "title": "Computer Use"
   },
-  "createMedia": {
+  "designStudio": {
     "confirmDelete": "Czy na pewno chcesz usunąć ten nośnik?",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
     "error": {
@@ -1229,7 +1229,7 @@
       "title": "Edytuj"
     },
     "file": {
-      "createMedia": "@:{'createMedia.title'}",
+      "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nowy czat",
       "quickPrompt": "Nowa zachęta",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1633,6 +1633,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Użycie: Podświetl tekst, naciśnij skrót klawiaturowy, a następnie wybierz polecenie AI.",
+      "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
@@ -1733,7 +1734,7 @@
   },
   "tray": {
     "menu": {
-      "createMedia": "@:{'menu.file.createMedia'}",
+      "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Zainstaluj aktualizację i uruchom ponownie...",
       "newChat": "@:{'menu.file.newChat'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",
