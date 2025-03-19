@@ -363,6 +363,7 @@
       "empty": "Sie haben noch keine Medien erstellt.",
       "title": "Verlauf"
     },
+    "imageToVideo": "Verwenden Sie das aktuelle Bild, um ein Video zu erstellen. Stellen Sie sicher, dass Sie ein Bild-zu-Video-Modell auswählen.",
     "loadMediaSettings": "Einstellungen laden",
     "mediaType": {
       "image": "Bild",

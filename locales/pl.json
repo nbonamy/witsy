@@ -382,6 +382,7 @@
       "empty": "Nie utworzono jeszcze żadnych multimediów.",
       "title": "Historia"
     },
+    "imageToVideo": "Użyj bieżącego obrazu, aby stworzyć wideo. Upewnij się, że wybierzesz model konwersji obrazu na wideo.",
     "loadMediaSettings": "Ustawienia ładowania",
     "mediaType": {
       "image": "Obraz",

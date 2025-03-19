@@ -363,6 +363,7 @@
       "empty": "Aún no has creado ningún medio.",
       "title": "Historial"
     },
+    "imageToVideo": "Usar la imagen actual para crear un video. Asegúrate de seleccionar un modelo de imagen a video.",
     "loadMediaSettings": "Cargar configuraciones",
     "mediaType": {
       "image": "Imagen",
@@ -1308,7 +1309,6 @@
     "requestingMicrophone": "Solicitando acceso al micrófono…",
     "sessionEstablished": "¡Sesión establecida con éxito!",
     "title": "Chat de Voz"
-
   },
   "scratchpad": {
     "actions": {

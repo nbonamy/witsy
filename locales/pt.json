@@ -382,6 +382,7 @@
       "empty": "Você ainda não criou nenhuma mídia.",
       "title": "Histórico"
     },
+    "imageToVideo": "Use a imagem atual para criar um vídeo. Certifique-se de selecionar um modelo de imagem para vídeo.",
     "loadMediaSettings": "Carregar configurações",
     "mediaType": {
       "image": "Imagem",

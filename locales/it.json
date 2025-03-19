@@ -363,6 +363,8 @@
       "empty": "Non hai ancora creato nessun media.",
       "title": "Cronologia"
     },
+    "imageToVideo": "Usa l'immagine corrente per creare un video. Assicurati di selezionare un modello da immagine a video.",
+
     "loadMediaSettings": "Carica impostazioni",
     "mediaType": {
       "image": "Immagine",
