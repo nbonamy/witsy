@@ -22,18 +22,25 @@ export default (window: BrowserWindow) => {
       // requestWillBeSent
       if (method === 'Network.requestWillBeSent') {
 
+        // get
+        const url = params.request.url
+
         // for all
-        if (!params.request.url.startsWith('http://') && !params.request.url.startsWith('https://')) {
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
           return
         }
 
         // for debug
-        if (MAIN_WINDOW_VITE_DEV_SERVER_URL && params.request.url.startsWith(MAIN_WINDOW_VITE_DEV_SERVER_URL)) {
+        if (MAIN_WINDOW_VITE_DEV_SERVER_URL && url.startsWith(MAIN_WINDOW_VITE_DEV_SERVER_URL)) {
           return
         }
 
         // other stuff
-        if (params.request.url.includes('googlefonts') || params.request.url.includes('storage.googleapis.com')) {
+        if (
+          url.includes('googlefonts') ||
+          url.includes('storage.googleapis.com') ||
+          (url.includes('queue.fal.run') && url.includes('status?logs=0'))
+        ) {
           return
         }
 
