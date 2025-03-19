@@ -1538,6 +1538,7 @@
       "memory": {
         "contents": "Contenu",
         "description": "Ce plugin permet aux moteurs LLM de stocker et récupérer des informations vous concernant, rendant leurs réponses plus personnalisées.",
+        "hasFacts": "Vous ne pouvez pas changer le modèle de vecteurs une fois que des faits ont été enregistrés dans la mémoire. Effacez la mémoire si vous souhaitez changer le modèle de vecteur.",
         "resetConfirmation": {
           "title": "Êtes-vous sûr de vouloir réinitialiser la mémoire et perdre toutes les informations vous concernant ?"
         },

@@ -1574,6 +1574,7 @@
       "memory": {
         "contents": "Zawartość",
         "description": "Ta wtyczka umożliwia silnikom LLM przechowywanie i pobieranie informacji o użytkowniku, dzięki czemu ich odpowiedzi są bardziej spersonalizowane.",
+        "hasFacts": "Nie można zmienić modelu osadzania, gdy fakty zostały zapisane w pamięci. Wyczyść pamięć, jeśli chcesz zmienić model osadzania.",
         "resetConfirmation": {
           "title": "Czy na pewno chcesz zresetować pamięć i stracić wszystkie fakty na swój temat?"
         },
