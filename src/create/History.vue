@@ -4,15 +4,15 @@
     <div v-if="history.length === 0" class="empty">{{ t('designStudio.history.empty') }}</div>
     <div v-else class="messages">
       <div 
+        v-for="msg in history" 
         class="message" 
         :class="{ selected: msg.uuid === selectedMessage?.uuid }" 
-        v-for="msg in history" 
         :key="msg.uuid" 
         @click="selectMessage(msg)" 
         @contextmenu.prevent="showContextMenu($event, msg)"
       >
-        <BIconFilm class="thumbnail" v-if="msg.isVideo()"/>
-        <img class="thumbnail" :src="msg.attachment.url" v-else/>
+        <video v-if="msg.isVideo()" class="thumbnail" :src="msg.attachment.url" />
+        <img v-else class="thumbnail" :src="msg.attachment.url" />
         <div class="description">
           <div class="prompt">{{ msg.content }}</div>
           <div class="info">{{ msg.engine }} - {{ msg.model }}</div>
