@@ -38,8 +38,8 @@ export default (window: BrowserWindow) => {
         // other stuff
         if (
           url.includes('googlefonts') ||
-          url.includes('storage.googleapis.com') ||
-          (url.includes('queue.fal.run') && url.includes('status?logs=0'))
+          url.includes('storage.googleapis.com')/* ||
+          (url.includes('queue.fal.run') && url.includes('status?logs=0'))*/
         ) {
           return
         }
