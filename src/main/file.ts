@@ -231,18 +231,29 @@ export const downloadFile = async (app: App, payload: anyDict) => {
   try {
 
     // get contents
-    let contents = null
     if (payload.url.startsWith('file://')) {
-      contents = fs.readFileSync(payload.url.slice(7));
+
+      payload.contents = fs.readFileSync(payload.url.slice(7)).toString('base64');
       payload.filename = payload.url.split('?')[0].split(path.sep).pop();
       payload.url = null
+
     } else {
+
+      // fal.media has certificate issues
+      // if (payload.url.includes('fal.media')) {
+      //   process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+      // }
+
       const response = await fetch(payload.url);
-      contents = await response.text();
+      const contents = await response.arrayBuffer();
+      payload.contents = Buffer.from(contents).toString('base64');
+
+      // reset
+      // delete process.env['NODE_TLS_REJECT_UNAUTHORIZED']      
+
     }
 
     // now just save
-    payload.contents = Buffer.from(contents).toString('base64')
     return await writeFileContents(app, payload);
 
   } catch (error) {
