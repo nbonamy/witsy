@@ -157,7 +157,7 @@ app.whenReady().then(() => {
     menu.installMenu(app, {
       quit: app.quit,
       checkForUpdates: autoUpdater.check,
-      newPrompt: PromptAnywhere.open,
+      quickPrompt: PromptAnywhere.open,
       newChat: window.openMainWindow,
       newScratchpad: window.openScratchPad,
       settings: window.openSettingsWindow,

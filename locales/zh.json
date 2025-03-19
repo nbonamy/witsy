@@ -1,8 +1,8 @@
 {
   "common": {
     "actions": {
-      "addFiles": "添加文件...",
-      "addFolder": "添加文件夹..."
+      "addFiles": "添加文件…",
+      "addFolder": "添加文件夹…"
     },
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
@@ -362,6 +362,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "欢迎使用计算机使用！计算机使用可以为您在计算机上执行操作，例如读取您的邮件并总结它们或预订酒店房间。请保持警惕，因为这些操作可能会导致意外行为，从而导致数据丢失。",
+    "title": "计算机使用"
+  },
   "createMedia": {
     "confirmDelete": "你确定要删除这个媒体吗？",
     "emptyPlaceholder": "让你的创造力尽情发挥吧！",
@@ -399,7 +403,7 @@
     },
     "promptPlaceholder": "你想创建什么？",
     "provider": "提供者",
-    "title": "创建媒体",
+    "title": "设计工作室",
     "variableEditor": {
       "title": "额外参数"
     }
@@ -578,7 +582,7 @@
       },
       "5767f26d-06d6-4b4b-bf24-b418bcc44e7f": {
         "name": "求职信",
-        "prompt": "为了提交工作申请，我想写一封新的求职信。请帮我撰写一封描述我的技术技能的求职信。我已经使用网络技术工作了两年。我作为前端开发人员工作了8个月。我通过使用一些工具来提升自己。这些工具包括 [...技术栈] 等等。我希望发展我的全栈开发技能。我希望成为一名 T 型人才。你能为我写一封关于自己的求职信吗？"
+        "prompt": "为了提交工作申请，我想写一封新的求职信。请帮我撰写一封描述我的技术技能的求职信。我已经使用网络技术工作了两年。我作为前端开发人员工作了8个月。我通过使用一些工具来提升自己。这些工具包括 […技术栈] 等等。我希望发展我的全栈开发技能。我希望成为一名 T 型人才。你能为我写一封关于自己的求职信吗？"
       },
       "29fdba48-aa49-48aa-a8dc-85dca41cf967": {
         "name": "网络安全专家",
@@ -1217,7 +1221,7 @@
     "app": {
       "checkForUpdates": "检查更新…",
       "quit": "退出 Witsy",
-      "settings": "设置…"
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "删除聊天",
@@ -1225,10 +1229,10 @@
       "title": "编辑"
     },
     "file": {
-      "createMedia": "创建媒体",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "新建聊天",
-      "newPrompt": "新建提示",
-      "newScratchpad": "新建便签",
+      "newScratchpad": "@:{'scratchpad.title'}",
+      "quickPrompt": "新建提示",
       "title": "文件"
     },
     "help": {
@@ -1266,7 +1270,7 @@
     "error": "拉取模型出错",
     "label": "拉取模型",
     "placeholder": "输入模型名称以拉取或选择一个",
-    "progress": "正在拉取模型..."
+    "progress": "正在拉取模型…"
   },
   "modelSettings": {
     "advancedSettings": "高级设置",
@@ -1316,8 +1320,8 @@
   "prompt": {
     "conversation": {
       "placeholders": {
-        "auto": "你现在可以开始说话了...",
-        "ptt": "按住空格键说话..."
+        "auto": "你现在可以开始说话了…",
+        "ptt": "按住空格键说话…"
       },
       "startAuto": "开始自动对话",
       "startPTT": "开始按键对话",
@@ -1329,8 +1333,8 @@
   },
   "realtimeChat": {
     "errorPrefix": "错误：",
-    "establishingConnection": "正在建立连接...",
-    "requestingMicrophone": "正在请求麦克风访问权限...",
+    "establishingConnection": "正在建立连接…",
+    "requestingMicrophone": "正在请求麦克风访问权限…",
     "sessionEstablished": "会话成功建立！"
   },
   "scratchpad": {
@@ -1360,7 +1364,8 @@
     },
     "generationError": "生成文本时出错",
     "loadingError": "加载便签文件时出错",
-    "placeholder": "开始输入你的文档，或者\n让 Witsy 为你写点什么！\n\n一旦开始，你可以让 Witsy\n对你的文档进行修改。\n\n如果你突出显示了一部分文本，\nWitsy 只会更新这一部分。\n\n还可以查看右下角的写作助手！\n\n试试吧！"
+    "placeholder": "开始输入你的文档，或者\n让 Witsy 为你写点什么！\n\n一旦开始，你可以让 Witsy\n对你的文档进行修改。\n\n如果你突出显示了一部分文本，\nWitsy 只会更新这一部分。\n\n还可以查看右下角的写作助手！\n\n试试吧！",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1619,15 +1624,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "AI 命令",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "使用方法：突出显示你的文本，按下键盘快捷键，然后选择一个 AI 命令",
-      "dictation": "听写",
-      "newChat": "新建聊天",
-      "newPrompt": "新建提示",
-      "newScratchpad": "新建便签",
-      "readAloud": "朗读",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "使用方法：突出显示你的文本，按下键盘快捷键",
-      "voiceMode": "语音模式"
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "高级",
@@ -1655,7 +1660,7 @@
       "engine": "引擎",
       "groqApiKeyReminder": "确保你在模型面板中输入了 Groq API 密钥。",
       "initializationError": "初始化过程中出现错误。请重试。",
-      "initializing": "正在初始化...",
+      "initializing": "正在初始化…",
       "model": "模型",
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
       "selectModel": "选择模型",
@@ -1716,19 +1721,20 @@
     "clickToRecord": "准备好了就点击录音按钮！",
     "errorMicrophone": "无法访问麦克风",
     "errorSTTNotReady": "语音转文本引擎未准备好",
-    "errorTranscription": "转录过程中发生错误"
+    "errorTranscription": "转录过程中发生错误",
+    "title": "语音转文本"
   },
   "tray": {
     "menu": {
-      "createMedia": "创建媒体...",
-      "installUpdate": "安装更新并重启...",
-      "newChat": "新建聊天",
-      "quickPrompt": "快速提示",
+      "createMedia": "@:{'menu.file.createMedia'}",
+      "installUpdate": "安装更新并重启…",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "退出",
       "readAloud": "朗读",
       "runAiCommand": "运行 AI 命令",
-      "scratchpad": "便签",
-      "settings": "设置…",
+      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "开始听写",
       "voiceMode": "语音模式"
     }

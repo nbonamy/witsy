@@ -97,7 +97,7 @@ function removeNestedKey(obj: any, keyPath: string) {
 }
 
 // Helper function to flatten a nested object
-function flatten(obj: Record<string, any>, prefix: string = ''): Record<string, any> {
+function flatten(obj: Record<string, any>, prefix: string = ''): Record<string, string> {
   if (!obj) {
     return {}
   }
@@ -109,7 +109,7 @@ function flatten(obj: Record<string, any>, prefix: string = ''): Record<string, 
       Object.assign(acc, flatten(obj[k], pre + k))
     }
     return acc
-  }, {} as Record<string, any>)
+  }, {} as Record<string, string>)
 }
 
 // Main function
@@ -297,16 +297,6 @@ async function checkUnusedTranslations() {
       .filter(file => file.endsWith('.json'))
       .map(file => path.join(LOCALES_DIR, file))
 
-    // Collect all keys from locale files
-    function getAllKeys(obj: any, prefix = ''): string[] {
-      return Object.entries(obj).flatMap(([key, value]) => {
-        const newKey = prefix ? `${prefix}.${key}` : key
-        return typeof value === 'object' && value !== null
-          ? getAllKeys(value, newKey)
-          : [newKey]
-      })
-    }
-
     let hasUnusedKeys = false
 
     // Load and process each locale file
@@ -314,7 +304,7 @@ async function checkUnusedTranslations() {
       
       const localeName = path.basename(file, '.json')
       const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
-      const allKeys = getAllKeys(localeData)
+      const allKeys = Object.keys(flatten(localeData))
 
       // Find all source files
       const srcFiles = glob.sync(`${SRC_DIR}/**/*.{ts,vue}`)

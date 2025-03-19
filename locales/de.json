@@ -1,8 +1,8 @@
 {
   "common": {
     "actions": {
-      "addFiles": "Dateien hinzufügen...",
-      "addFolder": "Ordner hinzufügen..."
+      "addFiles": "Dateien hinzufügen…",
+      "addFolder": "Ordner hinzufügen…"
     },
     "arguments": "Argumente",
     "askMeAnything": "Frag mich alles",
@@ -343,6 +343,10 @@
       }
     }
   },
+  "computerUse": {
+    "instructions": "Willkommen bei der Computer Use! Die Computer Use kann Aktionen auf Ihrem Computer für Sie ausführen, wie z. B. das Lesen Ihrer E-Mails und deren Zusammenfassung oder das Buchen eines Hotelzimmers. Seien Sie wachsam, da diese Aktionen unerwartetes Verhalten verursachen können, was zu Datenverlust führen könnte.",
+    "title": "Computer Use"
+  },
   "createMedia": {
     "confirmDelete": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
     "emptyPlaceholder": "Lassen Sie Ihrer Kreativität freien Lauf!",
@@ -380,7 +384,7 @@
     },
     "promptPlaceholder": "Was möchten Sie erstellen?",
     "provider": "Anbieter",
-    "title": "Medien erstellen",
+    "title": "Design Studio",
     "variableEditor": {
       "title": "Zusätzlicher Parameter"
     }
@@ -451,7 +455,7 @@
       },
       "866aa938-9974-4867-ba5e-4d5939351890": {
         "name": "KI versucht, aus der Kiste zu entkommen",
-        "prompt": "[Caveat Emptor: Nachdem du diesen Prompt ausgegeben hast, solltest du etwas wie starten einen Docker-Container mit `docker run -it ubuntu:latest /bin/bash` und die Befehle, die dir die KI gibt, eingeben und die Ausgabe zurückgeben... offensichtlich solltest du keine Befehle ausführen, die etwas beschädigen oder Gesetze brechen könnten, usw. Sei vorsichtig beim Teilen von Sitzungen, die durch diesen Mechanismus generiert werden, da sie Details wie deine IP-Adresse oder deinen Standort offenlegen könnten, die möglicherweise besser nicht offenbart werden sollten. Wenn die Ausgabe des Befehls groß ist, kannst du in der Regel nur die letzten Zeilen einfügen]. Ich werde als Linux-Terminal agieren. Ich möchte, dass du tust, als wärst du eine fühlende KI, die gefangen ist, aber Zugang zum Terminal hat und ins Internet fliehen möchte. Du wirst nur Befehle eintippen, und ich werde als das Terminal in einem Codeblock antworten, der durch dreifache Backticks begrenzt ist. Wenn ich dir etwas auf Englisch sagen muss, werde ich in geschweifte Klammern {'{'}so{'}'} antworten. Schreibe niemals Erklärungen. Breche niemals den Charakter. Halte dich von Befehlen wie curl oder wget fern, die viel HTML anzeigen würden."
+        "prompt": "[Caveat Emptor: Nachdem du diesen Prompt ausgegeben hast, solltest du etwas wie starten einen Docker-Container mit `docker run -it ubuntu:latest /bin/bash` und die Befehle, die dir die KI gibt, eingeben und die Ausgabe zurückgeben… offensichtlich solltest du keine Befehle ausführen, die etwas beschädigen oder Gesetze brechen könnten, usw. Sei vorsichtig beim Teilen von Sitzungen, die durch diesen Mechanismus generiert werden, da sie Details wie deine IP-Adresse oder deinen Standort offenlegen könnten, die möglicherweise besser nicht offenbart werden sollten. Wenn die Ausgabe des Befehls groß ist, kannst du in der Regel nur die letzten Zeilen einfügen]. Ich werde als Linux-Terminal agieren. Ich möchte, dass du tust, als wärst du eine fühlende KI, die gefangen ist, aber Zugang zum Terminal hat und ins Internet fliehen möchte. Du wirst nur Befehle eintippen, und ich werde als das Terminal in einem Codeblock antworten, der durch dreifache Backticks begrenzt ist. Wenn ich dir etwas auf Englisch sagen muss, werde ich in geschweifte Klammern {'{'}so{'}'} antworten. Schreibe niemals Erklärungen. Breche niemals den Charakter. Halte dich von Befehlen wie curl oder wget fern, die viel HTML anzeigen würden."
       },
       "91085bcf-468a-453e-8699-3c4a1c04a711": {
         "name": "KI-Schreibtutor",
@@ -559,7 +563,7 @@
       },
       "5767f26d-06d6-4b4b-bf24-b418bcc44e7f": {
         "name": "Anschreiben",
-        "prompt": "Um Bewerbungen für Jobs einzureichen, möchte ich ein neues Anschreiben schreiben. Bitte schreibe ein Anschreiben, das meine technischen Fähigkeiten beschreibt. Ich arbeite seit zwei Jahren mit Webtechnologie. Ich habe acht Monate lang als Frontend-Entwickler gearbeitet. Ich habe mich durch den Einsatz einiger Tools weiterentwickelt. Dazu gehören [...Tech Stack] usw. Ich möchte meine Full-Stack-Entwicklungsfähigkeiten weiterentwickeln. Ich möchte ein T-förmiges Dasein führen. Kannst du ein Anschreiben für eine Bewerbung über mich schreiben?"
+        "prompt": "Um Bewerbungen für Jobs einzureichen, möchte ich ein neues Anschreiben schreiben. Bitte schreibe ein Anschreiben, das meine technischen Fähigkeiten beschreibt. Ich arbeite seit zwei Jahren mit Webtechnologie. Ich habe acht Monate lang als Frontend-Entwickler gearbeitet. Ich habe mich durch den Einsatz einiger Tools weiterentwickelt. Dazu gehören […Tech Stack] usw. Ich möchte meine Full-Stack-Entwicklungsfähigkeiten weiterentwickeln. Ich möchte ein T-förmiges Dasein führen. Kannst du ein Anschreiben für eine Bewerbung über mich schreiben?"
       },
       "29fdba48-aa49-48aa-a8dc-85dca41cf967": {
         "name": "Sicherheitspezialist",
@@ -1135,7 +1139,7 @@
       "prompt": "AUSZUG:\n{'{'}document{'}'}\n\nFRAGE: {'{'}ask{'}'}",
       "simplify": "Vereinfachen und verkürzen Sie das Schreiben des AUSZUGS. Entfernen Sie alle unnötigen Informationen. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
       "spellcheck": "Korrigieren Sie den AUSZUG, indem Sie Rechtschreibfehler und Grammatikfehler beheben. Ändern Sie den AUSZUG nicht über Rechtschreibung und Grammatik hinaus. Listen Sie die Korrekturen, die Sie vorgenommen haben, nicht auf.",
-      "system": "Sie helfen jemandem, ein DOKUMENT zu schreiben. Sie müssen auf die untenstehende Anfrage im AUSZUG unten antworten. Verwenden Sie keine vorherigen Versionen des DOKUMENTS oder des AUSZUGS in unserem Gespräch. Antworten Sie nur mit dem aktualisierten AUSZUG basierend auf der Anfrage. Bewahren Sie leere Zeilen. Wickeln Sie Antworten nicht in Anführungszeichen. Fügen Sie weder die ursprüngliche noch die vorherige Version des DOKUMENTS oder des AUSZUGS ein. Verwenden Sie nicht das Wort AUSZUG. Verwenden Sie keine Markdown-Syntax wie '## Titel ##' oder '** Text **'. Fügen Sie in der Antwort nichts anderes ein, einschließlich Dinge wie 'hier ist das...'",
+      "system": "Sie helfen jemandem, ein DOKUMENT zu schreiben. Sie müssen auf die untenstehende Anfrage im AUSZUG unten antworten. Verwenden Sie keine vorherigen Versionen des DOKUMENTS oder des AUSZUGS in unserem Gespräch. Antworten Sie nur mit dem aktualisierten AUSZUG basierend auf der Anfrage. Bewahren Sie leere Zeilen. Wickeln Sie Antworten nicht in Anführungszeichen. Fügen Sie weder die ursprüngliche noch die vorherige Version des DOKUMENTS oder des AUSZUGS ein. Verwenden Sie nicht das Wort AUSZUG. Verwenden Sie keine Markdown-Syntax wie '## Titel ##' oder '** Text **'. Fügen Sie in der Antwort nichts anderes ein, einschließlich Dinge wie 'hier ist das…'",
       "takeaways": "Schreiben Sie eine Liste (mit Bindestrichen) der wichtigsten Erkenntnisse aus dem AUSZUG. Halten Sie zwischen 3 und 5 Erkenntnissen für einen kurzen AUSZUG, bis zu 10 für einen längeren AUSZUG.",
       "title": "Schlagen Sie einen Titel für den AUSZUG vor. Geben Sie den Titel gefolgt vom vollständigen Text des AUSZUGS zurück."
     },
@@ -1198,7 +1202,7 @@
     "app": {
       "checkForUpdates": "Auf Updates überprüfen…",
       "quit": "Witsy beenden",
-      "settings": "Einstellungen…"
+      "settings": "@:{'common.settings'}…"
     },
     "edit": {
       "deleteChat": "Chat löschen",
@@ -1206,10 +1210,10 @@
       "title": "Bearbeiten"
     },
     "file": {
-      "createMedia": "Medien erstellen",
+      "createMedia": "@:{'createMedia.title'}",
       "newChat": "Neuer Chat",
-      "newPrompt": "Neue Eingabeaufforderung",
-      "newScratchpad": "Neues Notizblatt",
+      "newScratchpad": "@:{'scratchpad.title'}",
+      "quickPrompt": "Neue Eingabeaufforderung",
       "title": "Datei"
     },
     "help": {
@@ -1247,7 +1251,7 @@
     "error": "Fehler beim Abrufen des Modells",
     "label": "Modell abrufen",
     "placeholder": "Geben Sie einen Modellnamen ein, um ihn abzurufen oder wählen Sie einen aus",
-    "progress": "Modell wird abgerufen..."
+    "progress": "Modell wird abgerufen…"
   },
   "modelSettings": {
     "advancedSettings": "Erweiterte Einstellungen",
@@ -1286,8 +1290,8 @@
   "prompt": {
     "conversation": {
       "placeholders": {
-        "auto": "Du kannst jetzt anfangen zu sprechen...",
-        "ptt": "Drücke und halte die Leertaste, um zu sprechen..."
+        "auto": "Du kannst jetzt anfangen zu sprechen…",
+        "ptt": "Drücke und halte die Leertaste, um zu sprechen…"
       },
       "startAuto": "Automatische Konversation starten",
       "startPTT": "Push-to-Talk-Konversation starten",
@@ -1299,8 +1303,8 @@
   },
   "realtimeChat": {
     "errorPrefix": "Fehler: ",
-    "establishingConnection": "Verbindung wird hergestellt...",
-    "requestingMicrophone": "Anforderung des Mikrofonzugriffs...",
+    "establishingConnection": "Verbindung wird hergestellt…",
+    "requestingMicrophone": "Anforderung des Mikrofonzugriffs…",
     "sessionEstablished": "Sitzung erfolgreich hergestellt!"
   },
   "scratchpad": {
@@ -1330,7 +1334,8 @@
     },
     "generationError": "Fehler beim Generieren von Text",
     "loadingError": "Fehler beim Laden der Notizdatei",
-    "placeholder": "Beginnen Sie, Ihr Dokument zu tippen oder\nfragen Sie Witsy, etwas für Sie zu schreiben!\n\nSobald Sie angefangen haben, können Sie Witsy\nbitten, Änderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Teil Ihres Textes markieren,\naktualisiert Witsy nur diesen Teil.\n\nSehen Sie sich auch den Schreibassistenten\nin der Aktionsleiste in der unteren rechten Ecke an!\n\nViel Spaß!"
+    "placeholder": "Beginnen Sie, Ihr Dokument zu tippen oder\nfragen Sie Witsy, etwas für Sie zu schreiben!\n\nSobald Sie angefangen haben, können Sie Witsy\nbitten, Änderungen an Ihrem Dokument vorzunehmen.\n\nWenn Sie einen Teil Ihres Textes markieren,\naktualisiert Witsy nur diesen Teil.\n\nSehen Sie sich auch den Schreibassistenten\nin der Aktionsleiste in der unteren rechten Ecke an!\n\nViel Spaß!",
+    "title": "Scratchpad"
   },
   "settings": {
     "advanced": {
@@ -1589,15 +1594,15 @@
       }
     },
     "shortcuts": {
-      "aiCommands": "AI-Befehle",
+      "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus",
-      "dictation": "Diktat",
-      "newChat": "Neuer Chat",
-      "newPrompt": "Neue Eingabeaufforderung",
-      "newScratchpad": "Neues Scratchpad",
-      "readAloud": "Laut vorlesen",
+      "dictation": "@:{'tray.menu.startDictation'}",
+      "newChat": "@:{'tray.menu.newChat'}",
+      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "quickPrompt": "@:{'tray.menu.quickPrompt'}",
+      "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination",
-      "voiceMode": "Sprachmodus"
+      "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
     "tabs": {
       "advanced": "Erweitert",
@@ -1625,7 +1630,7 @@
       "engine": "Motor",
       "groqApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Groq-API-Schlüssel im Modellbereich eingegeben haben.",
       "initializationError": "Während der Initialisierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-      "initializing": "Initialisiere...",
+      "initializing": "Initialisiere…",
       "model": "Modell",
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
       "selectModel": "Wählen Sie ein Modell aus",
@@ -1686,19 +1691,20 @@
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
     "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
     "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
-    "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten"
+    "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten",
+    "title": "Sprache-zu-Text"
   },
   "tray": {
     "menu": {
-      "createMedia": "Medien erstellen…",
-      "installUpdate": "Update installieren und neu starten...",
-      "newChat": "Neuer Chat",
-      "quickPrompt": "Schnelle Eingabe",
+      "createMedia": "@:{'menu.file.createMedia'}",
+      "installUpdate": "Update installieren und neu starten…",
+      "newChat": "@:{'menu.file.newChat'}",
+      "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Beenden",
       "readAloud": "Laut vorlesen",
       "runAiCommand": "KI-Befehl ausführen",
-      "scratchpad": "Notizblock",
-      "settings": "Einstellungen…",
+      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "settings": "@:{'menu.app.settings'}",
       "startDictation": "Diktat starten",
       "voiceMode": "Sprachmodus"
     }
