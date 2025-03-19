@@ -424,8 +424,8 @@ const onComputerUse = () => {
     align-items: center;
     font-size: 10.5pt;
     gap: 0.5rem;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 16px;
+    border-radius: 8px;
     background-color: color-mix(in srgb, var(--text-color), transparent var(--action-bg-color-alpha-normal));
     border: 1px solid var(--control-border-color);
     cursor: pointer;
