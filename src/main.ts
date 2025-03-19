@@ -57,6 +57,11 @@ if (process.platform !== 'darwin' && !process.env.TEST) {
   }
 }
 
+// changes path
+if (process.env.WITSY_HOME) {
+  app.getPath = (name: string) => `${process.env.WITSY_HOME}/${name}`;
+}
+
 // set up logging
 Object.assign(console, log.functions);
 log.eventLogger.startLogging();
@@ -555,6 +560,10 @@ ipcMain.on('readaloud-close-palette', async (_, sourceApp: Application) => {
   await window.releaseFocus({ sourceApp });
 });
 
+ipcMain.on('transcribe-start', async () => {
+  await Transcriber.initTranscription();
+});
+
 ipcMain.on('transcribe-insert', async (_, payload) => {
   await Transcriber.insertTranscription(payload);
 });
@@ -774,3 +783,13 @@ ipcMain.handle('search-query', async (_, payload) => {
   const results = localSearch.search(query, num);
   return results;
 });
+
+ipcMain.on('create-start', () => {
+  window.openCreateMediaWindow();
+})
+
+ipcMain.on('voice-mode-start', () => {
+  window.openRealtimeChatWindow();
+})
+
+

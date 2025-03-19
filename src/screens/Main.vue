@@ -67,6 +67,7 @@ onMounted(() => {
   onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-prompting', onStopGeneration)
   onEvent('toggle-sidebar', onToggleSidebar)
+  onEvent('activate-computer-use', onComputerUse)
 
   // main event
   window.api.on('delete-chat', () => {
@@ -493,6 +494,25 @@ const onToggleSidebar = () => {
   } else {
     sidebar.value.show()
   }
+}
+
+const onComputerUse = () => {
+  
+  assistant.value.initChat()
+  assistant.value.chat.engine = 'anthropic'
+  assistant.value.chat.model = 'computer-use'
+
+  const instructions = new Message('system', assistant.value.getSystemInstructions())
+  assistant.value.chat.addMessage(instructions)
+
+  const message = new Message('assistant', t('computerUse.instructions'))
+  message.uiOnly = true
+  assistant.value.chat.addMessage(message)
+
+  nextTick(() => {
+    emitEvent('new-llm-chunk', null)
+  })
+
 }
 
 </script>
