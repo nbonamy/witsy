@@ -3,7 +3,7 @@ import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 import { fal } from '@fal-ai/client'
 
-export default class STTFal implements STTEngine {
+export default class STTFalAi implements STTEngine {
 
   config: Configuration
 
@@ -26,7 +26,7 @@ export default class STTFal implements STTEngine {
   }
 
   requiresDownload(): boolean {
-    return STTFal.requiresDownload()
+    return STTFalAi.requiresDownload()
   }
 
   async initialize(callback?: ProgressCallback): Promise<void> {

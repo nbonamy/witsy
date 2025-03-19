@@ -63,8 +63,8 @@ test('stt settings', async () => {
   expect(store.config.stt.model).toBe(groq2.element.value)
 
   // fal.ai
-  await stt.find('select[name=engine]').setValue('fal.ai')
-  expect(store.config.stt.engine).toBe('fal.ai')
+  await stt.find('select[name=engine]').setValue('falai')
+  expect(store.config.stt.engine).toBe('falai')
   expect(stt.find<HTMLInputElement>('input').element.value).toBe('falai-api-key')
   expect(stt.find<HTMLSelectElement>('select[name=model]').element.value).toBe('fal-ai/whisper')
   const falai2 = stt.find('select[name=model]').findAll('option')[1]
