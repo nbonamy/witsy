@@ -1231,7 +1231,7 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Novo Chat",
-      "newScratchpad": "@:{'scratchpad.title'}",
+      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Novo Prompt",
       "title": "Arquivo"
     },
@@ -1628,7 +1628,7 @@
       "aiCommandsUsage": "Uso: Destaque seu texto, pressione o atalho de teclado e escolha um comando de IA",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Uso: Destaque seu texto, pressione o atalho de teclado",
@@ -1733,10 +1733,10 @@
       "quit": "Sair",
       "readAloud": "Ler em Voz Alta",
       "runAiCommand": "Executar Comando de IA",
-      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Iniciar Ditado",
-      "voiceMode": "Modo de Voz"
+      "voiceMode": "Chat Interativo"
     }
   }
 }

@@ -1212,7 +1212,7 @@
     "file": {
       "createMedia": "@:{'createMedia.title'}",
       "newChat": "Neuer Chat",
-      "newScratchpad": "@:{'scratchpad.title'}",
+      "scratchpad": "@:{'scratchpad.title'}",
       "quickPrompt": "Neue Eingabeaufforderung",
       "title": "Datei"
     },
@@ -1598,7 +1598,7 @@
       "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
-      "newScratchpad": "@:{'tray.menu.scratchpad'}",
+      "scratchpad": "@:{'tray.menu.scratchpad'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
       "readAloudUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination",
@@ -1703,10 +1703,10 @@
       "quit": "Beenden",
       "readAloud": "Laut vorlesen",
       "runAiCommand": "KI-Befehl ausführen",
-      "scratchpad": "@:{'menu.file.newScratchpad'}",
+      "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "Diktat starten",
-      "voiceMode": "Sprachmodus"
+      "voiceMode": "Interaktiver Chat"
     }
   }
 }

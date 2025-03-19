@@ -9,7 +9,7 @@
       <InputShortcut v-model="chat" @change="save "/>
     </div>
     <div class="group">
-      <label>{{ t('settings.shortcuts.newScratchpad') }}</label>
+      <label>{{ t('settings.shortcuts.scratchpad') }}</label>
       <InputShortcut v-model="scratchpad" @change="save "/>
     </div>
     <div class="group">
