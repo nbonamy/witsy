@@ -158,8 +158,10 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Quick access buttons on home
+- [x] fal.ai support (speech-to-text, text-to-image and text-to-video)
 - [x] Debug console
-- [x] Create Media screen
+- [x] Design Studio
 - [x] i18n
 - [x] Mermaid diagram rendering
 - [x] Model Context Protocol
