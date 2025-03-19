@@ -5,7 +5,7 @@ import { useWindowMock } from '../mocks/window'
 import { store, mediaChatId } from '../../src/services/store'
 import { Configuration } from '../../src/types/config'
 import ImageCreator from '../../src/services/image'
-import CreateMedia from '../../src/screens/CreateMedia.vue'
+import DesignStudio from '../../src/screens/DesignStudio.vue'
 import defaultSettings from '../../defaults/settings.json'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
@@ -101,7 +101,7 @@ beforeAll(() => {
 })
 
 test('Renders', async () => {
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.findComponent({ name: 'Settings' }).exists()).toBe(true)
   expect(wrapper.findComponent({ name: 'Settings' }).classes()).not.toContain('hidden')
@@ -111,7 +111,7 @@ test('Renders', async () => {
 })
 
 test('Settings', async () => {
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await wrapper.vm.$nextTick()
   expect(settings.find<HTMLSelectElement>('[name=type]').element.value).toBe('image')
@@ -137,7 +137,7 @@ test('Settings', async () => {
   
 test('History', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   await wrapper.find('.actions > *').trigger('click')
   expect(wrapper.findComponent({ name: 'Settings' }).classes()).toContain('hidden')
   const history = wrapper.findComponent({ name: 'History' })
@@ -167,7 +167,7 @@ test('History', async () => {
 
 test('Generates - Basic', async () => {
 
-  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
 
@@ -212,7 +212,7 @@ test('Generates - Basic', async () => {
 
 test('Generates - Custom Params OpenAI', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
@@ -266,7 +266,7 @@ test('Generates - Custom Params OpenAI', async () => {
 
 test('Generates - Custom Params HuggingFace', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
@@ -319,7 +319,7 @@ test('Generates - Custom Params HuggingFace', async () => {
 
 test('Generates - User Params', async () => {
 
-  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
@@ -379,7 +379,7 @@ test('Generates - User Params', async () => {
 
 test('Preview', async () => {
 
-  const wrapper = mount(CreateMedia)
+  const wrapper = mount(DesignStudio)
   // @ts-expect-error mock
   wrapper.vm.message = store.history.chats[0].messages[1]
   await wrapper.vm.$nextTick()
@@ -423,7 +423,7 @@ test('Preview', async () => {
 
 test('Upload', async () => {
 
-  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
@@ -459,7 +459,7 @@ test('Upload', async () => {
 
 test('Edit', async () => {
 
-  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
@@ -513,7 +513,7 @@ test('Edit', async () => {
 
 test('Undo / Redo', async () => {
 
-  const wrapper: VueWrapper<any> = mount(CreateMedia)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')

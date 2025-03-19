@@ -11,7 +11,7 @@ export type MenuCallbacks = {
   quickPrompt: () => void
   newChat: () => void
   scratchpad: () => void
-  createMedia: () => void
+  studio: () => void
 }
 
 const isMac = process.platform === 'darwin'
@@ -102,8 +102,9 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         },
         { type: 'separator' },
         {
-          label: t('menu.file.createMedia'),
-          click: () => callbacks.createMedia()
+          label: t('menu.file.designStudio'),
+          accelerator: shortcutAccelerator(shortcuts?.studio),
+          click: () => callbacks.studio()
         },
         { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
@@ -127,7 +128,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
               accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
               click: () => window.notifyBrowserWindows('delete-chat')
             }] : []),
-            ...(focusedWindow === window.createMediaWindow ? [{
+            ...(focusedWindow === window.designStudioWindow ? [{
               label: t('menu.edit.deleteMedia'),
               accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
               click: () => window.notifyBrowserWindows('delete-media')

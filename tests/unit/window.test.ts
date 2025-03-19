@@ -281,11 +281,12 @@ test('Open Realtime window', async () => {
 })
 
 test('Open Create Media window', async () => {
-  await window.openCreateMediaWindow()
+  await window.openDesignStudioWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/create',
+    hash: '/studio',
+    title: 'Design Studio',
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/create')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/studio')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })

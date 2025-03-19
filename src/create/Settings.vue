@@ -1,25 +1,25 @@
 <template>
   <div class="settings">
-    <div class="title">{{ t('createMedia.title') }}</div>
+    <div class="title">{{ t('designStudio.title') }}</div>
     <form class="vertical">
         
       <div class="group media-type">
-        <label>{{ t('createMedia.mediaType.label') }}</label>
+        <label>{{ t('designStudio.mediaType.label') }}</label>
         <select name="type" v-model="mediaType" @change="onChangeMediaType">
-          <option value="image">{{ t('createMedia.mediaType.image') }}</option>
-          <option value="video">{{ t('createMedia.mediaType.video') }}</option>
+          <option value="image">{{ t('designStudio.mediaType.image') }}</option>
+          <option value="video">{{ t('designStudio.mediaType.video') }}</option>
         </select>
       </div>
 
       <div class="group">
-        <label>{{ t('createMedia.provider') }}</label>
+        <label>{{ t('designStudio.provider') }}</label>
         <select v-model="engine" name="engine" @change="onChangeEngine">
           <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
         </select>
       </div>
 
       <div class="group" v-if="hasFixedModels">
-        <label>{{ t('createMedia.model') }}</label>
+        <label>{{ t('designStudio.model') }}</label>
         <div class="subgroup">
           <select v-model="model" name="model" @change="onChangeModel">
             <option v-for="model in models" :value="model.id">{{ model.name }}</option>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="group" v-else>
-        <label>{{ t('createMedia.model') }}</label>
+        <label>{{ t('designStudio.model') }}</label>
         <ComboBox :items="models" v-model="model" @change="onChangeModel" />
         <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a>
         <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
@@ -37,7 +37,7 @@
 
       <div class="group">
         <label>{{ t('common.prompt') }}</label>
-        <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('createMedia.promptPlaceholder')">
+        <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
 
@@ -47,7 +47,7 @@
           <span>
             <span v-if="showParams" class="expand">▼</span>
             <span v-else class="expand">▶</span>
-            {{ t('createMedia.parameters.title') }}
+            {{ t('designStudio.parameters.title') }}
           </span>
         </label>
 
@@ -55,11 +55,11 @@
 
       <template v-if="showParams">
 
-        <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('createMedia.moreAboutReplicateModels') }}</a></div>
+        <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('designStudio.moreAboutReplicateModels') }}</a></div>
 
-        <div v-if="engine == 'huggingface'" class="info">{{ t('createMedia.parameters.supportWarning') }}</div>
+        <div v-if="engine == 'huggingface'" class="info">{{ t('designStudio.parameters.supportWarning') }}</div>
 
-        <div v-if="engine == 'sdwebui'" class="info"><a :href="`${new SDWebUI(store.config).baseUrl}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('createMedia.moreAboutSDWebUIParameters') }}</a></div>
+        <div v-if="engine == 'sdwebui'" class="info"><a :href="`${new SDWebUI(store.config).baseUrl}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('designStudio.moreAboutSDWebUIParameters') }}</a></div>
         
         <template v-if="modelHasCustomParams">
           <div class="group" v-for="param in customParams">
@@ -83,7 +83,7 @@
         />
 
         <div v-if="modelHasParams" class="group">
-          <label>{{ t('createMedia.modelDefaults') }}</label>
+          <label>{{ t('designStudio.modelDefaults') }}</label>
           <div class="subgroup">
             <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
             <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
@@ -96,7 +96,7 @@
       <div class="group">
         <div class="subgroup">
           <button name="generate" class="generate-button" type="button" @click="generateMedia('create')" :disabled="isGenerating">
-            {{ isGenerating ? t('createMedia.generating') : t('createMedia.generate') }}
+            {{ isGenerating ? t('designStudio.generating') : t('designStudio.generate') }}
           </button>
           <button v-if="canEdit" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
           <button v-if="canEdit && hasCurrentImage" name="edit" type="button" @click="generateMedia('edit')" :disabled="isGenerating">{{ t('common.edit') }}</button>
@@ -105,7 +105,7 @@
     </form>
 
     <Teleport to="body">
-      <VariableEditor ref="editor" title="createMedia.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
+      <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
     </Teleport>
 
   </div>
@@ -201,34 +201,34 @@ const customParams = computed((): Parameter[] => {
   // openai dall-e-2
   if (engine.value === 'openai' && model.value === 'dall-e-2') {
     return [
-      { label: t('createMedia.parameters.size'),  key: 'size',  type: 'select', values: [ '256x256', '512x512', '1024x1024' ] },
+      { label: t('designStudio.parameters.size'),  key: 'size',  type: 'select', values: [ '256x256', '512x512', '1024x1024' ] },
     ]
   }
 
   // openai dall-e-3
   if (engine.value === 'openai' && model.value === 'dall-e-3') {
     return [
-      { label: t('createMedia.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'standard', 'hd' ] },
-      { label: t('createMedia.parameters.size'),  key: 'size',  type: 'select', values: [ '1024x1024', '1792x1024', '1024x1792' ] },
-      { label: t('createMedia.parameters.style'),  key: 'style',  type: 'select', values: [ 'vivid', 'natural' ] },
+      { label: t('designStudio.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'standard', 'hd' ] },
+      { label: t('designStudio.parameters.size'),  key: 'size',  type: 'select', values: [ '1024x1024', '1792x1024', '1024x1792' ] },
+      { label: t('designStudio.parameters.style'),  key: 'style',  type: 'select', values: [ 'vivid', 'natural' ] },
     ]
   }
 
   // hugingface all models
   if (engine.value === 'huggingface') {
     return [
-      { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
-      { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
-      { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+      { label: t('designStudio.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+      { label: t('designStudio.parameters.width'),  key: 'width',  type: 'input' },
+      { label: t('designStudio.parameters.height'), key: 'height', type: 'input' },
     ]
   }
 
   // // sdwebui all models
   // if (engine.value === 'sdwebui') {
   //   return [
-  //     { label: t('createMedia.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
-  //     { label: t('createMedia.parameters.width'),  key: 'width',  type: 'input' },
-  //     { label: t('createMedia.parameters.height'), key: 'height', type: 'input' },
+  //     { label: t('designStudio.parameters.negativePrompt'), key: 'negative_prompt', type: 'textarea' },
+  //     { label: t('designStudio.parameters.width'),  key: 'width',  type: 'input' },
+  //     { label: t('designStudio.parameters.height'), key: 'height', type: 'input' },
   //   ]
   // }
 
@@ -390,7 +390,7 @@ const generateMedia = async (action: 'create'|'edit') => {
   if (!userPrompt) {
     Dialog.show({
       title: t('common.error'),
-      text: t('createMedia.error.promptRequired'),
+      text: t('designStudio.error.promptRequired'),
     })
     return
   }

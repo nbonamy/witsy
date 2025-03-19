@@ -366,7 +366,7 @@
     "instructions": "欢迎使用计算机使用！计算机使用可以为您在计算机上执行操作，例如读取您的邮件并总结它们或预订酒店房间。请保持警惕，因为这些操作可能会导致意外行为，从而导致数据丢失。",
     "title": "计算机使用"
   },
-  "createMedia": {
+  "designStudio": {
     "confirmDelete": "你确定要删除这个媒体吗？",
     "emptyPlaceholder": "让你的创造力尽情发挥吧！",
     "error": {
@@ -1229,7 +1229,7 @@
       "title": "编辑"
     },
     "file": {
-      "createMedia": "@:{'createMedia.title'}",
+      "designStudio": "@:{'designStudio.title'}",
       "newChat": "新建聊天",
       "quickPrompt": "新建提示",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1627,6 +1627,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "使用方法：突出显示你的文本，按下键盘快捷键，然后选择一个 AI 命令",
+      "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
@@ -1727,7 +1728,7 @@
   },
   "tray": {
     "menu": {
-      "createMedia": "@:{'menu.file.createMedia'}",
+      "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "安装更新并重启…",
       "newChat": "@:{'menu.file.newChat'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

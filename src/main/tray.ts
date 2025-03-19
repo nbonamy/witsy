@@ -116,8 +116,9 @@ export default class {
         type: 'separator'
       },
       {
-        label: t('tray.menu.createMedia'),
-        click: () => window.openCreateMediaWindow(),
+        label: t('tray.menu.designStudio'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.studio),
+        click: () => window.openDesignStudioWindow(),
       },
       {
         type: 'separator'

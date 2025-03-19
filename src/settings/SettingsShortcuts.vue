@@ -20,6 +20,12 @@
       </div>
     </div>
     <div class="group">
+      <label>{{ t('settings.shortcuts.designStudio') }}</label>
+      <div class="subgroup">
+        <InputShortcut v-model="studio" @change="save" />
+      </div>
+    </div>
+    <div class="group">
       <label>{{ t('settings.shortcuts.readAloud') }}</label>
       <div class="subgroup">
         <InputShortcut v-model="readaloud" @change="save" />
@@ -51,6 +57,7 @@ const command = ref(null)
 const readaloud = ref(null)
 const transcribe = ref(null)
 const realtime = ref(null)
+const studio = ref(null)
 
 const load = () => {
   prompt.value = store.config.shortcuts.prompt
@@ -60,6 +67,7 @@ const load = () => {
   readaloud.value = store.config.shortcuts.readaloud
   transcribe.value = store.config.shortcuts.transcribe
   realtime.value = store.config.shortcuts.realtime
+  studio.value = store.config.shortcuts.studio
 }
 
 const save = () => {
@@ -70,6 +78,7 @@ const save = () => {
   store.config.shortcuts.readaloud = readaloud.value
   store.config.shortcuts.transcribe = transcribe.value
   store.config.shortcuts.realtime = realtime.value
+  store.config.shortcuts.studio = studio.value
   store.saveSettings()
   window.api.shortcuts.register()
 }

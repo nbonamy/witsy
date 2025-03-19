@@ -347,7 +347,7 @@
     "instructions": "Benvenuto in Computer Use! Computer Use può eseguire azioni per te sul tuo computer, come leggere le tue email e riassumerle o prenotare una stanza d'albergo. Rimani vigile poiché queste azioni potrebbero causare comportamenti imprevisti che potrebbero portare a perdita di dati.",
     "title": "Computer Use"
   },
-  "createMedia": {
+  "designStudio": {
     "confirmDelete": "Sei sicuro di voler eliminare questo media?",
     "emptyPlaceholder": "Lascia che la tua creatività si scateni!",
     "error": {
@@ -1210,7 +1210,7 @@
       "title": "Modifica"
     },
     "file": {
-      "createMedia": "@:{'createMedia.title'}",
+      "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nuova chat",
       "quickPrompt": "Nuova richiesta",
       "scratchpad": "@:{'scratchpad.title'}",
@@ -1597,6 +1597,7 @@
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
       "aiCommandsUsage": "Utilizzo: Evidenzia il tuo testo, premi la scorciatoia da tastiera e poi scegli un comando IA",
+      "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
@@ -1697,7 +1698,7 @@
   },
   "tray": {
     "menu": {
-      "createMedia": "@:{'menu.file.createMedia'}",
+      "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Installa aggiornamento e riavvia…",
       "newChat": "@:{'menu.file.newChat'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",

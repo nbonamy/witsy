@@ -28,8 +28,8 @@
       </template>
     </div>
     <div v-if="!message" class="empty">
-      <span v-if="isGenerating">{{ t('createMedia.generating') }}</span>
-      <span v-else>{{ t('createMedia.emptyPlaceholder') }}</span>
+      <span v-if="isGenerating">{{ t('designStudio.generating') }}</span>
+      <span v-else>{{ t('designStudio.emptyPlaceholder') }}</span>
     </div>
     <div v-else class="media">
       <video v-if="message.isVideo()" :src="message.attachment.url" :alt="message.content" class="video" controls />
