@@ -1538,6 +1538,7 @@
       "memory": {
         "contents": "Contenidos",
         "description": "Este complemento permite que los motores LLM almacenen y recuperen información sobre usted, haciendo que sus respuestas sean más personalizadas.",
+        "hasFacts": "No puedes cambiar el modelo de incrustación una vez que se han registrado hechos en la memoria. Borra la memoria si deseas cambiar el modelo de incrustación.",
         "resetConfirmation": {
           "title": "¿Está seguro de que desea restablecer la memoria y perder todos los datos sobre usted?"
         },

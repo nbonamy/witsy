@@ -1568,6 +1568,7 @@
       "memory": {
         "contents": "Conteúdo",
         "description": "Este plugin permite que os mecanismos LLM armazenem e recuperem informações sobre você, tornando suas respostas mais personalizadas.",
+        "hasFacts": "Você não pode alterar o modelo de embedding depois que fatos foram registrados na memória. Limpe a memória se quiser alterar o modelo de embedding.",
         "resetConfirmation": {
           "title": "Tem certeza de que deseja redefinir a memória e perder todos os fatos sobre você?"
         },

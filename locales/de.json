@@ -1538,6 +1538,7 @@
       "memory": {
         "contents": "Inhalt",
         "description": "Dieses Plugin ermöglicht LLM-Engines, Informationen über Sie zu speichern und abzurufen, wodurch ihre Antworten persönlicher werden.",
+        "hasFacts": "Sie können das Einbettungsmodell nicht ändern, sobald Fakten im Speicher aufgezeichnet wurden. Löschen Sie den Speicher, wenn Sie das Einbettungsmodell ändern möchten.",
         "resetConfirmation": {
           "title": "Sind Sie sicher, dass Sie das Gedächtnis zurücksetzen und alle Fakten über Sie verlieren möchten?"
         },

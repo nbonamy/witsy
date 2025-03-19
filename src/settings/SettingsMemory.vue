@@ -7,11 +7,15 @@
       <label>{{ t('common.enabled') }}</label>
       <input type="checkbox" v-model="enabled" @change="save" />
     </div>
-    <EmbeddingSelector :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
+    <EmbeddingSelector v-if="!hasFacts" :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
+    <div v-else class="group">
+      <label></label>
+      <div class="warning">{{ t('settings.plugins.memory.hasFacts') }}</div>
+    </div>
     <div class="group">
       <label>{{ t('settings.plugins.memory.contents') }}</label>
       <button @click.prevent="onView">{{ t('settings.plugins.memory.view') }}</button>
-      <button @click.prevent="onReset">{{ t('common.reset') }}</button>
+      <button @click.prevent="onReset">{{ t('common.clear') }}</button>
     </div>
     <MemoryInspector ref="inspector" @close="load"/>
   </div>
@@ -55,7 +59,7 @@ const onReset = () => {
     target: document.querySelector('.settings .plugins'),
     title: t('settings.plugins.memory.resetConfirmation.title'),
     text: t('common.confirmation.cannotUndo'),
-    confirmButtonText: t('common.reset'),
+    confirmButtonText: t('common.continue'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
@@ -84,6 +88,11 @@ defineExpose({ load })
 
 :deep() .group:has([required]) label:not(:empty)::after {
   content: ':' !important;
+}
+
+.warning {
+  font-style: italic;
+  margin-bottom: 8px;
 }
 
 </style>

@@ -364,7 +364,6 @@
       "title": "Cronologia"
     },
     "imageToVideo": "Usa l'immagine corrente per creare un video. Assicurati di selezionare un modello da immagine a video.",
-
     "loadMediaSettings": "Carica impostazioni",
     "mediaType": {
       "image": "Immagine",
@@ -1539,6 +1538,7 @@
       "memory": {
         "contents": "Contenuti",
         "description": "Questo plugin consente ai motori LLM di memorizzare e recuperare informazioni su di te, rendendo le loro risposte più personalizzate.",
+        "hasFacts": "Non puoi cambiare il modello di embedding una volta che i fatti sono stati registrati nella memoria. Cancella la memoria se vuoi cambiare il modello di embedding.",
         "resetConfirmation": {
           "title": "Sei sicuro di voler ripristinare la memoria e perdere tutti i fatti su di te?"
         },
