@@ -112,6 +112,7 @@ const getModels = async () => {
   const llmFactory = new LlmFactory(store.config)
   const success = await llmFactory.loadModels('ollama')
   if (!success) {
+    Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))
     return
   }

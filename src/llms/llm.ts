@@ -306,6 +306,11 @@ export default class LlmFactory {
       models = await llm.loadDeepSeekModels(this.config.engines.deepseek)
     }
 
+    // error?
+    if (!models) {
+      return false
+    }
+
     // needed
     const engineConfig = store.config.engines[engine]
     const initialConfig = JSON.stringify(engineConfig)

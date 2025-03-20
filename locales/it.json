@@ -43,6 +43,7 @@
     "embeddings": "Incorporamenti",
     "enabled": "Abilitato",
     "error": "Errore!",
+    "errorModelRefresh": "Errore durante l'aggiornamento dei modelli. Controlla la tua connessione e riprova.",
     "esc": "Esc",
     "estimatedCost": "Costo stimato:",
     "favorites": {
@@ -1250,7 +1251,7 @@
   },
   "modelPull": {
     "browse": "Sfoglia i modelli",
-    "error": "Errore durante il download del modello",
+    "error": "Errore durante il download del modello. Controlla la tua connessione e riprova.",
     "label": "Carica un modello",
     "placeholder": "Inserisci un nome di modello da scaricare o selezionane uno",
     "progress": "Download del modello…"

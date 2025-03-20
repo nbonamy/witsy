@@ -43,6 +43,7 @@
     "embeddings": "Embeddings",
     "enabled": "Ativado",
     "error": "Erro!",
+    "errorModelRefresh": "Erro ao atualizar modelos. Verifique sua conexão e tente novamente.",
     "esc": "Esc",
     "estimatedCost": "Custo estimado:",
     "favorites": {
@@ -1269,7 +1270,7 @@
   },
   "modelPull": {
     "browse": "Navegar por modelos",
-    "error": "Erro ao puxar modelo",
+    "error": "Erro ao puxar modelo. Verifique sua conexão e tente novamente.",
     "label": "Puxar modelo",
     "placeholder": "Insira um nome de modelo para puxar ou selecione um",
     "progress": "Puxando modelo…"

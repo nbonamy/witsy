@@ -64,7 +64,7 @@ const getModels = async () => {
   const llmFactory = new LlmFactory(store.config)
   let success = await llmFactory.loadModels('cerebras')
   if (!success) {
-    chat_models.value = []
+    Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))
     return
   }

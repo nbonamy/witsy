@@ -43,6 +43,7 @@
     "embeddings": "Einbettungen",
     "enabled": "Aktiviert",
     "error": "Fehler!",
+    "errorModelRefresh": "Fehler beim Aktualisieren der Modelle. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "esc": "Esc",
     "estimatedCost": "Geschätzte Kosten:",
     "favorites": {
@@ -1250,7 +1251,7 @@
   },
   "modelPull": {
     "browse": "Modelle durchsuchen",
-    "error": "Fehler beim Abrufen des Modells",
+    "error": "Fehler beim Abrufen des Modells. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "label": "Modell abrufen",
     "placeholder": "Geben Sie einen Modellnamen ein, um ihn abzurufen oder wählen Sie einen aus",
     "progress": "Modell wird abgerufen…"

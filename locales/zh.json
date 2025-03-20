@@ -43,6 +43,7 @@
     "embeddings": "嵌入",
     "enabled": "已启用",
     "error": "错误！",
+    "errorModelRefresh": "刷新模型时出错。请检查您的连接并重试。",
     "esc": "Esc",
     "estimatedCost": "预估成本：",
     "favorites": {
@@ -1269,7 +1270,7 @@
   },
   "modelPull": {
     "browse": "浏览模型",
-    "error": "拉取模型出错",
+    "error": "拉取模型时出错。请检查您的连接并重试。",
     "label": "拉取模型",
     "placeholder": "输入模型名称以拉取或选择一个",
     "progress": "正在拉取模型…"

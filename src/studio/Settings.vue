@@ -345,6 +345,7 @@ const getModels = async () => {
     const llmFactory = new LlmFactory(store.config)
     let success = await llmFactory.loadModels(engine.value)
     if (!success) {
+      Dialog.alert(t('common.errorModelRefresh'))
       setEphemeralRefreshLabel(t('common.error'))
       return
     }
@@ -355,6 +356,7 @@ const getModels = async () => {
     const sdwebui = new SDWebUI(store.config)
     let success = await sdwebui.loadModels()
     if (!success) {
+      Dialog.alert(t('common.errorModelRefresh'))
       setEphemeralRefreshLabel(t('common.error'))
       return
     }

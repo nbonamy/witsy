@@ -43,6 +43,7 @@
     "embeddings": "Osadzenia",
     "enabled": "Włączone",
     "error": "Błąd!",
+    "errorModelRefresh": "Błąd odświeżania modeli. Sprawdź swoje połączenie i spróbuj ponownie.",
     "esc": "Esc",
     "estimatedCost": "Szacowany koszt:",
     "favorites": {
@@ -1269,7 +1270,7 @@
   },
   "modelPull": {
     "browse": "Przeglądaj modele",
-    "error": "Model wyciągania błędów",
+    "error": "Błąd pobierania modelu. Sprawdź swoje połączenie i spróbuj ponownie.",
     "label": "Model ciągniony",
     "placeholder": "Wprowadź nazwę modelu, aby go pobrać lub wybrać",
     "progress": "Model ciągnący..."
