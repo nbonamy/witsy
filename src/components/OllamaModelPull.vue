@@ -6,8 +6,8 @@
       <a :href="props.infoUrl" target="_blank">{{ t('modelPull.browse') }}</a>
     </div>
     <div>
-      <button @click.prevent="onStop" v-if="pullStream">{{ t('common.stop') }}</button>
-      <button @click.prevent="onPull" v-else>{{ t('common.pull') }}</button>
+      <button v-if="pullStream" @click.prevent="onStop">{{ t('common.stop') }}</button>
+      <button v-else @click.prevent="onPull" :disabled="!pull_model">{{ t('common.pull') }}</button>
       <div class="progress" v-if="pull_progress">{{ pull_progress }}</div>
     </div>
   </div>
@@ -54,32 +54,41 @@ const onPull = () => {
   // do it
   nextTick(async () => {
 
-    // start pulling
-    //@ts-expect-error version mismatch because of direct import
-    pullStream.value = await ollama.pullModel(pull_model.value!)
-
-    // TODO: handle error (this is not working)
-    if (!pullStream.value) {
-      Dialog.alert(t('modelPull.error'))
-      pull_progress.value = null
-      return
-    }
-
-    // report progress
     try {
-      for await (const progress of pullStream.value) {
-        const percent = Math.floor(progress.completed / progress.total * 100)
-        if (!isNaN(percent)) {
-          pull_progress.value = percent + '%'
-        }
-      }
-    } catch {}
+      // start pulling
+      //@ts-expect-error version mismatch because of direct import
+      pullStream.value = await ollama.pullModel(pull_model.value!)
 
-    // done
-    pull_progress.value = null
-    pull_model.value = null
-    pullStream.value = null
-    emit('done')
+      // TODO: handle error (this is not working)
+      if (!pullStream.value) {
+        Dialog.alert(t('modelPull.error'))
+        pull_progress.value = null
+        return
+      }
+
+      // report progress
+      try {
+        for await (const progress of pullStream.value) {
+          const percent = Math.floor(progress.completed / progress.total * 100)
+          if (!isNaN(percent)) {
+            pull_progress.value = percent + '%'
+          }
+        }
+      } catch {}
+
+      // done
+      pull_progress.value = null
+      pull_model.value = null
+      pullStream.value = null
+      emit('done')
+
+    } catch (error) {
+      console.error(error)
+      pull_progress.value = null
+      pullStream.value = null
+      Dialog.alert(t('modelPull.error'))
+    }
+  
   })
 }
 

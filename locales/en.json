@@ -43,6 +43,7 @@
     "embeddings": "Embeddings",
     "enabled": "Enabled",
     "error": "Error!",
+    "errorModelRefresh": "Error refreshing models. Check your connection and try again.",
     "esc": "Esc",
     "estimatedCost": "Estimated cost:",
     "favorites": {
@@ -1269,7 +1270,7 @@
   },
   "modelPull": {
     "browse": "Browse models",
-    "error": "Error pulling model",
+    "error": "Error pulling model. Check your connection and try again.",
     "label": "Pull model",
     "placeholder": "Enter a model name to pull or select one",
     "progress": "Pulling model…"

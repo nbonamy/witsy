@@ -43,6 +43,7 @@
     "embeddings": "Vecteurs",
     "enabled": "Activé",
     "error": "Erreur !",
+    "errorModelRefresh": "Erreur lors de l'actualisation des modèles. Vérifiez votre connexion et réessayez.",
     "esc": "Échap",
     "estimatedCost": "Coût estimé :",
     "favorites": {
@@ -1250,7 +1251,7 @@
   },
   "modelPull": {
     "browse": "Parcourir les modèles",
-    "error": "Erreur lors du téléchargement du modèle",
+    "error": "Erreur lors du téléchargement du modèle. Vérifiez votre connexion et réessayez.",
     "label": "Charger un modèle",
     "placeholder": "Entrez un nom de modèle à télécharger ou sélectionnez-en un",
     "progress": "Téléchargement du modèle…"

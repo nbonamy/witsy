@@ -43,6 +43,7 @@
     "embeddings": "Vectores",
     "enabled": "Activado",
     "error": "¡Error!",
+    "errorModelRefresh": "Error al actualizar los modelos. Verifica tu conexión e inténtalo de nuevo.",
     "esc": "Esc",
     "estimatedCost": "Costo estimado:",
     "favorites": {
@@ -1250,7 +1251,7 @@
   },
   "modelPull": {
     "browse": "Explorar modelos",
-    "error": "Error al cargar el modelo",
+    "error": "Error al cargar el modelo. Verifica tu conexión e inténtalo de nuevo.",
     "label": "Cargar modelo",
     "placeholder": "Ingrese un nombre de modelo para cargar o seleccione uno",
     "progress": "Cargando modelo…"
