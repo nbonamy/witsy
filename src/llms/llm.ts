@@ -126,7 +126,7 @@ export default class LlmFactory {
 
   getChatModels = (engine: string): llm.Model[] => {
     if (this.isFavoriteEngine(engine)) {
-      return this.config.llm.favorites.map(f => ({ id: f.id, name: `${f.engine}/${f.model}`, meta: {} })).sort((a, b) => a.name.localeCompare(b.name))
+      return this.config.llm.favorites.map(f => ({ id: f.id, name: `${this.getEngineName(f.engine)}/${f.model}`, meta: {} })).sort((a, b) => a.name.localeCompare(b.name))
     } else {
       return this.config.engines[engine]?.models.chat || []
     }
