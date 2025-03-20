@@ -242,10 +242,15 @@ test('Favorite Ids', () => {
 })
 
 test('Favorite models', () => {
+  
+  store.config.engines['mock'] = {
+    label: 'mock_label',
+    model: { chat: '' }
+  }
 
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
-    { id: 'mock-chat2', name: 'mock/chat2', meta: {} }
+    { id: 'mock-chat1', name: 'mock_label/chat1', meta: {} },
+    { id: 'mock-chat2', name: 'mock_label/chat2', meta: {} }
   ])
 
   expect(llmFactory.isFavoriteModel('mock', 'chat1')).toBe(true)
@@ -262,25 +267,26 @@ test('Favorite models', () => {
 test('Favorites update', () => {
 
   store.config.engines['mock'] = {
+    label: 'mock_label',
     model: { chat: '' }
   }
 
   llmFactory.addFavoriteModel('mock', 'chat3')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
-    { id: 'mock-chat2', name: 'mock/chat2', meta: {} },
-    { id: 'mock-chat3', name: 'mock/chat3', meta: {} }
+    { id: 'mock-chat1', name: 'mock_label/chat1', meta: {} },
+    { id: 'mock-chat2', name: 'mock_label/chat2', meta: {} },
+    { id: 'mock-chat3', name: 'mock_label/chat3', meta: {} }
   ])
 
   llmFactory.removeFavoriteModel(favoriteMockEngine, 'mock-chat2')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'mock/chat1', meta: {} },
-    { id: 'mock-chat3', name: 'mock/chat3', meta: {} }
+    { id: 'mock-chat1', name: 'mock_label/chat1', meta: {} },
+    { id: 'mock-chat3', name: 'mock_label/chat3', meta: {} }
   ])
 
   llmFactory.removeFavoriteModel('mock', 'chat3')
   expect(llmFactory.getChatModels(favoriteMockEngine)).toStrictEqual([
-    { id: 'mock-chat1', name: 'mock/chat1', meta: {} }
+    { id: 'mock-chat1', name: 'mock_label/chat1', meta: {} }
   ])
 
   store.config.llm.engine = favoriteMockEngine
