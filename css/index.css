@@ -239,7 +239,7 @@
     --control-button-active-bg-color: rgb(75, 95, 115);
     --control-button-disabled-bg-color: rgb(35, 55, 75);
     --control-button-disabled-border-color: var(--control-button-disabled-bg-color);
-    --control-button-disabled-text-color: rgb(105, 105, 105);
+    --control-button-disabled-text-color: var(--icon-color);
     --control-textarea-bg-color: var(--background-color);
     --control-placeholder-text-color: var(--icon-color);
     --control-list-bg-color: var(--background-color);

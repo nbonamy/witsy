@@ -100,8 +100,6 @@ onUpdated(() => {
 
 const centerLogos = () => {
 
-  const verticalOffset = 0
-
   const engines = document.querySelector<HTMLElement>('.engines')
   const current = document.querySelector<HTMLElement>('.current')
   if (!engines || !current) {
@@ -111,23 +109,23 @@ const centerLogos = () => {
   const logo = current.querySelector<HTMLElement>('.logo')
 
   const rc1 = engines.getBoundingClientRect()
-  const midY1 = rc1.top + rc1.height / 2
+  const midY1 = rc1.top + 40 //+ rc1.height / 2
 
   const rc2 = logo.getBoundingClientRect()
   const midY2 = rc2.top + rc2.height / 2
 
   let top = parseInt(engines.style.top) || 0
-  engines.style.top = `-${top+midY1-midY2+verticalOffset}px`
+  engines.style.top = `-${top+midY1-midY2}px`
 
   // const tip = document.querySelector<HTMLElement>('.tip.engine')
   // if (tip) {
   //   top = parseInt(tip.style.top) || 0
-  //   tip.style.top = `${top+midY1-midY2+verticalOffset}px`
+  //   tip.style.top = `${top+midY1-midY2}px`
   // }
 
   const actions = document.querySelector<HTMLElement>('.actions')
   if (actions) {
-    actions.style.top = `-${top+midY1-midY2+verticalOffset}px`
+    actions.style.top = `-${top+midY1-midY2+60}px`
   }
 
 }
