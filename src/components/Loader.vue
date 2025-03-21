@@ -1,9 +1,17 @@
-
 <template>
-  <div class="loader"></div>
+  <div class="loader" :style="{ animationDelay: randomDelay + 's' }"></div>
 </template>
 
 <script setup lang="ts">
+
+import { ref, onMounted } from 'vue'
+
+const randomDelay = ref(0)
+
+onMounted(() => {
+  randomDelay.value = Math.random() / 3;
+})
+
 </script>
 
 <style scoped>
