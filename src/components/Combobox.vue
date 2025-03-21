@@ -4,7 +4,7 @@
     <select v-model="selected" @change="onSelect">
       <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
     </select>
-    <input type="text" v-model="value" :placeholder="placeholder" @change="onChange" @focus="onFocus" @blur="onBlur" />
+    <input type="text" :name="name" v-model="value" :placeholder="placeholder" @change="onChange" @focus="onFocus" @blur="onBlur" />
   </div>
 </template>
 
@@ -23,9 +23,10 @@ const focus = ref(false)
 const value = defineModel()
 const selected = ref(null)
 
-const props = defineProps({
+defineProps({
   items: { type: Array<ComboBoxItem>, required: true },
-  placeholder: { type: String, required: false }
+  placeholder: { type: String, required: false },
+  name: { type: String, default: '' },
 })
 
 const onFocus = () => {
