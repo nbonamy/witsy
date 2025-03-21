@@ -419,6 +419,7 @@
       "height": "Height",
       "negativePrompt": "Negative Prompt",
       "quality": "Quality",
+      "replicateInputImage": "Enter <media> as a value for the parameter matching the input image of the model.",
       "size": "Size",
       "style": "Style",
       "supportWarning": "Some parameters may not be supported by the model you selected.",
@@ -428,6 +429,10 @@
     "preserveOriginal": "Preserve original media",
     "promptPlaceholder": "What do you want to create?",
     "provider": "Provider",
+    "replicateInputImageRequired": {
+      "text": "Replicate models reference the input image differently. Refer to the <a href=\"{url}\" target=\"_blank\">model page</a> and enter the name of the parameter below.",
+      "title": "Replicate reference image parameter name required"
+    },
     "title": "Design Studio",
     "transform": "Use current media as base. Make sure you select a image-to-image, image-to-video or video-to-video model.",
     "variableEditor": {

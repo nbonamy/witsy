@@ -400,6 +400,7 @@
       "height": "Hauteur",
       "negativePrompt": "Prompt Négatif",
       "quality": "Qualité",
+      "replicateInputImage": "Entrez <media> comme valeur pour le paramètre correspondant à l'image d'entrée du modèle.",
       "size": "Taille",
       "style": "Style",
       "supportWarning": "Certains paramètres peuvent ne pas être pris en charge par le modèle que vous avez sélectionné.",
@@ -409,6 +410,10 @@
     "preserveOriginal": "Préserver l'original",
     "promptPlaceholder": "Que voulez-vous créer ?",
     "provider": "Fournisseur",
+    "replicateInputImageRequired": {
+      "text": "Les modèles Replicate font référence à l'image d'entrée différemment. Consultez la <a href=\"{url}\" target=\"_blank\">page du modèle</a> et entrez le nom du paramètre ci-dessous.",
+      "title": "Nom du paramètre de référence de l'image requis pour Replicate"
+    },
     "title": "Design Studio",
     "transform": "Utiliser le média actuel comme base. Assurez-vous de sélectionner un modèle d'image-à-image, d'image-à-vidéo ou de vidéo-à-vidéo.",
     "variableEditor": {

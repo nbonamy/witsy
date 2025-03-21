@@ -4,6 +4,7 @@
       <div class="actions">
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
+        <BIconPencilSquare @click="onReset"/>
       </div>
       <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :current-media="message" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
       <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
@@ -93,6 +94,11 @@ onMounted(() => {
   // keyboard
   document.addEventListener('keydown', onKeyDown)
 })
+
+const onReset = () => {
+  selectMessage(null)
+  mode.value = 'create'
+}
 
 const clearStacks = () => {
   undoStack.value = []
@@ -275,6 +281,47 @@ const onMediaGenerationRequest = async (data: any) => {
   const currentUrl = message.value?.attachment?.url
   const isEditing = data.action === 'edit' && !!currentUrl
   const isTransforming = data.action === 'transform' && !!currentUrl
+  let attachReference = isEditing || isTransforming
+
+  // make a copy as we are going to change that
+  const params = JSON.parse(JSON.stringify(data.params))
+
+  // replicate is painful...
+  if (data.engine === 'replicate' && attachReference) {
+
+    // find the key of <media> in params
+    let key = Object.keys(params).find(k => params[k] === '<media>')
+
+    // ask the user
+    if (!key) {
+
+      const url = `https://replicate.com/${data.model.split(':')[0]}`
+      
+      const result = await Dialog.show({
+        title: t('designStudio.replicateInputImageRequired.title'),
+        html: t('designStudio.replicateInputImageRequired.text', { url }),
+        input: 'text',
+        showCancelButton: true,
+      })
+
+      key = result.value
+    }
+
+    // still not?
+    if (!key) {
+      isGenerating.value = false
+      return
+    }
+
+    // attach here
+    const reference = window.api.file.read(currentUrl)
+    params[key] = `data:${reference.mimeType};base64,${reference.contents}`
+    attachReference = false
+
+    // ask Settings.vue to save the key
+    emitEvent('replicate-input-image-key', key)
+
+  }
 
   // reset
   isGenerating.value = true
@@ -287,9 +334,6 @@ const onMediaGenerationRequest = async (data: any) => {
   }
 
   try {
-
-    // make a copy as we are going to change that
-    const params = JSON.parse(JSON.stringify(data.params))
 
     // we need to convert params who look like numbers to numbers
     Object.keys(params).forEach((key) => {
@@ -306,10 +350,10 @@ const onMediaGenerationRequest = async (data: any) => {
 
     // generate
     const creator = data.mediaType === 'image' ? new ImageCreator() : new VideoCreator()
-    const media = await creator.execute( data.engine, data.model, {
+    const media = await creator.execute(data.engine, data.model, {
       prompt: data.prompt,
       ...params
-    }, isEditing || isTransforming ? window.api.file.read(currentUrl) : undefined)
+    }, attachReference ? window.api.file.read(currentUrl) : undefined)
 
     // check
     if (!media?.url) {

@@ -419,6 +419,7 @@
       "height": "Wysokość",
       "negativePrompt": "Negatywna zachęta",
       "quality": "Jakość",
+      "replicateInputImage": "Wprowadź <media> jako wartość dla parametru odpowiadającego obrazowi wejściowemu modelu.",
       "size": "Rozmiar",
       "style": "Styl",
       "supportWarning": "Niektóre parametry mogą nie być obsługiwane przez wybrany model.",
@@ -428,6 +429,10 @@
     "preserveOriginal": "Zachowaj oryginał",
     "promptPlaceholder": "Co chcesz stworzyć?",
     "provider": "Dostawca",
+    "replicateInputImageRequired": {
+      "text": "Modele Replicate odwołują się do obrazu wejściowego w inny sposób. Odwiedź <a href=\"{url}\" target=\"_blank\">stronę modelu</a> i wprowadź nazwę parametru poniżej.",
+      "title": "Wymagana nazwa parametru obrazu referencyjnego Replicate"
+    },
     "title": "Design Studio",
     "transform": "Użyj bieżącego nośnika jako podstawy. Upewnij się, że wybierasz model obraz-do-obraz, obraz-do-wideo lub wideo-do-wideo.",
     "variableEditor": {
