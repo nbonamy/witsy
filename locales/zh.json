@@ -145,6 +145,7 @@
   },
   "chat": {
     "actions": {
+      "exportMarkdown": "导出为 Markdown",
       "exportPdf": "导出为 PDF",
       "makeTemporary": "临时聊天",
       "saveChat": "保存聊天"
@@ -156,8 +157,13 @@
         "titleRequired": "请为此次聊天输入标题。"
       }
     },
-    "exportPdf": {
+    "export": {
       "error": "尝试导出聊天时发生错误。"
+    },
+    "role": {
+      "assistant": "助手",
+      "system": "系统",
+      "user": "你"
     }
   },
   "chatList": {

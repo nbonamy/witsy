@@ -126,6 +126,7 @@
   },
   "chat": {
     "actions": {
+      "exportMarkdown": "Exporter en Markdown",
       "exportPdf": "Exporter en PDF",
       "makeTemporary": "Conversation temporaire",
       "saveChat": "Sauvegarder la conversation"
@@ -137,8 +138,13 @@
         "titleRequired": "Assurez-vous d'entrer un titre pour cette conversation."
       }
     },
-    "exportPdf": {
+    "export": {
       "error": "Une erreur s'est produite lors de l'exportation de la conversation."
+    },
+    "role": {
+      "assistant": "Assistant",
+      "system": "Système",
+      "user": "Vous"
     }
   },
   "chatList": {
