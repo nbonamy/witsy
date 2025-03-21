@@ -33,6 +33,7 @@ import { ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
+import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 const apiKey = ref(null)
