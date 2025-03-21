@@ -84,7 +84,7 @@ export default class ImageCreator implements MediaCreator {
     } else if (engine == 'google') {
       return this.google(model, parameters, reference)
     } else if (engine == 'falai') {
-      return this.falai(model, parameters)
+      return this.falai(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -230,6 +230,17 @@ export default class ImageCreator implements MediaCreator {
         }
       }
 
+      if (!response.response.candidates?.[0]?.content) {
+        if (response.response.candidates?.[0]?.finishReason) {
+          return { 
+            error: `Google Generative AI finished with reason: ${response.response.candidates[0].finishReason}`
+          }
+        }
+        return { 
+          error: 'Google Generative AI returned no content'
+        }
+      }
+
       for (const part of  response.response.candidates[0].content.parts) {
         if (part.inlineData) {
           const imageData = part.inlineData.data;
@@ -249,7 +260,7 @@ export default class ImageCreator implements MediaCreator {
 
   }
 
-  async falai(model: string, parameters: anyDict): Promise<anyDict> {
+  async falai(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
     try {
 
@@ -260,7 +271,10 @@ export default class ImageCreator implements MediaCreator {
 
       // submit
       const response = await fal.subscribe(model, {
-        input: parameters
+        input: {
+          ...parameters,
+          ...(reference ? { image_url: `data:${reference.mimeType};base64,${reference.contents}` } : {}),
+        }
       })
 
       // download

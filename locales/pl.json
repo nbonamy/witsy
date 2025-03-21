@@ -389,7 +389,6 @@
       "empty": "Nie utworzono jeszcze żadnych multimediów.",
       "title": "Historia"
     },
-    "imageToVideo": "Użyj bieżącego obrazu, aby stworzyć wideo. Upewnij się, że wybierzesz model konwersji obrazu na wideo.",
     "loadMediaSettings": "Ustawienia ładowania",
     "mediaType": {
       "image": "Obraz",
@@ -410,9 +409,11 @@
       "title": "Parametry",
       "width": "Szerokość"
     },
+    "preserveOriginal": "Zachowaj oryginał",
     "promptPlaceholder": "Co chcesz stworzyć?",
     "provider": "Dostawca",
     "title": "Design Studio",
+    "transform": "Użyj bieżącego nośnika jako podstawy. Upewnij się, że wybierasz model obraz-do-obraz, obraz-do-wideo lub wideo-do-wideo.",
     "variableEditor": {
       "title": "Dodatkowy parametr"
     }

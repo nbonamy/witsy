@@ -194,6 +194,8 @@ export interface MediaCreator {
   execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any>
 }
 
+export type DesignStudioMediaType = 'image' | 'video'
+
 declare global {
   interface Window {
     api: {
@@ -358,7 +360,7 @@ declare global {
       search: {
         query(query: string, num: number): Promise<LocalSearchResult[]>
       }
-      create: {
+      studio: {
         start(): void
       }
       voiceMode: {

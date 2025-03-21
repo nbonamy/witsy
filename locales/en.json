@@ -389,7 +389,6 @@
       "empty": "You haven't created any media yet.",
       "title": "History"
     },
-    "imageToVideo": "Use current image to create video. Make sure you select a image-to-video model.",
     "loadMediaSettings": "Load settings",
     "mediaType": {
       "image": "Image",
@@ -410,9 +409,11 @@
       "title": "Parameters",
       "width": "Width"
     },
+    "preserveOriginal": "Preserve original media",
     "promptPlaceholder": "What do you want to create?",
     "provider": "Provider",
     "title": "Design Studio",
+    "transform": "Use current media as base. Make sure you select a image-to-image, image-to-video or video-to-video model.",
     "variableEditor": {
       "title": "Extra Parameter"
     }

@@ -27,7 +27,10 @@ beforeAll(() => {
   
   window.api.config.load = () => {
     const settings = defaultSettings as unknown as Configuration
-    settings.create.model = 'dall-e-2'
+    settings.studio.image = {
+      engine: 'openai',
+      model: 'dall-e-2',
+    }
     settings.engines.openai = {
       apiKey: 'openai',
       // @ts-expect-error mock
@@ -465,7 +468,8 @@ test('Edit', async () => {
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
   await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
-  await settings.find<HTMLButtonElement>('[name=edit]').trigger('click')
+  await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
+  await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
@@ -511,6 +515,50 @@ test('Edit', async () => {
 
 })
 
+test('Edit with preserve', async () => {
+
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
+  await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
+  await settings.find<HTMLInputElement>('[name=preserve]').setValue(true)
+  await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
+  expect(settings.emitted()['generate']).toHaveLength(1)
+  expect(settings.emitted()['generate'][0]).toStrictEqual([
+    expect.objectContaining({
+      action: 'transform',
+      mediaType: 'image',
+      engine: 'google',
+      model: 'gemini-2',
+      prompt: 'prompt',
+      params: { },
+    }),
+  ])
+
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
+
+  expect(store.history.chats[0].messages).toHaveLength(4)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+
+  expect(wrapper.vm.undoStack).toHaveLength(0)
+  expect(wrapper.vm.redoStack).toHaveLength(0)
+
+  expect(wrapper.vm.message).toMatchObject({
+    role: 'user',
+    content: 'prompt',
+    engine: 'google',
+    model: 'gemini-2',
+    attachment: expect.objectContaining({
+      url: 'file://google/gemini-2/prompt'
+    }),
+    toolCall: null
+  })
+
+})
+
 test('Undo / Redo', async () => {
 
   const wrapper: VueWrapper<any> = mount(DesignStudio)
@@ -519,7 +567,8 @@ test('Undo / Redo', async () => {
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
   await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
-  await settings.find<HTMLButtonElement>('[name=edit]').trigger('click')
+  await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
+  await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
 
   const preview = wrapper.findComponent({ name: 'Preview' })
   expect(preview.find('.action.undo').exists()).toBe(true)
