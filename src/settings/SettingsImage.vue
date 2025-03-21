@@ -14,7 +14,7 @@
       </select>
     </div>
 
-    <template v-if="engine == 'openai' || engine == 'google'">
+    <template v-if="['openai', 'google', 'xai'].includes(engine)">
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="subgroup">
