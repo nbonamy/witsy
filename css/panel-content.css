@@ -20,8 +20,10 @@
 
   .actions {
     padding: 16px;
-    text-align: right;
     -webkit-app-region: drag;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
   
     > * {
       fill: var(--sidebar-icon-color);
