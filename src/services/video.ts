@@ -100,13 +100,11 @@ export default class VideoCreator implements MediaCreator {
         credentials: store.config.engines.falai.apiKey
       });
 
-
-
       // submit
       const response = await fal.subscribe(model, {
         input: {
           ...(parameters.prompt ? { prompt: parameters.prompt } : {}),
-          ...(reference ? { image_url: new File([window.api.base64.decode(reference.contents)], 'image.png') } : {}),
+          ...(reference ? { image_url: `data:${reference.mimeType};base64,${reference.contents}` } : {}),
         }
       })
 

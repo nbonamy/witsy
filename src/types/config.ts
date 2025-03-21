@@ -1,6 +1,6 @@
 
 import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
-import { Shortcut, strDict } from './index'
+import { DesignStudioMediaType, Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
 import { McpClaudeServer } from './mcp'
 
@@ -12,7 +12,7 @@ export type Configuration = {
   automation: AutomationConfig
   instructions: InstructionsConfig
   appearance: AppearanceConfig
-  create: MediaCreateConfig
+  studio: DesignStudioConfig
   shortcuts: ShortcutsConfig
   scratchpad: ScratchpadConfig
   engines: {[key: string]: EngineConfig|CustomEngineConfig}
@@ -84,18 +84,19 @@ export type AppearanceConfig = {
   chat: ChatAppearance
 }
 
-export type MediaCreateDefaults = {
+export type DesignStudioDefaults = {
   engine: string
   model: string
   params: Record<string, string>
 }
 
-export type MediaCreateConfig = {
-  type: 'image' | 'video'
+export type DesignStudioConfig = {
+  type: DesignStudioMediaType
+  defaults: DesignStudioDefaults[]
+} & Record<DesignStudioMediaType, {
   engine: string
   model: string
-  defaults: MediaCreateDefaults[]
-}
+}>
 
 export type PromptConfig = {
   engine: string

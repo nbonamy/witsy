@@ -33,9 +33,18 @@
         <ComboBox :items="models" v-model="model" @change="onChangeModel" />
         <a v-if="engine === 'replicate' && mediaType === 'image'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
         <a v-if="engine === 'replicate' && mediaType === 'video'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
-        <a v-if="engine === 'falai' && mediaType === 'image'" href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
-        <a v-if="engine === 'falai' && mediaType === 'video'" href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
         <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
+        <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
+      </div>
+
+      <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
+        <input type="checkbox" v-model="transform" name="transform" />
+        <label>EXPERIMENTAL: {{ t('designStudio.transform') }}</label>
+      </div>
+
+      <div class="group horizontal checkbox" v-if="isEditing && !isGenerating">
+        <input type="checkbox" v-model="preserve" name="preserve" />
+        <label>{{ t('designStudio.preserveOriginal') }}</label>
       </div>
 
       <div class="group">
@@ -43,11 +52,6 @@
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
-
-      <!-- <div class="group horizontal checkbox" v-if="hasCurrentImage && supportsImageToVideo">
-        <input type="checkbox" v-model="imageToVideo" name="image_to_video" />
-        <label>{{ t('designStudio.imageToVideo') }}</label>
-      </div> -->
 
       <div v-if="modelHasParams" class="group">
         
@@ -101,11 +105,10 @@
 
       <div class="group">
         <div class="subgroup">
-          <button name="generate" class="generate-button" type="button" @click="generateMedia('create')" :disabled="isGenerating">
-            {{ isGenerating ? t('designStudio.generating') : t('designStudio.generate') }}
+          <button name="generate" class="generate-button" type="button" @click="generateMedia()" :disabled="isGenerating">
+            {{ isGenerating ? t('designStudio.generating') : isEditing ? t('common.edit') : t('designStudio.generate') }}
           </button>
           <button v-if="canUpload" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
-          <button v-if="canEdit && hasCurrentImage" name="edit" type="button" @click="generateMedia('edit')" :disabled="isGenerating">{{ t('common.edit') }}</button>
         </div>
       </div>
     </form>
@@ -119,10 +122,11 @@
 
 <script setup lang="ts">
 
-import { MediaCreator } from '../types/index'
+import { MediaCreator, DesignStudioMediaType } from '../types/index'
 import { onMounted, ref, Ref, computed } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
+import Message from '../models/message'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
 import ComboBox from '../components/Combobox.vue'
@@ -139,9 +143,9 @@ type Parameter = {
   values?: string[]
 }
 
-defineProps({
-  hasCurrentImage: {
-    type: Boolean,
+const props = defineProps({
+  currentMedia: {
+    type: Message,
     default: false
   },
   isGenerating: {
@@ -153,12 +157,13 @@ defineProps({
 const emit = defineEmits(['upload', 'generate'])
 
 const editor = ref(null)
-const mediaType: Ref<'image'|'video'> = ref('image')
+const mediaType: Ref<DesignStudioMediaType> = ref('image')
 const engine = ref('')
 const model = ref('')
 const prompt = ref('')
 const params: Ref<Record<string, string>> = ref({})
-//const imageToVideo = ref(false)
+const transform = ref(false)
+const preserve = ref(false)
 const showParams = ref(false)
 const selectedParam = ref(null)
 const refreshLabel = ref(t('common.refresh'))
@@ -191,7 +196,7 @@ const canEdit = computed(() => {
 })
 
 const modelHasDefaults = computed(() => {
-  return store.config.create.defaults?.find((d) => d.engine === engine.value && d.model === model.value)
+  return store.config.studio.defaults?.find((d) => d.engine === engine.value && d.model === model.value)
 })
 
 const canSaveAsDefaults = computed(() => {
@@ -297,24 +302,44 @@ const modelHasParams = computed(() => {
   return modelHasUserParams.value || modelHasCustomParams.value
 })
 
-const supportsImageToVideo = computed(() => {
-  return false//mediaType.value === 'video' && ['falai'].includes(engine.value)
+const canTransform = computed(() => {
+  return ['falai'].includes(engine.value) ||
+    (mediaType.value === 'image' && engine.value === 'google' && !props.currentMedia?.isVideo())
 })
 
 const canUpload = computed(() => {
-  return canEdit.value || supportsImageToVideo.value
+  return canEdit.value || canTransform.value
+})
+
+const isEditing = computed(() => {
+  return transform.value && mediaType.value === 'image' && !props.currentMedia?.isVideo()
+})
+
+const falaiModelsLink = computed(() => {
+  let categories = 'text-to-image'
+  if (mediaType.value === 'image' && transform.value) {
+    categories = 'image-to-image'
+  } else if (mediaType.value === 'video' && !transform.value) {
+    categories = 'text-to-video'
+  } else if (mediaType.value === 'video' && transform.value && !props.currentMedia?.isVideo()) {
+    categories = 'image-to-video'
+  } else if (mediaType.value === 'video' && transform.value && props.currentMedia?.isVideo()) {
+    categories = 'video-to-video'
+  }
+  return `https://fal.ai/models?categories=${categories}`
 })
 
 onMounted(() => {
-  mediaType.value = store.config.create.type || 'image'
-  engine.value = store.config.create.engine || 'openai'
-  model.value = store.config.create.model || 'dall-e-2'
+  mediaType.value = store.config.studio.type || 'image'
+  engine.value = store.config.studio[mediaType.value]?.engine || (mediaType.value === 'image' ? 'openai' : 'replicate')
+  model.value = store.config.studio[mediaType.value]?.model || (mediaType.value === 'image' ? 'dall-e-2' : '')
   onLoadDefaults()
 })
 
 const onChangeMediaType = () => {
-  engine.value = engines.value[0]?.id
-  onChangeEngine()
+  engine.value = store.config.studio[mediaType.value]?.engine || engines.value[0]?.id
+  model.value = store.config.studio[mediaType.value]?.model || models.value[0]?.id
+  onChangeModel()
 }
 
 const onChangeEngine = () => {
@@ -404,7 +429,7 @@ const onSaveParam = (param: { key: string, value: string }) => {
 }
 
 const onLoadDefaults = () => {
-  const savedDefaults = store.config.create.defaults.find((d) => d.engine === engine.value && d.model === model.value)
+  const savedDefaults = store.config.studio.defaults.find((d) => d.engine === engine.value && d.model === model.value)
   params.value = savedDefaults ? JSON.parse(JSON.stringify(savedDefaults?.params)) : {}
   if (Object.keys(params.value).length > 0) {
     showParams.value = true
@@ -413,7 +438,7 @@ const onLoadDefaults = () => {
 
 const onSaveDefaults = () => {
   onClearDefaults()
-  store.config.create.defaults.push({
+  store.config.studio.defaults.push({
     engine: engine.value,
     model: model.value,
     params: params.value,
@@ -422,7 +447,7 @@ const onSaveDefaults = () => {
 }
 
 const onClearDefaults = () => {
-  store.config.create.defaults = store.config.create.defaults.filter((d) => d.engine !== engine.value || d.model !== model.value)
+  store.config.studio.defaults = store.config.studio.defaults.filter((d) => d.engine !== engine.value || d.model !== model.value)
   store.saveSettings()
 }
 
@@ -437,16 +462,23 @@ const loadSettings = (settings: any) => {
 }
 
 const saveSettings = () => {
-  store.config.create.type = mediaType.value
-  store.config.create.engine = engine.value
-  store.config.create.model = model.value
+  store.config.studio.type = mediaType.value
+  if (!store.config.studio[mediaType.value]) {
+    store.config.studio[mediaType.value] = {
+      engine: engine.value,
+      model: model.value
+    }
+  } else {
+    store.config.studio[mediaType.value].engine = engine.value
+    store.config.studio[mediaType.value].model = model.value
+  }
   store.saveSettings()
 }
 
-const generateMedia = async (action: 'create'|'edit') => {
+const generateMedia = async () => {
 
   const userPrompt = prompt.value.trim()
-  if (/*!imageToVideo.value && */!userPrompt) {
+  if (!transform.value && !userPrompt) {
     Dialog.show({
       title: t('common.error'),
       text: t('designStudio.error.promptRequired'),
@@ -454,10 +486,15 @@ const generateMedia = async (action: 'create'|'edit') => {
     return
   }
 
-  // // overwrite
-  // if (imageToVideo.value) {
-  //   action = 'edit'
-  // }
+  // overwrite
+  let action = 'create'
+  if (transform.value) {
+    if (mediaType.value === 'image' && !props.currentMedia?.isVideo()) {
+      action = preserve.value ? 'transform' : 'edit'
+    } else {
+      action = 'transform'
+    }
+  }
 
   // emit
   emit('generate', {

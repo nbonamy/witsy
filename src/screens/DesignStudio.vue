@@ -5,7 +5,7 @@
         <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
         <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
       </div>
-      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :has-current-image="message != null" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
+      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :current-media="message" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
       <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
     </div>
     <Preview
@@ -273,7 +273,8 @@ const onMediaGenerationRequest = async (data: any) => {
 
   // save
   const currentUrl = message.value?.attachment?.url
-  const isEditing = data.action === 'edit' && currentUrl
+  const isEditing = data.action === 'edit' && !!currentUrl
+  const isTransforming = data.action === 'transform' && !!currentUrl
 
   // reset
   isGenerating.value = true
@@ -308,7 +309,7 @@ const onMediaGenerationRequest = async (data: any) => {
     const media = await creator.execute( data.engine, data.model, {
       prompt: data.prompt,
       ...params
-    }, isEditing ? window.api.file.read(currentUrl) : undefined)
+    }, isEditing || isTransforming ? window.api.file.read(currentUrl) : undefined)
 
     // check
     if (!media?.url) {
