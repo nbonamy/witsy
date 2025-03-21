@@ -30,11 +30,10 @@
 
       <div class="group" v-else>
         <label>{{ t('designStudio.model') }}</label>
-        <ComboBox :items="models" v-model="model" @change="onChangeModel" />
-        <a v-if="engine === 'replicate' && mediaType === 'image'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
-        <a v-if="engine === 'replicate' && mediaType === 'video'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
-        <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
+        <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel" />
         <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
+        <a v-if="engine === 'replicate'" :href="replicateModelsLink" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
+        <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
       </div>
 
       <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
@@ -67,7 +66,7 @@
 
       <template v-if="showParams">
 
-        <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model}`" target="_blank">{{ t('designStudio.moreAboutReplicateModels') }}</a></div>
+        <div v-if="engine == 'replicate'" class="info"><a :href="`https://replicate.com/${model.split(':')[0]}`" target="_blank">{{ t('designStudio.moreAboutReplicateModels') }}</a></div>
         <div v-if="engine == 'huggingface'" class="info">{{ t('designStudio.parameters.supportWarning') }}</div>
         <div v-if="engine == 'sdwebui'" class="info"><a :href="`${new SDWebUI(store.config).baseUrl}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('designStudio.moreAboutSDWebUIParameters') }}</a></div>
         
@@ -82,6 +81,10 @@
             </select>
           </div>
         </template>
+
+        <div v-if="currentMedia != null && transform">
+          {{ t('designStudio.parameters.replicateInputImage') }}
+        </div>
 
         <VariableTable v-if="modelHasUserParams" 
           :variables="params"
@@ -123,7 +126,7 @@
 <script setup lang="ts">
 
 import { MediaCreator, DesignStudioMediaType } from '../types/index'
-import { onMounted, ref, Ref, computed } from 'vue'
+import { onMounted, ref, Ref, computed, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import Message from '../models/message'
@@ -135,6 +138,9 @@ import VideoCreator from '../services/video'
 import VariableTable from '../components/VariableTable.vue'
 import SDWebUI from '../services/sdwebui'
 import LlmFactory from '../llms/llm'
+
+import useEventBus from '../composables/event_bus'
+const { onEvent } = useEventBus()
 
 type Parameter = {
   label: string
@@ -303,8 +309,9 @@ const modelHasParams = computed(() => {
 })
 
 const canTransform = computed(() => {
-  return ['falai'].includes(engine.value) ||
-    (mediaType.value === 'image' && engine.value === 'google' && !props.currentMedia?.isVideo())
+  
+  return ['falai', 'replicate'].includes(engine.value) ||
+    (engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo())
 })
 
 const canUpload = computed(() => {
@@ -312,7 +319,17 @@ const canUpload = computed(() => {
 })
 
 const isEditing = computed(() => {
-  return transform.value && mediaType.value === 'image' && !props.currentMedia?.isVideo()
+  return props.currentMedia != null && transform.value && mediaType.value === 'image' && !props.currentMedia?.isVideo()
+})
+
+const replicateModelsLink = computed(() => {
+  let collection = 'text-to-image'
+  if (mediaType.value === 'image' && transform.value) {
+    collection = 'image-editing'
+  } else if (mediaType.value === 'video') {
+    collection = 'text-to-video'
+  }
+  return `https://replicate.com/collections/${collection}`
 })
 
 const falaiModelsLink = computed(() => {
@@ -330,20 +347,34 @@ const falaiModelsLink = computed(() => {
 })
 
 onMounted(() => {
+
+  // replicate image key can be prompted by DesignStudio.vue
+  onEvent('replicate-input-image-key', (key: string) => {
+    params.value[key] = '<media>'
+  })
+
   mediaType.value = store.config.studio.type || 'image'
   engine.value = store.config.studio[mediaType.value]?.engine || (mediaType.value === 'image' ? 'openai' : 'replicate')
-  model.value = store.config.studio[mediaType.value]?.model || (mediaType.value === 'image' ? 'dall-e-2' : '')
+  model.value = store.config.studio[mediaType.value]?.[engine.value] || (mediaType.value === 'image' ? 'dall-e-2' : '')
   onLoadDefaults()
+
+  watch(() => props.currentMedia, () => {
+    if (!props.currentMedia) {
+      transform.value = false
+      preserve.value = false
+    }
+  }, { immediate: true  })
+
 })
 
 const onChangeMediaType = () => {
   engine.value = store.config.studio[mediaType.value]?.engine || engines.value[0]?.id
-  model.value = store.config.studio[mediaType.value]?.model || models.value[0]?.id
+  model.value = store.config.studio[mediaType.value]?.[engine.value] || models.value[0]?.id
   onChangeModel()
 }
 
 const onChangeEngine = () => {
-  model.value = models.value[0]?.id
+  model.value = store.config.studio[mediaType.value]?.[engine.value] || models.value[0]?.id
   onChangeModel()
 }
 
@@ -466,17 +497,18 @@ const saveSettings = () => {
   if (!store.config.studio[mediaType.value]) {
     store.config.studio[mediaType.value] = {
       engine: engine.value,
-      model: model.value
     }
+    store.config.studio[mediaType.value][engine.value] = model.value
   } else {
     store.config.studio[mediaType.value].engine = engine.value
-    store.config.studio[mediaType.value].model = model.value
+    store.config.studio[mediaType.value][engine.value] = model.value
   }
   store.saveSettings()
 }
 
 const generateMedia = async () => {
 
+  // check prompt
   const userPrompt = prompt.value.trim()
   if (!transform.value && !userPrompt) {
     Dialog.show({

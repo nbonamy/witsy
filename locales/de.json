@@ -400,6 +400,7 @@
       "height": "Höhe",
       "negativePrompt": "Negativer Prompt",
       "quality": "Qualität",
+      "replicateInputImage": "Geben Sie <media> als Wert für den Parameter ein, der dem Eingabebild des Modells entspricht.",
       "size": "Größe",
       "style": "Stil",
       "supportWarning": "Einige Parameter werden möglicherweise nicht von dem ausgewählten Modell unterstützt.",
@@ -409,6 +410,10 @@
     "preserveOriginal": "Original beibehalten",
     "promptPlaceholder": "Was möchten Sie erstellen?",
     "provider": "Anbieter",
+    "replicateInputImageRequired": {
+      "text": "Replicate-Modelle verweisen anders auf das Eingabebild. Siehe die <a href=\"{url}\" target=\"_blank\">Modellseite</a> und geben Sie den Namen des Parameters unten ein.",
+      "title": "Name des Referenzbildparameters für Replicate erforderlich"
+    },
     "title": "Design Studio",
     "transform": "Verwenden Sie das aktuelle Medium als Basis. Stellen Sie sicher, dass Sie ein Bild-zu-Bild-, Bild-zu-Video- oder Video-zu-Video-Modell auswählen.",
     "variableEditor": {

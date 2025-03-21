@@ -56,11 +56,11 @@
     "type": "image",
     "image": {
       "engine": "openai",
-      "model": "dall-e-2"
+      "openai": "dall-e-2"
     },
     "video": {
       "engine": "replicate",
-      "model": "wavespeedai/wan-2.1-t2v-480p"
+      "replicate": "wavespeedai/wan-2.1-t2v-480p"
     },
     "defaults": []
   },

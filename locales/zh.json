@@ -419,6 +419,7 @@
       "height": "高度",
       "negativePrompt": "负面提示",
       "quality": "质量",
+      "replicateInputImage": "输入 <media> 作为与模型输入图像匹配的参数的值。",
       "size": "大小",
       "style": "风格",
       "supportWarning": "您选择的模型可能不支持某些参数。",
@@ -428,6 +429,10 @@
     "preserveOriginal": "保留原始媒体",
     "promptPlaceholder": "你想创建什么？",
     "provider": "提供者",
+    "replicateInputImageRequired": {
+      "text": "Replicate 模型以不同方式引用输入图像。请参考 <a href=\"{url}\" target=\"_blank\">模型页面</a> 并在下方输入参数名称。",
+      "title": "需要 Replicate 引用图像参数名称"
+    },
     "title": "设计工作室",
     "transform": "使用当前媒体作为基础。请确保选择图像到图像、图像到视频或视频到视频模型。",
     "variableEditor": {

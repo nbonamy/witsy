@@ -29,13 +29,15 @@ beforeAll(() => {
     const settings = defaultSettings as unknown as Configuration
     settings.studio.image = {
       engine: 'openai',
-      model: 'dall-e-2',
+      openai: 'dall-e-3',
+      replicate: 'flux',
+      huggingface: 'sdxl',
     }
     settings.engines.openai = {
       apiKey: 'openai',
       // @ts-expect-error mock
       models: { image: [
-        { id: 'dall-e-2', name: 'dall-e-2' },
+        { id: 'dall-e-3', name: 'dall-e-3' },
         { id: 'dall-e-3', name: 'dall-e-3' }
       ] }
     }
@@ -79,7 +81,7 @@ beforeAll(() => {
             createdAt: 1,
             content: 'prompt1',
             engine: 'openai',
-            model: 'dall-e-2',
+            model: 'dall-e-3',
             attachment: new Attachment('', 'image/jpeg', 'file://url1.jpg')
           }),
           Message.fromJson({
@@ -119,22 +121,25 @@ test('Settings', async () => {
   await wrapper.vm.$nextTick()
   expect(settings.find<HTMLSelectElement>('[name=type]').element.value).toBe('image')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('openai')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('dall-e-2')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('dall-e-3')
   expect(settings.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('')
   expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
+  expect(settings.find<HTMLInputElement>('[name=model]').element.value).toBe('flux')
   expect(settings.find('.expander').exists()).toBe(true)
   await settings.find('.expander').trigger('click')
   expect(settings.find('.list-with-actions').exists()).toBe(true)
 
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('sdxl')
   expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=type]').setValue('video')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('replicate')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('wavespeedai/wan-2.1-t2v-480p')
   expect(settings.find('.expander').exists()).toBe(true)
 })
   
@@ -187,21 +192,21 @@ test('Generates - Basic', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'openai',
-      model: 'dall-e-2',
+      model: 'dall-e-3',
       prompt: 'prompt',
       params: {}
     })
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'openai', 'dall-e-2', { prompt: 'prompt' }, undefined
+    'openai', 'dall-e-3', { prompt: 'prompt' }, undefined
   )
 
   expect (wrapper.vm.message).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachment: expect.objectContaining({
-      url: 'file://openai/dall-e-2/prompt'
+      url: 'file://openai/dall-e-3/prompt'
     })
   })
 
@@ -291,14 +296,14 @@ test('Generates - Custom Params HuggingFace', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'huggingface',
-      model: 'black-forest-labs/FLUX.1-dev',
+      model: 'sdxl',
       prompt: 'prompt',
       params: { negative_prompt: 'no no no', width: '1000' },
     }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'huggingface', 'black-forest-labs/FLUX.1-dev', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
+    'huggingface', 'sdxl', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
   )
 
   // @ts-expect-error mock
@@ -306,7 +311,7 @@ test('Generates - Custom Params HuggingFace', async () => {
     role: 'user',
     content: 'prompt',
     attachment: expect.objectContaining({
-      url: 'file://huggingface/black-forest-labs/FLUX.1-dev/prompt'
+      url: 'file://huggingface/sdxl/prompt'
     }),
     toolCall: {
       status: expect.any(String),
@@ -353,21 +358,21 @@ test('Generates - User Params', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'replicate',
-      model: 'black-forest-labs/flux-1.1-pro',
+      model: 'flux',
       prompt: 'prompt',
       params: { string: 'value', number: '100', boolean: 'true' },
     }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'replicate', 'black-forest-labs/flux-1.1-pro', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
+    'replicate', 'flux', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
   )
 
   expect (wrapper.vm.message).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachment: expect.objectContaining({
-      url: 'file://replicate/black-forest-labs/flux-1.1-pro/prompt'
+      url: 'file://replicate/flux/prompt'
     }),
     toolCall: {
       status: expect.any(String),
@@ -396,7 +401,7 @@ test('Preview', async () => {
   await preview.find<HTMLElement>('.action.info').trigger('click')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'prompt1',
-    detail: 'Engine: openai\nModel: dall-e-2',
+    detail: 'Engine: openai\nModel: dall-e-3',
   }))
 
   // fullscreen

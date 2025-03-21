@@ -28,22 +28,32 @@
       </template>
     </div>
     <div v-if="!message" class="empty">
-      <span v-if="isGenerating">{{ t('designStudio.generating') }}</span>
+      <div v-if="isGenerating" class="loading">
+        <Loader />
+        <Loader />
+        <Loader />
+      </div>
       <span v-else>{{ t('designStudio.emptyPlaceholder') }}</span>
     </div>
     <div v-else class="media">
-      <video v-if="message.isVideo()" :src="message.attachment.url" :alt="message.content" class="video" controls />
-      <img v-else :src="message.attachment.url" @click="onFullScreen" />
+      <video v-if="message.isVideo()" :src="message.attachment.url" :alt="message.content" class="video" controls ref="mediaElement" @loadeddata="updateOverlay" />
+      <img v-else :src="message.attachment.url" @click="onFullScreen" ref="mediaElement" @load="updateOverlay" />
+      <div v-if="isGenerating" class="overlay loading" ref="overlayElement">
+        <Loader />
+        <Loader />
+        <Loader />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { t } from '../services/i18n'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
+import Loader from '../components/Loader.vue'
 
 const props = defineProps({
   message: {
@@ -67,6 +77,34 @@ const props = defineProps({
 const copying = ref(false)
 
 const emit = defineEmits(['fullscreen', 'delete', 'undo', 'redo'])
+
+const mediaElement = ref(null)
+const overlayElement = ref(null)
+
+onMounted(() => {
+  window.addEventListener('resize', updateOverlay)
+  watch(() => props.isGenerating, async () => {
+    await nextTick()
+    updateOverlay() 
+  }, { immediate: true })
+})
+
+const updateOverlay = () => {
+  
+  if (!mediaElement.value || !overlayElement.value) return
+  
+  const media = mediaElement.value
+  const overlay = overlayElement.value
+  
+  // Get the computed dimensions of the media element
+  const rect = media.getBoundingClientRect()
+  
+  // Apply the same dimensions to the overlay
+  overlay.style.width = `${media.offsetWidth}px`
+  overlay.style.height = `${media.offsetHeight}px`
+  overlay.style.top = `${rect.top - media.parentNode.getBoundingClientRect().top}px`
+  overlay.style.left = `${rect.left - media.parentNode.getBoundingClientRect().left}px`
+}
 
 const onInfo = () => {
   if (!props.message) return
@@ -133,6 +171,19 @@ const onDelete = () => {
   width: calc(100% - var(--create-panel-width));
   --preview-padding: 32px;
 
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+
+    .loader {
+      width: 24px;
+      height: 24px;
+    }
+
+  }
+
   .empty {
     flex: 1;
     display: flex;
@@ -153,6 +204,7 @@ const onDelete = () => {
   }
 
   .media {
+    position: relative;
     width: calc(100% - var(--preview-padding) * 2);
     height: calc(100% - var(--toolbar-height) - var(--preview-padding) * 2);
     display: flex;
@@ -167,6 +219,14 @@ const onDelete = () => {
       max-height: 100%;
       object-fit: contain;
       cursor: pointer;
+    }
+
+    .overlay {
+      position: absolute;
+      background-color: black;
+      opacity: 0.5;
+      z-index: 100;
+      pointer-events: none;
     }
   }
 }
