@@ -366,7 +366,8 @@ const onRenameFolder = async (folderId: string) => {
 }
 
 const onDeleteFolder = async (folderId: string) => {
-  Dialog.show({
+  
+  const result = await Dialog.show({
     title: t('main.folder.confirmDelete'),
     text: t('common.confirmation.cannotUndo'),
     customClass: { denyButton: 'alert-neutral' },
@@ -374,20 +375,24 @@ const onDeleteFolder = async (folderId: string) => {
     denyButtonText: t('main.folder.deleteConversations'),
     showCancelButton: true,
     showDenyButton: true,
-  }).then((result) => {
-
-    // find folder and delete it
-    const folder = store.history.folders.find((f) => f.id === folderId)
-    store.history.folders = store.history.folders.filter((f) => f.id !== folderId)
-
-    // delete chats if asked
-    if (result.isDenied) {
-      deleteChats(folder.chats)
-    }
-
-    // done
-    store.saveHistory()
   })
+
+  if (result.isDismissed) {
+    return
+  }
+
+  // find folder and delete it
+  const folder = store.history.folders.find((f) => f.id === folderId)
+  store.history.folders = store.history.folders.filter((f) => f.id !== folderId)
+
+  // delete chats if asked
+  if (result.isDenied) {
+    deleteChats(folder.chats)
+  }
+
+  // done
+  store.saveHistory()
+
 }
 
 const onSendPrompt = async (params: SendPromptParams) => {
