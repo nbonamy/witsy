@@ -1,4 +1,4 @@
-import { Model } from 'multi-llm-ts';
+import { Model, xAIBaseURL } from 'multi-llm-ts';
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index';
 import { saveFileContents, download } from '../services/download'
 import { store } from '../services/store'
@@ -16,17 +16,20 @@ export default class ImageCreator implements MediaCreator {
     if (!checkApiKey || store.config.engines.openai.apiKey) {
       engines.push({ id: 'openai', name: 'OpenAI' })
     }
-    if (!checkApiKey || store.config.engines.replicate.apiKey) {
-      engines.push({ id: 'replicate', name: 'Replicate' })
-    }
     if (!checkApiKey || store.config.engines.google.apiKey) {
       engines.push({ id: 'google', name: 'Google' })
     }
-    if (!checkApiKey || store.config.engines.huggingface.apiKey) {
-      engines.push({ id: 'huggingface', name: 'HuggingFace' })
+    if (!checkApiKey || store.config.engines.xai.apiKey) {
+      engines.push({ id: 'xai', name: 'xAI' })
+    }
+    if (!checkApiKey || store.config.engines.replicate.apiKey) {
+      engines.push({ id: 'replicate', name: 'Replicate' })
     }
     if (!checkApiKey || store.config.engines.falai.apiKey) {
       engines.push({ id: 'falai', name: 'fal.ai' })
+    }
+    if (!checkApiKey || store.config.engines.huggingface.apiKey) {
+      engines.push({ id: 'huggingface', name: 'HuggingFace' })
     }
     engines.push({ id: 'sdwebui', name: 'Stable Diffusion web UI' })
     return engines
@@ -85,42 +88,20 @@ export default class ImageCreator implements MediaCreator {
       return this.google(model, parameters, reference)
     } else if (engine == 'falai') {
       return this.falai(model, parameters, reference)
+    } else if (engine == 'xai') {
+      return this.xai(model, parameters)
     } else {
       throw new Error('Unsupported engine')
     }
   }
 
   async openai(model: string, parameters: anyDict): Promise<anyDict> {
+    return this._openai('openai', store.config.engines.openai.apiKey, store.config.engines.openai.baseURL, model, parameters)
+  }
 
-    // init
-    const client = new OpenAI({
-      apiKey: store.config.engines.openai.apiKey,
-      baseURL: store.config.engines.openai.baseURL,
-      dangerouslyAllowBrowser: true
-    })
-
-    // call
-    console.log(`[openai] prompting model ${model}`)
-    const response = await client.images.generate({
-      model: model,
-      prompt: parameters?.prompt,
-      response_format: 'b64_json',
-      size: parameters?.size,
-      style: parameters?.style,
-      quality: parameters?.quality,
-      n: parameters?.n || 1,
-    })
-
-    // save the content on disk
-    const fileUrl = saveFileContents('png', response.data[0].b64_json)
-    //console.log('[image] saved image to', fileUrl)
-
-    // return an object
-    return {
-      url: fileUrl,
-    }
-
-  }  
+  async xai(model: string, parameters: anyDict): Promise<anyDict> {
+    return this._openai('xai', store.config.engines.xai.apiKey, xAIBaseURL, model, parameters)
+  }
 
   async huggingface(model: string, parameters: anyDict): Promise<anyDict> {
 
@@ -150,7 +131,7 @@ export default class ImageCreator implements MediaCreator {
 
   }  
 
-  async replicate(model: string, parameters: any): Promise<any> {
+  async replicate(model: string, parameters: any/*, reference?: MediaReference*/): Promise<any> {
 
     // init
     const client = new Replicate({ auth: store.config.engines.replicate.apiKey }); 
@@ -160,6 +141,7 @@ export default class ImageCreator implements MediaCreator {
     const output: FileOutput[] = await client.run(model as `${string}/${string}`, {
       input: {
         ...parameters,
+        //...(reference ? { img: `data:${reference.mimeType};base64,${reference.contents}` } : {}),
         output_format: 'jpg',
       }
     }) as FileOutput[];
@@ -288,6 +270,39 @@ export default class ImageCreator implements MediaCreator {
     }
   
   }
+
+  protected async _openai(name: string, apiKey: string, baseURL: string, model: string, parameters: anyDict): Promise<anyDict> {
+
+    // init
+    const client = new OpenAI({
+      apiKey: apiKey,
+      baseURL: baseURL,
+      dangerouslyAllowBrowser: true
+    })
+
+    // call
+    console.log(`[${name}] prompting model ${model}`)
+    const response = await client.images.generate({
+      model: model,
+      prompt: parameters?.prompt,
+      response_format: 'b64_json',
+      size: parameters?.size,
+      style: parameters?.style,
+      quality: parameters?.quality,
+      n: parameters?.n || 1,
+    })
+
+    // save the content on disk
+    const fileUrl = saveFileContents('png', response.data[0].b64_json)
+    //console.log('[image] saved image to', fileUrl)
+
+    // return an object
+    return {
+      url: fileUrl,
+    }
+
+  }
+
 
   async blobToBase64(blob: Blob): Promise<string>{
     return new Promise((resolve, reject) => {
