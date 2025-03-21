@@ -371,7 +371,23 @@
     }
   },
   "computerUse": {
+    "action": {
+      "cursor_position": "获取鼠标光标位置…",
+      "double_click": "双击鼠标…",
+      "key": "按下一个键…",
+      "left_click": "点击鼠标左键…",
+      "left_click_drag": "拖动鼠标左键…",
+      "middle_click": "点击鼠标中键…",
+      "mouse_move": "移动鼠标光标…",
+      "right_click": "点击鼠标右键…",
+      "screenshot": "截取屏幕截图…",
+      "type": "在键盘上输入…"
+    },
     "instructions": "欢迎使用计算机使用！计算机使用可以为您在计算机上执行操作，例如读取您的邮件并总结它们或预订酒店房间。请保持警惕，因为这些操作可能会导致意外行为，从而导致数据丢失。",
+    "state": {
+      "idle": "初始化中…",
+      "working": "正在思考下一步该做什么…"
+    },
     "title": "计算机使用"
   },
   "designStudio": {

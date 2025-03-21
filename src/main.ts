@@ -754,6 +754,28 @@ ipcMain.on('computer-execute-action', async (event, payload) => {
   event.returnValue = await Computer.executeAction(payload);
 });
 
+ipcMain.on('computer-start', async () => {
+  window.mainWindow?.minimize();
+  window.openComputerStatusWindow();
+});
+
+ipcMain.on('computer-close', async () => {
+  window.closeComputerStatusWindow();
+  window.mainWindow?.restore();
+});
+
+ipcMain.on('computer-stop', async () => {
+  try {
+    window.mainWindow?.webContents.send('computer-stop');
+  } catch { /* empty */ }
+});
+
+ipcMain.on('computer-status', async (_, payload) => {
+  try {
+    window.computerStatusWindow?.webContents.send('computer-status', payload);
+  } catch { /* empty */ }
+});
+
 ipcMain.on('memory-reset', async () => {
   await memoryManager.reset();
 });

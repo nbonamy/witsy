@@ -9,7 +9,7 @@ import { Application, RunCommandParams } from './types/automation';
 import { McpServer, McpStatus } from './types/mcp';
 import { LocalSearchResult } from './main/search';
 import { Size } from './main/computer';
-import { LlmTool } from 'multi-llm-ts';
+import { LlmChunk, LlmTool } from 'multi-llm-ts';
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -156,6 +156,10 @@ contextBridge.exposeInMainWorld(
       getScreenNumber: (): number => { return ipcRenderer.sendSync('computer-get-screen-number') },
       takeScreenshot: (): string => { return ipcRenderer.sendSync('computer-get-screenshot') },
       executeAction: (action: ComputerAction): anyDict => { return ipcRenderer.sendSync('computer-execute-action', action) },
+      updateStatus(chunk: LlmChunk): void { ipcRenderer.send('computer-status', chunk) },
+      start: (): void => { return ipcRenderer.send('computer-start') },
+      close: (): void => { return ipcRenderer.send('computer-close') },
+      stop: (): void => { return ipcRenderer.send('computer-stop') },
     },
     memory: {
       reset: (): void => { ipcRenderer.send('memory-reset') },

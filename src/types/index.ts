@@ -1,5 +1,5 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, Model } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, Model, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -348,6 +348,10 @@ declare global {
         getScreenNumber(): number
         takeScreenshot(): string
         executeAction(action: ComputerAction): any
+        start(): void
+        stop(): void
+        close(): void
+        updateStatus(chunk: LlmChunk): void
       }
       memory: {
         reset(): void

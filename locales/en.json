@@ -371,7 +371,23 @@
     }
   },
   "computerUse": {
-    "instructions": "Welcome to Computer Use! Computer Use can perform actions for you on your computer such as reading your mails and summarize them or book a hotel room. Stay alert as these actions may cause unexpected behavior which could result in data loss",
+    "action": {
+      "cursor_position": "Getting mouse cursor position…",
+      "double_click": "Double clicking on mouse…",
+      "key": "Pressing a key…",
+      "left_click": "Clicking on mouse left button…",
+      "left_click_drag": "Dragging with mouse left button…",
+      "middle_click": "Clicking on mouse middle button…",
+      "mouse_move": "Moving mouse cursor…",
+      "right_click": "Clicking on mouse right button…",
+      "screenshot": "Taking a screenshot…",
+      "type": "Typing on keyboard…"
+    },
+    "instructions": "Welcome to Computer Use! Computer Use can perform actions for you on your computer such as reading your mails and summarize them or book a hotel room. Stay alert as these actions may cause unexpected behavior which could result in data loss.",
+    "state": {
+      "idle": "Initializing…",
+      "working": "Thinking about what to do next…"
+    },
     "title": "Computer Use"
   },
   "designStudio": {

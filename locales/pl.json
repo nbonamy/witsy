@@ -371,7 +371,23 @@
     }
   },
   "computerUse": {
+    "action": {
+      "cursor_position": "Pobieranie pozycji kursora myszy…",
+      "double_click": "Podwójne kliknięcie myszą…",
+      "key": "Naciskanie klawisza…",
+      "left_click": "Kliknięcie lewym przyciskiem myszy…",
+      "left_click_drag": "Przeciąganie lewym przyciskiem myszy…",
+      "middle_click": "Kliknięcie środkowym przyciskiem myszy…",
+      "mouse_move": "Przesuwanie kursora myszy…",
+      "right_click": "Kliknięcie prawym przyciskiem myszy…",
+      "screenshot": "Robienie zrzutu ekranu…",
+      "type": "Pisanie na klawiaturze…"
+    },
     "instructions": "Witamy w Computer Use! Computer Use może wykonywać dla Ciebie działania na Twoim komputerze, takie jak czytanie Twoich maili i ich podsumowywanie lub rezerwowanie pokoju w hotelu. Bądź czujny, ponieważ te działania mogą powodować nieoczekiwane zachowanie, które może skutkować utratą danych",
+    "state": {
+      "idle": "Inicjalizacja…",
+      "working": "Zastanawiam się, co zrobić dalej…"
+    },
     "title": "Computer Use"
   },
   "designStudio": {
