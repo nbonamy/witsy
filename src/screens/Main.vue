@@ -69,12 +69,13 @@ onMounted(() => {
   onEvent('toggle-sidebar', onToggleSidebar)
   onEvent('activate-computer-use', onComputerUse)
 
-  // main event
+  // main events
   window.api.on('delete-chat', () => {
     if (assistant.value.chat) {
       onDeleteChat(assistant.value.chat.uuid)
     }
   })
+  window.api.on('computer-stop', onStopGeneration)
 
   // query params
   window.api.on('query-params', (params) => {
@@ -417,6 +418,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
     store.addChat(assistant.value.chat)
   }
 
+  // we will need that (function because chat may be updated later)
+  const isUsingComputer = () => {
+    return llmFactory.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
+  }
+
   // prompt
   await assistant.value.prompt(prompt, {
     model: assistant.value.chat.model,
@@ -424,21 +430,43 @@ const onSendPrompt = async (params: SendPromptParams) => {
     docrepo: docrepo || null,
     expert: expert || null,
   }, (chunk) => {
+  
+    // if we get a chunk, emit it
     emitEvent('new-llm-chunk', chunk)
+
+    // computer use
+    if (isUsingComputer()) {
+      window.api.computer.updateStatus(chunk)
+    }
+  
+  
   }, async (event: GenerationEvent) => {
+
     if (event === 'before_generation') {
+
       // not very nice but gets the message list scrolling
       emitEvent('new-llm-chunk', {
         type: 'content',
         content: '',
         done: false,
       })
+
+      // for computer use
+      if (isUsingComputer()) {
+        window.api.computer.start()
+      }
+
     } else if (event === 'plugins_disabled') {
       tipsManager.showTip('pluginsDisabled')
     } else if (event === 'before_title') {
       store.saveHistory()
     }
   })
+
+  // for computer use
+  if (isUsingComputer()) {
+    window.api.computer.close()
+  }
 
   // save
   store.saveHistory()

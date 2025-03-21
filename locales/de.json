@@ -352,7 +352,23 @@
     }
   },
   "computerUse": {
+    "action": {
+      "cursor_position": "Mauszeigerposition abrufen…",
+      "double_click": "Doppelklick mit der Maus…",
+      "key": "Eine Taste drücken…",
+      "left_click": "Linke Maustaste klicken…",
+      "left_click_drag": "Mit der linken Maustaste ziehen…",
+      "middle_click": "Mittlere Maustaste klicken…",
+      "mouse_move": "Mauszeiger bewegen…",
+      "right_click": "Rechte Maustaste klicken…",
+      "screenshot": "Einen Screenshot machen…",
+      "type": "Auf der Tastatur tippen…"
+    },
     "instructions": "Willkommen bei der Computer Use! Die Computer Use kann Aktionen auf Ihrem Computer für Sie ausführen, wie z. B. das Lesen Ihrer E-Mails und deren Zusammenfassung oder das Buchen eines Hotelzimmers. Seien Sie wachsam, da diese Aktionen unerwartetes Verhalten verursachen können, was zu Datenverlust führen könnte.",
+    "state": {
+      "idle": "Initialisierung…",
+      "working": "Überlege, was als Nächstes zu tun ist…"
+    },
     "title": "Computer Use"
   },
   "designStudio": {

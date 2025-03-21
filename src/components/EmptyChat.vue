@@ -73,7 +73,7 @@ const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, tr
 const isFavoriteModel = computed(() => llmFactory.isFavoriteModel(store.config.llm.engine, model.value))
 
 const hasComputerUse = computed(() => {
-  return false//store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models.chat.find(m => m.id === 'computer-use')
+  return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
 const showEngineTip = () => {
@@ -261,8 +261,8 @@ const onSelectModel = (ev: Event) => {
   // target
   const target = ev.target as HTMLSelectElement
 
-  // anthropic computer-use warning
-  if (store.config.llm.engine === 'anthropic' && target.value === 'computer-use') {
+  // computer-use warning
+  if (llmFactory.isComputerUseModel(store.config.llm.engine, target.value)) {
     tipsManager.showTip('computerUse')
   }
 

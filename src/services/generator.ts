@@ -83,6 +83,7 @@ export type GenerationResult =
           response.usage = msg.usage
         } else if (msg.type === 'tool') {
           response.setToolCall(msg)
+          callback?.call(null, msg)
         } else if (msg.type === 'content') {
           if (msg && sources && sources.length > 0) {
             msg.done = false

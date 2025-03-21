@@ -312,6 +312,7 @@ async function checkUnusedTranslations() {
         !key.match(/^settings\.plugins\.[^.]+\.title$/) &&
         !key.match(/^common\.language\.[a-z]{2}-[A-Z]{2}$/) &&
         !key.match(/^chat\.role\..*$/) &&
+        !key.match(/^computerUse\.action\..*$/) &&
         !key.match(/^commands\.commands\..*$/) &&
         !key.match(/^experts\.experts\..*$/)
       ))

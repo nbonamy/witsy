@@ -87,6 +87,10 @@ export default class LlmFactory {
     store.saveSettings()
   }
 
+  isComputerUseModel = (engine: string, model: string): boolean => {
+    return (engine === 'anthropic' && model === 'computer-use')
+  }
+
   removeFavoriteModel = (engine: string, model: string) => {
 
     // 1st remove
