@@ -40,6 +40,7 @@
 <script setup lang="ts">
 
 import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
+import { t } from '../services/i18n'
 import { store } from '../services/store'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import useAppearanceTheme from '../composables/appearance_theme'
@@ -116,7 +117,7 @@ onUnmounted(() => {
 })
 
 const authorName = computed(() => {
-  return props.message.role === 'assistant' ? 'Assistant' : 'You'
+  return props.message.role === 'assistant' ? t('chat.role.assistant') : t('chat.role.user')
 })
 
 const imageUrl = computed(() => {

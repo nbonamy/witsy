@@ -66,6 +66,7 @@ const chatMenuActions = computed(() => {
   return [
     { label: props.chat?.temporary ? t('chat.actions.saveChat') : t('chat.actions.makeTemporary'), action: 'toggle_temp', disabled: false },
     { label: t('common.rename'), action: 'rename', disabled: false },
+    { label: t('chat.actions.exportMarkdown'), action: 'exportMarkdown', disabled: !hasMessages() },
     { label: t('chat.actions.exportPdf'), action: 'exportPdf', disabled: !hasMessages() },
     { label: t('common.delete'), action: 'delete', disabled: !isSaved() },
   ].filter((a) => a != null)
@@ -143,6 +144,8 @@ const handleActionClick = async (action: string) => {
     emitEvent('rename-chat', props.chat)
   } else if (action === 'delete') {
     emitEvent('delete-chat', props.chat.uuid)
+  } else if (action == 'exportMarkdown') {
+    onExportMarkdown()
   } else if (action == 'exportPdf') {
     onExportPdf()
   } else if (action == 'toogleTools') {
@@ -161,6 +164,29 @@ const onToggleTemporary = () => {
   } else {
     props.chat.temporary = true
     store.removeChat(props.chat)
+  }
+}
+
+const onExportMarkdown = async () => {
+  try {
+    let content = `# ${props.chat.title}\n\n`
+    for (const message of props.chat.messages) {
+      content += `## ${t('chat.role.' + message.role)}\n\n${message.content}\n\n`
+    }
+    window.api.file.save({
+      contents: window.api.base64.encode(content),
+      url: `${props.chat.title}.md`,
+      properties: {
+        directory: 'documents',
+        prompt: true,
+      }
+    })
+  } catch (e) {
+    console.error('Error exporting Markdown:', e)
+    window.api.showDialog({
+      message: t('common.error'),
+      detail: t('chat.export.error'),
+    })
   }
 }
 
@@ -231,7 +257,7 @@ const onExportPdf = async () => {
     console.error('Error exporting PDF:', e)
     window.api.showDialog({
       message: t('common.error'),
-      detail: t('chat.exportPdf.error'),
+      detail: t('chat.export.error'),
     })
   }
 

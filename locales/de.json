@@ -126,6 +126,7 @@
   },
   "chat": {
     "actions": {
+      "exportMarkdown": "Als Markdown exportieren",
       "exportPdf": "Als PDF exportieren",
       "makeTemporary": "Temporärer Chat",
       "saveChat": "Chat speichern"
@@ -137,8 +138,13 @@
         "titleRequired": "Bitte geben Sie einen Titel für diesen Chat ein."
       }
     },
-    "exportPdf": {
+    "export": {
       "error": "Beim Versuch, den Chat zu exportieren, ist ein Fehler aufgetreten."
+    },
+    "role": {
+      "assistant": "Assistent",
+      "system": "System",
+      "user": "Du"
     }
   },
   "chatList": {

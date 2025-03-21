@@ -89,6 +89,7 @@ test('Context menu empty chat', async () => {
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportMarkdown', action: 'exportMarkdown', disabled: true },
     { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: true },
     { label: 'common.delete', action: 'delete', disabled: true }
   ])
@@ -101,6 +102,7 @@ test('Context menu normal chat', async () => {
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.makeTemporary', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportMarkdown', action: 'exportMarkdown', disabled: false },
     { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
     { label: 'common.delete', action: 'delete', disabled: true }
   ])
@@ -114,6 +116,7 @@ test('Context menu temporary chat', async () => {
   expect(wrapper.vm.chatMenuActions).toStrictEqual([
     { label: 'chat.actions.saveChat', action: 'toggle_temp', disabled: false },
     { label: 'common.rename', action: 'rename', disabled: false },
+    { label: 'chat.actions.exportMarkdown', action: 'exportMarkdown', disabled: false },
     { label: 'chat.actions.exportPdf', action: 'exportPdf', disabled: false },
     { label: 'common.delete', action: 'delete', disabled: true }
   ])
@@ -157,7 +160,22 @@ test('Context menu rename', async () => {
   expect(emitEventMock).toHaveBeenLastCalledWith('rename-chat', chat)
 })
 
-test('Context menu export', async () => {
+test('Context menu export Markdown', async () => {
+  addMessagesToChat()
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+  await wrapper.find('.toolbar .menu').trigger('click')
+  await wrapper.find('.context-menu .item[data-action=exportMarkdown]').trigger('click')
+  expect(window.api.file.save).toHaveBeenCalledWith({
+    contents: '# New Chat\n\n## chat.role.system\n\nHello\n\n## chat.role.user\n\nHi\n\n_encoded',
+    url: 'New Chat.md',
+    properties: {
+      directory: 'documents',
+      prompt: true
+    }
+  })
+})
+
+test('Context menu export PDF', async () => {
   addMessagesToChat()
   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.toolbar .menu').trigger('click')

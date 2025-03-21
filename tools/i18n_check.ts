@@ -311,6 +311,7 @@ async function checkUnusedTranslations() {
       const unusedKeys = new Set(allKeys.filter(key =>
         !key.match(/^settings\.plugins\.[^.]+\.title$/) &&
         !key.match(/^common\.language\.[a-z]{2}-[A-Z]{2}$/) &&
+        !key.match(/^chat\.role\..*$/) &&
         !key.match(/^commands\.commands\..*$/) &&
         !key.match(/^experts\.experts\..*$/)
       ))
