@@ -168,8 +168,8 @@ contextBridge.exposeInMainWorld(
     search: {
       query: (query: string, num: number = 5): Promise<LocalSearchResult[]> => { return ipcRenderer.invoke('search-query', { query, num }) },
     },
-    create: {
-      start: (): void => { return ipcRenderer.send('create-start') },
+    studio: {
+      start: (): void => { return ipcRenderer.send('studio-start') },
     },
     voiceMode: {
       start: (): void => { return ipcRenderer.send('voice-mode-start') },

@@ -785,7 +785,7 @@ ipcMain.handle('search-query', async (_, payload) => {
   return results;
 });
 
-ipcMain.on('create-start', () => {
+ipcMain.on('studio-start', () => {
   window.openDesignStudioWindow();
 })
 

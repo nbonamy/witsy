@@ -280,7 +280,7 @@ const removeFavorite = () => {
 }
 
 const onCreateMedia = () => {
-  window.api.create.start()
+  window.api.studio.start()
 }
 
 const onScratchpad = () => {
