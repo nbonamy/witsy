@@ -15,6 +15,9 @@
     "clickToStart": "Clique na bolha para começar a conversar",
     "close": "Fechar",
     "colon": "spaced",
+    "comboBox": {
+      "help": "Selecione um modelo da lista ou digite um nome de modelo que você sabe que existe."
+    },
     "command": "Comando",
     "confirmation": {
       "cannotUndo": "Você não pode desfazer essa ação.",

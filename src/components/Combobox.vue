@@ -1,5 +1,6 @@
 
 <template>
+  <div v-if="showHelp" class="help">{{ t('common.comboBox.help') }}</div>
   <div class="wrapper" :class="{ focused: focus }">
     <select v-model="selected" @change="onSelect">
       <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
@@ -11,6 +12,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
+import { t } from '../services/i18n'
 
 export type ComboBoxItem = {
   id: string
@@ -26,6 +28,7 @@ const selected = ref(null)
 defineProps({
   items: { type: Array<ComboBoxItem>, required: true },
   placeholder: { type: String, required: false },
+  showHelp: { type: Boolean, default: true },
   name: { type: String, default: '' },
 })
 
@@ -55,6 +58,12 @@ const onSelect = (event: Event) => {
 </style>
 
 <style scoped>
+
+.help {
+  opacity: 0.6;
+  margin-top: 2px;
+  margin-bottom: 6px;
+}
 
 form .group .wrapper {
   position: relative;

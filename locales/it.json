@@ -15,6 +15,9 @@
     "clickToStart": "Clicca sul blob per iniziare a chattare",
     "close": "Chiudi",
     "colon": "non spazioso",
+    "comboBox": {
+      "help": "Seleziona un modello dall'elenco o digita un nome di modello che sai esistere."
+    },
     "command": "Comando",
     "confirmation": {
       "cannotUndo": "Non puoi annullare questa azione.",
@@ -401,7 +404,6 @@
       "negativePrompt": "Prompt Negativo",
       "quality": "Qualità",
       "replicateInputImage": "Inserisci <media> come valore per il parametro che corrisponde all'immagine di input del modello.",
-
       "size": "Dimensione",
       "style": "Stile",
       "supportWarning": "Alcuni parametri potrebbero non essere supportati dal modello selezionato.",

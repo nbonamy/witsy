@@ -2,7 +2,7 @@
   <div class="group pull">
     <label>{{ t('modelPull.label') }}</label>
     <div class="subgroup">
-      <Combobox class="combobox" :items="pullableModels" :placeholder="t('modelPull.placeholder')" v-model="pull_model" />
+      <Combobox class="combobox" :items="pullableModels" :placeholder="t('modelPull.placeholder')" :show-help="false" v-model="pull_model" />
       <a :href="props.infoUrl" target="_blank">{{ t('modelPull.browse') }}</a>
     </div>
     <div>

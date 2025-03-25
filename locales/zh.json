@@ -15,6 +15,9 @@
     "clickToStart": "点击气泡开始聊天",
     "close": "关闭",
     "colon": "notspaced",
+    "comboBox": {
+      "help": "从列表中选择一个模型或输入您知道存在的模型名称。"
+    },
     "command": "命令",
     "confirmation": {
       "cannotUndo": "您无法撤销此操作。",

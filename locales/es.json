@@ -15,6 +15,9 @@
     "clickToStart": "Haz clic en el blob para comenzar a chatear",
     "close": "Cerrar",
     "colon": "noespaciado",
+    "comboBox": {
+      "help": "Selecciona un modelo de la lista o escribe un nombre de modelo que sepas que existe."
+    },
     "command": "Comando",
     "confirmation": {
       "cannotUndo": "No puedes deshacer esta acción.",

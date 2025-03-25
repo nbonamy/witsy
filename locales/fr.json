@@ -15,6 +15,9 @@
     "clickToStart": "Cliquez sur le blob pour commencer à discuter",
     "close": "Fermer",
     "colon": "spaced",
+    "comboBox": {
+      "help": "Sélectionnez un modèle dans la liste ou saisissez un nom de modèle que vous savez exister."
+    },
     "command": "Commande",
     "confirmation": {
       "cannotUndo": "Cette action ne peut pas être annulée.",
