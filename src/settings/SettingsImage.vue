@@ -102,7 +102,6 @@ import Combobox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import SDWebUI, { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
 import LlmFactory from '../llms/llm'
-import { fal } from '@fal-ai/client'
 
 const enabled = ref(false)
 const engine = ref(null)
