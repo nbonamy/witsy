@@ -4,7 +4,7 @@
       <BIconRecordCircle v-if="state == 'recording'" color="red" @click="onStop()" />
       <Loader class="loader" v-else-if="state == 'processing'" />
       <BIconRecordCircle v-else @click="onRecord()" />
-      <Waveform :width="310" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+      <Waveform :width="350" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
       <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord')" />
@@ -214,14 +214,15 @@ const onCancel = () => {
   .controls {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 32px;
     align-items: center;
     color: var(--text-color);
   }
 
   .result {
     display: flex;
-    flex: 0 0 180px;
+    flex: 1;
     margin-top: 16px;
     textarea {
       flex: 1;
@@ -237,6 +238,7 @@ const onCancel = () => {
 
   .actions {
     margin-top: 8px;
+    margin-bottom: 32px;
     display: flex;
     flex-direction: row;
 

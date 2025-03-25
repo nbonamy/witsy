@@ -1,8 +1,10 @@
 
-import { app, BrowserWindow } from 'electron';
-import { createWindow, getCenteredCoordinates } from './index';
+import { app, BrowserWindow, Rectangle, WillResizeDetails } from 'electron';
+import { electronStore, createWindow, getCenteredCoordinates } from './index';
 import { wait } from '../utils';
 import { useI18n } from '../i18n';
+
+const storeBoundsId = 'transcribe.bounds'
 
 export let transcribePalette: BrowserWindow = null;
 
@@ -24,21 +26,49 @@ export const openTranscribePalette = async () => {
   // try to show existig one
   closeTranscribePalette();
 
+  // get bounds from here
+  const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
+
   // get bounds
-  const width = 400;
-  const height = 300;
-  const { x, y } = getCenteredCoordinates(width, height);
+  const minWidth = 460
+  const minHeight = 300
+  const width = bounds?.width ?? minWidth;
+  const height = bounds?.height ?? minHeight;
+  const center = getCenteredCoordinates(width, height);
 
   // open a new one
   transcribePalette = createWindow({
     title: useI18n(app)('transcribe.title'),
     hash: '/transcribe',
-    x, y, width, height,
+    x: bounds?.x || center.x,
+    y: bounds?.y || center.y,
+    width: width,
+    height: height,
+    minWidth: minWidth,
+    minHeight: minHeight,
     center: true,
     frame: false,
-    skipTaskbar: true,
-    resizable: false,
-    hiddenInMissionControl: true,
+    resizable: true,
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transcribePalette.on('will-resize', function (event: Event, newBounds: Rectangle, details: WillResizeDetails) {
+    transcribePalette.setSize(newBounds.width, minHeight);
+    event.preventDefault();
+  });
+
+  transcribePalette.on('close', () => {
+    electronStore.set(storeBoundsId, transcribePalette.getBounds());
+  })
+
+  // handle window close
+  transcribePalette.on('closed', () => {
+    transcribePalette = null;
+  });
+
+  // show in dock
+  if (process.platform === 'darwin') {
+    app.dock.show();
+  }
 
 }
