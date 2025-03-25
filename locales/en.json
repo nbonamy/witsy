@@ -15,6 +15,9 @@
     "clickToStart": "Click the blob to start chatting",
     "close": "Close",
     "colon": "notspaced",
+    "comboBox": {
+      "help": "Select a model from the list or type a model name you know exist."
+    },
     "command": "Command",
     "confirmation": {
       "cannotUndo": "You can't undo this action.",

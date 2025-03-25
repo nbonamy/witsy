@@ -15,6 +15,9 @@
     "clickToStart": "Kliknij kropkę, aby rozpocząć czat",
     "close": "Zamknij",
     "colon": "notspaced",
+    "comboBox": {
+      "help": "Wybierz model z listy lub wpisz nazwę modelu, o której wiesz, że istnieje."
+    },
     "command": "Polecenie",
     "confirmation": {
       "cannotUndo": "Nie można cofnąć tej akcji.",
