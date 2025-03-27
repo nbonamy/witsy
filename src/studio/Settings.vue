@@ -31,7 +31,7 @@
       <div class="group" v-else>
         <label>{{ t('designStudio.model') }}</label>
         <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
-          <button @click.prevent="toggleFavorite">
+          <button name="favorite" @click.prevent="toggleFavorite">
             <BIconStarFill v-if="isFavorite"/>
             <BIconStar v-else/>
           </button>

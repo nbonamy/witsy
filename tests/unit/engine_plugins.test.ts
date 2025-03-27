@@ -12,6 +12,8 @@ import Memory from '../../src/plugins/memory'
 import Nestor from '../../src/plugins/nestor'
 import Computer from '../../src/plugins/computer'
 import { HfInference } from '@huggingface/inference'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import { fal } from '@fal-ai/client'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
@@ -37,6 +39,14 @@ vi.mock('../../src/services/i18n', async () => {
     }
   }
 })
+
+// mock download
+vi.mock('../../src/services/download.ts', async () => {
+  return {
+    saveFileContents: vi.fn(() => 'file://file_saved'),
+    download: vi.fn(() => 'file://file_downloaded'),
+  }
+})  
 
 // tavily
 vi.mock('../../src/vendor/tavily', async () => {
@@ -70,6 +80,27 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
+// google
+vi.mock('@google/generative-ai', async () => {
+  const GoogleGenerativeAI = vi.fn()
+  GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => ({
+    generateContent: vi.fn(() => ({
+      response: {
+        candidates: [{
+          content: {
+            parts: [
+              { inlineData: { data: 'base64encodedimage' } },
+            ]
+          }
+        }]
+      }
+    }))
+  }))
+  return {
+    GoogleGenerativeAI
+  }
+})
+
 // huggingface
 vi.mock('@huggingface/inference', async () => {
   const HfInference = vi.fn()
@@ -88,6 +119,22 @@ vi.mock('replicate', async () => {
     }
   })
   return { default: Replicate }
+})
+
+// fal.ai
+vi.mock('@fal-ai/client', async () => {
+  return {
+    fal: {
+      config: vi.fn(),
+      subscribe: vi.fn((model) => {
+        if (model.includes('image')) {
+          return { data: { images: [ { url: 'http://fal.ai/image.jpg' } ] } }
+        } else if (model.includes('video')) {
+          return { data: { video: { url: 'http://fal.ai/video.mp4' } } }
+        }
+      })
+    }
+  }
 })
 
 beforeAll(() => {
@@ -116,8 +163,10 @@ beforeAll(() => {
   }
   store.config.engines = {
     openai: { apiKey: 'test-api-key', model: { image: 'dall-e-2' } },
+    google: { apiKey: 'test-api-key', model: { image: 'test-model' } },
     huggingface: { apiKey: 'test-api-key', model: { image: 'test-model' } },
-    replicate: { apiKey: 'test-api-key', model: { image: 'test-model' } }
+    replicate: { apiKey: 'test-api-key', model: { image: 'test-model' } },
+    falai: { apiKey: 'test-api-key', model: { image: 'test-model' } }
   }
 })
 
@@ -189,6 +238,40 @@ test('Image Plugin Replicate', async () => {
 
 })
 
+test('Image Plugin fal.ai', async () => {
+
+  store.config.plugins.image.engine = 'falai'
+  store.config.engines.falai.model.image = 'image/model'
+  const image = new Image(store.config.plugins.image)
+  const result = await image.execute({ prompt: 'test prompt' })
+  expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
+  expect(fal.subscribe).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
+    input: { prompt: 'test prompt', }
+  }))
+  expect(result).toStrictEqual({
+    url: 'file://file_downloaded',
+  })
+
+})
+
+test('Image Plugin google', async () => {
+
+  store.config.plugins.image.engine = 'google'
+  store.config.engines.falai.model.image = 'image/model'
+  const image = new Image(store.config.plugins.image)
+  const result = await image.execute({ prompt: 'test prompt' })
+  expect(GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenLastCalledWith({
+    model: 'test-model',
+    generationConfig: { responseModalities: ['Text', 'Image'] }
+  })
+  // expect(GoogleGenerativeAI.prototype.getGenerativeModel().generateContent).toHaveBeenLastCalledWith({
+  // })
+  expect(result).toStrictEqual({
+    url: 'file://file_saved',
+  })
+
+})
+
 test('Video Plugin', async () => {
   
   const video = new Video(store.config.plugins.video)
@@ -220,6 +303,22 @@ test('Video Plugin Replicate', async () => {
   }))
   expect(result).toStrictEqual({
     url: 'file://file_saved',
+  })
+
+})
+
+test('Video Plugin fal.ai', async () => {
+
+  store.config.plugins.video.engine = 'falai'
+  store.config.engines.falai.model.video = 'video/model'
+  const video = new Video(store.config.plugins.video)
+  const result = await video.execute({ prompt: 'test prompt' })
+  expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
+  expect(fal.subscribe).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
+    input: { prompt: 'test prompt', }
+  }))
+  expect(result).toStrictEqual({
+    url: 'file://file_downloaded',
   })
 
 })

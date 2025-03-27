@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config'
+/*import { Configuration } from '../types/config'
 import { SynthesisResponse, TTSEngine } from './tts-engine'
 import OpenAI from 'openai'
 
@@ -51,4 +51,4 @@ export default class TTSKokoro extends TTSEngine {
     }
   }
 
-}
+}*/

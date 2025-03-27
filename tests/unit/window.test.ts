@@ -291,6 +291,16 @@ test('Open Create Media window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
+test('Open Computer', async () => {
+  await window.openComputerStatusWindow()
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
+    hash: '/computer',
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/computer')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
 test('Open Debug window', async () => {
   await window.openDebugWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
@@ -311,3 +321,14 @@ test('MAS build warning', async () => {
   })
   expect(shell.openExternal).toHaveBeenLastCalledWith(expect.stringContaining('https://witsyai.com/'))
 })
+
+test('Utilities', async () => {
+  expect(window.persistentWindows().length).toBe(2)
+  expect(window.areAllWindowsClosed()).toBe(false)
+})
+
+test('Notify', async () => {
+  window.notifyBrowserWindows('event')
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('event')
+})
+

@@ -84,9 +84,12 @@ export type AppearanceConfig = {
   chat: ChatAppearance
 }
 
-export type DesignStudioModelDefaults = {
+export type DesignStudioModel = {
   engine: string
   model: string
+}
+
+export type DesignStudioModelDefaults = DesignStudioModel & {
   params: Record<string, string>
 }
 
@@ -96,6 +99,7 @@ export type DesignStudioMediaTypeDefaults = {
 
 export type DesignStudioConfig = {
   type: DesignStudioMediaType
+  favorites: DesignStudioModel[]
   defaults: DesignStudioModelDefaults[]
 } & Record<DesignStudioMediaType, DesignStudioMediaTypeDefaults>
 
