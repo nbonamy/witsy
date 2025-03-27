@@ -219,7 +219,7 @@ onMounted(() => {
   // event
   onEvent('set-prompt', onSetPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
-  //window.api.on('start-dictation', onDictate)
+  window.api.on('start-dictation', onDictate)
   autoGrow(input.value)
 
   // other stuff
@@ -236,7 +236,7 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onGlobalKeyDown)
   window.api.off('docrepo-modified', loadDocRepos)
-  //window.api.off('start-dictation', onDictate)
+  window.api.off('start-dictation', onDictate)
 })
 
 const defaultPrompt = (conversationMode: string) => {
