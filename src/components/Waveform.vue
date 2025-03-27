@@ -25,7 +25,6 @@ const props = defineProps({
 const waveform: Ref<HTMLCanvasElement|null> = ref(null)
 
 onMounted(() => {
-  console.log('Waveform mounted')
   draw()
 })
 

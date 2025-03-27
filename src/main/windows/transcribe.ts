@@ -53,8 +53,10 @@ export const openTranscribePalette = async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transcribePalette.on('will-resize', function (event: Event, newBounds: Rectangle, details: WillResizeDetails) {
-    transcribePalette.setSize(newBounds.width, minHeight);
-    event.preventDefault();
+    if (!process.env.DEBUG) {
+      transcribePalette.setSize(newBounds.width, minHeight);
+      event.preventDefault();
+    }
   });
 
   transcribePalette.on('close', () => {

@@ -17,6 +17,12 @@
       <button class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
       <button class="button" @click="onCopy()">{{ t('common.copy') }}</button>
     </div>
+    <form class="option">
+      <div class="group">
+        <input type="checkbox" v-model="autoStart" @change="save" />
+        <label>{{ t('transcribe.autoStart') }}</label>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -40,17 +46,18 @@ let userStoppedDictation = false
 const isMas = ref(false)
 const state = ref('idle')
 const transcription = ref('')
+const autoStart = ref(false)
 const foregroundColorActive = ref(null)
 const foregroundColorInactive = ref(null)
 
-onMounted(() => {
+onMounted(async () => {
 
   // events
   document.addEventListener('keydown', onKeyDown)
 
   // init
-  transcriber.initialize()
-  initializeAudio()
+  await transcriber.initialize()
+  await initializeAudio()
   
   // grab colors
   try {
@@ -63,7 +70,13 @@ onMounted(() => {
   }
 
   // other stuff
+  autoStart.value = store.config.stt.autoStart
   isMas.value = window.api.isMasBuild
+
+  // auto start?
+  if (autoStart.value) {
+    onRecord()
+  }
 
 })
 
@@ -196,7 +209,17 @@ const onInsert = () => {
 const onCancel = () => {
   window.api.transcribe.cancel()
 }
+
+const save = () => {
+  store.config.stt.autoStart = autoStart.value
+  store.saveSettings()
+}
+
 </script>
+
+<style scoped>
+@import '../../css/form.css';
+</style>
 
 <style scoped>
 
@@ -207,14 +230,19 @@ const onCancel = () => {
   flex-direction: column;
   background-color: var(--window-bg-color);
   color: var(--control-placeholder-text-color);
-  font-size: 18pt;
+  font-size: 10pt;
   padding: 16px 24px;
   -webkit-app-region: drag;
+
+  > *:last-child {
+    margin-bottom: 32px;
+  }
 
   .controls {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    font-size: 18pt;
     gap: 32px;
     align-items: center;
     color: var(--text-color);
@@ -238,7 +266,6 @@ const onCancel = () => {
 
   .actions {
     margin-top: 8px;
-    margin-bottom: 32px;
     display: flex;
     flex-direction: row;
 
@@ -247,7 +274,20 @@ const onCancel = () => {
     }
   }
 
-  svg, textarea, button {
+  .option {
+    margin-top: 8px;
+    .group {
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 4px;
+    }
+    input[type=checkbox] {
+      flex: 0 0 14px;
+    }
+  }
+
+  svg, input, textarea, button {
     -webkit-app-region: no-drag;
   }
 

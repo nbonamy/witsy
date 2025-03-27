@@ -1761,6 +1761,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
     "errorMicrophone": "Błąd dostępu do mikrofonu",
     "errorSTTNotReady": "Silnik zamiany mowy na tekst nie jest gotowy",

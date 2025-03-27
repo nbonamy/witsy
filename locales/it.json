@@ -1725,6 +1725,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "Inizia la trascrizione quando si apre la finestra",
     "clickToRecord": "Clicca sul pulsante di registrazione quando sei pronto!",
     "errorMicrophone": "Errore durante l'accesso al microfono",
     "errorSTTNotReady": "Il motore di riconoscimento vocale non è pronto",

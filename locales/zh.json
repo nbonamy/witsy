@@ -1755,6 +1755,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "窗口打开时开始转录",
     "clickToRecord": "准备好了就点击录音按钮！",
     "errorMicrophone": "无法访问麦克风",
     "errorSTTNotReady": "语音转文本引擎未准备好",

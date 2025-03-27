@@ -113,6 +113,7 @@
     "engine": "openai",
     "model": "whisper-1",
     "locale": "",
+    "autoStart": false,
     "silenceDetection": true,
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe"
