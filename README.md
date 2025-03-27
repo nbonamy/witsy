@@ -38,7 +38,8 @@ Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
-- Text-to-image and text-to video with OpenAI, HuggingFace and Replicate
+- Text-to-image and text-to video with OpenAI, Google, xAI, Replicate, fal.ai and HuggingFace
+- Image-to-image (image editing) and image-to-video with Google, Replicate and fal.ai
 - Scratchpad to interactively create the best content with any model!
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
