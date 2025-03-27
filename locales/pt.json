@@ -1755,6 +1755,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
     "errorMicrophone": "Erro ao acessar o microfone",
     "errorSTTNotReady": "Mecanismo de voz para texto não está pronto",

@@ -1761,6 +1761,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "Start transcribing when window opens",
     "clickToRecord": "Click the record button when you are ready!",
     "errorMicrophone": "Error accessing microphone",
     "errorSTTNotReady": "Speech-to-text engine not ready",

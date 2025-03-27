@@ -153,6 +153,7 @@ export type STTConfig = {
   locale: string
   engine: string
   model: string
+  autoStart: boolean
   silenceDetection: boolean
   silenceDuration: number
   //silenceAction: SilenceAction

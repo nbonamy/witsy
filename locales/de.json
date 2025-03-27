@@ -1725,6 +1725,7 @@
     }
   },
   "transcribe": {
+    "autoStart": "Beginnen Sie mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
     "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
     "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
