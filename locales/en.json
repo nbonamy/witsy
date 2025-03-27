@@ -16,7 +16,7 @@
     "close": "Close",
     "colon": "notspaced",
     "comboBox": {
-      "help": "Select a model from the list or type a model name you know exist."
+      "help": "Select a model from the list or type a model name you know exists."
     },
     "command": "Command",
     "confirmation": {
@@ -1260,6 +1260,7 @@
     "edit": {
       "deleteChat": "Delete Chat",
       "deleteMedia": "Delete Media",
+      "startDictation": "Start Dictation",
       "title": "Edit"
     },
     "file": {
@@ -1779,7 +1780,7 @@
       "runAiCommand": "Run AI Command",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
-      "startDictation": "Start Dictation",
+      "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
     }
   }

@@ -1260,6 +1260,7 @@
     "edit": {
       "deleteChat": "Usuń czat",
       "deleteMedia": "Usuń nośnik",
+      "startDictation": "Rozpocznij dyktowanie",
       "title": "Edytuj"
     },
     "file": {
@@ -1779,7 +1780,7 @@
       "runAiCommand": "Uruchom polecenie AI",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
-      "startDictation": "Rozpocznij dyktowanie",
+      "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
     }
   }

@@ -35,7 +35,7 @@
 
 import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
-import { ref, computed, onMounted, nextTick, watch, Ref, PropType } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch, Ref, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
@@ -213,9 +213,13 @@ const conversationMenu = computed(() => {
 
 onMounted(() => {
 
+  // global shorcuts
+  document.addEventListener('keydown', onGlobalKeyDown)
+
   // event
   onEvent('set-prompt', onSetPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
+  //window.api.on('start-dictation', onDictate)
   autoGrow(input.value)
 
   // other stuff
@@ -227,6 +231,12 @@ onMounted(() => {
     docrepo.value = props.chat?.docrepo
   }, { immediate: true })
 
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onGlobalKeyDown)
+  window.api.off('docrepo-modified', loadDocRepos)
+  //window.api.off('start-dictation', onDictate)
 })
 
 const defaultPrompt = (conversationMode: string) => {
@@ -700,6 +710,15 @@ const onKeyDown = (event: KeyboardEvent) => {
     } else {
       backSpaceHitsWhenEmpty = 0
     }
+  }
+}
+
+const onGlobalKeyDown = (event: KeyboardEvent) => {
+  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+  if (event.key === 't' && isCommand) {
+    event.preventDefault()
+    event.stopPropagation()
+    onDictate()
   }
 }
 
