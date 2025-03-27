@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
+import { Ref, ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Waveform from '../components/Waveform.vue'
@@ -44,7 +44,7 @@ const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
 
 const isMas = ref(false)
-const state = ref('idle')
+const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
 const transcription = ref('')
 const autoStart = ref(false)
 const foregroundColorActive = ref(null)
@@ -105,6 +105,7 @@ const initializeAudio = async () => {
 
         // if no noise stop everything
         if (!noiseDetected) {
+          state.value = 'idle'
           return
         }
 
@@ -236,6 +237,10 @@ const save = () => {
 
   > *:last-child {
     margin-bottom: 32px;
+  }
+
+  textarea {
+    outline: none;
   }
 
   .controls {
