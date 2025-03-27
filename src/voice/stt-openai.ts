@@ -9,6 +9,8 @@ export default class STTOpenAI implements STTEngine {
   client: OpenAI
 
   static readonly models = [
+    { id: 'gpt-4o-transcribe', label: 'GPT-4o Transcribe (online)' },
+    { id: 'gpt-4o-mini-transcribe', label: 'GPT-4o Mini Transcribe (online)' },
     { id: 'whisper-1', label: 'OpenAI Whisper V2 (online)' },
   ]
 
