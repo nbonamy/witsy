@@ -3,6 +3,15 @@ import { vi, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import getTTSEngine from '../../src/voice/tts'
+import TTSFalAi from '../../src/voice/tts-falai'
+import TTSElevenLabs from '../../src/voice/tts-elevenlabs'
+import TTSGroq from '../../src/voice/tts-groq'
+import TTSOpenAI from '../../src/voice/tts-openai'
+
+// @ts-expect-error mocking
+global.fetch = vi.fn(async (url) => ({
+  blob: () => new Blob([url], { type: 'text/plain' })
+}))
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
@@ -14,6 +23,20 @@ vi.mock('openai', async () => {
   return { default : OpenAI }
 })
 
+vi.mock('groq-sdk', async () => {
+  const Groq = vi.fn()
+  Groq.prototype.audio = {
+    speech: {
+      create: vi.fn((opts) => {
+        return { blob: vi.fn(() => {
+          return new Blob([opts.input], { type: 'text/plain' })
+        })}
+      })
+    }
+  }
+  return { default : Groq }
+})
+
 vi.mock('elevenlabs', async () => {
   const ElevenLabsClient = vi.fn()
   ElevenLabsClient.prototype.textToSpeech = {
@@ -22,14 +45,50 @@ vi.mock('elevenlabs', async () => {
   return { ElevenLabsClient }
 })
 
+vi.mock('@fal-ai/client', async () => {
+  return {
+    fal: {
+      config: vi.fn(),
+      subscribe: (model, opts) => ({ data: { audio: { url: opts.input.text } } })
+    }
+  }
+})
+
 beforeEach(() => {
   store.config = defaults
+})
+
+test('OpenAI data', async () => {
+  expect(TTSOpenAI.models.length).toBe(3)
+  expect(TTSOpenAI.voices('gpt-4o-mini-tts').length).toBe(9)
+  expect(TTSOpenAI.voices('tts-1').length).toBe(9)
+  expect(TTSOpenAI.voices('tts-1-hd').length).toBe(9)
 })
 
 test('OpenAI', async () => {
   const tts = getTTSEngine(store.config)
   const response = await tts.synthetize('hello openai')
   expect(response).toStrictEqual({ type: 'audio', content: 'hello openai' })
+})
+
+test('Groq data', async () => {
+  expect(TTSGroq.models.length).toBe(2)
+  expect(TTSGroq.voices('playai-tts').length).toBe(19)
+  expect(TTSGroq.voices('playai-tts-arabic').length).toBe(4)
+  expect(TTSGroq.voices('playai-tts-chinese').length).toBe(1)
+})
+
+test('Groq', async () => {
+  store.config.tts.engine = 'groq'
+  const tts = getTTSEngine(store.config)
+  const response = await tts.synthetize('hello groq')
+  expect(response).toStrictEqual({ type: 'audio', content: `data:text/plain;base64,${btoa("hello groq")}`, mimeType: 'audio/wav' })
+})
+
+test('ElevenLabs data', async () => {
+  expect(TTSElevenLabs.models.length).toBe(7)
+  expect(TTSElevenLabs.voices('elevenlabs-model1').length).toBe(20)
+  expect(TTSElevenLabs.voices('elevenlabs-model2').length).toBe(20)
 })
 
 test('ElevenLabs', async () => {
@@ -39,10 +98,24 @@ test('ElevenLabs', async () => {
   expect(response).toStrictEqual({ type: 'audio', content: 'hello elevenlabs' })
 })
 
-// test('Kokoro', async () => {
-//   store.config.tts.engine = 'kokoro'
-//   const tts = getTTSEngine(store.config)
-//   const response = await tts.synthetize('hello kokoro')
-//   expect(response).toStrictEqual({ type: 'audio', content: 'hello kokoro' })
-// })
+test('fal.ai data', async () => {
+  expect(TTSFalAi.models.length).toBe(9)
+  expect(TTSFalAi.voices('fal-ai/kokoro/american-english').length).toBe(20)
+  expect(TTSFalAi.voices('fal-ai/kokoro/british-english').length).toBe(8)
+  expect(TTSFalAi.voices('fal-ai/kokoro/spanish').length).toBe(3)
+  expect(TTSFalAi.voices('fal-ai/kokoro/french').length).toBe(1)
+  expect(TTSFalAi.voices('fal-ai/kokoro/italian').length).toBe(2)
+  expect(TTSFalAi.voices('fal-ai/kokoro/brazilian-portuguese').length).toBe(3)
+  expect(TTSFalAi.voices('fal-ai/kokoro/mandarin-chinese').length).toBe(8)
+  expect(TTSFalAi.voices('fal-ai/kokoro/japanese').length).toBe(5)
+  expect(TTSFalAi.voices('fal-ai/kokoro/hindi').length).toBe(4)
+  expect(TTSFalAi.voices('fal-ai/kokoro/vietnamese').length).toBe(1)
+  expect(TTSFalAi.voices('fal-ai/kokoro/vietnamese')[0]).toStrictEqual({ id: '', label: 'Default' })
+})
 
+test('fal.ai', async () => {
+  store.config.tts.engine = 'falai'
+  const tts = getTTSEngine(store.config)
+  const response = await tts.synthetize('hello fal.ai')
+  expect(response).toStrictEqual({ type: 'audio', content: `data:text/plain;base64,${btoa("hello fal.ai")}`, mimeType: 'audio/wav' })
+})

@@ -142,6 +142,26 @@ test('Settings', async () => {
   expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('wavespeedai/wan-2.1-t2v-480p')
   expect(settings.find('.expander').exists()).toBe(true)
 })
+
+test('Favorites', async () => {
+
+  const wrapper = mount(DesignStudio)
+  const settings = wrapper.findComponent({ name: 'Settings' })
+  await wrapper.vm.$nextTick()
+
+  await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
+  expect(settings.find<HTMLButtonElement>('[name=favorite]').exists()).toBe(false)
+
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
+  expect(settings.find<HTMLButtonElement>('[name=favorite]').exists()).toBe(true)
+  await settings.find<HTMLButtonElement>('[name=favorite]').trigger('click')
+  expect(store.config.studio.favorites).toStrictEqual([ { engine: 'replicate', model: 'flux' } ])
+
+  await settings.find<HTMLButtonElement>('[name=favorite]').trigger('click')
+  expect(store.config.studio.favorites).toStrictEqual([])
+
+})
   
 test('History', async () => {
 
