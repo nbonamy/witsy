@@ -20,7 +20,7 @@
     <form class="option">
       <div class="group">
         <input type="checkbox" v-model="autoStart" @change="save" />
-        <label>{{ t('transcribe.autoStart') }}</label>
+        <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
       </div>
     </form>
   </div>
