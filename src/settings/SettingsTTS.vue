@@ -8,13 +8,21 @@
         </option>
       </select>
     </div>
+    <div class="group" v-if="engine == 'openai'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="openaiAPIKey" @blur="save" />
+    </div>
     <div class="group" v-if="engine == 'elevenlabs'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="elevenlabsAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine === 'falai'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="falaiAPIKey" @blur="save" />
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
-      <select v-model="model" @change="save">
+      <select v-model="model" @change="onChangeModel">
         <option v-for="model in models" :key="model.id" :value="model.id">
           {{ model.label }}
         </option>
@@ -33,14 +41,10 @@
       </button>
       <audio ref="audio" />
     </div>
-    <div class="group" v-if="engine === 'openai'">
-      <label></label>
-      <span>{{ t('settings.voice.openaiApiKeyReminder') }}</span>
-    </div>
-    <div class="group" v-if="engine === 'kokoro'">
+    <!-- <div class="group" v-if="engine === 'kokoro'">
       <label></label>
       <span>{{ t('settings.voice.tts.kokoroReminder') }} <a href="https://kokorotts.com" target="_blank">Kokoro TTS</a>. {{ t('settings.voice.tts.serviceDisclaimer') }}</span>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -52,13 +56,16 @@ import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import TTSOpenAI from '../voice/tts-openai'
-import TTSKokoro from '../voice/tts-kokoro'
+import TTSFalAi from '../voice/tts-falai'
+//import TTSKokoro from '../voice/tts-kokoro'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import { BIconPlayFill, BIconStopFill } from 'bootstrap-icons-vue'
 
 const engine = ref('openai')
 const voice = ref(null)
 const model = ref(null)
+const openaiAPIKey = ref(null)
+const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
 const audio: Ref<HTMLAudioElement|null> = ref(null)
   const audioState: Ref<{state: string, messageId: string|null}> = ref({
@@ -72,7 +79,8 @@ const engines = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'elevenlabs', label: 'Eleven Labs' },
   // { id: 'replicate', label: 'Replicate' },
-  { id: 'kokoro', label: 'Kokoro' },
+  { id: 'falai', label: 'fal.ai' },
+  // { id: 'kokoro', label: 'Kokoro' },
 ]
 
 const models = computed(() => {
@@ -82,10 +90,12 @@ const models = computed(() => {
     return TTSOpenAI.models
   } else if (engine.value === 'elevenlabs') {
     return TTSElevenLabs.models
+  } else if (engine.value === 'falai') {
+    return TTSFalAi.models
   // } else if (engine.value === 'replicate') {
   //   return TTSReplicate.models
-  } else if (engine.value === 'kokoro') {
-    return TTSKokoro.models
+  // } else if (engine.value === 'kokoro') {
+  //   return TTSKokoro.models
   }
 
 })
@@ -94,13 +104,15 @@ const voices = computed(() => {
 
   // get models
   if (engine.value === 'openai') {
-    return TTSOpenAI.voices
+    return TTSOpenAI.voices(model.value)
   } else if (engine.value === 'elevenlabs') {
-    return TTSElevenLabs.voices
+    return TTSElevenLabs.voices(model.value)
+  } else if (engine.value === 'falai') {
+    return TTSFalAi.voices(model.value)
   // } else if (engine.value === 'replicate') {
-  //   return TTSReplicate.models
-  } else if (engine.value === 'kokoro') {
-    return TTSKokoro.voices
+  //   return TTSReplicate.models(model.value)
+  // } else if (engine.value === 'kokoro') {
+  //   return TTSKokoro.voices(model.value)
   }
 
 })
@@ -115,6 +127,10 @@ onUnmounted(() => {
 
 const onChangeEngine = () => {
   model.value = models.value[0].id
+  onChangeModel()
+}
+
+const onChangeModel = () => {
   voice.value = voices.value[0].id
   save()
 }
@@ -138,6 +154,8 @@ const load = () => {
   engine.value = store.config.tts?.engine || 'openai'
   model.value = store.config.tts?.model || 'tts-1'
   voice.value = store.config.tts?.voice || 'alloy'
+  openaiAPIKey.value = store.config.engines.openai?.apiKey || ''
+  falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   elevenlabsAPIKey.value = store.config.engines.elevenlabs?.apiKey || ''
 }
 
@@ -145,6 +163,8 @@ const save = () => {
   store.config.tts.engine = engine.value
   store.config.tts.model = model.value
   store.config.tts.voice = voice.value
+  store.config.engines.openai.apiKey = openaiAPIKey.value
+  store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.elevenlabs.apiKey = elevenlabsAPIKey.value
   store.saveSettings()
 }

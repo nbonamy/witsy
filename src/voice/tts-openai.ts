@@ -13,7 +13,8 @@ export default class TTSOpenAI implements TTSEngine {
     { id: 'tts-1-hd', label: 'TTS 1 HD' },
   ]
 
-  static readonly voices = [
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static readonly voices = (model: string) => [
     { id: 'alloy', label: 'Alloy' },
     { id: 'ash', label: 'Ash' },
     { id: 'coral', label: 'Coral' },

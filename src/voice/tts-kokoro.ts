@@ -12,7 +12,8 @@ export default class TTSKokoro implements TTSEngine {
     { id: 'kokoro', label: 'Kokoro' },
   ]
 
-  static readonly voices = [
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static readonly voices = (model: string) => [
     { id: 'af', label: 'Default' },
     { id: 'af_bella', label: 'Bella' },
     { id: 'af_sarah', label: 'Sarah' },
