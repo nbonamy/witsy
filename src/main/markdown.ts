@@ -29,9 +29,11 @@ const mdOptions: MarkdownIt.Options = {
 
 const mdPreprocess = (markdown: string) => {
   // for katex processing, we need to replace \[ and \] with $$ to trigger processing
+  // we also need to handle inline equations \(x\) and \( x \)
   // until https://github.com/iktakahiro/markdown-it-katex/pull/13 is merged
   let preprocessed = markdown.replaceAll('\\[', '$$$$').replaceAll('\\]', '$$$$')
   preprocessed = preprocessed.replaceAll('\\( ', '$').replaceAll(' \\)', '$')
+  preprocessed = preprocessed.replaceAll('\\(', '$').replaceAll('\\)', '$')
   return preprocessed
 }
 

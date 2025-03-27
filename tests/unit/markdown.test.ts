@@ -47,9 +47,10 @@ test('renders auto code block', () => {
 })
 
 test('renders inline math', () => {
-  const markdown = '\\( \\theta^2 \\)'
+  const markdown = '\\( \\theta^2 \\) \\(\\alpha^2\\)'
   const html = renderMarkdown(markdown)
   expect(html).toContain('θ')
+  expect(html).toContain('α')
 })
 
 test('renders block math', () => {
