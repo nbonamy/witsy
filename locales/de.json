@@ -397,7 +397,7 @@
     },
     "model": "Modell",
     "modelDefaults": "Standardwerte für dieses Modell",
-    "moreAboutReplicateModels": "Erfahren Sie mehr über die Modellparameter",
+    "moreAboutModelParameters": "Erfahren Sie mehr über die Modellparameter",
     "moreAboutSDWebUIParameters": "Erfahren Sie mehr über SDWebUI-Parameter",
     "parameters": {
       "height": "Höhe",
@@ -1717,7 +1717,7 @@
       "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
     },
     "pluginsDisabled": {
-      "text": "Dieses Modell hat einen Fehler in Bezug auf Plugins zurückgegeben. Sie wurden automatisch deaktiviert, damit Sie Ihr Gespräch fortsetzen können.",
+      "text": "This model returned an error with regards to plugins. They have been disabled automatically so you can continue your conversation.",
       "title": "Plugins wurden deaktiviert."
     },
     "realtime": {

@@ -397,7 +397,7 @@
     },
     "model": "Modèle",
     "modelDefaults": "Valeurs par défaut pour ce modèle",
-    "moreAboutReplicateModels": "En savoir plus sur les paramètres de ce modèle",
+    "moreAboutModelParameters": "En savoir plus sur les paramètres de ce modèle",
     "moreAboutSDWebUIParameters": "En savoir plus sur les paramètres de SDWebUI",
     "parameters": {
       "height": "Hauteur",
