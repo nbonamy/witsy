@@ -1,14 +1,14 @@
 
 import { Configuration } from '../types/config'
-import { SynthesisResponse, TTSEngine } from './tts'
+import { SynthesisResponse, TTSEngine } from './tts-engine'
 import OpenAI from 'openai'
 
-export default class TTSOpenAI implements TTSEngine {
+export default class TTSOpenAI extends TTSEngine {
 
-  config: Configuration
   client: OpenAI
 
   static readonly models = [
+    { id: 'gpt-4o-mini-tts', label: 'GPT-4o Mini TTS' },
     { id: 'tts-1', label: 'TTS 1' },
     { id: 'tts-1-hd', label: 'TTS 1 HD' },
   ]
@@ -27,7 +27,7 @@ export default class TTSOpenAI implements TTSEngine {
   ]
 
   constructor(config: Configuration) {
-    this.config = config
+    super(config)
     this.client = new OpenAI({
       apiKey: config.engines.openai.apiKey,
       dangerouslyAllowBrowser: true

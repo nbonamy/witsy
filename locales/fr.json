@@ -1685,6 +1685,7 @@
         "textToSpeech": "Synthèse"
       },
       "tts": {
+        "groqAcceptTermsReminder": "Vous devez <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">accepter les termes et conditions</a> pour utiliser le modèle Groq.",
         "kokoroReminder": "Fourni par",
         "sampleText": "Bienvenue dans Witsy, l'assistant AI ultime pour votre bureau.",
         "serviceDisclaimer": "Le service peut cesser de fonctionner à tout moment.",

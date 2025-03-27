@@ -1,31 +1,17 @@
 
 import { Configuration } from 'types/config'
+import { TTSEngine } from './tts-engine'
 import TTSOpenAI from './tts-openai'
-import TTSFalAi from './tts-falai'
-// import TTSKokoro from './tts-kokoro'
+import TTSGroq from './tts-groq'
 import TTSElevenLabs from './tts-elevenlabs'
-// import TTSReplicate from './tts-replicate'
-import * as nodeStream from 'stream'
-
-export type SynthesisStream = nodeStream.Readable
-
-export type SynthesisContent = Response|ReadableStream|Blob
-
-export type SynthesisResponse = {
-  type: 'audio'
-  mimeType?: string
-  content: SynthesisContent
-}
-
-export interface TTSEngine {
-  //constructor(config: Configuration): STTBase
-  synthetize(text: string, opts?: object): Promise<SynthesisResponse>
-}
+import TTSFalAi from './tts-falai'
 
 const getTTSEngine = (config: Configuration): TTSEngine => {
   const engine = config.tts.engine || 'openai'
   if (engine === 'openai') {
     return new TTSOpenAI(config)
+  } else if (engine === 'groq') {
+    return new TTSGroq(config)
   } else if (engine === 'falai') {
     return new TTSFalAi(config)
   // } else if (engine === 'replicate') {

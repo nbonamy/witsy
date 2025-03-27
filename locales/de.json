@@ -1685,6 +1685,7 @@
         "textToSpeech": "Text zu Sprache"
       },
       "tts": {
+        "groqAcceptTermsReminder": "Sie müssen die <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">Allgemeinen Geschäftsbedingungen akzeptieren</a>, um das Groq-Modell zu verwenden.",
         "kokoroReminder": "Bereitgestellt",
         "sampleText": "Willkommen bei Witsy, dem ultimativen KI-Desktop-Assistenten.",
         "serviceDisclaimer": "Der Dienst kann jederzeit eingestellt werden.",

@@ -12,6 +12,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="openaiAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'groq'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="groqAPIKey" @blur="save" />
+    </div>
     <div class="group" v-if="engine == 'elevenlabs'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="elevenlabsAPIKey" @blur="save" />
@@ -45,6 +49,10 @@
       <label></label>
       <span>{{ t('settings.voice.tts.kokoroReminder') }} <a href="https://kokorotts.com" target="_blank">Kokoro TTS</a>. {{ t('settings.voice.tts.serviceDisclaimer') }}</span>
     </div> -->
+    <div class="group" v-if="engine === 'groq'">
+      <label></label>
+      <span v-html="t('settings.voice.tts.groqAcceptTermsReminder')"></span>
+    </div>
   </div>
 </template>
 
@@ -56,15 +64,16 @@ import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import TTSOpenAI from '../voice/tts-openai'
-import TTSFalAi from '../voice/tts-falai'
-//import TTSKokoro from '../voice/tts-kokoro'
+import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
+import TTSFalAi from '../voice/tts-falai'
 import { BIconPlayFill, BIconStopFill } from 'bootstrap-icons-vue'
 
 const engine = ref('openai')
 const voice = ref(null)
 const model = ref(null)
 const openaiAPIKey = ref(null)
+const groqAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
 const audio: Ref<HTMLAudioElement|null> = ref(null)
@@ -77,6 +86,7 @@ const audioPlayer = useAudioPlayer(store.config)
 
 const engines = [
   { id: 'openai', label: 'OpenAI' },
+  { id: 'groq', label: 'Groq' },
   { id: 'elevenlabs', label: 'Eleven Labs' },
   // { id: 'replicate', label: 'Replicate' },
   { id: 'falai', label: 'fal.ai' },
@@ -88,6 +98,8 @@ const models = computed(() => {
   // get models
   if (engine.value === 'openai') {
     return TTSOpenAI.models
+  } else if (engine.value === 'groq') {
+    return TTSGroq.models
   } else if (engine.value === 'elevenlabs') {
     return TTSElevenLabs.models
   } else if (engine.value === 'falai') {
@@ -105,6 +117,8 @@ const voices = computed(() => {
   // get models
   if (engine.value === 'openai') {
     return TTSOpenAI.voices(model.value)
+  } else if (engine.value === 'groq') {
+    return TTSGroq.voices(model.value)
   } else if (engine.value === 'elevenlabs') {
     return TTSElevenLabs.voices(model.value)
   } else if (engine.value === 'falai') {
@@ -154,7 +168,8 @@ const load = () => {
   engine.value = store.config.tts?.engine || 'openai'
   model.value = store.config.tts?.model || 'tts-1'
   voice.value = store.config.tts?.voice || 'alloy'
-  openaiAPIKey.value = store.config.engines.openai?.apiKey || ''
+  openaiAPIKey.value = store.config.engines.openai?.apiKey || ''  
+  groqAPIKey.value = store.config.engines.groq?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   elevenlabsAPIKey.value = store.config.engines.elevenlabs?.apiKey || ''
 }
@@ -164,6 +179,7 @@ const save = () => {
   store.config.tts.model = model.value
   store.config.tts.voice = voice.value
   store.config.engines.openai.apiKey = openaiAPIKey.value
+  store.config.engines.groq.apiKey = groqAPIKey.value
   store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.elevenlabs.apiKey = elevenlabsAPIKey.value
   store.saveSettings()
