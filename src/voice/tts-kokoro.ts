@@ -1,11 +1,10 @@
 
 import { Configuration } from '../types/config'
-import { SynthesisResponse, TTSEngine } from './tts'
+import { SynthesisResponse, TTSEngine } from './tts-engine'
 import OpenAI from 'openai'
 
-export default class TTSKokoro implements TTSEngine {
+export default class TTSKokoro extends TTSEngine {
 
-  config: Configuration
   client: OpenAI
 
   static readonly models = [
@@ -28,7 +27,7 @@ export default class TTSKokoro implements TTSEngine {
   ]
 
   constructor(config: Configuration) {
-    this.config = config
+    super(config)
     this.client = new OpenAI({
       apiKey: 'not-needed',
       baseURL: 'https://api.kokorotts.com/v1',

@@ -1721,6 +1721,7 @@
         "textToSpeech": "Zamiana tekstu na mowę"
       },
       "tts": {
+        "groqAcceptTermsReminder": "Musisz <a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">zaakceptować warunki i zasady</a>, aby korzystać z modelu Groq.",
         "kokoroReminder": "Pod warunkiem",
         "sampleText": "Witamy w Witsy, najlepszym asystencie biurkowym AI.",
         "serviceDisclaimer": "Usługa może przestać działać w dowolnym momencie.",

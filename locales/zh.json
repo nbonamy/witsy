@@ -1715,6 +1715,7 @@
         "textToSpeech": "文本转语音"
       },
       "tts": {
+        "groqAcceptTermsReminder": "您需要<a href=\"https://console.groq.com/playground?model=playai-tts\" target=\"_blank\">接受条款和条件</a>以使用 Groq 模型。",
         "kokoroReminder": "已提供",
         "sampleText": "欢迎使用 Witsy，终极 AI 桌面助手。",
         "serviceDisclaimer": "该服务可能随时停止工作。",

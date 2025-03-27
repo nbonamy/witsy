@@ -1,9 +1,9 @@
 
 /*import { Configuration } from '../types/config'
-import { SynthesisResponse, TTSEngine } from './tts'
+import { SynthesisResponse, TTSEngine } from './tts-engine'
 import Replicate, { FileOutput, Prediction } from 'replicate'
 
-export default class TTSReplicate implements TTSEngine {
+export default class TTSReplicate extends TTSEngine {
 
   config: Configuration
   client: Replicate

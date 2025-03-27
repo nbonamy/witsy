@@ -1,12 +1,9 @@
 
 import { Configuration } from '../types/config'
-import { SynthesisResponse, TTSEngine } from './tts'
-import * as lamejs from '@breezystack/lamejs'
+import { SynthesisResponse, TTSEngine } from './tts-engine'
 import { fal } from '@fal-ai/client'
 
-export default class TTSFalAi implements TTSEngine {
-
-  config: Configuration
+export default class TTSFalAi extends TTSEngine {
 
   static readonly models = [
     { id: 'fal-ai/kokoro/american-english', label: 'Kokoro American English' },
@@ -137,7 +134,7 @@ export default class TTSFalAi implements TTSEngine {
   }
 
   constructor(config: Configuration) {
-    this.config = config
+    super(config)
   }
 
   async synthetize(text: string, opts?: { model?: string, voice?: string }): Promise<SynthesisResponse> {
@@ -169,46 +166,8 @@ export default class TTSFalAi implements TTSEngine {
       }
     }
 
-    // decode wav
-    const audioBuffer = await audioResponse.arrayBuffer();
-    //@ts-expect-error unsure but it works!
-    const wav = lamejs.WavHeader.readHeader(new DataView(audioBuffer));
-    const samples = new Int16Array(audioBuffer, wav.dataOffset, wav.dataLen / 2);
-    const sampleBlockSize = 1152
-
-    // encode to mp3
-    const mp3Data = [];
-    const mp3Encoder = new lamejs.Mp3Encoder(wav.channels, wav.sampleRate, 128);
-    for (let i = 0; i < samples.length; i += sampleBlockSize) {
-      const sampleChunk = samples.subarray(i, i + sampleBlockSize);
-      const mp3buf = mp3Encoder.encodeBuffer(sampleChunk);
-      if (mp3buf.length > 0) {
-          mp3Data.push(mp3buf);
-      }
-    }
-    
-    // finish writing mp3
-    const mp3buf = mp3Encoder.flush();
-    if (mp3buf.length > 0) {
-        mp3Data.push(new Int8Array(mp3buf));
-    }
-    
-    // const blob = new Blob(mp3Data, { type: 'audio/mp3' });
-    // const base64 = await new Promise<string>((resolve, reject) => {
-    //   const reader = new FileReader();
-    //   reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
-    //   reader.onerror = reject;
-    //   reader.readAsDataURL(blob);
-    // });
-    // saveFileContents('.mp3', base64);
-    
-    // return mp3
-    return {
-      type: 'audio',
-      mimeType: 'audio/mpeg',
-      content: new Blob(mp3Data, { type: 'audio/mp3' })
-    };
-
+    // wav
+    return await this.readWavResponse(audioResponse);
 
   }
 

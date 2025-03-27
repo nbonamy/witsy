@@ -1,8 +1,9 @@
 
 
 import { type Configuration } from '../types/config'
+import { SynthesisResponse } from '../voice/tts-engine'
+import getTTSEngine, { textMaxLength as importedTextMaxLength } from '../voice/tts'
 import { SpeechPlayer } from 'openai-speech-stream-player'
-import getTTSEngine, { textMaxLength as importedTextMaxLength, SynthesisResponse } from '../voice/tts'
 
 export type AudioState = 'idle'|'loading'|'playing'|'paused'
 export type AudioStatus = { state: AudioState, uuid: string }
@@ -76,14 +77,18 @@ class AudioPlayer {
         onChunkEnd: () => {
           this.stop()
         },
-        mimeType: response.mimeType ?? 'audio/mpeg',
+        mimeType: 'audio/mpeg',
       })
       await this.player.init()
 
-      if (response.content instanceof Blob) {
-        const objectURL = URL.createObjectURL(response.content)
-        audioEl.src = objectURL
+      if (typeof response.content === 'string') {
+
+        // SpeechPlayer cannot play wav files
+        // but it is connected to the audio element
+        // so commands and events can be used
+        audioEl.src = response.content as string
         audioEl.play()
+
       } else if (response.content instanceof Response) {
         this.player.feedWithResponse(response.content)
       } else if ('read' in response.content) {

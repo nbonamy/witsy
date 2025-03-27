@@ -1,11 +1,10 @@
 
 import { Configuration } from '../types/config'
-import { SynthesisResponse, TTSEngine } from './tts'
+import { SynthesisResponse, TTSEngine } from './tts-engine'
 import { ElevenLabsClient } from 'elevenlabs'
 
-export default class TTSElevenLabs implements TTSEngine {
+export default class TTSElevenLabs extends TTSEngine {
 
-  config: Configuration
   client: ElevenLabsClient
 
   static readonly models = [
@@ -44,7 +43,7 @@ export default class TTSElevenLabs implements TTSEngine {
   ]
 
   constructor(config: Configuration) {
-    this.config = config
+    super(config)
     this.client = new ElevenLabsClient({
       apiKey: this.config.engines.elevenlabs.apiKey
     })
