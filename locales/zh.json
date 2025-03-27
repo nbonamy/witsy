@@ -416,7 +416,7 @@
     },
     "model": "模型",
     "modelDefaults": "此模型的默认值",
-    "moreAboutReplicateModels": "了解此模型参数",
+    "moreAboutModelParameters": "了解此模型参数",
     "moreAboutSDWebUIParameters": "了解 SDWebUI 参数",
     "parameters": {
       "height": "高度",

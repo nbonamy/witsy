@@ -416,7 +416,7 @@
     },
     "model": "Model",
     "modelDefaults": "Defaults for this model",
-    "moreAboutReplicateModels": "Learn about this model parameters",
+    "moreAboutModelParameters": "Learn about this model parameters",
     "moreAboutSDWebUIParameters": "Learn about SDWebUI parameters",
     "parameters": {
       "height": "Height",
