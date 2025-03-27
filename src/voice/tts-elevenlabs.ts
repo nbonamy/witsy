@@ -18,7 +18,8 @@ export default class TTSElevenLabs implements TTSEngine {
     {id: 'eleven_flash_v2_5', label: 'Eleven Flash v2.5'},
   ]
 
-  static readonly voices = [
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static readonly voices = (model: string) => [
     { id: 'Xb7hH8MSUJpSbSDYk0k2', label: 'Alice' },
     // { id: 'aEO01A4wXwd1O8GPgGlF', label: 'Arabella' },
     { id: '9BWtsMINqrJLrRacOk9x', label: 'Aria' },
@@ -60,7 +61,7 @@ export default class TTSElevenLabs implements TTSEngine {
     // console.log(voices)
 
     // call
-    const voice = opts?.voice || this.config.tts.voice || TTSElevenLabs.voices[0].id
+    const voice = opts?.voice || this.config.tts.voice || TTSElevenLabs.voices('')[0].id
     const response = await this.client.textToSpeech.convertAsStream(voice, {
       model_id: opts?.model || this.config.tts.model || TTSElevenLabs.models[0].id,
       output_format: 'mp3_44100_96',

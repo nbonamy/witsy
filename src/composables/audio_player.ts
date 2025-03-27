@@ -76,11 +76,15 @@ class AudioPlayer {
         onChunkEnd: () => {
           this.stop()
         },
-        mimeType: 'audio/mpeg',
+        mimeType: response.mimeType ?? 'audio/mpeg',
       })
       await this.player.init()
 
-      if (response.content instanceof Response) {
+      if (response.content instanceof Blob) {
+        const objectURL = URL.createObjectURL(response.content)
+        audioEl.src = objectURL
+        audioEl.play()
+      } else if (response.content instanceof Response) {
         this.player.feedWithResponse(response.content)
       } else if ('read' in response.content) {
         for await (const chunk of response.content) {

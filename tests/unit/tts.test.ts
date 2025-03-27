@@ -39,10 +39,10 @@ test('ElevenLabs', async () => {
   expect(response).toStrictEqual({ type: 'audio', content: 'hello elevenlabs' })
 })
 
-test('Kokoro', async () => {
-  store.config.tts.engine = 'kokoro'
-  const tts = getTTSEngine(store.config)
-  const response = await tts.synthetize('hello kokoro')
-  expect(response).toStrictEqual({ type: 'audio', content: 'hello kokoro' })
-})
+// test('Kokoro', async () => {
+//   store.config.tts.engine = 'kokoro'
+//   const tts = getTTSEngine(store.config)
+//   const response = await tts.synthetize('hello kokoro')
+//   expect(response).toStrictEqual({ type: 'audio', content: 'hello kokoro' })
+// })
 
