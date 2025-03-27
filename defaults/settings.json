@@ -62,6 +62,7 @@
       "engine": "replicate",
       "replicate": "wavespeedai/wan-2.1-t2v-480p"
     },
+    "favorites": [],
     "defaults": []
   },
   "shortcuts": {
