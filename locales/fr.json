@@ -1717,7 +1717,7 @@
       "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."
     },
     "pluginsDisabled": {
-      "text": "Ce modèle ne prend pas en charge les plugins. Ils ont été désactivés automatiquement afin que vous puissiez continuer votre conversation.",
+      "text": "Ce modèle a renvoyé une erreur concernant les plugins. Ils ont été désactivés automatiquement pour que vous puissiez continuer votre conversation.",
       "title": "Les plugins ont été désactivés."
     },
     "realtime": {

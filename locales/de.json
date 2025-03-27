@@ -1717,7 +1717,7 @@
       "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
     },
     "pluginsDisabled": {
-      "text": "Dieses Modell unterstützt keine Plugins. Sie wurden automatisch deaktiviert, damit Sie Ihr Gespräch fortsetzen können.",
+      "text": "Dieses Modell hat einen Fehler in Bezug auf Plugins zurückgegeben. Sie wurden automatisch deaktiviert, damit Sie Ihr Gespräch fortsetzen können.",
       "title": "Plugins wurden deaktiviert."
     },
     "realtime": {

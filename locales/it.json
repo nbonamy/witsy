@@ -1717,7 +1717,7 @@
       "title": "La lista delle cartelle è un ottimo modo per organizzare le tue sessioni di chat. Fai clic sull'icona della cartella in fondo alla barra laterale per creare nuove cartelle.\n\nIl menu a destra di ogni cartella ti consente di gestire le tue cartelle.\n\nIl menu contestuale delle tue chat ti permette di spostarle in una cartella."
     },
     "pluginsDisabled": {
-      "text": "Questo modello non supporta i plugin. Sono stati disabilitati automaticamente in modo da poter continuare la tua conversazione.",
+      "text": "Questo modello ha restituito un errore riguardo ai plugin. Sono stati disabilitati automaticamente in modo che tu possa continuare la tua conversazione.",
       "title": "I plugin sono stati disabilitati."
     },
     "realtime": {

@@ -1753,7 +1753,7 @@
       "title": "Lista folderów to świetny sposób na organizowanie sesji czatu. Kliknij ikonę folderu na dole paska bocznego, aby utworzyć nowe foldery.\n\nMenu po prawej stronie każdego folderu umożliwia zarządzanie folderami.\n\nMenu kontekstowe czatów umożliwia przeniesienie ich do folderu."
     },
     "pluginsDisabled": {
-      "text": "Ten model nie obsługuje wtyczek. Zostały one automatycznie wyłączone, abyś mógł kontynuować rozmowę.",
+      "text": "Ten model zwrócił błąd dotyczący wtyczek. Zostały one automatycznie wyłączone, abyś mógł kontynuować rozmowę.",
       "title": "Wtyczki zostały wyłączone."
     },
     "realtime": {
