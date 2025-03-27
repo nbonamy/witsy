@@ -30,7 +30,12 @@
 
       <div class="group" v-else>
         <label>{{ t('designStudio.model') }}</label>
-        <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel" />
+        <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
+          <button @click.prevent="toggleFavorite">
+            <BIconStarFill v-if="isFavorite"/>
+            <BIconStar v-else/>
+          </button>
+        </ComboBox>
         <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
         <a v-if="engine === 'replicate'" :href="replicateModelsLink" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
         <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
@@ -194,7 +199,14 @@ const models = computed(() => {
   if (hasFixedModels.value) {
     return store.config.engines[engine.value]?.models?.[mediaType.value] || []
   } else {
-    return creator[mediaType.value].getModels(engine.value)
+    return [
+      ...[ { id: model.value, name: model.value } ],
+      ...store.config.studio.favorites.filter((f) => f.engine === engine.value).map((f) => ({ id: f.model, name: f.model })),
+      ...store.config.studio.defaults.filter((d) => d.engine === engine.value).map((d) => ({ id: d.model, name: d.model })),
+      ...creator[mediaType.value].getModels(engine.value)
+    ].filter((model, index, self) => 
+      index === self.findIndex((m) => m.id === model.id)
+    )
   }
 })
 
@@ -347,6 +359,10 @@ const falaiModelsLink = computed(() => {
   return `https://fal.ai/models?categories=${categories}`
 })
 
+const isFavorite = computed(() => {
+  return store.config.studio.favorites.find((f) => f.engine === engine.value && f.model === model.value) != null
+})
+
 onMounted(() => {
 
   // replicate image key can be prompted by DesignStudio.vue
@@ -480,6 +496,15 @@ const onSaveDefaults = () => {
 
 const onClearDefaults = () => {
   store.config.studio.defaults = store.config.studio.defaults.filter((d) => d.engine !== engine.value || d.model !== model.value)
+  store.saveSettings()
+}
+
+const toggleFavorite = () => {
+  if (isFavorite.value) {
+    store.config.studio.favorites = store.config.studio.favorites.filter((f) => f.engine !== engine.value || f.model !== model.value)
+  } else {
+    store.config.studio.favorites.push({ engine: engine.value, model: model.value })
+  }
   store.saveSettings()
 }
 

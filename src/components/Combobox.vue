@@ -1,11 +1,14 @@
 
 <template>
   <div v-if="showHelp" class="help">{{ t('common.comboBox.help') }}</div>
-  <div class="wrapper" :class="{ focused: focus }">
-    <select v-model="selected" @change="onSelect">
-      <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
-    </select>
-    <input type="text" :name="name" v-model="value" :placeholder="placeholder" @change="onChange" @focus="onFocus" @blur="onBlur" />
+  <div class="control">
+    <div class="wrapper" :class="{ focused: focus }">
+      <select v-model="selected" @change="onSelect">
+        <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
+      </select>
+      <input type="text" :name="name" v-model="value" :placeholder="placeholder" @change="onChange" @focus="onFocus" @blur="onBlur" />
+    </div>
+    <slot></slot>
   </div>
 </template>
 
@@ -63,6 +66,10 @@ const onSelect = (event: Event) => {
   opacity: 0.6;
   margin-top: 2px;
   margin-bottom: 6px;
+}
+
+.control {
+  display: flex;
 }
 
 form .group .wrapper {
