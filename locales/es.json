@@ -1717,7 +1717,7 @@
       "title": "La lista de carpetas es una excelente forma de organizar tus sesiones de chat. Haz clic en el icono de carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta."
     },
     "pluginsDisabled": {
-      "text": "Este modelo no admite plugins. Se han desactivado automáticamente para que puedas continuar con tu conversación.",
+      "text": "Este modelo devolvió un error con respecto a los complementos. Se han desactivado automáticamente para que puedas continuar tu conversación.",
       "title": "Los plugins han sido desactivados."
     },
     "realtime": {

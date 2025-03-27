@@ -1747,7 +1747,7 @@
       "title": "A lista de pastas é uma ótima maneira de organizar suas sessões de chat. Clique no ícone de pasta na parte inferior da barra lateral para criar novas pastas.\n\nO menu à direita de cada pasta permite que você gerencie suas pastas.\n\nO menu de contexto de seus chats permite que você os mova para uma pasta."
     },
     "pluginsDisabled": {
-      "text": "Este modelo não suporta plugins. Eles foram desativados automaticamente para que você possa continuar sua conversa.",
+      "text": "Este modelo retornou um erro em relação aos plugins. Eles foram desativados automaticamente para que você possa continuar sua conversa.",
       "title": "Plugins foram desativados."
     },
     "realtime": {

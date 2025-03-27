@@ -1753,7 +1753,7 @@
       "title": "The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.\n\nThe menu on the right of every folder allows you to manage your folders.\n\nThe context menu of your chats allows you to move them to a folder."
     },
     "pluginsDisabled": {
-      "text": "This model does not support plugins. They have been disabled automatically so you can continue your conversation.",
+      "text": "This model returned an error with regards to plugins. They have been disabled automatically so you can continue your conversation.",
       "title": "Plugins have been disabled."
     },
     "realtime": {
