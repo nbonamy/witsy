@@ -6,7 +6,7 @@ import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
 import fontList from 'font-list';
-import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -117,6 +117,12 @@ const quitApp = () => {
 
 //  tray icon
 const trayIconManager = new TrayIconManager(app, autoUpdater, quitApp);
+
+// this needs to be done before onReady
+if (process.platform === 'darwin') {
+  systemPreferences.setUserDefault('NSDisabledDictationMenuItem', 'boolean', true)
+  //systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

@@ -39,6 +39,12 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
   // get focused window
   const focusedWindow = BrowserWindow.getFocusedWindow()
 
+  // dictation
+  const hasDictation = 
+    focusedWindow === window.mainWindow ||
+    focusedWindow === window.promptAnywhereWindow ||
+    focusedWindow === window.transcribePalette
+
   // sort by title
   windowsMenu.sort((a, b) => a.label.localeCompare(b.label))
 
@@ -139,7 +145,15 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             { role: 'delete' },
             { type: 'separator' },
             { role: 'selectAll' }
-          ])
+          ]),
+          ...(hasDictation ? [
+            { type: 'separator' },
+            {
+              label: t('menu.edit.startDictation'),
+              accelerator: shortcutAccelerator({ key: 'T', meta: true }),
+              click: () => window.notifyBrowserWindows('start-dictation')
+            }]: []
+          ),
       ]
     },
     // { role: 'viewMenu' }

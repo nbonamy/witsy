@@ -1260,6 +1260,7 @@
     "edit": {
       "deleteChat": "删除聊天",
       "deleteMedia": "删除媒体",
+      "startDictation": "开始听写",
       "title": "编辑"
     },
     "file": {
@@ -1773,7 +1774,7 @@
       "runAiCommand": "运行 AI 命令",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
-      "startDictation": "开始听写",
+      "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
     }
   }

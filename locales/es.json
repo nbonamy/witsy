@@ -1241,6 +1241,7 @@
     "edit": {
       "deleteChat": "Eliminar conversación",
       "deleteMedia": "Eliminar Medio",
+      "startDictation": "Iniciar dictado",
       "title": "Editar"
     },
     "file": {
@@ -1743,7 +1744,7 @@
       "runAiCommand": "Ejecutar comando de IA",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
-      "startDictation": "Iniciar dictado",
+      "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
     }
   }

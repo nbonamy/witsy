@@ -1241,6 +1241,7 @@
     "edit": {
       "deleteChat": "Chat löschen",
       "deleteMedia": "Medium löschen",
+      "startDictation": "Diktat starten",
       "title": "Bearbeiten"
     },
     "file": {
@@ -1743,7 +1744,7 @@
       "runAiCommand": "KI-Befehl ausführen",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
-      "startDictation": "Diktat starten",
+      "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
     }
   }

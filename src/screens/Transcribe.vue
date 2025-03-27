@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted } from 'vue'
+import { Ref, ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Waveform from '../components/Waveform.vue'
@@ -54,6 +54,7 @@ onMounted(async () => {
 
   // events
   document.addEventListener('keydown', onKeyDown)
+  window.api.on('start-dictation', toggleRecord)
 
   // init
   await transcriber.initialize()
@@ -79,6 +80,21 @@ onMounted(async () => {
   }
 
 })
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
+  window.api.off('start-dictation', toggleRecord)
+})
+
+const toggleRecord = () => {
+  if (state.value === 'processing') {
+    return
+  } else if (state.value === 'recording') {
+    onStop()
+  } else {
+    onRecord()
+  }
+}
 
 const initializeAudio = async () => {
 
