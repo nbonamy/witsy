@@ -39,12 +39,8 @@ export const openRealtimeChatWindow = async () => {
     }),
     resizable: process.env.DEBUG ? true : false,
     movable: true,
+    showInDock: true,
   });
-
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
-  }
 
   // open the DevTools
   if (process.env.DEBUG) {

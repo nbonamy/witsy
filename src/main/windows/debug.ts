@@ -22,7 +22,8 @@ export const openDebugWindow = () => {
       height: bounds?.height || 600,
       minWidth: 600,
       minHeight: 400,
-    ...titleBarOptions(),
+      ...titleBarOptions(),
+      showInDock: true,
     });
 
     debugWindow.on('close', () => {
@@ -48,11 +49,6 @@ export const openDebugWindow = () => {
   if (process.env.DEBUG) {
     debugWindow.webContents.openDevTools({ mode: 'right' });
   }
-
-  // // show in dock
-  // if (process.platform === 'darwin') {
-  //   app.dock.show();
-  // }
 
   // done
   return debugWindow;

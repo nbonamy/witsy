@@ -49,6 +49,7 @@ export const openTranscribePalette = async () => {
     center: true,
     frame: false,
     resizable: true,
+    showInDock: true,
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -67,10 +68,5 @@ export const openTranscribePalette = async () => {
   transcribePalette.on('closed', () => {
     transcribePalette = null;
   });
-
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
-  }
 
 }
