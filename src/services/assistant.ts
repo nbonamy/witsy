@@ -50,10 +50,10 @@ export default class extends Generator {
 
   initLlm(engine: string): void {
     
-    // same?
-    if (this.llm !== null && this.llm.getName() === engine) {
-      return
-    }
+    // // same?
+    // if (this.llm !== null && this.llm.getName() === engine) {
+    //   return
+    // }
 
     // switch
     const llm = this.llmFactory.igniteEngine(engine)
