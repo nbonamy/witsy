@@ -286,7 +286,7 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
 };
 
 export const persistentWindows = (): BrowserWindow[] => {
-  return [ promptAnywhereWindow, commandPicker ]
+  return [ /*settingsWindow, */promptAnywhereWindow, commandPicker ]
 }
 
 export const areAllWindowsClosed = () => {

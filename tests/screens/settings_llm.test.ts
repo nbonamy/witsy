@@ -35,6 +35,7 @@ beforeAll(() => {
   useWindowMock()
   useBrowserMock()
   store.loadSettings()
+  store.load = () => {}
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`

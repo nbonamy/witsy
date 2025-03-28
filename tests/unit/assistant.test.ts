@@ -52,7 +52,7 @@ beforeAll(() => {
   store.loadExperts()
 })
 
-const spy = vi.spyOn(LlmMock.prototype, 'stream')
+const spyMockStream = vi.spyOn(LlmMock.prototype, 'stream')
 
 let assistant: Assistant|null = null
 
@@ -95,6 +95,7 @@ beforeEach(() => {
   // init assistant
   assistant = new Assistant(store.config)
   assistant!.setLlm(new LlmMock(store.config))
+  assistant.initLlm = () => {}
 })
 
 test('Assistant Creation', () => {
@@ -104,7 +105,7 @@ test('Assistant Creation', () => {
 
 test('Assistant parameters', async () => {
   await prompt('Hello LLM')
-  const params: AssistantCompletionOpts = spy.mock.calls[0][2] as AssistantCompletionOpts
+  const params: AssistantCompletionOpts = spyMockStream.mock.calls[0][2] as AssistantCompletionOpts
   expect(params).toStrictEqual({
     titling: true,
     engine: 'mock',

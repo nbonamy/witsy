@@ -7,9 +7,6 @@ import { standardEngines } from '../../src/llms/llm'
 import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 
-import useEventBus from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
-
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
@@ -38,6 +35,7 @@ beforeAll(() => {
 
   useWindowMock()
   store.loadSettings()
+  store.load = () => {}
 
   // init store
   store.config.engines.anthropic = {
@@ -53,10 +51,7 @@ beforeAll(() => {
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
-  emitEvent('open-settings', null)
-  expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledOnce()
+  wrapper = mount(Settings)
 })
 
 beforeEach(() => {
@@ -65,7 +60,7 @@ beforeEach(() => {
 
 test('Settings renders correctly', () => {
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.props('initialTab')).toBe('general')
+  expect(wrapper.props().extra.initialTab).toBe('general')
   checkVisibility(0)
 })
 
@@ -79,7 +74,7 @@ for (let i=1; i<tabs.length; i++) {
 
 test('Settings close', async () => {
   await wrapper.find('.settings header .windows').trigger('click')
-  expect(HTMLDialogElement.prototype.close).toHaveBeenCalledOnce()
+  expect(window.api.settings.close).toHaveBeenCalledOnce()
 })
 
 test('Settings General', async () => {

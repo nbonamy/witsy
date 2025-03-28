@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload } from './types';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -55,6 +55,10 @@ contextBridge.exposeInMainWorld(
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
       getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync('get-app-info', filepath) },
+    },
+    settings: {
+      open: (payload?: OpenSettingsPayload): void => { return ipcRenderer.send('settings-open', payload) },
+      close: (): void => { return ipcRenderer.send('settings-close') },
     },
     clipboard: {
       writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },

@@ -12,8 +12,9 @@ const voiceIndex = 7
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
-
   store.loadSettings()
+  store.load = () => {}
+
   store.config.engines.falai.apiKey = 'falai-api-key'
     
   // wrapper

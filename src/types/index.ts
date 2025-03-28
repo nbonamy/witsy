@@ -196,6 +196,11 @@ export interface MediaCreator {
 
 export type DesignStudioMediaType = 'image' | 'video'
 
+export type OpenSettingsPayload = {
+  initialTab: string
+  engine?: string
+}
+
 declare global {
   interface Window {
     api: {
@@ -237,6 +242,10 @@ declare global {
         find(name: string): string
         extractText(contents: string, format: string): string
         getAppInfo(filepath: string): ExternalApp
+      }
+      settings: {
+        open(payload?: OpenSettingsPayload): void
+        close(): void
       }
       shortcuts: {
         register(): void

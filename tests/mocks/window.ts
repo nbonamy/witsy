@@ -104,6 +104,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       insert: vi.fn(),
       replace: vi.fn(),
     },
+    settings: {
+      open: vi.fn(),
+      close: vi.fn(),
+    },
     chat: {
       open: vi.fn(),
     },
@@ -134,7 +138,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       export: vi.fn(),
     },
     history: {
-      load: vi.fn(() => ({ folders: [ ], chats: [ ] })),
+      load: vi.fn(() => ({ folders: [ ], chats: [ ], quickPrompts: [ ] })),
       save: vi.fn(),
     },
     base64:{
@@ -259,6 +263,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       getScreenNumber: vi.fn(() => 1),
       takeScreenshot: vi.fn(() => 'screenshot_url'),
       executeAction: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+      close: vi.fn(),
+      updateStatus: vi.fn(),
     },
     readaloud: {
       closePalette: vi.fn(),
@@ -268,6 +276,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       transcribe: vi.fn(async () => ({ text: 'transcribed' })),
     },
     transcribe: {
+      start: vi.fn(),
       insert: vi.fn(),
       cancel: vi.fn(),
     },

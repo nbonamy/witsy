@@ -26,6 +26,8 @@ beforeAll(() => {
   useWindowMock()
   useBrowserMock()
   store.loadSettings()
+  store.load = () => {}
+
   store.config.engines.huggingface.apiKey = 'hf-api-key'
   store.config.engines.replicate.apiKey = 'repl-api-key'
   store.config.plugins.search.tavilyApiKey = 'tavily-api-key'

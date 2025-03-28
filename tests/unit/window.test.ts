@@ -166,20 +166,13 @@ test('Restores existing main window', async () => {
   expect(BrowserWindow.prototype.loadURL).not.toHaveBeenCalled()
 })
 
-test('Open Settings window in current main window', async () => {
-  await window.openMainWindow()
+test('Open Settings window', async () => {
   await window.openSettingsWindow()
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { settings: true })
-})
-
-test('Open Settings window in new main window', async () => {
-  await window.openSettingsWindow()
+  expect(window.settingsWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    title: 'Chat',
-    queryParams: { settings: true }
+    hash: '/settings',
   }))
-  expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?settings=true#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/settings')
 })
 
 test('Create command picker window', async () => {
@@ -331,4 +324,3 @@ test('Notify', async () => {
   window.notifyBrowserWindows('event')
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('event')
 })
-

@@ -17,6 +17,8 @@ vi.mock('../../src/services/i18n', async () => {
     t: (key: string) => `${key}`,
     commandI18n: vi.fn(() => {}),
     expertI18n: vi.fn(() => {}),
+    i18nInstructions: vi.fn(),
+    hasLocalization: vi.fn(() => true),
   }
 })
 
@@ -24,7 +26,8 @@ beforeAll(() => {
   useWindowMock()
   useBrowserMock()
   store.loadSettings()
-    
+  store.load = () => {}
+  
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
   wrapper = mount(Settings, { attachTo: '#settings' })
