@@ -1,7 +1,7 @@
 
 import { anyDict } from 'types/index';
 import { app, BrowserWindow, Size } from 'electron';
-import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen } from './index';
+import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen, enableClickThrough } from './index';
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
@@ -14,7 +14,7 @@ const desiredSize = (): Size => ({
   height: Math.floor(getCurrentScreen().workAreaSize.height * 0.80)
 });
 
-export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
+export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
   // get bounds
   const size = desiredSize();
@@ -65,9 +65,12 @@ export const preparePromptAnywhere = (queryParams?: anyDict): BrowserWindow => {
     }
   });
 
-  // done
-  return promptAnywhereWindow;
-  
+  // enable click through
+  enableClickThrough(promptAnywhereWindow);
+  promptAnywhereWindow.on('blur', () => {
+    closePromptAnywhere();
+  });
+
 }
 
 export const openPromptAnywhere = (params: anyDict): BrowserWindow => {
