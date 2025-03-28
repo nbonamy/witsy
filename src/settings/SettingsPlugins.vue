@@ -1,11 +1,13 @@
 <template>
   <div class="content">
     <div class="list-panel">
-      <div class="list">
-        <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
-          <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
-          <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
-          {{ plugin.label }}
+      <div class="master">
+        <div class="list">
+          <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
+            <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
+            <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
+            {{ plugin.label }}
+          </div>
         </div>
       </div>
       <component :is="currentView" class="panel" ref="pluginSettings" />
