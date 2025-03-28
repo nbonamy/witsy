@@ -1,14 +1,14 @@
 <template>
   <div class="empty">
-    <div class="tip engine" :class="{ hidden: !showEngineTip() }">
-      {{ t('emptyChat.tips.switchProvider') }}<br/>
-      <img src="/assets/arrow_dashed.svg" />
-    </div>
-    <div class="engine">
+    <div class="selector">
       <div class="engines">
         <EngineLogo v-for="engine in llmFactory.getChatEngines()" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
       </div>
       <div class="current">
+        <div class="tip engine" v-if="showEngineTip()">
+          {{ t('emptyChat.tips.switchProvider') }}<br/>
+          <img src="/assets/arrow_dashed.svg" />
+        </div>
         <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
         <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
           <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
@@ -17,7 +17,7 @@
           <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
           <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
         </div>
-        <div class="tip model" :class="{ hidden: !showModelTip() }">
+        <div class="tip model" v-if="showModelTip()">
           <img src="/assets/arrow_dashed.svg" /><br/>
           {{ t('emptyChat.tips.switchModel') }}
         </div>
@@ -100,33 +100,38 @@ onUpdated(() => {
 
 const centerLogos = () => {
 
-  const engines = document.querySelector<HTMLElement>('.engines')
-  const current = document.querySelector<HTMLElement>('.current')
+  // get the engines and current
+  const engines = document.querySelector<HTMLElement>('.selector .engines')
+  const current = document.querySelector<HTMLElement>('.selector .current')
   if (!engines || !current) {
     return
   }
-  
-  const logo = current.querySelector<HTMLElement>('.logo')
 
+  // get vertical center of engines
   const rc1 = engines.getBoundingClientRect()
-  const midY1 = rc1.top + 40 //+ rc1.height / 2
+  const midY1 = rc1.top + rc1.height / 2
 
+  // get verical center of logo
+  const logo = current.querySelector<HTMLElement>('.logo')
   const rc2 = logo.getBoundingClientRect()
   const midY2 = rc2.top + rc2.height / 2
 
-  let top = parseInt(engines.style.top) || 0
-  engines.style.top = `-${top+midY1-midY2}px`
-
-  // const tip = document.querySelector<HTMLElement>('.tip.engine')
-  // if (tip) {
-  //   top = parseInt(tip.style.top) || 0
-  //   tip.style.top = `${top+midY1-midY2}px`
-  // }
+  // align current engine so that the logo is centered 
+  let top = parseInt(current.style.top) || 0
+  top = top+midY1-midY2
+  current.style.top = `${top}px`
 
   const actions = document.querySelector<HTMLElement>('.actions')
   if (actions) {
-    actions.style.top = `-${top+midY1-midY2+60}px`
+    const minHeight = parseInt(getComputedStyle(engines).minHeight)
+    if (rc1.height > minHeight) {
+      const offset = rc1.height - minHeight
+      actions.style.top = `${-offset/2}px`
+    } else {
+      actions.style.top = '0px'
+    }
   }
+
 
 }
 
@@ -138,7 +143,7 @@ const onEngine = (engine: string) => {
 
     // now animate current icon to the ones in the selector
     const current = store.config.llm.engine
-    animateEngineLogo(`.engine .current .logo`, `.engines .logo.${current}`, (elems, progress) => {
+    animateEngineLogo(`.selector .current .logo`, `.selector .engines .logo.${current}`, (elems, progress) => {
       if (elems) {
         elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
@@ -160,7 +165,7 @@ const onEngine = (engine: string) => {
         showCancelButton: true,
       }).then((result) => {
         if (result.isConfirmed) {
-          emitEvent('open-settings', { initialTab: 'models', engine: engine })
+          window.api.settings.open({ initialTab: 'models', engine: engine })
         }
       })
       return
@@ -174,7 +179,7 @@ const onEngine = (engine: string) => {
     store.saveSettings()
 
     // and do the animation in reverse
-    animateEngineLogo(`.engines .logo.${engine}`, `.engine .current .logo`, (elems, progress) => {
+    animateEngineLogo(`.selector .engines .logo.${engine}`, `.selector .current .logo`, (elems, progress) => {
       if (elems) {
         elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
@@ -309,6 +314,7 @@ const onComputerUse = () => {
 
 .empty {
   padding: 16px;
+  margin-top: -96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -344,7 +350,7 @@ const onComputerUse = () => {
   font-size: 14pt;
 }
 
-.empty .engine {
+.empty .selector {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -352,16 +358,17 @@ const onComputerUse = () => {
 }
 
 .empty .engines {
-  position: relative;
   display: flex;
   max-width: 400px;
+  min-height: 240px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  align-content: center;
   opacity: 0;
 }
 
-.empty .engine .logo {
+.empty .selector .logo {
   flex: 0 0 48px;
   cursor: pointer;
   margin: 16px;
@@ -370,7 +377,7 @@ const onComputerUse = () => {
   opacity: 1;
 }
 
-.empty .engine .current {
+.empty .selector .current {
   position: absolute;
   display: flex;
   flex-direction: column;
