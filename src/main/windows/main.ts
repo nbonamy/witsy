@@ -44,6 +44,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     ...titleBarOptions({
       height: 48,
     }),
+    showInDock: true,
     ...opts,
   });
 
@@ -80,11 +81,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
   // open the DevTools
   if (process.env.DEBUG) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
-  }
-
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
   }
 
 };
