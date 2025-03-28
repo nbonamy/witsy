@@ -21,7 +21,7 @@
       </ResizableHorizontal>
     </div>
   </div>
-  <EngineModelPicker ref="engineModelPicker" :engine="chat.engine" :model="chat.model" @save="onUpdateEngineModel" v-if="chat"/>
+  <EngineModelPicker ref="engineModelPicker" :engine="chat.engine" :model="chat.model" :disable-tools="store.config.prompt.disableTools" @save="onUpdateEngineModel" v-if="chat"/>
 </template>
 
 <script setup lang="ts">
@@ -214,11 +214,12 @@ const initChat = () => {
 
 }
 
-const initLlm = (engine?: string, model?: string) => {
+const initLlm = (engine?: string, model?: string, disableTools?: boolean) => {
 
   // get engine and model
   engine = engine || store.config.prompt.engine
   model = model || store.config.prompt.model
+  disableTools = disableTools || store.config.prompt.disableTools
   if (!engine.length || !model.length) {
     ({ engine, model } = llmFactory.getChatEngineModel(false))
   }
@@ -228,13 +229,13 @@ const initLlm = (engine?: string, model?: string) => {
   store.initChatWithDefaults(chat.value)
 
   // log
-  console.log(`initialize prompt window llm: ${engine} ${model}`)
+  console.log(`initialize prompt window llm: ${engine} ${model} ${disableTools ? 'without tools' : 'with tools'}`)
   
   // init llm
   llm = llmFactory.igniteEngine(engine)
 
-  // tools depend on chat parameters
-  if (!chat.value.disableTools) {
+  // tools
+  if (!disableTools) {
     for (const pluginName in availablePlugins) {
       const pluginClass = availablePlugins[pluginName]
       const instance = new pluginClass(store.config.plugins[pluginName])
@@ -248,12 +249,18 @@ const onEngineModel = () => {
   engineModelPicker.value.show()
 }
 
-const onUpdateEngineModel = (payload: { engine: string, model: string}) => {
-  const { engine, model } = payload
-  store.config.llm.engine = engine
-  store.config.engines[engine].model.chat = model
+const onUpdateEngineModel = (payload: { engine: string, model: string, disableTools: boolean }) => {
+  const { engine, model, disableTools } = payload
+  if (store.config.prompt.engine === '' && store.config.prompt.model === '') {
+    store.config.llm.engine = engine
+    store.config.engines[engine].model.chat = model
+  } else {
+    store.config.prompt.engine = engine
+    store.config.prompt.model = model
+  }
+  store.config.prompt.disableTools = disableTools
   store.saveSettings()
-  initLlm(engine, model)
+  initLlm(engine, model, disableTools)
 }
 
 const onKeyDown = (ev: KeyboardEvent) => {

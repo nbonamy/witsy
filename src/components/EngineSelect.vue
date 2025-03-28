@@ -2,7 +2,7 @@
 <template>
   <select name="engine" v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
-    <option :value="favoriteMockEngine" v-if="favorites">Favorite models</option>
+    <option :value="favoriteMockEngine" v-if="showFavorites">Favorite models</option>
     <option value="openai">OpenAI</option>
     <option value="ollama">Ollama</option>
     <option value="anthropic">Anthropic</option>
@@ -26,7 +26,7 @@ import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 
 const llmFactory = new LlmFactory(store.config)
 
-defineProps({
+const props = defineProps({
   defaultText: String,
   favorites: Boolean,
   disabled: {
@@ -37,6 +37,10 @@ defineProps({
 
 const value = defineModel()
 const emit = defineEmits(['change'])
+
+const showFavorites = computed(() => {
+  return props.favorites && llmFactory?.getChatModels(favoriteMockEngine)?.length > 0
+})
 
 const custom = computed(() => {
   const customs = llmFactory.getCustomEngines()

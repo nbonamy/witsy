@@ -9,6 +9,13 @@
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" />
       </div>
+      <div class="group">
+        <label>{{ t('modelSettings.plugins') }}</label>
+        <select name="plugins" v-model="disableTools" @change="save">
+          <option :value="false">{{ t('common.enabled') }}</option>
+          <option :value="true">{{ t('common.disabled') }}</option>
+        </select>
+      </div>
     </template> 
     <template v-slot:footer>
       <div class="buttons">
@@ -34,6 +41,7 @@ const llmFactory = new LlmFactory(store.config)
 const dialog = ref(null)
 const engine = ref('openai')
 const model = ref('gpt-4o')
+const disableTools = ref(false)
 
 const emit = defineEmits(['save'])
 
@@ -50,26 +58,29 @@ const props = defineProps({
     type: String,
     default: 'gpt-4o',
   },
+  disableTools: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-onMounted(() => {
-  watch(() => props, () => {
+const onShow = () => {
 
-    // get value
-    engine.value = props.engine
-    model.value = props.model
+  // get value
+  engine.value = props.engine
+  model.value = props.model
+  disableTools.value = props.disableTools
 
-    // use favorites
-    if (props.favorites) {
-      const favId = llmFactory.getFavoriteId(engine.value, model.value)
-      if (favId) {
-        engine.value = favoriteMockEngine
-        model.value = favId
-      }
+  // use favorites
+  if (props.favorites && llmFactory.isFavoriteModel(engine.value, model.value)) {
+    const favId = llmFactory.getFavoriteId(engine.value, model.value)
+    if (favId) {
+      engine.value = favoriteMockEngine
+      model.value = favId
     }
+  }
 
-  }, { immediate: true })
-})
+}
 
 const close = () => {
   dialog.value.close('#engine-model-picker')
@@ -86,15 +97,18 @@ const onCancel = () => {
 const onSave = () => {
   if (llmFactory.isFavoriteEngine(engine.value)) {
     const favorite = llmFactory.getFavoriteModel(model.value)
-    emit('save', { engine: favorite.engine, model: favorite.model })
+    emit('save', { engine: favorite.engine, model: favorite.model, disableTools: disableTools.value })
   } else {
-    emit('save', { engine: engine.value, model: model.value })
+    emit('save', { engine: engine.value, model: model.value, disableTools: disableTools.value })
   }
   close()
 }
 
 defineExpose({
-  show: () => dialog.value.show('#engine-model-picker'),
+  show: () => {
+    onShow()
+    dialog.value.show('#engine-model-picker')
+  },
   close,
 })
 
