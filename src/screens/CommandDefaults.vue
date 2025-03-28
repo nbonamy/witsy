@@ -1,5 +1,5 @@
 <template>
-  <dialog class="editor">
+  <dialog class="dialog editor">
     <form method="dialog">
       <header>
         <div class="title">{{ t('commands.defaults.title') }}</div>

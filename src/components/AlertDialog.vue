@@ -1,6 +1,6 @@
 
 <template>
-  <dialog class="alert-dialog show">
+  <dialog class="dialog alert-dialog show">
     <form class="vertical" method="dialog" @submit.prevent>
       <div class="icon">
         <img src="/assets/icon.png" />

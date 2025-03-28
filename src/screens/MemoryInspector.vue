@@ -1,5 +1,5 @@
 <template>
-  <dialog class="memory">
+  <dialog class="dialog memory">
     <form method="dialog">
       <header>
         <div class="title">{{ t('memory.inspector.title') }}</div>

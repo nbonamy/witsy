@@ -1,5 +1,5 @@
 <template>
-  <dialog id="expert-editor" class="editor">
+  <dialog id="expert-editor" class="dialog editor">
     <form method="dialog">
       <header>
         <div class="title">{{ t('experts.editor.title') }}</div>
