@@ -9,6 +9,7 @@ import { ref, computed, onMounted, WritableComputedRef } from 'vue'
 import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
+import Settings from './screens/Settings.vue'
 import CommandPicker from './screens/CommandPicker.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
 import RealtimeChat from './screens/RealtimeChat.vue'
@@ -31,6 +32,7 @@ const appearanceTheme = useAppearanceTheme()
 const routes: { [key: string]: any } = {
   '/': Main,
   '/chat': Main,
+  '/settings': Settings,
   '/commands': CommandPicker,
   '/prompt': PromptAnywhere,
   '/readaloud': ReadAloud,

@@ -14,6 +14,8 @@ HTMLDialogElement.prototype.close = vi.fn()
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
+    hasLocalization: vi.fn(() => true),
+    i18nInstructions: vi.fn(),
     commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
     expertI18n: vi.fn(() => {}),
   }
@@ -39,6 +41,7 @@ beforeAll(() => {
 
   useWindowMock()
   store.loadSettings()
+  store.load = () => {}
 
   // override
   store.commands[1].id = 'command'

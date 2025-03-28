@@ -143,7 +143,7 @@ export default class {
       },
       {
         label: t('tray.menu.settings'),
-        click: window.openSettingsWindow },
+        click: () => window.openSettingsWindow() },
       {
         type: 'separator'
       },

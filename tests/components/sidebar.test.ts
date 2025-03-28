@@ -50,7 +50,7 @@ test('New Chat', async () => {
 test('Open Settings', async () => {
   const wrapper: VueWrapper<any> = mount(Sidebar)
   await wrapper.find('.sidebar .footer #open-settings').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('open-settings', { initialTab: 'general'})
+  expect(window.api.settings.open).toHaveBeenLastCalledWith({ initialTab: 'general'})
 })
 
 // test('Switch to Folder Mode', async () => {

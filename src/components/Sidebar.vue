@@ -77,7 +77,7 @@ const setChatListMode = (mode: ChatListMode) => {
 }
 
 const onSettings = () => {
-  emitEvent('open-settings', { initialTab: 'general' })
+  window.api.settings.open({ initialTab: 'general' })
 }
 
 const onNewChat = () => {

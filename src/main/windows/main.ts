@@ -101,12 +101,3 @@ export const closeMainWindow = async () => {
 export const isMainWindowFocused = () => {
   return mainWindow && !mainWindow.isDestroyed() && mainWindow.isFocused();
 }
-
-export const openSettingsWindow = () => {
-  try {
-    openMainWindow({ queryParams: { settings: true }});
-    return;
-  } catch (error) {
-    console.error('Error while opening main window to show settings', error);
-  }
-}

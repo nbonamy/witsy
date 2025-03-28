@@ -235,6 +235,7 @@ app.whenReady().then(() => {
 
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {
+    window.prepareSettingsWindow();
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
   }
@@ -255,8 +256,8 @@ app.on('second-instance', () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
-  } else {
-    app.dock?.hide();
+  // } else {
+  //   app.dock?.hide();
   }
 });
 
@@ -264,7 +265,7 @@ app.on('window-all-closed', () => {
 app.on('before-quit', (ev) => {
 
   // if force quit
-  if (process.env.DEBUG || process.env.TEST || quitAnyway) {
+  if (/*process.env.DEBUG || process.env.TEST || */quitAnyway) {
     return;
   }
 
@@ -444,6 +445,14 @@ ipcMain.on('experts-export', (event) => {
 
 ipcMain.on('experts-import', (event) => {
   event.returnValue = experts.importExperts(app);
+});
+
+ipcMain.on('settings-open', (event, payload) => {
+  window.openSettingsWindow(payload);
+});
+
+ipcMain.on('settings-close', () => {
+  window.closeSettingsWindow();
 });
 
 ipcMain.on('run-at-login-get', (event) => {

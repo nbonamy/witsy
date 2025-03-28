@@ -39,6 +39,7 @@ beforeAll(() => {
 
   useWindowMock()
   store.loadSettings()
+  store.load = () => {}
 
   // override
   store.experts[0].id = 'uuid1'

@@ -3,7 +3,6 @@
     <Sidebar :chat="assistant.chat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" />
     <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
-    <Settings id="settings" />
     <DocRepos />
   </div>
 </template>
@@ -22,7 +21,6 @@ import Sidebar from '../components/Sidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import DocRepos from './DocRepos.vue'
-import Settings from './Settings.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
@@ -90,7 +88,7 @@ onMounted(() => {
     const target = (e.target || e.srcElement) as HTMLElement
     const href = target.getAttribute('href')
     if (href?.startsWith('#settings')) {
-      emitEvent('open-settings', { initialTab: href.split('_')[1] })
+      window.api.settings.open({ initialTab: href.split('_')[1] })
       e.preventDefault()
       return false
     } else if (href === '#retry_without_plugins') {
@@ -148,10 +146,6 @@ const processQueryParams = (params: anyDict) => {
     }
   }
 
-  // open settings
-  if (params.settings) {
-    emitEvent('open-settings', null)
-  }
 }
 
 const onNewChat = () => {
@@ -403,7 +397,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
   if (!assistant.value.hasLlm()) {
-    nextTick(() => emitEvent('open-settings', { initialTab: 'models' }))
+    nextTick(() => window.api.settings.open({ initialTab: 'models' }))
     return
   }
 

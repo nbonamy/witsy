@@ -1,40 +1,44 @@
 <template>
-  <dialog class="settings" ref="dialog">
-    <form method="dialog">
-      <div class="wrapper">
-        <DialogHeader :title="t('common.settings')" @close="onClose" />
-        <main>
-          <div class="tabs">
-            <ul>
-              <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-              <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
-              <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
-              <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
-              <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
-              <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
-              <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-              <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-              <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
-            </ul>
-            <SettingsGeneral ref="settingsGeneral" />
-            <SettingsAppearance ref="settingsAppearance" />
-            <SettingsCommands ref="settingsCommands" />
-            <SettingsExperts ref="settingsExperts" />
-            <SettingsShortcuts ref="settingsShortcuts" />
-            <SettingsLLM ref="settingsLLM" />
-            <SettingsPlugins ref="settingsPlugins" />
-            <SettingsVoice ref="settingsVoice" />
-            <SettingsAdvanced ref="settingsAdvanced" />
-          </div>
-        </main>
-      </div>
-    </form>
-  </dialog>
+  <div class="window">
+    <div class="settings dialog" ref="dialog">
+      <form method="dialog">
+        <div class="wrapper">
+          <DialogHeader :title="t('common.settings')" movable="drag" @close="onClose" />
+          <main>
+            <div class="tabs">
+              <ul>
+                <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
+                <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
+                <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
+                <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
+                <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
+                <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
+                <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
+                <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
+                <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
+              </ul>
+              <SettingsGeneral ref="settingsGeneral" />
+              <SettingsAppearance ref="settingsAppearance" />
+              <SettingsCommands ref="settingsCommands" />
+              <SettingsExperts ref="settingsExperts" />
+              <SettingsShortcuts ref="settingsShortcuts" />
+              <SettingsLLM ref="settingsLLM" />
+              <SettingsPlugins ref="settingsPlugins" />
+              <SettingsVoice ref="settingsVoice" />
+              <SettingsAdvanced ref="settingsAdvanced" />
+            </div>
+          </main>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { OpenSettingsPayload } from '../types/index'
+import { Ref, ref, onMounted, onUnmounted, nextTick, PropType } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
 import DialogHeader from '../components/DialogHeader.vue'
 import SettingsTab from '../settings/SettingsTab.vue'
@@ -53,19 +57,19 @@ import { installTabs, showActiveTab } from '../composables/tabs'
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
-export interface OpenSettingsPayload {
-  initialTab: string
-  engine?: string
-}
+store.load()
 
-defineProps({
-  initialTab: {
-    type: String,
-    default: 'general'
+const props = defineProps({
+  extra: {
+    type: Object as PropType<OpenSettingsPayload>,
+    default: {
+      initialTab: 'general'
+    }
   }
 })
 
 const dialog: Ref<HTMLElement> = ref(null)
+const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
@@ -76,13 +80,38 @@ const settingsPlugins = ref(null)
 const settingsVoice = ref(null)
 const settingsAdvanced = ref(null)
 
+const settings = [
+  settingsGeneral,
+  settingsAppearance,
+  settingsCommands,
+  settingsExperts,
+  settingsShortcuts,
+  settingsLLM,
+  settingsPlugins,
+  settingsVoice,
+  settingsAdvanced
+]
+
 let observer: MutationObserver|null = null
 
 onMounted(async () => {
 
   // events
-  window.api.on('show-settings', onOpenSettings)
-  onEvent('open-settings', onOpenSettings)
+  window.api.on('show', (params: OpenSettingsPayload) => {
+    onOpenSettings(params)
+  })
+
+  // reload
+  window.api.on('file-modified', (file: string) => {
+    if (file === 'settings') {
+      for (const setting of settings) {
+        setting.value.load()
+      }
+    }
+  })
+
+  // load
+  onOpenSettings(props.extra)
 
   // tabs
   installTabs(dialog.value)
@@ -100,38 +129,33 @@ onUnmounted(() => {
 })
 
 const adjustHeight = () => {
-  
-  // get elements
-  const form = document.querySelector<HTMLFormElement>('.settings form')
-  const wrapper = document.querySelector<HTMLDivElement>('.settings .wrapper')
 
-  // adjust height
-  const updated = wrapper.offsetHeight
-  form.style.height = `${updated}px`
+  try {
+
+    // get elements
+    const form = document.querySelector<HTMLFormElement>('.settings form')
+    const wrapper = document.querySelector<HTMLDivElement>('.settings .wrapper')
+    if (!form || !wrapper) return
+
+    // adjust height
+    const updated = wrapper.offsetHeight
+    form.style.height = `${updated}px`
+
+  } catch (e) {
+    console.error(e)
+  }
 
 }
 
 const onOpenSettings = (payload: OpenSettingsPayload) => {
 
   // load all panels
-  settingsGeneral.value.load(payload)
-  settingsAppearance.value.load(payload)
-  settingsShortcuts.value.load(payload)
-  settingsCommands.value.load(payload)
-  settingsExperts.value.load(payload)
-  settingsLLM.value.load(payload)
-  settingsPlugins.value.load(payload)
-  settingsVoice.value.load(payload)
-  settingsAdvanced.value.load(payload)
-  document.querySelector<HTMLDialogElement>('#settings').showModal()
-  showActiveTab(dialog.value)
-
-  // remove auto-positioning
-  if (!dialog.value.style.margin) {
-    dialog.value.style.left = `${dialog.value.getBoundingClientRect().left}px`
-    dialog.value.style.top = `${dialog.value.getBoundingClientRect().top}px`
-    dialog.value.style.margin = '0px'
+  for (const setting of settings) {
+    setting.value.load(payload)
   }
+
+  // show
+  showActiveTab(dialog.value)
 
   // show initial tab
   nextTick(() => {
@@ -145,7 +169,7 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
 }
 
 const onClose = () => {
-  document.querySelector<HTMLDialogElement>('#settings').close()
+  window.api.settings.close()
 }
 
 const load = (tab: any) => {
@@ -162,22 +186,24 @@ const load = (tab: any) => {
 
 <style>
 
-dialog.settings {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
+.window {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog.settings {
   width: 640px;
 }
 
-dialog.settings form {
+.dialog.settings form {
   overflow: hidden;
+  border-radius: 16px;
   transition: height 150ms ease;
 }
 
-dialog.settings .content {
+.dialog.settings .content {
   width: 440px;
   margin: 0 auto;
   padding: 16px 0px 24px 0px;
@@ -200,19 +226,19 @@ dialog.settings .content {
 
 }
 
-dialog.settings .tabs .tab>label {
+.dialog.settings .tabs .tab>label {
   padding: 8px;
   margin: 0px 2px;
   color: var(--tabs-header-normal-text-color);
 }
 
-dialog.settings .tabs .tab>[name="tabs"]:checked+label {
+.dialog.settings .tabs .tab>[name="tabs"]:checked+label {
   background-color: var(--tabs-header-selected-bg-color);
   color: var(--tabs-header-selected-text-color);
   border-radius: 8px;
 }
 
-dialog.settings .tabs label .icon {
+.dialog.settings .tabs label .icon {
   display: block;
   margin: 0 auto;
   width: 15pt;
@@ -223,61 +249,64 @@ dialog.settings .tabs label .icon {
 }
 
 @media (prefers-color-scheme: dark) {
-  dialog.settings .tabs label .icon {
+  .dialog.settings .tabs label .icon {
     filter: invert(81%) sepia(0%) saturate(0%) hue-rotate(323deg) brightness(167%) contrast(170%);
   }
 }
 
-dialog.settings .tabs .tab>[name="tabs"]:checked+label .icon {
+.dialog.settings .tabs .tab>[name="tabs"]:checked+label .icon {
   color: var(--tabs-header-selected-text-color);
   /* calculated using https://codepen.io/sosuke/pen/Pjoqqp */
   filter: invert(25%) sepia(97%) saturate(3446%) hue-rotate(208deg) brightness(97%) contrast(98%);
 }
 
-dialog.settings .tabs label .title {
+.dialog.settings .tabs label .title {
   font-size: 9pt;
 }
 
-dialog.settings textarea {
+.dialog.settings textarea {
   height: 50px;
   resize: none;
 }
 
-dialog.settings .actions {
+.dialog.settings .actions {
   margin-top: 8px;
   display: flex;
 }
 
-dialog.settings .actions button:first-child {
+.dialog.settings .actions button:first-child {
   margin-left: 0px;
 }
 
-dialog.settings .actions .right {
+.dialog.settings .actions .right {
   flex: 1;
   text-align: right;
 }
 
-dialog.settings .content:has(.list-panel) {
+.dialog.settings .content:has(.list-panel) {
   width: 100%;
   height: 100%;
   padding: 0px;
 }
 
-dialog.settings .list-panel {
+.dialog.settings .list-panel {
 
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  padding-top: 12px;
-  padding-bottom: 12px;
 
-  > .list, .master .list {
-  
+  .master {
+    padding: 8px;
     background-color: var(--sidebar-bg-color);
     border-right: 0.5px solid var(--dialog-separator-color);
-    width: 150px;
-    padding: 0px 12px;
+  }
+
+  .master .list {
+  
+    width: 160px;
     overflow-y: auto;
+    padding-right: 0px;
+    scrollbar-gutter: stable;
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
     .item {
@@ -289,6 +318,14 @@ dialog.settings .list-panel {
       display: flex;
       border-radius: 4px;
       font-size: 10.5pt;
+
+      &:first-child {
+        margin-top: 0px;
+      }
+
+      &:last-child {
+        margin-bottom: 0px;
+      }
 
       .logo {
         height: 10pt;
@@ -310,20 +347,25 @@ dialog.settings .list-panel {
         }
       }
     }
+
+  }
+
+  .actions button {
+    box-shadow: none;
   }
 
   .panel {
     flex: 1;
-    padding: 4px 16px 16px 0px !important;
+    padding: 8px;
   }
 
 }
 
 @media (prefers-color-scheme: dark) {
-  dialog.settings .list-panel .list .item .image {
+  .dialog.settings .list-panel .list .item .image {
     filter: invert(1);
   }
-  dialog.settings .list-panel .list .item .icon {
+  .dialog.settings .list-panel .list .item .icon {
     fill: var(--text-color);
   }
 }

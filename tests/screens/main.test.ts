@@ -10,7 +10,6 @@ import Attachment from '../../src/models/attachment'
 import Main from '../../src/screens/Main.vue'
 import Sidebar from '../../src/components/Sidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
-import Settings from '../../src/screens/Settings.vue'
 import Assistant from '../../src/services/assistant'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 
@@ -73,7 +72,7 @@ beforeAll(() => {
           new Message('assistant', 'response2'),  
         ]
       })
-    ]
+    ], quickPrompts: ['prompt']
   })
 
 })
@@ -88,7 +87,6 @@ test('Renders correctly', () => {
   expect(wrapper.find('.main').exists()).toBe(true)
   expect(wrapper.findComponent(Sidebar).exists()).toBe(true)
   expect(wrapper.findComponent(ChatArea).exists()).toBe(true)
-  expect(wrapper.findComponent(Settings).exists()).toBe(true)
 })
 
 test('Resets assistant', async () => {
