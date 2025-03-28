@@ -182,9 +182,6 @@ const load = (tab: any) => {
 @import '../../css/dialog.css';
 @import '../../css/tabs.css';
 @import '../../css/form.css';
-</style>
-
-<style>
 
 .window {
   height: 100vh;
@@ -192,6 +189,10 @@ const load = (tab: any) => {
   align-items: center;
   justify-content: center;
 }
+
+</style>
+
+<style>
 
 .dialog.settings {
   width: 640px;
