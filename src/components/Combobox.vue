@@ -74,6 +74,7 @@ const onSelect = (event: Event) => {
 
 form .group .wrapper {
   position: relative;
+  width: 100%;
 
   &.focused select {
     outline: 2px solid #83aaf2;
