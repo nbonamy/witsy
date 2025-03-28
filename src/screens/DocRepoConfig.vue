@@ -1,5 +1,5 @@
 <template>
-  <dialog class="editor" id="docrepoconfig">
+  <dialog class="dialog editor" id="docrepoconfig">
     <form method="dialog">
       <header>
         <div class="title">{{ t('docRepo.config.title') }}</div>

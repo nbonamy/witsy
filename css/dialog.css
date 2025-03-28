@@ -1,9 +1,9 @@
 
-dialog, dialog * {
-  -webkit-app-region: no-drag !important;
+.dialog {
+  -webkit-app-region: no-drag;
 }
 
-dialog {
+.dialog {
   outline: none;
   user-select: none;
   box-shadow: var(--dialog-box-shadow);
@@ -14,15 +14,19 @@ dialog {
   width: 500px;
 }
 
-dialog::backdrop {
+.dialog > * {
+  border-radius: 16px;
+}
+
+.dialog::backdrop {
   display: none;
 }
 
-.windows dialog {
+.windows .dialog {
   border-radius: var(--control-border-radius);
 }	
 
-dialog header {
+.dialog header {
   font-weight: bold;
   text-align: center;
   color: var(--dialog-header-text-color);
@@ -32,13 +36,13 @@ dialog header {
   border-bottom: 0.5px solid var(--dialog-separator-color);
 }
 
-dialog main {
+.dialog main {
   padding: 24px;
   background-color: var(--dialog-body-bg-color);
   color: var(--dialog-body-text-color);
 }
 
-dialog footer {
+.dialog footer {
   padding: 16px;
   display: flex;
   flex-direction: row;
@@ -47,6 +51,6 @@ dialog footer {
   border-top: 0.5px solid var(--dialog-separator-color);
 }
 
-dialog footer button {
+.dialog footer button {
   margin: 0 8px;
 }

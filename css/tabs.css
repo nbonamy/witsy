@@ -34,15 +34,15 @@
   color: var(--tabs-header-selected-color);
 }
 
-dialog:has(.tabs) header {
+.dialog:has(.tabs) header {
   border-bottom: none;
 }
 
-dialog:has(.tabs) main {
+.dialog:has(.tabs) main {
   padding: 0;
 }
 
-dialog .tabs ul {
+.dialog .tabs ul {
   padding: 8px;
   background-color: var(--dialog-header-bg-color);
   border-bottom: 0.5px solid var(--dialog-separator-color);

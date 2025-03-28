@@ -129,7 +129,7 @@ const onMore = () => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
-  const rcDialog = moreButton.value.closest('dialog').getBoundingClientRect()
+  const rcDialog = moreButton.value.closest('.dialog').getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
   menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }

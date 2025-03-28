@@ -51,7 +51,7 @@ const load = () => {
 const onDelete = () => {
   
   Dialog.show({
-    target: document.querySelector('dialog'),
+    target: document.querySelector('.dialog'),
     title: t('settings.engines.ollama.confirmDelete'),
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),

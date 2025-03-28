@@ -1,5 +1,5 @@
 <template>
-  <dialog class="docrepos" id="docrepos">
+  <dialog class="dialog docrepos" id="docrepos">
     <form method="dialog">
       <DialogHeader :title="t('docRepo.repositories.title')" @close="onClose" />
       <main>
