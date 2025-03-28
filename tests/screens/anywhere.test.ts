@@ -102,11 +102,16 @@ test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2' })
+  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableTools: false })
   await wrapper.vm.$nextTick()
   expect(LlmFactory.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
+  expect(store.config.prompt.disableTools).toBe(false)
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat2')
+  expect(wrapper.vm.llm.plugins.length).toBeGreaterThan(0)
+  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableTools: true })
+  expect(store.config.prompt.disableTools).toBe(true)
+  expect(wrapper.vm.llm.plugins.length).toBe(0)
 })
 
 test('Renders prompt response', async () => {
