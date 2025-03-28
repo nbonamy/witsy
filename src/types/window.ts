@@ -4,6 +4,7 @@ import { anyDict } from './index'
 import { Application } from './automation';
 
 export type CreateWindowOpts = BrowserWindowConstructorOptions & {
+  showInDock?: boolean;
   keepHidden?: boolean;
   queryParams?: anyDict;
   hash?: string;

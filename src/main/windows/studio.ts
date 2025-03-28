@@ -24,6 +24,7 @@ export const openDesignStudioWindow = () => {
       minWidth: 800,
       minHeight: 400,
       ...titleBarOptions(),
+      showInDock: true,
     });
 
     designStudioWindow.on('close', () => {
@@ -48,11 +49,6 @@ export const openDesignStudioWindow = () => {
   // if (process.env.DEBUG) {
   //   designStudioWindow.webContents.openDevTools({ mode: 'right' });
   // }
-
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
-  }
 
   // done
   return designStudioWindow;

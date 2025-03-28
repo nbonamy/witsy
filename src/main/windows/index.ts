@@ -18,6 +18,9 @@ export const setStore = (aStore: Store): void => {
   electronStore = aStore
 }
 
+// dock management
+const dockedWindows: Set<BrowserWindow> = new Set();
+
 // listener
 export interface WindowListener {
   onWindowCreated: (window: BrowserWindow) => void;
@@ -123,6 +126,16 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
   // notify listeners
   window.on('show', () => {
+
+    // docked window
+    if (opts.showInDock) {
+      dockedWindows.add(window);
+      if (process.platform === 'darwin') {
+        app.dock.show();
+      }
+    }
+    
+    // notify
     for (const listener of listeners) {
       listener.onWindowCreated(window);
     }
@@ -140,10 +153,12 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     for (const listener of listeners) {
       listener.onWindowClosed(window);
     }
-    if (areAllWindowsClosed()) {
-      app.emit('window-all-closed');
-    }
+    undockWindow(window);
   });
+
+  window.on('hide', () => {
+    undockWindow(window);
+  })
 
   // web console to here
   window.webContents.on('console-message', (event, level, message, line, sourceId) => {
@@ -195,6 +210,24 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
   // done
   return window;
 };
+
+const undockWindow = (window: BrowserWindow) => {
+
+  // remove
+  dockedWindows.delete(window);
+  if (dockedWindows.size) {
+    return
+  }
+
+  // hide dock
+  if (process.platform === 'darwin') {
+    app.dock.hide();
+  }
+
+  // emit
+  app.emit('window-all-closed');
+
+}
 
 // https://ashleyhindle.com/thoughts/electron-returning-focus
 

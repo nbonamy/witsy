@@ -26,6 +26,7 @@ export const openScratchPad = async (text?: string|null) => {
     hash: '/scratchpad',
     x, y, width, height,
     ...titleBarOptions(),
+    showInDock: true,
     queryParams,
   });
 
@@ -34,9 +35,4 @@ export const openScratchPad = async (text?: string|null) => {
     scratchpadWindow.webContents.openDevTools({ mode: 'right' });
   }
 
-  // show in dock
-  if (process.platform === 'darwin') {
-    app.dock.show();
-  }
-  
 }
