@@ -250,22 +250,11 @@ app.on('second-instance', () => {
   window.openMainWindow();
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  // } else {
-  //   app.dock?.hide();
-  }
-});
-
 //
 app.on('before-quit', (ev) => {
 
   // if force quit
-  if (/*process.env.DEBUG || process.env.TEST || */quitAnyway) {
+  if (process.env.DEBUG || process.env.TEST || quitAnyway) {
     return;
   }
 

@@ -32,9 +32,6 @@ export const prepareSettingsWindow = (queryParams?: anyDict) => {
 
   settingsWindow.on('hide', () => {
     electronStore.set(storeBoundsId, settingsWindow.getBounds());
-    if (areAllWindowsClosed()) {
-      app.emit('window-all-closed');
-    }
   })
 
   // handle window close
