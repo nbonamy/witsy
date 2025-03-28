@@ -43,7 +43,8 @@
   "prompt": {
     "engine": "",
     "model": "",
-    "autosave": false
+    "autosave": false,
+    "disableTools": false
   },
   "commands": {
     "engine": "",

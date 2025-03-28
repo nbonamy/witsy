@@ -106,6 +106,7 @@ export type DesignStudioConfig = {
 export type PromptConfig = {
   engine: string
   model: string
+  disableTools: boolean
   autosave: boolean
 }
 
