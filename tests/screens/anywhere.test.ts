@@ -98,16 +98,6 @@ test('Initalizes Expert', async () => {
   expect((wrapper.findComponent(Prompt).vm as unknown as typeof Prompt).expert).toStrictEqual(store.experts[2])
 })
 
-test('Closes when click on container', async () => {
-  const wrapper: VueWrapper<any> = mount(PromptAnywhere)
-  await wrapper.find('.prompt').trigger('mousedown')
-  await wrapper.find('.container').trigger('mouseup')
-  expect(window.api.anywhere.close).not.toHaveBeenCalled()
-  await wrapper.find('.container').trigger('mousedown')
-  await wrapper.find('.container').trigger('mouseup')
-  expect(window.api.anywhere.close).toHaveBeenCalled()
-})
-
 test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()

@@ -312,3 +312,63 @@ export const notifyBrowserWindows = (event: string, ...args: any[]) => {
     console.error('Error while notifying browser windows', error)
   }
 }
+
+export const enableClickThrough = (window: BrowserWindow) => {
+
+  // if not visible then schedule it
+  if (!window.isVisible()) {
+    //console.log(`Waiting onShow for ${window.getTitle()}`);
+    window.on('show', () => {
+      enableClickThrough(window);
+    })
+    return
+  }
+
+  //console.log(`Activating click through for ${window.getTitle()}`);
+
+  const id = setInterval(async () => {
+
+    // check it is visible
+    if (!window.isVisible()) {
+      return
+    }
+
+    // get info
+    const point = screen.getCursorScreenPoint()
+    const [x, y] = window.getPosition()
+    const [w, h] = window.getSize()
+  
+    // cursor not in window
+    if (point.x < x || point.x > x + w || point.y < y || point.y > y + h) {
+      return
+    }
+
+    // capture 1x1 image of mouse position.
+    const image = await window.webContents.capturePage({
+      x: point.x - x,
+      y: point.y - y,
+      width: 1,
+      height: 1,
+    })
+
+    // set ignore mouse events by alpha.
+    const buffer = image.getBitmap()
+    window.setIgnoreMouseEvents(buffer[3] < 255)
+    //console.log(`${window.getTitle()} setIgnoreMouseEvents`, buffer[3] < 255)
+
+  
+  }, 300)
+
+  const clear = () => {
+    //console.log(`Cancelling click through for ${window.getTitle()}`);
+    clearInterval(id);
+    window.off('hide', clear);
+    window.off('close', clear);
+  }
+
+  window.on('hide', clear);
+  window.on('close', clear);
+
+}
+
+
