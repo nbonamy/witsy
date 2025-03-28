@@ -80,7 +80,7 @@ test('Selects engine', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
   await wrapper.find('.empty .current .logo').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
-  expect(wrapper.find('.empty .tip').classes()).toContain('hidden')
+  expect(wrapper.find('.empty .tip').exists()).toBe(false)
   const ollama = 1 + standardEngines.indexOf('ollama')
   await wrapper.find(`.empty .engines .logo:nth-child(${ollama+1})`).trigger('click')
   expect(store.config.llm.engine).toBe('ollama')
