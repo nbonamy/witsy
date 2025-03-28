@@ -1,10 +1,12 @@
 <template>
   <div class="content">
     <div class="list-panel">
-      <div class="list">
-        <div class="item" v-for="item in available" :key="item.id" :class="{ selected: current == item.id }" @click="select(item)">
-          <component :is="item.icon" class="logo" />
-          {{ item.label }}
+      <div class="master">
+        <div class="list">
+          <div class="item" v-for="item in available" :key="item.id" :class="{ selected: current == item.id }" @click="select(item)">
+            <component :is="item.icon" class="logo" />
+            {{ item.label }}
+          </div>
         </div>
       </div>
       <component :is="currentView" class="panel" ref="settings" />
