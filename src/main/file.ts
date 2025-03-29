@@ -40,6 +40,7 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
     // check extension
     const extension = path.extname(filepath);
     if (extension === '.icns') {
+    
       const buffer = fs.readFileSync(filepath);
       const icons = icns.parse(buffer);
       const icon = icons[Object.keys(icons)[0]]
@@ -48,6 +49,21 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
         mimeType: extensionToMimeType('png'),
         contents: icon.toString('base64')
       };
+    
+    } else if (process.platform == 'win32') {
+
+      // for windows
+      const iconInfo = autolib.getApplicationIcon(filepath);
+
+      // convert iconInfo to base64 encoded string
+      if (iconInfo && iconInfo.iconData) {
+        return {
+          url: `file://${filepath}`,
+          mimeType: 'image/x-icon',
+          contents: Buffer.from(iconInfo.iconData).toString('base64')
+        };
+      }
+
     }
   } catch (error) {
     console.error('Error while reading icon', error);
@@ -291,22 +307,14 @@ export const getAppInfo = async (app: App, filepath: string): Promise<ExternalAp
 
       const exePath = filepath;
       const productName = autolib.getProductName(exePath);
-      const iconInfo = autolib.getApplicationIcon(exePath);
-
-      // convert iconInfo to base64 encoded string
-      let iconData = null;
-      if (iconInfo && iconInfo.iconData) {
-        iconData = {
-          url: `file://${exePath}#icon`,
-          mimeType: 'image/x-icon',
-          contents: Buffer.from(iconInfo.iconData).toString('base64')
-        };
+      if (!productName) {
+        console.error('Error while getting product name', exePath);
+        return null;
       }
-
       return {
         name: productName,
         identifier: exePath,
-        icon: iconData
+        icon: getIconContents(app, exePath)
       }
 
     } catch (err) {
