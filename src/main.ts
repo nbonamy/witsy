@@ -233,16 +233,18 @@ app.whenReady().then(() => {
   // create the memory manager
   memoryManager = new MemoryManager(app);
 
+  // some platforms have a one-time automator initialization to do so give them a chance
+  new Automator();
+
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {
-    window.prepareSettingsWindow();
+    if (window.isSettingsWindowPersistent()) {
+      window.prepareSettingsWindow();
+    }
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
   }
   
-  // some platforms have a one-time automator initialization to do so give them a chance
-  new Automator();
-
 });
 
 // called when the app is already running
