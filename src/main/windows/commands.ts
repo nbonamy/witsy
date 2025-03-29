@@ -139,16 +139,16 @@ const activateCommandPicker = async () => {
     // clear blur handlers
     commandPicker.removeAllListeners('blur');
 
-    // macos
-    if (process.platform === 'darwin') {
-      const automator = new MacosAutomator();
-      await automator.focusApp({
-        id: 'com.nabocorp.witsy',
-        name: 'Witsy',
-        path: '',
-        window: 'commandPicker.getTitle()',
-      })
-    }
+    // // macos
+    // if (process.platform === 'darwin') {
+    //   const automator = new MacosAutomator();
+    //   await automator.focusApp({
+    //     id: process.env.DEBUG ? 'com.github.Electron' : 'com.nabocorp.witsy',
+    //     name: 'Witsy',
+    //     path: '',
+    //     window: null//commandPicker.getTitle(),
+    //   })
+    // }
 
     // for windows: this works in debug or when run from the terminal
     // suspicion is that in these cases, this is called from another process
