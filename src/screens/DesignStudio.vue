@@ -287,13 +287,14 @@ const onMediaGenerationRequest = async (data: any) => {
   const params = JSON.parse(JSON.stringify(data.params))
 
   // replicate is painful...
+  let referenceKey = null
   if (data.engine === 'replicate' && attachReference) {
 
     // find the key of <media> in params
-    let key = Object.keys(params).find(k => params[k] === '<media>')
+    referenceKey = Object.keys(params).find(k => params[k] === '<media>')
 
     // ask the user
-    if (!key) {
+    if (!referenceKey) {
 
       const url = `https://replicate.com/${data.model.split(':')[0]}`
       
@@ -304,22 +305,22 @@ const onMediaGenerationRequest = async (data: any) => {
         showCancelButton: true,
       })
 
-      key = result.value
+      referenceKey = result.value
     }
 
     // still not?
-    if (!key) {
+    if (!referenceKey) {
       isGenerating.value = false
       return
     }
 
     // attach here
     const reference = window.api.file.read(currentUrl)
-    params[key] = `data:${reference.mimeType};base64,${reference.contents}`
+    params[referenceKey] = `data:${reference.mimeType};base64,${reference.contents}`
     attachReference = false
 
     // ask Settings.vue to save the key
-    emitEvent('replicate-input-image-key', key)
+    emitEvent('replicate-input-image-key', referenceKey)
 
   }
 
@@ -387,12 +388,17 @@ const onMediaGenerationRequest = async (data: any) => {
     const attachment = new Attachment('', data.mediaType === 'image' ? 'image/jpg' : 'video/mp4', media.url)
     message.value.attach(attachment)
 
-    // extra params
+    // tool call
     if (Object.keys(data.params).length > 0) {
+
+      // update reference key
+      if (referenceKey) {
+        params[referenceKey] = '<media>'
+      }
       message.value.toolCall = {
         status: 'done',
         calls: [{
-          name: 'create_media',
+          name: data.action,
           params: params,
           result: 'success'
         }]
