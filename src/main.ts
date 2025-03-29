@@ -167,7 +167,7 @@ app.whenReady().then(() => {
   // install the menu
   const installMenu = () => {
     menu.installMenu(app, {
-      quit: app.quit,
+      quit: quitApp,
       checkForUpdates: autoUpdater.check,
       quickPrompt: PromptAnywhere.open,
       newChat: window.openMainWindow,
