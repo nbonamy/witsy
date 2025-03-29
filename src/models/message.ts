@@ -117,7 +117,7 @@ export default class Message extends MessageBase implements IMessage {
   }
 
   static isVideoUrl(url: string): boolean {
-    return url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg')
+    return url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
   }
 
 }
