@@ -2,7 +2,7 @@
 import { vi, beforeAll, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import { store, mediaChatId } from '../../src/services/store'
+import { store, kMediaChatId } from '../../src/services/store'
 import { Configuration } from '../../src/types/config'
 import ImageCreator from '../../src/services/image'
 import DesignStudio from '../../src/screens/DesignStudio.vue'
@@ -71,7 +71,7 @@ beforeAll(() => {
     folders: [],
     chats: [
       Chat.fromJson({
-        uuid: mediaChatId,
+        uuid: kMediaChatId,
         messages: [
           new Message('system', 'This is a system message.'),
           Message.fromJson({

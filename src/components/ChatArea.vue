@@ -32,7 +32,7 @@
 <script setup lang="ts">
 
 import { Ref, ref, computed, onMounted } from 'vue'
-import { mediaChatId, store } from '../services/store'
+import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
@@ -87,7 +87,7 @@ const historyProvider = (event: KeyboardEvent): string[] => {
 
   // add messages from other chats
   const otherMessages = store.history.chats.reduce((acc, chat) => {
-    if (chat.uuid !== props.chat.uuid && chat.uuid != mediaChatId) {
+    if (chat.uuid !== props.chat.uuid && chat.uuid != kMediaChatId) {
       return acc.concat(chat.messages.filter(m => m.role === 'user'))
     }
     return acc
