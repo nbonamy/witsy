@@ -151,7 +151,7 @@ onMounted(() => {
 const updateTitle = () => {
   let title = 'Scratchpad'
   if (fileUrl && URL.parse) {
-    title += ' - ' + URL.parse(fileUrl).pathname.split('/').pop()
+    title += ' - ' + URL.parse(fileUrl).pathname.split(/[\\/]/).pop()
     if (modified.value) {
       title += ' *'
     }
