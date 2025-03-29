@@ -337,7 +337,7 @@ const save = () => {
     const contextWindowSizeValue = parseUserInput('Context Window Size', contextWindowSize, 'int', 1)
     const maxTokensValue = parseUserInput('Max Completion Tokens', maxTokens, 'int', 1)
     const temperatureValue = parseUserInput('Temperature', temperature, 'float', 0, 2)
-    const topKValue = parseUserInput('TopK', top_k, 'int', 0, 20)
+    const topKValue = parseUserInput('TopK', top_k, 'int', 0, 100)
     const topPValue = parseUserInput('TopP', top_p, 'float', 0, 1)
     const reasoningValue = reasoning.value ?? undefined
     const reasoningEffortValue = reasoningEffort.value ?? undefined
