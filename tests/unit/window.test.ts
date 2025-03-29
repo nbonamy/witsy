@@ -28,6 +28,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.on = vi.fn()
   BrowserWindow.prototype.off = vi.fn()
   BrowserWindow.prototype.once = vi.fn()
+  BrowserWindow.prototype.removeAllListeners = vi.fn()
   BrowserWindow.prototype.getPosition =  vi.fn(() => [0, 0])
   BrowserWindow.prototype.getSize = vi.fn(() => [0, 0])
   BrowserWindow.prototype.setPosition = vi.fn()
