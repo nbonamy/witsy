@@ -116,8 +116,8 @@ export default class Automator {
       });
 
       // done
-      await window.closePromptAnywhere();
       await window.releaseFocus({ sourceApp });
+      await window.closePromptAnywhere();
 
       // now paste
       console.debug(`Processing LLM output: "${result.slice(0, 50)}"…`);

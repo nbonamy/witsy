@@ -385,8 +385,8 @@ ipcMain.on('commands-import', (event) => {
 });
 
 ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
-  await window.closeCommandPicker();
   await window.releaseFocus({ sourceApp });
+  await window.closeCommandPicker();
 });
 
 ipcMain.on('command-is-prompt-editable', (event, payload) => {
@@ -562,9 +562,8 @@ ipcMain.on('anywhere-resize', async (_, payload) => {
 })
 
 ipcMain.on('readaloud-close-palette', async (_, sourceApp: Application) => {
-  console.log(sourceApp)
-  await window.closeReadAloudPalette();
   await window.releaseFocus({ sourceApp });
+  await window.closeReadAloudPalette();
 });
 
 ipcMain.on('transcribe-start', async () => {

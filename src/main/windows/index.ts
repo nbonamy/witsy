@@ -156,10 +156,6 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     undockWindow(window);
   });
 
-  window.on('hide', () => {
-    undockWindow(window);
-  })
-
   // web console to here
   window.webContents.on('console-message', (event, level, message, line, sourceId) => {
     if (!message.includes('Electron Security Warning') && !message.includes('Third-party cookie will be blocked')) {
@@ -211,7 +207,7 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
   return window;
 };
 
-const undockWindow = (window: BrowserWindow) => {
+export const undockWindow = (window: BrowserWindow) => {
 
   // remove
   dockedWindows.delete(window);
