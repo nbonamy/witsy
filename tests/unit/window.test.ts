@@ -48,6 +48,7 @@ vi.mock('electron', async () => {
     on: vi.fn(),
     send: vi.fn(),
     setWindowOpenHandler: vi.fn(),
+    capturePage: vi.fn(() => Promise.resolve(Buffer.from(''))),
     openDevTools: vi.fn(),
     debugger: {
       attach: vi.fn(),
