@@ -1320,7 +1320,7 @@
     "promptPlaceholder": "Deja vacío para usar el mensaje por defecto",
     "reasoningEffort": "Esfuerzo de razonamiento",
     "temperature": "Temperatura [0.0 … 2.0]",
-    "topK": "TopK / Logprobs [0 … 20]",
+    "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {

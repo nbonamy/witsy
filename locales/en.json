@@ -1339,7 +1339,7 @@
     "promptPlaceholder": "Leave empty to use default prompt",
     "reasoningEffort": "Reasoning Effort",
     "temperature": "Temperature [0.0 … 2.0]",
-    "topK": "TopK / Logprobs [0 … 20]",
+    "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
