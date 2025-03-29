@@ -73,9 +73,9 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
   // enable click through
   enableClickThrough(promptAnywhereWindow);
-  promptAnywhereWindow.on('blur', () => {
-    closePromptAnywhere();
-  });
+  // promptAnywhereWindow.on('blur', () => {
+  //   closePromptAnywhere();
+  // });
 
 }
 
