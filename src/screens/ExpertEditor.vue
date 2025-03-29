@@ -68,10 +68,13 @@ const selectedApp = ref(null)
 const diffLang = ref(false)
 const isEdited = ref(false)
 
+const icons = {}
+
 const supportTriggerApps = computed(() => window.api.platform !== 'linux')
 
 const iconData = (app: ExternalApp) => {
-  return `data:${app.icon.mimeType};base64,${app.icon.contents}`
+  const icon = icons[app.identifier]
+  return `data:${icon.mimeType};base64,${icon.contents}`
 }
 
 const onChangeText = () => {
@@ -80,6 +83,8 @@ const onChangeText = () => {
 }
 
 const load = () => {
+
+  // load expert
   type.value = props.expert?.type || 'user'
   name.value = props.expert?.name || expertI18n(props.expert, 'name')
   prompt.value = props.expert?.prompt || expertI18n(props.expert, 'prompt')
@@ -87,6 +92,15 @@ const load = () => {
   diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
   selectedApp.value = null
   onChangeText()
+
+  // load icons
+  for (const app of triggerApps.value) {
+    if (app.icon.contents) {
+      icons[app.identifier] = app.icon
+    } else {
+      icons[app.identifier] = window.api.file.readIcon(app.icon)
+    }
+  }
 }
 
 const selectApp = (app: ExternalApp) => {
@@ -95,7 +109,8 @@ const selectApp = (app: ExternalApp) => {
 
 const onAddApp = () => {
   const app = window.api.file.pick({ packages: true, location: true })
-  const info = window.api.file.getAppInfo(app as string)
+  const info = window.api.file.getAppInfo(app as string, false)
+  icons[info.identifier] = info.icon
   triggerApps.value.push(info)
 }
 
@@ -137,7 +152,12 @@ const onSave = (event: Event) => {
     id: props.expert.id,
     name: name.value === expertI18n(props.expert, 'name') ? undefined : name.value,
     prompt: prompt.value === expertI18n(props.expert, 'prompt') ? undefined : prompt.value,
-    triggerApps: triggerApps.value
+    triggerApps: triggerApps.value.map((app) => {
+      if (app.icon.contents) {
+        app.icon = app.icon.url.replace('file://', '')
+      }
+      return app
+    })
   })
 }
 
