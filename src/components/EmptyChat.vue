@@ -424,15 +424,20 @@ const onComputerUse = () => {
 
 .empty .select-model {
   z-index: 2;
-  border: none;
+  border: 0.5px solid transparent;
   outline: none;
   margin-top: 8px;
-  padding: 0px;
+  padding: 4px 0px;
   font-size: 11pt;
   text-align: center;
   cursor: pointer;
+  border-radius: 8px;
   background-color: var(--message-list-bg-color);
   color: var(--message-list-text-color);
+}
+
+.models:hover .select-model {
+  border: 0.5px solid var(--control-border-color);
 }
 
 .favorite {
