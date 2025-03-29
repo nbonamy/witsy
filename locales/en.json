@@ -432,6 +432,7 @@
     "preserveOriginal": "Preserve original media",
     "promptPlaceholder": "What do you want to create?",
     "provider": "Provider",
+    "renameMedia": "Rename media",
     "replicateInputImageRequired": {
       "text": "Replicate models reference the input image differently. Refer to the <a href=\"{url}\" target=\"_blank\">model page</a> and enter the name of the parameter below.",
       "title": "Replicate reference image parameter name required"

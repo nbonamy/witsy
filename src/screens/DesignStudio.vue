@@ -60,6 +60,7 @@ const targetRow: Ref<Message|null> = ref(null)
 
 const contextMenuActions = () => [
   { label: t('designStudio.loadMediaSettings'), action: 'load' },
+  { label: t('common.rename'), action: 'rename' },
   { label: t('common.delete'), action: 'delete' },
 ]
 
@@ -144,14 +145,29 @@ const handleActionClick = async (action: string) => {
         params: msg.toolCall?.calls?.[0]?.params || {}
       })
     })
-  }
-  else if (action === 'delete') {
+  } else if (action === 'rename') {
+    renameMedia(msg)
+  } else if (action === 'delete') {
     deleteMedia(msg)
   }
 }
 
 const onDelete = (msg: Message) => {
   deleteMedia(msg)
+}
+
+const renameMedia = (msg: Message) => {
+  Dialog.show({
+    title: t('designStudio.renameMedia'),
+    input: 'text',
+    inputValue: msg.content,
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      msg.content = result.value
+      store.saveHistory()
+    }
+  })
 }
 
 const deleteMedia = (msg: Message) => {
