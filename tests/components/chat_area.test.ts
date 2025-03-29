@@ -281,7 +281,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.model-settings select[name=locale]').setValue('')
   await wrapper.find('.model-settings textarea[name=prompt]').setValue('Prompt')
   await wrapper.find('.model-settings input[name=temperature]').setValue('5.0')
-  await wrapper.find('.model-settings input[name=top_k]').setValue('50')
+  await wrapper.find('.model-settings input[name=top_k]').setValue('150')
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
   await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('unknown')
 
