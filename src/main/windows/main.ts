@@ -2,7 +2,6 @@
 import { CreateWindowOpts } from 'types/window';
 import { app, BrowserWindow, dialog } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
-import { wait } from '../utils';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
 
@@ -10,7 +9,7 @@ const storeBoundsId = 'main.bounds'
 
 export let mainWindow: BrowserWindow = null;
 
-export const openMainWindow = (opts: CreateWindowOpts = {}) => {
+export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
 
   // try to show existig one
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -41,6 +40,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
     width: bounds?.width ?? 1400,
     height: bounds?.height ?? 800,
     minWidth: 800,
+    minHeight: 600,
     ...titleBarOptions({
       height: 48,
     }),
@@ -50,6 +50,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   // check
   ensureOnCurrentScreen(mainWindow);
+
+  // focus
+  app.focus({ steal: true });
+  mainWindow.focus();
 
   // show a tip
   mainWindow.on('close', () => {
@@ -78,6 +82,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
   })
 
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  })
+
   // open the DevTools
   if (process.env.DEBUG) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
@@ -85,15 +93,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}) => {
 
 };
 
-export const closeMainWindow = async () => {
-  try {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      // console.log('Closing main window')
-      mainWindow?.close()
-      await wait();
-    }
-  } catch (error) {
-    console.error('Error while closing main window', error);
+// only available for test purposes
+export const closeMainWindow = (): void => {
+  if (!process.env.TEST) {
+    console.error('closeMainWindow is only available for test purposes');
   }
   mainWindow = null;
 }

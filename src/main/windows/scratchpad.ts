@@ -5,7 +5,7 @@ import { createWindow, titleBarOptions, getCenteredCoordinates } from './index';
 import { putCachedText } from '../../main/utils';
 import { useI18n } from '../i18n';
 
-export const openScratchPad = async (text?: string|null) => {
+export const openScratchPad = (text?: string|null): void => {
 
   // get bounds
   const width = 800;
@@ -34,5 +34,9 @@ export const openScratchPad = async (text?: string|null) => {
   if (process.env.DEBUG) {
     scratchpadWindow.webContents.openDevTools({ mode: 'right' });
   }
+
+  // focus
+  app.focus({ steal: true });
+  scratchpadWindow.focus();
 
 }

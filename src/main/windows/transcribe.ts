@@ -1,27 +1,25 @@
 
 import { app, BrowserWindow, Rectangle, WillResizeDetails } from 'electron';
 import { electronStore, createWindow, getCenteredCoordinates } from './index';
-import { wait } from '../utils';
 import { useI18n } from '../i18n';
 
 const storeBoundsId = 'transcribe.bounds'
 
 export let transcribePalette: BrowserWindow = null;
 
-export const closeTranscribePalette = async () => {
+export const closeTranscribePalette = (): void => {
   try {
     if (transcribePalette && !transcribePalette.isDestroyed()) {
       // console.log('Closing read aloud picker')
-      transcribePalette?.close()
-      await wait();
     }
+      transcribePalette?.close()
   } catch (error) {
     console.error('Error while closing read aloud picker', error);
   }
   transcribePalette = null;
 };
 
-export const openTranscribePalette = async () => {
+export const openTranscribePalette = (): void => {
 
   // try to show existig one
   closeTranscribePalette();
@@ -69,4 +67,8 @@ export const openTranscribePalette = async () => {
     transcribePalette = null;
   });
 
+  // focus
+  app.focus({ steal: true });
+  transcribePalette.focus();
+  
 }

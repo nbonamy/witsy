@@ -1,13 +1,13 @@
 
 import { anyDict } from '../../types/index';
 import { app, BrowserWindow } from 'electron';
-import { electronStore, createWindow, ensureOnCurrentScreen, enableClickThrough, areAllWindowsClosed } from './index';
+import { electronStore, createWindow, ensureOnCurrentScreen, enableClickThrough, undockWindow } from './index';
 
 const storeBoundsId = 'settings.bounds'
 
 export let settingsWindow: BrowserWindow = null;
 
-export const prepareSettingsWindow = (queryParams?: anyDict) => {
+export const prepareSettingsWindow = (queryParams?: anyDict): void => {
   
   // get bounds from here
   const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
@@ -30,6 +30,11 @@ export const prepareSettingsWindow = (queryParams?: anyDict) => {
     showInDock: true,
   });
 
+  // // open the DevTools
+  // if (process.env.DEBUG) {
+  //   settingsWindow.webContents.openDevTools({ mode: 'right' });
+  // }
+
   settingsWindow.on('hide', () => {
     electronStore.set(storeBoundsId, settingsWindow.getBounds());
   })
@@ -44,7 +49,7 @@ export const prepareSettingsWindow = (queryParams?: anyDict) => {
 
 }
   
-export const openSettingsWindow = (params?: anyDict): BrowserWindow => {
+export const openSettingsWindow = (params?: anyDict): void => {
 
   // if we don't have a window, create one
   if (!settingsWindow || settingsWindow.isDestroyed()) {
@@ -61,17 +66,9 @@ export const openSettingsWindow = (params?: anyDict): BrowserWindow => {
   settingsWindow.focus();
   settingsWindow.show();
   
-  // // open the DevTools
-  // if (process.env.DEBUG) {
-  //   settingsWindow.webContents.openDevTools({ mode: 'right' });
-  // }
-
-  // done
-  return settingsWindow;
-
 };
 
-export const closeSettingsWindow = () => {
+export const closeSettingsWindow = (): void => {
 
   // just hide so we reuse it
   try {

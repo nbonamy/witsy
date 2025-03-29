@@ -6,7 +6,7 @@ const storeBoundsId = 'create.bounds'
 
 export let designStudioWindow: BrowserWindow = null;
 
-export const openDesignStudioWindow = () => {
+export const openDesignStudioWindow = (): void => {
 
   // if we don't have a window, create one
   if (!designStudioWindow || designStudioWindow.isDestroyed()) {
@@ -36,21 +36,18 @@ export const openDesignStudioWindow = () => {
       designStudioWindow = null;
     });
 
+    // // open the DevTools
+    // if (process.env.DEBUG) {
+    //   designStudioWindow.webContents.openDevTools({ mode: 'right' });
+    // }
+
   }
 
   // check
   ensureOnCurrentScreen(designStudioWindow);
 
-  // and focus
+  // focus
   app.focus({ steal: true });
   designStudioWindow.focus();
-
-  // // open the DevTools
-  // if (process.env.DEBUG) {
-  //   designStudioWindow.webContents.openDevTools({ mode: 'right' });
-  // }
-
-  // done
-  return designStudioWindow;
 
 };

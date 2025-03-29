@@ -73,7 +73,7 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
 }
 
-export const openPromptAnywhere = (params: anyDict): BrowserWindow => {
+export const openPromptAnywhere = (params: anyDict): void => {
 
   // if we don't have a window, create one
   if (!promptAnywhereWindow || promptAnywhereWindow.isDestroyed()) {
@@ -91,11 +91,10 @@ export const openPromptAnywhere = (params: anyDict): BrowserWindow => {
 
   // done
   promptAnywhereWindow.show();
-  return promptAnywhereWindow;
 
 };
 
-export const closePromptAnywhere = async () => {
+export const closePromptAnywhere = (): void => {
 
   // just hide so we reuse it
   try {
@@ -109,7 +108,7 @@ export const closePromptAnywhere = async () => {
 
 }
 
-export const resizePromptAnywhere = async (deltaX: number, deltaY: number) => {
+export const resizePromptAnywhere = (deltaX: number, deltaY: number): void => {
   const bounds = promptAnywhereWindow.getBounds();
   bounds.width += deltaX;
   bounds.height += deltaY;
