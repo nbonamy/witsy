@@ -403,13 +403,20 @@ const onComputerUse = () => {
   gap: 8px;
 
   svg {
+    visibility: hidden;
     cursor: pointer;
     position: relative;
     top: 4px;
   }
-  
+
   .rotating {
     animation: spin 1.5s linear infinite;
+  }
+
+  &:hover {
+    svg {
+      visibility: visible;
+    }
   }
 }
 
