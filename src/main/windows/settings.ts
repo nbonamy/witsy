@@ -75,6 +75,7 @@ export const closeSettingsWindow = (): void => {
     if (settingsWindow && !settingsWindow.isDestroyed() && settingsWindow.isVisible()) {
       settingsWindow.hide();
     }
+    undockWindow(settingsWindow);
   } catch (error) {
     console.error('Error while hiding settings window', error);
     settingsWindow = null;

@@ -28,11 +28,11 @@ export default class PromptAnywhere {
   static close = async (sourceApp?: Application): Promise<void> => {
 
     // close
-    await window.closePromptAnywhere();
     if (!PromptAnywhere.hadFocus) {
       await window.releaseFocus({ sourceApp });
       PromptAnywhere.hadFocus = true;
     }
+    await window.closePromptAnywhere();
 
   }
   
