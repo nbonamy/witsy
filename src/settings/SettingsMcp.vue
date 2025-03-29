@@ -151,7 +151,7 @@ const addMenuActions = [
 // Add these methods to handle the plus button menu
 const onAdd = (event: MouseEvent) => {
   const rcButton = addButton.value.getBoundingClientRect()
-  const rcDialog = addButton.value.closest('.dialog').getBoundingClientRect()
+  const rcDialog = addButton.value.closest('.window').getBoundingClientRect()
   addMenuX.value = rcButton.left - rcDialog.left
   addMenuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
   showAddMenu.value = true

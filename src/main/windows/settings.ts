@@ -26,7 +26,7 @@ export const prepareSettingsWindow = (queryParams?: anyDict): void => {
     x: bounds?.x,
     y: bounds?.y,
     width: /*bounds?.width || */660,
-    height: /*bounds?.height || */560,
+    height: /*bounds?.height || */800,
     maximizable: false,
     frame: false,
     transparent: true,
