@@ -30,6 +30,7 @@ let chunks: string[] = []
 let index = 0
 
 onMounted(async () => {
+  //console.log('Processing query params', JSON.stringify(props.extra))
   audioPlayer.addListener(onAudioPlayerStatus)
   const text = window.api.automation.getText(props.extra.textId) 
   play(text)
@@ -59,7 +60,7 @@ const onStop = () => {
 }
 
 const onClose = () => {
-  window.api.readaloud.closePalette(props.extra?.sourceApp)
+  window.api.readaloud.closePalette(JSON.parse(props.extra?.sourceApp))
 }
 
 const play = async (message: string) => {
