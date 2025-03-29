@@ -1,7 +1,8 @@
 
 import { anyDict } from '../../types/index';
+import { Application } from '../../types/automation';
 import { app, BrowserWindow, screen } from 'electron';
-import { createWindow, ensureOnCurrentScreen } from './index';
+import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
 
 export let commandPicker: BrowserWindow = null;
 
@@ -85,16 +86,30 @@ export const openCommandPicker = (params: anyDict): void => {
   
 }
 
-export const closeCommandPicker = (): void => {
+export const closeCommandPicker = async (sourceApp?: Application): Promise<void> => {
 
-  // just hide so we reuse it
+  // check
+  if (commandPicker === null || commandPicker.isDestroyed()) {
+    return;
+  }
+
   try {
-    if (commandPicker && !commandPicker.isDestroyed() && commandPicker.isVisible()) {
-      commandPicker.hide();
+
+    // hide from user as early as possible
+    commandPicker.setOpacity(0);
+
+    // now release focus
+    if (sourceApp) {
+      await releaseFocus({ sourceApp });
     }
+
+    // now hide (and restore opacity)
+    commandPicker.hide();
+    commandPicker.setOpacity(1);
+
   } catch (error) {
     console.error('Error while hiding command picker', error);
     commandPicker = null;
-  }
+  }  
 
 };

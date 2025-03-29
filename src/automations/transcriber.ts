@@ -15,7 +15,7 @@ export default class Transcriber {
       
       // done
       await window.releaseFocus();
-      await window.closeTranscribePalette();
+      window.closeTranscribePalette();
 
       // now paste
       console.debug(`Processing transcription output: ${text.slice(0, 50)}…`);

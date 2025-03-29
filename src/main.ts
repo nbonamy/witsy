@@ -388,8 +388,7 @@ ipcMain.on('commands-import', (event) => {
 });
 
 ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
-  await window.releaseFocus({ sourceApp });
-  await window.closeCommandPicker();
+  window.closeCommandPicker(sourceApp);
 });
 
 ipcMain.on('command-is-prompt-editable', (event, payload) => {

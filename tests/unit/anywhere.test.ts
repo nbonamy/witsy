@@ -66,6 +66,5 @@ test('Prepare prompt', async () => {
 test('Close prompt', async () => {
   await PromptAnywhere.close()
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
 })
 

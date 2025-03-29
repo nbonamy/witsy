@@ -1,5 +1,5 @@
 <template>
-  <div class="anywhere">
+  <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
         <Prompt ref="prompt" :chat="chat" :history-provider="historyProvider" :placeholder="t('common.askMeAnything')" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
@@ -76,6 +76,7 @@ let llm: LlmEngine = null
 let hiddenPrompt: string|null = null
 let addedToHistory = false
 let lastSeenChat: LastViewed = null
+let mouseDownToClose = false
 
 const iconData = computed(() => {
   return `data:${sourceApp.value.icon.mimeType};base64,${sourceApp.value.icon.contents}`
@@ -292,6 +293,19 @@ const onKeyUp = (event: KeyboardEvent) => {
     } else if (!prompt.value.isContextMenuOpen()) {
       onClose()
     }
+  }
+}
+
+const onMouseDown = (ev: MouseEvent) => {
+  const target = ev.target as HTMLElement
+  mouseDownToClose = (target.classList.contains('anywhere') || target.classList.contains('container'))
+}
+
+const onMouseUp = (ev: MouseEvent) => {
+  if (!mouseDownToClose) return
+  const target = ev.target as HTMLElement
+  if (target.classList.contains('anywhere') || target.classList.contains('container')) {
+    onClose()
   }
 }
 
