@@ -24,7 +24,7 @@
 import { FileContents } from '../types/index'
 import { ref, Ref, onMounted, computed, nextTick } from 'vue'
 import { t } from '../services/i18n'
-import { store, mediaChatId } from '../services/store'
+import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
 import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
 import Fullscreen from '../components/Fullscreen.vue'
@@ -73,10 +73,10 @@ const history = computed(() => {
 
 onMounted(() => {
   // we need the media chat
-  chat.value = store.history.chats.find(chat => chat.uuid === mediaChatId)
+  chat.value = store.history.chats.find(chat => chat.uuid === kMediaChatId)
   if (!chat.value) {
     chat.value = Chat.fromJson({
-      uuid: mediaChatId,
+      uuid: kMediaChatId,
       title: 'Media',
       createdAt: Date.now(),
       messages: [],
@@ -307,7 +307,7 @@ const onMediaGenerationRequest = async (data: any) => {
   if (data.engine === 'replicate') {
 
     // find the key of <media> in params
-    referenceKey = Object.keys(params).find(k => params[k] === '<media>')
+    referenceKey = Object.keys(params).find(k => params[k] === kReferenceParamValue)
 
     if (attachReference) {
 
@@ -419,7 +419,7 @@ const onMediaGenerationRequest = async (data: any) => {
 
       // update reference key
       if (referenceKey) {
-        params[referenceKey] = '<media>'
+        params[referenceKey] = kReferenceParamValue
       }
       message.value.toolCall = {
         status: 'done',
