@@ -514,7 +514,7 @@ const loadSettings = (settings: any) => {
   model.value = settings.model || model.value
   prompt.value = settings.prompt || prompt.value
   params.value = settings.params || {}
-  showParams.value = Object.keys(params.value).length > 0
+  showParams.value = Object.values(params.value).filter(v => v != '<media>').length > 0
   saveSettings()
 }
 
