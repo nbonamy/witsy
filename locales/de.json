@@ -479,6 +479,7 @@
       "triggerApps": "Trigger-Apps",
       "triggerAppsDescription": "Die Eingabeaufforderung wird automatisch ausgewählt, wenn Prompt Anywhere von einer dieser Anwendungen aufgerufen wird",
       "validation": {
+        "invalidApp": "Die ausgewählte Anwendung kann nicht analysiert werden",
         "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."
       }
     },

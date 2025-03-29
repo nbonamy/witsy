@@ -479,6 +479,7 @@
       "triggerApps": "Applications déclencheuses",
       "triggerAppsDescription": "Le prompt sera automatiquement sélectionné lorsque Prompt Anywhere est appelé depuis l'une de ces applications",
       "validation": {
+        "invalidApp": "Impossible d'analyser l'application sélectionnée",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
       }
     },

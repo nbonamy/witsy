@@ -498,6 +498,7 @@
       "triggerApps": "Aplicativos de Acionamento",
       "triggerAppsDescription": "O prompt será selecionado automaticamente quando o Prompt Anywhere for chamado de um desses aplicativos",
       "validation": {
+        "invalidApp": "Não foi possível analisar o aplicativo selecionado",
         "requiredFields": "Todos os campos marcados com * são obrigatórios."
       }
     },
