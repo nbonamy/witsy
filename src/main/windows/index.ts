@@ -219,10 +219,11 @@ export const undockWindow = (window: BrowserWindow) => {
   // for applications and their menu bar to stay active until the user quits
   // explicitly with Cmd + Q.
   if (process.platform === 'darwin') {
-    // without delay does not always work
-    setTimeout(() => {
-      app.dock.hide();
-    }, 250);
+    // for an unknown reason app.dock.hide
+    // might not work immediately...
+    app.dock.hide();
+    setTimeout(app.dock.hide, 1000);
+    setTimeout(app.dock.hide, 2500);
   } else {
     app.quit();
   }
