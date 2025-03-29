@@ -35,9 +35,16 @@ export const prepareSettingsWindow = (queryParams?: anyDict): void => {
   //   settingsWindow.webContents.openDevTools({ mode: 'right' });
   // }
 
+  // save position on hide
   settingsWindow.on('hide', () => {
     electronStore.set(storeBoundsId, settingsWindow.getBounds());
   })
+
+  // prevent close with keyboard shortcut
+  settingsWindow.on('close', (event) => {
+    closeSettingsWindow();
+    event.preventDefault();
+  });
 
   // handle window close
   settingsWindow.on('closed', () => {

@@ -28,6 +28,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
     hasShadow: false,
   });
 
+  // try to focus
   commandPicker.on('show', () => {
 
     // focus
@@ -42,11 +43,17 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
 
   })
 
+  // close on blue
   commandPicker.on('blur', () => {
     closeCommandPicker();
   });
 
-  
+  // prevent close with keyboard shortcut
+  commandPicker.on('close', (event) => {
+    closeCommandPicker();
+    event.preventDefault();
+  });
+
 }
 
 export const openCommandPicker = (params: anyDict): void => {
