@@ -314,7 +314,7 @@ const onComputerUse = () => {
 
 .empty {
   padding: 16px;
-  margin-top: -96px;
+  margin-top: -48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
