@@ -110,6 +110,10 @@ const selectApp = (app: ExternalApp) => {
 const onAddApp = () => {
   const app = window.api.file.pick({ packages: true, location: true })
   const info = window.api.file.getAppInfo(app as string, false)
+  if (!info) {
+    Dialog.alert(t('experts.editor.validation.invalidApp'))
+    return
+  }
   icons[info.identifier] = info.icon
   triggerApps.value.push(info)
 }
