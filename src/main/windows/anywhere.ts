@@ -63,6 +63,8 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
   promptAnywhereWindow.on('hide', () => {
     if (process.platform === 'win32') {
       promptAnywhereWindow.setOpacity(0);
+    } else {
+      promptAnywhereWindow.setOpacity(1);
     }
   });
 
@@ -112,9 +114,6 @@ export const closePromptAnywhere = async (sourceApp?: Application): Promise<void
 
     // now hide (and restore opacity except on Windows)
     promptAnywhereWindow.hide();
-    if (process.platform !== 'win32') {
-      promptAnywhereWindow.setOpacity(1);
-    }
 
   } catch (error) {
     console.error('Error while hiding prompt anywhere', error);
