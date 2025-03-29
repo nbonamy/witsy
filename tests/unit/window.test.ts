@@ -35,6 +35,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.setBounds = vi.fn()
   BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.setOpacity = vi.fn()
+  BrowserWindow.prototype.setIgnoreMouseEvents = vi.fn()
   BrowserWindow['getAllWindows'] = vi.fn(() => {
     const window1 = new BrowserWindow()
     const window2 = new BrowserWindow()
