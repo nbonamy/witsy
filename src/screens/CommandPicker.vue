@@ -296,4 +296,9 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
     border-color: var(--highlighted-color);
   }
 }
+
+.windows .shortcut {
+  margin-top: 0.5px;
+}
+
 </style>
