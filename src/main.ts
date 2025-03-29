@@ -449,10 +449,12 @@ ipcMain.on('run-at-login-get', (event) => {
 });
 
 ipcMain.on('run-at-login-set', (_, value) => {
-  app.setLoginItemSettings({
-    openAtLogin: value,
-    openAsHidden: true,
-  });
+  if (app.getLoginItemSettings().openAtLogin != value) {
+    app.setLoginItemSettings({
+      openAtLogin: value,
+      openAsHidden: true,
+    });
+  }
 });
 
 ipcMain.on('shortcuts-register', () => {
