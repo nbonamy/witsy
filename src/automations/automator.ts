@@ -115,9 +115,8 @@ export default class Automator {
         listUnicodeChar: ''
       });
 
-      // done
-      await window.releaseFocus({ sourceApp });
-      await window.closePromptAnywhere();
+      // close prompt anywhere
+      await window.closePromptAnywhere(sourceApp);
 
       // now paste
       console.debug(`Processing LLM output: "${result.slice(0, 50)}"…`);

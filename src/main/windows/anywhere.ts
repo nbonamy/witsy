@@ -1,7 +1,8 @@
 
 import { anyDict } from 'types/index';
+import { Application } from '../../types/automation';
 import { app, BrowserWindow, Size } from 'electron';
-import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen, enableClickThrough } from './index';
+import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen, releaseFocus } from './index';
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
@@ -71,12 +72,6 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
     event.preventDefault();
   });
 
-  // enable click through
-  enableClickThrough(promptAnywhereWindow);
-  // promptAnywhereWindow.on('blur', () => {
-  //   closePromptAnywhere();
-  // });
-
 }
 
 export const openPromptAnywhere = (params: anyDict): void => {
@@ -100,13 +95,27 @@ export const openPromptAnywhere = (params: anyDict): void => {
 
 };
 
-export const closePromptAnywhere = (): void => {
+export const closePromptAnywhere = async (sourceApp?: Application): Promise<void> => {
 
-  // just hide so we reuse it
+  // check
+  if (promptAnywhereWindow === null || promptAnywhereWindow.isDestroyed()) {
+    return;
+  }
+
   try {
-    if (promptAnywhereWindow && !promptAnywhereWindow.isDestroyed() && promptAnywhereWindow.isVisible()) {
-      promptAnywhereWindow.hide();
+
+    // hide from user as early as possible
+    promptAnywhereWindow.setOpacity(0);
+
+    // now release focus
+    await releaseFocus({ sourceApp });
+
+    // now hide (and restore opacity except on Windows)
+    promptAnywhereWindow.hide();
+    if (process.platform !== 'win32') {
+      promptAnywhereWindow.setOpacity(1);
     }
+
   } catch (error) {
     console.error('Error while hiding prompt anywhere', error);
     promptAnywhereWindow = null;

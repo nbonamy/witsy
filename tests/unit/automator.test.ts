@@ -85,7 +85,7 @@ test('Insert below', async () => {
 
   await Automator.automate('Explain this', null, AutomationAction.INSERT_BELOW)
 
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
 
   expect(prototype.moveCaretBelow).toHaveBeenCalled()
 
@@ -100,7 +100,7 @@ test('Replace', async () => {
 
   await Automator.automate('Explain this', null, AutomationAction.REPLACE)
 
-  expect(window.releaseFocus).toHaveBeenCalledOnce()
+  expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
 
   expect(prototype.moveCaretBelow).not.toHaveBeenCalled()
 

@@ -1,7 +1,8 @@
 
 import { vi, beforeEach, expect, test, Mock } from 'vitest'
-import { BrowserWindow, dialog, shell } from 'electron'
+import { BrowserWindow, dialog, Menu, shell, } from 'electron'
 import * as window from '../../src/main/window'
+import { Application } from '../../src/types/automation'
 
 global.MAIN_WINDOW_VITE_DEV_SERVER_URL = 'http://localhost:3000/'
 global.MAIN_WINDOW_VITE_NAME = 'vite'
@@ -75,6 +76,9 @@ vi.mock('electron', async () => {
   const shell = {
     openExternal: vi.fn(),
   }
+  const Menu = {
+    sendActionToFirstResponder: vi.fn(),
+  }
   return {
     app,
     shell,
@@ -82,6 +86,7 @@ vi.mock('electron', async () => {
     dialog,
     nativeTheme,
     BrowserWindow,
+    Menu
   }
 })
 
@@ -185,9 +190,10 @@ test('Create command picker window', async () => {
 
 test('Close command picker window', async () => {
   await window.openCommandPicker({ textId: 'id' })
-  await window.closeCommandPicker()
+  await window.closeCommandPicker({} as Application)
   expect(window.commandPicker).not.toBeNull()
   expect(window.commandPicker.isVisible()).toBe(false)
+  expect(Menu.sendActionToFirstResponder).toHaveBeenCalled()
 })
 
 test('Create prompt anywhere window', async () => {
@@ -218,10 +224,11 @@ test('Update prompt anywhere window', async () => {
 })
 
 test('Close prompt anywhere window', async () => {
-  await window.openPromptAnywhere({})
+  window.openPromptAnywhere({})
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
   expect(window.promptAnywhereWindow.isVisible()).toBe(false)
+  expect(Menu.sendActionToFirstResponder).toHaveBeenCalled()
 })
 
 test('Open Readaloud window', async () => {
