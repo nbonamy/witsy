@@ -17,14 +17,13 @@ export const isSettingsWindowPersistent = () => {
 export const prepareSettingsWindow = (queryParams?: anyDict): void => {
 
   // get bounds from here
-  const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
+  //const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
 
   settingsWindow = createWindow({
     title: 'Settings',
     hash: '/settings',
     queryParams: queryParams,
-    x: bounds?.x,
-    y: bounds?.y,
+    center: true,
     width: /*bounds?.width || */660,
     height: /*bounds?.height || */800,
     maximizable: false,
