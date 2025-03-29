@@ -93,7 +93,7 @@ const getDescription = (server: McpServer) => {
     const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0 
     return server.url.replace('-y @smithery/cli@latest run ', '').split(' ')[index]
   }
-  if (server.type == 'stdio') return server.command.split('/').pop() + ' ' + server.url
+  if (server.type == 'stdio') return server.command.split(/[\\/]/).pop() + ' ' + server.url
 }
 
 const getStatus = (server: McpServer) => {

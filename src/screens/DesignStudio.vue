@@ -251,7 +251,7 @@ const updateMessage = (msg: Message) => {
   message.value.attachment.url = window.api.file.save({
     contents: msg.attachment.content,
     properties: {
-      filename: msg.attachment.url.split('/').pop(),
+      filename: msg.attachment.url.split(/[\\/]/).pop(),
       directory: 'userData',
       subdir: 'images',
       prompt: false
@@ -269,7 +269,7 @@ const onUpload = () => {
     const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
     message.value = new Message('user', t('common.upload'))
     message.value.engine = 'upload'
-    message.value.model = fileContents.url.split('/').pop()
+    message.value.model = fileContents.url.split(/[\\/]/).pop()
     message.value.attachment = new Attachment('', fileContents.mimeType, fileUrl)
     clearStacks()
   }
