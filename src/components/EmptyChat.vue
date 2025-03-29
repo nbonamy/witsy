@@ -10,9 +10,12 @@
           <img src="/assets/arrow_dashed.svg" />
         </div>
         <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
-        <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
-          <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-        </select>
+        <div class="models">
+          <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
+            <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+          </select>
+          <BIconArrowRepeat v-if="!showAllEngines && store.config.llm.engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
+        </div>
         <div class="favorite" v-if="!showModelTip() && !showAllEngines">
           <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
           <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
@@ -56,10 +59,10 @@ import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 
 import useEventBus from '../composables/event_bus'
-import { BIconChatSquareDots } from 'bootstrap-icons-vue'
+import { BIconArrowRepeat, BIconChatSquareDots } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const tipsManager = useTipsManager(store)
@@ -67,6 +70,7 @@ const llmFactory = new LlmFactory(store.config)
 
 const showAllEngines = ref(false)
 const engines = shallowReactive(store.config.engines)
+const isRefreshing = ref(false)
 
 const models = computed(() => llmFactory.getChatModels(store.config.llm.engine))
 const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, true))
@@ -256,6 +260,15 @@ const moveElement = (element: HTMLElement, endX: number, endY: number, duration:
   requestAnimationFrame(animate);
 }
 
+const onRefreshModels = async () => {
+  isRefreshing.value = true
+  try {
+    await llmFactory.loadModels(store.config.llm.engine)
+  } finally {
+    isRefreshing.value = false
+  }
+}
+
 const onClickModel = () => {
   store.config.general.tips.modelSelector = false
   store.saveSettings()
@@ -382,6 +395,31 @@ const onComputerUse = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.empty .models {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  svg {
+    cursor: pointer;
+    position: relative;
+    top: 4px;
+  }
+  
+  .rotating {
+    animation: spin 1.5s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty .select-model {
