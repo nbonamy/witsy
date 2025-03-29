@@ -208,7 +208,7 @@ const load = (tab: any) => {
   width: 440px;
   margin: 0 auto;
   padding: 16px 0px 24px 0px;
-  min-height: 160px;
+  min-height: 240px;
 
   &.large {
     width: 540px;
