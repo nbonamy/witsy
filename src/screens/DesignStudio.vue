@@ -288,39 +288,49 @@ const onMediaGenerationRequest = async (data: any) => {
 
   // replicate is painful...
   let referenceKey = null
-  if (data.engine === 'replicate' && attachReference) {
+  if (data.engine === 'replicate') {
 
     // find the key of <media> in params
     referenceKey = Object.keys(params).find(k => params[k] === '<media>')
 
-    // ask the user
-    if (!referenceKey) {
+    if (attachReference) {
 
-      const url = `https://replicate.com/${data.model.split(':')[0]}`
-      
-      const result = await Dialog.show({
-        title: t('designStudio.replicateInputImageRequired.title'),
-        html: t('designStudio.replicateInputImageRequired.text', { url }),
-        input: 'text',
-        showCancelButton: true,
-      })
+      // ask the user
+      if (!referenceKey) {
 
-      referenceKey = result.value
+        const url = `https://replicate.com/${data.model.split(':')[0]}`
+        
+        const result = await Dialog.show({
+          title: t('designStudio.replicateInputImageRequired.title'),
+          html: t('designStudio.replicateInputImageRequired.text', { url }),
+          input: 'text',
+          showCancelButton: true,
+        })
+
+        referenceKey = result.value
+      }
+
+      // still not?
+      if (!referenceKey) {
+        isGenerating.value = false
+        return
+      }
+
+      // attach here
+      const reference = window.api.file.read(currentUrl)
+      params[referenceKey] = `data:${reference.mimeType};base64,${reference.contents}`
+      attachReference = false
+
+      // ask Settings.vue to save the key
+      emitEvent('replicate-input-image-key', referenceKey)
+
+    } else if (referenceKey) {
+
+      // remove the key
+      delete params[referenceKey]
+      attachReference = false
+
     }
-
-    // still not?
-    if (!referenceKey) {
-      isGenerating.value = false
-      return
-    }
-
-    // attach here
-    const reference = window.api.file.read(currentUrl)
-    params[referenceKey] = `data:${reference.mimeType};base64,${reference.contents}`
-    attachReference = false
-
-    // ask Settings.vue to save the key
-    emitEvent('replicate-input-image-key', referenceKey)
 
   }
 
