@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp } from '../types/index'
+import { Expert, ExternalApp, FileContents } from '../types/index'
 import { ref, computed, watch } from 'vue'
 import { expertI18n, t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -68,7 +68,7 @@ const selectedApp = ref(null)
 const diffLang = ref(false)
 const isEdited = ref(false)
 
-const icons = {}
+const icons: Record<string, FileContents> = {}
 
 const supportTriggerApps = computed(() => window.api.platform !== 'linux')
 
@@ -109,7 +109,7 @@ const selectApp = (app: ExternalApp) => {
 
 const onAddApp = () => {
   const app = window.api.file.pick({ packages: true, location: true })
-  const info = window.api.file.getAppInfo(app as string, false)
+  const info = window.api.file.getAppInfo(app as string)
   if (!info) {
     Dialog.alert(t('experts.editor.validation.invalidApp'))
     return
