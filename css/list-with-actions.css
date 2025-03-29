@@ -47,7 +47,7 @@
     align-self: stretch;
     background: var(--actions-bar-bg-color);
     border: 1px solid var(--actions-bar-border-color);
-    margin-top: 0px;
+    margin-top: 0px !important;
 
     button {
       border: 0px;

@@ -357,7 +357,8 @@ const load = (tab: any) => {
 
   .panel {
     flex: 1;
-    padding: 8px;
+    padding: 8px 16px;
+    padding-bottom: 24px;
   }
 
 }
