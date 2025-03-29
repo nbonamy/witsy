@@ -1,18 +1,16 @@
 
-import { strDict } from '../../types/index';
+import { anyDict } from '../../types/index';
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCenteredCoordinates } from './index';
-import { wait } from '../utils';
 import { useI18n } from '../i18n';
 
 export let readAloudPalette: BrowserWindow = null;
 
-export const closeReadAloudPalette = async () => {
+export const closeReadAloudPalette = (): void => {
   try {
     if (readAloudPalette && !readAloudPalette.isDestroyed()) {
       // console.log('Closing read aloud picker')
       readAloudPalette?.close()
-      await wait();
     }
   } catch (error) {
     console.error('Error while closing read aloud picker', error);
@@ -20,7 +18,7 @@ export const closeReadAloudPalette = async () => {
   readAloudPalette = null;
 };
 
-export const openReadAloudPalette = async (params: strDict) => {
+export const openReadAloudPalette = (params: anyDict): void => {
 
   // try to show existig one
   closeReadAloudPalette();
@@ -42,5 +40,9 @@ export const openReadAloudPalette = async (params: strDict) => {
     hiddenInMissionControl: true,
     queryParams: params
   });
+
+  // focus
+  app.focus({ steal: true });
+  readAloudPalette.focus();
 
 }

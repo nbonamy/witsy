@@ -5,7 +5,7 @@ const storeBoundsId = 'debug.bounds'
 
 export let debugWindow: BrowserWindow = null;
 
-export const openDebugWindow = () => {
+export const openDebugWindow = (): void => {
   
   // if we don't have a window, create one
   if (!debugWindow || debugWindow.isDestroyed()) {
@@ -43,14 +43,10 @@ export const openDebugWindow = () => {
   // and focus
   app.focus({ steal: true });
   debugWindow.focus();
-  debugWindow.show();
   
   // open the DevTools
   if (process.env.DEBUG) {
     debugWindow.webContents.openDevTools({ mode: 'right' });
   }
-
-  // done
-  return debugWindow;
 
 };

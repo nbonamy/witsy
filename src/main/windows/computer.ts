@@ -1,15 +1,13 @@
 import { app, BrowserWindow } from 'electron';
 import { createWindow, getCurrentScreen } from './index';
-import { wait } from '../utils';
 import { useI18n } from '../i18n';
 
 export let computerStatusWindow: BrowserWindow = null;
 
-export const closeComputerStatusWindow = async () => {
+export const closeComputerStatusWindow = (): void => {
   try {
     if (computerStatusWindow && !computerStatusWindow.isDestroyed()) {
       computerStatusWindow?.close()
-      await wait();
     }
   } catch (error) {
     console.error('Error while closing computer status window', error);
@@ -17,7 +15,7 @@ export const closeComputerStatusWindow = async () => {
   computerStatusWindow = null;
 };
 
-export const openComputerStatusWindow = async () => {
+export const openComputerStatusWindow = (): void => {
 
   // try to close existing one
   closeComputerStatusWindow();

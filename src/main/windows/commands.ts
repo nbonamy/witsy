@@ -10,7 +10,7 @@ const height = 320;
 
 let commanderStartTime: number|undefined
 
-export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
+export const prepareCommandPicker = (queryParams?: anyDict): void => {
 
   // open a new one
   commandPicker = createWindow({
@@ -46,12 +46,10 @@ export const prepareCommandPicker = (queryParams?: anyDict): BrowserWindow => {
     closeCommandPicker();
   });
 
-  // done
-  return commandPicker;
   
 }
 
-export const openCommandPicker = (params: anyDict): BrowserWindow => {
+export const openCommandPicker = (params: anyDict): void => {
 
   // save
   commanderStartTime = params.startTime;
@@ -77,11 +75,10 @@ export const openCommandPicker = (params: anyDict): BrowserWindow => {
 
   // done
   commandPicker.show();
-  return commandPicker;
   
 }
 
-export const closeCommandPicker = async () => {
+export const closeCommandPicker = (): void => {
 
   // just hide so we reuse it
   try {
