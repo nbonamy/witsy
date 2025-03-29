@@ -1,0 +1,13 @@
+diff --git a/node_modules/@excalidraw/markdown-to-text/index.ts b/node_modules/@excalidraw/markdown-to-text/index.ts
+index 5aa9aec..d465c2a 100644
+--- a/node_modules/@excalidraw/markdown-to-text/index.ts
++++ b/node_modules/@excalidraw/markdown-to-text/index.ts
+@@ -23,7 +23,7 @@ const removeMarkdown = (
+     listUnicodeChar: "",
+   }
+ ) => {
+-  options = options || {};
++  options = options || { listUnicodeChar: "" };
+   options.listUnicodeChar = options.hasOwnProperty("listUnicodeChar")
+     ? options.listUnicodeChar
+     : false;

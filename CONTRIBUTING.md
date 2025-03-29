@@ -14,7 +14,7 @@ Use [nvm](https://github.com/nvm-sh/nvm) to switch between Node.js versions.
 ### Guidelines
 
 1. **Keep `package-lock.json`**: `electron` and `electron-forge` are picky things and the versions of the packages used are important.
-2. **Linting**: Run `npm run lint` to check for and fix any linting issues. You should see one error from `node_modules/@excalidraw/markdown-to-text/index.ts` and that's all!
+2. **Linting**: Run `npm run lint` to check for and fix any linting issues.
 3. **Testing**: Add/Update required tests. Coverage varies betwen 80% and 82% and I would like to keep it that way (or more!). Run `npm run test` to ensure all tests pass before submitting your changes.
 
 ## Translation Contributions
