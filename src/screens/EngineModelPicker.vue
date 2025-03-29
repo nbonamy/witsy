@@ -11,7 +11,7 @@
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
-        <select name="plugins" v-model="disableTools" @change="save">
+        <select name="plugins" v-model="disableTools">
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
         </select>
