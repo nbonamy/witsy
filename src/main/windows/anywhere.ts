@@ -112,7 +112,7 @@ export const closePromptAnywhere = async (sourceApp?: Application): Promise<void
     // now release focus
     await releaseFocus({ sourceApp });
 
-    // now hide (and restore opacity except on Windows)
+    // now hide (opacity will be restored on 'hide')
     promptAnywhereWindow.hide();
 
   } catch (error) {

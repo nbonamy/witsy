@@ -3,6 +3,7 @@ import { strDict } from '../../types/index';
 import { CreateWindowOpts, ReleaseFocusOpts } from '../../types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
 import MacosAutomator from '../../automations/macos';
+import WindowsAutomator from '../../automations/windows';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
 import interceptNetwork from '../network';
@@ -207,7 +208,12 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
   return window;
 };
 
-export const undockWindow = (window: BrowserWindow) => {
+export const undockWindow = (window: BrowserWindow, preventQuit: boolean = false) => {
+
+  // only if it was there before
+  if (!dockedWindows.has(window)) {
+    return
+  }
 
   // remove
   dockedWindows.delete(window);
@@ -224,7 +230,7 @@ export const undockWindow = (window: BrowserWindow) => {
     app.dock.hide();
     setTimeout(app.dock.hide, 1000);
     setTimeout(app.dock.hide, 2500);
-  } else {
+  } else if (!preventQuit) {
     app.quit();
   }
 
@@ -263,19 +269,39 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
       Menu.sendActionToFirstResponder('hide:');
     }
 
-} else if (process.platform === 'win32') {
+  } else if (process.platform === 'win32') {
 
-    const dummyTransparentWindow = new BrowserWindow({
-        width: 1,
-        height: 1,
-        x: -100,
-        y: -100,
-        skipTaskbar: true,
-        transparent: true,
-        frame: false,
-      });
+    let focused = false;
 
-    dummyTransparentWindow.close();
+    // if we have an app then target it
+    if (opts?.sourceApp?.window) {
+
+      try {
+        console.log(`Releasing focus to ${opts.sourceApp.window}`);
+        const windowsAutomator = new WindowsAutomator();
+        await windowsAutomator.activateApp(opts.sourceApp.window);
+        focused = true;
+      } catch (error) {
+        console.error('Error while focusing app', error);
+      }
+
+    }
+
+    if (!focused) {
+
+      const dummyTransparentWindow = new BrowserWindow({
+          width: 1,
+          height: 1,
+          x: -100,
+          y: -100,
+          skipTaskbar: true,
+          transparent: true,
+          frame: false,
+        });
+
+      dummyTransparentWindow.close();
+
+    }
 
   }
 
