@@ -65,6 +65,12 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
     }
   });
 
+  // prevent close with keyboard shortcut
+  promptAnywhereWindow.on('close', (event) => {
+    closePromptAnywhere();
+    event.preventDefault();
+  });
+
   // enable click through
   enableClickThrough(promptAnywhereWindow);
   promptAnywhereWindow.on('blur', () => {

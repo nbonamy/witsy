@@ -167,7 +167,7 @@ app.whenReady().then(() => {
   // install the menu
   const installMenu = () => {
     menu.installMenu(app, {
-      quit: quitApp,
+      quit: app.quit,
       checkForUpdates: autoUpdater.check,
       quickPrompt: PromptAnywhere.open,
       newChat: window.openMainWindow,
@@ -253,25 +253,28 @@ app.on('second-instance', () => {
 //
 app.on('before-quit', (ev) => {
 
+  const closeAllWindows = () => {
+    BrowserWindow.getAllWindows().forEach((win) => {
+      win.removeAllListeners('close');
+      win.close();
+    });
+  }
+
   // if force quit
   if (process.env.DEBUG || process.env.TEST || quitAnyway) {
+    closeAllWindows();
     return;
   }
 
   // check settings
   const settings = config.loadSettings(app);
   if (!settings.general.keepRunning) {
+    closeAllWindows();
     return;
   }
 
   // close all windows but do not quit
-  const persistentWindows = window.persistentWindows();
-  BrowserWindow.getAllWindows().forEach((win) => {
-    if (!persistentWindows.includes(win)) {
-      //win.removeAllListeners('close');
-      win.close();
-    }
-  });
+  BrowserWindow.getAllWindows().forEach((win) => win.close());
   ev.preventDefault();
 
 });
