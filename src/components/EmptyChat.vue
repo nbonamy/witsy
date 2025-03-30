@@ -7,7 +7,7 @@
       <div class="current">
         <div class="tip engine" v-if="showEngineTip()">
           {{ t('emptyChat.tips.switchProvider') }}<br/>
-          <img src="/assets/arrow_dashed.svg" />
+          <img src="/assets/arrow_dashed.svg" @load="centerLogos()" />
         </div>
         <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
         <div class="models">
@@ -21,7 +21,7 @@
           <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
         </div>
         <div class="tip model" v-if="showModelTip()">
-          <img src="/assets/arrow_dashed.svg" /><br/>
+          <img src="/assets/arrow_dashed.svg" @load="centerLogos()" /><br/>
           {{ t('emptyChat.tips.switchModel') }}
         </div>
       </div>
@@ -489,6 +489,10 @@ const onComputerUse = () => {
       background-color: color-mix(in srgb, var(--text-color), transparent var(--action-bg-color-alpha-hover));
     }
   }
+}
+
+.empty:has(.tip.model) .actions {
+  margin-top: 4rem;
 }
 
 @media (prefers-color-scheme: dark) {
