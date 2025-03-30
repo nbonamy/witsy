@@ -1297,6 +1297,7 @@
     "createOllama": {
       "title": "Ingrese el nombre del nuevo modelo"
     },
+    "customParams": "Parámetros personalizados",
     "defaultForModel": "Valores predeterminados para este modelo",
     "defaultModelValue": "Valor predeterminado del modelo cuando está vacío",
     "errors": {

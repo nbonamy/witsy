@@ -68,6 +68,19 @@
         <label>{{ t('modelSettings.topP') }}</label>
         <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
+
+      <div class="group" v-if="showAdvanced && modelHasCustomParams">
+        <label>{{ t('modelSettings.customParams') }}</label>
+        <VariableTable
+            :variables="customParams"
+            :selectedVariable="selectedParam"
+            @select="onSelectParam"
+            @add="onAddParam"
+            @edit="onEditParam"
+            @delete="onDelParam"
+          />
+      </div>
+
       <div class="group">
         <label>{{ t('modelSettings.defaultForModel') }}</label>
         <div class="subgroup">
@@ -84,7 +97,11 @@
         <a href="#" @click="openDebugConsole()">{{ t('menu.window.debug') }}</a>
       </div>
     </form>
+
+    <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
+
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -97,11 +114,14 @@ import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
+import VariableTable from '../components/VariableTable.vue'
+import VariableEditor from '../screens/VariableEditor.vue'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
 
+const editor = ref(null)
 const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
@@ -116,6 +136,8 @@ const top_k: Ref<number> = ref(undefined)
 const top_p: Ref<number> = ref(undefined)
 const reasoning: Ref<boolean> = ref(undefined)
 const reasoningEffort: Ref<LlmReasoningEffort> = ref(undefined)
+const customParams: Ref<Record<string, string>> = ref({})
+const selectedParam = ref(null)
 
 const props = defineProps({
   chat: {
@@ -139,7 +161,8 @@ const canSaveAsDefaults = computed(() => {
     top_k.value !== undefined ||
     top_p.value !== undefined ||
     reasoning.value !== undefined ||
-    reasoningEffort.value !== undefined
+    reasoningEffort.value !== undefined ||
+    Object.keys(customParams.value).length > 0
   )
 })
 
@@ -181,6 +204,10 @@ const isReasoningEffortSupported = computed(() => {
   return engine.value === 'openai'
 })
 
+const modelHasCustomParams = computed(() => {
+  return llmFactory.isCustomEngine(engine.value)
+})
+
 onMounted(async () => {
   watch(() => props || {}, () => {
     if (!props.chat) return
@@ -195,9 +222,46 @@ onMounted(async () => {
     top_k.value = props.chat.modelOpts?.top_k
     top_p.value = props.chat.modelOpts?.top_p
     reasoning.value = props.chat.modelOpts?.reasoning,
-    reasoningEffort.value = props.chat.modelOpts?.reasoningEffort
+    reasoningEffort.value = props.chat.modelOpts?.reasoningEffort,
+    customParams.value = props.chat.modelOpts?.customOpts || {}
   }, { deep: true, immediate: true })
 })
+
+const onSelectParam = (key: string) => {
+  selectedParam.value = { key, value: customParams.value[key] }
+}
+
+const onAddParam = () => {
+  selectedParam.value = { key: '', value: '' }
+  editor.value.show()
+}
+
+const onDelParam = () => {
+  if (selectedParam.value) {
+    delete customParams.value[selectedParam.value.key]
+    customParams.value = { ...customParams.value }
+  }
+}
+
+const onEditParam = (key: string) => {
+  selectedParam.value = { key, value: customParams.value[key] }
+  editor.value.show()
+}
+
+const onSaveParam = (param: { key: string, value: string }) => {
+  if (param.key.length) {
+    if (param.key != selectedParam.value.key) {
+      delete customParams.value[selectedParam.value.key]
+    }
+    let value: any = param.value
+    if (value === 'true') value = true
+    else if (value === 'false') value = false
+    else if (!isNaN(value)) value = parseFloat(value)
+    customParams.value[param.key] = value
+    customParams.value = { ...customParams.value }
+  }
+  save()
+}
 
 const onLoadDefaults = () => {
   loadDefaults()
@@ -226,6 +290,7 @@ const loadDefaults = () => {
     top_p.value = defaults.top_p
     reasoning.value = defaults.reasoning
     reasoningEffort.value = defaults.reasoningEffort
+    customParams.value = defaults.customOpts || {}
   } else {
     disableTools.value = false
     locale.value = ''
@@ -237,6 +302,7 @@ const loadDefaults = () => {
     top_p.value = undefined
     reasoning.value = undefined
     reasoningEffort.value = undefined
+    customParams.value = {}
   }
 }
 
@@ -255,6 +321,7 @@ const saveAsDefaults = () => {
     top_p: top_p.value,
     reasoning: reasoning.value,
     reasoningEffort: reasoningEffort.value,
+    customOpts: JSON.parse(JSON.stringify(customParams.value)),
   }
   for (const key of Object.keys(modelDefaults)) {
     if ((modelDefaults as anyDict)[key] === undefined) {
@@ -355,6 +422,7 @@ const save = () => {
       top_p: topPValue,
       reasoning: reasoningValue,
       reasoningEffort: reasoningEffortValue,
+      customOpts: customParams.value,
     }
 
     // set to undefined if all values are undefined
@@ -441,6 +509,7 @@ const openDebugConsole = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  max-width: 250px;
 
   form {
     padding: 16px;
@@ -458,6 +527,10 @@ const openDebugConsole = () => {
 
     .subgroup {
       white-space: nowrap;
+    }
+
+    .list-with-actions {
+      width: 100%;
     }
   }
 }

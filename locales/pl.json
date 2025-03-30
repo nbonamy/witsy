@@ -1316,6 +1316,7 @@
     "createOllama": {
       "title": "Utwórz model Ollama"
     },
+    "customParams": "Niestandardowe parametry",
     "defaultForModel": "Domyślne dla modelu",
     "defaultModelValue": "Wartość domyślna modelu",
     "errors": {
