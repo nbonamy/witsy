@@ -1,6 +1,5 @@
 
-import { Expert as ExpertBase, ExternalApp } from 'types'
-
+import { Expert as ExpertBase, ExternalApp } from '../types'
 
 export default class Expert implements ExpertBase {
   

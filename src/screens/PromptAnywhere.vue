@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { expertI18n, i18nInstructions, t } from '../services/i18n'
-import { anyDict, ExternalApp } from 'types'
+import { anyDict, ExternalApp } from '../types'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
@@ -58,7 +58,7 @@ const prompt = ref(null)
 const engineModelPicker: Ref<typeof EngineModelPicker> = ref(null)
 const sourceApp: Ref<ExternalApp|null> = ref(null)
 const output = ref(null)
-const chat: Ref<Chat> = ref(null)
+const chat: Ref<Chat> = ref(new Chat())
 const response: Ref<Message> = ref(null)
 const showReplace = ref(false)
 

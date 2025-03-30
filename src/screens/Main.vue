@@ -10,7 +10,7 @@
 <script setup lang="ts">
 
 import { Ref, ref, onMounted, nextTick, watch } from 'vue'
-import { strDict, anyDict } from 'types'
+import { strDict, anyDict } from '../types'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
