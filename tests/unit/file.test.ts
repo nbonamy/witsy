@@ -152,8 +152,9 @@ test('List files recursively', async () => {
     '.github/workflows/build-darwin-arm64.yml',
     '.github/workflows/build-darwin-x64.yml',
     '.github/workflows/build-darwin.yml',
-    '.github/workflows/build-linux.yml',
-    '.github/workflows/build-windows.yml',
+    '.github/workflows/build-linux-x64.yml',
+    '.github/workflows/build-win32-arm64.yml',
+    '.github/workflows/build-win32-x64.yml',
     '.github/workflows/test.yml',
   ].map(f => process.platform == 'win32' ? f.replace(/\//g, '\\') : f))
 })

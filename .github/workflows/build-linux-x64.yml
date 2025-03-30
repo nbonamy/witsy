@@ -1,0 +1,39 @@
+
+# .github/workflows/build-linux-x64.yml
+name: Build Linux x64 Release
+on:
+  workflow_dispatch:
+jobs:
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Install required packages
+        run: sudo apt-get install -y rpm
+      - name: Github checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: get-package-version
+        id: package-version
+        uses: beaconbrigade/package-json-version@v0.3.2
+      - name: Install required packages
+        run: npm install -g node-gyp
+      - name: Install Dependencies
+        run: npm i
+      - name: Build script
+        run: make linux-x64
+        env:
+          PREBUILDS_ONLY: "1"
+      - name: List packages
+        uses: mathiasvr/command-output@v2.0.0
+        id: packagelist
+        with:
+          run: node ./build/list_packages.mjs
+      - name: Publish Release
+        run: gh release upload v${{ steps.package-version.outputs.version}} ${{ steps.packagelist.outputs.stdout }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
