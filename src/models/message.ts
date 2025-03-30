@@ -1,5 +1,5 @@
 
-import { ToolCallInfo, MessageType, Message as IMessage } from 'types'
+import { ToolCallInfo, MessageType, Message as IMessage } from '../types'
 import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase, LlmChunkContent } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'

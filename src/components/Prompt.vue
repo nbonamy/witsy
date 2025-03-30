@@ -67,7 +67,7 @@ const { onEvent, emitEvent } = useEventBus()
 
 const props = defineProps({
   chat: {
-    type: Object as PropType<Chat|null>,
+    type: Object as PropType<Chat>,
     required: true
   },
   conversationMode: {
