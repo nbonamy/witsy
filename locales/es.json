@@ -413,6 +413,7 @@
     "preserveOriginal": "Preservar el medio original",
     "promptPlaceholder": "¿Qué quieres crear?",
     "provider": "Proveedor",
+    "renameMedia": "Renombrar medio",
     "replicateInputImageRequired": {
       "text": "Los modelos de Replicate hacen referencia a la imagen de entrada de manera diferente. Consulta la <a href=\"{url}\" target=\"_blank\">página del modelo</a> e ingresa el nombre del parámetro a continuación.",
       "title": "Se requiere el nombre del parámetro de referencia de la imagen en Replicate"

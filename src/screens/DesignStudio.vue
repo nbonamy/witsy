@@ -24,7 +24,7 @@
 import { FileContents } from '../types/index'
 import { ref, Ref, onMounted, computed, nextTick } from 'vue'
 import { t } from '../services/i18n'
-import { store, mediaChatId } from '../services/store'
+import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
 import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
 import Fullscreen from '../components/Fullscreen.vue'
@@ -60,6 +60,7 @@ const targetRow: Ref<Message|null> = ref(null)
 
 const contextMenuActions = () => [
   { label: t('designStudio.loadMediaSettings'), action: 'load' },
+  { label: t('common.rename'), action: 'rename' },
   { label: t('common.delete'), action: 'delete' },
 ]
 
@@ -72,10 +73,10 @@ const history = computed(() => {
 
 onMounted(() => {
   // we need the media chat
-  chat.value = store.history.chats.find(chat => chat.uuid === mediaChatId)
+  chat.value = store.history.chats.find(chat => chat.uuid === kMediaChatId)
   if (!chat.value) {
     chat.value = Chat.fromJson({
-      uuid: mediaChatId,
+      uuid: kMediaChatId,
       title: 'Media',
       createdAt: Date.now(),
       messages: [],
@@ -144,14 +145,29 @@ const handleActionClick = async (action: string) => {
         params: msg.toolCall?.calls?.[0]?.params || {}
       })
     })
-  }
-  else if (action === 'delete') {
+  } else if (action === 'rename') {
+    renameMedia(msg)
+  } else if (action === 'delete') {
     deleteMedia(msg)
   }
 }
 
 const onDelete = (msg: Message) => {
   deleteMedia(msg)
+}
+
+const renameMedia = (msg: Message) => {
+  Dialog.show({
+    title: t('designStudio.renameMedia'),
+    input: 'text',
+    inputValue: msg.content,
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      msg.content = result.value
+      store.saveHistory()
+    }
+  })
 }
 
 const deleteMedia = (msg: Message) => {
@@ -288,39 +304,49 @@ const onMediaGenerationRequest = async (data: any) => {
 
   // replicate is painful...
   let referenceKey = null
-  if (data.engine === 'replicate' && attachReference) {
+  if (data.engine === 'replicate') {
 
     // find the key of <media> in params
-    referenceKey = Object.keys(params).find(k => params[k] === '<media>')
+    referenceKey = Object.keys(params).find(k => params[k] === kReferenceParamValue)
 
-    // ask the user
-    if (!referenceKey) {
+    if (attachReference) {
 
-      const url = `https://replicate.com/${data.model.split(':')[0]}`
-      
-      const result = await Dialog.show({
-        title: t('designStudio.replicateInputImageRequired.title'),
-        html: t('designStudio.replicateInputImageRequired.text', { url }),
-        input: 'text',
-        showCancelButton: true,
-      })
+      // ask the user
+      if (!referenceKey) {
 
-      referenceKey = result.value
+        const url = `https://replicate.com/${data.model.split(':')[0]}`
+        
+        const result = await Dialog.show({
+          title: t('designStudio.replicateInputImageRequired.title'),
+          html: t('designStudio.replicateInputImageRequired.text', { url }),
+          input: 'text',
+          showCancelButton: true,
+        })
+
+        referenceKey = result.value
+      }
+
+      // still not?
+      if (!referenceKey) {
+        isGenerating.value = false
+        return
+      }
+
+      // attach here
+      const reference = window.api.file.read(currentUrl)
+      params[referenceKey] = `data:${reference.mimeType};base64,${reference.contents}`
+      attachReference = false
+
+      // ask Settings.vue to save the key
+      emitEvent('replicate-input-image-key', referenceKey)
+
+    } else if (referenceKey) {
+
+      // remove the key
+      delete params[referenceKey]
+      attachReference = false
+
     }
-
-    // still not?
-    if (!referenceKey) {
-      isGenerating.value = false
-      return
-    }
-
-    // attach here
-    const reference = window.api.file.read(currentUrl)
-    params[referenceKey] = `data:${reference.mimeType};base64,${reference.contents}`
-    attachReference = false
-
-    // ask Settings.vue to save the key
-    emitEvent('replicate-input-image-key', referenceKey)
 
   }
 
@@ -393,7 +419,7 @@ const onMediaGenerationRequest = async (data: any) => {
 
       // update reference key
       if (referenceKey) {
-        params[referenceKey] = '<media>'
+        params[referenceKey] = kReferenceParamValue
       }
       message.value.toolCall = {
         status: 'done',

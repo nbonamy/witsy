@@ -432,6 +432,7 @@
     "preserveOriginal": "保留原始媒体",
     "promptPlaceholder": "你想创建什么？",
     "provider": "提供者",
+    "renameMedia": "重命名媒体",
     "replicateInputImageRequired": {
       "text": "Replicate 模型以不同方式引用输入图像。请参考 <a href=\"{url}\" target=\"_blank\">模型页面</a> 并在下方输入参数名称。",
       "title": "需要 Replicate 引用图像参数名称"

@@ -413,6 +413,7 @@
     "preserveOriginal": "Original beibehalten",
     "promptPlaceholder": "Was möchten Sie erstellen?",
     "provider": "Anbieter",
+    "renameMedia": "Medium umbenennen",
     "replicateInputImageRequired": {
       "text": "Replicate-Modelle verweisen anders auf das Eingabebild. Siehe die <a href=\"{url}\" target=\"_blank\">Modellseite</a> und geben Sie den Namen des Parameters unten ein.",
       "title": "Name des Referenzbildparameters für Replicate erforderlich"

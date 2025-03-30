@@ -7,7 +7,8 @@ import { loadExperts } from './experts'
 import LlmFactory from '../llms/llm'
 import Chat from '../models/chat'
 
-export const mediaChatId = '00000000-0000-0000-0000-000000000000'
+export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
+export const kReferenceParamValue = '<media>'
 
 export const store: Store = reactive({
 

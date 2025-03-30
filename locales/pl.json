@@ -432,6 +432,7 @@
     "preserveOriginal": "Zachowaj oryginał",
     "promptPlaceholder": "Co chcesz stworzyć?",
     "provider": "Dostawca",
+    "renameMedia": "Zmień nazwę nośnika",
     "replicateInputImageRequired": {
       "text": "Modele Replicate odwołują się do obrazu wejściowego w inny sposób. Odwiedź <a href=\"{url}\" target=\"_blank\">stronę modelu</a> i wprowadź nazwę parametru poniżej.",
       "title": "Wymagana nazwa parametru obrazu referencyjnego Replicate"
