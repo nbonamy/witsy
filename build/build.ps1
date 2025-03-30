@@ -26,6 +26,9 @@ $packageJsonContent = Get-Content -Raw -Path "package.json"
 $version = ($packageJsonContent | ConvertFrom-Json).version
 Write-Host "Version: $version"
 
+# Make sure prebuilds are used
+$env:PREBUILDS_ONLY = "1"
+
 # Run the electron-forge package command with architecture
 npx electron-forge make -p win32 -a $architecture
 

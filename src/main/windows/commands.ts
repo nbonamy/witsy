@@ -3,8 +3,10 @@ import { anyDict } from '../../types/index';
 import { Application } from '../../types/automation';
 import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
-import MacosAutomator from '../../automations/macos';
-import WindowsAutomator from '../../automations/windows';
+//import MacosAutomator from '../../automations/macos';
+//import WindowsAutomator from '../../automations/windows';
+import autolib from 'autolib';
+import { wait } from '../utils';
 
 export let commandPicker: BrowserWindow = null;
 
@@ -42,10 +44,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
     commandPicker.focusOnWebView();
 
     // try to activate (make foremost)
-    //activateCommandPicker();
-    //setTimeout(activateCommandPicker, 250);
-    setTimeout(activateCommandPicker, 500);
-    //setTimeout(activateCommandPicker, 1000);
+    activateCommandPicker();
     
     // log
     if (commanderStartTime) {
@@ -121,16 +120,22 @@ export const closeCommandPicker = async (sourceApp?: Application): Promise<void>
 
  
 const activateCommandPicker = async () => {
-
+  
   const isThere = () =>
     commandPicker &&
     !commandPicker.isDestroyed() &&
     commandPicker.isVisible() &&
     commandPicker.getOpacity() > 0;
 
-  // check
+  // wait for command picker to be visible
+  const start = Date.now();
+  const totalWait = 1000;
+  while (!isThere() && Date.now() - start < totalWait) {
+    await wait(50);
+  } 
+
   if (!isThere()) {
-    console.log('Command picker is not visible, not activating');
+    console.log('Command picker is not visible after 1 second, not activating');
     return;
   }
 
@@ -150,13 +155,21 @@ const activateCommandPicker = async () => {
     //   })
     // }
 
-    // for windows: this works in debug or when run from the terminal
-    // suspicion is that in these cases, this is called from another process
-    // when in release mode, this is called from the same process
-    // if (process.platform === 'win32') {
-    //   const automator = new WindowsAutomator();
-    //   await automator.activateApp(commandPicker.getTitle());
-    // }
+    // windows: click at the top-center of the command picker
+    // this is a workaround to make the command picker
+    // become the active window
+    if (process.platform === 'win32') {
+      try {
+        const [winX, winY] = commandPicker.getPosition()
+        const [winW] = commandPicker.getSize()
+        const x = winX + winW / 2;
+        const y = winY + 2;
+        const pt = screen.dipToScreenPoint({ x, y });
+        await autolib.mouseClick(pt.x, pt.y);
+      } catch (err) {
+        console.warn('mouseClick failed', err);
+      }      
+    }
 
   } finally {
 
