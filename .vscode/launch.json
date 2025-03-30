@@ -11,7 +11,7 @@
       "runtimeArgs": [ ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "env": { "DEBUG": "1" },
+      "env": { "DEBUG": "1", "PREBUILDS_ONLY": "1" },
     },
     {
       "type": "node",
