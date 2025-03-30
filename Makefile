@@ -83,10 +83,11 @@ create-and-build:
 	@$(MAKE) increment-build-number
 	@$(MAKE) commit-build-number
 	gh release create v$(VERSION) --title $(VERSION) --generate-notes --draft
-	gh workflow run build-darwin-x64.yml --ref $(CURRENT_BRANCH)
 	gh workflow run build-darwin-arm64.yml --ref $(CURRENT_BRANCH)
-	gh workflow run build-windows.yml --ref $(CURRENT_BRANCH)
-	gh workflow run build-linux.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-darwin-x64.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-linux-x64.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-win32-arm64.yml --ref $(CURRENT_BRANCH)
+	gh workflow run build-win32-x64.yml --ref $(CURRENT_BRANCH)
 	node build/monitor_gh_builds.mjs
 
 publish:
