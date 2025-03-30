@@ -170,7 +170,7 @@ export type GenerationResult =
         } else {
           console.error('Error while generating text:', error.status, error.message)
           if (response.content === '') {
-            if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p) {
+            if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p || Object.keys(opts.customOpts).length > 0) {
               response.setText(t('generator.errors.tryWithoutParams'))
             } else if (llm.plugins.length > 0) {
               response.setText(t('generator.errors.tryWithoutPlugins'))

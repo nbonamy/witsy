@@ -1316,6 +1316,7 @@
     "createOllama": {
       "title": "Enter new model name"
     },
+    "customParams": "Custom parameters",
     "defaultForModel": "Defaults for this model",
     "defaultModelValue": "Default model value when empty",
     "errors": {

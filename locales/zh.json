@@ -1316,6 +1316,7 @@
     "createOllama": {
       "title": "输入新模型名称"
     },
+    "customParams": "自定义参数",
     "defaultForModel": "此模型的默认值",
     "defaultModelValue": "为空时的默认模型值",
     "errors": {

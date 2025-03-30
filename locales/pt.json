@@ -1316,6 +1316,7 @@
     "createOllama": {
       "title": "Insira o novo nome do modelo"
     },
+    "customParams": "Parâmetros personalizados",
     "defaultForModel": "Padrões para este modelo",
     "defaultModelValue": "Valor padrão do modelo quando vazio",
     "errors": {
