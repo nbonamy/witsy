@@ -47,10 +47,16 @@ jobs:
         uses: beaconbrigade/package-json-version@v0.3.2
       - name: Install Dependencies
         run: npm i
+        env:
+          PREBUILDS_ONLY: "1"
+          npm_config_arch: "win32"
+          npm_config_platform: "arm64"
       - name: Build script
         run: make win-arm64
         env:
           PREBUILDS_ONLY: "1"
+          npm_config_arch: "win32"
+          npm_config_platform: "arm64"
       - name: List packages
         uses: mathiasvr/command-output@v2.0.0
         id: packagelist
