@@ -3,9 +3,10 @@
   
   overflow-y: auto;
   scrollbar-color: var(--scrollbar-thumb-color) var(--dialog-body-bg-color);
+  scrollbar-gutter: stable;
 
   table {
-    width: calc(100% - 12px);
+    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 

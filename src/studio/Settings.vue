@@ -134,7 +134,7 @@
 import { MediaCreator, DesignStudioMediaType } from '../types/index'
 import { onMounted, ref, Ref, computed, watch } from 'vue'
 import { t } from '../services/i18n'
-import { store } from '../services/store'
+import { store, kReferenceParamValue } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
@@ -367,7 +367,7 @@ onMounted(() => {
 
   // replicate image key can be prompted by DesignStudio.vue
   onEvent('replicate-input-image-key', (key: string) => {
-    params.value[key] = '<media>'
+    params.value[key] = kReferenceParamValue
   })
 
   mediaType.value = store.config.studio.type || 'image'
@@ -514,7 +514,7 @@ const loadSettings = (settings: any) => {
   model.value = settings.model || model.value
   prompt.value = settings.prompt || prompt.value
   params.value = settings.params || {}
-  showParams.value = Object.values(params.value).filter(v => v != '<media>').length > 0
+  showParams.value = Object.values(params.value).filter(v => v != kReferenceParamValue).length > 0
   saveSettings()
 }
 

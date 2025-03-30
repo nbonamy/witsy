@@ -35,6 +35,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.setBounds = vi.fn()
   BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.setOpacity = vi.fn()
+  BrowserWindow.prototype.setIgnoreMouseEvents = vi.fn()
   BrowserWindow['getAllWindows'] = vi.fn(() => {
     const window1 = new BrowserWindow()
     const window2 = new BrowserWindow()
@@ -48,7 +49,9 @@ vi.mock('electron', async () => {
     on: vi.fn(),
     send: vi.fn(),
     setWindowOpenHandler: vi.fn(),
-    capturePage: vi.fn(() => Promise.resolve(Buffer.from(''))),
+    capturePage: vi.fn(() => ({
+      getBitmap: vi.fn(() => ([0, 0, 0, 0]))
+    })),
     openDevTools: vi.fn(),
     debugger: {
       attach: vi.fn(),
