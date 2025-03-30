@@ -87,6 +87,7 @@ create-and-build:
 	gh workflow run build-darwin-arm64.yml --ref $(CURRENT_BRANCH)
 	gh workflow run build-windows.yml --ref $(CURRENT_BRANCH)
 	gh workflow run build-linux.yml --ref $(CURRENT_BRANCH)
+	node build/monitor_gh_builds.mjs
 
 publish:
 	@$(MAKE) create-and-build
