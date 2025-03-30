@@ -118,7 +118,7 @@
     "mermaid": "^11.4.1",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^2.16.3",
+    "multi-llm-ts": "^2.16.4",
     "nestor-client": "^0.3.1",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",
