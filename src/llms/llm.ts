@@ -330,7 +330,10 @@ export default class LlmFactory {
       models.chat = models.chat.map(m => {
         let name = m.name
         name = name.replace(/^gpt-([^-]*)(-?)([a-z]?)/i, (_, l1, __, l3) => `GPT-${l1} ${l3?.toUpperCase()}`)
+        name = name.replace(/^chatgpt-([^-]*)(-?)([a-z]?)/i, (_, l1, __, l3) => `ChatGPT-${l1} ${l3?.toUpperCase()}`)
         name = name.replace('Mini', 'mini')
+        name = name.replace(/-(\d\d\d\d)$/i, (_ ,l1) => ` ${l1}`)
+        name = name.replace(/-(\d\d\d\d-\d\d-\d\d)$/i, (_ ,l1) => ` ${l1}`)
         return { id: m.id, name, meta: m.meta }
       })
       models.image = models.image.map(m => {
