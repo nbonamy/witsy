@@ -41,6 +41,10 @@ beforeAll(() => {
     models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
     model: { chat: 'chat', image: '' }
   }
+
+  // @ts-expect-error mock
+  Element.prototype.showModal = vi.fn()
+
 })
 
 let chat: Chat|null = null
@@ -219,7 +223,6 @@ test('Model settings init chat', async () => {
   expect(chat?.modelOpts?.top_k).toBe(10)
   expect(chat?.modelOpts?.top_p).toBe(0.5)
   expect(chat?.modelOpts?.reasoning).toBe(true)
-  expect(chat?.modelOpts?.reasoningEffort).toBe('low')
 
   // load engine/model without defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('openai')
@@ -231,7 +234,7 @@ test('Model settings init chat', async () => {
 
 test('Model settings update chat', async () => {
 
-  chat?.setEngineModel('openai', 'chat')
+  chat?.setEngineModel('mock', 'chat')
 
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
@@ -246,11 +249,11 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').exists()).toBe(false)
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').exists()).toBe(true)
+  expect(wrapper.find<HTMLElement>('.model-settings .group.custom').exists()).toBe(false)
 
   await wrapper.find('.model-settings .toggle').trigger('click')
 
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('openai')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('mock')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
@@ -260,14 +263,29 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
+  expect(wrapper.find<HTMLElement>('.model-settings .group.custom').exists()).toBe(true)
   
   await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings input[name=maxTokens]').setValue('1000')
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings input[name=top_p]').setValue('0.8')
-  await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('high')
+
+  const table = wrapper.findComponent({ name: 'VariableTable' })
+  await table.find<HTMLButtonElement>('.button.add').trigger('click')
+
+  const editor = wrapper.findComponent({ name: 'VariableEditor' })
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('string')
+  await editor.find<HTMLSelectElement>('[name=value]').setValue('value')
+  await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
+
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('number')
+  await editor.find<HTMLSelectElement>('[name=value]').setValue('100')
+  await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
+
+  await editor.find<HTMLSelectElement>('[name=key]').setValue('boolean')
+  await editor.find<HTMLSelectElement>('[name=value]').setValue('true')
+  await editor.find<HTMLButtonElement>('[name=save]').trigger('click')
 
   expect(chat?.locale).toBe('fr-FR')
   expect(chat?.prompt).toBeUndefined()
@@ -276,14 +294,20 @@ test('Model settings update chat', async () => {
   expect(chat?.modelOpts?.temperature).toBe(0.7)
   expect(chat?.modelOpts?.top_k).toBe(15)
   expect(chat?.modelOpts?.top_p).toBe(0.8)
-  expect(chat?.modelOpts?.reasoningEffort).toBe('high')
+  expect(chat?.modelOpts?.customOpts).toStrictEqual({
+    string: 'value',
+    number: 100,
+    boolean: true,
+  })
 
   await wrapper.find('.model-settings select[name=locale]').setValue('')
   await wrapper.find('.model-settings textarea[name=prompt]').setValue('Prompt')
   await wrapper.find('.model-settings input[name=temperature]').setValue('5.0')
   await wrapper.find('.model-settings input[name=top_k]').setValue('150')
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
-  await wrapper.find('.model-settings select[name=reasoningEffort]').setValue('unknown')
+
+  await table.find<HTMLTableRowElement>('tbody tr:nth-child(2)').trigger('click')
+  await table.find<HTMLButtonElement>('.button.remove').trigger('click')
 
   expect(chat?.locale).toBeUndefined()
   expect(chat?.prompt).toBe('Prompt')
@@ -292,7 +316,10 @@ test('Model settings update chat', async () => {
   expect(chat?.modelOpts?.temperature).toBeUndefined()
   expect(chat?.modelOpts?.top_k).toBeUndefined()
   expect(chat?.modelOpts?.top_p).toBeUndefined()
-  expect(chat?.modelOpts?.reasoningEffort).toBeUndefined()
+  expect(chat?.modelOpts?.customOpts).toStrictEqual({
+    string: 'value',
+    boolean: true,
+  })
 
   await wrapper.find('.model-settings input[name=temperature]').setValue('not a number')
   expect(chat?.modelOpts?.temperature).toBeUndefined()
@@ -301,30 +328,30 @@ test('Model settings update chat', async () => {
 
 test('Model settings defaults', async () => {
 
-  chat?.setEngineModel('openai', 'chat')
+  chat?.setEngineModel('mock', 'chat')
 
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
   await wrapper.find('.toolbar .settings').trigger('click')
   await wrapper.find('.model-settings .toggle').trigger('click')
 
-  // initial state: all disabled
-  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(true)
+  // initial state
+  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(false)
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=save]').element.disabled).toBe(true)
-  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=clear]').element.disabled).toBe(true)
+  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=clear]').element.disabled).toBe(false)
 
   // should enable save
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
-  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(true)
+  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(false)
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=save]').element.disabled).toBe(false)
-  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=clear]').element.disabled).toBe(true)
+  expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=clear]').element.disabled).toBe(false)
 
   // click save
   await wrapper.find('.model-settings button[name=save]').trigger('click')
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=load]').element.disabled).toBe(false)
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=save]').element.disabled).toBe(false)
   expect(wrapper.find<HTMLButtonElement>('.model-settings button[name=clear]').element.disabled).toBe(false)
-  expect(store.config.llm.defaults[1]).toStrictEqual({
-    engine: 'openai',
+  expect(store.config.llm.defaults[0]).toStrictEqual({
+    engine: 'mock',
     model: 'chat',
     disableTools: false,
     temperature: 0.7
@@ -334,8 +361,8 @@ test('Model settings defaults', async () => {
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings button[name=save]').trigger('click')
-  expect(store.config.llm.defaults[1]).toStrictEqual({
-    engine: 'openai',
+  expect(store.config.llm.defaults[0]).toStrictEqual({
+    engine: 'mock',
     model: 'chat',
     locale: 'fr-FR',
     disableTools: false,
@@ -347,8 +374,8 @@ test('Model settings defaults', async () => {
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
   await wrapper.find('.model-settings button[name=load]').trigger('click')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_p]').element.value).toBe('')
-  expect(store.config.llm.defaults[1]).toStrictEqual({
-    engine: 'openai',
+  expect(store.config.llm.defaults[0]).toStrictEqual({
+    engine: 'mock',
     model: 'chat',
     locale: 'fr-FR',
     disableTools: false,
@@ -358,11 +385,10 @@ test('Model settings defaults', async () => {
 
   // clear
   await wrapper.find('.model-settings button[name=clear]').trigger('click')
-  expect(store.config.llm.defaults).toHaveLength(1)
+  expect(store.config.llm.defaults).toHaveLength(0)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoningEffort]').element.value).toBe('common.default')
 
 })
