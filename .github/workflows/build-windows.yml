@@ -49,6 +49,8 @@ jobs:
         run: npm i
       - name: Build script
         run: make win-arm64
+        env:
+          PREBUILDS_ONLY: "1"
       - name: List packages
         uses: mathiasvr/command-output@v2.0.0
         id: packagelist
