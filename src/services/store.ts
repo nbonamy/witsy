@@ -98,7 +98,9 @@ export const store: Store = reactive({
         top_p: defaults.top_p,
         reasoning: defaults.reasoning,
         reasoningEffort: defaults.reasoningEffort,
-        customOpts: defaults.customOpts,
+      }
+      if (defaults.customOpts) {
+        chat.modelOpts.customOpts = defaults.customOpts
       }
     } else {
       chat.disableTools = store.config.engines[chat.engine]?.disableTools || false

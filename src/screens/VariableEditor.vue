@@ -52,10 +52,10 @@ onMounted(async () => {
     value.value = props.variable?.value || ''
     if (key.value.length) {
       const input =  document.querySelector<HTMLInputElement>('#variable-editor [name=value]')
-      input.focus()
-      input.select()
+      input?.focus()
+      input?.select()
     } else {
-      document.querySelector<HTMLElement>('#variable-editor [name=key]').focus()
+      document.querySelector<HTMLElement>('#variable-editor [name=key]')?.focus()
     }
   }, { immediate: true })
 })

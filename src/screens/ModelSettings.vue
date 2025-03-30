@@ -69,7 +69,7 @@
         <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
 
-      <div class="group" v-if="showAdvanced && modelHasCustomParams">
+      <div class="group custom" v-if="showAdvanced && modelHasCustomParams">
         <label>{{ t('modelSettings.customParams') }}</label>
         <VariableTable
             :variables="customParams"
@@ -241,6 +241,7 @@ const onDelParam = () => {
     delete customParams.value[selectedParam.value.key]
     customParams.value = { ...customParams.value }
   }
+  save()
 }
 
 const onEditParam = (key: string) => {
@@ -321,7 +322,7 @@ const saveAsDefaults = () => {
     top_p: top_p.value,
     reasoning: reasoning.value,
     reasoningEffort: reasoningEffort.value,
-    customOpts: JSON.parse(JSON.stringify(customParams.value)),
+    customOpts: Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined,
   }
   for (const key of Object.keys(modelDefaults)) {
     if ((modelDefaults as anyDict)[key] === undefined) {
@@ -408,6 +409,7 @@ const save = () => {
     const topPValue = parseUserInput('TopP', top_p, 'float', 0, 1)
     const reasoningValue = reasoning.value ?? undefined
     const reasoningEffortValue = reasoningEffort.value ?? undefined
+    const customOptsValue = Object.keys(customParams.value).length > 0 ? JSON.parse(JSON.stringify(customParams.value)) : undefined
 
     // update chat
     props.chat.setEngineModel(engine.value, model.value)
@@ -422,7 +424,7 @@ const save = () => {
       top_p: topPValue,
       reasoning: reasoningValue,
       reasoningEffort: reasoningEffortValue,
-      customOpts: customParams.value,
+      customOpts: customOptsValue,
     }
 
     // set to undefined if all values are undefined

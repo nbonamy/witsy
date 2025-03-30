@@ -77,7 +77,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               top_k: 10,
               top_p: 0.5,
               reasoning: true,
-              reasoningEffort: 'low'
             },
           ]
         }

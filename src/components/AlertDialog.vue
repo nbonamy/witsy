@@ -19,12 +19,14 @@
 defineExpose({
   show(id: string) {
     const dialog =  document.querySelector<HTMLDialogElement>(id)
+    if (!dialog) return
     dialog.classList.remove('hide')
     dialog.classList.add('show')
     dialog.showModal()
   },
   close(id: string) {
     const dialog =  document.querySelector<HTMLDialogElement>(id)
+    if (!dialog) return
     dialog.addEventListener('animationend', () => {
       dialog.close()
     }, { once: true })

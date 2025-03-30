@@ -106,8 +106,7 @@ test('Resets assistant', async () => {
     temperature: 0.7,
     top_k: 10,
     top_p: 0.5,
-    reasoning: true,
-    reasoningEffort: 'low',
+    reasoning: true
   })
 
   // load witbout defaults
