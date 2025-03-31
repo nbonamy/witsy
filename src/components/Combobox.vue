@@ -3,10 +3,10 @@
   <div v-if="showHelp" class="help">{{ t('common.comboBox.help') }}</div>
   <div class="control">
     <div class="wrapper" :class="{ focused: focus }">
-      <select v-model="selected" @change="onSelect">
+      <select v-model="selected" :disabled="disabled" @change="onSelect">
         <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <input type="text" :name="name" v-model="value" :placeholder="placeholder" @change="onChange" @focus="onFocus" @blur="onBlur" />
+      <input type="text" :name="name" v-model="value" :placeholder="placeholder" :disabled="disabled" :required="required" @change="onChange" @focus="onFocus" @blur="onBlur" />
     </div>
     <slot></slot>
   </div>
@@ -30,6 +30,8 @@ const selected = ref(null)
 
 defineProps({
   items: { type: Array<ComboBoxItem>, required: true },
+  required: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
   placeholder: { type: String, required: false },
   showHelp: { type: Boolean, default: true },
   name: { type: String, default: '' },
