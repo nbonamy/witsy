@@ -33,14 +33,14 @@ import MemoryInspector from '../screens/MemoryInspector.vue'
 const enabled = ref(false)
 const hasFacts = ref(false)
 const engine = ref('openai')
-const model = ref('text-embedding-ada-002')
+const model = ref('')
 const inspector = ref(null)
 
 const load = () => {
   hasFacts.value = window.api.memory.isNotEmpty()
   enabled.value = store.config.plugins.memory.enabled || false
   engine.value = store.config.plugins.memory.engine || 'openai'
-  model.value = store.config.plugins.memory.model || 'text-embedding-ada-002'
+  model.value = store.config.plugins.memory.model || ''
 }
 
 const save = () => {
