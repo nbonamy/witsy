@@ -60,7 +60,8 @@ Non-exhaustive feature list:
 
 <p align="center">
   <img src="doc/main1.jpg" height="250" />&nbsp;&nbsp;
-  <img src="doc/main2.jpg" height="250" />
+  <img src="doc/main2.jpg" height="250" />&nbsp;&nbsp;
+  <img src="doc/studio.jpg" height="250" />
 </p>
 
 ## Prompt Anywhere
