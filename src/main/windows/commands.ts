@@ -15,6 +15,7 @@ const height = 320;
 
 let commanderStartTime: number|undefined
 let sourceApp: Application|undefined;
+let cursorAtOpen: { x: number, y: number }|undefined;
 
 export const prepareCommandPicker = (queryParams?: anyDict): void => {
 
@@ -78,10 +79,10 @@ export const openCommandPicker = (params: anyDict): void => {
   ensureOnCurrentScreen(commandPicker);
 
   // and at right location
-  const { x, y } = screen.getCursorScreenPoint();
+  cursorAtOpen = screen.getCursorScreenPoint();
   commandPicker.setBounds({
-    x: x - width/2,
-    y: y - (params.sourceApp ? 64 : 24),
+    x: cursorAtOpen.x - width/2,
+    y: cursorAtOpen.y - (params.sourceApp ? 64 : 24),
     width: width,
     height: height,
   });
@@ -157,15 +158,23 @@ const activateCommandPicker = async () => {
 
     // windows: click at the top-center of the command picker
     // this is a workaround to make the command picker
-    // become the active window
+    // become the active window. but we don't want to click
+    // if the user is moving the mouse so first we need to check
+    // that the user did not move even though autolib is
+    // explicitely asking to click at specific coordinates...
     if (process.platform === 'win32') {
       try {
-        const [winX, winY] = commandPicker.getPosition()
-        const [winW] = commandPicker.getSize()
-        const x = winX + winW / 2;
-        const y = winY + 2;
-        const pt = screen.dipToScreenPoint({ x, y });
-        await autolib.mouseClick(pt.x, pt.y);
+        const { x, y } = screen.getCursorScreenPoint();
+        if (cursorAtOpen.x === x && cursorAtOpen.y === y) {
+          const [winX, winY] = commandPicker.getPosition()
+          const [winW] = commandPicker.getSize()
+          const x = winX + winW / 2;
+          const y = winY + 2;
+          const pt = screen.dipToScreenPoint({ x, y });
+          await autolib.mouseClick(pt.x, pt.y);
+        } else {
+          console.warn('Mouse moved, not clicking on command picker');
+        }
       } catch (err) {
         console.warn('mouseClick failed', err);
       }      

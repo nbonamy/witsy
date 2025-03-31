@@ -12,9 +12,10 @@ import { wait } from '../utils';
 import Store from 'electron-store';
 import process from 'node:process';
 import path from 'node:path';
+import os from 'node:os';
 
 // store
-export let electronStore: Store|null = null
+export let electronStore: Store | null = null
 export const setStore = (aStore: Store): void => {
   electronStore = aStore
 }
@@ -382,7 +383,6 @@ export const enableClickThrough = (window: BrowserWindow) => {
     const buffer = image.getBitmap()
     window.setIgnoreMouseEvents(buffer[3] < 255)
     //console.log(`${window.getTitle()} setIgnoreMouseEvents`, buffer[3] < 255)
-
   
   }, 300)
 
@@ -398,4 +398,11 @@ export const enableClickThrough = (window: BrowserWindow) => {
 
 }
 
-
+export const getNativeWindowHandleInt = (window: BrowserWindow): number => {
+  const hbuf = window.getNativeWindowHandle()
+  if (os.endianness() == "LE") {
+    return hbuf.readInt32LE()
+  } else {
+    return hbuf.readInt32BE()
+  }
+}
