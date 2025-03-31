@@ -45,6 +45,7 @@ Non-exhaustive feature list:
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
 - LLM plugins to augment LLM: execute python code, search the Internet...
+- Anthropic MCP server support
 - Long-term memory plugin to increase relevance of LLM answers
 - Read aloud of assistant messages (requires OpenAI or ElevenLabs API key)
 - Read aloud of any text in other applications (requires OpenAI or ElevenLabs API key)
