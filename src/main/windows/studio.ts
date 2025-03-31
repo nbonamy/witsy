@@ -23,7 +23,9 @@ export const openDesignStudioWindow = (): void => {
       height: bounds?.height || 800,
       minWidth: 800,
       minHeight: 400,
-      ...titleBarOptions(),
+      ...titleBarOptions({
+        height: 48,
+      }),
       showInDock: true,
     });
 
