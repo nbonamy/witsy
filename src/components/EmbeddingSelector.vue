@@ -1,21 +1,33 @@
 <template>
+  
   <div class="group">
     <label>{{ t('embedding.provider') }}</label>
     <select v-model="engine" @change="onChangeEngine" required :disabled="disabled">
       <option v-for="e in engines" :key="e.id" :value="e.id">{{ e.name }}</option>
     </select>
   </div>
-  <div class="group">
+  
+  <div class="group" v-if="llmFactory.isCustomEngine(engine)">
+    <label>{{ t('embedding.model') }}</label>
+    <div class="subgroup">
+      <Combobox v-model="model" :items="models"@change="onChangeModel" required :disabled="disabled" />
+    </div>
+    <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
+  </div>
+  
+  <div class="group" v-else>
     <label>{{ t('embedding.model') }}</label>
     <select v-model="model" @change="onChangeModel" required :disabled="disabled">
       <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
     </select>
     <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
   </div>
+  
   <div class="group" style="margin-top: -8px" v-if="engine !== 'ollama'">
     <label></label>
     <span>{{ t('embedding.apiKeyReminder') }}</span>
   </div>
+  
   <OllamaModelPull 
     v-if="engine === 'ollama'" 
     :pullable-models="getEmbeddingModels" 
@@ -35,6 +47,7 @@ import { t } from '../services/i18n'
 import { getEmbeddingModels } from '../llms/ollama'
 import LlmFactory from '../llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
+import Combobox from '../components/Combobox.vue'
 import Dialog from '../composables/dialog'
 
 const engine = defineModel('engine', { default: 'openai' })
@@ -65,7 +78,7 @@ const engines = computed(() => {
   // add custom engines
   for (const engine of llmFactory.getCustomEngines()) {
     const engineConfig = store.config?.engines?.[engine] as CustomEngineConfig
-    if (engineConfig?.api === 'openai' && engineConfig?.models?.embedding?.length) {
+    if (engineConfig?.api === 'openai'/* && engineConfig?.models?.embedding?.length*/) {
       engines.push({ id: engine, name: engineConfig.label })
     }
   }
@@ -82,7 +95,7 @@ const models = computed(() => {
 const canRefresh = computed(() => ['ollama', 'google'].includes(engine.value))
 
 const onChangeEngine = () => {
-  model.value = models.value?.[0]?.id
+  model.value = models.value?.[0]?.id || null
   nextTick(() => {
     onChangeModel()
   })
@@ -134,10 +147,4 @@ const getModels = async () => {
 @import '../../css/dialog.css';
 @import '../../css/form.css';
 @import '../../css/editor.css';
-</style>
-
-<style scoped>
-#docrepocreate .group label {
-  min-width: 150px;
-}
 </style>

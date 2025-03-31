@@ -77,8 +77,8 @@ const onCancel = () => {
 @import '../../css/editor.css';
 </style>
 
-<style scoped>
-#docrepocreate .group label {
+<style>
+#docrepocreate form .group label {
   min-width: 150px;
 }
 </style>
