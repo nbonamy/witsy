@@ -215,7 +215,11 @@ const onClear = () => {
 }
 
 const onCopy = async () => {
-  await navigator.clipboard.writeText(transcription.value)
+  window.api.clipboard.writeText(transcription.value)
+  if (window.api.clipboard.readText() != transcription.value) {
+    Dialog.alert(t('transcribe.errorCopy'))
+    return
+  }
   onCancel()
 }
 

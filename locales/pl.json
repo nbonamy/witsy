@@ -1769,6 +1769,7 @@
   "transcribe": {
     "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
+    "errorCopy": "Wystąpił błąd podczas kopiowania tekstu do schowka. Możesz spróbować skopiować go ręcznie.",
     "errorMicrophone": "Błąd dostępu do mikrofonu",
     "errorSTTNotReady": "Silnik zamiany mowy na tekst nie jest gotowy",
     "errorTranscription": "Wystąpił błąd podczas transkrypcji",
