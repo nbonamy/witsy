@@ -1636,11 +1636,13 @@
         "warning": "Ostrzeżenie!"
       },
       "search": {
+        "braveApiKey": "Klucz API Brave",
         "characters": "znaków (0 dla pełnej zawartości)",
         "contentLength": "Długość treści",
         "description": "Ta wtyczka pozwala silnikom LLM przeszukiwać Internet i wykorzystywać wyniki jako dane wejściowe do generowania aktualnych odpowiedzi.",
         "engine": "Silnik",
         "engines": {
+          "brave": "Brave Search",
           "local": "Lokalne wyszukiwanie w przeglądarce (EKSPERYMENTALNE)",
           "tavily": "Tavily"
         },

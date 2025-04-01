@@ -14,12 +14,21 @@ import Computer from '../../src/plugins/computer'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { fal } from '@fal-ai/client'
+import tavily from '../../src/vendor/tavily'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
   text: () => 'fetched_content',
+  json: () => ({
+    web: {
+      results: [
+        { url: 'url1', title: 'title1', description: 'desc1' },
+        { url: 'url2', title: 'title2', description: 'desc2' }
+      ]
+    }
+  })
 }))
 
 // mock i18n
@@ -149,6 +158,7 @@ beforeAll(() => {
     enabled: true,
     engine: 'local',
     tavilyApiKey: '123',
+    braveApiKey: '456',
     contentLength: 8
   }
   store.config.plugins.python = {
@@ -366,6 +376,26 @@ test('Search Plugin Tavily', async () => {
     results: [
       { title: 'title', url: 'url', content: 'fetched_' }
     ]
+  })
+  expect(tavily .prototype.search).toHaveBeenLastCalledWith('test', {})
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Brave', async () => {
+  store.config.plugins.search.engine = 'brave'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute({ query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { url: 'url1', title: 'title1', content: 'desc1' },
+      { url: 'url2', title: 'title2', content: 'desc2' }
+    ]
+  })
+  expect(fetch).toHaveBeenLastCalledWith('https://api.search.brave.com/res/v1/web/search?q=test&count=5', {
+    headers: {
+      'Accept': 'application/json',
+      'X-Subscription-Token': store.config.plugins.search.braveApiKey
+    }
   })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })

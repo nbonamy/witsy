@@ -1630,11 +1630,13 @@
         "warning": "Aviso!"
       },
       "search": {
+        "braveApiKey": "Chave de API do Brave",
         "characters": "caracteres (0 para conteúdo completo)",
         "contentLength": "Comprimento do Conteúdo",
         "description": "Este plugin permite que os mecanismos LLM pesquisem na Internet e usem os resultados como entrada para gerar respostas atualizadas.",
         "engine": "Mecanismo",
         "engines": {
+          "brave": "Brave Search",
           "local": "Pesquisa no Navegador Local (EXPERIMENTAL)",
           "tavily": "Tavily"
         },
