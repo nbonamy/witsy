@@ -336,6 +336,11 @@ ipcMain.on('store-set-value', (event, payload) => {
   store.set(payload.key, payload.value);
 });
 
+ipcMain.on('clipboard-read-text', (event) => {
+  const text = clipboard.readText();
+  event.returnValue = text;
+});
+
 ipcMain.on('clipboard-write-text', (event, payload) => {
   clipboard.writeText(payload);
 });

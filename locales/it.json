@@ -1733,6 +1733,7 @@
   "transcribe": {
     "autoStart": "Inizia la trascrizione quando si apre la finestra",
     "clickToRecord": "Clicca sul pulsante di registrazione quando sei pronto!",
+    "errorCopy": "Si è verificato un errore durante la copia del testo negli appunti. Puoi provare a copiarlo manualmente.",
     "errorMicrophone": "Errore durante l'accesso al microfono",
     "errorSTTNotReady": "Il motore di riconoscimento vocale non è pronto",
     "errorTranscription": "Si è verificato un errore durante la trascrizione",

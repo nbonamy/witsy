@@ -1763,6 +1763,7 @@
   "transcribe": {
     "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
+    "errorCopy": "Ocorreu um erro ao copiar o texto para a área de transferência. Você pode tentar copiá-lo manualmente.",
     "errorMicrophone": "Erro ao acessar o microfone",
     "errorSTTNotReady": "Mecanismo de voz para texto não está pronto",
     "errorTranscription": "Ocorreu um erro durante a transcrição",

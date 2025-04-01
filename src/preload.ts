@@ -61,6 +61,7 @@ contextBridge.exposeInMainWorld(
       close: (): void => { return ipcRenderer.send('settings-close') },
     },
     clipboard: {
+      readText: (): string => { return ipcRenderer.sendSync('clipboard-read-text') },
       writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },
       writeImage: (path: string): void => { return ipcRenderer.send('clipboard-write-image', path) },
     },

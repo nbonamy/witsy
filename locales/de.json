@@ -1733,6 +1733,7 @@
   "transcribe": {
     "autoStart": "Beginnen Sie mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
+    "errorCopy": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten. Sie können versuchen, ihn manuell zu kopieren.",
     "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
     "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
     "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten",

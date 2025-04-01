@@ -321,6 +321,7 @@ declare global {
         cancel(): void
       },
       clipboard: {
+        readText(): string
         writeText(text: string): void
         writeImage(path: string): void
       },
