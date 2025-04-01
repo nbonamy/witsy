@@ -3,10 +3,11 @@ import { BrowserWindow } from 'electron'
 
 const grabGoogleResults = `
   const results = []
-  document.querySelectorAll(".g").forEach((result) => {
+  const search = document.getElementById("search")
+  search.querySelectorAll("a").forEach((link) => {
+    const result = link.closest("div")
     const title = result.querySelector("h3")
-    const link = result.querySelector("a")
-    const url = link?.getAttribute("href")
+    const url = link.getAttribute("href")
     const item = {
       title: title?.textContent || "",
       url,
@@ -39,6 +40,9 @@ export default class LocalSearch {
 
         try {
         
+          // const html = await win.webContents.executeJavaScript(`document.documentElement.innerHTML`, true)
+          // fs.writeFileSync('page.html', html, 'utf8')
+
           // get the results
           const googleResults: LocalSearchResult[] = await win.webContents.executeJavaScript(grabGoogleResults)
           console.log(`[search] found ${googleResults.length} results`)
