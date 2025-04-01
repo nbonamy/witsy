@@ -1600,11 +1600,13 @@
         "warning": "Attention !"
       },
       "search": {
+        "braveApiKey": "Clé API Brave",
         "characters": "caractères (0 pour le contenu complet)",
         "contentLength": "Longueur du contenu",
         "description": "Ce plugin permet aux moteurs LLM de rechercher sur Internet et d'utiliser les résultats comme données pour générer des réponses à jour.",
         "engine": "Moteur",
         "engines": {
+          "brave": "Brave Search",
           "local": "Recherche locale dans le navigateur (EXPÉRIMENTAL)",
           "tavily": "Tavily"
         },

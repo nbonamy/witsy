@@ -1600,11 +1600,13 @@
         "warning": "Warnung!"
       },
       "search": {
+        "braveApiKey": "Brave API-Schlüssel",
         "characters": "Zeichen (0 für den vollständigen Inhalt)",
         "contentLength": "Inhaltslänge",
         "description": "Dieses Plugin ermöglicht LLM-Engines die Suche im Internet und die Verwendung der Ergebnisse als Eingabe zur Erzeugung aktueller Antworten.",
         "engine": "Engine",
         "engines": {
+          "brave": "Brave Search",
           "local": "Lokale Browsersuche (EXPERIMENTAL)",
           "tavily": "Tavily"
         },

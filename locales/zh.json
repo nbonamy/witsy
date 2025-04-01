@@ -1630,11 +1630,13 @@
         "warning": "警告！"
       },
       "search": {
+        "braveApiKey": "Brave API 密钥",
         "characters": "字符数（0 表示完整内容）",
         "contentLength": "内容长度",
         "description": "此插件允许 LLM 引擎搜索互联网，并将结果作为输入生成最新的回答。",
         "engine": "引擎",
         "engines": {
+          "brave": "Brave Search",
           "local": "本地浏览器搜索（实验性）",
           "tavily": "Tavily"
         },

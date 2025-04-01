@@ -14,7 +14,8 @@ export default class extends Plugin {
   isEnabled(): boolean {
     return this.config?.enabled && (
       (this.config.engine == 'local') ||
-      (this.config.engine == 'tavily' && this.config.tavilyApiKey.trim().length > 0)
+      (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0) ||
+      (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0)
     )
   }
 
@@ -50,6 +51,8 @@ export default class extends Plugin {
       return this.local(parameters)
     } else if (this.config.engine === 'tavily') {
       return this.tavily(parameters)
+    } else if (this.config.engine === 'brave') {
+      return this.brave(parameters)
     } else {
       return { error: 'Invalid engine' }
     }
@@ -83,7 +86,7 @@ export default class extends Plugin {
         //include_raw_content: true,
       })
 
-      // content returned by tavily is bery short
+      // content returned by tavily is very short
       for (const result of results.results) {
         const html = await fetch(result.url).then(response => response.text())
         result.content = this.htmlToText(html)
@@ -100,6 +103,34 @@ export default class extends Plugin {
       }
       //console.log('Tavily response:', response)
       return response
+
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  async brave(parameters: anyDict): Promise<anyDict> {
+    
+    try {
+      
+      const baseUrl = 'https://api.search.brave.com/res/v1/web/search'
+      const response = await fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${this.config.maxResults || 5}`, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Subscription-Token': this.config.braveApiKey
+        }
+      })
+
+      const data = await response.json()
+
+      return {
+        query: parameters.query,
+        results: data.web.results.map((result: any) => ({
+            url: result.url,
+            title: result.title,
+            content: this.truncateContent(result.description)
+        }))
+      }
 
     } catch (error) {
       return { error: error.message }
