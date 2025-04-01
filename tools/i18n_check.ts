@@ -3,12 +3,18 @@
 import fs from 'fs'
 import path from 'path'
 import glob from 'glob'
+import * as llm from 'multi-llm-ts'
+import { sortLocales } from './i18n_sort'
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Configuration
 const SRC_DIR = 'src'
 const LOCALES_DIR = 'locales'
 const I18N_KEY_PATTERN_T = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
 const I18N_KEY_PATTERN_I = /i18nInstructions\((?:[^,]+),\s*['"]([^'"]+)['"]/g
+const DEFAULT_ENGINE = 'openai'
+const DEFAULT_MODEL = 'gpt-4o-mini'
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -112,6 +118,83 @@ function flatten(obj: Record<string, any>, prefix: string = ''): Record<string, 
   }, {} as Record<string, string>)
 }
 
+// Function for translating text
+async function translateText(texts: Array<{key: string, en: string}>, locale: string): Promise<Map<string, string>> {
+  const translations = new Map<string, string>();
+  
+  try {
+    // Skip translation if locale is English
+    if (locale === 'en') {
+      texts.forEach(item => translations.set(item.key, item.en));
+      return translations;
+    }
+
+    // Skip if we have no items to translate
+    if (texts.length === 0) {
+      return translations;
+    }
+
+    // Engine and model
+    const provider = process.env.ENGINE || DEFAULT_ENGINE
+    const model = process.env.MODEL || DEFAULT_MODEL
+
+    // We need an api key
+    const apiKey = process.env.API_KEY || process.env[`${provider.toUpperCase()}_API_KEY`]
+    if (provider !== 'ollama' && !apiKey) {
+      throw new Error('API_KEY environment variable is not set')
+    }
+
+    // Initialize the LLM engine
+    const engine = llm.igniteEngine(provider, { apiKey });
+    
+    // Get locale name from locale code
+    const localeNames: Record<string, string> = {
+      fr: 'French',
+      es: 'Spanish',
+      de: 'German',
+      ja: 'Japanese',
+      zh: 'Chinese',
+      it: 'Italian',
+      pt: 'Portuguese',
+      ru: 'Russian',
+      ko: 'Korean',
+      // Add more as needed
+    };
+    
+    const localeName = localeNames[locale] || locale;
+    
+    // Create the system prompt
+    const system = `You are a translation assistant. Translate the given English strings to ${localeName}.
+Only include the JSON payload in your response, no additional text.
+Example response:
+[
+  { "key": "greeting", "translation": "Hello in ${localeName}" },
+  { "key": "farewell", "translation": "Goodbye in ${localeName}" }
+]`;
+
+    // Send the request to the LLM
+    console.log(`Translating ${texts.length} strings to ${localeName}...`);
+    const result = await engine.complete(model, [
+      new llm.Message('system', system),
+      new llm.Message('user', JSON.stringify(texts)),
+    ]);
+
+    if (result.content) {
+      const parsedResult = JSON.parse(result.content);
+      parsedResult.forEach((entry: {key: string, translation: string}) => {
+        translations.set(entry.key, entry.translation);
+      });
+    }
+    
+  } catch (e) {
+    console.error('Error translating:', e);
+    // Fallback to English for failed translations
+    texts.forEach(item => translations.set(item.key, item.en));
+  }
+  
+  return translations;
+}
+
 // Main function
 async function checkMissingTranslations() {
   try {
@@ -210,50 +293,75 @@ async function checkMissingTranslations() {
 
     // Fix missing translations if --fix flag is provided
     if (shouldFix) {
-      let fixesApplied = false
+      let fixesApplied = false;
 
+      // Prepare for batch translations
+      const localeTranslationBatches: Record<string, Array<{key: string, en: string}>> = {};
+
+      // Initialize empty arrays for each locale
+      Object.keys(missingTranslations).forEach(locale => {
+        if (missingTranslations[locale].length > 0) {
+          localeTranslationBatches[locale] = [];
+        }
+      });
+
+      // Group keys by locale for translation
       Object.entries(missingTranslations).forEach(([locale, keys]) => {
         if (keys.length > 0) {
-          console.log(`\n🔧 Fixing ${keys.length} missing translation keys in "${locale}"...`)
-
+          console.log(`\n🔧 Found ${keys.length} missing translation keys in "${locale}"...`);
+          
           keys.forEach(key => {
             // For English, use the key itself as the value
             if (locale === 'en') {
-              setNestedValue(locales[locale], key, key)
-              console.log(`  + Added "${key}" = "${key}"`)
+              setNestedValue(locales[locale], key, key);
+              console.log(`  + Added "${key}" = "${key}"`);
             }
-            // For other languages, use the English value if available
+            // For other languages, prepare for translation
             else if (keyExists(locales.en, key)) {
-              const enValue = getNestedValue(locales.en, key)
-              setNestedValue(locales[locale], key, enValue)
-              console.log(`  + Added "${key}" = "${enValue}"`)
+              const enValue = getNestedValue(locales.en, key);
+              localeTranslationBatches[locale].push({ key, en: enValue });
             }
-            // If no English value, use the key itself
             else {
-              setNestedValue(locales[locale], key, key)
-              console.log(`  + Added "${key}" = "${key}" (no English value found)`)
+              // If no English value, use the key itself
+              setNestedValue(locales[locale], key, key);
+              console.log(`  + Added "${key}" = "${key}" (no English value found)`);
             }
-          })
+          });
 
+          fixesApplied = true;
+        }
+      });
+
+      // Process translations for each locale
+      for (const [locale, translationItems] of Object.entries(localeTranslationBatches)) {
+        if (translationItems.length > 0) {
+          console.log(`\n🌐 Translating ${translationItems.length} keys for "${locale}"...`);
+          
+          const translations = await translateText(translationItems, locale);
+          
+          // Apply translations
+          translations.forEach((translatedText, key) => {
+            setNestedValue(locales[locale], key, translatedText);
+            console.log(`  + Added "${key}" = "${translatedText}"`);
+          });
+          
           // Save the updated locale file
           fs.writeFileSync(
             path.join(LOCALES_DIR, `${locale}.json`),
             JSON.stringify(locales[locale], null, 2) + '\n',
             'utf8'
-          )
-
-          fixesApplied = true
+          );
         }
-      })
+      }
 
       if (fixesApplied) {
-        console.log('\n✅ Fixed all missing translation keys.')
+        console.log('\n✅ Fixed all missing translation keys.');
       } else {
-        console.log('\n✅ No missing translations to fix.')
+        console.log('\n✅ No missing translations to fix.');
       }
 
       // After fixing, there should be no more missing translations
-      return false
+      return false;
     }
 
     // Report results
@@ -444,4 +552,10 @@ async function checkWrongLinkedTranslations() {
   if ((hasMissingTranslations || hasUnusedTranslations || hasWrongLinkedTranslations) && !shouldFix) {
     process.exit(1)
   }
+
+  // Sort locales
+  if (shouldFix) {
+    sortLocales()
+  }
+
 })()

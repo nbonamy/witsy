@@ -93,7 +93,7 @@ function processDirectory(dir: string): void {
 }
 
 // Main function
-function main(): void {
+export function sortLocales(): void {
   const localesDir = path.resolve('./locales')
   
   if (!fs.existsSync(localesDir)) {
@@ -106,4 +106,4 @@ function main(): void {
   console.log('Done!')
 }
 
-main()
+sortLocales()
