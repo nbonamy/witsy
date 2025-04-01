@@ -161,12 +161,17 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Brave Search plugin
+- [x] Allow user-input models for embeddings
+- [x] User defined parameters for custom engines
+- [x] Direct speech-to-text checbox
 - [x] Quick access buttons on home
 - [x] fal.ai support (speech-to-text, text-to-image and text-to-video)
 - [x] Debug console
 - [x] Design Studio
 - [x] i18n
 - [x] Mermaid diagram rendering
+- [x] Smithery.ai MCP integration
 - [x] Model Context Protocol
 - [x] Local Web Search
 - [x] Model defaults
