@@ -7,7 +7,7 @@ export default class STTGladia implements STTEngine {
   config: Configuration
  
   static readonly models = [
-    { id: 'gladia', label: 'Solaria (online)' },
+    { id: 'solaria', label: 'Solaria (online)' },
   ]
 
     constructor(config: Configuration) {
