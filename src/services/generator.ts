@@ -1,4 +1,4 @@
-import { LlmEngine, LlmCompletionOpts, LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
 import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
@@ -6,6 +6,7 @@ import Message from '../models/message'
 
 export interface GenerationOpts extends LlmCompletionOpts {
   model: string
+  streaming?: boolean
   docrepo?: string
   sources?: boolean
 }
@@ -66,34 +67,60 @@ export type GenerationResult =
       // debug
       //console.log(`Generation with ${llm.plugins.length} plugins and opts ${JSON.stringify(opts)}`)
 
-      // now stream
-      this.stopGeneration = false
-      this.stream = await llm.generate(opts.model, conversation, {
-        models: this.config.engines[llm.getName()]?.models?.chat,
-        autoSwitchVision: this.config.llm.autoVisionSwitch,
-        usage: true,
-        ...opts
-      })
-      for await (const msg of this.stream) {
-        if (this.stopGeneration) {
-          response.appendText({ type: 'content', text: '', done: true })
-          break
+      if (opts.streaming === false) {
+
+        // normal completion
+        const llmResponse: LlmResponse = await llm.complete(opts.model, conversation, {
+          models: this.config.engines[llm.getName()]?.models?.chat,
+          autoSwitchVision: this.config.llm.autoVisionSwitch,
+          usage: true,
+          ...opts
+        })
+
+        // fake streaming
+        const chunk: LlmChunk = {
+          type: 'content',
+          text: llmResponse.content,
+          done: true
         }
-        if (msg.type === 'usage') {
-          response.usage = msg.usage
-        } else if (msg.type === 'tool') {
-          response.setToolCall(msg)
-          callback?.call(null, msg)
-        } else if (msg.type === 'content') {
-          if (msg && sources && sources.length > 0) {
-            msg.done = false
+
+        // append text
+        response.appendText(chunk)
+        response.usage = llmResponse.usage
+        callback?.call(null, chunk)
+
+      } else {
+
+        // now stream
+        this.stopGeneration = false
+        this.stream = await llm.generate(opts.model, conversation, {
+          models: this.config.engines[llm.getName()]?.models?.chat,
+          autoSwitchVision: this.config.llm.autoVisionSwitch,
+          usage: true,
+          ...opts
+        })
+        for await (const msg of this.stream) {
+          if (this.stopGeneration) {
+            response.appendText({ type: 'content', text: '', done: true })
+            break
           }
-          response.appendText(msg)
-          callback?.call(null, msg)
-        } else if (msg.type === 'reasoning') {
-          response.appendText(msg)
-          callback?.call(null, msg)
+          if (msg.type === 'usage') {
+            response.usage = msg.usage
+          } else if (msg.type === 'tool') {
+            response.setToolCall(msg)
+            callback?.call(null, msg)
+          } else if (msg.type === 'content') {
+            if (msg && sources && sources.length > 0) {
+              msg.done = false
+            }
+            response.appendText(msg)
+            callback?.call(null, msg)
+          } else if (msg.type === 'reasoning') {
+            response.appendText(msg)
+            callback?.call(null, msg)
+          }
         }
+
       }
 
       // append sources

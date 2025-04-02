@@ -12,6 +12,7 @@ const chats = [
     uuid: '123',
     engine: 'engine',
     model: 'model',
+    disableStreaming: false,
     disableTools: false,
     modelOpts: {
       temperature: 1.0

@@ -244,6 +244,7 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').exists()).toBe(true)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=streaming]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').exists()).toBe(false)
@@ -258,6 +259,7 @@ test('Model settings update chat', async () => {
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').element.value).toBe('')
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=streaming]').element.value).toBe('false')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=contextWindowSize]').exists()).toBe(false)
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
@@ -270,6 +272,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.model-settings input[name=temperature]').setValue('0.7')
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings input[name=top_p]').setValue('0.8')
+  await wrapper.find('.model-settings select[name=streaming]').setValue(true)
 
   const table = wrapper.findComponent({ name: 'VariableTable' })
   await table.find<HTMLButtonElement>('.button.add').trigger('click')
@@ -289,6 +292,7 @@ test('Model settings update chat', async () => {
 
   expect(chat?.locale).toBe('fr-FR')
   expect(chat?.prompt).toBeUndefined()
+  expect(chat?.disableStreaming).toBe(true)
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBe(0.7)
@@ -305,12 +309,14 @@ test('Model settings update chat', async () => {
   await wrapper.find('.model-settings input[name=temperature]').setValue('5.0')
   await wrapper.find('.model-settings input[name=top_k]').setValue('150')
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
+  await wrapper.find('.model-settings select[name=streaming]').setValue(false)
 
   await table.find<HTMLTableRowElement>('tbody tr:nth-child(2)').trigger('click')
   await table.find<HTMLButtonElement>('.button.remove').trigger('click')
 
   expect(chat?.locale).toBeUndefined()
   expect(chat?.prompt).toBe('Prompt')
+  expect(chat?.disableStreaming).toBe(false)
   expect(chat?.modelOpts?.maxTokens).toBe(1000)
   expect(chat?.modelOpts?.contextWindowSize).toBeUndefined()
   expect(chat?.modelOpts?.temperature).toBeUndefined()
@@ -353,6 +359,7 @@ test('Model settings defaults', async () => {
   expect(store.config.llm.defaults[0]).toStrictEqual({
     engine: 'mock',
     model: 'chat',
+    disableStreaming: false,
     disableTools: false,
     temperature: 0.7
   })
@@ -360,11 +367,13 @@ test('Model settings defaults', async () => {
   // add stuff
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
   await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
+  await wrapper.find('.model-settings select[name=streaming]').setValue(true)
   await wrapper.find('.model-settings button[name=save]').trigger('click')
   expect(store.config.llm.defaults[0]).toStrictEqual({
     engine: 'mock',
     model: 'chat',
     locale: 'fr-FR',
+    disableStreaming: true,
     disableTools: false,
     temperature: 0.7,
     top_k: 15
@@ -378,6 +387,7 @@ test('Model settings defaults', async () => {
     engine: 'mock',
     model: 'chat',
     locale: 'fr-FR',
+    disableStreaming: true,
     disableTools: false,
     temperature: 0.7,
     top_k: 15
@@ -386,6 +396,7 @@ test('Model settings defaults', async () => {
   // clear
   await wrapper.find('.model-settings button[name=clear]').trigger('click')
   expect(store.config.llm.defaults).toHaveLength(0)
+  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=streaming]').element.value).toBe('false')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=maxTokens]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=temperature]').element.value).toBe('')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_k]').element.value).toBe('')

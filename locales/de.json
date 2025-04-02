@@ -1321,6 +1321,7 @@
     "prompt": "Aufforderung",
     "promptPlaceholder": "Leer lassen, um die Standardaufforderung zu verwenden",
     "reasoningEffort": "Überlegungsaufwand",
+    "streaming": "Streaming",
     "temperature": "Temperatur [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"

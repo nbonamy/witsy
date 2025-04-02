@@ -1,7 +1,7 @@
 
 import { Expert } from 'types'
 import { Configuration } from 'types/config'
-import { LlmEngine, LlmResponse, LlmChunk } from 'multi-llm-ts'
+import { LlmEngine, LlmChunk } from 'multi-llm-ts'
 import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
 import Generator, { GenerationResult, GenerationOpts } from './generator'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
@@ -116,6 +116,9 @@ export default class extends Generator {
     opts.model = this.chat.model || opts.model
     opts.docrepo = this.chat.docrepo || opts.docrepo
 
+    // disable streaming
+    opts.streaming = opts.streaming ?? (this.chat.disableStreaming !== true)
+
     // make sure chat options are set
     this.chat.setEngineModel(opts.engine, opts.model)
     this.chat.docrepo = opts.docrepo
@@ -188,44 +191,10 @@ export default class extends Generator {
   }
 
   async _prompt(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<GenerationResult> {
-
-    // normal case: we stream
-    if (!this.chat.disableStreaming) {
-      return await this.generate(this.llm, this.chat.messages, {
-        ...opts,
-        ...this.chat.modelOpts,
-      }, callback)
-    }
-
-    try {
-
-      // normal completion
-      const response: LlmResponse = await this.llm.complete(this.chat.model, this.chat.messages, {
-        usage: true,
-        ...opts,
-        ...this.chat.modelOpts
-      })
-
-      // fake streaming
-      const chunk: LlmChunk = {
-        type: 'content',
-        text: response.content,
-        done: true
-      }
-
-      // add content
-      this.chat.lastMessage().appendText(chunk)
-      this.chat.lastMessage().usage = response.usage
-      callback.call(null, chunk)
-
-      // done
-      return 'success'
-
-    } catch (error) {
-      console.error('Error while trying to complete', error)
-      return 'error'
-    }
-
+    return await this.generate(this.llm, this.chat.messages, {
+      ...opts,
+      ...this.chat.modelOpts,
+    }, callback)
   }
 
   async attach(file: Attachment) {
