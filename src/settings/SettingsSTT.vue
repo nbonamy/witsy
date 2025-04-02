@@ -16,6 +16,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'gladia'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="gladiaAPIKey" @blur="save" />
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
@@ -75,6 +79,7 @@ import STTOpenAI from '../voice/stt-openai'
 import STTGroq from '../voice/stt-groq'
 import STTFalAi from '../voice/stt-falai'
 import STTWhisper from '../voice/stt-whisper'
+import STTGladia from '../voice/stt-gladia'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 
@@ -87,6 +92,7 @@ const locale = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
 const falAiAPIKey = ref(null)
+const gladiaAPIKey = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
@@ -96,6 +102,7 @@ const engines = [
   { id: 'groq', label: 'Groq' },
   { id: 'falai', label: 'fal.ai' },
   { id: 'whisper', label: 'Whisper' },
+  { id: 'gladia', label: 'Gladia' }
 ]
 
 const models = computed(() => {
@@ -110,6 +117,8 @@ const models = computed(() => {
       return STTFalAi.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
+    } else if (engine.value === 'gladia') {
+      return STTGladia.models
     }
   })()
 
@@ -146,6 +155,7 @@ const load = () => {
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
+  gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -154,6 +164,7 @@ const save = () => {
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
   store.config.engines.falai.apiKey = falAiAPIKey.value
+  store.config.engines.gladia.apiKey = gladiaAPIKey.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }

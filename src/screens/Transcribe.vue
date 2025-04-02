@@ -193,7 +193,7 @@ const transcribe = async (audioChunks: any[]) => {
 
   } catch (error) {
     console.error('Error:', error)
-    Dialog.alert(t('transcribe.errorTranscription'))
+    Dialog.alert(t('transcribe.errorTranscription'), error.message)
   }
 
 }

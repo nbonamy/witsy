@@ -8,7 +8,7 @@ import OpenAI from './openai'
 
 export const favoriteMockEngine = '__favorites__'
 export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
-export const nonChatEngines = [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai' ]
+export const nonChatEngines = [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia' ]
 
 export type GetChatEnginesOpts = {
   favorites?: boolean
