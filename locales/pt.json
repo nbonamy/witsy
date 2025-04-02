@@ -1340,6 +1340,7 @@
     "prompt": "Prompt",
     "promptPlaceholder": "Deixe vazio para usar o prompt padrão",
     "reasoningEffort": "Esforço de Raciocínio",
+    "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"

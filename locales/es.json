@@ -1321,6 +1321,7 @@
     "prompt": "Mensaje",
     "promptPlaceholder": "Deja vacío para usar el mensaje por defecto",
     "reasoningEffort": "Esfuerzo de razonamiento",
+    "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"

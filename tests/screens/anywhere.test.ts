@@ -45,11 +45,19 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-const prompt = async (attachment: Attachment|null = null, docrepo: string|null = null, expert: Expert|null = null) => {
+type PromptParams = {
+  disableStreaming?: boolean
+  attachment?: Attachment
+  docrepo?: string
+  expert?: Expert
+}
+
+const prompt = async (params?: PromptParams) => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment, docrepo, expert } as SendPromptParams)
+  wrapper.vm.chat.disableStreaming = params?.disableStreaming
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: params?.attachment, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   return wrapper
 }
@@ -72,6 +80,7 @@ test('Initalizes LLM and chat without defaults', async () => {
   expect(wrapper.vm.llm.getName()).toBe('mock')
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableStreaming).toBe(false)
   expect(wrapper.vm.chat.disableTools).toBe(false)
   expect(wrapper.vm.chat.modelOpts).not.toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
@@ -86,6 +95,7 @@ test('Initalizes LLM and chat with defaults', async () => {
   expect(wrapper.vm.llm.getName()).toBe('mock')
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
+  expect(wrapper.vm.chat.disableStreaming).toBe(false)
   expect(wrapper.vm.chat.disableTools).toBe(true)
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
@@ -102,15 +112,18 @@ test('Changes engine model', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableTools: false })
+  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableStreaming: false, disableTools: false })
   await wrapper.vm.$nextTick()
   expect(LlmFactory.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
   expect(store.config.prompt.disableTools).toBe(false)
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat2')
+  expect(wrapper.vm.chat.disableStreaming).toBe(false)
   expect(wrapper.vm.llm.plugins.length).toBeGreaterThan(0)
-  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableTools: true })
+  wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableStreaming: true, disableTools: true })
+  expect(store.config.prompt.disableStreaming).toBe(true)
   expect(store.config.prompt.disableTools).toBe(true)
+  expect(wrapper.vm.chat.disableStreaming).toBe(true)
   expect(wrapper.vm.llm.plugins.length).toBe(0)
 })
 
@@ -128,20 +141,26 @@ test('Renders prompt response', async () => {
   expect(wrapper.find('.response .scratchpad').exists()).toBe(true)
 })
 
-test('Submits prompt', async () => {
+test('Submits prompt with streaming', async () => {
   const wrapper = await prompt()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
+test('Submits prompt without streaming', async () => {
+  const wrapper = await prompt({ disableStreaming: true })
+  expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('Reasoning...# instructions.default:\n"Title"')
+})
+
 test('Submits system prompt with params', async () => {
-  const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[0])
+  const wrapper = await prompt({ attachment: new Attachment('file', 'text/plain'), expert: store.experts[0] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits system user with params', async () => {
-  const wrapper = await prompt(new Attachment('file', 'text/plain'), null, store.experts[2])
+  const wrapper = await prompt({ attachment: new Attachment('file', 'text/plain'), expert: store.experts[2] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })

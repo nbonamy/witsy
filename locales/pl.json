@@ -1340,6 +1340,7 @@
     "prompt": "Podpowiedź",
     "promptPlaceholder": "Napisz swoją podpowiedź tutaj...",
     "reasoningEffort": "Wysiłek rozumowania",
+    "streaming": "Streaming",
     "temperature": "Temperatura",
     "topK": "Top K",
     "topP": "Top P"

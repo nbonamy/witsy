@@ -114,6 +114,7 @@ test('Assistant parameters', async () => {
     docrepo: null,
     expert: null,
     sources: true,
+    streaming: true,
     models: [ 'chat1', 'chat2' ],
     autoSwitchVision: true,
     citations: true,
@@ -160,9 +161,29 @@ test('User-defined instructions', async () => {
   expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 
-test('Assistant Chat', async () => {
+test('Assistant Chat Streaming', async () => {
   const content = await prompt('Hello LLM')
   expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(assistant!.chat.lastMessage().type).toBe('text')
+  expect(assistant!.chat.lastMessage().content).toBe(content)
+  expect(assistant!.chat.messages.length).toBe(3)
+  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
+})
+
+test('Assistant Chat No Streaming 1', async () => {
+  const content = await prompt('Hello LLM', { model: 'chat', streaming: false })
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.default.fr-FR:\n"Title"</b>')
+  expect(assistant!.chat.lastMessage().type).toBe('text')
+  expect(assistant!.chat.lastMessage().content).toBe(content)
+  expect(assistant!.chat.messages.length).toBe(3)
+  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
+})
+
+test('Assistant Chat No Streaming 2', async () => {
+  assistant!.initChat()
+  assistant!.chat.disableStreaming = true
+  const content = await prompt('Hello LLM')
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.default.fr-FR:\n"Title"</b>')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)

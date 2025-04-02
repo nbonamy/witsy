@@ -48,6 +48,13 @@
           {{ t('modelSettings.advancedSettings') }}
         </span>
       </div>
+      <div class="group" v-if="showAdvanced">
+        <label>{{ t('modelSettings.streaming') }}</label>
+        <select name="streaming" v-model="disableStreaming" @change="save">
+          <option :value="false">{{ t('common.enabled') }}</option>
+          <option :value="true">{{ t('common.disabled') }}</option>
+        </select>
+      </div>
       <div class="group" v-if="showAdvanced && isContextWindowSupported">
         <label>{{ t('modelSettings.contextWindowSize') }}</label>
         <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
@@ -125,6 +132,7 @@ const editor = ref(null)
 const llmFactory = new LlmFactory(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
+const disableStreaming: Ref<boolean> = ref(false)
 const disableTools: Ref<boolean> = ref(false)
 const locale = ref('')
 const prompt = ref('')
@@ -152,6 +160,7 @@ const modelHasDefaults = computed(() => {
 
 const canSaveAsDefaults = computed(() => {
   return (
+    disableStreaming.value === true ||
     disableTools.value === true ||
     locale.value !== '' ||
     prompt.value !== '' ||
@@ -213,6 +222,7 @@ onMounted(async () => {
     if (!props.chat) return
     engine.value = props.chat.engine
     model.value = props.chat.model
+    disableStreaming.value = props.chat.disableStreaming
     disableTools.value = props.chat.disableTools
     locale.value = props.chat.locale || ''
     prompt.value = props.chat.prompt || ''
@@ -281,6 +291,7 @@ const onClearDefaults = () => {
 const loadDefaults = () => {
   const defaults = store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value)
   if (defaults) {
+    disableStreaming.value = defaults.disableStreaming
     disableTools.value = defaults.disableTools
     locale.value = defaults.locale || ''
     prompt.value = defaults.prompt || ''
@@ -293,6 +304,7 @@ const loadDefaults = () => {
     reasoningEffort.value = defaults.reasoningEffort
     customParams.value = defaults.customOpts || {}
   } else {
+    disableStreaming.value = false
     disableTools.value = false
     locale.value = ''
     prompt.value = ''
@@ -312,6 +324,7 @@ const saveAsDefaults = () => {
   const modelDefaults = {
     engine: engine.value,
     model: model.value,
+    disableStreaming: disableStreaming.value,
     disableTools: disableTools.value,
     locale: locale.value.trim() || undefined,
     prompt: prompt.value.trim() || undefined,
@@ -413,6 +426,7 @@ const save = () => {
 
     // update chat
     props.chat.setEngineModel(engine.value, model.value)
+    props.chat.disableStreaming = disableStreaming.value
     props.chat.disableTools = disableTools.value
     props.chat.locale = locale.value.trim() || undefined,
     props.chat.prompt = prompt.value.trim() || undefined,

@@ -10,6 +10,13 @@
         <ModelSelect v-model="model" :engine="engine" />
       </div>
       <div class="group">
+        <label>{{ t('modelSettings.streaming') }}</label>
+        <select name="streaming" v-model="disableStreaming">
+          <option :value="false">{{ t('common.enabled') }}</option>
+          <option :value="true">{{ t('common.disabled') }}</option>
+        </select>
+      </div>
+      <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
         <select name="plugins" v-model="disableTools">
           <option :value="false">{{ t('common.enabled') }}</option>
@@ -41,6 +48,7 @@ const llmFactory = new LlmFactory(store.config)
 const dialog = ref(null)
 const engine = ref('openai')
 const model = ref('gpt-4o')
+const disableStreaming = ref(false)
 const disableTools = ref(false)
 
 const emit = defineEmits(['save'])
@@ -58,6 +66,10 @@ const props = defineProps({
     type: String,
     default: 'gpt-4o',
   },
+  disableStreaming: {
+    type: Boolean,
+    default: false,
+  },
   disableTools: {
     type: Boolean,
     default: false,
@@ -69,6 +81,7 @@ const onShow = () => {
   // get value
   engine.value = props.engine
   model.value = props.model
+  disableStreaming.value = props.disableStreaming
   disableTools.value = props.disableTools
 
   // use favorites
@@ -97,9 +110,9 @@ const onCancel = () => {
 const onSave = () => {
   if (llmFactory.isFavoriteEngine(engine.value)) {
     const favorite = llmFactory.getFavoriteModel(model.value)
-    emit('save', { engine: favorite.engine, model: favorite.model, disableTools: disableTools.value })
+    emit('save', { engine: favorite.engine, model: favorite.model, disableTools: disableTools.value, disableStreaming: disableStreaming.value })
   } else {
-    emit('save', { engine: engine.value, model: model.value, disableTools: disableTools.value })
+    emit('save', { engine: engine.value, model: model.value, disableTools: disableTools.value, disableStreaming: disableStreaming.value })
   }
   close()
 }

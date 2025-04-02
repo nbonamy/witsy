@@ -53,6 +53,7 @@ export type FavoriteModel = {
 export type ModelDefaults = {
   engine: string
   model: string
+  disableStreaming: boolean
   disableTools: boolean
   locale: string
   prompt: string

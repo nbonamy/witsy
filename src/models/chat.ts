@@ -32,6 +32,7 @@ export default class Chat implements ChatBase {
     this.engine = null
     this.model = null
     this.prompt = null
+    this.disableStreaming = false
     this.disableTools = false
     this.modelOpts = null
     this.locale = null
@@ -50,6 +51,7 @@ export default class Chat implements ChatBase {
     chat.engine = obj.engine || 'openai'
     chat.model = obj.model
     chat.prompt = obj.prompt
+    chat.disableStreaming = obj.disableStreaming
     chat.disableTools = obj.disableTools
     chat.modelOpts = obj.modelOpts
     chat.locale = obj.locale
@@ -74,6 +76,7 @@ export default class Chat implements ChatBase {
     this.title = obj.title
     this.lastModified = obj.lastModified
     this.prompt = obj.prompt
+    this.disableStreaming = obj.disableStreaming
     this.disableTools = obj.disableTools
     this.modelOpts = obj.modelOpts
     this.locale = obj.locale

@@ -44,6 +44,7 @@
     "engine": "",
     "model": "",
     "autosave": false,
+    "disableStreaming": false,
     "disableTools": false
   },
   "commands": {

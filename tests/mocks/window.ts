@@ -70,6 +70,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
             {
               engine: 'mock',
               model: 'chat',
+              disableStreaming: false,
               disableTools: true,
               contextWindowSize: 512,
               maxTokens: 150,
@@ -145,6 +146,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       encode: (s) => `${s}_encoded`,
     },
     clipboard: {
+      readText: vi.fn(),
       writeText: vi.fn(),
       writeImage: vi.fn(),
     },
