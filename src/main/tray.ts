@@ -86,6 +86,10 @@ export default class {
       menuItems = [
         ...menuItems,
         { role: 'about' },
+        { 
+          label: t('menu.app.checkForUpdates'),
+          click: () => this.autoUpdater.check()
+        },
         { type: 'separator' },
       ]
     }
