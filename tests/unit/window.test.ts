@@ -1,6 +1,8 @@
 
-import { vi, beforeEach, expect, test, Mock } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { BrowserWindow, dialog, Menu, shell, } from 'electron'
+import { useWindowMock } from '../mocks/window'
+import { store } from '../../src/services/store'
 import * as window from '../../src/main/window'
 import { Application } from '../../src/types/automation'
 
@@ -116,7 +118,12 @@ const expectCreateWebPreferences = (callParams) => {
   expect(callParams.webPreferences.sandbox).toBe(true)
 }
 
+beforeAll(() => {
+  useWindowMock()
+})
+
 beforeEach(async () => {
+  store.loadSettings()
   try { await window.closeMainWindow() } catch { /* empty */ }
   try { await window.closeCommandPicker() } catch { /* empty */ }
   try { await window.closePromptAnywhere() } catch { /* empty */ }

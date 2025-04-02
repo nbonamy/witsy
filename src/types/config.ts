@@ -20,13 +20,14 @@ export type Configuration = {
   stt: STTConfig
   tts: TTSConfig
   rag: RagConfig
+  realtime: RealtimeConfig
   mcpServers: { [key: string]: McpClaudeServer }
 }
 
 export type EngineConfig = EngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
-  realtime?: RealtimeConfig
+  realtime?: EngineRealtimeConfig
   disableTools?: boolean
 }
 
@@ -171,6 +172,11 @@ export type TTSConfig = {
   voice: string
 }
 
+export type RealtimeConfig = {
+  engine: string
+
+}
+
 export type ModelsConfig = {
   chat: Model[]
   image?: Model[]
@@ -188,7 +194,7 @@ export type ModelConfig = {
 export type RealtimeModel = string
 export type RealtimeVoice = 'alloy' | 'ash' | 'ballad' | 'coral' | 'edge' | 'sage' | 'simmer' | 'verse'
 
-export type RealtimeConfig = {
+export type EngineRealtimeConfig = {
   model: RealtimeModel
   voice: RealtimeVoice
 }

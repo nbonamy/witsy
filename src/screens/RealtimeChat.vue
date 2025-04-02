@@ -3,18 +3,14 @@
 
     <form onsubmit="return false">
       <div class="toolbar group">
+        <select class="tool" v-model="engine" @change="onChangeEngine">
+          <option v-for="engine in engines" :value="engine.id" :key="engine.id">{{ engine.name }}</option>
+        </select>
         <select class="tool" v-model="model" @change="save">
           <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
         </select>
         <select class="tool" v-model="voice" @change="save">
-          <option value="alloy">Alloy</option>
-          <option value="ash">Ash</option>
-          <option value="ballad">Ballad</option>
-          <option value="coral">Coral</option>
-          <option value="echo">Echo</option>
-          <option value="sage">Sage</option>
-          <option value="simmer">Simmer</option>
-          <option value="verse">Verse</option>
+          <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
         </select>
       </div>
     </form>
@@ -91,14 +87,43 @@ const sessionTotals: Ref<Stats> = ref({
 const kWelcomeMessage = t('common.clickToStart')
 
 const blob = ref<typeof AnimatedBlob>(null)
-const model: Ref<string> = ref(store.config.engines.openai.realtime.model || 'davinci')
-const voice: Ref<RealtimeVoice> = ref(store.config.engines.openai.realtime.voice || 'ash')
+const engine: Ref<string> = ref('openai')
+const model: Ref<string> = ref('gpt-4o-mini-realtime-preview')
+const voice: Ref<RealtimeVoice> = ref('ash')
 const status = ref(kWelcomeMessage)
 const state: Ref<'idle'|'active'> = ref('idle')
 const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
 
+const engines = computed(() => ([
+  { id: 'openai', name: 'OpenAI' },
+  //{ id: 'gladia', name: 'Gladia' },
+]))
+
 const models = computed(() => {
-  return store.config.engines.openai.models.chat.filter(m => m.id.includes('realtime'))
+  if (engine.value === 'gladia') {
+    return [ { id: 'solaria', name: 'Solaria' } ]
+  } else {
+    return store.config.engines[engine.value].models.realtime
+  }
+})
+
+const voices = computed(() => {
+  if (engine.value === 'gladia') {
+    return [
+      { id: 'default', name: 'Default' },
+    ]
+  } else if (engine.value === 'openai') {
+    return [
+      { id: 'alloy', name: 'Alloy' },
+      { id: 'ash', name: 'Ash' },
+      { id: 'ballad', name: 'Ballad' },
+      { id: 'coral', name: 'Coral' },
+      { id: 'echo', name: 'Echo' },
+      { id: 'sage', name: 'Sage' },
+      { id: 'simmer', name: 'Simmer' },
+      { id: 'verse', name: 'Verse' }
+    ]
+  }
 })
 
 let simInterval: NodeJS.Timeout
@@ -116,7 +141,17 @@ onMounted(() => {
     tipsManager.showTip('realtime')
   }, 1000)
 
+  // init
+  engine.value = store.config.realtime.engine
+  onChangeEngine()
+
 })
+
+const onChangeEngine = () => {
+  model.value = store.config.engines[engine.value].realtime.model || models.value[0].id
+  voice.value = store.config.engines[engine.value].realtime.voice || voices.value[0].id
+  save()
+}
 
 const createRealtimeSession = async (inStream: MediaStream, token: String, voice: String) => {
 
@@ -313,8 +348,9 @@ const onStart = () => {
 }
 
 const save = () => {
-  store.config.engines.openai.realtime.model = model.value
-  store.config.engines.openai.realtime.voice = voice.value
+  store.config.realtime.engine = engine.value
+  store.config.engines[engine.value].realtime.model = model.value
+  store.config.engines[engine.value].realtime.voice = voice.value
   store.saveSettings()
 }
 

@@ -124,7 +124,10 @@
     "engine": "openai",
     "model": "tts-1",
     "voice": "alloy"
-},
+  },
+  "realtime": {
+    "engine": "openai"
+  },
   "engines": {
     "__favorites__": {
       "models": {
