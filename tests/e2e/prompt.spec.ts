@@ -16,9 +16,9 @@ afterAll(async () => {
 test('Prompt', async () => {
   await window.fill('.prompt .input textarea', 'Hello World')
   await window.click('.prompt .icon.send')
-  await window.waitForSelector('.content .messages')
-  await expect(window.isVisible('.content .messages')).resolves.toBeTruthy()
-  await expect(window.isVisible('.content .messages .message')).resolves.toBeTruthy()
-  await expect(window.locator('.content .messages .message').all()).resolves.toHaveLength(2)
+  await window.waitForSelector('.chat-area .messages')
+  await expect(window.isVisible('.chat-area .messages')).resolves.toBeTruthy()
+  await expect(window.isVisible('.chat-area .messages .message')).resolves.toBeTruthy()
+  await expect(window.locator('.chat-area .messages .message').all()).resolves.toHaveLength(2)
   await window.waitForSelector('.prompt .icon.send')
 })
