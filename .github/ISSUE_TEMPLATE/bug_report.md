@@ -26,8 +26,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem. If your issue is related to an interaction with a model, please also include screenshots of the Debug Console. To open the Debug Console please refer to https://github.com/nbonamy/witsy/wiki/Network-Debug-Console.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 22]
+ - OS: [e.g. macOS 15, Windows 11]
+ - Witsy Version [e.g. 2.2.4]
 
 **Additional context**
 Add any other context about the problem here.
