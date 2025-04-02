@@ -296,6 +296,17 @@
         "chat": "",
         "image": ""
       }
+    },
+    "gladia": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
     }
   },
   "plugins": {

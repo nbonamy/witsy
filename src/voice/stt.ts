@@ -4,6 +4,7 @@ import STTOpenAI from './stt-openai'
 import STTFalAi from './stt-falai'
 import STTGroq from './stt-groq'
 import STTWhisper from './stt-whisper'
+import STTGladia from './stt-gladia'
 
 export type DownloadStatus = {
   state: 'initiate'|'download'|'done'
@@ -56,6 +57,8 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTFalAi(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
+  } else if (engine === 'gladia') {
+    return new STTGladia(config)
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -70,6 +73,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTFalAi.requiresDownload()
   } else if (engine === 'whisper') {
     return STTWhisper.requiresDownload()
+  } else if (engine === 'gladia') {
+    return STTGladia.requiresDownload()
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }

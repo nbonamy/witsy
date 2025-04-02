@@ -7,6 +7,7 @@ import STTOpenAI from '../../src/voice/stt-openai'
 import STTGroq from '../../src/voice/stt-groq'
 import STTFalAi from '../../src/voice/stt-falai'
 import STTWhisper from '../../src/voice/stt-whisper'
+import STTGladia from '../../src/voice/stt-gladia'
 import { fal } from '@fal-ai/client'
 
 const initCallback = vi.fn()
@@ -16,6 +17,30 @@ const initCallback = vi.fn()
 // tests will fail. therefore we cannot test
 // that api methods are indeed called correctly
 // which poses the question: what are we really testing here?
+
+// @ts-expect-error mocking
+global.fetch = async (url) => {
+  console.log('fetch', url)
+  if (url.includes('gladia') && url.includes('pre-recorded')) {
+    return {
+      json: () => ({
+        result_url: 'https://api.gladia.io/v2/transcription/1234567890',
+      })
+    }
+  }
+  if (url.includes('gladia') && url.includes('transcription')) {
+    return {
+      json: () => ({
+        status: 'done',
+        result: {
+          transcription: {
+            full_transcript: 'transcribed'
+          }
+        }
+      })
+    }
+  }
+}
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn()
@@ -127,6 +152,23 @@ test('Instanciates Whisper', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith(expect.objectContaining({ task:'automatic-speech-recognition', status: 'initiate', model: expect.any(String) }))
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instanciates Gladia', async () => {
+  store.config.stt.engine = 'gladia'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTGladia)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'gladia', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe({
+    type: 'audio/wav',
+    // @ts-expect-error mocking
+    arrayBuffer: async () => ([])
+  })).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
 test('Throws error on unknown engine', async () => {

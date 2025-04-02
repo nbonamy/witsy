@@ -71,10 +71,8 @@ const Dialog = {
     return Swal.fire(opts)
   },
 
-  alert: (title: string): Promise<DialogResult> => {
-    return Dialog.show({
-      title: title,
-    })
+  alert: (title: string, text?: string): Promise<DialogResult> => {
+    return Dialog.show({ title, text })
   },
 
   system: async (opts: any): Promise<DialogResult> => {
