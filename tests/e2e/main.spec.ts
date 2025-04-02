@@ -24,7 +24,7 @@ test('Check components', async () => {
   await expect(window.isVisible('.main')).resolves.toBeTruthy()
   await expect(window.isVisible('.main .sidebar')).resolves.toBeTruthy()
   await expect(window.isVisible('.main .resizer')).resolves.toBeTruthy()
-  await expect(window.isVisible('.main .content')).resolves.toBeTruthy()
+  await expect(window.isVisible('.main .chat-area')).resolves.toBeTruthy()
 })
 
 test('Check sidebar', async () => {
@@ -35,9 +35,9 @@ test('Check sidebar', async () => {
 })
 
 test('Check content', async () => {
-  await expect(window.isVisible('.content .toolbar')).resolves.toBeTruthy()
-  await expect(window.isVisible('.content .empty') || window.isVisible('.content .messages')).resolves.toBeTruthy()
-  await expect(window.isVisible('.content .prompt')).resolves.toBeTruthy()
+  await expect(window.isVisible('.chat-area .toolbar')).resolves.toBeTruthy()
+  await expect(window.isVisible('.chat-area .empty') || window.isVisible('.chat-area .messages')).resolves.toBeTruthy()
+  await expect(window.isVisible('.chat-area .prompt')).resolves.toBeTruthy()
 })
 
 test('Open settings', async () => {

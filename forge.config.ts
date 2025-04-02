@@ -90,7 +90,7 @@ const config: ForgeConfig = {
       'assets/trayUpdateWhite@2x.png',
       'assets/icon.ico',
     ],
-    ...osxPackagerConfig,
+    ...(process.env.TEST ? {} : osxPackagerConfig),
     afterCopy: [
       // sign native modules
       (buildPath, electronVersion, platform, arch, callback) => {
@@ -124,7 +124,7 @@ const config: ForgeConfig = {
     ],
   },
   rebuildConfig: {},
-  makers: [
+  makers: process.env.TEST ? [ new MakerZIP() ] : [
     /* xplat  */ new MakerZIP({}, ['linux', 'win32', 'darwin']),
     /* darwin */ new MakerDMG(dmgOptions, ['darwin']), new MakerPKG({ identity: process.env.IDENTITY_MAS_PKG, }, ['mas']),
     /* win32  */ new MakerSquirrel({}),

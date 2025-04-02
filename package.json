@@ -19,7 +19,7 @@
     "test": "vitest --exclude './tests/e2e/**'",
     "test-ci": "vitest run --exclude './tests/e2e/**' --coverage.enabled=true --coverage.reporter='text-summary'",
     "testui": "vitest --ui --exclude './tests/e2e/**' --coverage.enabled=true",
-    "teste2e": "vitest ./tests/e2e/**"
+    "teste2e": "WITSY_HOME=/tmp vitest ./tests/e2e/**"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
