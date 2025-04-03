@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 
-import { type RealtimeVoice } from '../types/config'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -89,7 +88,7 @@ const kWelcomeMessage = t('common.clickToStart')
 const blob = ref<typeof AnimatedBlob>(null)
 const engine: Ref<string> = ref('openai')
 const model: Ref<string> = ref('gpt-4o-mini-realtime-preview')
-const voice: Ref<RealtimeVoice> = ref('ash')
+const voice: Ref<string> = ref('ash')
 const status = ref(kWelcomeMessage)
 const state: Ref<'idle'|'active'> = ref('idle')
 const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
