@@ -199,13 +199,14 @@ const transcribe = async (audioChunks: any[]) => {
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
+  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
   if (event.key === 'Escape') {
     onCancel()
   }
-  if (event.key === 'c' && event.metaKey) {
+  if (event.key === 'c' && isCommand) {
     onCopy()
   }
-  if (event.key === 'v' && event.metaKey) {
+  if (event.key === 'i' && isCommand) {
     onInsert()
   }
 }
