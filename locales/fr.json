@@ -1561,6 +1561,15 @@
         "copyInstallCommand": "Vous pouvez copier la commande d'installation dans le presse-papiers et l'essayer dans un Terminal.",
         "description": "Ce plugin permet aux moteurs LLM d'accéder aux serveurs",
         "failedToInstall": "Échec de l'installation du serveur",
+        "importJson": {
+          "errorArgs": "Arguments de serveur MCP invalides.",
+          "errorCommand": "Commande du serveur MCP introuvable.",
+          "errorEmpty": "Le JSON ne peut pas être vide.",
+          "errorFormat": "Erreur lors de l'analyse de la définition du serveur JSON.",
+          "errorMultiple": "Plusieurs serveurs trouvés. Veuillez coller un serveur à la fois.",
+          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
+          "title": "Importer depuis Json"
+        },
         "importSmitheryServer": "Importer un serveur Smithery.ai…",
         "mcpServers": "Serveurs MCP :",
         "modelContextProtocol": "Model Context Protocol",

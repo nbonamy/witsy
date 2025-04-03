@@ -70,6 +70,7 @@ import ContextMenu from '../components/ContextMenu.vue'
 import McpServerEditor from '../screens/McpServerEditor.vue'
 import Dialog from '../composables/dialog'
 import Spinner from '../components/Spinner.vue'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 const editor = ref(null)
 const addButton = ref(null)
@@ -144,8 +145,9 @@ const onRestart = async () => {
 
 // Add the context menu actions
 const addMenuActions = [
-  { label: t('settings.plugins.mcp.addCustomServer'), action: 'custom' },
+  { label: t('settings.plugins.mcp.importJson.menu'), action: 'json' },
   { label: t('settings.plugins.mcp.importSmitheryServer'), action: 'smithery' },
+  { label: t('settings.plugins.mcp.addCustomServer'), action: 'custom' },
 ]
 
 // Add these methods to handle the plus button menu
@@ -161,7 +163,17 @@ const closeAddMenu = () => {
   showAddMenu.value = false
 }
 
-// Modify the onCreate method to handle both types
+const handleAddAction = (action: string) => {
+  closeAddMenu()
+  if (action === 'custom') {
+    onCreate('stdio')
+  } else if (action === 'smithery') {
+    onCreate('smithery')
+  } else if (action === 'json') {
+    onImportJson()
+  }
+}
+
 const onCreate = (type: string) => {
   selected.value = {
     uuid: null,
@@ -174,13 +186,47 @@ const onCreate = (type: string) => {
   editor.value.show()
 }
 
-const handleAddAction = (action: string) => {
-  closeAddMenu()
-  if (action === 'custom') {
-    onCreate('stdio')
-  } else if (action === 'smithery') {
-    onCreate('smithery')
+const onImportJson = async () => {
+
+  const result = await Dialog.show({
+    title: t('settings.plugins.mcp.importJson.title'),
+    input: 'textarea',
+    inputAttributes: { rows: 10 },
+    inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
+    customClass: { input: 'auto-height' },
+    inputValue: '',
+    showCancelButton: true,
+    preConfirm: (json) => {
+      try {
+        return validateServerJson(json)
+      } catch (error) {
+        Swal.showValidationMessage(error.message);
+      }
+    }
+  })
+
+  if (result.isConfirmed) {
+
+    // build a dummy server
+    const server: McpServer = {
+      uuid: null,
+      registryId: null,
+      state: 'enabled',
+      type: 'stdio',
+      command: result.value.command,
+      url: result.value.args.join(' '),
+      env: result.value.env || {}
+    }
+
+    // edit it
+    loading.value = true
+    nextTick(async () => {
+      await window.api.mcp.editServer(server)
+      load()
+    })
+
   }
+
 }
 
 const onDelete = async () => {
@@ -262,6 +308,42 @@ const onInstall = async ({ registry, server }) => {
     load()
 
   })
+
+}
+
+const validateServerJson = (json: string) => {
+
+  // build a proper payload
+  json = json.trim()
+  if (json.endsWith(',')) {
+    json = json.slice(0, -1).trim()
+  }
+  if (!json.length) {
+    throw new Error(t('settings.plugins.mcp.importJson.errorEmpty'))
+  }
+  if (!json.startsWith('{')) {
+    json = `{${json}}`
+  }
+
+  // parse it (might throw a syntax error)
+  let dict
+  try {
+    dict = JSON.parse(json)
+  } catch {
+    throw new Error(t('settings.plugins.mcp.importJson.errorFormat'))
+  }
+  
+  // need an object with exactly one key
+  if (typeof dict !== 'object') throw new Error(t('settings.plugins.mcp.importJson.errorFormat'))
+  if (Object.keys(dict).length != 1) throw new Error(t('settings.plugins.mcp.importJson.errorMultiple'))
+
+  // get the server and check command and args
+  const server = dict[Object.keys(dict)[0]]
+  if (typeof server.command !== 'string' || !server.command?.length) throw new Error(t('settings.plugins.mcp.importJson.errorCommand'))
+  if (!Array.isArray(server.args)) throw new Error(t('settings.plugins.mcp.importJson.errorArgs'))
+  
+  // done
+  return server
 
 }
 

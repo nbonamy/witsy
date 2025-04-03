@@ -1591,6 +1591,15 @@
         "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
         "description": "此插件允许 LLM 引擎访问",
         "failedToInstall": "服务器安装失败",
+        "importJson": {
+          "errorArgs": "无效的MCP服务器参数。",
+          "errorCommand": "未找到MCP服务器命令。",
+          "errorEmpty": "JSON不能为空。",
+          "errorFormat": "解析JSON服务器定义时出错。",
+          "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
+          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
+          "title": "从Json导入"
+        },
         "importSmitheryServer": "导入 Smithery.ai 服务器…",
         "mcpServers": "MCP 服务器：",
         "modelContextProtocol": "模型上下文协议",
