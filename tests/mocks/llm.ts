@@ -1,5 +1,5 @@
 
-import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStream, EngineCreateOpts } from 'multi-llm-ts'
+import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts } from 'multi-llm-ts'
 import { store } from '../../src/services/store'
 import Message from '../../src/models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
@@ -59,7 +59,7 @@ export default class LlmMock extends LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async stream(model: string, thread: Message[], opts: LlmCompletionOpts): Promise<LlmStream> {
+  async stream(model: string, thread: Message[], opts: LlmCompletionOpts): Promise<LlmStreamingResponse> {
 
     // errors
     if (thread[thread.length-1].content.includes('no api key')) {
@@ -74,19 +74,22 @@ export default class LlmMock extends LlmEngine {
 
     // infinite
     if (thread[thread.length-1].content.includes('infinite')) {
-      return new InfiniteStream()
+      return { stream: new InfiniteStream(), context: {} }
     }
 
     // now stream
-    return new RandomChunkStream(JSON.stringify([
-      ...thread.map(m => {
-        let content = m.contentForModel
-        if (m.attachment?.content && m.attachment.isText()) {
-          content += ` (${m.attachment.content})`
-        }
-        return { role: m.role, content: content }}),
-      { role: 'assistant', content: 'Be kind. Don\'t mock me' }
-    ]))
+    return {
+      stream: new RandomChunkStream(JSON.stringify([
+        ...thread.map(m => {
+          let content = m.contentForModel
+          if (m.attachment?.content && m.attachment.isText()) {
+            content += ` (${m.attachment.content})`
+          }
+          return { role: m.role, content: content }}),
+        { role: 'assistant', content: 'Be kind. Don\'t mock me' }
+      ])),
+      context: {}
+    }
   }
 
   async stop() {
