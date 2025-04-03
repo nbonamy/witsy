@@ -223,7 +223,7 @@ export default class extends Generator {
 
       // now get it
       this.initLlm(this.chat.engine)
-      const response = await this.llm.complete(this.chat.model, messages)
+      const response = await this.llm.complete(this.chat.model, messages, { tools: false })
       let title = response.content.trim()
       if (title === '') {
         return this.chat.messages[1].content
