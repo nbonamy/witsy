@@ -34,6 +34,7 @@ vi.mock('electron', async () => {
   BrowserWindow.prototype.getPosition =  vi.fn(() => [0, 0])
   BrowserWindow.prototype.getSize = vi.fn(() => [0, 0])
   BrowserWindow.prototype.setPosition = vi.fn()
+  BrowserWindow.prototype.getBounds = vi.fn(() => ({ x: 100, y: 200, width: 150, height: 250}))
   BrowserWindow.prototype.setBounds = vi.fn()
   BrowserWindow.prototype.setSize = vi.fn()
   BrowserWindow.prototype.setOpacity = vi.fn()
@@ -124,7 +125,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
   store.loadSettings()
-  try { await window.closeMainWindow() } catch { /* empty */ }
+  try { window.closeMainWindow() } catch { /* empty */ }
   try { await window.closeCommandPicker() } catch { /* empty */ }
   try { await window.closePromptAnywhere() } catch { /* empty */ }
   //try { await window.closeWaitingPanel() } catch { /* empty */ }
@@ -139,17 +140,20 @@ test('All windows are null', async () => {
 })
 
 test('Create main window', async () => {
-  await window.openMainWindow()
+  window.openMainWindow()
   expect(window.mainWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'Chat'
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#')
+  expect(window.mainWindow.isVisible()).toBe(true)
+  window.closeMainWindow()
+  expect(window.mainWindow).toBeNull()
 
 })
 
 test('Main window properties', async () => {
-  await window.openMainWindow()
+  window.openMainWindow()
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expect(callParams.width).toBeDefined()
   expect(callParams.height).toBeDefined()
@@ -160,9 +164,9 @@ test('Main window properties', async () => {
 })
 
 test('Two main windows are not created', async () => {
-  await window.openMainWindow()
+  window.openMainWindow()
   vi.clearAllMocks()
-  await window.openMainWindow()
+  window.openMainWindow()
   expect(BrowserWindow.prototype.isDestroyed).toHaveBeenCalled()
   expect(BrowserWindow.prototype.show).toHaveBeenCalled()
   expect(BrowserWindow.prototype.isMinimized).toHaveBeenCalled()
@@ -171,10 +175,10 @@ test('Two main windows are not created', async () => {
 })
 
 test('Restores existing main window', async () => {
-  await window.openMainWindow()
+  window.openMainWindow()
   window.mainWindow.minimize()
   vi.clearAllMocks()
-  await window.openMainWindow()
+  window.openMainWindow()
   expect(BrowserWindow.prototype.isDestroyed).toHaveBeenCalled()
   expect(BrowserWindow.prototype.show).toHaveBeenCalled()
   expect(BrowserWindow.prototype.isMinimized).toHaveBeenCalled()
@@ -184,16 +188,19 @@ test('Restores existing main window', async () => {
 })
 
 test('Open Settings window', async () => {
-  await window.openSettingsWindow()
+  window.openSettingsWindow()
   expect(window.settingsWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/settings',
   }))
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/settings')
+  expect(window.settingsWindow.isVisible()).toBe(true)
+  window.closeSettingsWindow()
+  expect(window.settingsWindow.isVisible()).toBe(false)
 })
 
 test('Create command picker window', async () => {
-  await window.openCommandPicker({ textId: 'id' })
+  window.openCommandPicker({ textId: 'id' })
   expect(window.commandPicker).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?textId=id#/commands')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
@@ -201,7 +208,7 @@ test('Create command picker window', async () => {
 })
 
 test('Close command picker window', async () => {
-  await window.openCommandPicker({ textId: 'id' })
+  window.openCommandPicker({ textId: 'id' })
   await window.closeCommandPicker({} as Application)
   expect(window.commandPicker).not.toBeNull()
   expect(window.commandPicker.isVisible()).toBe(false)
@@ -209,7 +216,7 @@ test('Close command picker window', async () => {
 })
 
 test('Create prompt anywhere window', async () => {
-  await window.openPromptAnywhere({ promptId: 'id' })
+  window.openPromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/prompt',
@@ -222,7 +229,7 @@ test('Create prompt anywhere window', async () => {
 })
 
 test('Update prompt anywhere window', async () => {
-  await window.preparePromptAnywhere({ promptId: 'id' })
+  window.preparePromptAnywhere({ promptId: 'id' })
   expect(window.promptAnywhereWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/prompt',
@@ -231,8 +238,14 @@ test('Update prompt anywhere window', async () => {
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?promptId=id#/prompt')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
-  await window.openPromptAnywhere({ promptId: 'id' })
+  window.openPromptAnywhere({ promptId: 'id' })
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('show', { promptId: 'id'})
+})
+
+test('Resize prompt anywhere window', async () => {
+  window.openPromptAnywhere({ promptId: 'id' })
+  window.resizePromptAnywhere(10, 20)
+  expect(BrowserWindow.prototype.setBounds).toHaveBeenCalledWith({ x: 100, y: 200, width: 160, height: 270 })
 })
 
 test('Close prompt anywhere window', async () => {
@@ -244,7 +257,7 @@ test('Close prompt anywhere window', async () => {
 })
 
 test('Open Readaloud window', async () => {
-  await window.openReadAloudPalette({ textId: 'textId', sourceApp: JSON.stringify({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }) })
+  window.openReadAloudPalette({ textId: 'textId', sourceApp: JSON.stringify({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }) })
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/readaloud',
     queryParams: {
@@ -258,7 +271,7 @@ test('Open Readaloud window', async () => {
 })
 
 test('Open Transcribe window', async () => {
-  await window.openTranscribePalette()
+  window.openTranscribePalette()
   expect(window.transcribePalette).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/transcribe',
@@ -270,7 +283,7 @@ test('Open Transcribe window', async () => {
 })
 
 test('Open Scratchpad window', async () => {
-  await window.openScratchPad('text')
+  window.openScratchPad('text')
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/scratchpad',
     title: 'Scratchpad',
@@ -282,7 +295,7 @@ test('Open Scratchpad window', async () => {
 });
 
 test('Open Realtime window', async () => {
-  await window.openRealtimeChatWindow()
+  window.openRealtimeChatWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/realtime',
     title: 'Voice Chat'
@@ -293,7 +306,7 @@ test('Open Realtime window', async () => {
 })
 
 test('Open Create Media window', async () => {
-  await window.openDesignStudioWindow()
+  window.openDesignStudioWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/studio',
     title: 'Design Studio',
@@ -304,7 +317,7 @@ test('Open Create Media window', async () => {
 })
 
 test('Open Computer', async () => {
-  await window.openComputerStatusWindow()
+  window.openComputerStatusWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/computer',
   }))
@@ -314,7 +327,7 @@ test('Open Computer', async () => {
 })
 
 test('Open Debug window', async () => {
-  await window.openDebugWindow()
+  window.openDebugWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     hash: '/debug',
   }))
