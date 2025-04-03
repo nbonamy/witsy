@@ -1197,6 +1197,9 @@
       "keepConversations": "Conservar conversaciones",
       "rename": "Renombrar carpeta"
     },
+    "message": {
+      "confirmDelete": "¿Está seguro de que desea eliminar este mensaje? Este mensaje y todos los mensajes posteriores de la conversación serán eliminados."
+    },
     "update": {
       "available": "Actualización disponible",
       "later": "Más tarde",

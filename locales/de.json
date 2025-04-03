@@ -1197,6 +1197,9 @@
       "keepConversations": "Konversationen behalten",
       "rename": "Ordner umbenennen"
     },
+    "message": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diese Nachricht löschen möchten? Diese Nachricht und alle nachfolgenden Nachrichten des Gesprächs werden gelöscht."
+    },
     "update": {
       "available": "Update verfügbar",
       "later": "Später",

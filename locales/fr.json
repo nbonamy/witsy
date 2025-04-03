@@ -1197,6 +1197,9 @@
       "keepConversations": "Conserver les conversations",
       "rename": "Renommer le dossier"
     },
+    "message": {
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce message ? Ce message et tous les messages suivants de la conversation seront supprimés."
+    },
     "update": {
       "available": "Mise à jour disponible",
       "later": "Plus tard",

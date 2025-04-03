@@ -65,6 +65,16 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
+  isVideo(): boolean {
+    if (!this.attachment) return false
+    const url = this.attachment.url
+    return Message.isVideoUrl(url)
+  }
+
+  static isVideoUrl(url: string): boolean {
+    return url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
+  }
+
   setExpert(expert: Expert, fallbackPrompt: string): void {
     if (!expert) return
     this.expert = JSON.parse(JSON.stringify(expert))
@@ -110,14 +120,13 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
-  isVideo(): boolean {
-    if (!this.attachment) return false
-    const url = this.attachment.url
-    return Message.isVideoUrl(url)
-  }
-
-  static isVideoUrl(url: string): boolean {
-    return url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
+  delete(): void {
+    if (this.type === 'image' && typeof this.content === 'string') {
+      window.api.file.delete(this.content)
+    }
+    if (this.attachment?.saved) {
+      window.api.file.delete(this.attachment.url)
+    }
   }
 
 }

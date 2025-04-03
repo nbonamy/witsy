@@ -1216,6 +1216,9 @@
       "keepConversations": "保留聊天记录",
       "rename": "重命名文件夹"
     },
+    "message": {
+      "confirmDelete": "您确定要删除此消息吗？此消息及对话的所有后续消息将被删除。"
+    },
     "update": {
       "available": "有可用更新",
       "later": "稍后",
