@@ -67,8 +67,7 @@ beforeAll(() => {
           new Message('system', 'instructions'),
           new Message('user', 'prompt1'),
           new Message('assistant', 'response1'),
-          Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment' } }),
-          new Message('user', 'prompt2'),
+          Message.fromJson({ role: 'user', content: 'prompt2', expert: { id: 'expert' }, attachment: { content: 'attachment', url: 'url', saved: true } }),
           new Message('assistant', 'response2'),  
         ]
       })
@@ -306,7 +305,6 @@ test('Fork Chat on Assistant Message', async () => {
   expect(Assistant.prototype.prompt).not.toHaveBeenCalled()
 })
 
-
 test('Fork Chat on User Message', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
   expect(store.history.chats).toHaveLength(1)
@@ -327,4 +325,18 @@ test('Fork Chat on User Message', async () => {
     docrepo: 'docrepo',
     expert: expect.objectContaining({ id: 'expert'})
   }, expect.any(Function), expect.any(Function))
+})
+
+test('Delete Message', async () => {
+  const wrapper: VueWrapper<any> = mount(Main)
+  emitEvent('select-chat', store.history.chats[0])
+  const chat = wrapper.vm.assistant.chat
+  expect(chat.messages).toHaveLength(5)
+  await wrapper.vm.onDeleteMessage(chat.messages[3])
+  expect(chat.messages).toHaveLength(3)
+  expect(window.api.file.delete).toHaveBeenCalledTimes(1)
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('url')
+  await wrapper.vm.onDeleteMessage(chat.messages[1])
+  expect(chat.messages).toHaveLength(1)
+  expect(window.api.file.delete).toHaveBeenCalledTimes(1)
 })
