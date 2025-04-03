@@ -200,7 +200,7 @@ const load = (tab: any) => {
 
 .dialog.settings form {
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 12px;
   transition: height 150ms ease;
 }
 
