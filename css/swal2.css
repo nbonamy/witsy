@@ -102,6 +102,10 @@ div:where(.swal2-container) textarea:where(.swal2-textarea) {
   box-shadow: none;
 }
 
+div:where(.swal2-container) textarea:where(.swal2-textarea).auto-height {
+  height: auto !important;
+}
+
 div:where(.swal2-container) input:where(.swal2-input):focus,
 div:where(.swal2-container) input:where(.swal2-file):focus,
 div:where(.swal2-container) select:where(.swal2-select):focus,
@@ -123,6 +127,13 @@ div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-che
     outline: none;
     margin-right: 8px;
   }
+}
+
+div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,
+div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,
+div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror {
+  border-color: var(--control-border-color) !important;
+  box-shadow: none;
 }
 
 div:where(.swal2-container) div:where(.swal2-actions) {
@@ -156,4 +167,16 @@ div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="d
 
 div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"])  button:where(.swal2-styled):nth-child(4) {
   margin-top: 12px !important;
+}
+
+div:where(.swal2-container) div:where(.swal2-validation-message) {
+  background-color: transparent;
+  margin-top: 0px;
+  justify-content: flex-start;
+  color: var(--text-color);
+  font-size: 10pt;
+}
+
+div:where(.swal2-container) div:where(.swal2-validation-message)::before {
+  content: none;
 }

@@ -1561,6 +1561,15 @@
         "copyInstallCommand": "Puede copiar el comando de instalación en su portapapeles e intentarlo en una Terminal.",
         "description": "Este complemento permite que los motores LLM accedan",
         "failedToInstall": "Error al instalar el servidor",
+        "importJson": {
+          "errorArgs": "Argumentos del servidor MCP no válidos.",
+          "errorCommand": "Comando del servidor MCP no encontrado.",
+          "errorEmpty": "JSON no puede estar vacío.",
+          "errorFormat": "Error al analizar la definición del servidor JSON.",
+          "errorMultiple": "Se encontraron múltiples servidores. Por favor, pega un servidor a la vez.",
+          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
+          "title": "Importar desde Json"
+        },
         "importSmitheryServer": "Importar servidor de Smithery.ai…",
         "mcpServers": "Servidores MCP:",
         "modelContextProtocol": "Protocolo de Contexto de Modelo",

@@ -1561,6 +1561,15 @@
         "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
         "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
         "failedToInstall": "Fehler beim Installieren des Servers",
+        "importJson": {
+          "errorArgs": "Ungültige MCP-Serverargumente.",
+          "errorCommand": "MCP-Serverbefehl nicht gefunden.",
+          "errorEmpty": "JSON darf nicht leer sein.",
+          "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
+          "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
+          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
+          "title": "Von Json importieren"
+        },
         "importSmitheryServer": "Smithery.ai-Server importieren…",
         "mcpServers": "MCP-Server:",
         "modelContextProtocol": "Modellkontextprotokoll",

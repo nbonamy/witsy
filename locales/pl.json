@@ -1597,6 +1597,15 @@
         "copyInstallCommand": "Możesz skopiować polecenie instalacji do schowka i wypróbować je w Terminalu.",
         "description": "Ta wtyczka umożliwia silnikom LLM dostęp do",
         "failedToInstall": "Nie udało się zainstalować serwera",
+        "importJson": {
+          "errorArgs": "Nieprawidłowe argumenty serwera MCP.",
+          "errorCommand": "Nie znaleziono polecenia serwera MCP.",
+          "errorEmpty": "JSON nie może być pusty.",
+          "errorFormat": "Błąd podczas analizowania definicji serwera JSON.",
+          "errorMultiple": "Znaleziono wiele serwerów. Proszę wkleić jeden serwer naraz.",
+          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
+          "title": "Importuj z Json"
+        },
         "importSmitheryServer": "Import serwera Smithery.ai...",
         "mcpServers": "Serwery MCP:",
         "modelContextProtocol": "Protokół Kontekstu Modelu",
