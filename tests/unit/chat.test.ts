@@ -101,3 +101,28 @@ test('Fork', () => {
   expect(fork.messages[2]).toMatchObject({ uuid: expect.not.stringMatching('^3$'), role: 'role3', content: 'content3' })
 
 })
+
+test('Delete Message', () => {
+  const chat = Chat.fromJson({
+    uuid: 'uuid',
+    title: 'title',
+    createdAt: 1,
+    lastModified: 1,
+    engine: 'engine',
+    model: 'model',
+    docrero: 'docrepo',
+    disableTools: true,
+    messages: [
+      { uuid: '1', role: 'role1', content: 'content1' },
+      { uuid: '2', role: 'role2', content: 'content2' },
+      { uuid: '3', role: 'role3', content: 'content3' },
+      { uuid: '4', role: 'role4', content: 'content4' },
+    ]
+  })
+  
+  chat.deleteMessagesStarting(chat.messages[2])
+  expect(chat.messages.length).toBe(2)
+  expect(chat.messages[0].uuid).toBe('1')
+  expect(chat.messages[1].uuid).toBe('2')
+
+})

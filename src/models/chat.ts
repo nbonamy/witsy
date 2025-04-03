@@ -133,12 +133,18 @@ export default class Chat implements ChatBase {
 
   delete(): void {
     for (const message of this.messages) {
-      if (message.type === 'image' && typeof message.content === 'string') {
-        window.api.file.delete(message.content)
+      message.delete()
+    }
+  }
+  
+  deleteMessagesStarting(message: Message): void {
+    const index = this.messages.findIndex((msg) => msg.uuid === message.uuid)
+    if (index !== -1) {
+      for (let i = index; i < this.messages.length; i++) {
+        this.messages[i].delete()
       }
-      if (message.attachment?.saved) {
-        window.api.file.delete(message.attachment.url)
-      }
+      this.messages = this.messages.slice(0, index)
+      this.lastModified = Date.now()
     }
   }
 

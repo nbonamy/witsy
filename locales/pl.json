@@ -1216,6 +1216,9 @@
       "keepConversations": "Prowadzenie rozmów",
       "rename": "Zmień nazwę folderu"
     },
+    "message": {
+      "confirmDelete": "Czy na pewno chcesz usunąć tę wiadomość? Ta wiadomość i wszystkie następne wiadomości rozmowy zostaną usunięte."
+    },
     "update": {
       "available": "Dostępna aktualizacja",
       "later": "Później",

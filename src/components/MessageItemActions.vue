@@ -11,6 +11,9 @@
     <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
       <BIconPencil /> {{ t('common.edit') }}
     </div>
+    <div class="action delete" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onDelete(message)">
+      <BIconTrash /> {{ t('common.delete') }}
+    </div>
     <div class="action fork" v-if="!message.transient" @click="onFork(message)">
       <ForIcon /> {{ t('common.fork') }}
     </div>
@@ -82,6 +85,10 @@ const onRetry = (message: Message) => {
 
 const onEdit = (message: Message) => {
   emitEvent('set-prompt', message)
+}
+
+const onDelete = (message: Message) => {
+  emitEvent('delete-message', message)
 }
 
 const onUsage = (message: Message) => {

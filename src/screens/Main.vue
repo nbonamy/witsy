@@ -58,6 +58,7 @@ onMounted(() => {
   onEvent('move-chat', onMoveChat)
   onEvent('delete-chat', onDeleteChat)
   onEvent('fork-chat', onForkChat)
+  onEvent('delete-message', onDeleteMessage)
   onEvent('rename-folder', onRenameFolder)
   onEvent('delete-folder', onDeleteFolder)
   onEvent('select-chat', onSelectChat)
@@ -252,25 +253,25 @@ const onDeleteChat = async (chatId: string|string[]) => {
     ? t('main.chat.confirmDeleteMultiple')
     : t('main.chat.confirmDeleteSingle')
 
-  Dialog.show({
+  const result = await Dialog.show({
     target: document.querySelector('.main'),
     title: title,
     text: t('common.confirmation.cannotUndo'),
     confirmButtonText: t('common.delete'),
     showCancelButton: true,
-  }).then((result) => {
-    
-    if (result.isConfirmed) {
-
-      // fist remove
-      deleteChats(chatIds)
-      store.saveHistory()
-
-    }
-
-    // selection done
-    sidebar.value?.cancelSelectMode()
   })
+    
+  if (result.isConfirmed) {
+
+    // fist remove
+    deleteChats(chatIds)
+    store.saveHistory()
+
+  }
+
+  // selection done
+  sidebar.value?.cancelSelectMode()
+
 }
 
 const deleteChats = (chatIds: string[]) => {
@@ -340,6 +341,25 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       docrepo: fork.docrepo,
       expert: message.expert
     })
+  }
+}
+
+const onDeleteMessage = async (message: Message) => {
+  const result = await Dialog.show({
+    target: document.querySelector('.main'),
+    title: t('main.message.confirmDelete'),
+    text: t('common.confirmation.cannotUndo'),
+    confirmButtonText: t('common.delete'),
+    showCancelButton: true,
+  })
+  if (result.isConfirmed) {
+    assistant.value.chat.deleteMessagesStarting(message)
+    store.saveHistory()
+    if (assistant.value.chat.messages.length === 1) {
+      assistant.value.chat.delete()
+      store.history.chats = store.history.chats.filter((c) => c.uuid !== assistant.value.chat.uuid)
+      onNewChat()
+    }
   }
 }
 

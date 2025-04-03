@@ -261,9 +261,14 @@ test('Toggle actions', async () => {
 })
 
 test('Run user actions', async () => {
+  
   const wrapper = await mount(userMessage)
+
   await wrapper.find('.actions .edit').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('set-prompt', userMessage)
+
+  await wrapper.find('.actions .delete').trigger('click')
+  expect(emitEventMock).toHaveBeenLastCalledWith('delete-message', userMessage)
 })
 
 test('Run assistant text actions', async () => {

@@ -46,6 +46,7 @@ export interface Message extends IMessageBase {
   setImage(url: string): void
   setToolCall(toolCall: LlmChunkTool): void
   isVideo(): boolean
+  delete(): void
 }
 
 export interface Chat {
@@ -69,6 +70,7 @@ export interface Chat {
   hasTitle(): boolean
   hasMessages(): boolean
   addMessage(message: Message): void
+  deleteMessagesStarting(message: Message): void
   fork(message: Message): Chat
   lastMessage(): Message
   subtitle(): string

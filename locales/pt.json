@@ -1216,6 +1216,9 @@
       "keepConversations": "Manter conversas",
       "rename": "Renomear Pasta"
     },
+    "message": {
+      "confirmDelete": "Tem certeza de que deseja excluir esta mensagem? Esta mensagem e todas as mensagens subsequentes da conversa serão excluídas."
+    },
     "update": {
       "available": "Atualização Disponível",
       "later": "Mais tarde",
