@@ -108,6 +108,7 @@ export type DesignStudioConfig = {
 export type PromptConfig = {
   engine: string
   model: string
+  disableStreaming: boolean
   disableTools: boolean
   autosave: boolean
 }
@@ -182,7 +183,10 @@ export type ModelsConfig = {
   image?: Model[]
   video?: Model[]
   embedding?: Model[]
+  realtime?: Model[]
+  computer?: Model[]
   tts?: Model[]
+  stt?: Model[]
 }
 
 export type ModelConfig = {
@@ -191,12 +195,9 @@ export type ModelConfig = {
   video?: string
 }
 
-export type RealtimeModel = string
-export type RealtimeVoice = 'alloy' | 'ash' | 'ballad' | 'coral' | 'edge' | 'sage' | 'simmer' | 'verse'
-
 export type EngineRealtimeConfig = {
-  model: RealtimeModel
-  voice: RealtimeVoice
+  model: string
+  voice: string
 }
 
 export type RagConfig = {
