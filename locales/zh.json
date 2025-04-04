@@ -1592,6 +1592,7 @@
         "description": "此插件允许 LLM 引擎访问",
         "failedToInstall": "服务器安装失败",
         "importJson": {
+          "details": "在此粘贴来自Claude的JSON MCP服务器定义。",
           "errorArgs": "无效的MCP服务器参数。",
           "errorCommand": "未找到MCP服务器命令。",
           "errorEmpty": "JSON不能为空。",

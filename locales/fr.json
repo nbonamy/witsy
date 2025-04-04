@@ -1562,6 +1562,7 @@
         "description": "Ce plugin permet aux moteurs LLM d'accéder aux serveurs",
         "failedToInstall": "Échec de l'installation du serveur",
         "importJson": {
+          "details": "Copiez/collez les définitions JSON du serveur MCP de Claude ici.",
           "errorArgs": "Arguments de serveur MCP invalides.",
           "errorCommand": "Commande du serveur MCP introuvable.",
           "errorEmpty": "Le JSON ne peut pas être vide.",

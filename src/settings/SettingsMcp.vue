@@ -190,6 +190,7 @@ const onImportJson = async () => {
 
   const result = await Dialog.show({
     title: t('settings.plugins.mcp.importJson.title'),
+    text: t('settings.plugins.mcp.importJson.details'),
     input: 'textarea',
     inputAttributes: { rows: 10 },
     inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
