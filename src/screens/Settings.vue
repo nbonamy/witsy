@@ -53,10 +53,6 @@ import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 import { installTabs, showActiveTab } from '../composables/tabs'
 
-// bus
-import useEventBus from '../composables/event_bus'
-const { onEvent } = useEventBus()
-
 store.load()
 
 const props = defineProps({
@@ -121,6 +117,9 @@ onMounted(async () => {
   observer = new MutationObserver(adjustHeight)
   observer.observe(dialog.value, { attributes: true, subtree: true, childList: true })
 
+  // keyup
+  document.addEventListener('keyup', onKeyup)
+
 })
 
 onUnmounted(() => {
@@ -151,7 +150,7 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
 
   // load all panels
   for (const setting of settings) {
-    setting.value.load(payload)
+    setting.value?.load(payload)
   }
 
   // show
@@ -166,6 +165,12 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
   })
 
   //
+}
+
+const onKeyup = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    onClose()
+  }
 }
 
 const onClose = () => {
