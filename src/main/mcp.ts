@@ -415,8 +415,9 @@ export default class {
   }
 
   protected uniqueToolName(server: McpServer, name: string): string {
-    return `${name}___${server.uuid}`
-  }
+  const suffix = server.uuid.slice(-4)  // use only last 4 characters of UUID to generate uniqueToolName
+  return `${name}_${suffix}`
+}
 
   protected mcpToOpenAI = (server: McpServer, tool: any): LlmTool => {
     return {
