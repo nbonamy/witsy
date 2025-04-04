@@ -1598,6 +1598,7 @@
         "description": "This plugin allows LLM engines to access",
         "failedToInstall": "Failed to install server",
         "importJson": {
+          "details": "Copy/Paste JSON MCP Server definitions from Claude here.",
           "errorArgs": "Invalid MCP Server arguments.",
           "errorCommand": "MCP Server command not found.",
           "errorEmpty": "JSON cannot be empty.",

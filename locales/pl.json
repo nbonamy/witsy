@@ -1598,6 +1598,7 @@
         "description": "Ta wtyczka umożliwia silnikom LLM dostęp do",
         "failedToInstall": "Nie udało się zainstalować serwera",
         "importJson": {
+          "details": "Wklej definicje serwera JSON MCP z Claude tutaj.",
           "errorArgs": "Nieprawidłowe argumenty serwera MCP.",
           "errorCommand": "Nie znaleziono polecenia serwera MCP.",
           "errorEmpty": "JSON nie może być pusty.",

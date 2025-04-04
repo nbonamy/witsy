@@ -1562,6 +1562,7 @@
         "description": "Este complemento permite que los motores LLM accedan",
         "failedToInstall": "Error al instalar el servidor",
         "importJson": {
+          "details": "Copia/Pega las definiciones del servidor MCP en formato JSON de Claude aquí.",
           "errorArgs": "Argumentos del servidor MCP no válidos.",
           "errorCommand": "Comando del servidor MCP no encontrado.",
           "errorEmpty": "JSON no puede estar vacío.",
