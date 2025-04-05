@@ -453,6 +453,9 @@
     "provider": "Fornitore di embedding"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Premi {shortcut} per attivare rapidamente questo modello"
+    },
     "settings": {
       "configure": "Configura",
       "needsConfiguration": "Questo motore deve essere configurato prima! Vuoi aprire le Impostazioni?"

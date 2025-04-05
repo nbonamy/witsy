@@ -472,6 +472,9 @@
     "provider": "Provedor de Embedding"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Pressione {shortcut} para ativar rapidamente este modelo"
+    },
     "settings": {
       "configure": "Configurar",
       "needsConfiguration": "Este motor precisa ser configurado primeiro! Deseja abrir as Configurações?"

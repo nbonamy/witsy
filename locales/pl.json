@@ -472,6 +472,9 @@
     "provider": "Dostawca osadzania"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Naciśnij {shortcut}, aby szybko aktywować ten model"
+    },
     "settings": {
       "configure": "Konfiguracja",
       "needsConfiguration": "Ten silnik należy najpierw skonfigurować! Czy chcesz otworzyć Ustawienia?"

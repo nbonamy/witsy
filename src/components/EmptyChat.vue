@@ -17,8 +17,9 @@
           <BIconArrowRepeat v-if="!showAllEngines && store.config.llm.engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
         </div>
         <div class="favorite" v-if="!showModelTip() && !showAllEngines">
-          <span @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
-          <span @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
+          <span class="action remove" @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
+          <span class="action add" @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
+          <span class="shortcut" v-if="modelShortcut">{{ t('emptyChat.favorites.shortcut', { shortcut: modelShortcut }) }}</span>
         </div>
         <div class="tip model" v-if="showModelTip()">
           <img src="/assets/arrow_dashed.svg" @load="centerLogos()" /><br/>
@@ -53,7 +54,7 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onMounted, onBeforeUpdate, onUpdated } from 'vue'
+import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
@@ -80,6 +81,16 @@ const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
+const modelShortcut = computed(() => {
+  const favorites = llmFactory.getChatModels(favoriteMockEngine)
+  const id = store.config.llm.engine == favoriteMockEngine ? model.value : llmFactory.getFavoriteId(store.config.llm.engine, model.value)
+  let index = favorites.findIndex(m => m.id === id)
+  if (index < 0 || index > 9) return null
+  if (index === 9) index = -1
+  const mod = window.api.platform == 'darwin' ? '⌥' : 'Alt'
+  return `${mod}+${String.fromCharCode(49 + index)}`
+})
+
 const showEngineTip = () => {
   return tipsManager.isTipAvailable('engineSelector') && !showAllEngines.value && Object.keys(engines).length > 1
 }
@@ -96,11 +107,27 @@ onBeforeUpdate(() => {
 
 onMounted(() => {
   centerLogos()
+  document.addEventListener('keydown', onKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
 })
 
 onUpdated(() => {
   centerLogos()
 })
+
+const onKeyDown = (ev: KeyboardEvent) => {
+  if (showAllEngines.value) return
+  const favorites = llmFactory.getChatModels(favoriteMockEngine)
+  if (!favorites.length) return
+  if (!ev.altKey) return
+  let index = ev.keyCode - 49
+  if (index === -1) index = 9
+  if (index < 0 || index > favorites.length-1) return
+  llmFactory.setChatModel(favoriteMockEngine, favorites[index].id)
+}
 
 const centerLogos = () => {
 
@@ -448,15 +475,19 @@ const onComputerUse = () => {
 }
 
 .favorite {
-
   margin-top: 1rem;
-  cursor: pointer;
   font-size: 9.5pt;
-  
-  > * {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .action {
+    cursor: pointer;
+  }
+
+  .shortcut {
+    opacity: 0.5;
   }
 }
 
@@ -489,6 +520,10 @@ const onComputerUse = () => {
       background-color: color-mix(in srgb, var(--text-color), transparent var(--action-bg-color-alpha-hover));
     }
   }
+}
+
+.empty:has(.shortcut) .actions {
+  margin-top: 3rem;
 }
 
 .empty:has(.tip.model) .actions {

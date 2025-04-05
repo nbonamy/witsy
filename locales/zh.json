@@ -472,6 +472,9 @@
     "provider": "嵌入提供商"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "按 {shortcut} 快速激活此模型"
+    },
     "settings": {
       "configure": "配置",
       "needsConfiguration": "此引擎需要先进行配置！您是否要打开设置？"

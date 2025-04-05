@@ -472,6 +472,9 @@
     "provider": "Embedding Provider"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Press {shortcut} to quickly activate this model"
+    },
     "settings": {
       "configure": "Configure",
       "needsConfiguration": "This engine needs to be configured first! Do you want to open the Settings?"

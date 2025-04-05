@@ -120,6 +120,8 @@ test('Prompts when selecting not ready engine', async () => {
 })
 
 test('Displays and selects favorites', async () => {
+  store.config.general.tips.modelSelector = false
+  store.config.general.tips.modelSelector = false
   const wrapper: VueWrapper<any> = mount(EmptyChat)
   await wrapper.find('.empty .current .logo').trigger('click')
   await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
@@ -127,6 +129,24 @@ test('Displays and selects favorites', async () => {
   expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(1)').element.value).toBe('mock-chat1')
   expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(2)').element.value).toBe('mock-chat2')
   await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat1')
+  expect(store.config.llm.engine).toBe(favoriteMockEngine)
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
+  expect(wrapper.find<HTMLElement>('.empty .favorite .shortcut').text()).toBe('emptyChat.favorites.shortcut')
+  expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+1' : 'Alt+1')
+  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat2')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat2')
+  expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+2' : 'Alt+2')
+})
+
+test('Activates favorites', async () => {
+  mount(EmptyChat)
+  document.dispatchEvent(new KeyboardEvent('keydown', { code: '2', key: '2', keyCode: 50, altKey: true }))
+  expect(store.config.llm.engine).toBe(favoriteMockEngine)
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat2')
+  document.dispatchEvent(new KeyboardEvent('keydown', { code: '1', key: '1', keyCode: 49, altKey: true }))
+  expect(store.config.llm.engine).toBe(favoriteMockEngine)
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
+  document.dispatchEvent(new KeyboardEvent('keydown', { code: '2', key: '2', keyCode: 50, altKey: false }))
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
   expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
 })
@@ -146,14 +166,14 @@ test('Manages favorites', async () => {
   expect(store.config.llm.favorites).toHaveLength(3)
   expect(store.config.llm.favorites[2].engine).toBe('openai')
   expect(store.config.llm.favorites[2].model).toBe('gpt-4-turbo')
-  await wrapper.find('.empty .current .favorite span').trigger('click')
+  await wrapper.find('.empty .current .favorite .action').trigger('click')
   expect(store.config.llm.favorites).toHaveLength(2)
 
   // from favorites
   store.config.general.tips.modelSelector = false
   await wrapper.find('.empty .current .logo').trigger('click')
   await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
-  await wrapper.find('.empty .current .favorite span').trigger('click')
+  await wrapper.find('.empty .current .favorite .action').trigger('click')
   expect(store.config.llm.favorites).toHaveLength(1)
 
 })
