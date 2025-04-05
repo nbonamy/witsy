@@ -42,7 +42,7 @@
               <td class="tools center">
                 <BIconSearch @click="showTools(server)" v-if="isRunning(server)"/>
               </td>
-              <td class="center">
+              <td class="status center">
                 <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
                 <span v-else>{{ getStatus(server) }}</span>
               </td>

@@ -69,7 +69,7 @@ test('Plugin enablement', async () => {
   // state should be updated
   expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr')).toHaveLength(5)
   expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr input[type=checkbox]:checked')).toHaveLength(3)
-  expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr td:nth-child(4)').map(e => e.text())).toStrictEqual([ '✅', '✅', '🔶', '❌', '🔶' ])
+  expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr td.status').map(e => e.text())).toStrictEqual([ '✅', '✅', '🔶', '❌', '🔶' ])
 
 })
 
