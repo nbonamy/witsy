@@ -453,6 +453,9 @@
     "provider": "Proveedor de incrustación"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Presiona {shortcut} para activar rápidamente este modelo"
+    },
     "settings": {
       "configure": "Configurar",
       "needsConfiguration": "¡Este motor debe ser configurado primero! ¿Quieres abrir la Configuración?"

@@ -453,6 +453,9 @@
     "provider": "Fournisseur"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Appuyez sur {shortcut} pour activer rapidement ce modèle"
+    },
     "settings": {
       "configure": "Configurer",
       "needsConfiguration": "Ce moteur doit d'abord être configuré ! Voulez-vous ouvrir les Paramètres ?"

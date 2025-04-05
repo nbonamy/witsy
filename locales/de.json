@@ -453,6 +453,9 @@
     "provider": "Einbettungsanbieter"
   },
   "emptyChat": {
+    "favorites": {
+      "shortcut": "Drücken Sie {shortcut}, um dieses Modell schnell zu aktivieren"
+    },
     "settings": {
       "configure": "Konfigurieren",
       "needsConfiguration": "Dieser Motor muss zuerst konfiguriert werden! Möchten Sie die Einstellungen öffnen?"
