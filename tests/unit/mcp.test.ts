@@ -51,9 +51,12 @@ vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
   })) }
 })
 
+let count = 1
 vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
-  const Client = vi.fn()
-  Client.prototype.connect = vi.fn()
+  const Client = vi.fn(function() {
+    this.id = count++
+  })
+  Client.prototype.connect = vi.fn(function(transport) { this.transport = transport })
   Client.prototype.close = vi.fn()
   Client.prototype.listTools = vi.fn(async () => ({
     tools: [
@@ -61,34 +64,35 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
       { name: 'tool2', description: 'tool2 description', inputSchema: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } },
     ]
   }))
-  Client.prototype.callTool = vi.fn(async (params) => {
-    if (JSON.stringify(params.arguments).includes('legacy')) return { toolResult: 'result' }
-    else return { content: [ { type: 'text', text: 'result' }]}
+  Client.prototype.callTool = vi.fn(function(params) {
+    if (this.id == 1) return { toolResult: `${this.id}-${params.name}-${params.arguments.arg}-result` }
+    else return { content: [ { type: 'text', text: `${this.id}-${params.name}-${params.arguments.arg}-result` }]}
   })
   return { Client }
 })
 
 beforeEach(() => {
+  count = 1
   config = JSON.parse(JSON.stringify(mcpConfig))
   vi.clearAllMocks()
 })
   
-test('init', async () => {
+test('Initialization', async () => {
   const mcp = new Mcp(app)
   expect(mcp).toBeDefined()
   expect(mcp.clients).toBeDefined()
   expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
   expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
-    { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' } },
-    { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
-    { uuid: '3', registryId: '3', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
+    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' } },
+    { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
+    { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
     { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', env: { KEY: 'value' } },
     { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', env: undefined }
   ])
 })
 
-test('create server', async () => {
+test('Create server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
   expect(mcp.getServers()).toHaveLength(6)
@@ -110,26 +114,26 @@ test('create server', async () => {
   })
 })
 
-test('edit normal server', async () => {
+test('Edit normal server', async () => {
   const mcp = new Mcp(app)
-  expect(await mcp.editServer({ uuid: '2', registryId: '2', state: 'disabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
+  expect(await mcp.editServer({ uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'disabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
   expect(mcp.getServers()[1]).toMatchObject({
-    uuid: '2',
-    registryId: '2',
+    uuid: '2345-6789-0abc',
+    registryId: '2345-6789-0abc',
     state: 'disabled',
     type: 'sse',
     url: 'http://localhost:3001',
   })
   expect(config.plugins.mcp.servers[1]).toMatchObject({
-    uuid: '2',
-    registryId: '2',
+    uuid: '2345-6789-0abc',
+    registryId: '2345-6789-0abc',
     state: 'disabled',
     type: 'sse',
     url: 'http://localhost:3001',
   })
 })
 
-test('edit mcp server', async () => {
+test('Edit mcp server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'node', url: '-f exec mcp1.js'})).toBe(true)
   
@@ -167,32 +171,36 @@ test('edit mcp server', async () => {
   expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2', '@mcp1'])
 })
 
-test('delete server', async () => {
+test('Delete server', async () => {
   const mcp = new Mcp(app)
-  expect(mcp.deleteServer('1')).toBe(true)
-  expect(mcp.getServers().find(s => s.uuid === '1')).toBeUndefined()
-  expect(config.plugins.mcp.servers.find(s => s.uuid === '1')).toBeUndefined()
+  expect(mcp.getServers().length).toBe(5)
+  expect(mcp.deleteServer('1234-5678-90ab')).toBe(true)
+  expect(mcp.getServers().length).toBe(4)
+  expect(mcp.getServers().find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
+  expect(config.plugins.mcp.servers.find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
   expect(mcp.deleteServer('@mcp1')).toBe(true)
+  expect(mcp.getServers().length).toBe(3)
   expect(mcp.getServers().find(s => s.uuid === 'mcp1')).toBeUndefined()
   expect(config.mcpServers['@mcp1']).toBeUndefined()
   expect(mcp.deleteServer('4')).toBe(false)
+  expect(mcp.getServers().length).toBe(3)
   expect(mcp.deleteServer('@mcp2')).toBe(false)
 })
 
-test('connect', async () => {
+test('Connect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
   expect(mcp.clients).toHaveLength(3)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' }, tools: ['tool1___1', 'tool2___1'] },
-      { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___2', 'tool2___2'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab'] },
+      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc'] },
       { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1'] },
     ],
     logs: {
-      '1': [],
-      '2': [],
-      '3': [],
+      '1234-5678-90ab': [],
+      '2345-6789-0abc': [],
+      '3456-7890-abcd': [],
       'mcp1': [],
       'mcp2': [],
     }
@@ -200,19 +208,19 @@ test('connect', async () => {
   expect(await mcp.getTools()).toStrictEqual([
     {
       type: 'function',
-      function: { name: 'tool1___1', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
+      function: { name: 'tool1___90ab', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
     },
     {
       type: 'function',
-      function: { name: 'tool2___1', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2___90ab', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
     {
       type: 'function',
-      function: { name: 'tool1___2', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
+      function: { name: 'tool1___0abc', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
     },
     {
       type: 'function',
-      function: { name: 'tool2___2', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2___0abc', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
     {
       type: 'function',
@@ -225,24 +233,26 @@ test('connect', async () => {
   ])
 })
 
-test('call tool', async () => {
+test('Call tool', async () => {
   const mcp = new Mcp(app)
   await mcp.connect()
-  expect(await mcp.callTool('tool1___1', { arg: 'legacy' })).toStrictEqual({ toolResult: 'result' })
-  expect(await mcp.callTool('tool2___1', { arg: 'modern' })).toStrictEqual({ content: [{ type: 'text', text: 'result' }] })
+  expect(await mcp.callTool('tool1___90ab', { arg: 'arg1' })).toStrictEqual({ toolResult: '1-tool1-arg1-result' })
+  expect(await mcp.callTool('tool2___90ab', { arg: 'arg2' })).toStrictEqual({ toolResult: '1-tool2-arg2-result' })
+  expect(await mcp.callTool('tool1___0abc', { arg: 'arg3' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool1-arg3-result' }] })
+  expect(await mcp.callTool('tool2___0abc', { arg: 'arg4' })).toStrictEqual({ content: [{ type: 'text', text: '2-tool2-arg4-result' }] })
   await expect(() => mcp.callTool('tool3___1', { arg: 'modern' })).rejects.toThrowError(/not found/)
 })
 
-test('disconnect', async () => {
+test('Disconnect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
   expect(mcp.clients).toHaveLength(3)
-  expect(mcp.deleteServer('1')).toBe(true)
+  expect(mcp.deleteServer('1234-5678-90ab')).toBe(true)
   expect(Client.prototype.close).toHaveBeenCalledTimes(1)
   expect(mcp.clients).toHaveLength(2)
 })
 
-test('reload', async () => {
+test('Reload', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
   expect(mcp.clients).toHaveLength(3)
@@ -252,7 +262,7 @@ test('reload', async () => {
   expect(Client.prototype.close).toHaveBeenCalledTimes(3)
 })
 
-test('install smithery', async () => {
+test('Install smithery', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.getInstallCommand('smithery', 'server')).toBe('npx -y @smithery/cli@latest install server --client witsy')
   expect(await mcp.installServer('smithery', 'server')).toBe(true)
