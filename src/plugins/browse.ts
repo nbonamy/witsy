@@ -44,7 +44,8 @@ export default class extends Plugin {
   async execute(parameters: anyDict): Promise<anyDict> {
 
     try {
-      const html = await fetch(parameters.url).then(response => response.text())
+      const response = await fetch(parameters.url)
+      const html = await response.text()
       const text = convert(html, {
         selectors: [
           { selector: 'img', format: 'skip' }
