@@ -403,3 +403,7 @@ button.destructive {
 .button-group button:last-child {
   border-radius: 0 var(--control-button-border-radius) var(--control-button-border-radius) 0;
 }
+
+table th.center, table td.center {
+  text-align: center;
+}

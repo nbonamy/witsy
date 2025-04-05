@@ -1,7 +1,7 @@
 
 import { anyDict } from '../types/index'
 import { App } from 'electron'
-import { McpServer, McpClient, McpStatus } from '../types/mcp'
+import { McpServer, McpClient, McpStatus, McpTool } from '../types/mcp'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
@@ -382,6 +382,19 @@ export default class {
   private disconnect = (client: McpClient): void => {
     client.client.close()
     this.clients = this.clients.filter(c => c !== client)
+  }
+
+  getServerTools = async (uuid: string): Promise<McpTool[]> => {
+
+    const client = this.clients.find(client => client.server.uuid === uuid)
+    if (!client) return []
+
+    const tools = await client.client.listTools()
+    return tools.tools.map((tool: any) => ({
+      name: tool.name,
+      description: tool.description    
+    }))
+
   }
 
   getTools = async (): Promise<LlmTool[]> => {

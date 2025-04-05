@@ -1622,6 +1622,7 @@
         "status": "Status",
         "target": "Target",
         "title": "MCP",
+        "tools": "Tools",
         "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
       },
       "memory": {

@@ -1616,6 +1616,7 @@
         "status": "Status",
         "target": "Alvo",
         "title": "MCP",
+        "tools": "Ferramentas",
         "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
       },
       "memory": {

@@ -1586,6 +1586,7 @@
         "status": "Estado",
         "target": "Objetivo",
         "title": "MCP",
+        "tools": "Herramientas",
         "totalTools": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
       },
       "memory": {

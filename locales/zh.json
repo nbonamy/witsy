@@ -1616,6 +1616,7 @@
         "status": "状态",
         "target": "目标",
         "title": "MCP",
+        "tools": "工具",
         "totalTools": "总共 {count} 个服务可用"
       },
       "memory": {
