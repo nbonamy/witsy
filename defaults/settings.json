@@ -141,6 +141,16 @@
         "video": ""
       }
     },
+    "witsy": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "openai": {
       "apiKey": "",
       "baseURL": "https://api.openai.com/v1",

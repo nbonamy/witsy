@@ -5,9 +5,10 @@ import { imageFormats, textFormats } from '../models/attachment'
 import { store } from '../services/store'
 import * as llm from 'multi-llm-ts'
 import OpenAI from './openai'
+import Witsy from './witsy'
 
 export const favoriteMockEngine = '__favorites__'
-export const standardEngines = [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
+export const standardEngines = [ 'witsy', 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
 export const nonChatEngines = [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia' ]
 
 export type GetChatEnginesOpts = {
@@ -165,6 +166,7 @@ export default class LlmFactory {
   }
 
   isEngineConfigured = (engine: string): boolean => {
+    if (engine === 'witsy') return Witsy.isConfigured(this.config.engines.witsy)
     if (engine === 'anthropic') return llm.Anthropic.isConfigured(this.config.engines.anthropic)
     if (engine === 'cerebras') return llm.Cerebras.isConfigured(this.config.engines.cerebras)
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
@@ -181,6 +183,7 @@ export default class LlmFactory {
   }  
   
   isEngineReady = (engine: string): boolean => {
+    if (engine === 'witsy') return Witsy.isReady(this.config.engines.witsy, this.config.engines.witsy?.models)
     if (engine === 'anthropic') return llm.Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
@@ -212,6 +215,7 @@ export default class LlmFactory {
     }
     
     // select
+    if (engine === 'witsy') return new Witsy(this.config.engines.witsy)
     if (engine === 'anthropic') return new llm.Anthropic(this.config.engines.anthropic, getComputerInfo())
     if (engine === 'cerebras') return new llm.Cerebras(this.config.engines.cerebras)
     if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
@@ -288,7 +292,9 @@ export default class LlmFactory {
     
     console.log('Loading models for', engine)
     let models: llm.ModelsList|null = null
-    if (engine === 'openai') {
+    if (engine === 'witsy') {
+      models = await this.loadWitsyModels(this.config.engines.witsy)
+    } else if (engine === 'openai') {
       models = await llm.loadOpenAIModels(this.config.engines.openai)
     } else if (engine === 'ollama') {
       models = await llm.loadOllamaModels(this.config.engines.ollama)
@@ -363,6 +369,30 @@ export default class LlmFactory {
     // done
     return true
   
+  }
+  
+  loadWitsyModels = async (engineConfig: EngineConfig): Promise<null|llm.ModelsList> => {
+
+    const witsy = new Witsy(engineConfig)
+
+    // load
+    let models: llm.Model[] = []
+    try {
+      models = await witsy.getModels()
+    } catch (error) {
+      console.error('Error listing Witsy models:', error);
+    }
+    if (!models.length) {
+      return null
+    }
+
+    // done
+    return {
+      chat: models,
+      image: [],
+      embedding: [],
+    }
+    
   }
 
   loadModelsCustom = async (engine: string): Promise<boolean> => {

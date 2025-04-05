@@ -28,6 +28,7 @@ import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineLogo from '../components/EngineLogo.vue'
 import CreateEngine from '../screens/CreateEngine.vue'
+import SettingsWitsy from './SettingsWitsy.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
@@ -65,6 +66,7 @@ const engines = computed(() => {
       return {
         id: id,
         label: {
+          witsy: 'Witsy',
           openai: 'OpenAI',
           ollama: 'Ollama',
           anthropic: 'Anthropic',
@@ -82,6 +84,7 @@ const engines = computed(() => {
 })
 
 const currentView = computed(() => {
+  if (currentEngine.value == 'witsy') return SettingsWitsy
   if (currentEngine.value == 'openai') return SettingsOpenAI
   if (currentEngine.value == 'ollama') return SettingsOllama
   if (currentEngine.value == 'anthropic') return SettingsAnthropic

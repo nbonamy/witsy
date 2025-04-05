@@ -3,6 +3,7 @@
   <select name="engine" v-model="value" @change="$emit('change')" :disabled="disabled">
     <option value="" v-if="defaultText">{{ defaultText }}</option>
     <option :value="favoriteMockEngine" v-if="showFavorites">Favorite models</option>
+    <option value="witsy">Witsy</option>
     <option value="openai">OpenAI</option>
     <option value="ollama">Ollama</option>
     <option value="anthropic">Anthropic</option>
