@@ -404,7 +404,7 @@ export default class {
       throw new Error(`Tool ${name} not found`)
     }
 
-    const tool = name.replace(`___${client.server.uuid}`, '')
+    const tool = name.replace(`___${client.server.uuid.slice(-4)}`, '')
     console.log('Calling MCP tool', tool, args)
 
     return await client.client.callTool({
@@ -415,8 +415,9 @@ export default class {
   }
 
   protected uniqueToolName(server: McpServer, name: string): string {
-    return `${name}___${server.uuid}`
-  }
+  const suffix = server.uuid.slice(-4)  // use only last 4 characters of UUID to generate uniqueToolName
+  return `${name}___${suffix}`
+}
 
   protected mcpToOpenAI = (server: McpServer, tool: any): LlmTool => {
     return {
