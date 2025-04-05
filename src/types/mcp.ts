@@ -20,6 +20,11 @@ export type McpClient = {
   tools: string[]
 }
 
+export type McpTool = {
+  name: string
+  description: string
+}
+
 export type McpClaudeServer = {
   command: string
   args: string[]

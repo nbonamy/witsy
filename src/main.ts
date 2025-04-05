@@ -2,6 +2,7 @@
 import { History, Command, Expert } from './types/index';
 import { Configuration } from './types/config';
 import { Application, RunCommandParams } from './types/automation';
+import { McpTool } from './types/mcp';
 import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
@@ -718,6 +719,10 @@ ipcMain.handle('mcp-reload', async () => {
 
 ipcMain.on('mcp-get-status', (event): void => {
   event.returnValue = mcp ? mcp.getStatus() : null;
+});
+
+ipcMain.handle('mcp-get-server-tools', async (_, payload): Promise<McpTool[]> => {
+  return mcp ? await mcp.getServerTools(payload) : [];
 });
 
 ipcMain.handle('mcp-get-tools', async (): Promise<LlmTool[]> => {

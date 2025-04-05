@@ -6,7 +6,7 @@ import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, Ex
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
-import { McpServer, McpStatus } from './types/mcp';
+import { McpServer, McpStatus, McpTool } from './types/mcp';
 import { LocalSearchResult } from './main/search';
 import { Size } from './main/computer';
 import { LlmChunk, LlmTool } from 'multi-llm-ts';
@@ -149,6 +149,7 @@ contextBridge.exposeInMainWorld(
       installServer: (registry: string, server: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-install-server', { registry, server }) },
       reload: (): Promise<void> => { return ipcRenderer.invoke('mcp-reload') },
       getStatus: (): McpStatus|null => { return ipcRenderer.sendSync('mcp-get-status') },
+      getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke('mcp-get-server-tools', uuid) },
       getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke('mcp-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('mcp-call-tool', { name, parameters }) },
     },

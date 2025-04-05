@@ -13,7 +13,7 @@ const Dialog = {
   show: (opts: any): Promise<DialogResult|typeof SwalDialogResult> => {
 
     // if no input we rely on system dialogs
-    if (!opts.input) {
+    if (!opts.input && !opts.html) {
       return Dialog.system(opts)
     }
 

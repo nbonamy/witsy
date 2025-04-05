@@ -1622,6 +1622,7 @@
         "status": "Status",
         "target": "Cel",
         "title": "MCP",
+        "tools": "Narzędzia",
         "totalTools": "Łącznie {count} narzędzi{count > 1 ? 'i' : 'e'} dostępne"
       },
       "memory": {

@@ -30,15 +30,19 @@
               <th>&nbsp;</th>
               <th>{{ t('common.type') }}</th>
               <th>{{ t('settings.plugins.mcp.target') }}</th>
+              <th>{{ t('settings.plugins.mcp.tools') }}</th>
               <th>{{ t('settings.plugins.mcp.status') }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="server in servers" :key="server.uuid" :class="{ selected: selected == server }" @click="selected = server" @dblclick="edit(server)">
-              <td class="enabled"><input type="checkbox" :checked="server.state=='enabled'" @change="onEnabled(server)" /></td>
+              <td class="enabled"><input type="checkbox" :checked="server.state == 'enabled'" @change="onEnabled(server)" /></td>
               <td>{{ getType(server) }}</td>
               <td>{{ getDescription(server) }}</td>
-              <td>
+              <td class="tools center">
+                <BIconSearch @click="showTools(server)" v-if="isRunning(server)"/>
+              </td>
+              <td class="center">
                 <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
                 <span v-else>{{ getStatus(server) }}</span>
               </td>
@@ -97,10 +101,15 @@ const getDescription = (server: McpServer) => {
   if (server.type == 'stdio') return server.command.split(/[\\/]/).pop() + ' ' + server.url
 }
 
+const isRunning = (server: McpServer) => {
+  if (server.state == 'disabled') return false
+  const s = status.value?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
+  return s ? true : false
+}
+
 const getStatus = (server: McpServer) => {
   if (server.state == 'disabled') return '🔶'
-  const s = status.value?.servers.find((s: McpServerStatus) => s.uuid == server.uuid)
-  return s ? '✅' : '❌'
+  return isRunning(server) ? '✅' : '❌'
 }
 
 const hasLogs = (server: McpServer) => {
@@ -132,6 +141,23 @@ const showLogs = (server: McpServer) => {
     text: status.value.logs[server.uuid].join(''),
     confirmButtonText: t('common.close'),
   })
+}
+
+const showTools = async (server: McpServer) => {
+  const tools = await window.api.mcp.getServerTools(server.registryId)
+  if (tools.length) {
+    Dialog.show({
+      title: t('settings.plugins.mcp.tools'),
+      html: tools.map((tool: any) => `<li><b>${tool.name}</b><br/>${tool.description}</li>`).join(''),
+      customClass: { confirmButton: 'alert-confirm', htmlContainer: 'list' },
+      confirmButtonText: t('common.close'),
+    })
+  } else {
+    Dialog.show({
+      title: t('settings.plugins.mcp.noTools'),
+      confirmButtonText: t('common.close'),
+    })
+  }
 }
 
 const onRestart = async () => {
@@ -397,6 +423,10 @@ defineExpose({ load })
       white-space: nowrap;
 
       a {
+        cursor: pointer;
+      }
+
+      &.tools {
         cursor: pointer;
       }
     }
