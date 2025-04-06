@@ -10,11 +10,11 @@
 
 import { computed } from 'vue'
 import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
-const models = computed(() => llmFactory.getChatModels(props.engine))
+const models = computed(() => llmManager.getChatModels(props.engine))
 
 const props = defineProps({
   engine: String,

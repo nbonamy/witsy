@@ -11,24 +11,24 @@ import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
-import LlmFactory from '../../src/llms/llm'
 
 import useEventBus  from '../../src/composables/event_bus'
 import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
+import LlmManager from '../../src/llms/manager'
 const { emitEvent } = useEventBus()
 
 // mock llm
-vi.mock('../../src/llms/llm.ts', async () => {
-  const LlmFactory = vi.fn()
-  LlmFactory.prototype.initModels = vi.fn()
-  LlmFactory.prototype.isEngineReady = vi.fn(() => true)
-  LlmFactory.prototype.getEngineName = () => 'mock'
-  LlmFactory.prototype.getCustomEngines = () => []
-  LlmFactory.prototype.getFavoriteId = () => 'favid'
-  LlmFactory.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
-  LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
-  LlmFactory.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
-	return { default: LlmFactory, favoriteMockEngine: '__favorites__' }
+vi.mock('../../src/llms/manager.ts', async () => {
+  const LlmManager = vi.fn()
+  LlmManager.prototype.initModels = vi.fn()
+  LlmManager.prototype.isEngineReady = vi.fn(() => true)
+  LlmManager.prototype.getEngineName = () => 'mock'
+  LlmManager.prototype.getCustomEngines = () => []
+  LlmManager.prototype.getFavoriteId = () => 'favid'
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
+  LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
+	return { default: LlmManager }
 })
 
 enableAutoUnmount(afterEach)
@@ -114,7 +114,7 @@ test('Changes engine model', async () => {
   await wrapper.vm.$nextTick()
   wrapper.findComponent(EngineModelPicker).vm.$emit('save', { engine: 'openai', model: 'chat2', disableStreaming: false, disableTools: false })
   await wrapper.vm.$nextTick()
-  expect(LlmFactory.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
+  expect(LlmManager.prototype.igniteEngine).toHaveBeenLastCalledWith('openai')
   expect(store.config.prompt.disableTools).toBe(false)
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat2')

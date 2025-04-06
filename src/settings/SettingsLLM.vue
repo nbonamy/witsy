@@ -39,24 +39,24 @@ import SettingsXAI from './SettingsXAI.vue'
 import SettingsDeepSeek from './SettingsDeepSeek.vue'
 import SettingsOpenRouter from './SettingsOpenRouter.vue'
 import SettingsCustomLLM from './SettingsCustomLLM.vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
 type Engine = {
   id: string,
   label: string
 }
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const createEngine = ref(null)
-const currentEngine:Ref<string> = ref(llmFactory.getChatEngines({ favorites: false })[0])
+const currentEngine:Ref<string> = ref(llmManager.getChatEngines({ favorites: false })[0])
 const engineSettings = ref(null)
 
-const isCustom = computed(() => llmFactory.isCustomEngine(currentEngine.value))
+const isCustom = computed(() => llmManager.isCustomEngine(currentEngine.value))
 
 const engines = computed(() => {
-  return llmFactory.getChatEngines({ favorites: false }).map(id => {
-    if (llmFactory.isCustomEngine(id)) {
+  return llmManager.getChatEngines({ favorites: false }).map(id => {
+    if (llmManager.isCustomEngine(id)) {
       return {
         id: id,
         label: (store.config.engines[id] as CustomEngineConfig).label
@@ -129,7 +129,7 @@ const onDeleteCustom = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       delete store.config.engines[currentEngine.value]
-      selectEngine({ id: llmFactory.getChatEngines()[0] } as Engine)
+      selectEngine({ id: llmManager.getChatEngines()[0] } as Engine)
       store.saveSettings()
     }
   })

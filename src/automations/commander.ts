@@ -5,7 +5,7 @@ import { App, Notification } from 'electron'
 import { getCachedText, putCachedText } from '../main/utils'
 import { loadSettings } from '../main/config'
 import { useI18n, useI18nLlm } from '../main/i18n'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Automator from './automator'
 import Automation from './automation'
 import * as window from '../main/window'
@@ -88,13 +88,13 @@ export default class Commander {
 
       // config
       const config: Configuration = loadSettings(app);
-      const llmFactory = new LlmFactory(config);
+      const llmManager: ILlmManager = LlmFactory.manager(config);
 
       // extract what we need
       let engine = command.engine || config.commands.engine;
       let model = command.model || config.commands.model;
       if (!engine?.length || !model?.length) {
-        ({ engine, model } = llmFactory.getChatEngineModel(false));
+        ({ engine, model } = llmManager.getChatEngineModel(false));
       }
 
       // template may be localized

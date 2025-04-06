@@ -123,13 +123,13 @@ import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
 import VariableTable from '../components/VariableTable.vue'
 import VariableEditor from '../screens/VariableEditor.vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
 
 const editor = ref(null)
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableStreaming: Ref<boolean> = ref(false)
@@ -214,7 +214,7 @@ const isReasoningEffortSupported = computed(() => {
 })
 
 const modelHasCustomParams = computed(() => {
-  return llmFactory.isCustomEngine(engine.value)
+  return llmManager.isCustomEngine(engine.value)
 })
 
 onMounted(async () => {
@@ -355,7 +355,7 @@ const clearDefaults = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = llmFactory.getChatModel(engine.value, false)
+  model.value = llmManager.getChatModel(engine.value, false)
   onChangeModel()
 }
 
@@ -453,7 +453,7 @@ const save = () => {
 
     // special case
     if (!props.chat.hasMessages()) {
-      llmFactory.setChatModel(props.chat.engine, props.chat.model)
+      llmManager.setChatModel(props.chat.engine, props.chat.model)
     }
 
   } catch (e) {
@@ -497,7 +497,7 @@ const onCreateOllamaModel = async () => {
     })
 
     // reload
-    await llmFactory.loadModels('ollama')
+    await llmManager.loadModels('ollama')
 
     // and select
     model.value = name

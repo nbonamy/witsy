@@ -24,7 +24,7 @@ import { computed } from 'vue'
 import { store } from '../services/store'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const props = defineProps({
   defaultText: String,
@@ -39,11 +39,11 @@ const value = defineModel()
 const emit = defineEmits(['change'])
 
 const showFavorites = computed(() => {
-  return props.favorites && llmFactory?.getChatModels(favoriteMockEngine)?.length > 0
+  return props.favorites && llmManager?.getChatModels(favoriteMockEngine)?.length > 0
 })
 
 const custom = computed(() => {
-  const customs = llmFactory.getCustomEngines()
+  const customs = llmManager.getCustomEngines()
   return customs.map((id) => ({
     id: id,
     label: (store.config.engines[id] as CustomEngineConfig).label

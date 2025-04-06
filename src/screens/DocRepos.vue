@@ -65,7 +65,7 @@ import { ref, onMounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import DialogHeader from '../components/DialogHeader.vue'
 import ContextMenu from '../components/ContextMenu.vue'
@@ -77,7 +77,7 @@ import Spinner from '../components/Spinner.vue'
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const docRepos = ref(null)
 const plusButton = ref(null)
@@ -112,7 +112,7 @@ const docLabel = (doc: DocumentSource) => {
 }
 
 const embeddingModel = computed(() => {
-  return llmFactory.getEngineName(selectedRepo.value?.embeddingEngine) + ' / ' + selectedRepo.value?.embeddingModel
+  return llmManager.getEngineName(selectedRepo.value?.embeddingEngine) + ' / ' + selectedRepo.value?.embeddingModel
 })
 
 onMounted(async () => {

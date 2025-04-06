@@ -16,17 +16,17 @@ import Attachment from '../../src/models/attachment'
 const { emitEvent } = useEventBus()
 
 // mock llm
-vi.mock('../../src/llms/llm', async () => {
-  const LlmFactory = vi.fn()
-  LlmFactory.prototype.initModels = vi.fn()
-  LlmFactory.prototype.isEngineReady = vi.fn(() => true)
-  LlmFactory.prototype.getCustomEngines = vi.fn(() => [])
-  LlmFactory.prototype.getEngineName = vi.fn(() => 'mock')
-  LlmFactory.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
-  LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
-  LlmFactory.prototype.isCustomEngine = vi.fn(() => false)
-  LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
-	return { default: LlmFactory }
+vi.mock('../../src/llms/manager', async () => {
+  const LlmManager = vi.fn()
+  LlmManager.prototype.initModels = vi.fn()
+  LlmManager.prototype.isEngineReady = vi.fn(() => true)
+  LlmManager.prototype.getCustomEngines = vi.fn(() => [])
+  LlmManager.prototype.getEngineName = vi.fn(() => 'mock')
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
+  LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.isCustomEngine = vi.fn(() => false)
+  LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
+	return { default: LlmManager }
 })
 
 vi.mock('../../src/services/i18n', async (importOriginal) => {

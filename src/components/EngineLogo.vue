@@ -25,7 +25,7 @@ import LogoOpenRouter from '../../assets/openrouter.svg?component'
 import LogoCustom from '../../assets/custom.svg?component'
 import LogoFavorite from '../../assets/favorite.svg?component'
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const logos: { [key: string]: any } = {
   openai: LogoOpenAI,
@@ -62,7 +62,7 @@ const props = defineProps({
 const logo = computed(() => props.engine == favoriteMockEngine ? LogoFavorite : logos[props.engine] ?? LogoCustom)
 
 const label = computed(() => {
-  if (llmFactory.isCustomEngine(props.engine)) {
+  if (llmManager.isCustomEngine(props.engine)) {
     return (store.config.engines[props.engine] as CustomEngineConfig).label
   }
 })  

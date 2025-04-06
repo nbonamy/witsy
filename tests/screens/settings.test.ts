@@ -3,9 +3,9 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import { standardEngines } from '../../src/llms/llm'
 import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
+import LlmFactory from '../../src/llms/llm'
 
 enableAutoUnmount(afterAll)
 
@@ -79,13 +79,14 @@ test('Settings close', async () => {
 
 test('Settings General', async () => {
   
+  const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, 0)
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(standardEngines.length+1)
+  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
   
   // helper
   const checkAndReset = (times: number = 1) => {

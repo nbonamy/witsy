@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import LlmFactory from '../../src/llms/llm'
+import LlmFactory, { ILlmManager } from '../../src/llms/llm'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
   loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
@@ -25,11 +25,11 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
   }
 })
 
-let llmFactory: LlmFactory
+let llmManager: ILlmManager
 
 beforeAll(() => {
   useWindowMock({ customEngine: true })
-  llmFactory = new LlmFactory(store.config)
+  llmManager = LlmFactory.manager(store.config)
 })
 
 beforeEach(() => {
@@ -48,7 +48,7 @@ beforeEach(() => {
 })
 
 test('Init models', async () => {
-  await llmFactory.initModels()
+  await llmManager.initModels()
   expect(loadAnthropicModels).toHaveBeenCalledTimes(0)
   expect(loadCerebrasModels).toHaveBeenCalledTimes(0)
   expect(loadGoogleModels).toHaveBeenCalledTimes(0)
@@ -62,47 +62,47 @@ test('Init models', async () => {
 })
 
 test('Load models', async () => {
-  await llmFactory.loadModels('anthropic')
+  await llmManager.loadModels('anthropic')
   expect(loadAnthropicModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(0)
   
-  await llmFactory.loadModels('cerebras')
+  await llmManager.loadModels('cerebras')
   expect(loadCerebrasModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(1)
   
-  await llmFactory.loadModels('google')
+  await llmManager.loadModels('google')
   expect(loadGoogleModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(2)
   
-  await llmFactory.loadModels('groq')
+  await llmManager.loadModels('groq')
   expect(loadGroqModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
-  await llmFactory.loadModels('mistralai')
+  await llmManager.loadModels('mistralai')
   expect(loadMistralAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
-  await llmFactory.loadModels('ollama')
+  await llmManager.loadModels('ollama')
   expect(loadOllamaModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
-  await llmFactory.loadModels('openai')
+  await llmManager.loadModels('openai')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(4)
   
-  await llmFactory.loadModels('xai')
+  await llmManager.loadModels('xai')
   expect(loadXAIModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
-  await llmFactory.loadModels('deepseek')
+  await llmManager.loadModels('deepseek')
   expect(loadDeepSeekModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
-  await llmFactory.loadModels('openrouter')
+  await llmManager.loadModels('openrouter')
   expect(loadOpenRouterModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
-  await llmFactory.loadModels('custom')
+  await llmManager.loadModels('custom')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(2)
   expect(loadOpenAIModels).toHaveBeenLastCalledWith({
     apiKey: '456',

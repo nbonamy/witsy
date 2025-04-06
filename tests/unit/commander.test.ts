@@ -51,11 +51,11 @@ vi.mock('../../src/automations/automator.ts', async () => {
 })
 
 // mock llm
-vi.mock('../../src/llms/llm.ts', async () => {
-  const LlmFactory = vi.fn()
-  LlmFactory.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
-  LlmFactory.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
-	return { default: LlmFactory }
+vi.mock('../../src/llms/manager.ts', async () => {
+  const LlmManager = vi.fn()
+  LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
+  LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
+	return { default: LlmManager }
 })
 
 // mock i18n

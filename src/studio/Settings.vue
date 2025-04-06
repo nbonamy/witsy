@@ -143,7 +143,7 @@ import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
 import VariableTable from '../components/VariableTable.vue'
 import SDWebUI from '../services/sdwebui'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
@@ -415,8 +415,8 @@ const getModels = async () => {
 
   // openai
   if (['openai', 'google', 'xai'].includes(engine.value)) {
-    const llmFactory = new LlmFactory(store.config)
-    let success = await llmFactory.loadModels(engine.value)
+    const llmManager = LlmFactory.manager(store.config)
+    let success = await llmManager.loadModels(engine.value)
     if (!success) {
       Dialog.alert(t('common.errorModelRefresh'))
       setEphemeralRefreshLabel(t('common.error'))

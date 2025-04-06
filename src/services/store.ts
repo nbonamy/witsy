@@ -4,7 +4,7 @@ import { Folder, History, Store } from 'types/index'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 
 export const kMediaChatId = '00000000-0000-0000-0000-000000000000'
@@ -61,11 +61,11 @@ export const store: Store = reactive({
     })
 
     // load models and select valid engine
-    const llmFactory = new LlmFactory(store.config)
-    await llmFactory.initModels()
-    if (!llmFactory.isEngineReady(store.config.llm.engine)) {
-      for (const engine of llmFactory.getChatEngines({ favorites: false })) {
-        if (llmFactory.isEngineReady(engine)) {
+    const llmManager: ILlmManager = LlmFactory.manager(store.config)
+    await llmManager.initModels()
+    if (!llmManager.isEngineReady(store.config.llm.engine)) {
+      for (const engine of llmManager.getChatEngines({ favorites: false })) {
+        if (llmManager.isEngineReady(engine)) {
           console.log(`Selected engine not ready, selecting ${engine} as default`)
           store.config.llm.engine = engine
           break

@@ -8,7 +8,7 @@ import { Ollama } from 'ollama'
 import OpenAI from 'openai'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Embedding } from 'openai/resources'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 // import path from 'path'
 // import fs from 'fs'
 
@@ -49,7 +49,7 @@ export default class Embedder {
   async init(app: App): Promise<void> {
     
     // we need this
-    const llmFactory = new LlmFactory(this.config)
+    const llmManager: ILlmManager = LlmFactory.manager(this.config)
     
     if (this.engine === 'openai') {
 
@@ -96,7 +96,7 @@ export default class Embedder {
     //     throw new Error(`Unsupported FastEmbed model: ${this.model}`)
     //   }
 
-    } else if (llmFactory.isCustomEngine(this.engine)) {
+    } else if (llmManager.isCustomEngine(this.engine)) {
 
       const engineConfig = this.config.engines[this.engine] as CustomEngineConfig
       if (engineConfig.api === 'openai') {

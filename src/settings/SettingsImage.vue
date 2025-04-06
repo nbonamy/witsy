@@ -101,7 +101,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import SDWebUI, { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
 const enabled = ref(false)
 const engine = ref(null)
@@ -149,8 +149,8 @@ const getModels = async () => {
 
   // openai
   if (engine.value === 'openai' || engine.value === 'google') {
-    const llmFactory = new LlmFactory(store.config)
-    let success = await llmFactory.loadModels(engine.value)
+    const llmManager = LlmFactory.manager(store.config)
+    let success = await llmManager.loadModels(engine.value)
     if (!success) {
       Dialog.alert(t('common.errorModelRefresh'))
       setEphemeralRefreshLabel(t('common.error'))

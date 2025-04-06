@@ -32,7 +32,7 @@
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
@@ -62,8 +62,8 @@ const setEphemeralRefreshLabel = (text: string) => {
 const getModels = async () => {
 
   // load
-  const llmFactory = new LlmFactory(store.config)
-  let success = await llmFactory.loadModels('cerebras')
+  const llmManager = LlmFactory.manager(store.config)
+  let success = await llmManager.loadModels('cerebras')
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))
