@@ -223,7 +223,7 @@ const onImportJson = async () => {
     customClass: { input: 'auto-height' },
     inputValue: '',
     showCancelButton: true,
-    preConfirm: (json) => {
+    preConfirm: (json: any) => {
       try {
         return validateServerJson(json)
       } catch (error) {
