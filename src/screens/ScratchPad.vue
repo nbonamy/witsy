@@ -19,7 +19,7 @@ import { FileContents } from '../types'
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
@@ -184,11 +184,11 @@ const resetState = () => {
 const initLlm = () => {
 
   // load engine and model
-  const llmFactory = new LlmFactory(store.config)
+  const llmManager = LlmFactory.manager(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
   if (!engine?.value.length || !model?.value.length) {
-    ({ engine: engine.value, model: model.value } = llmFactory.getChatEngineModel(false))
+    ({ engine: engine.value, model: model.value } = llmManager.getChatEngineModel(false))
   }
 
   // set chat
@@ -196,7 +196,7 @@ const initLlm = () => {
   store.initChatWithDefaults(chat.value)
 
   // prompt
-  llm = llmFactory.igniteEngine(engine.value)
+  llm = llmManager.igniteEngine(engine.value)
 
 }
 

@@ -41,7 +41,7 @@ import { t } from '../services/i18n'
 import { CustomEngineConfig } from '../types/config'
 import { ref, onMounted, watch } from 'vue'
 import { store } from '../services/store'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
@@ -96,8 +96,8 @@ const getModels = async () => {
   // const model = engineConfig.model.chat
 
   // load
-  const llmFactory = new LlmFactory(store.config)
-  let success = await llmFactory.loadModelsCustom(props.engine)
+  const llmManager = LlmFactory.manager(store.config)
+  let success = await llmManager.loadModelsCustom(props.engine)
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))

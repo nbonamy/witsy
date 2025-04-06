@@ -2,7 +2,7 @@
   <div class="empty">
     <div class="selector">
       <div class="engines">
-        <EngineLogo v-for="engine in llmFactory.getChatEngines()" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
+        <EngineLogo v-for="engine in llmManager.getChatEngines()" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
       </div>
       <div class="current">
         <div class="tip engine" v-if="showEngineTip()">
@@ -67,23 +67,23 @@ import { BIconArrowRepeat, BIconChatSquareDots } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const tipsManager = useTipsManager(store)
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const showAllEngines = ref(false)
 const engines = shallowReactive(store.config.engines)
 const isRefreshing = ref(false)
 
-const models = computed(() => llmFactory.getChatModels(store.config.llm.engine))
-const model = computed(() => llmFactory.getChatModel(store.config.llm.engine, true))
-const isFavoriteModel = computed(() => llmFactory.isFavoriteModel(store.config.llm.engine, model.value))
+const models = computed(() => llmManager.getChatModels(store.config.llm.engine))
+const model = computed(() => llmManager.getChatModel(store.config.llm.engine, true))
+const isFavoriteModel = computed(() => llmManager.isFavoriteModel(store.config.llm.engine, model.value))
 
 const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
 const modelShortcut = computed(() => {
-  const favorites = llmFactory.getChatModels(favoriteMockEngine)
-  const id = store.config.llm.engine == favoriteMockEngine ? model.value : llmFactory.getFavoriteId(store.config.llm.engine, model.value)
+  const favorites = llmManager.getChatModels(favoriteMockEngine)
+  const id = store.config.llm.engine == favoriteMockEngine ? model.value : llmManager.getFavoriteId(store.config.llm.engine, model.value)
   let index = favorites.findIndex(m => m.id === id)
   if (index < 0 || index > 9) return null
   if (index === 9) index = -1
@@ -120,13 +120,13 @@ onUpdated(() => {
 
 const onKeyDown = (ev: KeyboardEvent) => {
   if (showAllEngines.value) return
-  const favorites = llmFactory.getChatModels(favoriteMockEngine)
+  const favorites = llmManager.getChatModels(favoriteMockEngine)
   if (!favorites.length) return
   if (!ev.altKey) return
   let index = ev.keyCode - 49
   if (index === -1) index = 9
   if (index < 0 || index > favorites.length-1) return
-  llmFactory.setChatModel(favoriteMockEngine, favorites[index].id)
+  llmManager.setChatModel(favoriteMockEngine, favorites[index].id)
 }
 
 const centerLogos = () => {
@@ -189,7 +189,7 @@ const onEngine = (engine: string) => {
   } else {
 
     // check if the engine is ready
-    if (!llmFactory.isEngineReady(engine) || !llmFactory.hasChatModels(engine)) {
+    if (!llmManager.isEngineReady(engine) || !llmManager.hasChatModels(engine)) {
       Dialog.show({
         title: t('emptyChat.settings.needsConfiguration'),
         confirmButtonText: t('emptyChat.settings.configure'),
@@ -290,7 +290,7 @@ const moveElement = (element: HTMLElement, endX: number, endY: number, duration:
 const onRefreshModels = async () => {
   isRefreshing.value = true
   try {
-    await llmFactory.loadModels(store.config.llm.engine)
+    await llmManager.loadModels(store.config.llm.engine)
   } finally {
     isRefreshing.value = false
   }
@@ -307,21 +307,21 @@ const onSelectModel = (ev: Event) => {
   const target = ev.target as HTMLSelectElement
 
   // computer-use warning
-  if (llmFactory.isComputerUseModel(store.config.llm.engine, target.value)) {
+  if (llmManager.isComputerUseModel(store.config.llm.engine, target.value)) {
     tipsManager.showTip('computerUse')
   }
 
   // continue
-  llmFactory.setChatModel(store.config.llm.engine, target.value)
+  llmManager.setChatModel(store.config.llm.engine, target.value)
 }
 
 const addToFavorites = () => {
-  llmFactory.addFavoriteModel(store.config.llm.engine, model.value)
+  llmManager.addFavoriteModel(store.config.llm.engine, model.value)
   tipsManager.showTip('favoriteModels')
 }
 
 const removeFavorite = () => {
-  llmFactory.removeFavoriteModel(store.config.llm.engine, model.value)
+  llmManager.removeFavoriteModel(store.config.llm.engine, model.value)
 }
 
 const onCreateMedia = () => {

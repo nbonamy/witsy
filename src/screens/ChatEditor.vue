@@ -32,7 +32,7 @@ import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 
 export type ChatEditorCallback = ({title, engine, model}: {title: string, engine: string, model: string}) => void
@@ -69,8 +69,8 @@ const close = () => {
 }
 
 const onChangeEngine = () => {
-  const llmFactory = new LlmFactory(store.config)
-  model.value = llmFactory.getChatModel(engine.value, false)
+  const llmManager = LlmFactory.manager(store.config)
+  model.value = llmManager.getChatModel(engine.value, false)
 }
 
 const onCancel = () => {

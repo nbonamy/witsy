@@ -10,7 +10,7 @@
           </template>
           <template v-slot:actions>
             <div class="info" v-if="chat"><span @click="onEngineModel">
-              <BIconGlobe /> {{ llmFactory.getEngineName(chat.engine) }} / {{ chat.model }}
+              <BIconGlobe /> {{ llmManager.getEngineName(chat.engine) }} / {{ chat.model }}
             </span></div>
           </template>
         </Prompt>
@@ -34,7 +34,7 @@ import { LlmEngine } from 'multi-llm-ts'
 import { SendPromptParams } from '../components/Prompt.vue'
 import ResizableHorizontal from '../components/ResizableHorizontal.vue'
 import EngineModelPicker from '../screens/EngineModelPicker.vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
@@ -52,7 +52,7 @@ store.load()
 
 // init stuff
 const generator = new Generator(store.config)
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const prompt = ref(null)
 const engineModelPicker: Ref<typeof EngineModelPicker> = ref(null)
@@ -223,7 +223,7 @@ const initLlm = (engine?: string, model?: string, disableTools?: boolean) => {
   model = model || store.config.prompt.model
   disableTools = disableTools || store.config.prompt.disableTools
   if (!engine.length || !model.length) {
-    ({ engine, model } = llmFactory.getChatEngineModel(false))
+    ({ engine, model } = llmManager.getChatEngineModel(false))
   }
 
   // set engine model
@@ -234,7 +234,7 @@ const initLlm = (engine?: string, model?: string, disableTools?: boolean) => {
   console.log(`initialize prompt window llm: ${engine} ${model} ${disableTools ? 'without tools' : 'with tools'}`)
   
   // init llm
-  llm = llmFactory.igniteEngine(engine)
+  llm = llmManager.igniteEngine(engine)
 
   // tools
   if (!disableTools) {

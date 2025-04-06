@@ -31,7 +31,7 @@ import { t } from '../services/i18n'
 import { getChatModels } from '../llms/ollama'
 import { Ollama } from 'multi-llm-ts'
 import Dialog from '../composables/dialog'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 
@@ -79,8 +79,8 @@ const setEphemeralRefreshLabel = (text: string) => {
 const getModels = async () => {
 
   // load
-  const llmFactory = new LlmFactory(store.config)
-  let success = await llmFactory.loadModels('ollama')
+  const llmManager = LlmFactory.manager(store.config)
+  let success = await llmManager.loadModels('ollama')
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))

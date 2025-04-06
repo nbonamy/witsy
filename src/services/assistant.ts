@@ -9,7 +9,7 @@ import { availablePlugins } from '../plugins/plugins'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
 
@@ -24,14 +24,14 @@ export interface AssistantCompletionOpts extends GenerationOpts {
 
 export default class extends Generator {
 
-  llmFactory: LlmFactory
+  llmManager: ILlmManager
   chat: Chat
 
   constructor(config: Configuration) {
     super(config)
     this.llm = null
     this.stream = null
-    this.llmFactory = new LlmFactory(config)
+    this.llmManager = LlmFactory.manager(config)
     this.chat = new Chat()
   }
 
@@ -56,7 +56,7 @@ export default class extends Generator {
     // }
 
     // switch
-    const llm = this.llmFactory.igniteEngine(engine)
+    const llm = this.llmManager.igniteEngine(engine)
     this.setLlm(llm)
   }
 
@@ -88,7 +88,7 @@ export default class extends Generator {
     // merge with defaults
     const defaults: AssistantCompletionOpts = {
       titling: true,
-      ... this.llmFactory.getChatEngineModel(),
+      ... this.llmManager.getChatEngineModel(),
       attachment: null,
       docrepo: null,
       expert: null,

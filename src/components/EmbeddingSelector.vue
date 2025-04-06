@@ -7,7 +7,7 @@
     </select>
   </div>
   
-  <div class="group" v-if="llmFactory.isCustomEngine(engine)">
+  <div class="group" v-if="llmManager.isCustomEngine(engine)">
     <label>{{ t('embedding.model') }}</label>
     <div class="subgroup">
       <Combobox v-model="model" :items="models"@change="onChangeModel" required :disabled="disabled" />
@@ -45,7 +45,7 @@ import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { getEmbeddingModels } from '../llms/ollama'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 import Combobox from '../components/Combobox.vue'
 import Dialog from '../composables/dialog'
@@ -63,7 +63,7 @@ defineProps({
 
 const emit = defineEmits(['update'])
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const engines = computed(() => {
 
@@ -76,7 +76,7 @@ const engines = computed(() => {
   ]
 
   // add custom engines
-  for (const engine of llmFactory.getCustomEngines()) {
+  for (const engine of llmManager.getCustomEngines()) {
     const engineConfig = store.config?.engines?.[engine] as CustomEngineConfig
     if (engineConfig?.api === 'openai'/* && engineConfig?.models?.embedding?.length*/) {
       engines.push({ id: engine, name: engineConfig.label })
@@ -122,8 +122,8 @@ const setEphemeralRefreshLabel = (text: string) => {
 const getModels = async () => {
 
   // load
-  const llmFactory = new LlmFactory(store.config)
-  const success = await llmFactory.loadModels('ollama')
+  const llmManager = LlmFactory.manager(store.config)
+  const success = await llmManager.loadModels('ollama')
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
     setEphemeralRefreshLabel(t('common.error'))

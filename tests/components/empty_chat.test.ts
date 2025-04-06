@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import { favoriteMockEngine, standardEngines } from '../../src/llms/llm'
+import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 
 enableAutoUnmount(afterAll)
@@ -67,8 +67,9 @@ test('Renders correctly', async () => {
 })
 
 test('Renders engines and models', async () => {
+  const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(standardEngines.length+2)
+  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(manager.getStandardEngines().length+2)
   expect(wrapper.findAll('.empty .current .logo')).toHaveLength(1)
   expect(wrapper.findAll('.empty .current select option')).toHaveLength(3)
   expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(1)').element.value).toBe('gpt-3.5-turbo')
@@ -77,11 +78,12 @@ test('Renders engines and models', async () => {
 })
 
 test('Selects engine', async () => {
+  const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
   await wrapper.find('.empty .current .logo').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
-  const ollama = 1 + standardEngines.indexOf('ollama')
+  const ollama = 1 + manager.getStandardEngines().indexOf('ollama')
   await wrapper.find(`.empty .engines .logo:nth-child(${ollama+1})`).trigger('click')
   expect(store.config.llm.engine).toBe('ollama')
   expect(wrapper.find('.empty .tip').exists()).toBe(true)
@@ -96,6 +98,8 @@ test('Selects model', async () => {
 })
 
 test('Prompts when selecting not ready engine', async () => {
+
+  const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
 
   // openai is ready
@@ -105,14 +109,14 @@ test('Prompts when selecting not ready engine', async () => {
   
   // anthropic is not
   wrapper.vm.showAllEngines = true
-  const anthropic = 1 + standardEngines.indexOf('anthropic')
+  const anthropic = 1 + manager.getStandardEngines().indexOf('anthropic')
   await wrapper.find(`.empty .engines .logo:nth-child(${anthropic+1})`).trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
   expect(store.config.llm.engine).toBe('openai')
 
   // mistralai is
   wrapper.vm.showAllEngines = true
-  const mistralai = 1 + standardEngines.indexOf('mistralai')
+  const mistralai = 1 + manager.getStandardEngines().indexOf('mistralai')
   await wrapper.find(`.empty .engines .logo:nth-child(${mistralai+1})`).trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
   expect(store.config.llm.engine).toBe('mistralai')

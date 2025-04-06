@@ -39,7 +39,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch, Ref, PropType }
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
 import useTipsManager from '../composables/tips_manager'
@@ -120,7 +120,7 @@ const props = defineProps({
 const audioRecorder = useAudioRecorder(store.config)
 const transcriber = useTranscriber(store.config)
 const tipsManager = useTipsManager(store)
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
@@ -140,8 +140,8 @@ const processing = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
-const engine = () => props.chat?.engine || llmFactory.getChatEngineModel().engine
-const model = () => props.chat?.model || llmFactory.getChatEngineModel().model
+const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
+const model = () => props.chat?.model || llmManager.getChatEngineModel().model
 
 const backSpaceHitsToClearExpert = 1
 let backSpaceHitsWhenEmpty = 0
@@ -336,7 +336,7 @@ const onAttach = () => {
   if (file) {
     const fileContents = file as FileContents
     const format = fileContents.url.split('.').pop()
-    if (llmFactory.canProcessFormat(engine(), model(), format)) {
+    if (llmManager.canProcessFormat(engine(), model(), format)) {
       const mimeType = extensionToMimeType(format)
       attach(fileContents.contents, mimeType, fileContents.url)
     } else {
@@ -360,7 +360,7 @@ const onPaste = (event: ClipboardEvent) => {
           let contents = result.split(',')[1]
 
           // check before attaching
-          if (llmFactory.canProcessFormat(engine(), model(), format)) {
+          if (llmManager.canProcessFormat(engine(), model(), format)) {
             attach(contents, mimeType, 'clipboard://')
           } else {
             console.error('Cannot attach format', format)

@@ -25,7 +25,7 @@ import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
-import LlmFactory from '../llms/llm'
+import LlmFactory, { ILlmManager } from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -34,7 +34,7 @@ const { onEvent, emitEvent } = useEventBus()
 // init stuff
 store.load()
 const tipsManager = useTipsManager(store)
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 const assistant = ref(new Assistant(store.config))
 
 const chatEditor: Ref<typeof ChatEditor> = ref(null)
@@ -167,7 +167,7 @@ const onNewChatInFolder = (folderId: string) => {
 
 const updateChatEngineModel = () => {
   if (!assistant.value.chat.hasMessages()) {
-    const { engine, model } = llmFactory.getChatEngineModel()
+    const { engine, model } = llmManager.getChatEngineModel()
     assistant.value.chat.setEngineModel(engine, model)
     store.initChatWithDefaults(assistant.value.chat)
   }
@@ -439,7 +439,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
 
   // we will need that (function because chat may be updated later)
   const isUsingComputer = () => {
-    return llmFactory.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
+    return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
   }
 
   // prompt

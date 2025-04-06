@@ -43,7 +43,7 @@ import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 
-const llmFactory = new LlmFactory(store.config)
+const llmManager = LlmFactory.manager(store.config)
 
 const dialog = ref(null)
 const engine = ref('openai')
@@ -85,8 +85,8 @@ const onShow = () => {
   disableTools.value = props.disableTools
 
   // use favorites
-  if (props.favorites && llmFactory.isFavoriteModel(engine.value, model.value)) {
-    const favId = llmFactory.getFavoriteId(engine.value, model.value)
+  if (props.favorites && llmManager.isFavoriteModel(engine.value, model.value)) {
+    const favId = llmManager.getFavoriteId(engine.value, model.value)
     if (favId) {
       engine.value = favoriteMockEngine
       model.value = favId
@@ -100,7 +100,7 @@ const close = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = llmFactory.getChatModel(engine.value, false)
+  model.value = llmManager.getChatModel(engine.value, false)
 }
 
 const onCancel = () => {
@@ -108,8 +108,8 @@ const onCancel = () => {
 }
 
 const onSave = () => {
-  if (llmFactory.isFavoriteEngine(engine.value)) {
-    const favorite = llmFactory.getFavoriteModel(model.value)
+  if (llmManager.isFavoriteEngine(engine.value)) {
+    const favorite = llmManager.getFavoriteModel(model.value)
     emit('save', { engine: favorite.engine, model: favorite.model, disableTools: disableTools.value, disableStreaming: disableStreaming.value })
   } else {
     emit('save', { engine: engine.value, model: model.value, disableTools: disableTools.value, disableStreaming: disableStreaming.value })
