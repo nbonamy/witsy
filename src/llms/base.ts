@@ -20,6 +20,10 @@ export default class LlmManagerBase implements ILlmManager {
     throw new Error('getStandardEngines not implemented')
   }
 
+  getPriorityEngines(): string[] {
+    throw new Error('getPriorityEngines not implemented')
+  }
+
   getNonChatEngines = (): string[] => {
     throw new Error('getNonChatEngines not implemented')
   }
