@@ -6,21 +6,22 @@ export type GetChatEnginesOpts = {
 }
 
 export interface ILlmManager {
-  
+
+  getPriorityEngines(): string[]
   getChatEngines(opts?: GetChatEnginesOpts): string[]
-  
+
   getEngineName(engine: string): string
-  
+
   getCustomEngines(): string[]
   isCustomEngine(engine: string): boolean
-  
+
   isFavoriteEngine(engine: string): boolean
   getFavoriteId(engine: string, model: string): string
   isFavoriteModel(engine: string, model: string): boolean
   getFavoriteModel(id: string): { engine: string, model: string } | null
   addFavoriteModel(engine: string, model: string): void
   removeFavoriteModel(engine: string, model: string): void
-  
+
   isComputerUseModel(engine: string, model: string): boolean
 
   getChatEngineModel(acceptSpecializedModels?: boolean): { engine: string, model: string }

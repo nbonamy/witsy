@@ -2,7 +2,8 @@
   <div class="empty">
     <div class="selector">
       <div class="engines">
-        <EngineLogo v-for="engine in llmManager.getChatEngines()" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
+        <EngineLogo v-for="engine in visibleEngines" :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
+        <div class="logo more" @click="onEngineMore"><BIconPlusCircleDotted /></div>
       </div>
       <div class="current">
         <div class="tip engine" v-if="showEngineTip()">
@@ -72,6 +73,12 @@ const llmManager = LlmFactory.manager(store.config)
 const showAllEngines = ref(false)
 const engines = shallowReactive(store.config.engines)
 const isRefreshing = ref(false)
+
+const visibleEngines = computed(() => {
+  return llmManager.getChatEngines().filter(engine => {
+    return (llmManager.getPriorityEngines().includes(engine) || llmManager.isEngineReady(engine))
+  })
+})
 
 const models = computed(() => llmManager.getChatModels(store.config.llm.engine))
 const model = computed(() => llmManager.getChatModel(store.config.llm.engine, true))
@@ -164,6 +171,10 @@ const centerLogos = () => {
   }
 
 
+}
+
+const onEngineMore = () => {
+  window.api.settings.open({ initialTab: 'models' })
 }
 
 const onEngine = (engine: string) => {
@@ -406,6 +417,11 @@ const onComputerUse = () => {
   align-items: center;
   align-content: center;
   opacity: 0;
+}
+
+.empty .engines .more svg {
+  height: 48px;
+  width: 48px;
 }
 
 .empty .selector .logo {

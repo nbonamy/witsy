@@ -15,6 +15,10 @@ export default class LlmManager extends LlmManagerBase {
     return [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
   }
 
+  getPriorityEngines = (): string[] => {
+    return [ 'openai', 'anthropic', 'google', 'ollama' ]
+  }
+
   getNonChatEngines = (): string[] => {
     return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia' ]
   }
