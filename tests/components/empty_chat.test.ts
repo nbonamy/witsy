@@ -69,7 +69,7 @@ test('Renders correctly', async () => {
 test('Renders engines and models', async () => {
   const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(manager.getStandardEngines().length+2)
+  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(8)
   expect(wrapper.findAll('.empty .current .logo')).toHaveLength(1)
   expect(wrapper.findAll('.empty .current select option')).toHaveLength(3)
   expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(1)').element.value).toBe('gpt-3.5-turbo')
@@ -83,7 +83,7 @@ test('Selects engine', async () => {
   await wrapper.find('.empty .current .logo').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
   expect(wrapper.find('.empty .tip').exists()).toBe(false)
-  const ollama = 1 + manager.getStandardEngines().indexOf('ollama')
+  const ollama = 1 + manager.getPriorityEngines().indexOf('ollama')
   await wrapper.find(`.empty .engines .logo:nth-child(${ollama+1})`).trigger('click')
   expect(store.config.llm.engine).toBe('ollama')
   expect(wrapper.find('.empty .tip').exists()).toBe(true)
@@ -116,7 +116,7 @@ test('Prompts when selecting not ready engine', async () => {
 
   // mistralai is
   wrapper.vm.showAllEngines = true
-  const mistralai = 1 + manager.getStandardEngines().indexOf('mistralai')
+  const mistralai = 1 + manager.getPriorityEngines().length
   await wrapper.find(`.empty .engines .logo:nth-child(${mistralai+1})`).trigger('click')
   expect(window.api.showDialog).toHaveBeenCalledTimes(1)
   expect(store.config.llm.engine).toBe('mistralai')
