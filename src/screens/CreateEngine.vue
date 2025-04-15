@@ -108,9 +108,9 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => {
+  show: (apiSpec: string = 'openai') => {
     label.value = ''
-    api.value = 'openai'
+    api.value = apiSpec
     apiKey.value = ''
     baseURL.value = ''
     deployment.value = ''

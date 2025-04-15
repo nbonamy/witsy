@@ -486,10 +486,13 @@
   },
   "engine": {
     "create": {
-      "apiBaseURL": "API 基础 URL",
-      "apiKey": "API 密钥",
-      "apiSpecification": "API 规范",
+      "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
+      "apiKey": "@:{'settings.engines.apiKey'}",
+      "apiSpecification": "@:{'settings.engines.custom.apiSpecification'}",
+      "apiVersion": "@:{'settings.engines.custom.apiVersion'}",
+      "deployment": "@:{'settings.engines.custom.deployment'}",
       "description": "根据 API 标准创建一个新的自定义引擎。",
+      "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "创建自定义引擎",
       "validation": {
         "nameBaseURLRequired": "名称和基础 URL 是必需的"
@@ -1490,19 +1493,28 @@
         "pricing": "Anthropic 定价"
       },
       "apiKey": "API 密钥",
+      "azure": {
+        "create": "创建 Azure 部署连接",
+        "description": "您可以通过点击下面的按钮创建与您的 Azure 部署的连接。这允许您为每个 Azure 部署创建独特的连接。"
+      },
       "cerebras": {
-        "aboutModels": "了解更多关于 Cerebras 模型的信息"
+        "aboutModels": "了解更多关于 Cerebras 模型的信息",
+        "pricing": "Cerebras 定价"
       },
       "chatModel": "聊天模型",
       "custom": {
         "apiBaseURL": "API 基础 URL",
         "apiSpecification": "API 规范",
+        "apiVersion": "API 版本",
         "confirmDelete": "你确定要删除这个自定义提供程序吗？",
         "create": "创建引擎",
-        "delete": "删除引擎"
+        "delete": "删除引擎",
+        "deployment": "部署",
+        "endpoint": "端点"
       },
       "deepseek": {
-        "aboutModels": "了解更多关于 DeepSeek 模型的信息"
+        "aboutModels": "了解更多关于 DeepSeek 模型的信息",
+        "pricing": "DeepSeek 定价"
       },
       "disableTools": "为所有模型禁用插件",
       "getApiKey": "获取你的 API 密钥",
@@ -1529,14 +1541,16 @@
         "pricing": "OpenAI 定价"
       },
       "openrouter": {
-        "aboutModels": "了解更多关于 OpenRouter 模型的信息"
+        "aboutModels": "了解更多关于 OpenRouter 模型的信息",
+        "pricing": "OpenRouter 定价"
       },
       "sdwebui": {
         "baseURL": "API 基础 URL",
         "ensureApiMode": "确保你处于 API 模式"
       },
       "xai": {
-        "aboutModels": "了解更多关于 xAI 模型的信息"
+        "aboutModels": "了解更多关于 xAI 模型的信息",
+        "pricing": "xAI 定价"
       }
     },
     "experts": {

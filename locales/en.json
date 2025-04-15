@@ -487,11 +487,11 @@
   "engine": {
     "create": {
       "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
-      "apiKey": "API key",
+      "apiKey": "@:{'settings.engines.apiKey'}",
       "apiSpecification": "@:{'settings.engines.custom.apiSpecification'}",
       "apiVersion": "@:{'settings.engines.custom.apiVersion'}",
-      "description": "Create a new custom engine based on an API standard.",
       "deployment": "@:{'settings.engines.custom.deployment'}",
+      "description": "Create a new custom engine based on an API standard.",
       "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "Create Custom Engine",
       "validation": {
@@ -1494,7 +1494,8 @@
       },
       "apiKey": "API key",
       "azure": {
-        "description": "You can create an Azure deployment connection by clicking the \"Create engine\" button in the lower left corner. This allows you to create distinct connections for each of your Azure deployments."
+        "create": "Create Azure deployment connection",
+        "description": "You can create a connection to your Azure deployment by clicking the button below. This allows you to create distinct connections for each of your Azure deployments."
       },
       "cerebras": {
         "aboutModels": "More about Cerebras models",

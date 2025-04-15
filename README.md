@@ -35,7 +35,7 @@ Witsy is a BYOK (Bring Your Own Keys) AI application: it means you need to have 
 you can use [Ollama](https://ollama.com) to run models locally on your machine for free and use them in Witsy.
 
 Non-exhaustive feature list:
-- OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, OpenRouter, DeepSeek, Groq and Cerebras models supported
+- OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
 - Text-to-image and text-to video with OpenAI, Google, xAI, Replicate, fal.ai and HuggingFace
@@ -161,6 +161,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Azure AI support
 - [x] Brave Search plugin
 - [x] Allow user-input models for embeddings
 - [x] User defined parameters for custom engines
