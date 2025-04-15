@@ -154,6 +154,7 @@ const selectRequest = (request: NetworkRequest) => {
 .list {
   padding: 0px 0px;
   overflow-y: auto;
+  max-width: 280px;
 }
 
 .empty {
