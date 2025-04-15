@@ -16,6 +16,7 @@
           </option>
         </select>
         <a href="https://openrouter.ai/models" target="_blank">{{ t('settings.engines.openrouter.aboutModels') }}</a>
+        <a href="https://openrouter.ai/models" target="_blank">{{ t('settings.engines.openrouter.pricing') }}</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
