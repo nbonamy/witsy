@@ -9,11 +9,11 @@
           </div>
         </div>
         <div class="actions">
-          <button class="button create" @click.prevent="showCreateCustom"><BIconPlusLg /> <span v-if="!isCustom">{{ t('settings.engines.custom.create') }}</span></button>
+          <button class="button create" @click.prevent="showCreateCustom()"><BIconPlusLg /> <span v-if="!isCustom">{{ t('settings.engines.custom.create') }}</span></button>
           <button class="button delete" @click.prevent="onDeleteCustom" v-if="isCustom"><BIconTrash /> {{ t('settings.engines.custom.delete') }}</button>
         </div>
       </div>
-      <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" />
+      <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
     </div>
     <CreateEngine ref="createEngine" @create="onCreateCustom" />
   </div>
@@ -113,8 +113,8 @@ const selectEngine = (engine: Engine) => {
   nextTick(() => engineSettings.value.load())
 }
 
-const showCreateCustom = () => {
-  createEngine.value.show()
+const showCreateCustom = (apiSpec?: string) => {
+  createEngine.value.show(apiSpec || (currentEngine.value === 'azure' ? 'azure' : 'openai'))
 }
 
 const onCreateCustom = (payload: { label: string, api: string, baseURL: string, apiKey: string, deployment: string, apiVersion: string}) => {

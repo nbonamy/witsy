@@ -486,10 +486,13 @@
   },
   "engine": {
     "create": {
-      "apiBaseURL": "Bazowy adres URL API",
-      "apiKey": "Klucz API",
-      "apiSpecification": "Specyfikacja API",
+      "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
+      "apiKey": "@:{'settings.engines.apiKey'}",
+      "apiSpecification": "@:{'settings.engines.custom.apiSpecification'}",
+      "apiVersion": "@:{'settings.engines.custom.apiVersion'}",
+      "deployment": "@:{'settings.engines.custom.deployment'}",
       "description": "Utwórz nowy niestandardowy silnik w oparciu o standard API.",
+      "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "Tworzenie niestandardowego silnika",
       "validation": {
         "nameBaseURLRequired": "Nazwa i podstawowy adres URL są wymagane"
@@ -1490,19 +1493,28 @@
         "pricing": "Ceny antropiczne"
       },
       "apiKey": "Klucz API",
+      "azure": {
+        "create": "Utwórz połączenie z wdrożeniem Azure",
+        "description": "Możesz stworzyć połączenie z Twoim wdrożeniem w Azure, klikając przycisk poniżej. Umożliwia to tworzenie odrębnych połączeń dla każdego z Twoich wdrożeń w Azure."
+      },
       "cerebras": {
-        "aboutModels": "Więcej informacji o modelach Cerebras"
+        "aboutModels": "Więcej informacji o modelach Cerebras",
+        "pricing": "Ceny Cerebras"
       },
       "chatModel": "Model czatu",
       "custom": {
         "apiBaseURL": "Bazowy adres URL API",
         "apiSpecification": "Specyfikacja API",
+        "apiVersion": "Wersja API",
         "confirmDelete": "Czy na pewno chcesz usunąć tego niestandardowego dostawcę?",
         "create": "Tworzenie silnika",
-        "delete": "Usuń silnik"
+        "delete": "Usuń silnik",
+        "deployment": "Wdrożenie",
+        "endpoint": "Punkt końcowy"
       },
       "deepseek": {
-        "aboutModels": "Więcej informacji o modelach DeepSeek"
+        "aboutModels": "Więcej informacji o modelach DeepSeek",
+        "pricing": "Ceny DeepSeek"
       },
       "disableTools": "Wyłącz wtyczki dla wszystkich modeli",
       "getApiKey": "Uzyskaj klucz API",
@@ -1529,14 +1541,16 @@
         "pricing": "Ceny OpenAI"
       },
       "openrouter": {
-        "aboutModels": "Więcej informacji o modelach OpenRouter"
+        "aboutModels": "Więcej informacji o modelach OpenRouter",
+        "pricing": "Ceny OpenRouter"
       },
       "sdwebui": {
         "baseURL": "Bazowy adres URL API",
         "ensureApiMode": "Upewnij się, że jesteś w trybie API"
       },
       "xai": {
-        "aboutModels": "Więcej informacji o modelach xAI"
+        "aboutModels": "Więcej informacji o modelach xAI",
+        "pricing": "Ceny xAI"
       }
     },
     "experts": {

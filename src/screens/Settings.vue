@@ -169,7 +169,7 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
 
 const onKeyup = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {
-    onClose()
+    //onClose()
   }
 }
 

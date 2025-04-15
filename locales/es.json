@@ -467,10 +467,13 @@
   },
   "engine": {
     "create": {
-      "apiBaseURL": "URL base de la API",
-      "apiKey": "Clave API",
-      "apiSpecification": "Especificación API",
+      "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
+      "apiKey": "@:{'settings.engines.apiKey'}",
+      "apiSpecification": "@:{'settings.engines.custom.apiSpecification'}",
+      "apiVersion": "@:{'settings.engines.custom.apiVersion'}",
+      "deployment": "@:{'settings.engines.custom.deployment'}",
       "description": "Crear un nuevo motor personalizado basado en un estándar API.",
+      "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "Crear motor personalizado",
       "validation": {
         "nameBaseURLRequired": "Se requieren el nombre y la URL base"
@@ -1460,19 +1463,28 @@
         "pricing": "Precios de Anthropic"
       },
       "apiKey": "Clave API",
+      "azure": {
+        "create": "Crear conexión de implementación de Azure",
+        "description": "Puedes crear una conexión a tu implementación de Azure haciendo clic en el botón de abajo. Esto te permite crear conexiones distintas para cada una de tus implementaciones de Azure."
+      },
       "cerebras": {
-        "aboutModels": "Más sobre los modelos de Cerebras"
+        "aboutModels": "Más sobre los modelos de Cerebras",
+        "pricing": "Precios de Cerebras"
       },
       "chatModel": "Modelo de chat",
       "custom": {
         "apiBaseURL": "URL base de la API",
         "apiSpecification": "Especificación de la API",
+        "apiVersion": "Versión de API",
         "confirmDelete": "¿Está seguro de que desea eliminar este proveedor personalizado?",
         "create": "Crear motor",
-        "delete": "Eliminar motor"
+        "delete": "Eliminar motor",
+        "deployment": "Implementación",
+        "endpoint": "Endpoint"
       },
       "deepseek": {
-        "aboutModels": "Más sobre los modelos de DeepSeek"
+        "aboutModels": "Más sobre los modelos de DeepSeek",
+        "pricing": "Precios de DeepSeek"
       },
       "disableTools": "Desactivar complementos para todos los modelos",
       "getApiKey": "Obtenga su clave API",
@@ -1499,14 +1511,16 @@
         "pricing": "Precios de OpenAI"
       },
       "openrouter": {
-        "aboutModels": "Más sobre los modelos de OpenRouter"
+        "aboutModels": "Más sobre los modelos de OpenRouter",
+        "pricing": "Precios de OpenRouter"
       },
       "sdwebui": {
         "baseURL": "URL base de la API",
         "ensureApiMode": "Asegúrate de estar en modo API"
       },
       "xai": {
-        "aboutModels": "Más sobre los modelos de xAI"
+        "aboutModels": "Más sobre los modelos de xAI",
+        "pricing": "Precios de xAI"
       }
     },
     "experts": {
