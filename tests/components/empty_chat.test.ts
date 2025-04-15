@@ -67,9 +67,8 @@ test('Renders correctly', async () => {
 })
 
 test('Renders engines and models', async () => {
-  const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(8)
+  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(9)
   expect(wrapper.findAll('.empty .current .logo')).toHaveLength(1)
   expect(wrapper.findAll('.empty .current select option')).toHaveLength(3)
   expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(1)').element.value).toBe('gpt-3.5-turbo')

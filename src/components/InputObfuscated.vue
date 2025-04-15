@@ -1,7 +1,7 @@
 
 <template>
   <div class="wrapper">
-    <input :type="type" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')"/>
+    <input :type="type" :name="name" v-model="value" @keyup="onKeyUp" @blur="$emit('blur')"/>
     <component :is="icon" class="icon" @click="onToggleView" />
   </div>
 </template>
@@ -9,6 +9,13 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
+
+defineProps({
+  name: {
+    type: String,
+    default: ''
+  }
+})
 
 const type = ref('password')
 

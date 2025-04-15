@@ -208,6 +208,15 @@ export default class LlmManagerBase implements ILlmManager {
       })
       engine.getName = () => engineConfig.label
       return engine
+    } else if (engineConfig.api === 'azure') {
+      const engine: llm.Azure = new llm.Azure({
+        baseURL: engineConfig.baseURL,
+        apiKey: engineConfig.apiKey,
+        deployment: engineConfig.deployment,
+        apiVersion: engineConfig.apiVersion,
+      })
+      engine.getName = () => engineConfig.label
+      return engine
     }
 
     // error
@@ -272,6 +281,14 @@ export default class LlmManagerBase implements ILlmManager {
         models: engineConfig.models
       }
       models = await llm.loadOpenAIModels(openaiConfig)
+    } else if (engineConfig.api === 'azure') {
+      const azureConfig = {
+        baseURL: engineConfig.baseURL,
+        apiKey: engineConfig.apiKey,
+        deployment: engineConfig.deployment,
+        apiVersion: engineConfig.apiVersion,
+      }
+      models = await llm.loadAzureModels(azureConfig)
     }
 
     // save

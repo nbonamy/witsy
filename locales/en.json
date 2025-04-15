@@ -486,10 +486,13 @@
   },
   "engine": {
     "create": {
-      "apiBaseURL": "API Base URL",
+      "apiBaseURL": "@:{'settings.engines.custom.apiBaseURL'}",
       "apiKey": "API key",
-      "apiSpecification": "API Specification",
+      "apiSpecification": "@:{'settings.engines.custom.apiSpecification'}",
+      "apiVersion": "@:{'settings.engines.custom.apiVersion'}",
       "description": "Create a new custom engine based on an API standard.",
+      "deployment": "@:{'settings.engines.custom.deployment'}",
+      "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "Create Custom Engine",
       "validation": {
         "nameBaseURLRequired": "Name and Base URL are required"
@@ -1490,6 +1493,9 @@
         "pricing": "Anthropic pricing"
       },
       "apiKey": "API key",
+      "azure": {
+        "description": "You can create an Azure deployment connection by clicking the \"Create engine\" button in the lower left corner. This allows you to create distinct connections for each of your Azure deployments."
+      },
       "cerebras": {
         "aboutModels": "More about Cerebras models",
         "pricing": "Cerebras pricing"
@@ -1498,9 +1504,12 @@
       "custom": {
         "apiBaseURL": "API Base URL",
         "apiSpecification": "API Specification",
+        "apiVersion": "API Version",
         "confirmDelete": "Are you sure you want to delete this custom provider?",
         "create": "Create engine",
-        "delete": "Delete engine"
+        "delete": "Delete engine",
+        "deployment": "Deployment",
+        "endpoint": "Endpoint"
       },
       "deepseek": {
         "aboutModels": "More about DeepSeek models",

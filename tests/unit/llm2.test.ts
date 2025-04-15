@@ -5,7 +5,7 @@ import { store } from '../../src/services/store'
 import LlmFactory, { ILlmManager } from '../../src/llms/llm'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
-  loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
+  loadOllamaModels, loadOpenAIModels, loadAzureModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
 } from 'multi-llm-ts'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
@@ -13,15 +13,16 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
   return {
     ...mod,
     loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
+    loadAzureModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [] })),
+    loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [ { id: 'image', name: 'image' } ] })),
     loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
     loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
+    loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] }))
   }
 })
 
@@ -102,7 +103,7 @@ test('Load models', async () => {
   expect(loadOpenRouterModels).toHaveBeenCalledTimes(1)
   expect(window.api.config?.save).toHaveBeenCalledTimes(4)
 
-  await llmManager.loadModels('custom')
+  await llmManager.loadModels('custom1')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(2)
   expect(loadOpenAIModels).toHaveBeenLastCalledWith({
     apiKey: '456',
@@ -110,5 +111,15 @@ test('Load models', async () => {
     models: { chat: [], image: [] }
   })
   expect(window.api.config?.save).toHaveBeenCalledTimes(5)
+
+  await llmManager.loadModels('custom2')
+  expect(loadAzureModels).toHaveBeenCalledTimes(1)
+  expect(loadAzureModels).toHaveBeenLastCalledWith({
+    apiKey: '789',
+    baseURL: 'http://witsy.azure.com/',
+    deployment: 'witsy_deployment',
+    apiVersion: '2024-04-03',
+  })
+  expect(window.api.config?.save).toHaveBeenCalledTimes(6)
 
 })

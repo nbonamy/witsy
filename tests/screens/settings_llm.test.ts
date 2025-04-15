@@ -49,6 +49,7 @@ beforeEach(async () => {
 test('should render', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   expect(tab.find('.list-panel').exists()).toBeTruthy()
+  expect(tab.findAll('.list-panel .master .list .item').length).toBe(11)
   expect(tab.findComponent({ name: 'SettingsOpenAI' }).exists()).toBeTruthy()
 })
 
@@ -151,9 +152,17 @@ test('mistralai settings', async () => {
   expect(store.config.engines.mistralai.disableTools).toBeTruthy()
 })
 
-test('deepseek settings', async () => {
+test('azure settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
+  await tab.vm.$nextTick()
+  const azure = tab.findComponent({ name: 'SettingsAzure' })
+  expect(azure.exists()).toBeTruthy()
+})
+
+test('deepseek settings', async () => {
+  const tab = await switchToTab(wrapper, llmIndex)
+  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
   await tab.vm.$nextTick()
   const deepseek = tab.findComponent({ name: 'SettingsDeepSeek' })
   await deepseek.find('input').setValue('api-key')
@@ -169,7 +178,7 @@ test('deepseek settings', async () => {
 
 test('openrouter settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(9)').trigger('click')
   await tab.vm.$nextTick()
   const openrouter = tab.findComponent({ name: 'SettingsOpenRouter' })
   await openrouter.find('input').setValue('api-key')
@@ -185,7 +194,7 @@ test('openrouter settings', async () => {
 
 test('groq settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(9)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(10)').trigger('click')
   await tab.vm.$nextTick()
   const groq = tab.findComponent({ name: 'SettingsGroq' })
   await groq.find('input').setValue('api-key')
@@ -201,7 +210,7 @@ test('groq settings', async () => {
 
 test('cerebras settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(10)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(11)').trigger('click')
   await tab.vm.$nextTick()
   const cerebras = tab.findComponent({ name: 'SettingsCerebras' })
   await cerebras.find('input').setValue('api-key')
