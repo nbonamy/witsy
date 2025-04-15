@@ -1,10 +1,11 @@
 
 import { Configuration } from 'types/config'
-import STTOpenAI from './stt-openai'
 import STTFalAi from './stt-falai'
-import STTGroq from './stt-groq'
-import STTWhisper from './stt-whisper'
 import STTGladia from './stt-gladia'
+import STTGroq from './stt-groq'
+import STTHuggingFace from './stt-huggingface'
+import STTOpenAI from './stt-openai'
+import STTWhisper from './stt-whisper'
 
 export type DownloadStatus = {
   state: 'initiate'|'download'|'done'
@@ -55,6 +56,8 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTGroq(config)
   } else if (engine === 'falai') {
     return new STTFalAi(config)
+  } else if (engine === 'huggingface') {
+    return new STTHuggingFace(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
   } else if (engine === 'gladia') {
@@ -71,6 +74,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTGroq.requiresDownload()
   } else if (engine === 'falai') {
     return STTFalAi.requiresDownload()
+  } else if (engine === 'huggingface') {
+    return STTHuggingFace.requiresDownload()
   } else if (engine === 'whisper') {
     return STTWhisper.requiresDownload()
   } else if (engine === 'gladia') {

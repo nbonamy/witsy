@@ -16,6 +16,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'huggingface'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="huggingFaceAPIKey" @blur="save" />
+    </div>
     <div class="group" v-if="engine == 'gladia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="gladiaAPIKey" @blur="save" />
@@ -75,13 +79,14 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
-import STTOpenAI from '../voice/stt-openai'
-import STTGroq from '../voice/stt-groq'
-import STTFalAi from '../voice/stt-falai'
-import STTWhisper from '../voice/stt-whisper'
-import STTGladia from '../voice/stt-gladia'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
+import STTFalAi from '../voice/stt-falai'
+import STTGladia from '../voice/stt-gladia'
+import STTGroq from '../voice/stt-groq'
+import STTHuggingFace from '../voice/stt-huggingface'
+import STTOpenAI from '../voice/stt-openai'
+import STTWhisper from '../voice/stt-whisper'
 
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
@@ -92,6 +97,7 @@ const locale = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
 const falAiAPIKey = ref(null)
+const huggingFaceAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
@@ -101,6 +107,7 @@ const engines = [
   { id: 'openai', label: 'OpenAI' },
   { id: 'groq', label: 'Groq' },
   { id: 'falai', label: 'fal.ai' },
+  //{ id: 'huggingface', label: 'Hugging Face' },
   { id: 'whisper', label: 'Whisper' },
   { id: 'gladia', label: 'Gladia' }
 ]
@@ -115,6 +122,8 @@ const models = computed(() => {
       return STTGroq.models
     } else if (engine.value === 'falai') {
       return STTFalAi.models
+    } else if (engine.value === 'huggingface') {
+      return STTHuggingFace.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
     } else if (engine.value === 'gladia') {
@@ -156,6 +165,7 @@ const load = () => {
   model.value = store.config.stt.model || 'whisper-1'
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
+  huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -165,6 +175,7 @@ const save = () => {
   store.config.stt.silenceDuration = parseInt(duration.value)
   store.config.engines.falai.apiKey = falAiAPIKey.value
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
+  store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
