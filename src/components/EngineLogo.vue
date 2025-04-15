@@ -1,7 +1,7 @@
 
 <template>
   <div :class="[ 'logo', engine, background ? 'background' : '' ]">
-    <component :is="logo" :class="[ 'svg', grayscale ? 'grayscale' : '' ]" />
+    <component :is="logo" :class="[ 'svg', klass, grayscale ? 'grayscale' : '' ]" />
     <div class="label" v-if="customLabel && label">{{ label }}</div>
   </div>
 </template>
@@ -14,6 +14,7 @@ import { store } from '../services/store'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 import LogoOpenAI from '../../assets/openai.svg?component'
 import LogoOllama from '../../assets/ollama.svg?component'
+import LogoAzure from '../../assets/azure.svg?component'
 import LogoAnthropic from '../../assets/anthropic.svg?component'
 import LogoMistralAI from '../../assets/mistralai.svg?component'
 import LogoGoogle from '../../assets/google.svg?component'
@@ -28,16 +29,17 @@ import LogoFavorite from '../../assets/favorite.svg?component'
 const llmManager = LlmFactory.manager(store.config)
 
 const logos: { [key: string]: any } = {
-  openai: LogoOpenAI,
-  ollama: LogoOllama,
   anthropic: LogoAnthropic,
-  mistralai: LogoMistralAI,
-  google: LogoGoogle,
-  xai: LogoXAI,
-  openrouter: LogoOpenRouter,
-  deepseek: LogoDeepSeek,
-  groq: LogoGroq,
+  azure: LogoAzure,
   cerebras: LogoCerberas,
+  deepseek: LogoDeepSeek,
+  google: LogoGoogle,
+  groq: LogoGroq,
+  mistralai: LogoMistralAI,
+  ollama: LogoOllama,
+  openai: LogoOpenAI,
+  openrouter: LogoOpenRouter,
+  xai: LogoXAI,
 }
 
 const props = defineProps({
@@ -59,13 +61,31 @@ const props = defineProps({
   }
 })
 
-const logo = computed(() => props.engine == favoriteMockEngine ? LogoFavorite : logos[props.engine] ?? LogoCustom)
+const logo = computed(() => {
+  if (props.engine == favoriteMockEngine) return LogoFavorite
+  if (logos[props.engine]) return logos[props.engine]
+  if (llmManager.isCustomEngine(props.engine)) {
+    const engineConfig = store.config?.engines?.[props.engine] as CustomEngineConfig
+    if (engineConfig?.api === 'azure') return LogoAzure
+  }
+    return LogoCustom
+})
 
 const label = computed(() => {
   if (llmManager.isCustomEngine(props.engine)) {
     return (store.config.engines[props.engine] as CustomEngineConfig).label
   }
-})  
+})
+
+const klass = computed(() => {
+  if (props.engine == favoriteMockEngine) return 'favorite'
+  if (logos[props.engine]) return props.engine
+  if (llmManager.isCustomEngine(props.engine)) {
+    const engineConfig = store.config?.engines?.[props.engine] as CustomEngineConfig
+    if (engineConfig?.api === 'azure') return 'azure'
+  }
+  return 'custom'
+})
 
 </script>
 
@@ -101,6 +121,10 @@ const label = computed(() => {
     &.grayscale {
       fill: rgb(64, 64, 64);
       filter: grayscale(100%);
+
+      &.azure {
+        filter: grayscale(100%) brightness(1.6);
+      }
     }
 
   }

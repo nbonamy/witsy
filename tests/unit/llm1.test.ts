@@ -1,7 +1,7 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { Anthropic, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter } from 'multi-llm-ts'
+import { Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter } from 'multi-llm-ts'
 import OpenAI from '../../src/llms/openai'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
@@ -26,17 +26,19 @@ test('Custom Engine', () => {
   }
   expect(llmManager.isCustomEngine('__favorites__')).toBe(false)
   expect(llmManager.isCustomEngine('aws')).toBe(false)
-  expect(llmManager.isCustomEngine('custom')).toBe(true)
+  expect(llmManager.isCustomEngine('custom1')).toBe(true)
+  expect(llmManager.isCustomEngine('custom2')).toBe(true)
 })
 
 test('Get Engines', () => {
-  expect(llmManager.getChatEngines()).toStrictEqual([favoriteMockEngine, ...llmManager.getStandardEngines(), 'custom'])
-  expect(llmManager.getCustomEngines()).toStrictEqual(['custom'])
+  expect(llmManager.getChatEngines()).toStrictEqual([favoriteMockEngine, ...llmManager.getStandardEngines(), 'custom1', 'custom2' ])
+  expect(llmManager.getCustomEngines()).toStrictEqual(['custom1', 'custom2'])
 })
 
 test('Get Engine name', () => {
   expect(llmManager.getEngineName('openai')).toBe('openai')
-  expect(llmManager.getEngineName('custom')).toBe('custom_engine')
+  expect(llmManager.getEngineName('custom1')).toBe('custom_openai')
+  expect(llmManager.getEngineName('custom2')).toBe('custom_azure')
   expect(llmManager.getEngineName('unknown')).toBe('custom')
 })
 
@@ -52,7 +54,8 @@ test('Default Configuration', () => {
   expect(llmManager.isEngineReady('groq')).toBe(false)
   expect(llmManager.isEngineReady('cerebras')).toBe(false)
   expect(llmManager.isEngineReady('aws')).toBe(false)
-  expect(llmManager.isEngineReady('custom')).toBe(true)
+  expect(llmManager.isEngineReady('custom1')).toBe(true)
+  expect(llmManager.isEngineReady('custom2')).toBe(true)
 })
 
 test('OpenAI Configuration', () => {
@@ -167,10 +170,10 @@ test('Cerebras Configuration', () => {
 })
 
 test('Custom Configuration', () => {
-  expect(llmManager.isEngineConfigured('custom')).toBe(true)
-  expect(llmManager.isEngineReady('custom')).toBe(true)
-  store.config.engines.custom.models.image = [model]
-  expect(llmManager.isEngineReady('custom')).toBe(true)
+  expect(llmManager.isEngineConfigured('custom1')).toBe(true)
+  expect(llmManager.isEngineReady('custom1')).toBe(true)
+  store.config.engines.custom1.models.image = [model]
+  expect(llmManager.isEngineReady('custom1')).toBe(true)
 })
 
 test('Ignite Engine', async () => {
@@ -196,16 +199,25 @@ test('Ignite Favorite Engine', async () => {
   expect(await llmManager.igniteEngine(favoriteMockEngine)).toBeInstanceOf(OpenAI)
 })
 
-test('Ignite Custom Engine', async () => {
-  const engine = await llmManager.igniteEngine('custom')
+test('Ignite Custom Engine OpenAI', async () => {
+  const engine = await llmManager.igniteEngine('custom1')
   expect(engine).toBeInstanceOf(OpenAI)
   expect(engine.config.apiKey).toBe('456')
   expect(engine.config.baseURL).toBe('http://localhost/api/v1')
 })
 
+test('Ignite Custom Engine Azure', async () => {
+  const engine = await llmManager.igniteEngine('custom2')
+  expect(engine).toBeInstanceOf(Azure)
+  expect(engine.config.apiKey).toBe('789')
+  expect(engine.config.baseURL).toBe('http://witsy.azure.com/')
+  expect(engine.config.deployment).toBe('witsy_deployment')
+  expect(engine.config.apiVersion).toBe('2024-04-03')
+})
+
 test('No vision models for custom engine', () => {
-  expect(llmManager.hasVisionModels('custom')).toBe(false)
-  expect(llmManager.isVisionModel('custom', 'vision')).toBe(false)  
+  expect(llmManager.hasVisionModels('custom1')).toBe(false)
+  expect(llmManager.isVisionModel('custom1', 'vision')).toBe(false)  
 })
 
 test('Anthropic Computer Use', async () => {

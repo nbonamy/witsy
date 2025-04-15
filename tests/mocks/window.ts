@@ -82,11 +82,21 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           ]
         }
         if (opts.customEngine) {
-          config.engines.custom = { 
-            label: 'custom_engine',
+          config.engines.custom1 = { 
+            label: 'custom_openai',
             api: 'openai',
             apiKey: '456',
             baseURL: 'http://localhost/api/v1',
+            models: { image: [], chat: [] },
+            model: { chat: '', image: '' }
+          }
+          config.engines.custom2 = { 
+            label: 'custom_azure',
+            api: 'azure',
+            apiKey: '789',
+            baseURL: 'http://witsy.azure.com/',
+            deployment: 'witsy_deployment',
+            apiVersion: '2024-04-03',
             models: { image: [], chat: [] },
             model: { chat: '', image: '' }
           }

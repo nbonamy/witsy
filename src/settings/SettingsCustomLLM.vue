@@ -2,31 +2,52 @@
   <div>
     <div class="group">
       <label>{{ t('common.name') }}</label>
-      <input v-model="label" @keydown.enter.prevent="save" @change="save"/>
+      <input name="label" v-model="label" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="group">
       <label>{{ t('settings.engines.custom.apiSpecification') }}</label>
-      <select v-model="api" @change="save">
+      <select name="api"v-model="api" :disabled="true">
         <option value="openai">OpenAI</option>
+        <option value="azure">Azure OpenAI</option>
       </select>
     </div>
-    <div class="group">
-      <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
-      <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.engines.apiKey') }}</label>
-      <div class="subgroup">
-        <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
+    <template v-if="api === 'openai'">
+      <div class="group">
+        <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
+        <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
       </div>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.engines.chatModel') }}</label>
-      <div class="subgroup">
-        <Combobox :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save" />
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <div class="subgroup">
+          <InputObfuscated name="apiKey" v-model="apiKey" @blur="onKeyChange" />
+        </div>
       </div>
-      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-    </div>
+      <div class="group">
+        <label>{{ t('settings.engines.chatModel') }}</label>
+        <div class="subgroup">
+          <Combobox name="models" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save" />
+        </div>
+        <button name="refresh"@click.prevent="onRefresh">{{ refreshLabel }}</button>
+      </div>
+    </template>
+    <template v-if="api === 'azure'">
+      <div class="group">
+        <label>{{ t('settings.engines.custom.endpoint') }}</label>
+        <input name="baseURL" v-model="baseURL" placeholder="https://xxx.openai.azure.com/" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated name="apiKey" v-model="apiKey" @blur="onKeyChange" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.engines.custom.deployment') }}</label>
+        <input name="deployment" v-model="deployment" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.engines.custom.apiVersion') }}</label>
+        <input name="apiVersion" v-model="apiVersion" />
+      </div>
+    </template>
     <div class="group">
       <label></label>
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
@@ -58,6 +79,8 @@ const label = ref(null)
 const api = ref(null)
 const apiKey = ref(null)
 const baseURL = ref(null)
+const deployment = ref(null)
+const apiVersion = ref(null)
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
 const chat_model = ref(null)
@@ -73,6 +96,8 @@ const load = () => {
   api.value = engineConfig?.api || ''
   apiKey.value = engineConfig?.apiKey || ''
   baseURL.value = engineConfig?.baseURL || ''
+  deployment.value = engineConfig?.deployment || ''
+  apiVersion.value = engineConfig?.apiVersion || ''
   chat_models.value = engineConfig?.models?.chat || []
   chat_model.value = engineConfig?.model?.chat || ''
   disableTools.value = engineConfig?.disableTools || false
@@ -137,6 +162,8 @@ const save = () => {
   engineConfig.api = api.value
   engineConfig.apiKey = apiKey.value
   engineConfig.baseURL = baseURL.value
+  engineConfig.deployment = deployment.value
+  engineConfig.apiVersion = apiVersion.value
   engineConfig.model.chat = chat_model.value
   engineConfig.disableTools = disableTools.value
 

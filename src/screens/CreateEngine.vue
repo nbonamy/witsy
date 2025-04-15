@@ -6,28 +6,49 @@
     </template> 
     <template v-slot:body>
       <div class="group">
-      <label>{{ t('common.name') }}</label>
-      <input v-model="label" placeholder="e.g. Together.ai"/>
-    </div>
-    <div class="group">
-      <label>{{ t('engine.create.apiSpecification') }}</label>
-      <select v-model="api">
-        <option value="openai">OpenAI</option>
-      </select>
-    </div>
-    <div class="group">
-      <label>{{ t('engine.create.apiBaseURL') }}</label>
-      <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" />
-    </div>
-    <div class="group">
-      <label>{{ t('engine.create.apiKey') }}</label>
-      <InputObfuscated v-model="apiKey" />
-    </div>
+        <label>{{ t('common.name') }}</label>
+        <input name="label" v-model="label" placeholder="e.g. Together.ai"/>
+      </div>
+      <div class="group">
+        <label>{{ t('engine.create.apiSpecification') }}</label>
+        <select name="api" v-model="api">
+          <option value="openai">OpenAI</option>
+          <option value="azure">Azure OpenAI</option>
+        </select>
+      </div>
+      <template v-if="api === 'openai'">
+        <div class="group">
+          <label>{{ t('engine.create.apiBaseURL') }}</label>
+          <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" />
+        </div>
+        <div class="group">
+          <label>{{ t('engine.create.apiKey') }}</label>
+          <InputObfuscated name="apiKey" v-model="apiKey" />
+        </div>
+      </template>
+      <template v-if="api === 'azure'">
+        <div class="group">
+          <label>{{ t('engine.create.endpoint') }}</label>
+          <input name="baseURL" v-model="baseURL" placeholder="https://xxx.openai.azure.com/" />
+        </div>
+        <div class="group">
+          <label>{{ t('engine.create.apiKey') }}</label>
+          <InputObfuscated name="apiKey" v-model="apiKey" />
+        </div>
+        <div class="group">
+          <label>{{ t('engine.create.deployment') }}</label>
+          <input name="deployment" v-model="deployment" />
+        </div>
+        <div class="group">
+          <label>{{ t('engine.create.apiVersion') }}</label>
+          <input name="apiVersion" v-model="apiVersion" />
+        </div>
+      </template>
     </template>
     <template v-slot:footer>
       <div class="buttons">
-        <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-        <button @click="onSave" class="alert-confirm">{{ t('common.create') }}</button>
+        <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.create') }}</button>
       </div>
     </template>
   </AlertDialog>
@@ -47,6 +68,8 @@ const label = ref(null)
 const api = ref(null)
 const baseURL = ref(null)
 const apiKey = ref(null)
+const deployment = ref(null)
+const apiVersion = ref(null)
 
 const emit = defineEmits(['create'])
 
@@ -78,6 +101,8 @@ const onSave = () => {
     api: api.value,
     baseURL: baseURL.value,
     apiKey: apiKey.value,
+    deployment: deployment.value,
+    apiVersion: apiVersion.value,
   })
   close()
 }
@@ -88,6 +113,8 @@ defineExpose({
     api.value = 'openai'
     apiKey.value = ''
     baseURL.value = ''
+    deployment.value = ''
+    apiVersion.value = ''
     dialog.value.show('#create-engine')
   },
   close,

@@ -28,16 +28,17 @@ import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineLogo from '../components/EngineLogo.vue'
 import CreateEngine from '../screens/CreateEngine.vue'
-import SettingsOpenAI from './SettingsOpenAI.vue'
-import SettingsOllama from './SettingsOllama.vue'
-import SettingsMistralAI from './SettingsMistralAI.vue'
 import SettingsAnthropic from './SettingsAnthropic.vue'
+import SettingsAzure from './SettingsAzure.vue'
+import SettingsCerebras from './SettingsCerebras.vue'
+import SettingsDeepSeek from './SettingsDeepSeek.vue'
 import SettingsGoogle from './SettingsGoogle.vue'
 import SettingsGroq from './SettingsGroq.vue'
-import SettingsCerberas from './SettingsCerebras.vue'
-import SettingsXAI from './SettingsXAI.vue'
-import SettingsDeepSeek from './SettingsDeepSeek.vue'
+import SettingsMistralAI from './SettingsMistralAI.vue'
+import SettingsOllama from './SettingsOllama.vue'
+import SettingsOpenAI from './SettingsOpenAI.vue'
 import SettingsOpenRouter from './SettingsOpenRouter.vue'
+import SettingsXAI from './SettingsXAI.vue'
 import SettingsCustomLLM from './SettingsCustomLLM.vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 
@@ -46,7 +47,7 @@ type Engine = {
   label: string
 }
 
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const createEngine = ref(null)
 const currentEngine:Ref<string> = ref(llmManager.getChatEngines({ favorites: false })[0])
@@ -55,7 +56,7 @@ const engineSettings = ref(null)
 const isCustom = computed(() => llmManager.isCustomEngine(currentEngine.value))
 
 const engines = computed(() => {
-  return llmManager.getChatEngines({ favorites: false }).map(id => {
+  const engines = llmManager.getChatEngines({ favorites: false }).map(id => {
     if (llmManager.isCustomEngine(id)) {
       return {
         id: id,
@@ -65,33 +66,45 @@ const engines = computed(() => {
       return {
         id: id,
         label: {
-          openai: 'OpenAI',
-          ollama: 'Ollama',
           anthropic: 'Anthropic',
-          mistralai: 'Mistral AI',
-          google: 'Google',
-          xai: 'xAI',
-          openrouter: 'OpenRouter',
-          deepseek: 'DeepSeek',
-          groq: 'Groq',
+          azure: 'Azure',
           cerebras: 'Cerebras',
+          deepseek: 'DeepSeek',
+          google: 'Google',
+          groq: 'Groq',
+          mistralai: 'Mistral AI',
+          ollama: 'Ollama',
+          openai: 'OpenAI',
+          openrouter: 'OpenRouter',
+          xai: 'xAI',
         }[id]
       }
     }
   })
+
+  // add azure after mistralai
+  const idx = engines.findIndex(e => e.id == 'mistralai')
+  engines.splice(idx + 1, 0, {
+    id: 'azure',
+    label: 'Azure'
+  })
+
+  // done
+  return engines
 })
 
 const currentView = computed(() => {
-  if (currentEngine.value == 'openai') return SettingsOpenAI
-  if (currentEngine.value == 'ollama') return SettingsOllama
   if (currentEngine.value == 'anthropic') return SettingsAnthropic
-  if (currentEngine.value == 'mistralai') return SettingsMistralAI
-  if (currentEngine.value == 'google') return SettingsGoogle
-  if (currentEngine.value == 'xai') return SettingsXAI
+  if (currentEngine.value == 'azure') return SettingsAzure
+  if (currentEngine.value == 'cerebras') return SettingsCerebras
   if (currentEngine.value == 'deepseek') return SettingsDeepSeek
-  if (currentEngine.value == 'openrouter') return SettingsOpenRouter
+  if (currentEngine.value == 'google') return SettingsGoogle
   if (currentEngine.value == 'groq') return SettingsGroq
-  if (currentEngine.value == 'cerebras') return SettingsCerberas
+  if (currentEngine.value == 'mistralai') return SettingsMistralAI
+  if (currentEngine.value == 'ollama') return SettingsOllama
+  if (currentEngine.value == 'openai') return SettingsOpenAI
+  if (currentEngine.value == 'openrouter') return SettingsOpenRouter
+  if (currentEngine.value == 'xai') return SettingsXAI
   return SettingsCustomLLM
 })
 
@@ -104,13 +117,15 @@ const showCreateCustom = () => {
   createEngine.value.show()
 }
 
-const onCreateCustom = (payload: { label: string, api: string, baseURL: string, apiKey: string}) => {
+const onCreateCustom = (payload: { label: string, api: string, baseURL: string, apiKey: string, deployment: string, apiVersion: string}) => {
   const uuid = 'c' + crypto.randomUUID().replace(/-/g, '')
   store.config.engines[uuid] = {
     label: payload.label,
     api: payload.api,
     baseURL: payload.baseURL,
     apiKey: payload.apiKey,
+    deployment: payload.deployment,
+    apiVersion: payload.apiVersion,
     models: { chat: [], image: [] },
     model: { chat: '', image: '' }
   }

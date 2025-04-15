@@ -1,0 +1,25 @@
+<template>
+  <div>
+    <div class="description">
+      {{ t('settings.engines.azure.description') }}
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+
+import { t } from '../services/i18n'
+
+const load = () => {
+}
+
+defineExpose({ load })
+
+</script>
+
+<style scoped>
+@import '../../css/dialog.css';
+@import '../../css/tabs.css';
+@import '../../css/form.css';
+@import '../../css/panel.css';
+</style>
