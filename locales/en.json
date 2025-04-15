@@ -1491,7 +1491,8 @@
       },
       "apiKey": "API key",
       "cerebras": {
-        "aboutModels": "More about Cerebras models"
+        "aboutModels": "More about Cerebras models",
+        "pricing": "Cerebras pricing"
       },
       "chatModel": "Chat model",
       "custom": {
@@ -1502,7 +1503,8 @@
         "delete": "Delete engine"
       },
       "deepseek": {
-        "aboutModels": "More about DeepSeek models"
+        "aboutModels": "More about DeepSeek models",
+        "pricing": "DeepSeek pricing"
       },
       "disableTools": "Disable plugins for all models",
       "getApiKey": "Get your API key",
@@ -1529,14 +1531,16 @@
         "pricing": "OpenAI pricing"
       },
       "openrouter": {
-        "aboutModels": "More about OpenRouter models"
+        "aboutModels": "More about OpenRouter models",
+        "pricing": "OpenRouter pricing"
       },
       "sdwebui": {
         "baseURL": "API Base URL",
         "ensureApiMode": "Make sure you are in API mode"
       },
       "xai": {
-        "aboutModels": "More about xAI models"
+        "aboutModels": "More about xAI models",
+        "pricing": "xAI pricing"
       }
     },
     "experts": {

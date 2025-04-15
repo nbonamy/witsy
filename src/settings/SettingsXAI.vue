@@ -15,7 +15,8 @@
             {{ model.name }}
           </option>
         </select>
-        <a href="https://console.x.ai/team/" target="_blank">{{ t('settings.engines.xai.aboutModels') }}</a>
+        <a href="https://docs.x.ai/docs/models#models-and-pricing" target="_blank">{{ t('settings.engines.xai.aboutModels') }}</a>
+        <a href="https://docs.x.ai/docs/models#models-and-pricing" target="_blank">{{ t('settings.engines.xai.pricing') }}</a>
       </div>
       <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
