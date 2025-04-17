@@ -36,8 +36,8 @@ export default class STTNvidia implements STTEngine {
     try {
       
       // Convert blob to wav base64
-      const wavBlob = await getWaveBlob(audioBlob, false)
-      const wavBase64 = await this.blobToBase64(wavBlob)
+      const payloadBlob = await getWaveBlob(audioBlob, false)
+      const payloadBase64 = await this.blobToBase64(payloadBlob)
       
       const headers = {
         'Authorization': `Bearer ${this.config.engines.nvidia?.apiKey}`,
@@ -49,7 +49,7 @@ export default class STTNvidia implements STTEngine {
         model: this.config.stt.model,
         messages: [{
           role: 'user',
-          content: `${this.config.stt.nvidia.prompt}.\n<audio src="data:${wavBlob.type};base64,${wavBase64}" />`
+          content: `${this.config.stt.nvidia.prompt}.\n<audio src="data:audio/wav;base64,${payloadBase64}" />`
         }],
         stream: false
       }
