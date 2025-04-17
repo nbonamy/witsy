@@ -164,6 +164,10 @@ export type STTConfig = {
   autoStart: boolean
   silenceDetection: boolean
   silenceDuration: number
+  nvidia: {
+    enabled: boolean
+    prompt: string
+  }
   //silenceAction: SilenceAction
 }
 

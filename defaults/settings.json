@@ -118,7 +118,11 @@
     "autoStart": false,
     "silenceDetection": true,
     "silenceDuration": 2000,
-    "silenceAction": "stop_transcribe"
+    "silenceAction": "stop_transcribe",
+    "nvidia": {
+      "enabled": false,
+      "prompt": "Transcribe the audio clip into text.\nFormat sentences with clear line breaks and paragraphs for natural reading. Remove filler words like um, uh.\nYour response should be formatted as follows:\n\"transcribed text here\""
+    }
   },
   "tts": {
     "engine": "openai",
@@ -228,6 +232,17 @@
       }
     },
     "mistralai": {
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
+    "nvidia": {
+      "apiKey": "",
       "models": {
         "chat": [],
         "image": []

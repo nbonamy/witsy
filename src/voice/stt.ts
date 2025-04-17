@@ -4,6 +4,7 @@ import STTFalAi from './stt-falai'
 import STTGladia from './stt-gladia'
 import STTGroq from './stt-groq'
 import STTHuggingFace from './stt-huggingface'
+import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
 import STTWhisper from './stt-whisper'
 
@@ -58,6 +59,8 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTFalAi(config)
   } else if (engine === 'huggingface') {
     return new STTHuggingFace(config)
+  } else if (engine === 'nvidia') {
+    return new STTNvidia(config)
   } else if (engine === 'whisper') {
     return new STTWhisper(config)
   } else if (engine === 'gladia') {
@@ -76,6 +79,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTFalAi.requiresDownload()
   } else if (engine === 'huggingface') {
     return STTHuggingFace.requiresDownload()
+  } else if (engine === 'nvidia') {
+    return STTNvidia.requiresDownload()
   } else if (engine === 'whisper') {
     return STTWhisper.requiresDownload()
   } else if (engine === 'gladia') {

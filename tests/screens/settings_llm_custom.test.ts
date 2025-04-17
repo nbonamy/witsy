@@ -108,7 +108,7 @@ test('delete custom engine', async () => {
 })
 
 test('create custom engine openai', async () => {
-  expect(Object.keys(store.config.engines)).toHaveLength(18)
+  const enginesCount = Object.keys(store.config.engines).length
   const tab = await switchToTab(wrapper, llmIndex)
   await tab.find<HTMLButtonElement>('button.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
@@ -125,7 +125,7 @@ test('create custom engine openai', async () => {
   await create.find('input[name=baseURL]').setValue('http://localhost/api/v2')
   await create.find('input[name=apiKey]').setValue('012')
   await create.find('button[name=save]').trigger('click')
-  expect(Object.keys(store.config.engines)).toHaveLength(19)
+  expect(Object.keys(store.config.engines)).toHaveLength(enginesCount + 1)
   const engineId = Object.keys(store.config.engines).pop()
   expect(store.config.engines[engineId!].label).toBe('custom_openai2')
   expect(store.config.engines[engineId!].api).toBe('openai')
@@ -135,7 +135,7 @@ test('create custom engine openai', async () => {
 })
 
 test('create custom engine azure', async () => {
-  expect(Object.keys(store.config.engines)).toHaveLength(19)
+  const enginesCount = Object.keys(store.config.engines).length
   const tab = await switchToTab(wrapper, llmIndex)
   await tab.find<HTMLButtonElement>('button.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
@@ -149,7 +149,7 @@ test('create custom engine azure', async () => {
   await create.find('input[name=deployment]').setValue('deployment')
   await create.find('input[name=apiVersion]').setValue('2025-04-03')
   await create.find('button[name=save]').trigger('click')
-  expect(Object.keys(store.config.engines)).toHaveLength(20)
+  expect(Object.keys(store.config.engines)).toHaveLength(enginesCount + 1)
   const engineId = Object.keys(store.config.engines).pop()
   expect(store.config.engines[engineId!].label).toBe('custom_azure2')
   expect(store.config.engines[engineId!].api).toBe('azure')
