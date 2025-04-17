@@ -7,7 +7,7 @@
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
-        <option v-for="engine in engines" :key="engine.id" :value="engine.id">
+        <option v-for="engine in engines()" :key="engine.id" :value="engine.id">
           {{ engine.label }}
         </option>
       </select>
@@ -23,6 +23,10 @@
     <div class="group" v-if="engine == 'gladia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="gladiaAPIKey" @blur="save" />
+    </div>
+    <div class="group" v-if="engine == 'nvidia'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="nvidiaAPIKey" @blur="save" />
     </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
@@ -85,6 +89,7 @@ import STTFalAi from '../voice/stt-falai'
 import STTGladia from '../voice/stt-gladia'
 import STTGroq from '../voice/stt-groq'
 import STTHuggingFace from '../voice/stt-huggingface'
+import STTNvidia from '../voice/stt-nvidia'
 import STTOpenAI from '../voice/stt-openai'
 import STTWhisper from '../voice/stt-whisper'
 
@@ -99,14 +104,16 @@ const model = ref('whisper-1')
 const falAiAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
+const nvidiaAPIKey = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
 
-const engines = [
+const engines = () => [
   { id: 'openai', label: 'OpenAI' },
   { id: 'groq', label: 'Groq' },
   { id: 'falai', label: 'fal.ai' },
+  ...(store.config.stt.nvidia.enabled ? [{ id: 'nvidia', label: 'nVidia' }] : []),
   //{ id: 'huggingface', label: 'Hugging Face' },
   { id: 'whisper', label: 'Whisper' },
   { id: 'gladia', label: 'Gladia' }
@@ -124,6 +131,8 @@ const models = computed(() => {
       return STTFalAi.models
     } else if (engine.value === 'huggingface') {
       return STTHuggingFace.models
+    } else if (engine.value === 'nvidia') {
+      return STTNvidia.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
     } else if (engine.value === 'gladia') {
@@ -166,6 +175,7 @@ const load = () => {
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
+  nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -176,6 +186,7 @@ const save = () => {
   store.config.engines.falai.apiKey = falAiAPIKey.value
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
+  store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
