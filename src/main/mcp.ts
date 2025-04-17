@@ -443,7 +443,7 @@ export default class {
       type: 'function',
       function: {
         name: this.uniqueToolName(server, tool.name),
-        description: tool.description.slice(0, 1024),
+        description: tool.description ? tool.description.slice(0, 1024) : tool.name,
         parameters: {
           type: 'object',
           properties: Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
