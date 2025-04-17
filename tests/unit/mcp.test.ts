@@ -61,7 +61,7 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
   Client.prototype.listTools = vi.fn(async () => ({
     tools: [
       { name: 'tool1', description: 'tool1 description', inputSchema: { type: 'object', properties: { arg: { type: 'string' }}, required: [] } },
-      { name: 'tool2', description: 'tool2 description', inputSchema: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } },
+      { name: 'tool2', inputSchema: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } },
     ]
   }))
   Client.prototype.callTool = vi.fn(function(params) {
@@ -213,7 +213,7 @@ test('Connect', async () => {
     },
     {
       type: 'function',
-      function: { name: 'tool2___90ab', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2___90ab', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
     {
       type: 'function',
@@ -221,7 +221,7 @@ test('Connect', async () => {
     },
     {
       type: 'function',
-      function: { name: 'tool2___0abc', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2___0abc', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
     {
       type: 'function',
@@ -229,7 +229,7 @@ test('Connect', async () => {
     },
     {
       type: 'function',
-      function: { name: 'tool2___mcp1', description: 'tool2 description', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2___mcp1', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
   ])
 })
