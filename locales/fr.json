@@ -1229,7 +1229,8 @@
         "packageRequired": "Assurez-vous d'entrer un nom de package pour ce serveur.",
         "requiredFields": "Certains champs sont obligatoires",
         "urlRequired": "Assurez-vous d'entrer une URL pour ce serveur."
-      }
+      },
+      "workingDirectory": "Répertoire de travail"
     },
     "variableEditor": {
       "title": "Variable d'environnement MCP"

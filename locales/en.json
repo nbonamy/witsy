@@ -1248,7 +1248,8 @@
         "packageRequired": "Make sure you enter a package name for this server.",
         "requiredFields": "Some fields are required",
         "urlRequired": "Make sure you enter a URL for this server."
-      }
+      },
+      "workingDirectory": "Working Directory"
     },
     "variableEditor": {
       "title": "MCP Environment Variable"
