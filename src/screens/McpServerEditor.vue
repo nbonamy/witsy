@@ -49,6 +49,13 @@
         </div>
       </div>
       <div class="group" v-if="type === 'stdio'">
+        <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
+        <div style="display: flex; width: 100%;">
+          <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+          <button name="pickWorkDir" @click="pickWorkDir">{{ t('common.pick') }}</button>
+        </div>
+      </div>
+      <div class="group" v-if="type === 'stdio'">
         <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
         <VariableTable 
           :variables="env"
@@ -86,6 +93,7 @@ const type = ref('stdio')
 const command = ref('')
 const source = ref('')
 const url = ref('')
+const cwd = ref('')
 const env: Ref<{ [key: string]: string }> = ref({})
 const selectedVar: Ref<{ key: string, value: string }> = ref(null)
 
@@ -103,6 +111,7 @@ onMounted(async () => {
     type.value = props.server?.type || 'stdio'
     command.value = props.server?.command || ''
     url.value = props.server?.url || ''
+    cwd.value = props.server?.cwd || ''
     env.value = props.server?.env || {}
   }, { immediate: true })
 })
@@ -144,6 +153,13 @@ const pickScript = () => {
   const path = window.api.file.pick({ location: true })
   if (path) {
     url.value = path as string
+  }
+}
+
+const pickWorkDir = () => {
+  const path = window.api.file.pickDir()
+  if (path) {
+    cwd.value = path as string
   }
 }
 
@@ -222,6 +238,7 @@ const onSave = () => {
       type: type.value,
       command: command.value,
       url: url.value,
+      cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
     })
 
@@ -243,7 +260,7 @@ defineExpose({
 @import '../../css/sticky-header-table.css';
 </style>
 
-<style scoped>
+<style>
 #mcp-server-editor {
 
   .list-with-actions {
@@ -251,6 +268,7 @@ defineExpose({
   }
 
   .sticky-table-container {
+
     height: 100px;
 
     td {

@@ -49,6 +49,7 @@ export default class {
           type: 'stdio',
           command: config.mcpServers[key].command,
           url: config.mcpServers[key].args.join(' '),
+          cwd: config.mcpServers[key].cwd,
           env: config.mcpServers[key].env
         })
         return arr
@@ -161,6 +162,7 @@ export default class {
       original.state = server.state
       original.command = server.command
       original.url = server.url
+      original.cwd = server.cwd
       original.env = server.env
       edited = true
     }
@@ -184,6 +186,7 @@ export default class {
       // rest is normal
       originalMcp.command = server.command
       originalMcp.args = server.url.split(' ')
+      originalMcp.cwd = server.cwd
       originalMcp.env = server.env
       edited = true
     }
@@ -311,10 +314,13 @@ export default class {
         env = undefined
       }
 
+      // working directory
+      const cwd = server.cwd || undefined
+
       // console.log('MCP Stdio command', process.platform, command, args, env)
 
       const transport = new StdioClientTransport({
-        command, args, env, stderr: 'pipe'
+        command, args, env, stderr: 'pipe', cwd
       })
 
       // start transport to get errors

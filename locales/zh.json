@@ -1248,7 +1248,8 @@
         "packageRequired": "确保你为这个服务器输入了一个包名。",
         "requiredFields": "一些字段是必填的",
         "urlRequired": "确保你为这个服务器输入了一个 URL。"
-      }
+      },
+      "workingDirectory": "工作目录"
     },
     "variableEditor": {
       "title": "MCP 环境变量"

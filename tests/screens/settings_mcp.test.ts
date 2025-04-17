@@ -108,6 +108,7 @@ test('Server edit', async () => {
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')
   expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('script.js')
+  expect(editor.find<HTMLInputElement>('input[name=cwd]').element.value).toBe('cwd1')
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLInputElement>('input[name=url]').setValue('http://localhost:3000')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
@@ -118,6 +119,7 @@ test('Server edit', async () => {
     type: 'sse',
     command: 'node',
     url: 'http://localhost:3000',
+    cwd: 'cwd1',
     env: {},
   })
 })
@@ -146,8 +148,12 @@ test('Normal server add', async () => {
     type: 'stdio',
     command: 'npx',
     url: 'script1.js',
+    cwd: '',
     env: { },
   })
+
+  // add cwd
+  await editor.find<HTMLButtonElement>('button[name=pickWorkDir]').trigger('click')
 
   // add variable
   await editor.find<HTMLButtonElement>('button.add').trigger('click')
@@ -173,6 +179,7 @@ test('Normal server add', async () => {
     type: 'stdio',
     command: 'npx',
     url: 'script1.js',
+    cwd: 'picked_folder',
     env: { key1: 'value1', key2: 'value2' },
   })
 
@@ -197,6 +204,7 @@ test('Normal server add', async () => {
     type: 'stdio',
     command: 'npx',
     url: 'script1.js',
+    cwd: 'picked_folder',
     env: { key3: 'value3' },
   })
 

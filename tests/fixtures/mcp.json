@@ -3,7 +3,7 @@
     "mcp": {
       "enabled": true,
       "servers": [
-        { "uuid": "1234-5678-90ab", "registryId": "1234-5678-90ab", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js", "env": { "KEY": "value" } },
+        { "uuid": "1234-5678-90ab", "registryId": "1234-5678-90ab", "state": "enabled", "type": "stdio", "command": "node", "url": "script.js", "cwd": "cwd1", "env": { "KEY": "value" } },
         { "uuid": "2345-6789-0abc", "registryId": "2345-6789-0abc", "state": "enabled", "type": "sse", "url": "http://localhost:3000" },
         { "uuid": "3456-7890-abcd", "registryId": "3456-7890-abcd", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py" }
       ],
@@ -14,6 +14,7 @@
     "@mcp1": {
       "command": "npx",
       "args": ["-y", "run", "mcp1.js"],
+      "cwd": "cwd2",
       "env": { "KEY": "value" }
     },
     "mcp2": {

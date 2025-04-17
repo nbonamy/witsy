@@ -1248,7 +1248,8 @@
         "packageRequired": "Upewnij się, że wprowadziłeś nazwę pakietu dla tego serwera.",
         "requiredFields": "Niektóre pola są wymagane",
         "urlRequired": "Upewnij się, że wprowadziłeś adres URL tego serwera."
-      }
+      },
+      "workingDirectory": "Katalog roboczy"
     },
     "variableEditor": {
       "title": "Zmienna środowiskowa MCP"

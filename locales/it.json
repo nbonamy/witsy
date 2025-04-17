@@ -1229,7 +1229,8 @@
         "packageRequired": "Assicurati di inserire un nome di pacchetto per questo server.",
         "requiredFields": "Alcuni campi sono obbligatori",
         "urlRequired": "Assicurati di inserire un URL per questo server."
-      }
+      },
+      "workingDirectory": "Directory di lavoro"
     },
     "variableEditor": {
       "title": "Variabile di ambiente MCP"

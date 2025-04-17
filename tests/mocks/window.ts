@@ -176,7 +176,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
           }
         }
       }),
-      pickDir: vi.fn(),
+      pickDir: vi.fn(() => 'picked_folder'),
       delete: vi.fn(),
       find: vi.fn(() => 'file.ext'),
       extractText: vi.fn((s) => `${s}_extracted`),
@@ -234,10 +234,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       isAvailable: vi.fn(() => true),
       //@ts-expect-error not sure about the state: 'enabled' complain
       getServers: vi.fn(() => [
-        { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js' },
+        { uuid: '1', registryId: '1', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1' },
         { uuid: '2', registryId: '2', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
         { uuid: '3', registryId: '3', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
-        { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js' },
+        { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2' },
         { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'}
       ]),
       editServer: vi.fn(async () => true),

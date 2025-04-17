@@ -242,6 +242,7 @@ const onImportJson = async () => {
       type: 'stdio',
       command: result.value.command,
       url: result.value.args.join(' '),
+      cwd: result.value.cwd,
       env: result.value.env || {}
     }
 
@@ -291,14 +292,14 @@ const edit = (server: McpServer) => {
 }
 
 // @ts-expect-error lazy
-const onEdited = async ({ type, command, url, env }) => {
+const onEdited = async ({ type, command, url, cwd, env }) => {
 
   // build a dummy server
   const server: McpServer = {
     uuid: selected.value.uuid,
     registryId: selected.value.registryId,
     state: selected.value.state,
-    type, command, url, env
+    type, command, url, cwd, env
   }
 
   // edit it

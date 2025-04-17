@@ -1229,7 +1229,8 @@
         "packageRequired": "Stellen Sie sicher, dass Sie einen Paketnamen für diesen Server eingeben.",
         "requiredFields": "Einige Felder sind erforderlich",
         "urlRequired": "Stellen Sie sicher, dass Sie eine URL für diesen Server eingeben."
-      }
+      },
+      "workingDirectory": "Arbeitsverzeichnis"
     },
     "variableEditor": {
       "title": "MCP-Umgebungsvariable"

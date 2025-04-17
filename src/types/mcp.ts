@@ -11,6 +11,7 @@ export type McpServer = {
   type: McpServerType
   command?: string
   url: string
+  cwd?: string
   env?: strDict
 }
 
@@ -28,6 +29,7 @@ export type McpTool = {
 export type McpClaudeServer = {
   command: string
   args: string[]
+  cwd?: string
   env?: strDict
 }
 

@@ -84,11 +84,11 @@ test('Initialization', async () => {
   expect(Client.prototype.connect).toHaveBeenCalledTimes(0)
   expect(await mcp.getStatus()).toEqual({ servers: [], logs: {} })
   expect(mcp.getServers()).toStrictEqual([
-    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' } },
+    { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' } },
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
-    { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', env: { KEY: 'value' } },
-    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', env: undefined }
+    { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' } },
+    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
   ])
 })
 
@@ -110,6 +110,7 @@ test('Create server', async () => {
     type: 'sse',
     command: undefined,
     url: 'http://localhost:3001',
+    cwd: undefined,
     env: undefined,
   })
 })
@@ -193,9 +194,9 @@ test('Connect', async () => {
   expect(mcp.clients).toHaveLength(3)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab'] },
       { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc'] },
-      { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1'] },
+      { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
