@@ -1806,6 +1806,11 @@
     "errorMicrophone": "Błąd dostępu do mikrofonu",
     "errorSTTNotReady": "Silnik zamiany mowy na tekst nie jest gotowy",
     "errorTranscription": "Wystąpił błąd podczas transkrypcji",
+    "spaceKeyHint": {
+      "pushToTalk": "Możesz także nacisnąć i przytrzymać spację, aby nagrywać.",
+      "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."
+    },
+    "spaceToTalk": "Naciśnij i przytrzymaj spację, aby mówić",
     "title": "Zamiana mowy na tekst"
   },
   "tray": {

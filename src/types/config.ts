@@ -162,6 +162,7 @@ export type STTConfig = {
   engine: string
   model: string
   autoStart: boolean
+  pushToTalk: boolean
   silenceDetection: boolean
   silenceDuration: number
   nvidia: {

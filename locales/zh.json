@@ -1800,6 +1800,11 @@
     "errorMicrophone": "无法访问麦克风",
     "errorSTTNotReady": "语音转文本引擎未准备好",
     "errorTranscription": "转录过程中发生错误",
+    "spaceKeyHint": {
+      "pushToTalk": "您也可以按住空格键进行录音。",
+      "toggle": "您也可以按空格键开始录音，再次按空格键停止录音。"
+    },
+    "spaceToTalk": "按住空格键开始讲话",
     "title": "语音转文本"
   },
   "tray": {

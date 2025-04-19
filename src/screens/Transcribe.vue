@@ -2,25 +2,29 @@
   <div class="transcribe">
     <div class="controls">
       <BIconRecordCircle v-if="state == 'recording'" color="red" @click="onStop()" />
-      <Loader class="loader" v-else-if="state == 'processing'" />
-      <BIconRecordCircle v-else @click="onRecord()" />
+      <Loader class="loader" v-else-if="state === 'processing'" />
+      <BIconRecordCircle v-else @click="onRecord(false)" />
       <Waveform :width="350" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
-      <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord')" />
+      <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
     </div>
     <div class="actions">
       <button class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
-      <button class="button" v-else @click="onRecord()">{{ t('common.record') }}</button>
-      <button class="button" @click="onClear()">{{ t('common.clear') }}</button>
+      <button class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
+      <button class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
       <button class="button push" @click="onCancel()">{{ t('common.cancel') }}</button>
       <button class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
       <button class="button" @click="onCopy()">{{ t('common.copy') }}</button>
     </div>
     <form class="option">
       <div class="group">
-        <input type="checkbox" v-model="autoStart" @change="save" />
+        <input type="checkbox" v-model="autoStart" @change="save" :disabled="pushToTalk" />
         <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
+      </div>
+      <div class="group">
+        <input type="checkbox" v-model="pushToTalk" @change="save" :disabled="autoStart" />
+        <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
       </div>
     </form>
   </div>
@@ -42,8 +46,10 @@ store.loadSettings()
 const transcriber = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
+let pushToTalkMode = false
 
 const isMas = ref(false)
+const pushToTalk = ref(false)
 const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
 const transcription = ref('')
 const autoStart = ref(false)
@@ -54,6 +60,7 @@ onMounted(async () => {
 
   // events
   document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('keyup', onKeyUp)
   window.api.on('start-dictation', toggleRecord)
 
   // init
@@ -72,17 +79,26 @@ onMounted(async () => {
 
   // other stuff
   autoStart.value = store.config.stt.autoStart
+  pushToTalk.value = store.config.stt.pushToTalk
   isMas.value = window.api.isMasBuild
 
   // auto start?
   if (autoStart.value) {
-    onRecord()
+    onRecord(false)
+  }
+
+  // Log focused element
+  if (document.activeElement) {
+    console.log('Focused element:', document.activeElement);
+  } else {
+    console.log('No element is focused');
   }
 
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('keyup', onKeyUp)
   window.api.off('start-dictation', toggleRecord)
 })
 
@@ -92,8 +108,9 @@ const toggleRecord = () => {
   } else if (state.value === 'recording') {
     onStop()
   } else {
-    onRecord()
+    onRecord(false)
   }
+  refocus()
 }
 
 const initializeAudio = async () => {
@@ -114,7 +131,9 @@ const initializeAudio = async () => {
         // }
 
         // stop
-        stopDictation(false)
+        if (!pushToTalkMode) {
+          stopDictation(false)
+        }
 
       },
       onRecordingComplete: async (audioChunks, noiseDetected) => {
@@ -130,7 +149,7 @@ const initializeAudio = async () => {
 
         // execute?
         if (userStoppedDictation === false/* && store.config.stt.silenceAction === 'execute_continue'*/) {
-          onRecord()
+          onRecord(false)
         }
       }
 
@@ -143,7 +162,7 @@ const initializeAudio = async () => {
 
 }
 
-const onRecord = async () => {
+const onRecord = async (ptt: boolean) => {
 
   try {
 
@@ -154,6 +173,7 @@ const onRecord = async () => {
     }
 
     // start the recording
+    pushToTalkMode = ptt
     audioRecorder.start()
 
     // update the status
@@ -168,6 +188,7 @@ const onRecord = async () => {
 
 const onStop = () => {
   stopDictation(true)
+  refocus()
 }
 
 const stopDictation = async (userStopped: boolean) => {
@@ -202,17 +223,38 @@ const onKeyDown = (event: KeyboardEvent) => {
   const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
   if (event.key === 'Escape') {
     onCancel()
-  }
-  if (event.key === 'c' && isCommand) {
-    onCopy()
-  }
-  if (event.key === 'i' && isCommand) {
+  } else if (event.code === 'Space') {
+    if (state.value !== 'recording') {
+      onRecord(pushToTalk.value)
+    } else if (!pushToTalk.value) {
+      onStop()
+    }
+  } else if (event.key === 'Enter' && isCommand) {
+    event.preventDefault()
     onInsert()
+  } else if (event.key === 'Backspace') {
+    transcription.value = transcription.value.slice(0, -1)
+  } else if (event.key === 'Delete') {
+    transcription.value = ''
+  } else if (event.key === 'c' && isCommand) {
+    onCopy()
+  } else if (event.key === 'i' && isCommand) {
+    onInsert()
+  }
+}
+
+const onKeyUp = (event: KeyboardEvent) => {
+  //const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+  if (event.code === 'Space') {
+    if (pushToTalkMode && state.value === 'recording') {
+      onStop()
+    }
   }
 }
 
 const onClear = () => {
   transcription.value = ''
+  refocus()
 }
 
 const onCopy = async () => {
@@ -234,7 +276,14 @@ const onCancel = () => {
 
 const save = () => {
   store.config.stt.autoStart = autoStart.value
+  store.config.stt.pushToTalk = pushToTalk.value
   store.saveSettings()
+  refocus()
+}
+
+const refocus = () => {
+  const focusedElement = document.activeElement as HTMLElement
+  focusedElement?.blur()
 }
 
 </script>
@@ -260,16 +309,17 @@ const save = () => {
     margin-bottom: 32px;
   }
 
-  textarea {
+  input, textarea, button {
     outline: none;
   }
 
   .controls {
+    margin-left: 8px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     font-size: 18pt;
-    gap: 32px;
+    gap: 24px;
     align-items: center;
     color: var(--text-color);
   }
@@ -287,6 +337,17 @@ const save = () => {
       padding: 8px;
       border: none;
       resize: none;
+
+      &::placeholder {
+        padding: 32px;
+        position: relative !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important; 
+        text-align: center;
+        line-height: 140%;
+        font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+        font-size: 14pt;
+      }
     }
   }
 
@@ -304,21 +365,31 @@ const save = () => {
     margin-top: 8px;
     .group {
       padding: 0;
-      margin: 0;
+      margin: 4px 0px;
       display: flex;
       gap: 4px;
     }
     input[type=checkbox] {
       flex: 0 0 14px;
     }
+    label {
+      margin-left: 4px;
+      min-width: fit-content;
+    }
+    select {
+      flex: 0;
+      width: auto;
+      outline: none;
+    }
   }
 
-  svg, input, textarea, button {
+  svg, input, textarea, button, select {
     -webkit-app-region: no-drag;
   }
 
   .loader {
     margin: 8px;
+    background-color: orange;
   }
 }
 

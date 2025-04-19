@@ -1800,6 +1800,11 @@
     "errorMicrophone": "Erro ao acessar o microfone",
     "errorSTTNotReady": "Mecanismo de voz para texto não está pronto",
     "errorTranscription": "Ocorreu um erro durante a transcrição",
+    "spaceKeyHint": {
+      "pushToTalk": "Você também pode pressionar e segurar a barra de espaço para gravar.",
+      "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."
+    },
+    "spaceToTalk": "Pressione e segure a barra de espaço para falar",
     "title": "Voz para Texto"
   },
   "tray": {

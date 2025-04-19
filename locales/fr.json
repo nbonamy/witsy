@@ -1770,6 +1770,11 @@
     "errorMicrophone": "Erreur d'accès au microphone",
     "errorSTTNotReady": "Le moteur de reconnaissance vocale n'est pas prêt",
     "errorTranscription": "Une erreur s'est produite pendant la transcription",
+    "spaceKeyHint": {
+      "pushToTalk": "Vous pouvez également appuyer et maintenir la barre d'espace pour enregistrer.",
+      "toggle": "Vous pouvez également appuyer sur la barre d'espace pour commencer à enregistrer et appuyer à nouveau pour l'arrêter."
+    },
+    "spaceToTalk": "Appuyez et maintenez la barre d'espace pour parler",
     "title": "Dictée Vocale"
   },
   "tray": {
