@@ -29,7 +29,7 @@ export const openTranscribePalette = (): void => {
 
   // get bounds
   const minWidth = 460
-  const minHeight = 300
+  const minHeight = 400
   const width = bounds?.width ?? minWidth;
   const height = bounds?.height ?? minHeight;
   const center = getCenteredCoordinates(width, height);

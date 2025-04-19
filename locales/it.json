@@ -1770,6 +1770,11 @@
     "errorMicrophone": "Errore durante l'accesso al microfono",
     "errorSTTNotReady": "Il motore di riconoscimento vocale non è pronto",
     "errorTranscription": "Si è verificato un errore durante la trascrizione",
+    "spaceKeyHint": {
+      "pushToTalk": "Puoi anche tenere premuto il tasto Spazio per registrare.",
+      "toggle": "Puoi anche premere il tasto Spazio per iniziare a registrare e premere di nuovo per fermarlo."
+    },
+    "spaceToTalk": "Tieni premuto il tasto spazio per parlare",
     "title": "Da Voce a Testo"
   },
   "tray": {

@@ -1806,6 +1806,11 @@
     "errorMicrophone": "Error accessing microphone",
     "errorSTTNotReady": "Speech-to-text engine not ready",
     "errorTranscription": "Error occurred during transcription",
+    "spaceKeyHint": {
+      "pushToTalk": "You can also press and hold the Space bar to record.",
+      "toggle": "You can also hit Space to start recording and hit again to stop it."
+    },
+    "spaceToTalk": "Press and hold space to talk",
     "title": "Speech-to-Text"
   },
   "tray": {

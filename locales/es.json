@@ -1770,6 +1770,11 @@
     "errorMicrophone": "Error al acceder al micrófono",
     "errorSTTNotReady": "El motor de reconocimiento de voz no está listo",
     "errorTranscription": "Ocurrió un error durante la transcripción",
+    "spaceKeyHint": {
+      "pushToTalk": "También puedes presionar y mantener la barra espaciadora para grabar.",
+      "toggle": "También puedes presionar la barra espaciadora para comenzar a grabar y presionar nuevamente para detenerlo."
+    },
+    "spaceToTalk": "Mantén presionada la barra espaciadora para hablar",
     "title": "Texto a Voz"
   },
   "tray": {

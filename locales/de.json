@@ -1770,6 +1770,11 @@
     "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
     "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
     "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten",
+    "spaceKeyHint": {
+      "pushToTalk": "Sie können auch die Leertaste gedrückt halten, um aufzuzeichnen.",
+      "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."
+    },
+    "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
     "title": "Sprache-zu-Text"
   },
   "tray": {
