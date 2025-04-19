@@ -289,7 +289,7 @@ declare global {
       anywhere: {
         prompt(): void
         insert(prompt: string): void
-        close(sourceApp: Application): void
+        close(sourceApp?: Application): void
         resize(deltaX: number, deltaY: number): void
       }
       experts: {
