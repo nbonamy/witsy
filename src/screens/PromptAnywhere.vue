@@ -358,7 +358,7 @@ const onClose = () => {
   // document.removeEventListener('keydown', onKeyDown)
 
   // done
-  window.api.anywhere.close(showParams?.sourceApp)
+  window.api.anywhere.close(/*showParams?.sourceApp*/)
 }
 
 const onStopGeneration = () => {
