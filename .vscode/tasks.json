@@ -1,0 +1,25 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Clear Witsy Settings",
+      "type": "shell",
+      "command": "mv ~/Library/Application\\ Support/Witsy/settings.json ~/Library/Application\\ Support/Witsy/settings.json.bak",
+      "problemMatcher": []
+    },
+    {
+      "label": "Backup Witsy Settings",
+      "type": "shell",
+      "command": "cp ~/Library/Application\\ Support/Witsy/settings.json ~/Library/Application\\ Support/Witsy/settings.json.bak",
+      "problemMatcher": []
+    },
+    {
+      "label": "Restore Witsy Settings",
+      "type": "shell",
+      "command": "cp ~/Library/Application\\ Support/Witsy/settings.json.bak ~/Library/Application\\ Support/Witsy/settings.json",
+      "problemMatcher": []
+    }
+  ]
+}
