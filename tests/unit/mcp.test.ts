@@ -62,6 +62,7 @@ vi.mock('@modelcontextprotocol/sdk/client/index.js', async () => {
     tools: [
       { name: 'tool1', description: 'tool1 description', inputSchema: { type: 'object', properties: { arg: { type: 'string' }}, required: [] } },
       { name: 'tool2', inputSchema: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } },
+      { name: 'tool3', description: 'tool3 description' },
     ]
   }))
   Client.prototype.callTool = vi.fn(function(params) {
@@ -194,9 +195,9 @@ test('Connect', async () => {
   expect(mcp.clients).toHaveLength(3)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
-      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab'] },
-      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc'] },
-      { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1'] },
+      { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
+      { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
+      { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1', 'tool3___mcp1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
@@ -217,6 +218,10 @@ test('Connect', async () => {
     },
     {
       type: 'function',
+      function: { name: 'tool3___90ab', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
+    },
+    {
+      type: 'function',
       function: { name: 'tool1___0abc', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
     },
     {
@@ -225,11 +230,19 @@ test('Connect', async () => {
     },
     {
       type: 'function',
+      function: { name: 'tool3___0abc', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
+    },
+    {
+      type: 'function',
       function: { name: 'tool1___mcp1', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
     },
     {
       type: 'function',
       function: { name: 'tool2___mcp1', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+    },
+    {
+      type: 'function',
+      function: { name: 'tool3___mcp1', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
     },
   ])
 })
