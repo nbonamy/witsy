@@ -404,11 +404,18 @@ export default class {
   }
 
   getTools = async (): Promise<LlmTool[]> => {
-    let allTools: LlmTool[] = []
+    const allTools: LlmTool[] = []
     for (const client of this.clients) {
       try {
         const tools = await client.client.listTools()
-        allTools = [...allTools, ...tools.tools.map((tool: any) => this.mcpToOpenAI(client.server, tool))]
+        for (const tool of tools.tools) {
+          try {
+            const functionTool = this.mcpToOpenAI(client.server, tool)
+            allTools.push(functionTool)
+          } catch (e) {
+            console.error(`Failed to convert MCP tool ${tool.name} from MCP server ${client.server.url} to OpenAI tool:`, e)
+          }
+        }
       } catch (e) {
         console.error(`Failed to get tools from MCP server ${client.server.url}:`, e)
       }
@@ -446,7 +453,7 @@ export default class {
         description: tool.description ? tool.description.slice(0, 1024) : tool.name,
         parameters: {
           type: 'object',
-          properties: Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
+          properties: tool.inputSchema?.properties ? Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
             const prop = tool.inputSchema.properties[key]
             obj[key] = {
               type: prop.type,
@@ -454,8 +461,8 @@ export default class {
               ...(prop.type === 'array' ? {items: prop.items || 'string'} : {}),
             }
             return obj
-          }, {}),
-          required: tool.inputSchema.required
+          }, {}) : {},
+          required: tool.inputSchema?.required ?? []
         }
       }
     }
