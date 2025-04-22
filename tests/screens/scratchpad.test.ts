@@ -33,7 +33,7 @@ vi.mock('../../src/services/i18n', async (importOriginal) => {
   const mod: any = await importOriginal()
   return {
     ...mod,
-    t: (key: string) => `${key}.${store.config.llm.locale}`,
+    t: (key: string) => `${key}.${store.config.llm?.locale}`,
     i18nInstructions: (config: any, key: string) => {
 
       // get instructions

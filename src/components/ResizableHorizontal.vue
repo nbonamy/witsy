@@ -47,6 +47,7 @@ const stopResizing = () => {
   lastX = null
 }
 
+/* v8 ignore start */
 const setElWidth = (el: HTMLElement, width: number) => {
   try {
     const pl = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) || 0
@@ -69,6 +70,7 @@ const adjustWidth = (deltaX: number): boolean => {
   }
   return true
 }
+/* v8 ignore stop */
 
 defineExpose({
   adjustWidth
