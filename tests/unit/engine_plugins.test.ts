@@ -9,7 +9,6 @@ import Search from '../../src/plugins/search'
 import Python from '../../src/plugins/python'
 import YouTube from '../../src/plugins/youtube'
 import Memory from '../../src/plugins/memory'
-import Nestor from '../../src/plugins/nestor'
 import Computer from '../../src/plugins/computer'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenerativeAI } from '@google/generative-ai'
@@ -166,9 +165,6 @@ beforeAll(() => {
     binpath: 'python3',
   }
   store.config.plugins.youtube = {
-    enabled: true,
-  }
-  store.config.plugins.nestor = {
     enabled: true,
   }
   store.config.engines = {
@@ -460,24 +456,6 @@ test('Memory Plugin', async () => {
   expect(window.api.memory.retrieve).toHaveBeenLastCalledWith('fact')
   expect(await memory.execute({ action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
   expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
-})
-
-test('Nestor Plugin', async () => {
-  const nestor = new Nestor(store.config.plugins.nestor)
-  expect(nestor.isEnabled()).toBe(true)
-  expect(nestor.getName()).toBe('Nestor')
-  expect(nestor.isMultiTool()).toBe(true)
-  expect(await nestor.getTools()).toStrictEqual([
-    { function: { name: 'tool1' }, description: 'description1' },
-    { function: { name: 'tool2' }, description: 'description2' },
-  ])
-  expect(nestor.handlesTool('tool1')).toBe(true)
-  expect(nestor.handlesTool('tool2')).toBe(true)
-  expect(nestor.handlesTool('tool3')).toBe(false)
-  expect(await nestor.execute({ tool: 'tool1', parameters: { arg: 'hello' } })).toStrictEqual({
-    name: 'tool1',
-    params: { arg: 'hello' }
-  })
 })
 
 test('Computer Plugin', async () => {

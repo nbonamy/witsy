@@ -170,13 +170,3 @@ test('python settings', async () => {
   expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('file.ext')
   expect(store.config.plugins.python.binpath).toBe('file.ext')
 })
-
-// test('nestor settings', async () => {
-//   const tab = await switchToTab(wrapper, pluginIndex)
-//    await tab.find('.list-panel .list .item[data-id=nestor]').trigger('click')
-//   const nestor = tab.findComponent({ name: 'SettingsNestor' })
-//   expect(nestor.find('input[type=checkbox]').exists()).toBeTruthy()
-//   expect(nestor.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
-//   await nestor.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
-//   expect(store.config.plugins.nestor.enabled).toBe(true)
-// })

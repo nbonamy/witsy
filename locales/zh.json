@@ -1644,15 +1644,6 @@
         "title": "记忆",
         "view": "查看"
       },
-      "nestor": {
-        "connectedToHubs": "已连接到 {count} 个 Nestor 中心",
-        "description": "此插件允许 LLM 引擎访问本地网络上的 API。查看",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "没有可用的 Nestor 中心",
-        "noServices": "没有可用服务",
-        "title": "Nestor",
-        "totalServices": "总共 {count} 个服务可用"
-      },
       "python": {
         "binaryPath": "Python 二进制路径",
         "description1": "启用此插件将允许 LLM 引擎在你的计算机上运行任意代码。",

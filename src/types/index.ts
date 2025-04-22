@@ -345,12 +345,7 @@ declare global {
         getServerTools(uuid: string): Promise<McpTool[]>
         getTools(): Promise<LlmTool[]>
         callTool(name: string, parameters: anyDict): any
-      }
-      nestor: {
-        isAvailable(): boolean
-        getStatus(): any
-        getTools(): any
-        callTool(name: string, parameters: anyDict): any
+        originalToolName(name: string): string
       }
       scratchpad: {
         open(textId?: string): void

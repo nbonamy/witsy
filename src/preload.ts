@@ -134,12 +134,6 @@ contextBridge.exposeInMainWorld(
     interpreter: {
       python: (code: string): string => { return ipcRenderer.sendSync('code-python-run', code) },
     },
-    nestor: {
-      isAvailable: (): boolean => { return ipcRenderer.sendSync('nestor-is-available') },
-      getStatus: (): Promise<any> => { return ipcRenderer.invoke('nestor-get-status') },
-      getTools: (): Promise<any[]> => { return ipcRenderer.invoke('nestor-get-tools') },
-      callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('nestor-call-tool', { name, parameters }) },
-    },
     mcp: {
       isAvailable: (): boolean => { return ipcRenderer.sendSync('mcp-is-available') },
       getServers: (): McpServer[] => { return ipcRenderer.sendSync('mcp-get-servers') },

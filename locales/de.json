@@ -1614,15 +1614,6 @@
         "title": "Gedächtnis",
         "view": "Anzeigen"
       },
-      "nestor": {
-        "connectedToHubs": "Verbunden mit {count} Nestor-Hub{count > 1 ? 's' : ''}",
-        "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf lokale APIs im Netzwerk. Überprüfen Sie",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "Keine Nestor-Hubs verfügbar",
-        "noServices": "Kein Dienst verfügbar",
-        "title": "Nestor",
-        "totalServices": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
-      },
       "python": {
         "binaryPath": "Python-Binärdatei",
         "description1": "Durch die Aktivierung dieses Plugins können LLM-Engines beliebigen Code auf Ihrem Computer ausführen.",

@@ -12,9 +12,5 @@
 	<false/>
 	<key>LSMultipleInstancesProhibited</key>
 	<true/>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_nestor._tcp</string>
-	</array>
 </dict>
 </plist>

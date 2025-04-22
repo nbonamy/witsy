@@ -1614,15 +1614,6 @@
         "title": "Memoria",
         "view": "Ver"
       },
-      "nestor": {
-        "connectedToHubs": "Conectado a {count} hub{count > 1 ? 's' : ''} Nestor",
-        "description": "Este complemento permite que los motores LLM accedan a la API local en la red. Consulte",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "No hay hubs de Nestor disponibles",
-        "noServices": "No hay servicio disponible",
-        "title": "Nestor",
-        "totalServices": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
-      },
       "python": {
         "binaryPath": "Ejecutable de Python",
         "description1": "Activar este complemento permitirá que los motores LLM ejecuten código arbitrario en su computadora.",

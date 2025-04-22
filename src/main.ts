@@ -45,7 +45,6 @@ import { useI18n } from './main/i18n';
 let commander: Commander = null
 let docRepo: DocumentRepository = null
 let memoryManager: MemoryManager = null
-//const nestor: Nestor = null
 let mcp: Mcp = null
 
 // first-thing: single instance
@@ -89,11 +88,6 @@ const autoUpdater = new AutoUpdater(app, {
 // open store
 const store = new Store({ name: 'window' });
 window.setStore(store);
-
-// // start nestor
-// if (!process.mas) {
-//   nestor = new Nestor();
-// }
 
 // this is going to be called later
 const registerShortcuts = () => {
@@ -731,22 +725,6 @@ ipcMain.handle('mcp-get-tools', async (): Promise<LlmTool[]> => {
 
 ipcMain.handle('mcp-call-tool', async (_, payload) => {
   return mcp ? await mcp.callTool(payload.name, payload.parameters) : null;
-});
-
-ipcMain.on('nestor-is-available', (event) => {
-  event.returnValue = false//nestor !== null;
-});
-
-ipcMain.handle('nestor-get-status', async () => {
-  //return nestor ? await nestor.getStatus() : {};
-});
-
-ipcMain.handle('nestor-get-tools', async () => {
-  //return nestor ? await nestor.getTools() : [];
-});
-
-ipcMain.handle('nestor-call-tool', async () => {
-  //return nestor ? await nestor.callTool(payload.name, payload.parameters) : null;
 });
 
 ipcMain.on('scratchpad-open', async (_, payload) => {

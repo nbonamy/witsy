@@ -357,9 +357,6 @@
     "vega": {
       "enabled": false
     },
-    "nestor": {
-      "enabled": false
-    },
     "mcp": {
       "enabled": false,
       "servers": [],
