@@ -6,10 +6,10 @@ export const tabs = [
   'settingsAppearance',
   'settingsCommands',
   'settingsExperts',
-  'settingsShortcuts',
   'settingsLLM',
   'settingsPlugins',
   'settingsVoice',
+  'settingsShortcuts',
   'settingsAdvanced',
 ]
 

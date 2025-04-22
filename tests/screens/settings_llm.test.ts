@@ -29,7 +29,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const llmIndex = 5
+const llmIndex = 4
 
 beforeAll(() => {
   useWindowMock()
