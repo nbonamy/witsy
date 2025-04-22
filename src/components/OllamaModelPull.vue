@@ -2,12 +2,12 @@
   <div class="group pull">
     <label>{{ t('modelPull.label') }}</label>
     <div class="subgroup">
-      <Combobox :items="pullableModels" :placeholder="t('modelPull.placeholder')" :show-help="false" v-model="pull_model" />
+      <Combobox :items="pullableModels" :placeholder="t('modelPull.placeholder')" :show-help="false" name="pull_model" v-model="pull_model" />
       <a :href="props.infoUrl" target="_blank">{{ t('modelPull.browse') }}</a>
     </div>
     <div>
-      <button v-if="pullStream" @click.prevent="onStop">{{ t('common.stop') }}</button>
-      <button v-else @click.prevent="onPull" :disabled="!pull_model">{{ t('common.pull') }}</button>
+      <button v-if="pullStream" name="stop" @click.prevent="onStop">{{ t('common.stop') }}</button>
+      <button v-else name="pull" @click.prevent="onPull" :disabled="!pull_model">{{ t('common.pull') }}</button>
       <div class="progress" v-if="pull_progress">{{ pull_progress }}</div>
     </div>
   </div>
