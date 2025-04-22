@@ -1378,6 +1378,9 @@
     },
     "expert": {
       "clear": "Limpar especialista"
+    },
+    "placeholders": {
+      "default": "Pressione Enter para enviar, Shift+Enter para adicionar uma nova linha"
     }
   },
   "realtimeChat": {

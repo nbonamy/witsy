@@ -1348,6 +1348,9 @@
     },
     "expert": {
       "clear": "Rimuovi esperto"
+    },
+    "placeholders": {
+      "default": "Premi Invio per inviare, Maiusc+Invio per aggiungere una nuova riga"
     }
   },
   "realtimeChat": {
