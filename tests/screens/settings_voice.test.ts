@@ -7,7 +7,7 @@ import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 
 let wrapper: VueWrapper<any>
-const voiceIndex = 7
+const voiceIndex = 6
 
 beforeAll(() => {
   useWindowMock()

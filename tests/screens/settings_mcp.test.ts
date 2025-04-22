@@ -46,7 +46,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
   vi.clearAllMocks()
-  const tab = await switchToTab(wrapper, 6)
+  const tab = await switchToTab(wrapper, 5)
   await tab.find('.list-panel .list .item[data-id=mcp]').trigger('click')
   mcp = tab.findComponent({ name: 'SettingsMcp' })
 })

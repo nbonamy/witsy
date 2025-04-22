@@ -11,20 +11,20 @@
                 <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
                 <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
                 <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
-                <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
                 <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
                 <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
                 <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
+                <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
                 <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
               </ul>
               <SettingsGeneral ref="settingsGeneral" />
               <SettingsAppearance ref="settingsAppearance" />
               <SettingsCommands ref="settingsCommands" />
               <SettingsExperts ref="settingsExperts" />
-              <SettingsShortcuts ref="settingsShortcuts" />
               <SettingsLLM ref="settingsLLM" />
               <SettingsPlugins ref="settingsPlugins" />
               <SettingsVoice ref="settingsVoice" />
+              <SettingsShortcuts ref="settingsShortcuts" />
               <SettingsAdvanced ref="settingsAdvanced" />
             </div>
           </main>
@@ -81,10 +81,10 @@ const settings = [
   settingsAppearance,
   settingsCommands,
   settingsExperts,
-  settingsShortcuts,
   settingsLLM,
   settingsPlugins,
   settingsVoice,
+  settingsShortcuts,
   settingsAdvanced
 ]
 
