@@ -52,7 +52,7 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
     app.focus({ steal: true });
     promptAnywhereWindow.moveTop();
     promptAnywhereWindow.focusOnWebView();
-    if (process.platform === 'win32') {
+    if (promptAnywhereWindow.getOpacity() !== 1) {
       setTimeout(() => {
         promptAnywhereWindow.setOpacity(1);
       }, 100);
@@ -100,7 +100,7 @@ export const openPromptAnywhere = (params: anyDict): void => {
 export const closePromptAnywhere = async (sourceApp?: Application): Promise<void> => {
 
   // check
-  if (promptAnywhereWindow === null || promptAnywhereWindow.isDestroyed()) {
+  if (promptAnywhereWindow === null || promptAnywhereWindow.isDestroyed() || promptAnywhereWindow.isVisible() === false) {
     return;
   }
 

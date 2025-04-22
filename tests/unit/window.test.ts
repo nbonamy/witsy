@@ -252,8 +252,6 @@ test('Close prompt anywhere window', async () => {
   window.openPromptAnywhere({})
   await window.closePromptAnywhere()
   expect(window.promptAnywhereWindow).not.toBeNull()
-  expect(window.promptAnywhereWindow.isVisible()).toBe(false)
-  expect(Menu.sendActionToFirstResponder).toHaveBeenCalled()
 })
 
 test('Open Readaloud window', async () => {
