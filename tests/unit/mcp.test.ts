@@ -88,7 +88,7 @@ test('Initialization', async () => {
     { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' } },
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
-    { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' } },
+    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' } },
     { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
   ])
 })
@@ -137,12 +137,12 @@ test('Edit normal server', async () => {
 
 test('Edit mcp server', async () => {
   const mcp = new Mcp(app)
-  expect(await mcp.editServer({ uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'node', url: '-f exec mcp1.js'})).toBe(true)
+  expect(await mcp.editServer({ uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'node', url: '-f exec s1.js'})).toBe(true)
   
   expect(getDefaultEnvironment).toHaveBeenCalledTimes(1)
   expect(StdioClientTransport).toHaveBeenLastCalledWith({
     command: 'node',
-    args: ['-f', 'exec', 'mcp1.js'],
+    args: ['-f', 'exec', 's1.js'],
     env: { PATH: '/tmp' },
     stderr: 'pipe'
   })
@@ -151,17 +151,17 @@ test('Edit mcp server', async () => {
   expect(SSEClientTransport.prototype.start).toHaveBeenCalledTimes(0)
   
   expect(mcp.getServers()[3]).toMatchObject({
-    uuid: 'mcp1',
-    registryId: '@mcp1',
+    uuid: 's1',
+    registryId: 's1',
     state: 'enabled',
     type: 'stdio',
     command: 'node',
-    url: '-f exec mcp1.js',
+    url: '-f exec s1.js',
   })
   expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
-  expect(config.mcpServers['@mcp1']).toMatchObject({
+  expect(config.mcpServers['s1']).toMatchObject({
     command: 'node',
-    args: ['-f', 'exec', 'mcp1.js'],
+    args: ['-f', 'exec', 's1.js'],
   })
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
   expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
@@ -169,8 +169,8 @@ test('Edit mcp server', async () => {
   expect(config.plugins.mcp.disabledMcpServers).toEqual([])
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
   expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
-  expect(await mcp.editServer({ uuid: 'mcp1', registryId: '@mcp1', state: 'disabled', type: 'stdio', command: 'node', url: '-f exec mcp1.js'})).toBe(true)
-  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2', '@mcp1'])
+  expect(await mcp.editServer({ uuid: 's1', registryId: 's1', state: 'disabled', type: 'stdio', command: 'node', url: '-f exec s1.js'})).toBe(true)
+  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2', 's1'])
 })
 
 test('Delete server', async () => {
@@ -180,10 +180,10 @@ test('Delete server', async () => {
   expect(mcp.getServers().length).toBe(4)
   expect(mcp.getServers().find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
   expect(config.plugins.mcp.servers.find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
-  expect(mcp.deleteServer('@mcp1')).toBe(true)
+  expect(mcp.deleteServer('s1')).toBe(true)
   expect(mcp.getServers().length).toBe(3)
-  expect(mcp.getServers().find(s => s.uuid === 'mcp1')).toBeUndefined()
-  expect(config.mcpServers['@mcp1']).toBeUndefined()
+  expect(mcp.getServers().find(s => s.uuid === 's1')).toBeUndefined()
+  expect(config.mcpServers['s1']).toBeUndefined()
   expect(mcp.deleteServer('4')).toBe(false)
   expect(mcp.getServers().length).toBe(3)
   expect(mcp.deleteServer('@mcp2')).toBe(false)
@@ -197,13 +197,13 @@ test('Connect', async () => {
     servers: [
       { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
       { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
-      { uuid: 'mcp1', registryId: '@mcp1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1___mcp1', 'tool2___mcp1', 'tool3___mcp1'] },
+      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
       '2345-6789-0abc': [],
       '3456-7890-abcd': [],
-      'mcp1': [],
+      's1': [],
       'mcp2': [],
     }
   })
@@ -234,17 +234,23 @@ test('Connect', async () => {
     },
     {
       type: 'function',
-      function: { name: 'tool1___mcp1', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
+      function: { name: 'tool1_____s1', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
     },
     {
       type: 'function',
-      function: { name: 'tool2___mcp1', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+      function: { name: 'tool2_____s1', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
     },
     {
       type: 'function',
-      function: { name: 'tool3___mcp1', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
+      function: { name: 'tool3_____s1', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
     },
   ])
+})
+
+test('Name conversion', async () => {
+  const mcp = new Mcp(app)
+  expect(mcp.originalToolName('tool1___90ab')).toBe('tool1')
+  expect(mcp.originalToolName('tool3_____s1')).toBe('tool3')
 })
 
 test('Call tool', async () => {
