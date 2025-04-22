@@ -727,6 +727,10 @@ ipcMain.handle('mcp-call-tool', async (_, payload) => {
   return mcp ? await mcp.callTool(payload.name, payload.parameters) : null;
 });
 
+ipcMain.on('mcp-original-tool-name', (event, payload) => {
+  event.returnValue = mcp ? mcp.originalToolName(payload) : null;
+});
+
 ipcMain.on('scratchpad-open', async (_, payload) => {
   await window.openScratchPad(payload);
 });

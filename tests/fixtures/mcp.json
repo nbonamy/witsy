@@ -11,9 +11,9 @@
     }
   },
   "mcpServers": {
-    "@mcp1": {
+    "s1": {
       "command": "npx",
-      "args": ["-y", "run", "mcp1.js"],
+      "args": ["-y", "run", "s1.js"],
       "cwd": "cwd2",
       "env": { "KEY": "value" }
     },

@@ -24,12 +24,15 @@ export default class extends Plugin {
     return 'Model Context Protocol'
   }
 
-  getPreparationDescription(): string {
-    return 'Preparing to use Model Context Protocol...'
+  getPreparationDescription(name: string): string {
+    const tool = window.api.mcp.originalToolName(name)
+    return `Preparing to use MCP tool #${tool}#…`
   }
   
-  getRunningDescription(): string {
-    return 'Model Context Protocol is currently running...'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getRunningDescription(name: string, args: any): string {
+    const tool = window.api.mcp.originalToolName(name)
+    return `MCP tool #${tool}# is currently running…`
   }
 
   async getTools(): Promise<anyDict|Array<anyDict>> {
