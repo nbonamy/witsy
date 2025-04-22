@@ -245,7 +245,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
         { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
       ]),
-      callTool: vi.fn(async () => ({ result: 'result' })),
+      callTool: vi.fn(async (tool: string) => (tool === 'tool2' ? {
+        content: [ { text: 'result2' } ],
+      } : { result: 'result' })),
+      originalToolName: vi.fn((name: string) => name),
     },
     anywhere: {
       prompt: vi.fn(),
@@ -312,18 +315,48 @@ const useBrowserMock = () => {
   navigator = {
     // @ts-expect-error mock
     mediaDevices: {
-      getUserMedia: vi.fn(),
+      getUserMedia: vi.fn(async () => ({} as MediaStream)),
       getSupportedConstraints: vi.fn(() => ({
         echoCancellation: true,
         autoGainControl: true,
       })),
     },
+
   }
 
   // eslint-disable-next-line no-global-assign
   MutationObserver = vi.fn().mockImplementation(() => ({
     observe: vi.fn(),
     disconnect: vi.fn(),
+  }))
+
+  // @ts-expect-error mock 
+  window.MediaRecorder = vi.fn()
+  // @ts-expect-error mock 
+  window.MediaRecorder.prototype = {
+  start: vi.fn(),
+    stop: vi.fn(),
+    pause: vi.fn(),
+    resume: vi.fn(),
+    requestData: vi.fn(),
+  }
+
+  window.AudioContext = vi.fn().mockImplementation(() => ({
+    createAnalyser: vi.fn(() => ({
+      fftSize: 2048,
+      frequencyBinCount: 1024,
+      getFloatFrequencyData: vi.fn(),
+      getByteFrequencyData: vi.fn(),
+      getFloatTimeDomainData: vi.fn(),
+      getByteTimeDomainData: vi.fn(),
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+    })),
+    createMediaStreamSource: vi.fn(() => ({
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+    })),
+    close: vi.fn(),
   }))
 
 }

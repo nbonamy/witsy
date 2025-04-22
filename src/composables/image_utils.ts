@@ -1,6 +1,7 @@
 
 export default {
 
+  /* v8 ignore start */
   resize(src: string, maxSize: number, callback: (contents: string, mimeType: string) => void): void {
 
     const img = document.createElement('img')
@@ -24,5 +25,6 @@ export default {
     img.src = src
   
   }
+  /* v8 ignore stop */
 
 }

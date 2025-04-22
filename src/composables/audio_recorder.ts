@@ -71,6 +71,7 @@ class AudioRecorder {
     return this.bufferLength
   }
 
+  /* v8 ignore start */
   async initialize(listener: AudioRecorderListener): Promise<void> {
 
     // save the listener
@@ -88,6 +89,7 @@ class AudioRecorder {
       this.audioChunks.push(event.data)
     }
     this.mediaRecorder.onstop = () => {
+      console.log('Recording stopped')
       this.listener.onRecordingComplete(this.audioChunks, this.lastNoise != null)
     }
 
@@ -169,6 +171,7 @@ class AudioRecorder {
     // }
 
   }
+  /* v8 ignore stop */
 
 }
 

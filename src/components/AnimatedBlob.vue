@@ -39,6 +39,7 @@ const update = () => {
   const scaling = props.active ? 100 : 50;
   const delay = props.active ? 250 : 2000;
 
+  /* v8 ignore start */
   document.querySelectorAll<HTMLElement>('.blob').forEach((blob, idx) => {
 
     let rotation = transforms[idx][0]
@@ -69,6 +70,7 @@ const update = () => {
     blob.style.setProperty("transition", `linear ${delay}ms`);
 
   });
+  /* v8 ignore stop */
 
   blobTimeout = setTimeout(update, delay);
 

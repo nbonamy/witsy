@@ -32,7 +32,7 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return 'Searching the internet…'
+    return `#${this.config.engine}# Searching the internet…`
   }
 
   getParameters(): PluginParameter[] {
