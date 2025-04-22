@@ -1,29 +1,29 @@
 <template>
   <div class="transcribe">
     <div class="controls">
-      <BIconRecordCircle v-if="state == 'recording'" color="red" @click="onStop()" />
+      <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
       <Loader class="loader" v-else-if="state === 'processing'" />
-      <BIconRecordCircle v-else @click="onRecord(false)" />
+      <BIconRecordCircle v-else class="record" @click="onRecord(false)" />
       <Waveform :width="350" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
     </div>
     <div class="result">
       <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
     </div>
     <div class="actions">
-      <button class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
-      <button class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
-      <button class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
-      <button class="button push" @click="onCancel()">{{ t('common.cancel') }}</button>
-      <button class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
-      <button class="button" @click="onCopy()">{{ t('common.copy') }}</button>
+      <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
+      <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
+      <button name="clear" class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
+      <button name="cancel" class="button push" @click="onCancel()">{{ t('common.cancel') }}</button>
+      <button name="insert" class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
+      <button name="copy" class="button" @click="onCopy()">{{ t('common.copy') }}</button>
     </div>
     <form class="option">
       <div class="group">
-        <input type="checkbox" v-model="autoStart" @change="save" :disabled="pushToTalk" />
+        <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" :disabled="pushToTalk" />
         <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
       </div>
       <div class="group">
-        <input type="checkbox" v-model="pushToTalk" @change="save" :disabled="autoStart" />
+        <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" :disabled="autoStart" />
         <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
       </div>
     </form>
@@ -53,8 +53,8 @@ const pushToTalk = ref(false)
 const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
 const transcription = ref('')
 const autoStart = ref(false)
-const foregroundColorActive = ref(null)
-const foregroundColorInactive = ref(null)
+const foregroundColorActive = ref('')
+const foregroundColorInactive = ref('')
 
 onMounted(async () => {
 
@@ -85,13 +85,6 @@ onMounted(async () => {
   // auto start?
   if (autoStart.value) {
     onRecord(false)
-  }
-
-  // Log focused element
-  if (document.activeElement) {
-    console.log('Focused element:', document.activeElement);
-  } else {
-    console.log('No element is focused');
   }
 
 })
@@ -235,7 +228,7 @@ const onKeyDown = (event: KeyboardEvent) => {
   } else if (event.key === 'Backspace') {
     transcription.value = transcription.value.slice(0, -1)
   } else if (event.key === 'Delete') {
-    transcription.value = ''
+    onClear()
   } else if (event.key === 'c' && isCommand) {
     onCopy()
   } else if (event.key === 'i' && isCommand) {
