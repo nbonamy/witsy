@@ -258,7 +258,7 @@ app.on('before-quit', (ev) => {
   }
 
   // if force quit
-  if (process.env.DEBUG || process.env.TEST || quitAnyway) {
+  if (/*process.env.DEBUG ||*/ process.env.TEST || quitAnyway) {
     closeAllWindows();
     return;
   }
