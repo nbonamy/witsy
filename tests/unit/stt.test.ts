@@ -8,6 +8,8 @@ import STTGroq from '../../src/voice/stt-groq'
 import STTFalAi from '../../src/voice/stt-falai'
 import STTWhisper from '../../src/voice/stt-whisper'
 import STTGladia from '../../src/voice/stt-gladia'
+import STTHuggingFace from '../../src/voice/stt-huggingface'
+import STTNvidia from '../../src/voice/stt-nvidia'
 import { fal } from '@fal-ai/client'
 
 const initCallback = vi.fn()
@@ -32,11 +34,15 @@ global.fetch = async (url) => {
     return {
       json: () => ({
         status: 'done',
-        result: {
-          transcription: {
-            full_transcript: 'transcribed'
-          }
-        }
+        result: { transcription: { full_transcript: 'transcribed' } }
+      })
+    }
+  }
+  if (url.includes('nvidia')) {
+    return {
+      ok: true,
+      json: () => ({
+        choices: [ { message: { content: 'transcribed' } } ]
       })
     }
   }
@@ -81,6 +87,22 @@ vi.mock('@huggingface/transformers', async () => {
   }
 })
 
+vi.mock('@huggingface/inference', async () => {
+  const HfInference = vi.fn()
+  HfInference.prototype.automaticSpeechRecognition = async () => {
+    return { text: 'transcribed' }
+  }
+  return { HfInference }
+})
+
+vi.mock('webm-to-wav-converter', async () => {
+  return {
+    getWaveBlob: async (blob) => {
+      return new Blob([blob], { type: 'audio/wav' })
+    }
+  }
+})
+
 beforeAll(() => {
   window.AudioContext = vi.fn()
   // @ts-expect-error mocking
@@ -101,7 +123,7 @@ test('Requires download', () => {
   expect(requiresDownload('whisper')).toBe(true)
 })
 
-test('Instanciates OpenAI by default', async () => {
+test('Instantiates OpenAI by default', async () => {
   store.config.stt.engine = 'openai'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
@@ -114,7 +136,7 @@ test('Instanciates OpenAI by default', async () => {
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
-test('Instanciates Groq', async () => {
+test('Instantiates Groq', async () => {
   store.config.stt.engine = 'groq'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
@@ -127,7 +149,7 @@ test('Instanciates Groq', async () => {
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
-test('Instanciates fal.ai', async () => {
+test('Instantiates fal.ai', async () => {
   store.config.stt.engine = 'falai'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
@@ -141,7 +163,7 @@ test('Instanciates fal.ai', async () => {
   expect(fal.config).toHaveBeenCalledWith({ credentials: 'falai-api-key'  })
 })
 
-test('Instanciates Whisper', async () => {
+test('Instantiates Whisper', async () => {
   store.config.stt.engine = 'whisper'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
@@ -154,7 +176,7 @@ test('Instanciates Whisper', async () => {
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
-test('Instanciates Gladia', async () => {
+test('Instantiates Gladia', async () => {
   store.config.stt.engine = 'gladia'
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
@@ -169,6 +191,33 @@ test('Instanciates Gladia', async () => {
     // @ts-expect-error mocking
     arrayBuffer: async () => ([])
   })).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instantiates HuggingFace', async () => {
+  store.config.stt.engine = 'huggingface'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTHuggingFace)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'huggingface', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+
+})
+
+test('Instantiates nVidia', async () => {
+  store.config.stt.engine = 'nvidia'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTNvidia)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'nvidia', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
 test('Throws error on unknown engine', async () => {
