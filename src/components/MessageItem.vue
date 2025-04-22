@@ -28,7 +28,7 @@
       <!-- transient information -->
       <div v-if="message.transient" class="transient">
         <Loader />
-        <span v-if="message.toolCall?.status" class="tool-call">{{ message.toolCall.status }}</span>
+        <span v-if="message.toolCall?.status" class="tool-call" v-html="toolStatus"></span>
       </div>
 
     </div>
@@ -135,6 +135,11 @@ const imageUrl = computed(() => {
 
 })
 
+const toolStatus = computed(() => {
+  if (!props.message.toolCall?.status) return ''
+  return props.message.toolCall.status.replaceAll(/#(.*?)#/g, '<span class="tag">$1</span>')
+})
+
 // using simple css :hover
 // was not working from a testing perspective
 // so we fallback to that...
@@ -211,6 +216,27 @@ img {
     margin-left: 8px;
     font-size: 10.5pt;
     color: var(--message-list-tip-text-color);
+
+    --tag-bg-color-mix: 92.5%;
+    --tag-fg-color-mix: 75%;
+
+    &:deep() .tag {
+      font-family: monospace;
+      background-color: color-mix(in srgb, var(--text-color), transparent var(--tag-bg-color-mix));
+      color: color-mix(in srgb, var(--text-color), var(--message-list-tip-text-color) var(--tag-fg-color-mix));
+      padding: 2px 4px;
+      margin: 0px 2px;
+      border-radius: 4px;
+      font-size: 9.5pt;
+    }
+
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .transient .tool-call {
+    --tag-bg-color-mix: 80%;
+    --tag-fg-color-mix: 75%;
   }
 }
 

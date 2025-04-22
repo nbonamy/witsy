@@ -146,6 +146,7 @@ contextBridge.exposeInMainWorld(
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke('mcp-get-server-tools', uuid) },
       getTools: (): Promise<LlmTool[]> => { return ipcRenderer.invoke('mcp-get-tools') },
       callTool: (name: string, parameters: anyDict): Promise<any> => { return ipcRenderer.invoke('mcp-call-tool', { name, parameters }) },
+      originalToolName(name: string): string { return ipcRenderer.sendSync('mcp-original-tool-name', name) },
     },
     scratchpad: {
       open: (textId?: string): void => { return ipcRenderer.send('scratchpad-open', textId) },

@@ -105,7 +105,7 @@ export default class {
 
       this.monitor?.stop()
       const result = execSync(command).toString().trim()
-      console.log(result)
+      console.log(`MCP install ${server} result:`, result)
 
       // now we should be able to connect
       const after = this.getServers()
@@ -431,7 +431,7 @@ export default class {
     }
 
     // remove unique suffix
-    const tool = name.replace(/___....$/, '')
+    const tool = this.originalToolName(name)
     console.log('Calling MCP tool', tool, args)
 
     return await client.client.callTool({
@@ -441,9 +441,13 @@ export default class {
 
   }
 
+  originalToolName(name: string): string {
+    return name.replace(/___....$/, '')
+  }
+
   protected uniqueToolName(server: McpServer, name: string): string {
-  return `${name}___${server.uuid.slice(-4)}`
-}
+    return `${name}___${server.uuid.padStart(4, '_').slice(-4)}`
+  }
 
   protected mcpToOpenAI = (server: McpServer, tool: any): LlmTool => {
     return {
@@ -458,7 +462,7 @@ export default class {
             obj[key] = {
               type: prop.type,
               description: (prop.description || key).slice(0, 1024),
-              ...(prop.type === 'array' ? {items: prop.items || 'string'} : {}),
+              ...(prop.type === 'array' ? { items: prop.items || 'string' } : {}),
             }
             return obj
           }, {}) : {},
