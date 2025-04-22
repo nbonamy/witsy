@@ -1650,15 +1650,6 @@
         "title": "Memory",
         "view": "View"
       },
-      "nestor": {
-        "connectedToHubs": "Connected to {count} Nestor hub{count > 1 ? 's' : ''}",
-        "description": "This plugin allows LLM engines to access local API on the network. Check",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "No Nestor hubs available",
-        "noServices": "No service available",
-        "title": "Nestor",
-        "totalServices": "Total of {count} service{count > 1 ? 's' : ''} available"
-      },
       "python": {
         "binaryPath": "Python Binary",
         "description1": "Enabling this plugin will allow LLM engines to run arbitray code on your computer.",

@@ -1644,15 +1644,6 @@
         "title": "Memória",
         "view": "Visualizar"
       },
-      "nestor": {
-        "connectedToHubs": "Conectado a {count} hub Nestor{count > 1 ? 's' : ''}",
-        "description": "Este plugin permite que os mecanismos LLM acessem API local na rede. Verifique",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "Nenhum hub Nestor disponível",
-        "noServices": "Nenhum serviço disponível",
-        "title": "Nestor",
-        "totalServices": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
-      },
       "python": {
         "binaryPath": "Binário Python",
         "description1": "Habilitar este plugin permitirá que os mecanismos LLM executem código arbitrário em seu computador.",

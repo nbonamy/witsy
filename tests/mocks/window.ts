@@ -221,15 +221,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     scratchpad: {
       open: vi.fn(),
     },
-    nestor: {
-      isAvailable: vi.fn(() => true),
-      getStatus: vi.fn(),
-      getTools: vi.fn(async () => [
-        { function: { name: 'tool1' }, description: 'description1' },
-        { function: { name: 'tool2' }, description: 'description2' },
-      ]),
-      callTool: vi.fn(async (name, params) => ({ name, params })),
-    },
     mcp: {
       isAvailable: vi.fn(() => true),
       //@ts-expect-error not sure about the state: 'enabled' complain

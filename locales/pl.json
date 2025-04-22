@@ -1650,15 +1650,6 @@
         "title": "Pamięć",
         "view": "Widok"
       },
-      "nestor": {
-        "connectedToHubs": "Podłączony do {count} hub{count > 1 ? 'ów' : 'a'} Nestor",
-        "description": "Ta wtyczka umożliwia silnikom LLM dostęp do lokalnego API w sieci. Sprawdź",
-        "githubLink": "https://github.com/nbonamy/nestor",
-        "noHubs": "Brak dostępnych hubów Nestor",
-        "noServices": "Usługa niedostępna",
-        "title": "Nestor",
-        "totalServices": "Łącznie {count} usług{count > 1 ? 'i' : 'a'} dostępnych"
-      },
       "python": {
         "binaryPath": "Ścieżka do Pythona",
         "description1": "Włączenie tej wtyczki pozwoli silnikom LLM na uruchamianie dowolnego kodu na komputerze.",
