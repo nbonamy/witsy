@@ -1348,6 +1348,9 @@
     },
     "expert": {
       "clear": "Supprimer l'expert"
+    },
+    "placeholders": {
+      "default": "Appuyez sur Entrée pour soumettre, Maj+Entrée pour ajouter une nouvelle ligne"
     }
   },
   "realtimeChat": {

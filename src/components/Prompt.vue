@@ -76,7 +76,8 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    required: false
+    required: false,
+    default: t('prompt.placeholders.default')
   },
   enableDocRepo: {
     type: Boolean,
@@ -903,6 +904,7 @@ defineExpose({
 
 .input .textarea-wrapper textarea::placeholder {
   color: var(--control-placeholder-text-color);
+  opacity: 0.5;
 }
 
 .input .textarea-wrapper textarea:focus {

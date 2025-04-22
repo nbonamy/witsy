@@ -1348,6 +1348,9 @@
     },
     "expert": {
       "clear": "Experte löschen"
+    },
+    "placeholders": {
+      "default": "Eingeben zum Senden, Shift+Eingeben um eine neue Zeile hinzuzufügen"
     }
   },
   "realtimeChat": {

@@ -1378,6 +1378,9 @@
     },
     "expert": {
       "clear": "清除专家"
+    },
+    "placeholders": {
+      "default": "按回车提交，Shift+回车添加新行"
     }
   },
   "realtimeChat": {
