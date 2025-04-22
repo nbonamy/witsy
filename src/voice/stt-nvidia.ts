@@ -16,7 +16,7 @@ export default class STTNvidia implements STTEngine {
   }
 
   isReady(): boolean {
-    return this.config.engines.nvidia?.apiKey !== ''
+    return true
   }
 
   static requiresDownload(): boolean {
