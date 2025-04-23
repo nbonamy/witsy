@@ -4,6 +4,7 @@ import { Folder, History, Store } from 'types/index'
 import { reactive } from 'vue'
 import { loadCommands } from './commands'
 import { loadExperts } from './experts'
+import { loadAgents } from './agents'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 
@@ -15,6 +16,7 @@ export const store: Store = reactive({
   config: {} as Configuration,
   commands: [], 
   experts: [],
+  agents: [],
   history: null,
   chatFilter: null,
 
@@ -40,6 +42,10 @@ export const store: Store = reactive({
     loadExperts()
   },
 
+  loadAgents: (): void => {
+    loadAgents()
+  },
+
   load: async (): Promise<void> => {
 
     //perf
@@ -50,6 +56,7 @@ export const store: Store = reactive({
     store.loadCommands()
     store.loadHistory()
     store.loadExperts()
+    store.loadAgents()
 
     // subscribe to file changes
     window.api.on('file-modified', (file) => {

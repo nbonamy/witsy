@@ -31,6 +31,7 @@ import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
 import * as experts from './main/experts';
+import * as agents from './main/agents';
 import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
@@ -438,6 +439,10 @@ ipcMain.on('experts-export', (event) => {
 
 ipcMain.on('experts-import', (event) => {
   event.returnValue = experts.importExperts(app);
+});
+
+ipcMain.on('agents-load', (event) => {
+  event.returnValue = JSON.stringify(agents.loadAgents(app));
 });
 
 ipcMain.on('settings-open', (event, payload) => {

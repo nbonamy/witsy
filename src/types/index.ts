@@ -77,6 +77,21 @@ export interface Chat {
   delete(): void
 }
 
+export interface Agent {
+  id: string
+  name: string
+  description: string
+  engine: string|null
+  model: string|null
+  modelOpts: LlmModelOpts|null
+  disableStreaming: boolean
+  locale: string|null
+  tools: string[]|null
+  docrepo: string|null
+  instructions: string
+  prompt: string|null
+}
+
 export type Folder = {
   id: string
   name: string
@@ -117,6 +132,7 @@ export type Shortcut = {
 export interface Store {
   commands: Command[]
   experts: Expert[]
+  agents: Agent[]
   config: Configuration
   history: History
   rootFolder: Folder
@@ -127,6 +143,7 @@ export interface Store {
   loadSettings?(): void
   loadCommands?(): void
   loadExperts?(): void
+  loadAgents?(): void
   loadHistory?(): void
   initChatWithDefaults(chat: Chat): void
   addChat?(chat: Chat, folderId?: string): void
@@ -297,6 +314,9 @@ declare global {
         save(experts: Expert[]): void
         import(): boolean
         export(): boolean
+      }
+      agents: {
+        load(): Agent[]
       }
       docrepo: {
         list(): DocumentBase[]

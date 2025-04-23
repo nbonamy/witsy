@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload, Agent } from './types';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -107,6 +107,9 @@ contextBridge.exposeInMainWorld(
       save: (data: Expert[]): void => { return ipcRenderer.send('experts-save', JSON.stringify(data)) },
       export: (): void => { return ipcRenderer.sendSync('experts-export') },
       import: (): void => { return ipcRenderer.sendSync('experts-import') },
+    },
+    agents: {
+      load: (): Agent[] => { return JSON.parse(ipcRenderer.sendSync('agents-load')) },
     },
     docrepo: {
       list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },
