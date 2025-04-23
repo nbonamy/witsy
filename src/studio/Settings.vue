@@ -43,7 +43,7 @@
 
       <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
         <input type="checkbox" v-model="transform" name="transform" />
-        <label>EXPERIMENTAL: {{ t('designStudio.transform') }}</label>
+        <label>{{ t('designStudio.transform') }}</label>
       </div>
 
       <div class="group horizontal checkbox" v-if="isEditing && !isGenerating">
@@ -211,7 +211,8 @@ const models = computed(() => {
 })
 
 const canEdit = computed(() => {
-  return ['google'].includes(engine.value)
+  return ['google'].includes(engine.value) ||
+    engine.value === 'openai' && !model.value.includes('dall-e')
 })
 
 const modelHasDefaults = computed(() => {
@@ -242,6 +243,14 @@ const customParams = computed((): Parameter[] => {
       { label: t('designStudio.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'standard', 'hd' ] },
       { label: t('designStudio.parameters.size'),  key: 'size',  type: 'select', values: [ '1024x1024', '1792x1024', '1024x1792' ] },
       { label: t('designStudio.parameters.style'),  key: 'style',  type: 'select', values: [ 'vivid', 'natural' ] },
+    ]
+  }
+
+  // openai gpt-image
+  if (engine.value === 'openai' && model.value.startsWith('gpt-image-')) {
+    return [
+    { label: t('designStudio.parameters.quality'),  key: 'quality',  type: 'select', values: [ 'auto', 'low', 'medium', 'high' ] },
+    { label: t('designStudio.parameters.size'),  key: 'size',  type: 'select', values: [ 'auto', '1024x1024', '1536x1024', '1024x1536' ] },
     ]
   }
 
@@ -322,9 +331,9 @@ const modelHasParams = computed(() => {
 })
 
 const canTransform = computed(() => {
-  
   return ['falai', 'replicate'].includes(engine.value) ||
-    (engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo())
+    (engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
+    (engine.value === 'openai' && model.value.startsWith('gpt-image-') && mediaType.value === 'image' && !props.currentMedia?.isVideo())
 })
 
 const canUpload = computed(() => {
@@ -397,6 +406,9 @@ const onChangeEngine = () => {
 
 const onChangeModel = () => {
   // imageToVideo.value = false
+  if (!canTransform.value) {
+    transform.value = false
+  }
   onLoadDefaults()
   saveSettings()
 }
