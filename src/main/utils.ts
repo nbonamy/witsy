@@ -2,6 +2,7 @@
 import { strDict } from '../types/index';
 import { execSync } from 'node:child_process'
 import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
 
 const textCache: strDict = {}
 
@@ -29,7 +30,20 @@ export const fixPath = (): void => {
     // macOS and Linux need to fix the PATH
     const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_ENV_DELIMITER_"; printenv PATH; echo -n "_SHELL_ENV_DELIMITER_";'`
     const output = execSync(command).toString();
-    const path = output.split('_SHELL_ENV_DELIMITER_')[1].trim();
+    let path = output.split('_SHELL_ENV_DELIMITER_')[1].trim();
+
+    // on macOS we add homebrew paths
+    if (process.platform === 'darwin') {
+      const paths = path.split(':')
+      for (const hbp of [ '/usr/local/bin', '/opt/homebrew/bin' ]) {
+        if (fs.existsSync(hbp) && !paths.includes(hbp)) {
+          paths.push(hbp)
+        }
+      }
+      path = paths.join(':')
+    }
+
+    // done
     console.log('Fixing PATH:', path)
     process.env.PATH = path;
 

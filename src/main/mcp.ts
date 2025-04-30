@@ -351,6 +351,19 @@ export default class {
 
     } catch (e) {
       console.error(`Failed to connect to MCP server ${server.command} ${server.url}:`, e)
+      this.logs[server.uuid].push(`Failed to connect to MCP server "${server.command} ${server.url}"\n`)
+      this.logs[server.uuid].push(`Error: ${e.message}\n`)
+      if (e.message.startsWith('spawn')) {
+        const words = e.message.split(' ')
+        if (words.length >= 2) {
+          const cmd = e.message.split(' ')[1]
+          this.logs[server.uuid].push(`Command not found: ${cmd}. Please install it and/or add it to your PATH.\n`)
+          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS for more information.')
+        } else {
+          this.logs[server.uuid].push('Command not found. Please install it and/or add it to your PATH.\n')
+          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS for more information.')
+        }
+      }
     }
 
   }
@@ -381,6 +394,7 @@ export default class {
 
     } catch (e) {
       console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      this.logs[server.uuid].push(e.message)
     }
 
   }
