@@ -626,6 +626,7 @@ let draftPrompt = ''
 const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
+    if (event.isComposing) return;
     if (event.shiftKey) {
 
     } else {
