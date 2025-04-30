@@ -142,6 +142,7 @@ export const store: Store = reactive({
   },
 
   addQuickPrompt: (prompt: string): void => {
+    if (prompt.trim().length === 0) return
     store.history.quickPrompts = store.history.quickPrompts.filter((p) => p !== prompt)
     store.history.quickPrompts.push(prompt)
     store.history.quickPrompts = store.history.quickPrompts.slice(-100)
