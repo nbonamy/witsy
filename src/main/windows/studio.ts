@@ -30,7 +30,9 @@ export const openDesignStudioWindow = (): void => {
     });
 
     designStudioWindow.on('close', () => {
-      electronStore.set(storeBoundsId, designStudioWindow.getBounds());
+      try {
+        electronStore.set(storeBoundsId, designStudioWindow.getBounds());
+      } catch { /* empty */ }
     })
 
     // handle window close
