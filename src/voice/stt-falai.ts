@@ -17,8 +17,17 @@ export default class STTFalAi implements STTEngine {
     this.config = config
   }
 
+  get name(): string {
+    return 'fal.ai'
+  }
+
   isReady(): boolean {
     return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isStreamingModel(model: string): boolean {
+    return false
   }
 
   static requiresDownload(): boolean {

@@ -426,6 +426,7 @@ const onDictate = async () => {
 
 const stopDictation = async (userStopped = false) => {
   userStoppedDictation = userStopped
+  transcriber.endStreaming()
   audioRecorder.stop()
 }
 
@@ -437,88 +438,112 @@ const startDictation = async () => {
   // audio recorder
   await audioRecorder.initialize({
 
-    onNoiseDetected: () => {
-      emitEvent('audio-noise-detected', null)
-    },
-    
-    onSilenceDetected: () => {
+    pcm16bitStreaming: transcriber.requiresPcm16bits,
+    listener: {
 
-      // // depends on configuration
-      // if (store.config.stt.silenceAction === 'nothing') {
-      //   return
-      // }
+      onNoiseDetected: () => {
+        emitEvent('audio-noise-detected', null)
+      },
+      
+      onAudioChunk: async (chunk) => {
+          if (transcriber.streaming) {
+            await transcriber.sendStreamingChunk(chunk)
+          }
+        },
 
-      // no silence in ptt conversation
-      if (props.conversationMode === 'ptt') {
-        return
-      }
+      onSilenceDetected: () => {
 
-      // we dictate anyway
-      stopDictation(false)
+        // // depends on configuration
+        // if (store.config.stt.silenceAction === 'nothing') {
+        //   return
+        // }
 
-    },
-    
-    onRecordingComplete: async (audioChunks, noiseDetected) => {
-
-      try {
-
-        // do that always
-        audioRecorder.release()
-
-        // update
-        prompt.value = defaultPrompt(props.conversationMode)
-        dictating.value = false
-
-        // if no noise stop everything
-        if (!noiseDetected) {
+        // no silence in ptt conversation
+        if (props.conversationMode === 'ptt') {
           return
         }
 
-        // transcribe
-        processing.value = true
-        const response = await transcriber.transcribe(audioChunks)
-        if (response) {
-          prompt.value = response.text
+        // we dictate anyway
+        stopDictation(false)
+
+      },
+      
+      onRecordingComplete: async (audioChunks: Blob[], noiseDetected: boolean) => {
+
+        try {
+
+          // do that always
+          audioRecorder.release()
+          dictating.value = false
+
+          // if streaming we are all done
+          if (audioChunks.length) {
+
+            // update
+            prompt.value = defaultPrompt(props.conversationMode)
+
+            // if no noise stop everything
+            if (!noiseDetected) {
+              return
+            }
+
+            // transcribe
+            processing.value = true
+            const response = await transcriber.transcribe(audioChunks)
+            if (response) {
+              prompt.value = response.text
+            }
+
+          }
+
+          // execute?
+          if (props.conversationMode/* || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue'*/) {
+
+            // send prompt
+            onSendPrompt()
+
+            // record again?
+            if (userStoppedDictation === false && (props.conversationMode === 'auto'/* || store.config.stt.silenceAction === 'execute_continue'*/)) {
+              startDictation()
+            }
+          
+          } else {
+
+            // focus
+            input.value.focus()
+
+            // conversation tip
+            if (props.enableConversations) {
+              tipsManager.showTip('conversation')
+            }
+
+
+          }
+
+        } catch (error) {
+          console.error(error)
+          Dialog.alert('Error transcribing audio')
         }
 
-        // execute?
-        if (props.conversationMode/* || store.config.stt.silenceAction === 'stop_execute' || store.config.stt.silenceAction === 'execute_continue'*/) {
+        // update
+        processing.value = false
 
-          // send prompt
-          onSendPrompt()
-
-          // record again?
-          if (userStoppedDictation === false && (props.conversationMode === 'auto'/* || store.config.stt.silenceAction === 'execute_continue'*/)) {
-            startDictation()
-          }
-        
-        } else {
-
-          // focus
-          input.value.focus()
-
-          // conversation tip
-          if (props.enableConversations) {
-            tipsManager.showTip('conversation')
-          }
-
-
-        }
-
-      } catch (error) {
-        console.error(error)
-        Dialog.alert('Error transcribing audio')
-      }
-
-      // update
-      processing.value = false
-
-    },
+      },
+    }
   })
+
+  // streaming setup
+  const useStreaming = transcriber.requiresStreaming
+  if (useStreaming) {
+    await transcriber.startStreaming((text) => {
+      prompt.value = text
+      autoGrow(input.value)
+    })
+  }
 
   // start
   dictating.value = true
-  audioRecorder.start()
+  audioRecorder.start(transcriber.requiresStreaming)
 
 }
 
@@ -626,7 +651,7 @@ let draftPrompt = ''
 const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
-    if (event.isComposing) return;
+    if (event.isComposing) return
     if (event.shiftKey) {
 
     } else {

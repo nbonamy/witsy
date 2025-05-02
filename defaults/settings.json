@@ -325,6 +325,17 @@
         "chat": "",
         "image": ""
       }
+    },
+    "fireworks": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
     }
   },
   "plugins": {

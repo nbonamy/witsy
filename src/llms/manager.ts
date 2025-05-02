@@ -20,7 +20,7 @@ export default class LlmManager extends LlmManagerBase {
   }
 
   getNonChatEngines = (): string[] => {
-    return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia' ]
+    return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia', 'fireworks' ]
   }
 
   isEngineConfigured = (engine: string): boolean => {

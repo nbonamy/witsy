@@ -23,8 +23,17 @@ export default class STTWhisper implements STTEngine {
     env.allowLocalModels = false
   }
 
+  get name(): string {
+    return 'whisper'
+  }
+
   isReady(): boolean {
     return this.ready
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isStreamingModel(model: string): boolean {
+    return false
   }
 
   static requiresDownload(): boolean {

@@ -10,12 +10,21 @@ export default class STTGladia implements STTEngine {
     { id: 'solaria', label: 'Solaria (online)' },
   ]
 
-    constructor(config: Configuration) {
+  constructor(config: Configuration) {
     this.config = config
+  }
+
+  get name(): string {
+    return 'gladia'
   }
 
   isReady(): boolean {
     return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isStreamingModel(model: string): boolean {
+    return false
   }
 
   static requiresDownload(): boolean {
