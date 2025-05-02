@@ -26,13 +26,14 @@
         <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" :disabled="autoStart" />
         <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
       </div>
+      <div style="display: none">{{ engineModel }}</div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Waveform from '../components/Waveform.vue'
@@ -56,17 +57,28 @@ const autoStart = ref(false)
 const foregroundColorActive = ref('')
 const foregroundColorInactive = ref('')
 
+const engineModel = computed(() => {
+  return transcriber.engine ? transcriber.engine.name + ' / ' + transcriber.model : ''
+})
+
+let previousTranscription = ''
+
 onMounted(async () => {
 
   // events
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
   window.api.on('start-dictation', toggleRecord)
+  window.api.on('file-modified', (file) => {
+    if (file === 'settings') {
+      store.loadSettings()
+      initialize()
+    }
+  })
 
   // init
-  await transcriber.initialize()
-  await initializeAudio()
-  
+  initialize()
+
   // grab colors
   try {
     foregroundColorInactive.value = window.getComputedStyle(document.querySelector('.transcribe')).getPropertyValue('color')
@@ -76,11 +88,6 @@ onMounted(async () => {
       console.error('Error getting colors:', error)
     }
   }
-
-  // other stuff
-  autoStart.value = store.config.stt.autoStart
-  pushToTalk.value = store.config.stt.pushToTalk
-  isMas.value = window.api.isMasBuild
 
   // auto start?
   if (autoStart.value) {
@@ -93,7 +100,24 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.api.off('start-dictation', toggleRecord)
+  window.api.off('file-modified')
 })
+
+const initialize = async () => {
+
+  // initialize the transcriber
+  transcriber.initialize()
+  await initializeAudio()
+  if (transcriber.engine) {
+    console.log('[stt]', transcriber.engine?.name, transcriber.model)
+  }
+
+  // other stuff
+  autoStart.value = store.config.stt.autoStart
+  pushToTalk.value = store.config.stt.pushToTalk
+  isMas.value = window.api.isMasBuild
+
+}
 
 const toggleRecord = () => {
   if (state.value === 'processing') {
@@ -113,41 +137,53 @@ const initializeAudio = async () => {
     // init our recorder
     await audioRecorder.initialize({
 
-      onNoiseDetected: () => {
-      },
+      pcm16bitStreaming: transcriber.requiresPcm16bits,
+      listener: {
 
-      onSilenceDetected: () => {
+        onNoiseDetected: () => {
+        },
 
-        // // depends on configuration
-        // if (store.config.stt.silenceAction === 'nothing') {
-        //   return
-        // }
+        onAudioChunk: async (chunk) => {
+          if (transcriber.streaming) {
+            await transcriber.sendStreamingChunk(chunk)
+          }
+        },
 
-        // stop
-        if (!pushToTalkMode) {
-          stopDictation(false)
+        onSilenceDetected: () => {
+
+          // // depends on configuration
+          // if (store.config.stt.silenceAction === 'nothing') {
+          //   return
+          // }
+
+          // stop
+          if (!pushToTalkMode) {
+            stopDictation(false)
+          }
+
+        },
+
+        onRecordingComplete: async (audioChunks: Blob[], noiseDetected: boolean) => {
+
+          // if no noise stop everything
+          if (!noiseDetected) {
+            state.value = 'idle'
+            return
+          }
+
+          // transcribe
+          await transcribe(audioChunks)
+
+          // execute?
+          if (userStoppedDictation === false/* && store.config.stt.silenceAction === 'execute_continue'*/) {
+            onRecord(false)
+          }
         }
 
-      },
-      onRecordingComplete: async (audioChunks, noiseDetected) => {
-
-        // if no noise stop everything
-        if (!noiseDetected) {
-          state.value = 'idle'
-          return
-        }
-
-        // transcribe
-        await transcribe(audioChunks)
-
-        // execute?
-        if (userStoppedDictation === false/* && store.config.stt.silenceAction === 'execute_continue'*/) {
-          onRecord(false)
-        }
       }
 
     })
-    
+
   } catch (err) {
     console.error('Error accessing microphone:', err)
     Dialog.alert(t('transcribe.errorMicrophone'))
@@ -160,14 +196,28 @@ const onRecord = async (ptt: boolean) => {
   try {
 
     // check
-    if (transcriber.isReady() === false) {
+    if (transcriber.ready === false) {
       Dialog.alert(t('transcribe.errorSTTNotReady'))
       return
     }
 
+    // save current transcription
+    previousTranscription = transcription.value.trim()
+    if (previousTranscription.length) {
+      previousTranscription += ' '
+    }
+
+    // streaming setup
+    const useStreaming = transcriber.requiresStreaming
+    if (useStreaming) {
+      await transcriber.startStreaming((text) => {
+        transcription.value = `${previousTranscription}${text}`
+      })
+    }
+
     // start the recording
     pushToTalkMode = ptt
-    audioRecorder.start()
+    audioRecorder.start(useStreaming)
 
     // update the status
     state.value = 'recording'
@@ -187,6 +237,7 @@ const onStop = () => {
 const stopDictation = async (userStopped: boolean) => {
   userStoppedDictation = userStopped
   state.value = 'processing'
+  transcriber.endStreaming()
   audioRecorder.stop()
 }
 
@@ -225,8 +276,8 @@ const onKeyDown = (event: KeyboardEvent) => {
   } else if (event.key === 'Enter' && isCommand) {
     event.preventDefault()
     onInsert()
-  } else if (event.key === 'Backspace') {
-    transcription.value = transcription.value.slice(0, -1)
+  // } else if (event.key === 'Backspace') {
+  //   transcription.value = transcription.value.slice(0, -1)
   } else if (event.key === 'Delete') {
     onClear()
   } else if (event.key === 'c' && isCommand) {
@@ -288,7 +339,7 @@ const refocus = () => {
 <style scoped>
 
 .transcribe {
-  
+
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -335,7 +386,7 @@ const refocus = () => {
         padding: 32px;
         position: relative !important;
         top: 50% !important;
-        transform: translateY(-50%) !important; 
+        transform: translateY(-50%) !important;
         text-align: center;
         line-height: 140%;
         font-family: Garamond, Georgia, Times, 'Times New Roman', serif;

@@ -1,9 +1,15 @@
 import { type Configuration } from '../types/config'
 
+export type AudioRecorderInitOptions = {
+  listener: AudioRecorderListener
+  pcm16bitStreaming: boolean
+}
+
 export interface AudioRecorderListener {
   onNoiseDetected: () => void
   onSilenceDetected: () => void
-  onRecordingComplete: (audioChunks: any[], noiseDetected: boolean) => void
+  onRecordingComplete: (audioChunks: Blob[], noiseDetected: boolean) => void
+  onAudioChunk: (chunk: Blob) => void
 }
 
 const closeStream = (stream: MediaStream) => {
@@ -47,9 +53,12 @@ class AudioRecorder {
 
   config: Configuration
   listener: AudioRecorderListener
+  streamingMode: boolean
   stream: MediaStream
   mediaRecorder: MediaRecorder
-  audioChunks: any[]
+  audioContext: AudioContext
+  microphone: MediaStreamAudioSourceNode
+  audioChunks: Blob[]
   analyser: AnalyserNode
   bufferLength: number
   dataArray: Uint8Array
@@ -60,6 +69,7 @@ class AudioRecorder {
   constructor(config: Configuration) {
     this.config = config
     this.mediaRecorder = null
+    this.microphone = null
     this.audioChunks = []
   }
 
@@ -72,10 +82,13 @@ class AudioRecorder {
   }
 
   /* v8 ignore start */
-  async initialize(listener: AudioRecorderListener): Promise<void> {
+  async initialize(opts: AudioRecorderInitOptions): Promise<void> {
+
+    // clear
+    this.release()
 
     // save the listener
-    this.listener = listener
+    this.listener = opts.listener
 
     // we need an audio stream
     this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -86,18 +99,98 @@ class AudioRecorder {
     // the media recorder
     this.mediaRecorder = new MediaRecorder(this.stream)
     this.mediaRecorder.ondataavailable = (event) => {
-      this.audioChunks.push(event.data)
+
+      // in streaming: pcm16bits is handled in the worklet
+      if (this.streamingMode) {
+        if (!opts.pcm16bitStreaming) {
+          this.listener.onAudioChunk(event.data)
+        }
+      } else {
+        this.audioChunks.push(event.data)
+      }
     }
+
     this.mediaRecorder.onstop = () => {
-      console.log('Recording stopped')
+      console.log('[audio] recording stopped')
       this.listener.onRecordingComplete(this.audioChunks, this.lastNoise != null)
     }
 
     // now connect the microphone
-    const audioContext = new window.AudioContext()
-    const microphone = audioContext.createMediaStreamSource(this.stream)
-    this.analyser = audioContext.createAnalyser()
-    microphone.connect(this.analyser)
+    this.audioContext = new window.AudioContext(opts.pcm16bitStreaming ? { sampleRate: 44100 } : {})
+    this.microphone = this.audioContext.createMediaStreamSource(this.stream)
+    this.analyser = this.audioContext.createAnalyser()
+    this.microphone.connect(this.analyser)
+
+    // for pcm 16 bits we need to use a worklet
+    if (opts.pcm16bitStreaming) {
+
+      // TODO: fix load issue with worklet code stored in file:
+      // await audioContext.audioWorklet.addModule('pcm-processor.js');
+
+      const workletCode = `
+      class PCMProcessor extends AudioWorkletProcessor {
+        constructor() {
+          super();
+          this.sampleRate = 16000;
+          this.bufferSize = 800;
+          this.buffer = new Float32Array(this.bufferSize);
+          this.bufferIndex = 0;
+          this.resampleRatio = 1;
+        }
+      
+        process(inputs, outputs, parameters) {
+          const input = inputs[0][0];
+          if (!input) return true;
+          
+          if (sampleRate !== this.sampleRate) {
+            this.resampleRatio = sampleRate / this.sampleRate;
+          }
+          
+          for (let i = 0; i < input.length; i++) {
+            const targetIndex = Math.floor(i * this.resampleRatio);
+            if (targetIndex < input.length) {
+              this.buffer[this.bufferIndex++] = input[targetIndex];
+              
+              if (this.bufferIndex >= this.bufferSize) {
+                const pcmData = new Int16Array(this.bufferSize);
+                for (let j = 0; j < this.bufferSize; j++) {
+                  pcmData[j] = Math.max(-1, Math.min(1, this.buffer[j])) * 0x7FFF;
+                }
+                
+                this.port.postMessage({
+                  type: 'pcm',
+                  data: pcmData
+                });
+                
+                this.bufferIndex = 0;
+              }
+            }
+          }
+          
+          return true;
+        }
+      }
+      
+      registerProcessor('pcm-processor', PCMProcessor);
+      `;
+
+      const blob = new Blob([workletCode], { type: 'text/javascript' });
+      const workletUrl = URL.createObjectURL(blob);
+
+      await this.audioContext.audioWorklet.addModule(workletUrl)
+      const audioWorkletNode = new AudioWorkletNode(this.audioContext, 'pcm-processor')
+      audioWorkletNode.port.onmessage = (event) => {
+        //console.log('Received message from worklet:', event.data);
+        if (event.data.type === 'pcm') {
+          // Send PCM data over WebSocket
+          this.listener.onAudioChunk(event.data.data.buffer);
+        }
+      };
+      
+      // Connect nodes
+      this.microphone.connect(audioWorkletNode);
+    
+    }
 
     // and setup the analyser
     this.analyser.fftSize = 256
@@ -106,10 +199,11 @@ class AudioRecorder {
 
   }
 
-  start(): void {
+  start(streaming: boolean = false): void {
     if (this.mediaRecorder) {
       this.audioChunks = []
-      this.mediaRecorder.start()
+      this.streamingMode = streaming
+      this.mediaRecorder.start(streaming ? 200 : undefined)
       this.lastNoise = null
       this.startRecordingTime = new Date().getTime()
       this.sampler = setInterval(() => this.detectSilence(), 250)
@@ -124,14 +218,24 @@ class AudioRecorder {
   }
 
   release(): void {
-    clearInterval(this.sampler)
+    this.stop()
     closeStream(this.stream)
+    this.analyser?.disconnect()
+    this.microphone?.disconnect()
+    this.audioContext?.close()
     this.mediaRecorder = null
     this.analyser = null
+    this.sampler = null
+    this.stream = null
   }
 
   private detectSilence(): void {
-    
+
+    // if we are streaming, we don't need to check for silence
+    if (this.streamingMode) {
+      return
+    }
+
     // check
     if (!this.analyser) {
       clearInterval(this.sampler)

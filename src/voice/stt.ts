@@ -1,6 +1,7 @@
 
 import { Configuration } from 'types/config'
 import STTFalAi from './stt-falai'
+import STTFireworks from './stt-fireworks'
 import STTGladia from './stt-gladia'
 import STTGroq from './stt-groq'
 import STTHuggingFace from './stt-huggingface'
@@ -38,15 +39,33 @@ export type TranscribeResponse = {
   text: string
 }
 
+export type StreamingResponse = {
+  type: 'init'|'text'|'done'|'error'
+  content?: string
+}
+
+export type StreamingCallback = (response: StreamingResponse) => void
+
 export interface STTEngine {
-  //constructor(config: Configuration): STTBase
+
+  // standard
+  get name(): string
   isReady(): boolean
-  requiresDownload(): boolean
   initialize(callback?: ProgressCallback): Promise<void>
   transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse>
+
+  // local model management
+  requiresDownload(): boolean
   isModelDownloaded(model: string): Promise<boolean>
   deleteModel(model: string): Promise<void>
   deleteAllModels(): Promise<void>
+
+  // streaming
+  isStreamingModel(model: string): boolean
+  requiresPcm16bits?(model: string): boolean
+  startStreaming?(callback: StreamingCallback, opts?: object): Promise<void>  
+  sendAudioChunk?(chunk: Blob): Promise<void>  
+  endStreaming?(): Promise<void>  
 }
 
 const getSTTEngine = (config: Configuration): STTEngine => {
@@ -65,6 +84,8 @@ const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTWhisper(config)
   } else if (engine === 'gladia') {
     return new STTGladia(config)
+  } else if (engine === 'fireworks') {
+    return new STTFireworks(config)
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -85,6 +106,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTWhisper.requiresDownload()
   } else if (engine === 'gladia') {
     return STTGladia.requiresDownload()
+  } else if (engine === 'fireworks') {
+    return STTFireworks.requiresDownload()
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }

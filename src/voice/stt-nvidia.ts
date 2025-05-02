@@ -15,8 +15,17 @@ export default class STTNvidia implements STTEngine {
     this.config = config
   }
 
+  get name(): string {
+    return 'nvidia'
+  }
+
   isReady(): boolean {
     return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isStreamingModel(model: string): boolean {
+    return false
   }
 
   static requiresDownload(): boolean {

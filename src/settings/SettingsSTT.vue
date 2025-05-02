@@ -16,6 +16,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'fireworks'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="fireworksAPIKey" @blur="save" />
+    </div>
     <div class="group" v-if="engine == 'huggingface'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="huggingFaceAPIKey" @blur="save" />
@@ -86,6 +90,7 @@ import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngi
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 import STTFalAi from '../voice/stt-falai'
+import STTFireworks from '../voice/stt-fireworks'
 import STTGladia from '../voice/stt-gladia'
 import STTGroq from '../voice/stt-groq'
 import STTHuggingFace from '../voice/stt-huggingface'
@@ -102,8 +107,9 @@ const locale = ref('')
 const engine = ref('openai')
 const model = ref('whisper-1')
 const falAiAPIKey = ref(null)
-const huggingFaceAPIKey = ref(null)
+const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
+const huggingFaceAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
@@ -111,12 +117,13 @@ const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 
 const engines = () => [
   { id: 'openai', label: 'OpenAI' },
-  { id: 'groq', label: 'Groq' },
   { id: 'falai', label: 'fal.ai' },
-  ...(store.config.stt.nvidia.enabled ? [{ id: 'nvidia', label: 'nVidia' }] : []),
+  { id: 'fireworks', label: 'Fireworks.ai' },
+  { id: 'gladia', label: 'Gladia' },
+  { id: 'groq', label: 'Groq' },
   //{ id: 'huggingface', label: 'Hugging Face' },
+  ...(store.config.stt.nvidia.enabled ? [{ id: 'nvidia', label: 'nVidia' }] : []),
   { id: 'whisper', label: 'Whisper' },
-  { id: 'gladia', label: 'Gladia' }
 ]
 
 const models = computed(() => {
@@ -125,18 +132,20 @@ const models = computed(() => {
   const models = (() => {
     if (engine.value === 'openai') {
       return STTOpenAI.models
-    } else if (engine.value === 'groq') {
-      return STTGroq.models
     } else if (engine.value === 'falai') {
       return STTFalAi.models
+    } else if (engine.value === 'fireworks') {
+      return STTFireworks.models
+    } else if (engine.value === 'gladia') {
+      return STTGladia.models
+    } else if (engine.value === 'groq') {
+      return STTGroq.models
     } else if (engine.value === 'huggingface') {
       return STTHuggingFace.models
     } else if (engine.value === 'nvidia') {
       return STTNvidia.models
     } else if (engine.value === 'whisper') {
       return STTWhisper.models
-    } else if (engine.value === 'gladia') {
-      return STTGladia.models
     }
   })()
 
@@ -173,6 +182,7 @@ const load = () => {
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || 'whisper-1'
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
+  fireworksAPIKey.value = store.config.engines.fireworks.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
@@ -184,6 +194,7 @@ const save = () => {
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
   store.config.engines.falai.apiKey = falAiAPIKey.value
+  store.config.engines.fireworks.apiKey = fireworksAPIKey.value
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value

@@ -22,8 +22,17 @@ export default class STTGroq implements STTEngine {
     })
   }
 
+  get name(): string {
+    return 'groq'
+  }
+
   isReady(): boolean {
     return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isStreamingModel(model: string): boolean {
+    return false
   }
 
   static requiresDownload(): boolean {
