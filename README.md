@@ -161,6 +161,8 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Realtime STT with Fireworks
+- [x] OpenAI image generation
 - [x] Azure AI support
 - [x] Brave Search plugin
 - [x] Allow user-input models for embeddings
