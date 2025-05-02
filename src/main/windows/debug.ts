@@ -27,7 +27,9 @@ export const openDebugWindow = (): void => {
     });
 
     debugWindow.on('close', () => {
-      electronStore.set(storeBoundsId, debugWindow.getBounds());
+      try {
+        electronStore.set(storeBoundsId, debugWindow.getBounds());
+      } catch { /* empty */ }
     })
 
     // handle window close
