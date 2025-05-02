@@ -8,6 +8,12 @@ test('renders markdown', () => {
   expect(html).toContain('<h1>Hello World</h1>')
 })
 
+test('does not render html', () => {
+  const markdown = '<h1>Hello World</h1>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('&lt;h1&gt;Hello World&lt;/h1&gt;')
+})
+
 test('renders local links', () => {
   const markdown = '[link](file://README.md)'
   const html = renderMarkdown(markdown)
@@ -60,7 +66,13 @@ test('renders block math', () => {
 })
 
 test('render <think>', () => {
-  const markdown = '<think>Thinking</think>Talking'
+  const markdown = '<think>Thinking</think>'
   const html = renderMarkdown(markdown)
-  expect(html).toContain('<p><think>Thinking</think>Talking</p>')
+  expect(html).toContain('<p><think>Thinking</think></p>')
+})
+
+test('render mix', () => {
+  const markdown = '<think>Reasoning...</think># <b>instructions.default:\n"Title"</b>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p><think>Reasoning...</think># &lt;b&gt;instructions.default:\n&quot;Title&quot;&lt;/b&gt;</p>')
 })
