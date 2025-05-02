@@ -18,7 +18,13 @@ contextBridge.exposeInMainWorld(
     isMasBuild: process.mas === true,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
     on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
-    off: (signal: string, callback: (value: any) => void): void => { ipcRenderer.off(signal, (_event, value) => callback(value)) },
+    off: (signal: string, callback?: (value: any) => void): void => {
+      if (callback) {
+        ipcRenderer.removeListener(signal, (_event, value) => callback(value))
+      } else {
+        ipcRenderer.removeAllListeners(signal)
+      }
+    },
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
     showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('show-dialog', opts) },
     listFonts: (): string[] => { return ipcRenderer.sendSync('fonts-list') },
