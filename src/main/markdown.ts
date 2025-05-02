@@ -1,5 +1,4 @@
 
-
 import MarkdownIt from 'markdown-it';
 import MarkdownItKatex from '@iktakahiro/markdown-it-katex'
 import MarkdownItMark from 'markdown-it-mark'
@@ -7,7 +6,7 @@ import MarkdownItDiagram from 'markdown-it-diagram'
 import hljs from 'highlight.js'
 
 const mdOptions: MarkdownIt.Options = {
-  html: true,
+  html: false,
   highlight: function (str: string, lang: string) {
     try {
       let code = '<pre class="hljs"><code class="hljs variable-font-size">';
@@ -37,12 +36,34 @@ const mdPreprocess = (markdown: string) => {
   return preprocessed
 }
 
+const mdPostprocess = (html: string) => {
+  // we want to preserve ollama <think> content as-is
+  // restore the <think> and </think> tags
+  let postprocessed = html
+  postprocessed = postprocessed.replaceAll('&lt;think&gt;', '<think>').replace(/&lt;\/think&gt;/g, '</think>')
+  return postprocessed
+}
+  
+let md: MarkdownIt | null = null
+
 export const renderMarkdown = (markdown: string): string => {
-  const md = new MarkdownIt(mdOptions)
-  const validateLink = md.validateLink
-  md.validateLink = (url) =>  url.startsWith('file://') ? true : validateLink(url)
-  md.use(MarkdownItKatex)
-  md.use(MarkdownItMark)
-  md.use(MarkdownItDiagram)
-  return md.render(mdPreprocess(markdown))
+  
+  // init
+  if (!md) {
+
+    md = new MarkdownIt(mdOptions)
+
+    // add support for file:// links
+    const validateLink = md.validateLink
+    md.validateLink = (url) =>  url.startsWith('file://') ? true : validateLink(url)
+
+    // plugins
+    md.use(MarkdownItKatex)
+    md.use(MarkdownItMark)
+    md.use(MarkdownItDiagram)
+  
+  }
+
+  // do it
+  return mdPostprocess(md.render(mdPreprocess(markdown)))
 }

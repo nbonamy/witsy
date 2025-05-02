@@ -150,7 +150,7 @@ test('Submits prompt with streaming', async () => {
 test('Submits prompt without streaming', async () => {
   const wrapper = await prompt({ disableStreaming: true })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('Reasoning...# instructions.default:\n"Title"')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('Reasoning...# <b>instructions.default:\n"Title"</b>')
 })
 
 test('Submits system prompt with params', async () => {
