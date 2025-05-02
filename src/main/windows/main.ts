@@ -77,8 +77,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
 
     }
 
-    // save bounds    
-    electronStore.set(storeBoundsId, mainWindow.getBounds());
+    // save bounds
+    try {
+      electronStore.set(storeBoundsId, mainWindow.getBounds());
+    } catch { /* empty */ }
 
   })
 

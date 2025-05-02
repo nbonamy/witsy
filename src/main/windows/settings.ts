@@ -52,7 +52,9 @@ export const prepareSettingsWindow = (queryParams?: anyDict): void => {
 
   // save position on hide
   settingsWindow.on('hide', () => {
-    electronStore.set(storeBoundsId, settingsWindow.getBounds());
+    try {
+      electronStore.set(storeBoundsId, settingsWindow.getBounds());
+    } catch { /* empty */ }
     if (process.platform === 'win32') {
       settingsWindow.setOpacity(0);
     }

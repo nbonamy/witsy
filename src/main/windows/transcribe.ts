@@ -59,7 +59,9 @@ export const openTranscribePalette = (): void => {
   });
 
   transcribePalette.on('close', () => {
-    electronStore.set(storeBoundsId, transcribePalette.getBounds());
+    try {
+      electronStore.set(storeBoundsId, transcribePalette.getBounds());
+    } catch { /* empty */ }
   })
 
   // handle window close
