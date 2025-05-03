@@ -1671,7 +1671,7 @@
         "engine": "Mecanismo",
         "engines": {
           "brave": "Brave Search",
-          "local": "Pesquisa no Navegador Local (EXPERIMENTAL)",
+          "local": "Pesquisa Local do Google",
           "tavily": "Tavily"
         },
         "getApiKey": "Obtenha sua chave de API",

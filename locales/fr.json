@@ -1641,7 +1641,7 @@
         "engine": "Moteur",
         "engines": {
           "brave": "Brave Search",
-          "local": "Recherche locale dans le navigateur (EXPÉRIMENTAL)",
+          "local": "Recherche Google locale",
           "tavily": "Tavily"
         },
         "getApiKey": "Obtenir votre clé API",
