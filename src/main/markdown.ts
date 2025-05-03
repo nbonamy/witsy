@@ -38,10 +38,8 @@ const mdPreprocess = (markdown: string) => {
 
 const mdPostprocess = (html: string) => {
   // we want to preserve ollama <think> content as-is: <think>...</think>
-  // we want to preserve deeplinks as-is: <a href="#...">...</a>
   let postprocessed = html
   postprocessed = postprocessed.replaceAll('&lt;think&gt;', '<think>').replace(/&lt;\/think&gt;/g, '</think>')
-  postprocessed = postprocessed.replaceAll(/&lt;a href=&quot;#(.*?)&quot;&gt;(.*?)&lt;\/a&gt;/g, '<a href="#$1">$2</a>')
   return postprocessed
 }
   

@@ -1163,12 +1163,12 @@
       "contextTooLong": "Entschuldigung, es scheint, dass diese Nachricht die Kontextlänge dieses Modells überschreitet. Versuchen Sie, Ihren Prompt zu verkürzen oder ein anderes Modell auszuprobieren.",
       "couldNotGenerate": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen.",
       "invalidModel": "Entschuldigung, es scheint, dass dieses Modell nicht verfügbar ist.",
-      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter <a href=\"#settings_models\">Einstellungen</a> eingeben, um zu chatten.",
+      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter [Einstellungen](#settings_models) eingeben, um zu chatten.",
       "outOfCredits": "Entschuldigung, es scheint, dass Sie keine Credits mehr haben. Überprüfen Sie den Kontostand Ihres LLM-Anbieters.",
       "pluginDescriptionTooLong": "Entschuldigung, es scheint, dass die Beschreibung eines der Plugins zu lang ist. Wenn Sie sie in Einstellungen | Erweitert geändert haben, versuchen Sie es bitte erneut.",
       "quotaExceeded": "Entschuldigung, es scheint, dass Sie das Limit Ihres LLM-Anbieterkontos erreicht haben. Versuchen Sie es später erneut.",
-      "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_params\">es erneut ohne Modellparameter versuchen</a>?",
-      "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_plugins\">es erneut ohne Plugins versuchen</a>?"
+      "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie [es erneut ohne Modellparameter versuchen](#retry_without_params)?",
+      "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie [es erneut ohne Plugins versuchen](#retry_without_plugins)?"
     }
   },
   "instructions": {

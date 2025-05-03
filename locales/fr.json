@@ -1163,12 +1163,12 @@
       "contextTooLong": "Désolé, il semble que ce message dépasse la longueur de contexte de ce modèle. Essayez de raccourcir votre prompt ou essayez un autre modèle.",
       "couldNotGenerate": "Désolé, je n'ai pas pu générer de texte pour cette requête.",
       "invalidModel": "Désolé, il semble que ce modèle ne soit pas disponible.",
-      "missingApiKey": "Vous devez entrer votre clé API dans l'onglet Modèles des <a href=\"#settings_models\">Paramètres</a> pour pouvoir discuter.",
+      "missingApiKey": "Vous devez entrer votre clé API dans l'onglet Modèles des [Paramètres](#settings_models) pour pouvoir discuter.",
       "outOfCredits": "Désolé, il semble que vous n'ayez plus de crédits. Vérifiez le solde de votre compte fournisseur LLM.",
       "pluginDescriptionTooLong": "Désolé, il semble que la description d'un des plugins soit trop longue. Si vous les avez modifiés dans Paramètres | Avancé, veuillez réessayer.",
       "quotaExceeded": "Désolé, il semble que vous ayez atteint la limite de votre compte fournisseur LLM. Réessayez plus tard.",
-      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous <a href=\"#retry_without_params\">réessayer sans paramètres de modèle</a> ?",
-      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous <a href=\"#retry_without_plugins\">réessayer sans plugins</a> ?"
+      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans paramètres de modèle](#retry_without_params) ?",
+      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans plugins](#retry_without_plugins) ?"
     }
   },
   "instructions": {

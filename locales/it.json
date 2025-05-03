@@ -1163,12 +1163,12 @@
       "contextTooLong": "Mi dispiace, sembra che questo messaggio superi la lunghezza del contesto di questo modello. Prova a abbreviare il tuo prompt o prova un altro modello.",
       "couldNotGenerate": "Mi dispiace, non sono riuscito a generare del testo per quel prompt.",
       "invalidModel": "Mi dispiace, sembra che questo modello non sia disponibile.",
-      "missingApiKey": "Devi inserire la tua chiave API nella scheda Modelli delle <a href=\"#settings_models\">Impostazioni</a> per poter chattare.",
+      "missingApiKey": "Devi inserire la tua chiave API nella scheda Modelli delle [Impostazioni](#settings_models) per poter chattare.",
       "outOfCredits": "Mi dispiace, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore LLM.",
       "pluginDescriptionTooLong": "Mi dispiace, sembra che la descrizione di uno dei plugin sia troppo lunga. Se li hai modificati in Impostazioni | Avanzate, riprova.",
       "quotaExceeded": "Mi dispiace, sembra che tu abbia raggiunto il limite di velocità del tuo account fornitore LLM. Riprova più tardi.",
-      "tryWithoutParams": "Mi dispiace, non sono riuscito a generare del testo per quel prompt. Vuoi <a href=\"#retry_without_params\">riprovare senza parametri del modello</a>?",
-      "tryWithoutPlugins": "Mi dispiace, non sono riuscito a generare del testo per quel prompt. Vuoi <a href=\"#retry_without_plugins\">riprovare senza plugin</a>?"
+      "tryWithoutParams": "Mi dispiace, non sono riuscito a generare del testo per quel prompt. Vuoi [riprovare senza parametri del modello](#retry_without_params)?",
+      "tryWithoutPlugins": "Mi dispiace, non sono riuscito a generare del testo per quel prompt. Vuoi [riprovare senza plugin](#retry_without_plugins)?"
     }
   },
   "instructions": {

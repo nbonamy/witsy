@@ -1163,12 +1163,12 @@
       "contextTooLong": "Lo siento, parece que este mensaje excede la longitud de contexto de este modelo. Intenta acortar tu solicitud o prueba otro modelo.",
       "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud.",
       "invalidModel": "Lo siento, parece que este modelo no está disponible.",
-      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de <a href=\"#settings_models\">Configuración</a> para poder chatear.",
+      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de [Configuración](#settings_models) para poder chatear.",
       "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
       "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
       "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
-      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_params\">intentar de nuevo sin parámetros de modelo</a>?",
-      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_plugins\">intentar de nuevo sin plugins</a>?"
+      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin parámetros de modelo](#retry_without_params)?",
+      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {
