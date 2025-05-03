@@ -1309,6 +1309,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Paramètres avancés",
+    "allToolsEnabled": "Tous les outils sont sélectionnés",
     "contextWindowSize": "Taille de la fenêtre de contexte",
     "createNewModel": "Créer un nouveau modèle",
     "createOllama": {
@@ -1340,6 +1341,7 @@
     "reasoningEffort": "Effort de raisonnement",
     "streaming": "Streaming",
     "temperature": "Température [0.0 … 2.0]",
+    "toolsCount": "Aucun outil sélectionné | 1 outil sélectionné | {count} outils sélectionnés",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },

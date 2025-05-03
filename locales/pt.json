@@ -1328,6 +1328,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Configurações avançadas",
+    "allToolsEnabled": "Todas as ferramentas estão selecionadas",
     "contextWindowSize": "Tamanho da Janela de Contexto",
     "createNewModel": "Criar novo modelo",
     "createOllama": {
@@ -1359,6 +1360,7 @@
     "reasoningEffort": "Esforço de Raciocínio",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
+    "toolsCount": "Nenhuma ferramenta selecionada | 1 ferramenta selecionada | {count} ferramentas selecionadas",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },

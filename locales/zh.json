@@ -1328,6 +1328,7 @@
   },
   "modelSettings": {
     "advancedSettings": "高级设置",
+    "allToolsEnabled": "所有工具都已选中",
     "contextWindowSize": "上下文窗口大小",
     "createNewModel": "创建新模型",
     "createOllama": {
@@ -1359,6 +1360,7 @@
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",
     "temperature": "温度 [0.0 … 2.0]",
+    "toolsCount": "未选择工具 | 选择了 1 个工具 | 选择了 {count} 个工具",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
