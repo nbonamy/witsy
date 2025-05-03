@@ -81,6 +81,17 @@ export type Folder = {
   id: string
   name: string
   chats: string[]
+  defaults?: {
+    engine: string
+    model: string
+    disableTools: boolean
+    disableStreaming: boolean
+    prompt: string|null
+    locale: string|null
+    docrepo: string|null
+    expert: string|null
+    modelOpts: LlmModelOpts|null
+  }
 }
 
 export type History = {

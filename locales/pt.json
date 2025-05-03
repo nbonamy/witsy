@@ -176,8 +176,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Excluir pasta"
-      }
+        "clearDefaults": "Limpar padrões da pasta",
+        "delete": "Excluir pasta",
+        "setDefaults": "Definir padrões a partir do chat ativo"
+      },
+      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?",
+      "confirmOverwriteDefaults": "Tem certeza de que deseja substituir os padrões da pasta?"
     },
     "timeline": {
       "earlier": "Anterior",
@@ -1775,6 +1779,10 @@
     "doNotShowAgain": "Não mostrar novamente",
     "favoriteModels": {
       "title": "Clique no ícone LLM: seus modelos preferidos serão agrupados sob o ícone de estrela!"
+    },
+    "folderDefaults": {
+      "text": "Selecione Novo chat no menu de contexto da pasta para usar os padrões da pasta.",
+      "title": "Padrões da pasta salvos com sucesso!"
     },
     "folderList": {
       "title": "A lista de pastas é uma ótima maneira de organizar suas sessões de chat. Clique no ícone de pasta na parte inferior da barra lateral para criar novas pastas.\n\nO menu à direita de cada pasta permite que você gerencie suas pastas.\n\nO menu de contexto de seus chats permite que você os mova para uma pasta."

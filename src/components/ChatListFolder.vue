@@ -12,7 +12,7 @@
       <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
     </template>
   </section>
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
@@ -21,12 +21,16 @@ import { Folder } from '../types/index'
 import { Ref, ref, onMounted, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import Dialog from '../composables/dialog'
 import ChatListItem from './ChatListItem.vue'
 import ContextMenu from './ContextMenu.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+import useTipsManager from '../composables/tips_manager'
+const tipsManager = useTipsManager(store)
 
 const props = defineProps({
   chats: {
@@ -81,11 +85,16 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow: Ref<string|null> = ref(null)
-const contextMenuActions = [
-  { label: t('common.newChat'), action: 'chat' },
-  { label: t('common.rename'), action: 'rename' },
-  { label: t('chatList.folder.actions.delete'), action: 'delete' },
-]
+const contextMenuActions = () => {
+  const folder = store.history.folders.find((f) => f.id === targetRow.value)
+  return [
+    { label: t('common.newChat'), action: 'chat' },
+    { label: t('common.rename'), action: 'rename' },
+    ...(props.active?.hasMessages() ? [ { label: t('chatList.folder.actions.setDefaults'), action: 'setDefaults' } ] : []),
+    ...(folder?.defaults ? [ { label: t('chatList.folder.actions.clearDefaults'), action: 'clearDefaults' } ] : []),
+    { label: t('chatList.folder.actions.delete'), action: 'delete' },
+  ]
+}
 
 onMounted(() => {
   expandedFolders.value = localStorage.getItem('expandedFolders')?.split(',') || expandedFolders.value
@@ -138,19 +147,79 @@ const handleActionClick = async (action: string) => {
   closeContextMenu()
 
   // init
-  let folder = targetRow.value
-  if (!folder) return
+  let folderId: string = targetRow.value
+  if (!folderId) return
 
   // process
   if (action === 'chat') {
-    expandFolder(folder)
-    emitEvent('new-chat-in-folder', folder)
+    expandFolder(folderId)
+    emitEvent('new-chat-in-folder', folderId)
   } else if (action === 'rename') {
-    emitEvent('rename-folder',folder)
+    emitEvent('rename-folder', folderId)
   } else if (action === 'delete') {
-    emitEvent('delete-folder', folder)
-  }
+    emitEvent('delete-folder', folderId)
+  } else if (action === 'setDefaults') {
 
+    // get and check
+    const chat: Chat = props.active
+    const folder = store.history.folders.find((f) => f.id === folderId)
+    if (!folder) return
+
+    // if already set, ask for confirmation
+    if (folder.defaults) {
+      const result = await Dialog.show({
+        title: t('chatList.folder.confirmOverwriteDefaults'),
+        text: t('common.confirmation.cannotUndo'),
+        showCancelButton: true,
+      })
+
+      if (result.isDismissed) {
+        return
+      }
+    }
+
+    // set defaults
+    folder.defaults = {
+      engine: chat.engine,
+      model: chat.model,
+      disableTools: chat.disableTools,
+      disableStreaming: chat.disableStreaming,
+      prompt: chat.prompt,
+      locale: chat.locale,
+      expert: chat.messages.findLast((m) => m.expert)?.expert?.id,
+      docrepo: chat.docrepo,
+      modelOpts: chat.modelOpts,
+    }
+
+    // save
+    store.saveHistory()
+
+    // show tip
+    tipsManager.showTip('folderDefaults')
+
+  } else if (action === 'clearDefaults') {
+
+    // get and check
+    const folder = store.history.folders.find((f) => f.id === folderId)
+    if (!folder) return
+
+    // confirm
+    const result = await Dialog.show({
+      title: t('chatList.folder.confirmDeleteDefaults'),
+      text: t('common.confirmation.cannotUndo'),
+      confirmButtonText: t('common.delete'),
+      showCancelButton: true,
+    })
+
+    if (result.isDismissed) {
+      return
+    }
+
+    // clear and save
+    delete folder.defaults
+    store.saveHistory()
+
+  }
 }
 
 </script>

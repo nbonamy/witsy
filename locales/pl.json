@@ -176,8 +176,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Usuń folder"
-      }
+        "clearDefaults": "Wyczyść domyślne folderu",
+        "delete": "Usuń folder",
+        "setDefaults": "Ustaw domyślne z aktywnego czatu"
+      },
+      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne folderu?",
+      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne folderu?"
     },
     "timeline": {
       "earlier": "Wcześniej",
@@ -1781,6 +1785,10 @@
     "doNotShowAgain": "Nie pokazuj ponownie",
     "favoriteModels": {
       "title": "Kliknij ikonę LLM: preferowane modele zostaną zgrupowane pod ikoną gwiazdy!"
+    },
+    "folderDefaults": {
+      "text": "Wybierz Nowy czat w menu kontekstowym folderu, aby użyć domyślnych folderu.",
+      "title": "Domyślne folderu zapisane pomyślnie!"
     },
     "folderList": {
       "title": "Lista folderów to świetny sposób na organizowanie sesji czatu. Kliknij ikonę folderu na dole paska bocznego, aby utworzyć nowe foldery.\n\nMenu po prawej stronie każdego folderu umożliwia zarządzanie folderami.\n\nMenu kontekstowe czatów umożliwia przeniesienie ich do folderu."

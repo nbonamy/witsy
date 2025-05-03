@@ -5,7 +5,7 @@ import Dialog from './dialog'
 export type TipId = 
   'engineSelector' | 'modelSelector' | 'conversation' |
   'computerUse' | 'realtime' | 'folderList' |
-  'favoriteModels' | 'pluginsDisabled'
+  'favoriteModels' | 'pluginsDisabled' | 'folderDefaults'
 
 type TipHandler = () => Promise<boolean>
 
@@ -53,13 +53,16 @@ class TipsManager {
     }
 
     // callbacks
-    const callbacks: Record<string, TipHandler> = {
+    const callbacks: Record<TipId, TipHandler> = {
+      'engineSelector': async () => { return false},
+      'modelSelector': async () => { return false},
       'conversation': this.showConversationTip,
       'computerUse': this.showComputerUseWarning,
       'realtime': this.showRealtimeTip,
       'folderList': this.showFolderListTip,
       'favoriteModels': this.showFavoriteModelsTip,
       'pluginsDisabled': this.showPluginsDisabledTip,
+      'folderDefaults': this.showFolderDefaultsTip,
     }
 
     // get the callback
@@ -116,6 +119,16 @@ class TipsManager {
     const response = await Dialog.show({
       title: t('tips.pluginsDisabled.title'),
       text: t('tips.pluginsDisabled.text'),
+      input: 'checkbox',
+      inputLabel: t('tips.doNotShowAgain'),
+    })
+    return response.value
+  }
+
+  showFolderDefaultsTip = async () => {
+    const response = await Dialog.show({
+      title: t('tips.folderDefaults.title'),
+      text: t('tips.folderDefaults.text'),
       input: 'checkbox',
       inputLabel: t('tips.doNotShowAgain'),
     })

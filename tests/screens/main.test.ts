@@ -28,7 +28,7 @@ vi.mock('../../src/services/i18n', async () => {
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()
-  Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder' : 'user-input' }))
+  Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder1' : 'user-input' }))
   return { default: Swal }
 })
 
@@ -55,7 +55,23 @@ beforeAll(() => {
 
   window.api.history.load = () => ({
     folders: [
-      { id: 'folder', name: 'Folder', chats: [] }
+      { id: 'folder1', name: 'Folder', chats: [] },
+      { id: 'folder2', name: 'Folder', chats: [], defaults: {
+        engine: 'mock',
+        model: 'chat',
+        disableStreaming: true,
+        disableTools: true,
+        locale: 'en',
+        prompt: 'prompt',
+        docrepo: 'docrepo',
+        expert: 'uuid1',
+        modelOpts: {
+          temperature: 0.7,
+          customOpts: {
+            'custom': 'custom'
+          }
+        }
+      } },
     ], chats: [
       Chat.fromJson({
         uuid: 'chat',
@@ -197,10 +213,10 @@ test('Stop assistant', async () => {
   expect(Assistant.prototype.stop).toHaveBeenCalled()
 })
 
-test('New chat in folder', async () => {
+test('New chat in folder without defaults', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
   setLlmDefaults('mock', 'chat')
-  emitEvent('new-chat-in-folder', 'folder')
+  emitEvent('new-chat-in-folder', 'folder1')
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].title).toBeTruthy()
   expect(store.history.chats[1].engine).toBeTruthy()
@@ -209,6 +225,30 @@ test('New chat in folder', async () => {
   expect(store.history.folders[0].chats[0]).toBe(store.history.chats[1].uuid)
   expect(wrapper.vm.assistant.chat.uuid).toBe(store.history.chats[1].uuid)
   expect(wrapper.vm.assistant.chat.modelOpts).not.toBeUndefined()
+})
+
+test('New chat in folder with defaults', async () => {
+  const wrapper: VueWrapper<any> = mount(Main)
+  setLlmDefaults('mock', 'chat')
+  emitEvent('new-chat-in-folder', 'folder2')
+  expect(store.history.chats).toHaveLength(2)
+  expect(store.history.chats[1].title).toBeTruthy()
+  expect(store.history.chats[1].engine).toBe('mock')
+  expect(store.history.chats[1].model).toBe('chat')
+  expect(store.history.folders[1].chats).toHaveLength(1)
+  expect(store.history.folders[1].chats[0]).toBe(store.history.chats[1].uuid)
+  expect(wrapper.vm.assistant.chat.uuid).toBe(store.history.chats[1].uuid)
+  expect(wrapper.vm.assistant.chat.disableStreaming).toBe(true)
+  expect(wrapper.vm.assistant.chat.disableTools).toBe(true)
+  expect(wrapper.vm.assistant.chat.locale).toBe('en')
+  expect(wrapper.vm.assistant.chat.prompt).toBe('prompt')
+  expect(wrapper.vm.assistant.chat.docrepo).toBe('docrepo')
+  expect(wrapper.vm.assistant.chat.modelOpts).toStrictEqual({
+    temperature: 0.7,
+    customOpts: {
+      'custom': 'custom'
+    }
+  })
 })
 
 test('Rename chat', async () => {
@@ -235,7 +275,8 @@ test('Move chat', async () => {
     inputValue: 'root',
     inputOptions: {
       root: 'Unsorted',
-      folder: 'Folder',
+      folder1: 'Folder',
+      folder2: 'Folder',
     }
   }))
   await flushPromises()
@@ -255,7 +296,7 @@ test('Delete chat', async () => {
 
 test('Rename folder', async () => {
   mount(Main)
-  emitEvent('rename-folder', 'folder')
+  emitEvent('rename-folder', 'folder1')
   expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.rename',
     showCancelButton: true,
@@ -268,13 +309,13 @@ test('Rename folder', async () => {
 
 test('Delete folder', async () => {
   mount(Main)
-  emitEvent('delete-folder', 'folder')
+  emitEvent('delete-folder', 'folder1')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'main.folder.confirmDelete',
     detail: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
-  expect(store.history.folders).toHaveLength(0)
+  expect(store.history.folders).toHaveLength(1)
 })
 
 test('Select chat', async () => {

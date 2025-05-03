@@ -157,8 +157,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Ordner löschen"
-      }
+        "clearDefaults": "Ordnerstandards löschen",
+        "delete": "Ordner löschen",
+        "setDefaults": "Standards aus dem aktiven Chat festlegen"
+      },
+      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
+      "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
     },
     "timeline": {
       "earlier": "Früher",
@@ -1745,6 +1749,10 @@
     "doNotShowAgain": "Nicht mehr anzeigen",
     "favoriteModels": {
       "title": "Klicken Sie auf das LLM-Symbol: Ihre bevorzugten Modelle werden unter dem Sternsymbol gruppiert!"
+    },
+    "folderDefaults": {
+      "text": "Wählen Sie 'Neuer Chat' im Kontextmenü des Ordners, um die Ordnerstandards zu verwenden.",
+      "title": "Ordnerstandards erfolgreich gespeichert!"
     },
     "folderList": {
       "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
