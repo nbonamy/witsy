@@ -34,7 +34,7 @@ Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](ht
 Witsy is a BYOK (Bring Your Own Keys) AI application: it means you need to have API keys for the LLM providers you want to use. Alternatively,
 you can use [Ollama](https://ollama.com) to run models locally on your machine for free and use them in Witsy.
 
-It is the firt of very few (only?) universal MCP clients: ***Witsy allows you to run MCP servers with virtually any LLM!***
+It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows you to run MCP servers with virtually any LLM!***
 
 Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
