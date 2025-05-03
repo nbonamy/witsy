@@ -15,6 +15,12 @@ const emitEventMock = vi.fn()
 
 const stubTeleport = { global: { stubs: { teleport: true } } }
 
+vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
+  const Swal = vi.fn()
+  Swal['fire'] = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
+  return { default: Swal }
+})
+
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
