@@ -1182,12 +1182,12 @@
       "contextTooLong": "Desculpe, parece que esta mensagem excede o comprimento do contexto deste modelo. Tente encurtar seu prompt ou tente outro modelo.",
       "couldNotGenerate": "Desculpe, não consegui gerar texto para esse prompt.",
       "invalidModel": "Desculpe, parece que este modelo não está disponível.",
-      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos de <a href=\"#settings_models\">Configurações</a> para poder conversar.",
+      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos de [Configurações](#settings_models) para poder conversar.",
       "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta de provedor de LLM.",
       "pluginDescriptionTooLong": "Desculpe, parece que uma das descrições dos plugins é muito longa. Se você as ajustou em Configurações | Avançado, tente novamente.",
       "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta de provedor de LLM. Tente novamente mais tarde.",
-      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer <a href=\"#retry_without_params\">tentar novamente sem parâmetros de modelo</a>?",
-      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer <a href=\"#retry_without_plugins\">tentar novamente sem plugins</a>?"
+      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem parâmetros de modelo](#retry_without_params)?",
+      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {

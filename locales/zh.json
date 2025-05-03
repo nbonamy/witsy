@@ -1182,12 +1182,12 @@
       "contextTooLong": "抱歉，这条信息似乎超出了模型上下文长度。尝试缩短你的提示，或者尝试使用其他模型。",
       "couldNotGenerate": "抱歉，我无法为该提示生成文本。",
       "invalidModel": "抱歉，似乎这个模型不可用。",
-      "missingApiKey": "你需要在 <a href=\"#settings_models\">设置</a> 的模型标签中输入你的 API 密钥，才能进行聊天。",
+      "missingApiKey": "你需要在 [设置](#settings_models) 的模型标签中输入你的 API 密钥，才能进行聊天。",
       "outOfCredits": "抱歉，似乎你已经用完了你的 LLM 提供商账户的余额。检查你的 LLM 提供商账户余额。",
       "pluginDescriptionTooLong": "抱歉，似乎其中一个插件描述过长。如果你在设置 | 高级中进行了调整，请尝试再次。",
       "quotaExceeded": "抱歉，似乎你已经达到了你的 LLM 提供商账户的速率限制。稍后再试。",
-      "tryWithoutParams": "抱歉，我无法为该提示生成文本。你想不想 <a href=\"#retry_without_params\">不使用模型参数再试一次</a>？",
-      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 <a href=\"#retry_without_plugins\">不使用插件再试一次</a>？"
+      "tryWithoutParams": "抱歉，我无法为该提示生成文本。你想不想 [不使用模型参数再试一次](#retry_without_params)？",
+      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 [不使用插件再试一次](#retry_without_plugins)？"
     }
   },
   "instructions": {

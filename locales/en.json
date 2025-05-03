@@ -1182,12 +1182,12 @@
       "contextTooLong": "Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.",
       "couldNotGenerate": "Sorry, I could not generate text for that prompt.",
       "invalidModel": "Sorry, it seems this model is not available.",
-      "missingApiKey": "You need to enter your API key in the Models tab of <a href=\"#settings_models\">Settings</a> in order to chat.",
+      "missingApiKey": "You need to enter your API key in the Models tab of [Settings](#settings_models) in order to chat.",
       "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.",
       "pluginDescriptionTooLong": "Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.",
       "quotaExceeded": "Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.",
-      "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_params\">try again without model parameters</a>?",
-      "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_plugins\">try again without plugins</a>?"
+      "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to [try again without model parameters](#retry_without_params)?",
+      "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to [try again without plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {

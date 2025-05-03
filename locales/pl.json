@@ -1182,12 +1182,12 @@
       "contextTooLong": "Przepraszamy, wygląda na to, że ta wiadomość przekracza długość kontekstu tego modelu. Spróbuj skrócić monit lub wypróbuj inny model.",
       "couldNotGenerate": "Niestety, nie mogłem wygenerować tekstu dla tego monitu.",
       "invalidModel": "Niestety, wygląda na to, że ten model nie jest dostępny.",
-      "missingApiKey": "Aby móc czatować, należy wprowadzić klucz API w zakładce Modele w <a href=\"#settings_models\">Ustawienia</a>.",
+      "missingApiKey": "Aby móc czatować, należy wprowadzić klucz API w zakładce Modele w [Ustawienia](#settings_models).",
       "outOfCredits": "Przepraszamy, wygląda na to, że skończyły Ci się kredyty. Sprawdź saldo swojego konta dostawcy LLM.",
       "pluginDescriptionTooLong": "Przepraszamy, wygląda na to, że opis jednej z wtyczek jest zbyt długi. Jeśli zmieniłeś je w Ustawieniach | Zaawansowane, spróbuj ponownie.",
       "quotaExceeded": "Przepraszamy, wygląda na to, że osiągnięto limit stawek na koncie dostawcy LLM. Spróbuj ponownie później.",
-      "tryWithoutParams": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz <a href=\"#retry_without_params\">spróbować ponownie bez parametrów modelu</a>?",
-      "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz <a href=\"#retry_without_plugins\">spróbować ponownie bez wtyczek</a>?"
+      "tryWithoutParams": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez parametrów modelu](#retry_without_params)?",
+      "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)?"
     }
   },
   "instructions": {
