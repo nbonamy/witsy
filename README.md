@@ -3,7 +3,7 @@
 
   <a href="https://witsyai.com" target="_blank"><img src="assets/icon.png" width="128" alt="Witsy Logo"></a>
   <div><b>Witsy</b></div>
-  <div>Desktop AI Assistant</div>
+  <div>Desktop AI Assistant<br/>Universal MCP Client</div>
 
 </div>
 
@@ -34,18 +34,20 @@ Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](ht
 Witsy is a BYOK (Bring Your Own Keys) AI application: it means you need to have API keys for the LLM providers you want to use. Alternatively,
 you can use [Ollama](https://ollama.com) to run models locally on your machine for free and use them in Witsy.
 
+It is the firt of very few (only?) universal MCP clients: ***Witsy allows you to run MCP servers with virtually any LLM!***
+
 Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
 - Text-to-image and text-to video with OpenAI, Google, xAI, Replicate, fal.ai and HuggingFace
 - Image-to-image (image editing) and image-to-video with Google, Replicate and fal.ai
+- LLM plugins to augment LLM: execute python code, search the Internet...
+- Anthropic MCP server support
 - Scratchpad to interactively create the best content with any model!
 - Prompt anywhere allows to generate content directly in any application
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
-- LLM plugins to augment LLM: execute python code, search the Internet...
-- Anthropic MCP server support
 - Long-term memory plugin to increase relevance of LLM answers
 - Read aloud of assistant messages (requires OpenAI or ElevenLabs API key)
 - Read aloud of any text in other applications (requires OpenAI or ElevenLabs API key)
