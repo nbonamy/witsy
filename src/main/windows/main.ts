@@ -1,6 +1,6 @@
 
 import { CreateWindowOpts } from 'types/window';
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
@@ -47,6 +47,30 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
     showInDock: true,
     ...opts,
   });
+
+  // context menu
+  mainWindow.webContents.on('context-menu', (event, params) => {
+    const menu = new Menu();
+
+    // Add each spelling suggestion
+    for (const suggestion of params.dictionarySuggestions) {
+      menu.append(new MenuItem({
+        label: suggestion,
+        click: () => mainWindow.webContents.replaceMisspelling(suggestion)
+      }))
+    }
+
+    // Allow users to add the misspelled word to the dictionary
+    if (params.misspelledWord) {
+      menu.append(
+        new MenuItem({
+          label: 'Add to dictionary',
+          click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+        })
+      )
+    }
+    menu.popup();
+  })
 
   // check
   ensureOnCurrentScreen(mainWindow);
