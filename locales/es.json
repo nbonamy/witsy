@@ -157,8 +157,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Eliminar carpeta"
-      }
+        "clearDefaults": "Borrar valores predeterminados de la carpeta",
+        "delete": "Eliminar carpeta",
+        "setDefaults": "Establecer valores predeterminados desde el chat activo"
+      },
+      "confirmDeleteDefaults": "¿Está seguro de que desea eliminar los valores predeterminados de la carpeta?",
+      "confirmOverwriteDefaults": "¿Está seguro de que desea sobrescribir los valores predeterminados de la carpeta?"
     },
     "timeline": {
       "earlier": "Más antiguo",
@@ -1745,6 +1749,10 @@
     "doNotShowAgain": "No mostrar de nuevo",
     "favoriteModels": {
       "title": "¡Haz clic en el icono LLM: tus modelos preferidos estarán agrupados bajo el icono de estrella!"
+    },
+    "folderDefaults": {
+      "text": "Seleccione Nuevo chat en el menú contextual de la carpeta para utilizar los valores predeterminados de la carpeta.",
+      "title": "¡Valores predeterminados de la carpeta guardados con éxito!"
     },
     "folderList": {
       "title": "La lista de carpetas es una excelente forma de organizar tus sesiones de chat. Haz clic en el icono de carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta."

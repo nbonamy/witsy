@@ -176,8 +176,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "删除文件夹"
-      }
+        "clearDefaults": "清除文件夹默认值",
+        "delete": "删除文件夹",
+        "setDefaults": "从活跃聊天设置默认值"
+      },
+      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？",
+      "confirmOverwriteDefaults": "您确定要覆盖文件夹默认值吗？"
     },
     "timeline": {
       "earlier": "更早",
@@ -1775,6 +1779,10 @@
     "doNotShowAgain": "不再显示",
     "favoriteModels": {
       "title": "点击 LLM 图标：你偏好的模型将被分组在星形图标下！"
+    },
+    "folderDefaults": {
+      "text": "在文件夹上下文菜单中选择新聊天以使用文件夹默认值。",
+      "title": "文件夹默认值保存成功！"
     },
     "folderList": {
       "title": "文件夹列表是组织聊天会话的好方法。点击侧边栏底部的文件夹图标创建新文件夹。\n\n每个文件夹右侧的菜单允许你管理文件夹。\n\n聊天的上下文菜单允许你将它们移动到文件夹中。"

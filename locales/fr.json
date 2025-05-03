@@ -157,8 +157,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Supprimer le dossier"
-      }
+        "clearDefaults": "Effacer les valeurs par défaut du dossier",
+        "delete": "Supprimer le dossier",
+        "setDefaults": "Définir les valeurs par défaut à partir du chat actif"
+      },
+      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
+      "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
     },
     "timeline": {
       "earlier": "Plus ancien",
@@ -1745,6 +1749,10 @@
     "doNotShowAgain": "Ne plus afficher",
     "favoriteModels": {
       "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
+    },
+    "folderDefaults": {
+      "text": "Sélectionnez Nouveau chat dans le menu contextuel du dossier pour utiliser les valeurs par défaut du dossier.",
+      "title": "Valeurs par défaut du dossier enregistrées avec succès !"
     },
     "folderList": {
       "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."

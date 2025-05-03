@@ -157,8 +157,12 @@
     },
     "folder": {
       "actions": {
-        "delete": "Elimina cartella"
-      }
+        "clearDefaults": "Cancella le impostazioni predefinite della cartella",
+        "delete": "Elimina cartella",
+        "setDefaults": "Imposta impostazioni predefinite dalla chat attiva"
+      },
+      "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?",
+      "confirmOverwriteDefaults": "Sei sicuro di voler sovrascrivere le impostazioni predefinite della cartella?"
     },
     "timeline": {
       "earlier": "Precedente",
@@ -1745,6 +1749,10 @@
     "doNotShowAgain": "Non mostrare più",
     "favoriteModels": {
       "title": "Fai clic sull'icona LLM: i tuoi modelli preferiti saranno raggruppati sotto l'icona a forma di stella!"
+    },
+    "folderDefaults": {
+      "text": "Seleziona Nuova chat nel menu contestuale della cartella per utilizzare le impostazioni predefinite della cartella.",
+      "title": "Impostazioni predefinite della cartella salvate con successo!"
     },
     "folderList": {
       "title": "La lista delle cartelle è un ottimo modo per organizzare le tue sessioni di chat. Fai clic sull'icona della cartella in fondo alla barra laterale per creare nuove cartelle.\n\nIl menu a destra di ogni cartella ti consente di gestire le tue cartelle.\n\nIl menu contestuale delle tue chat ti permette di spostarle in una cartella."
