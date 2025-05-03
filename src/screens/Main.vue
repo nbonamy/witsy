@@ -152,6 +152,7 @@ const processQueryParams = (params: anyDict) => {
 const onNewChat = () => {
   assistant.value.initChat()
   updateChatEngineModel()
+  chatArea.value?.setExpert(null)
   nextTick(() => {
     emitEvent('new-llm-chunk', null)
   })
