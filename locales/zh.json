@@ -1671,7 +1671,7 @@
         "engine": "引擎",
         "engines": {
           "brave": "Brave Search",
-          "local": "本地浏览器搜索（实验性）",
+          "local": "本地 Google 搜索",
           "tavily": "Tavily"
         },
         "getApiKey": "获取你的 API 密钥",

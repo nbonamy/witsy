@@ -1677,7 +1677,7 @@
         "engine": "Engine",
         "engines": {
           "brave": "Brave Search",
-          "local": "Local Browser Search (EXPERIMENTAL)",
+          "local": "Local Google Search",
           "tavily": "Tavily"
         },
         "getApiKey": "Get your API key",
