@@ -362,12 +362,13 @@ export const enableClickThrough = (window: BrowserWindow) => {
     }
 
     // get info
+    const margin = 4
     const point = screen.getCursorScreenPoint()
     const [x, y] = window.getPosition()
     const [w, h] = window.getSize()
   
     // cursor not in window
-    if (point.x < x || point.x > x + w || point.y < y || point.y > y + h) {
+    if (point.x < x - margin || point.x > x + w + margin || point.y < y - margin || point.y > y + h + margin) {
       return
     }
 
