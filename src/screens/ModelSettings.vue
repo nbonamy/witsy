@@ -167,6 +167,7 @@ const canSaveAsDefaults = computed(() => {
   return (
     disableStreaming.value === true ||
     disableTools.value === true ||
+    tools.value !== null ||
     locale.value !== '' ||
     prompt.value !== '' ||
     contextWindowSize.value !== undefined ||
