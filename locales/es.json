@@ -162,8 +162,9 @@
       "actions": {
         "clearDefaults": "Borrar valores predeterminados de la carpeta",
         "delete": "Eliminar carpeta",
-        "setDefaults": "Establecer valores predeterminados desde el chat activo"
+        "setDefaults": "Establecer valores predeterminados desde el chat"
       },
+      "cantSetDefaults": "Primero selecciona la conversación que deseas usar para establecer los valores predeterminados de la carpeta.",
       "confirmDeleteDefaults": "¿Está seguro de que desea eliminar los valores predeterminados de la carpeta?",
       "confirmOverwriteDefaults": "¿Está seguro de que desea sobrescribir los valores predeterminados de la carpeta?"
     },

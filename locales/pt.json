@@ -181,8 +181,9 @@
       "actions": {
         "clearDefaults": "Limpar padrões da pasta",
         "delete": "Excluir pasta",
-        "setDefaults": "Definir padrões a partir do chat ativo"
+        "setDefaults": "Definir padrões a partir do chat"
       },
+      "cantSetDefaults": "Primeiro selecione a conversa que você deseja usar para definir os padrões da pasta.",
       "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?",
       "confirmOverwriteDefaults": "Tem certeza de que deseja substituir os padrões da pasta?"
     },

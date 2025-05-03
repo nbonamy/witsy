@@ -162,8 +162,9 @@
       "actions": {
         "clearDefaults": "Ordnerstandards löschen",
         "delete": "Ordner löschen",
-        "setDefaults": "Standards aus dem aktiven Chat festlegen"
+        "setDefaults": "Standards aus dem Chat festlegen"
       },
+      "cantSetDefaults": "Zuerst wählen Sie das Gespräch aus, das Sie verwenden möchten, um die Ordnerstandards festzulegen.",
       "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
       "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
     },

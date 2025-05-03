@@ -181,8 +181,9 @@
       "actions": {
         "clearDefaults": "Wyczyść domyślne folderu",
         "delete": "Usuń folder",
-        "setDefaults": "Ustaw domyślne z aktywnego czatu"
+        "setDefaults": "Ustaw domyślne z czatu"
       },
+      "cantSetDefaults": "Najpierw wybierz rozmowę, którą chcesz użyć do ustawienia domyślnych folderów.",
       "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne folderu?",
       "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne folderu?"
     },
