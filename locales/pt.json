@@ -1801,7 +1801,7 @@
   "toolSelector": {
     "title": "Personalizar seleção de ferramentas",
     "tools": {
-      "description": "@:{'common.description'}",
+      "description": "Descrição",
       "name": "@:{'common.name'}"
     }
   },

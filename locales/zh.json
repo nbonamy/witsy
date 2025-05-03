@@ -1801,7 +1801,7 @@
   "toolSelector": {
     "title": "自定义工具选择",
     "tools": {
-      "description": "@:{'common.description'}",
+      "description": "描述",
       "name": "@:{'common.name'}"
     }
   },
