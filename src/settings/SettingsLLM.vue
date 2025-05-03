@@ -173,11 +173,25 @@ defineExpose({ load })
 
 <style scoped>
 
+.master {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-self: stretch;
+}
+
 .list {
-  max-height: 208px;
+  max-height: none;
+  flex: 1 1 190px;
 }
 
 .actions {
+  flex: 0 0 28px;
   display: flex;
   flex-direction: row;
   justify-content: start;
