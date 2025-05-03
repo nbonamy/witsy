@@ -17,6 +17,7 @@ const stubTeleport = { global: { stubs: { teleport: true } } }
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
+    i18nInstructions: (config: any, key: string) => `${key}`,
   }
 })
 
@@ -216,7 +217,7 @@ test('Model settings init chat', async () => {
   await wrapper.find('.model-settings select[name=model]').setValue('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('true')
-  expect(chat?.disableTools).toBe(true)
+  expect(chat?.tools).toStrictEqual([])
   expect(chat?.modelOpts?.contextWindowSize).toBe(512)
   expect(chat?.modelOpts?.maxTokens).toBe(150)
   expect(chat?.modelOpts?.temperature).toBe(0.7)
@@ -227,7 +228,7 @@ test('Model settings init chat', async () => {
   // load engine/model without defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('openai')
   await wrapper.find('.model-settings select[name=model]').setValue('chat')
-  expect(chat?.disableTools).toBe(false)
+  expect(chat?.tools).toStrictEqual(null)
   expect(chat?.modelOpts).toBeUndefined()
 
 })
@@ -360,12 +361,13 @@ test('Model settings defaults', async () => {
     engine: 'mock',
     model: 'chat',
     disableStreaming: false,
-    disableTools: false,
+    tools: null,
     temperature: 0.7
   })
 
   // add stuff
   await wrapper.find('.model-settings input[name=top_k]').setValue('15')
+  await wrapper.find('.model-settings select[name=plugins]').setValue(true)
   await wrapper.find('.model-settings select[name=locale]').setValue('fr-FR')
   await wrapper.find('.model-settings select[name=streaming]').setValue(true)
   await wrapper.find('.model-settings button[name=save]').trigger('click')
@@ -374,13 +376,14 @@ test('Model settings defaults', async () => {
     model: 'chat',
     locale: 'fr-FR',
     disableStreaming: true,
-    disableTools: false,
+    tools: [],
     temperature: 0.7,
     top_k: 15
   })
 
   // update and load
   await wrapper.find('.model-settings input[name=top_p]').setValue('3.0')
+  await wrapper.find('.model-settings select[name=plugins]').setValue(false)
   await wrapper.find('.model-settings button[name=load]').trigger('click')
   expect(wrapper.find<HTMLInputElement>('.model-settings input[name=top_p]').element.value).toBe('')
   expect(store.config.llm.defaults[0]).toStrictEqual({
@@ -388,7 +391,7 @@ test('Model settings defaults', async () => {
     model: 'chat',
     locale: 'fr-FR',
     disableStreaming: true,
-    disableTools: false,
+    tools: [],
     temperature: 0.7,
     top_k: 15
   })

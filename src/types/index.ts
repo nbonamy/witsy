@@ -6,6 +6,7 @@ import { Application, RunCommandParams } from './automation'
 import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
 import { McpServer, McpStatus, McpTool } from './mcp'
+import { ToolSelection } from './llm'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -59,12 +60,14 @@ export interface Chat {
   prompt: string|null
   messages: Message[]
   temporary: boolean
-  disableTools: boolean
   disableStreaming: boolean
+  tools: ToolSelection
   locale: string|null
   docrepo: string|null
   modelOpts: LlmModelOpts|null
   patchFromJson(jsonChat: any): boolean
+  disableTools(): void
+  enableAllTools(): void
   setEngineModel(engine: string, model: string): void
   initTitle(): void
   hasTitle(): boolean
@@ -84,8 +87,8 @@ export type Folder = {
   defaults?: {
     engine: string
     model: string
-    disableTools: boolean
     disableStreaming: boolean
+    tools: ToolSelection
     prompt: string|null
     locale: string|null
     docrepo: string|null

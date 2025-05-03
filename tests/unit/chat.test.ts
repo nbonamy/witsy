@@ -9,7 +9,7 @@ beforeAll(() => {
 
 test('Build from title', () => {
   const chat = new Chat('The chat title')
-  expect(chat.uuid).not.toBe(null)
+  expect(chat.uuid).not.toBeNull()
   expect(chat.title).toBe('The chat title')
   expect(chat.createdAt - Date.now()).toBeLessThan(100)  
   expect(chat.lastModified - Date.now()).toBeLessThan(100)  
@@ -77,7 +77,7 @@ test('Fork', () => {
     engine: 'engine',
     model: 'model',
     docrero: 'docrepo',
-    disableTools: true,
+    tools: [ 'tool1' ],
     messages: [
       { uuid: '1', role: 'role1', content: 'content1' },
       { uuid: '2', role: 'role2', content: 'content2' },
@@ -94,7 +94,7 @@ test('Fork', () => {
   expect(fork.engine).toBe(chat.engine)
   expect(fork.model).toBe(chat.model)
   expect(fork.docrepo).toBe(chat.docrepo)
-  expect(fork.disableTools).toBe(chat.disableTools)
+  expect(fork.tools).toBe(chat.tools)
   expect(fork.messages.length).toBe(3)
   expect(fork.messages[0]).toMatchObject({ uuid: expect.not.stringMatching('^1$'), role: 'role1', content: 'content1' })
   expect(fork.messages[1]).toMatchObject({ uuid: expect.not.stringMatching('^2$'), role: 'role2', content: 'content2' })
@@ -111,7 +111,7 @@ test('Delete Message', () => {
     engine: 'engine',
     model: 'model',
     docrero: 'docrepo',
-    disableTools: true,
+    tools: [],
     messages: [
       { uuid: '1', role: 'role1', content: 'content1' },
       { uuid: '2', role: 'role2', content: 'content2' },

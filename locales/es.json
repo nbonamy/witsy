@@ -36,6 +36,7 @@
     "copy": "Copiar",
     "costsAsOf": "costos a partir de",
     "create": "Crear",
+    "customize": "Personalizar…",
     "default": "Predeterminado",
     "delete": "Eliminar",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
@@ -93,6 +94,8 @@
     "retry": "Reintentar",
     "save": "Guardar",
     "search": "Buscar…",
+    "selectAll": "Seleccionar todo",
+    "selectNone": "Desmarcar todo",
     "settings": "Configuraciones",
     "shortcut": "Atajo",
     "stop": "Detener",
@@ -1462,8 +1465,8 @@
       "importSuccess": "Archivo de comandos importado con éxito",
       "more": "Más",
       "new": "Nuevo",
-      "selectAll": "Seleccionar todo",
-      "unselectAll": "Deseleccionar todo"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1542,10 +1545,10 @@
       "importSuccess": "Archivo de expertos importado con éxito",
       "more": "Más",
       "new": "Nuevo",
-      "selectAll": "Seleccionar todo",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabéticamente",
       "sortState": "Ordenar por estado",
-      "unselectAll": "Deseleccionar todo"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Pedir al modelo que siempre hable este idioma (los resultados pueden variar)",
@@ -1763,6 +1766,13 @@
     },
     "realtime": {
       "title": "El chat en tiempo real puede volverse costoso rápidamente. El costo estimado proporcionado es solo una estimación y puede no ser correcto. ¡Haz clic en el blob para comenzar y detener el chat!"
+    }
+  },
+  "toolSelector": {
+    "title": "Personalizar selección de herramientas",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

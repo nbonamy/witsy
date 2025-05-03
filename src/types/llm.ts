@@ -1,9 +1,16 @@
 
+import { PluginsList } from '../plugins/plugins'
 import { LlmEngine, Model } from 'multi-llm-ts'
 
 export type GetChatEnginesOpts = {
   favorites?: boolean
 }
+
+// tool selection
+// null: all tools enabled
+// []: no tools enabled
+// ['tool1', 'tool2']: only tool1 and tool2 enabled
+export type ToolSelection = string[]|null
 
 export interface ILlmManager {
 
@@ -36,4 +43,6 @@ export interface ILlmManager {
 
   initModels(): Promise<void>
   loadModels(engine: string): Promise<boolean>
+  
+  loadTools(engine: LlmEngine, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void>
 }

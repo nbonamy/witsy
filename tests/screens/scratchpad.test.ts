@@ -91,7 +91,7 @@ test('Initalizes correctly', async () => {
   expect(wrapper.vm.llm.getName()).toBe('mock')
   expect(wrapper.vm.chat.engine).toBe('mock')
   expect(wrapper.vm.chat.model).toBe('chat')
-  expect(wrapper.vm.chat.disableTools).toBe(true)
+  expect(wrapper.vm.chat.tools).toStrictEqual([])
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.vm.chat.messages).toHaveLength(1)
   expect(wrapper.vm.editor.value).not.toBeNull()
@@ -171,7 +171,7 @@ test('Sets engine', async () => {
   emitEvent('action', { type: 'llm', value: { engine: 'openai', model: 'chat' }})
   expect(wrapper.vm.chat.engine).toBe('openai')
   expect(wrapper.vm.chat.model).toBe('chat')
-  expect(wrapper.vm.chat.disableTools).toBe(false)
+  expect(wrapper.vm.chat.tools).toBeNull()
   expect(wrapper.vm.chat.modelOpts).not.toBeDefined()
 })
 

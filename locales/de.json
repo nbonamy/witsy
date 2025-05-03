@@ -36,6 +36,7 @@
     "copy": "Kopieren",
     "costsAsOf": "Kosten ab",
     "create": "Erstellen",
+    "customize": "Anpassen…",
     "default": "Standard",
     "delete": "Löschen",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
@@ -93,6 +94,8 @@
     "retry": "Erneut versuchen",
     "save": "Speichern",
     "search": "Suchen…",
+    "selectAll": "Alle auswählen",
+    "selectNone": "Alle abwählen",
     "settings": "Einstellungen",
     "shortcut": "Tastenkombination",
     "stop": "Stop",
@@ -1462,8 +1465,8 @@
       "importSuccess": "Befehlsdatei erfolgreich importiert",
       "more": "Mehr",
       "new": "Neu",
-      "selectAll": "Alle auswählen",
-      "unselectAll": "Alle abwählen"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1542,10 +1545,10 @@
       "importSuccess": "Experten-Datei erfolgreich importiert",
       "more": "Mehr",
       "new": "Neu",
-      "selectAll": "Alle auswählen",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Alphabetisch sortieren",
       "sortState": "Nach Status sortieren",
-      "unselectAll": "Alle abwählen"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Modell auffordern, immer diese Sprache zu sprechen (Ergebnisse können variieren)",
@@ -1763,6 +1766,13 @@
     },
     "realtime": {
       "title": "Echtzeit-Chat kann schnell teuer werden. Die angegebene Kostenschätzung ist nur eine Schätzung und möglicherweise nicht richtig. Klicken Sie auf die Blase, um das Chatten zu starten und zu stoppen!"
+    }
+  },
+  "toolSelector": {
+    "title": "Werkzeugauswahl anpassen",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

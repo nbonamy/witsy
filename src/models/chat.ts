@@ -1,6 +1,7 @@
 
 import { LlmModelOpts } from 'multi-llm-ts'
 import { type Chat as ChatBase } from '../types/index'
+import { ToolSelection } from '../types/llm'
 import Message from './message'
 
 const DEFAULT_TITLE = 'New Chat'
@@ -15,7 +16,7 @@ export default class Chat implements ChatBase {
   model: string|null
   prompt: string|null
   disableStreaming: boolean = false
-  disableTools: boolean = false
+  tools: ToolSelection = null
   modelOpts: LlmModelOpts|null = null
   locale: string|null
   docrepo: string|null
@@ -33,7 +34,7 @@ export default class Chat implements ChatBase {
     this.model = null
     this.prompt = null
     this.disableStreaming = false
-    this.disableTools = false
+    this.tools = null
     this.modelOpts = null
     this.locale = null
     this.docrepo = null
@@ -52,7 +53,7 @@ export default class Chat implements ChatBase {
     chat.model = obj.model
     chat.prompt = obj.prompt
     chat.disableStreaming = obj.disableStreaming
-    chat.disableTools = obj.disableTools
+    chat.tools = obj.disableTools === true ? [] : (obj.tools || null)
     chat.modelOpts = obj.modelOpts
     chat.locale = obj.locale
     chat.docrepo = obj.docrepo
@@ -77,7 +78,7 @@ export default class Chat implements ChatBase {
     this.lastModified = obj.lastModified
     this.prompt = obj.prompt
     this.disableStreaming = obj.disableStreaming
-    this.disableTools = obj.disableTools
+    this.tools = obj.disableTools === true ? [] : (obj.tools || null)
     this.modelOpts = obj.modelOpts
     this.locale = obj.locale
     this.docrepo = obj.docrepo
@@ -95,6 +96,14 @@ export default class Chat implements ChatBase {
 
     // done
     return patched
+  }
+
+  disableTools(): void {
+    this.tools = []
+  }
+
+  enableAllTools(): void {
+    this.tools = null
   }
 
   setEngineModel(engine: string, model: string): void {
