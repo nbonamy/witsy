@@ -282,8 +282,6 @@ test('Folder defaults', async () => {
 
   // set defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
-  expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(4)
-  expect(wrapper.findAll('.context-menu .actions .item').at(2)!.text()).toBe('chatList.folder.actions.setDefaults')
   await wrapper.find('.context-menu .actions .item[data-action=setDefaults]').trigger('click')
   expect(store.history.folders[0].defaults).toStrictEqual({
     engine: 'mock',
@@ -305,8 +303,8 @@ test('Folder defaults', async () => {
   // clear defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(5)
-  expect(wrapper.findAll('.context-menu .actions .item').at(2)!.text()).toBe('chatList.folder.actions.setDefaults')
   expect(wrapper.findAll('.context-menu .actions .item').at(3)!.text()).toBe('chatList.folder.actions.clearDefaults')
+  expect(wrapper.findAll('.context-menu .actions .item').at(4)!.text()).toBe('chatList.folder.actions.delete')
   await wrapper.find('.context-menu .actions .item[data-action=clearDefaults]').trigger('click')
   expect(store.history.folders[0].defaults).toBeUndefined()
 
