@@ -7,7 +7,7 @@ import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
 import fontList from 'font-list';
-import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -274,13 +274,19 @@ app.on('before-quit', (ev) => {
   BrowserWindow.getAllWindows().forEach((win) => win.close());
   ev.preventDefault();
 
+  // in debug mode the tray icon gets multiplied
+  if (process.env.DEBUG) {
+    trayIconManager.destroy();
+  }
+
 });
 
 // real quit
 app.on('will-quit', () => {
-  try {
-    mcp?.shutdown();
-  } catch { /* empty */ }
+  try { Menu.setApplicationMenu(null)  } catch { /* empty */ }
+  try { trayIconManager.destroy();  } catch { /* empty */ }
+  try { shortcuts.unregisterShortcuts(); } catch { /* empty */ }
+  try { mcp?.shutdown(); } catch { /* empty */ }
 })
 
 // In this file you can include the rest of your app's specific main process
