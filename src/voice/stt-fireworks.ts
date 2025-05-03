@@ -29,7 +29,8 @@ export default class STTFireworks implements STTEngine {
     return model === 'realtime'
   }
 
-  requiresPcm16bits?(): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requiresPcm16bits?(model: string): boolean {
     return true
   }
 
