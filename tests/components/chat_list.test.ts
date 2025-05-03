@@ -222,10 +222,11 @@ test('Context Menu Folder', async () => {
   expect(wrapper.findAll('.context-menu')).toHaveLength(0)
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu')).toHaveLength(1)
-  expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(3)
+  expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(4)
   expect(wrapper.findAll('.context-menu .actions .item').at(0)!.text()).toBe('common.newChat')
   expect(wrapper.findAll('.context-menu .actions .item').at(1)!.text()).toBe('common.rename')
-  expect(wrapper.findAll('.context-menu .actions .item').at(2)!.text()).toBe('chatList.folder.actions.delete')
+  expect(wrapper.findAll('.context-menu .actions .item').at(2)!.text()).toBe('chatList.folder.actions.setDefaults')
+  expect(wrapper.findAll('.context-menu .actions .item').at(3)!.text()).toBe('chatList.folder.actions.delete')
 })
 
 test('New Chat', async () => {
