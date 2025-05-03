@@ -15,7 +15,11 @@
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
         </select>
-        <button @click.prevent="onCustomizeTools" :disabled="disableTools">{{ t('common.customize') }}</button>
+        <div v-if="!disableTools" class="tools">
+          <button @click.prevent="onCustomizeTools">{{ t('common.customize') }}</button>
+          <div style="color: var(--dimmed-text-color)" v-if="!areToolsDisabled(tools) && !areAllToolsEnabled(tools)">&nbsp;{{ t('modelSettings.toolsCount', { count: tools.length }) }}</div>
+          <div style="color: var(--dimmed-text-color)" v-if="areAllToolsEnabled(tools)">&nbsp;{{ t('modelSettings.allToolsEnabled') }}</div>
+        </div>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.locale') }}</label>
@@ -126,7 +130,7 @@ import LangSelect from '../components/LangSelect.vue'
 import VariableTable from '../components/VariableTable.vue'
 import VariableEditor from '../screens/VariableEditor.vue'
 import ToolSelector from '../screens/ToolSelector.vue'
-import LlmFactory, { areToolsDisabled, ILlmManager } from '../llms/llm'
+import LlmFactory, { areToolsDisabled, areAllToolsEnabled, ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
@@ -573,6 +577,17 @@ const openDebugConsole = () => {
 
     .list-with-actions {
       width: 100%;
+    }
+
+    .tools {
+      display: flex;
+      flex-direction: column;
+      margin-top: 4px;
+      gap: 4px;
+
+      button {
+        margin-left: 0;
+      };
     }
   }
 }
