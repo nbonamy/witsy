@@ -11,7 +11,13 @@ test('renders markdown', () => {
 test('does not render html', () => {
   const markdown = '<h1>Hello World</h1>'
   const html = renderMarkdown(markdown)
-  expect(html).toContain('&lt;h1&gt;Hello World&lt;/h1&gt;')
+  expect(html).toContain('<p>&lt;h1&gt;Hello World&lt;/h1&gt;</p>')
+})
+
+test('renders deeplinks', () => {
+  const markdown = 'Click <a href="#section">here</a>'
+  const html = renderMarkdown(markdown)
+  expect(html).toContain('<p>Click <a href="#section">here</a></p>')
 })
 
 test('renders local links', () => {
