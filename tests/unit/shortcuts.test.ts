@@ -37,10 +37,10 @@ test('Shortcuts Keys', async () => {
 
 test('Shortcuts Modifiers', async () => {
 
-  expect(shortcutAccelerator({key: 'none', alt: true})).toBe(null)
-  expect(shortcutAccelerator({key: 'none', ctrl: true})).toBe(null)
-  expect(shortcutAccelerator({key: 'none', shift: true})).toBe(null)
-  expect(shortcutAccelerator({key: 'none', meta: true})).toBe(null)
+  expect(shortcutAccelerator({key: 'none', alt: true})).toBeNull()
+  expect(shortcutAccelerator({key: 'none', ctrl: true})).toBeNull()
+  expect(shortcutAccelerator({key: 'none', shift: true})).toBeNull()
+  expect(shortcutAccelerator({key: 'none', meta: true})).toBeNull()
 
   expect(shortcutAccelerator({key: 'A', alt: true})).toBe('Alt+A')
   expect(shortcutAccelerator({key: 'A', ctrl: true})).toBe('Control+A')

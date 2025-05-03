@@ -23,6 +23,7 @@ vi.mock('../../src/services/i18n', async () => {
     t: (key: string) => `${key}`,
     commandI18n: vi.fn(() => {}),
     expertI18n: vi.fn(() => {}),
+    i18nInstructions: (config: any, key: string) => `${key}`,
   }
 })
 
@@ -60,7 +61,7 @@ beforeAll(() => {
         engine: 'mock',
         model: 'chat',
         disableStreaming: true,
-        disableTools: true,
+        tools: [ 'tool1' ],
         locale: 'en',
         prompt: 'prompt',
         docrepo: 'docrepo',
@@ -114,7 +115,7 @@ test('Resets assistant', async () => {
   expect(wrapper.vm.assistant.chat.title).toBeNull()
   expect(wrapper.vm.assistant.chat.engine).toBe('mock')
   expect(wrapper.vm.assistant.chat.model).toBe('chat')
-  expect(wrapper.vm.assistant.chat.disableTools).toBe(true)
+  expect(wrapper.vm.assistant.chat.tools).toStrictEqual([])
   expect(wrapper.vm.assistant.chat.modelOpts).toEqual({
     contextWindowSize: 512,
     maxTokens: 150,
@@ -131,7 +132,7 @@ test('Resets assistant', async () => {
   expect(wrapper.vm.assistant.chat.title).toBeNull()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(wrapper.vm.assistant.chat.model).toBe('gpt-4o-mini')
-  expect(wrapper.vm.assistant.chat.disableTools).toBe(false)
+  expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
 
@@ -239,7 +240,7 @@ test('New chat in folder with defaults', async () => {
   expect(store.history.folders[1].chats[0]).toBe(store.history.chats[1].uuid)
   expect(wrapper.vm.assistant.chat.uuid).toBe(store.history.chats[1].uuid)
   expect(wrapper.vm.assistant.chat.disableStreaming).toBe(true)
-  expect(wrapper.vm.assistant.chat.disableTools).toBe(true)
+  expect(wrapper.vm.assistant.chat.tools).toStrictEqual(['tool1'])
   expect(wrapper.vm.assistant.chat.locale).toBe('en')
   expect(wrapper.vm.assistant.chat.prompt).toBe('prompt')
   expect(wrapper.vm.assistant.chat.docrepo).toBe('docrepo')
@@ -323,7 +324,7 @@ test('Select chat', async () => {
   const wrapper: VueWrapper<any> = mount(Main)
   emitEvent('select-chat', store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
-  expect(wrapper.vm.assistant.chat.disableTools).toBeFalsy()
+  expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()

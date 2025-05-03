@@ -1,7 +1,8 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter } from 'multi-llm-ts'
+import { Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin } from 'multi-llm-ts'
+import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import OpenAI from '../../src/llms/openai'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
@@ -307,4 +308,38 @@ test('Favorites update', () => {
   expect(store.config.llm.engine).toBe('mock')
   expect(store.config.engines['mock'].model.chat).toBe('chat1')
   
+})
+
+test('Load tools', async () => {
+
+  const plugins = {
+    plugin1: Plugin1,
+    plugin2: Plugin2,
+    plugin3: Plugin3,
+  }
+
+  const engine = await llmManager.igniteEngine('openai')
+  expect(engine.plugins).toHaveLength(0)
+
+  await llmManager.loadTools(engine, plugins, null)
+  expect(engine.plugins).toHaveLength(3)
+  expect((engine.plugins[2] as MultiToolPlugin).toolsEnabled).toBeNull()
+
+  await llmManager.loadTools(engine, plugins, [])
+  expect(engine.plugins).toHaveLength(0)
+
+  await llmManager.loadTools(engine, plugins, ['plugin1'])
+  expect(engine.plugins).toHaveLength(1)
+
+  await llmManager.loadTools(engine, plugins, ['plugin1', 'plugin2'])
+  expect(engine.plugins).toHaveLength(2)
+
+  await llmManager.loadTools(engine, plugins, ['plugin1', 'plugin2', 'tool1'])
+  expect(engine.plugins).toHaveLength(3)
+  expect((engine.plugins[2] as MultiToolPlugin).toolsEnabled).toStrictEqual(['tool1'])
+
+  await llmManager.loadTools(engine, plugins, ['plugin1', 'plugin2', 'tool1', 'tool2'])
+  expect(engine.plugins).toHaveLength(3)
+  expect((engine.plugins[2] as MultiToolPlugin).toolsEnabled).toStrictEqual(['tool1', 'tool2'])
+
 })

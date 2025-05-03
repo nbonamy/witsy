@@ -13,7 +13,7 @@ const chats = [
     engine: 'engine',
     model: 'model',
     disableStreaming: false,
-    disableTools: false,
+    tools: null,
     modelOpts: {
       temperature: 1.0
     },
@@ -47,8 +47,8 @@ test('Check atributtes', async () => {
   expect(store.config).toEqual({})
   expect(store.commands).toEqual([])
   expect(store.experts).toEqual([])
-  expect(store.history).toBe(null)
-  expect(store.chatFilter).toBe(null)
+  expect(store.history).toBeNull()
+  expect(store.chatFilter).toBeNull()
 })
 
 test('Load', async () => {
@@ -104,7 +104,7 @@ test('Save history', async () => {
       engine: 'engine',
       model: 'model',
       disableStreaming: false,
-      disableTools: false,
+      tools: null,
       temporary: false,
       modelOpts: { temperature: 1 },
       messages: [

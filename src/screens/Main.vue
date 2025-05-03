@@ -95,7 +95,7 @@ onMounted(() => {
       return false
     } else if (href === '#retry_without_plugins') {
       if (assistant.value.chat) {
-        assistant.value.chat.disableTools = true
+        assistant.value.chat.disableTools()
         onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
       } else {
         console.log('No chat to retry')
@@ -175,8 +175,8 @@ const onNewChatInFolder = (folderId: string) => {
 
   // other config
   if (folder.defaults) {
-    chat.disableTools = folder.defaults.disableTools
     chat.disableStreaming = folder.defaults.disableStreaming
+    chat.tools = folder.defaults.tools
     chat.prompt = folder.defaults.prompt
     chat.locale = folder.defaults.locale
     chat.docrepo = folder.defaults.docrepo

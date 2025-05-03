@@ -36,6 +36,7 @@
     "copy": "复制",
     "costsAsOf": "截至",
     "create": "创建",
+    "customize": "自定义…",
     "default": "默认",
     "delete": "删除",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
@@ -112,6 +113,8 @@
     "retry": "重试",
     "save": "保存",
     "search": "搜索…",
+    "selectAll": "全选",
+    "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
     "stop": "停止",
@@ -1492,8 +1495,8 @@
       "importSuccess": "命令文件导入成功",
       "more": "更多",
       "new": "新建",
-      "selectAll": "全选",
-      "unselectAll": "取消全选"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1572,10 +1575,10 @@
       "importSuccess": "专家文件导入成功",
       "more": "更多",
       "new": "新建",
-      "selectAll": "全选",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",
       "sortState": "按状态排序",
-      "unselectAll": "取消全选"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "要求模型始终使用此语言（结果可能有所不同）",
@@ -1793,6 +1796,13 @@
     },
     "realtime": {
       "title": "实时聊天可能会很快变得昂贵。提供的估算费用只是一个估计值，可能不准确。点击气泡开始和停止聊天！"
+    }
+  },
+  "toolSelector": {
+    "title": "自定义工具选择",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

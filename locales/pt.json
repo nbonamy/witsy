@@ -36,6 +36,7 @@
     "copy": "Copiar",
     "costsAsOf": "custos a partir de",
     "create": "Criar",
+    "customize": "Personalizar…",
     "default": "Padrão",
     "delete": "Excluir",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
@@ -112,6 +113,8 @@
     "retry": "Tentar novamente",
     "save": "Salvar",
     "search": "Pesquisar…",
+    "selectAll": "Selecionar Tudo",
+    "selectNone": "Desmarcar Tudo",
     "settings": "Configurações",
     "shortcut": "Atalho",
     "stop": "Parar",
@@ -1492,8 +1495,8 @@
       "importSuccess": "Arquivo de comandos importado com sucesso",
       "more": "Mais",
       "new": "Novo",
-      "selectAll": "Selecionar Tudo",
-      "unselectAll": "Desselecionar Tudo"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1572,10 +1575,10 @@
       "importSuccess": "Arquivo de especialistas importado com sucesso",
       "more": "Mais",
       "new": "Novo",
-      "selectAll": "Selecionar Tudo",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabeticamente",
       "sortState": "Ordenar por estado",
-      "unselectAll": "Desselecionar Tudo"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Pedir ao modelo para sempre falar este idioma (os resultados podem variar)",
@@ -1793,6 +1796,13 @@
     },
     "realtime": {
       "title": "O chat em tempo real pode rapidamente se tornar caro. O custo estimado fornecido é apenas uma estimativa e pode não estar correto. Clique no blob para iniciar e parar de conversar!"
+    }
+  },
+  "toolSelector": {
+    "title": "Personalizar seleção de ferramentas",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

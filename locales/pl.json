@@ -36,6 +36,7 @@
     "copy": "Kopiuj",
     "costsAsOf": "koszty na dzień",
     "create": "Utwórz",
+    "customize": "Dostosuj…",
     "default": "Domyślny",
     "delete": "Usuń",
     "differentLocales": "Ustawienia regionalne LLM różnią się od ustawień regionalnych interfejsu. Wyświetlane teksty są w języku LLM lub w twoim języku, jeśli je dostosowałeś.",
@@ -112,6 +113,8 @@
     "retry": "Ponów próbę",
     "save": "Zapisz",
     "search": "Szukaj...",
+    "selectAll": "Wybierz wszystko",
+    "selectNone": "Anuluj wybór wszystkich",
     "settings": "Ustawienia",
     "shortcut": "Skrót",
     "stop": "Stop",
@@ -1492,8 +1495,8 @@
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
       "more": "Więcej",
       "new": "Nowość",
-      "selectAll": "Wybierz wszystko",
-      "unselectAll": "Odznacz wszystko"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1572,10 +1575,10 @@
       "importSuccess": "Plik eksperta zaimportowany pomyślnie",
       "more": "Więcej",
       "new": "Nowość",
-      "selectAll": "Wybierz wszystko",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sortuj alfabetycznie",
       "sortState": "Sortuj według stanu",
-      "unselectAll": "Odznacz wszystko"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Wymuszanie języka interfejsu",
@@ -1799,6 +1802,13 @@
     },
     "realtime": {
       "title": "Czat w czasie rzeczywistym może szybko okazać się kosztowny. Podany szacunkowy koszt jest jedynie szacunkowy i może nie być prawidłowy. Kliknij na kropkę, aby rozpocząć i zakończyć czat!"
+    }
+  },
+  "toolSelector": {
+    "title": "Dostosuj wybór narzędzi",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

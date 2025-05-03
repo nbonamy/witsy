@@ -182,8 +182,8 @@ const handleActionClick = async (action: string) => {
     folder.defaults = {
       engine: chat.engine,
       model: chat.model,
-      disableTools: chat.disableTools,
       disableStreaming: chat.disableStreaming,
+      tools: chat.tools,
       prompt: chat.prompt,
       locale: chat.locale,
       expert: chat.messages.findLast((m) => m.expert)?.expert?.id,

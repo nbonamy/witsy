@@ -36,6 +36,7 @@
     "copy": "Copier",
     "costsAsOf": "coûts au",
     "create": "Créer",
+    "customize": "Personnaliser…",
     "default": "Défaut",
     "delete": "Supprimer",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
@@ -93,6 +94,8 @@
     "retry": "Réessayer",
     "save": "Sauvegarder",
     "search": "Rechercher…",
+    "selectAll": "Tout sélectionner",
+    "selectNone": "Tout désélectionner",
     "settings": "Paramètres",
     "shortcut": "Raccourci",
     "stop": "Arrêter",
@@ -1462,8 +1465,8 @@
       "importSuccess": "Fichier de commandes importé avec succès",
       "more": "Plus",
       "new": "Nouveau",
-      "selectAll": "Tout sélectionner",
-      "unselectAll": "Tout désélectionner"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1542,10 +1545,10 @@
       "importSuccess": "Fichier d'experts importé avec succès",
       "more": "Plus",
       "new": "Nouveau",
-      "selectAll": "Tout sélectionner",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Trier alphabétiquement",
       "sortState": "Trier par statut",
-      "unselectAll": "Tout désélectionner"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Demander au modèle de toujours parler cette langue (résultats peuvent varier)",
@@ -1763,6 +1766,13 @@
     },
     "realtime": {
       "title": "Le chat en temps réel peut rapidement devenir coûteux. Le coût estimé fourni n'est qu'une estimation et peut ne pas être correct. Cliquez sur le blob pour démarrer et arrêter la discussion !"
+    }
+  },
+  "toolSelector": {
+    "title": "Personnaliser la sélection d'outils",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

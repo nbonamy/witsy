@@ -130,13 +130,10 @@ export default class extends Generator {
     }
 
     // make sure llm has latest tools
-    this.llm.clearPlugins()
-    if (!this.chat.disableTools) {
-      for (const pluginName in availablePlugins) {
-        const pluginClass = availablePlugins[pluginName]
-        const instance = new pluginClass(this.config.plugins[pluginName])
-        this.llm.addPlugin(instance)
-      }
+    if (!this.llmManager.isComputerUseModel(opts.engine, opts.model)) {
+      await this.llmManager.loadTools(this.llm, availablePlugins, this.chat.tools)
+    } else {
+      this.llm.clearPlugins()
     }
 
     // add user message
@@ -173,7 +170,7 @@ export default class extends Generator {
     // check if generator disabled plugins
     if (hadPlugins && this.llm.plugins.length === 0) {
       generationCallback?.call(null, 'plugins_disabled')
-      this.chat.disableTools = true
+      this.chat.disableTools()
     }
 
     // check if we need to update title
