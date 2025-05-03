@@ -208,37 +208,45 @@ const onEngine = (engine: string) => {
 /* v8 ignore start */
 const centerLogos = () => {
 
-// get the engines and current
-const engines = document.querySelector<HTMLElement>('.selector .engines')
-const current = document.querySelector<HTMLElement>('.selector .current')
-if (!engines || !current) {
-  return
-}
+  try {
 
-// get vertical center of engines
-const rc1 = engines.getBoundingClientRect()
-const midY1 = rc1.top + rc1.height / 2
+    // get the engines and current
+    const engines = document.querySelector<HTMLElement>('.selector .engines')
+    const current = document.querySelector<HTMLElement>('.selector .current')
+    if (!engines || !current) {
+      return
+    }
 
-// get verical center of logo
-const logo = current.querySelector<HTMLElement>('.logo')
-const rc2 = logo.getBoundingClientRect()
-const midY2 = rc2.top + rc2.height / 2
+    // get vertical center of engines
+    const rc1 = engines.getBoundingClientRect()
+    const midY1 = rc1.top + rc1.height / 2
 
-// align current engine so that the logo is centered 
-let top = parseInt(current.style.top) || 0
-top = top+midY1-midY2
-current.style.top = `${top}px`
+    // get verical center of logo
+    const logo = current.querySelector<HTMLElement>('.logo')
+    const rc2 = logo.getBoundingClientRect()
+    const midY2 = rc2.top + rc2.height / 2
 
-const actions = document.querySelector<HTMLElement>('.actions')
-if (actions) {
-  const minHeight = parseInt(getComputedStyle(engines).minHeight)
-  if (rc1.height > minHeight) {
-    const offset = rc1.height - minHeight
-    actions.style.top = `${-offset/2}px`
-  } else {
-    actions.style.top = '0px'
+    // align current engine so that the logo is centered 
+    let top = parseInt(current.style.top) || 0
+    top = top+midY1-midY2
+    current.style.top = `${top}px`
+
+    const actions = document.querySelector<HTMLElement>('.actions')
+    if (actions) {
+      const minHeight = parseInt(getComputedStyle(engines).minHeight)
+      if (rc1.height > minHeight) {
+        const offset = rc1.height - minHeight
+        actions.style.top = `${-offset/2}px`
+      } else {
+        actions.style.top = '0px'
+      }
+    }
+
+  } catch (e) {
+    if (!process.env.TEST) {
+      console.error('Error setting element width:', e)
+    }
   }
-}
 
 
 }
