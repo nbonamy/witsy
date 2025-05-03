@@ -23,12 +23,17 @@ export default class {
     this.autoUpdater = autoUpdater;
   }
 
+  destroy = () => {
+    if (this.tray) {
+      this.tray.destroy();
+      this.tray = null;
+    }
+  }
+
   install = () => {
 
     // delete previous one
-    if (this.tray) {
-      this.tray.destroy();
-    }
+    this.destroy();
   
     // need to know if an update is available
     const updateAvailable = this.autoUpdater.updateAvailable;
