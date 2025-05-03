@@ -150,8 +150,6 @@ const handleActionClick = async (action: string) => {
     onExportMarkdown()
   } else if (action == 'exportPdf') {
     onExportPdf()
-  } else if (action == 'toogleTools') {
-    props.chat.disableTools = !props.chat.disableTools
   } else if (action == 'modelSettings') {
     showModelSettings.value = !showModelSettings.value
   }
