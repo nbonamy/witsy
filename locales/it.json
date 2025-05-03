@@ -162,8 +162,9 @@
       "actions": {
         "clearDefaults": "Cancella le impostazioni predefinite della cartella",
         "delete": "Elimina cartella",
-        "setDefaults": "Imposta impostazioni predefinite dalla chat attiva"
+        "setDefaults": "Imposta i valori predefiniti dalla chat"
       },
+      "cantSetDefaults": "Prima seleziona la conversazione che desideri utilizzare per impostare i valori predefiniti della cartella.",
       "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?",
       "confirmOverwriteDefaults": "Sei sicuro di voler sovrascrivere le impostazioni predefinite della cartella?"
     },

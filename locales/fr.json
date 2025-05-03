@@ -162,8 +162,9 @@
       "actions": {
         "clearDefaults": "Effacer les valeurs par défaut du dossier",
         "delete": "Supprimer le dossier",
-        "setDefaults": "Définir les valeurs par défaut à partir du chat actif"
+        "setDefaults": "Définir les valeurs par défaut à partir du chat"
       },
+      "cantSetDefaults": "Sélectionnez d'abord la conversation que vous souhaitez utiliser pour définir les paramètres par défaut du dossier.",
       "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
       "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
     },

@@ -90,7 +90,7 @@ const contextMenuActions = () => {
   return [
     { label: t('common.newChat'), action: 'chat' },
     { label: t('common.rename'), action: 'rename' },
-    ...(props.active?.hasMessages() ? [ { label: t('chatList.folder.actions.setDefaults'), action: 'setDefaults' } ] : []),
+    { label: t('chatList.folder.actions.setDefaults'), action: 'setDefaults' },
     ...(folder?.defaults ? [ { label: t('chatList.folder.actions.clearDefaults'), action: 'clearDefaults' } ] : []),
     { label: t('chatList.folder.actions.delete'), action: 'delete' },
   ]
@@ -162,6 +162,15 @@ const handleActionClick = async (action: string) => {
 
     // get and check
     const chat: Chat = props.active
+    if (!chat.hasMessages()) {
+      Dialog.show({
+        title: t('chatList.folder.cantSetDefaults'),
+        confirmButtonText: t('common.ok'),
+      })
+      return
+    }
+
+    // get and check
     const folder = store.history.folders.find((f) => f.id === folderId)
     if (!folder) return
 
