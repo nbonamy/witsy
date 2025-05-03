@@ -166,8 +166,8 @@ export const store: Store = reactive({
         chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
           return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
         }),
-        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts)),
-        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts)),
+        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
+        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts || [])),
       }
       for (const chat of history.chats) {
         for (const message of chat.messages) {
