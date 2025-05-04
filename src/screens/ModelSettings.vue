@@ -587,6 +587,7 @@ const openDebugConsole = () => {
 
       button {
         margin-left: 0;
+        width: fit-content;
       };
     }
   }
