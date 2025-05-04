@@ -186,12 +186,13 @@ defineExpose({ load })
 }
 
 .list {
+  min-height: 196px;
   max-height: none;
   flex: 1 1 190px;
 }
 
 .actions {
-  flex: 0 0 28px;
+  flex: 0 0 16px;
   display: flex;
   flex-direction: row;
   justify-content: start;
