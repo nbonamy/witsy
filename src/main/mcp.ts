@@ -440,8 +440,15 @@ export default class {
   callTool = async (name: string, args: anyDict): Promise<any> => {
 
     const client = this.clients.find(client => client.tools.includes(name))
+    // The LLM might reference an unknown or no-longer-available tool. Instead of
+    // throwing here – which would bubble up as an exception and stop the
+    // generation process – we return a structured error object. This object
+    // will be serialized by the plugin infrastructure and forwarded back to
+    // the model as the tool call result, allowing it to notice the problem and
+    // try again with a valid tool.
+
     if (!client) {
-      throw new Error(`Tool ${name} not found`)
+      return { error: `Tool ${name} not found` }
     }
 
     // remove unique suffix
