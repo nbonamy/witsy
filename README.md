@@ -28,6 +28,8 @@
 
 Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](https://github.com/nbonamy/witsy/releases) page.
 
+On macOS you can also `brew install --cask witsy`.
+
 
 ## What is Witsy?
 
