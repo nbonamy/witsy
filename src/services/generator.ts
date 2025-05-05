@@ -1,8 +1,41 @@
 import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse } from 'multi-llm-ts'
 import { Configuration } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
-import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
+import { t, i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import Message from '../models/message'
+
+// ---------------------------------------------------------------------------
+// Monkey-patch LlmEngine.callTool so that an unknown tool does not throw and
+// abort the entire generation. Instead we return a structured error object
+// which will be forwarded back to the language model, enabling it to recover
+// (e.g. by choosing a valid tool) without interrupting the conversation flow.
+// ---------------------------------------------------------------------------
+
+if (!(LlmEngine.prototype as any)._callToolPatched) {
+  const originalCallTool = LlmEngine.prototype.callTool;
+
+  // We mark the prototype so that we do the patch only once even if this file
+  // is imported multiple times in the renderer.
+  Object.defineProperty(LlmEngine.prototype, '_callToolPatched', {
+    value: true,
+    writable: false,
+    enumerable: false,
+  })
+
+  LlmEngine.prototype.callTool = async function (this: LlmEngine, tool: string, args: any) {
+    try {
+      return await originalCallTool.call(this, tool, args)
+    } catch (err: any) {
+      const msg = err?.message || ''
+
+      if (msg.startsWith('Tool ') && msg.endsWith(' not found')) {
+        return { error: msg }
+      }
+
+      throw err
+    }
+  }
+}
 
 export interface GenerationOpts extends LlmCompletionOpts {
   model: string
