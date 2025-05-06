@@ -32,7 +32,8 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return `#${this.config.engine}# Searching the internet…`
+    const engine = this.config.engine === 'local' ? 'google' : this.config.engine
+    return `#${engine}# Searching the internet…`
   }
 
   getParameters(): PluginParameter[] {

@@ -36,6 +36,7 @@
     "copy": "复制",
     "costsAsOf": "截至",
     "create": "创建",
+    "customize": "自定义…",
     "default": "默认",
     "delete": "删除",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
@@ -112,6 +113,8 @@
     "retry": "重试",
     "save": "保存",
     "search": "搜索…",
+    "selectAll": "全选",
+    "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
     "stop": "停止",
@@ -176,8 +179,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "删除文件夹"
-      }
+        "clearDefaults": "清除文件夹默认值",
+        "delete": "删除文件夹",
+        "setDefaults": "从聊天设置默认值"
+      },
+      "cantSetDefaults": "首先选择您想要用于设置文件夹默认值的对话。",
+      "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？",
+      "confirmOverwriteDefaults": "您确定要覆盖文件夹默认值吗？"
     },
     "timeline": {
       "earlier": "更早",
@@ -1182,12 +1190,12 @@
       "contextTooLong": "抱歉，这条信息似乎超出了模型上下文长度。尝试缩短你的提示，或者尝试使用其他模型。",
       "couldNotGenerate": "抱歉，我无法为该提示生成文本。",
       "invalidModel": "抱歉，似乎这个模型不可用。",
-      "missingApiKey": "你需要在 <a href=\"#settings_models\">设置</a> 的模型标签中输入你的 API 密钥，才能进行聊天。",
+      "missingApiKey": "你需要在 [设置](#settings_models) 的模型标签中输入你的 API 密钥，才能进行聊天。",
       "outOfCredits": "抱歉，似乎你已经用完了你的 LLM 提供商账户的余额。检查你的 LLM 提供商账户余额。",
       "pluginDescriptionTooLong": "抱歉，似乎其中一个插件描述过长。如果你在设置 | 高级中进行了调整，请尝试再次。",
       "quotaExceeded": "抱歉，似乎你已经达到了你的 LLM 提供商账户的速率限制。稍后再试。",
-      "tryWithoutParams": "抱歉，我无法为该提示生成文本。你想不想 <a href=\"#retry_without_params\">不使用模型参数再试一次</a>？",
-      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 <a href=\"#retry_without_plugins\">不使用插件再试一次</a>？"
+      "tryWithoutParams": "抱歉，我无法为该提示生成文本。你想不想 [不使用模型参数再试一次](#retry_without_params)？",
+      "tryWithoutPlugins": "抱歉，我无法为该提示生成文本。你想不想 [不使用插件再试一次](#retry_without_plugins)？"
     }
   },
   "instructions": {
@@ -1321,6 +1329,7 @@
   },
   "modelSettings": {
     "advancedSettings": "高级设置",
+    "allToolsEnabled": "所有工具都已选中",
     "contextWindowSize": "上下文窗口大小",
     "createNewModel": "创建新模型",
     "createOllama": {
@@ -1352,6 +1361,7 @@
     "reasoningEffort": "推理努力",
     "streaming": "流媒体",
     "temperature": "温度 [0.0 … 2.0]",
+    "toolsCount": "未选择工具 | 选择了 1 个工具 | 选择了 {count} 个工具",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1488,8 +1498,8 @@
       "importSuccess": "命令文件导入成功",
       "more": "更多",
       "new": "新建",
-      "selectAll": "全选",
-      "unselectAll": "取消全选"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1568,10 +1578,10 @@
       "importSuccess": "专家文件导入成功",
       "more": "更多",
       "new": "新建",
-      "selectAll": "全选",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",
       "sortState": "按状态排序",
-      "unselectAll": "取消全选"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "要求模型始终使用此语言（结果可能有所不同）",
@@ -1664,7 +1674,7 @@
         "engine": "引擎",
         "engines": {
           "brave": "Brave Search",
-          "local": "本地浏览器搜索（实验性）",
+          "local": "本地 Google 搜索",
           "tavily": "Tavily"
         },
         "getApiKey": "获取你的 API 密钥",
@@ -1776,6 +1786,10 @@
     "favoriteModels": {
       "title": "点击 LLM 图标：你偏好的模型将被分组在星形图标下！"
     },
+    "folderDefaults": {
+      "text": "在文件夹上下文菜单中选择新聊天以使用文件夹默认值。",
+      "title": "文件夹默认值保存成功！"
+    },
     "folderList": {
       "title": "文件夹列表是组织聊天会话的好方法。点击侧边栏底部的文件夹图标创建新文件夹。\n\n每个文件夹右侧的菜单允许你管理文件夹。\n\n聊天的上下文菜单允许你将它们移动到文件夹中。"
     },
@@ -1785,6 +1799,13 @@
     },
     "realtime": {
       "title": "实时聊天可能会很快变得昂贵。提供的估算费用只是一个估计值，可能不准确。点击气泡开始和停止聊天！"
+    }
+  },
+  "toolSelector": {
+    "title": "自定义工具选择",
+    "tools": {
+      "description": "描述",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

@@ -171,9 +171,9 @@ const onRestart = async () => {
 
 // Add the context menu actions
 const addMenuActions = [
-  { label: t('settings.plugins.mcp.importJson.menu'), action: 'json' },
-  { label: t('settings.plugins.mcp.importSmitheryServer'), action: 'smithery' },
   { label: t('settings.plugins.mcp.addCustomServer'), action: 'custom' },
+  { label: t('settings.plugins.mcp.importSmitheryServer'), action: 'smithery' },
+  { label: t('settings.plugins.mcp.importJson.menu'), action: 'json' },
 ]
 
 // Add these methods to handle the plus button menu

@@ -1,5 +1,5 @@
 
-import { Plugin } from 'multi-llm-ts'
+import { CustomToolPlugin, MultiToolPlugin, Plugin } from 'multi-llm-ts'
 
 export class Plugin1 extends Plugin {
   
@@ -29,7 +29,7 @@ export class Plugin1 extends Plugin {
   }
 }
 
-export class Plugin2 extends Plugin {
+export class Plugin2 extends CustomToolPlugin {
 
   isEnabled(): boolean {
     return true
@@ -51,21 +51,27 @@ export class Plugin2 extends Plugin {
     return 'run2'
   }
 
-  getParameters(): any[] {
-    return [
-      {
-        name: 'param1',
-        type: 'string',
-        description: 'Parameter 1',
-        required: true
-      },
-      {
-        name: 'param2',
-        type: 'number',
-        description: 'Parameter 2',
-        required: false
+  async getTools(): Promise<any[]> {
+    return [{
+      function: {
+        name: 'plugin2',
+        description: 'Plugin 2',
+        parameters: {
+          type: 'object',
+          properties: {
+            param1: {
+              type: 'string',
+              description: 'Parameter 1'
+            },
+            param2: {
+              type: 'number',
+              description: 'Parameter 2'
+
+            }
+          }
+        }
       }
-    ]
+    }]
   }
 
   async execute(parameters: any): Promise<any> {
@@ -73,7 +79,7 @@ export class Plugin2 extends Plugin {
   }
 }
 
-export class Plugin3 extends Plugin {
+export class Plugin3 extends MultiToolPlugin {
 
   getName(): string {
     return 'plugin3'
@@ -83,7 +89,45 @@ export class Plugin3 extends Plugin {
     return 'Plugin 3'
   }
 
-  getParameters(): any[] {
-    return []
+  async getTools(): Promise<any[]> {
+    return [{
+      function: {
+        name: 'tool1',
+        description: 'Tool 1',
+        parameters: {
+          type: 'object',
+          properties: {
+            param1: {
+              type: 'string',
+              description: 'Parameter 1'
+            },
+            param2: {
+              type: 'number',
+              description: 'Parameter 2'
+
+            }
+          }
+        }
+      }
+    }, {
+      function: {
+        name: 'tool2',
+        description: 'Tool 2',
+        parameters: {
+          type: 'object',
+          properties: {
+            param1: {
+              type: 'string',
+              description: 'Parameter 3'
+            },
+            param2: {
+              type: 'number',
+              description: 'Parameter 4'
+
+            }
+          }
+        }
+      }
+    }]
   }
 }

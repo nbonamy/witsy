@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <Sidebar :chat="assistant.chat" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" />
     <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
     <DocRepos />
   </div>
@@ -25,7 +25,7 @@ import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
@@ -37,6 +37,7 @@ const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
 const assistant = ref(new Assistant(store.config))
 
+const chatArea: Ref<typeof ChatArea> = ref(null)
 const chatEditor: Ref<typeof ChatEditor> = ref(null)
 const sidebar: Ref<typeof Sidebar> = ref(null)
 const chatEditorConfirmButtonText = ref('common.save')
@@ -94,7 +95,7 @@ onMounted(() => {
       return false
     } else if (href === '#retry_without_plugins') {
       if (assistant.value.chat) {
-        assistant.value.chat.disableTools = true
+        assistant.value.chat.disableTools()
         onRetryGeneration(assistant.value.chat.messages[assistant.value.chat.messages.length - 1])
       } else {
         console.log('No chat to retry')
@@ -152,17 +153,49 @@ const processQueryParams = (params: anyDict) => {
 const onNewChat = () => {
   assistant.value.initChat()
   updateChatEngineModel()
+  chatArea.value?.setExpert(null)
   nextTick(() => {
     emitEvent('new-llm-chunk', null)
   })
 }
 
 const onNewChatInFolder = (folderId: string) => {
+  
+  // get
+  const folder = store.history.folders.find((f) => f.id === folderId)
   const chat = assistant.value.initChat()
+  
+  // engine and model 
+  if (folder.defaults) {
+    llmManager.setChatModel(folder.defaults.engine, folder.defaults.model)
+  }
+
+  // set it
   updateChatEngineModel()
+
+  // other config
+  if (folder.defaults) {
+    chat.disableStreaming = folder.defaults.disableStreaming
+    chat.tools = folder.defaults.tools
+    chat.prompt = folder.defaults.prompt
+    chat.locale = folder.defaults.locale
+    chat.docrepo = folder.defaults.docrepo
+    chat.modelOpts = folder.defaults.modelOpts
+  }
+
+  // init
   chat.initTitle()
   store.addChat(chat, folderId)
   onSelectChat(chat)
+
+  // expert
+  if (folder.defaults?.expert) {
+    const expert = store.experts.find((e) => e.id === folder.defaults.expert)
+    if (expert) {
+      chatArea.value?.setExpert(expert)
+    }
+  }
+
 }
 
 const updateChatEngineModel = () => {

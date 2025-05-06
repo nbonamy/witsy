@@ -9,10 +9,6 @@ export default class extends Plugin {
     super(config)
   }
 
-  sezializeInTools(): boolean {
-    return false
-  }
-
   isEnabled(): boolean {
     return true
   }
@@ -38,6 +34,11 @@ export default class extends Plugin {
   }
 
   async execute(parameters: anyDict): Promise<anyDict> {
+
+    // we need an action
+    if (!parameters.action) {
+      return { content: 'No action specified' }
+    }
 
     // if not screenshot run it first
     if (parameters.action !== 'screenshot') {

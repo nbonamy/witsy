@@ -71,7 +71,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
               engine: 'mock',
               model: 'chat',
               disableStreaming: false,
-              disableTools: true,
+              tools: [],
               contextWindowSize: 512,
               maxTokens: 150,
               temperature: 0.7,

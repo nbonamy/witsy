@@ -3,6 +3,7 @@ import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { DesignStudioMediaType, Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
 import { McpClaudeServer } from './mcp'
+import { ToolSelection } from './llm'
 
 export type Configuration = {
   general: GeneralConfig
@@ -55,7 +56,8 @@ export type ModelDefaults = {
   engine: string
   model: string
   disableStreaming: boolean
-  disableTools: boolean
+  disableTools?: boolean // backwards compatibility
+  tools: ToolSelection
   locale: string
   prompt: string
 } & LlmModelOpts

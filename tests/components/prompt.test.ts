@@ -168,7 +168,7 @@ test('Remove attachment', async () => {
   wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
   await wrapper.vm.$nextTick()
   await wrapper.find('.attachment').trigger('click')
-  expect(wrapper.vm.attachment).toBe(null)
+  expect(wrapper.vm.attachment).toBeNull()
 })
 
 // test('Accept incoming prompt', async () => {
@@ -225,7 +225,7 @@ test('Clears expert', async () => {
   expect(menu.find('.item:nth-child(3)').text()).toBe('')
   expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.expert.clear')
   await menu.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.expert).toBe(null)
+  expect(wrapper.vm.expert).toBeNull()
 })
 
 test('Document repository', async () => {

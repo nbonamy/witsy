@@ -36,6 +36,7 @@
     "copy": "Kopiuj",
     "costsAsOf": "koszty na dzień",
     "create": "Utwórz",
+    "customize": "Dostosuj…",
     "default": "Domyślny",
     "delete": "Usuń",
     "differentLocales": "Ustawienia regionalne LLM różnią się od ustawień regionalnych interfejsu. Wyświetlane teksty są w języku LLM lub w twoim języku, jeśli je dostosowałeś.",
@@ -112,6 +113,8 @@
     "retry": "Ponów próbę",
     "save": "Zapisz",
     "search": "Szukaj...",
+    "selectAll": "Wybierz wszystko",
+    "selectNone": "Anuluj wybór wszystkich",
     "settings": "Ustawienia",
     "shortcut": "Skrót",
     "stop": "Stop",
@@ -176,8 +179,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Usuń folder"
-      }
+        "clearDefaults": "Wyczyść domyślne folderu",
+        "delete": "Usuń folder",
+        "setDefaults": "Ustaw domyślne z czatu"
+      },
+      "cantSetDefaults": "Najpierw wybierz rozmowę, którą chcesz użyć do ustawienia domyślnych folderów.",
+      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne folderu?",
+      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne folderu?"
     },
     "timeline": {
       "earlier": "Wcześniej",
@@ -1182,12 +1190,12 @@
       "contextTooLong": "Przepraszamy, wygląda na to, że ta wiadomość przekracza długość kontekstu tego modelu. Spróbuj skrócić monit lub wypróbuj inny model.",
       "couldNotGenerate": "Niestety, nie mogłem wygenerować tekstu dla tego monitu.",
       "invalidModel": "Niestety, wygląda na to, że ten model nie jest dostępny.",
-      "missingApiKey": "Aby móc czatować, należy wprowadzić klucz API w zakładce Modele w <a href=\"#settings_models\">Ustawienia</a>.",
+      "missingApiKey": "Aby móc czatować, należy wprowadzić klucz API w zakładce Modele w [Ustawienia](#settings_models).",
       "outOfCredits": "Przepraszamy, wygląda na to, że skończyły Ci się kredyty. Sprawdź saldo swojego konta dostawcy LLM.",
       "pluginDescriptionTooLong": "Przepraszamy, wygląda na to, że opis jednej z wtyczek jest zbyt długi. Jeśli zmieniłeś je w Ustawieniach | Zaawansowane, spróbuj ponownie.",
       "quotaExceeded": "Przepraszamy, wygląda na to, że osiągnięto limit stawek na koncie dostawcy LLM. Spróbuj ponownie później.",
-      "tryWithoutParams": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz <a href=\"#retry_without_params\">spróbować ponownie bez parametrów modelu</a>?",
-      "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz <a href=\"#retry_without_plugins\">spróbować ponownie bez wtyczek</a>?"
+      "tryWithoutParams": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez parametrów modelu](#retry_without_params)?",
+      "tryWithoutPlugins": "Niestety, nie mogłem wygenerować tekstu dla tego monitu. Czy chcesz [spróbować ponownie bez wtyczek](#retry_without_plugins)?"
     }
   },
   "instructions": {
@@ -1321,6 +1329,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Ustawienia zaawansowane",
+    "allToolsEnabled": "Wszystkie narzędzia są wybrane",
     "contextWindowSize": "Rozmiar okna kontekstu",
     "createNewModel": "Utwórz nowy model",
     "createOllama": {
@@ -1352,6 +1361,7 @@
     "reasoningEffort": "Wysiłek rozumowania",
     "streaming": "Streaming",
     "temperature": "Temperatura",
+    "toolsCount": "Brak wybranego narzędzia | Wybrane 1 narzędzie | Wybrane {count} narzędzi",
     "topK": "Top K",
     "topP": "Top P"
   },
@@ -1488,8 +1498,8 @@
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
       "more": "Więcej",
       "new": "Nowość",
-      "selectAll": "Wybierz wszystko",
-      "unselectAll": "Odznacz wszystko"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1568,10 +1578,10 @@
       "importSuccess": "Plik eksperta zaimportowany pomyślnie",
       "more": "Więcej",
       "new": "Nowość",
-      "selectAll": "Wybierz wszystko",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sortuj alfabetycznie",
       "sortState": "Sortuj według stanu",
-      "unselectAll": "Odznacz wszystko"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Wymuszanie języka interfejsu",
@@ -1670,7 +1680,7 @@
         "engine": "Silnik",
         "engines": {
           "brave": "Brave Search",
-          "local": "Lokalne wyszukiwanie w przeglądarce (EKSPERYMENTALNE)",
+          "local": "Lokalne wyszukiwanie Google",
           "tavily": "Tavily"
         },
         "getApiKey": "Uzyskaj klucz API",
@@ -1782,6 +1792,10 @@
     "favoriteModels": {
       "title": "Kliknij ikonę LLM: preferowane modele zostaną zgrupowane pod ikoną gwiazdy!"
     },
+    "folderDefaults": {
+      "text": "Wybierz Nowy czat w menu kontekstowym folderu, aby użyć domyślnych folderu.",
+      "title": "Domyślne folderu zapisane pomyślnie!"
+    },
     "folderList": {
       "title": "Lista folderów to świetny sposób na organizowanie sesji czatu. Kliknij ikonę folderu na dole paska bocznego, aby utworzyć nowe foldery.\n\nMenu po prawej stronie każdego folderu umożliwia zarządzanie folderami.\n\nMenu kontekstowe czatów umożliwia przeniesienie ich do folderu."
     },
@@ -1791,6 +1805,13 @@
     },
     "realtime": {
       "title": "Czat w czasie rzeczywistym może szybko okazać się kosztowny. Podany szacunkowy koszt jest jedynie szacunkowy i może nie być prawidłowy. Kliknij na kropkę, aby rozpocząć i zakończyć czat!"
+    }
+  },
+  "toolSelector": {
+    "title": "Dostosuj wybór narzędzi",
+    "tools": {
+      "description": "Opis",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

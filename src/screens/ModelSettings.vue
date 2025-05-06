@@ -11,10 +11,15 @@
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
-        <select name="plugins" v-model="disableTools" @change="save">
+        <select name="plugins" v-model="disableTools" @change="onChangeTools">
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
         </select>
+        <div v-if="!disableTools" class="tools">
+          <button @click.prevent="onCustomizeTools">{{ t('common.customize') }}</button>
+          <div style="color: var(--dimmed-text-color)" v-if="!areToolsDisabled(tools) && !areAllToolsEnabled(tools)">&nbsp;{{ t('modelSettings.toolsCount', { count: tools.length }) }}</div>
+          <div style="color: var(--dimmed-text-color)" v-if="areAllToolsEnabled(tools)">&nbsp;{{ t('modelSettings.allToolsEnabled') }}</div>
+        </div>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.locale') }}</label>
@@ -105,6 +110,7 @@
       </div>
     </form>
 
+    <ToolSelector ref="selector" :tools="tools" @save="onSaveTools" />
     <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
   </div>
@@ -123,17 +129,20 @@ import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
 import VariableTable from '../components/VariableTable.vue'
 import VariableEditor from '../screens/VariableEditor.vue'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import ToolSelector from '../screens/ToolSelector.vue'
+import LlmFactory, { areToolsDisabled, areAllToolsEnabled, ILlmManager } from '../llms/llm'
 import Chat from '../models/chat'
 import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
 
 const editor = ref(null)
-const llmManager = LlmFactory.manager(store.config)
+const selector = ref(null)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableStreaming: Ref<boolean> = ref(false)
 const disableTools: Ref<boolean> = ref(false)
+const tools: Ref<string[]> = ref(null)
 const locale = ref('')
 const prompt = ref('')
 const showAdvanced = ref(false)
@@ -162,6 +171,7 @@ const canSaveAsDefaults = computed(() => {
   return (
     disableStreaming.value === true ||
     disableTools.value === true ||
+    tools.value !== null ||
     locale.value !== '' ||
     prompt.value !== '' ||
     contextWindowSize.value !== undefined ||
@@ -223,7 +233,8 @@ onMounted(async () => {
     engine.value = props.chat.engine
     model.value = props.chat.model
     disableStreaming.value = props.chat.disableStreaming
-    disableTools.value = props.chat.disableTools
+    disableTools.value = areToolsDisabled(props.chat.tools)
+    tools.value = props.chat.tools
     locale.value = props.chat.locale || ''
     prompt.value = props.chat.prompt || ''
     contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
@@ -236,6 +247,15 @@ onMounted(async () => {
     customParams.value = props.chat.modelOpts?.customOpts || {}
   }, { deep: true, immediate: true })
 })
+
+const onCustomizeTools = () => {
+  selector.value.show()
+}
+
+const onSaveTools = (selected: string[]) => {
+  tools.value = selected
+  save()
+}
 
 const onSelectParam = (key: string) => {
   selectedParam.value = { key, value: customParams.value[key] }
@@ -292,7 +312,8 @@ const loadDefaults = () => {
   const defaults = store.config.llm.defaults.find(d => d.engine === engine.value && d.model === model.value)
   if (defaults) {
     disableStreaming.value = defaults.disableStreaming
-    disableTools.value = defaults.disableTools
+    disableTools.value = areToolsDisabled(defaults.tools)
+    tools.value = defaults.tools
     locale.value = defaults.locale || ''
     prompt.value = defaults.prompt || ''
     contextWindowSize.value = defaults.contextWindowSize
@@ -306,6 +327,7 @@ const loadDefaults = () => {
   } else {
     disableStreaming.value = false
     disableTools.value = false
+    tools.value = null
     locale.value = ''
     prompt.value = ''
     contextWindowSize.value = undefined
@@ -325,7 +347,7 @@ const saveAsDefaults = () => {
     engine: engine.value,
     model: model.value,
     disableStreaming: disableStreaming.value,
-    disableTools: disableTools.value,
+    tools: tools.value,
     locale: locale.value.trim() || undefined,
     prompt: prompt.value.trim() || undefined,
     contextWindowSize: contextWindowSize.value,
@@ -361,6 +383,11 @@ const onChangeEngine = () => {
 
 const onChangeModel = () => {
   loadDefaults()
+  save()
+}
+
+const onChangeTools = () => {
+  tools.value = disableTools.value ? [] : null
   save()
 }
 
@@ -427,7 +454,7 @@ const save = () => {
     // update chat
     props.chat.setEngineModel(engine.value, model.value)
     props.chat.disableStreaming = disableStreaming.value
-    props.chat.disableTools = disableTools.value
+    props.chat.tools = disableTools.value ? [] : (tools.value || null)
     props.chat.locale = locale.value.trim() || undefined,
     props.chat.prompt = prompt.value.trim() || undefined,
     props.chat.modelOpts = {
@@ -455,6 +482,9 @@ const save = () => {
     if (!props.chat.hasMessages()) {
       llmManager.setChatModel(props.chat.engine, props.chat.model)
     }
+
+    // debug
+    //console.log(props.chat)
 
   } catch (e) {
     console.error(e)
@@ -547,6 +577,18 @@ const openDebugConsole = () => {
 
     .list-with-actions {
       width: 100%;
+    }
+
+    .tools {
+      display: flex;
+      flex-direction: column;
+      margin-top: 4px;
+      gap: 4px;
+
+      button {
+        margin-left: 0;
+        width: fit-content;
+      };
     }
   }
 }

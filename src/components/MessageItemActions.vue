@@ -1,22 +1,24 @@
 <template>
-  <div class="actions">
+  <div class="actions" v-if="message">
     <MessageItemActionCopy :message="message" />
     <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
-    <div class="action usage" v-if="message.usage" @click="onUsage(message)">
-      <BIconBarChartFill /> {{ t('common.usage') }}
-    </div>
-    <div class="action retry" v-if="message.role == 'assistant' && !message.transient" @click="onRetry(message)">
-      <BIconArrowCounterclockwise /> {{ t('common.retry') }}
-    </div>
-    <div class="action edit" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onEdit(message)">
-      <BIconPencil /> {{ t('common.edit') }}
-    </div>
-    <div class="action delete" v-if="message.role == 'user' && message.type == 'text' && !message.transient" @click="onDelete(message)">
-      <BIconTrash /> {{ t('common.delete') }}
-    </div>
-    <div class="action fork" v-if="!message.transient" @click="onFork(message)">
-      <ForIcon /> {{ t('common.fork') }}
-    </div>
+    <template v-if="!message.transient">
+      <div class="action usage" v-if="message.usage" @click="onUsage(message)">
+        <BIconBarChartFill /> {{ t('common.usage') }}
+      </div>
+      <div class="action retry" v-if="message.role == 'assistant'" @click="onRetry(message)">
+        <BIconArrowCounterclockwise /> {{ t('common.retry') }}
+      </div>
+      <div class="action edit" v-if="message.role == 'user' && message.type == 'text'" @click="onEdit(message)">
+        <BIconPencil /> {{ t('common.edit') }}
+      </div>
+      <div class="action delete" v-if="message.role == 'user' && message.type == 'text'" @click="onDelete(message)">
+        <BIconTrash /> {{ t('common.delete') }}
+      </div>
+      <div class="action fork" @click="onFork(message)">
+        <ForIcon /> {{ t('common.fork') }}
+      </div>
+    </template>
   </div>
 </template>
 

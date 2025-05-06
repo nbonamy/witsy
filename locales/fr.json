@@ -36,6 +36,7 @@
     "copy": "Copier",
     "costsAsOf": "coûts au",
     "create": "Créer",
+    "customize": "Personnaliser…",
     "default": "Défaut",
     "delete": "Supprimer",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
@@ -93,6 +94,8 @@
     "retry": "Réessayer",
     "save": "Sauvegarder",
     "search": "Rechercher…",
+    "selectAll": "Tout sélectionner",
+    "selectNone": "Tout désélectionner",
     "settings": "Paramètres",
     "shortcut": "Raccourci",
     "stop": "Arrêter",
@@ -157,8 +160,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Supprimer le dossier"
-      }
+        "clearDefaults": "Effacer les valeurs par défaut du dossier",
+        "delete": "Supprimer le dossier",
+        "setDefaults": "Définir les valeurs par défaut à partir du chat"
+      },
+      "cantSetDefaults": "Sélectionnez d'abord la conversation que vous souhaitez utiliser pour définir les paramètres par défaut du dossier.",
+      "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
+      "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
     },
     "timeline": {
       "earlier": "Plus ancien",
@@ -1163,12 +1171,12 @@
       "contextTooLong": "Désolé, il semble que ce message dépasse la longueur de contexte de ce modèle. Essayez de raccourcir votre prompt ou essayez un autre modèle.",
       "couldNotGenerate": "Désolé, je n'ai pas pu générer de texte pour cette requête.",
       "invalidModel": "Désolé, il semble que ce modèle ne soit pas disponible.",
-      "missingApiKey": "Vous devez entrer votre clé API dans l'onglet Modèles des <a href=\"#settings_models\">Paramètres</a> pour pouvoir discuter.",
+      "missingApiKey": "Vous devez entrer votre clé API dans l'onglet Modèles des [Paramètres](#settings_models) pour pouvoir discuter.",
       "outOfCredits": "Désolé, il semble que vous n'ayez plus de crédits. Vérifiez le solde de votre compte fournisseur LLM.",
       "pluginDescriptionTooLong": "Désolé, il semble que la description d'un des plugins soit trop longue. Si vous les avez modifiés dans Paramètres | Avancé, veuillez réessayer.",
       "quotaExceeded": "Désolé, il semble que vous ayez atteint la limite de votre compte fournisseur LLM. Réessayez plus tard.",
-      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous <a href=\"#retry_without_params\">réessayer sans paramètres de modèle</a> ?",
-      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous <a href=\"#retry_without_plugins\">réessayer sans plugins</a> ?"
+      "tryWithoutParams": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans paramètres de modèle](#retry_without_params) ?",
+      "tryWithoutPlugins": "Désolé, je n'ai pas pu générer de texte pour cette requête. Voulez-vous [réessayer sans plugins](#retry_without_plugins) ?"
     }
   },
   "instructions": {
@@ -1302,6 +1310,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Paramètres avancés",
+    "allToolsEnabled": "Tous les outils sont sélectionnés",
     "contextWindowSize": "Taille de la fenêtre de contexte",
     "createNewModel": "Créer un nouveau modèle",
     "createOllama": {
@@ -1333,6 +1342,7 @@
     "reasoningEffort": "Effort de raisonnement",
     "streaming": "Streaming",
     "temperature": "Température [0.0 … 2.0]",
+    "toolsCount": "Aucun outil sélectionné | 1 outil sélectionné | {count} outils sélectionnés",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1458,8 +1468,8 @@
       "importSuccess": "Fichier de commandes importé avec succès",
       "more": "Plus",
       "new": "Nouveau",
-      "selectAll": "Tout sélectionner",
-      "unselectAll": "Tout désélectionner"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1538,10 +1548,10 @@
       "importSuccess": "Fichier d'experts importé avec succès",
       "more": "Plus",
       "new": "Nouveau",
-      "selectAll": "Tout sélectionner",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Trier alphabétiquement",
       "sortState": "Trier par statut",
-      "unselectAll": "Tout désélectionner"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Demander au modèle de toujours parler cette langue (résultats peuvent varier)",
@@ -1634,7 +1644,7 @@
         "engine": "Moteur",
         "engines": {
           "brave": "Brave Search",
-          "local": "Recherche locale dans le navigateur (EXPÉRIMENTAL)",
+          "local": "Recherche Google locale",
           "tavily": "Tavily"
         },
         "getApiKey": "Obtenir votre clé API",
@@ -1746,6 +1756,10 @@
     "favoriteModels": {
       "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
     },
+    "folderDefaults": {
+      "text": "Sélectionnez Nouveau chat dans le menu contextuel du dossier pour utiliser les valeurs par défaut du dossier.",
+      "title": "Valeurs par défaut du dossier enregistrées avec succès !"
+    },
     "folderList": {
       "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."
     },
@@ -1755,6 +1769,13 @@
     },
     "realtime": {
       "title": "Le chat en temps réel peut rapidement devenir coûteux. Le coût estimé fourni n'est qu'une estimation et peut ne pas être correct. Cliquez sur le blob pour démarrer et arrêter la discussion !"
+    }
+  },
+  "toolSelector": {
+    "title": "Personnaliser la sélection d'outils",
+    "tools": {
+      "description": "Description",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {
