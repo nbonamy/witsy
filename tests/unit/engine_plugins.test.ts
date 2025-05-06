@@ -11,6 +11,7 @@ import YouTube from '../../src/plugins/youtube'
 import Memory from '../../src/plugins/memory'
 import Computer from '../../src/plugins/computer'
 import Mcp from '../../src/plugins/mcp'
+import { MultiToolPlugin } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { fal } from '@fal-ai/client'
@@ -352,8 +353,8 @@ test('Search Plugin Local', async () => {
   expect(search.isEnabled()).toBe(true)
   expect(search.getName()).toBe('search_internet')
   expect(search.getDescription()).not.toBeFalsy()
-  expect(search.getPreparationDescription()).toBe('#local# Searching the internet…')
-  expect(search.getRunningDescription()).toBe('#local# Searching the internet…')
+  expect(search.getPreparationDescription()).toBe('#google# Searching the internet…')
+  expect(search.getRunningDescription()).toBe('#google# Searching the internet…')
   expect(search.getParameters()[0].name).toBe('query')
   expect(search.getParameters()[0].type).toBe('string')
   expect(search.getParameters()[0].description).not.toBeFalsy()
@@ -491,25 +492,46 @@ test('Computer Plugin', async () => {
 })
 
 test('MCP Plugin', async () => {
+  
   const mcp = new Mcp(store.config.plugins.mcp)
   expect(mcp.isEnabled()).toBe(true)
-  expect(mcp.isMultiTool()).toBe(true)
+  expect(mcp).toBeInstanceOf(MultiToolPlugin)
   expect(mcp.getName()).toBe('Model Context Protocol')
   expect(mcp.getPreparationDescription('tool')).toBe('Preparing to use MCP tool #tool#…')
   expect(mcp.getRunningDescription('tool', {})).toBe('MCP tool #tool# is currently running…')
+  
   expect(await mcp.getTools()).toStrictEqual([
     { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
     { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },
   ])
+  
   expect(mcp.handlesTool('tool1')).toBe(true)
+  expect(mcp.handlesTool('tool2')).toBe(true)
   expect(mcp.handlesTool('tool3')).toBe(false)
+  
   expect(await mcp.execute({
     tool: 'tool1',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result' })
   expect(window.api.mcp.callTool).toHaveBeenLastCalledWith('tool1', { param1: 'value1' })
+  
   expect(await mcp.execute({
     tool: 'tool2',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result2' })
+
+  mcp.enableTool('tool1')
+  expect(await mcp.getTools()).toStrictEqual([
+    { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
+  ])
+
+  expect(mcp.handlesTool('tool1')).toBe(true)
+  expect(mcp.handlesTool('tool2')).toBe(false)
+  expect(mcp.handlesTool('tool3')).toBe(false)
+
+  expect(await mcp.execute({
+    tool: 'tool2',
+    parameters: { param1: 'value1' }
+  })).toStrictEqual({ error: 'Tool tool2 is not handled by this plugin or has been disabled' })
+
 })

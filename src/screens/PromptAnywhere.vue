@@ -237,13 +237,7 @@ const initLlm = (engine?: string, model?: string, disableTools?: boolean) => {
   llm = llmManager.igniteEngine(engine)
 
   // tools
-  if (!disableTools) {
-    for (const pluginName in availablePlugins) {
-      const pluginClass = availablePlugins[pluginName]
-      const instance = new pluginClass(store.config.plugins[pluginName])
-      llm.addPlugin(instance)
-    }
-  }
+  llmManager.loadTools(llm, availablePlugins, disableTools ? [] : null)
 
 }
 

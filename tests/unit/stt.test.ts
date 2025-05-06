@@ -4,12 +4,13 @@ import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import getSTTEngine, { requiresDownload } from '../../src/voice/stt'
 import STTOpenAI from '../../src/voice/stt-openai'
-import STTGroq from '../../src/voice/stt-groq'
 import STTFalAi from '../../src/voice/stt-falai'
-import STTWhisper from '../../src/voice/stt-whisper'
+import STTFireworks from '../../src/voice/stt-fireworks'
 import STTGladia from '../../src/voice/stt-gladia'
+import STTGroq from '../../src/voice/stt-groq'
 import STTHuggingFace from '../../src/voice/stt-huggingface'
 import STTNvidia from '../../src/voice/stt-nvidia'
+import STTWhisper from '../../src/voice/stt-whisper'
 import { fal } from '@fal-ai/client'
 
 const initCallback = vi.fn()
@@ -218,6 +219,24 @@ test('Instantiates nVidia', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'nvidia', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+
+test('Instantiates Fireworks', async () => {
+  store.config.stt.engine = 'fireworks'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTFireworks)
+  expect(engine.isStreamingModel('realtime')).toBe(true)
+  expect(engine.requiresPcm16bits!.call('realtime')).toBe(true)
+  expect(engine).toHaveProperty('startStreaming')
+  expect(engine).toHaveProperty('sendAudioChunk')
+  expect(engine).toHaveProperty('endStreaming')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'fireworks', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).rejects.toThrowError()
 })
 
 test('Throws error on unknown engine', async () => {

@@ -36,6 +36,7 @@
     "copy": "Copy",
     "costsAsOf": "costs as of",
     "create": "Create",
+    "customize": "Customize…",
     "default": "Default",
     "delete": "Delete",
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
@@ -112,6 +113,8 @@
     "retry": "Retry",
     "save": "Save",
     "search": "Search…",
+    "selectAll": "Select All",
+    "selectNone": "Unselect All",
     "settings": "Settings",
     "shortcut": "Shortcut",
     "stop": "Stop",
@@ -176,8 +179,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Delete folder"
-      }
+        "clearDefaults": "Clear folder defaults",
+        "delete": "Delete folder",
+        "setDefaults": "Set defaults from chat"
+      },
+      "cantSetDefaults": "First select the conversation you want to use to set the folder defaults.",
+      "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?",
+      "confirmOverwriteDefaults": "Are you sure you want to overwrite the folder defaults?"
     },
     "timeline": {
       "earlier": "Earlier",
@@ -1182,12 +1190,12 @@
       "contextTooLong": "Sorry, it seems this message exceeds this model context length. Try to shorten your prompt or try another model.",
       "couldNotGenerate": "Sorry, I could not generate text for that prompt.",
       "invalidModel": "Sorry, it seems this model is not available.",
-      "missingApiKey": "You need to enter your API key in the Models tab of <a href=\"#settings_models\">Settings</a> in order to chat.",
+      "missingApiKey": "You need to enter your API key in the Models tab of [Settings](#settings_models) in order to chat.",
       "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.",
       "pluginDescriptionTooLong": "Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.",
       "quotaExceeded": "Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.",
-      "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_params\">try again without model parameters</a>?",
-      "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to <a href=\"#retry_without_plugins\">try again without plugins</a>?"
+      "tryWithoutParams": "Sorry, I could not generate text for that prompt. Do you want to [try again without model parameters](#retry_without_params)?",
+      "tryWithoutPlugins": "Sorry, I could not generate text for that prompt. Do you want to [try again without plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {
@@ -1321,6 +1329,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Advanced settings",
+    "allToolsEnabled": "All tools are selected",
     "contextWindowSize": "Context Window Size",
     "createNewModel": "Create new model",
     "createOllama": {
@@ -1352,6 +1361,7 @@
     "reasoningEffort": "Reasoning Effort",
     "streaming": "Streaming",
     "temperature": "Temperature [0.0 … 2.0]",
+    "toolsCount": "No tool selected | 1 tool selected | {count} tools selected",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1488,8 +1498,8 @@
       "importSuccess": "Commands file imported successfully",
       "more": "More",
       "new": "New",
-      "selectAll": "Select All",
-      "unselectAll": "Unselect All"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1568,10 +1578,10 @@
       "importSuccess": "Experts file imported successfully",
       "more": "More",
       "new": "New",
-      "selectAll": "Select All",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sort alphabetically",
       "sortState": "Sort by state",
-      "unselectAll": "Unselect All"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Ask model to always speak this language (results may vary)",
@@ -1670,7 +1680,7 @@
         "engine": "Engine",
         "engines": {
           "brave": "Brave Search",
-          "local": "Local Browser Search (EXPERIMENTAL)",
+          "local": "Local Google Search",
           "tavily": "Tavily"
         },
         "getApiKey": "Get your API key",
@@ -1782,6 +1792,10 @@
     "favoriteModels": {
       "title": "Click on the LLM icon: your preferred models will be grouped under the star icon!"
     },
+    "folderDefaults": {
+      "text": "Select New chat in the folder context menu to use the folder defaults.",
+      "title": "Folder defaults saved successfully!"
+    },
     "folderList": {
       "title": "The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.\n\nThe menu on the right of every folder allows you to manage your folders.\n\nThe context menu of your chats allows you to move them to a folder."
     },
@@ -1791,6 +1805,13 @@
     },
     "realtime": {
       "title": "Realtime chat can quickly be expensive. The estimated cost provided is just an estimate and may not be correct. Click on the blob to start and stop chatting!"
+    }
+  },
+  "toolSelector": {
+    "title": "Customize tool selection",
+    "tools": {
+      "description": "Description",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

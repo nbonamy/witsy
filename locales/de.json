@@ -36,6 +36,7 @@
     "copy": "Kopieren",
     "costsAsOf": "Kosten ab",
     "create": "Erstellen",
+    "customize": "Anpassen…",
     "default": "Standard",
     "delete": "Löschen",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
@@ -93,6 +94,8 @@
     "retry": "Erneut versuchen",
     "save": "Speichern",
     "search": "Suchen…",
+    "selectAll": "Alle auswählen",
+    "selectNone": "Alle abwählen",
     "settings": "Einstellungen",
     "shortcut": "Tastenkombination",
     "stop": "Stop",
@@ -157,8 +160,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Ordner löschen"
-      }
+        "clearDefaults": "Ordnerstandards löschen",
+        "delete": "Ordner löschen",
+        "setDefaults": "Standards aus dem Chat festlegen"
+      },
+      "cantSetDefaults": "Zuerst wählen Sie das Gespräch aus, das Sie verwenden möchten, um die Ordnerstandards festzulegen.",
+      "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
+      "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
     },
     "timeline": {
       "earlier": "Früher",
@@ -1163,12 +1171,12 @@
       "contextTooLong": "Entschuldigung, es scheint, dass diese Nachricht die Kontextlänge dieses Modells überschreitet. Versuchen Sie, Ihren Prompt zu verkürzen oder ein anderes Modell auszuprobieren.",
       "couldNotGenerate": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen.",
       "invalidModel": "Entschuldigung, es scheint, dass dieses Modell nicht verfügbar ist.",
-      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter <a href=\"#settings_models\">Einstellungen</a> eingeben, um zu chatten.",
+      "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter [Einstellungen](#settings_models) eingeben, um zu chatten.",
       "outOfCredits": "Entschuldigung, es scheint, dass Sie keine Credits mehr haben. Überprüfen Sie den Kontostand Ihres LLM-Anbieters.",
       "pluginDescriptionTooLong": "Entschuldigung, es scheint, dass die Beschreibung eines der Plugins zu lang ist. Wenn Sie sie in Einstellungen | Erweitert geändert haben, versuchen Sie es bitte erneut.",
       "quotaExceeded": "Entschuldigung, es scheint, dass Sie das Limit Ihres LLM-Anbieterkontos erreicht haben. Versuchen Sie es später erneut.",
-      "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_params\">es erneut ohne Modellparameter versuchen</a>?",
-      "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie <a href=\"#retry_without_plugins\">es erneut ohne Plugins versuchen</a>?"
+      "tryWithoutParams": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie [es erneut ohne Modellparameter versuchen](#retry_without_params)?",
+      "tryWithoutPlugins": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen. Möchten Sie [es erneut ohne Plugins versuchen](#retry_without_plugins)?"
     }
   },
   "instructions": {
@@ -1302,6 +1310,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Erweiterte Einstellungen",
+    "allToolsEnabled": "Alle Werkzeuge sind ausgewählt",
     "contextWindowSize": "Kontextfenstergröße",
     "createNewModel": "Neues Modell erstellen",
     "createOllama": {
@@ -1333,6 +1342,7 @@
     "reasoningEffort": "Überlegungsaufwand",
     "streaming": "Streaming",
     "temperature": "Temperatur [0.0 … 2.0]",
+    "toolsCount": "Kein Werkzeug ausgewählt | 1 Werkzeug ausgewählt | {count} Werkzeuge ausgewählt",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1458,8 +1468,8 @@
       "importSuccess": "Befehlsdatei erfolgreich importiert",
       "more": "Mehr",
       "new": "Neu",
-      "selectAll": "Alle auswählen",
-      "unselectAll": "Alle abwählen"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1538,10 +1548,10 @@
       "importSuccess": "Experten-Datei erfolgreich importiert",
       "more": "Mehr",
       "new": "Neu",
-      "selectAll": "Alle auswählen",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Alphabetisch sortieren",
       "sortState": "Nach Status sortieren",
-      "unselectAll": "Alle abwählen"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Modell auffordern, immer diese Sprache zu sprechen (Ergebnisse können variieren)",
@@ -1634,7 +1644,7 @@
         "engine": "Engine",
         "engines": {
           "brave": "Brave Search",
-          "local": "Lokale Browsersuche (EXPERIMENTAL)",
+          "local": "Lokale Google-Suche",
           "tavily": "Tavily"
         },
         "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
@@ -1746,6 +1756,10 @@
     "favoriteModels": {
       "title": "Klicken Sie auf das LLM-Symbol: Ihre bevorzugten Modelle werden unter dem Sternsymbol gruppiert!"
     },
+    "folderDefaults": {
+      "text": "Wählen Sie 'Neuer Chat' im Kontextmenü des Ordners, um die Ordnerstandards zu verwenden.",
+      "title": "Ordnerstandards erfolgreich gespeichert!"
+    },
     "folderList": {
       "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
     },
@@ -1755,6 +1769,13 @@
     },
     "realtime": {
       "title": "Echtzeit-Chat kann schnell teuer werden. Die angegebene Kostenschätzung ist nur eine Schätzung und möglicherweise nicht richtig. Klicken Sie auf die Blase, um das Chatten zu starten und zu stoppen!"
+    }
+  },
+  "toolSelector": {
+    "title": "Werkzeugauswahl anpassen",
+    "tools": {
+      "description": "Beschreibung",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

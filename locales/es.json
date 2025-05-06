@@ -36,6 +36,7 @@
     "copy": "Copiar",
     "costsAsOf": "costos a partir de",
     "create": "Crear",
+    "customize": "Personalizar…",
     "default": "Predeterminado",
     "delete": "Eliminar",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
@@ -93,6 +94,8 @@
     "retry": "Reintentar",
     "save": "Guardar",
     "search": "Buscar…",
+    "selectAll": "Seleccionar todo",
+    "selectNone": "Desmarcar todo",
     "settings": "Configuraciones",
     "shortcut": "Atajo",
     "stop": "Detener",
@@ -157,8 +160,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Eliminar carpeta"
-      }
+        "clearDefaults": "Borrar valores predeterminados de la carpeta",
+        "delete": "Eliminar carpeta",
+        "setDefaults": "Establecer valores predeterminados desde el chat"
+      },
+      "cantSetDefaults": "Primero selecciona la conversación que deseas usar para establecer los valores predeterminados de la carpeta.",
+      "confirmDeleteDefaults": "¿Está seguro de que desea eliminar los valores predeterminados de la carpeta?",
+      "confirmOverwriteDefaults": "¿Está seguro de que desea sobrescribir los valores predeterminados de la carpeta?"
     },
     "timeline": {
       "earlier": "Más antiguo",
@@ -1163,12 +1171,12 @@
       "contextTooLong": "Lo siento, parece que este mensaje excede la longitud de contexto de este modelo. Intenta acortar tu solicitud o prueba otro modelo.",
       "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud.",
       "invalidModel": "Lo siento, parece que este modelo no está disponible.",
-      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de <a href=\"#settings_models\">Configuración</a> para poder chatear.",
+      "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de [Configuración](#settings_models) para poder chatear.",
       "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
       "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
       "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
-      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_params\">intentar de nuevo sin parámetros de modelo</a>?",
-      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres <a href=\"#retry_without_plugins\">intentar de nuevo sin plugins</a>?"
+      "tryWithoutParams": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin parámetros de modelo](#retry_without_params)?",
+      "tryWithoutPlugins": "Lo siento, no pude generar texto para esa solicitud. ¿Quieres [intentar de nuevo sin plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {
@@ -1302,6 +1310,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Configuración avanzada",
+    "allToolsEnabled": "Todas las herramientas están seleccionadas",
     "contextWindowSize": "Tamaño de la ventana de contexto",
     "createNewModel": "Crear nuevo modelo",
     "createOllama": {
@@ -1333,6 +1342,7 @@
     "reasoningEffort": "Esfuerzo de razonamiento",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
+    "toolsCount": "Ninguna herramienta seleccionada | 1 herramienta seleccionada | {count} herramientas seleccionadas",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1458,8 +1468,8 @@
       "importSuccess": "Archivo de comandos importado con éxito",
       "more": "Más",
       "new": "Nuevo",
-      "selectAll": "Seleccionar todo",
-      "unselectAll": "Deseleccionar todo"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1538,10 +1548,10 @@
       "importSuccess": "Archivo de expertos importado con éxito",
       "more": "Más",
       "new": "Nuevo",
-      "selectAll": "Seleccionar todo",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabéticamente",
       "sortState": "Ordenar por estado",
-      "unselectAll": "Deseleccionar todo"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Pedir al modelo que siempre hable este idioma (los resultados pueden variar)",
@@ -1634,7 +1644,7 @@
         "engine": "Motor",
         "engines": {
           "brave": "Brave Search",
-          "local": "Búsqueda local en el navegador (EXPERIMENTAL)",
+          "local": "Búsqueda local en Google",
           "tavily": "Tavily"
         },
         "getApiKey": "Obtenga su clave API",
@@ -1746,6 +1756,10 @@
     "favoriteModels": {
       "title": "¡Haz clic en el icono LLM: tus modelos preferidos estarán agrupados bajo el icono de estrella!"
     },
+    "folderDefaults": {
+      "text": "Seleccione Nuevo chat en el menú contextual de la carpeta para utilizar los valores predeterminados de la carpeta.",
+      "title": "¡Valores predeterminados de la carpeta guardados con éxito!"
+    },
     "folderList": {
       "title": "La lista de carpetas es una excelente forma de organizar tus sesiones de chat. Haz clic en el icono de carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta."
     },
@@ -1755,6 +1769,13 @@
     },
     "realtime": {
       "title": "El chat en tiempo real puede volverse costoso rápidamente. El costo estimado proporcionado es solo una estimación y puede no ser correcto. ¡Haz clic en el blob para comenzar y detener el chat!"
+    }
+  },
+  "toolSelector": {
+    "title": "Personalizar selección de herramientas",
+    "tools": {
+      "description": "Descripción",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

@@ -36,6 +36,7 @@
     "copy": "Copiar",
     "costsAsOf": "custos a partir de",
     "create": "Criar",
+    "customize": "Personalizar…",
     "default": "Padrão",
     "delete": "Excluir",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
@@ -112,6 +113,8 @@
     "retry": "Tentar novamente",
     "save": "Salvar",
     "search": "Pesquisar…",
+    "selectAll": "Selecionar Tudo",
+    "selectNone": "Desmarcar Tudo",
     "settings": "Configurações",
     "shortcut": "Atalho",
     "stop": "Parar",
@@ -176,8 +179,13 @@
     },
     "folder": {
       "actions": {
-        "delete": "Excluir pasta"
-      }
+        "clearDefaults": "Limpar padrões da pasta",
+        "delete": "Excluir pasta",
+        "setDefaults": "Definir padrões a partir do chat"
+      },
+      "cantSetDefaults": "Primeiro selecione a conversa que você deseja usar para definir os padrões da pasta.",
+      "confirmDeleteDefaults": "Tem certeza de que deseja excluir os padrões da pasta?",
+      "confirmOverwriteDefaults": "Tem certeza de que deseja substituir os padrões da pasta?"
     },
     "timeline": {
       "earlier": "Anterior",
@@ -1182,12 +1190,12 @@
       "contextTooLong": "Desculpe, parece que esta mensagem excede o comprimento do contexto deste modelo. Tente encurtar seu prompt ou tente outro modelo.",
       "couldNotGenerate": "Desculpe, não consegui gerar texto para esse prompt.",
       "invalidModel": "Desculpe, parece que este modelo não está disponível.",
-      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos de <a href=\"#settings_models\">Configurações</a> para poder conversar.",
+      "missingApiKey": "Você precisa inserir sua chave de API na aba Modelos de [Configurações](#settings_models) para poder conversar.",
       "outOfCredits": "Desculpe, parece que você ficou sem créditos. Verifique o saldo da sua conta de provedor de LLM.",
       "pluginDescriptionTooLong": "Desculpe, parece que uma das descrições dos plugins é muito longa. Se você as ajustou em Configurações | Avançado, tente novamente.",
       "quotaExceeded": "Desculpe, parece que você atingiu o limite de taxa da sua conta de provedor de LLM. Tente novamente mais tarde.",
-      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer <a href=\"#retry_without_params\">tentar novamente sem parâmetros de modelo</a>?",
-      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer <a href=\"#retry_without_plugins\">tentar novamente sem plugins</a>?"
+      "tryWithoutParams": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem parâmetros de modelo](#retry_without_params)?",
+      "tryWithoutPlugins": "Desculpe, não consegui gerar texto para esse prompt. Você quer [tentar novamente sem plugins](#retry_without_plugins)?"
     }
   },
   "instructions": {
@@ -1321,6 +1329,7 @@
   },
   "modelSettings": {
     "advancedSettings": "Configurações avançadas",
+    "allToolsEnabled": "Todas as ferramentas estão selecionadas",
     "contextWindowSize": "Tamanho da Janela de Contexto",
     "createNewModel": "Criar novo modelo",
     "createOllama": {
@@ -1352,6 +1361,7 @@
     "reasoningEffort": "Esforço de Raciocínio",
     "streaming": "Streaming",
     "temperature": "Temperatura [0.0 … 2.0]",
+    "toolsCount": "Nenhuma ferramenta selecionada | 1 ferramenta selecionada | {count} ferramentas selecionadas",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
   },
@@ -1488,8 +1498,8 @@
       "importSuccess": "Arquivo de comandos importado com sucesso",
       "more": "Mais",
       "new": "Novo",
-      "selectAll": "Selecionar Tudo",
-      "unselectAll": "Desselecionar Tudo"
+      "selectAll": "@:{'common.selectAll'}",
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "engines": {
       "anthropic": {
@@ -1568,10 +1578,10 @@
       "importSuccess": "Arquivo de especialistas importado com sucesso",
       "more": "Mais",
       "new": "Novo",
-      "selectAll": "Selecionar Tudo",
+      "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabeticamente",
       "sortState": "Ordenar por estado",
-      "unselectAll": "Desselecionar Tudo"
+      "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
       "forceLocale": "Pedir ao modelo para sempre falar este idioma (os resultados podem variar)",
@@ -1664,7 +1674,7 @@
         "engine": "Mecanismo",
         "engines": {
           "brave": "Brave Search",
-          "local": "Pesquisa no Navegador Local (EXPERIMENTAL)",
+          "local": "Pesquisa Local do Google",
           "tavily": "Tavily"
         },
         "getApiKey": "Obtenha sua chave de API",
@@ -1776,6 +1786,10 @@
     "favoriteModels": {
       "title": "Clique no ícone LLM: seus modelos preferidos serão agrupados sob o ícone de estrela!"
     },
+    "folderDefaults": {
+      "text": "Selecione Novo chat no menu de contexto da pasta para usar os padrões da pasta.",
+      "title": "Padrões da pasta salvos com sucesso!"
+    },
     "folderList": {
       "title": "A lista de pastas é uma ótima maneira de organizar suas sessões de chat. Clique no ícone de pasta na parte inferior da barra lateral para criar novas pastas.\n\nO menu à direita de cada pasta permite que você gerencie suas pastas.\n\nO menu de contexto de seus chats permite que você os mova para uma pasta."
     },
@@ -1785,6 +1799,13 @@
     },
     "realtime": {
       "title": "O chat em tempo real pode rapidamente se tornar caro. O custo estimado fornecido é apenas uma estimativa e pode não estar correto. Clique no blob para iniciar e parar de conversar!"
+    }
+  },
+  "toolSelector": {
+    "title": "Personalizar seleção de ferramentas",
+    "tools": {
+      "description": "Descrição",
+      "name": "@:{'common.name'}"
     }
   },
   "transcribe": {

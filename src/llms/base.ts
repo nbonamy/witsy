@@ -1,9 +1,10 @@
 
 import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
-import { GetChatEnginesOpts, ILlmManager } from '../types/llm'
+import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel } from './anthropic'
-import { favoriteMockEngine } from './llm'
+import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
 import { imageFormats, textFormats } from '../models/attachment'
+import { PluginInstance, PluginsList } from 'plugins/plugins'
 import { store } from '../services/store'
 import * as llm from 'multi-llm-ts'
 import OpenAI from './openai'
@@ -359,5 +360,59 @@ export default class LlmManagerBase implements ILlmManager {
     return m ? modelId : (models?.[0]?.id || null)
   }
 
-}
+  loadTools = async (engine: llm.LlmEngine, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void> => {
 
+    // clear
+    engine.clearPlugins()
+
+    // tools disabled?
+    if (areToolsDisabled(toolSelection)) {
+      return
+    }
+
+    // add plugins
+    const customPluginsAdded: Record<string, PluginInstance> = {}
+    for (const pluginName in availablePlugins) {
+      
+      const pluginClass = availablePlugins[pluginName]
+      const plugin: PluginInstance = new pluginClass(this.config.plugins[pluginName])
+
+      // if no filters add
+      if (areAllToolsEnabled(toolSelection)) {
+        engine.addPlugin(plugin)
+        continue
+      }
+
+      // single-tool plugins is easy
+      if (!('getTools' in plugin)) {
+        if (toolSelection.includes(plugin.getName())) {
+          engine.addPlugin(plugin)
+        }
+        continue
+      }
+
+      // multi-tool plugins are more complex
+      const pluginTools = await plugin.getTools()
+      for (const pluginTool of pluginTools) {
+        if (toolSelection.includes(pluginTool.function.name)) {
+
+          let instance: PluginInstance = customPluginsAdded[pluginName]
+          if (!instance) {
+            instance = plugin
+            engine.addPlugin(instance)
+            customPluginsAdded[pluginName] = instance
+          }
+
+          // multi-tool: enable this tool
+          if (instance instanceof llm.MultiToolPlugin) {
+            instance.enableTool(pluginTool.function.name)
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+}

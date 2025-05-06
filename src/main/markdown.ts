@@ -37,8 +37,7 @@ const mdPreprocess = (markdown: string) => {
 }
 
 const mdPostprocess = (html: string) => {
-  // we want to preserve ollama <think> content as-is
-  // restore the <think> and </think> tags
+  // we want to preserve ollama <think> content as-is: <think>...</think>
   let postprocessed = html
   postprocessed = postprocessed.replaceAll('&lt;think&gt;', '<think>').replace(/&lt;\/think&gt;/g, '</think>')
   return postprocessed

@@ -88,7 +88,7 @@ export const store: Store = reactive({
     const defaults = store.config.llm.defaults.find(d => d.engine === chat.engine && d.model === chat.model)
     if (defaults) {
       chat.disableStreaming = defaults.disableStreaming
-      chat.disableTools = defaults.disableTools
+      chat.tools = defaults.tools !== undefined ? defaults.tools : (defaults.disableTools ? [] : null)
       chat.locale = defaults.locale
       chat.prompt = defaults.prompt
       chat.modelOpts = {
@@ -105,7 +105,7 @@ export const store: Store = reactive({
       }
     } else {
       chat.disableStreaming = false
-      chat.disableTools = store.config.engines[chat.engine]?.disableTools || false
+      chat.tools = store.config.engines[chat.engine]?.disableTools ? [] : null
       chat.locale = null
       chat.prompt = null
       chat.modelOpts = undefined
@@ -166,8 +166,8 @@ export const store: Store = reactive({
         chats: JSON.parse(JSON.stringify(store.history.chats)).filter((chat: Chat) => {
           return chat.messages.length > 1 || store.history.folders.find((folder) => folder.chats.includes(chat.uuid))
         }),
-        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts)),
-        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts)),
+        quickPrompts: JSON.parse(JSON.stringify(store.history.quickPrompts || [])),
+        //padPrompts: JSON.parse(JSON.stringify(store.history.padPrompts || [])),
       }
       for (const chat of history.chats) {
         for (const message of chat.messages) {
