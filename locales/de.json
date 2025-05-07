@@ -1402,6 +1402,7 @@
     "advanced": {
       "autoSavePrompt": "Immer Prompt-Sitzungen im Chatverlauf speichern",
       "autoVisionSwitch": "Automatisch zum Vision-Modell wechseln",
+      "bypassProxy": "System-Proxy-Server umgehen (erfordert einen Neustart der App)",
       "conversationLength": "Nachrichten pro Unterhaltung",
       "imageResize": "Bildgröße",
       "imageResizeOptions": {

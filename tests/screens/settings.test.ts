@@ -200,7 +200,7 @@ test('Settings Appearance', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(wrapper, 8)
-  expect(tab.findAll('.group')).toHaveLength(5)
+  expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)
   tab.find('.group.vision input').setValue(false)
@@ -211,6 +211,12 @@ test('Settings Advanced', async () => {
   expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.group.autosave input').setValue(true)
   expect(store.config.prompt.autosave).toBe(true)
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.general.bypassProxy).not.toBe(true)
+  tab.find('.group.proxy input').setValue(true)
+  expect(store.config.general.bypassProxy).toBe(true)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

@@ -149,6 +149,11 @@ app.whenReady().then(() => {
     })
   }
 
+  // proxy
+  if (settings.general.bypassProxy) {
+    app.commandLine.appendSwitch('no-proxy-server');
+  }
+
   // debugging
   if (process.env.DEBUG) {
     installExtension(VUEJS_DEVTOOLS)

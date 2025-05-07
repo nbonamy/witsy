@@ -1402,6 +1402,7 @@
     "advanced": {
       "autoSavePrompt": "Salva sempre le sessioni di richiesta nella cronologia chat",
       "autoVisionSwitch": "Passa automaticamente al modello visione",
+      "bypassProxy": "Salta il server proxy di sistema (richiede riavvio dell'app)",
       "conversationLength": "Messaggi per conversazione",
       "imageResize": "Ridimensionamento immagine",
       "imageResizeOptions": {
