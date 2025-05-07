@@ -164,7 +164,6 @@
         "delete": "Elimina cartella",
         "setDefaults": "Imposta i valori predefiniti dalla chat"
       },
-      "cantSetDefaults": "Prima seleziona la conversazione che desideri utilizzare per impostare i valori predefiniti della cartella.",
       "confirmDeleteDefaults": "Sei sicuro di voler eliminare le impostazioni predefinite della cartella?",
       "confirmOverwriteDefaults": "Sei sicuro di voler sovrascrivere le impostazioni predefinite della cartella?"
     },
@@ -1281,8 +1280,7 @@
       "title": "Visualizza"
     },
     "window": {
-      "debug": "Apri Console di Debug",
-      "title": "Finestra"
+      "debug": "Apri Console di Debug"
     }
   },
   "message": {

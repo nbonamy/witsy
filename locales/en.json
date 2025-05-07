@@ -183,7 +183,6 @@
         "delete": "Delete folder",
         "setDefaults": "Set defaults from chat"
       },
-      "cantSetDefaults": "First select the conversation you want to use to set the folder defaults.",
       "confirmDeleteDefaults": "Are you sure you want to delete the folder defaults?",
       "confirmOverwriteDefaults": "Are you sure you want to overwrite the folder defaults?"
     },
@@ -1300,8 +1299,7 @@
       "title": "View"
     },
     "window": {
-      "debug": "Open Debug Console",
-      "title": "Window"
+      "debug": "Open Debug Console"
     }
   },
   "message": {

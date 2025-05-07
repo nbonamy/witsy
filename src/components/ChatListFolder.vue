@@ -162,14 +162,7 @@ const handleActionClick = async (action: string) => {
 
     // get and check
     const chat: Chat = props.active
-    if (!chat.hasMessages()) {
-      Dialog.show({
-        title: t('chatList.folder.cantSetDefaults'),
-        confirmButtonText: t('common.ok'),
-      })
-      return
-    }
-
+    
     // get and check
     const folder = store.history.folders.find((f) => f.id === folderId)
     if (!folder) return
@@ -195,7 +188,7 @@ const handleActionClick = async (action: string) => {
       tools: chat.tools,
       prompt: chat.prompt,
       locale: chat.locale,
-      expert: chat.messages.findLast((m) => m.expert)?.expert?.id,
+      expert: chat.messages.findLast((m) => m.expert)?.expert?.id || null,
       docrepo: chat.docrepo,
       modelOpts: chat.modelOpts,
     }
