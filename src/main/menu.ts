@@ -22,20 +22,6 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
   // i18n
   const t = useI18n(app)
 
-  // get all windows
-  const windowsMenu = []
-  for (const win of BrowserWindow.getAllWindows()) {
-    if (win != window.promptAnywhereWindow && win != window.commandPicker) {
-      windowsMenu.push({
-        label: win.getTitle(),
-        click: () => {
-          win.restore()
-          win.focus()
-        }
-      })
-    }
-  }
-
   // get focused window
   const focusedWindow = BrowserWindow.getFocusedWindow()
 
@@ -44,14 +30,6 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
     focusedWindow === window.mainWindow ||
     focusedWindow === window.promptAnywhereWindow ||
     focusedWindow === window.transcribePalette
-
-  // sort by title
-  windowsMenu.sort((a, b) => a.label.localeCompare(b.label))
-
-  // add separator at the beginning
-  if (windowsMenu.length > 0) {
-    windowsMenu.unshift({ type: 'separator' })
-  }
 
   // done
   return [
@@ -156,10 +134,14 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           ),
       ]
     },
-    // { role: 'viewMenu' }
     {
       label: t('menu.view.title'),
       submenu: [
+        {
+          label: t('menu.window.debug'),
+          click: () => window.openDebugWindow()
+        },
+        { type: 'separator' },
         ...process.env.DEBUG ? [
           { role: 'reload' },
           { role: 'forceReload' },
@@ -173,28 +155,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         { role: 'togglefullscreen' }
       ]
     },
-    // { role: 'windowMenu' }
-    {
-      label: t('menu.window.title'),
-      submenu: [
-        {
-          label: t('menu.window.debug'),
-          click: () => window.openDebugWindow()
-        },
-        { type: 'separator' },
-        { role: 'minimize' },
-        { role: 'zoom' },
-        ...(isMac
-          ? [
-            { type: 'separator' },
-            { role: 'front' },
-            ...windowsMenu,
-          ]
-          : [
-            { role: 'close' }
-          ])
-      ]
-    },
+    { role: 'windowMenu' },
     {
       label: t('menu.help.title'),
       submenu: [
