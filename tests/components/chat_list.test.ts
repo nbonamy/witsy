@@ -265,11 +265,7 @@ test('Folder defaults', async () => {
     prompt: 'prompt',
     locale: 'locale',
     docrepo: 'docrepo',
-    messages: [
-      { role: 'system', content: 'System Prompt' },
-      { role: 'user', content: 'Question 1', expert: { id: 'expert' } },
-      { role: 'assistant', content: 'Subtitle 1' }
-    ],
+    messages: [],
     modelOpts: {
       temperature: 0.7,
       customOpts: {
@@ -291,7 +287,7 @@ test('Folder defaults', async () => {
     prompt: 'prompt',
     locale: 'locale',
     docrepo: 'docrepo',
-    expert: 'expert',
+    expert: null,//'expert',
     modelOpts: {
       temperature: 0.7,
       customOpts: {
@@ -300,6 +296,33 @@ test('Folder defaults', async () => {
     }
   })
 
+  // experts
+  chat.messages = [
+    Message.fromJson({ role: 'system', content: 'System Prompt' }),
+    Message.fromJson({ role: 'user', content: 'Question 1', expert: { id: 'expert' } }),
+    Message.fromJson({ role: 'assistant', content: 'Subtitle 1' })
+  ]
+
+  // set defaults
+  await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
+  await wrapper.find('.context-menu .actions .item[data-action=setDefaults]').trigger('click')
+  expect(store.history.folders[0].defaults).toStrictEqual({
+    engine: 'mock',
+    model: 'chat',
+    disableStreaming: false,
+    tools: [],
+    prompt: 'prompt',
+    locale: 'locale',
+    docrepo: 'docrepo',
+    expert: 'expert',
+    modelOpts: {
+      temperature: 0.7,
+      customOpts: {
+        custom: 'custom'
+      } 
+    }
+  })
+  
   // clear defaults
   await wrapper.findAll('section').at(0)!.find('.menu').trigger('click')
   expect(wrapper.findAll('.context-menu .actions .item')).toHaveLength(5)
