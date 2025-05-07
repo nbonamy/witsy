@@ -8,6 +8,10 @@
       <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       <input type="checkbox" v-model="autoSavePrompt" @change="save" />
     </div>
+    <div class="group proxy checkbox">
+      <label>{{ t('settings.advanced.bypassProxy') }}</label>
+      <input type="checkbox" v-model="bypassProxy" @change="save" />
+    </div>
     <hr/>
     <div class="group length">
       <label>{{ t('settings.advanced.conversationLength') }}</label>
@@ -64,12 +68,14 @@ const isPromptOverridden = ref(false)
 const instructions = ref('instructions.default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
+const bypassProxy = ref(null)
 const conversationLength = ref(null)
 const imageResize = ref(null)
 
 const load = () => {
   autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   autoSavePrompt.value = store.config.prompt.autosave
+  bypassProxy.value = store.config.general.bypassProxy
   conversationLength.value = store.config.llm.conversationLength || 5
   imageResize.value = store.config.llm.imageResize || 768
   onChangeInstructions()
@@ -90,6 +96,7 @@ const save = () => {
   // basic stuff
   store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.prompt.autosave = autoSavePrompt.value
+  store.config.general.bypassProxy = bypassProxy.value
   store.config.llm.conversationLength = conversationLength.value
   store.config.llm.imageResize = parseInt(imageResize.value)
 
@@ -144,6 +151,10 @@ input::-webkit-inner-spin-button {
 
 form .group label {
   min-width: 180px;
+}
+
+form .group.checkbox label {
+  min-width: 140px;
 }
 
 .subgroup select {

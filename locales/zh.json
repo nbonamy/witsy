@@ -1432,6 +1432,7 @@
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
       "autoVisionSwitch": "自动切换到视觉模型",
+      "bypassProxy": "绕过系统代理服务器（需要重新启动应用）",
       "conversationLength": "每段对话的消息数量",
       "imageResize": "图像调整大小",
       "imageResizeOptions": {

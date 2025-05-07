@@ -1432,6 +1432,7 @@
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
       "autoVisionSwitch": "Automatically switch to vision model",
+      "bypassProxy": "Bypass system proxy server (requires app restart)",
       "conversationLength": "Messages per conversation",
       "imageResize": "Image resize",
       "imageResizeOptions": {

@@ -1402,6 +1402,7 @@
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
       "autoVisionSwitch": "Passer automatiquement au modèle vision",
+      "bypassProxy": "Ignorer le serveur proxy système (nécessite un redémarrage de l'application)",
       "conversationLength": "Messages par conversation",
       "imageResize": "Taille des images",
       "imageResizeOptions": {

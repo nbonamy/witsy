@@ -41,6 +41,7 @@ export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
+  bypassProxy: boolean
   locale: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}

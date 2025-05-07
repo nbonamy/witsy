@@ -1432,6 +1432,7 @@
     "advanced": {
       "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
       "autoVisionSwitch": "Automatycznie przełączaj na model wizyjny",
+      "bypassProxy": "Omijaj serwer proxy systemu (wymaga ponownego uruchomienia aplikacji)",
       "conversationLength": "Wiadomości na konwersację",
       "imageResize": "Zmiana rozmiaru obrazu",
       "imageResizeOptions": {

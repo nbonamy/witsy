@@ -4,6 +4,7 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
+    "bypassProxy": false,
     "tips": {
     },
     "confirm": {

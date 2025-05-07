@@ -1402,6 +1402,7 @@
     "advanced": {
       "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
       "autoVisionSwitch": "Cambiar automáticamente al modelo de visión",
+      "bypassProxy": "Saltar el servidor proxy del sistema (requiere reiniciar la aplicación)",
       "conversationLength": "Mensajes por conversación",
       "imageResize": "Redimensionar imagen",
       "imageResizeOptions": {
