@@ -274,9 +274,10 @@ app.on('before-quit', (ev) => {
   BrowserWindow.getAllWindows().forEach((win) => win.close());
   ev.preventDefault();
 
-  // in debug mode the tray icon gets multiplied
+  // clean up when debugging (vscode restarts the app)
   if (process.env.DEBUG) {
     trayIconManager.destroy();
+    shortcuts.unregisterShortcuts();
   }
 
 });
