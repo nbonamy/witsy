@@ -183,7 +183,6 @@
         "delete": "Usuń folder",
         "setDefaults": "Ustaw domyślne z czatu"
       },
-      "cantSetDefaults": "Najpierw wybierz rozmowę, którą chcesz użyć do ustawienia domyślnych folderów.",
       "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne folderu?",
       "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne folderu?"
     },
@@ -1300,8 +1299,7 @@
       "title": "Widok"
     },
     "window": {
-      "debug": "Otwórz konsolę debugowania",
-      "title": "Okno"
+      "debug": "Otwórz konsolę debugowania"
     }
   },
   "message": {

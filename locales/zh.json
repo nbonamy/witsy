@@ -183,7 +183,6 @@
         "delete": "删除文件夹",
         "setDefaults": "从聊天设置默认值"
       },
-      "cantSetDefaults": "首先选择您想要用于设置文件夹默认值的对话。",
       "confirmDeleteDefaults": "您确定要删除文件夹默认值吗？",
       "confirmOverwriteDefaults": "您确定要覆盖文件夹默认值吗？"
     },
@@ -1300,8 +1299,7 @@
       "title": "查看"
     },
     "window": {
-      "debug": "打开调试控制台",
-      "title": "窗口"
+      "debug": "打开调试控制台"
     }
   },
   "message": {

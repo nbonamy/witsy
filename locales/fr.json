@@ -164,7 +164,6 @@
         "delete": "Supprimer le dossier",
         "setDefaults": "Définir les valeurs par défaut à partir du chat"
       },
-      "cantSetDefaults": "Sélectionnez d'abord la conversation que vous souhaitez utiliser pour définir les paramètres par défaut du dossier.",
       "confirmDeleteDefaults": "Êtes-vous sûr de vouloir supprimer les valeurs par défaut du dossier ?",
       "confirmOverwriteDefaults": "Êtes-vous sûr de vouloir écraser les valeurs par défaut du dossier ?"
     },
@@ -1281,8 +1280,7 @@
       "title": "Affichage"
     },
     "window": {
-      "debug": "Ouvrir la console de débogage",
-      "title": "Fenêtre"
+      "debug": "Ouvrir la console de débogage"
     }
   },
   "message": {

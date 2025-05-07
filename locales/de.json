@@ -164,7 +164,6 @@
         "delete": "Ordner löschen",
         "setDefaults": "Standards aus dem Chat festlegen"
       },
-      "cantSetDefaults": "Zuerst wählen Sie das Gespräch aus, das Sie verwenden möchten, um die Ordnerstandards festzulegen.",
       "confirmDeleteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards löschen möchten?",
       "confirmOverwriteDefaults": "Sind Sie sicher, dass Sie die Ordnerstandards überschreiben möchten?"
     },
@@ -1281,8 +1280,7 @@
       "title": "Ansicht"
     },
     "window": {
-      "debug": "Debug-Konsole öffnen",
-      "title": "Fenster"
+      "debug": "Debug-Konsole öffnen"
     }
   },
   "message": {
