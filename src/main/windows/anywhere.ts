@@ -3,6 +3,7 @@ import { anyDict } from 'types/index';
 import { Application } from '../../types/automation';
 import { app, BrowserWindow, Size } from 'electron';
 import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen, releaseFocus } from './index';
+import { useI18n } from '../i18n';
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
@@ -26,6 +27,7 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
   promptAnywhereWindow = createWindow({
     hash: '/prompt',
     queryParams: queryParams,
+    title: useI18n(app)('tray.menu.quickPrompt'),
     x, y, width: size.width, height: size.height,
     frame: false,
     skipTaskbar: true,
