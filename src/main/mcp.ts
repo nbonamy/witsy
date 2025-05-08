@@ -358,10 +358,10 @@ export default class {
         if (words.length >= 2) {
           const cmd = e.message.split(' ')[1]
           this.logs[server.uuid].push(`Command not found: ${cmd}. Please install it and/or add it to your PATH.\n`)
-          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS for more information.')
+          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS-and-Linux for more information.')
         } else {
           this.logs[server.uuid].push('Command not found. Please install it and/or add it to your PATH.\n')
-          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS for more information.')
+          this.logs[server.uuid].push('Check https://github.com/nbonamy/witsy/wiki/MCP-Server-not-starting-on-macOS-and-Linux for more information.')
         }
       }
     }
