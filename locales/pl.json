@@ -117,6 +117,9 @@
     "selectNone": "Anuluj wybór wszystkich",
     "settings": "Ustawienia",
     "shortcut": "Skrót",
+    "spellcheck": {
+      "add": "Dodaj do słownika"
+    },
     "stop": "Stop",
     "type": "Typ",
     "undo": "Cofnij",

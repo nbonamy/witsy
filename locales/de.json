@@ -98,6 +98,9 @@
     "selectNone": "Alle abwählen",
     "settings": "Einstellungen",
     "shortcut": "Tastenkombination",
+    "spellcheck": {
+      "add": "Zum Wörterbuch hinzufügen"
+    },
     "stop": "Stop",
     "type": "Typ",
     "undo": "Rückgängig",
