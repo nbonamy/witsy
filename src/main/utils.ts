@@ -31,17 +31,71 @@ export const fixPath = (): void => {
     const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_ENV_DELIMITER_"; printenv PATH; echo -n "_SHELL_ENV_DELIMITER_";'`
     const output = execSync(command).toString();
     let path = output.split('_SHELL_ENV_DELIMITER_')[1].trim();
+    const paths = path.split(':')
 
     // on macOS we add homebrew paths
-    if (process.platform === 'darwin') {
-      const paths = path.split(':')
-      for (const hbp of [ '/usr/local/bin', '/opt/homebrew/bin' ]) {
-        if (fs.existsSync(hbp) && !paths.includes(hbp)) {
-          paths.push(hbp)
+    try {
+      if (process.platform === 'darwin') {
+        for (const hbp of [ '/usr/local/bin', '/opt/homebrew/bin' ]) {
+          if (fs.existsSync(hbp) && !paths.includes(hbp)) {
+            paths.push(hbp)
+          }
+        }
+        path = paths.join(':')
+      }
+    } catch { /* empty */ }
+
+    // try to deal with nvm using nvm
+    try {
+      const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_NVM_DELIMITER_"; nvm which current; echo -n "_SHELL_NVM_DELIMITER_";'`
+      const output = execSync(command).toString();
+      let nbp = output.split('_SHELL_NVM_DELIMITER_')[1].trim()
+      if (fs.existsSync(nbp)) {
+        nbp = nbp.split('/').slice(0, -1).join('/')
+        if (!paths.includes(nbp)) {
+          paths.push(nbp)
         }
       }
-      path = paths.join(':')
-    }
+    } catch { /* empty */ }
+
+    // try to deal with nvm using files
+    try {
+      const nvf = `${process.env.HOME}/.nvm/alias/default`
+      const nbf = `${process.env.HOME}/.nvm/versions/node`
+      if (fs.existsSync(nvf) && fs.existsSync(nbf)) {
+        
+        // read current version file
+        // could be simply '20' but we need to add 'v' prefix
+        let current = fs.readFileSync(nvf, 'utf8').trim()
+        if (!current.startsWith('v')) {
+          current = `v${current}`
+        }
+
+        // now iterate on existing versions
+        let best = ''
+        const versions = fs.readdirSync(nbf).sort()
+        for (const v of versions) {
+          if (v === current) {
+            best = v
+            break
+          } else if (v.startsWith(current)) {            
+            best = v
+          }
+        }
+
+        if (best) {
+          const nvpPath = `${nbf}/${best}/bin`
+          if (!paths.includes(nvpPath)) {
+            paths.push(nvpPath)
+          }
+        }
+      }
+    } catch { /* empty */ }
+
+
+
+    // join
+    path = paths.join(':')
 
     // done
     console.log('Fixing PATH:', path)
