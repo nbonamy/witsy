@@ -1,4 +1,2 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 ./tools/i18n_check.ts
 npx vitest run --exclude './tests/e2e/**'
