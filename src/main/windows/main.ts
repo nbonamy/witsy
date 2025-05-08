@@ -45,39 +45,41 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
       height: 48,
     }),
     showInDock: true,
+    show: false,
     ...opts,
   });
 
-  // context menu
-  mainWindow.webContents.on('context-menu', (event, params) => {
-    const menu = new Menu();
+  // spellchecker context menu
+  // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
+  if (process.platform !== 'darwin') {
+    mainWindow.webContents.on('context-menu', (event, params) => {
+    
+      // init
+      const menu = new Menu();
 
-    // Add each spelling suggestion
-    for (const suggestion of params.dictionarySuggestions) {
-      menu.append(new MenuItem({
-        label: suggestion,
-        click: () => mainWindow.webContents.replaceMisspelling(suggestion)
-      }))
-    }
+      // Add each spelling suggestion
+      for (const suggestion of params.dictionarySuggestions) {
+        menu.append(new MenuItem({
+          label: suggestion,
+          click: () => mainWindow.webContents.replaceMisspelling(suggestion)
+        }))
+      }
 
-    // Allow users to add the misspelled word to the dictionary
-    if (params.misspelledWord) {
-      menu.append(
-        new MenuItem({
-          label: 'Add to dictionary',
-          click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
-        })
-      )
-    }
-    menu.popup();
-  })
+      // Allow users to add the misspelled word to the dictionary
+      if (params.misspelledWord) {
+        menu.append(
+          new MenuItem({
+            label: useI18n(app)('common.spellcheck.add'),
+            click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+          })
+        )
+      }
+      menu.popup();
+    })
+  }
 
   // check
   ensureOnCurrentScreen(mainWindow);
-
-  // focus
-  app.focus({ steal: true });
-  mainWindow.focus();
 
   // show a tip
   mainWindow.on('close', () => {
@@ -111,6 +113,11 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   })
+
+  // focus
+  mainWindow.show();
+  app.focus({ steal: true });
+  mainWindow.focus();
 
   // open the DevTools
   if (process.env.DEBUG) {

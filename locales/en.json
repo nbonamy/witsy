@@ -117,6 +117,9 @@
     "selectNone": "Unselect All",
     "settings": "Settings",
     "shortcut": "Shortcut",
+    "spellcheck": {
+      "add": "Add to dictionary"
+    },
     "stop": "Stop",
     "type": "Type",
     "undo": "Undo",

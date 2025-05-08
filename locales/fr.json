@@ -98,6 +98,9 @@
     "selectNone": "Tout désélectionner",
     "settings": "Paramètres",
     "shortcut": "Raccourci",
+    "spellcheck": {
+      "add": "Ajouter au dictionnaire"
+    },
     "stop": "Arrêter",
     "type": "Type",
     "undo": "Annuler",

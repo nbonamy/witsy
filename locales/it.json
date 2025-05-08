@@ -98,6 +98,9 @@
     "selectNone": "Deseleziona tutto",
     "settings": "Impostazioni",
     "shortcut": "Scorciatoia",
+    "spellcheck": {
+      "add": "Aggiungi al dizionario"
+    },
     "stop": "Ferma",
     "type": "Tipo",
     "undo": "Annulla",

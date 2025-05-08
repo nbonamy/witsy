@@ -117,6 +117,9 @@
     "selectNone": "全不选",
     "settings": "设置",
     "shortcut": "快捷键",
+    "spellcheck": {
+      "add": "添加到字典"
+    },
     "stop": "停止",
     "type": "类型",
     "undo": "撤销",

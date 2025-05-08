@@ -98,6 +98,9 @@
     "selectNone": "Desmarcar todo",
     "settings": "Configuraciones",
     "shortcut": "Atajo",
+    "spellcheck": {
+      "add": "Agregar al diccionario"
+    },
     "stop": "Detener",
     "type": "Tipo",
     "undo": "Deshacer",

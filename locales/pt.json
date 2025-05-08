@@ -117,6 +117,9 @@
     "selectNone": "Desmarcar Tudo",
     "settings": "Configurações",
     "shortcut": "Atalho",
+    "spellcheck": {
+      "add": "Adicionar ao dicionário"
+    },
     "stop": "Parar",
     "type": "Tipo",
     "undo": "Desfazer",
