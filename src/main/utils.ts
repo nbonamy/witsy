@@ -46,11 +46,13 @@ export const fixPath = (): void => {
     } catch { /* empty */ }
 
     // try to deal with nvm using nvm
+    let nvmFixed = false
     try {
       const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_NVM_DELIMITER_"; nvm which current; echo -n "_SHELL_NVM_DELIMITER_";'`
       const output = execSync(command).toString();
       let nbp = output.split('_SHELL_NVM_DELIMITER_')[1].trim()
       if (fs.existsSync(nbp)) {
+        nvmFixed = true
         nbp = nbp.split('/').slice(0, -1).join('/')
         if (!paths.includes(nbp)) {
           paths.push(nbp)
@@ -59,40 +61,40 @@ export const fixPath = (): void => {
     } catch { /* empty */ }
 
     // try to deal with nvm using files
-    try {
-      const nvf = `${process.env.HOME}/.nvm/alias/default`
-      const nbf = `${process.env.HOME}/.nvm/versions/node`
-      if (fs.existsSync(nvf) && fs.existsSync(nbf)) {
-        
-        // read current version file
-        // could be simply '20' but we need to add 'v' prefix
-        let current = fs.readFileSync(nvf, 'utf8').trim()
-        if (!current.startsWith('v')) {
-          current = `v${current}`
-        }
+    if (!nvmFixed) {
+      try {
+        const nvf = `${process.env.HOME}/.nvm/alias/default`
+        const nbf = `${process.env.HOME}/.nvm/versions/node`
+        if (fs.existsSync(nvf) && fs.existsSync(nbf)) {
+          
+          // read current version file
+          // could be simply '20' but we need to add 'v' prefix
+          let current = fs.readFileSync(nvf, 'utf8').trim()
+          if (!current.startsWith('v')) {
+            current = `v${current}`
+          }
 
-        // now iterate on existing versions
-        let best = ''
-        const versions = fs.readdirSync(nbf).sort()
-        for (const v of versions) {
-          if (v === current) {
-            best = v
-            break
-          } else if (v.startsWith(current)) {            
-            best = v
+          // now iterate on existing versions
+          let best = ''
+          const versions = fs.readdirSync(nbf).sort()
+          for (const v of versions) {
+            if (v === current) {
+              best = v
+              break
+            } else if (v.startsWith(current)) {            
+              best = v
+            }
+          }
+
+          if (best) {
+            const nvpPath = `${nbf}/${best}/bin`
+            if (!paths.includes(nvpPath)) {
+              paths.push(nvpPath)
+            }
           }
         }
-
-        if (best) {
-          const nvpPath = `${nbf}/${best}/bin`
-          if (!paths.includes(nvpPath)) {
-            paths.push(nvpPath)
-          }
-        }
-      }
-    } catch { /* empty */ }
-
-
+      } catch { /* empty */ }
+    }
 
     // join
     path = paths.join(':')
