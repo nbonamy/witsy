@@ -27,6 +27,11 @@
   color: black;
 }
 
+.messages.conversation .message .body .toggle-reasoning {
+  margin-top: 1rem;
+  margin-bottom: 0rem;
+}
+
 .messages.conversation .message .body:has(.media) {
   padding: 0px;
   background-color: transparent;

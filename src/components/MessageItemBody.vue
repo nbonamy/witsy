@@ -1,10 +1,18 @@
 <template>
   <div v-if="message.type == 'text'">
-    <div class="think" v-if="message.reasoning">
-      <div v-for="block in reasoningBlocks">
-        <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+    <template v-if="reasoningBlocks.length">
+      <div @click="onToggleReasoning" class="toggle-reasoning">
+        <BIconChevronDown v-if="showReasoning" />
+        <BIconChevronRight v-else />
+        {{ isThinking ? t('message.reasoning.active') : showReasoning ? t('message.reasoning.hide') : t('message.reasoning.show') }}
+        <span class="thinking-ellipsis" v-if="isThinking"></span>
       </div>
-    </div>
+      <div class="think" v-if="showReasoning">
+        <div v-for="block in reasoningBlocks">
+          <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
+        </div>
+      </div>
+    </template>
     <div v-for="block in contentBlocks">
       <MessageItemBodyBlock :block="block" @media-loaded="onMediaLoaded(message)" />
     </div>
@@ -13,15 +21,30 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { ref, inject, computed, onMounted } from 'vue'
+import { store } from '../services/store'
+import { t } from '../services/i18n'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 import Message from '../models/message'
+
+import useEventBus from '../composables/event_bus'
+const { onEvent, emitEvent } = useEventBus()
+
+const showReasoning = inject('showReasoning', ref(store.config.appearance.chat.showReasoning))
+const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
+  store.config.appearance.chat.showReasoning = value
+  store.saveSettings()
+})
 
 const props = defineProps({
   message: {
     type: Message,
     required: true,
   },
+})
+
+const isThinking = computed(() => {
+  return props.message.transient && props.message.reasoning?.length && !props.message.content?.length
 })
 
 const reasoningBlocks = computed(() => {
@@ -32,13 +55,29 @@ const contentBlocks = computed(() => {
   return computeBlocks(props.message.content)
 })
 
+const onToggleReasoning = () => {
+  showReasoning.value = !showReasoning.value
+  userToggleReasoning(showReasoning.value)
+  emitEvent('toggle-reasoning', showReasoning.value)
+}
+
+onMounted(() => {
+  onEvent('toggle-reasoning', (value: boolean) => {
+    showReasoning.value = value
+  })  
+})
+
 const emits = defineEmits(['media-loaded'])
 
 const onMediaLoaded = (message: Message) => {
   emits('media-loaded', message)
 }
 
-const computeBlocks = (content: string): Block[] => {
+const computeBlocks = (content: string|null): Block[] => {
+
+  if (!content || content.trim().length === 0 || content.replaceAll('\n', '').trim().length === 0) {
+    return []
+  }
 
   // extract each <img> in a separate block
   let match

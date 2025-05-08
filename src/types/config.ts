@@ -126,6 +126,7 @@ export type AutomationConfig = {
 }
 
 export type ChatAppearance = {
+  showReasoning: boolean
   theme: string
   fontFamily: string
   fontSize: number

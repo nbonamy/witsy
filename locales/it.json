@@ -1297,6 +1297,11 @@
         "response": "Token di risposta: {completion}",
         "title": "Token totali: {total}"
       }
+    },
+    "reasoning": {
+      "active": "Pensando",
+      "hide": "Nascondi ragionamento",
+      "show": "Mostra ragionamento"
     }
   },
   "modelPull": {

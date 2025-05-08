@@ -1316,6 +1316,11 @@
         "response": "Tokens de resposta: {completion}",
         "title": "Tokens totais: {total}"
       }
+    },
+    "reasoning": {
+      "active": "Pensando",
+      "hide": "Ocultar raciocínio",
+      "show": "Mostrar raciocínio"
     }
   },
   "modelPull": {

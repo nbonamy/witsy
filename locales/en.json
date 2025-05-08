@@ -1316,6 +1316,11 @@
         "response": "Response tokens: {completion}",
         "title": "Total tokens: {total}"
       }
+    },
+    "reasoning": {
+      "active": "Thinking",
+      "hide": "Hide reasoning",
+      "show": "Show reasoning"
     }
   },
   "modelPull": {
