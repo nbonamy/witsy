@@ -45,9 +45,15 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
       height: 48,
     }),
     showInDock: true,
-    show: false,
     ...opts,
   });
+
+  // check
+  ensureOnCurrentScreen(mainWindow);
+
+  // focus
+  app.focus({ steal: true });
+  mainWindow.focus();
 
   // spellchecker context menu
   // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
@@ -77,9 +83,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
       menu.popup();
     })
   }
-
-  // check
-  ensureOnCurrentScreen(mainWindow);
 
   // show a tip
   mainWindow.on('close', () => {
@@ -113,11 +116,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   })
-
-  // focus
-  mainWindow.show();
-  app.focus({ steal: true });
-  mainWindow.focus();
 
   // open the DevTools
   if (process.env.DEBUG) {
