@@ -44,6 +44,7 @@ const botMessageVideoMd: Message = Message.fromJson({ role: 'assistant', type: '
 const botMessageVideoHtml: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<video controls src="file:///data/video.mp4">' })
 const botMessageImageLegacy: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
 const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
+const botMessageReasoning: Message = Message.fromJson({ role: 'assistant', type: 'text', reasoning: 'Hum', content :'Hi' })
 
 beforeAll(() => {
   useWindowMock()
@@ -77,9 +78,9 @@ const mount = async (message: Message, mouseenter = true): Promise<VueWrapper<an
 test('Render', async () => {
   const wrapper = await mount(userMessage, false)
   expect(wrapper.exists()).toBe(true)
-  expect (wrapper.find('.role').exists()).toBe(true)
-  expect (wrapper.find('.body').exists()).toBe(true)
-  expect (wrapper.find('.actions').exists()).toBe(false)
+  expect(wrapper.find('.role').exists()).toBe(true)
+  expect(wrapper.find('.body').exists()).toBe(true)
+  expect(wrapper.find('.actions').exists()).toBe(false)
 })
 
 test('User message', async () => {
@@ -91,6 +92,8 @@ test('User message', async () => {
   expect(wrapper.find('.logo').exists()).toBe(false)
   expect(wrapper.find('.body').text()).toBe('Hello')
   expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
+  expect(wrapper.find('.body .think').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(false)
   expect(wrapper.find('.actions .read').exists()).toBe(false)
   expect(wrapper.find('.actions .retry').exists()).toBe(false)
@@ -109,6 +112,8 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.role .logo').exists()).toBe(true)
   expect(wrapper.find('.body').text()).toBe('Hi')
   expect(wrapper.find('.body .transient').exists()).toBe(false)
+  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
+  expect(wrapper.find('.body .think').exists()).toBe(false)
   expect(wrapper.find('.actions .copy').exists()).toBe(true)
   expect(wrapper.find('.actions .read').exists()).toBe(true)
   expect(wrapper.find('.actions .retry').exists()).toBe(true)
@@ -374,4 +379,14 @@ test('Format math equations OpenAI', async () => {
   botMessageText.setText('\\[\n\\frac{1}{2}\n\\]')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body p[class=katex-block]').exists()).toBe(true)
+})
+
+test('Format reasoning message', async () => {
+  expect(store.config.appearance.chat.showReasoning).toBe(true)
+  const wrapper = await mount(botMessageReasoning)
+  expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(true)
+  expect(wrapper.find('.body .think').exists()).toBe(true)
+  await (wrapper.find('.body .toggle-reasoning').trigger('click'))
+  expect(wrapper.find('.body .think').exists()).toBe(false)
+  expect(store.config.appearance.chat.showReasoning).toBe(false)
 })

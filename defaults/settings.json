@@ -30,6 +30,7 @@
       "layout": "normal"
     },
     "chat": {
+      "showReasoning": true,
       "theme": "openai",
       "fontFamily": "",
       "fontSize": 3

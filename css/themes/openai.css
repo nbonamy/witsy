@@ -28,6 +28,7 @@
 }
 
 .messages.openai .message .think {
+  margin-left: 0.15rem;
   border-left: 1.5px solid var(--text-color);
   padding-left: 0.75rem;
 }

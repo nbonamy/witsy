@@ -1316,6 +1316,11 @@
         "response": "回答词：{completion}",
         "title": "总词数：{total}"
       }
+    },
+    "reasoning": {
+      "active": "思考中",
+      "hide": "隐藏推理",
+      "show": "显示推理"
     }
   },
   "modelPull": {

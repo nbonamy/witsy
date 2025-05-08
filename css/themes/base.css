@@ -84,15 +84,35 @@
   overflow: auto;
 }
 
-.message .body .think {
-  font-style: italic;
-  opacity: 0.66;
+.message .body .toggle-reasoning {
+  cursor: pointer;
+  margin: 0.5rem 0px;
+  margin-left: -0.25rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  opacity: var(--message-reasoning-opacity);
+  gap: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .message .body .think {
-    opacity: 0.80;
-  }
+.message .body .thinking-ellipsis:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  animation: ellipsis-animation steps(1,end) 2s infinite;
+  content: "\2026";
+}
+
+@keyframes ellipsis-animation {
+  0%  { clip-path: inset(0 100% 0 0); }
+  25% { clip-path: inset(0 66.6% 0 0); }
+  50% { clip-path: inset(0 33.3% 0 0); }
+  75% { clip-path: inset(0 0 0 0); }
+}
+
+.message .body .think {
+  font-style: italic;
+  opacity: var(--message-reasoning-opacity);
 }
 
 .message .actions {

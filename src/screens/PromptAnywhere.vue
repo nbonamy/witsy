@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { expertI18n, i18nInstructions, t } from '../services/i18n'
 import { anyDict, ExternalApp } from '../types'
-import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, computed, onMounted, onUnmounted, provide } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
@@ -83,6 +83,10 @@ const iconData = computed(() => {
 })
 
 const historyProvider = () => store.history.quickPrompts
+
+// for reasoning toggling
+provide('showReasoning', ref(false))
+provide('onToggleReasoning', () => {})
 
 onMounted(() => {
   

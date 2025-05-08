@@ -1316,6 +1316,11 @@
         "response": "Tokeny odpowiedzi: {uzupełnienie}",
         "title": "Łączna liczba żetonów: {łącznie}"
       }
+    },
+    "reasoning": {
+      "active": "Myślenie",
+      "hide": "Ukryj uzasadnienie",
+      "show": "Pokaż uzasadnienie"
     }
   },
   "modelPull": {
