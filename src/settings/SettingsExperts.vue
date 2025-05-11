@@ -34,9 +34,9 @@
         </div>
       </div>
     </main>
+    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
+    <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
   </form>
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-  <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
 </template>
 
 <script setup lang="ts">

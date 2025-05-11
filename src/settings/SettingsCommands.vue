@@ -36,10 +36,10 @@
         </div>
       </div>
     </main>
+    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
+    <CommandDefaults id="defaults" ref="defaults" />
+    <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
   </form>
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-  <CommandDefaults id="defaults" ref="defaults" />
-  <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
 </template>
 
 <script setup lang="ts">

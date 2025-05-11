@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="variable-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
+  <AlertDialog id="variable-editor" ref="dialog">
     <template v-slot:header>
       <div class="title">{{ t(title) }}</div>
     </template>
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch, PropType } from 'vue'
+import { ref, onMounted, onUnmounted, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import AlertDialog from '../components/AlertDialog.vue'
@@ -58,10 +58,24 @@ onMounted(async () => {
       document.querySelector<HTMLElement>('#variable-editor [name=key]')?.focus()
     }
   }, { immediate: true })
+
+  document.addEventListener('keydown', onKeyDown)
 })
 
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
+})
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    close()
+  } else if (e.key === 'Enter') {
+    onSave()
+  }
+}
+
 const close = () => {
-  dialog.value.close('#variable-editor')
+  dialog.value?.close('#variable-editor')
 }
 
 const onCancel = () => {

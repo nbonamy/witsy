@@ -8,8 +8,8 @@
         <ul>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
           <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')"@change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')"@change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
+          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
+          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
           <SettingsTab class="mcp" :title="t('settings.plugins.mcp.title')" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
@@ -71,11 +71,11 @@ const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
 const settingsCommands = ref(null)
 const settingsExperts = ref(null)
-const settingsShortcuts = ref(null)
 const settingsLLM = ref(null)
 const settingsPlugins = ref(null)
 const settingsMcp = ref(null)
 const settingsVoice = ref(null)
+const settingsShortcuts = ref(null)
 const settingsAdvanced = ref(null)
 
 const settings = [

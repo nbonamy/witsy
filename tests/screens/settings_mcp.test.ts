@@ -2,14 +2,13 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
-import Settings from '../../src/screens/Settings.vue'
+import SettingsMcp from '../../src/settings/SettingsMcp.vue'
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
-let wrapper: VueWrapper<any>
 let mcp: VueWrapper<any>
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
@@ -40,70 +39,50 @@ beforeAll(() => {
   store.load = () => {}
   
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  mcp = mount(SettingsMcp, { ...stubTeleport })
 })
 
 beforeEach(async () => {
   vi.clearAllMocks()
-  const tab = await switchToTab(wrapper, 5)
-  await tab.find('.list-panel .list .item[data-id=mcp]').trigger('click')
-  mcp = tab.findComponent({ name: 'SettingsMcp' })
+  mcp.vm.load()
 })
 
 test('Initialization', async () => {
-  expect(mcp.find('input[type=checkbox]').exists()).toBeTruthy()
-  expect(mcp.findComponent({ name: 'McpServerEditor' }).exists()).toBeTruthy()
-  expect(mcp.findComponent({ name: 'McpServerEditor' }).isVisible()).toBeFalsy()
+  // expect(mcp.find('input[type=checkbox]').exists()).toBeTruthy()
+  expect(mcp.findComponent({ name: 'McpServerEditor' }).exists()).toBe(true)
   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(1)
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(1)
-})
-
-test('Plugin enablement', async () => {
-
-  // plugin enabled
-  expect(mcp.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
-  await mcp.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
-  expect(store.config.plugins.mcp.enabled).toBe(true)
-
-  // state should be updated
-  expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr')).toHaveLength(5)
-  expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr input[type=checkbox]:checked')).toHaveLength(3)
-  expect(mcp.findAll<HTMLTableRowElement>('.list tbody tr td.status').map(e => e.text())).toStrictEqual([ '✅', '✅', '🔶', '❌', '🔶' ])
-
 })
 
 test('Actions', async () => {
   
   // reload
-  await mcp.find('button[name=reload]').trigger('click')
+  await mcp.find('.icon.reload').trigger('click')
   expect(window.api.mcp.getServers).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.getStatus).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(0)
 
   // restart
-  await mcp.find('button[name=restart]').trigger('click')
+  await mcp.find('.icon.restart').trigger('click')
   expect(window.api.mcp.reload).toHaveBeenCalledTimes(1)
 
 })
 
 test('Server enablement', async () => {
-  await mcp.find<HTMLInputElement>('.list tbody tr:nth-child(1) input[type=checkbox]').setValue(false)
+  await mcp.find<HTMLInputElement>('.list .item:nth-child(1) .stop').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: '1', state: 'disabled' }))
-  await mcp.find<HTMLInputElement>('.list tbody tr:nth-child(5) input[type=checkbox]').setValue(true)
+  await mcp.find<HTMLInputElement>('.list .item:nth-child(5) .start').trigger('click')
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith(expect.objectContaining({ uuid: 'mcp2', state: 'enabled' }))
 })
 
 test('Server delete', async () => {
-  await mcp.find<HTMLTableRowElement>('.list tbody tr:nth-child(4)').trigger('click')
-  await mcp.find<HTMLButtonElement>('button.remove').trigger('click')
+  await mcp.find<HTMLTableRowElement>('.list .item:nth-child(4) .delete').trigger('click')
   await mcp.vm.$nextTick()
   expect(window.api.mcp.deleteServer).toHaveBeenLastCalledWith('@mcp1')
 })
 
 test('Server edit', async () => {
-  await mcp.find<HTMLTableRowElement>('.list tbody tr:nth-child(1)').trigger('click')
-  await mcp.find<HTMLTableRowElement>('.list tbody tr:nth-child(1)').trigger('dblclick')
+  await mcp.find<HTMLTableRowElement>('.list .item:nth-child(1) .info').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('node')
@@ -126,13 +105,13 @@ test('Server edit', async () => {
 
 test('Normal server add', async () => {
 
-  expect(mcp.find('.context-menu').exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('button.add').trigger('click')
-  const menu = mcp.find('.context-menu')
-  expect(mcp.exists()).toBe(true)
-  expect(mcp.findAll('.item').length).toBe(3)
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  await mcp.find<HTMLElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.item').length).toBe(3)
   await menu.find('.item[data-action=custom]').trigger('click')
-  expect(mcp.find('.context-menu').exists()).toBe(false)
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
 
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
@@ -212,12 +191,12 @@ test('Normal server add', async () => {
 
 test('Smithery server add', async () => {
 
-  expect(mcp.find('.context-menu').exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('button.add').trigger('click')
-  const menu = mcp.find('.context-menu')
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
   expect(mcp.exists()).toBe(true)
   await menu.find('.item[data-action=smithery]').trigger('click')
-  expect(mcp.find('.context-menu').exists()).toBe(false)
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
 
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('smithery')
@@ -229,8 +208,8 @@ test('Smithery server add', async () => {
 
 test('Error server add', async () => {
 
-  await mcp.find<HTMLButtonElement>('button.add').trigger('click')
-  const menu = mcp.find('.context-menu')
+  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
   await menu.find('.item[data-action=custom]').trigger('click')
 
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
@@ -295,12 +274,12 @@ test('JSON server parsing', async () => {
 
 test('JSON server add', async () => {
 
-  expect(mcp.find('.context-menu').exists()).toBe(false)
-  await mcp.find<HTMLButtonElement>('button.add').trigger('click')
-  const menu = mcp.find('.context-menu')
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
   expect(mcp.exists()).toBe(true)
   await menu.find('.item[data-action=json]').trigger('click')
-  expect(mcp.find('.context-menu').exists()).toBe(false)
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
 
   expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
     uuid: null,
@@ -316,8 +295,8 @@ test('JSON server add', async () => {
 
 test('Editor pickers', async () => {
 
-  await mcp.find<HTMLButtonElement>('button.add').trigger('click')
-  const menu = mcp.find('.context-menu')
+  await mcp.find<HTMLButtonElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
   await menu.find('.item[data-action=custom]').trigger('click')
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
 

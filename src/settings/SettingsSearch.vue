@@ -6,7 +6,7 @@
     </div>
 
     <div class="group horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
+      <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
 

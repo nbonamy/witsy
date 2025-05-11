@@ -2,6 +2,7 @@
 import { vi, beforeAll, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store, kMediaChatId } from '../../src/services/store'
 import { Configuration } from '../../src/types/config'
 import ImageCreator from '../../src/services/image'
@@ -347,7 +348,7 @@ test('Generates - Custom Params HuggingFace', async () => {
 
 test('Generates - User Params', async () => {
 
-  const wrapper: VueWrapper<any> = mount(DesignStudio)
+  const wrapper: VueWrapper<any> = mount(DesignStudio, { ...stubTeleport })
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')

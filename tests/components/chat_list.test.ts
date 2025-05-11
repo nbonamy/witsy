@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import ChatList from '../../src/components/ChatList.vue'
 import defaults from '../../defaults/settings.json'
@@ -12,8 +13,6 @@ enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
-
-const stubTeleport = { global: { stubs: { teleport: true } } }
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   const Swal = vi.fn()

@@ -27,7 +27,7 @@ let wrapper: VueWrapper<any>
 const checkVisibility = (visible: number) => {
   for (let i=0; i<tabs.length; i++) {
     const display = i === visible ? 'flex' : 'none'
-    expect(getTab(wrapper, i).attributes().style).toMatch(new RegExp(`display: ${display}`))
+    expect(getTab(wrapper, i).attributes().style)?.toMatch(new RegExp(`display: ${display}`))
   }
 }
 
@@ -194,7 +194,7 @@ test('Settings Appearance', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = await switchToTab(wrapper, 8)
+  const tab = await switchToTab(wrapper, 9)
   expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)

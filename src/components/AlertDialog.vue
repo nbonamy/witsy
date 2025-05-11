@@ -1,6 +1,6 @@
 
 <template>
-  <Teleport to="body" @keydown="emit('keydown', $event)" @keyup="emit('keyup', $event)">
+  <Teleport to="body">
     <dialog :id="id" class="dialog alert-dialog show">
       <form class="vertical" method="dialog" @submit.prevent>
         <div class="icon" v-if="icon">
@@ -21,8 +21,6 @@
 </template>
 
 <script setup lang="ts">
-
-const emit = defineEmits(['keydown', 'keyup'])
 
 defineProps({
   id: {

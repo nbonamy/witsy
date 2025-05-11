@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
@@ -11,8 +12,6 @@ enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
-
-const stubTeleport = { global: { stubs: { teleport: true } } }
 
 vi.mock('../../src/services/i18n', async () => {
   return {
@@ -237,7 +236,7 @@ test('Model settings update chat', async () => {
 
   chat?.setEngineModel('mock', 'chat')
 
-  const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: chat! } } )
+  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
   await wrapper.find('.content > header .settings').trigger('click')
 
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)

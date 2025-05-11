@@ -23,7 +23,7 @@
     </div>
     <div class="group">
       <label>{{ t('settings.engines.openai.apiBaseURL') }}</label>
-      <input v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
+      <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
     <div class="group horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
