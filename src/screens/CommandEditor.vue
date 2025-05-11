@@ -1,51 +1,51 @@
 <template>
-  <dialog id="command-editor" class="dialog editor">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('commands.editor.title') }}</div>
-      </header>
-      <main>
-        <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
-          <label class="no-colon"><BIconExclamationCircle /></label>
-          <div>{{ t('common.differentLocales') }}</div>
+  <AlertDialog id="command-editor" ref="dialog" :editor="true" @save="onSave">
+    <template #header>
+      <div class="title">{{ t('commands.editor.title') }}</div>
+    </template>
+    <template #body>
+      <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+        <label class="no-colon"><BIconExclamationCircle /></label>
+        <div>{{ t('common.differentLocales') }}</div>
+      </div>
+      <div class="group">
+        <label>{{ t('common.name') }}</label>
+        <input type="text" name="label" v-model="label" required @keyup="onChangeText" />
+      </div>
+      <div class="group">
+        <label>{{ t('commands.editor.prompt') }}</label>
+        <div class="subgroup">
+          <textarea name="template" v-model="template" required @keyup="onChangeText" v-if="isEditable"></textarea>
+          <textarea name="template" disabled="true" v-else>{{ t('commands.editor.notEditable') }}</textarea>
+          <span>{{ t('commands.editor.inputPlaceholder') }}</span>
+          <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
         </div>
-        <div class="group">
-          <label>{{ t('common.name') }}</label>
-          <input type="text" name="label" v-model="label" required @keyup="onChangeText" />
-        </div>
-        <div class="group">
-          <label>{{ t('commands.editor.prompt') }}</label>
-          <div class="subgroup">
-            <textarea name="template" v-model="template" required @keyup="onChangeText" v-if="isEditable"></textarea>
-            <textarea name="template" disabled="true" v-else>{{ t('commands.editor.notEditable') }}</textarea>
-            <span>{{ t('commands.editor.inputPlaceholder') }}</span>
-            <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
-          </div>
-        </div>
-        <div class="group">
-          <label>{{ t('common.llmProvider') }}</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.editor.useDefault')" />
-        </div>
-        <div class="group">
-          <label>{{ t('common.llmModel') }}</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
-        </div>
-        <div class="group">
-          <label>{{ t('common.icon') }}</label>
-          <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
-          <input type="text" name="icon" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
-        </div>
-        <div class="group">
-          <label>{{ t('common.shortcut') }}</label>
-          <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
-        </div>
-      </main>
-      <footer>
+      </div>
+      <div class="group">
+        <label>{{ t('common.llmProvider') }}</label>
+        <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.editor.useDefault')" />
+      </div>
+      <div class="group">
+        <label>{{ t('common.llmModel') }}</label>
+        <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
+      </div>
+      <div class="group">
+        <label>{{ t('common.icon') }}</label>
+        <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
+        <input type="text" name="icon" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
+      </div>
+      <div class="group">
+        <label>{{ t('common.shortcut') }}</label>
+        <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
+      </div>
+    </template>
+    <template #footer>
+      <div class="buttons">
         <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
         <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      </footer>
-    </form>
-  </dialog>
+      </div>
+    </template>
+  </AlertDialog>
 </template>
 
 <script setup lang="ts">
@@ -54,6 +54,7 @@ import { ref, computed, watch, PropType } from 'vue'
 import { Command } from '../types/index'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
+import AlertDialog from '../components/AlertDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import Dialog from '../composables/dialog'
@@ -197,18 +198,22 @@ defineExpose({
 
 <style scoped>
 
-dialog.editor form .group input.icon {
+#command-editor {
+  width: 400px !important
+}
+
+#command-editor form .group input.icon {
   flex: 0 0 32px;
   text-align: center;
 }
 
-dialog.editor form .group input.shortcut {
+#command-editor form .group input.shortcut {
   flex: 0 0 32px;
   text-align: center;
   text-transform: uppercase;
 }
 
-.windows dialog.editor .icon {
+.windows #command-editor .icon {
   font-family: 'NotoColorEmojiLimited';
   font-size: 9pt;
 }

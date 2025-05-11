@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="create-engine" ref="dialog" @keyup.enter="onSave">
+  <AlertDialog id="create-engine" ref="dialog" @save="onSave">
     <template v-slot:header>
       <div class="title">{{ t('engine.create.title') }}</div>
       <div class="text">{{ t('engine.create.description') }}</div>

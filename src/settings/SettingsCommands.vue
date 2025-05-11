@@ -37,7 +37,7 @@
       </div>
     </main>
     <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-    <CommandDefaults id="defaults" ref="defaults" />
+    <CommandDefaults ref="defaults" />
     <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
   </form>
 </template>
@@ -166,8 +166,7 @@ const handleActionClick = async (action: string) => {
 }
 
 const onDefaults = () => {
-  defaults.value.load()
-  document.querySelector<HTMLDialogElement>('#defaults').showModal()
+  defaults.value.show()
 }
 
 const onImport = () => {

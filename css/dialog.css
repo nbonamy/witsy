@@ -48,6 +48,11 @@ dialog form.vertical {
       font-weight: bold;
       text-align: center;
     }
+
+    .text {
+      font-size: 8.5pt;
+      font-weight: normal;
+    }
   }
 
   footer {
