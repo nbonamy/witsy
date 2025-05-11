@@ -1,9 +1,9 @@
 
 <template>
   <Teleport to="body">
-    <dialog :id="id" class="dialog alert-dialog show">
-      <form class="vertical" method="dialog" @submit.prevent>
-        <div class="icon" v-if="icon">
+    <dialog :id="id" class="dialog alert-dialog show" :class="{ editor: editor }">
+      <form :class="{ vertical: !editor }" method="dialog" @submit.prevent>
+        <div class="icon" v-if="icon && !editor">
           <img src="/assets/icon.png" />
         </div>
         <header>
@@ -22,10 +22,16 @@
 
 <script setup lang="ts">
 
-defineProps({
+const emit = defineEmits(['save'])
+
+const props = defineProps({
   id: {
     type: String,
     required: true
+  },
+  editor: {
+    type: Boolean,
+    default: false
   },
   icon: {
     type: Boolean,
@@ -33,29 +39,42 @@ defineProps({
   }
 })
 
-defineExpose({
-  show(id: string) {
-    const dialog =  document.querySelector<HTMLDialogElement>(id)
-    if (!dialog) return
-    dialog.classList.remove('hide')
-    dialog.classList.add('show')
-    dialog.showModal()
-  },
-  close(id: string) {
-    const dialog =  document.querySelector<HTMLDialogElement>(id)
-    if (!dialog) return
-    dialog.addEventListener('animationend', () => {
-      dialog.close()
-    }, { once: true })
-    dialog.classList.remove('show')
-    dialog.classList.add('hide')
+const show = (id: string) => {
+  const dialog =  document.querySelector<HTMLDialogElement>(id)
+  if (!dialog) return
+  dialog.classList.remove('hide')
+  dialog.classList.add('show')
+  dialog.showModal()
+  dialog.addEventListener('keydown', onKeyDown)
+}
+
+const close = (id: string) => {
+  const dialog =  document.querySelector<HTMLDialogElement>(id)
+  if (!dialog) return
+  dialog.removeEventListener('keydown', onKeyDown)
+  dialog.addEventListener('animationend', () => {
+    dialog.close()
+  }, { once: true })
+  dialog.classList.remove('show')
+  dialog.classList.add('hide')
+}
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    close(props.id)
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    emit('save')
   }
-})
+}
+
+defineExpose({ show, close })
 
 </script>
 
 <style scoped>
 @import '../../css/dialog.css';
+@import '../../css/editor.css';
 @import '../../css/form.css';
 </style>
 
@@ -64,6 +83,10 @@ defineExpose({
 .alert-dialog {
   
   width: 260px !important;
+
+  &.editor {
+    width: 400px !important;
+  }
 
   &.show {
     animation: show 0.3s;

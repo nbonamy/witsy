@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="engine-model-picker" ref="dialog" @keyup.enter="onSave">
+  <AlertDialog id="engine-model-picker" ref="dialog" @save="onSave">
     <template v-slot:body>
       <div class="group">
         <label>{{ t('common.llmProvider') }}</label>

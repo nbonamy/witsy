@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="mcp-server-editor" ref="dialog" :icon="false" @keydown.enter.prevent @keyup.enter="onSave">
+  <AlertDialog id="mcp-server-editor" ref="dialog" :icon="false" @save="onSave">
     <template v-slot:header>
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </template>

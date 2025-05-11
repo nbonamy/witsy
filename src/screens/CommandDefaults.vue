@@ -1,29 +1,29 @@
 <template>
-  <dialog class="dialog editor">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('commands.defaults.title') }}</div>
-      </header>
-      <main>
-        <div class="group">
-          <label>{{ t('common.llmProvider') }}</label>
-          <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.defaults.lastOneUsed')" />
-        </div>
-        <div class="group">
-          <label>{{ t('common.llmModel') }}</label>
-          <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
-        </div>
-        <div class="group" v-if="isWindows">
-          <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>
-          <input type="checkbox" v-model="altWinCopyPaste" />
-        </div>
-      </main>
-      <footer>
+  <AlertDialog id="command-defaults" ref="dialog">
+    <template v-slot:header>
+      <div class="title">{{ t('commands.defaults.title') }}</div>
+    </template>
+    <template v-slot:body>
+      <div class="group">
+        <label>{{ t('common.llmProvider') }}</label>
+        <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.defaults.lastOneUsed')" />
+      </div>
+      <div class="group">
+        <label>{{ t('common.llmModel') }}</label>
+        <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
+      </div>
+      <div class="group" v-if="isWindows">
+        <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>
+        <input type="checkbox" v-model="altWinCopyPaste" />
+      </div>
+    </template>
+    <template v-slot:footer>
+      <div class="buttons">
         <button @click="onSave" class="default">{{ t('common.save') }}</button>
         <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      </footer>
-    </form>
-  </dialog>
+      </div>
+    </template>
+  </AlertDialog>
 </template>
 
 <script setup lang="ts">
@@ -31,9 +31,11 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import AlertDialog from '../components/AlertDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 
+const dialog = ref(null)
 const engine = ref(null)
 const model = ref(null)
 const altWinCopyPaste = ref(false)
@@ -57,7 +59,7 @@ const onChangeEngine = () => {
 }
 
 const onCancel = () => {
-  load()
+  close()
 }
 
 const onSave = () => {
@@ -65,9 +67,21 @@ const onSave = () => {
   store.config.commands.model = model.value
   store.config.automation.altWinCopyPaste = altWinCopyPaste.value
   store.saveSettings()
+  close()
 }
 
-defineExpose({ load })
+const close = () => {
+  dialog.value.close('#command-defaults')
+}
+
+defineExpose({
+  show: () => {
+    load()
+    dialog.value.show('#command-defaults')
+  },
+  close,
+})
+
 
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="variable-editor" ref="dialog">
+  <AlertDialog id="variable-editor" :icon="false" ref="dialog" @save="onSave">
     <template v-slot:header>
       <div class="title">{{ t(title) }}</div>
     </template>
@@ -58,21 +58,7 @@ onMounted(async () => {
       document.querySelector<HTMLElement>('#variable-editor [name=key]')?.focus()
     }
   }, { immediate: true })
-
-  document.addEventListener('keydown', onKeyDown)
 })
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', onKeyDown)
-})
-
-const onKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
-    close()
-  } else if (e.key === 'Enter') {
-    onSave()
-  }
-}
 
 const close = () => {
   dialog.value?.close('#variable-editor')

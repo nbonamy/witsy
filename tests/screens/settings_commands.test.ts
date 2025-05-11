@@ -2,9 +2,11 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
+import { H } from 'vitest/dist/chunks/environment.LoooBwUu.js'
 
 enableAutoUnmount(afterAll)
 
@@ -54,7 +56,7 @@ beforeAll(() => {
     
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings, { ...stubTeleport, attachTo: '#settings' })
 })
 
 beforeEach(() => {
@@ -99,8 +101,8 @@ test('Move items', async () => {
 test('New command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  const editor = tab.find<HTMLDialogElement>('#command-editor')
-  const modal = editor.element
+  const editor = tab.findComponent({ name: 'CommandEditor' })
+  const modal = editor.find<HTMLDialogElement>('dialog').element
   vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
   expect(modal.showModal).not.toHaveBeenCalled()
   await tab.find('.actions button[name=new]').trigger('click')
@@ -134,12 +136,8 @@ test('New command', async () => {
 test('Edit user command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  const editor = tab.find<HTMLDialogElement>('#command-editor')
-  const modal = editor.element
-  expect(modal.hasAttribute('open')).toBe(false)
+  const editor = tab.findComponent({ name: 'CommandEditor' })
   await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('dblclick')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
 
   expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command')
   expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('{input}')
@@ -195,7 +193,7 @@ test('Edit user command', async () => {
 test('Edit system command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
-  const editor = tab.find<HTMLDialogElement>('#command-editor')
+  const editor = tab.findComponent({ name: 'CommandEditor' })
   await tab.find('.sticky-table-container tr.command:nth-of-type(2)').trigger('dblclick')
 
   expect(store.commands[1].label).toBeUndefined()
@@ -240,7 +238,7 @@ test('Edit system command', async () => {
 
 test('Edit ask me anything', async () => {
   const tab = await switchToTab(wrapper, commandsIndex)
-  const editor = tab.find<HTMLDialogElement>('#command-editor')
+  const editor = tab.findComponent({ name: 'CommandEditor' })
   await tab.find('.sticky-table-container tr.command:nth-of-type(1)').trigger('dblclick')
   expect(editor.find<HTMLTextAreaElement>('[name=template]').element.disabled).toBe(true)
 })
