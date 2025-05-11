@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, computed } from 'vue'
+import { ref, Ref, onMounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { store } from '../services/store'
@@ -88,10 +88,9 @@ import Spinner from '../components/Spinner.vue'
 import useEventBus from '../composables/event_bus'
 const { onEvent, emitEvent } = useEventBus()
 
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const docRepos = ref(null)
-const plusButton = ref(null)
 const selectedRepo: Ref<DocumentBase | null> = ref(null)
 const modelReady = ref(true)
 const loading = ref(false)
@@ -247,9 +246,9 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
   loading.value = false
 }
 
-const onRefreshDoc = (doc: DocumentSource) => {
-  window.api.docrepo.refreshDocument(selectedRepo.value.uuid, doc.uuid)
-}
+// const onRefreshDoc = (doc: DocumentSource) => {
+//   window.api.docrepo.refreshDocument(selectedRepo.value.uuid, doc.uuid)
+// }
 
 </script>
 
