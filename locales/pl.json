@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Dodaj pliki...",
-      "addFolder": "Dodaj folder..."
-    },
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
     "back": "Powrót",
@@ -402,6 +398,9 @@
       "working": "Zastanawiam się, co zrobić dalej…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Konsola debugowania"
   },
   "designStudio": {
     "confirmDelete": "Czy na pewno chcesz usunąć ten nośnik?",
@@ -1299,10 +1298,8 @@
       "title": "Pomoc"
     },
     "view": {
+      "debug": "Otwórz konsolę debugowania",
       "title": "Widok"
-    },
-    "window": {
-      "debug": "Otwórz konsolę debugowania"
     }
   },
   "message": {
@@ -1471,6 +1468,10 @@
     },
     "appearance": {
       "chatFont": "Czcionka czatu",
+      "chatFontExample": {
+        "text": "Tak wygląda wiadomość czatu.",
+        "title": "Przykład wiadomości czatu"
+      },
       "chatFontSize": "Rozmiar czcionki czatu",
       "chatListLayout": "Układ listy czatów",
       "chatListLayouts": {
@@ -1529,7 +1530,6 @@
         "apiVersion": "Wersja API",
         "confirmDelete": "Czy na pewno chcesz usunąć tego niestandardowego dostawcę?",
         "create": "Tworzenie silnika",
-        "delete": "Usuń silnik",
         "deployment": "Wdrożenie",
         "endpoint": "Punkt końcowy"
       },
@@ -1646,16 +1646,13 @@
           "title": "Importuj z Json"
         },
         "importSmitheryServer": "Import serwera Smithery.ai...",
-        "mcpServers": "Serwery MCP:",
+        "mcpServers": "Serwery MCP",
         "modelContextProtocol": "Protokół Kontekstu Modelu",
         "noServersFound": "Nie znaleziono serwerów MCP",
         "noTools": "Brak dostępnych narzędzi",
-        "restartClient": "Uruchom ponownie klienta",
         "serverLogs": "Dzienniki serwera MCP",
         "servers": "serwerów. Wykrywanie i instalowanie serwerów MCP z poziomu",
         "smithery": "Smithery",
-        "status": "Status",
-        "target": "Cel",
         "title": "MCP",
         "tools": "Narzędzia",
         "totalTools": "Łącznie {count} narzędzi{count > 1 ? 'i' : 'e'} dostępne"

@@ -1,11 +1,11 @@
 <template>
-  <div class="debug window">
-    
+  <div class="debug panel-content window">
     <div class="panel">
-      <div class="actions">
+      <header>
+        <div class="title">{{ t('debugConsole.title') }}</div>
         <BIconTrash @click="clearRequests"/>
-      </div>
-      <div class="list">
+      </header>
+      <main class="list">
         <div v-if="requests.length === 0" class="empty">
           No network requests captured yet
         </div>
@@ -17,16 +17,16 @@
             <span v-else class="status pending" >•••</span>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
     <div class="details content">
-      <div class="toolbar">
+      <header>
         <template v-if="selected">
           <div class="title">{{ selected.method }} {{ selected.url }}</div>
         </template>
-      </div>
-      <template v-if="selected">
+      </header>
+      <main v-if="selected">
         <div class="tabs">
           <button :class="{ active: activeTab === 'request' }" @click="activeTab = 'request'">Request</button>
           <button :class="{ active: activeTab === 'response' }" @click="activeTab = 'response'">Response</button>
@@ -51,7 +51,7 @@
             </div>
           </template>
         </div>
-      </template>
+      </main>
     </div>
   </div>
 </template>
@@ -143,174 +143,174 @@ const selectRequest = (request: NetworkRequest) => {
 
 <style scoped>
 
-:root {
-  --debug-panel-width: 200px;
-}
+.panel-content {
 
-.panel {
-  flex: 0 0 var(--debug-panel-width);
-}
-
-.list {
-  padding: 0px 0px;
-  overflow-y: auto;
-  max-width: 280px;
-}
-
-.empty {
-  padding: 32px;
-  text-align: center;
-}
-
-.item {
-  display: flex;
-  gap: 8px;
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--dialog-border-color);
-  cursor: pointer;
-  font-size: 10pt;
-}
-
-.item:first-child {
-  border-top: 1px solid var(--dialog-border-color);
-}
-
-.item.selected {
-  background-color: var(--sidebar-selected-color);
-}
-
-.url {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.status {
-  color: #4caf50;
-}
-
-.status.pending {
-  color: #ff9800;
-}
-
-.status.error {
-  color: #f44336;
-}
-
-.details {
-  width: calc(100% - var(--create-panel-width));
-  --preview-padding: 32px;
-}
-
-.tabs {
-  padding-bottom: 8px;
-}
-
-.tabs button {
-  padding: 8px 16px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  cursor: pointer;
-  color: var(--text-color, #666);
-  font-size: 10.5pt;
-
-  &:hover {
-    background: none;
+  .panel {
+    flex: 0 0 250px;
   }
 
-  &.active {
-    border-bottom-color: var(--primary-color, #2196F3);
-    color: var(--primary-color, #2196F3);
+  .list {
+    padding: 0px 0px;
+    overflow-y: auto;
+    max-width: 280px;
   }
 
-}
+  .empty {
+    padding: 32px;
+    text-align: center;
+  }
 
-.tab-content {
-  padding: 24px;
-  padding-top: 0px;
-  overflow-y: auto;
-  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--control-bg-color);
-  flex: 1;
-}
-
-.section {
-  margin-bottom: 20px;
-}
-
-.section h3 {
-  margin-bottom: 8px;
-  font-size: 1rem;
-  color: var(--text-color);
-}
-
-pre {
-  position: relative;
-  white-space: pre-wrap;
-  word-break: break-all;
-  background-color: rgb(13,13,13);
-  color: #fff;
-  padding: 12px;
-  padding-top: 36px;
-  border-radius: 8px;
-  font-size: 10.5pt;
-
-  .copy {
+  .item {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--dialog-border-color);
     cursor: pointer;
-    position: absolute;
-    right: 24px;
-    top: 8px;
-    font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
-    font-size: 10.5pt;
-    &.copying {
-      opacity: 0.4;
-    }
+    font-size: 10pt;
   }
-}
 
-.json {
-  background-color: rgb(13,13,13);
-  border-radius: 8px;
-  color: white;
+  .item:first-child {
+    border-top: 1px solid var(--dialog-border-color);
+  }
 
-  &:deep() {
-    
-    span, a {
+  .item.selected {
+    background-color: var(--sidebar-selected-color);
+  }
+
+  .url {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status {
+    color: #4caf50;
+  }
+
+  .status.pending {
+    color: #ff9800;
+  }
+
+  .status.error {
+    color: #f44336;
+  }
+
+  .details {
+    width: calc(100% - var(--create-panel-width));
+    --preview-padding: 32px;
+  }
+
+  .tabs {
+    padding-bottom: 8px;
+  }
+
+  .tabs button {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    color: var(--text-color, #666);
+    font-size: 10.5pt;
+
+    &:hover {
+      background: none;
+    }
+
+    &.active {
+      border-bottom-color: var(--primary-color, #2196F3);
+      color: var(--primary-color, #2196F3);
+    }
+
+  }
+
+  .tab-content {
+    padding: 24px;
+    padding-top: 0px;
+    overflow-y: auto;
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--control-bg-color);
+    flex: 1;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section h3 {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    color: var(--text-color);
+  }
+
+  pre {
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-all;
+    background-color: rgb(13,13,13);
+    color: #fff;
+    padding: 12px;
+    padding-top: 36px;
+    border-radius: 8px;
+    font-size: 10.5pt;
+
+    .copy {
+      cursor: pointer;
+      position: absolute;
+      right: 24px;
+      top: 8px;
       font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
       font-size: 10.5pt;
-    }
-
-    .jv-code {
-      padding: 12px;
-      white-space: pre-wrap;
-    }
-
-    .jv-ellipsis {
-      cursor: pointer;
-    }
-
-    .jv-toggle {
-      background: none;
-      &::before {
-        color: var(--link-color);
-        content : '⏵';
-      }
-      &.open {
-        position: relative;
-        top: 4px;
-        left: 2px;
+      &.copying {
+        opacity: 0.4;
       }
     }
-  
   }
 
-  &.expanded :deep() {
-    .jv-toggle {
-      display: none
+  .json {
+    background-color: rgb(13,13,13);
+    border-radius: 8px;
+    color: white;
+
+    &:deep() {
+      
+      span, a {
+        font-family: SF Mono,Monaco,Andale Mono,Ubuntu Mono,monospace !important;
+        font-size: 10.5pt;
+      }
+
+      .jv-code {
+        padding: 12px;
+        white-space: pre-wrap;
+      }
+
+      .jv-ellipsis {
+        cursor: pointer;
+      }
+
+      .jv-toggle {
+        background: none;
+        &::before {
+          color: var(--link-color);
+          content : '⏵';
+        }
+        &.open {
+          position: relative;
+          top: 4px;
+          left: 2px;
+        }
+      }
+    
+    }
+
+    &.expanded :deep() {
+      .jv-toggle {
+        display: none
+      }
     }
   }
+
 }
 
 </style>

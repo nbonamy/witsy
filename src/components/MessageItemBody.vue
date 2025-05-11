@@ -141,11 +141,3 @@ const computeBlocks = (content: string|null): Block[] => {
   display: none;
 }
 </style>
-
-<style scoped>
-
-.text, .text * {
-  font-family: var(--messages-font);
-}
-
-</style>

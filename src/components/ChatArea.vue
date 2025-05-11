@@ -1,30 +1,30 @@
 <template>
-  <div class="chat-area">
-    <div class="toolbar" :class="{ 'is-left-most': isLeftMost }">
-      <div class="action sidebar" @click="toggleSideBar">
+  <div class="content">
+    <header :class="{ 'is-left-most': isLeftMost }">
+      <div class="icon left" @click="toggleSideBar">
         <IconSideBar />
       </div>
-      <div class="action new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
-        <BIconPencilSquare />
+      <div class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
+        <IconNewChat />
       </div>
       <div class="title" v-if="chat?.title">{{ chat.title }}</div>
-      <div class="action settings" @click="showModelSettings = !showModelSettings">
+      <div class="icon settings" @click="showModelSettings = !showModelSettings">
         <BIconSliders />
       </div>
-      <div class="action menu" @click="onMenu">
+      <div class="icon menu" @click="onMenu">
         <div></div>
         <div></div>
         <div></div>
       </div>
-    </div>
-    <div class="inside-content">
+    </header>
+    <main>
       <div class="chat-content">
         <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
         <EmptyChat v-else />
         <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" class="prompt" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
-    </div>
+    </main>
     <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
 </template>
@@ -35,6 +35,7 @@ import { Expert } from '../types/index'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
+import IconNewChat from './IconNewChat.vue'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
@@ -221,8 +222,8 @@ const onExportPdf = async () => {
 
     // now remove scroll
     content.style.height = 'auto'
-    content.querySelector<HTMLElement>('.inside-content').style.height = 'auto'
-    content.querySelector<HTMLElement>('.inside-content').style.overflow = 'visible'
+    content.querySelector<HTMLElement>('main').style.height = 'auto'
+    content.querySelector<HTMLElement>('main').style.overflow = 'visible'
 
     // adjust title
     //content.querySelector<HTMLElement>('.toolbar').style.marginTop = '-12px'
@@ -281,168 +282,103 @@ defineExpose({
 </script>
 
 <style scoped>
+@import '../../css/panel-content.css';
+</style>
 
-.macos .chat-area .toolbar.is-left-most {
-  padding-left: 90px;
+<style scoped>
+
+.macos .content header.is-left-most {
+  padding-left: 40px;
 }
 
-.chat-area {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
-  background-color: var(--message-list-bg-color);
+.panel-content {
+  
+  .content {
+
+    background-color: var(--message-list-bg-color);
+
+    header {
+
+      display: grid;
+      grid-template-columns: fit-content(24px) fit-content(24px) auto fit-content(24px) fit-content(24px);
+
+      .title {
+        grid-column: 3;
+      }
+
+      .icon {
+        margin-right: 8px;
+      }
+
+      .left {
+        position: relative;
+        top: -2px;
+        transform: scaleY(120%);
+        grid-column: 1;
+      }
+
+      .new-chat {
+        grid-column: 2;
+        &.hidden {
+          display: none;
+        }
+      }
+
+      .settings {
+        grid-column: 4;
+      }
+
+      .menu {
+        grid-column: 5;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+
+        div {
+          width: 16px;
+          height: 1.5px;
+          background-color: var(--chatarea-toolbar-icon-color);
+        }
+      }
+    }
+
+    main {
+
+      flex-direction: row;
+
+      .chat-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        &:deep() > div:first-child {
+          flex: 1;
+        }
+
+        &:deep() .prompt {
+          padding-bottom: 12px;
+        }
+      }
+
+    }
+
+    .model-settings {
+      flex: 0 0 0px;
+      transition: flex-basis 0.15s ease-in-out;
+      overflow: hidden;
+
+      &:deep() label {
+        white-space: nowrap;
+      }
+
+      &.visible {
+        flex: 0 0 var(--info-panel-width);
+      }
+    }
+
+  }
+
 }
-
-.toolbar {
-  padding: 16px;
-  -webkit-app-region: drag;
-  display: grid;
-  grid-template-columns: fit-content(24px) fit-content(24px) auto fit-content(24px) fit-content(24px);
-  background-color: var(--chatarea-toolbar-bg-color);
-
-  .title {
-    grid-column: 3;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-left: 8px;
-    color: var(--chatarea-toolbar-text-color);
-  }
-
-  .action {
-    -webkit-app-region: no-drag;
-    cursor: pointer;
-    text-align: right;
-    width: 16px;
-    height: 16px;
-    margin-right: 8px;
-    color: var(--chatarea-toolbar-icon-color);
-    fill: var(--chatarea-toolbar-icon-color);
-  }
-
-  .sidebar {
-    margin-top: -1.5px;
-    transform: scaleY(120%);
-    grid-column: 1;
-  }
-
-  .new-chat {
-    grid-column: 2;
-    &.hidden {
-      display: none;
-    }
-  }
-
-  .settings {
-    grid-column: 4;
-  }
-
-  .menu {
-    grid-column: 5;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 3px;
-
-    div {
-      width: 16px;
-      height: 1.5px;
-      background-color: var(--chatarea-toolbar-icon-color);
-    }
-  }
-}
-
-.inside-content {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  overflow-y: auto;
-
-  .chat-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    &:deep() > div:first-child {
-      flex: 1;
-    }
-
-    &:deep() .prompt {
-      padding-bottom: 12px;
-    }
-  }
-
-}
-
-.model-settings {
-  flex: 0 0 0px;
-  transition: flex-basis 0.2s ease-in-out;
-  overflow: hidden;
-
-  &:deep() label {
-    white-space: nowrap;
-  }
-
-  &.visible {
-    flex: 0 0 var(--info-panel-width);
-  }
-}
-
-.windows {
-  .toolbar {
-    padding-right: 148px;
-    .menu {
-      margin-top: 1px;
-    }
-  }
-}
-
-.linux {
-  .toolbar {
-    padding-right: 92px;
-    .menu {
-      margin-top: 0px;
-    }
-  }
-}
-
-/*.windows {
-  .toolbar {
-    grid-template-columns: fit-content(24px) fit-content(24px) fit-content(24px) fit-content(24px) auto;
-
-    .sidebar {
-      margin-top: 1px;
-      grid-column: 1;
-      order: 1;
-    }
-
-    .new-chat {
-      margin-top: 3px;
-      grid-column: 2;
-      order: 2;
-    }
-
-    .settings {
-      margin-top: 2px;
-      grid-column: 3;
-      order: 3;
-    }
-    
-    .menu {
-      margin-top: 4px;
-      grid-column: 4;
-      order: 4;
-    }
-
-    .title {
-      margin-left: 8px;
-      grid-column: 5;
-      order: 5;
-    }
-
-  }
-}*/
 
 </style>

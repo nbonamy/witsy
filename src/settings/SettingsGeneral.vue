@@ -1,41 +1,46 @@
 <template>
-  <div class="content">
-    <div class="group prompt">
-      <label>{{ t('settings.general.promptLLMModel') }}</label>
-      <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />&nbsp;
-      <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
-    </div>
-    <div class="group localeUI">
-      <label>{{ t('settings.general.localeUI') }}</label>
-      <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
-    </div>
-    <div class="group localeLLM">
-      <label>{{ t('settings.general.localeLLM') }}</label>
-      <div class="subgroup">
-        <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
-        <div class="checkbox">
-          <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
-          <div class="label">{{ t('settings.general.forceLocale') }}</div>
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.general') }}</div>
+    </header>
+    <main>
+      <div class="group prompt">
+        <label>{{ t('settings.general.promptLLMModel') }}</label>
+        <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
+        <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+      </div>
+      <div class="group localeUI">
+        <label>{{ t('settings.general.localeUI') }}</label>
+        <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
+      </div>
+      <div class="group localeLLM">
+        <label>{{ t('settings.general.localeLLM') }}</label>
+        <div class="subgroup">
+          <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
+          <div class="checkbox">
+            <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
+            <div class="label">{{ t('settings.general.forceLocale') }}</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="group reset-tips">
-      <label>{{ t('settings.general.resetTips') }}</label>
-      <button @click.prevent="onResetTips">{{ t('common.reset') }}</button>
-    </div>
-    <div class="group run-at-login">
-      <label>{{ t('settings.general.runAtLogin') }}</label>
-      <input type="checkbox" v-model="runAtLogin" @change="save" />
-    </div>
-    <div class="group hide-on-startup">
-      <label>{{ t('settings.general.hideOnStartup') }}</label>
-      <input type="checkbox" v-model="hideOnStartup" @change="save" />
-    </div>
-    <div class="group keep-running">
-      <label>{{ t('settings.general.keepInStatusBar') }}</label>
-      <input type="checkbox" v-model="keepRunning" @change="save" />
-    </div>
-  </div>
+      <div class="group reset-tips">
+        <label>{{ t('settings.general.resetTips') }}</label>
+        <button @click.prevent="onResetTips">{{ t('common.reset') }}</button>
+      </div>
+      <div class="group horizontal run-at-login">
+        <input type="checkbox" v-model="runAtLogin" @change="save" />
+        <label>{{ t('settings.general.runAtLogin') }}</label>
+      </div>
+      <div class="group horizontal hide-on-startup">
+        <input type="checkbox" v-model="hideOnStartup" @change="save" />
+        <label>{{ t('settings.general.hideOnStartup') }}</label>
+      </div>
+      <div class="group horizontal keep-running">
+        <input type="checkbox" v-model="keepRunning" @change="save" />
+        <label>{{ t('settings.general.keepInStatusBar') }}</label>
+      </div>
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -124,7 +129,6 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>
 

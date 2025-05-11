@@ -25,9 +25,10 @@
       <div class="group">
         <label>{{ t('settings.engines.chatModel') }}</label>
         <div class="subgroup">
-          <Combobox name="models" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save" />
+          <Combobox name="models" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save">
+            <button name="refresh"@click.prevent="onRefresh">{{ refreshLabel }}</button>
+          </Combobox>
         </div>
-        <button name="refresh"@click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
     </template>
     <template v-if="api === 'azure'">
@@ -48,10 +49,9 @@
         <input name="apiVersion" v-model="apiVersion" />
       </div>
     </template>
-    <div class="group">
-      <label></label>
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
-      {{  t('settings.engines.disableTools') }}
+    <div class="group horizontal">
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
+      <label>{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
@@ -183,7 +183,5 @@ defineExpose({ load, loadModels: onRefresh })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>

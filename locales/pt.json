@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Adicionar Arquivos…",
-      "addFolder": "Adicionar Pastas…"
-    },
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "back": "Voltar",
@@ -402,6 +398,9 @@
       "working": "Pensando no que fazer a seguir…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Console de Depuração"
   },
   "designStudio": {
     "confirmDelete": "Tem certeza de que deseja excluir esta mídia?",
@@ -1299,10 +1298,8 @@
       "title": "Ajuda"
     },
     "view": {
+      "debug": "Abrir Console de Depuração",
       "title": "Visualizar"
-    },
-    "window": {
-      "debug": "Abrir Console de Depuração"
     }
   },
   "message": {
@@ -1471,6 +1468,10 @@
     },
     "appearance": {
       "chatFont": "Fonte do chat",
+      "chatFontExample": {
+        "text": "Assim é como uma mensagem de chat aparece.",
+        "title": "Exemplo de mensagem de chat"
+      },
       "chatFontSize": "Tamanho da fonte do chat",
       "chatListLayout": "Layout da lista de chats",
       "chatListLayouts": {
@@ -1529,7 +1530,6 @@
         "apiVersion": "Versão da API",
         "confirmDelete": "Tem certeza de que deseja excluir este provedor personalizado?",
         "create": "Criar mecanismo",
-        "delete": "Excluir mecanismo",
         "deployment": "Implantação",
         "endpoint": "Endpoint"
       },
@@ -1640,16 +1640,13 @@
           "title": "Importar do Json"
         },
         "importSmitheryServer": "Importar servidor Smithery.ai…",
-        "mcpServers": "Servidores MCP:",
+        "mcpServers": "Servidores MCP",
         "modelContextProtocol": "Protocolo de Contexto de Modelo",
         "noServersFound": "Nenhum Servidor MCP encontrado",
         "noTools": "Nenhuma ferramenta disponível",
-        "restartClient": "Reiniciar cliente",
         "serverLogs": "Logs do Servidor MCP",
         "servers": "servidores. Descubra e instale servidores MCP do",
         "smithery": "Smithery",
-        "status": "Status",
-        "target": "Alvo",
         "title": "MCP",
         "tools": "Ferramentas",
         "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"

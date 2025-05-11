@@ -62,10 +62,13 @@ form .group .wrapper input {
 }
 
 .icon {
+  background-color: var(--control-bg-color);
   cursor: pointer;
   position: absolute;
-  top: 5.5px;
-  right: 6px;
+  top: calc(50% - 0.5rem);
+  padding-left: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
 }
 
 </style>

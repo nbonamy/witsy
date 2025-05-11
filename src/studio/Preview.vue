@@ -1,41 +1,42 @@
 <template>
-  <div class="preview content">
-    <div class="toolbar">
+  <div class="preview">
+    <header class="toolbar">
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
-        <div class="action undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
+        <div class="push"></div>
+        <div class="icon undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
           <BIconArrowCounterclockwise />
         </div>
-        <div class="action redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
+        <div class="icon redo" @click="$emit('redo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canRedo }">
           <BIconArrowClockwise />
         </div>
-        <div class="action info" @click="onInfo">
+        <div class="icon info" @click="onInfo">
           <BIconInfoCircle />
         </div>
-        <div class="action fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
+        <div class="icon fullscreen" @click="onFullScreen" v-if="!message.isVideo()">
           <BIconFullscreen />
         </div>
-        <div class="action copy" @click="onCopy" v-if="!message.isVideo()">
+        <div class="icon copy" @click="onCopy" v-if="!message.isVideo()">
           <BIconClipboardCheck v-if="copying" />
           <BIconClipboard v-else />
         </div>
-        <div class="action save" @click="onDownload">
+        <div class="icon save" @click="onDownload">
           <BIconDownload />
         </div>
-        <div class="action delete" @click="onDelete">
+        <div class="icon delete" @click="onDelete">
           <BIconTrash />
         </div>
       </template>
-    </div>
-    <div v-if="!message" class="empty">
+    </header>
+    <main v-if="!message" class="empty">
       <div v-if="isGenerating" class="loading">
         <Loader />
         <Loader />
         <Loader />
       </div>
       <span v-else>{{ t('designStudio.emptyPlaceholder') }}</span>
-    </div>
-    <div v-else class="media">
+    </main>
+    <main v-else class="media">
       <video v-if="message.isVideo()" :src="message.attachment.url" :alt="message.content" class="video" controls ref="mediaElement" @loadeddata="updateOverlay" />
       <img v-else :src="message.attachment.url" @click="onFullScreen" ref="mediaElement" @load="updateOverlay" />
       <div v-if="isGenerating" class="overlay loading" ref="overlayElement">
@@ -43,7 +44,7 @@
         <Loader />
         <Loader />
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -206,7 +207,7 @@ const onDelete = () => {
   .media {
     position: relative;
     width: calc(100% - var(--preview-padding) * 2);
-    height: calc(100% - var(--toolbar-height) - var(--preview-padding) * 2);
+    height: calc(100% - var(--window-toolbar-height) - var(--preview-padding) * 2);
     display: flex;
     justify-content: center;
     align-items: center;

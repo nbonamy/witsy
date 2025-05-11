@@ -1,59 +1,64 @@
 <template>
-  <div class="content large">
-    <div class="group vision top checkbox">
-      <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
-      <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
-    </div>
-    <div class="group autosave checkbox">
-      <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
-      <input type="checkbox" v-model="autoSavePrompt" @change="save" />
-    </div>
-    <div class="group proxy checkbox">
-      <label>{{ t('settings.advanced.bypassProxy') }}</label>
-      <input type="checkbox" v-model="bypassProxy" @change="save" />
-    </div>
-    <hr/>
-    <div class="group length">
-      <label>{{ t('settings.advanced.conversationLength') }}</label>
-      <input type="number" min="1" v-model="conversationLength" @change="save">
-    </div>
-    <div class="group size">
-      <label>{{ t('settings.advanced.imageResize') }}</label>
-      <select v-model="imageResize" @change="save">
-        <option value="0">{{ t('settings.advanced.imageResizeOptions.none') }}</option>
-        <option value="512">{{ t('settings.advanced.imageResizeOptions.size', { size: 512 }) }}</option>
-        <option value="768">{{ t('settings.advanced.imageResizeOptions.size', { size: 768 }) }}</option>
-        <option value="1024">{{ t('settings.advanced.imageResizeOptions.size', { size: 1024 }) }}</option>
-        <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
-      </select>
-    </div>
-    <div class="group instruction">
-      <label>{{ t('settings.advanced.systemInstructions') }}</label>
-      <div class="subgroup">
-        <select v-model="instructions" @change="onChangeInstructions">
-          <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
-          <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
-          <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
-          <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
-          <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
-          <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
-          <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>
-          <option value="instructions.scratchpad.system">{{ t('settings.advanced.instructions.scratchpad_system') }}</option>
-          <option value="instructions.scratchpad.prompt">{{ t('settings.advanced.instructions.scratchpad_prompt') }}</option>
-          <option value="instructions.scratchpad.spellcheck">{{ t('settings.advanced.instructions.scratchpad_spellcheck') }}</option>
-          <option value="instructions.scratchpad.improve">{{ t('settings.advanced.instructions.scratchpad_improve') }}</option>
-          <option value="instructions.scratchpad.takeaways">{{ t('settings.advanced.instructions.scratchpad_takeaways') }}</option>
-          <option value="instructions.scratchpad.title">{{ t('settings.advanced.instructions.scratchpad_title') }}</option>
-          <option value="instructions.scratchpad.simplify">{{ t('settings.advanced.instructions.scratchpad_simplify') }}</option>
-          <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
-          <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
-        </select>
-        <textarea v-model="prompt" @change="save" @keyup="save" />
-        <a href="#" @click="onResetDefaultInstructions" v-if="isPromptOverridden">{{ t('settings.advanced.resetToDefault') }}</a>
-        <span v-else>{{ t('settings.advanced.overridingHelp') }}</span>
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.advanced') }}</div>
+    </header>
+    <main>
+      <div class="group vision top horizontal">
+        <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
+        <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
       </div>
-    </div>
-  </div>
+      <div class="group autosave horizontal">
+        <input type="checkbox" v-model="autoSavePrompt" @change="save" />
+        <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
+      </div>
+      <div class="group proxy horizontal">
+        <input type="checkbox" v-model="bypassProxy" @change="save" />
+        <label>{{ t('settings.advanced.bypassProxy') }}</label>
+      </div>
+      <hr/>
+      <div class="group length">
+        <label>{{ t('settings.advanced.conversationLength') }}</label>
+        <input type="number" min="1" v-model="conversationLength" @change="save">
+      </div>
+      <div class="group size">
+        <label>{{ t('settings.advanced.imageResize') }}</label>
+        <select v-model="imageResize" @change="save">
+          <option value="0">{{ t('settings.advanced.imageResizeOptions.none') }}</option>
+          <option value="512">{{ t('settings.advanced.imageResizeOptions.size', { size: 512 }) }}</option>
+          <option value="768">{{ t('settings.advanced.imageResizeOptions.size', { size: 768 }) }}</option>
+          <option value="1024">{{ t('settings.advanced.imageResizeOptions.size', { size: 1024 }) }}</option>
+          <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
+        </select>
+      </div>
+      <div class="group instruction">
+        <label>{{ t('settings.advanced.systemInstructions') }}</label>
+        <div class="subgroup">
+          <select v-model="instructions" @change="onChangeInstructions">
+            <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
+            <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
+            <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
+            <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
+            <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
+            <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
+            <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>
+            <option value="instructions.scratchpad.system">{{ t('settings.advanced.instructions.scratchpad_system') }}</option>
+            <option value="instructions.scratchpad.prompt">{{ t('settings.advanced.instructions.scratchpad_prompt') }}</option>
+            <option value="instructions.scratchpad.spellcheck">{{ t('settings.advanced.instructions.scratchpad_spellcheck') }}</option>
+            <option value="instructions.scratchpad.improve">{{ t('settings.advanced.instructions.scratchpad_improve') }}</option>
+            <option value="instructions.scratchpad.takeaways">{{ t('settings.advanced.instructions.scratchpad_takeaways') }}</option>
+            <option value="instructions.scratchpad.title">{{ t('settings.advanced.instructions.scratchpad_title') }}</option>
+            <option value="instructions.scratchpad.simplify">{{ t('settings.advanced.instructions.scratchpad_simplify') }}</option>
+            <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
+            <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
+          </select>
+          <textarea v-model="prompt" @change="save" @keyup="save" />
+          <a href="#" @click="onResetDefaultInstructions" v-if="isPromptOverridden">{{ t('settings.advanced.resetToDefault') }}</a>
+          <span v-else>{{ t('settings.advanced.overridingHelp') }}</span>
+        </div>
+      </div>
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -125,23 +130,10 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>
 
 <style scoped>
-.checkbox label {
-  width: 370px;
-}
-
-hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid var(--control-bg-color);
-  margin: 1em 0;
-  padding: 0;
-}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -149,20 +141,11 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-form .group label {
-  min-width: 180px;
-}
-
-form .group.checkbox label {
-  min-width: 140px;
-}
-
 .subgroup select {
   margin-bottom: 0.5rem;
 }
 
 .subgroup textarea {
-  width: 100%;
-  height: 100px;
+  height: 150px;
 }
 </style>

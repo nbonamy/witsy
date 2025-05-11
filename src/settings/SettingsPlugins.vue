@@ -1,18 +1,23 @@
 <template>
-  <div class="content">
-    <div class="list-panel">
-      <div class="master">
-        <div class="list">
-          <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
-            <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
-            <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
-            {{ plugin.label }}
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.plugins') }}</div>
+    </header>
+    <main>
+      <div class="list-panel">
+        <div class="master">
+          <div class="list">
+            <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
+              <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
+              <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
+              {{ plugin.label }}
+            </div>
           </div>
         </div>
+        <component :is="currentView" class="panel" ref="pluginSettings" />
       </div>
-      <component :is="currentView" class="panel" ref="pluginSettings" />
-    </div>
-  </div>
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -28,11 +33,9 @@ import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsVega from './SettingsVega.vue'
-import SettingsMcp from './SettingsMcp.vue'
 import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill } from 'bootstrap-icons-vue'
 import WIconPython from '../../assets/python.svg?component'
 import WIconVega from '../../assets/vega.svg?component'
-import WIconMcp from '../../assets/mcp.svg?component'
 
 const currentPlugin = ref(Object.keys(availablePlugins)[0])
 const pluginSettings = ref(null)
@@ -45,7 +48,7 @@ type PluginUI = {
 
 const plugins = computed((): PluginUI[] => {
 
-  let res = Object.keys(availablePlugins).map(plugin => {
+  let res = Object.keys(availablePlugins).filter(plugin => plugin != 'mcp').map(plugin => {
     return {
       id: plugin,
       label: t(`settings.plugins.${plugin}.title`),
@@ -58,7 +61,7 @@ const plugins = computed((): PluginUI[] => {
         memory: { icon: BIconPersonVcardFill },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
-        mcp: { icon: WIconMcp },
+        // mcp: { icon: WIconMcp },
       }[plugin],
     }
   })
@@ -74,7 +77,6 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'youtube') return SettingsYouTube
   if (currentPlugin.value == 'memory') return SettingsMemory
   if (currentPlugin.value == 'vega') return SettingsVega
-  if (currentPlugin.value == 'mcp') return SettingsMcp
 })
 
 const selectPlugin = (plugin: PluginUI) => {
@@ -95,6 +97,5 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>

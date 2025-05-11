@@ -166,7 +166,7 @@ test('Favorites', async () => {
 test('History', async () => {
 
   const wrapper = mount(DesignStudio)
-  await wrapper.find('.actions > *').trigger('click')
+  await wrapper.find('.button-group button:nth-child(2)').trigger('click')
   expect(wrapper.findComponent({ name: 'Settings' }).classes()).toContain('hidden')
   const history = wrapper.findComponent({ name: 'History' })
   expect(history.classes()).not.toContain('hidden')
@@ -418,22 +418,22 @@ test('Preview', async () => {
   expect(preview.find<HTMLImageElement>('img').element.src).toBe('file://url1.jpg/')
 
   // info
-  await preview.find<HTMLElement>('.action.info').trigger('click')
+  await preview.find<HTMLElement>('.icon.info').trigger('click')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'prompt1',
     detail: 'Engine: openai\nModel: dall-e-3',
   }))
 
   // fullscreen
-  await preview.find<HTMLElement>('.action.fullscreen').trigger('click')
+  await preview.find<HTMLElement>('.icon.fullscreen').trigger('click')
   expect(preview.emitted()['fullscreen']).toHaveLength(1)
 
   // copy
-  await preview.find<HTMLElement>('.action.copy').trigger('click')
+  await preview.find<HTMLElement>('.icon.copy').trigger('click')
   expect(window.api.clipboard.writeImage).toHaveBeenLastCalledWith('file://url1.jpg')
 
   // save
-  await preview.find<HTMLElement>('.action.save').trigger('click')
+  await preview.find<HTMLElement>('.icon.save').trigger('click')
   expect(window.api.file.download).toHaveBeenLastCalledWith({
     url: 'file://url1.jpg',
     properties: {
@@ -444,7 +444,7 @@ test('Preview', async () => {
   })
 
   // delete
-  await preview.find<HTMLElement>('.action.delete').trigger('click')
+  await preview.find<HTMLElement>('.icon.delete').trigger('click')
   expect(preview.emitted()['delete']).toHaveLength(1)
 
 })
@@ -596,12 +596,12 @@ test('Undo / Redo', async () => {
   await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
 
   const preview = wrapper.findComponent({ name: 'Preview' })
-  expect(preview.find('.action.undo').exists()).toBe(true)
-  expect(preview.find('.action.redo').exists()).toBe(true)
-  expect(preview.find('.action.undo').classes()).not.toContain('disabled')
-  expect(preview.find('.action.redo').classes()).toContain('disabled')
+  expect(preview.find('.icon.undo').exists()).toBe(true)
+  expect(preview.find('.icon.redo').exists()).toBe(true)
+  expect(preview.find('.icon.undo').classes()).not.toContain('disabled')
+  expect(preview.find('.icon.redo').classes()).toContain('disabled')
 
-  await preview.find<HTMLElement>('.action.undo').trigger('click')
+  await preview.find<HTMLElement>('.icon.undo').trigger('click')
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://google/gemini-2/prompt')
 
@@ -635,10 +635,10 @@ test('Undo / Redo', async () => {
     toolCall: null
   })
 
-  expect(preview.find('.action.undo').classes()).toContain('disabled')
-  expect(preview.find('.action.redo').classes()).not.toContain('disabled')
+  expect(preview.find('.icon.undo').classes()).toContain('disabled')
+  expect(preview.find('.icon.redo').classes()).not.toContain('disabled')
 
-  await preview.find<HTMLElement>('.action.redo').trigger('click')
+  await preview.find<HTMLElement>('.icon.redo').trigger('click')
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 

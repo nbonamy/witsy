@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "添加文件…",
-      "addFolder": "添加文件夹…"
-    },
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "back": "返回",
@@ -402,6 +398,9 @@
       "working": "正在思考下一步该做什么…"
     },
     "title": "计算机使用"
+  },
+  "debugConsole": {
+    "title": "调试控制台"
   },
   "designStudio": {
     "confirmDelete": "你确定要删除这个媒体吗？",
@@ -1299,10 +1298,8 @@
       "title": "帮助"
     },
     "view": {
+      "debug": "打开调试控制台",
       "title": "查看"
-    },
-    "window": {
-      "debug": "打开调试控制台"
     }
   },
   "message": {
@@ -1471,6 +1468,10 @@
     },
     "appearance": {
       "chatFont": "聊天字体",
+      "chatFontExample": {
+        "text": "这就是聊天信息的样子。",
+        "title": "聊天信息示例"
+      },
       "chatFontSize": "聊天字体大小",
       "chatListLayout": "聊天列表布局",
       "chatListLayouts": {
@@ -1529,7 +1530,6 @@
         "apiVersion": "API 版本",
         "confirmDelete": "你确定要删除这个自定义提供程序吗？",
         "create": "创建引擎",
-        "delete": "删除引擎",
         "deployment": "部署",
         "endpoint": "端点"
       },
@@ -1640,16 +1640,13 @@
           "title": "从Json导入"
         },
         "importSmitheryServer": "导入 Smithery.ai 服务器…",
-        "mcpServers": "MCP 服务器：",
+        "mcpServers": "MCP 服务器",
         "modelContextProtocol": "模型上下文协议",
         "noServersFound": "未找到 MCP 服务器",
         "noTools": "没有可用工具",
-        "restartClient": "重启客户端",
         "serverLogs": "MCP 服务器日志",
         "servers": "服务器。从",
         "smithery": "Smithery",
-        "status": "状态",
-        "target": "目标",
         "title": "MCP",
         "tools": "工具",
         "totalTools": "总共 {count} 个服务可用"

@@ -5,9 +5,9 @@
       {{ t('settings.plugins.python.description2') }}
       <b>{{ t('settings.plugins.python.useAtOwnRisk') }}</b>!
     </div>
-    <div class="group">
-      <label>{{ t('common.enabled') }}</label>
+    <div class="group horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
+      <label>{{ t('common.enabled') }}</label>
     </div>
     <div class="group">
       <label>{{ t('settings.plugins.python.binaryPath') }}</label>
@@ -64,9 +64,7 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>
 
 <style scoped>

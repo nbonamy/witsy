@@ -1,46 +1,51 @@
 <template>
-  <div class="content">
-    <div class="group">
-      <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
-      <InputShortcut v-model="prompt" @change="save" />
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.newChat') }}</label>
-      <InputShortcut v-model="chat" @change="save "/>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.scratchpad') }}</label>
-      <InputShortcut v-model="scratchpad" @change="save "/>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.aiCommands') }}</label>
-      <div class="subgroup">
-        <InputShortcut v-model="command" @change="save" />
-        <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.shortcuts') }}</div>
+    </header>
+    <main>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
+        <InputShortcut v-model="prompt" @change="save" />
       </div>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.designStudio') }}</label>
-      <div class="subgroup">
-        <InputShortcut v-model="studio" @change="save" />
+      <div class="group">
+        <label>{{ t('settings.shortcuts.newChat') }}</label>
+        <InputShortcut v-model="chat" @change="save "/>
       </div>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.readAloud') }}</label>
-      <div class="subgroup">
-        <InputShortcut v-model="readaloud" @change="save" />
-        <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.scratchpad') }}</label>
+        <InputShortcut v-model="scratchpad" @change="save "/>
       </div>
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.dictation') }}</label>
-      <InputShortcut v-model="transcribe" @change="save" />
-    </div>
-    <div class="group">
-      <label>{{ t('settings.shortcuts.voiceMode') }}</label>
-      <InputShortcut v-model="realtime" @change="save" />
-    </div>
-  </div>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.aiCommands') }}</label>
+        <div class="subgroup">
+          <InputShortcut v-model="command" @change="save" />
+          <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
+        </div>
+      </div>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.designStudio') }}</label>
+        <div class="subgroup">
+          <InputShortcut v-model="studio" @change="save" />
+        </div>
+      </div>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.readAloud') }}</label>
+        <div class="subgroup">
+          <InputShortcut v-model="readaloud" @change="save" />
+          <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
+        </div>
+      </div>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.dictation') }}</label>
+        <InputShortcut v-model="transcribe" @change="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.shortcuts.voiceMode') }}</label>
+        <InputShortcut v-model="realtime" @change="save" />
+      </div>
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -89,6 +94,14 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
+</style>
+
+<style scoped>
+
+.settings .tab-content main {
+  min-width: auto;
+  max-width: 350px;  
+}
+
 </style>

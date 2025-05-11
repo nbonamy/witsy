@@ -18,7 +18,7 @@ export const wait = async (millis = 200) => {
   }
 }
 
-export const fixPath = (): void => {
+export const fixPath = async (): Promise<void> => {
 
   try {
 

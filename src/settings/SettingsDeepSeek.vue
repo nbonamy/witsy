@@ -10,20 +10,21 @@
     <div class="group">
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
-        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-          <option v-for="model in chat_models" :key="model.id" :value="model.id">
-            {{ model.name }}
-          </option>
-        </select>
+        <div class="control-group">
+          <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+            <option v-for="model in chat_models" :key="model.id" :value="model.id">
+              {{ model.name }}
+            </option>
+          </select>
+          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+        </div>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.aboutModels') }}</a>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.pricing') }}</a>
       </div>
-      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
     </div>
-    <div class="group">
-      <label></label>
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
-      {{  t('settings.engines.disableTools') }}
+    <div class="group horizontal">
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
+      <label>{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
@@ -100,7 +101,5 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>

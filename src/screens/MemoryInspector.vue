@@ -24,7 +24,7 @@
             </tbody>
           </table>
         </div>
-        <div>{{ t('memory.inspector.shiftDelete') }}</div>
+        <div v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
       </main>
       <footer>
         <button @click.prevent="onClose">{{ t('common.close') }}</button>

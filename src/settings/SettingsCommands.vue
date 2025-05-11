@@ -1,40 +1,45 @@
 <template>
-  <div class="content large" @click="closeContextMenu">
-    <div class="commands sticky-table-container">
-      <table>
-        <thead>
-          <tr>
-            <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
-              @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
-          >
-            <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
-            <td class="icon">{{ command.icon }}</td>
-            <td class="label">{{ label(command) }}</td>
-            <td class="shortcut">{{ command.shortcut }}</td>
-            <td class="move">
-              <button @click.prevent="onMoveDown(command)" @dblclick.stop>▼</button>
-              <button @click.prevent="onMoveUp(command)" @dblclick.stop>▲</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="actions">
-      <button name="new" @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
-      <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
-      <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
-      <div class="right">
-        <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+  <form class="tab-content vertical large" @click="closeContextMenu">
+    <header>
+      <div class="title">{{ t('settings.tabs.commands') }}</div>
+    </header>
+    <main>
+      <div class="commands sticky-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="command in visibleCommands" :key="command.id" :data-id="command.id" class="command" :class="selected?.id == command.id ? 'selected' : ''"
+                @click="onSelect(command)" @dblclick="onEdit(command)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd"
+            >
+              <td class="enabled"><input type="checkbox" :checked="command.state=='enabled'" @click="onEnabled(command)" /></td>
+              <td class="icon">{{ command.icon }}</td>
+              <td class="label">{{ label(command) }}</td>
+              <td class="shortcut">{{ command.shortcut }}</td>
+              <td class="move">
+                <button @click.prevent="onMoveDown(command)" @dblclick.stop>▼</button>
+                <button @click.prevent="onMoveUp(command)" @dblclick.stop>▲</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
-    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-    <CommandDefaults id="defaults" ref="defaults" />
-    <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
-  </div>
+      <div class="actions">
+        <button name="new" @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
+        <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+        <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
+        <div class="right">
+          <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+        </div>
+      </div>
+    </main>
+  </form>
+  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
+  <CommandDefaults id="defaults" ref="defaults" />
+  <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
 </template>
 
 <script setup lang="ts">
@@ -129,7 +134,7 @@ const onMore = () => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
-  const rcDialog = moreButton.value.closest('.window').getBoundingClientRect()
+  const rcDialog = moreButton.value.closest('.tab-content').getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
   menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }

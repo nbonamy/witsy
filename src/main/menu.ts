@@ -138,7 +138,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       label: t('menu.view.title'),
       submenu: [
         {
-          label: t('menu.window.debug'),
+          label: t('menu.view.debug'),
           click: () => window.openDebugWindow()
         },
         { type: 'separator' },

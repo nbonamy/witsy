@@ -1,6 +1,6 @@
 <template>
   <div class="history">
-    <div class="title">{{ t('designStudio.history.title') }}</div>
+
     <div v-if="history.length === 0" class="empty">{{ t('designStudio.history.empty') }}</div>
     <div v-else class="messages">
       <div 

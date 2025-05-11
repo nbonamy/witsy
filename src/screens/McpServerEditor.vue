@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="mcp-server-editor" ref="dialog" @keydown.enter.prevent @keyup.enter="onSave">
+  <AlertDialog id="mcp-server-editor" ref="dialog" :icon="false" @keydown.enter.prevent @keyup.enter="onSave">
     <template v-slot:header>
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </template>
@@ -25,7 +25,7 @@
       </div>
       <div class="group" v-if="type === 'stdio'">
         <label>{{ t('common.command') }}</label>
-        <div style="display: flex; width: 100%;">
+        <div class="control-group">
           <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button name="pickCommand" @click="pickCommand">{{ t('common.pick') }}</button>
         </div>
@@ -43,14 +43,14 @@
       </div>
       <div class="group" v-if="type === 'stdio'">
         <label>{{ t('common.arguments') }}</label>
-        <div style="display: flex; width: 100%;">
+        <div class="control-group">
           <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button name="pickScript" @click="pickScript">{{ t('common.pick') }}</button>
         </div>
       </div>
       <div class="group" v-if="type === 'stdio'">
         <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
-        <div style="display: flex; width: 100%;">
+        <div class="control-group">
           <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button name="pickWorkDir" @click="pickWorkDir">{{ t('common.pick') }}</button>
         </div>
@@ -262,6 +262,8 @@ defineExpose({
 
 <style>
 #mcp-server-editor {
+
+  width: 300px !important;
 
   .list-with-actions {
     width: 100%;

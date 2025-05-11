@@ -2,23 +2,24 @@
   <div>
     <div class="group">
       <label>{{ t('settings.engines.chatModel') }}</label>
-      <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-        <option v-for="model in chat_models" :key="model.id" :value="model.id">
-          {{ model.name }}
-        </option>
-      </select>
-      <button @click.prevent="onDelete"><BIconTrash /></button>
-      <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-    </div>
-    <div class="group">
-      <label></label>
-      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />&nbsp;
-      {{  t('settings.engines.disableTools') }}
+      <div class="control-group">
+        <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
+          <option v-for="model in chat_models" :key="model.id" :value="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+        <button @click.prevent="onDelete"><BIconTrash /></button>
+        <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+      </div>
     </div>
     <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
       <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
       <input v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>
+    </div>
+    <div class="group horizontal">
+      <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
+      <label>{{  t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
@@ -109,7 +110,5 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>

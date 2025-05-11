@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Agregar archivos…",
-      "addFolder": "Agregar carpeta…"
-    },
     "arguments": "Argumentos",
     "askMeAnything": "Pregúntame cualquier cosa",
     "back": "Atrás",
@@ -383,6 +379,9 @@
       "working": "Pensando en qué hacer a continuación…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Consola de depuración"
   },
   "designStudio": {
     "confirmDelete": "¿Estás seguro de que deseas eliminar este medio?",
@@ -1280,10 +1279,8 @@
       "title": "Ayuda"
     },
     "view": {
+      "debug": "Abrir Consola de depuración",
       "title": "Vista"
-    },
-    "window": {
-      "debug": "Abrir consola de depuración"
     }
   },
   "message": {
@@ -1441,6 +1438,10 @@
     },
     "appearance": {
       "chatFont": "Fuente del chat",
+      "chatFontExample": {
+        "text": "Así es como se ve un mensaje de chat.",
+        "title": "Ejemplo de mensaje de chat"
+      },
       "chatFontSize": "Tamaño de fuente del chat",
       "chatListLayout": "Diseño de lista de chat",
       "chatListLayouts": {
@@ -1499,7 +1500,6 @@
         "apiVersion": "Versión de API",
         "confirmDelete": "¿Está seguro de que desea eliminar este proveedor personalizado?",
         "create": "Crear motor",
-        "delete": "Eliminar motor",
         "deployment": "Implementación",
         "endpoint": "Endpoint"
       },
@@ -1610,16 +1610,13 @@
           "title": "Importar desde Json"
         },
         "importSmitheryServer": "Importar servidor de Smithery.ai…",
-        "mcpServers": "Servidores MCP:",
+        "mcpServers": "Servidores MCP",
         "modelContextProtocol": "Protocolo de Contexto de Modelo",
         "noServersFound": "No se encontraron servidores MCP",
         "noTools": "No hay herramientas disponibles",
-        "restartClient": "Reiniciar cliente",
         "serverLogs": "Registros del servidor MCP",
         "servers": ". Descubra e instale servidores MCP desde",
         "smithery": "Smithery",
-        "status": "Estado",
-        "target": "Objetivo",
         "title": "MCP",
         "tools": "Herramientas",
         "totalTools": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
