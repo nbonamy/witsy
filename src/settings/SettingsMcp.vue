@@ -1,67 +1,66 @@
 <template>
-  <div>
-    <div class="description">
-      {{ t('settings.plugins.mcp.description') }}
-      <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">{{ t('settings.plugins.mcp.modelContextProtocol') }}</a> (MCP)
-      {{ t('settings.plugins.mcp.servers') }}
-      <a href="https://smithery.ai" target="_blank">{{ t('settings.plugins.mcp.smithery') }}</a>.
-    </div>
-    <!--div class="description status" v-if="status">
-      <span v-if="status.servers == 0">{{ t('settings.plugins.mcp.noServersFound') }}</span>
-      <span v-else><b>
-        <span>{{ t('settings.plugins.mcp.connectedToServers', { count: status.servers }) }}</span>
-        <span v-if="status.tools > 0"><br/>{{ t('settings.plugins.mcp.totalTools', { count: status.tools }) }}</span>
-        <span v-else><br/>{{ t('settings.plugins.mcp.noTools') }}</span>
-      </b></span>
-    </div-->
-    <div class="group">
-      <label>{{ t('common.enabled') }}</label>
-      <input type="checkbox" v-model="enabled" @change="save" />
-    </div>
-    <div class="servers list-with-actions">
-      <div class="header">
-        <span>{{ t('settings.plugins.mcp.mcpServers') }}</span>
-        <Spinner v-if="loading" />
-      </div>
-      <div class="sticky-table-container" v-if="servers.length">
-        <table class="list">
-          <thead>
-            <tr>
-              <th>&nbsp;</th>
-              <th>{{ t('common.type') }}</th>
-              <th>{{ t('settings.plugins.mcp.target') }}</th>
-              <th>{{ t('settings.plugins.mcp.tools') }}</th>
-              <th>{{ t('settings.plugins.mcp.status') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="server in servers" :key="server.uuid" :class="{ selected: selected == server }" @click="selected = server" @dblclick="edit(server)">
-              <td class="enabled"><input type="checkbox" :checked="server.state == 'enabled'" @change="onEnabled(server)" /></td>
-              <td>{{ getType(server) }}</td>
-              <td>{{ getDescription(server) }}</td>
-              <td class="tools center">
-                <BIconSearch @click="showTools(server)" v-if="isRunning(server)"/>
-              </td>
-              <td class="status center">
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.plugins.mcp.title') }}</div>
+    </header>
+    <main>
+      <!-- <div class="description">
+        {{ t('settings.plugins.mcp.description') }}
+        <a href="https://docs.anthropic.com/en/docs/build-with-claude/mcp" target="_blank">{{ t('settings.plugins.mcp.modelContextProtocol') }}</a> (MCP)
+        {{ t('settings.plugins.mcp.servers') }}
+        <a href="https://smithery.ai" target="_blank">{{ t('settings.plugins.mcp.smithery') }}</a>.
+      </div> -->
+      <!--div class="description status" v-if="status">
+        <span v-if="status.servers == 0">{{ t('settings.plugins.mcp.noServersFound') }}</span>
+        <span v-else><b>
+          <span>{{ t('settings.plugins.mcp.connectedToServers', { count: status.servers }) }}</span>
+          <span v-if="status.tools > 0"><br/>{{ t('settings.plugins.mcp.totalTools', { count: status.tools }) }}</span>
+          <span v-else><br/>{{ t('settings.plugins.mcp.noTools') }}</span>
+        </b></span>
+      </div-->
+      <!-- <div class="group horizontal">
+        <input type="checkbox" v-model="enabled" @change="save" />
+        <label>{{ t('common.enabled') }}</label>
+      </div> -->
+      <div class="servers">
+        <div class="header">
+          <label>{{ t('settings.plugins.mcp.mcpServers') }}</label>
+          <Spinner v-if="loading" />
+          <BIconPlusLg class="icon add" ref="addButton" @click.prevent="onAdd"></BIconPlusLg>
+          <BIconArrowClockwise class="icon reload" @click.prevent="onReload" />
+          <BIconArrowRepeat class="icon restart" @click.prevent="onRestart" />
+        </div>
+        <div class="list">
+          <template v-for="server in servers" :key="server.uuid">
+            <div class="item">
+
+              <div class="icon status center">
                 <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
                 <span v-else>{{ getStatus(server) }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+
+              <div class="info" @click="onEdit(server)">
+                <div class="name">{{ getDescription(server) }}</div>
+                <div class="type">{{ getType(server) }}</div>
+              </div>
+
+              <div class="actions">
+                <BIconPlayCircle @click="onEnabled(server)" v-if="server.state == 'disabled'"/>
+                <BIconStopCircle @click="onEnabled(server)" v-if="server.state == 'enabled'"/>
+                <BIconJournalText @click="showLogs(server)" v-if="hasLogs(server)"/>
+                <BIconSearch @click="showTools(server)" :class="{ 'disabled': !isRunning(server) }"/>
+                <BIconPencil @click="onEdit(server)" />
+                <BIconTrash @click="onDelete(server)" />
+              </div>
+
+            </div>
+          </template>
+        </div>
       </div>
-      <div class="actions">
-        <button ref="addButton" class="button add" @click.prevent="onAdd"><BIconPlus /></button>
-        <button class="button remove" @click.prevent="onDelete" :disabled="!selected"><BIconDash /></button>
-      </div>
-      <div style="margin-top: 16px">
-        <button name="reload" @click.prevent="reload">{{ t('common.refresh') }}</button>
-        <button name="restart" @click.prevent="onRestart">{{ t('settings.plugins.mcp.restartClient') }}</button>
-      </div>
-    </div>
-    <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="above" :teleport="false" />
-    <McpServerEditor ref="editor" :server="selected" @save="onEdited" @install="onInstall" />
-  </div>
+    </main>
+  </form>
+  <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
+  <McpServerEditor ref="editor" :server="selected" @save="onEdited" @install="onInstall" />
 </template>
 
 <script setup lang="ts">
@@ -75,6 +74,7 @@ import McpServerEditor from '../screens/McpServerEditor.vue'
 import Dialog from '../composables/dialog'
 import Spinner from '../components/Spinner.vue'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
+import { BIconArrowClockwise, BIconArrowRepeat } from 'bootstrap-icons-vue'
 
 const editor = ref(null)
 const addButton = ref(null)
@@ -117,18 +117,21 @@ const hasLogs = (server: McpServer) => {
 }
 
 const load = async () => {
+  const now = new Date().getTime()
   enabled.value = store.config.plugins.mcp.enabled || false
   servers.value = await window.api.mcp.getServers()
   status.value = await window.api.mcp.getStatus()
-  loading.value = false
+  setTimeout(() => {
+    loading.value = false
+  }, 1000 - (new Date().getTime() - now))
 }
 
-const save = async () => {
-  store.config.plugins.mcp.enabled = enabled.value
-  store.saveSettings()
-}
+// const save = async () => {
+//   store.config.plugins.mcp.enabled = enabled.value
+//   store.saveSettings()
+// }
 
-const reload = async () => {
+const onReload = async () => {
   loading.value = true
   nextTick(async () => {
     await load()
@@ -169,19 +172,17 @@ const onRestart = async () => {
   })
 }
 
-// Add the context menu actions
 const addMenuActions = [
   { label: t('settings.plugins.mcp.addCustomServer'), action: 'custom' },
   { label: t('settings.plugins.mcp.importSmitheryServer'), action: 'smithery' },
   { label: t('settings.plugins.mcp.importJson.menu'), action: 'json' },
 ]
 
-// Add these methods to handle the plus button menu
-const onAdd = (event: MouseEvent) => {
-  const rcButton = addButton.value.getBoundingClientRect()
-  const rcDialog = addButton.value.closest('.window').getBoundingClientRect()
-  addMenuX.value = rcButton.left - rcDialog.left
-  addMenuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
+const onAdd = () => {
+  const addButton = document.querySelector('.servers .icon.add')
+  const rc = addButton.getBoundingClientRect()
+  addMenuX.value = 200
+  addMenuY.value = rc.top - 32
   showAddMenu.value = true
 }
 
@@ -220,7 +221,7 @@ const onImportJson = async () => {
     input: 'textarea',
     inputAttributes: { rows: 10 },
     inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
-    customClass: { input: 'auto-height' },
+    customClass: { icon: 'hidden', input: 'auto-height' },
     inputValue: '',
     showCancelButton: true,
     preConfirm: (json: any) => {
@@ -257,8 +258,8 @@ const onImportJson = async () => {
 
 }
 
-const onDelete = async () => {
-  if (!selected.value) return
+const onDelete = async (server: McpServer) => {
+  if (!server) return
   Dialog.show({
     target: document.querySelector('.settings .plugins'),
     title: t('settings.plugins.mcp.confirmDelete'),
@@ -269,7 +270,7 @@ const onDelete = async () => {
     if (result.isConfirmed) {
       loading.value = true
       nextTick(async () => {
-        await window.api.mcp.deleteServer(selected.value.registryId)
+        await window.api.mcp.deleteServer(server.registryId)
         selected.value = null
         load()
       })
@@ -286,7 +287,7 @@ const onEnabled = async (server: McpServer) => {
   })
 }
 
-const edit = (server: McpServer) => {
+const onEdit = (server: McpServer) => {
   selected.value = server
   editor.value.show()
 }
@@ -381,57 +382,149 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 @import '../../css/list-with-actions.css';
 @import '../../css/sticky-header-table.css';
 </style>
 
-<style>
-.status {
-  font-weight: bold;
+<style scoped>
+
+main {
+  width: calc(100% - 4rem);
 }
 
 .servers {
   
-  margin-top: 16px;
-  padding-left: 32px;
-  padding-right: 16px;
+  padding: 2rem;
+  padding-top: 0px;
+  display: flex;
+  flex-direction: column;
+  margin: 8px 6px 8px 6px;
+  flex-grow: 1;
+  overflow: hidden;
 
   .header {
+    
     display: flex;
-    justify-content: space-between;
-    font-size: 10pt;
-    margin-bottom: 8px;
-    padding-right: 4px;
-  }
+    flex-direction: row;
+    align-items: center;
+    font-weight: bold;
+    gap: 1rem;
 
-  .sticky-table-container {
-    height: 120px !important;
+    padding: 1.5rem;
+    background-color: var(--window-decoration-color);
+    border: 1px solid var(--control-border-color);
+    border-bottom-width: 0px;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    margin-bottom: 0px !important;
+
+    label {
+      flex: 1;
+    }
+
+    .icon {
+      cursor: pointer;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .spinner {
+      transform: scale(125%);
+    }
+
+    button {
+      margin: 0px;
+    }
+
   }
 
   .list {
-    width: 100% !important;
 
-    td {
-      padding-top: 3px !important;
-      padding-bottom: 3px !important;
+    flex-grow: 1;
+    border: 1px solid var(--control-border-color);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
 
-      max-width: 200px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+    padding: 1rem;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
 
-      a {
+    .item {
+
+      padding: 1rem;
+      font-size: 9.5pt;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border: 0.75px solid var(--control-border-color);
+      border-radius: 0.5rem;
+      gap: 1rem;
+
+      > .status {
         cursor: pointer;
+        text-align: center;
+        flex: 0 0 2.5rem;
+        font-size: 13pt;
+      }
+      
+      .info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        overflow: hidden;
+        cursor: pointer;
+        
+        .name, .type {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .name {
+          font-size: 11pt;
+          font-weight: 600;
+        }
+
+        .type {
+          opacity: 0.6;
+        }
       }
 
-      &.tools {
-        cursor: pointer;
+      .actions {
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-top: 0px;
+        gap: 0.75rem;
+
+
+        svg {
+          width: 1.25rem;
+          height: 1.25rem;
+          opacity: 0.6;
+          cursor: pointer;
+        }
+
+        .icon.error:hover {
+          color: red;
+        }
+
+        .disabled {
+          opacity: 0.3;
+          pointer-events: none;
+        }
+
       }
+
     }
   }
 }
+
 
 </style>

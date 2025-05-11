@@ -67,9 +67,6 @@ Object.assign(console, log.functions);
 log.eventLogger.startLogging();
 console.log('Log file:',log.transports.file.getFile().path);
 
-// fix path
-fixPath();
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 if (require('electron-squirrel-startup')) {
@@ -188,8 +185,10 @@ app.whenReady().then(() => {
 
   // start mcp
   if (!process.mas) {
-    mcp = new Mcp(app);
-    mcp.connect();
+    fixPath().then(() => {
+      mcp = new Mcp(app);
+      mcp.connect();
+    });
   }
 
   // create the main window
@@ -485,7 +484,7 @@ ipcMain.on('fullscreen', (_, payload) => {
   if (payload.window === 'main') {
     window.mainWindow.setFullScreen(payload.state);
   } else if (payload.window === 'create') {
-    window.designStudioWindow.setFullScreen(payload.state);
+    window.mainWindow.setFullScreen(payload.state);
   }
 });
 

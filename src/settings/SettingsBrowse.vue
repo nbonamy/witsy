@@ -3,9 +3,9 @@
     <div class="description">
       {{ t('settings.plugins.browse.description') }}
     </div>
-    <div class="group">
+    <div class="group horizontal">
+      <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
-      <input type="checkbox" v-model="enabled" @change="save" />
     </div>
   </div>
 </template>
@@ -33,8 +33,6 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>
 

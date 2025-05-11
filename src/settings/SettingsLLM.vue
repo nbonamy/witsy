@@ -1,22 +1,28 @@
 <template>
-  <div class="content">
-    <div class="list-panel">
-      <div class="master">
-        <div class="list">
-          <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
-            <EngineLogo :engine="engine.id" :grayscale="true" />
-            {{ engine.label }}
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.models') }}</div>
+      <BIconTrash class="icon delete" @click="onDeleteCustom" v-if="isCustom" />
+    </header>
+    <main>
+      <div class="list-panel">
+        <div class="master">
+          <div class="list">
+            <div class="item" @click="showCreateCustom()">
+              <BIconPlusCircle class="logo create" />
+              {{ t('settings.engines.custom.create') }}
+            </div>
+            <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
+              <EngineLogo :engine="engine.id" :grayscale="true" />
+              {{ engine.label }}
+            </div>
           </div>
         </div>
-        <div class="actions">
-          <button class="button create" @click.prevent="showCreateCustom()"><BIconPlusLg /> <span v-if="!isCustom">{{ t('settings.engines.custom.create') }}</span></button>
-          <button class="button delete" @click.prevent="onDeleteCustom" v-if="isCustom"><BIconTrash /> {{ t('settings.engines.custom.delete') }}</button>
-        </div>
+        <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
       </div>
-      <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
-    </div>
-    <CreateEngine ref="createEngine" @create="onCreateCustom" />
-  </div>
+      <CreateEngine ref="createEngine" @create="onCreateCustom" />
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -167,56 +173,5 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-</style>
-
-<style scoped>
-
-.master {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-panel {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-self: stretch;
-}
-
-.list {
-  min-height: 196px;
-  max-height: none;
-  flex: 1 1 190px;
-}
-
-.actions {
-  flex: 0 0 16px;
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-self: stretch;
-  border-top: 1px solid var(--actions-bar-border-color);
-  padding-left: 6px;
-
-  button {
-    border: 0px;
-    border-radius: 0px;
-    background-color: transparent;
-    margin: 0px;
-    font-size: 10pt;
-    padding: 2px;
-
-    &:active {
-      background: var(--actions-bar-button-active-bg-color);
-    }
-
-    svg {
-      position: relative;
-      top: 2px;
-    }
-  }
-}
-
 </style>

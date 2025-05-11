@@ -26,7 +26,6 @@ defineProps({
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>
 

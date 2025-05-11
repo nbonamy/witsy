@@ -84,3 +84,12 @@ const renderMermaidBlocks = async () => {
 }
 
 </script>
+
+
+<style scoped>
+
+.text, .text * {
+  font-family: var(--messages-font);
+}
+
+</style>

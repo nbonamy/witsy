@@ -106,7 +106,7 @@
         <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">{{ t('common.create') }}</button>
       </div>
       <div class="group">
-        <a href="#" @click="openDebugConsole()">{{ t('menu.window.debug') }}</a>
+        <a href="#" @click="openDebugConsole()">{{ t('menu.view.debug') }}</a>
       </div>
     </form>
 
@@ -551,6 +551,7 @@ const openDebugConsole = () => {
 <style scoped>
 
 .model-settings {
+  border-left: 1px solid var(--sidebar-border-color);
   background-color: var(--sidebar-bg-color);
   height: 100%;
   display: flex;

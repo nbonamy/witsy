@@ -1,23 +1,31 @@
 <template>
-  <dialog class="dialog docrepos" id="docrepos">
-    <form method="dialog">
-      <DialogHeader :title="t('docRepo.repositories.title')" @close="onClose" />
+  <div class="panel-content">
+    <div class="panel">
+      <header>
+        <div class="title">{{ t('docRepo.repositories.title') }}</div>
+        <BIconPlusLg class="icon create" @click="onCreate" />
+      </header>
       <main>
-        <div class="master list-with-actions">
-          <div class="list">
-            <template v-for="repo in docRepos" :key="repo.uuid">
-              <div :class="{ item: true, selected: repo.uuid == selectedRepo?.uuid }" @click="selectRepo(repo)">
-                <div class="name">{{ repo.name }}</div>
-              </div>
-            </template>
-          </div>
-          <div class="actions">
-            <button class="button create" @click.prevent="onCreate"><BIconPlus /></button>
-            <button class="button delete" @click.prevent="onDelete"><BIconDash /></button>
-            <button class="button config right lighter" @click.prevent="onConfig"><BIconGearFill /></button>
-          </div>
+        <div class="list">
+          <template v-for="repo in docRepos" :key="repo.uuid">
+            <div :class="{ item: true, selected: repo.uuid == selectedRepo?.uuid }" @click="selectRepo(repo)">
+              <BIconArchive class="icon" />
+              <div class="name">{{ repo.name }}</div>
+            </div>
+          </template>
         </div>
-        <div class="details" v-if="selectedRepo">
+      </main>
+      <footer>
+        <BIconSliders class="icon config" @click="onConfig" />
+      </footer>
+    </div>
+    <div class="content">
+      <header>
+        <div class="title">{{ selectedRepo?.name }}</div>
+        <BIconTrash class="icon delete" @click="onDeleteRepo" />
+      </header>
+      <main v-if="selectedRepo">
+        <form class="header">
           <div class="group name">
             <label>{{ t('common.name') }}</label>
             <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
@@ -27,48 +35,51 @@
             <input type="text" :value="embeddingModel" disabled />
             <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
-          <div class="group documents list-with-actions">
-            <div class="header">
-              <label>{{ t('common.documents') }}</label>
-              <Spinner v-if="loading" />
-            </div>
-            <div class="list">
-              <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
-                <div :class="{ item: true, selected: selectedDocs.includes(doc.uuid) }" @click="selectDoc($event, doc)">
-                  <div class="icon"><Component :is="docIcon(doc)" /></div>
-                  <div class="name"><span class="filename">{{ docLabel(doc) }}</span> ({{ doc.origin }})</div>
-                </div>
-              </template>
-            </div>
-            <div class="actions">
-              <button ref="plusButton" class="button add" @click.prevent="showContextMenu"><BIconPlus /></button>
-              <button class="button remove" @click.prevent="onDelDoc"><BIconDash /></button>
-            </div>
+        </form>
+        <div class="group documents">
+          <div class="header">
+            <label>{{ t('common.documents') }}</label>
+            <Spinner v-if="loading" />
+            <BIconFilePlus class="icon add-file" @click="onAddDocs" />
+            <BIconFolderPlus class="icon add-folder" @click="onAddFolder" />
           </div>
-          <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above" :teleport="false" />
-        </div>
-        <div class="empty" v-else>
-          <div>
-            {{ t('docRepo.repositories.noRepositories') }}<br />{{ t('docRepo.repositories.clickToCreate') }}
+          <div class="list">
+            <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
+              <div class="item">
+                <div class="icon"><Component :is="docIcon(doc)" /></div>
+                <div class="info">
+                  <div class="filename">{{ docLabel(doc) }}</div>
+                  <div class="origin">{{ doc.origin }}</div>
+                </div>
+                <div class="actions">
+                  <!-- <BIconArrowClockwise class="icon" @click="onRefreshDoc(doc)" /> -->
+                  <BIconTrash class="icon remove error" @click="onDelDoc(doc)" />
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </main>
-    </form>
-    <DocRepoConfig />
-    <DocRepoCreate />
-  </dialog>
+      <main class="empty" v-else>
+        <div>
+          {{ t('docRepo.repositories.noRepositories') }}<br />{{ t('docRepo.repositories.clickToCreate') }}
+        </div>
+      </main>
+    </div>
+  </div>
+  <DocRepoConfig />
+  <DocRepoCreate />
 </template>
 
 <script setup lang="ts">
 
 import { ref, onMounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
+import { extensionToMimeType } from 'multi-llm-ts'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
-import DialogHeader from '../components/DialogHeader.vue'
-import ContextMenu from '../components/ContextMenu.vue'
 import DocRepoConfig from './DocRepoConfig.vue'
 import DocRepoCreate from './DocRepoCreate.vue'
 import Spinner from '../components/Spinner.vue'
@@ -81,24 +92,26 @@ const llmManager = LlmFactory.manager(store.config)
 
 const docRepos = ref(null)
 const plusButton = ref(null)
-const selectedRepo = ref(null)
-const selectedDocs = ref([])
+const selectedRepo: Ref<DocumentBase | null> = ref(null)
 const modelReady = ref(true)
-const showMenu = ref(false)
 const loading = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
-
-const contextMenuActions = [
-  { label: t('common.actions.addFiles'), action: 'addFiles' },
-  { label: t('common.actions.addFolder'), action: 'addFolder' },
-]
 
 const docIcon = (doc: DocumentSource) => {
   if (doc.type === 'file') {
-    return 'BIconFileText'
+    const mimeType = extensionToMimeType(doc.filename.split('.').pop() ?? '')
+    if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      return 'BIconFileWord'
+    } else if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      return 'BIconFileExcel'
+    } else if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+      return 'BIconFileSlides'
+    } else if (mimeType === 'application/pdf') {
+      return 'BIconFilePdf'
+    } else {
+      return 'BIconFileText'
+    }
   } else if (doc.type === 'folder') {
-    return 'BIconArchive'
+    return 'BIconFolder'
   }
   return 'BIconFile'
 }
@@ -151,30 +164,14 @@ const loadDocRepos = async () => {
 
 const selectRepo = (repo: DocumentBase) => {
   selectedRepo.value = repo
-  selectedDocs.value = []
   modelReady.value = window.api.docrepo.isEmbeddingAvailable(selectedRepo.value?.embeddingEngine, selectedRepo.value?.embeddingModel)
-  if (selectedRepo.value.documents.length) {
-    selectedDocs.value = [selectedRepo.value.documents[0].uuid]
-  }
-}
-
-const selectDoc = (event: MouseEvent, doc: DocumentBase) => {
-  if (event.metaKey) {
-    if (selectedDocs.value.includes(doc.uuid)) {
-      selectedDocs.value = selectedDocs.value.filter((d) => d !== doc.uuid)
-    } else {
-      selectedDocs.value.push(doc.uuid)
-    }
-  } else {
-    selectedDocs.value = [doc.uuid]
-  }
 }
 
 const onCreate = async () => {
   emitEvent('open-docrepo-create', null)
 }
 
-const onDelete = () => {
+const onDeleteRepo = () => {
   if (!selectedRepo.value) return
   Dialog.show({
     target: document.querySelector('.docrepos'),
@@ -198,32 +195,6 @@ const onConfig = () => {
 const onChangeRepoName = (event: Event) => {
   if (!selectedRepo.value) return
   window.api.docrepo.rename(selectedRepo.value.uuid, (event.target as HTMLInputElement).value)
-}
-
-const showContextMenu = () => {
-  showMenu.value = true
-  const rcButton = plusButton.value.getBoundingClientRect()
-  const rcDialog = document.getElementById('docrepos')?.getBoundingClientRect()
-  menuX.value = rcButton.left - rcDialog?.left + 4
-  menuY.value = rcDialog?.bottom - rcButton.bottom + rcButton.height + 4
-}
-
-const closeContextMenu = () => {
-  showMenu.value = false;
-}
-
-const handleActionClick = async (action: string) => {
-
-  // close
-  closeContextMenu()
-
-  // process
-  if (action === 'addFiles') {
-    onAddDocs()
-  } else if (action === 'addFolder') {
-    onAddFolder()
-  }
-
 }
 
 const onAddDocs = () => {
@@ -257,8 +228,7 @@ const onAddDocError = (payload: DocRepoAddDocResponse) => {
   Dialog.alert(payload.error)
 }
 
-const onDelDoc = () => {
-  if (selectedDocs.value.length == 0) return
+const onDelDoc = (doc: DocumentSource) => {
   Dialog.show({
     target: document.querySelector('.docrepos'),
     title: t('common.confirmation.deleteDocument'),
@@ -267,12 +237,8 @@ const onDelDoc = () => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      const docIds = selectedDocs.value
-      selectedDocs.value = []
-      for (const docId of docIds) {
-        loading.value = true
-        window.api.docrepo.removeDocument(selectedRepo.value.uuid, docId)
-      }
+      loading.value = true
+      window.api.docrepo.removeDocument(selectedRepo.value.uuid, doc.uuid)
     }
   })
 }
@@ -281,28 +247,28 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
   loading.value = false
 }
 
+const onRefreshDoc = (doc: DocumentSource) => {
+  window.api.docrepo.refreshDocument(selectedRepo.value.uuid, doc.uuid)
+}
+
 </script>
 
 <style scoped>
-@import '../../css/dialog.css';
+@import '../../css/panel-content.css';
 @import '../../css/form.css';
-@import '../../css/list-with-actions.css';
 </style>
 
 <style scoped>
-dialog.docrepos {
-  width: 640px;
-}
 
-main {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  padding: 20px;
-  height: 360px;
+* {
+  color: var(--text-color);
+  scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 }
 
 .list {
+
+  padding: 0 .5rem;
+  overflow-y: auto;
 
   .item {
 
@@ -310,132 +276,214 @@ main {
     flex-direction: row;
     align-items: center;
     align-self: stretch;
+    border-radius: 4px;
 
     &.selected {
-      background-color: var(--highlight-color);
-      color: var(--highlighted-color);
+      background-color: var(--sidebar-selected-color);
     }
   }
 }
 
-.master {
-  display: flex;
-  flex-direction: column;
+.panel-content {
 
-  .list {
-    width: 160px;
+  .panel {
 
-    .item {
-      .name {
-        padding: 12px 8px;
-        font-size: 10pt;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-  }
-}
-
-.details {
-  
-  display: flex;
-  flex-direction: column;
-  margin-left: 16px;
-  background-color: var(--dialog-body-bg-color);
-  border-radius: 8px;
-  padding: 8px;
-
-  .group label {
-    min-width: 100px;
-  }
-  
-  .embeddings {
-    margin-top: 0px;
-    input {
-      background-color: var(--control-bg-color);
-    }
-    .embedding-warning {
-      color: red;
-      margin-left: 4px;
-    }
-  }
-
-  .documents {
-
-    display: flex;
-    flex-direction: column;
-    margin: 8px 6px 8px 6px;
-    flex-grow: 1;
-
-    .header {
-      align-self: stretch;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding-right: 4px;
-
-      label {
-        align-self: start;
-        text-align: left;
-        margin-bottom: 8px;
-
-        &::after {
-          content: '';
-        }
-      }
-
-      .loader {
-        height: 6px;
-        width: 6px;
-        margin: 4px;
-      }
-
-    }
+    flex-basis: 250px;
 
     .list {
-
-      width: 384px; /* would want to be 100% but then ellipsis don't work */
-      border-radius: 2px;
-
       .item {
-        padding: 8px;
-        font-size: 9.5pt;
-        border-bottom: 1px dotted var(--control-border-color);
+
         display: flex;
         flex-direction: row;
+        padding: 1rem 0.5rem;
+        cursor: pointer;
+        gap: 0.25rem;
 
         .icon {
-          flex: 0 0 24px;
-          position: relative;
-          top: 1px;
+          color: var(--text-color);
         }
+
         .name {
+          font-size: 11pt;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          position: relative;
-          top: -2px;
+          letter-spacing: 0.36px;
+        }
 
-          .filename {
+        &.selected {
+          .name {
             font-weight: 600;
+            letter-spacing: normal;
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+
+    main {
+
+      overflow: hidden;
+
+      form.header {
+        
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+
+        .group label {
+          min-width: 100px;
+        }
+        
+        .embeddings {
+          margin-top: 0px;
+          input {
+            background-color: var(--control-bg-color);
+            outline: none;
+            border: none;
+          }
+          .embedding-warning {
+            color: red;
+            margin-left: 4px;
           }
         }
 
       }
-    }
-  }
-}
 
-.empty {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 16px;
-  font-size: 11pt;
-  line-height: 1.5;
-  text-align: center;
+      .documents {
+
+        padding: 2rem;
+        padding-top: 0px;
+        display: flex;
+        flex-direction: column;
+        margin: 8px 6px 8px 6px;
+        flex-grow: 1;
+        overflow: hidden;
+
+        .header {
+          
+          display: flex;
+          flex-direction: row;
+          font-weight: bold;;
+          gap: 1rem;
+
+          padding: 1.5rem;
+          background-color: var(--window-decoration-color);
+          border: 1px solid var(--control-border-color);
+          border-bottom-width: 0px;
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
+
+          label {
+            flex: 1;
+          }
+
+          .icon {
+            cursor: pointer;
+          }
+
+          .spinner {
+            transform: scale(125%);
+            top: 3px;
+          }
+
+        }
+
+        .list {
+
+          flex-grow: 1;
+          border: 1px solid var(--control-border-color);
+          border-bottom-left-radius: 0.5rem;
+          border-bottom-right-radius: 0.5rem;
+
+          padding: 1rem;
+          
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          
+
+          .item {
+
+            padding: 1rem;
+            font-size: 9.5pt;
+            display: flex;
+            flex-direction: row;
+            border: 0.75px solid var(--control-border-color);
+            border-radius: 0.5rem;
+            gap: 1rem;
+
+            > .icon {
+              text-align: center;
+              flex: 0 0 2.5rem;
+              svg {
+                width: 1.25rem;
+                height: 1.25rem;
+              }
+            }
+            
+            .info {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              gap: 0.375rem;
+              overflow: hidden;
+              
+              .filename, .origin {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .filename {
+                font-size: 11pt;
+                font-weight: 600;
+              }
+
+              .origin {
+                opacity: 0.6;
+              }
+            }
+
+            .actions {
+
+              display: flex;
+              flex-direction: row;
+              gap: 0.5rem;
+
+
+              svg {
+                width: 1rem;
+                height: 1rem;
+                cursor: pointer;
+              }
+
+              .icon.error:hover {
+                color: red;
+              }
+
+            }
+          }
+        }
+      }
+
+      .empty {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 16px;
+        font-size: 11pt;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+    }
+
+  }
+
 }
 
 </style>

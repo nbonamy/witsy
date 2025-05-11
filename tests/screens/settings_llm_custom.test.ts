@@ -39,12 +39,12 @@ beforeEach(async () => {
 
 test('should render', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  expect(tab.findAll('.list-panel .master .list .item').length).toBe(13)
+  expect(tab.findAll('.list-panel .master .list .item').length).toBe(14)
 })
 
 test('custom settings openai', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(12)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(13)').trigger('click')
   await tab.vm.$nextTick()
   const custom = tab.findComponent({ name: 'SettingsCustomLLM' })
   expect(custom.exists()).toBe(true)
@@ -72,7 +72,7 @@ test('custom settings openai', async () => {
 
 test('custom settings azure', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(13)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(14)').trigger('click')
   await tab.vm.$nextTick()
   const custom = tab.findComponent({ name: 'SettingsCustomLLM' })
   expect(custom.exists()).toBe(true)
@@ -100,9 +100,9 @@ test('custom settings azure', async () => {
 
 test('delete custom engine', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(13)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(14)').trigger('click')
   await tab.vm.$nextTick()
-  await tab.find<HTMLButtonElement>('button.delete').trigger('click')
+  await tab.find<HTMLButtonElement>('.icon.delete').trigger('click')
   expect(store.config.engines.custom1).toBeDefined()
   expect(store.config.engines.custom2).toBeUndefined()
 })
@@ -110,7 +110,7 @@ test('delete custom engine', async () => {
 test('create custom engine openai', async () => {
   const enginesCount = Object.keys(store.config.engines).length
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find<HTMLButtonElement>('button.create').trigger('click')
+  await tab.find<HTMLButtonElement>('.logo.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
   expect(create.exists()).toBe(true)
   expect(create.find<HTMLInputElement>('input[name=label]').element.value).toBe('')
@@ -137,7 +137,7 @@ test('create custom engine openai', async () => {
 test('create custom engine azure', async () => {
   const enginesCount = Object.keys(store.config.engines).length
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find<HTMLButtonElement>('button.create').trigger('click')
+  await tab.find<HTMLButtonElement>('.logo.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
   expect(create.exists()).toBe(true)
   await create.find<HTMLSelectElement>('select[name=api]').setValue('azure')

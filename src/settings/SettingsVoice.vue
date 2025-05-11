@@ -1,17 +1,22 @@
 <template>
-  <div class="content">
-    <div class="list-panel">
-      <div class="master">
-        <div class="list">
-          <div class="item" v-for="item in available" :key="item.id" :class="{ selected: current == item.id }" @click="select(item)">
-            <component :is="item.icon" class="logo" />
-            {{ item.label }}
+  <form class="tab-content vertical large">
+    <header>
+      <div class="title">{{ t('settings.tabs.voice') }}</div>
+    </header>
+    <main>
+      <div class="list-panel">
+        <div class="master">
+          <div class="list">
+            <div class="item" v-for="item in available" :key="item.id" :class="{ selected: current == item.id }" @click="select(item)">
+              <component :is="item.icon" class="logo" />
+              {{ item.label }}
+            </div>
           </div>
         </div>
+        <component :is="currentView" class="panel" ref="settings" />
       </div>
-      <component :is="currentView" class="panel" ref="settings" />
-    </div>
-  </div>
+    </main>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +60,5 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>

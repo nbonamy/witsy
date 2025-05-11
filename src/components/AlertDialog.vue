@@ -1,20 +1,39 @@
 
 <template>
-  <dialog class="dialog alert-dialog show">
-    <form class="vertical" method="dialog" @submit.prevent>
-      <div class="icon">
-        <img src="/assets/icon.png" />
-      </div>
-      <div class="header">
-        <slot name="header"></slot>
-      </div>
-      <slot name="body"></slot>
-      <slot name="footer"></slot>
-    </form>
-  </dialog>
+  <Teleport to="body" @keydown="emit('keydown', $event)" @keyup="emit('keyup', $event)">
+    <dialog :id="id" class="dialog alert-dialog show">
+      <form class="vertical" method="dialog" @submit.prevent>
+        <div class="icon" v-if="icon">
+          <img src="/assets/icon.png" />
+        </div>
+        <header>
+          <slot name="header"></slot>
+        </header>
+        <main>
+          <slot name="body"></slot>
+        </main>
+        <footer>
+          <slot name="footer"></slot>
+        </footer>
+      </form>
+    </dialog>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
+
+const emit = defineEmits(['keydown', 'keyup'])
+
+defineProps({
+  id: {
+    type: String,
+    required: true
+  },
+  icon: {
+    type: Boolean,
+    default: true
+  }
+})
 
 defineExpose({
   show(id: string) {

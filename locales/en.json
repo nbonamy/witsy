@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Add Files…",
-      "addFolder": "Add Folder…"
-    },
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
     "back": "Back",
@@ -402,6 +398,9 @@
       "working": "Thinking about what to do next…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Debug Console"
   },
   "designStudio": {
     "confirmDelete": "Are you sure you want to delete this media?",
@@ -1299,10 +1298,8 @@
       "title": "Help"
     },
     "view": {
+      "debug": "Open Debug Console",
       "title": "View"
-    },
-    "window": {
-      "debug": "Open Debug Console"
     }
   },
   "message": {
@@ -1471,6 +1468,10 @@
     },
     "appearance": {
       "chatFont": "Chat font",
+      "chatFontExample": {
+        "text": "This is how a chat message looks like.",
+        "title": "Chat message example"
+      },
       "chatFontSize": "Chat font size",
       "chatListLayout": "Chat list layout",
       "chatListLayouts": {
@@ -1529,7 +1530,6 @@
         "apiVersion": "API Version",
         "confirmDelete": "Are you sure you want to delete this custom provider?",
         "create": "Create engine",
-        "delete": "Delete engine",
         "deployment": "Deployment",
         "endpoint": "Endpoint"
       },
@@ -1646,16 +1646,13 @@
           "title": "Import from Json"
         },
         "importSmitheryServer": "Import Smithery.ai server…",
-        "mcpServers": "MCP Servers:",
+        "mcpServers": "MCP Servers",
         "modelContextProtocol": "Model Context Protocol",
         "noServersFound": "No MCP Servers found",
         "noTools": "No tools available",
-        "restartClient": "Restart client",
         "serverLogs": "MCP Server Logs",
         "servers": "servers. Discover and install MCP servers from the",
         "smithery": "Smithery",
-        "status": "Status",
-        "target": "Target",
         "title": "MCP",
         "tools": "Tools",
         "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"

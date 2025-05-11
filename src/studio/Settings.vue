@@ -1,8 +1,7 @@
 <template>
   <div class="settings">
-    <div class="title">{{ t('designStudio.title') }}</div>
     <form class="vertical">
-        
+
       <div class="group media-type">
         <label>{{ t('designStudio.mediaType.label') }}</label>
         <select name="type" v-model="mediaType" @change="onChangeMediaType">

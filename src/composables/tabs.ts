@@ -11,8 +11,8 @@ export const installTabs = (tabbedEl: HTMLElement) => {
 
 export const showActiveTab = (tabbedEl: HTMLElement) => {
   const tabs = tabbedEl.querySelectorAll<HTMLInputElement>('.tabs input[name="tabs"]')
-  const contents = tabbedEl.querySelectorAll<HTMLElement>('.tabs .content')
+  const contents = tabbedEl.querySelectorAll<HTMLElement>('.tabs .tab-content')
   tabs.forEach((tab, index) => {
-    contents[index].style.display = tab.checked ? 'block' : 'none'
+    contents[index].style.display = tab.checked ? 'flex' : 'none'
   })
 }

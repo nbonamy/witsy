@@ -24,33 +24,41 @@
 
 .windows .dialog {
   border-radius: var(--control-border-radius);
-}	
-
-.dialog header {
-  font-weight: bold;
-  text-align: center;
-  color: var(--dialog-header-text-color);
-  font-size: 10pt;
-  padding: 8px;
-  background-color: var(--dialog-header-bg-color);
-  border-bottom: 0.5px solid var(--dialog-separator-color);
 }
 
-.dialog main {
-  padding: 24px;
-  background-color: var(--dialog-body-bg-color);
-  color: var(--dialog-body-text-color);
+dialog form.vertical {
+  align-items: stretch;
 }
 
-.dialog footer {
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  background-color: var(--dialog-body-bg-color);
-  border-top: 0.5px solid var(--dialog-separator-color);
-}
+.dialog {
 
-.dialog footer button {
-  margin: 0 8px;
+  .icon {
+    align-self: center;
+  }
+  
+  header {
+    align-self: center;
+    font-weight: bold;
+    text-align: center;
+    font-size: 10pt;
+    
+    .title {
+      font-size: 10pt;
+      line-height: 150%;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: var(--dialog-body-bg-color);
+
+    button {
+      margin: 0 8px;
+    }
+
+  }
 }

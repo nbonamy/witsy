@@ -1,15 +1,20 @@
 <template>
-  <div class="create-media window" @keydown="onKeyDown">
+  <div class="panel-content" @keydown="onKeyDown">
     <div class="panel">
-      <div class="actions">
-        <BIconClockHistory @click="mode = 'history'" v-if="mode === 'create'"/>
-        <BIconSliders @click="mode = 'create'" v-if="mode === 'history'"/>
-        <BIconPencilSquare @click="onReset"/>
-      </div>
-      <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :current-media="message" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
-      <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
+      <header>
+        <div class="title">{{ t('designStudio.title') }}</div>
+        <BIconArrowCounterclockwise class="icon reset" @click="onReset" v-if="message" />
+      </header>
+      <main>
+        <div class="button-group">
+          <button :class="{active: mode === 'create'}" @click="mode = 'create'">{{ t('common.create') }}</button>
+          <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
+        </div>
+        <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :current-media="message" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
+        <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-message="message" @select-message="selectMessage" @context-menu="showContextMenu" />
+      </main>
     </div>
-    <Preview
+    <Preview class="content"
       :message="message" :is-generating="isGenerating"
       :can-undo="undoStack.length > 0" :can-redo="redoStack.length > 0"
       @fullscreen="onFullScreen" @delete="onDelete"
@@ -481,11 +486,39 @@ const onFullScreen = (url: string) => {
 
 <style scoped>
 
-.panel {
-  flex: 0 0 var(--create-panel-width);
-  > .hidden {
-    display: none;
+.panel-content {
+  
+  .panel {
+  
+    flex: 0 0 var(--create-panel-width);
+
+    header {
+
+      .icon.reset {
+        position: relative;
+        transform: scale(105%);
+        top: 1px;
+      }
+    }
+
+    main {
+      flex: 1;
+      padding-top: 1rem;
+      border-right: 1px solid var(--sidebar-border-color);
+    }
+
+    main .button-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    main .hidden {
+      display: none;
+    }
   }
+
 }
 
 </style>

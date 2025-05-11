@@ -59,7 +59,7 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
       // windows
       height: process.platform === 'win32' ? opts.height : undefined,
     },
-    trafficLightPosition: { x: 16, y: 16 },
+    trafficLightPosition: { x: 12, y: 16 },
   }
 }
 

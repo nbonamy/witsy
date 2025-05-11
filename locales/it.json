@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Aggiungi file…",
-      "addFolder": "Aggiungi cartella…"
-    },
     "arguments": "Argomenti",
     "askMeAnything": "Chiedimi qualsiasi cosa",
     "back": "Indietro",
@@ -383,6 +379,9 @@
       "working": "Pensando a cosa fare dopo…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Console di debug"
   },
   "designStudio": {
     "confirmDelete": "Sei sicuro di voler eliminare questo media?",
@@ -1280,10 +1279,8 @@
       "title": "Aiuto"
     },
     "view": {
+      "debug": "Apri Console di debug",
       "title": "Visualizza"
-    },
-    "window": {
-      "debug": "Apri Console di Debug"
     }
   },
   "message": {
@@ -1441,6 +1438,10 @@
     },
     "appearance": {
       "chatFont": "Carattere chat",
+      "chatFontExample": {
+        "text": "Ecco come appare un messaggio chat.",
+        "title": "Esempio di messaggio chat"
+      },
       "chatFontSize": "Dimensione carattere chat",
       "chatListLayout": "Layout lista chat",
       "chatListLayouts": {
@@ -1499,7 +1500,6 @@
         "apiVersion": "Versione API",
         "confirmDelete": "Sei sicuro di voler eliminare questo fornitore personalizzato?",
         "create": "Crea motore",
-        "delete": "Elimina motore",
         "deployment": "Deployment",
         "endpoint": "Endpoint"
       },
@@ -1610,16 +1610,13 @@
           "title": "Importa da Json"
         },
         "importSmitheryServer": "Importa server Smithery.ai…",
-        "mcpServers": "Server MCP:",
+        "mcpServers": "Server MCP",
         "modelContextProtocol": "Protocollo di contesto modello",
         "noServersFound": "Nessun server MCP trovato",
         "noTools": "Nessun strumento disponibile",
-        "restartClient": "Riavvia client",
         "serverLogs": "Registri del server MCP",
         "servers": "server. Scopri e installa server MCP da",
         "smithery": "Smithery",
-        "status": "Stato",
-        "target": "Obiettivo",
         "title": "MCP",
         "tools": "Strumenti",
         "totalTools": "Totale di {count} servizio{count > 1 ? 's' : ''} disponibile"

@@ -18,6 +18,13 @@
   --highlighted-color: #fff;
   --link-color: #0000ee;
 
+  --window-decoration-color: #f4f4f4;
+  --window-toolbar-height: 3rem;
+
+  --menubar-bg-color: var(--window-decoration-color);
+  --menubar-icon-color: var(--icon-color);
+  --menubar-highlight-color: var(--highlight-color);
+
   --control-bg-color: var(--background-color);
   --control-border-color: #d0d0d0;
   --control-border-radius: 6px;
@@ -35,12 +42,13 @@
   --control-checkbox-bg-color: var(--background-color);
 
   --sidebar-width: 300px;
-  --sidebar-bg-color: #e0e0e0;
+  --sidebar-bg-color: var(--background-color);
+  --sidebar-border-color: #e6e6e6;
   --sidebar-scroll-thumb-color: #888;
   --sidebar-text-color: var(--dimmed-text-color);
   --sidebar-icon-color: var(--icon-color);
-  --sidebar-selected-color: #c8c8c8;
-  --sidebar-search-bg-color: #d5d5d5;
+  --sidebar-selected-color: #e8e8e8;
+  --sidebar-search-bg-color: #fcfcfc;
   --sidebar-search-border-color: #ccc;
   --sidebar-search-icon-color: #6b6b6b;
   --sidebar-section-title-color: #919191;
@@ -49,7 +57,7 @@
   --scrollbar-bg-color: var(--background-color-light);
   --scrollbar-thumb-color: #c2c2c2;
 
-  --chatarea-toolbar-bg-color: #efefef;
+  --chatarea-toolbar-bg-color: var(--window-decoration-color);
   --chatarea-toolbar-text-color: var(--dimmed-text-color);
   --chatarea-toolbar-icon-color: var(--dimmed-text-color);
 
@@ -70,7 +78,7 @@
   --prompt-input-text-color: var(--text-color);
 
   --dialog-border-color: #d0d0d0;
-  --dialog-header-bg-color: #efefef;
+  --dialog-header-bg-color: #ececec;
   --dialog-header-text-color: #666;
   --dialog-body-bg-color: #ececec;
   --dialog-body-text-color: var(--text-color);
@@ -140,6 +148,10 @@
     --highlight-color: rgb(11, 132, 255);
     --link-color: rgb(65, 156, 255);
 
+    --window-decoration-color: #404040;
+
+    --menubar-highlight-color: rgb(54, 173, 194);
+
     --control-bg-color: #646464;
     --control-border-color: var(--control-bg-color);
     --control-text-color: #e0e0e0;
@@ -153,6 +165,7 @@
     --control-checkbox-bg-color: #545454;
 
     --sidebar-bg-color: #292929;
+    --sidebar-border-color: transparent;
     --sidebar-scroll-thumb-color: var(--scrollbar-thumb-color);
     --sidebar-selected-color: var(--highlight-color);
     --sidebar-search-bg-color: #404040;
@@ -161,7 +174,6 @@
 
     --scrollbar-thumb-color: #787878;
 
-    --chatarea-toolbar-bg-color: #373737;
     --chatarea-toolbar-icon-color: var(--icon-color);
 
     --message-list-tip-text-color: var(--text-color);
@@ -233,6 +245,11 @@
     --highlight-color: rgb(10, 120, 240);
     --link-color: rgb(60, 140, 230);
 
+    --window-decoration-color: rgb(40, 50, 65);
+
+    --menubar-bg-color: var(--window-decoration-color);
+    --menubar-icon-color: var(--icon-color);
+  
     --control-bg-color: rgb(45, 65, 85);
     --control-border-color: var(--control-bg-color);
     --control-text-color: rgb(210, 220, 230);

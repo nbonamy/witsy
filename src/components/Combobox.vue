@@ -72,6 +72,7 @@ const onSelect = (event: Event) => {
 
 .control {
   display: flex;
+  width: 100%;
 }
 
 form .group .wrapper {

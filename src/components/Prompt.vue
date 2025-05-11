@@ -168,13 +168,13 @@ const docReposMenuItems = computed(() => {
   const menus: MenuAction[] = docRepos.value.map(d => {
     return { label: d.name, action: d.uuid }
   })
-  if (menus.length > 0) {
+  if (menus.length > 0 && docRepoActive.value) {
     menus.push({ separator: true })
   }
   if (docRepoActive.value) {
     menus.push({ label: 'Disconnect', action: 'disconnect' })
   }
-  menus.push({ label: 'Manage...', action: 'manage' })
+  //menus.push({ label: 'Manage...', action: 'manage' })
   return menus
 })
 

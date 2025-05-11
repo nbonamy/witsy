@@ -7,8 +7,8 @@ import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 import Attachment from '../../src/models/attachment'
-import Main from '../../src/screens/Main.vue'
-import Sidebar from '../../src/components/Sidebar.vue'
+import ChatView from '../../src/components/Chat.vue'
+import ChatSidebar from '../../src/components/ChatSidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Assistant from '../../src/services/assistant'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
@@ -51,6 +51,7 @@ vi.mock('../../src/services/assistant', async () => {
 })
 
 beforeAll(() => {
+  
   useWindowMock({ modelDefaults: true })
   useBrowserMock()
 
@@ -95,18 +96,19 @@ beforeAll(() => {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  store.load()
 })
 
 test('Renders correctly', () => {
-  const wrapper = mount(Main)
+  const wrapper = mount(ChatView)
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.main').exists()).toBe(true)
-  expect(wrapper.findComponent(Sidebar).exists()).toBe(true)
+  expect(wrapper.find('.chat').exists()).toBe(true)
+  expect(wrapper.findComponent(ChatSidebar).exists()).toBe(true)
   expect(wrapper.findComponent(ChatArea).exists()).toBe(true)
 })
 
 test('Resets assistant', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
 
   // load witb defaults
   setLlmDefaults('mock', 'chat')
@@ -137,7 +139,7 @@ test('Resets assistant', async () => {
 })
 
 test('Saves text attachment', async () => {
-  mount(Main)
+  mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
@@ -146,7 +148,7 @@ test('Saves text attachment', async () => {
 })
 
 test('Saves pdf attachment', async () => {
-  mount(Main)
+  mount(ChatView)
   const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
@@ -155,7 +157,7 @@ test('Saves pdf attachment', async () => {
 })
 
 test('Saves image attachment', async () => {
-  mount(Main)
+  mount(ChatView)
   const attachment = new Attachment('image', 'image/png', 'file://image', false)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
@@ -164,7 +166,7 @@ test('Saves image attachment', async () => {
 })
 
 test('Does not save twice', async () => {
-  mount(Main)
+  mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', true)
   emitEvent('send-prompt', { prompt: 'prompt', attachment })
   expect(window.api.file.save).not.toHaveBeenCalled()
@@ -173,7 +175,7 @@ test('Does not save twice', async () => {
 })
 
 test('Sends prompt', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
@@ -182,7 +184,7 @@ test('Sends prompt', async () => {
 })
 
 test('Sends prompt with attachment', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
@@ -191,7 +193,7 @@ test('Sends prompt with attachment', async () => {
 })
 
 test('Sends prompt with doc repo', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
@@ -200,7 +202,7 @@ test('Sends prompt with doc repo', async () => {
 })
 
 test('Sends prompt with expert', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
@@ -209,13 +211,13 @@ test('Sends prompt with expert', async () => {
 })
 
 test('Stop assistant', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('stop-prompting', null)
   expect(Assistant.prototype.stop).toHaveBeenCalled()
 })
 
 test('New chat in folder without defaults', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   setLlmDefaults('mock', 'chat')
   emitEvent('new-chat-in-folder', 'folder1')
   expect(store.history.chats).toHaveLength(2)
@@ -229,7 +231,7 @@ test('New chat in folder without defaults', async () => {
 })
 
 test('New chat in folder with defaults', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   setLlmDefaults('mock', 'chat')
   emitEvent('new-chat-in-folder', 'folder2')
   expect(store.history.chats).toHaveLength(2)
@@ -253,7 +255,7 @@ test('New chat in folder with defaults', async () => {
 })
 
 test('Rename chat', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('rename-chat', store.history.chats[0])
   expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.rename',
@@ -267,7 +269,7 @@ test('Rename chat', async () => {
 
 test('Move chat', async () => {
   expect(store.history.folders[0].chats).not.toHaveLength(1)
-  mount(Main)
+  mount(ChatView)
   emitEvent('move-chat', 'chat')
   expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.moveToFolder',
@@ -285,7 +287,7 @@ test('Move chat', async () => {
 })
 
 test('Delete chat', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('delete-chat', 'chat')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'main.chat.confirmDeleteSingle',
@@ -296,7 +298,7 @@ test('Delete chat', async () => {
 })
 
 test('Rename folder', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('rename-folder', 'folder1')
   expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.rename',
@@ -309,7 +311,7 @@ test('Rename folder', async () => {
 })
 
 test('Delete folder', async () => {
-  mount(Main)
+  mount(ChatView)
   emitEvent('delete-folder', 'folder1')
   expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'main.folder.confirmDelete',
@@ -321,7 +323,7 @@ test('Delete folder', async () => {
 
 test('Select chat', async () => {
   store.config.llm.engine = 'mock'
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   emitEvent('select-chat', store.history.chats[0])
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
@@ -335,7 +337,7 @@ test('Select chat', async () => {
 })
 
 test('Fork Chat on Assistant Message', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   emitEvent('select-chat', store.history.chats[0])
   wrapper.vm.forkChat(store.history.chats[0], store.history.chats[0].messages[2], 'title2', 'engine2', 'model2')
   expect(store.history.chats).toHaveLength(2)
@@ -348,7 +350,7 @@ test('Fork Chat on Assistant Message', async () => {
 })
 
 test('Fork Chat on User Message', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   expect(store.history.chats).toHaveLength(1)
   emitEvent('select-chat', store.history.chats[0])
   expect(store.history.chats).toHaveLength(1)
@@ -370,7 +372,7 @@ test('Fork Chat on User Message', async () => {
 })
 
 test('Delete Message', async () => {
-  const wrapper: VueWrapper<any> = mount(Main)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   emitEvent('select-chat', store.history.chats[0])
   const chat = wrapper.vm.assistant.chat
   expect(chat.messages).toHaveLength(5)

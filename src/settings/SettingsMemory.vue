@@ -3,16 +3,16 @@
     <div class="description">
       {{ t('settings.plugins.memory.description') }}
     </div>
-    <div class="group">
-      <label>{{ t('common.enabled') }}</label>
+    <div class="group horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
+      <label>{{ t('common.enabled') }}</label>
     </div>
     <EmbeddingSelector v-if="!hasFacts" :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
     <div v-else class="group">
       <label></label>
       <div class="warning">{{ t('settings.plugins.memory.hasFacts') }}</div>
     </div>
-    <div class="group">
+    <div class="group horizontal">
       <label>{{ t('settings.plugins.memory.contents') }}</label>
       <button @click.prevent="onView">{{ t('settings.plugins.memory.view') }}</button>
       <button @click.prevent="onReset">{{ t('common.clear') }}</button>
@@ -75,9 +75,7 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
-@import '../../css/panel.css';
 </style>
 
 <style scoped>

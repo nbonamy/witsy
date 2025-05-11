@@ -1,37 +1,42 @@
 <template>
-  <div class="content large" @click="closeContextMenu">
-    <div class="experts sticky-table-container">
-      <table>
-        <thead>
-          <tr>
-            <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
-              @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd">
-            <td class="enabled"><input type="checkbox" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
-            <td class="name">{{ name(expert) }}</td>
-            <td class="move">
-              <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
-              <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="actions">
-      <button name="new" @click.prevent="onNew">{{ t('settings.experts.new') }}</button>
-      <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
-      <button name="copy" @click.prevent="onCopy(selected)" :disabled="!selected">{{ t('settings.experts.copy') }}</button>
-      <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
-      <div class="right">
-        <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.experts.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+  <form class="tab-content vertical large" @click="closeContextMenu">
+    <header>
+      <div class="title">{{ t('settings.tabs.experts') }}</div>
+    </header>
+    <main>
+      <div class="experts sticky-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="column in columns" :key="column.field">{{ column.title }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="expert in visibleExperts" :key="expert.id" :data-id="expert.id" class="expert" :class="selected?.id == expert.id ? 'selected' : ''"
+                @click="onSelect(expert)" @dblclick="onEdit(expert)" draggable="true" @dragstart="onDragStart" @dragover="onDragOver" @dragend="onDragEnd">
+              <td class="enabled"><input type="checkbox" :checked="expert.state=='enabled'" @click="onEnabled(expert)" /></td>
+              <td class="name">{{ name(expert) }}</td>
+              <td class="move">
+                <button @click.prevent="onMoveDown(expert)" @dblclick.stop>▼</button>
+                <button @click.prevent="onMoveUp(expert)" @dblclick.stop>▲</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
-    <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
-    <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
-  </div>
+      <div class="actions">
+        <button name="new" @click.prevent="onNew">{{ t('settings.experts.new') }}</button>
+        <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
+        <button name="copy" @click.prevent="onCopy(selected)" :disabled="!selected">{{ t('settings.experts.copy') }}</button>
+        <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
+        <div class="right">
+          <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.experts.more') }} {{ showMenu ? '▼' : '▲'}}</button>
+        </div>
+      </div>
+    </main>
+  </form>
+  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" position="above-right" :teleport="false" />
+  <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
 </template>
 
 <script setup lang="ts">
@@ -123,7 +128,7 @@ const onMore = () => {
 const showContextMenu = () => {
   showMenu.value = true
   const rcButton = moreButton.value.getBoundingClientRect()
-  const rcDialog = moreButton.value.closest('.window').getBoundingClientRect()
+  const rcDialog = moreButton.value.closest('.tab-content').getBoundingClientRect()
   menuX.value = rcDialog.right - rcButton.right
   menuY.value = rcDialog.bottom - rcButton.bottom + rcButton.height + 8
 }

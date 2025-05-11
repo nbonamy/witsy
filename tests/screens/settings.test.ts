@@ -26,7 +26,7 @@ let wrapper: VueWrapper<any>
 
 const checkVisibility = (visible: number) => {
   for (let i=0; i<tabs.length; i++) {
-    const display = i === visible ? 'block' : 'none'
+    const display = i === visible ? 'flex' : 'none'
     expect(getTab(wrapper, i).attributes().style).toMatch(new RegExp(`display: ${display}`))
   }
 }
@@ -71,11 +71,6 @@ for (let i=1; i<tabs.length; i++) {
     expect(wrapper.getComponent({ ref: tabs[i] }).find('.group')).not.toBeNull()
   })
 }
-
-test('Settings close', async () => {
-  await wrapper.find('.settings header .windows').trigger('click')
-  expect(window.api.settings.close).toHaveBeenCalledOnce()
-})
 
 test('Settings General', async () => {
   
@@ -168,7 +163,7 @@ test('Settings General', async () => {
 test('Settings Appearance', async () => {
   
   const tab = await switchToTab(wrapper, 1)
-  expect(tab.findAll('.group')).toHaveLength(6)
+  expect(tab.findAll('.group')).toHaveLength(7)
 
   expect(store.config.appearance.theme).toBe('system')
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')

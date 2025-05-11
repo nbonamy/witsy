@@ -1,9 +1,5 @@
 {
   "common": {
-    "actions": {
-      "addFiles": "Ajouter des fichiers…",
-      "addFolder": "Ajouter un dossier…"
-    },
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
@@ -383,6 +379,9 @@
       "working": "Réflexion sur la prochaine étape…"
     },
     "title": "Computer Use"
+  },
+  "debugConsole": {
+    "title": "Console de débogage"
   },
   "designStudio": {
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce média ?",
@@ -1280,10 +1279,8 @@
       "title": "Aide"
     },
     "view": {
+      "debug": "Ouvrir la console de débogage",
       "title": "Affichage"
-    },
-    "window": {
-      "debug": "Ouvrir la console de débogage"
     }
   },
   "message": {
@@ -1441,6 +1438,10 @@
     },
     "appearance": {
       "chatFont": "Police des conversations",
+      "chatFontExample": {
+        "text": "Voici à quoi ressemble un message de chat.",
+        "title": "Exemple de message de chat"
+      },
       "chatFontSize": "Taille de police",
       "chatListLayout": "Liste des conversations",
       "chatListLayouts": {
@@ -1499,7 +1500,6 @@
         "apiVersion": "Version API",
         "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce fournisseur personnalisé ?",
         "create": "Créer un moteur",
-        "delete": "Supprimer le moteur",
         "deployment": "Déploiement",
         "endpoint": "Point de terminaison"
       },
@@ -1610,16 +1610,13 @@
           "title": "Importer depuis Json"
         },
         "importSmitheryServer": "Importer un serveur Smithery.ai…",
-        "mcpServers": "Serveurs MCP :",
+        "mcpServers": "Serveurs MCP",
         "modelContextProtocol": "Model Context Protocol",
         "noServersFound": "Aucun serveur MCP trouvé",
         "noTools": "Aucun outil disponible",
-        "restartClient": "Redémarrer le client",
         "serverLogs": "Journaux du serveur MCP",
         "servers": ". Découvrez et installez des serveurs MCP depuis",
         "smithery": "Smithery",
-        "status": "Statut",
-        "target": "Cible",
         "title": "MCP",
         "tools": "Outils",
         "totalTools": "Total de {count} service{count > 1 ? 's' : ''} disponible{count > 1 ? 's' : ''}"

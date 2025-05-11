@@ -1,118 +1,213 @@
 
-.window {
+.panel-content {
+  
   display: flex;
   height: 100vh;
   width: 100%;
   overflow: hidden;
   color: var(--text-color);
-}
-
-.panel {
-  
-  /* concrete windows should probably override
-     the flex with their desired width */
-  
-  flex: 0 0 200px;
-  background-color: var(--sidebar-bg-color);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-
-  .actions {
-    padding: 16px;
-    -webkit-app-region: drag;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  
-    > * {
-      fill: var(--sidebar-icon-color);
-      -webkit-app-region: no-drag;
-      cursor: pointer;
-    }
-  }
 
   * {
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
   }
 
-  .title {
-    font-weight: bold;
-    font-size: 1.1em;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-  }
-
-}
-
-.content {
-  
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--background-color);
-  min-width: 0;
-
-  --toolbar-height: 48px;
-  --toolbar-padding: 16px;
-
-  .toolbar {
-    -webkit-app-region: drag;
-    padding: var(--toolbar-padding);
-    flex: 0 0 calc(var(--toolbar-height) - (var(--toolbar-padding) * 2));
-    background-color: var(--chatarea-toolbar-bg-color);
+  .panel {
+    
+    /* concrete windows should probably override
+      the flex with their desired width */
+    
+    flex: 0 0 200px;
+    height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--sidebar-bg-color);
+    color: var(--sidebar-text-color);
     display: flex;
-    gap: 16px;
+    flex-direction: column;
 
-    .title {
-      font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--chatarea-toolbar-text-color);
-    }
-
-    .action {
-      -webkit-app-region: no-drag;
+    .icon {
+      color: var(--sidebar-icon-color);
       cursor: pointer;
-      text-align: right;
-      width: 16px;
-      height: 16px;
-      color: var(--chatarea-toolbar-icon-color);
-      fill: var(--chatarea-toolbar-icon-color);
-      margin-left: auto;
+      display: inline-block;
+      margin: 0px 8px;
 
-      &.disabled {
-        opacity: 0.5;
-        pointer-events: none;
+      &:has(span) svg {
+        margin-right: 4px;
       }
 
-      ~ .action {
-        margin-left: 0px;
+      &:last-child {
+        margin-right: 0px;
       }
       
     }
+    
+    header {
+
+      flex: 0 0 var(--window-toolbar-height);
+      background-color: var(--window-decoration-color);
+      padding: 0px 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      -webkit-app-region: drag;
+
+      form, input, select, .icon {
+        -webkit-app-region: no-drag;
+      }
+
+      form {
+        flex: 1;
+      }
+
+      .title {
+        flex: 1;
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+    
+      .actions {
+        -webkit-app-region: drag;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+    }
+
+    main {
+
+      flex: 1;
+      border-right: 1px solid var(--sidebar-border-color);
+      padding-top: 1rem;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+
+    }
+
+    footer {
+
+      border-right: 1px solid var(--sidebar-border-color);
+      padding: 1rem;
+      font-size: 11pt;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+
+    }
+
+  }
+
+  .content {
+    
+    flex: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    overflow: hidden;
+    min-width: 0;
+
+    header {
+      
+      flex: 0 0 var(--window-toolbar-height);
+      background-color: var(--window-decoration-color);
+      padding: 0px 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      -webkit-app-region: drag;
+      gap: 0.75rem;
+      
+      .title {
+        flex: 1;
+        font-size: 12pt;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--chatarea-toolbar-text-color);
+      }
+
+      .push {
+        flex: 1;
+      }
+
+      .icon {
+        -webkit-app-region: no-drag;
+        cursor: pointer;
+        text-align: right;
+        width: 16px;
+        height: 16px;
+        color: var(--chatarea-toolbar-icon-color);
+        fill: var(--chatarea-toolbar-icon-color);
+        margin-left: auto;
+
+        &.disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+
+        ~ .action {
+          margin-left: 0px;
+        }
+        
+      }
+    }
+
+    main {
+
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+
+    }
+
   }
 
 }
 
+.macos {
+  .panel-content {
+    .panel {
+      header {
+        padding-left: 1.5rem;
+      }
+    }
+  }
+}
+
+.macos {
+  .window {
+    .panel {
+      header {
+        padding-left: 5rem;
+      }
+    }
+  }
+}
+
 .windows {
-  .content {
-    .toolbar {
-      padding-right: 148px;
-      .menu {
-        margin-top: 1px;
+  .panel-content {
+    .content {
+      header {
+        padding-right: 148px;
+        .menu {
+          margin-top: 1px;
+        }
       }
     }
   }
 }
 
 .linux {
-  .content {
-    .toolbar {
-      padding-right: 92px;
-      .menu {
-        margin-top: 0px;
+  .panel-content {
+    .content {
+      header {
+        padding-right: 92px;
+        .menu {
+          margin-top: 0px;
+        }
       }
     }
   }

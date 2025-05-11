@@ -34,15 +34,17 @@
     </div>
     <div class="group">
       <label>{{ t('settings.voice.tts.voice') }}</label>
-      <select v-model="voice" @change="save">
-        <option v-for="voice in voices" :key="voice.id" :value="voice.id">
-          {{ voice.label }}
-        </option>
-      </select>
-      <button class="control" @click.prevent="onPlay">
-        <BIconPlayFill v-if="audioState.state === 'idle'"/>
-        <BIconStopFill v-else />
-      </button>
+      <div class="control-group">
+        <select v-model="voice" @change="save">
+          <option v-for="voice in voices" :key="voice.id" :value="voice.id">
+            {{ voice.label }}
+          </option>
+        </select>
+        <button class="control" @click.prevent="onPlay">
+          <BIconPlayFill v-if="audioState.state === 'idle'"/>
+          <BIconStopFill v-else />
+        </button>
+      </div>
       <audio ref="audio" />
     </div>
     <!-- <div class="group" v-if="engine === 'kokoro'">
@@ -191,7 +193,6 @@ defineExpose({ load })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/tabs.css';
 @import '../../css/form.css';
 </style>
 

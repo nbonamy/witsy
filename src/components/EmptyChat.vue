@@ -28,28 +28,6 @@
         </div>
       </div>
     </div>
-    <div class="actions" :class="{ hidden: showAllEngines }">
-      <div class="action" @click="onCreateMedia">
-        <BIconPaletteFill />
-        {{ t('designStudio.title') }}
-      </div>
-      <div class="action" @click="onScratchpad">
-        <BIconJournalText />
-        {{ t('scratchpad.title') }}
-      </div>
-      <div class="action" @click="onDictation">
-        <BIconMic />
-        {{ t('transcribe.title') }}
-      </div>
-      <div class="action" @click="onVoiceMode">
-        <BIconChatSquareDots />
-        {{ t('realtimeChat.title') }}
-      </div>
-      <div class="action" @click="onComputerUse" v-if="hasComputerUse">
-        <BIconRobot />
-        {{ t('computerUse.title') }}
-      </div>
-    </div>
   </div>
 </template>
 
@@ -62,9 +40,9 @@ import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import Dialog from '../composables/dialog'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
+import { BIconArrowRepeat, BIconChatSquareDots } from 'bootstrap-icons-vue'
 
 import useEventBus from '../composables/event_bus'
-import { BIconArrowRepeat, BIconChatSquareDots } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 const tipsManager = useTipsManager(store)
@@ -343,26 +321,6 @@ const addToFavorites = () => {
 
 const removeFavorite = () => {
   llmManager.removeFavoriteModel(store.config.llm.engine, model.value)
-}
-
-const onCreateMedia = () => {
-  window.api.studio.start()
-}
-
-const onScratchpad = () => {
-  window.api.scratchpad.open()
-}
-
-const onDictation = () => {
-  window.api.transcribe.start()
-}
-
-const onVoiceMode = () => {
-  window.api.voiceMode.start()
-}
-
-const onComputerUse = () => {
-  emitEvent('activate-computer-use')
 }
 
 </script>
