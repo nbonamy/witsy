@@ -121,9 +121,7 @@
       </div>
     </form>
 
-    <Teleport to="body">
-      <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
-    </Teleport>
+    <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
   </div>
 </template>

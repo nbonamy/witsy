@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import Chat from '../../src/models/chat'
@@ -45,7 +46,7 @@ beforeAll(() => {
 beforeEach(() => {
   vi.clearAllMocks()
   chat = new Chat()
-  wrapper = mount(Prompt, { props: { chat: chat }, global: { stubs: { teleport: true } } } )
+  wrapper = mount(Prompt, { ...stubTeleport, props: { chat: chat } } )
 })
 
 test('Render', () => {

@@ -45,12 +45,12 @@
               </div>
 
               <div class="actions">
-                <BIconPlayCircle @click="onEnabled(server)" v-if="server.state == 'disabled'"/>
-                <BIconStopCircle @click="onEnabled(server)" v-if="server.state == 'enabled'"/>
-                <BIconJournalText @click="showLogs(server)" v-if="hasLogs(server)"/>
-                <BIconSearch @click="showTools(server)" :class="{ 'disabled': !isRunning(server) }"/>
-                <BIconPencil @click="onEdit(server)" />
-                <BIconTrash @click="onDelete(server)" />
+                <BIconPlayCircle class="start" @click="onEnabled(server)" v-if="server.state == 'disabled'"/>
+                <BIconStopCircle class="stop" @click="onEnabled(server)" v-if="server.state == 'enabled'"/>
+                <BIconJournalText class="logs" @click="showLogs(server)" v-if="hasLogs(server)"/>
+                <BIconSearch class="tools" @click="showTools(server)" :class="{ 'disabled': !isRunning(server) }"/>
+                <BIconPencil class="edit" @click="onEdit(server)" />
+                <BIconTrash class="delete" @click="onDelete(server)" />
               </div>
 
             </div>
@@ -58,9 +58,9 @@
         </div>
       </div>
     </main>
+    <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
+    <McpServerEditor ref="editor" :server="selected" @save="onEdited" @install="onInstall" />
   </form>
-  <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
-  <McpServerEditor ref="editor" :server="selected" @save="onEdited" @install="onInstall" />
 </template>
 
 <script setup lang="ts">
@@ -180,9 +180,9 @@ const addMenuActions = [
 
 const onAdd = () => {
   const addButton = document.querySelector('.servers .icon.add')
-  const rc = addButton.getBoundingClientRect()
+  const rc = addButton?.getBoundingClientRect()
   addMenuX.value = 200
-  addMenuY.value = rc.top - 32
+  addMenuY.value = rc?.top - 32
   showAddMenu.value = true
 }
 

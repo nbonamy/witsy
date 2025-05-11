@@ -56,8 +56,9 @@ test('should render', async () => {
 test('openai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   const openai = tab.findComponent({ name: 'SettingsOpenAI' })
-  await openai.findAll('input')[2].setValue('base-url')
-  await openai.findAll('input')[2].trigger('blur')
+  console.log(openai.html())
+  await openai.find('input[name=baseURL]').setValue('base-url')
+  await openai.find('input[name=baseURL]').trigger('blur')
   expect(store.config.engines.openai.baseURL).toBe('base-url')
   await openai.findAll('input')[0].setValue('api-key')
   await openai.findAll('input')[0].trigger('blur')
@@ -124,8 +125,8 @@ test('ollama settings', async () => {
   await tab.find('.list-panel .list .item:nth-child(6)').trigger('click')
   await tab.vm.$nextTick()
   const ollama = tab.findComponent({ name: 'SettingsOllama' })
-  await ollama.findAll('input')[2].setValue('base-url')
-  await ollama.findAll('input')[2].trigger('blur')
+  await ollama.find('input[name=baseURL]').setValue('base-url')
+  await ollama.find('input[name=baseURL]').trigger('blur')
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
   await ollama.findAll('button')[1].trigger('click')
   await wait(750) //timeout

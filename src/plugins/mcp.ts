@@ -15,7 +15,7 @@ export default class extends MultiToolPlugin {
   }
 
   isEnabled(): boolean {
-    return this.config?.enabled && window.api.mcp.isAvailable()
+    return /*this.config?.enabled && */window.api.mcp.isAvailable()
   }
 
   getName(): string {

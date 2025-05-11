@@ -8,6 +8,7 @@ export const tabs = [
   'settingsExperts',
   'settingsLLM',
   'settingsPlugins',
+  'settingsMcp',
   'settingsVoice',
   'settingsShortcuts',
   'settingsAdvanced',

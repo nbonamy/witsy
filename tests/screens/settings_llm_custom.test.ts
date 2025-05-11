@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -30,7 +31,7 @@ beforeAll(() => {
 
   // wrapper
   document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings, { attachTo: '#settings', ...stubTeleport })
 })
 
 beforeEach(async () => {
@@ -113,6 +114,7 @@ test('create custom engine openai', async () => {
   await tab.find<HTMLButtonElement>('.logo.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
   expect(create.exists()).toBe(true)
+  console.log(create.html())
   expect(create.find<HTMLInputElement>('input[name=label]').element.value).toBe('')
   expect(create.find<HTMLSelectElement>('select[name=api]').element.value).toBe('openai')
   expect(create.find<HTMLInputElement>('input[name=baseURL]').element.value).toBe('')
