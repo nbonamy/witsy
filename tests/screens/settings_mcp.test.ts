@@ -6,9 +6,6 @@ import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import SettingsMcp from '../../src/settings/SettingsMcp.vue'
 
-HTMLDialogElement.prototype.showModal = vi.fn()
-HTMLDialogElement.prototype.close = vi.fn()
-
 let mcp: VueWrapper<any>
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {

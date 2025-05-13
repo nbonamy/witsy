@@ -9,9 +9,6 @@ import LlmFactory from '../../src/llms/llm'
 
 enableAutoUnmount(afterAll)
 
-HTMLDialogElement.prototype.showModal = vi.fn()
-HTMLDialogElement.prototype.close = vi.fn()
-
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
   const mod: any = await importOriginal()
   return {

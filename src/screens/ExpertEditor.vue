@@ -129,7 +129,7 @@ watch(() => props.expert || {}, load, { immediate: true })
 
 const close = () => {
   emit('expert-modified')
-  document.querySelector<HTMLDialogElement>('#expert-editor').close()
+  dialog.value.close('#expert-editor')
 }
 
 const onCancel = () => {

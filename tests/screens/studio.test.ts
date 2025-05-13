@@ -101,9 +101,6 @@ beforeAll(() => {
     quickPrompts: []
   }))
 
-  // @ts-expect-error mock
-  Element.prototype.showModal = vi.fn()
-
 })
 
 test('Renders', async () => {

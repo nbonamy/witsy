@@ -26,12 +26,8 @@ beforeAll(() => {
   store.loadSettings()
   store.load = () => {}
     
-  // @ts-expect-error mock
-  Element.prototype.showModal = vi.fn()
-
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings', ...stubTeleport })
+  wrapper = mount(Settings, { ...stubTeleport })
 })
 
 beforeEach(async () => {
