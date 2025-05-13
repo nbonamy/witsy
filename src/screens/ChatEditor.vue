@@ -1,6 +1,6 @@
 <template>
-  <AlertDialog id="chat-editor" ref="dialog" @keyup.enter="onSave">
-    <template v-slot:body>
+  <ModalDialog id="chat-editor" ref="dialog" @save="onSave">
+    <template #body>
       <div class="group">
         <label>{{ t('chat.editor.title') }}</label>
         <input type="text" v-model="title" />
@@ -14,13 +14,13 @@
         <ModelSelect v-model="model" :engine="engine" />
       </div>
     </template> 
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
         <button @click="onSave" class="alert-confirm">{{ t(confirmButtonText) }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +29,7 @@ import { ref, onMounted, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'

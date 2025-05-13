@@ -1,6 +1,6 @@
 <template>
-  <AlertDialog id="engine-model-picker" ref="dialog" @save="onSave">
-    <template v-slot:body>
+  <ModalDialog id="engine-model-picker" ref="dialog" @save="onSave">
+    <template #body>
       <div class="group">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect :favorites="favorites" v-model="engine" @change="onChangeEngine"/>
@@ -24,13 +24,13 @@
         </select>
       </div>
     </template> 
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
         <button @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -38,7 +38,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'

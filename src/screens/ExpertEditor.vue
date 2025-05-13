@@ -1,50 +1,48 @@
 <template>
-  <dialog id="expert-editor" class="dialog editor">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('experts.editor.title') }}</div>
-      </header>
-      <main>
-        <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
-          <label class="no-colon"><BIconExclamationCircle /></label>
-          <div>{{ t('common.differentLocales') }}</div>
+  <ModalDialog id="expert-editor" ref="dialog" :editor="true">
+    <template #header>
+      <div class="title">{{ t('experts.editor.title') }}</div>
+    </template>
+    <template #body>
+      <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+        <label class="no-colon"><BIconExclamationCircle /></label>
+        <div>{{ t('common.differentLocales') }}</div>
+      </div>
+      <div class="group">
+        <label>{{ t('common.name') }}</label>
+        <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
+      </div>
+      <div class="group">
+        <label>{{ t('common.prompt') }}</label>
+        <div class="subgroup">
+          <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
+          <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
         </div>
-        <div class="group">
-          <label>{{ t('common.name') }}</label>
-          <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
-        </div>
-        <div class="group">
-          <label>{{ t('common.prompt') }}</label>
-          <div class="subgroup">
-            <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
-            <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
-          </div>
-        </div>
-        <div class="group" v-if="supportTriggerApps">
-          <label>{{ t('experts.editor.triggerApps') }}</label>
-          <div class="subgroup list-with-actions">
-            <div class="list">
-              <template v-for="app in triggerApps" :key="app.identifier">
-              <div :class="{ item: true, selected: app.identifier == selectedApp?.identifier }" @click="selectApp(app)">
-                <img class="icon" :src="iconData(app)" />
-                <div class="name">{{ app.name }}</div>
-              </div>
-            </template>
+      </div>
+      <div class="group" v-if="supportTriggerApps">
+        <label>{{ t('experts.editor.triggerApps') }}</label>
+        <div class="subgroup list-with-actions">
+          <div class="list">
+            <template v-for="app in triggerApps" :key="app.identifier">
+            <div :class="{ item: true, selected: app.identifier == selectedApp?.identifier }" @click="selectApp(app)">
+              <img class="icon" :src="iconData(app)" />
+              <div class="name">{{ app.name }}</div>
             </div>
-            <div class="actions">
-              <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
-              <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
-            </div>
-            <span> {{ t('experts.editor.triggerAppsDescription') }}</span>
+          </template>
           </div>
+          <div class="actions">
+            <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
+            <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
+          </div>
+          <span> {{ t('experts.editor.triggerAppsDescription') }}</span>
         </div>
-      </main>
-      <footer>
-        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
-        <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      </footer>
-    </form>
-  </dialog>
+      </div>
+    </template>
+    <template #footer>
+      <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
+      <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -52,6 +50,7 @@
 import { Expert, ExternalApp, FileContents } from '../types/index'
 import { ref, computed, watch } from 'vue'
 import { expertI18n, t } from '../services/i18n'
+import ModalDialog from '../components/ModalDialog.vue'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
@@ -60,6 +59,7 @@ const props = defineProps<{
   expert: Expert|null
 }>()
 
+const dialog = ref(null)
 const type = ref(null)
 const name = ref(null)
 const prompt = ref(null)
@@ -166,7 +166,7 @@ const onSave = (event: Event) => {
 }
 
 defineExpose({
-  show: () => document.querySelector<HTMLDialogElement>('#expert-editor').showModal(),
+  show: () => dialog.value.show('#expert-editor'),
   close,
 })
 

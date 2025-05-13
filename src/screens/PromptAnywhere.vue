@@ -3,12 +3,12 @@
     <div class="container">
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
         <Prompt ref="prompt" :chat="chat" :history-provider="historyProvider" :placeholder="t('common.askMeAnything')" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
-          <template v-slot:after>
+          <template #after>
             <div class="app" v-if="sourceApp">
               <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
             </div>
           </template>
-          <template v-slot:actions>
+          <template #actions>
             <div class="info" v-if="chat"><span @click="onEngineModel">
               <BIconGlobe /> {{ llmManager.getEngineName(chat.engine) }} / {{ chat.model }}
             </span></div>

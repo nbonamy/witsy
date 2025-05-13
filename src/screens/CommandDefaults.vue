@@ -1,9 +1,9 @@
 <template>
-  <AlertDialog id="command-defaults" ref="dialog">
-    <template v-slot:header>
+  <ModalDialog id="command-defaults" ref="dialog">
+    <template #header>
       <div class="title">{{ t('commands.defaults.title') }}</div>
     </template>
-    <template v-slot:body>
+    <template #body>
       <div class="group">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.defaults.lastOneUsed')" />
@@ -17,13 +17,13 @@
         <input type="checkbox" v-model="altWinCopyPaste" />
       </div>
     </template>
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button @click="onSave" class="default">{{ t('common.save') }}</button>
         <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -31,7 +31,7 @@
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 

@@ -1,9 +1,9 @@
 <template>
-  <AlertDialog id="variable-editor" :icon="false" ref="dialog" @save="onSave">
-    <template v-slot:header>
+  <ModalDialog id="variable-editor" :icon="false" ref="dialog" @save="onSave">
+    <template #header>
       <div class="title">{{ t(title) }}</div>
     </template>
-    <template v-slot:body>
+    <template #body>
       <div class="group">
         <label>{{ t('common.key') }}</label>
         <input type="text" name="key" v-model="key" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
@@ -13,13 +13,13 @@
         <input type="text" name="value" v-model="value" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
     </template>
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
         <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -27,7 +27,7 @@
 import { ref, onMounted, onUnmounted, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 
 const dialog = ref(null)
 const key = ref('')

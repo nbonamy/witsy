@@ -1,5 +1,6 @@
 
 dialog.editor {
+  padding: 1.5rem;
   background-color: var(--dialog-body-bg-color);
   border: 1px solid var(--dialog-border-color);
 }

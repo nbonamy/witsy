@@ -1,9 +1,9 @@
 <template>
-  <dialog id="tool-selector" class="dialog" @keydown.enter.prevent @keyup.enter="onSave">
-    <header>
+  <ModalDialog id="tool-selector" ref="dialog" :width="700" :editor="true" @save="onSave">
+    <template #header>
       <div class="title">{{ t('toolSelector.title') }}</div>
-    </header>
-    <main>
+    </template>
+    <template #body>
       <div class="sticky-table-container">
         <table>
           <thead>
@@ -22,14 +22,14 @@
           </tbody>
         </table>
       </div>
-    </main>
-    <footer>
+    </template>
+    <template #footer>
       <button name="all" @click.prevent="selection = null">{{ t('common.selectAll') }}</button>
       <button name="none" @click.prevent="selection = []">{{ t('common.selectNone') }}</button>
       <button name="cancel" @click="onCancel" class="push alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
       <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
-    </footer>
-  </dialog>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +39,7 @@ import { ref, Ref, onMounted, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import { availablePlugins } from '../plugins/plugins'
 import { Plugin } from 'multi-llm-ts'
+import ModalDialog from '../components/ModalDialog.vue'
 import McpPlugin from '../plugins/mcp'
 
 type Tool = {
@@ -48,6 +49,7 @@ type Tool = {
   plugin: Plugin
 }
 
+const dialog = ref(null)
 const tools: Ref<Tool[]> = ref([])
 const selection: Ref<string[]> = ref([])
 
@@ -133,7 +135,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => document.querySelector<HTMLDialogElement>('#tool-selector').showModal(),
+  show: () => dialog.value.show('#tool-selector'),
   close,
 })
 
@@ -142,13 +144,14 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
+@import '../../css/editor.css';
 @import '../../css/sticky-header-table.css';
 </style>
 
-<style scoped>
+<style>
 
 #tool-selector {
-  width: 700px !important;
+  
   height: 520px !important;
 
   main {
@@ -156,7 +159,8 @@ defineExpose({
     padding-bottom: 0px;
 
     .sticky-table-container {
-      max-height: 406px;
+      margin: 1rem 0;
+      max-height: 440px;
       overflow: auto;
 
       th, td {
@@ -166,6 +170,7 @@ defineExpose({
   }
 
   footer {
+    flex-direction: row;;
     justify-content: start;
 
     .push {

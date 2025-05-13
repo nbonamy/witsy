@@ -6,7 +6,6 @@ import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
-import { H } from 'vitest/dist/chunks/environment.LoooBwUu.js'
 
 enableAutoUnmount(afterAll)
 
@@ -55,8 +54,7 @@ beforeAll(() => {
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { ...stubTeleport, attachTo: '#settings' })
+  wrapper = mount(Settings, { ...stubTeleport })
 })
 
 beforeEach(() => {

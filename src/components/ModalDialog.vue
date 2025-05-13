@@ -1,7 +1,7 @@
 
 <template>
   <Teleport to="body">
-    <dialog :id="id" class="dialog alert-dialog show" :class="{ editor: editor }">
+    <dialog :id="id" class="dialog show" :class="{ 'alert-dialog': !editor, editor: editor }">
       <form :class="{ vertical: !editor }" method="dialog" @submit.prevent>
         <div class="icon" v-if="icon && !editor">
           <img src="/assets/icon.png" />
@@ -28,6 +28,10 @@ const props = defineProps({
   id: {
     type: String,
     required: true
+  },
+  width: {
+    type: Number,
+    default: 260
   },
   editor: {
     type: Boolean,
@@ -82,11 +86,7 @@ defineExpose({ show, close })
 
 .alert-dialog {
   
-  width: 260px !important;
-
-  &.editor {
-    width: 400px !important;
-  }
+  width: v-bind(`${width}px`) !important;
 
   &.show {
     animation: show 0.3s;

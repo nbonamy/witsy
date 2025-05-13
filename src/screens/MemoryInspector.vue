@@ -1,36 +1,34 @@
 <template>
-  <dialog class="dialog memory">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('memory.inspector.title') }}</div>
-      </header>
-      <main>
-        <div class="empty" v-if="contents.length == 0">{{ t('memory.inspector.noFacts') }}</div>
-        <div class="sticky-table-container" v-else>
-          <table>
-            <thead>
-              <tr>
-                <th>{{ t('memory.inspector.memory') }}</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="fact in contents">
-                <td>{{ fact.content }}</td>
-                <td>
-                  <button @click.prevent="onDelete($event, fact)">{{ t('common.delete') }}</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
-      </main>
-      <footer>
-        <button @click.prevent="onClose">{{ t('common.close') }}</button>
-      </footer>
-    </form>
-  </dialog>
+  <ModalDialog id="memory-inspector" ref="dialog" :icon="false" :width="400">
+    <template #header>
+      <div class="title">{{ t('memory.inspector.title') }}</div>
+    </template>
+    <template #body>
+      <div class="empty" v-if="contents.length == 0">{{ t('memory.inspector.noFacts') }}</div>
+      <div class="sticky-table-container" v-else>
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('memory.inspector.memory') }}</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="fact in contents">
+              <td>{{ fact.content }}</td>
+              <td>
+                <button @click.prevent="onDelete($event, fact)">{{ t('common.delete') }}</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
+    </template>
+    <template #footer>
+      <button @click.prevent="onClose">{{ t('common.close') }}</button>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -38,8 +36,10 @@
 import { ref } from 'vue'
 import { t } from '../services/i18n'
 import { MemoryFact } from '../types/index'
+import ModalDialog from '../components/ModalDialog.vue'
 import Dialog from '../composables/dialog'
 
+const dialog = ref(null)
 const contents = ref([])
 
 const emit = defineEmits(['close'])
@@ -70,14 +70,16 @@ const onDelete = (event: MouseEvent, fact: MemoryFact) => {
 }
 
 const onClose = () => {
-  document.querySelector<HTMLDialogElement>('dialog.memory').close()
+  dialog.value.close('#memory-inspector')
   emit('close')
 }
 
 defineExpose({
   show: () => {
-    contents.value = window.api.memory.facts()
-    document.querySelector<HTMLDialogElement>('dialog.memory').showModal()
+    contents.value = [
+      { content: 'hello' }
+    ]//window.api.memory.facts()
+    dialog.value.show('#memory-inspector')
   },
 })
 
@@ -97,6 +99,7 @@ defineExpose({
 }
 
 .sticky-table-container {
+  margin: 1rem 0;
   min-height: 200px;
 
   table td {

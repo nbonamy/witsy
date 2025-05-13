@@ -1,10 +1,10 @@
 <template>
-  <AlertDialog id="create-engine" ref="dialog" @save="onSave">
-    <template v-slot:header>
+  <ModalDialog id="create-engine" ref="dialog" @save="onSave">
+    <template #header>
       <div class="title">{{ t('engine.create.title') }}</div>
       <div class="text">{{ t('engine.create.description') }}</div>
     </template> 
-    <template v-slot:body>
+    <template #body>
       <div class="group">
         <label>{{ t('common.name') }}</label>
         <input name="label" v-model="label" placeholder="e.g. Together.ai"/>
@@ -45,13 +45,13 @@
         </div>
       </template>
     </template>
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
         <button name="save" @click="onSave" class="alert-confirm">{{ t('common.create') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -60,7 +60,7 @@ import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import defaults from '../../defaults/settings.json'
 
 const dialog = ref(null)
