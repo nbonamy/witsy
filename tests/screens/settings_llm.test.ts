@@ -38,8 +38,7 @@ beforeAll(() => {
   store.load = () => {}
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings)
 })
 
 beforeEach(async () => {
@@ -56,7 +55,6 @@ test('should render', async () => {
 test('openai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   const openai = tab.findComponent({ name: 'SettingsOpenAI' })
-  console.log(openai.html())
   await openai.find('input[name=baseURL]').setValue('base-url')
   await openai.find('input[name=baseURL]').trigger('blur')
   expect(store.config.engines.openai.baseURL).toBe('base-url')

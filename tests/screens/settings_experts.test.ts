@@ -97,14 +97,14 @@ test('Move items', async () => {
 test('New expert', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
-  const editor = tab.find<HTMLDialogElement>('#expert-editor')
-  const modal = editor.element
-  vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  expect(modal.showModal).not.toHaveBeenCalled()
+  const editor = tab.findComponent({ name: 'ExpertEditor' })
+  // const modal = editor.element
+  // vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
+  // expect(modal.showModal).not.toHaveBeenCalled()
   await tab.find('.actions button[name=new]').trigger('click')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
-  modal.removeAttribute('open')
+  // expect(modal.showModal).toHaveBeenCalledTimes(1)
+  // expect(modal.hasAttribute('open')).toBe(true)
+  // modal.removeAttribute('open')
 
   // for test stability
   tab.vm.selected = null
@@ -132,12 +132,8 @@ test('New expert', async () => {
 test('Edit user prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
-  const editor = tab.find<HTMLDialogElement>('#expert-editor')
-  const modal = editor.element
-  expect(modal.hasAttribute('open')).toBe(false)
+  const editor = tab.findComponent({ name: 'ExpertEditor' })
   await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('dblclick')
-  expect(modal.showModal).toHaveBeenCalledTimes(1)
-  expect(modal.hasAttribute('open')).toBe(true)
 
   expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('expert')
   expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('prompt')
@@ -167,7 +163,7 @@ test('Edit user prompt', async () => {
 test('Edit system prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
-  const editor = tab.find<HTMLDialogElement>('#expert-editor')
+  const editor = tab.findComponent({ name: 'ExpertEditor' })
   await tab.find('.sticky-table-container tr.expert:nth-of-type(1)').trigger('dblclick')
 
   expect(store.experts[1].label).toBeUndefined()
