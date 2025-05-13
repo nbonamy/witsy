@@ -174,7 +174,6 @@ const docReposMenuItems = computed(() => {
   if (docRepoActive.value) {
     menus.push({ label: 'Disconnect', action: 'disconnect' })
   }
-  //menus.push({ label: 'Manage...', action: 'manage' })
   return menus
 })
 
@@ -307,7 +306,7 @@ const setExpert = (xpert: Expert) => {
     prompt.value = ''
   }
   nextTick(() => {
-    input.value.focus()
+    input.value?.focus()
   })
 }
 
@@ -585,9 +584,7 @@ const onDocRepo = () => {
 
 const handleDocRepoClick = (action: string) => {
   closeContextMenu()
-  if (action === 'manage') {
-    emitEvent('open-doc-repos', null)
-  } else if (action === 'disconnect') {
+  if (action === 'disconnect') {
     if (props.chat) {
       props.chat.docrepo = null
     }

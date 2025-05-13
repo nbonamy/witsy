@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import DocRepos from '../../src/screens/DocRepos.vue'
 import DocRepoConfig from '../../src/screens/DocRepoConfig.vue'
@@ -93,7 +94,7 @@ test('Shows configuration', async () => {
 })
 
 test('Updates configuration', async () => {
-  const wrapper: VueWrapper<any> = mount(DocRepoConfig)
+  const wrapper: VueWrapper<any> = mount(DocRepoConfig, { ...stubTeleport })
   wrapper.vm.load()
   await wrapper.vm.$nextTick()
   expect(wrapper.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')

@@ -146,6 +146,9 @@
     "export": {
       "error": "Une erreur s'est produite lors de l'exportation de la conversation."
     },
+    "fork": {
+      "title": "Conversation en fourche"
+    },
     "role": {
       "assistant": "Assistant",
       "system": "Système",

@@ -17,7 +17,9 @@ contextBridge.exposeInMainWorld(
     platform: process.platform,
     isMasBuild: process.mas === true,
     userDataPath: ipcRenderer.sendSync('get-app-path'),
-    on: (signal: string, callback: (value: any) => void): void => { ipcRenderer.on(signal, (_event, value) => callback(value)) },
+    on: (signal: string, callback: (value: any) => void): void => {
+      ipcRenderer.on(signal, (_event, value) => callback(value))
+    },
     off: (signal: string, callback?: (value: any) => void): void => {
       if (callback) {
         ipcRenderer.removeListener(signal, (_event, value) => callback(value))
@@ -64,7 +66,6 @@ contextBridge.exposeInMainWorld(
     },
     settings: {
       open: (payload?: OpenSettingsPayload): void => { return ipcRenderer.send('settings-open', payload) },
-      close: (): void => { return ipcRenderer.send('settings-close') },
     },
     clipboard: {
       readText: (): string => { return ipcRenderer.sendSync('clipboard-read-text') },

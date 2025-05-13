@@ -1,7 +1,7 @@
 
 <template>
   <div v-if="showHelp" class="help">{{ t('common.comboBox.help') }}</div>
-  <div class="control">
+  <div class="control-group">
     <div class="wrapper" :class="{ focused: focus }">
       <select v-model="selected" :disabled="disabled" @change="onSelect">
         <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
@@ -68,11 +68,6 @@ const onSelect = (event: Event) => {
   opacity: 0.6;
   margin-top: 2px;
   margin-bottom: 6px;
-}
-
-.control {
-  display: flex;
-  width: 100%;
 }
 
 form .group .wrapper {

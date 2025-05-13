@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, expect, test, afterEach } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
@@ -101,6 +101,12 @@ beforeAll(() => {
     quickPrompts: []
   }))
 
+
+})
+
+beforeEach(() => {
+  store.loadSettings()
+  store.loadHistory()
 })
 
 test('Renders', async () => {

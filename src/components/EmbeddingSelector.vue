@@ -146,5 +146,4 @@ const getModels = async () => {
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 </style>

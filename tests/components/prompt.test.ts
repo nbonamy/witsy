@@ -239,12 +239,6 @@ test('Document repository', async () => {
   expect(menu.findAll('.item').length).toBe(2)
   expect(menu.find('.item:nth-child(1)').text()).toBe('docrepo1')
   expect(menu.find('.item:nth-child(2)').text()).toBe('docrepo2')
-  // expect(menu.find('.item:nth-child(3) hr')).toBeTruthy()
-  // expect(menu.find('.item:nth-child(4)').text()).toBe('Manage...')
-
-  // // manage
-  // await menu.find('.item:nth-child(4)').trigger('click')
-  // expect(emitEventMock).toHaveBeenLastCalledWith('open-doc-repos', null)
 
   // connect
   await trigger.trigger('click')

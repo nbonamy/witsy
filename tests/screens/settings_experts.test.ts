@@ -98,13 +98,7 @@ test('New expert', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   const editor = tab.findComponent({ name: 'ExpertEditor' })
-  // const modal = editor.element
-  // vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  // expect(modal.showModal).not.toHaveBeenCalled()
   await tab.find('.actions button[name=new]').trigger('click')
-  // expect(modal.showModal).toHaveBeenCalledTimes(1)
-  // expect(modal.hasAttribute('open')).toBe(true)
-  // modal.removeAttribute('open')
 
   // for test stability
   tab.vm.selected = null

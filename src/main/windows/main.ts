@@ -9,25 +9,7 @@ const storeBoundsId = 'main.bounds'
 
 export let mainWindow: BrowserWindow = null;
 
-export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
-
-  // try to show existig one
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    try {
-      ensureOnCurrentScreen(mainWindow);
-      mainWindow.show();
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore();
-      }
-      mainWindow.focus();
-      if (opts.queryParams) {
-        mainWindow.webContents.send('query-params', opts.queryParams);
-      }
-      return
-    } catch (error) {
-      console.error('Error while showing main window', error);
-    }
-  }
+export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 
   // get bounds from here
   const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
@@ -44,16 +26,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
     ...titleBarOptions({
       height: 48,
     }),
+    keepHidden: true,
     showInDock: true,
     ...opts,
   });
-
-  // check
-  ensureOnCurrentScreen(mainWindow);
-
-  // focus
-  app.focus({ steal: true });
-  mainWindow.focus();
 
   // spellchecker context menu
   // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
@@ -85,7 +61,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   }
 
   // show a tip
-  mainWindow.on('close', () => {
+  mainWindow.on('close', (event) => {
 
     // check
     const config = loadSettings(app);
@@ -111,6 +87,10 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
       electronStore.set(storeBoundsId, mainWindow.getBounds());
     } catch { /* empty */ }
 
+    // hide only
+    mainWindow.hide();
+    event.preventDefault();
+
   })
 
   mainWindow.on('closed', () => {
@@ -121,6 +101,36 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (process.env.DEBUG) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
   }
+
+}
+
+export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
+
+  // default to chat
+  if (!opts.queryParams) {
+    opts.queryParams = {};
+  }
+  if (!opts.queryParams.view) {
+    opts.queryParams.view = 'chat';
+  }
+
+  // if we don't have a window, create one
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    prepareMainWindow(opts);
+  } else {
+      mainWindow.webContents.send('query-params', opts.queryParams);
+  }
+
+  // restore
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+
+  // now show
+  ensureOnCurrentScreen(mainWindow);
+  mainWindow.show();
+  mainWindow.focus();
+  app.focus({ steal: true });
 
 };
 

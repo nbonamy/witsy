@@ -34,8 +34,7 @@ beforeAll(() => {
   store.config.plugins.python.binpath = 'python3'
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings)
 })
 
 beforeEach(async () => {
@@ -86,7 +85,7 @@ test('video settings', async () => {
   const video = tab.findComponent({ name: 'SettingsVideo' })
   expect(video.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(video.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
-  await video.find('input[type=checkbox]').trigger('click')
+  await video.find('input[type=checkbox]').setValue(false)
   expect(store.config.plugins.video.enabled).toBe(false)
 
   // replicate
@@ -131,6 +130,7 @@ test('search settings', async () => {
 })
 
 test('memory settings', async () => {
+  
   const tab = await switchToTab(wrapper, pluginIndex)
   await tab.find('.list-panel .list .item[data-id=memory]').trigger('click')
   const memory = tab.findComponent({ name: 'SettingsMemory' })

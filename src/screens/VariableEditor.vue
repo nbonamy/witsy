@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted, watch, PropType } from 'vue'
+import { ref, onMounted, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import ModalDialog from '../components/ModalDialog.vue'
@@ -61,7 +61,7 @@ onMounted(async () => {
 })
 
 const close = () => {
-  dialog.value?.close('#variable-editor')
+  dialog.value?.close()
 }
 
 const onCancel = () => {
@@ -89,7 +89,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#variable-editor'),
+  show: () => dialog.value.show(),
   close,
 })
 
@@ -98,4 +98,10 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
+</style>
+
+<style>
+#variable-editor {
+  width: 200px !important;
+}
 </style>

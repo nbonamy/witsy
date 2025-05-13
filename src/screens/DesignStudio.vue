@@ -69,9 +69,6 @@ const contextMenuActions = () => [
   { label: t('common.delete'), action: 'delete' },
 ]
 
-store.loadSettings()
-store.loadHistory()
-
 const history = computed(() => {
   return chat.value?.messages.filter((m) => m.role === 'user').reverse() || []
 })

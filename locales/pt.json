@@ -165,6 +165,9 @@
     "export": {
       "error": "Ocorreu um erro ao tentar exportar o chat."
     },
+    "fork": {
+      "title": "Dividir chat"
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",

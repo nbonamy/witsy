@@ -1,5 +1,8 @@
 <template>
-  <ModalDialog id="chat-editor" ref="dialog" @save="onSave">
+  <ModalDialog id="fork-chat" ref="dialog" @save="onSave">
+    <template #header>
+      <div class="title">{{ t(dialogTitle) }}</div>
+    </template>
     <template #body>
       <div class="group">
         <label>{{ t('chat.editor.title') }}</label>
@@ -46,13 +49,17 @@ const props = defineProps({
   chat: {
     type: Chat,
   },
-  onConfirm: {
-    type: Function as PropType<ChatEditorCallback>,
+  dialogTitle: {
+    type: String,
     required: true,
   },
   confirmButtonText: {
     type: String,
     default: 'common.save',
+  },
+  onConfirm: {
+    type: Function as PropType<ChatEditorCallback>,
+    required: true,
   },
 })
 
@@ -65,7 +72,7 @@ onMounted(async () => {
 })
 
 const close = () => {
-  dialog.value.close('#chat-editor')
+  dialog.value.close()
 }
 
 const onChangeEngine = () => {
@@ -98,7 +105,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#chat-editor'),
+  show: () => dialog.value.show(),
   close,
 })
 

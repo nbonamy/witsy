@@ -1,9 +1,9 @@
 
 <template>
   <Teleport to="body">
-    <dialog :id="id" class="dialog show" :class="{ 'alert-dialog': !editor, editor: editor }">
-      <form :class="{ vertical: !editor }" method="dialog" @submit.prevent>
-        <div class="icon" v-if="icon && !editor">
+    <dialog :id="id" class="dialog show" :class="[ type ]">
+      <form :class="{ vertical: form === 'vertical' }" method="dialog" @submit.prevent>
+        <div class="icon" v-if="icon && type === 'alert'">
           <img src="/assets/icon.png" />
         </div>
         <header>
@@ -22,6 +22,11 @@
 
 <script setup lang="ts">
 
+import { PropType } from 'vue'
+
+export type DialogType = 'alert' | 'window'
+export type DialogForm = 'horizontal' | 'vertical'
+
 const emit = defineEmits(['save'])
 
 const props = defineProps({
@@ -33,18 +38,22 @@ const props = defineProps({
     type: Number,
     default: 260
   },
-  editor: {
-    type: Boolean,
-    default: false
+  type: {
+    type: String as PropType<DialogType>,
+    default: 'alert'
   },
   icon: {
     type: Boolean,
     default: true
+  },
+  form: {
+    type: String as PropType<DialogForm>,
+    default: 'vertical'
   }
 })
 
-const show = (id: string) => {
-  const dialog =  document.querySelector<HTMLDialogElement>(id)
+const show = () => {
+  const dialog =  document.querySelector<HTMLDialogElement>(`#${props.id}`)
   if (!dialog) return
   dialog.classList.remove('hide')
   dialog.classList.add('show')
@@ -52,8 +61,8 @@ const show = (id: string) => {
   dialog.addEventListener('keydown', onKeyDown)
 }
 
-const close = (id: string) => {
-  const dialog =  document.querySelector<HTMLDialogElement>(id)
+const close = () => {
+  const dialog =  document.querySelector<HTMLDialogElement>(`#${props.id}`)
   if (!dialog) return
   dialog.removeEventListener('keydown', onKeyDown)
   dialog.addEventListener('animationend', () => {
@@ -65,7 +74,8 @@ const close = (id: string) => {
 
 const onKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {
-    close(props.id)
+    e.preventDefault()
+    close()
   } else if (e.key === 'Enter') {
     e.preventDefault()
     emit('save')
@@ -78,47 +88,13 @@ defineExpose({ show, close })
 
 <style scoped>
 @import '../../css/dialog.css';
-@import '../../css/editor.css';
 @import '../../css/form.css';
 </style>
 
 <style scoped>
 
-.alert-dialog {
-  
+.dialog {
   width: v-bind(`${width}px`) !important;
-
-  &.show {
-    animation: show 0.3s;
-  }
-
-  &.hide {
-    animation: hide 0.15s forwards;
-  }
-
-  form.vertical {
-    padding: 16px;
-    padding-top: 26px;
-    
-    .icon, .icon img {
-      width: 60px;
-      height: 60px;
-      margin-bottom: 1.5rem;
-    }
-  }
-
-}
-
-@keyframes show {
-  0% { transform: scale(0.7); }
-  45% { transform: scale(1.05); }
-  80% { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-
-@keyframes hide {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.5); opacity: 0; }
 }
 
 </style>

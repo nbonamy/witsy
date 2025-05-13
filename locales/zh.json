@@ -165,6 +165,9 @@
     "export": {
       "error": "尝试导出聊天时发生错误。"
     },
+    "fork": {
+      "title": "分叉聊天"
+    },
     "role": {
       "assistant": "助手",
       "system": "系统",

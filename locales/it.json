@@ -146,6 +146,9 @@
     "export": {
       "error": "Si è verificato un errore durante il tentativo di esportare la chat."
     },
+    "fork": {
+      "title": "Fork chat in Italian"
+    },
     "role": {
       "assistant": "Assistente",
       "system": "Sistema",
