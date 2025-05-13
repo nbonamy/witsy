@@ -110,7 +110,6 @@ test('create custom engine openai', async () => {
   await tab.find<HTMLButtonElement>('.logo.create').trigger('click')
   const create = tab.findComponent({ name: 'CreateEngine' })
   expect(create.exists()).toBe(true)
-  console.log(create.html())
   expect(create.find<HTMLInputElement>('input[name=label]').element.value).toBe('')
   expect(create.find<HTMLSelectElement>('select[name=api]').element.value).toBe('openai')
   expect(create.find<HTMLInputElement>('input[name=baseURL]').element.value).toBe('')

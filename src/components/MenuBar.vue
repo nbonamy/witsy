@@ -9,7 +9,7 @@
     </MenuBarItem>
 
     <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')">
-      <BIconPaletteFill />
+      <BIconPalette />
       <span>{{ t('designStudio.title') }}</span>
     </MenuBarItem>
 

@@ -2,7 +2,7 @@
   <div class="panel-content">
     <ChatSidebar :chat="assistant.chat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" />
-    <ChatEditor id="chat-editor" :chat="assistant.chat" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
+    <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import Dialog from '../composables/dialog'
 import useTipsManager from '../composables/tips_manager'
 import ChatSidebar from '../components/ChatSidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
-import ChatEditor, { ChatEditorCallback } from '../screens/ChatEditor.vue'
+import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
@@ -37,6 +37,7 @@ const assistant = ref(new Assistant(store.config))
 const chatArea: Ref<typeof ChatArea> = ref(null)
 const chatEditor: Ref<typeof ChatEditor> = ref(null)
 const sidebar: Ref<typeof ChatSidebar> = ref(null)
+const chatEditorTitle = ref('')
 const chatEditorConfirmButtonText = ref('common.save')
 const chatEditorCallback: Ref<ChatEditorCallback> = ref(() => {})
 
@@ -74,13 +75,13 @@ onMounted(() => {
   })
   window.api.on('computer-stop', onStopGeneration)
 
-  // query params
-  window.api.on('query-params', (params) => {
-    processQueryParams(params)
-  })
-  if (props.extra) {
-    processQueryParams(props.extra)
-  }
+  // // query params
+  // window.api.on('query-params', (params) => {
+  //   processQueryParams(params)
+  // })
+  // if (props.extra) {
+  //   processQueryParams(props.extra)
+  // }
 
   // intercept links
   document.addEventListener('click', (e) => {
@@ -127,25 +128,21 @@ onMounted(() => {
   // make sure engine and model are always up-to-date
   watch(() => store.config, updateChatEngineModel, { immediate: true, deep: true })
 
-})
-
-const processQueryParams = (params: anyDict) => {
-
-  // log
-  console.log('Processing query params', JSON.stringify(params))
-  
-  // load chat
-  if (params.chatId) {
-    store.loadHistory()
-    const chat: Chat = store.history.chats.find((c) => c.uuid === params.chatId)
-    if (chat) {
-      onSelectChat(chat)
-    } else {
-      console.log('Chat not found', params.chatId)
+  // watch props for changes
+  watch(() => props.extra, (params) => {
+    if (params?.chatId) {
+      console.log('[chat] props changed', params)
+      store.loadHistory()
+      const chat: Chat = store.history.chats.find((c) => c.uuid === params.chatId)
+      if (chat) {
+        onSelectChat(chat)
+      } else {
+        console.log('Chat not found', params.chatId)
+      }
     }
-  }
+  }, { immediate: true })
 
-}
+})
 
 const onNewChat = () => {
   assistant.value.initChat()
@@ -332,6 +329,7 @@ const deleteChats = (chatIds: string[]) => {
 const onForkChat = (message: Message) => {
 
   // set up editor for forking
+  chatEditorTitle.value = 'chat.fork.title'
   chatEditorConfirmButtonText.value = 'common.fork'
   chatEditorCallback.value = ({ title, engine, model }) => {
     const chat = assistant.value.chat

@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="command-editor" ref="dialog" :editor="true" @save="onSave">
+  <ModalDialog id="command-editor" ref="dialog" type="window" form="horizontal" :width="500" @save="onSave">
     <template #header>
       <div class="title">{{ t('commands.editor.title') }}</div>
     </template>
@@ -41,8 +41,8 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
         <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>
@@ -142,7 +142,7 @@ const onShortcutKeyUp = (event: KeyboardEvent) => {
 
 const close = () => {
   emit('command-modified')
-  dialog.value.show('#command-editor')
+  dialog.value.close()
 }
 
 const onCancel = () => {
@@ -185,7 +185,7 @@ const onSave = (event: Event) => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#command-editor'),
+  show: () => dialog.value.show(),
   close,
 })
 
@@ -194,7 +194,6 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 </style>
 
 <style scoped>

@@ -1,32 +1,30 @@
 <template>
-  <dialog class="dialog editor" id="docrepocreate">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('docRepo.create.title') }}</div>
-      </header>
-      <main>
-        <div class="group" style="margin-bottom: 16px">
-          <label></label>
-          <span><b>{{ t('common.warning') }}</b>: {{ t('docRepo.create.embeddingWarning') }}</span>
-        </div>
-        <div class="group name">
-          <label>{{ t('common.name') }}</label>
-          <input type="text" ref="nameInput" v-model="name" required />
-        </div>
-        <EmbeddingSelector v-model:engine="engine" v-model:model="model" />
-      </main>
-      <footer>
-        <button @click="onCreate" class="default">{{ t('common.create') }}</button>
+  <ModalDialog id="docrepocreate" ref="dialog">
+    <template #header>
+      <div class="title">{{ t('docRepo.create.title') }}</div>
+      <div class="text"><b>{{ t('common.warning') }}</b>: {{ t('docRepo.create.embeddingWarning') }}</div>
+    </template>
+    <template #body>
+      <div class="group name">
+        <label>{{ t('common.name') }}</label>
+        <input type="text" ref="nameInput" v-model="name" required />
+      </div>
+      <EmbeddingSelector v-model:engine="engine" v-model:model="model" />
+    </template>
+    <template #footer>
+      <div class="buttons">
         <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      </footer>
-    </form>
-  </dialog>
+        <button @click="onCreate" class="default">{{ t('common.create') }}</button>
+      </div>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
 
 import { ref, onMounted, nextTick } from 'vue'
 import { t } from '../services/i18n'
+import ModalDialog from '../components/ModalDialog.vue'
 import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import Dialog from '../composables/dialog'
 
@@ -34,6 +32,7 @@ import Dialog from '../composables/dialog'
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
+const dialog = ref(null)
 const nameInput = ref(null)
 const name = ref('')
 const engine = ref('openai')
@@ -44,7 +43,7 @@ onMounted(() => {
 })
 
 const onOpen = () => {
-  document.querySelector<HTMLDialogElement>('#docrepocreate').showModal()
+  dialog.value.show()
   name.value = t('docRepo.create.defaultName')
   nextTick(() => {
     nameInput.value.focus()
@@ -66,7 +65,7 @@ const onCreate = (event: Event) => {
 }
 
 const onCancel = () => {
-  document.querySelector<HTMLDialogElement>('#docrepocreate').close()
+  dialog.value.close()
 }
 
 </script>
@@ -74,7 +73,6 @@ const onCancel = () => {
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 </style>
 
 <style>

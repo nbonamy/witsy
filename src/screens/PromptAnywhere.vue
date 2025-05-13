@@ -551,7 +551,7 @@ const onResponseResize = (deltaX: number) => {
           position: relative;
           top: 1px;
           font-size: 10pt;
-          margin-right: 6px;
+          margin-right: 0.5rem;
         }
       }
     }

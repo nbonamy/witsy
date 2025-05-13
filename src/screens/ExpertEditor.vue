@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="expert-editor" ref="dialog" :editor="true">
+  <ModalDialog id="expert-editor" ref="dialog" type="window" form="horizontal" :width="500" @save="onSave">
     <template #header>
       <div class="title">{{ t('experts.editor.title') }}</div>
     </template>
@@ -39,8 +39,10 @@
       </div>
     </template>
     <template #footer>
-      <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
-      <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+      <div class="buttons">
+        <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button type="button" @click="onSave" class="default">{{ t('common.save') }}</button>
+      </div>
     </template>
   </ModalDialog>
 </template>
@@ -129,7 +131,7 @@ watch(() => props.expert || {}, load, { immediate: true })
 
 const close = () => {
   emit('expert-modified')
-  dialog.value.close('#expert-editor')
+  dialog.value.close()
 }
 
 const onCancel = () => {
@@ -166,7 +168,7 @@ const onSave = (event: Event) => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#expert-editor'),
+  show: () => dialog.value.show(),
   close,
 })
 
@@ -175,7 +177,6 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 @import '../../css/list-with-actions.css';
 </style>
 

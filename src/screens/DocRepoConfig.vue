@@ -1,38 +1,38 @@
 <template>
-  <dialog class="dialog editor" id="docrepoconfig">
-    <form method="dialog">
-      <header>
-        <div class="title">{{ t('docRepo.config.title') }}</div>
-      </header>
-      <main>
-        <div class="group">
-          <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
-          <input name="maxDocumentSizeMB" v-model="maxDocumentSizeMB" />&nbsp;&nbsp;{{ t('docRepo.config.millionCharacters') }}
-        </div>
-        <div class="group">
-          <label>{{ t('docRepo.config.chunkSize') }}</label>
-          <input name="chunkSize" v-model="chunkSize" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
-        </div>
-        <div class="group">
-          <label>{{ t('docRepo.config.chunkOverlap') }}</label>
-          <input name="chunkOverlap" v-model="chunkOverlap" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
-        </div>
-        <div class="group">
-          <label>{{ t('docRepo.config.searchResultCount') }}</label>
-          <input name="searchResultCount" v-model="searchResultCount" />
-        </div>
-        <div class="group">
-          <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
-          <input name="relevanceCutOff" v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
-        </div>
-      </main>
-      <footer>
-        <button name="save" @click="onSave" class="default">{{ t('common.save') }}</button>
-        <button name="reset" @click.prevent="onReset" formnovalidate>{{ t('common.reset') }}</button>
+  <ModalDialog id="docrepoconfig" ref="dialog" type="window" form="horizontal" :width="420" @save="onSave">
+    <template #header>
+      <div class="title">{{ t('docRepo.config.title') }}</div>
+    </template>
+    <template #body>
+      <div class="group">
+        <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
+        <input name="maxDocumentSizeMB" v-model="maxDocumentSizeMB" />&nbsp;&nbsp;{{ t('docRepo.config.millionCharacters') }}
+      </div>
+      <div class="group">
+        <label>{{ t('docRepo.config.chunkSize') }}</label>
+        <input name="chunkSize" v-model="chunkSize" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
+      </div>
+      <div class="group">
+        <label>{{ t('docRepo.config.chunkOverlap') }}</label>
+        <input name="chunkOverlap" v-model="chunkOverlap" />&nbsp;&nbsp;{{ t('docRepo.config.characters') }}
+      </div>
+      <div class="group">
+        <label>{{ t('docRepo.config.searchResultCount') }}</label>
+        <input name="searchResultCount" v-model="searchResultCount" />
+      </div>
+      <div class="group">
+        <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
+        <input name="relevanceCutOff" v-model="relevanceCutOff" />&nbsp;&nbsp;0 ≤ x ≤ 1
+      </div>
+    </template>
+    <template #footer>
+      <div class="buttons">
         <button name="cancel" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
-      </footer>
-    </form>
-  </dialog>
+        <button name="reset" @click.prevent="onReset" formnovalidate>{{ t('common.reset') }}</button>
+        <button name="save" @click="onSave" class="default">{{ t('common.save') }}</button>
+      </div>
+    </template>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -40,12 +40,14 @@
 import { ref, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import ModalDialog from '../components/ModalDialog.vue'
 import defaultSettings from '../../defaults/settings.json'
 
 // bus
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
+const dialog = ref(null)
 const maxDocumentSizeMB = ref(null)
 const chunkSize = ref(null)
 const chunkOverlap = ref(null)
@@ -57,7 +59,7 @@ onMounted(() => {
 })
 
 const onOpen = () => {
-  document.querySelector<HTMLDialogElement>('#docrepoconfig')?.showModal()
+  dialog.value.show()
   load()
 }
 
@@ -87,7 +89,7 @@ const onSave = () => {
 }
 
 const onCancel = () => {
-  document.querySelector<HTMLDialogElement>('#docrepoconfig')?.close()
+  dialog.value.close()
 }
 
 </script>
@@ -95,12 +97,11 @@ const onCancel = () => {
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 </style>
 
 <style scoped>
 #docrepoconfig .group label {
-  min-width: 225px;
+  min-width: 200px;
 }
 
 #docrepoconfig .group input {

@@ -133,20 +133,11 @@ onMounted(async () => {
   window.api.on('docrepo-add-document-error', onAddDocError)
   window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
-  onEvent('open-doc-repos', onOpenDocRepos)
   await loadDocRepos()
 })
 
 const onModelReady = () => {
   selectRepo(selectedRepo.value)
-}
-
-const onOpenDocRepos = () => {
-  document.querySelector<HTMLDialogElement>('#docrepos').showModal()
-}
-
-const onClose = () => {
-  document.querySelector<HTMLDialogElement>('#docrepos').close()
 }
 
 const loadDocRepos = async () => {

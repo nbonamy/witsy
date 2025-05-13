@@ -3,7 +3,7 @@
     <div class="description">
       {{ t('settings.engines.azure.description') }}
     </div>
-    <div class="description">
+    <div class="description group">
       <button @click.prevent="createAzureConnection">{{ t('settings.engines.azure.create') }}</button>
     </div>
   </div>

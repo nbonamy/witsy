@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="tool-selector" ref="dialog" :width="700" :editor="true" @save="onSave">
+  <ModalDialog id="tool-selector" ref="dialog" type="window" :width="700" @save="onSave">
     <template #header>
       <div class="title">{{ t('toolSelector.title') }}</div>
     </template>
@@ -24,10 +24,12 @@
       </div>
     </template>
     <template #footer>
-      <button name="all" @click.prevent="selection = null">{{ t('common.selectAll') }}</button>
-      <button name="none" @click.prevent="selection = []">{{ t('common.selectNone') }}</button>
-      <button name="cancel" @click="onCancel" class="push alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-      <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+      <div class="buttons">
+        <button name="all" @click.prevent="selection = null">{{ t('common.selectAll') }}</button>
+        <button name="none" @click.prevent="selection = []">{{ t('common.selectNone') }}</button>
+        <button name="cancel" @click="onCancel" class="push" formnovalidate>{{ t('common.cancel') }}</button>
+        <button name="save" @click="onSave" class="alert-confirm">{{ t('common.save') }}</button>
+      </div>
     </template>
   </ModalDialog>
 </template>
@@ -122,7 +124,7 @@ const isToolActive = (tool: Tool) => {
 }
 
 const close = () => {
-  document.querySelector<HTMLDialogElement>('#tool-selector').close()
+  dialog.value.close()
 }
 
 const onCancel = () => {
@@ -135,7 +137,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#tool-selector'),
+  show: () => dialog.value.show(),
   close,
 })
 
@@ -144,7 +146,6 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 @import '../../css/sticky-header-table.css';
 </style>
 
@@ -152,29 +153,9 @@ defineExpose({
 
 #tool-selector {
   
-  height: 520px !important;
-
   main {
-
-    padding-bottom: 0px;
-
     .sticky-table-container {
-      margin: 1rem 0;
-      max-height: 440px;
-      overflow: auto;
-
-      th, td {
-        white-space: normal;
-      }
-    }
-  }
-
-  footer {
-    flex-direction: row;;
-    justify-content: start;
-
-    .push {
-      margin-left: auto;
+      max-height: 400px;
     }
   }
 

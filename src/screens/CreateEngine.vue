@@ -77,7 +77,7 @@ onMounted(async () => {
 })
 
 const close = () => {
-  dialog.value.close('#create-engine')
+  dialog.value.close()
 }
 
 const onCancel = () => {
@@ -115,7 +115,7 @@ defineExpose({
     baseURL.value = ''
     deployment.value = ''
     apiVersion.value = ''
-    dialog.value.show('#create-engine')
+    dialog.value.show()
   },
   close,
 })

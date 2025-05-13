@@ -165,6 +165,9 @@
     "export": {
       "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
     },
+    "fork": {
+      "title": "Rozdziel czat"
+    },
     "role": {
       "assistant": "Asystent",
       "system": "System",

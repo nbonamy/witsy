@@ -88,7 +88,7 @@
   --editor-header-bg-color: var(--background-color);
   --editor-body-bg-color: var(--background-color);
 
-  --tabs-header-normal-text-color: #666;
+  --tabs-header-normal-text-color: #555;
   --tabs-header-selected-bg-color: #e1e1e1;
   --tabs-header-selected-text-color: var(--highlight-color);
 

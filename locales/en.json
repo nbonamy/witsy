@@ -165,6 +165,9 @@
     "export": {
       "error": "An error occurred while trying to export the chat."
     },
+    "fork": {
+      "title": "Fork chat"
+    },
     "role": {
       "assistant": "Assistant",
       "system": "System",

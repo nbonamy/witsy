@@ -146,6 +146,9 @@
     "export": {
       "error": "Beim Versuch, den Chat zu exportieren, ist ein Fehler aufgetreten."
     },
+    "fork": {
+      "title": "Chat teilen"
+    },
     "role": {
       "assistant": "Assistent",
       "system": "System",

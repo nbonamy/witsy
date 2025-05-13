@@ -237,9 +237,7 @@ app.whenReady().then(() => {
 
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {
-    if (window.isSettingsWindowPersistent()) {
-      window.prepareSettingsWindow();
-    }
+    window.prepareMainWindow();
     window.preparePromptAnywhere();
     window.prepareCommandPicker();
   }
@@ -453,10 +451,6 @@ ipcMain.on('experts-import', (event) => {
 
 ipcMain.on('settings-open', (event, payload) => {
   window.openSettingsWindow(payload);
-});
-
-ipcMain.on('settings-close', () => {
-  window.closeSettingsWindow();
 });
 
 ipcMain.on('run-at-login-get', (event) => {

@@ -19,8 +19,8 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button @click="onSave" class="default">{{ t('common.save') }}</button>
         <button @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click="onSave" class="default">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalDialog>
@@ -71,13 +71,13 @@ const onSave = () => {
 }
 
 const close = () => {
-  dialog.value.close('#command-defaults')
+  dialog.value.close()
 }
 
 defineExpose({
   show: () => {
     load()
-    dialog.value.show('#command-defaults')
+    dialog.value.show()
   },
   close,
 })
@@ -88,7 +88,6 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/editor.css';
 </style>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="mcp-server-editor" ref="dialog" :icon="false" :width="320" @save="onSave">
+  <ModalDialog id="mcp-server-editor" ref="dialog" type="window" :width="320" @save="onSave">
     <template #header>
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </template>
@@ -117,7 +117,7 @@ onMounted(async () => {
 })
 
 const close = () => {
-  dialog.value.close('#mcp-server-editor')
+  dialog.value.close()
 }
 
 const onCancel = () => {
@@ -247,7 +247,7 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show('#mcp-server-editor'),
+  show: () => dialog.value.show(),
   close,
 })
 

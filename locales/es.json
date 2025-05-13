@@ -146,6 +146,9 @@
     "export": {
       "error": "Ocurrió un error al intentar exportar la conversación."
     },
+    "fork": {
+      "title": "Fork de chat"
+    },
     "role": {
       "assistant": "Asistente",
       "system": "Sistema",

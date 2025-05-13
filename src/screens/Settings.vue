@@ -7,7 +7,7 @@
       <main>
         <ul>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-          <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconPalette class="icon" /></SettingsTab>
+          <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
@@ -37,8 +37,7 @@
 <script setup lang="ts">
 
 import { OpenSettingsPayload } from '../types/index'
-import { Ref, ref, onMounted, nextTick, computed, PropType } from 'vue'
-import { store } from '../services/store'
+import { ref, onMounted, onUnmounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
@@ -53,8 +52,7 @@ import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 import WIconMcp from '../../assets/mcp.svg?component'
 import { installTabs, showActiveTab } from '../composables/tabs'
-
-store.load()
+import { BIconLayoutTextWindowReverse } from 'bootstrap-icons-vue'
 
 const props = defineProps({
   extra: {
@@ -65,7 +63,7 @@ const props = defineProps({
   }
 })
 
-const dialog: Ref<HTMLElement> = ref(null)
+const dialog = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
@@ -93,10 +91,13 @@ const settings = [
 
 onMounted(async () => {
 
-  // events
-  window.api.on('show', (params: OpenSettingsPayload) => {
-    onOpenSettings(params)
-  })
+  // watch props for changes
+  watch(() => props.extra, (params) => {
+    if (params?.initialTab) {
+      console.log('[settings] props changed', params)
+      initialTab.value = params.initialTab
+    }
+  }, { immediate: true })
 
   // reload
   window.api.on('file-modified', (file: string) => {
@@ -114,6 +115,11 @@ onMounted(async () => {
   installTabs(dialog.value)
   showActiveTab(dialog.value)
 
+})
+
+onUnmounted(() => {
+  window.api.off('show')
+  window.api.off('file-modified')
 })
 
 const onOpenSettings = (payload: OpenSettingsPayload) => {

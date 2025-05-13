@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="memory-inspector" ref="dialog" :icon="false" :width="400">
+  <ModalDialog id="memory-inspector" ref="dialog" type="window" :width="400">
     <template #header>
       <div class="title">{{ t('memory.inspector.title') }}</div>
     </template>
@@ -26,7 +26,9 @@
       <div v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
     </template>
     <template #footer>
-      <button @click.prevent="onClose">{{ t('common.close') }}</button>
+      <div class="buttons">
+        <button @click.prevent="onClose" formnovalidate>{{ t('common.cancel') }}</button>
+      </div>
     </template>
   </ModalDialog>
 </template>
@@ -70,16 +72,14 @@ const onDelete = (event: MouseEvent, fact: MemoryFact) => {
 }
 
 const onClose = () => {
-  dialog.value.close('#memory-inspector')
+  dialog.value.close()
   emit('close')
 }
 
 defineExpose({
   show: () => {
-    contents.value = [
-      { content: 'hello' }
-    ]//window.api.memory.facts()
-    dialog.value.show('#memory-inspector')
+    contents.value = window.api.memory.facts()
+    dialog.value.show()
   },
 })
 
@@ -92,23 +92,22 @@ defineExpose({
 
 <style scoped>
 
-.empty {
-  padding: 1em;
-  font-size: 11pt;
-  text-align: center;
-}
+#memory-inspector {
 
-.sticky-table-container {
-  margin: 1rem 0;
-  min-height: 200px;
-
-  table td {
-    white-space: normal;
-  }
-
-  button {
-    font-size: 8pt;
-    padding: 2px 8px;
+  main {
+    margin-bottom: 1rem;
+    .empty {
+      padding: 1em;
+      font-size: 11pt;
+      text-align: center;
+    }
+    .sticky-table-container {
+      margin-bottom: 0.5rem;
+    }
+    button {
+      font-size: 8pt;
+      padding: 2px 8px;
+    }
   }
 
 }

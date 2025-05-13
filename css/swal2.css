@@ -11,7 +11,7 @@
 }
 
 .alert-neutral {
-  border: 1px solid transparent !important;
+  /* border: 1px solid transparent !important; */
   background-color: var(--control-bg-color) !important;
   color: var(--control-text-color) !important;
 }

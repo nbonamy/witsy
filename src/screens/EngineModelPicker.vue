@@ -96,7 +96,7 @@ const onShow = () => {
 }
 
 const close = () => {
-  dialog.value.close('#engine-model-picker')
+  dialog.value.close()
 }
 
 const onChangeEngine = () => {
@@ -120,7 +120,7 @@ const onSave = () => {
 defineExpose({
   show: () => {
     onShow()
-    dialog.value.show('#engine-model-picker')
+    dialog.value.show()
   },
   close,
 })

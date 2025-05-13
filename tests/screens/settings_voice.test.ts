@@ -18,8 +18,7 @@ beforeAll(() => {
   store.config.engines.falai.apiKey = 'falai-api-key'
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings)
 })
 
 beforeEach(async () => {

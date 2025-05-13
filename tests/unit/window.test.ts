@@ -145,7 +145,7 @@ test('Create main window', async () => {
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'Chat'
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=chat#')
   expect(window.mainWindow.isVisible()).toBe(true)
   window.closeMainWindow()
   expect(window.mainWindow).toBeNull()
@@ -189,14 +189,17 @@ test('Restores existing main window', async () => {
 
 test('Open Settings window', async () => {
   window.openSettingsWindow()
-  expect(window.settingsWindow).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/settings',
+    queryParams: { view: 'settings', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/settings')
-  expect(window.settingsWindow.isVisible()).toBe(true)
-  window.closeSettingsWindow()
-  expect(window.settingsWindow.isVisible()).toBe(false)
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
+test('Switch to Settings window', async () => {
+  window.openMainWindow()
+  window.openSettingsWindow()
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'settings' })
 })
 
 test('Create command picker window', async () => {
@@ -303,15 +306,19 @@ test('Open Realtime window', async () => {
   expectCreateWebPreferences(callParams)
 })
 
-test('Open Create Media window', async () => {
+test('Open Design Studio window', async () => {
   window.openDesignStudioWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/studio',
-    title: 'Design Studio',
+    queryParams: { view: 'studio', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/studio')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
+})
+
+test('Switch to Design Studio window', async () => {
+  window.openMainWindow()
+  window.openDesignStudioWindow()
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'studio' })
 })
 
 test('Open Computer', async () => {

@@ -213,7 +213,7 @@ export interface MediaCreator {
 export type DesignStudioMediaType = 'image' | 'video'
 
 export type OpenSettingsPayload = {
-  initialTab: string
+  initialTab?: string
   engine?: string
 }
 
@@ -261,7 +261,6 @@ declare global {
       }
       settings: {
         open(payload?: OpenSettingsPayload): void
-        close(): void
       }
       shortcuts: {
         register(): void

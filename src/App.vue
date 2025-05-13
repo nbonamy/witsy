@@ -9,14 +9,12 @@ import { ref, computed, onMounted, WritableComputedRef } from 'vue'
 import { Locale } from 'vue-i18n'
 import useAppearanceTheme from './composables/appearance_theme'
 import Main from './screens/Main.vue'
-import Settings from './screens/Settings.vue'
 import CommandPicker from './screens/CommandPicker.vue'
 import PromptAnywhere from './screens/PromptAnywhere.vue'
 import RealtimeChat from './screens/RealtimeChat.vue'
 import ReadAloud from './screens/ReadAloud.vue'
 import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
-import DesignStudio from './screens/DesignStudio.vue'
 import ComputerStatus from './screens/ComputerStatus.vue'
 import Debug from './screens/Debug.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
@@ -32,14 +30,12 @@ const appearanceTheme = useAppearanceTheme()
 const routes: { [key: string]: any } = {
   '/': Main,
   '/chat': Main,
-  '/settings': Settings,
   '/commands': CommandPicker,
   '/prompt': PromptAnywhere,
   '/readaloud': ReadAloud,
   '/realtime': RealtimeChat,
   '/transcribe': Transcribe,
   '/scratchpad': ScratchPad,
-  '/studio': DesignStudio,
   '/computer': ComputerStatus,
   '/debug': Debug,
 }
@@ -48,7 +44,7 @@ const theme = ref('light')
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
-  //console.log(currentPath.value.slice(1) || '/')
+  console.log(currentPath.value.slice(1) || '/')
   return routes[currentPath.value.slice(1) || '/']
 })
 

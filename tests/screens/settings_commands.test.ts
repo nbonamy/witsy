@@ -100,13 +100,7 @@ test('New command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  // const modal = editor.find<HTMLDialogElement>('dialog').element
-  // vi.spyOn(modal, 'showModal').mockImplementation(() => modal.setAttribute('open', 'opened'))
-  // expect(HTMLDialogElement.prototype.showModal).not.toHaveBeenCalled()
   await tab.find('.actions button[name=new]').trigger('click')
-  // expect(modal.showModal).toHaveBeenCalledTimes(1)
-  // expect(modal.hasAttribute('open')).toBe(true)
-  // modal.removeAttribute('open')
 
   // new command creates
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)

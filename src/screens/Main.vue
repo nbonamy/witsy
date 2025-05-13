@@ -1,16 +1,17 @@
 <template>
   <div class="main">
     <MenuBar :mode="mode" @change="onMode"/>
-    <Chat v-if="mode === 'chat'"/>
+    <Settings v-if="mode === 'settings'" :extra="viewParams"/>
+    <Chat v-if="mode === 'chat'" :extra="viewParams"/>
     <DesignStudio v-if="mode === 'studio'"/>
     <DocRepos v-if="mode === 'docrepo'"/>
-    <Settings v-if="mode === 'settings'"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, nextTick } from 'vue'
+import { anyDict } from '../types/index'
+import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import Chat from '../screens/Chat.vue'
@@ -29,6 +30,24 @@ const props = defineProps({
 })
 
 const mode = ref<MenuBarMode>('chat')
+const viewParams = ref(null)
+
+onMounted(() => {
+  window.api.on('query-params', (params) => {
+    processQueryParams(params)
+  })
+  if (props.extra) {
+    processQueryParams(props.extra)
+  }
+})
+
+const processQueryParams = (params: anyDict) => {
+  console.log('[main] processing query params', JSON.stringify(params))
+  if (params.view) {
+    onMode(params.view)
+    viewParams.value = params 
+  }
+}
 
 const onMode = async (next: MenuBarMode) => {
 

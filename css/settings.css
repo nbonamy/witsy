@@ -235,7 +235,7 @@
 
       .logo {
         height: var(--settings-list-font-size);
-        margin-right: 6px;
+        margin-right: 0.5rem;
       }
 
       .icon {

@@ -107,16 +107,16 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
         ...(isMac
           ? [
             { role: 'pasteAndMatchStyle' },
-            ...(focusedWindow === window.mainWindow ? [{
-              label: t('menu.edit.deleteChat'),
-              accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
-              click: () => window.notifyBrowserWindows('delete-chat')
-            }] : []),
-            ...(focusedWindow === window.designStudioWindow ? [{
-              label: t('menu.edit.deleteMedia'),
-              accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
-              click: () => window.notifyBrowserWindows('delete-media')
-            }] : []),
+            // ...(focusedWindow === window.mainWindow ? [{
+            //   label: t('menu.edit.deleteChat'),
+            //   accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
+            //   click: () => window.notifyBrowserWindows('delete-chat')
+            // }] : []),
+            // ...(focusedWindow === window.designStudioWindow ? [{
+            //   label: t('menu.edit.deleteMedia'),
+            //   accelerator: shortcutAccelerator({ key: 'Backspace', meta: isMac }),
+            //   click: () => window.notifyBrowserWindows('delete-media')
+            // }] : []),
             { role: 'selectAll' },
           ]
           : [
