@@ -1,9 +1,9 @@
 <template>
-  <AlertDialog id="mcp-server-editor" ref="dialog" :icon="false" @save="onSave">
-    <template v-slot:header>
+  <ModalDialog id="mcp-server-editor" ref="dialog" :icon="false" :width="320" @save="onSave">
+    <template #header>
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
     </template>
-    <template v-slot:body>
+    <template #body>
       <div class="group">
         <label>{{ t('common.type') }}</label>
         <select name="type" v-model="type">
@@ -67,13 +67,13 @@
         />
       </div>
     </template>
-    <template v-slot:footer>
+    <template #footer>
       <div class="buttons">
         <button name="cancel" @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
         <button name="save" @click="onSave" class="alert-confirm">{{ type === 'smithery' ? t('common.install') : t('common.save') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
   <VariableEditor ref="editor" title="mcp.variableEditor.title" :variable="selectedVar" @save="onSaveVar" />
 </template>
 
@@ -83,7 +83,7 @@ import { Ref, ref, onMounted, watch, PropType } from 'vue'
 import { McpServer } from '../types/mcp'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import VariableEditor from './VariableEditor.vue'
 import VariableTable from '../components/VariableTable.vue'
 
@@ -261,9 +261,8 @@ defineExpose({
 </style>
 
 <style>
-#mcp-server-editor {
 
-  width: 300px !important;
+#mcp-server-editor {
 
   .list-with-actions {
     width: 100%;
@@ -281,4 +280,5 @@ defineExpose({
     }
   }
 }
+
 </style>

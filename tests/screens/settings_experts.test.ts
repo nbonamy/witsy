@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -51,8 +52,7 @@ beforeAll(() => {
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
     
   // wrapper
-  document.body.innerHTML = `<dialog id="settings"></dialog>`
-  wrapper = mount(Settings, { attachTo: '#settings' })
+  wrapper = mount(Settings, { ...stubTeleport })
 })
 
 beforeEach(() => {

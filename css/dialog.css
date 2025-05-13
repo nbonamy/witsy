@@ -55,6 +55,21 @@ dialog form.vertical {
     }
   }
 
+  main {
+
+    .sticky-table-container {
+      margin: 1rem 0;
+      max-height: 440px;
+      overflow: auto;
+
+      th, td {
+        white-space: normal;
+      }
+    }
+
+
+  }
+
   footer {
     display: flex;
     flex-direction: row;

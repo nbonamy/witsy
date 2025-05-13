@@ -1,5 +1,5 @@
 <template>
-  <AlertDialog id="command-editor" ref="dialog" :editor="true" @save="onSave">
+  <ModalDialog id="command-editor" ref="dialog" :editor="true" @save="onSave">
     <template #header>
       <div class="title">{{ t('commands.editor.title') }}</div>
     </template>
@@ -45,7 +45,7 @@
         <button type="button" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
       </div>
     </template>
-  </AlertDialog>
+  </ModalDialog>
 </template>
 
 <script setup lang="ts">
@@ -54,7 +54,7 @@ import { ref, computed, watch, PropType } from 'vue'
 import { Command } from '../types/index'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
-import AlertDialog from '../components/AlertDialog.vue'
+import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import Dialog from '../composables/dialog'
@@ -66,6 +66,7 @@ const props = defineProps({
   command: Object as PropType<Command>,
 })
 
+const dialog = ref(null)
 const icon = ref(null)
 const label = ref(null)
 const template = ref(null)
@@ -141,7 +142,7 @@ const onShortcutKeyUp = (event: KeyboardEvent) => {
 
 const close = () => {
   emit('command-modified')
-  document.querySelector<HTMLDialogElement>('#command-editor').close()
+  dialog.value.show('#command-editor')
 }
 
 const onCancel = () => {
@@ -184,7 +185,7 @@ const onSave = (event: Event) => {
 }
 
 defineExpose({
-  show: () => document.querySelector<HTMLDialogElement>('#command-editor').showModal(),
+  show: () => dialog.value.show('#command-editor'),
   close,
 })
 
