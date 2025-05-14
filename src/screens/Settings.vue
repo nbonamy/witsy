@@ -1,5 +1,5 @@
 <template>
-  <div class="settings panel-content tabs" ref="dialog">
+  <div class="settings panel-content tabs" ref="tabs">
     <div class="panel">
       <header>
         <div class="title">{{ t('common.settings') }}</div>
@@ -63,7 +63,7 @@ const props = defineProps({
   }
 })
 
-const dialog = ref<HTMLElement>(null)
+const tabs = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
@@ -109,8 +109,8 @@ onMounted(async () => {
   })
 
   // tabs
-  installTabs(dialog.value)
-  showActiveTab(dialog.value)
+  installTabs(tabs.value)
+  showActiveTab(tabs.value)
 
   // load
   onOpenSettings(props.extra)
@@ -130,7 +130,7 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
   }
 
   // show
-  showActiveTab(dialog.value)
+  showActiveTab(tabs.value)
 
   // show initial tab
   nextTick(() => {
