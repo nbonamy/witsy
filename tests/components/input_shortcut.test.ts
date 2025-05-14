@@ -44,7 +44,7 @@ test('Delete value with backspace', async () => {
 test('Delete value with icon', async () => {
   await wrapper.find('input').trigger('keydown', { code: 'Space', key: ' ', keyCode: 32, ctrlKey: true })
   expect(wrapper.find('input').element.value).not.toBe('')
-  await wrapper.find('.icon').trigger('click')
+  await wrapper.find('.clear').trigger('click')
   expect(wrapper.find('input').element.value).toBe('')
   expect(wrapper.vm.value).toStrictEqual({ key: 'none' })
   expect(wrapper.emitted().change).toBeTruthy()
