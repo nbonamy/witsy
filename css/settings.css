@@ -1,7 +1,7 @@
 
 .settings {
 
-  --settings-font-size: 10.5pt;
+  --settings-font-size: var(--form-large-font-size);
   --settings-menu-font-size: 11pt;
   --settings-list-font-size: 11pt;
 
@@ -143,20 +143,6 @@
   
   overflow: hidden;
   font-size: var(--settings-font-size);
-
-  &.large {
-
-    .group {
-      input:not([type=checkbox]), select, textarea, button {
-        font-size:var(--settings-font-size) !important;
-      }
-      input:not([type=checkbox]):not([type=range]), select {
-        padding: 0.33rem;
-        margin: 0.25rem 0;
-      }
-    }
-
-  }
 
   &.vertical {
     

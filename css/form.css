@@ -5,6 +5,7 @@
 
 form {
   --form-font-size: 9.5pt;
+  --form-large-font-size: 10.5pt;
   font-size: var(--form-font-size);
 }
 
@@ -52,13 +53,35 @@ form .control-group {
 
 }
 
-form.large .control-group {
-  &:has(input[type=text]), &:has(select) {
-    button {
-      padding-top: 6px;
-      padding-bottom: 6px;
+form.large {
+
+  font-size: var(--form-large-font-size);
+
+  .group {
+
+    input:not([type=checkbox]), select, textarea, button {
+      font-size:var(--form-large-font-size) !important;
+    }
+
+    input:not([type=checkbox]):not([type=range]), select {
+      padding: 0.33rem;
+      margin: 0.25rem 0;
+    }
+
+    .control-group {
+      &:has(input[type=text]), &:has(select) {
+        button {
+          padding-top: 6px;
+          padding-bottom: 6px;
+        }
+      }
     }
   }
+
+  button {
+    font-size: var(--form-large-font-size);
+  }
+
 }
 
 form .group:has([required]) label:not(:empty)::after {

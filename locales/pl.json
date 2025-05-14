@@ -1392,6 +1392,9 @@
       "startPTT": "Naciśnij i przytrzymaj, aby mówić",
       "stop": "Stop"
     },
+    "docRepos": {
+      "none": "Brak dostępnego repozytorium dokumentów. Czy chcesz utworzyć jedno teraz?"
+    },
     "expert": {
       "clear": "Wyczyść"
     },

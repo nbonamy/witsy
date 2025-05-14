@@ -574,7 +574,20 @@ const stopConversation = () => {
   emitEvent('conversation-mode', null)
 }
 
-const onDocRepo = () => {
+const onDocRepo = async () => {
+
+  if (docRepos.value.length === 0) {
+    const result = await Dialog.show({
+      title: t('prompt.docRepos.none'),
+      showCancelButton: true,
+      confirmButtonText: t('common.create'),
+    })
+    if (result.isConfirmed) {
+      emitEvent('create-docrepo', null)
+    }
+    return
+  }
+  
   showDocRepo.value = true
   const icon = document.querySelector('.prompt .docrepo')
   const rect = icon?.getBoundingClientRect()
