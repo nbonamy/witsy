@@ -46,13 +46,13 @@ const emit = defineEmits(['select', 'menu']);
 <style scoped>
 
 .chat {
-  margin: 2px 8px;
-  margin-right: 16px;
-  padding: 12px;
+  margin: 0.125rem 0.5rem;
+  margin-right: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   cursor: pointer;
 }
 
@@ -75,7 +75,7 @@ const emit = defineEmits(['select', 'menu']);
 .chat .logo {
   width: var(--sidebar-logo-size);
   height: var(--sidebar-logo-size);
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
 .chat .title {
@@ -88,14 +88,14 @@ const emit = defineEmits(['select', 'menu']);
 }
 
 .chat .select {
-  margin-left: 16px;
+  margin-left: 1rem;
   text-align: right;
   flex: 1;
 }
 
 .chat.compact {
-  margin: 0px 8px;
-  padding: 4px 12px;
+  margin: 0px 0.5rem;
+  padding: 0.25rem 0.75rem;
 }
 
 .chat.compact .logo {

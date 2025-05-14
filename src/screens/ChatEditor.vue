@@ -1,7 +1,7 @@
 <template>
   <ModalDialog id="fork-chat" ref="dialog" @save="onSave">
     <template #header>
-      <div class="title">{{ t(dialogTitle) }}</div>
+      <div class="title">{{ t(dialogTitle || 'common.chat') }}</div>
     </template>
     <template #body>
       <div class="group">
@@ -20,7 +20,7 @@
     <template #footer>
       <div class="buttons">
         <button @click="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
-        <button @click="onSave" class="alert-confirm">{{ t(confirmButtonText) }}</button>
+        <button @click="onSave" class="alert-confirm">{{ t(confirmButtonText || 'common.save' ) }}</button>
       </div>
     </template>
   </ModalDialog>
