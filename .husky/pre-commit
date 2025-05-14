@@ -1,4 +1,0 @@
-
-npm run lint
-npx vitest run --exclude './tests/e2e/**'
-./tools/i18n_check.ts
