@@ -59,19 +59,37 @@ const onMediaLoaded = () => {
   }
 }
 
-const scrollDown = () => {
-  nextTick(() => {
-    divScroller.value!.scrollTop = divScroller.value!.scrollHeight
-    overflown.value = false
-  })
+const scrollDown = async () => {
+  await nextTick()
+  divScroller.value!.scrollTop = divScroller.value!.scrollHeight
+  overflown.value = false
+  await nextTick()
 }
 
 let scrollOnChunk = true
-const onNewChunk = (chunk: LlmChunk) => {
+let avatar: HTMLElement | null = null
+const onNewChunk = async (chunk: LlmChunk) => {
 
-  // reset on empty chunk
-  if (!chunk) {
+  // scroll down on a new chunk
+  if (!chunk || (chunk.type === 'content' && chunk.text === '' && chunk.done)) {
+    await scrollDown()
     scrollOnChunk = true
+    avatar = null
+  }
+
+  // if we do not referenced the last avatar yet, we need to find it
+  if (!avatar) {
+    const avatars = document.querySelectorAll<HTMLElement>('.message .avatar')
+    avatar = avatars[avatars.length - 1]
+  }
+
+  // we don't want to scroll past the avatar
+  if (avatar && divScroller.value) {
+    const rc = avatar.getBoundingClientRect()
+    const messagesListRect = divScroller.value.getBoundingClientRect()
+    if (rc && messagesListRect && rc.top - rc.height < messagesListRect.top) {
+      scrollOnChunk = false
+    }
   }
 
   // only concerned with text chunks
@@ -88,6 +106,12 @@ const onNewChunk = (chunk: LlmChunk) => {
   if (chunk?.done && props.conversationMode && itemRefs.value?.length) {
     const last: any = itemRefs.value[itemRefs.value.length - 1]
     last.readAloud()
+  }
+
+  // clear
+  if (chunk?.done) {
+    scrollOnChunk = true
+    avatar = null
   }
 
 }
