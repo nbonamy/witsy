@@ -1,7 +1,7 @@
 
 import { CreateWindowOpts } from 'types/window';
 import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
-import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen } from './index';
+import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
 
@@ -89,6 +89,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 
     // hide only
     mainWindow.hide();
+    undockWindow(mainWindow);
     event.preventDefault();
 
   })
