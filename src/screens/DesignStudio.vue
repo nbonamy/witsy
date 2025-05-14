@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-content" @keydown="onKeyDown">
+  <div class="studio panel-content" @keydown="onKeyDown" v-bind="$attrs">
     <div class="panel">
       <header>
         <div class="title">{{ t('designStudio.title') }}</div>
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { FileContents } from '../types/index'
-import { ref, Ref, onMounted, computed, nextTick } from 'vue'
+import { ref, Ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { t } from '../services/i18n'
 import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
 import { saveFileContents } from '../services/download'
@@ -96,6 +96,11 @@ onMounted(() => {
 
   // keyboard
   document.addEventListener('keydown', onKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeyDown)
+  window.api.off('delete-media')
 })
 
 const onReset = () => {

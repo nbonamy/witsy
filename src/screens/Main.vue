@@ -2,16 +2,16 @@
   <div class="main">
     <MenuBar :mode="mode" @change="onMode"/>
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
-    <Chat v-if="mode === 'chat'" :extra="viewParams" />
-    <DesignStudio v-if="mode === 'studio'"/>
-    <DocRepos v-if="mode === 'docrepo'"/>
+    <Chat :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
+    <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
+    <DocRepos :style="{ display: mode === 'docrepo' ? 'flex' : 'none' }" />
   </div>
 </template>
 
 <script setup lang="ts">
 
 import { anyDict } from '../types/index'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import Chat from '../screens/Chat.vue'
@@ -47,7 +47,10 @@ onMounted(() => {
     mode.value = 'docrepo'
   })
 
+})
 
+onUnmounted(() => {
+  window.api.off('query-params')
 })
 
 const processQueryParams = (params: anyDict) => {
