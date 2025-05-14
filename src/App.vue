@@ -44,7 +44,7 @@ const theme = ref('light')
 const currentPath = ref(window.location.hash)
 
 const currentView = computed(() => {
-  console.log(currentPath.value.slice(1) || '/')
+  //console.log(currentPath.value.slice(1) || '/')
   return routes[currentPath.value.slice(1) || '/']
 })
 
