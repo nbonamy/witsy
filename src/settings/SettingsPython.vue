@@ -14,8 +14,8 @@
       <div class="subgroup">
         <input type="text" v-model="binpath" @change="save">
         <div class="actions">
-          <button @click.prevent="pick">{{ t('common.pick') }}</button>  
           <button @click.prevent="search" class="search">{{ t('settings.plugins.python.search') }}</button>
+          <button @click.prevent="pick">{{ t('common.pick') }}</button>  
         </div>
       </div>
     </div>

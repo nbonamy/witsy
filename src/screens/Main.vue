@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <MenuBar :mode="mode" @change="onMode"/>
-    <Settings v-if="mode === 'settings'" :extra="viewParams" />
+    <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat v-if="mode === 'chat'" :extra="viewParams" />
     <DesignStudio v-if="mode === 'studio'"/>
     <DocRepos v-if="mode === 'docrepo'"/>
