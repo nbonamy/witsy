@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-content">
+  <div class="docrepo panel-content" v-bind="$attrs">
     <div class="panel">
       <header>
         <div class="title">{{ t('docRepo.repositories.title') }}</div>
@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref, onMounted, computed } from 'vue'
+import { ref, Ref, onMounted, onUnmounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { store } from '../services/store'
@@ -133,10 +133,16 @@ onMounted(async () => {
   window.api.on('docrepo-add-document-error', onAddDocError)
   window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
+  onEvent('create-docrepo', onCreate)
   await loadDocRepos()
-  if (!docRepos.value.length) {
-    onCreate()
-  }
+})
+
+onUnmounted(() => {
+  window.api.off('docrepo-modified', loadDocRepos)
+  window.api.off('docrepo-add-document-done', onAddDocDone)
+  window.api.off('docrepo-add-document-error', onAddDocError)
+  window.api.off('docrepo-del-document-done', onDelDocDone)
+  window.api.off('docrepo-model-downloaded', onModelReady)
 })
 
 const onModelReady = () => {
