@@ -229,9 +229,14 @@ export const undockWindow = (window: BrowserWindow, preventQuit: boolean = false
   if (process.platform === 'darwin') {
     // for an unknown reason app.dock.hide
     // might not work immediately...
-    app.dock.hide();
-    setTimeout(app.dock.hide, 1000);
-    setTimeout(app.dock.hide, 2500);
+    const hideDock = () => {
+      if (dockedWindows.size === 0) {
+        app.dock.hide();
+      }
+    }
+    hideDock();
+    setTimeout(hideDock, 1000);
+    setTimeout(hideDock, 2500);
   } else if (!preventQuit) {
     app.quit();
   }
