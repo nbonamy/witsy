@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <MenuBar :mode="mode" @change="onMode"/>
-    <Settings v-if="mode === 'settings'" :extra="viewParams"/>
-    <Chat v-if="mode === 'chat'" :extra="viewParams"/>
+    <Settings v-if="mode === 'settings'" :extra="viewParams" />
+    <Chat v-if="mode === 'chat'" :extra="viewParams" />
     <DesignStudio v-if="mode === 'studio'"/>
     <DocRepos v-if="mode === 'docrepo'"/>
   </div>
@@ -20,7 +20,7 @@ import DocRepos from '../screens/DocRepos.vue'
 import Settings from '../screens/Settings.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
 // init stuff
 store.load()
@@ -33,12 +33,21 @@ const mode = ref<MenuBarMode>('chat')
 const viewParams = ref(null)
 
 onMounted(() => {
+
+  // init
   window.api.on('query-params', (params) => {
     processQueryParams(params)
   })
   if (props.extra) {
     processQueryParams(props.extra)
   }
+
+  // events
+  onEvent('create-docrepo', () => {
+    mode.value = 'docrepo'
+  })
+
+
 })
 
 const processQueryParams = (params: anyDict) => {

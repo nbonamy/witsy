@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="docrepocreate" ref="dialog">
+  <ModalDialog id="docrepocreate" ref="dialog" @save="onCreate">
     <template #header>
       <div class="title">{{ t('docRepo.create.title') }}</div>
       <div class="text"><b>{{ t('common.warning') }}</b>: {{ t('docRepo.create.embeddingWarning') }}</div>
@@ -36,7 +36,7 @@ const dialog = ref(null)
 const nameInput = ref(null)
 const name = ref('')
 const engine = ref('openai')
-const model = ref('')
+const model = ref('text-embedding-3-large')
 
 onMounted(() => {
   onEvent('open-docrepo-create', onOpen)

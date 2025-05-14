@@ -134,6 +134,9 @@ onMounted(async () => {
   window.api.on('docrepo-del-document-done', onDelDocDone)
   window.api.on('docrepo-model-downloaded', onModelReady)
   await loadDocRepos()
+  if (!docRepos.value.length) {
+    onCreate()
+  }
 })
 
 const onModelReady = () => {

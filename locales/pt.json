@@ -1392,6 +1392,9 @@
       "startPTT": "Iniciar conversa push-to-talk",
       "stop": "Parar conversa"
     },
+    "docRepos": {
+      "none": "Nenhum repositório de documentos disponível. Você gostaria de criar um agora?"
+    },
     "expert": {
       "clear": "Limpar especialista"
     },
