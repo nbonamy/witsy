@@ -459,15 +459,16 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
         }
       }
 
-      .empty {
+      &.empty {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         padding: 16px;
-        font-size: 11pt;
+        font-size: 14pt;
         line-height: 1.5;
         text-align: center;
+        opacity: 0.6;
       }
 
     }

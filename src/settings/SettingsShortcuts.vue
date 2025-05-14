@@ -1,5 +1,5 @@
 <template>
-  <form class="tab-content large">
+  <form class="tab-content vertical large">
     <header>
       <div class="title">{{ t('settings.tabs.shortcuts') }}</div>
     </header>
@@ -99,12 +99,9 @@ defineExpose({ load })
 
 <style scoped>
 
-.settings form .group label {
-  font-weight: bold;
-
-  &::after {
-    content: '';
-  }
+.settings .tab-content main {
+  min-width: auto;
+  max-width: 350px;  
 }
 
 </style>
