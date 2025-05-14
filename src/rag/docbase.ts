@@ -289,7 +289,7 @@ export default class DocumentBaseImpl {
 
     // now query
     await this.connect()
-    const results = await this.db.query(query[0], searchResultCount+10)
+    const results = await this.db.query(text, query[0], searchResultCount+10)
     
     // filter and transform
     const filtered = results

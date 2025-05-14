@@ -78,7 +78,7 @@ export default class MemoryManager {
     const embeddings = await embedder.embed([query])
 
     // now query
-    const results = await this.db.query(embeddings[0], 10)
+    const results = await this.db.query(query, embeddings[0], 10)
     return results
       .filter((result) => result.score > relevanceCutOff)
       .map((result) => result.item.metadata.content as string)
