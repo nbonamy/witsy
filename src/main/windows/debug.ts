@@ -22,7 +22,9 @@ export const openDebugWindow = (): void => {
       height: bounds?.height || 600,
       minWidth: 600,
       minHeight: 400,
-      ...titleBarOptions(),
+      ...titleBarOptions({
+        height: 48,
+      }),
       showInDock: true,
     });
 
