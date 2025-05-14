@@ -4,6 +4,7 @@ import { getComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
 import OpenAI from './openai'
+import Ollama from './ollama'
 
 export default class LlmManager extends LlmManagerBase {
 
@@ -12,7 +13,7 @@ export default class LlmManager extends LlmManagerBase {
   }
 
   getStandardEngines = (): string[] => {
-    return [ 'openai', 'anthropic', 'google', 'xai', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
+    return [ 'openai', 'anthropic', 'google', 'xai', 'meta', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
   }
 
   getPriorityEngines = (): string[] => {
@@ -29,8 +30,9 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
     if (engine === 'google') return llm.Google.isConfigured(this.config.engines.google)
     if (engine === 'groq') return llm.Groq.isConfigured(this.config.engines.groq)
+    if (engine === 'meta') return llm.Meta.isConfigured(this.config.engines.meta)
     if (engine === 'mistralai') return llm.MistralAI.isConfigured(this.config.engines.mistralai)
-    if (engine === 'ollama') return llm.Ollama.isConfigured(this.config.engines.ollama)
+    if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
     if (engine === 'openai') return OpenAI.isConfigured(this.config.engines.openai)
     if (engine === 'openrouter') return llm.OpenRouter.isConfigured(this.config.engines.openrouter)
     if (engine === 'xai') return llm.XAI.isConfigured(this.config.engines.xai)
@@ -45,8 +47,9 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
     if (engine === 'google') return llm.Google.isReady(this.config.engines.google, this.config.engines.google?.models)
     if (engine === 'groq') return llm.Groq.isReady(this.config.engines.groq, this.config.engines.groq?.models)
+    if (engine === 'meta') return llm.Meta.isReady(this.config.engines.meta, this.config.engines.meta?.models)
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
-    if (engine === 'ollama') return llm.Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
+    if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
     if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return llm.OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return llm.XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
@@ -72,8 +75,9 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
       if (engine === 'google') return new llm.Google(this.config.engines.google)
       if (engine === 'groq') return new llm.Groq({ ...this.config.engines.groq, maxRetries: 0 })
+      if (engine === 'meta') return new llm.Meta(this.config.engines.meta)
       if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
-      if (engine === 'ollama') return new llm.Ollama(this.config.engines.ollama)
+      if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
       if (engine === 'openai') return new OpenAI(this.config.engines.openai)
       if (engine === 'openrouter') return new llm.OpenRouter(this.config.engines.openrouter)
       if (engine === 'xai') return new llm.XAI(this.config.engines.xai)
@@ -98,6 +102,8 @@ export default class LlmManager extends LlmManagerBase {
       models = await llm.loadOpenAIModels(this.config.engines.openai)
     } else if (engine === 'ollama') {
       models = await llm.loadOllamaModels(this.config.engines.ollama)
+    } else if (engine === 'meta') {
+      models = await llm.loadMetaModels(this.config.engines.meta)
     } else if (engine === 'mistralai') {
       models = await llm.loadMistralAIModels(this.config.engines.mistralai)
     } else if (engine === 'anthropic') {

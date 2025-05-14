@@ -12,19 +12,20 @@ import { CustomEngineConfig } from '../types/config'
 import { computed } from 'vue'
 import { store } from '../services/store'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
-import LogoOpenAI from '../../assets/openai.svg?component'
-import LogoOllama from '../../assets/ollama.svg?component'
-import LogoAzure from '../../assets/azure.svg?component'
-import LogoAnthropic from '../../assets/anthropic.svg?component'
-import LogoMistralAI from '../../assets/mistralai.svg?component'
-import LogoGoogle from '../../assets/google.svg?component'
-import LogoXAI from '../../assets/xai.svg?component'
-import LogoDeepSeek from '../../assets/deepseek.svg?component'
-import LogoGroq from '../../assets/groq.svg?component'
-import LogoCerberas from '../../assets/cerebras.svg?component'
-import LogoOpenRouter from '../../assets/openrouter.svg?component'
 import LogoCustom from '../../assets/custom.svg?component'
 import LogoFavorite from '../../assets/favorite.svg?component'
+import LogoAnthropic from '../../assets/anthropic.svg?component'
+import LogoAzure from '../../assets/azure.svg?component'
+import LogoCerberas from '../../assets/cerebras.svg?component'
+import LogoDeepSeek from '../../assets/deepseek.svg?component'
+import LogoGoogle from '../../assets/google.svg?component'
+import LogoGroq from '../../assets/groq.svg?component'
+import LogoMeta from '../../assets/meta.svg?component'
+import LogoMistralAI from '../../assets/mistralai.svg?component'
+import LogoOllama from '../../assets/ollama.svg?component'
+import LogoOpenAI from '../../assets/openai.svg?component'
+import LogoOpenRouter from '../../assets/openrouter.svg?component'
+import LogoXAI from '../../assets/xai.svg?component'
 
 const llmManager = LlmFactory.manager(store.config)
 
@@ -35,6 +36,7 @@ const logos: { [key: string]: any } = {
   deepseek: LogoDeepSeek,
   google: LogoGoogle,
   groq: LogoGroq,
+  meta: LogoMeta,
   mistralai: LogoMistralAI,
   ollama: LogoOllama,
   openai: LogoOpenAI,

@@ -40,6 +40,7 @@ import SettingsCerebras from './SettingsCerebras.vue'
 import SettingsDeepSeek from './SettingsDeepSeek.vue'
 import SettingsGoogle from './SettingsGoogle.vue'
 import SettingsGroq from './SettingsGroq.vue'
+import SettingsMeta from './SettingsMeta.vue'
 import SettingsMistralAI from './SettingsMistralAI.vue'
 import SettingsOllama from './SettingsOllama.vue'
 import SettingsOpenAI from './SettingsOpenAI.vue'
@@ -78,6 +79,7 @@ const engines = computed(() => {
           deepseek: 'DeepSeek',
           google: 'Google',
           groq: 'Groq',
+          meta: 'Meta',
           mistralai: 'Mistral AI',
           ollama: 'Ollama',
           openai: 'OpenAI',
@@ -106,6 +108,7 @@ const currentView = computed(() => {
   if (currentEngine.value == 'deepseek') return SettingsDeepSeek
   if (currentEngine.value == 'google') return SettingsGoogle
   if (currentEngine.value == 'groq') return SettingsGroq
+  if (currentEngine.value == 'meta') return SettingsMeta
   if (currentEngine.value == 'mistralai') return SettingsMistralAI
   if (currentEngine.value == 'ollama') return SettingsOllama
   if (currentEngine.value == 'openai') return SettingsOpenAI

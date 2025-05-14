@@ -8,7 +8,8 @@ import Settings from '../../src/screens/Settings.vue'
 import { wait } from '../../src/main/utils'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
-  loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
+  loadOllamaModels, loadOpenAIModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels,
+  loadMetaModels
 } from 'multi-llm-ts'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
@@ -19,6 +20,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
     loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadGroqModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
+    loadMetaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
@@ -48,7 +50,7 @@ beforeEach(async () => {
 test('should render', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   expect(tab.find('.list-panel').exists()).toBeTruthy()
-  expect(tab.findAll('.list-panel .master .list .item').length).toBe(12)
+  expect(tab.findAll('.list-panel .master .list .item').length).toBe(13)
   expect(tab.findComponent({ name: 'SettingsOpenAI' }).exists()).toBeTruthy()
 })
 
@@ -118,9 +120,25 @@ test('xai settings', async () => {
   expect(store.config.engines.xai.disableTools).toBeTruthy()
 })
 
-test('ollama settings', async () => {
+test('meta settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
   await tab.find('.list-panel .list .item:nth-child(6)').trigger('click')
+  await tab.vm.$nextTick()
+  const meta = tab.findComponent({ name: 'SettingsMeta' })
+  await meta.find('input').setValue('api-key')
+  await meta.find('input').trigger('blur')
+  expect(store.config.engines.meta.apiKey).toBe('api-key')
+  expect(loadMetaModels).toHaveBeenLastCalledWith(expect.objectContaining({
+    apiKey: 'api-key'
+  }))
+  expect(store.config.engines.meta.disableTools).toBeFalsy()
+  await meta.find('[name=disableTools]').setValue(true)
+  expect(store.config.engines.meta.disableTools).toBeTruthy()
+})
+
+test('ollama settings', async () => {
+  const tab = await switchToTab(wrapper, llmIndex)
+  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
   await tab.vm.$nextTick()
   const ollama = tab.findComponent({ name: 'SettingsOllama' })
   await ollama.find('input[name=baseURL]').setValue('base-url')
@@ -137,7 +155,7 @@ test('ollama settings', async () => {
 
 test('mistralai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
   await tab.vm.$nextTick()
   const mistralai = tab.findComponent({ name: 'SettingsMistralAI' })
   await mistralai.find('input').setValue('api-key')
@@ -153,7 +171,7 @@ test('mistralai settings', async () => {
 
 test('azure settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(9)').trigger('click')
   await tab.vm.$nextTick()
   const azure = tab.findComponent({ name: 'SettingsAzure' })
   expect(azure.exists()).toBeTruthy()
@@ -161,7 +179,7 @@ test('azure settings', async () => {
 
 test('deepseek settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(9)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(10)').trigger('click')
   await tab.vm.$nextTick()
   const deepseek = tab.findComponent({ name: 'SettingsDeepSeek' })
   await deepseek.find('input').setValue('api-key')
@@ -177,7 +195,7 @@ test('deepseek settings', async () => {
 
 test('openrouter settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(10)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(11)').trigger('click')
   await tab.vm.$nextTick()
   const openrouter = tab.findComponent({ name: 'SettingsOpenRouter' })
   await openrouter.find('input').setValue('api-key')
@@ -193,7 +211,7 @@ test('openrouter settings', async () => {
 
 test('groq settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(11)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(12)').trigger('click')
   await tab.vm.$nextTick()
   const groq = tab.findComponent({ name: 'SettingsGroq' })
   await groq.find('input').setValue('api-key')
@@ -209,7 +227,7 @@ test('groq settings', async () => {
 
 test('cerebras settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(12)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(13)').trigger('click')
   await tab.vm.$nextTick()
   const cerebras = tab.findComponent({ name: 'SettingsCerebras' })
   await cerebras.find('input').setValue('api-key')

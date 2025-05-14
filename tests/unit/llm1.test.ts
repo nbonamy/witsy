@@ -50,6 +50,7 @@ test('Default Configuration', () => {
   expect(llmManager.isEngineReady('anthropic')).toBe(false)
   expect(llmManager.isEngineReady('google')).toBe(false)
   expect(llmManager.isEngineReady('xai')).toBe(false)
+  expect(llmManager.isEngineReady('meta')).toBe(false)
   expect(llmManager.isEngineReady('deepseek')).toBe(false)
   expect(llmManager.isEngineReady('openrouter')).toBe(false)
   expect(llmManager.isEngineReady('groq')).toBe(false)
