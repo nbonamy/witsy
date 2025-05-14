@@ -2,7 +2,7 @@
 <template>
   <div class="wrapper">
     <input type="text" v-model="display" spellcheck="false" @keydown.prevent="onKeyDown" />
-    <BIconXCircleFill v-if="display" class="icon" @click="onDelete" />
+    <BIconXCircleFill v-if="display" class="clear" @click="onDelete" />
   </div>
 </template>
 
@@ -106,6 +106,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 .wrapper {
   flex: 1;
+  align-items: center;
   position: relative;
 }
 
@@ -115,11 +116,11 @@ input {
   /* font-weight: 500; */
 }
 
-.icon {
+.clear {
   opacity: 0.33;
   cursor: pointer;
   position: absolute;
-  top: 6px;
+  top: 12px;
   right: 6px;
 }
 
