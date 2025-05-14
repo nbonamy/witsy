@@ -25,7 +25,7 @@ form .group .subgroup {
 }
 
 form .group:has(.subgroup) {
-  align-items: flex-start;
+  align-items: baseline;
   margin-bottom: 12px;
 }
 
@@ -58,6 +58,10 @@ form.large {
   font-size: var(--form-large-font-size);
 
   .group {
+
+    span, a {
+      font-size: var(--form-large-font-size);
+    }
 
     input:not([type=checkbox]), select, textarea, button {
       font-size:var(--form-large-font-size) !important;
