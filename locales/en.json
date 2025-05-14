@@ -81,6 +81,7 @@
       "ms-MY": "Malay",
       "sw-KE": "Swahili"
     },
+    "learnMore": "Learn more…",
     "llmModel": "LLM Model",
     "llmProvider": "LLM Provider",
     "load": "Load",
@@ -1251,8 +1252,9 @@
       "serverPackage": "Server Package",
       "title": "MCP Server Configuration",
       "type": {
+        "http": "Streamable HTTP",
         "smithery": "Smithery.ai",
-        "sse": "SSE",
+        "sse": "SSE (Deprecated)",
         "stdio": "stdio"
       },
       "validation": {
@@ -1553,6 +1555,10 @@
         "aboutModels": "More about Groq models",
         "pricing": "Groq pricing"
       },
+      "meta": {
+        "aboutModels": "More about Meta Llama models",
+        "pricing": "Meta Llama pricing"
+      },
       "mistralai": {
         "aboutModels": "More about MistralAI models",
         "pricing": "MistralAI pricing"
@@ -1560,7 +1566,8 @@
       "ollama": {
         "apiBaseURL": "API Base URL",
         "browseModels": "Browse models",
-        "confirmDelete": "Are you sure you want to delete this model?"
+        "confirmDelete": "Are you sure you want to delete this model?",
+        "keepAlive": "Keep alive"
       },
       "openai": {
         "aboutModels": "More about OpenAI models",

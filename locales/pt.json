@@ -81,6 +81,7 @@
       "ms-MY": "Malaio",
       "sw-KE": "Suaíli"
     },
+    "learnMore": "Saiba mais…",
     "llmModel": "Modelo LLM",
     "llmProvider": "Provedor LLM",
     "load": "Carregar",
@@ -1251,6 +1252,7 @@
       "serverPackage": "Pacote do Servidor",
       "title": "Configuração do Servidor MCP",
       "type": {
+        "http": "HTTP transmissível",
         "smithery": "Smithery.ai",
         "sse": "SSE",
         "stdio": "stdio"
@@ -1553,6 +1555,10 @@
         "aboutModels": "Mais sobre os modelos Groq",
         "pricing": "Preços Groq"
       },
+      "meta": {
+        "aboutModels": "Saiba mais sobre os modelos Meta Llama",
+        "pricing": "Preços do Meta Llama"
+      },
       "mistralai": {
         "aboutModels": "Mais sobre os modelos MistralAI",
         "pricing": "Preços MistralAI"
@@ -1560,7 +1566,8 @@
       "ollama": {
         "apiBaseURL": "URL Base da API",
         "browseModels": "Navegar por modelos",
-        "confirmDelete": "Tem certeza de que deseja excluir este modelo?"
+        "confirmDelete": "Tem certeza de que deseja excluir este modelo?",
+        "keepAlive": "Manter vivo"
       },
       "openai": {
         "aboutModels": "Mais sobre os modelos OpenAI",
