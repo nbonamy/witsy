@@ -253,10 +253,19 @@ app.on('second-instance', () => {
 app.on('before-quit', (ev) => {
 
   const closeAllWindows = () => {
+
+    // close all windows
     BrowserWindow.getAllWindows().forEach((win) => {
       win.removeAllListeners('close');
       win.close();
     });
+
+    // clean up when debugging (vscode restarts the app)
+    if (process.env.DEBUG) {
+      trayIconManager.destroy();
+      shortcuts.unregisterShortcuts();
+    }
+
   }
 
   // if force quit
@@ -276,12 +285,6 @@ app.on('before-quit', (ev) => {
   BrowserWindow.getAllWindows().forEach((win) => win.close());
   ev.preventDefault();
 
-  // clean up when debugging (vscode restarts the app)
-  if (process.env.DEBUG) {
-    trayIconManager.destroy();
-    shortcuts.unregisterShortcuts();
-  }
-
 });
 
 // real quit
@@ -290,6 +293,12 @@ app.on('will-quit', () => {
   try { trayIconManager.destroy();  } catch { /* empty */ }
   try { shortcuts.unregisterShortcuts(); } catch { /* empty */ }
   try { mcp?.shutdown(); } catch { /* empty */ }
+})
+
+// vscode debugging
+app.on('render-process-gone', () => {
+  quitAnyway = true;
+  app.quit();
 })
 
 // In this file you can include the rest of your app's specific main process
