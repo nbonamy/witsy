@@ -11,7 +11,58 @@ export const getNetworkHistory = (): NetworkRequest[] => Array.from(requests.val
 
 export const clearNetworkHistory = () => requests.clear()
 
+// const convertHeaders = (headers: Headers): Record<string, string> => {
+//   const result: Record<string, string> = {}
+//   headers.forEach((value, key) => {
+//     result[key] = value
+//   })
+//   return result
+// }
+
 export default (window: BrowserWindow) => {
+
+  // try {
+
+  //   const globalFetch = global.fetch
+  //   global.fetch = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+
+  //     // store
+  //     const requestId = crypto.randomUUID()
+  //     let networkRequest: NetworkRequest | undefined
+  //     try {
+  //       networkRequest = {
+  //         id: requestId,
+  //         url: input.toString(),
+  //         method: init?.method || 'GET',
+  //         headers: convertHeaders(init?.headers as Headers),
+  //         postData: init?.body.toString() || '',
+  //       }
+  //       requests.set(requestId, networkRequest)
+  //     } catch { /* empty */}
+
+  //     // call
+  //     const response = await globalFetch(input, init)
+
+  //     // update
+  //     if (networkRequest) {
+  //       try {
+  //         networkRequest.statusCode = response.status
+  //         networkRequest.statusText = response.statusText
+  //         networkRequest.responseHeaders = convertHeaders(response.headers)
+  //         networkRequest.mimeType = response.type
+  //         networkRequest.responseBody = await response.text()
+  //         requests.set(requestId, networkRequest)
+  //       } catch { /* empty */ }
+  //     }
+
+  //     // done
+  //     return response
+  //   }
+
+  // } catch (error) {
+  //   console.error('Error attaching fetch debugger', error)
+  // }
+
 
   try {
   
@@ -146,7 +197,7 @@ export default (window: BrowserWindow) => {
     })
 
   } catch (error) {
-    console.error('Error attaching debugger', error)
+    console.error('Error attaching network debugger', error)
   }
 
 }
