@@ -32,6 +32,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="nvidiaAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'nvidia'">
+      <label>{{ t('common.prompt') }}</label>
+      <textarea v-model="nvidiaPrompt" @blur="save" />
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
@@ -111,6 +115,7 @@ const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
+const nvidiaPrompt = ref(null)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
@@ -122,7 +127,7 @@ const engines = () => [
   { id: 'gladia', label: 'Gladia' },
   { id: 'groq', label: 'Groq' },
   //{ id: 'huggingface', label: 'Hugging Face' },
-  ...(store.config.stt.nvidia.enabled ? [{ id: 'nvidia', label: 'nVidia' }] : []),
+  { id: 'nvidia', label: 'nVidia' },
   { id: 'whisper', label: 'Whisper' },
 ]
 
@@ -186,6 +191,7 @@ const load = () => {
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
+  nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -198,6 +204,7 @@ const save = () => {
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
+  store.config.stt.nvidia.prompt = nvidiaPrompt.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
@@ -338,5 +345,8 @@ defineExpose({ load })
 <style scoped>
 .progress {
   margin-top: 8px;
+}
+.settings form.vertical .group textarea {
+  flex: 1 0 100px;
 }
 </style>
