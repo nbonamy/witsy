@@ -1,4 +1,7 @@
 
+import { LlmCompletionOpts, LLmCompletionPayload, Ollama } from 'multi-llm-ts'
+import { ChatRequest, } from 'ollama/dist/browser.cjs'
+
 const getChatModels = [
   { id: 'deepseek-r1:14b', name: 'DeepSeek Reasoner' },
   { id: 'llama3.3:latest', name: 'Llama 3.3' },
@@ -17,3 +20,28 @@ const getEmbeddingModels = [
 ]
 
 export { getChatModels, getEmbeddingModels }
+
+export default class OllamaEngine extends Ollama {
+
+  buildChatOptions({ model, messages, opts }: { model: string, messages: LLmCompletionPayload[], opts: LlmCompletionOpts|null }): ChatRequest {
+    const options = super.buildChatOptions({ model, messages, opts })
+    
+    const keepAlive = (() => {
+      const value = this.config.keepAlive;
+      if (!value?.length) {
+        return undefined
+      }
+      if (typeof value === 'string') {
+        const num = Number(value);
+        return !isNaN(num) ? num : value;
+      }
+      return value;
+    })();
+
+    return {
+      ...{ keep_alive: keepAlive },
+      ...options
+    }
+  }
+
+}

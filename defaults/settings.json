@@ -122,7 +122,6 @@
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe",
     "nvidia": {
-      "enabled": false,
       "prompt": "Transcribe the audio clip into text.\nFormat sentences with clear line breaks and paragraphs for natural reading. Remove filler words like um, uh.\nYour response should be formatted as follows:\n\"transcribed text here\""
     }
   },
@@ -233,6 +232,17 @@
         "image": ""
       }
     },
+    "meta": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "mistralai": {
       "models": {
         "chat": [],
@@ -256,6 +266,7 @@
     },
     "ollama": {
       "baseURL": "http://127.0.0.1:11434",
+      "keepAlive": "",
       "models": {
         "chat": [],
         "image": []

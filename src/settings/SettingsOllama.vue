@@ -17,9 +17,16 @@
       <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
+    <div class="group">
+      <label>{{ t('settings.engines.ollama.keepAlive') }}</label>
+      <div class="subgroup">
+        <input type="text" name="keepAlive" v-model="keepAlive" @change="save" />
+        <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately" target="_blank">{{ t('common.learnMore') }}</a>
+      </div>
+    </div>
     <div class="group horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
-      <label>{{  t('settings.engines.disableTools') }}</label>
+      <label>{{ t('settings.engines.disableTools') }}</label>
     </div>
   </div>
 </template>
@@ -37,6 +44,7 @@ import defaults from '../../defaults/settings.json'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 
 const baseURL = ref(null)
+const keepAlive = ref('')
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
 const chat_model = ref(null)
@@ -46,6 +54,7 @@ const load = () => {
   baseURL.value = store.config.engines.ollama?.baseURL || ''
   chat_models.value = store.config.engines.ollama?.models?.chat || []
   chat_model.value = store.config.engines.ollama?.model?.chat || ''
+  keepAlive.value = store.config.engines.ollama?.keepAlive || ''
   disableTools.value = store.config.engines.ollama?.disableTools || false
 }
 
@@ -100,6 +109,7 @@ const getModels = async () => {
 const save = () => {
   store.config.engines.ollama.baseURL = baseURL.value
   store.config.engines.ollama.model.chat = chat_model.value
+  store.config.engines.ollama.keepAlive = keepAlive.value
   store.config.engines.ollama.disableTools = disableTools.value
   store.saveSettings()
 }
