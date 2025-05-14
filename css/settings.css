@@ -139,19 +139,23 @@
 
 }
 
-.settings form.large {
+.settings form {
   
   overflow: hidden;
   font-size: var(--settings-font-size);
 
-  .group {
-    input:not([type=checkbox]), select, textarea, button {
-      font-size:var(--settings-font-size) !important;
+  &.large {
+
+    .group {
+      input:not([type=checkbox]), select, textarea, button {
+        font-size:var(--settings-font-size) !important;
+      }
+      input:not([type=checkbox]):not([type=range]), select {
+        padding: 0.33rem;
+        margin: 0.25rem 0;
+      }
     }
-    input:not([type=checkbox]):not([type=range]), select {
-      padding: 0.33rem;
-      margin: 0.25rem 0;
-    }
+
   }
 
   &.vertical {
@@ -255,8 +259,7 @@
 
   .panel {
     flex: 1;
-    padding: 1rem;
-    padding-right: 2rem;
+    padding: 1rem 1.5rem;
     background-color: inherit;
     height: auto;
   } 

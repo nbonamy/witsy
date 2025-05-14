@@ -18,7 +18,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const llmIndex = 4
+const llmIndex = 2
 
 beforeAll(() => {
   useWindowMock({ customEngine: true})

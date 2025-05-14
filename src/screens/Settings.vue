@@ -8,11 +8,11 @@
         <ul>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
           <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
           <SettingsTab class="mcp" :title="t('settings.plugins.mcp.title')" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
+          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
+          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
           <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
           <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
@@ -22,11 +22,11 @@
     <div class="content">
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsAppearance ref="settingsAppearance" />
-      <SettingsCommands ref="settingsCommands" />
-      <SettingsExperts ref="settingsExperts" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
+      <SettingsCommands ref="settingsCommands" />
+      <SettingsExperts ref="settingsExperts" />
       <SettingsVoice ref="settingsVoice" />
       <SettingsShortcuts ref="settingsShortcuts" />
       <SettingsAdvanced ref="settingsAdvanced" />
@@ -67,11 +67,11 @@ const dialog = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsAppearance = ref(null)
-const settingsCommands = ref(null)
-const settingsExperts = ref(null)
 const settingsLLM = ref(null)
 const settingsPlugins = ref(null)
 const settingsMcp = ref(null)
+const settingsCommands = ref(null)
+const settingsExperts = ref(null)
 const settingsVoice = ref(null)
 const settingsShortcuts = ref(null)
 const settingsAdvanced = ref(null)
@@ -79,11 +79,11 @@ const settingsAdvanced = ref(null)
 const settings = [
   settingsGeneral,
   settingsAppearance,
-  settingsCommands,
-  settingsExperts,
   settingsLLM,
   settingsPlugins,
   settingsMcp,
+  settingsCommands,
+  settingsExperts,
   settingsVoice,
   settingsShortcuts,
   settingsAdvanced

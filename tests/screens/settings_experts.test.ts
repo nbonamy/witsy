@@ -34,7 +34,7 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const expertsIndex = 3
+const expertsIndex = 6
 
 beforeAll(() => {
 
