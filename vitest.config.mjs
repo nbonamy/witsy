@@ -24,6 +24,10 @@ export default defineConfig({
   ],
   test: {
     globals: true,
+    exclude: [
+      '**/node_modules/**',
+      './tests/e2e/**',
+    ],
     environment: 'jsdom',
     setupFiles: 'vitest.setup.ts',
     coverage: {
