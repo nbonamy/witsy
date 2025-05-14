@@ -62,6 +62,7 @@
       "system": "🖥️ Systemsprache",
       "fr-FR": "Französisch"
     },
+    "learnMore": "Mehr erfahren…",
     "llmModel": "LLM-Modell",
     "llmProvider": "LLM-Anbieter",
     "load": "Laden",
@@ -1232,6 +1233,7 @@
       "serverPackage": "Serverpaket",
       "title": "MCP-Serverkonfiguration",
       "type": {
+        "http": "Streambares HTTP",
         "smithery": "Smithery.ai",
         "sse": "SSE",
         "stdio": "stdio"
@@ -1523,6 +1525,10 @@
         "aboutModels": "Mehr über Groq-Modelle",
         "pricing": "Groq-Preise"
       },
+      "meta": {
+        "aboutModels": "Mehr über Meta Llama-Modelle",
+        "pricing": "Meta Llama Preise"
+      },
       "mistralai": {
         "aboutModels": "Mehr über MistralAI-Modelle",
         "pricing": "MistralAI-Preise"
@@ -1530,7 +1536,8 @@
       "ollama": {
         "apiBaseURL": "API-Basis-URL",
         "browseModels": "Modelle durchsuchen",
-        "confirmDelete": "Sind Sie sicher, dass Sie dieses Modell löschen möchten?"
+        "confirmDelete": "Sind Sie sicher, dass Sie dieses Modell löschen möchten?",
+        "keepAlive": "Verbindung aufrechterhalten"
       },
       "openai": {
         "aboutModels": "Mehr über OpenAI-Modelle",

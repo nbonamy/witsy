@@ -81,6 +81,7 @@
       "ms-MY": "马来语",
       "sw-KE": "斯瓦希里语"
     },
+    "learnMore": "了解更多…",
     "llmModel": "LLM 模型",
     "llmProvider": "LLM 提供商",
     "load": "加载",
@@ -1251,6 +1252,7 @@
       "serverPackage": "服务器包",
       "title": "MCP 服务器配置",
       "type": {
+        "http": "可流式传输的 HTTP",
         "smithery": "Smithery.ai",
         "sse": "SSE",
         "stdio": "stdio"
@@ -1553,6 +1555,10 @@
         "aboutModels": "了解更多关于 Groq 模型的信息",
         "pricing": "Groq 定价"
       },
+      "meta": {
+        "aboutModels": "更多关于 Meta Llama 模型的信息",
+        "pricing": "Meta Llama 定价"
+      },
       "mistralai": {
         "aboutModels": "了解更多关于 MistralAI 模型的信息",
         "pricing": "MistralAI 定价"
@@ -1560,7 +1566,8 @@
       "ollama": {
         "apiBaseURL": "API 基础 URL",
         "browseModels": "浏览模型",
-        "confirmDelete": "你确定要删除这个模型吗？"
+        "confirmDelete": "你确定要删除这个模型吗？",
+        "keepAlive": "保持活动"
       },
       "openai": {
         "aboutModels": "了解更多关于 OpenAI 模型的信息",
