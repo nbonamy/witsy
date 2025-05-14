@@ -18,7 +18,7 @@
           </select>
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </div>
-        <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.aboutModels') }}</a>
+        <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.aboutModels') }}</a><br/>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.pricing') }}</a>
       </div>
     </div>
