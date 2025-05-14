@@ -43,7 +43,7 @@ export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => 
   opts = {
     titleBarStyle: 'hidden',
     lightThemeColor: '#efefef',
-    darkBlackThemeColor: '#383838',
+    darkBlackThemeColor: '#404040',
     darkBlueThemeColor: 'rgb(40, 50, 65)',
     height: undefined,
     ...opts

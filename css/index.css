@@ -21,7 +21,6 @@
   --window-decoration-color: #f4f4f4;
   --window-toolbar-height: 3rem;
 
-  --menubar-bg-color: var(--window-decoration-color);
   --menubar-icon-color: var(--icon-color);
   --menubar-highlight-color: var(--highlight-color);
 
@@ -135,6 +134,11 @@
 
 }
 
+.windows {
+  --window-decoration-color: #efefef;
+  --control-border-radius: 2px;
+}
+
 @media (prefers-color-scheme: dark) {
   
   :root {
@@ -148,7 +152,8 @@
     --highlight-color: rgb(11, 132, 255);
     --link-color: rgb(65, 156, 255);
 
-    --window-decoration-color: #404040;
+    --default-window-decoration-color: #404040;
+    --window-decoration-color: var(--default-window-decoration-color);
 
     --menubar-highlight-color: rgb(54, 173, 194);
 
@@ -233,6 +238,10 @@
     --message-reasoning-opacity: 0.80;
 
   }
+
+  .windows {
+    --window-decoration-color: var(--default-window-decoration-color);
+  }
   
   [data-tint=blue], [data-tint=blue] * {
 
@@ -245,9 +254,9 @@
     --highlight-color: rgb(10, 120, 240);
     --link-color: rgb(60, 140, 230);
 
-    --window-decoration-color: rgb(40, 50, 65);
+    --default-window-decoration-color: rgb(40, 50, 65);
+    --window-decoration-color: var(--default-window-decoration-color);
 
-    --menubar-bg-color: var(--window-decoration-color);
     --menubar-icon-color: var(--icon-color);
   
     --control-bg-color: rgb(45, 65, 85);
@@ -332,12 +341,12 @@
     --scratchpad-actionbar-disabled-icon-color: #566;
     --scratchpad-actionbar-hover-icon-color: #cde;
 
+    .windows {
+      --window-decoration-color: var(--default-window-decoration-color);
+    }
+
   }
 
-}
-
-.windows {
-  --control-border-radius: 0px;
 }
 
 * {

@@ -101,7 +101,7 @@ onMounted(() => {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: var(--menubar-bg-color);
+  background-color: var(--window-decoration-color);
   gap: 0.65rem;
 
   .push {

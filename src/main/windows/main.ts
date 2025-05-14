@@ -97,11 +97,6 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     mainWindow = null;
   })
 
-  // open the DevTools
-  if (process.env.DEBUG) {
-    mainWindow.webContents.openDevTools({ mode: 'right' });
-  }
-
 }
 
 export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
@@ -131,6 +126,11 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   mainWindow.show();
   mainWindow.focus();
   app.focus({ steal: true });
+
+  // open the DevTools
+  if (process.env.DEBUG) {
+    mainWindow.webContents.openDevTools({ mode: 'right' });
+  }
 
 };
 

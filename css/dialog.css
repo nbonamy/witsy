@@ -143,7 +143,7 @@
 }
 
 .windows .dialog {
-  border-radius: var(--control-border-radius);
+  border-radius: 12px;
 }
 
 @keyframes dialog-show {
