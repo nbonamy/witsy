@@ -1,5 +1,5 @@
 <template>
-  <form class="tab-content vertical large">
+  <form class="mcp tab-content vertical large">
     <header>
       <div class="title">{{ t('settings.plugins.mcp.title') }}</div>
     </header>
@@ -93,7 +93,7 @@ const getType = (server: McpServer) => {
 }
 
 const getDescription = (server: McpServer) => {
-  if (server.type == 'sse') return server.url
+  if (['http', 'sse'].includes(server.type)) return server.url
   if (server.url.includes('@smithery/cli')) {
     const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0 
     return server.url.replace('-y @smithery/cli@latest run ', '').split(' ')[index]

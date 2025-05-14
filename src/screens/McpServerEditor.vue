@@ -8,11 +8,12 @@
         <label>{{ t('common.type') }}</label>
         <select name="type" v-model="type">
           <option value="stdio">{{ t('mcp.serverEditor.type.stdio') }}</option>
+          <option value="http">{{ t('mcp.serverEditor.type.http') }}</option>
           <option value="sse">{{ t('mcp.serverEditor.type.sse') }}</option>
           <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
         </select>
       </div>
-      <div class="group" v-if="type === 'sse'">
+      <div class="group" v-if="['http', 'sse'].includes(type)">
         <label>{{ t('common.url') }}</label>
         <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
@@ -23,49 +24,51 @@
           <a href="https://smithery.ai" target="_blank">{{ t('common.browse') }} Smithery.ai</a>
         </div>
       </div>
-      <div class="group" v-if="type === 'stdio'">
-        <label>{{ t('common.command') }}</label>
-        <div class="control-group">
-          <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickCommand" @click="pickCommand">{{ t('common.pick') }}</button>
+      <template v-if="type === 'stdio'">
+        <div class="group">
+          <label>{{ t('common.command') }}</label>
+          <div class="control-group">
+            <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickCommand" @click="pickCommand">{{ t('common.pick') }}</button>
+          </div>
+          <div style="width: 100%;">
+            <select name="source" v-model="source" @change="findCommand">
+              <option value="">{{ t('mcp.serverEditor.selectCommand') }}</option>
+              <option value="python3">python</option>
+              <option value="uvx">uvx</option>
+              <option value="node">node</option>
+              <option value="npx">npx</option>
+              <option value="bun">bun</option>
+              <option value="bunx">bunx</option>
+            </select>
+          </div>
         </div>
-        <div style="width: 100%;">
-          <select name="source" v-model="source" @change="findCommand">
-            <option value="">{{ t('mcp.serverEditor.selectCommand') }}</option>
-            <option value="python3">python</option>
-            <option value="uvx">uvx</option>
-            <option value="node">node</option>
-            <option value="npx">npx</option>
-            <option value="bun">bun</option>
-            <option value="bunx">bunx</option>
-          </select>
+        <div class="group">
+          <label>{{ t('common.arguments') }}</label>
+          <div class="control-group">
+            <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickScript" @click="pickScript">{{ t('common.pick') }}</button>
+          </div>
         </div>
-      </div>
-      <div class="group" v-if="type === 'stdio'">
-        <label>{{ t('common.arguments') }}</label>
-        <div class="control-group">
-          <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickScript" @click="pickScript">{{ t('common.pick') }}</button>
+        <div class="group">
+          <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
+          <div class="control-group">
+            <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+            <button name="pickWorkDir" @click="pickWorkDir">{{ t('common.pick') }}</button>
+          </div>
         </div>
-      </div>
-      <div class="group" v-if="type === 'stdio'">
-        <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
-        <div class="control-group">
-          <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
-          <button name="pickWorkDir" @click="pickWorkDir">{{ t('common.pick') }}</button>
+        <div class="group">
+          <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
+          <VariableTable 
+            :variables="env"
+            :selectedVariable="selectedVar"
+            @select="onSelectVar"
+            @add="onAddVar"
+            @edit="onEditVar"
+            @delete="onDelVar"
+          />
         </div>
-      </div>
-      <div class="group" v-if="type === 'stdio'">
-        <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
-        <VariableTable 
-          :variables="env"
-          :selectedVariable="selectedVar"
-          @select="onSelectVar"
-          @add="onAddVar"
-          @edit="onEditVar"
-          @delete="onDelVar"
-        />
-      </div>
+      </template>
     </template>
     <template #footer>
       <div class="buttons">

@@ -33,14 +33,6 @@ vi.mock('../../src/main/config', async () => {
   }
 })
 
-vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
-  const SSEClientTransport = vi.fn()
-  SSEClientTransport.prototype.start = vi.fn()
-  SSEClientTransport.prototype.close = vi.fn()
-  SSEClientTransport.prototype.send = vi.fn()
-  return { SSEClientTransport }
-})
-
 vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
   const StdioClientTransport = vi.fn()
   StdioClientTransport.prototype.start = vi.fn()
@@ -49,6 +41,22 @@ vi.mock('@modelcontextprotocol/sdk/client/stdio.js', async () => {
   return { StdioClientTransport, getDefaultEnvironment: vi.fn(() => ({
     PATH: '/tmp'
   })) }
+})
+
+vi.mock('@modelcontextprotocol/sdk/client/sse.js', async () => {
+  const SSEClientTransport = vi.fn()
+  SSEClientTransport.prototype.start = vi.fn()
+  SSEClientTransport.prototype.close = vi.fn()
+  SSEClientTransport.prototype.send = vi.fn()
+  return { SSEClientTransport }
+})
+
+vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', async () => {
+  const StreamableHTTPClientTransport = vi.fn()
+  StreamableHTTPClientTransport.prototype.start = vi.fn()
+  StreamableHTTPClientTransport.prototype.close = vi.fn()
+  StreamableHTTPClientTransport.prototype.send = vi.fn()
+  return { StreamableHTTPClientTransport }
 })
 
 let count = 1
@@ -88,6 +96,7 @@ test('Initialization', async () => {
     { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' } },
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
+    { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002' },
     { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' } },
     { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
   ])
@@ -96,12 +105,15 @@ test('Initialization', async () => {
 test('Create server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
-  expect(mcp.getServers()).toHaveLength(6)
+  expect(mcp.getServers()).toHaveLength(7)
   
   expect(getDefaultEnvironment).not.toHaveBeenCalled()
   expect(StdioClientTransport).not.toHaveBeenCalled()
   expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'))
-  expect(Client.prototype.connect).toHaveBeenLastCalledWith({})
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith({
+    onerror: expect.any(Function),
+    onmessage: expect.any(Function),
+  })
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
   expect(config.plugins.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
@@ -150,7 +162,7 @@ test('Edit mcp server', async () => {
   expect(Client.prototype.connect).toHaveBeenLastCalledWith({ start: expect.any(Function) })
   expect(SSEClientTransport.prototype.start).toHaveBeenCalledTimes(0)
   
-  expect(mcp.getServers()[3]).toMatchObject({
+  expect(mcp.getServers()[4]).toMatchObject({
     uuid: 's1',
     registryId: 's1',
     state: 'enabled',
@@ -175,34 +187,36 @@ test('Edit mcp server', async () => {
 
 test('Delete server', async () => {
   const mcp = new Mcp(app)
-  expect(mcp.getServers().length).toBe(5)
+  expect(mcp.getServers().length).toBe(6)
   expect(mcp.deleteServer('1234-5678-90ab')).toBe(true)
-  expect(mcp.getServers().length).toBe(4)
+  expect(mcp.getServers().length).toBe(5)
   expect(mcp.getServers().find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
   expect(config.plugins.mcp.servers.find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
   expect(mcp.deleteServer('s1')).toBe(true)
-  expect(mcp.getServers().length).toBe(3)
+  expect(mcp.getServers().length).toBe(4)
   expect(mcp.getServers().find(s => s.uuid === 's1')).toBeUndefined()
   expect(config.mcpServers['s1']).toBeUndefined()
   expect(mcp.deleteServer('4')).toBe(false)
-  expect(mcp.getServers().length).toBe(3)
+  expect(mcp.getServers().length).toBe(4)
   expect(mcp.deleteServer('@mcp2')).toBe(false)
 })
 
 test('Connect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
-  expect(mcp.clients).toHaveLength(3)
+  expect(mcp.clients).toHaveLength(4)
   expect(await mcp.getStatus()).toStrictEqual({
     servers: [
       { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
       { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
+      { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
       { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],
       '2345-6789-0abc': [],
       '3456-7890-abcd': [],
+      '4567-890a-bcde': [],
       's1': [],
       'mcp2': [],
     }
@@ -231,6 +245,18 @@ test('Connect', async () => {
     {
       type: 'function',
       function: { name: 'tool3___0abc', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
+    },
+    {
+      type: 'function',
+      function: { name: 'tool1___bcde', description: 'tool1 description', parameters: { type: 'object', properties: { arg: { type: 'string', description: 'arg' }}, required: [] } }
+    },
+    {
+      type: 'function',
+      function: { name: 'tool2___bcde', description: 'tool2', parameters: { type: 'object', properties: { arg: { type: 'number', description: 'desc' }}, required: [] } }
+    },
+    {
+      type: 'function',
+      function: { name: 'tool3___bcde', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
     },
     {
       type: 'function',
@@ -266,20 +292,20 @@ test('Call tool', async () => {
 test('Disconnect', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
-  expect(mcp.clients).toHaveLength(3)
+  expect(mcp.clients).toHaveLength(4)
   expect(mcp.deleteServer('1234-5678-90ab')).toBe(true)
   expect(Client.prototype.close).toHaveBeenCalledTimes(1)
-  expect(mcp.clients).toHaveLength(2)
+  expect(mcp.clients).toHaveLength(3)
 })
 
 test('Reload', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.connect())
-  expect(mcp.clients).toHaveLength(3)
+  expect(mcp.clients).toHaveLength(4)
   expect(Client.prototype.close).toHaveBeenCalledTimes(0)
   expect(await mcp.reload())
-  expect(mcp.clients).toHaveLength(3)
-  expect(Client.prototype.close).toHaveBeenCalledTimes(3)
+  expect(mcp.clients).toHaveLength(4)
+  expect(Client.prototype.close).toHaveBeenCalledTimes(4)
 })
 
 test('Install smithery', async () => {
