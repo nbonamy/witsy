@@ -117,25 +117,20 @@ const hasLogs = (server: McpServer) => {
 }
 
 const load = async () => {
-  const now = new Date().getTime()
-  enabled.value = store.config.plugins.mcp.enabled || false
-  servers.value = await window.api.mcp.getServers()
-  status.value = await window.api.mcp.getStatus()
-  setTimeout(() => {
-    loading.value = false
-  }, 1000 - (new Date().getTime() - now))
-}
-
-// const save = async () => {
-//   store.config.plugins.mcp.enabled = enabled.value
-//   store.saveSettings()
-// }
-
-const onReload = async () => {
   loading.value = true
   nextTick(async () => {
-    await load()
+    const now = new Date().getTime()
+    enabled.value = store.config.plugins.mcp.enabled || false
+    servers.value = await window.api.mcp.getServers()
+    status.value = await window.api.mcp.getStatus()
+    setTimeout(() => {
+      loading.value = false
+    }, 1000 - (new Date().getTime() - now))
   })
+}
+
+const onReload = async () => {
+  load()
 }
 
 const showLogs = (server: McpServer) => {
