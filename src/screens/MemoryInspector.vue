@@ -27,7 +27,7 @@
     </template>
     <template #footer>
       <div class="buttons">
-        <button @click.prevent="onClose" formnovalidate>{{ t('common.cancel') }}</button>
+        <button @click.prevent="onClose" formnovalidate>{{ t('common.close') }}</button>
       </div>
     </template>
   </ModalDialog>
