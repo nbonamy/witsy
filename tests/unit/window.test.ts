@@ -353,7 +353,7 @@ test('MAS build warning', async () => {
 })
 
 test('Utilities', async () => {
-  expect(window.persistentWindows().length).toBe(2)
+  expect(window.persistentWindows().length).toBe(3)
   expect(window.areAllWindowsClosed()).toBe(false)
 })
 
