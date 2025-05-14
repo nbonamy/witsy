@@ -4,11 +4,11 @@ import { VueWrapper } from '@vue/test-utils'
 export const tabs = [
   'settingsGeneral',
   'settingsAppearance',
-  'settingsCommands',
-  'settingsExperts',
   'settingsLLM',
   'settingsPlugins',
   'settingsMcp',
+  'settingsCommands',
+  'settingsExperts',
   'settingsVoice',
   'settingsShortcuts',
   'settingsAdvanced',

@@ -20,7 +20,7 @@ HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
 let wrapper: VueWrapper<any>
-const pluginIndex = 5
+const pluginIndex = 3
 
 beforeAll(() => {
   useWindowMock()
