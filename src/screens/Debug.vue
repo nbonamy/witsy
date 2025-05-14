@@ -3,7 +3,7 @@
     <div class="panel">
       <header>
         <div class="title">{{ t('debugConsole.title') }}</div>
-        <BIconTrash @click="clearRequests"/>
+        <BIconTrash class="icon" @click="clearRequests"/>
       </header>
       <main class="list">
         <div v-if="requests.length === 0" class="empty">
@@ -59,7 +59,7 @@
 <script setup lang="ts">
 
 import { NetworkRequest } from '../types'
-import { ref, Ref, computed, onMounted } from 'vue'
+import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
 import { t } from '../services/i18n'
 
 import { JsonViewer } from 'vue3-json-viewer'
@@ -107,6 +107,10 @@ onMounted(() => {
     }
   })
 
+})
+
+onUnmounted(() => {
+  window.api.off('network')
 })
 
 const jsonData = (data: string) => {
@@ -182,10 +186,15 @@ const selectRequest = (request: NetworkRequest) => {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: var(--text-color);
   }
 
   .status {
-    color: #4caf50;
+    font-weight: bold;
+  }
+
+  .status {
+    color: #337435;
   }
 
   .status.pending {

@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-content">
+  <div class="chat panel-content">
     <ChatSidebar :chat="assistant.chat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, nextTick, watch } from 'vue'
-import { strDict, anyDict } from '../types'
+import { Ref, ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { strDict } from '../types'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
@@ -27,6 +27,7 @@ import LlmFactory from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
+import { LlmChunkContent } from 'multi-llm-ts'
 const { onEvent, emitEvent } = useEventBus()
 
 // init stuff
@@ -74,14 +75,6 @@ onMounted(() => {
     }
   })
   window.api.on('computer-stop', onStopGeneration)
-
-  // // query params
-  // window.api.on('query-params', (params) => {
-  //   processQueryParams(params)
-  // })
-  // if (props.extra) {
-  //   processQueryParams(props.extra)
-  // }
 
   // intercept links
   document.addEventListener('click', (e) => {
@@ -142,6 +135,12 @@ onMounted(() => {
     }
   }, { immediate: true })
 
+})
+
+onUnmounted(() => {
+  window.api.off('delete-chat')
+  window.api.off('computer-stop')
+  window.api.off('update-available')
 })
 
 const onNewChat = () => {
@@ -494,9 +493,9 @@ const onSendPrompt = async (params: SendPromptParams) => {
       // not very nice but gets the message list scrolling
       emitEvent('new-llm-chunk', {
         type: 'content',
-        content: '',
+        text: '',
         done: false,
-      })
+      } as LlmChunkContent)
 
       // for computer use
       if (isUsingComputer()) {
