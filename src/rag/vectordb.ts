@@ -66,8 +66,8 @@ export default class VectorDB {
     return items.length
   }
 
-  async query(query: number[], searchResultCount: number): Promise<QueryResult<Record<string,MetadataTypes>>[]> {
-    return await this.index.queryItems(query, searchResultCount)
+  async query(query: string, vector: number[], searchResultCount: number): Promise<QueryResult<Record<string,MetadataTypes>>[]> {
+    return await this.index.queryItems(vector, query, searchResultCount)
   }
 
   async list(): Promise<IndexItem<Record<string,MetadataTypes>>[]> {
