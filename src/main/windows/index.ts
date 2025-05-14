@@ -2,13 +2,14 @@
 import { strDict } from '../../types/index';
 import { CreateWindowOpts, ReleaseFocusOpts } from '../../types/window';
 import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
-import MacosAutomator from '../../automations/macos';
-import WindowsAutomator from '../../automations/windows';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
+import { mainWindow } from './main';
+import { wait } from '../utils';
+import MacosAutomator from '../../automations/macos';
+import WindowsAutomator from '../../automations/windows';
 import interceptNetwork from '../network';
 import * as config from '../config';
-import { wait } from '../utils';
 import Store from 'electron-store';
 import process from 'node:process';
 import path from 'node:path';
@@ -314,7 +315,7 @@ export const releaseFocus = async (opts?: ReleaseFocusOpts) => {
 };
 
 export const persistentWindows = (): BrowserWindow[] => {
-  return [ /*settingsWindow, */promptAnywhereWindow, commandPicker ]
+  return [ mainWindow, promptAnywhereWindow, commandPicker ]
 }
 
 export const areAllWindowsClosed = () => {
