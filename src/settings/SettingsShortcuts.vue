@@ -1,5 +1,5 @@
 <template>
-  <form class="tab-content vertical large">
+  <form class="tab-content large">
     <header>
       <div class="title">{{ t('settings.tabs.shortcuts') }}</div>
     </header>
@@ -99,9 +99,26 @@ defineExpose({ load })
 
 <style scoped>
 
-.settings .tab-content main {
-  min-width: auto;
-  max-width: 350px;  
+.settings form.tab-content:deep() main {
+  
+  max-width: 600px;
+  
+  .group {
+    width: auto;
+    label {
+      white-space: wrap;
+      width: 250px;
+      overflow-x: hidden;
+      font-weight: bold;
+    }
+    .subgroup {
+      flex: 0 1 310px;
+      overflow-x: hidden;
+    }
+    .wrapper {
+      flex-basis: 330px;
+    }
+  }
 }
 
 </style>
