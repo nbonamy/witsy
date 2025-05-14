@@ -108,12 +108,12 @@ onMounted(async () => {
     }
   })
 
-  // load
-  onOpenSettings(props.extra)
-
   // tabs
   installTabs(dialog.value)
   showActiveTab(dialog.value)
+
+  // load
+  onOpenSettings(props.extra)
 
 })
 
