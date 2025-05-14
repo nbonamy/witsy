@@ -5,6 +5,7 @@ import { McpServer, McpClient, McpStatus, McpTool } from '../types/mcp'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
 import { execSync } from 'child_process'
@@ -264,6 +265,8 @@ export default class {
       client = await this.connectToStdioServer(server)
     } else if (server.type === 'sse') {
       client = await this.connectToSseServer(server)
+    } else if (server.type === 'http') {
+      client = await this.connectToStreamableHttpServer(server)
     }
 
     if (!client) {
@@ -376,6 +379,12 @@ export default class {
       const transport = new SSEClientTransport(
         new URL(server.url)
       )
+      transport.onerror = (e) => {
+        this.logs[server.uuid].push(e.message)
+      }
+      transport.onmessage = (message: any) => {
+        console.log('MCP SSE message', message)
+      }
 
       // build the client
       const client = new Client({
@@ -384,6 +393,10 @@ export default class {
       }, {
         capabilities: { tools: {} }
       })
+
+      client.onerror = (e) => {
+        this.logs[server.uuid].push(e.message)
+      }
 
       // connect
       await client.connect(transport)
@@ -398,6 +411,47 @@ export default class {
     }
 
   }
+
+  private connectToStreamableHttpServer = async(server: McpServer): Promise<Client> => {
+
+    try {
+
+      // get transport
+      const transport = new StreamableHTTPClientTransport(
+        new URL(server.url)
+      )
+      transport.onerror = (e) => {
+        this.logs[server.uuid].push(e.message)
+      }
+      transport.onmessage = (message: any) => {
+        console.log('MCP HTTP message', message)
+      }
+
+      // build the client
+      const client = new Client({
+        name: 'witsy-mcp-client',
+        version: '1.0.0'
+      }, {
+        capabilities: { tools: {} }
+      })
+
+      client.onerror = (e) => {
+        this.logs[server.uuid].push(e.message)
+      }
+
+      // connect
+      await client.connect(transport)
+
+      // done
+      return client
+
+
+    } catch (e) {
+      console.error(`Failed to connect to MCP server ${server.url}:`, e)
+      this.logs[server.uuid].push(e.message)
+    }
+
+  }  
   
   private disconnect = (client: McpClient): void => {
     client.client.close()
@@ -474,7 +528,7 @@ export default class {
           properties: tool.inputSchema?.properties ? Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
             const prop = tool.inputSchema.properties[key]
             obj[key] = {
-              type: prop.type,
+              type: prop.type || 'string',
               description: (prop.description || key).slice(0, 1024),
               ...(prop.type === 'array' ? { items: prop.items || 'string' } : {}),
             }

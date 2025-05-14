@@ -2,7 +2,7 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { strDict } from './index'
 
-export type McpServerType = 'stdio' | 'sse'
+export type McpServerType = 'stdio' | 'sse' | 'http'
 
 export type McpServer = {
   uuid: string|null
