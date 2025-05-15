@@ -22,7 +22,7 @@
     <div class="content">
       <header>
         <div class="title">{{ selectedRepo?.name }}</div>
-        <BIconTrash class="icon delete" @click="onDeleteRepo" />
+        <BIconTrash class="icon delete" @click="onDeleteRepo" v-if="selectedRepo" />
       </header>
       <main v-if="selectedRepo">
         <form class="header">
