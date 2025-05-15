@@ -8,6 +8,9 @@
 
 :root {
 
+  --form-font-size: 9.5pt;
+  --form-large-font-size: 10.5pt;
+
   --background-color: #fff;
   --background-color-light: var(--background-color);
   --window-bg-color: #e0e0e0;
@@ -22,7 +25,7 @@
   --window-toolbar-height: 3rem;
 
   --menubar-icon-color: var(--icon-color);
-  --menubar-highlight-color: var(--highlight-color);
+  --menubar-highlight-color: var(--link-color);
 
   --control-bg-color: var(--background-color);
   --control-border-color: #d0d0d0;
@@ -155,8 +158,6 @@
     --default-window-decoration-color: #404040;
     --window-decoration-color: var(--default-window-decoration-color);
 
-    --menubar-highlight-color: rgb(54, 173, 194);
-
     --control-bg-color: #646464;
     --control-border-color: var(--control-bg-color);
     --control-text-color: #e0e0e0;
@@ -170,6 +171,7 @@
     --control-checkbox-bg-color: #545454;
 
     --sidebar-bg-color: #292929;
+    --sidebar-text-color: var(--text-color);
     --sidebar-border-color: transparent;
     --sidebar-scroll-thumb-color: var(--scrollbar-thumb-color);
     --sidebar-selected-color: var(--highlight-color);
