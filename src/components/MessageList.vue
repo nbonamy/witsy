@@ -87,8 +87,9 @@ const onNewChunk = async (chunk: LlmChunk) => {
   if (avatar && divScroller.value) {
     const rc = avatar.getBoundingClientRect()
     const messagesListRect = divScroller.value.getBoundingClientRect()
-    if (rc && messagesListRect && rc.top - rc.height < messagesListRect.top) {
+    if (rc && messagesListRect && rc.top - rc.height * 1.5 < messagesListRect.top) {
       scrollOnChunk = false
+      overflown.value = true
     }
   }
 
