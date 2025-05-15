@@ -25,7 +25,11 @@ export type Configuration = {
   mcpServers: { [key: string]: McpClaudeServer }
 }
 
-export type EngineConfig = EngineCreateOpts & {
+export type WitsyEngineCreateOpts = EngineCreateOpts & {
+  keepAlive?: string
+}
+
+export type EngineConfig = WitsyEngineCreateOpts & {
   models: ModelsConfig
   model: ModelConfig
   realtime?: EngineRealtimeConfig
