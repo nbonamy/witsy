@@ -22,7 +22,7 @@ export const setStore = (aStore: Store): void => {
 }
 
 // dock management
-const dockedWindows: Set<BrowserWindow> = new Set();
+const dockedWindows: Set<number> = new Set();
 
 // listener
 export interface WindowListener {
@@ -132,7 +132,7 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
     // docked window
     if (opts.showInDock) {
-      dockedWindows.add(window);
+      dockedWindows.add(window.id);
       if (process.platform === 'darwin') {
         app.dock.show();
       }
@@ -212,15 +212,23 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
 
 export const undockWindow = (window: BrowserWindow, preventQuit: boolean = false) => {
 
+  // helper function
+  const hideDock = () => {
+    if (process.platform === 'darwin' && dockedWindows.size === 0) {
+      app.dock.hide();
+    }
+  }
+  
   // only if it was there before
-  if (!dockedWindows.has(window)) {
-    return
+  if (!dockedWindows.has(window.id)) {
+    hideDock();
+    return;
   }
 
   // remove
-  dockedWindows.delete(window);
+  dockedWindows.delete(window.id);
   if (dockedWindows.size) {
-    return
+    return;
   }
 
   // quit when all windows are closed, except on macOS. There, it's common
@@ -229,11 +237,6 @@ export const undockWindow = (window: BrowserWindow, preventQuit: boolean = false
   if (process.platform === 'darwin') {
     // for an unknown reason app.dock.hide
     // might not work immediately...
-    const hideDock = () => {
-      if (dockedWindows.size === 0) {
-        app.dock.hide();
-      }
-    }
     hideDock();
     setTimeout(hideDock, 1000);
     setTimeout(hideDock, 2500);
