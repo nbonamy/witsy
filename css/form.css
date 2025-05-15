@@ -4,8 +4,6 @@
 }
 
 form {
-  --form-font-size: 9.5pt;
-  --form-large-font-size: 10.5pt;
   font-size: var(--form-font-size);
 }
 
@@ -275,6 +273,7 @@ form.vertical {
 
     label {
       min-width: auto !important;
+      text-align: left;
       margin-left: 2px;
 
       &::after {
