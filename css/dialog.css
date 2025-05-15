@@ -11,6 +11,10 @@
   border-radius: 16px;
   padding: 1rem;
 
+  * {
+    color: var(--text-color);
+  }
+
   &::backdrop {
     transition: opacity 3s ease;
     background-color: rgba(0, 0, 0, 0.3);
