@@ -1,4 +1,5 @@
 
+import { WitsyEngineCreateOpts } from '../types/config'
 import { LlmCompletionOpts, LLmCompletionPayload, Ollama } from 'multi-llm-ts'
 import { ChatRequest, } from 'ollama/dist/browser.cjs'
 
@@ -22,6 +23,8 @@ const getEmbeddingModels = [
 export { getChatModels, getEmbeddingModels }
 
 export default class OllamaEngine extends Ollama {
+
+  declare config: WitsyEngineCreateOpts
 
   buildChatOptions({ model, messages, opts }: { model: string, messages: LLmCompletionPayload[], opts: LlmCompletionOpts|null }): ChatRequest {
     const options = super.buildChatOptions({ model, messages, opts })
