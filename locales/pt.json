@@ -474,6 +474,7 @@
     },
     "repositories": {
       "clickToCreate": "Clique no botão + para criar um.",
+      "noDocuments": "Você ainda não tem nenhum documento. Clique nos ícones acima para adicionar documentos ou pastas.",
       "noRepositories": "Você ainda não tem nenhum repositório.",
       "title": "Repositórios de Documentos"
     }
@@ -1655,7 +1656,7 @@
         "importSmitheryServer": "Importar servidor Smithery.ai…",
         "mcpServers": "Servidores MCP",
         "modelContextProtocol": "Protocolo de Contexto de Modelo",
-        "noServersFound": "Nenhum Servidor MCP encontrado",
+        "noServersFound": "Nenhum servidor MCP encontrado. Clique no ícone + acima para adicionar um novo servidor ou atualizar a lista.",
         "noTools": "Nenhuma ferramenta disponível",
         "serverLogs": "Logs do Servidor MCP",
         "servers": "servidores. Descubra e instale servidores MCP do",
