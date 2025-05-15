@@ -490,8 +490,9 @@
       "shortcut": "按 {shortcut} 快速激活此模型"
     },
     "settings": {
-      "configure": "配置",
-      "needsConfiguration": "此引擎需要先进行配置！您是否要打开设置？"
+      "needsApiKey": "您需要一个API密钥才能使用此供应商的模型。您可以在下面输入它。",
+      "needsModels": "此供应商的模型尚未加载。<br/><a href=\"#settings_models_{engine}\">点击这里</a>检查您的配置。",
+      "refreshingModels": "加载模型列表中…"
     },
     "tips": {
       "switchModel": "点击此处切换到不同的聊天机器人模型！",

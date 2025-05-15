@@ -96,32 +96,6 @@ test('Selects model', async () => {
   expect(store.config.engines.openai.model.chat).toBe('gpt-4o')
 })
 
-test('Prompts when selecting not ready engine', async () => {
-
-  const manager = LlmFactory.manager(store.config)
-  const wrapper: VueWrapper<any> = mount(EmptyChat)
-
-  // openai is ready
-  wrapper.vm.showAllEngines = true
-  await wrapper.find('.empty .engines .logo:nth-child(2)').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(0)
-  
-  // anthropic is not
-  wrapper.vm.showAllEngines = true
-  const anthropic = 1 + manager.getStandardEngines().indexOf('anthropic')
-  await wrapper.find(`.empty .engines .logo:nth-child(${anthropic+1})`).trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(store.config.llm.engine).toBe('openai')
-
-  // mistralai is
-  wrapper.vm.showAllEngines = true
-  const mistralai = 1 + manager.getPriorityEngines().length
-  await wrapper.find(`.empty .engines .logo:nth-child(${mistralai+1})`).trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(store.config.llm.engine).toBe('mistralai')
-
-})
-
 test('Displays and selects favorites', async () => {
   store.config.general.tips.modelSelector = false
   store.config.general.tips.modelSelector = false

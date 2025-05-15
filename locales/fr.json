@@ -471,8 +471,9 @@
       "shortcut": "Appuyez sur {shortcut} pour activer rapidement ce modèle"
     },
     "settings": {
-      "configure": "Configurer",
-      "needsConfiguration": "Ce moteur doit d'abord être configuré ! Voulez-vous ouvrir les Paramètres ?"
+      "needsApiKey": "Vous avez besoin d'une clé API pour utiliser les modèles de ce fournisseur. Vous pouvez l'entrer ci-dessous.",
+      "needsModels": "Les modèles ne sont pas chargés pour ce fournisseur.<br/><a href=\"#settings_models_{engine}\">Cliquez ici</a> pour vérifier votre configuration.",
+      "refreshingModels": "Chargement de la liste des modèles…"
     },
     "tips": {
       "switchModel": "Cliquez ici pour changer de modèle !",
