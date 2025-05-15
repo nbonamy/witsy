@@ -1,14 +1,14 @@
 {
   "common": {
     "arguments": "Argumente",
-    "askMeAnything": "Frag mich alles",
+    "askMeAnything": "Frag mich, was du willst!",
     "back": "Zurück",
     "basedOn": "basierend auf",
     "browse": "Durchsuchen",
     "cancel": "Abbrechen",
     "chat": "Chat",
     "clear": "Löschen",
-    "clickToStart": "Klicken Sie auf den Blob, um mit dem Chatten zu beginnen",
+    "clickToStart": "Klicken Sie auf die Blase, um mit dem Chatten zu beginnen",
     "close": "Schließen",
     "colon": "nichtabstand",
     "comboBox": {
@@ -19,7 +19,7 @@
       "cannotUndo": "Sie können diese Aktion nicht rückgängig machen.",
       "closeAnyway": "Trotzdem schließen",
       "continue": "Fortfahren",
-      "continueQuestion": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Arbeit, wenn Sie fortfahren.",
+      "continueQuestion": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Eingaben, wenn Sie fortfahren.",
       "delete": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
       "deleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
       "deleteMemory": "Sind Sie sicher, dass Sie dieses Gedächtnis löschen möchten?",
@@ -40,7 +40,7 @@
     "documents": "Dokumente",
     "done": "Fertig!",
     "edit": "Bearbeiten",
-    "embeddings": "Einbettungen",
+    "embeddings": "Embeddings",
     "enabled": "Aktiviert",
     "error": "Fehler!",
     "errorModelRefresh": "Fehler beim Aktualisieren der Modelle. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
@@ -75,7 +75,7 @@
     "no": "Nein",
     "ok": "OK",
     "pick": "Auswählen",
-    "prompt": "Eingabeaufforderung",
+    "prompt": "Prompt",
     "pull": "Abrufen",
     "read": "Lesen",
     "record": "Aufzeichnen",
@@ -354,8 +354,8 @@
     "editor": {
       "inputPlaceholder": "{input} wird durch den hervorgehobenen Text ersetzt",
       "notEditable": "Dieser Befehl ist nicht bearbeitbar. Der erfasste Inhalt steht Ihnen im Prompt zur Verfügung, damit Sie alles darüber fragen können!",
-      "prompt": "Eingabeaufforderung",
-      "resetToDefault": "Name und Eingabeaufforderung auf Standardwerte zurücksetzen",
+      "prompt": "Prompt",
+      "resetToDefault": "Name und Prompt auf Standardwerte zurücksetzen",
       "title": "Befehlsdetails",
       "useDefault": "Verwenden Sie die Standardeinstellungen für Befehle",
       "validation": {
@@ -393,7 +393,7 @@
     "error": {
       "invalidParams": "Ein Fehler wurde bezüglich Ihrer Parameter gemeldet: {detail}. Bitte überprüfen Sie die Parameter und versuchen Sie es erneut.",
       "noDetailsProvided": "keine Details verfügbar",
-      "promptRequired": "Stellen Sie sicher, dass Sie eine Eingabeaufforderung eingeben.",
+      "promptRequired": "Stellen Sie sicher, dass Sie einen Prompt eingeben.",
       "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     },
     "generate": "Generieren",
@@ -490,7 +490,7 @@
       "endpoint": "@:{'settings.engines.custom.endpoint'}",
       "title": "Benutzerdefinierte Engine erstellen",
       "validation": {
-        "nameBaseURLRequired": "Name und Basis-URL sind erforderlich"
+        "nameBaseURLRequired": "Name und API Base URL sind erforderlich"
       }
     }
   },
@@ -498,7 +498,7 @@
     "editor": {
       "title": "Expertendetails",
       "triggerApps": "Trigger-Apps",
-      "triggerAppsDescription": "Die Eingabeaufforderung wird automatisch ausgewählt, wenn Prompt Anywhere von einer dieser Anwendungen aufgerufen wird",
+      "triggerAppsDescription": "Der Prompt wird automatisch ausgewählt, wenn Prompt Anywhere von einer dieser Anwendungen aufgerufen wird",
       "validation": {
         "invalidApp": "Die ausgewählte Anwendung kann nicht analysiert werden",
         "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."
@@ -1274,7 +1274,7 @@
     "file": {
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Neuer Chat",
-      "quickPrompt": "Neue Eingabeaufforderung",
+      "quickPrompt": "Neuer Prompt",
       "scratchpad": "@:{'scratchpad.title'}",
       "title": "Datei"
     },
@@ -1431,19 +1431,19 @@
         "scratchpad_complete": "Scratchpad - Abschließen",
         "scratchpad_expand": "Scratchpad - Erweitern",
         "scratchpad_improve": "Scratchpad - Verbessern",
-        "scratchpad_prompt": "Scratchpad - Eingabeaufforderung",
+        "scratchpad_prompt": "Scratchpad - Prompt",
         "scratchpad_simplify": "Scratchpad - Vereinfachen",
         "scratchpad_spellcheck": "Scratchpad - Rechtschreibprüfung",
         "scratchpad_system": "Scratchpad - Anweisungen",
         "scratchpad_takeaways": "Scratchpad - Erkenntnisse",
         "scratchpad_title": "Scratchpad - Titel",
         "titling": "Chat-Titel - Anweisungen",
-        "titlingUser": "Chat-Titel - Eingabeaufforderung",
+        "titlingUser": "Chat-Titel - Prompt",
         "video_plugin": "Video-Plugin - Beschreibung (maximal 1024 Zeichen)"
       },
-      "overridingHelp": "Benutzerdefinierte Eingabeaufforderungen oder Anweisungen gelten für alle Sprachen.",
+      "overridingHelp": "Benutzerdefinierte Prompts oder Anweisungen gelten für alle Sprachen.",
       "resetToDefault": "Auf Standardwert zurücksetzen",
-      "systemInstructions": "Systemanweisungen"
+      "systemInstructions": "System-Prompt"
     },
     "appearance": {
       "chatFont": "Chat-Schriftart",
@@ -1457,7 +1457,7 @@
         "compact": "Kompakt",
         "cozy": "Gemütlich"
       },
-      "chatTheme": "Chat-Thema",
+      "chatTheme": "Chat-Theme",
       "chatThemes": {
         "conversation": "Unterhaltung",
         "openai": "OpenAI"
@@ -1504,11 +1504,11 @@
       },
       "chatModel": "Chat-Modell",
       "custom": {
-        "apiBaseURL": "API-Basis-URL",
+        "apiBaseURL": "API Base URL",
         "apiSpecification": "API-Spezifikation",
         "apiVersion": "API-Version",
         "confirmDelete": "Sind Sie sicher, dass Sie diesen benutzerdefinierten Anbieter löschen möchten?",
-        "create": "Motor erstellen",
+        "create": "Eigene Engine erstellen",
         "deployment": "Deployment",
         "endpoint": "Endpunkt"
       },
@@ -1528,21 +1528,21 @@
       },
       "meta": {
         "aboutModels": "Mehr über Meta Llama-Modelle",
-        "pricing": "Meta Llama Preise"
+        "pricing": "Meta Llama-Preise"
       },
       "mistralai": {
         "aboutModels": "Mehr über MistralAI-Modelle",
         "pricing": "MistralAI-Preise"
       },
       "ollama": {
-        "apiBaseURL": "API-Basis-URL",
+        "apiBaseURL": "API Base URL",
         "browseModels": "Modelle durchsuchen",
         "confirmDelete": "Sind Sie sicher, dass Sie dieses Modell löschen möchten?",
         "keepAlive": "Verbindung aufrechterhalten"
       },
       "openai": {
         "aboutModels": "Mehr über OpenAI-Modelle",
-        "apiBaseURL": "API-Basis-URL",
+        "apiBaseURL": "API Base URL",
         "pricing": "OpenAI-Preise"
       },
       "openrouter": {
@@ -1550,7 +1550,7 @@
         "pricing": "OpenRouter-Preise"
       },
       "sdwebui": {
-        "baseURL": "API-Basis-URL",
+        "baseURL": "API Base URL",
         "ensureApiMode": "Stellen Sie sicher, dass Sie sich im API-Modus befinden"
       },
       "xai": {
@@ -1577,22 +1577,22 @@
     "general": {
       "forceLocale": "Modell auffordern, immer diese Sprache zu sprechen (Ergebnisse können variieren)",
       "hideOnStartup": "Hauptfenster beim Start ausblenden",
-      "keepInStatusBar": "In der Statusleiste behalten",
+      "keepInStatusBar": "Im System-Tray behalten",
       "lastOneUsed": "Zuletzt verwendet",
       "localeLLM": "LLM-Sprache",
-      "localeUI": "Oberflächensprache",
-      "promptLLMModel": "Eingabeaufforderung LLM-Modell",
+      "localeUI": "UI-Sprache",
+      "promptLLMModel": "Prompt LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
-      "runAtLogin": "Beim Anmelden ausführen"
+      "runAtLogin": "Witsy mit Windows starten"
     },
     "plugins": {
       "browse": {
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
         "title": "Herunterladen"
       },
       "image": {
         "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben.",
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
         "falai": {
           "aboutModels": "Mehr über fal.ai-Modelle"
         },
@@ -1637,7 +1637,7 @@
       },
       "memory": {
         "contents": "Inhalt",
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Informationen über Sie zu speichern und abzurufen, wodurch ihre Antworten persönlicher werden.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Informationen über Sie zu speichern und abzurufen, wodurch ihre Antworten persönlicher werden.",
         "hasFacts": "Sie können das Einbettungsmodell nicht ändern, sobald Fakten im Speicher aufgezeichnet wurden. Löschen Sie den Speicher, wenn Sie das Einbettungsmodell ändern möchten.",
         "resetConfirmation": {
           "title": "Sind Sie sicher, dass Sie das Gedächtnis zurücksetzen und alle Fakten über Sie verlieren möchten?"
@@ -1658,7 +1658,7 @@
         "braveApiKey": "Brave API-Schlüssel",
         "characters": "Zeichen (0 für den vollständigen Inhalt)",
         "contentLength": "Inhaltslänge",
-        "description": "Dieses Plugin ermöglicht LLM-Engines die Suche im Internet und die Verwendung der Ergebnisse als Eingabe zur Erzeugung aktueller Antworten.",
+        "description": "Mit diesem Plugin können LLM-Engines das Internet durchsuchen und die Suchergebnisse als Input verwenden, um aktuellere Antworten zu generieren.",
         "engine": "Engine",
         "engines": {
           "brave": "Brave Search",
@@ -1672,11 +1672,11 @@
         "truncationWarning": "WARNUNG: Die Trunkierungslänge beeinflusst die Anzahl der Eingabetokens und damit die Kosten der Anfrage"
       },
       "vega": {
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Diagrammbilder basierend auf Daten unter Verwendung der Vega-Visualisierungsbibliothek zu erstellen.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Diagrammbilder basierend auf Daten unter Verwendung der Vega-Visualisierungsbibliothek zu erstellen.",
         "title": "Vega"
       },
       "video": {
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Videos aus einer Textbeschreibung zu erstellen.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Videos aus einer Textbeschreibung zu erstellen.",
         "provider": "Anbieter",
         "replicate": {
           "aboutModels": "Mehr über Replicate-Modelle"
@@ -1685,19 +1685,19 @@
         "videoModel": "Videomodell"
       },
       "youtube": {
-        "description": "Dieses Plugin ermöglicht LLM-Engines, Transkripte von YouTube-Videos herunterzuladen.",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, Transkripte von YouTube-Videos herunterzuladen.",
         "title": "YouTube"
       }
     },
     "shortcuts": {
       "aiCommands": "@:{'tray.menu.runAiCommand'}",
-      "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus",
+      "aiCommandsUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination und wählen Sie dann einen KI-Befehl aus.",
       "designStudio": "@:{'tray.menu.designStudio'}",
       "dictation": "@:{'tray.menu.startDictation'}",
       "newChat": "@:{'tray.menu.newChat'}",
       "quickPrompt": "@:{'tray.menu.quickPrompt'}",
       "readAloud": "@:{'tray.menu.readAloud'}",
-      "readAloudUsage": "Verwendung: Markieren Sie Ihren Text, drücken Sie die Tastenkombination",
+      "readAloudUsage": "Verwendung: Markieren Sie Ihren Text und drücken die Tastenkombination.",
       "scratchpad": "@:{'tray.menu.scratchpad'}",
       "voiceMode": "@:{'tray.menu.voiceMode'}"
     },
@@ -1724,14 +1724,14 @@
         "title": "Dieses Modell muss auf Ihrem Computer heruntergeladen werden. Möchten Sie fortfahren?"
       },
       "downloading": "Herunterladen: {percent}%",
-      "engine": "Motor",
+      "engine": "Engine",
       "groqApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Groq-API-Schlüssel im Modellbereich eingegeben haben.",
       "initializationError": "Während der Initialisierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "initializing": "Initialisiere…",
       "model": "Modell",
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
       "selectModel": "Wählen Sie ein Modell aus",
-      "silenceDetection": "Schweigenserkennung",
+      "silenceDetection": "Stille-Erkennung",
       "silenceOptions": {
         "disabled": "Deaktiviert",
         "fiveSeconds": "5 Sekunden",
@@ -1764,8 +1764,8 @@
   },
   "tips": {
     "computerUse": {
-      "text": "Benutzen Sie auf eigene Gefahr!",
-      "title": "Die Computerbenutzung interagiert mit Ihrem Computer und führt Maus- und Tastatureingaben aus. Diese Aktionen können unerwartetes Verhalten verursachen, was zu Datenverlust führen kann."
+      "text": "Benutzung auf eigene Gefahr!",
+      "title": "Die Computerbenutzung interagiert mit Ihrem Computer und führt Maus- und Tastatureingaben aus. Diese Aktionen können zu unerwartetem Verhalten und Datenverlust führen."
     },
     "conversation": {
       "title": "Überprüfen Sie die Gesprächsoptionen, indem Sie mit der rechten Maustaste auf das Mikrofonsymbol im Chatfenster klicken."
@@ -1782,11 +1782,11 @@
       "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
     },
     "pluginsDisabled": {
-      "text": "This model returned an error with regards to plugins. They have been disabled automatically so you can continue your conversation.",
+      "text": "Bei diesem Modell ist ein Plugin-Fehler aufgetreten. Die Plugins wurden automatisch deaktiviert, damit Sie Ihre Konversation fortsetzen können.",
       "title": "Plugins wurden deaktiviert."
     },
     "realtime": {
-      "title": "Echtzeit-Chat kann schnell teuer werden. Die angegebene Kostenschätzung ist nur eine Schätzung und möglicherweise nicht richtig. Klicken Sie auf die Blase, um das Chatten zu starten und zu stoppen!"
+      "title": "Ein Echtzeit-Chat kann schnell teuer werden. Die angegebenen Kosten sind nur eine Schätzung und möglicherweise nicht richtig. Klicken Sie auf die Blase, um das Chatten zu starten und zu stoppen!"
     }
   },
   "toolSelector": {
@@ -1797,7 +1797,7 @@
     }
   },
   "transcribe": {
-    "autoStart": "Beginnen Sie mit der Transkription, wenn das Fenster geöffnet wird",
+    "autoStart": "Beginne mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
     "errorCopy": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten. Sie können versuchen, ihn manuell zu kopieren.",
     "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
@@ -1808,7 +1808,7 @@
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."
     },
     "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
-    "title": "Sprache-zu-Text"
+    "title": "Diktiermodus"
   },
   "tray": {
     "menu": {
