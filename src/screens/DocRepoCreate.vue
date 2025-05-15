@@ -62,6 +62,7 @@ const onCreate = (event: Event) => {
 
   // create
   window.api.docrepo.create(name.value, engine.value, model.value)
+  onCancel()
 }
 
 const onCancel = () => {

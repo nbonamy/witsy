@@ -36,20 +36,20 @@
             <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
           </div>
         </form>
-        <div class="group documents">
+        <div class="group documents list-large-with-header">
           <div class="header">
             <label>{{ t('common.documents') }}</label>
             <Spinner v-if="loading" />
             <BIconFilePlus class="icon add-file" @click="onAddDocs" />
             <BIconFolderPlus class="icon add-folder" @click="onAddFolder" />
           </div>
-          <div class="list">
+          <div class="list" v-if="selectedRepo.documents.length">
             <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
               <div class="item">
-                <div class="icon"><Component :is="docIcon(doc)" /></div>
+                <div class="icon leading"><Component :is="docIcon(doc)" /></div>
                 <div class="info">
-                  <div class="filename">{{ docLabel(doc) }}</div>
-                  <div class="origin">{{ doc.origin }}</div>
+                  <div class="text">{{ docLabel(doc) }}</div>
+                  <div class="subtext">{{ doc.origin }}</div>
                 </div>
                 <div class="actions">
                   <!-- <BIconArrowClockwise class="icon" @click="onRefreshDoc(doc)" /> -->
@@ -57,6 +57,9 @@
                 </div>
               </div>
             </template>
+          </div>
+          <div class="empty" v-else>
+            <div>{{ t('docRepo.repositories.noDocuments') }}</div>
           </div>
         </div>
       </main>
@@ -255,6 +258,7 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
 <style scoped>
 @import '../../css/panel-content.css';
 @import '../../css/form.css';
+@import '../../css/list-large-with-header.css';
 </style>
 
 <style scoped>
@@ -352,120 +356,7 @@ const onDelDocDone = (payload: DocRepoAddDocResponse) => {
       }
 
       .documents {
-
-        padding: 2rem;
-        padding-top: 0px;
-        display: flex;
-        flex-direction: column;
-        margin: 8px 6px 8px 6px;
         flex-grow: 1;
-        overflow: hidden;
-
-        .header {
-          
-          display: flex;
-          flex-direction: row;
-          font-weight: bold;;
-          gap: 1rem;
-
-          padding: 1.5rem;
-          background-color: var(--window-decoration-color);
-          border: 1px solid var(--control-border-color);
-          border-bottom-width: 0px;
-          border-top-left-radius: 0.5rem;
-          border-top-right-radius: 0.5rem;
-
-          label {
-            flex: 1;
-          }
-
-          .icon {
-            cursor: pointer;
-          }
-
-          .spinner {
-            transform: scale(125%);
-            top: 3px;
-          }
-
-        }
-
-        .list {
-
-          flex-grow: 1;
-          border: 1px solid var(--control-border-color);
-          border-bottom-left-radius: 0.5rem;
-          border-bottom-right-radius: 0.5rem;
-
-          padding: 1rem;
-          
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          
-
-          .item {
-
-            padding: 1rem;
-            font-size: 9.5pt;
-            display: flex;
-            flex-direction: row;
-            border: 0.75px solid var(--control-border-color);
-            border-radius: 0.5rem;
-            gap: 1rem;
-
-            > .icon {
-              text-align: center;
-              flex: 0 0 2.5rem;
-              svg {
-                width: 1.25rem;
-                height: 1.25rem;
-              }
-            }
-            
-            .info {
-              flex: 1;
-              display: flex;
-              flex-direction: column;
-              gap: 0.375rem;
-              overflow: hidden;
-              
-              .filename, .origin {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              }
-
-              .filename {
-                font-size: 11pt;
-                font-weight: 600;
-              }
-
-              .origin {
-                opacity: 0.6;
-              }
-            }
-
-            .actions {
-
-              display: flex;
-              flex-direction: row;
-              gap: 0.5rem;
-
-
-              svg {
-                width: 1rem;
-                height: 1rem;
-                cursor: pointer;
-              }
-
-              .icon.error:hover {
-                color: red;
-              }
-
-            }
-          }
-        }
       }
 
       &.empty {

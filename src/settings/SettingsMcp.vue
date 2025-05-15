@@ -22,7 +22,7 @@
         <input type="checkbox" v-model="enabled" @change="save" />
         <label>{{ t('common.enabled') }}</label>
       </div> -->
-      <div class="servers">
+      <div class="servers list-large-with-header">
         <div class="header">
           <label>{{ t('settings.plugins.mcp.mcpServers') }}</label>
           <Spinner v-if="loading" />
@@ -30,18 +30,18 @@
           <BIconArrowClockwise class="icon reload" @click.prevent="onReload" />
           <BIconArrowRepeat class="icon restart" @click.prevent="onRestart" />
         </div>
-        <div class="list">
+        <div class="list" v-if="servers.length">
           <template v-for="server in servers" :key="server.uuid">
             <div class="item">
 
-              <div class="icon status center">
+              <div class="icon leading center">
                 <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
                 <span v-else>{{ getStatus(server) }}</span>
               </div>
 
               <div class="info" @click="onEdit(server)">
-                <div class="name">{{ getDescription(server) }}</div>
-                <div class="type">{{ getType(server) }}</div>
+                <div class="text">{{ getDescription(server) }}</div>
+                <div class="subtext">{{ getType(server) }}</div>
               </div>
 
               <div class="actions">
@@ -55,6 +55,9 @@
 
             </div>
           </template>
+        </div>
+        <div class="empty" v-else>
+          {{ t('settings.plugins.mcp.noServersFound') }}
         </div>
       </div>
     </main>
@@ -378,8 +381,7 @@ defineExpose({ load })
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/list-with-actions.css';
-@import '../../css/sticky-header-table.css';
+@import '../../css/list-large-with-header.css';
 </style>
 
 <style scoped>
@@ -389,137 +391,7 @@ main {
 }
 
 .servers {
-  
-  padding: 2rem;
-  padding-top: 0px;
-  display: flex;
-  flex-direction: column;
-  margin: 8px 6px 8px 6px;
-  flex-grow: 1;
-  overflow: hidden;
-
-  .header {
-    
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-weight: bold;
-    gap: 1rem;
-
-    padding: 1.5rem;
-    background-color: var(--window-decoration-color);
-    border: 1px solid var(--control-border-color);
-    border-bottom-width: 0px;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    margin-bottom: 0px !important;
-
-    label {
-      flex: 1;
-    }
-
-    .icon {
-      cursor: pointer;
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-
-    .spinner {
-      transform: scale(125%);
-    }
-
-    button {
-      margin: 0px;
-    }
-
-  }
-
-  .list {
-
-    flex-grow: 1;
-    border: 1px solid var(--control-border-color);
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-
-    padding: 1rem;
-    
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    
-
-    .item {
-
-      padding: 1rem;
-      font-size: 9.5pt;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      border: 0.75px solid var(--control-border-color);
-      border-radius: 0.5rem;
-      gap: 1rem;
-
-      > .status {
-        cursor: pointer;
-        text-align: center;
-        flex: 0 0 2.5rem;
-        font-size: 13pt;
-      }
-      
-      .info {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.375rem;
-        overflow: hidden;
-        cursor: pointer;
-        
-        .name, .type {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .name {
-          font-size: 11pt;
-          font-weight: 600;
-        }
-
-        .type {
-          opacity: 0.6;
-        }
-      }
-
-      .actions {
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin-top: 0px;
-        gap: 0.75rem;
-
-
-        svg {
-          width: 1.25rem;
-          height: 1.25rem;
-          opacity: 0.6;
-          cursor: pointer;
-        }
-
-        .icon.error:hover {
-          color: red;
-        }
-
-        .disabled {
-          opacity: 0.3;
-          pointer-events: none;
-        }
-
-      }
-
-    }
-  }
+  font-size: 110%;
 }
-
 
 </style>

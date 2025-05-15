@@ -259,28 +259,13 @@ defineExpose({
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
-@import '../../css/list-with-actions.css';
-@import '../../css/sticky-header-table.css';
 </style>
 
 <style>
 
 #mcp-server-editor {
-
   .list-with-actions {
     width: 100%;
-  }
-
-  .sticky-table-container {
-
-    height: 100px;
-
-    td {
-      max-width: 60px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
   }
 }
 
