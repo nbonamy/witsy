@@ -7,7 +7,6 @@ import { imageFormats, textFormats } from '../models/attachment'
 import { PluginInstance, PluginsList } from 'plugins/plugins'
 import { store } from '../services/store'
 import * as llm from 'multi-llm-ts'
-import OpenAI from './openai'
 
 export default class LlmManagerBase implements ILlmManager {
 
@@ -139,7 +138,7 @@ export default class LlmManagerBase implements ILlmManager {
     if (this.isFavoriteEngine(engine)) {
       return this.config.llm.favorites.map(f => ({ id: f.id, name: `${this.getEngineName(f.engine)}/${f.model}`, meta: {} })).sort((a, b) => a.name.localeCompare(b.name))
     } else {
-      return this.config.engines[engine]?.models.chat || []
+      return this.config.engines[engine]?.models?.chat || []
     }
   }
   
@@ -203,7 +202,7 @@ export default class LlmManagerBase implements ILlmManager {
     
     const engineConfig = this.config.engines[engine] as CustomEngineConfig
     if (engineConfig.api === 'openai') {
-      const engine: OpenAI = new OpenAI({
+      const engine: llm.OpenAI = new llm.OpenAI({ 
         apiKey: engineConfig.apiKey,
         baseURL: engineConfig.baseURL
       })
