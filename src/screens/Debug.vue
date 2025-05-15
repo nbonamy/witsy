@@ -14,7 +14,11 @@
             <span v-if="request.statusCode" class="status" :class="{ 'error': request.statusCode >= 400 }">
               {{ request.statusCode }}
             </span>
-            <span v-else class="status pending" >•••</span>
+            <span v-else class="status pending" >
+              <Loader />
+              <Loader />
+              <Loader />
+            </span>
           </div>
         </div>
       </main>
@@ -61,7 +65,7 @@
 import { NetworkRequest } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
 import { t } from '../services/i18n'
-
+import Loader from '../components/Loader.vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 
@@ -153,6 +157,15 @@ const selectRequest = (request: NetworkRequest) => {
     flex: 0 0 250px;
   }
 
+  .loader {
+    position: relative;
+    top: -3px;
+    width: 0.2rem;
+    height: 0.2rem;
+    margin: 0 0.1rem;
+    background-color: #ff9800;
+  }
+
   .list {
     padding: 0px 0px;
     overflow-y: auto;
@@ -166,6 +179,7 @@ const selectRequest = (request: NetworkRequest) => {
 
   .item {
     display: flex;
+    align-items: center;
     gap: 8px;
     padding: 8px 16px;
     border-bottom: 1px solid var(--dialog-border-color);
@@ -194,7 +208,7 @@ const selectRequest = (request: NetworkRequest) => {
   }
 
   .status {
-    color: #337435;
+    color: #4caf50;
   }
 
   .status.pending {
