@@ -94,8 +94,10 @@ onMounted(async () => {
   // watch props for changes
   watch(() => props.extra, (params) => {
     if (params?.initialTab) {
-      console.log('[settings] props changed', params)
-      initialTab.value = params.initialTab
+      showTab(params.initialTab)
+      if (params.initialTab === 'models' && params.engine) {
+        settingsLLM.value?.load({ engine: params.engine })
+      }
     }
   }, { immediate: true })
 
@@ -122,6 +124,13 @@ onUnmounted(() => {
   window.api.off('file-modified')
 })
 
+const showTab = (tab: string) => {
+  const el = document.querySelector<HTMLElement>(`.settings .tab.${tab} input`)
+  if (el) {
+    el.click()
+  }
+}
+
 const onOpenSettings = (payload: OpenSettingsPayload) => {
 
   // load all panels
@@ -135,11 +144,10 @@ const onOpenSettings = (payload: OpenSettingsPayload) => {
   // show initial tab
   nextTick(() => {
     if (payload?.initialTab) {
-      document.querySelector<HTMLElement>(`.settings .tab.${payload.initialTab} input`)?.click()
+      showTab(payload.initialTab)
     }
   })
 
-  //
 }
 
 const load = (tab: any) => {
