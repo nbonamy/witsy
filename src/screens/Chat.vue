@@ -81,7 +81,8 @@ onMounted(() => {
     const target = (e.target || e.srcElement) as HTMLElement
     const href = target.getAttribute('href')
     if (href?.startsWith('#settings')) {
-      window.api.settings.open({ initialTab: href.split('_')[1] })
+      const parts = href.split('_')
+      window.api.settings.open({ initialTab: parts[1], engine: parts.length > 2 ? parts[2] : '' })
       e.preventDefault()
       return false
     } else if (href === '#retry_without_plugins') {
