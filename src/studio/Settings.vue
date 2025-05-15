@@ -1,5 +1,5 @@
 <template>
-  <div class="settings">
+  <div class="studio-settings">
     <form class="vertical">
 
       <div class="group media-type">
@@ -590,21 +590,21 @@ defineExpose({
 
 <style scoped>
 
-.settings {
+.studio-settings {
   overflow-y: auto;
   padding-bottom: 2rem;
 }
 
-.settings > * {
+.studio-settings > * {
   padding: 0px 24px;
 }
 
-.settings form .group .subgroup {
+.studio-settings form .group .subgroup {
   display: flex;
   width: 100%;
 }
 
-.settings form .group textarea {
+.studio-settings form .group textarea {
   flex: auto;
   min-height: 2rem;
   height: 4rem;
@@ -612,34 +612,34 @@ defineExpose({
   background-color: var(--control-textarea-bg-color);
 }
 
-.settings .info {
+.studio-settings .info {
   align-self: flex-start;
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
 }
 
-.settings .list-with-actions {
+.studio-settings .list-with-actions {
   margin-top: 0.5rem;
   width: 100%;
 }
 
-.settings form .group label.expander {
+.studio-settings form .group label.expander {
   margin-top: -0.5rem;
   cursor: pointer;
 }
 
-.settings .sticky-table-container {
+.studio-settings .sticky-table-container {
   height: 100px;
 }
 
-.settings .sticky-table-container td {
+.studio-settings .sticky-table-container td {
   max-width: 60px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.settings .error {
+.studio-settings .error {
   color: red;
 }
 
