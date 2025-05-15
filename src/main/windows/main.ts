@@ -1,6 +1,6 @@
 
 import { CreateWindowOpts } from 'types/window';
-import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, Notification } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
@@ -11,12 +11,17 @@ export let mainWindow: BrowserWindow = null;
 
 export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 
+  // do not allow multiple windows
+  if (mainWindow) {
+    return;
+  }
+  
   // get bounds from here
   const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
 
   // else open a new one
   mainWindow = createWindow({
-    title: useI18n(app)('common.chat'),
+    title: 'Witsy',
     x: bounds?.x,
     y: bounds?.y,
     width: bounds?.width ?? 1400,
@@ -66,16 +71,15 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     // check
     const config = loadSettings(app);
     if (config.general.tips.trayIcon === undefined || config.general.tips.trayIcon === true) {
+
       const trayIconDesc = process.platform === 'win32' ? 'the icon in the system tray' : 'the fountain pen icon in the menu bar';
       const message = `You can activate Witsy from ${trayIconDesc}.`;
-      const options = {
-        buttons: ['OK'],
-        message: message,
-      };
 
-      // show
-      dialog.showMessageBoxSync(null, options);
-
+      new Notification({
+        title: 'Witsy',
+        body: message
+      }).show()
+      
       // save
       config.general.tips.trayIcon = false;
       saveSettings(app, config);
@@ -114,7 +118,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (!mainWindow || mainWindow.isDestroyed()) {
     prepareMainWindow(opts);
   } else {
-      mainWindow.webContents.send('query-params', opts.queryParams);
+    mainWindow.webContents.send('query-params', opts.queryParams);
   }
 
   // restore
