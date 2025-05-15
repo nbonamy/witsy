@@ -490,8 +490,9 @@
       "shortcut": "Naciśnij {shortcut}, aby szybko aktywować ten model"
     },
     "settings": {
-      "configure": "Konfiguracja",
-      "needsConfiguration": "Ten silnik należy najpierw skonfigurować! Czy chcesz otworzyć Ustawienia?"
+      "needsApiKey": "Musisz mieć klucz API, aby korzystać z modeli tego dostawcy. Możesz wpisać go poniżej.",
+      "needsModels": "Modele nie są załadowane dla tego dostawcy.<br/><a href=\"#settings_models_{engine}\">Kliknij tutaj</a>, aby sprawdzić swoją konfigurację.",
+      "refreshingModels": "Ładowanie listy modeli…"
     },
     "tips": {
       "switchModel": "Kliknij tutaj, aby przełączyć się na inny model chatbota!",

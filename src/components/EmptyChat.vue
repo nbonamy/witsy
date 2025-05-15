@@ -10,16 +10,34 @@
           {{ t('emptyChat.tips.switchProvider') }}<br/>
           <img src="/assets/arrow_dashed.svg" @load="centerLogos()" />
         </div>
-        <EngineLogo :engine="store.config.llm.engine" :grayscale="true" :custom-label="true" @click="onEngine(store.config.llm.engine)" />
-        <div class="models">
+        <EngineLogo :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
+        <div class="models" v-if="models?.length">
           <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
-          <BIconArrowRepeat v-if="!showAllEngines && store.config.llm.engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
+          <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
+        </div>
+        <div class="help" v-else-if="!llmManager.isEngineConfigured(engine)">
+          <form class="vertical large">
+            <div class="group">
+              <label>{{ t('emptyChat.settings.needsApiKey') }}</label>
+              <div class="control-group">
+                <InputObfuscated v-model="apiKey"/>
+                <button @click="saveApiKey">{{ t('common.save') }}</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="help" v-else-if="isRefreshing">
+          {{ t('emptyChat.settings.refreshingModels') }}
+          <BIconArrowRepeat class="rotating"/>
+        </div>
+        <div class="help" v-else>
+          <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
         </div>
         <div class="favorite" v-if="!showModelTip() && !showAllEngines">
           <span class="action remove" @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
-          <span class="action add" @click="addToFavorites" v-else><BIconStar /> {{ t('common.favorites.add') }}</span>
+          <span class="action add" @click="addToFavorites" v-else-if="models?.length"><BIconStar /> {{ t('common.favorites.add') }}</span>
           <span class="shortcut" v-if="modelShortcut">{{ t('emptyChat.favorites.shortcut', { shortcut: modelShortcut }) }}</span>
         </div>
         <div class="tip model" v-if="showModelTip()">
@@ -38,12 +56,8 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
-import Dialog from '../composables/dialog'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
-import { BIconArrowRepeat, BIconChatSquareDots } from 'bootstrap-icons-vue'
-
-import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+import InputObfuscated from './InputObfuscated.vue'
 
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
@@ -51,6 +65,7 @@ const llmManager = LlmFactory.manager(store.config)
 const showAllEngines = ref(false)
 const engines = shallowReactive(store.config.engines)
 const isRefreshing = ref(false)
+const apiKey = ref('')
 
 const visibleEngines = computed(() => {
   return llmManager.getChatEngines().filter(engine => {
@@ -58,17 +73,14 @@ const visibleEngines = computed(() => {
   })
 })
 
-const models = computed(() => llmManager.getChatModels(store.config.llm.engine))
-const model = computed(() => llmManager.getChatModel(store.config.llm.engine, true))
-const isFavoriteModel = computed(() => llmManager.isFavoriteModel(store.config.llm.engine, model.value))
-
-const hasComputerUse = computed(() => {
-  return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
-})
+const engine = computed(() => store.config.llm.engine)
+const models = computed(() => llmManager.getChatModels(engine.value))
+const model = computed(() => llmManager.getChatModel(engine.value, true))
+const isFavoriteModel = computed(() => llmManager.isFavoriteModel(engine.value, model.value))
 
 const modelShortcut = computed(() => {
   const favorites = llmManager.getChatModels(favoriteMockEngine)
-  const id = store.config.llm.engine == favoriteMockEngine ? model.value : llmManager.getFavoriteId(store.config.llm.engine, model.value)
+  const id = engine.value == favoriteMockEngine ? model.value : llmManager.getFavoriteId(engine.value, model.value)
   let index = favorites.findIndex(m => m.id === id)
   if (index < 0 || index > 9) return null
   if (index === 9) index = -1
@@ -85,7 +97,7 @@ const showModelTip = () => {
 }
 
 onBeforeUpdate(() => {
-  if (store.config.engines[store.config.llm.engine] === undefined) {
+  if (store.config.engines[engine.value] === undefined) {
     store.config.llm.engine = 'openai'
   }
 })
@@ -93,6 +105,7 @@ onBeforeUpdate(() => {
 onMounted(() => {
   centerLogos()
   document.addEventListener('keydown', onKeyDown)
+  loadApiKey()
 })
 
 onUnmounted(() => {
@@ -102,6 +115,10 @@ onUnmounted(() => {
 onUpdated(() => {
   centerLogos()
 })
+
+const loadApiKey = () => {
+  apiKey.value = store.config.engines[engine.value]?.apiKey
+}
 
 const onKeyDown = (ev: KeyboardEvent) => {
   if (showAllEngines.value) return
@@ -119,6 +136,7 @@ const onEngineMore = () => {
 }
 
 const onEngine = (engine: string) => {
+  
   if (showAllEngines.value === false) {
 
     // show all always
@@ -140,26 +158,20 @@ const onEngine = (engine: string) => {
   
   } else {
 
-    // check if the engine is ready
-    if (!llmManager.isEngineReady(engine) || !llmManager.hasChatModels(engine)) {
-      Dialog.show({
-        title: t('emptyChat.settings.needsConfiguration'),
-        confirmButtonText: t('emptyChat.settings.configure'),
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.api.settings.open({ initialTab: 'models', engine: engine })
-        }
-      })
-      return
-    }
-
     // close and disable tip
     store.config.general.tips.engineSelector = false
 
     // select the engine
     store.config.llm.engine = engine
     store.saveSettings()
+
+    // load api key
+    loadApiKey()
+
+    // can we try and load models
+    if (llmManager.isEngineConfigured(engine) && !llmManager.isCustomEngine(engine)) {
+      onRefreshModels()
+    }
 
     // and do the animation in reverse
     animateEngineLogo(`.selector .engines .logo.${engine}`, `.selector .current .logo`, (elems, progress) => {
@@ -286,10 +298,24 @@ const moveElement = (element: HTMLElement, endX: number, endY: number, duration:
 }
 /* v8 ignore stop */
 
+const saveApiKey = async () => {
+  
+  if (apiKey.value) {
+    
+    // first save
+    store.config.engines[engine.value].apiKey = apiKey.value
+    store.saveSettings()
+
+    // refresh models
+    onRefreshModels()
+
+  }
+}
+
 const onRefreshModels = async () => {
   isRefreshing.value = true
   try {
-    await llmManager.loadModels(store.config.llm.engine)
+    await llmManager.loadModels(engine.value)
   } finally {
     isRefreshing.value = false
   }
@@ -306,24 +332,28 @@ const onSelectModel = (ev: Event) => {
   const target = ev.target as HTMLSelectElement
 
   // computer-use warning
-  if (llmManager.isComputerUseModel(store.config.llm.engine, target.value)) {
+  if (llmManager.isComputerUseModel(engine.value, target.value)) {
     tipsManager.showTip('computerUse')
   }
 
   // continue
-  llmManager.setChatModel(store.config.llm.engine, target.value)
+  llmManager.setChatModel(engine.value, target.value)
 }
 
 const addToFavorites = () => {
-  llmManager.addFavoriteModel(store.config.llm.engine, model.value)
+  llmManager.addFavoriteModel(engine.value, model.value)
   tipsManager.showTip('favoriteModels')
 }
 
 const removeFavorite = () => {
-  llmManager.removeFavoriteModel(store.config.llm.engine, model.value)
+  llmManager.removeFavoriteModel(engine.value, model.value)
 }
 
 </script>
+
+<style scoped>
+@import '../../css/form.css';
+</style>
 
 <style scoped>
 
@@ -333,7 +363,7 @@ const removeFavorite = () => {
 
 .empty {
   padding: 16px;
-  margin-top: -48px;
+  margin-top: -128px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -406,6 +436,21 @@ const removeFavorite = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .help {
+    margin-top: 0.5rem;
+    font-size: var(--form-large-font-size);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
 
 .empty .models {
@@ -420,16 +465,16 @@ const removeFavorite = () => {
     top: 4px;
   }
 
-  .rotating {
-    animation: spin 1.5s linear infinite;
-  }
-
   &:hover {
     svg {
       visibility: visible;
     }
   }
 }
+
+  .rotating {
+    animation: spin 1.5s linear infinite;
+  }
 
 @keyframes spin {
   from {

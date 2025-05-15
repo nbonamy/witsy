@@ -490,8 +490,9 @@
       "shortcut": "Press {shortcut} to quickly activate this model"
     },
     "settings": {
-      "configure": "Configure",
-      "needsConfiguration": "This engine needs to be configured first! Do you want to open the Settings?"
+      "needsApiKey": "You need an API key to use models from this provider. You can enter it below.",
+      "needsModels": "Models are not loaded for this provider.<br/><a href=\"#settings_models_{engine}\">Click here</a> to check your configuration.",
+      "refreshingModels": "Loading models list…"
     },
     "tips": {
       "switchModel": "Click here to switch to a different chat bot model!",
