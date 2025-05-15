@@ -3,7 +3,6 @@ import { Configuration } from '../types/config'
 import { getComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
-import OpenAI from './openai'
 import Ollama from './ollama'
 
 export default class LlmManager extends LlmManagerBase {
@@ -33,7 +32,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'meta') return llm.Meta.isConfigured(this.config.engines.meta)
     if (engine === 'mistralai') return llm.MistralAI.isConfigured(this.config.engines.mistralai)
     if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
-    if (engine === 'openai') return OpenAI.isConfigured(this.config.engines.openai)
+    if (engine === 'openai') return llm.OpenAI.isConfigured(this.config.engines.openai)
     if (engine === 'openrouter') return llm.OpenRouter.isConfigured(this.config.engines.openrouter)
     if (engine === 'xai') return llm.XAI.isConfigured(this.config.engines.xai)
     if (this.isFavoriteEngine(engine)) return true
@@ -50,7 +49,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'meta') return llm.Meta.isReady(this.config.engines.meta, this.config.engines.meta?.models)
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
     if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
-    if (engine === 'openai') return OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
+    if (engine === 'openai') return llm.OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return llm.OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return llm.XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
     if (this.isFavoriteEngine(engine)) return true
@@ -78,7 +77,7 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'meta') return new llm.Meta(this.config.engines.meta)
       if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
       if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
-      if (engine === 'openai') return new OpenAI(this.config.engines.openai)
+      if (engine === 'openai') return new llm.OpenAI(this.config.engines.openai)
       if (engine === 'openrouter') return new llm.OpenRouter(this.config.engines.openrouter)
       if (engine === 'xai') return new llm.XAI(this.config.engines.xai)
 
@@ -86,7 +85,7 @@ export default class LlmManager extends LlmManagerBase {
 
     // fallback
     console.warn(`Engine ${engine} unknown. Falling back to OpenAI`)
-    return new OpenAI(this.config.engines.openai)
+    return new llm.OpenAI(this.config.engines.openai)
 
   }
   

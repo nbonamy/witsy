@@ -1,9 +1,8 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin } from 'multi-llm-ts'
+import { OpenAI, Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin } from 'multi-llm-ts'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
-import OpenAI from '../../src/llms/openai'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
@@ -11,7 +10,6 @@ import defaults from '../../defaults/settings.json'
 beforeAll(() => {
   useWindowMock({ customEngine: true, favoriteModels: true })
   store.loadSettings()
-  store.config.engines.openai.apiKey = '123'
 })
 
 const llmManager = LlmFactory.manager(store.config)
@@ -44,7 +42,7 @@ test('Get Engine name', () => {
 })
 
 test('Default Configuration', () => {
-  expect(llmManager.isEngineReady('openai')).toBe(true)
+  expect(llmManager.isEngineReady('openai')).toBe(false)
   expect(llmManager.isEngineReady('ollama')).toBe(false)
   expect(llmManager.isEngineReady('mistralai')).toBe(false)
   expect(llmManager.isEngineReady('anthropic')).toBe(false)
@@ -61,11 +59,13 @@ test('Default Configuration', () => {
 })
 
 test('OpenAI Configuration', () => {
-  expect(llmManager.isEngineConfigured('openai')).toBe(true)
-  expect(llmManager.isEngineReady('openai')).toBe(true)
+  expect(llmManager.isEngineConfigured('openai')).toBe(false)
+  expect(llmManager.isEngineReady('openai')).toBe(false)
   store.config.engines.openai.apiKey = '123'
-  expect(llmManager.isEngineReady('openai')).toBe(true)
+  expect(llmManager.isEngineConfigured('openai')).toBe(true)
+  expect(llmManager.isEngineReady('openai')).toBe(false)
   store.config.engines.openai.models.chat = [model]
+  expect(llmManager.isEngineConfigured('openai')).toBe(true)
   expect(llmManager.isEngineReady('openai')).toBe(true)
 })
 
