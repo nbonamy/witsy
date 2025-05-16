@@ -12,7 +12,7 @@
         <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
     </div>
-    <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/library" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
+    <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/search" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
       <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>

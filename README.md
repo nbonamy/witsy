@@ -147,7 +147,7 @@ To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your AP
 - [Groq](https://console.groq.com/keys)
 - [Cerebras](https://cloud.cerebras.ai/platform/)
 
-To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/library).
+To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/search).
 
 To use text-to-speech, you need an [OpenAI API key](https://platform.openai.com/api-keys).
 
