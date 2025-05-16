@@ -1,9 +1,9 @@
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-index 2ada877..bdd5b4d 100644
+index c4038a9..b682444 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js
-@@ -68,7 +68,7 @@ class StdioClientTransport {
-             this._process = (0, node_child_process_1.spawn)(this._serverParams.command, (_a = this._serverParams.args) !== null && _a !== void 0 ? _a : [], {
+@@ -73,7 +73,7 @@ class StdioClientTransport {
+             this._process = (0, cross_spawn_1.default)(this._serverParams.command, (_a = this._serverParams.args) !== null && _a !== void 0 ? _a : [], {
                  env: (_b = this._serverParams.env) !== null && _b !== void 0 ? _b : getDefaultEnvironment(),
                  stdio: ["pipe", "pipe", (_c = this._serverParams.stderr) !== null && _c !== void 0 ? _c : "inherit"],
 -                shell: false,
@@ -12,10 +12,10 @@ index 2ada877..bdd5b4d 100644
                  windowsHide: node_process_1.default.platform === "win32" && isElectron(),
                  cwd: this._serverParams.cwd,
 diff --git a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-index 387c982..040414a 100644
+index 0edafa5..8506213 100644
 --- a/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
 +++ b/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js
-@@ -61,7 +61,7 @@ export class StdioClientTransport {
+@@ -66,7 +66,7 @@ export class StdioClientTransport {
              this._process = spawn(this._serverParams.command, (_a = this._serverParams.args) !== null && _a !== void 0 ? _a : [], {
                  env: (_b = this._serverParams.env) !== null && _b !== void 0 ? _b : getDefaultEnvironment(),
                  stdio: ["pipe", "pipe", (_c = this._serverParams.stderr) !== null && _c !== void 0 ? _c : "inherit"],
