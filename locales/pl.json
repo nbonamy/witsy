@@ -1860,6 +1860,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "Możesz aktywować Witsy z ikony pióra wiecznego na pasku menu.",
+      "linux": "Możesz aktywować Witsy z ikony pióra wiecznego na pasku menu.",
+      "windows": "Możesz aktywować Witsy z ikony pióra wiecznego w zasobniku systemowym."
     }
   }
 }

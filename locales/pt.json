@@ -1854,6 +1854,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "Você pode ativar o Witsy pelo ícone da caneta na barra de menu.",
+      "linux": "Você pode ativar o Witsy pelo ícone da caneta na barra de menu.",
+      "windows": "Você pode ativar o Witsy pelo ícone da caneta na área de notificação."
     }
   }
 }

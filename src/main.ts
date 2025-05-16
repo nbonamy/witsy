@@ -7,7 +7,7 @@ import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
 import fontList from 'font-list';
-import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu, Notification } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -225,6 +225,9 @@ app.whenReady().then(() => {
 
   // tray icon
   trayIconManager.install();
+
+  // request notification permission
+  new Notification();
 
   // create the document repository
   docRepo = new DocumentRepository(app);

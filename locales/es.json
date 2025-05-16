@@ -1824,6 +1824,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "Puedes activar Witsy desde el icono de la pluma en la barra de menú.",
+      "linux": "Puedes activar Witsy desde el icono de la pluma en la barra de menú.",
+      "windows": "Puedes activar Witsy desde el icono de la pluma en la bandeja del sistema."
     }
   }
 }
