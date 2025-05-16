@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -88,6 +88,7 @@
     "@huggingface/transformers": "^3.5.1",
     "@iktakahiro/markdown-it-katex": "^4.0.1",
     "@langchain/textsplitters": "^0.0.3",
+    "@mistralai/mistralai": "^1.1.0",
     "@modelcontextprotocol/sdk": "^1.11.2",
     "@nut-tree-fork/nut-js": "^4.2.6",
     "applescript": "^1.0.0",
