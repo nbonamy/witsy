@@ -177,7 +177,7 @@ export type GenerationResult =
           }
         
         // function call not supported
-        } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool use') || message.includes('tool choice'))) {
+        } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
           console.warn('Model does not support function calling:', error.status, message)
           llm.clearPlugins()
           return this.generate(llm, messages, opts, callback)
@@ -197,7 +197,7 @@ export type GenerationResult =
         } else {
           console.error('Error while generating text:', error.status, error.message)
           if (response.content === '') {
-            if (opts.contextWindowSize || opts.maxTokens || opts.temperature || opts.top_k || opts.top_p || Object.keys(opts.customOpts).length > 0) {
+            if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
               response.setText(t('generator.errors.tryWithoutParams'))
             } else if (llm.plugins.length > 0) {
               response.setText(t('generator.errors.tryWithoutPlugins'))
