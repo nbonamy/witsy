@@ -422,7 +422,8 @@ async function checkUnusedTranslations() {
         !key.match(/^chat\.role\..*$/) &&
         !key.match(/^computerUse\.action\..*$/) &&
         !key.match(/^commands\.commands\..*$/) &&
-        !key.match(/^experts\.experts\..*$/)
+        !key.match(/^experts\.experts\..*$/) &&
+        !key.match(/^tray\.notification\..*$/)
       ))
 
       // Check each source file for key usage

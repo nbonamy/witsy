@@ -1824,6 +1824,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "Sie können Witsy über das Füller-Symbol in der Menüleiste aktivieren.",
+      "linux": "Sie können Witsy über das Füller-Symbol in der Menüleiste aktivieren.",
+      "windows": "Sie können Witsy über das Füller-Symbol im Systembereich aktivieren."
     }
   }
 }

@@ -1860,6 +1860,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "You can activate Witsy from the fountain pen icon in the menu bar.",
+      "linux": "You can activate Witsy from the fountain pen icon in the menu bar.",
+      "windows": "You can activate Witsy from the fountain pen icon in the system tray."
     }
   }
 }

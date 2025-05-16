@@ -72,12 +72,9 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     const config = loadSettings(app);
     if (config.general.tips.trayIcon === undefined || config.general.tips.trayIcon === true) {
 
-      const trayIconDesc = process.platform === 'win32' ? 'the icon in the system tray' : 'the fountain pen icon in the menu bar';
-      const message = `You can activate Witsy from ${trayIconDesc}.`;
-
       new Notification({
-        title: 'Witsy',
-        body: message
+        title: app.getName(),
+        body: useI18n(app)(`tray.notification.${process.platform}`),
       }).show()
       
       // save

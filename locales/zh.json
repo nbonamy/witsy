@@ -1854,6 +1854,11 @@
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
       "voiceMode": "@:{'realtimeChat.title'}"
+    },
+    "notification": {
+      "darwin": "您可以从菜单栏中的钢笔图标激活 Witsy。",
+      "linux": "您可以从菜单栏中的钢笔图标激活 Witsy。",
+      "windows": "您可以从系统托盘中的钢笔图标激活 Witsy。"
     }
   }
 }
