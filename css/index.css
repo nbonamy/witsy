@@ -25,7 +25,7 @@
   --window-toolbar-height: 3rem;
 
   --menubar-icon-color: var(--icon-color);
-  --menubar-highlight-color: var(--link-color);
+  --menubar-highlight-color: var(--highlight-color);
 
   --control-bg-color: var(--background-color);
   --control-border-color: #d0d0d0;
@@ -157,6 +157,8 @@
 
     --default-window-decoration-color: #404040;
     --window-decoration-color: var(--default-window-decoration-color);
+
+    --menubar-highlight-color: var(--link-color);
 
     --control-bg-color: #646464;
     --control-border-color: var(--control-bg-color);
