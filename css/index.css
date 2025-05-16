@@ -405,7 +405,7 @@ button:active:enabled {
 button.default {
   border: none;
   background: linear-gradient(#2991FF, #057AFF);
-  color: white;
+  color: white !important;
 }
 
 button.default:active:enabled {
