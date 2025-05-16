@@ -1,12 +1,26 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
+import { loadAnthropicModels } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
+import { wait } from '../../src/main/utils'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 
 enableAutoUnmount(afterAll)
+
+// mock llm
+vi.mock('multi-llm-ts', async (importOriginal) => {
+  const actual = await importOriginal() as unknown as any
+  return {
+    ...actual,
+    loadAnthropicModels: vi.fn(async () => {
+      await wait(200)
+      return false
+    })
+  }
+})
 
 beforeAll(() => {
   useWindowMock({ customEngine: true, favoriteModels: true })
@@ -40,9 +54,6 @@ beforeEach(() => {
         { id: 'llama3-70b', name: 'llama3-70b' }
       ]
     }
-  }
-  store.config.engines.anthropic = {
-    apiKey: 'test',
   }
   store.config.engines.mistralai =  {
     apiKey: 'test',
@@ -94,6 +105,23 @@ test('Selects model', async () => {
   expect(store.config.engines.openai.model.chat).toBe('gpt-4-turbo')
   await wrapper.find('.empty .current select').setValue('gpt-4o')
   expect(store.config.engines.openai.model.chat).toBe('gpt-4o')
+})
+
+test('Allows API Key input', async () => {
+  const wrapper: VueWrapper<any> = mount(EmptyChat)
+  expect(wrapper.find('.empty .current .help').exists()).toBe(false)
+  await wrapper.find('.empty .current .logo').trigger('click')
+  await wrapper.find('.empty .engines .logo.anthropic').trigger('click')
+  expect(wrapper.find('.empty .current input[name=apiKey]').exists()).toBe(true)
+  await wrapper.find('.empty .current input[name=apiKey]').setValue('test')
+  await wrapper.find('.empty .current button[name=saveApiKey]').trigger('click')
+  expect(store.config.engines.anthropic.apiKey).toBe('test')
+  expect(loadAnthropicModels).toHaveBeenCalledWith(store.config.engines.anthropic, expect.anything())
+  expect(wrapper.find('.empty .current .help.loading').exists()).toBe(true)
+  expect(wrapper.find('.empty .current .help.models').exists()).toBe(false)
+  await wait(200) //vi.waitUntil(() => wrapper.find('.empty .current .help.models').exists(), { timeout: 5000 })
+  expect(wrapper.find('.empty .current .help.loading').exists()).toBe(false)
+  expect(wrapper.find('.empty .current .help.models').exists()).toBe(true)
 })
 
 test('Displays and selects favorites', async () => {

@@ -18,22 +18,22 @@
           <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
         </div>
         <template v-else-if="!showAllEngines">
-          <div class="help" v-if="!llmManager.isEngineConfigured(engine)">
+          <div class="help apiKey" v-if="!llmManager.isEngineConfigured(engine)">
             <form class="vertical large">
               <div class="group">
                 <label>{{ t('emptyChat.settings.needsApiKey') }}</label>
                 <div class="control-group">
-                  <InputObfuscated v-model="apiKey"/>
-                  <button @click="saveApiKey">{{ t('common.save') }}</button>
+                  <InputObfuscated name="apiKey" v-model="apiKey"/>
+                  <button name="saveApiKey" @click="saveApiKey">{{ t('common.save') }}</button>
                 </div>
               </div>
             </form>
           </div>
-          <div class="help" v-else-if="isRefreshing">
+          <div class="help loading" v-else-if="isRefreshing">
             {{ t('emptyChat.settings.refreshingModels') }}
             <BIconArrowRepeat class="rotating"/>
           </div>
-          <div class="help" v-else>
+          <div class="help models" v-else>
             <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
           </div>
         </template>
