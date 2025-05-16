@@ -17,24 +17,26 @@
           </select>
           <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
         </div>
-        <div class="help" v-else-if="!llmManager.isEngineConfigured(engine)">
-          <form class="vertical large">
-            <div class="group">
-              <label>{{ t('emptyChat.settings.needsApiKey') }}</label>
-              <div class="control-group">
-                <InputObfuscated v-model="apiKey"/>
-                <button @click="saveApiKey">{{ t('common.save') }}</button>
+        <template v-else-if="!showAllEngines">
+          <div class="help" v-if="!llmManager.isEngineConfigured(engine)">
+            <form class="vertical large">
+              <div class="group">
+                <label>{{ t('emptyChat.settings.needsApiKey') }}</label>
+                <div class="control-group">
+                  <InputObfuscated v-model="apiKey"/>
+                  <button @click="saveApiKey">{{ t('common.save') }}</button>
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
-        <div class="help" v-else-if="isRefreshing">
-          {{ t('emptyChat.settings.refreshingModels') }}
-          <BIconArrowRepeat class="rotating"/>
-        </div>
-        <div class="help" v-else>
-          <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
-        </div>
+            </form>
+          </div>
+          <div class="help" v-else-if="isRefreshing">
+            {{ t('emptyChat.settings.refreshingModels') }}
+            <BIconArrowRepeat class="rotating"/>
+          </div>
+          <div class="help" v-else>
+            <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
+          </div>
+        </template>
         <div class="favorite" v-if="!showModelTip() && !showAllEngines">
           <span class="action remove" @click="removeFavorite" v-if="isFavoriteModel"><BIconStarFill /> {{ t('common.favorites.remove') }}</span>
           <span class="action add" @click="addToFavorites" v-else-if="models?.length"><BIconStar /> {{ t('common.favorites.add') }}</span>
@@ -133,6 +135,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
 
 const onEngineMore = () => {
   window.api.settings.open({ initialTab: 'models' })
+  onEngine(engine.value)
 }
 
 const onEngine = (engine: string) => {
