@@ -71,7 +71,7 @@ let avatar: HTMLElement | null = null
 const onNewChunk = async (chunk: LlmChunk) => {
 
   // scroll down on a new chunk
-  if (!chunk || (chunk.type === 'content' && chunk.text === '' && chunk.done)) {
+  if (!chunk || (chunk.type === 'content' && chunk.text === '' && !chunk.done)) {
     await scrollDown()
     scrollOnChunk = true
     avatar = null
