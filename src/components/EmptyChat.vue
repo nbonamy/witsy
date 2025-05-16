@@ -366,7 +366,7 @@ const removeFavorite = () => {
 
 .empty {
   padding: 16px;
-  margin-top: -128px;
+  margin-top: -64px;
   display: flex;
   flex-direction: column;
   justify-content: center;
