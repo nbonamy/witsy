@@ -7,6 +7,7 @@ import { useI18n } from '../i18n';
 
 const storeBoundsId = 'main.bounds'
 
+let firstOpen = true;
 export let mainWindow: BrowserWindow = null;
 
 export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
@@ -130,9 +131,12 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   app.focus({ steal: true });
 
   // open the DevTools
-  if (process.env.DEBUG) {
+  if (process.env.DEBUG && firstOpen) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
   }
+  
+  // record
+  firstOpen = false;
 
 };
 
