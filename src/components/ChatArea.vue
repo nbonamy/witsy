@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <header :class="{ 'is-left-most': isLeftMost }">
-      <div class="icon left" @click="toggleSideBar">
+      <div class="icon left toggle-sidebar" @click="toggleSideBar">
         <IconSideBar />
       </div>
       <div class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
@@ -289,6 +289,10 @@ defineExpose({
 
 .macos .content header.is-left-most {
   padding-left: 40px;
+}
+
+.windows .panel-content .content header .toggle-sidebar {
+  top: -4.5px;
 }
 
 .panel-content {
