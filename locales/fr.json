@@ -1180,6 +1180,7 @@
       "couldNotGenerate": "Désolé, je n'ai pas pu générer de texte pour cette requête.",
       "invalidModel": "Désolé, il semble que ce modèle ne soit pas disponible.",
       "missingApiKey": "Vous devez entrer votre clé API dans l'onglet Modèles des [Paramètres](#settings_models) pour pouvoir discuter.",
+      "networkError": "Désolé, je n'ai pas pu me connecter au fournisseur LLM. Veuillez vérifier votre connexion Internet ou vos [paramètres de proxy](#settings_advanced) si vous en avez définis.",
       "outOfCredits": "Désolé, il semble que vous n'ayez plus de crédits. Vérifiez le solde de votre compte fournisseur LLM.",
       "pluginDescriptionTooLong": "Désolé, il semble que la description d'un des plugins soit trop longue. Si vous les avez modifiés dans Paramètres | Avancé, veuillez réessayer.",
       "quotaExceeded": "Désolé, il semble que vous ayez atteint la limite de votre compte fournisseur LLM. Réessayez plus tard.",
@@ -1418,8 +1419,8 @@
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
       "autoVisionSwitch": "Passer automatiquement au modèle vision",
-      "bypassProxy": "Ignorer le serveur proxy système (nécessite un redémarrage de l'application)",
       "conversationLength": "Messages par conversation",
+      "header": "Paramètres divers",
       "imageResize": "Taille des images",
       "imageResizeOptions": {
         "none": "Taille originale",
@@ -1444,6 +1445,12 @@
         "video_plugin": "Plugin Vidéo - Description (1024 caractères max)"
       },
       "overridingHelp": "Les prompts et instructions personnalisés s'appliquent à toutes les langues.",
+      "proxy": {
+        "bypass": "Ignorer le proxy système",
+        "custom": "Proxy personnalisé",
+        "default": "Par défaut du système",
+        "title": "Paramètres du proxy (requiert un redémarrage de l'application)"
+      },
       "resetToDefault": "Réinitialiser à la valeur par défaut",
       "systemInstructions": "Instructions système"
     },

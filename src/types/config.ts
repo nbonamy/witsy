@@ -41,11 +41,14 @@ export type CustomEngineConfig = EngineConfig & {
   api: string
 }
 
+export type ProxyMode = 'default' | 'bypass' | 'custom'
+
 export type GeneralConfig = {
   firstRun: boolean
   hideOnStartup: boolean
   keepRunning: boolean
-  bypassProxy: boolean
+  proxyMode: ProxyMode
+  customProxy: string
   locale: string
   tips: {[key: string]: boolean}
   confirm: {[key: string]: boolean}

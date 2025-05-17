@@ -4,7 +4,8 @@
     "firstRun": true,
     "keepRunning": true,
     "hideOnStartup": false,
-    "bypassProxy": false,
+    "proxyMode": "default",
+    "customProxy": "",
     "tips": {
     },
     "confirm": {
