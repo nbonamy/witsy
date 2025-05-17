@@ -20,7 +20,7 @@
 <div align="center">
 
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/nbonamy)
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/nbonamy/witsy)
 
 </div>
 
@@ -139,8 +139,9 @@ npm start
 To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
 - [OpenAI](https://platform.openai.com/api-keys)
 - [Anthropic](https://console.anthropic.com/settings/keys)
-- [xAI](https://console.x.ai/team/)
 - [Google](https://aistudio.google.com/app/apikey)
+- [xAI](https://console.x.ai/team/)
+- [Meta](https://llama.developer.meta.com/api-keys/)
 - [MistralAI](https://console.mistral.ai/api-keys/)
 - [DeepSeek](https://platform.deepseek.com/api_keys)
 - [OpenRouter](https://openrouter.ai/settings/keys)
@@ -165,6 +166,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Meta/Llama AI support
 - [x] Realtime STT with Fireworks
 - [x] OpenAI image generation
 - [x] Azure AI support
