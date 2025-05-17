@@ -1,13 +1,15 @@
 <template>
-  <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
-    <EngineLogo :engine="engine(chat)" :background="true" />
-    <div class="info">
-      <div class="title">{{ chat.title }}</div>
-      <div class="subtitle">{{ chat.subtitle() }}</div>
-    </div>
-    <div v-if="selectMode" class="select">
-      <BIconCheckCircleFill v-if="selection.includes(chat.uuid)" class="selected"/>
-      <BIconCircle v-else />
+  <div class="container">
+    <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
+      <EngineLogo :engine="engine(chat)" :background="true" />
+      <div class="info">
+        <div class="title">{{ chat.title }}</div>
+        <div class="subtitle">{{ chat.subtitle() }}</div>
+      </div>
+      <div v-if="selectMode" class="select">
+        <BIconCheckCircleFill v-if="selection.includes(chat.uuid)" class="selected"/>
+        <BIconCircle v-else />
+      </div>
     </div>
   </div>
 </template>
@@ -45,15 +47,20 @@ const emit = defineEmits(['select', 'menu']);
 
 <style scoped>
 
-.chat {
-  margin: 0.125rem 0.5rem;
+.container {
+  margin: 0rem 0.5rem;
   margin-right: 1rem;
+  padding: 0.1rem 0rem;
+  cursor: pointer;
+}
+
+.chat {
+  margin: 0;
   padding: 0.5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   border-radius: 0.5rem;
-  cursor: pointer;
 }
 
 .chat.selected {
