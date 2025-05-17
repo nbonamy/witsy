@@ -4,6 +4,9 @@
       <div class="title">{{ t('settings.tabs.advanced') }}</div>
     </header>
     <main>
+      <div class="group">
+        <label>{{ t('settings.advanced.header') }}</label>
+      </div>
       <div class="group vision top horizontal">
         <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
         <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
@@ -12,11 +15,18 @@
         <input type="checkbox" v-model="autoSavePrompt" @change="save" />
         <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       </div>
-      <div class="group proxy horizontal">
-        <input type="checkbox" v-model="bypassProxy" @change="save" />
-        <label>{{ t('settings.advanced.bypassProxy') }}</label>
+      <div class="group proxy">
+        <label>{{ t('settings.advanced.proxy.title') }}</label>
+        <select name="proxyMode" v-model="proxyMode" @change="save">
+          <option value="default">{{ t('settings.advanced.proxy.default') }}</option>
+          <option value="bypass">{{ t('settings.advanced.proxy.bypass') }}</option>
+          <option value="custom">{{ t('settings.advanced.proxy.custom') }}</option>
+        </select>
       </div>
-      <hr/>
+      <div class="group custom-proxy" v-if="proxyMode === 'custom'">
+        <label>{{ t('settings.advanced.proxy.custom') }}</label>
+        <input type="text" name="customProxy" v-model="customProxy" @change="save">
+      </div>
       <div class="group length">
         <label>{{ t('settings.advanced.conversationLength') }}</label>
         <input type="number" min="1" v-model="conversationLength" @change="save">
@@ -67,20 +77,23 @@ import { t, i18nInstructions } from '../services/i18n'
 import { ref } from 'vue'
 import { store } from '../services/store'
 import { anyDict } from '../types/index'
+import { ProxyMode } from '../types/config'
 
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
 const instructions = ref('instructions.default')
 const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
-const bypassProxy = ref(null)
+const proxyMode = ref<ProxyMode>('default')
+const customProxy = ref('')
 const conversationLength = ref(null)
 const imageResize = ref(null)
 
 const load = () => {
   autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   autoSavePrompt.value = store.config.prompt.autosave
-  bypassProxy.value = store.config.general.bypassProxy
+  proxyMode.value = store.config.general.proxyMode
+  customProxy.value = store.config.general.customProxy
   conversationLength.value = store.config.llm.conversationLength || 5
   imageResize.value = store.config.llm.imageResize || 768
   onChangeInstructions()
@@ -101,7 +114,8 @@ const save = () => {
   // basic stuff
   store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.prompt.autosave = autoSavePrompt.value
-  store.config.general.bypassProxy = bypassProxy.value
+  store.config.general.proxyMode = proxyMode.value
+  store.config.general.customProxy = customProxy.value
   store.config.llm.conversationLength = conversationLength.value
   store.config.llm.imageResize = parseInt(imageResize.value)
 

@@ -1180,6 +1180,7 @@
       "couldNotGenerate": "Lo siento, no pude generar texto para esa solicitud.",
       "invalidModel": "Lo siento, parece que este modelo no está disponible.",
       "missingApiKey": "Necesitas ingresar tu clave API en la pestaña Modelos de [Configuración](#settings_models) para poder chatear.",
+      "networkError": "Lo siento, no pude conectarme al proveedor de LLM. Por favor, verifica tu conexión a internet o tus [configuraciones de proxy](#settings_advanced) si has definido alguna.",
       "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor LLM.",
       "pluginDescriptionTooLong": "Lo siento, parece que una de las descripciones de los plugins es demasiado larga. Si las has modificado en Configuración | Avanzado, por favor intenta nuevamente.",
       "quotaExceeded": "Lo siento, parece que has alcanzado el límite de tu cuenta de proveedor LLM. Intenta nuevamente más tarde.",
@@ -1418,8 +1419,8 @@
     "advanced": {
       "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
       "autoVisionSwitch": "Cambiar automáticamente al modelo de visión",
-      "bypassProxy": "Saltar el servidor proxy del sistema (requiere reiniciar la aplicación)",
       "conversationLength": "Mensajes por conversación",
+      "header": "Configuraciones misceláneas",
       "imageResize": "Redimensionar imagen",
       "imageResizeOptions": {
         "none": "Sin redimensionar",
@@ -1444,6 +1445,12 @@
         "video_plugin": "Plugin de Video - Descripción (máximo 1024 caracteres)"
       },
       "overridingHelp": "Los comandos o instrucciones personalizados son aplicables para todos los idiomas.",
+      "proxy": {
+        "bypass": "Saltar proxy del sistema",
+        "custom": "Proxy personalizado",
+        "default": "Predeterminado del sistema",
+        "title": "Configuraciones del proxy (requiere reinicio de la aplicación)"
+      },
       "resetToDefault": "Restablecer al valor predeterminado",
       "systemInstructions": "Instrucciones del sistema"
     },

@@ -192,7 +192,7 @@ test('Settings Appearance', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(wrapper, 9)
-  expect(tab.findAll('.group')).toHaveLength(6)
+  expect(tab.findAll('.group')).toHaveLength(7)
 
   expect(store.config.llm.autoVisionSwitch).not.toBe(false)
   tab.find('.group.vision input').setValue(false)
@@ -206,9 +206,23 @@ test('Settings Advanced', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.general.bypassProxy).not.toBe(true)
-  tab.find('.group.proxy input').setValue(true)
-  expect(store.config.general.bypassProxy).toBe(true)
+  expect(store.config.general.proxyMode).toBe('default')
+  expect(tab.find('[name=customProxy]').exists()).toBe(false)
+  tab.find('[name=proxyMode]').setValue('bypass')
+  expect(store.config.general.proxyMode).toBe('bypass')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  tab.find('[name=proxyMode]').setValue('custom')
+  expect(store.config.general.proxyMode).toBe('custom')
+  await tab.vm.$nextTick()
+  expect(tab.find('[name=customProxy]').exists()).toBe(true)
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  await tab.find('[name=customProxy]').setValue('http://localhost:8080')
+  expect(store.config.general.proxyMode).toBe('custom')
+  expect(store.config.general.customProxy).toBe('http://localhost:8080')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

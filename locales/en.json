@@ -1199,6 +1199,7 @@
       "couldNotGenerate": "Sorry, I could not generate text for that prompt.",
       "invalidModel": "Sorry, it seems this model is not available.",
       "missingApiKey": "You need to enter your API key in the Models tab of [Settings](#settings_models) in order to chat.",
+      "networkError": "Sorry, I could not connect to the LLM provider. Please check your internet connection or your [proxy settings](#settings_advanced) if you have defined any.",
       "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your LLM provider account.",
       "pluginDescriptionTooLong": "Sorry, it seems that one of the plugins description is too long. If you tweaked them in Settings | Advanced, please try again.",
       "quotaExceeded": "Sorry, it seems you have reached the rate limit of your LLM provider account. Try again later.",
@@ -1448,8 +1449,8 @@
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
       "autoVisionSwitch": "Automatically switch to vision model",
-      "bypassProxy": "Bypass system proxy server (requires app restart)",
       "conversationLength": "Messages per conversation",
+      "header": "Miscellaneous settings",
       "imageResize": "Image resize",
       "imageResizeOptions": {
         "none": "No resize",
@@ -1474,6 +1475,12 @@
         "video_plugin": "Video Plugin - Description (1024 characters max)"
       },
       "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
+      "proxy": {
+        "bypass": "Bypass system proxy",
+        "custom": "Custom proxy",
+        "default": "System default",
+        "title": "Proxy settings (requires app restart)"
+      },
       "resetToDefault": "Reset to default value",
       "systemInstructions": "System instructions"
     },

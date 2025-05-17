@@ -147,8 +147,10 @@ app.whenReady().then(() => {
   }
 
   // proxy
-  if (settings.general.bypassProxy) {
+  if (settings.general.proxyMode === 'bypass') {
     app.commandLine.appendSwitch('no-proxy-server');
+  } else if (settings.general.proxyMode === 'custom' && settings.general.customProxy?.length) {
+    app.commandLine.appendSwitch('proxy-server', settings.general.customProxy);
   }
 
   // debugging

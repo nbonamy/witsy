@@ -142,11 +142,21 @@ export type GenerationResult =
 
     } catch (error) {
       console.error('Error while generating text', error)
+
       if (error.name !== 'AbortError') {
+
+        const cause = error.cause?.stack?.toString()?.toLowerCase() || ''
         const message = error.message.toLowerCase()
+
+        // proxy
+        if (!error.status && (cause.includes('proxy') || cause.includes('network'))) {
+          console.error('Network error:', cause)
+          response.setText(t('generator.errors.networkError'))
+          rc = 'error'
+        }
         
         // missing api key
-        if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
+        else if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
           console.error('Missing API key:', error.status, message)
           response.setText(t('generator.errors.missingApiKey'))
           rc = 'missing_api_key'

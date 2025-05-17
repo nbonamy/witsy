@@ -1180,6 +1180,7 @@
       "couldNotGenerate": "Entschuldigung, ich konnte keinen Text für diesen Prompt erstellen.",
       "invalidModel": "Entschuldigung, es scheint, dass dieses Modell nicht verfügbar ist.",
       "missingApiKey": "Sie müssen Ihren API-Schlüssel im Tab Modelle unter [Einstellungen](#settings_models) eingeben, um zu chatten.",
+      "networkError": "Entschuldigung, ich konnte keine Verbindung zum LLM-Anbieter herstellen. Bitte überprüfen Sie Ihre Internetverbindung oder Ihre [Proxy-Einstellungen](#settings_advanced), wenn Sie welche definiert haben.",
       "outOfCredits": "Entschuldigung, es scheint, dass Sie kein Guthaben mehr haben. Überprüfen Sie den Kontostand bei Ihrem LLM-Anbieter.",
       "pluginDescriptionTooLong": "Entschuldigung, es scheint, dass die Beschreibung eines der Plugins zu lang ist. Wenn Sie sie in Einstellungen | Erweitert geändert haben, versuchen Sie es bitte erneut.",
       "quotaExceeded": "Entschuldigung, es scheint, dass Sie das Limit Ihres LLM-Anbieterkontos erreicht haben. Versuchen Sie es später erneut.",
@@ -1418,8 +1419,8 @@
     "advanced": {
       "autoSavePrompt": "Immer Prompt-Sitzungen im Chatverlauf speichern",
       "autoVisionSwitch": "Automatisch zum Vision-Modell wechseln",
-      "bypassProxy": "System-Proxy-Server umgehen (erfordert einen Neustart der App)",
       "conversationLength": "Nachrichten pro Unterhaltung",
+      "header": "Sonstige Einstellungen",
       "imageResize": "Bildgröße",
       "imageResizeOptions": {
         "none": "Keine Größe",
@@ -1444,6 +1445,12 @@
         "video_plugin": "Video-Plugin - Beschreibung (maximal 1024 Zeichen)"
       },
       "overridingHelp": "Benutzerdefinierte Prompts oder Anweisungen gelten für alle Sprachen.",
+      "proxy": {
+        "bypass": "System-Proxy-Server umgehen",
+        "custom": "Benutzerdefinierter Proxy",
+        "default": "Systemstandard",
+        "title": "Proxy-Einstellungen (erfordert Neustart der App)"
+      },
       "resetToDefault": "Auf Standardwert zurücksetzen",
       "systemInstructions": "System-Prompt"
     },

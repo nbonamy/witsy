@@ -1180,6 +1180,7 @@
       "couldNotGenerate": "Mi dispiace, non sono riuscito a generare del testo per quel prompt.",
       "invalidModel": "Mi dispiace, sembra che questo modello non sia disponibile.",
       "missingApiKey": "Devi inserire la tua chiave API nella scheda Modelli delle [Impostazioni](#settings_models) per poter chattare.",
+      "networkError": "Spiacente, non sono riuscito a connettermi al fornitore LLM. Controlla la tua connessione internet o le tue [impostazioni del proxy](#settings_advanced) se ne hai definite alcune.",
       "outOfCredits": "Mi dispiace, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore LLM.",
       "pluginDescriptionTooLong": "Mi dispiace, sembra che la descrizione di uno dei plugin sia troppo lunga. Se li hai modificati in Impostazioni | Avanzate, riprova.",
       "quotaExceeded": "Mi dispiace, sembra che tu abbia raggiunto il limite di velocità del tuo account fornitore LLM. Riprova più tardi.",
@@ -1418,8 +1419,8 @@
     "advanced": {
       "autoSavePrompt": "Salva sempre le sessioni di richiesta nella cronologia chat",
       "autoVisionSwitch": "Passa automaticamente al modello visione",
-      "bypassProxy": "Salta il server proxy di sistema (richiede riavvio dell'app)",
       "conversationLength": "Messaggi per conversazione",
+      "header": "Impostazioni varie",
       "imageResize": "Ridimensionamento immagine",
       "imageResizeOptions": {
         "none": "Nessun ridimensionamento",
@@ -1444,6 +1445,12 @@
         "video_plugin": "Plugin Video - Descrizione (massimo 1024 caratteri)"
       },
       "overridingHelp": "I prompt o le istruzioni personalizzate sono applicabili a tutte le lingue.",
+      "proxy": {
+        "bypass": "Ignora il proxy di sistema",
+        "custom": "Proxy personalizzato",
+        "default": "Predefinito di sistema",
+        "title": "Impostazioni del proxy (richiede riavvio dell'app)"
+      },
       "resetToDefault": "Reimposta al valore predefinito",
       "systemInstructions": "Istruzioni di sistema"
     },

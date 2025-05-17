@@ -1199,6 +1199,7 @@
       "couldNotGenerate": "抱歉，我无法为该提示生成文本。",
       "invalidModel": "抱歉，似乎这个模型不可用。",
       "missingApiKey": "你需要在 [设置](#settings_models) 的模型标签中输入你的 API 密钥，才能进行聊天。",
+      "networkError": "抱歉，我无法连接到 LLM 提供者。如果您定义了任何 [代理设置](#settings_advanced)，请检查您的互联网连接或这些设置。",
       "outOfCredits": "抱歉，似乎你已经用完了你的 LLM 提供商账户的余额。检查你的 LLM 提供商账户余额。",
       "pluginDescriptionTooLong": "抱歉，似乎其中一个插件描述过长。如果你在设置 | 高级中进行了调整，请尝试再次。",
       "quotaExceeded": "抱歉，似乎你已经达到了你的 LLM 提供商账户的速率限制。稍后再试。",
@@ -1448,8 +1449,8 @@
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
       "autoVisionSwitch": "自动切换到视觉模型",
-      "bypassProxy": "绕过系统代理服务器（需要重新启动应用）",
       "conversationLength": "每段对话的消息数量",
+      "header": "杂项设置",
       "imageResize": "图像调整大小",
       "imageResizeOptions": {
         "none": "不调整大小",
@@ -1474,6 +1475,12 @@
         "video_plugin": "视频插件 - 描述（最多 1024 个字符）"
       },
       "overridingHelp": "自定义提示或指令适用于所有语言。",
+      "proxy": {
+        "bypass": "绕过系统代理",
+        "custom": "自定义代理",
+        "default": "系统默认",
+        "title": "代理设置（需要重启应用）"
+      },
       "resetToDefault": "重置为默认值",
       "systemInstructions": "系统指令"
     },

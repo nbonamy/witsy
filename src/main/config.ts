@@ -51,6 +51,14 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   const config = mergeConfig(defaults, overrides)
 
   // backwards compatibility
+  if ('bypassProxy' in config.general) {
+    if (config.general.bypassProxy) {
+      config.general.proxyMode = 'bypass'
+    }
+    delete config.general.bypassProxy
+  }
+
+  // backwards compatibility
   if (config.openai || config.ollama) {
     config.engines = {
       openai: config.openai,
