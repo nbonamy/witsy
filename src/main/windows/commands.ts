@@ -118,8 +118,6 @@ export const closeCommandPicker = async (sourceApp?: Application): Promise<void>
 
 };
 
-
- 
 const activateCommandPicker = async () => {
   
   const isThere = () =>
