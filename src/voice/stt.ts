@@ -35,16 +35,31 @@ export type ProgressInfo = DownloadStatus | DownloadProgress | TaskStatus
 
 export type ProgressCallback = (data: ProgressInfo) => void
 
+export type STTStatus = 'connected' | 'text' | 'done' | 'not_authorized' | 'out_of_credits' | 'quota_reached' | 'error'
+
 export type TranscribeResponse = {
   text: string
 }
 
-export type StreamingResponse = {
-  type: 'init'|'text'|'done'|'error'
-  content?: string
+export type StreamingChunkText = {
+  type: 'text'
+  content: string
 }
 
-export type StreamingCallback = (response: StreamingResponse) => void
+export type StreamingChunkStatus = {
+  type: 'status'
+  status: STTStatus
+}
+
+export type StreamingChunkError = {
+  type: 'error'
+  status: STTStatus
+  error: string
+}
+
+export type StreamingChunk = StreamingChunkText | StreamingChunkStatus | StreamingChunkError
+
+export type StreamingCallback = (chunk: StreamingChunk) => void
 
 export interface STTEngine {
 

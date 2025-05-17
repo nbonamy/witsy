@@ -1,19 +1,19 @@
 
 import { type Configuration } from '../types/config'
-import getSTTEngine, { StreamingResponse, type STTEngine, type TranscribeResponse } from '../voice/stt'
+import getSTTEngine, { StreamingChunk, StreamingChunkError, STTEngine, TranscribeResponse } from '../voice/stt'
+import { t } from '../services/i18n'
+import Dialog from './dialog'
 
 class Transcriber {
 
   config: Configuration
   engine: STTEngine|null
   streaming: boolean
-  streamingCallback: (text: string) => void
-
+  
   constructor(config: Configuration) {
     this.config = config
     this.engine = null
     this.streaming = false
-    this.streamingCallback = null
   }
 
   get model(): string {
@@ -53,18 +53,15 @@ class Transcriber {
 
   }
 
-  async startStreaming(callback: (text: string) => void): Promise<void> {
+  async startStreaming(callback: (chunk: StreamingChunk) => void): Promise<void> {
 
     if (!this.requiresStreaming || !this.engine?.startStreaming) {
       throw new Error('Streaming not supported by this engine')
     }
 
     this.streaming = true
-    this.streamingCallback = callback
-    await this.engine.startStreaming((response: StreamingResponse) => {
-      if (response.type === 'text') {
-        this.streamingCallback(response.content)
-      }
+    await this.engine.startStreaming((chunk: StreamingChunk) => {
+      callback(chunk)
     })
   }
 
@@ -84,5 +81,30 @@ class Transcriber {
 }
 
 export default function useTranscriber(config: Configuration) {
-  return new Transcriber(config)
+  return {
+    transcriber: new Transcriber(config),
+    processStreamingError: async (chunk: StreamingChunkError) => {
+
+      // process
+      console.error('Error in streaming:', chunk.status, chunk.error)
+      if (chunk.status === 'not_authorized') {
+      
+        const result = await Dialog.show({
+          title: t('transcribe.errors.notAuthorized.title'),
+          text: t('transcribe.errors.notAuthorized.text'),
+          showCancelButton: true,
+        })
+
+        if (result.isConfirmed) {
+          window.api.settings.open({ initialTab: 'voice', engine: 'stt' })
+        }
+      
+      } else if (chunk.status === 'out_of_credits' || chunk.status === 'quota_reached') {
+        Dialog.alert(t('transcribe.errors.outOfCredits'))
+      } else {
+        Dialog.alert(t('transcribe.errors.unknown'))
+      }
+
+    }
+  }
 }

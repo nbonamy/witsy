@@ -42,13 +42,17 @@ const currentView = computed(() => {
   if (current.value == 'stt') return SettingsSTT
 })
 
-const select = (item: { id: string}) => {
+const select = (item: { id: string }) => {
   current.value = item.id
   nextTick(() => settings.value.load())
 }
 
-const load = () => {
-  settings.value.load()
+const load = (payload: { engine: string }) => {
+  if (payload?.engine) {
+    select({ id: payload.engine })
+  } else {
+    settings.value.load()
+  }
 }
 
 const save = () => {

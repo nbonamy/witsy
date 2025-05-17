@@ -98,6 +98,9 @@ onMounted(async () => {
       if (params.initialTab === 'models' && params.engine) {
         settingsLLM.value?.load({ engine: params.engine })
       }
+      if (params.initialTab === 'voice' && params.engine) {
+        settingsVoice.value?.load({ engine: params.engine })
+      }
     }
   }, { immediate: true })
 

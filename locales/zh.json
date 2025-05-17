@@ -1831,10 +1831,18 @@
   "transcribe": {
     "autoStart": "窗口打开时开始转录",
     "clickToRecord": "准备好了就点击录音按钮！",
-    "errorCopy": "复制文本到剪贴板时出错。您可以尝试手动复制。",
-    "errorMicrophone": "无法访问麦克风",
-    "errorSTTNotReady": "语音转文本引擎未准备好",
-    "errorTranscription": "转录过程中发生错误",
+    "errors": {
+      "copy": "复制文本到剪贴板时出错",
+      "microphone": "访问麦克风时出错",
+      "notAuthorized": {
+        "text": "点击确定以打开设置窗口并检查您的API密钥。",
+        "title": "请求未授权。请在设置中检查您的API密钥。"
+      },
+      "notReady": "语音转文本引擎未准备好",
+      "outOfCredits": "抱歉，您似乎已经用完了积分。请检查您提供商账户的余额。",
+      "transcription": "转录过程中发生错误",
+      "unknown": "发生未知错误。请再试一次。"
+    },
     "spaceKeyHint": {
       "pushToTalk": "您也可以按住空格键进行录音。",
       "toggle": "您也可以按空格键开始录音，再次按空格键停止录音。"
