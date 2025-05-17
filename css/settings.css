@@ -198,8 +198,7 @@
   height: 100vh;
 
   .master {
-    padding: 1rem;
-    padding-right: 0;
+    padding: 0.5rem;
     border-right: 1px solid var(--sidebar-border-color);
     background-color: color-mix(in srgb, var(--sidebar-bg-color), var(--background-color) 50%);
   }
