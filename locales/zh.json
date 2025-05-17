@@ -375,6 +375,7 @@
       "notEditable": "此命令不可编辑。捕获的内容将在提示中提供，您可以根据需要提问。",
       "prompt": "提示",
       "resetToDefault": "将名称和提示重置为默认值",
+      "shortcutDescription": "在命令面板激活时按下这个键以运行此命令。",
       "title": "命令详情",
       "useDefault": "使用命令默认值",
       "validation": {
