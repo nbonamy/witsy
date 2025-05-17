@@ -375,6 +375,7 @@
       "notEditable": "This command is not editable. The content captured will be available in the prompt for you to ask anything about it!",
       "prompt": "Prompt",
       "resetToDefault": "Reset name and prompt to default values",
+      "shortcutDescription": "Hit this key when the command palette is active to run this command.",
       "title": "Command details",
       "useDefault": "Use commands default",
       "validation": {

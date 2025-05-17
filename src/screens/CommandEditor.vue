@@ -36,7 +36,10 @@
       </div>
       <div class="group">
         <label>{{ t('common.shortcut') }}</label>
-        <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
+        <div class="subgroup">
+          <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
+          {{ t('commands.editor.shortcutDescription') }}
+        </div>
       </div>
     </template>
     <template #footer>
@@ -207,10 +210,16 @@ defineExpose({
   text-align: center;
 }
 
-#command-editor form .group input.shortcut {
-  flex: 0 0 32px;
-  text-align: center;
-  text-transform: uppercase;
+#command-editor form .group .subgroup:has(.shortcut) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  input.shortcut {
+    width: 32px;
+    text-align: center;
+    text-transform: uppercase;
+  }
 }
 
 .windows #command-editor .icon {

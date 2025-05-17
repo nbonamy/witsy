@@ -356,6 +356,7 @@
       "notEditable": "Questo comando non è modificabile. Il contenuto catturato sarà disponibile nel prompt affinché tu possa chiedere qualsiasi cosa a riguardo!",
       "prompt": "Prompt",
       "resetToDefault": "Ripristina nome e prompt ai valori predefiniti",
+      "shortcutDescription": "Premi questo tasto quando la palette dei comandi è attiva per eseguire questo comando.",
       "title": "Dettagli del comando",
       "useDefault": "Utilizza i parametri predefiniti",
       "validation": {

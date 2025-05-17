@@ -375,6 +375,7 @@
       "notEditable": "Este comando não é editável. O conteúdo capturado estará disponível no prompt para você perguntar qualquer coisa sobre ele!",
       "prompt": "Prompt",
       "resetToDefault": "Redefinir nome e prompt para os valores padrão",
+      "shortcutDescription": "Pressione esta tecla quando a paleta de comandos estiver ativa para executar este comando.",
       "title": "Detalhes do comando",
       "useDefault": "Usar padrões de comandos",
       "validation": {

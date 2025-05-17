@@ -375,6 +375,7 @@
       "notEditable": "Tego polecenia nie można edytować. Przechwycona zawartość będzie dostępna w oknie zachęty, abyś mógł o nią zapytać!",
       "prompt": "Podpowiedź",
       "resetToDefault": "Zresetuj nazwę i monit do wartości domyślnych",
+      "shortcutDescription": "Naciśnij ten klawisz, gdy paleta poleceń jest aktywna, aby wykonać to polecenie.",
       "title": "Szczegóły polecenia",
       "useDefault": "Użyj poleceń domyślnych",
       "validation": {

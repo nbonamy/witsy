@@ -356,6 +356,7 @@
       "notEditable": "Este comando no es editable. ¡El contenido capturado estará disponible en el aviso para que puedas preguntar cualquier cosa sobre él!",
       "prompt": "Aviso",
       "resetToDefault": "Restablecer nombre y aviso a valores predeterminados",
+      "shortcutDescription": "Presiona esta tecla cuando la paleta de comandos esté activa para ejecutar este comando.",
       "title": "Detalles del comando",
       "useDefault": "Usar valores predeterminados de comandos",
       "validation": {

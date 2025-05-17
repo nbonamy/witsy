@@ -356,6 +356,7 @@
       "notEditable": "Dieser Befehl ist nicht bearbeitbar. Der erfasste Inhalt steht Ihnen im Prompt zur Verfügung, damit Sie alles darüber fragen können!",
       "prompt": "Prompt",
       "resetToDefault": "Name und Prompt auf Standardwerte zurücksetzen",
+      "shortcutDescription": "Drücken Sie diese Taste, wenn die Befehls-Palette aktiv ist, um diesen Befehl auszuführen.",
       "title": "Befehlsdetails",
       "useDefault": "Verwenden Sie die Standardeinstellungen für Befehle",
       "validation": {
