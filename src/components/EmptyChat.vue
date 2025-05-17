@@ -12,6 +12,7 @@
         </div>
         <EngineLogo :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
         <div class="models" v-if="models?.length">
+          <BIconArrowRepeat class="for=symmetry" style="visibility: hidden; margin-right: 0.5rem;" />
           <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
             <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
           </select>
