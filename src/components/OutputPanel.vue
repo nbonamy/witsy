@@ -1,6 +1,6 @@
 <template>
-  <div class="response messages openai size4">
-    <MessageItem :message="message" :show-role="false" :show-actions="false"/>
+  <div class="response messages openai size4" @mousedown.stop="onMouseDown">
+    <MessageItem :message="message" :show-role="false" :show-actions="false" />
     <div class="actions">
       <MessageItemActionCopy :message="message" ref="actionCopy" />
       <div class="action replace" v-if="!isMas && showReplace && !message.transient" @click="onReplace">
@@ -81,6 +81,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
+  'drag',
   'close',
   'clear',
   'chat',
@@ -106,6 +107,12 @@ onUnmounted(() => {
   audioPlayer.removeListener(onAudioPlayerStatus)
 })
 
+const onMouseDown = (ev: MouseEvent) => {
+  const classList: DOMTokenList = (ev.target as HTMLElement)?.classList || new DOMTokenList()
+  if (classList.contains('response') || classList.contains('actions')) {
+    emit('drag', ev)
+  }
+}
 
 const onKeyDown = (ev: KeyboardEvent) => {
 
@@ -231,7 +238,6 @@ defineExpose({
 <style scoped>
 
 .response {
-  -webkit-app-region: drag;
   box-shadow: var(--window-box-shadow);
   background-color: var(--window-bg-color);
   border-radius: var(--border-radius);
@@ -239,14 +245,14 @@ defineExpose({
   color: var(--text-color);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   .message {
-    -webkit-app-region: no-drag;
     overflow-y: auto;
     margin-bottom: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
-    scrollbar-color: var(--scrollbar-thumb-color) var(--background-color);
+    scrollbar-color: var(--scrollbar-thumb-color) var(--anywhere-bg-color);
   }
 
   .actions {
@@ -259,11 +265,11 @@ defineExpose({
     padding-bottom: 2px;
     color: var(--icon-color);
     font-size: 10pt;
-    cursor: pointer;
 
     .action {
       display: flex;
       align-items: center;
+      cursor: pointer;
       svg {
         margin-right: 4px;
       }

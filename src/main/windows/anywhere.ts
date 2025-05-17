@@ -1,46 +1,36 @@
 
 import { anyDict } from 'types/index';
 import { Application } from '../../types/automation';
-import { app, BrowserWindow, Size } from 'electron';
-import { createWindow, getCurrentScreen, getCenteredCoordinates, ensureOnCurrentScreen, releaseFocus } from './index';
+import { app, BrowserWindow } from 'electron';
+import { createWindow, getCurrentScreen, ensureOnCurrentScreen, releaseFocus, getWindowScreen, getFullscreenBounds } from './index';
 import { useI18n } from '../i18n';
 
 export let promptAnywhereWindow: BrowserWindow = null;
 
-const kWidthMinimum = 800;
-const kWidthMaximum = 1000;
-const kWidthRatio = 2.25;
-
-const desiredSize = (): Size => ({
-  width: Math.min(kWidthMaximum, Math.max(kWidthMinimum, Math.floor(getCurrentScreen().workAreaSize.width / kWidthRatio))),
-  height: Math.floor(getCurrentScreen().workAreaSize.height * 0.80)
-});
-
 export const preparePromptAnywhere = (queryParams?: anyDict): void => {
 
   // get bounds
-  const size = desiredSize();
-  const { x } = getCenteredCoordinates(size.width, size.height);
-  const y = Math.floor(size.height * 0.18);
+  const windowScreen = getCurrentScreen();
 
   // open a new one
   promptAnywhereWindow = createWindow({
     hash: '/prompt',
     queryParams: queryParams,
     title: useI18n(app)('tray.menu.quickPrompt'),
-    x, y, width: size.width, height: size.height,
+    ...getFullscreenBounds(windowScreen),
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
     //opacity: 0.975,
     resizable: process.env.DEBUG ? true : false,
-    // backgroundColor: 'rgba(255, 255, 255, 0)',
+    // backgroundColor: 'rgba(255, 0, 0, 0)',
     // vibrancy: 'hud',
     transparent: true,
     hiddenInMissionControl: true,
+    enableLargerThanScreen: true,
     keepHidden: true,
     hasShadow: false,
-    movable: true,
+    //movable: true,
   });
 
   // // open the DevTools
@@ -87,12 +77,12 @@ export const openPromptAnywhere = (params: anyDict): void => {
     promptAnywhereWindow.webContents.send('show', params);
   }
 
-  // adjust height to current screem
-  const windowSize = promptAnywhereWindow.getSize();
-  promptAnywhereWindow.setSize(windowSize[0], desiredSize().height);
-
   // check prompt is on the right screen
   ensureOnCurrentScreen(promptAnywhereWindow);
+
+  // adjust height to current screen
+  const windowScreen = getWindowScreen(promptAnywhereWindow);
+  promptAnywhereWindow.setBounds(getFullscreenBounds(windowScreen));
 
   // done
   promptAnywhereWindow.show();

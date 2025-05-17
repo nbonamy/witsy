@@ -1,8 +1,20 @@
 <template>
   <div class="anywhere" @mousedown="onMouseDown" @mouseup="onMouseUp">
-    <div class="container">
+    <div class="container" :style="{ top: `calc(${containerTop}px + var(--padding-top))`, left: `${containerLeft}px`, width: `${containerWidth}px` }" >
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onPromptResize">
-        <Prompt ref="prompt" :chat="chat" :history-provider="historyProvider" :placeholder="t('common.askMeAnything')" menus-position="below" :enable-doc-repo="false" :enable-attachments="true" :enable-experts="true" :enable-commands="false" :enable-conversations="false">
+        <Prompt 
+          ref="prompt" 
+          :chat="chat" 
+          :history-provider="historyProvider" 
+          :placeholder="t('common.askMeAnything')" 
+          menus-position="below" 
+          :enable-doc-repo="false" 
+          :enable-attachments="true" 
+          :enable-experts="true" 
+          :enable-commands="false" 
+          :enable-conversations="false"
+          @mousedown.stop="onMouseDownPrompt"
+        >
           <template #after>
             <div class="app" v-if="sourceApp">
               <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
@@ -17,7 +29,7 @@
       </ResizableHorizontal>
       <div class="spacer" />
       <ResizableHorizontal :min-width="500" :resize-elems="false" @resize="onResponseResize" v-if="response">
-        <OutputPanel ref="output" :message="response" :source-app="showParams?.sourceApp" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat" @retry="onRetry"/>
+        <OutputPanel ref="output" :message="response" :source-app="showParams?.sourceApp" :show-replace="showReplace" @close="onClose" @clear="onClear" @chat="onChat" @retry="onRetry" @drag="startDrag"/>
       </ResizableHorizontal>
     </div>
   </div>
@@ -61,6 +73,13 @@ const output = ref(null)
 const chat: Ref<Chat> = ref(new Chat())
 const response: Ref<Message> = ref(null)
 const showReplace = ref(false)
+
+const containerTop = ref(0)
+const containerLeft = ref(0)
+const containerWidth = ref(900)
+let isDragging = false
+let dragStartX = 0
+let dragStartY = 0
 
 let showParams: anyDict = {}
 const props = defineProps({
@@ -207,6 +226,41 @@ const processQueryParams = (params?: anyDict) => {
 
 }
 
+const onMouseDownPrompt = (event: MouseEvent) => {
+  if ((event?.target as HTMLElement)?.classList.contains('actions')) {
+    startDrag(event)
+  }
+}
+
+const startDrag = (event: MouseEvent) => {
+
+  // Only proceed if it's a primary button click (usually left mouse button)
+  if (event.button !== 0) return
+  
+  // Prevent default behavior to avoid text selection during drag
+  event.preventDefault()
+  
+  isDragging = true
+  dragStartX = event.clientX - containerLeft.value
+  dragStartY = event.clientY - containerTop.value
+  
+  // Add event listeners for dragging
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', stopDrag)
+}
+
+const onDrag = (event: MouseEvent) => {
+  if (!isDragging) return
+  containerLeft.value = event.clientX - dragStartX
+  containerTop.value = event.clientY - dragStartY
+}
+
+const stopDrag = () => {
+  isDragging = false
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', stopDrag)
+}
+
 const initChat = () => {
 
   // init thread
@@ -293,7 +347,7 @@ const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     if (prompt.value?.getPrompt()?.length) {
       prompt.value.setPrompt('')
-    } else if (!prompt.value.isContextMenuOpen()) {
+    } else if (!prompt.value.isContextMenuOpen() && !document.querySelector('dialog[open]')) {
       onClose()
     }
   }
@@ -480,14 +534,66 @@ const onRetry = () => {
 }
 
 const onPromptResize = (deltaX: number) => {
-  window.api.anywhere.resize(deltaX, 0)
+  containerLeft.value += deltaX / 2
+  containerWidth.value += deltaX
 }
 
 const onResponseResize = (deltaX: number) => {
-  window.api.anywhere.resize(deltaX, 0)
+  containerLeft.value += deltaX / 2
+  containerWidth.value += deltaX
 }
 
 </script>
+
+
+<style scoped>
+
+.anywhere {
+  
+  height: 100vh;
+  background-color: transparent;
+  -webkit-app-region: no-drag;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+}
+
+.container {
+
+  --width-ratio: 2.25;
+  --padding-top: 12.5%;
+  --border-radius: 16px;
+
+  position: relative;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin: 0 auto;
+
+  display: flex;
+  height: calc(100% - (1.5 * var(--padding-top)));
+  flex-direction: column;
+  justify-content: start;
+  align-items: stretch;
+  overflow: hidden;
+
+  .prompt {
+    box-shadow: var(--window-box-shadow);
+    border-radius: var(--border-radius);
+    resize: horizontal;
+    padding: 10px 16px;
+  }
+
+  /* this is to have space between prompt and response */
+  /* that does not close the window if clicked */
+  .spacer {
+    flex: 0 0 32px;
+  }
+
+}
+
+</style>
 
 <style>
 
@@ -609,7 +715,7 @@ const onResponseResize = (deltaX: number) => {
 
   .response {
     .message {
-      max-height: 65vh;
+      max-height: 60vh;
     }
   }
 
@@ -622,60 +728,18 @@ const onResponseResize = (deltaX: number) => {
 }
 
 dialog#engine-model-picker {
-
   position: relative;
   top: -30%;
+}
 
-  &::backdrop {
-    display: none;
+@media (prefers-color-scheme: dark) {
+  dialog#engine-model-picker::backdrop {
+    opacity: 0.35;
   }
-
 }
 
 body.macos dialog#engine-model-picker {
   top: -50%;
-}
-
-</style>
-
-<style scoped>
-
-.anywhere {
-  height: 100vh;
-  padding-left: 64px;
-  padding-right: 64px;
-  overflow: hidden;
-  background-color: transparent;
-}
-
-.container {
-
-  --border-radius: 16px;
-  
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: start;
-  align-items: stretch;
-
-  .prompt {
-    -webkit-app-region: drag;
-    box-shadow: var(--window-box-shadow);
-    border-radius: var(--border-radius);
-    resize: horizontal;
-    padding: 10px 16px;
-  }
-
-  .prompt *:not(.actions):not(.info) {
-    -webkit-app-region: no-drag;
-  }
-
-  /* this is to have space between prompt and response */
-  /* that does not close the window if clicked */
-  .spacer {
-    flex: 0 0 32px;
-  }
-
 }
 
 </style>

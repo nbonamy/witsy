@@ -1,7 +1,7 @@
 
 import { strDict } from '../../types/index';
 import { CreateWindowOpts, ReleaseFocusOpts } from '../../types/window';
-import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, screen, shell } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, Menu, nativeTheme, Display, screen, shell } from 'electron';
 import { promptAnywhereWindow } from './anywhere';
 import { commandPicker } from './commands';
 import { mainWindow } from './main';
@@ -79,12 +79,26 @@ export const getCenteredCoordinates = (w: number, h: number) => {
   };
 };
 
+export const getWindowScreen = (window: BrowserWindow): Display => {
+  const windowPosition = window.getPosition();
+  return screen.getDisplayNearestPoint({ x: windowPosition[0], y: windowPosition[1] });
+}
+
+export const getFullscreenBounds = (screen: Display): { x: number, y: number, width: number, height: number } => {
+  const x = screen.workArea.x;
+  const y = screen.workArea.y - 1;
+  return {
+    x, y,
+    width: screen.bounds.width - x,
+    height: screen.bounds.height - y,
+  }
+}
+
 // ensure window is on current screen
 export const ensureOnCurrentScreen = (window: BrowserWindow) => {
 
   const cursorScreen = getCurrentScreen();
-  const windowPosition = window.getPosition();
-  const windowScreen = screen.getDisplayNearestPoint({ x: windowPosition[0], y: windowPosition[1] });
+  const windowScreen = getWindowScreen(window);
   if (cursorScreen.id !== windowScreen.id) {
 
     // adjust width
