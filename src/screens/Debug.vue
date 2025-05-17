@@ -103,6 +103,7 @@ onMounted(() => {
   requests.value = window.api.debug.getNetworkHistory()
 
   window.api.on('network', (request: NetworkRequest) => {
+    //console.log('Received Network request:', request)
     const existingIndex = requests.value.findIndex((r) => r.id === request.id)
     if (existingIndex >= 0) {
       requests.value[existingIndex] = request

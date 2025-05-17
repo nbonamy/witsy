@@ -47,7 +47,7 @@ test('attaches debugger', async () => {
   expect(window.webContents.debugger.sendCommand).toHaveBeenLastCalledWith('Network.enable')
   expect(window.webContents.debugger.on).toHaveBeenLastCalledWith('message', expect.any(Function))
 
-  expect(window.on).toHaveBeenLastCalledWith('close', expect.any(Function))
+  expect(window.on).toHaveBeenLastCalledWith('closed', expect.any(Function))
 
 })
 

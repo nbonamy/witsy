@@ -119,6 +119,7 @@ export default (window: BrowserWindow) => {
         requests.set(requestId, networkRequest)
 
         // emit event
+        // console.log('Sending network event', networkRequest)
         debugWindow?.webContents?.send('network', networkRequest)
 
         // done
@@ -172,6 +173,7 @@ export default (window: BrowserWindow) => {
         }
 
         // emit event
+        // console.log('Sending network event', request)
         debugWindow?.webContents?.send('network', request)
 
         // cleanup
@@ -188,13 +190,15 @@ export default (window: BrowserWindow) => {
 
     })
 
-    window.on('close', () => {
+    window.on('closed', () => {
       try {
         window.webContents.debugger.detach()
       } catch (error) {
         console.error('Error detaching debugger', error)
       }
     })
+
+    // console.log('Network debugger attached')
 
   } catch (error) {
     console.error('Error attaching network debugger', error)
