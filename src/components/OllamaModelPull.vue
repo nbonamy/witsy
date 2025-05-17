@@ -115,6 +115,7 @@ const onStop = async () => {
   font-variant-numeric: tabular-nums;
   font-size: 9.5pt;
   color: var(--icon-color);
+  white-space: nowrap;
 }
 
 </style>
