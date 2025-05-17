@@ -1429,8 +1429,8 @@
       "instructions": {
         "chat": "Chat - Instrucciones",
         "docquery": "Consulta de documento - Instrucciones",
-        "image_plugin": "Plugin de Imagen - Descripción (máximo 1024 caracteres)",
-        "memory_plugin": "Plugin de Memoria - Descripción (máximo 1024 caracteres)",
+        "image_plugin": "Plugin de Imagen - Descripción",
+        "memory_plugin": "Plugin de Memoria - Descripción",
         "scratchpad_complete": "Bloc de notas - Completar",
         "scratchpad_expand": "Bloc de notas - Expandir",
         "scratchpad_improve": "Bloc de notas - Mejorar",
@@ -1442,7 +1442,7 @@
         "scratchpad_title": "Bloc de notas - Título",
         "titling": "Título de chat - Instrucciones",
         "titlingUser": "Título de chat - Sugerencia",
-        "video_plugin": "Plugin de Video - Descripción (máximo 1024 caracteres)"
+        "video_plugin": "Plugin de Video - Descripción"
       },
       "overridingHelp": "Los comandos o instrucciones personalizados son aplicables para todos los idiomas.",
       "proxy": {

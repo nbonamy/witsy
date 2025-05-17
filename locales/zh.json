@@ -1459,8 +1459,8 @@
       "instructions": {
         "chat": "聊天 - 指令",
         "docquery": "文档查询 - 指令",
-        "image_plugin": "图像插件 - 描述（最多 1024 个字符）",
-        "memory_plugin": "记忆插件 - 描述（最多 1024 个字符）",
+        "image_plugin": "图像插件 - 描述",
+        "memory_plugin": "记忆插件 - 描述",
         "scratchpad_complete": "便签 - 完成",
         "scratchpad_expand": "便签 - 扩展",
         "scratchpad_improve": "便签 - 改进",
@@ -1472,7 +1472,7 @@
         "scratchpad_title": "便签 - 标题",
         "titling": "聊天标题 - 指令",
         "titlingUser": "聊天标题 - 提示",
-        "video_plugin": "视频插件 - 描述（最多 1024 个字符）"
+        "video_plugin": "视频插件 - 描述"
       },
       "overridingHelp": "自定义提示或指令适用于所有语言。",
       "proxy": {

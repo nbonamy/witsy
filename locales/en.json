@@ -1459,8 +1459,8 @@
       "instructions": {
         "chat": "Chat - Instructions",
         "docquery": "Document query - Instructions",
-        "image_plugin": "Image Plugin - Description (1024 characters max)",
-        "memory_plugin": "Memory Plugin - Description (1024 characters max)",
+        "image_plugin": "Image Plugin - Description",
+        "memory_plugin": "Memory Plugin - Description",
         "scratchpad_complete": "Scratchpad - Complete",
         "scratchpad_expand": "Scratchpad - Expand",
         "scratchpad_improve": "Scratchpad - Improve",
@@ -1472,7 +1472,7 @@
         "scratchpad_title": "Scratchpad - Title",
         "titling": "Chat title - Instructions",
         "titlingUser": "Chat title - Prompt",
-        "video_plugin": "Video Plugin - Description (1024 characters max)"
+        "video_plugin": "Video Plugin - Description"
       },
       "overridingHelp": "Custom prompts or instructions are applicable for all languages.",
       "proxy": {
