@@ -228,6 +228,8 @@ img {
       margin: 0px 2px;
       border-radius: 4px;
       font-size: 9.5pt;
+      position: relative;
+      top: -1px;
     }
 
   }
