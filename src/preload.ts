@@ -116,6 +116,7 @@ contextBridge.exposeInMainWorld(
       import: (): void => { return ipcRenderer.sendSync('experts-import') },
     },
     docrepo: {
+      open(): void { return ipcRenderer.send('docrepo-open') },
       list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },
       connect(baseId: string): void { return ipcRenderer.send('docrepo-connect', baseId) },
       disconnect(): void { return ipcRenderer.send('docrepo-disconnect') },
