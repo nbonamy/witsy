@@ -156,6 +156,9 @@ const selectRequest = (request: NetworkRequest) => {
 
   .panel {
     flex: 0 0 250px;
+    main {
+      padding-top: 0px;
+    }
   }
 
   .loader {
@@ -169,8 +172,14 @@ const selectRequest = (request: NetworkRequest) => {
 
   .list {
     padding: 0px 0px;
-    overflow-y: auto;
+    overflow: hidden;
     max-width: 280px;
+  }
+
+  .requests {
+    overflow-y: auto;
+    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--control-bg-color);
+    flex: 1;
   }
 
   .empty {
@@ -186,10 +195,6 @@ const selectRequest = (request: NetworkRequest) => {
     border-bottom: 1px solid var(--dialog-border-color);
     cursor: pointer;
     font-size: 10pt;
-  }
-
-  .item:first-child {
-    border-top: 1px solid var(--dialog-border-color);
   }
 
   .item.selected {
