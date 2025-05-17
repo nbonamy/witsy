@@ -1429,8 +1429,8 @@
       "instructions": {
         "chat": "Conversation",
         "docquery": "Requête de document - Instructions",
-        "image_plugin": "Plugin Image - Description (1024 caractères max)",
-        "memory_plugin": "Plugin Mémoire - Description (1024 caractères max)",
+        "image_plugin": "Plugin Image - Description",
+        "memory_plugin": "Plugin Mémoire - Description",
         "scratchpad_complete": "Bloc-notes - Compléter",
         "scratchpad_expand": "Bloc-notes - Développer",
         "scratchpad_improve": "Bloc-notes - Améliorer",
@@ -1442,7 +1442,7 @@
         "scratchpad_title": "Bloc-notes - Titre",
         "titling": "Titre de conversation - Instructions",
         "titlingUser": "Titre de conversation - Prompt",
-        "video_plugin": "Plugin Vidéo - Description (1024 caractères max)"
+        "video_plugin": "Plugin Vidéo - Description"
       },
       "overridingHelp": "Les prompts et instructions personnalisés s'appliquent à toutes les langues.",
       "proxy": {

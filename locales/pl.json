@@ -1459,8 +1459,8 @@
       "instructions": {
         "chat": "Czat - Instrukcje",
         "docquery": "Zapytanie o dokument - Instrukcje",
-        "image_plugin": "Wtyczka obrazu - Opis (maksymalnie 1024 znaków)",
-        "memory_plugin": "Wtyczka pamięci - Opis (maksymalnie 1024 znaków)",
+        "image_plugin": "Wtyczka obrazu - Opis",
+        "memory_plugin": "Wtyczka pamięci - Opis",
         "scratchpad_complete": "Notatnik - Uzupełnij",
         "scratchpad_expand": "Notatnik - Rozwiń",
         "scratchpad_improve": "Notatnik - Ulepsz",
@@ -1472,7 +1472,7 @@
         "scratchpad_title": "Notatnik - Tytuł",
         "titling": "Tytuł czatu - Instrukcje",
         "titlingUser": "Tytuł czatu - Podpowiedź",
-        "video_plugin": "Wtyczka wideo - Opis (maksymalnie 1024 znaków)"
+        "video_plugin": "Wtyczka wideo - Opis"
       },
       "overridingHelp": "Niestandardowe podpowiedzi lub instrukcje są stosowane dla wszystkich języków.",
       "proxy": {

@@ -522,14 +522,14 @@ export default class {
       type: 'function',
       function: {
         name: this.uniqueToolName(server, tool.name),
-        description: tool.description ? tool.description.slice(0, 1024) : tool.name,
+        description: tool.description ? tool.description : tool.name,
         parameters: {
           type: 'object',
           properties: tool.inputSchema?.properties ? Object.keys(tool.inputSchema.properties).reduce((obj: anyDict, key: string) => {
             const prop = tool.inputSchema.properties[key]
             obj[key] = {
               type: prop.type || 'string',
-              description: (prop.description || key).slice(0, 1024),
+              description: (prop.description || key),
               ...(prop.type === 'array' ? { items: prop.items || 'string' } : {}),
             }
             return obj
