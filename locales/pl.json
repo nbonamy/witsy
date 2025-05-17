@@ -1837,10 +1837,18 @@
   "transcribe": {
     "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
-    "errorCopy": "Wystąpił błąd podczas kopiowania tekstu do schowka. Możesz spróbować skopiować go ręcznie.",
-    "errorMicrophone": "Błąd dostępu do mikrofonu",
-    "errorSTTNotReady": "Silnik zamiany mowy na tekst nie jest gotowy",
-    "errorTranscription": "Wystąpił błąd podczas transkrypcji",
+    "errors": {
+      "copy": "Błąd podczas kopiowania tekstu do schowka",
+      "microphone": "Błąd dostępu do mikrofonu",
+      "notAuthorized": {
+        "text": "Kliknij OK, aby otworzyć okno Ustawienia i sprawdzić swój klucz API.",
+        "title": "Żądanie nie zostało autoryzowane. Sprawdź swój klucz API w Ustawieniach."
+      },
+      "notReady": "Silnik rozpoznawania mowy nie jest gotowy",
+      "outOfCredits": "Przykro nam, wydaje się, że wyczerpały się kredyty. Sprawdź saldo swojego konta dostawcy.",
+      "transcription": "Wystąpił błąd podczas transkrypcji",
+      "unknown": "Wystąpił nieznany błąd. Proszę spróbować ponownie."
+    },
     "spaceKeyHint": {
       "pushToTalk": "Możesz także nacisnąć i przytrzymać spację, aby nagrywać.",
       "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."

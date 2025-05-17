@@ -1801,10 +1801,18 @@
   "transcribe": {
     "autoStart": "Inizia la trascrizione quando si apre la finestra",
     "clickToRecord": "Clicca sul pulsante di registrazione quando sei pronto!",
-    "errorCopy": "Si è verificato un errore durante la copia del testo negli appunti. Puoi provare a copiarlo manualmente.",
-    "errorMicrophone": "Errore durante l'accesso al microfono",
-    "errorSTTNotReady": "Il motore di riconoscimento vocale non è pronto",
-    "errorTranscription": "Si è verificato un errore durante la trascrizione",
+    "errors": {
+      "copy": "Errore durante la copia del testo negli appunti",
+      "microphone": "Errore nell'accesso al microfono",
+      "notAuthorized": {
+        "text": "Clicca su OK per aprire la finestra delle Impostazioni e controllare la tua chiave API.",
+        "title": "Richiesta non autorizzata. Controlla la tua chiave API nelle Impostazioni."
+      },
+      "notReady": "Il motore di riconoscimento vocale non è pronto",
+      "outOfCredits": "Spiacente, sembra che tu abbia esaurito i crediti. Controlla il saldo del tuo account fornitore.",
+      "transcription": "Si è verificato un errore durante la trascrizione",
+      "unknown": "Si è verificato un errore sconosciuto. Per favore riprova."
+    },
     "spaceKeyHint": {
       "pushToTalk": "Puoi anche tenere premuto il tasto Spazio per registrare.",
       "toggle": "Puoi anche premere il tasto Spazio per iniziare a registrare e premere di nuovo per fermarlo."

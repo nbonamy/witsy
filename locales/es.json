@@ -1801,10 +1801,18 @@
   "transcribe": {
     "autoStart": "Iniciar transcripción al abrir la ventana",
     "clickToRecord": "¡Haz clic en el botón de grabar cuando estés listo!",
-    "errorCopy": "Hubo un error al copiar el texto al portapapeles. Puede intentar copiarlo manualmente.",
-    "errorMicrophone": "Error al acceder al micrófono",
-    "errorSTTNotReady": "El motor de reconocimiento de voz no está listo",
-    "errorTranscription": "Ocurrió un error durante la transcripción",
+    "errors": {
+      "copy": "Error al copiar el texto en el portapapeles",
+      "microphone": "Error al acceder al micrófono",
+      "notAuthorized": {
+        "text": "Haz clic en Aceptar para abrir la ventana de Configuración y verificar tu clave API.",
+        "title": "La solicitud no fue autorizada. Verifica tu clave API en la Configuración."
+      },
+      "notReady": "El motor de conversión de voz a texto no está listo",
+      "outOfCredits": "Lo siento, parece que te has quedado sin créditos. Verifica el saldo de tu cuenta de proveedor.",
+      "transcription": "Se produjo un error durante la transcripción",
+      "unknown": "Se produjo un error desconocido. Por favor, inténtalo de nuevo."
+    },
     "spaceKeyHint": {
       "pushToTalk": "También puedes presionar y mantener la barra espaciadora para grabar.",
       "toggle": "También puedes presionar la barra espaciadora para comenzar a grabar y presionar nuevamente para detenerlo."

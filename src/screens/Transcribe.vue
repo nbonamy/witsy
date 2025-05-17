@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 
+import { StreamingChunk } from '../voice/stt'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -44,7 +45,7 @@ import Dialog from '../composables/dialog'
 
 // init stuff
 store.loadSettings()
-const transcriber = useTranscriber(store.config)
+const { transcriber, processStreamingError } = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
 let pushToTalkMode = false
@@ -186,35 +187,56 @@ const initializeAudio = async () => {
 
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    Dialog.alert(t('transcribe.errorMicrophone'))
+    Dialog.alert(t('transcribe.errors.microphone'))
   }
 
 }
 
 const onRecord = async (ptt: boolean) => {
 
-  try {
+  // check
+  if (transcriber.ready === false) {
+    Dialog.alert(t('transcribe.errors.notReady'))
+    return
+  }
 
-    // check
-    if (transcriber.ready === false) {
-      Dialog.alert(t('transcribe.errorSTTNotReady'))
-      return
-    }
+  // save current transcription
+  previousTranscription = transcription.value.trim()
+  if (previousTranscription.length) {
+    previousTranscription += ' '
+  }
 
-    // save current transcription
-    previousTranscription = transcription.value.trim()
-    if (previousTranscription.length) {
-      previousTranscription += ' '
-    }
+  // we need this
+  let connected = true
 
-    // streaming setup
-    const useStreaming = transcriber.requiresStreaming
-    if (useStreaming) {
-      await transcriber.startStreaming((text) => {
-        transcription.value = `${previousTranscription}${text}`
+  // streaming setup
+  const useStreaming = transcriber.requiresStreaming
+  if (useStreaming) {
+    try {
+      await transcriber.startStreaming(async (chunk: StreamingChunk) => {
+        if (chunk.type === 'text') {
+          transcription.value = `${previousTranscription}${chunk.content}`
+        } else if (chunk.type === 'error') {
+          await processStreamingError(chunk)
+          state.value = 'idle'
+          audioRecorder.stop()
+          connected = false
+        }
       })
+    } catch (err) {
+      console.error('Error in streaming:', err)
+      Dialog.alert(t('transcribe.errors.unknown'))
+      connected = false
     }
+  }
 
+  // check
+  if (!connected) {
+    return
+  }
+
+  try {
+    
     // start the recording
     pushToTalkMode = ptt
     audioRecorder.start(useStreaming)
@@ -224,7 +246,7 @@ const onRecord = async (ptt: boolean) => {
 
   } catch (err) {
     console.error('Error accessing microphone:', err)
-    Dialog.alert(t('transcribe.errorMicrophone'))
+    Dialog.alert(t('transcribe.errors.microphone'))
   }
 
 }
@@ -258,7 +280,7 @@ const transcribe = async (audioChunks: any[]) => {
 
   } catch (error) {
     console.error('Error:', error)
-    Dialog.alert(t('transcribe.errorTranscription'), error.message)
+    Dialog.alert(t('transcribe.errors.transcription'), error.message)
   }
 
 }
@@ -304,7 +326,7 @@ const onClear = () => {
 const onCopy = async () => {
   window.api.clipboard.writeText(transcription.value)
   if (window.api.clipboard.readText() != transcription.value) {
-    Dialog.alert(t('transcribe.errorCopy'))
+    Dialog.alert(t('transcribe.errors.copy'))
     return
   }
   onCancel()

@@ -1801,10 +1801,18 @@
   "transcribe": {
     "autoStart": "Commencer la transcription à l'ouverture de la fenêtre",
     "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
-    "errorCopy": "Une erreur est survenue lors de la copie du texte dans le presse-papiers. Vous pouvez essayer de le copier manuellement.",
-    "errorMicrophone": "Erreur d'accès au microphone",
-    "errorSTTNotReady": "Le moteur de reconnaissance vocale n'est pas prêt",
-    "errorTranscription": "Une erreur s'est produite pendant la transcription",
+    "errors": {
+      "copy": "Erreur lors de la copie du texte dans le presse-papiers",
+      "microphone": "Erreur d'accès au microphone",
+      "notAuthorized": {
+        "text": "Cliquez sur OK pour ouvrir la fenêtre des paramètres et vérifier votre clé API.",
+        "title": "La demande n'a pas été autorisée. Vérifiez votre clé API dans les paramètres."
+      },
+      "notReady": "Le moteur de reconnaissance vocale n'est pas prêt",
+      "outOfCredits": "Désolé, il semble que vous n'ayez plus de crédits. Vérifiez le solde de votre compte fournisseur.",
+      "transcription": "Une erreur est survenue pendant la transcription",
+      "unknown": "Une erreur inconnue est survenue. Veuillez réessayer."
+    },
     "spaceKeyHint": {
       "pushToTalk": "Vous pouvez également appuyer et maintenir la barre d'espace pour enregistrer.",
       "toggle": "Vous pouvez également appuyer sur la barre d'espace pour commencer à enregistrer et appuyer à nouveau pour l'arrêter."

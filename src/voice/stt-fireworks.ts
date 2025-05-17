@@ -53,6 +53,16 @@ export default class STTFireworks implements STTEngine {
 
   async startStreaming(callback: StreamingCallback, opts?: Record<string, string>): Promise<void> {
 
+    // check for API key before attempting connection
+    if (!this.config.engines.fireworks?.apiKey) {
+      callback({ 
+        type: 'error', 
+        status: 'not_authorized', 
+        error: 'Missing API key. Please check your Fireworks AI configuration.' 
+      })
+      return
+    }
+
     const baseWsUrl = 'wss://audio-streaming.us-virginia-1.direct.fireworks.ai'
     const wsPath = '/v1/audio/transcriptions/streaming'
 
@@ -68,19 +78,15 @@ export default class STTFireworks implements STTEngine {
 
     this.streamingSession = new WebSocket(wsUrl)
 
-    await new Promise<void>((resolve, reject) => {
-      this.streamingSession.onopen = () => {
-        console.log('[fireworks] websocket connected')
-        callback({ type: 'init' })
-        resolve()
-      }
+    this.streamingSession.onerror = (error) => {
+      console.log('[fireworks] websocket error', error)
+      callback({ type: 'error', status: 'error', error: 'WebSocket connection error' })
+    }
 
-      this.streamingSession.onerror = (error) => {
-        console.log('[fireworks] websocket error', error)
-        callback({ type: 'error', content: 'WebSocket connection failed' })
-        reject(new Error('WebSocket connection failed'))
-      }
-    })
+    this.streamingSession.onopen = () => {
+      console.log('[fireworks] websocket connected')
+      callback({ type: 'status', status: 'connected' })
+    }
 
     this.streamingSession.onmessage = (event) => {
 
@@ -95,15 +101,9 @@ export default class STTFireworks implements STTEngine {
 
     }
 
-    this.streamingSession.onerror = (error) => {
-      console.log('[fireworks] websocket error', error)
-      callback({ type: 'error', content: 'WebSocket connection error' })
-      throw new Error('WebSocket error')
-    }
-
     this.streamingSession.onclose = () => {
       console.log('[fireworks] websocket closed')
-      callback({ type: 'done' })
+      callback({ type: 'status', status: 'done' })
     }
 
   }

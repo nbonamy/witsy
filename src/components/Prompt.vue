@@ -35,6 +35,7 @@
 
 import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
+import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, Ref, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t } from '../services/i18n'
@@ -119,9 +120,9 @@ const props = defineProps({
 
 // init stuff
 const audioRecorder = useAudioRecorder(store.config)
-const transcriber = useTranscriber(store.config)
+const { transcriber, processStreamingError } = useTranscriber(store.config)
 const tipsManager = useTipsManager(store)
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
@@ -532,12 +533,25 @@ const startDictation = async () => {
   })
 
   // streaming setup
+  let connected = true
   const useStreaming = transcriber.requiresStreaming
   if (useStreaming) {
-    await transcriber.startStreaming((text) => {
-      prompt.value = text
-      autoGrow(input.value)
+    await transcriber.startStreaming(async (chunk: StreamingChunk) => {
+      if (chunk.type === 'text') {
+        prompt.value = chunk.content
+        autoGrow(input.value)
+      } else if (chunk.type === 'error') {
+        await processStreamingError(chunk)
+        dictating.value = false
+        audioRecorder.stop()
+        connected = false
+      }
     })
+  }
+
+  // check
+  if (!connected) {
+    return
   }
 
   // start

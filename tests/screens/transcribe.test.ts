@@ -11,10 +11,13 @@ enableAutoUnmount(afterEach)
 
 vi.mock('../../src/composables/transcriber', () => {
   return { default: vi.fn(() => ({
-    initialize: vi.fn(),
-    isReady: vi.fn(() => true),
-    transcribe: vi.fn(async (): Promise<TranscribeResponse> => Promise.resolve({ text: 'transcribed' })),
-    endStreaming: vi.fn(),
+    transcriber: {
+      initialize: vi.fn(),
+      isReady: vi.fn(() => true),
+      transcribe: vi.fn(async (): Promise<TranscribeResponse> => Promise.resolve({ text: 'transcribed' })),
+      endStreaming: vi.fn(),
+    },
+    processStreamingError: vi.fn(),
   })) }
 })
 

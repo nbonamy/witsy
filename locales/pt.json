@@ -1831,10 +1831,18 @@
   "transcribe": {
     "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
-    "errorCopy": "Ocorreu um erro ao copiar o texto para a área de transferência. Você pode tentar copiá-lo manualmente.",
-    "errorMicrophone": "Erro ao acessar o microfone",
-    "errorSTTNotReady": "Mecanismo de voz para texto não está pronto",
-    "errorTranscription": "Ocorreu um erro durante a transcrição",
+    "errors": {
+      "copy": "Erro ao copiar texto para a área de transferência",
+      "microphone": "Erro ao acessar o microfone",
+      "notAuthorized": {
+        "text": "Clique em OK para abrir a janela Configurações e verificar sua chave de API.",
+        "title": "A solicitação não foi autorizada. Verifique sua chave de API nas Configurações."
+      },
+      "notReady": "O mecanismo de reconhecimento de voz não está pronto",
+      "outOfCredits": "Desculpe, parece que você esgotou seus créditos. Verifique o saldo da sua conta de provedor.",
+      "transcription": "Ocorreu um erro durante a transcrição",
+      "unknown": "Ocorreu um erro desconhecido. Por favor, tente novamente."
+    },
     "spaceKeyHint": {
       "pushToTalk": "Você também pode pressionar e segurar a barra de espaço para gravar.",
       "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."

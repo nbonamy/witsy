@@ -1801,10 +1801,18 @@
   "transcribe": {
     "autoStart": "Beginne mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
-    "errorCopy": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten. Sie können versuchen, ihn manuell zu kopieren.",
-    "errorMicrophone": "Fehler beim Zugriff auf das Mikrofon",
-    "errorSTTNotReady": "Spracherkennungsengine nicht bereit",
-    "errorTranscription": "Es ist ein Fehler bei der Transkription aufgetreten",
+    "errors": {
+      "copy": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten. Sie können versuchen, ihn manuell zu kopieren.",
+      "microphone": "Fehler beim Zugriff auf das Mikrofon",
+      "notAuthorized": {
+        "text": "Klicken Sie auf OK, um das Einstellungsfenster zu öffnen und Ihren API-Schlüssel zu überprüfen.",
+        "title": "Anfrage war nicht autorisiert. Überprüfen Sie Ihren API-Schlüssel in den Einstellungen."
+      },
+      "notReady": "Spracherkennungsengine nicht bereit",
+      "outOfCredits": "Entschuldigung, es scheint, dass Sie keine Credits mehr haben. Überprüfen Sie den Kontostand Ihres Anbieterkontos.",
+      "transcription": "Es ist ein Fehler bei der Transkription aufgetreten",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
     "spaceKeyHint": {
       "pushToTalk": "Sie können auch die Leertaste gedrückt halten, um aufzuzeichnen.",
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."

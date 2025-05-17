@@ -1837,10 +1837,18 @@
   "transcribe": {
     "autoStart": "Start transcribing when window opens",
     "clickToRecord": "Click the record button when you are ready!",
-    "errorCopy": "There was an error copying the text to clipboard. You may try to copy it manually.",
-    "errorMicrophone": "Error accessing microphone",
-    "errorSTTNotReady": "Speech-to-text engine not ready",
-    "errorTranscription": "Error occurred during transcription",
+    "errors": {
+      "copy": "Error copying text to clipboard",
+      "microphone": "Error accessing microphone",
+      "notAuthorized": {
+        "text": "Click OK to open the Settings window and check your API key.",
+        "title": "Request was not authorized. Check your API key in the Settings."
+      },
+      "notReady": "Speech-to-text engine not ready",
+      "outOfCredits": "Sorry, it seems you have run out of credits. Check the balance of your provider account.",
+      "transcription": "Error occurred during transcription",
+      "unknown": "An unknown error occurred. Please try again."
+    },
     "spaceKeyHint": {
       "pushToTalk": "You can also press and hold the Space bar to record.",
       "toggle": "You can also hit Space to start recording and hit again to stop it."
