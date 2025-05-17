@@ -23,7 +23,7 @@ form .group .subgroup {
 }
 
 form .group:has(.subgroup) {
-  align-items: baseline;
+  align-items: flex-start;
   margin-bottom: 12px;
 }
 
@@ -49,6 +49,39 @@ form .control-group {
   align-items: center;
   gap: 0.2rem;
 
+}
+
+form.medium {
+
+  font-size: var(--form-medium-font-size);
+
+  .group {
+
+    span, a {
+      font-size: var(--form-medium-font-size);
+    }
+
+    input:not([type=checkbox]), select, textarea, button {
+      font-size:var(--form-medium-font-size) !important;
+    }
+
+    input:not([type=checkbox]):not([type=range]), select {
+      margin: 0;
+      padding: 0.25rem;
+    }
+
+  }
+
+  button {
+    font-size: var(--form-medium-font-size);
+  }
+
+}
+
+form.vertical.medium {
+  .group {
+    margin: 0.75rem 0;
+  }
 }
 
 form.large {

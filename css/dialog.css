@@ -62,6 +62,12 @@
       }
     }
 
+    &.large {
+      button {
+        padding-top: 5.5px;
+        padding-bottom: 5.5px;
+      }
+    }
 
   }
   

@@ -13,7 +13,6 @@
       border: 0.5px solid rgba(192, 192, 192, 0.5);
       background-color: var(--background-color);
       white-space: nowrap;
-      font-size: 9.5pt;
       padding: 2px 4px;
     }
 
@@ -23,7 +22,6 @@
     }
 
     th {
-      font-size: 9pt;
       font-weight: normal;
       text-align: left;
       position: sticky;
@@ -46,6 +44,5 @@
 
 .windows .sticky-table-container td.icon {
   font-family: 'NotoColorEmojiLimited';
-  font-size: 9pt;
 }
 
