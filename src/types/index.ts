@@ -312,6 +312,7 @@ declare global {
         export(): boolean
       }
       docrepo: {
+        open(): void
         list(): DocumentBase[]
         connect(baseId: string): void
         disconnect(): void
