@@ -73,7 +73,11 @@ vi.mock('electron', async () => {
   }
   const screen = {
     getCursorScreenPoint: vi.fn(() => ({ x: 0, y: 0 })),
-    getDisplayNearestPoint: vi.fn(() => ({ bounds: { x: 0, y: 0 }, workAreaSize: { width: 0, height: 0 } })),
+    getDisplayNearestPoint: vi.fn(() => ({
+      bounds: { x: 0, y: 0, width: 1024, height: 768 },
+      workArea: { x: 0, y: 25 },
+      workAreaSize: { width: 0, height: 0 }
+    })),
   }
   const nativeTheme = {
     shouldUseDarkColors: vi.fn(() => false),

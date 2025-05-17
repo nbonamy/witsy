@@ -583,7 +583,7 @@ const onDocRepo = async () => {
       confirmButtonText: t('common.create'),
     })
     if (result.isConfirmed) {
-      emitEvent('create-docrepo', null)
+      window.api.docrepo.open()
     }
     return
   }
@@ -827,10 +827,6 @@ defineExpose({
 
 .prompt .actions {
   display: flex;
-  -webkit-app-region: drag;
-  * {
-    -webkit-app-region: no-drag;
-  }
 }
 
 .prompt .actions-many .icon {
