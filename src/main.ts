@@ -599,6 +599,10 @@ ipcMain.on('transcribe-cancel', async () => {
   await window.closeTranscribePalette();
 });
 
+ipcMain.on('docrepo-open', () => {
+  window.openMainWindow({ queryParams: { view: 'docrepo' } });
+});
+
 ipcMain.on('docrepo-list', (event) => {
   event.returnValue = JSON.stringify(docRepo.list());
 });

@@ -42,11 +42,6 @@ onMounted(() => {
     processQueryParams(props.extra)
   }
 
-  // events
-  onEvent('create-docrepo', () => {
-    mode.value = 'docrepo'
-  })
-
 })
 
 onUnmounted(() => {
@@ -56,8 +51,16 @@ onUnmounted(() => {
 const processQueryParams = (params: anyDict) => {
   console.log('[main] processing query params', JSON.stringify(params))
   if (params.view) {
+
+    // switch and save params
     onMode(params.view)
     viewParams.value = params 
+
+    // special
+    if (params.view === 'docrepo') {
+      emitEvent('create-docrepo')
+    }
+
   }
 }
 
@@ -78,6 +81,7 @@ const onMode = async (next: MenuBarMode) => {
   } else {
     mode.value = next
   }
+
 }
 
 </script>
