@@ -1502,6 +1502,7 @@
         "openai": "OpenAI"
       },
       "darkTint": "Dark tint",
+      "lightTint": "Light tint",
       "theme": "Appearance",
       "themes": {
         "dark": "Dark",
@@ -1510,7 +1511,9 @@
       },
       "tints": {
         "black": "Black",
-        "blue": "Blue"
+        "blue": "Blue",
+        "gray": "Gray",
+        "white": "White"
       }
     },
     "commands": {
