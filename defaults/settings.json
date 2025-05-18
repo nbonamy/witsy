@@ -25,7 +25,8 @@
   },
   "appearance": {
     "theme": "system",
-    "tint": "black",
+    "lighTint": "white",
+    "darkTint": "black",
     "chatList": {
       "mode": "timeline",
       "layout": "normal"

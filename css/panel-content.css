@@ -44,6 +44,7 @@
 
       flex: 0 0 var(--window-toolbar-height);
       background-color: var(--window-decoration-color);
+      border-bottom: 1px solid var(--toolbar-border-color);
       padding: 0px 1rem;
       display: flex;
       flex-direction: row;
@@ -111,6 +112,7 @@
       
       flex: 0 0 var(--window-toolbar-height);
       background-color: var(--window-decoration-color);
+      border-bottom: 1px solid var(--toolbar-border-color);
       padding: 0px 1rem;
       display: flex;
       flex-direction: row;

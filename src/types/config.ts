@@ -91,7 +91,8 @@ export type InstructionsConfig = {
 
 export type AppearanceConfig = {
   theme: 'light' | 'dark' | 'system'
-  tint: 'black' | 'blue'
+  lightTint: 'white' | 'gray'
+  darkTint: 'black' | 'blue'
   chatList: ChatListAppearance
   chat: ChatAppearance
 }

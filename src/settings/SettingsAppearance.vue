@@ -21,9 +21,16 @@
           </div>
         </div>
       </div>
-      <div class="group tint">
+      <div class="group lightTint" v-if="appearanceTheme.getTheme() === 'light'">
+        <label>{{ t('settings.appearance.lightTint') }}</label>
+        <select v-model="lightTint" @change="onTintChange">
+          <option value="white">{{ t('settings.appearance.tints.white') }}</option>
+          <option value="gray">{{ t('settings.appearance.tints.gray') }}</option>
+        </select>
+      </div>
+      <div class="group darkTint" v-if="appearanceTheme.getTheme() === 'dark'">
         <label>{{ t('settings.appearance.darkTint') }}</label>
-        <select v-model="tint" @change="onTintChange">
+        <select v-model="darkTint" @change="onTintChange">
           <option value="black">{{ t('settings.appearance.tints.black') }}</option>
           <option value="blue">{{ t('settings.appearance.tints.blue') }}</option>
         </select>
@@ -92,6 +99,7 @@ import { ChatListLayout } from '../types/config';
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import useAppearanceTheme from '../composables/appearance_theme'
 import Message from '../models/message'
 import MessageItem from '../components/MessageItem.vue'
 
@@ -101,7 +109,8 @@ const { emitEvent } = useEventBus()
 
 const isMas = ref(false)
 const appearance = ref(null)
-const tint = ref(null)
+const darkTint = ref(null)
+const lightTint = ref(null)
 const theme = ref(null)
 const fontSize = ref(null)
 const fontFamily = ref('')
@@ -115,11 +124,14 @@ const fontStyle = computed(() => {
   }
 })
 
+// init
+const appearanceTheme = useAppearanceTheme()
 
 const load = () => {
   isMas.value = window.api.isMasBuild
   appearance.value = store.config.appearance.theme || 'system'
-  tint.value = store.config.appearance.tint || 'black'
+  lightTint.value = store.config.appearance.lightTint || 'white'
+  darkTint.value = store.config.appearance.darkTint || 'black'
   theme.value = store.config.appearance.chat.theme || 'openai'
   layout.value = store.config.appearance.chatList.layout || 'normal'
   fontFamily.value = store.config.appearance.chat.fontFamily || ''
@@ -133,13 +145,14 @@ const setAppearanceTheme = (value: string) => {
 }
 
 const onTintChange = () => {
-  emitEvent('appearance-tint-changed', tint.value)
   save()
+  emitEvent('appearance-tint-changed')
 }
 
 const save = () => {
   store.config.appearance.theme = appearance.value
-  store.config.appearance.tint = tint.value
+  store.config.appearance.lightTint = lightTint.value
+  store.config.appearance.darkTint = darkTint.value
   store.config.appearance.chat.theme = theme.value
   store.config.appearance.chat.fontFamily = fontFamily.value
   store.config.appearance.chat.fontSize = fontSize.value

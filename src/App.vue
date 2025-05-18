@@ -57,11 +57,8 @@ const queryParams = computed(() => {
   return queryParams;
 })
 
-const setTint = (tint?: string) => {
-  if (!tint) {
-    const config = window.api.config.load()
-    tint = config.appearance.tint || 'black'
-  }
+const setTint = () => {
+  const tint = appearanceTheme.getTint()
   document.querySelector('body').setAttribute('data-tint', tint)
 }
 
@@ -94,8 +91,8 @@ const setLocale = () => {
 onMounted(() => {
 
   // events
-  onEvent('appearance-tint-changed', (tint: string) => {
-    setTint(tint)
+  onEvent('appearance-tint-changed', () => {
+    setTint()
   })
 
   // config change may lead to tint change
@@ -128,6 +125,7 @@ onMounted(() => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
       theme.value = event.matches ? 'dark' : 'light'
       emitEvent('appearance-theme-change', theme.value)
+      setTint()
     })
   }
 

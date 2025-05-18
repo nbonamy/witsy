@@ -18,23 +18,21 @@
       </div>
       <div class="group">
         <label>{{ t('settings.shortcuts.aiCommands') }}</label>
-        <div class="subgroup">
-          <InputShortcut v-model="command" @change="save" />
-          <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
-        </div>
+        <InputShortcut v-model="command" @change="save" />
+      </div>
+      <div class="group">
+        <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
       </div>
       <div class="group">
         <label>{{ t('settings.shortcuts.designStudio') }}</label>
-        <div class="subgroup">
-          <InputShortcut v-model="studio" @change="save" />
-        </div>
+        <InputShortcut v-model="studio" @change="save" />
       </div>
       <div class="group">
         <label>{{ t('settings.shortcuts.readAloud') }}</label>
-        <div class="subgroup">
-          <InputShortcut v-model="readaloud" @change="save" />
-          <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
-        </div>
+        <InputShortcut v-model="readaloud" @change="save" />
+      </div>
+      <div class="group">
+        <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
       </div>
       <div class="group">
         <label>{{ t('settings.shortcuts.dictation') }}</label>
@@ -100,23 +98,19 @@ defineExpose({ load })
 <style scoped>
 
 .settings form.tab-content:deep() main {
+
+  --label-width: 250px;
   
   max-width: 600px;
   
   .group {
-    width: auto;
     label {
-      white-space: wrap;
-      width: 250px;
-      overflow-x: hidden;
+      width: var(--label-width);
       font-weight: bold;
     }
-    .subgroup {
-      flex: 0 1 310px;
-      overflow-x: hidden;
-    }
-    .wrapper {
-      flex-basis: 330px;
+    &:not(:has(label)) {
+      margin-top: -0.25rem;
+      padding-left: calc(var(--label-width) + 0.5rem);
     }
   }
 }

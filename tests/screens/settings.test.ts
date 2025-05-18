@@ -19,6 +19,12 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
   }
 })
 
+vi.mock('../../src/composables/appearance_theme.ts', async () => {
+  return { default: () => ({
+    getTheme: () => store.config.appearance.theme === 'system' ? 'light' : store.config.appearance.theme
+  })}
+})
+
 let wrapper: VueWrapper<any>
 
 const checkVisibility = (visible: number) => {
@@ -163,15 +169,22 @@ test('Settings Appearance', async () => {
   expect(tab.findAll('.group')).toHaveLength(7)
 
   expect(store.config.appearance.theme).toBe('system')
+
+  expect(store.config.appearance.lightTint).not.toBe('white')
+  tab.find('.group.lightTint select').setValue('gray')
+  expect(store.config.appearance.lightTint).toBe('gray')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
   await tab.find('.group.appearance div:nth-of-type(2)').trigger('click')
   expect(store.config.appearance.theme).toBe('dark')
   expect(window.api.setAppearanceTheme).toHaveBeenLastCalledWith('dark')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.appearance.tint).not.toBe('blue')
-  tab.find('.group.tint select').setValue('blue')
-  expect(store.config.appearance.tint).toBe('blue')
+  expect(store.config.appearance.darkTint).not.toBe('blue')
+  tab.find('.group.darkTint select').setValue('blue')
+  expect(store.config.appearance.darkTint).toBe('blue')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

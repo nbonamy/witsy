@@ -25,8 +25,12 @@
   --window-decoration-color: #f4f4f4;
   --window-toolbar-height: 3rem;
 
+  --menubar-bg-color: var(--window-decoration-color);
+  --menubar-border-color: transparent;
   --menubar-icon-color: var(--icon-color);
   --menubar-highlight-color: var(--highlight-color);
+
+  --toolbar-border-color: transparent;
 
   --control-bg-color: var(--background-color);
   --control-border-color: #d0d0d0;
@@ -143,6 +147,13 @@
   --control-border-radius: 2px;
 }
 
+[data-tint=gray], [data-tint=gray] * {
+  --menubar-bg-color: var(--background-color);
+  --toolbar-border-color: var(--sidebar-border-color);
+  --sidebar-bg-color: var(--window-decoration-color);
+}
+
+
 @media (prefers-color-scheme: dark) {
   
   :root {
@@ -159,6 +170,7 @@
     --default-window-decoration-color: #404040;
     --window-decoration-color: var(--default-window-decoration-color);
 
+    --menubar-bg-color: var(--window-decoration-color);
     --menubar-highlight-color: var(--link-color);
 
     --control-bg-color: #646464;
@@ -262,6 +274,7 @@
     --default-window-decoration-color: rgb(40, 50, 65);
     --window-decoration-color: var(--default-window-decoration-color);
 
+    --menubar-bg-color: var(--window-decoration-color);
     --menubar-icon-color: var(--icon-color);
   
     --control-bg-color: rgb(45, 65, 85);

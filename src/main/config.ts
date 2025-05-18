@@ -59,6 +59,12 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   }
 
   // backwards compatibility
+  if ('tint' in config.appearance) {
+    config.appearance.darkTint = config.appearance.tint
+    delete config.appearance.tint
+  }
+
+  // backwards compatibility
   if (config.openai || config.ollama) {
     config.engines = {
       openai: config.openai,

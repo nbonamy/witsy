@@ -39,7 +39,7 @@ export const addWindowListener = (listener: WindowListener) => {
 export const titleBarOptions = (opts?: any): BrowserWindowConstructorOptions => {
 
   const settings = config.loadSettings(app);
-  const isBlueTheme = settings.appearance.tint === 'blue';
+  const isBlueTheme = settings.appearance.darkTint === 'blue';
 
   opts = {
     titleBarStyle: 'hidden',

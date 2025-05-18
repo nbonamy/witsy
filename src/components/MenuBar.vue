@@ -1,57 +1,63 @@
 
 <template>
 
-  <div class="menu">
+  <div class="menubar-wrapper">
 
-    <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('change', 'chat')">
-      <BIconChatSquareQuote />
-      <span>{{ t('common.chat') }}</span>
-    </MenuBarItem>
+    <div class="corner"></div>
 
-    <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')">
-      <BIconPalette />
-      <span>{{ t('designStudio.title') }}</span>
-    </MenuBarItem>
+      <div class="menu">
 
-    <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')">
-      <BIconJournalText />
-      <span>{{ t('scratchpad.title') }}</span>
-    </MenuBarItem>
 
-    <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
-      <BIconMic />
-      <span>{{ t('transcribe.title') }}</span>
-    </MenuBarItem>
+      <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('change', 'chat')">
+        <BIconChatSquareQuote />
+        <span>{{ t('common.chat') }}</span>
+      </MenuBarItem>
 
-    <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
-      <BIconChatSquareDots />
-      <span>{{ t('realtimeChat.title') }}</span>
-    </MenuBarItem>
+      <MenuBarItem action="studio" :active="mode === 'studio'" @click="emit('change', 'studio')">
+        <BIconPalette />
+        <span>{{ t('designStudio.title') }}</span>
+      </MenuBarItem>
 
-    <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
-      <BIconDatabase />
-      <span>{{ t('docRepo.repositories.title') }}</span>
-    </MenuBarItem>
+      <MenuBarItem action="scratchpad" :active="mode === 'scratchpad'" @click="emit('change', 'scratchpad')">
+        <BIconJournalText />
+        <span>{{ t('scratchpad.title') }}</span>
+      </MenuBarItem>
 
-    <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
-      <BIconMouse2 />
-      <span>{{ t('computerUse.title') }}</span>
-    </MenuBarItem>
+      <MenuBarItem action="dictation" :active="mode === 'dictation'" @click="emit('change', 'dictation')">
+        <BIconMic />
+        <span>{{ t('transcribe.title') }}</span>
+      </MenuBarItem>
 
-    <div class="push"></div>
+      <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
+        <BIconChatSquareDots />
+        <span>{{ t('realtimeChat.title') }}</span>
+      </MenuBarItem>
 
-    <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
-      <BIconActivity />
-      <span>{{ t('debugConsole.title') }}</span>
-    </MenuBarItem>
+      <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
+        <BIconDatabase />
+        <span>{{ t('docRepo.repositories.title') }}</span>
+      </MenuBarItem>
 
-    <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
-      <BIconGear />
-      <span>{{ t('common.settings') }}</span>
-    </MenuBarItem>
+      <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">
+        <BIconMouse2 />
+        <span>{{ t('computerUse.title') }}</span>
+      </MenuBarItem>
+
+      <div class="push"></div>
+
+      <MenuBarItem action="debug" :active="mode === 'debug'" @click="emit('change', 'debug')">
+        <BIconActivity />
+        <span>{{ t('debugConsole.title') }}</span>
+      </MenuBarItem>
+
+      <MenuBarItem action="settings" :active="mode === 'settings'" @click="emit('change', 'settings')">
+        <BIconGear />
+        <span>{{ t('common.settings') }}</span>
+      </MenuBarItem>
+
+    </div>
 
   </div>
-
 
 </template>
 
@@ -92,28 +98,45 @@ onMounted(() => {
 
 <style scoped>
 
-.menu {
+.menubar-wrapper {
   
-  flex: 0 0 3rem;
-  padding-top: 4rem;
-  padding-bottom: 0.5rem;
+  --menubar-width: 3rem;
+
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: var(--window-decoration-color);
-  gap: 0.65rem;
 
-  .push {
-    flex: 1;
+  .corner {
+    background-color: var(--window-decoration-color);
+    border-bottom: 1px solid var(--toolbar-border-color);
+    width: var(--menubar-width);
+    height: var(--window-toolbar-height);
   }
 
-  .chat svg {
-    position: relative;
-    top: 2px;
+  .menu {
+    
+    flex: 1;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--menubar-bg-color);
+    gap: 0.65rem;
+
+    border-right: 1px solid var(--menubar-border-color);
+
+    .push {
+      flex: 1;
+    }
+
+    .chat svg {
+      position: relative;
+      top: 2px;
+    }
+
   }
 
 }
-
 
 </style>
