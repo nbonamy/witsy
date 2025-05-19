@@ -180,6 +180,9 @@ export type STTConfig = {
   nvidia: {
     prompt: string
   }
+  whisper: {
+    gpu: boolean
+  }
   //silenceAction: SilenceAction
 }
 

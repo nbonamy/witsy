@@ -286,6 +286,13 @@ const transcribe = async (audioChunks: any[]) => {
 }
 
 const onKeyDown = (event: KeyboardEvent) => {
+
+  // if focus is on textarea, ignore
+  if ((event.target as HTMLElement).nodeName === 'TEXTAREA') {
+    return
+  }
+
+  // process
   const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
   if (event.key === 'Escape') {
     onCancel()
@@ -310,6 +317,13 @@ const onKeyDown = (event: KeyboardEvent) => {
 }
 
 const onKeyUp = (event: KeyboardEvent) => {
+
+  // if focus is on textarea, ignore
+  if ((event.target as HTMLElement).nodeName === 'TEXTAREA') {
+    return
+  }
+
+  // process
   //const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
   if (event.code === 'Space') {
     if (pushToTalkMode && state.value === 'recording') {

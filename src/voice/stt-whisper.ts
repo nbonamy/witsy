@@ -50,7 +50,12 @@ export default class STTWhisper implements STTEngine {
 
       const model = this.config.stt.model || 'Xenova/whisper-tiny'
       this.transcriber = await pipeline('automatic-speech-recognition', model, {
-        dtype: 'q8',
+        ...(this.config.stt.whisper.gpu ? {
+          dtype: 'fp32',
+          device: 'webgpu',
+        } : {
+          dtype: 'q8',
+        }),
         progress_callback: (data: ProgressInfo) => {
           if ((data as TaskStatus).status === 'ready') {
             this.ready = true
