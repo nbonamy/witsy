@@ -62,7 +62,7 @@ test('Empty chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatArea, { props: { chat: new Chat() } } )
   expect(wrapper.exists()).toBe(true)
   expect(wrapper.find('.content > header').exists()).toBe(true)
-  expect(wrapper.find('.content > header .title').exists()).toBe(false)
+  expect(wrapper.find('.content > header .title').text()).toBe('')
   expect(wrapper.find('.content > header .menu').exists()).toBe(true)
   expect(wrapper.find('.content .model-settings').exists()).toBe(true)
   expect(wrapper.find('.content .model-settings').classes()).not.toContain('visible')
