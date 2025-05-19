@@ -169,9 +169,6 @@ beforeAll(() => {
   store.config.plugins.youtube = {
     enabled: true,
   }
-  store.config.plugins.mcp = {
-    enabled: true,
-  }
   store.config.engines = {
     openai: { apiKey: 'test-api-key', model: { image: 'dall-e-2' } },
     google: { apiKey: 'test-api-key', model: { image: 'test-model' } },
@@ -493,7 +490,7 @@ test('Computer Plugin', async () => {
 
 test('MCP Plugin', async () => {
   
-  const mcp = new Mcp(store.config.plugins.mcp)
+  const mcp = new Mcp(store.config.mcp)
   expect(mcp.isEnabled()).toBe(true)
   expect(mcp).toBeInstanceOf(MultiToolPlugin)
   expect(mcp.getName()).toBe('Model Context Protocol')

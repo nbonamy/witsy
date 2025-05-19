@@ -1,7 +1,7 @@
 
 <template>
   <Teleport to="body">
-    <dialog :id="id" class="dialog show" :class="[ type ]">
+    <dialog :id="id" class="dialog show" :class="[ type ]" v-bind="$attrs">
       <form :class="{ medium: true, vertical: form === 'vertical' }" method="dialog" @submit.prevent>
         <div class="icon" v-if="icon && type === 'alert'">
           <img src="/assets/icon.png" />

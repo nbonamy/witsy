@@ -65,6 +65,14 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   }
 
   // backwards compatibility
+  if ('servers' in config.plugins.mcp) {
+    config.mcp.servers = config.plugins.mcp.servers
+    config.mcp.disabledMcpServers = config.plugins.mcp.disabledMcpServers
+    config.mcp.smitheryApiKey = config.plugins.mcp.smitheryApiKey
+    delete config.plugins.mcp
+  }
+
+  // backwards compatibility
   if (config.openai || config.ollama) {
     config.engines = {
       openai: config.openai,

@@ -19,7 +19,16 @@ vi.mock('electron', async() => {
 let command = null
 vi.mock('child_process', async () => {
   return { default: {
-    execSync: vi.fn((cmd) => { command = cmd; return 'success' })
+    exec: vi.fn((cmd) => { command = cmd; return {
+      on: vi.fn(),
+      stdout: { on: vi.fn((signal, callback) => {
+        console.log('stdout', signal, callback)
+        if (signal === 'data') {
+          callback('successfully installed')
+        }
+      }) },
+      stderr: { on: vi.fn() },
+    } })
   }}
 })
 
@@ -116,7 +125,7 @@ test('Create server', async () => {
   })
   
   expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
-  expect(config.plugins.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
+  expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
     uuid: expect.any(String),
     registryId: expect.any(String),
     state: 'enabled',
@@ -138,7 +147,7 @@ test('Edit normal server', async () => {
     type: 'sse',
     url: 'http://localhost:3001',
   })
-  expect(config.plugins.mcp.servers[1]).toMatchObject({
+  expect(config.mcp.servers[1]).toMatchObject({
     uuid: '2345-6789-0abc',
     registryId: '2345-6789-0abc',
     state: 'disabled',
@@ -170,19 +179,19 @@ test('Edit mcp server', async () => {
     command: 'node',
     url: '-f exec s1.js',
   })
-  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
   expect(config.mcpServers['s1']).toMatchObject({
     command: 'node',
     args: ['-f', 'exec', 's1.js'],
   })
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.plugins.mcp.disabledMcpServers).toEqual([])
+  expect(config.mcp.disabledMcpServers).toEqual([])
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
   expect(await mcp.editServer({ uuid: 's1', registryId: 's1', state: 'disabled', type: 'stdio', command: 'node', url: '-f exec s1.js'})).toBe(true)
-  expect(config.plugins.mcp.disabledMcpServers).toEqual(['mcp2', 's1'])
+  expect(config.mcp.disabledMcpServers).toEqual(['mcp2', 's1'])
 })
 
 test('Delete server', async () => {
@@ -191,7 +200,7 @@ test('Delete server', async () => {
   expect(mcp.deleteServer('1234-5678-90ab')).toBe(true)
   expect(mcp.getServers().length).toBe(5)
   expect(mcp.getServers().find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
-  expect(config.plugins.mcp.servers.find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
+  expect(config.mcp.servers.find(s => s.uuid === '1234-5678-90ab')).toBeUndefined()
   expect(mcp.deleteServer('s1')).toBe(true)
   expect(mcp.getServers().length).toBe(4)
   expect(mcp.getServers().find(s => s.uuid === 's1')).toBeUndefined()
@@ -310,7 +319,7 @@ test('Reload', async () => {
 
 test('Install smithery', async () => {
   const mcp = new Mcp(app)
-  expect(await mcp.getInstallCommand('smithery', 'server')).toBe('npx -y @smithery/cli@latest install server --client witsy')
-  expect(await mcp.installServer('smithery', 'server')).toBe(true)
-  expect(command).toBe('npx -y @smithery/cli@latest install server --client witsy')
+  expect(await mcp.getInstallCommand('smithery', 'server', 'key')).toBe('npx -y @smithery/cli@latest install server --client witsy --key key')
+  expect(await mcp.installServer('smithery', 'server', 'key')).toBe('success')
+  expect(command).toBe('npx -y @smithery/cli@latest install server --client witsy --key key')
 })

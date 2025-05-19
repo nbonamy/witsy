@@ -5,7 +5,7 @@ import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
 import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
-import { McpServer, McpStatus, McpTool } from './mcp'
+import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 
 export type strDict = Record<string, string>
@@ -353,7 +353,7 @@ declare global {
         editServer(server: McpServer): Promise<boolean>
         deleteServer(uuid: string): Promise<boolean>
         getInstallCommand(registry: string, server: string): string
-        installServer(registry: string, server: string): Promise<boolean>
+        installServer(registry: string, server: string, apiKey: string): Promise<McpInstallStatus>
         reload(): Promise<void>
         getStatus(): McpStatus
         getServerTools(uuid: string): Promise<McpTool[]>

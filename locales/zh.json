@@ -1254,6 +1254,7 @@
       "environmentVariables": "环境变量",
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
+      "smitheryApiKey": "Smithery.ai API 密钥",
       "title": "MCP 服务器配置",
       "type": {
         "http": "可流式传输的 HTTP",
@@ -1502,6 +1503,7 @@
         "openai": "OpenAI"
       },
       "darkTint": "深色色调",
+      "lightTint": "浅色调",
       "theme": "外观",
       "themes": {
         "dark": "深色",
@@ -1510,7 +1512,9 @@
       },
       "tints": {
         "black": "黑色",
-        "blue": "蓝色"
+        "blue": "蓝色",
+        "gray": "灰色",
+        "white": "白色"
       }
     },
     "commands": {
@@ -1624,6 +1628,36 @@
       "resetTips": "重置提示",
       "runAtLogin": "登录时运行"
     },
+    "mcp": {
+      "addCustomServer": "添加自定义服务器…",
+      "confirmDelete": "你确定要删除这个服务器吗？",
+      "connectedToServers": "已连接到 {count} 个 MCP 服务器",
+      "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
+      "description": "此插件允许 LLM 引擎访问",
+      "failedToInstall": "服务器安装失败",
+      "importJson": {
+        "details": "在此粘贴来自Claude的JSON MCP服务器定义。",
+        "errorArgs": "无效的MCP服务器参数。",
+        "errorCommand": "未找到MCP服务器命令。",
+        "errorEmpty": "JSON不能为空。",
+        "errorFormat": "解析JSON服务器定义时出错。",
+        "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "title": "从Json导入"
+      },
+      "importSmitheryServer": "导入 Smithery.ai 服务器…",
+      "mcpServers": "MCP 服务器",
+      "modelContextProtocol": "模型上下文协议",
+      "noServersFound": "未找到MCP服务器。点击上面的+图标以添加新服务器或刷新列表。",
+      "noTools": "没有可用工具",
+      "retryWithApiKey": "安装此服务器似乎需要一个 API 密钥。您想用您的 API 密钥重试吗？否则您可以复制命令并在终端中尝试。",
+      "serverLogs": "MCP 服务器日志",
+      "serverNotFound": "您尝试连接的服务器不存在。",
+      "servers": "服务器。从",
+      "smithery": "Smithery",
+      "tools": "工具",
+      "totalTools": "总共 {count} 个服务可用"
+    },
     "plugins": {
       "browse": {
         "description": "此插件允许 LLM 引擎从互联网下载内容，并使用它生成更准确的回答。",
@@ -1644,35 +1678,6 @@
           "aboutModels": "了解更多关于 Replicate 模型的信息"
         },
         "title": "文本转图像"
-      },
-      "mcp": {
-        "addCustomServer": "添加自定义服务器…",
-        "confirmDelete": "你确定要删除这个服务器吗？",
-        "connectedToServers": "已连接到 {count} 个 MCP 服务器",
-        "copyInstallCommand": "你可以将安装命令复制到剪贴板，并在终端中尝试运行。",
-        "description": "此插件允许 LLM 引擎访问",
-        "failedToInstall": "服务器安装失败",
-        "importJson": {
-          "details": "在此粘贴来自Claude的JSON MCP服务器定义。",
-          "errorArgs": "无效的MCP服务器参数。",
-          "errorCommand": "未找到MCP服务器命令。",
-          "errorEmpty": "JSON不能为空。",
-          "errorFormat": "解析JSON服务器定义时出错。",
-          "errorMultiple": "发现多个服务器。请一次粘贴一个服务器。",
-          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
-          "title": "从Json导入"
-        },
-        "importSmitheryServer": "导入 Smithery.ai 服务器…",
-        "mcpServers": "MCP 服务器",
-        "modelContextProtocol": "模型上下文协议",
-        "noServersFound": "未找到MCP服务器。点击上面的+图标以添加新服务器或刷新列表。",
-        "noTools": "没有可用工具",
-        "serverLogs": "MCP 服务器日志",
-        "servers": "服务器。从",
-        "smithery": "Smithery",
-        "title": "MCP",
-        "tools": "工具",
-        "totalTools": "总共 {count} 个服务可用"
       },
       "memory": {
         "contents": "内容",
@@ -1746,6 +1751,7 @@
       "commands": "命令",
       "experts": "专家",
       "general": "常规",
+      "mcp": "MCP",
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
@@ -1791,6 +1797,7 @@
         "serviceDisclaimer": "该服务可能随时停止工作。",
         "voice": "语音"
       },
+      "useWebGpu": "使用 WebGPU",
       "verificationComplete": "验证完成！",
       "verifying": "正在验证：{percent}%"
     }

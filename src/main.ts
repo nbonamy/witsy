@@ -2,7 +2,7 @@
 import { History, Command, Expert } from './types/index';
 import { Configuration } from './types/config';
 import { Application, RunCommandParams } from './types/automation';
-import { McpTool } from './types/mcp';
+import { McpInstallStatus, McpTool } from './types/mcp';
 import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
@@ -722,12 +722,12 @@ ipcMain.handle('mcp-delete-server', async (_, uuid): Promise<boolean> => {
 
 ipcMain.on('mcp-get-install-command', (event, payload) => {
   const { registry, server } = payload;
-  event.returnValue = mcp ? mcp.getInstallCommand(registry, server) : '';
+  event.returnValue = mcp ? mcp.getInstallCommand(registry, server, '') : '';
 });
 
-ipcMain.handle('mcp-install-server', async (_, payload): Promise<boolean> => {
-  const { registry, server } = payload;
-  return await mcp?.installServer(registry, server) || false;
+ipcMain.handle('mcp-install-server', async (_, payload): Promise<McpInstallStatus> => {
+  const { registry, server, apiKey } = payload;
+  return await mcp?.installServer(registry, server, apiKey) || 'error';
 });
 
 ipcMain.handle('mcp-reload', async () => {

@@ -1254,6 +1254,7 @@
       "environmentVariables": "Variáveis de Ambiente",
       "selectCommand": "Selecionar comando",
       "serverPackage": "Pacote do Servidor",
+      "smitheryApiKey": "Chave da API do Smithery.ai",
       "title": "Configuração do Servidor MCP",
       "type": {
         "http": "HTTP transmissível",
@@ -1502,6 +1503,7 @@
         "openai": "OpenAI"
       },
       "darkTint": "Tonalidade escura",
+      "lightTint": "Tonalidade clara",
       "theme": "Aparência",
       "themes": {
         "dark": "Escuro",
@@ -1510,7 +1512,9 @@
       },
       "tints": {
         "black": "Preto",
-        "blue": "Azul"
+        "blue": "Azul",
+        "gray": "Cinza",
+        "white": "Branco"
       }
     },
     "commands": {
@@ -1624,6 +1628,36 @@
       "resetTips": "Redefinir dicas",
       "runAtLogin": "Executar ao iniciar a sessão"
     },
+    "mcp": {
+      "addCustomServer": "Adicionar servidor personalizado…",
+      "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
+      "connectedToServers": "Conectado a {count} servidor MCP{count > 1 ? 'es' : ''}",
+      "copyInstallCommand": "Você pode copiar o comando de instalação para sua área de transferência e experimentá-lo em um Terminal.",
+      "description": "Este plugin permite que os mecanismos LLM acessem",
+      "failedToInstall": "Falha ao instalar servidor",
+      "importJson": {
+        "details": "Cole/cole aqui as definições do servidor JSON MCP do Claude.",
+        "errorArgs": "Argumentos de servidor MCP inválidos.",
+        "errorCommand": "Comando do servidor MCP não encontrado.",
+        "errorEmpty": "O JSON não pode estar vazio.",
+        "errorFormat": "Erro ao analisar a definição do servidor JSON.",
+        "errorMultiple": "Vários servidores encontrados. Por favor, cole um servidor de cada vez.",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "title": "Importar do Json"
+      },
+      "importSmitheryServer": "Importar servidor Smithery.ai…",
+      "mcpServers": "Servidores MCP",
+      "modelContextProtocol": "Protocolo de Contexto de Modelo",
+      "noServersFound": "Nenhum servidor MCP encontrado. Clique no ícone + acima para adicionar um novo servidor ou atualizar a lista.",
+      "noTools": "Nenhuma ferramenta disponível",
+      "retryWithApiKey": "Parece que uma chave de API é necessária para instalar este servidor. Você deseja tentar novamente com sua chave de API? Caso contrário, você pode copiar o comando e tentar em um terminal.",
+      "serverLogs": "Logs do Servidor MCP",
+      "serverNotFound": "O servidor que você está tentando conectar não existe.",
+      "servers": "servidores. Descubra e instale servidores MCP do",
+      "smithery": "Smithery",
+      "tools": "Ferramentas",
+      "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
+    },
     "plugins": {
       "browse": {
         "description": "Este plugin permite que os mecanismos LLM baixem conteúdo da Internet e o usem para gerar respostas mais precisas.",
@@ -1644,35 +1678,6 @@
           "aboutModels": "Mais sobre os modelos Replicate"
         },
         "title": "Texto para Imagem"
-      },
-      "mcp": {
-        "addCustomServer": "Adicionar servidor personalizado…",
-        "confirmDelete": "Tem certeza de que deseja excluir este servidor?",
-        "connectedToServers": "Conectado a {count} servidor MCP{count > 1 ? 'es' : ''}",
-        "copyInstallCommand": "Você pode copiar o comando de instalação para sua área de transferência e experimentá-lo em um Terminal.",
-        "description": "Este plugin permite que os mecanismos LLM acessem",
-        "failedToInstall": "Falha ao instalar servidor",
-        "importJson": {
-          "details": "Cole/cole aqui as definições do servidor JSON MCP do Claude.",
-          "errorArgs": "Argumentos de servidor MCP inválidos.",
-          "errorCommand": "Comando do servidor MCP não encontrado.",
-          "errorEmpty": "O JSON não pode estar vazio.",
-          "errorFormat": "Erro ao analisar a definição do servidor JSON.",
-          "errorMultiple": "Vários servidores encontrados. Por favor, cole um servidor de cada vez.",
-          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
-          "title": "Importar do Json"
-        },
-        "importSmitheryServer": "Importar servidor Smithery.ai…",
-        "mcpServers": "Servidores MCP",
-        "modelContextProtocol": "Protocolo de Contexto de Modelo",
-        "noServersFound": "Nenhum servidor MCP encontrado. Clique no ícone + acima para adicionar um novo servidor ou atualizar a lista.",
-        "noTools": "Nenhuma ferramenta disponível",
-        "serverLogs": "Logs do Servidor MCP",
-        "servers": "servidores. Descubra e instale servidores MCP do",
-        "smithery": "Smithery",
-        "title": "MCP",
-        "tools": "Ferramentas",
-        "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
       },
       "memory": {
         "contents": "Conteúdo",
@@ -1746,6 +1751,7 @@
       "commands": "Comandos",
       "experts": "Especialistas",
       "general": "Geral",
+      "mcp": "MCP",
       "models": "Modelos",
       "plugins": "Plugins",
       "shortcuts": "Atalhos",
@@ -1791,6 +1797,7 @@
         "serviceDisclaimer": "O serviço pode parar de funcionar a qualquer momento.",
         "voice": "Voz"
       },
+      "useWebGpu": "Usar WebGPU",
       "verificationComplete": "Verificação concluída!",
       "verifying": "Verificando: {percent}%"
     }

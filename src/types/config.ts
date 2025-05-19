@@ -2,7 +2,7 @@
 import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { DesignStudioMediaType, Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
-import { McpClaudeServer } from './mcp'
+import { McpClaudeServer, McpServer } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
@@ -22,6 +22,7 @@ export type Configuration = {
   tts: TTSConfig
   rag: RagConfig
   realtime: RealtimeConfig
+  mcp: McpConfig
   mcpServers: { [key: string]: McpClaudeServer }
 }
 
@@ -225,4 +226,10 @@ export type RagConfig = {
   chunkOverlap?: number
   searchResultCount?: number
   relevanceCutOff?: number
+}
+
+export type McpConfig = {
+  servers: McpServer[]
+  disabledMcpServers: string[]
+  smitheryApiKey: string
 }
