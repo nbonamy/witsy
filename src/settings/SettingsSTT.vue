@@ -36,6 +36,10 @@
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
+    <div class="group horizontal" v-if="engine == 'whisper'">
+      <input type="checkbox" v-model="whisperGPU" @change="save" />
+      <label>{{ t('settings.voice.useWebGpu') }}</label>
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
@@ -116,6 +120,7 @@ const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
+const whisperGPU = ref(true)
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
@@ -192,6 +197,7 @@ const load = () => {
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
+  whisperGPU.value = store.config.stt.whisper.gpu ?? true
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
 
@@ -205,6 +211,7 @@ const save = () => {
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
+  store.config.stt.whisper.gpu = whisperGPU.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
 }
