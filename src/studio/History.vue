@@ -1,6 +1,5 @@
 <template>
   <div class="history">
-
     <div v-if="history.length === 0" class="empty">{{ t('designStudio.history.empty') }}</div>
     <div v-else class="messages">
       <div 

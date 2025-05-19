@@ -61,7 +61,6 @@ import ModalDialog from '../components/ModalDialog.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import Dialog from '../composables/dialog'
-import { BIconExclamationCircle } from 'bootstrap-icons-vue'
 
 const emit = defineEmits(['command-modified']);
 
