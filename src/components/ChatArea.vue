@@ -7,7 +7,7 @@
       <div class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
         <IconNewChat />
       </div>
-      <div class="title" v-if="chat?.title">{{ chat.title }}</div>
+      <div class="title">{{ chat?.title || '&nbsp;' }}</div>
       <div class="icon settings" @click="showModelSettings = !showModelSettings">
         <BIconSliders />
       </div>
