@@ -111,7 +111,7 @@
     </form>
 
     <ToolSelector ref="selector" :tools="tools" @save="onSaveTools" />
-    <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
+    <VariableEditor ref="editor" id="model-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
   </div>
 
