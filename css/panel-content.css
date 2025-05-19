@@ -152,6 +152,11 @@
         ~ .action {
           margin-left: 0px;
         }
+
+        &.back {
+          color: var(--text-color);
+          fill: var(--text-color);
+        }
         
       }
     }

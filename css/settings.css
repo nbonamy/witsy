@@ -99,20 +99,15 @@
     min-width: 500px;
     align-self: center;
     padding: 2rem 4rem;
-  }
 
-  &:has(.list-panel) {
-    main {
+    &:has(.list-panel) {
       padding: 0;
       min-width: auto;
       align-self: stretch;
     }
-  }
 
-  &:has(.sticky-table-container) {
+    &:has(.sticky-table-container) {
 
-    main {
-      
       min-width: auto;
       align-self: stretch;
 
