@@ -69,7 +69,6 @@ import TTSOpenAI from '../voice/tts-openai'
 import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
 import TTSFalAi from '../voice/tts-falai'
-import { BIconPlayFill, BIconStopFill } from 'bootstrap-icons-vue'
 
 const engine = ref('openai')
 const voice = ref(null)

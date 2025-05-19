@@ -18,7 +18,6 @@
 
 import { ref, Ref, onMounted } from 'vue'
 import mermaid, { RenderResult } from 'mermaid'
-import { BIconCodeSlash, BIconDownload, BIconCircleHalf } from 'bootstrap-icons-vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

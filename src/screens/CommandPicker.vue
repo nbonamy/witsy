@@ -22,7 +22,6 @@ import { anyDict, Command, ExternalApp } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
-import { BIconX } from 'bootstrap-icons-vue'
 
 // load store
 store.loadSettings()
