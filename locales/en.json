@@ -1254,6 +1254,7 @@
       "environmentVariables": "Environment Variables",
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
+      "smitheryApiKey": "Smithery.ai API Key",
       "title": "MCP Server Configuration",
       "type": {
         "http": "Streamable HTTP",
@@ -1633,6 +1634,36 @@
         "title": "There was an error loading your settings."
       }
     },
+    "mcp": {
+      "addCustomServer": "Add custom server…",
+      "confirmDelete": "Are you sure you want to delete this server?",
+      "connectedToServers": "Connected to {count} MCP server{count > 1 ? 's' : ''}",
+      "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
+      "description": "This plugin allows LLM engines to access",
+      "failedToInstall": "Failed to install server",
+      "importJson": {
+        "details": "Copy/Paste JSON MCP Server definitions from Claude here.",
+        "errorArgs": "Invalid MCP Server arguments.",
+        "errorCommand": "MCP Server command not found.",
+        "errorEmpty": "JSON cannot be empty.",
+        "errorFormat": "Error while parsing JSON server definition.",
+        "errorMultiple": "Multiple servers found. Please paste one server at a time.",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "title": "Import from Json"
+      },
+      "importSmitheryServer": "Import Smithery.ai server…",
+      "mcpServers": "MCP Servers",
+      "modelContextProtocol": "Model Context Protocol",
+      "noServersFound": "No MCP Servers found. Click on the + icon above to add a new server or refresh the list.",
+      "noTools": "No tools available",
+      "retryWithApiKey": "It seems an API key is required to install this server. Do you want to retry with your API key? Else you can copy the command and try it a Terminal.",
+      "serverLogs": "MCP Server Logs",
+      "serverNotFound": "The server you are trying to connect does not exist.",
+      "servers": "servers. Discover and install MCP servers from the",
+      "smithery": "Smithery",
+      "tools": "Tools",
+      "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
+    },
     "plugins": {
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",
@@ -1653,35 +1684,6 @@
           "aboutModels": "More about Replicate models"
         },
         "title": "Text-to-Image"
-      },
-      "mcp": {
-        "addCustomServer": "Add custom server…",
-        "confirmDelete": "Are you sure you want to delete this server?",
-        "connectedToServers": "Connected to {count} MCP server{count > 1 ? 's' : ''}",
-        "copyInstallCommand": "You can copy the install command to your clipboard and try it in a Terminal.",
-        "description": "This plugin allows LLM engines to access",
-        "failedToInstall": "Failed to install server",
-        "importJson": {
-          "details": "Copy/Paste JSON MCP Server definitions from Claude here.",
-          "errorArgs": "Invalid MCP Server arguments.",
-          "errorCommand": "MCP Server command not found.",
-          "errorEmpty": "JSON cannot be empty.",
-          "errorFormat": "Error while parsing JSON server definition.",
-          "errorMultiple": "Multiple servers found. Please paste one server at a time.",
-          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
-          "title": "Import from Json"
-        },
-        "importSmitheryServer": "Import Smithery.ai server…",
-        "mcpServers": "MCP Servers",
-        "modelContextProtocol": "Model Context Protocol",
-        "noServersFound": "No MCP Servers found. Click on the + icon above to add a new server or refresh the list.",
-        "noTools": "No tools available",
-        "serverLogs": "MCP Server Logs",
-        "servers": "servers. Discover and install MCP servers from the",
-        "smithery": "Smithery",
-        "title": "MCP",
-        "tools": "Tools",
-        "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
       },
       "memory": {
         "contents": "Contents",
@@ -1755,6 +1757,7 @@
       "commands": "Commands",
       "experts": "Experts",
       "general": "General",
+      "mcp": "MCP",
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
@@ -1800,6 +1803,7 @@
         "serviceDisclaimer": "The service may stop working at any point in time.",
         "voice": "Voice"
       },
+      "useWebGpu": "Use WebGPU",
       "verificationComplete": "Verification completed!",
       "verifying": "Verifying: {percent}%"
     }

@@ -10,7 +10,7 @@
           <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
-          <SettingsTab class="mcp" :title="t('settings.plugins.mcp.title')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
+          <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
           <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
           <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
@@ -52,7 +52,6 @@ import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 import WIconMcp from '../../assets/mcp.svg?component'
 import { installTabs, showActiveTab } from '../composables/tabs'
-import { BIconLayoutTextWindowReverse } from 'bootstrap-icons-vue'
 
 const props = defineProps({
   extra: {

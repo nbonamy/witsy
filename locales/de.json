@@ -1235,6 +1235,7 @@
       "environmentVariables": "Umgebungsvariablen",
       "selectCommand": "Befehl auswählen",
       "serverPackage": "Serverpaket",
+      "smitheryApiKey": "Smithery.ai API-Schlüssel",
       "title": "MCP-Serverkonfiguration",
       "type": {
         "http": "Streambares HTTP",
@@ -1472,6 +1473,7 @@
         "openai": "OpenAI"
       },
       "darkTint": "Dunkler Farbton",
+      "lightTint": "Helle Tönung",
       "theme": "Erscheinungsbild",
       "themes": {
         "dark": "Dunkel",
@@ -1480,7 +1482,9 @@
       },
       "tints": {
         "black": "Schwarz",
-        "blue": "Blau"
+        "blue": "Blau",
+        "gray": "Grau",
+        "white": "Weiß"
       }
     },
     "commands": {
@@ -1594,6 +1598,36 @@
       "resetTips": "Tipps zurücksetzen",
       "runAtLogin": "Witsy mit Windows starten"
     },
+    "mcp": {
+      "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
+      "connectedToServers": "Verbunden mit {count} MCP-Server{count > 1 ? 'n' : ''}",
+      "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
+      "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
+      "failedToInstall": "Fehler beim Installieren des Servers",
+      "importJson": {
+        "details": "Fügen Sie hier JSON MCP-Serverdefinitionen von Claude ein.",
+        "errorArgs": "Ungültige MCP-Serverargumente.",
+        "errorCommand": "MCP-Serverbefehl nicht gefunden.",
+        "errorEmpty": "JSON darf nicht leer sein.",
+        "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
+        "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
+        "title": "Von Json importieren"
+      },
+      "importSmitheryServer": "Smithery.ai-Server importieren…",
+      "mcpServers": "MCP-Server",
+      "modelContextProtocol": "Modellkontextprotokoll",
+      "noServersFound": "Keine MCP-Server gefunden. Klicken Sie auf das +-Symbol oben, um einen neuen Server hinzuzufügen oder die Liste zu aktualisieren.",
+      "noTools": "Keine Tools verfügbar",
+      "retryWithApiKey": "Es scheint, dass ein API-Schlüssel erforderlich ist, um diesen Server zu installieren. Möchten Sie es mit Ihrem API-Schlüssel erneut versuchen? Andernfalls können Sie den Befehl kopieren und es in einem Terminal versuchen.",
+      "serverLogs": "MCP-Serverprotokolle",
+      "serverNotFound": "Der Server, mit dem Sie sich verbinden möchten, existiert nicht.",
+      "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
+      "smithery": "Smithery",
+      "tools": "Werkzeuge",
+      "totalTools": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
+    },
     "plugins": {
       "browse": {
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
@@ -1614,35 +1648,6 @@
           "aboutModels": "Mehr über Replicate-Modelle"
         },
         "title": "Text zu Bild"
-      },
-      "mcp": {
-        "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
-        "confirmDelete": "Sind Sie sicher, dass Sie diesen Server löschen möchten?",
-        "connectedToServers": "Verbunden mit {count} MCP-Server{count > 1 ? 'n' : ''}",
-        "copyInstallCommand": "Sie können den Installationsbefehl in Ihre Zwischenablage kopieren und im Terminal ausprobieren.",
-        "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
-        "failedToInstall": "Fehler beim Installieren des Servers",
-        "importJson": {
-          "details": "Fügen Sie hier JSON MCP-Serverdefinitionen von Claude ein.",
-          "errorArgs": "Ungültige MCP-Serverargumente.",
-          "errorCommand": "MCP-Serverbefehl nicht gefunden.",
-          "errorEmpty": "JSON darf nicht leer sein.",
-          "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
-          "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
-          "menu": "@:{'settings.plugins.mcp.importJson.title'}…",
-          "title": "Von Json importieren"
-        },
-        "importSmitheryServer": "Smithery.ai-Server importieren…",
-        "mcpServers": "MCP-Server",
-        "modelContextProtocol": "Modellkontextprotokoll",
-        "noServersFound": "Keine MCP-Server gefunden. Klicken Sie auf das +-Symbol oben, um einen neuen Server hinzuzufügen oder die Liste zu aktualisieren.",
-        "noTools": "Keine Tools verfügbar",
-        "serverLogs": "MCP-Serverprotokolle",
-        "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
-        "smithery": "Smithery",
-        "title": "MCP",
-        "tools": "Werkzeuge",
-        "totalTools": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
       },
       "memory": {
         "contents": "Inhalt",
@@ -1716,6 +1721,7 @@
       "commands": "Befehle",
       "experts": "Experten",
       "general": "Allgemein",
+      "mcp": "MCP",
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
@@ -1761,6 +1767,7 @@
         "serviceDisclaimer": "Der Dienst kann jederzeit eingestellt werden.",
         "voice": "Stimme"
       },
+      "useWebGpu": "WebGPU verwenden",
       "verificationComplete": "Verifizierung abgeschlossen!",
       "verifying": "Verifying: {percent}%"
     }

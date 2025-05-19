@@ -4,6 +4,8 @@ import { strDict } from './index'
 
 export type McpServerType = 'stdio' | 'sse' | 'http'
 
+export type McpInstallStatus = 'success' | 'api_key_missing' | 'not_found' | 'error'
+
 export type McpServer = {
   uuid: string|null
   registryId: string|null

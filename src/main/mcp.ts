@@ -1,14 +1,14 @@
 
 import { anyDict } from '../types/index'
 import { App } from 'electron'
-import { McpServer, McpClient, McpStatus, McpTool } from '../types/mcp'
+import { McpInstallStatus, McpServer, McpClient, McpStatus, McpTool } from '../types/mcp'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { CompatibilityCallToolResultSchema } from '@modelcontextprotocol/sdk/types'
 import { loadSettings, saveSettings, settingsFilePath } from './config'
-import { execSync } from 'child_process'
+import { exec } from 'child_process'
 import { LlmTool } from 'multi-llm-ts'
 import Monitor from './monitor'
 
@@ -41,12 +41,12 @@ export default class {
   getServers = (): McpServer[] => {
     const config = loadSettings(this.app)
     return [
-      ...config.plugins.mcp.servers,
+      ...config.mcp.servers,
       ...Object.keys(config.mcpServers).reduce((arr: McpServer[], key: string) => {
         arr.push({
           uuid: key.replace('@', ''),
           registryId: key,
-          state: config.plugins.mcp.disabledMcpServers?.includes(key) ? 'disabled' : 'enabled',
+          state: config.mcp.disabledMcpServers?.includes(key) ? 'disabled' : 'enabled',
           type: 'stdio',
           command: config.mcpServers[key].command,
           url: config.mcpServers[key].args.join(' '),
@@ -71,8 +71,8 @@ export default class {
     }
 
     // is it a normal server
-    if (config.plugins.mcp.servers.find((s: McpServer) => s.uuid === uuid)) {
-      config.plugins.mcp.servers = config.plugins.mcp.servers.filter((s: McpServer) => s.uuid !== uuid)
+    if (config.mcp.servers.find((s: McpServer) => s.uuid === uuid)) {
+      config.mcp.servers = config.mcp.servers.filter((s: McpServer) => s.uuid !== uuid)
       deleted = true
     } else if (config.mcpServers[uuid]) {
       delete config.mcpServers[uuid]
@@ -95,18 +95,67 @@ export default class {
 
   }
 
-  installServer = async (registry: string, server: string): Promise<boolean> => {
+  installServer = async (registry: string, server: string, apiKey: string): Promise<McpInstallStatus> => {
 
-    const command = this.getInstallCommand(registry, server)
-    if (!command) return false
+    const command = this.getInstallCommand(registry, server, apiKey)
+    if (!command) return 'error'
 
     try {
 
       const before = this.getServers()
 
       this.monitor?.stop()
-      const result = execSync(command).toString().trim()
-      console.log(`MCP install ${server} result:`, result)
+      this.logs[server] = this.logs[server] || []
+
+      await new Promise<McpInstallStatus>((resolve, reject) => {
+
+        let failTimeout: NodeJS.Timeout
+        const childProcess = exec(command)
+
+        childProcess.on('error', (error) => {
+          console.error(`Error installing MCP server ${server}:`, error)
+          this.logs[server].push(`Error installing MCP server ${server}: ${error.message}`)
+          reject('error')
+        })
+
+        childProcess.stderr.on('data', (data: Buffer) => {
+          const stderr = data.toString()
+          console.error(`MCP install ${server} stderr:`, stderr)
+          this.logs[server].push(`MCP install ${server} stderr: ${stderr}`)
+
+          if (stderr.includes('Failed to install')) {
+            failTimeout = setTimeout(() => {
+              childProcess.kill()
+              reject('error')
+            }, 250)
+          }
+
+          if (stderr.includes('Server not found')) {
+            clearTimeout(failTimeout)
+            childProcess.kill()
+            reject('not_found')
+          }
+        
+        })
+
+        childProcess.stdout.on('data', (data: Buffer) => {
+          const stdout = data.toString()
+          console.log(`MCP install ${server} stdout:`, stdout)
+          this.logs[server].push(`MCP install ${server} stdout: ${stdout}`)
+
+          if (stdout.includes('successfully installed')) {
+            resolve('success')
+          }
+
+          if (stdout.includes('Please enter your Smithery API key')) {
+            childProcess.kill()
+            reject('api_key_missing')
+          }
+
+        })
+    
+      
+      })
 
       // now we should be able to connect
       const after = this.getServers()
@@ -116,22 +165,23 @@ export default class {
       }
 
       // done
-      return true
+      return 'success'
 
     } catch (e) {
-      console.error(`Failed to install MCP server ${server}:`, e)
+      return e
     } finally {
       this.startConfigMonitor()
     }
     
-    // too bad
-    return false
-    
   }
 
-  getInstallCommand = (registry: string, server: string): string|null => {
+  getInstallCommand = (registry: string, server: string, apiKey: string): string|null => {  
     if (registry === 'smithery') {
-      return `npx -y @smithery/cli@latest install ${server} --client witsy`
+      let command = `npx -y @smithery/cli@latest install ${server} --client witsy`
+      if (apiKey) {
+        command += ` --key ${apiKey}`
+      }
+      return command
     }
     return null
   }
@@ -146,7 +196,7 @@ export default class {
     if (server.uuid === null) {
       server.uuid = crypto.randomUUID()
       server.registryId = server.uuid
-      config.plugins.mcp.servers.push(server)
+      config.mcp.servers.push(server)
       edited = true
     }
 
@@ -157,7 +207,7 @@ export default class {
     }
 
     // search for server in normal server
-    const original = config.plugins.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
+    const original = config.mcp.servers.find((s: McpServer) => s.uuid === server.uuid)
     if (original) {
       original.type = server.type
       original.state = server.state
@@ -174,14 +224,14 @@ export default class {
 
       // state is outside of mcpServers
       if (server.state === 'disabled') {
-        if (!config.plugins.mcp.disabledMcpServers) {
-          config.plugins.mcp.disabledMcpServers = []
+        if (!config.mcp.disabledMcpServers) {
+          config.mcp.disabledMcpServers = []
         }
-        if (!config.plugins.mcp.disabledMcpServers.includes(server.registryId)) {
-          config.plugins.mcp.disabledMcpServers.push(server.registryId)
+        if (!config.mcp.disabledMcpServers.includes(server.registryId)) {
+          config.mcp.disabledMcpServers.push(server.registryId)
         }
       } else {
-        config.plugins.mcp.disabledMcpServers = config.plugins.mcp.disabledMcpServers.filter((s: string) => s !== server.registryId)
+        config.mcp.disabledMcpServers = config.mcp.disabledMcpServers.filter((s: string) => s !== server.registryId)
       }
 
       // rest is normal

@@ -148,7 +148,7 @@ contextBridge.exposeInMainWorld(
       editServer: (server: McpServer): Promise<boolean> => { return ipcRenderer.invoke('mcp-edit-server', JSON.stringify(server)) },
       deleteServer: (uuid: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-delete-server', uuid)},
       getInstallCommand: (registry: string, server: string): string => { return ipcRenderer.sendSync('mcp-get-install-command', { registry, server }) },
-      installServer: (registry: string, server: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-install-server', { registry, server }) },
+      installServer: (registry: string, server: string, apiKey: string): Promise<boolean> => { return ipcRenderer.invoke('mcp-install-server', { registry, server, apiKey }) }, 
       reload: (): Promise<void> => { return ipcRenderer.invoke('mcp-reload') },
       getStatus: (): McpStatus|null => { return ipcRenderer.sendSync('mcp-get-status') },
       getServerTools: (uuid: string): Promise<McpTool[]> => { return ipcRenderer.invoke('mcp-get-server-tools', uuid) },

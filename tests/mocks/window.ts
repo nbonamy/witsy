@@ -4,6 +4,7 @@ import { renderMarkdown } from '../../src/main/markdown'
 import { Command, Expert } from '../../src/types/index'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
+import { McpInstallStatus } from '../../src/types/mcp'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -116,7 +117,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     settings: {
       open: vi.fn(),
-      close: vi.fn(),
     },
     chat: {
       open: vi.fn(),
@@ -183,6 +183,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       getAppInfo: vi.fn(),
     },
     docrepo: {
+      open: vi.fn(),
       list: vi.fn((): DocumentBase[] => {
         return [
           { uuid: 'uuid1', name: 'docrepo1', embeddingEngine: 'ollama', embeddingModel: 'all-minilm', documents: [] },
@@ -233,7 +234,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       ]),
       editServer: vi.fn(async () => true),
       deleteServer: vi.fn(async () => true),
-      installServer: vi.fn(async () => true),
+      installServer: vi.fn(async () => 'success' as McpInstallStatus),
       reload: vi.fn(async () => {}),
       //@ts-expect-error not sure about the state: 'enabled' complain
       getStatus: vi.fn(() => ({ servers: [
