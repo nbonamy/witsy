@@ -121,7 +121,7 @@
       </div>
     </form>
 
-    <VariableEditor ref="editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
+    <VariableEditor ref="editor" id="studio-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
   </div>
 </template>

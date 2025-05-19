@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="variable-editor" :icon="false" ref="dialog" @save="onSave">
+  <ModalDialog :id="id" class="variable-editor" :icon="false" ref="dialog" @save="onSave">
     <template #header>
       <div class="title">{{ t(title) }}</div>
     </template>
@@ -34,6 +34,10 @@ const key = ref('')
 const value = ref('')
 
 const props = defineProps({
+  id: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true,
@@ -101,7 +105,7 @@ defineExpose({
 </style>
 
 <style>
-#variable-editor {
+.variable-editor {
   width: 200px !important;
 }
 </style>
