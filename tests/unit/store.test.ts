@@ -80,7 +80,7 @@ test('Reload settings without changing reference', async () => {
   defaultSettings.llm.engine = 'xai'
   // @ts-expect-error unkown
   delete defaultSettings.plugins
-  listeners[0]('settings')
+  listeners.map(l => l('settings'))
   expect(window.api.config?.load).toHaveBeenCalledTimes(2)
   expect(store.config).toBe(backup)
   expect(store.config.llm.engine).toBe('xai')
@@ -122,11 +122,11 @@ test('Merge history', async () => {
   expect(store.history.chats[1].messages).toHaveLength(2)
   chats.push(new Chat())
   chats[1].messages.push(new Message('user', ''))
-  listeners[0]('history')
+  listeners.map(l => l('history'))
   expect(store.history.chats).toHaveLength(3)
   expect(store.history.chats[1].messages).toHaveLength(3)
   chats.splice(2, 1)
-  listeners[0]('history')
+  listeners.map(l => l('history'))
   expect(store.history.chats).toHaveLength(2)
   expect(store.history.chats[1].messages).toHaveLength(3)
 })
