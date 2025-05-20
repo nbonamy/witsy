@@ -1,9 +1,5 @@
 <template>
   <div class="commands">
-    <div class="close">
-      <div class="decoration"></div>
-      <BIconX class="icon" @click="onClose"/>
-    </div>
     <div class="app" v-if="sourceApp">
       <img class="icon" :src="iconData" /> {{ t('common.workingWith') }} {{ sourceApp.name }}
     </div>
@@ -164,44 +160,23 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 </script>
 
 <style scoped>
+
 ::-webkit-scrollbar {
   display: none;
 }
 
 .commands {
   box-sizing: border-box;
+  /* margin: 1rem; */
+  padding: 0.5rem;
   height: 100vh;
+  /* box-shadow: var(--window-box-shadow); */
+  background-color: var(--window-bg-color);
+  border-radius: 0.5rem;
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
-  background-color: var(--window-bg-color);
-  color: var(--text-color);
-  padding: 10px;
 }
-
-.close {
-  display: none;
-  flex-direction: row;
-  margin-bottom: 8px;
-
-  .decoration {
-    flex: 1;
-    height: 3px;
-    margin-top: 6px;
-    border-top: 0.5px solid var(--icon-color);
-    border-bottom: 0.5px solid var(--icon-color);
-    margin-left: 8px;
-    margin-right: 4px;
-    opacity: 0.7;
-  }
-
-  .icon {
-    cursor: pointer;
-  }
-}
-
-/*.windows .close {
-  display: flex;
-}*/
 
 .app {
   display: flex;

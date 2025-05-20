@@ -44,7 +44,6 @@ export const openRealtimeChatWindow = (): void => {
   ensureOnCurrentScreen(realtimeChatWindow);
 
   // and focus
-  app.focus({ steal: true });
   realtimeChatWindow.focus();
-  
+
 }

@@ -1,7 +1,7 @@
 
 import { CreateWindowOpts } from 'types/window';
 import { app, BrowserWindow, Menu, MenuItem, Notification } from 'electron';
-import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
+import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow, focusApp } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
 
@@ -128,7 +128,7 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   ensureOnCurrentScreen(mainWindow);
   mainWindow.show();
   mainWindow.focus();
-  app.focus({ steal: true });
+  focusApp(true);
 
   // open the DevTools
   if (process.env.DEBUG && firstOpen) {

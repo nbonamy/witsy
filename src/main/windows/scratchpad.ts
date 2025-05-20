@@ -36,7 +36,6 @@ export const openScratchPad = (text?: string|null): void => {
   }
 
   // focus
-  app.focus({ steal: true });
   scratchpadWindow.focus();
 
 }

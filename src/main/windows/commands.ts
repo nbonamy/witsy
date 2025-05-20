@@ -1,8 +1,8 @@
 
 import { anyDict } from '../../types/index';
 import { Application } from '../../types/automation';
-import { app, BrowserWindow, screen } from 'electron';
-import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
+import { BrowserWindow, screen } from 'electron';
+import { createWindow, ensureOnCurrentScreen, focusApp, releaseFocus } from './index';
 //import MacosAutomator from '../../automations/macos';
 //import WindowsAutomator from '../../automations/windows';
 import autolib from 'autolib';
@@ -29,20 +29,19 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
+    transparent: true,
     resizable: process.env.DEBUG ? true : false,
     hiddenInMissionControl: true,
     queryParams: queryParams,
     keepHidden: true,
-    hasShadow: false,
+    hasShadow: true,
   });
 
   // focus tricks
   commandPicker.on('show', () => {
 
     // focus
-    if (process.platform === 'darwin') {
-      app.focus({ steal: true });
-    }
+    focusApp();
     commandPicker.moveTop();
     commandPicker.focusOnWebView();
 

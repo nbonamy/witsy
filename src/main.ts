@@ -12,7 +12,7 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
-import { fixPath, getCachedText, wait } from './main/utils';
+import { fixPath, getCachedText } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
@@ -437,14 +437,12 @@ ipcMain.on('command-run', async (event, payload) => {
     return;
   }
 
-  // focus
-  try {
-    await wait();
-    app.show();
-    app.focus({
-      steal: true,
-    });
-  } catch { /* empty */ }
+  // // focus
+  // try {
+  //   await wait();
+  //   app.show();
+  //   window.focusApp(true);
+  // } catch { /* empty */ }
 });
 
 ipcMain.on('experts-load', (event) => {

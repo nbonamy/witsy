@@ -42,7 +42,6 @@ export const openReadAloudPalette = (params: anyDict): void => {
   });
 
   // focus
-  app.focus({ steal: true });
   readAloudPalette.focus();
 
 }
