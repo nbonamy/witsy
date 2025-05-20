@@ -25,11 +25,31 @@ export const store: Store = reactive({
   } as Folder,
 
   loadSettings: (): void => {
+    
+    // load settings
     loadSettings()
+
+    // subscribe to file changes
+    window.api.on('file-modified', (file) => {
+      if (file === 'settings') {
+        loadSettings()
+      }
+    })
+
   },
 
   loadHistory: (): void => {
+
+    // load history
     loadHistory()
+
+    // subscribe to file changes
+    window.api.on('file-modified', (file) => {
+      if (file === 'history') {
+        mergeHistory(window.api.history.load())
+      }
+    })
+
   },
 
   loadCommands: (): void => {
@@ -50,15 +70,6 @@ export const store: Store = reactive({
     store.loadCommands()
     store.loadHistory()
     store.loadExperts()
-
-    // subscribe to file changes
-    window.api.on('file-modified', (file) => {
-      if (file === 'settings') {
-        loadSettings()
-      } else if (file === 'history') {
-        mergeHistory(window.api.history.load())
-      }
-    })
 
     // load models and select valid engine
     const llmManager: ILlmManager = LlmFactory.manager(store.config)
