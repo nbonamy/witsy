@@ -429,20 +429,9 @@ ipcMain.on('command-run', async (event, payload) => {
 
   // now run
   commander = new Commander();
-  const result = await commander.execCommand(app, args as RunCommandParams);
+  await commander.execCommand(app, args as RunCommandParams);
   commander = null;
   
-  // error
-  if (!result) {
-    return;
-  }
-
-  // // focus
-  // try {
-  //   await wait();
-  //   app.show();
-  //   window.focusApp(true);
-  // } catch { /* empty */ }
 });
 
 ipcMain.on('experts-load', (event) => {
