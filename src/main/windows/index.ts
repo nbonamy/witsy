@@ -430,9 +430,3 @@ export const getNativeWindowHandleInt = (window: BrowserWindow): number => {
     return hbuf.readInt32BE()
   }
 }
-
-export const focusApp = (anyway: boolean = false) => {
-  if (anyway || process.platform === 'darwin') {
-    app.focus({ steal: true});
-  }
-}

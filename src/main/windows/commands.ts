@@ -1,8 +1,8 @@
 
 import { anyDict } from '../../types/index';
 import { Application } from '../../types/automation';
-import { BrowserWindow, screen } from 'electron';
-import { createWindow, ensureOnCurrentScreen, focusApp, releaseFocus } from './index';
+import { app, BrowserWindow, screen } from 'electron';
+import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
 //import MacosAutomator from '../../automations/macos';
 //import WindowsAutomator from '../../automations/windows';
 import autolib from 'autolib';
@@ -19,6 +19,8 @@ let cursorAtOpen: { x: number, y: number }|undefined;
 
 export const prepareCommandPicker = (queryParams?: anyDict): void => {
 
+  const macOS = process.platform === 'darwin';
+
   // open a new one
   commandPicker = createWindow({
     hash: '/commands',
@@ -29,19 +31,24 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
-    transparent: true,
+    transparent: macOS,
     resizable: process.env.DEBUG ? true : false,
     hiddenInMissionControl: true,
     queryParams: queryParams,
     keepHidden: true,
-    hasShadow: true,
+    hasShadow: macOS,
   });
 
   // focus tricks
   commandPicker.on('show', () => {
 
+    // macos requires app.focus
+    // windows will use activateCommandPicker
+    if (macOS) {
+      app.focus({ steal: true});
+    }
+
     // focus
-    focusApp();
     commandPicker.moveTop();
     commandPicker.focusOnWebView();
 
