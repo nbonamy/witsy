@@ -64,10 +64,14 @@
 
 import { NetworkRequest } from '../types'
 import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Loader from '../components/Loader.vue'
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
+
+// load store
+store.loadSettings()
 
 const requests: Ref<NetworkRequest[]> = ref([])
 const selected: Ref<NetworkRequest | null> = ref(null)
