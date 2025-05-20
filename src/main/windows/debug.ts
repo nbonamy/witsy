@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import { electronStore, createWindow, ensureOnCurrentScreen, titleBarOptions } from './index';
 
 const storeBoundsId = 'debug.bounds'
@@ -45,7 +45,6 @@ export const openDebugWindow = (): void => {
   ensureOnCurrentScreen(debugWindow);
 
   // and focus
-  app.focus({ steal: true });
   debugWindow.focus();
   
   // open the DevTools

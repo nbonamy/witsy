@@ -70,7 +70,6 @@ export const openTranscribePalette = (): void => {
   });
 
   // focus
-  app.focus({ steal: true });
   transcribePalette.focus();
   
 }
