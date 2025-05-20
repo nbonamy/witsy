@@ -40,7 +40,9 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
   commandPicker.on('show', () => {
 
     // focus
-    app.focus({ steal: true });
+    if (process.platform === 'darwin') {
+      app.focus({ steal: true });
+    }
     commandPicker.moveTop();
     commandPicker.focusOnWebView();
 
