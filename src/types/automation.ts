@@ -32,6 +32,6 @@ export interface Automator {
 
 export type RunCommandParams = {
   textId: string
-  sourceApp: string | null
+  sourceApp: Application | null
   command: Command
 }

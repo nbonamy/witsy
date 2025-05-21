@@ -423,13 +423,13 @@ ipcMain.on('command-is-prompt-editable', (event, payload) => {
 ipcMain.on('command-run', async (event, payload) => {
 
   // prepare
-  const args = JSON.parse(payload);
-  await window.closeCommandPicker();
+  const args: RunCommandParams = JSON.parse(payload);
+  await window.closeCommandPicker(args.sourceApp);
   //await window.releaseFocus();
 
   // now run
   commander = new Commander();
-  await commander.execCommand(app, args as RunCommandParams);
+  await commander.execCommand(app, args);
   commander = null;
   
 });
