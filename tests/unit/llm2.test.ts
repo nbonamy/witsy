@@ -123,3 +123,42 @@ test('Load models', async () => {
   expect(window.api.config?.save).toHaveBeenCalledTimes(6)
 
 })
+
+test('OpenRouter vision models', async () => {
+
+  store.config.engines.openrouter.models = {
+    chat: [
+      { id: 'chat', name: 'chat', meta: { architecture: { input_modalities: [ 'text' ] } } }, 
+      { id: 'vision', name: 'vision', meta: { architecture: { input_modalities: [ 'text', 'image' ] } } }, 
+    ],
+    image: []
+  }
+
+  const openrouter = llmManager.igniteEngine('openrouter')
+  expect(openrouter.isVisionModel('chat')).toBe(false)
+  expect(openrouter.isVisionModel('vision')).toBe(true)
+
+})
+
+test('Can process format', async () => {
+
+  store.config.engines.openrouter.models = {
+    chat: [
+      { id: 'chat', name: 'chat', meta: { architecture: { input_modalities: [ 'text' ] } } }, 
+      { id: 'vision', name: 'vision', meta: { architecture: { input_modalities: [ 'text', 'image' ] } } }, 
+    ],
+    image: []
+  }
+
+  // without autoVisionSwitch
+  store.config.llm.autoVisionSwitch = false
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'txt')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'vision', 'txt')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'vision', 'jpg')).toBe(true)
+
+  // with autoVisionSwitch
+  store.config.llm.autoVisionSwitch = true
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(true)
+
+})

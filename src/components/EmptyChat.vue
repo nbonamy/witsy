@@ -78,7 +78,7 @@ const visibleEngines = computed(() => {
 
 const engine = computed(() => store.config.llm.engine)
 const models = computed(() => llmManager.getChatModels(engine.value))
-const model = computed(() => llmManager.getChatModel(engine.value, true))
+const model = computed(() => llmManager.getDefaultChatModel(engine.value, true))
 const isFavoriteModel = computed(() => llmManager.isFavoriteModel(engine.value, model.value))
 
 const modelShortcut = computed(() => {

@@ -342,7 +342,7 @@ const onAttach = () => {
       attach(fileContents.contents, mimeType, fileContents.url)
     } else {
       console.error('Cannot attach format', format)
-      Dialog.alert('This file format is not supported')
+      Dialog.alert(t('prompt.attachment.formatError.title'), t('prompt.attachment.formatError.text'))
     }
   }
 }
@@ -365,7 +365,7 @@ const onPaste = (event: ClipboardEvent) => {
             attach(contents, mimeType, 'clipboard://')
           } else {
             console.error('Cannot attach format', format)
-            Dialog.alert('This file format is not supported')
+            Dialog.alert(t('prompt.attachment.formatError.title'), t('prompt.attachment.formatError.text'))
           }
         }
       }
