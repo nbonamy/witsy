@@ -1390,6 +1390,12 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "title": "This file format is not supported by this model.",
+        "text": "Please try again with another file."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "You can start talking now…",

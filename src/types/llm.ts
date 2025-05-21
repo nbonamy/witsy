@@ -33,7 +33,7 @@ export interface ILlmManager {
 
   getChatEngineModel(acceptSpecializedModels?: boolean): { engine: string, model: string }
   getChatModels(engine: string): Model[]
-  getChatModel(engine: string, acceptSpecializedModels?: boolean): string
+  getDefaultChatModel(engine: string, acceptSpecializedModels?: boolean): string
   setChatModel(engine: string, model: string): void
 
   isEngineReady(engine: string): boolean
