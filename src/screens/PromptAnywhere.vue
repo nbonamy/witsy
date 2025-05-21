@@ -64,7 +64,7 @@ store.load()
 
 // init stuff
 const generator = new Generator(store.config)
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const prompt = ref(null)
 const engineModelPicker: Ref<typeof EngineModelPicker> = ref(null)
@@ -397,7 +397,6 @@ const onClose = () => {
 
   // save last seen chat
   if (chat.value !== null) {
-    lastSeenChat = { uuid: chat.value.uuid, when: Date.now() }
   } else {
     lastSeenChat = null
   }
@@ -410,7 +409,7 @@ const onClose = () => {
   // document.removeEventListener('keydown', onKeyDown)
 
   // done
-  window.api.anywhere.close(/*showParams?.sourceApp*/)
+  window.api.anywhere.close(showParams?.sourceApp)
 }
 
 const onStopGeneration = () => {

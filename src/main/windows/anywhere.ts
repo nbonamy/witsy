@@ -41,8 +41,17 @@ export const preparePromptAnywhere = (queryParams?: anyDict): void => {
   // get focus
   // opacity trick is to avoid flickering on Windows
   promptAnywhereWindow.on('show', () => {
+
+    // macos can use app.focus
+    if (process.platform === 'darwin') {
+      app.focus({ steal: true });
+    }
+
+    // focus
     promptAnywhereWindow.moveTop();
     promptAnywhereWindow.focusOnWebView();
+
+    // restore opacity (for windows)
     if (promptAnywhereWindow.getOpacity() !== 1) {
       setTimeout(() => {
         promptAnywhereWindow.setOpacity(1);

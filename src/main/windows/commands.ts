@@ -5,6 +5,7 @@ import { app, BrowserWindow, screen } from 'electron';
 import { createWindow, ensureOnCurrentScreen, releaseFocus } from './index';
 //import MacosAutomator from '../../automations/macos';
 //import WindowsAutomator from '../../automations/windows';
+//import Computer from '../../automations/computer_nut';
 import autolib from 'autolib';
 import { wait } from '../utils';
 
@@ -42,7 +43,7 @@ export const prepareCommandPicker = (queryParams?: anyDict): void => {
   // focus tricks
   commandPicker.on('show', () => {
 
-    // macos requires app.focus
+    // macos can use app.focus which is more elegant
     // windows will use activateCommandPicker
     if (macOS) {
       app.focus({ steal: true});
@@ -112,13 +113,15 @@ export const closeCommandPicker = async (sourceApp?: Application): Promise<void>
     // remove blur handler
     //console.log('Removing blur handler from command picker');
     commandPicker.removeAllListeners('blur');
+    commandPicker.setOpacity(0);
 
-    // now hide (and restore opacity)
-    commandPicker.hide();
-    
     // now release focus
     await releaseFocus({ sourceApp });
 
+    // now hide
+    commandPicker.hide();
+    commandPicker.setOpacity(1);
+    
   } catch (error) {
     console.error('Error while hiding command picker', error);
     commandPicker = null;
@@ -168,22 +171,27 @@ const activateCommandPicker = async () => {
     // if the user is moving the mouse so first we need to check
     // that the user did not move even though autolib is
     // explicitely asking to click at specific coordinates...
-    if (process.platform === 'win32') {
-      try {
-        const { x, y } = screen.getCursorScreenPoint();
-        if (cursorAtOpen.x === x && cursorAtOpen.y === y) {
-          const [winX, winY] = commandPicker.getPosition()
-          const [winW] = commandPicker.getSize()
-          const x = winX + winW / 2;
-          const y = winY + 2;
+    try {
+      const { x, y } = screen.getCursorScreenPoint();
+      if (cursorAtOpen.x === x && cursorAtOpen.y === y) {
+        const [winX, winY] = commandPicker.getPosition()
+        const [winW] = commandPicker.getSize()
+        const x = winX + winW / 2;
+        const y = winY + 2;
+        if (process.platform === 'win32') {
           const pt = screen.dipToScreenPoint({ x, y });
           await autolib.mouseClick(pt.x, pt.y);
-        } else {
-          console.warn('Mouse moved, not clicking on command picker');
-        }
-      } catch (err) {
-        console.warn('mouseClick failed', err);
-      }      
+        }/* else if (await Computer.isAvailable()) {
+          const currPt = await Computer.getCursorPosition();
+          await Computer.mouseMove(x, y);
+          await Computer.leftClick();
+          await Computer.mouseMove(currPt.x, currPt.y);
+        }*/
+      } else {
+        console.warn('Mouse moved, not clicking on command picker');
+      }
+    } catch (err) {
+      console.warn('mouseClick failed', err);
     }
 
   } finally {
