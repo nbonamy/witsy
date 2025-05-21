@@ -397,6 +397,7 @@ const onClose = () => {
 
   // save last seen chat
   if (chat.value !== null) {
+    lastSeenChat = { uuid: chat.value.uuid, when: Date.now() }
   } else {
     lastSeenChat = null
   }
