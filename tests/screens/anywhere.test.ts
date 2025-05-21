@@ -226,7 +226,7 @@ test('Closes when click on icon', async () => {
   wrapper.vm.response = new Message('assistant', 'This is a response')
   await wrapper.vm.$nextTick()
   wrapper.find('.close').trigger('click')
-  expect(window.api.anywhere.close).toHaveBeenLastCalledWith(/*{ id: 'appId', name: 'appName', path: 'appPath' }*/)
+  expect(window.api.anywhere.close).toHaveBeenLastCalledWith({ id: 'appId', name: 'appName', path: 'appPath' })
 })
 
 test('Manages conversation', async () => {
@@ -328,5 +328,5 @@ test('Supports keyboard clear with escape', async () => {
 test('Supports keyboard close', async () => {
   await prompt()
   document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-  expect(window.api.anywhere.close).toHaveBeenCalledWith()
+  expect(window.api.anywhere.close).toHaveBeenCalledWith(undefined)
 })
