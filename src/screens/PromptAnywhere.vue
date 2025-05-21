@@ -563,7 +563,7 @@ const onResponseResize = (deltaX: number) => {
 .container {
 
   --width-ratio: 2.25;
-  --padding-top: 12.5%;
+  --padding-top: 12%;
   --border-radius: 16px;
 
   position: relative;
@@ -715,7 +715,7 @@ const onResponseResize = (deltaX: number) => {
 
   .response {
     .message {
-      max-height: 60vh;
+      max-height: 55vh;
     }
   }
 
