@@ -224,7 +224,7 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   padding-right: 20px;
   display: flex;
   flex-direction: column;
-  margin-top: 0px !important;
+  margin: 0px !important;
 }
 
 .context-menu .item {

@@ -115,7 +115,7 @@
       min-width: auto;
       align-self: stretch;
 
-      :not(.context-menu) .actions {
+      .actions {
         margin-bottom: 1rem;
         button {
           font-size: 10pt;

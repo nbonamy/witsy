@@ -217,8 +217,4 @@ defineExpose({ load })
 
 <style scoped>
 
-.actions {
-  margin-bottom: 1rem;
-}
-
 </style>
