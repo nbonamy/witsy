@@ -135,11 +135,12 @@ const handleActionClick = async (action: string) => {
     save()
   } else if (action === 'sortEnabled') {
     experts.value.sort((a, b) => {
-      if (!b.state && !a.state) {
+      if (a.state === b.state) {
         const aName = a.name || expertI18n(a, 'name')
         const bName = b.name || expertI18n(b, 'name')
         return aName.localeCompare(bName)
       } else {
+        // disabled < enabled
         return b.state.localeCompare(a.state)
       }
     })
