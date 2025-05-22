@@ -102,6 +102,9 @@ test('New command', async () => {
   const editor = tab.findComponent({ name: 'CommandEditor' })
   await tab.find('.actions button[name=new]').trigger('click')
 
+  // for test stability
+  tab.vm.selected = null
+
   // new command creates
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
   await editor.find('[name=label]').setValue('command')
