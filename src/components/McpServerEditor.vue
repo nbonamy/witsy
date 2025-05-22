@@ -261,19 +261,12 @@ const onSave = () => {
 
 <style scoped>
 
-.list-with-actions {
-  width: 100%;
-}
-
-.buttons {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.25rem;
-
-  button {
-    padding: 0.375rem 0.75rem;
+.server-editor {
+  
+  .list-with-actions {
+    width: 100%;
   }
+
 }
 
 </style>

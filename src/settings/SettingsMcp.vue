@@ -166,9 +166,6 @@ main {
     width: 500px;
     align-self: center !important;
   }
-  &.hidden {
-    display: none;
-  }
 }
 
 /* .slide-enter-active,
