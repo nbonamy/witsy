@@ -7,11 +7,11 @@
     <header v-else>
       <div class="title">{{ t('settings.tabs.commands') }}</div>
     </header>
-    <main :class="{ editor: true, hidden: !edited }">
-      <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
-    </main>
-    <main :class="{ list: true, hidden: edited }">
+    <main class="list sliding-root" :class="{ hidden: edited }">
       <CommandsList ref="list" @edit="onEdit" @create="onCreate" />
+    </main>
+    <main class="editor sliding-pane" :class="{ hidden: !edited }"> 
+      <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
     </main>
   </form>
 </template>

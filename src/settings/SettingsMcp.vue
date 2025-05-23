@@ -7,11 +7,11 @@
     <header v-else>
       <div class="title">{{ t('settings.mcp.modelContextProtocol') }}</div>
     </header>
-    <main :class="{ editor: true, hidden: !selected }">
-      <McpServerEditor ref="editor" :type="type" :server="selected" :apiKey="apiKey" @cancel="onEdit(null)" @save="onEdited" @install="onInstall" />
-    </main>
-    <main :class="{ list: true, hidden: selected }">
+    <main class="list sliding-root" :class="{ hidden: selected }">
       <McpServerList ref="list" @edit="onEdit" @create="onCreate" />
+    </main>
+    <main class="editor sliding-pane" :class="{ hidden: !selected }"> 
+      <McpServerEditor ref="editor" :type="type" :server="selected" :apiKey="apiKey" @cancel="onEdit(null)" @save="onEdited" @install="onInstall" />
     </main>
   </form>
 </template>
