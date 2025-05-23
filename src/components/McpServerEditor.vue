@@ -261,7 +261,7 @@ const onSave = () => {
 
 <style scoped>
 
-.server-editor {
+.mcp-server-editor {
   
   .list-with-actions {
     width: 100%;

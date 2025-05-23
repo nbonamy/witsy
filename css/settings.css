@@ -104,6 +104,10 @@
       display: none;
     }
 
+    &.editor {
+      width: 66%;
+    }
+
     &:has(.list-panel) {
       padding: 0;
       min-width: auto;
