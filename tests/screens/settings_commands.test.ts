@@ -67,7 +67,6 @@ test('Renders', async () => {
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
   expect(tab.findAll('.sticky-table-container tr.command button')).toHaveLength(82)
-  expect(tab.findAll('.actions button')).toHaveLength(4)
 
 })
 
@@ -100,7 +99,7 @@ test('New command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   const editor = tab.findComponent({ name: 'CommandEditor' })
-  await tab.find('.actions button[name=new]').trigger('click')
+  await tab.find('.list-actions .list-action.new').trigger('click')
 
   // for test stability
   tab.vm.selected = null
@@ -242,7 +241,7 @@ test('Delete command', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   await tab.find('.sticky-table-container tr.command:nth-of-type(42)').trigger('click')
-  await tab.find('.actions button[name=delete]').trigger('click')
+  await tab.find('.list-actions .list-action.delete').trigger('click')
   expect(tab.findAll('.sticky-table-container tr.command')).toHaveLength(41)
   expect(store.commands).toHaveLength(41)
 
@@ -252,7 +251,7 @@ test('Context Menu', async () => {
 
   const tab = await switchToTab(wrapper, commandsIndex)
   expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.actions .right button').trigger('click')
+  await tab.find('.list-actions .list-action.menu').trigger('click')
   await tab.vm.$nextTick()
   expect(tab.findAll('.context-menu')).toHaveLength(1)
 

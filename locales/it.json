@@ -357,7 +357,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Ripristina nome e prompt ai valori predefiniti",
       "shortcutDescription": "Premi questo tasto quando la palette dei comandi è attiva per eseguire questo comando.",
-      "title": "Dettagli del comando",
       "useDefault": "Utilizza i parametri predefiniti",
       "validation": {
         "inputPlaceholder": "Il template deve contenere il segnaposto {'{'}input{'}'}.",
@@ -498,7 +497,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Dettagli esperto",
       "triggerApps": "App di attivazione",
       "triggerAppsDescription": "Il prompt verrà selezionato automaticamente quando Prompt Anywhere viene chiamato da una di queste applicazioni",
       "validation": {
@@ -1360,6 +1358,12 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Per favore, riprova con un altro file.",
+        "title": "Questo formato di file non è supportato da questo modello."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Puoi iniziare a parlare ora…",
@@ -1496,7 +1500,6 @@
       "import": "Importa",
       "importError": "Errore durante l'importazione del file dei comandi",
       "importSuccess": "File dei comandi importato con successo",
-      "more": "Di più",
       "new": "Nuovo",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1580,7 +1583,6 @@
       "import": "Importa",
       "importError": "Errore durante l'importazione del file esperti",
       "importSuccess": "File esperti importato con successo",
-      "more": "Di più",
       "new": "Nuovo",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordina alfabeticamente",

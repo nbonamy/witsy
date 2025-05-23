@@ -357,7 +357,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Name und Prompt auf Standardwerte zurücksetzen",
       "shortcutDescription": "Drücken Sie diese Taste, wenn die Befehls-Palette aktiv ist, um diesen Befehl auszuführen.",
-      "title": "Befehlsdetails",
       "useDefault": "Verwenden Sie die Standardeinstellungen für Befehle",
       "validation": {
         "inputPlaceholder": "Die Vorlage muss den Platzhalter {input} enthalten.",
@@ -498,7 +497,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Expertendetails",
       "triggerApps": "Trigger-Apps",
       "triggerAppsDescription": "Der Prompt wird automatisch ausgewählt, wenn Prompt Anywhere von einer dieser Anwendungen aufgerufen wird",
       "validation": {
@@ -1360,6 +1358,12 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Bitte versuchen Sie es mit einer anderen Datei.",
+        "title": "Dieses Dateiformat wird von diesem Modell nicht unterstützt."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Du kannst jetzt anfangen zu sprechen…",
@@ -1496,7 +1500,6 @@
       "import": "Importieren",
       "importError": "Fehler beim Importieren der Befehlsdatei",
       "importSuccess": "Befehlsdatei erfolgreich importiert",
-      "more": "Mehr",
       "new": "Neu",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1580,7 +1583,6 @@
       "import": "Importieren",
       "importError": "Fehler beim Importieren der Experten-Datei",
       "importSuccess": "Experten-Datei erfolgreich importiert",
-      "more": "Mehr",
       "new": "Neu",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Alphabetisch sortieren",

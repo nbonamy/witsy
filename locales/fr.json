@@ -357,7 +357,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Réinitialiser nom et prompt aux valeurs par défaut",
       "shortcutDescription": "Appuyez sur cette touche lorsque la palette de commandes est active pour exécuter cette commande.",
-      "title": "Détails de la commande",
       "useDefault": "Utiliser les paramètres par défaut",
       "validation": {
         "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
@@ -498,7 +497,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Détails de l'expert",
       "triggerApps": "Applications déclencheuses",
       "triggerAppsDescription": "Le prompt sera automatiquement sélectionné lorsque Prompt Anywhere est appelé depuis l'une de ces applications",
       "validation": {
@@ -1360,6 +1358,12 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Veuillez réessayer avec un autre fichier.",
+        "title": "Ce format de fichier n'est pas pris en charge par ce modèle."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Vous pouvez commencer à parler…",
@@ -1496,7 +1500,6 @@
       "import": "Importer",
       "importError": "Échec de l'importation du fichier de commandes",
       "importSuccess": "Fichier de commandes importé avec succès",
-      "more": "Plus",
       "new": "Nouveau",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1580,7 +1583,6 @@
       "import": "Importer",
       "importError": "Échec de l'importation du fichier d'experts",
       "importSuccess": "Fichier d'experts importé avec succès",
-      "more": "Plus",
       "new": "Nouveau",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Trier alphabétiquement",
