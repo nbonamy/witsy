@@ -376,7 +376,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Redefinir nome e prompt para os valores padrão",
       "shortcutDescription": "Pressione esta tecla quando a paleta de comandos estiver ativa para executar este comando.",
-      "title": "Detalhes do comando",
       "useDefault": "Usar padrões de comandos",
       "validation": {
         "inputPlaceholder": "O modelo deve conter o placeholder {'{'}input{'}'}.",
@@ -517,7 +516,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Detalhes do Expert",
       "triggerApps": "Aplicativos de Acionamento",
       "triggerAppsDescription": "O prompt será selecionado automaticamente quando o Prompt Anywhere for chamado de um desses aplicativos",
       "validation": {
@@ -1390,6 +1388,12 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Por favor, tente novamente com outro arquivo.",
+        "title": "Este formato de arquivo não é suportado por este modelo."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Você pode começar a falar agora…",
@@ -1526,7 +1530,6 @@
       "import": "Importar",
       "importError": "Falha ao importar arquivo de comandos",
       "importSuccess": "Arquivo de comandos importado com sucesso",
-      "more": "Mais",
       "new": "Novo",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1610,7 +1613,6 @@
       "import": "Importar",
       "importError": "Falha ao importar arquivo de especialistas",
       "importSuccess": "Arquivo de especialistas importado com sucesso",
-      "more": "Mais",
       "new": "Novo",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabeticamente",

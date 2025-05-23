@@ -1,11 +1,10 @@
 <template>
-  <div class="actions">
-    <button name="new" @click.prevent="onNew">{{ t('settings.commands.new') }}</button>
-    <button name="edit" @click.prevent="onEdit(selected)" :disabled="!selected">{{ t('common.edit') }}</button>
-    <button name="delete" @click.prevent="onDelete" :disabled="!selected">{{ t('common.delete') }}</button>
-    <div class="right">
-      <button name="more" @click.prevent.stop="onMore" ref="moreButton">{{ t('settings.commands.more') }} {{ showMenu ? '▼' : '▲'}}</button>
-    </div>
+  <div class="list-actions">
+    <div class="list-action new" @click.prevent="onNew"><BIconPlusLg />{{ t('settings.commands.new') }}</div>
+    <div class="list-action edit" @click.prevent="onEdit(selected)" v-if="selected"><BIconPencil />{{ t('common.edit') }}</div>
+    <div class="list-action delete" @click.prevent="onDelete" v-if="selected"><BIconTrash />{{ t('common.delete') }}</div>
+    <div class="push" /> 
+    <div class="list-action menu" @click.prevent.stop="onMore" ref="moreButton"><div></div><div></div><div></div></div>
   </div>
   <div class="commands sticky-table-container">
     <table>

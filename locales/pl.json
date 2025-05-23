@@ -376,7 +376,6 @@
       "prompt": "Podpowiedź",
       "resetToDefault": "Zresetuj nazwę i monit do wartości domyślnych",
       "shortcutDescription": "Naciśnij ten klawisz, gdy paleta poleceń jest aktywna, aby wykonać to polecenie.",
-      "title": "Szczegóły polecenia",
       "useDefault": "Użyj poleceń domyślnych",
       "validation": {
         "inputPlaceholder": "Szablon musi zawierać symbol zastępczy {'{'}input{'}'}.",
@@ -517,7 +516,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Szczegóły eksperta",
       "triggerApps": "Aplikacje wyzwalające",
       "triggerAppsDescription": "Monit zostanie automatycznie wybrany, gdy Prompt Anywhere zostanie wywołany z jednej z tych aplikacji",
       "validation": {
@@ -1390,6 +1388,12 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Spróbuj ponownie z innym plikiem.",
+        "title": "Ten format pliku nie jest obsługiwany przez ten model."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Naciśnij Enter, aby rozpocząć pisanie lub Spację, aby użyć dyktowania...",
@@ -1526,7 +1530,6 @@
       "import": "Import",
       "importError": "Nie udało się zaimportować pliku poleceń",
       "importSuccess": "Plik poleceń zaimportowany pomyślnie",
-      "more": "Więcej",
       "new": "Nowość",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1610,7 +1613,6 @@
       "import": "Import",
       "importError": "Nie udało się zaimportować pliku ekspertów",
       "importSuccess": "Plik eksperta zaimportowany pomyślnie",
-      "more": "Więcej",
       "new": "Nowość",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sortuj alfabetycznie",

@@ -357,7 +357,6 @@
       "prompt": "Aviso",
       "resetToDefault": "Restablecer nombre y aviso a valores predeterminados",
       "shortcutDescription": "Presiona esta tecla cuando la paleta de comandos esté activa para ejecutar este comando.",
-      "title": "Detalles del comando",
       "useDefault": "Usar valores predeterminados de comandos",
       "validation": {
         "inputPlaceholder": "La plantilla debe contener el marcador de posición {'input'}.",
@@ -498,7 +497,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Detalles del experto",
       "triggerApps": "Aplicaciones desencadenantes",
       "triggerAppsDescription": "El prompt se seleccionará automáticamente cuando Prompt Anywhere se llame desde una de estas aplicaciones",
       "validation": {
@@ -1360,6 +1358,12 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "Por favor, inténtalo de nuevo con otro archivo.",
+        "title": "Este formato de archivo no es compatible con este modelo."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Puedes empezar a hablar ahora…",
@@ -1496,7 +1500,6 @@
       "import": "Importar",
       "importError": "Error al importar el archivo de comandos",
       "importSuccess": "Archivo de comandos importado con éxito",
-      "more": "Más",
       "new": "Nuevo",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1580,7 +1583,6 @@
       "import": "Importar",
       "importError": "Error al importar el archivo de expertos",
       "importSuccess": "Archivo de expertos importado con éxito",
-      "more": "Más",
       "new": "Nuevo",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabéticamente",

@@ -376,7 +376,6 @@
       "prompt": "提示",
       "resetToDefault": "将名称和提示重置为默认值",
       "shortcutDescription": "在命令面板激活时按下这个键以运行此命令。",
-      "title": "命令详情",
       "useDefault": "使用命令默认值",
       "validation": {
         "inputPlaceholder": "模板必须包含 {'{'}input{'}'} 占位符。",
@@ -517,7 +516,6 @@
   },
   "experts": {
     "editor": {
-      "title": "专家详情",
       "triggerApps": "触发应用",
       "triggerAppsDescription": "当从这些应用中调用 Prompt Anywhere 时，将自动选择提示。",
       "validation": {
@@ -1390,6 +1388,12 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "formatError": {
+        "text": "请尝试使用其他文件。",
+        "title": "此文件格式不被此模型支持。"
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "你现在可以开始说话了…",
@@ -1526,7 +1530,6 @@
       "import": "导入",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "more": "更多",
       "new": "新建",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1610,7 +1613,6 @@
       "import": "导入",
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
-      "more": "更多",
       "new": "新建",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",

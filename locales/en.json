@@ -376,7 +376,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Reset name and prompt to default values",
       "shortcutDescription": "Hit this key when the command palette is active to run this command.",
-      "title": "Command details",
       "useDefault": "Use commands default",
       "validation": {
         "inputPlaceholder": "The template must contain the {'{'}input{'}'} placeholder.",
@@ -517,7 +516,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Expert details",
       "triggerApps": "Trigger Apps",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",
       "validation": {
@@ -1392,8 +1390,8 @@
   "prompt": {
     "attachment": {
       "formatError": {
-        "title": "This file format is not supported by this model.",
-        "text": "Please try again with another file."
+        "text": "Please try again with another file.",
+        "title": "This file format is not supported by this model."
       }
     },
     "conversation": {
@@ -1532,7 +1530,6 @@
       "import": "Import",
       "importError": "Failed to import commands file",
       "importSuccess": "Commands file imported successfully",
-      "more": "More",
       "new": "New",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1616,7 +1613,6 @@
       "import": "Import",
       "importError": "Failed to import experts file",
       "importSuccess": "Experts file imported successfully",
-      "more": "More",
       "new": "New",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sort alphabetically",
