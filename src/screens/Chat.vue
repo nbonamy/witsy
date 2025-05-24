@@ -365,7 +365,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
     //emitEvent('set-prompt', message)
     onSendPrompt({
       prompt: message.content,
-      attachment: message.attachment as Attachment,
+      attachments: message.attachments,
       docrepo: fork.docrepo,
       expert: message.expert
     })
@@ -440,7 +440,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { prompt, attachment, docrepo, expert } = params
+  const { prompt, attachments, docrepo, expert } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -450,12 +450,14 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
 
   // save the attachment
-  if (attachment?.saved === false) {
-    attachment.loadContents()
-    const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
-    if (fileUrl) {
-      attachment.saved = true
-      attachment.url = fileUrl
+  for (const attachment of attachments ?? []) {
+    if (attachment?.saved === false) {
+      attachment.loadContents()
+      const fileUrl = saveFileContents(attachment.format(), attachment.b64Contents())
+      if (fileUrl) {
+        attachment.saved = true
+        attachment.url = fileUrl
+      }
     }
   }
 
@@ -473,7 +475,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // prompt
   await assistant.value.prompt(prompt, {
     model: assistant.value.chat.model,
-    attachment: attachment || null,
+    attachments: attachments || [],
     docrepo: docrepo || null,
     expert: expert || null,
   }, (chunk) => {
@@ -537,7 +539,7 @@ const onRetryGeneration = async (message: Message) => {
   // and retry
   onSendPrompt({
     prompt: lastMessage.content,
-    attachment: lastMessage.attachment as Attachment,
+    attachments: lastMessage.attachments,
     docrepo: assistant.value.chat.docrepo,
     expert: lastMessage.expert
   })

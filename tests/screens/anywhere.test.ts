@@ -155,13 +155,13 @@ test('Submits prompt without streaming', async () => {
 })
 
 test('Submits system prompt with params', async () => {
-  const wrapper = await prompt({ attachment: new Attachment('file', 'text/plain'), expert: store.experts[0] })
+  const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits system user with params', async () => {
-  const wrapper = await prompt({ attachment: new Attachment('file', 'text/plain'), expert: store.experts[2] })
+  const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.default"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })

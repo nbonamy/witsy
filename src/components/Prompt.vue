@@ -10,8 +10,10 @@
     </div>
     <slot name="between" />
     <div class="input" @paste="onPaste">
-      <div v-if="attachment" class="attachment" @click="onDetach">
-        <AttachmentView class="attachment" :attachment="attachment" />
+      <div class="attachments" >
+        <div class="attachment" @click="onDetach(attachment)" v-for="(attachment, index) in attachments" :key="index">
+          <AttachmentView :attachment="attachment" />
+        </div>
       </div>
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
@@ -36,7 +38,7 @@
 import { FileContents, Expert } from '../types/index'
 import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
-import { ref, computed, onMounted, onUnmounted, nextTick, watch, Ref, PropType } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
@@ -56,7 +58,7 @@ import Chat from '../models/chat'
 
 export type SendPromptParams = {
   prompt: string,
-  attachment: Attachment|null
+  attachments: Attachment[]
   docrepo: string|null,
   expert: Expert|null
 }
@@ -126,11 +128,11 @@ const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
-const expert: Ref<Expert|null> = ref(null)
-const attachment = ref(null)
+const expert = ref<Expert|null>(null)
+const attachments = ref<Attachment[]>([])
 const docrepo = ref(null)
 const input = ref(null)
-const docRepos: Ref<DocumentBase[]> = ref([])
+const docRepos = ref<DocumentBase[]>([])
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showActiveExpert = ref(false)
@@ -290,7 +292,7 @@ const loadDocRepos = () => {
 
 const onSetPrompt = (message: Message) => {
   prompt.value = message.content
-  attachment.value = message.attachment
+  attachments.value = message.attachments
   expert.value = message.expert
   nextTick(() => {
     autoGrow(input.value)
@@ -318,11 +320,11 @@ const onSendPrompt = () => {
     autoGrow(input.value)
     emitEvent('send-prompt', {
       prompt: message,
-      attachment: attachment.value || null,
+      attachments: attachments.value || null,
       docrepo: docrepo.value || null,
       expert: expert.value || null
     } as SendPromptParams)
-    attachment.value = null
+    attachments.value = []
   })
 }
 
@@ -380,19 +382,19 @@ const attach = async (contents: string, mimeType: string, url: string) => {
   if (toAttach.isImage() && store.config.llm.imageResize > 0) {
     try {
       ImageUtils.resize(`data:${mimeType};base64,${contents}`, store.config.llm.imageResize, (resizedContent, resizedMimeTyoe) => {
-        attachment.value = new Attachment(resizedContent, resizedMimeTyoe, url)
+        attachments.value.push(new Attachment(resizedContent, resizedMimeTyoe, url))
       })
     } catch (e) {
       console.error('Error resizing image', e)
-      attachment.value = toAttach
+      attachments.value.push(toAttach)
     }
   } else {
-    attachment.value = toAttach
+      attachments.value.push(toAttach)
   }
 }
 
-const onDetach = () => {
-  attachment.value = null
+const onDetach = (attachment: Attachment) => {
+  attachments.value = attachments.value.filter((a: Attachment) => a !== attachment)
 }
 
 const openExperts = () => {
@@ -858,11 +860,6 @@ defineExpose({
   padding-right: 0px;
 }
 
-.attachment .icon {
-  height: 18pt !important;
-  width: 18pt !important;
-}
-
 .input {
   background-color: var(--prompt-input-bg-color);
   border: 1px solid var(--prompt-input-border-color);
@@ -872,10 +869,22 @@ defineExpose({
   flex: 1;
 }
 
+.input .attachments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 8px;
+}
+
 .input .attachment {
   margin-top: 4px;
   margin-left: 8px;
   cursor: pointer;
+}
+
+.attachment .icon {
+  height: 18pt !important;
+  width: 18pt !important;
 }
 
 .input .textarea-wrapper {

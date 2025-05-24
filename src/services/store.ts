@@ -29,6 +29,10 @@ export const store: Store = reactive({
     // load settings
     loadSettings()
 
+    // we need to check the model list versions
+    const llmManager = LlmFactory.manager(store.config)
+    llmManager.checkModelListsVersion()
+
     // subscribe to file changes
     window.api.on('file-modified', (file) => {
       if (file === 'settings') {
@@ -182,8 +186,8 @@ export const store: Store = reactive({
       }
       for (const chat of history.chats) {
         for (const message of chat.messages) {
-          if (message.attachment) {
-            message.attachment.content = null
+          for (const attachment of message.attachments) {
+            attachment.content = null
           }
         }
       }
@@ -204,6 +208,7 @@ export const store: Store = reactive({
 })
 
 const loadSettings = (): void => {
+  
   // we don't want to reassign store.config
   // as others are referencing it directly
   // so we update locally instead
@@ -220,6 +225,7 @@ const loadSettings = (): void => {
     // @ts-expect-error direct key access
     store.config[key] = updated[key]
   }
+
 }
 
 const loadHistory = (): void => {
