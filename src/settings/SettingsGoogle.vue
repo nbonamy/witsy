@@ -21,6 +21,13 @@
         <a href="https://ai.google.dev/pricing" target="_blank">{{ t('settings.engines.google.pricing') }}</a>
       </div>
     </div>
+    <div class="group">
+      <label>{{ t('settings.engines.vision.model') }}</label>
+      <select name="vision_model" v-model="vision_model" :disabled="vision_models.length == 0" @change="save">
+        <option v-for="model in vision_models" :key="model.id" :value="model.id">{{ model.name }}
+        </option>
+      </select>
+    </div>
     <div class="group horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
       <label>{{  t('settings.engines.disableTools') }}</label>
@@ -30,27 +37,33 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import { ChatModel } from 'multi-llm-ts'
 
 const apiKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
-const chat_model = ref(null)
-//const image_model = ref(null)
-const chat_models = ref([])
-//const image_models = ref([])
+const chat_model = ref<string>(null)
+const vision_model = ref<string>(null)
+const chat_models = ref<ChatModel[]>([])
+
+const vision_models = computed(() => {
+  return [
+    { id: '', name: t('settings.engines.vision.noFallback') },
+    ...chat_models.value.filter(model => model.capabilities?.vision)
+  ]
+})
 
 const load = () => {
   apiKey.value = store.config.engines.google?.apiKey || ''
   chat_models.value = store.config.engines.google?.models?.chat || []
-  //image_models.value = store.config.engines.google?.models?.image || []
   chat_model.value = store.config.engines.google?.model?.chat || ''
-  //image_model.value = store.config.engines.google?.model?.image || ''
+  vision_model.value = store.config.engines.google?.model?.vision || ''
   disableTools.value = store.config.engines.google?.disableTools || false
 }
 
@@ -93,10 +106,8 @@ const onKeyChange = () => {
 
 const save = () => {
   store.config.engines.google.apiKey = apiKey.value
-  store.config.engines.google.model = {
-    chat: chat_model.value,
-    image: ''
-  }
+  store.config.engines.google.model.chat = chat_model.value
+  store.config.engines.google.model.vision = vision_model.value
   store.config.engines.google.disableTools = disableTools.value
   store.saveSettings()
 }

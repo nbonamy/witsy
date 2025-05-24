@@ -14,19 +14,28 @@ import {
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
+  const visionModel = (engine: string) => ({
+    id: `${engine}-vision`,
+    name: 'Vision',
+    capabilities: {
+      tools: false,
+      vision: true,
+      reasoning: false
+    }
+  })
   return {
     ...mod,
-    loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadGroqModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadMetaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] }))
+    loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [ visionModel('anthropic') ], image: [] })),
+    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ visionModel('cerebras') ], image: [] })),
+    loadGoogleModels: vi.fn((): ModelsList => ({ chat: [ visionModel('google') ], image: [] })),
+    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ visionModel('groq') ], image: [] })),
+    loadMetaModels: vi.fn((): ModelsList => ({ chat: [ visionModel('meta') ], image: [] })),
+    loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [ visionModel('mistralai') ], image: [] })),
+    loadOllamaModels: vi.fn((): ModelsList => ({ chat: [ visionModel('ollama') ], image: [] })),
+    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ visionModel('openai') ], image: [] })),
+    loadXAIModels: vi.fn((): ModelsList => ({ chat: [ visionModel('xai') ], image: [] })),
+    loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [ visionModel('deepseek') ], image: [] })),
+    loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [ visionModel('openrouter') ], image: [] }))
   }
 })
 
@@ -67,6 +76,8 @@ test('openai settings', async () => {
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
+  await openai.find('[name=vision_model]').setValue('openai-vision')
+  expect(store.config.engines.openai.model.vision).toBe('openai-vision')
   expect(store.config.engines.openai.disableTools).toBeFalsy()
   await openai.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.openai.disableTools).toBeTruthy()
@@ -83,6 +94,8 @@ test('anthropic settings', async () => {
   expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
+  await anthropic.find('[name=vision_model]').setValue('anthropic-vision')
+  expect(store.config.engines.anthropic.model.vision).toBe('anthropic-vision')
   expect(store.config.engines.anthropic.disableTools).toBeFalsy()
   await anthropic.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.anthropic.disableTools).toBeTruthy()
@@ -99,6 +112,8 @@ test('google settings', async () => {
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await google.find('[name=vision_model]').setValue('google-vision')
+  expect(store.config.engines.google.model.vision).toBe('google-vision')
   expect(store.config.engines.google.disableTools).toBeFalsy()
   await google.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.google.disableTools).toBeTruthy()
@@ -115,6 +130,8 @@ test('xai settings', async () => {
   expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await xai.find('[name=vision_model]').setValue('xai-vision')
+  expect(store.config.engines.xai.model.vision).toBe('xai-vision')
   expect(store.config.engines.xai.disableTools).toBeFalsy()
   await xai.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.xai.disableTools).toBeTruthy()
@@ -131,6 +148,8 @@ test('meta settings', async () => {
   expect(loadMetaModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await meta.find('[name=vision_model]').setValue('meta-vision')
+  expect(store.config.engines.meta.model.vision).toBe('meta-vision')
   expect(store.config.engines.meta.disableTools).toBeFalsy()
   await meta.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.meta.disableTools).toBeTruthy()
@@ -148,6 +167,8 @@ test('ollama settings', async () => {
   await wait(750) //timeout
   expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
+  await ollama.find('[name=vision_model]').setValue('ollama-vision')
+  expect(store.config.engines.ollama.model.vision).toBe('ollama-vision')
   expect(store.config.engines.ollama.disableTools).toBeFalsy()
   await ollama.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.ollama.disableTools).toBeTruthy()
@@ -164,6 +185,8 @@ test('mistralai settings', async () => {
   expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await mistralai.find('[name=vision_model]').setValue('mistralai-vision')
+  expect(store.config.engines.mistralai.model.vision).toBe('mistralai-vision')
   expect(store.config.engines.mistralai.disableTools).toBeFalsy()
   await mistralai.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.mistralai.disableTools).toBeTruthy()
@@ -188,6 +211,8 @@ test('deepseek settings', async () => {
   expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await deepseek.find('[name=vision_model]').setValue('deepseek-vision')
+  expect(store.config.engines.deepseek.model.vision).toBe('deepseek-vision')
   expect(store.config.engines.deepseek.disableTools).toBeFalsy()
   await deepseek.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.deepseek.disableTools).toBeTruthy()
@@ -204,6 +229,8 @@ test('openrouter settings', async () => {
   expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await openrouter.find('[name=vision_model]').setValue('openrouter-vision')
+  expect(store.config.engines.openrouter.model.vision).toBe('openrouter-vision')
   expect(store.config.engines.openrouter.disableTools).toBeFalsy()
   await openrouter.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.openrouter.disableTools).toBeTruthy()
@@ -220,6 +247,8 @@ test('groq settings', async () => {
   expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await groq.find('[name=vision_model]').setValue('groq-vision')
+  expect(store.config.engines.groq.model.vision).toBe('groq-vision')
   expect(store.config.engines.groq.disableTools).toBeFalsy()
   await groq.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.groq.disableTools).toBeTruthy()
@@ -236,6 +265,8 @@ test('cerebras settings', async () => {
   expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
+  await cerebras.find('[name=vision_model]').setValue('cerebras-vision')
+  expect(store.config.engines.cerebras.model.vision).toBe('cerebras-vision')
   expect(store.config.engines.cerebras.disableTools).toBeFalsy()
   await cerebras.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.cerebras.disableTools).toBeTruthy()

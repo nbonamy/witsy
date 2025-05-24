@@ -205,13 +205,7 @@ test('Settings Appearance', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(wrapper, 9)
-  expect(tab.findAll('.group')).toHaveLength(7)
-
-  expect(store.config.llm.autoVisionSwitch).not.toBe(false)
-  tab.find('.group.vision input').setValue(false)
-  expect(store.config.llm.autoVisionSwitch).toBe(false)
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.group.autosave input').setValue(true)

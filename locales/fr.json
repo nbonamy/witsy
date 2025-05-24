@@ -1423,7 +1423,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Enregistrer les requêtes rapides dans l'historique",
-      "autoVisionSwitch": "Passer automatiquement au modèle vision",
       "conversationLength": "Messages par conversation",
       "header": "Paramètres divers",
       "imageResize": "Taille des images",
@@ -1568,6 +1567,10 @@
       "sdwebui": {
         "baseURL": "URL de base de l'API",
         "ensureApiMode": "Assurez-vous d'être en mode API"
+      },
+      "vision": {
+        "model": "Modèle de vision de secours (commutation automatique si le modèle actuel ne prend pas en charge la vision)",
+        "noFallback": "Ne pas recourir à un modèle de vision"
       },
       "xai": {
         "aboutModels": "A propos des modèles xAI",

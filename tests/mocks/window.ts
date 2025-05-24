@@ -62,8 +62,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         const config = JSON.parse(JSON.stringify(defaultSettings))
         if (opts.favoriteModels) {
           config.llm.favorites = [
-            { id: 'mock-chat1', engine: 'mock', model: 'chat1' },
-            { id: 'mock-chat2', engine: 'mock', model: 'chat2' },
+            { id: 'mock-chat', engine: 'mock', model: 'chat' },
+            { id: 'mock-vision', engine: 'mock', model: 'vision' },
           ]
         }
         if (opts.modelDefaults) {

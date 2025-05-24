@@ -20,7 +20,7 @@ import DocRepos from '../screens/DocRepos.vue'
 import Settings from '../screens/Settings.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { emitEvent } = useEventBus()
 
 // init stuff
 store.load()

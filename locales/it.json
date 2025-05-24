@@ -1423,7 +1423,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Salva sempre le sessioni di richiesta nella cronologia chat",
-      "autoVisionSwitch": "Passa automaticamente al modello visione",
       "conversationLength": "Messaggi per conversazione",
       "header": "Impostazioni varie",
       "imageResize": "Ridimensionamento immagine",
@@ -1568,6 +1567,10 @@
       "sdwebui": {
         "baseURL": "URL di base API",
         "ensureApiMode": "Assicurati di essere in modalità API"
+      },
+      "vision": {
+        "model": "Modello di visione di riserva (switch automatico se il modello attuale non supporta la visione)",
+        "noFallback": "Non passare a un modello di visione"
       },
       "xai": {
         "aboutModels": "Ulteriori informazioni sui modelli xAI",

@@ -8,7 +8,7 @@ import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant
 import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
-import LlmMock from '../mocks/llm'
+import LlmMock, { installMockModels } from '../mocks/llm'
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -87,10 +87,7 @@ beforeEach(() => {
   store.config.llm.forceLocale = false
   store.config.llm.engine = 'mock'
   store.config.instructions = {}
-  store.config.engines.mock = {
-    models: { chat: [ 'chat1', 'chat2' ] },
-    model: { chat: 'chat'  }
-  }
+  installMockModels()
 
   // init assistant
   assistant = new Assistant(store.config)
@@ -110,13 +107,20 @@ test('Assistant parameters', async () => {
     titling: true,
     engine: 'mock',
     model: 'chat',
-    attachment: null,
+    attachments: [],
     docrepo: null,
     expert: null,
     sources: true,
     streaming: true,
-    models: [ 'chat1', 'chat2' ],
-    autoSwitchVision: true,
+    visionFallbackModel: {
+      id: 'vision',
+      meta: {},
+      capabilities: {
+        tools: true,
+        vision: true,
+        reasoning: false,
+      }
+    },
     citations: true,
     usage: true,
   })

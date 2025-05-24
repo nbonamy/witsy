@@ -21,7 +21,8 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
-import { ProgressResponse, AbortableAsyncIterator } from 'ollama'
+import { ProgressResponse } from 'ollama'
+import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.e009de91.cjs'
 
 type Model = {
   id: string,

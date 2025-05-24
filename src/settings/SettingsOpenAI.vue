@@ -22,6 +22,13 @@
       </div>
     </div>
     <div class="group">
+      <label>{{ t('settings.engines.vision.model') }}</label>
+      <select name="vision_model" v-model="vision_model" :disabled="vision_models.length == 0" @change="save">
+        <option v-for="model in vision_models" :key="model.id" :value="model.id">{{ model.name }}
+        </option>
+      </select>
+    </div>
+    <div class="group">
       <label>{{ t('settings.engines.openai.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
@@ -34,26 +41,36 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import { ChatModel } from 'multi-llm-ts'
 
 const apiKey = ref(null)
 const baseURL = ref(null)
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
-const chat_model = ref(null)
-const chat_models = ref([])
+const chat_model = ref<string>(null)
+const vision_model = ref<string>(null)
+const chat_models = ref<ChatModel[]>([])
+
+const vision_models = computed(() => {
+  return [
+    { id: '', name: t('settings.engines.vision.noFallback') },
+    ...chat_models.value.filter(model => model.capabilities?.vision)
+  ]
+})
 
 const load = () => {
   apiKey.value = store.config.engines.openai?.apiKey || ''
   baseURL.value = store.config.engines.openai?.baseURL || ''
   chat_models.value = store.config.engines.openai?.models?.chat || []
   chat_model.value = store.config.engines.openai?.model?.chat || ''
+  vision_model.value = store.config.engines.openai?.model?.vision || ''
   disableTools.value = store.config.engines.openai?.disableTools || false
 }
 
@@ -98,6 +115,7 @@ const save = () => {
   store.config.engines.openai.apiKey = apiKey.value
   store.config.engines.openai.baseURL = baseURL.value
   store.config.engines.openai.model.chat = chat_model.value
+  store.config.engines.openai.model.vision = vision_model.value
   store.config.engines.openai.disableTools = disableTools.value
   store.saveSettings()
 }

@@ -1,6 +1,6 @@
 
 import { PluginsList } from '../plugins/plugins'
-import { LlmEngine, Model } from 'multi-llm-ts'
+import { ChatModel, LlmEngine } from 'multi-llm-ts'
 
 export type GetChatEnginesOpts = {
   favorites?: boolean
@@ -32,11 +32,13 @@ export interface ILlmManager {
   isComputerUseModel(engine: string, model: string): boolean
 
   getChatEngineModel(acceptSpecializedModels?: boolean): { engine: string, model: string }
-  getChatModels(engine: string): Model[]
+  getChatModels(engine: string): ChatModel[]
+  getChatModel(engine: string, model: string): ChatModel | null
   getDefaultChatModel(engine: string, acceptSpecializedModels?: boolean): string
   setChatModel(engine: string, model: string): void
 
   isEngineReady(engine: string): boolean
+  isEngineConfigured(engine: string): boolean
   igniteEngine(engine: string): LlmEngine
   hasChatModels(engine: string): boolean
   canProcessFormat(engine: string, model: string, format: string): boolean

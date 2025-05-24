@@ -1453,7 +1453,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Zawsze zapisuj sesje podpowiedzi w historii czatu",
-      "autoVisionSwitch": "Automatycznie przełączaj na model wizyjny",
       "conversationLength": "Wiadomości na konwersację",
       "header": "Ustawienia różne",
       "imageResize": "Zmiana rozmiaru obrazu",
@@ -1598,6 +1597,10 @@
       "sdwebui": {
         "baseURL": "Bazowy adres URL API",
         "ensureApiMode": "Upewnij się, że jesteś w trybie API"
+      },
+      "vision": {
+        "model": "Rezycja modelu wizji (automatyczne przełączenie, jeśli bieżący model nie obsługuje wizji)",
+        "noFallback": "Nie przełączaj na model wizji"
       },
       "xai": {
         "aboutModels": "Więcej informacji o modelach xAI",

@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import LlmMock, { setLlmDefaults } from '../mocks/llm'
+import LlmMock, { installMockModels, setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import { Expert } from '../../src/types'
 import Attachment from '../../src/models/attachment'
@@ -25,9 +25,11 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.getEngineName = () => 'mock'
   LlmManager.prototype.getCustomEngines = () => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
-  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat' }])
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', capabilities: { tools: false, vision: false, reasoning: false } }])
+  LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', capabilities: { tools: false, vision: false, reasoning: false } }))
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
+  LlmManager.prototype.checkModelListsVersion = vi.fn()
   LlmManager.prototype.loadTools = vi.fn()
 	return { default: LlmManager }
 })
@@ -48,7 +50,7 @@ beforeEach(() => {
 
 type PromptParams = {
   disableStreaming?: boolean
-  attachment?: Attachment
+  attachments?: Attachment[]
   docrepo?: string
   expert?: Expert
 }
@@ -58,7 +60,8 @@ const prompt = async (params?: PromptParams) => {
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   wrapper.vm.chat.disableStreaming = params?.disableStreaming
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: params?.attachment, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
+  installMockModels()
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: params?.attachments, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   return wrapper
 }
@@ -178,6 +181,7 @@ test('Does not execute command response', async () => {
 test('Executes command response', async () => {
   // will execute the prompt returned by window mock ("text")
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  installMockModels()
   wrapper.vm.onShow({ promptId: 'whatever', engine: 'mock', model: 'chat', execute: true, replace: true })
   await wrapper.vm.$nextTick()
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
@@ -257,6 +261,7 @@ test('Resets chat with defaults', async () => {
 
 test('Brings back chat', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
+  installMockModels()
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   const chatId = wrapper.vm.chat.uuid
@@ -271,7 +276,7 @@ test('Saves chat', async () => {
   const wrapper = await prompt()
   expect(wrapper.vm.chat.title).toBeNull()
   wrapper.find('.continue').trigger('click')
-  await wrapper.vm.$nextTick()
+  await vi.waitUntil(async () => !wrapper.vm.chat.title)
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.history.chats).toHaveLength(1)
   expect(window.api.history.save).toHaveBeenCalled()
@@ -281,6 +286,7 @@ test('Saves chat', async () => {
 test('Auto saves chat', async () => {
   const wrapper: VueWrapper<any> = mount(PromptAnywhere)
   store.config.prompt.autosave = true
+  installMockModels()
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   emitEvent('send-prompt', { prompt: 'Hello LLM' })
@@ -305,7 +311,7 @@ test('Supports keyboard insert', async () => {
 test('Supports keyboard save', async () => {
   const wrapper = await prompt()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 's' }));
-  await wrapper.vm.$nextTick()
+  await vi.waitUntil(async () => !wrapper.vm.chat.title)
   expect(window.api.history?.save).toHaveBeenCalled()
   await wrapper.vm.$nextTick()
   expect(window.api.chat?.open).toHaveBeenCalled()

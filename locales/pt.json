@@ -1453,7 +1453,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Sempre salvar sessões de prompt no histórico do chat",
-      "autoVisionSwitch": "Mudar automaticamente para o modelo de visão",
       "conversationLength": "Mensagens por conversa",
       "header": "Configurações diversas",
       "imageResize": "Redimensionamento de imagem",
@@ -1598,6 +1597,10 @@
       "sdwebui": {
         "baseURL": "URL Base da API",
         "ensureApiMode": "Certifique-se de que está no modo API"
+      },
+      "vision": {
+        "model": "Modelo de visão de fallback (alternância automática se o modelo atual não suportar visão)",
+        "noFallback": "Não usar um modelo de visão como fallback"
       },
       "xai": {
         "aboutModels": "Mais sobre os modelos xAI",
