@@ -54,13 +54,14 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated } from 'vue'
+import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
 import InputObfuscated from './InputObfuscated.vue'
+import Dialog from '../composables/dialog'
 
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
@@ -174,11 +175,13 @@ const onEngine = (engine: string) => {
 
     // can we try and load models
     if (llmManager.isEngineConfigured(engine) && !llmManager.isCustomEngine(engine)) {
-      onRefreshModels()
+      if (!llmManager.getChatModels(engine).length) {
+        onRefreshModels()
+      }
     }
 
     // and do the animation in reverse
-    animateEngineLogo(`.selector .engines .logo.${engine}`, `.selector .current .logo`, (elems, progress) => {
+    animateEngineLogo(`.selector .engines .logo.${engine}`, `.selector .current .logo`, async (elems, progress) => {
       if (elems) {
         elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()

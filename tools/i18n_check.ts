@@ -174,7 +174,7 @@ Example response:
 
     // Send the request to the LLM
     console.log(`Translating ${texts.length} strings to ${localeName}...`);
-    const result = await engine.complete(model, [
+    const result = await engine.complete(engine.buildModel(model), [
       new llm.Message('system', system),
       new llm.Message('user', JSON.stringify(texts)),
     ]);

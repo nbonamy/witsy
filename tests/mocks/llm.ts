@@ -1,14 +1,29 @@
 
-import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts } from 'multi-llm-ts'
+import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel } from 'multi-llm-ts'
 import { store } from '../../src/services/store'
 import Message from '../../src/models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
+import Attachment from '../../src/models/attachment'
 
 export const setLlmDefaults = (engine: string, model: string) => {
   store.config.llm.engine = engine
   store.config.engines[engine] = {
-    models: { chat: [] },
+    models: { chat: [
+      { id: model, name: model, capabilities: { tools: true, vision: false, reasoning: false } }
+    ] },
     model: { chat: model }
+  }
+}
+
+export const installMockModels = () => {
+  store.config.engines.mock = {
+    label: 'mock_label',
+    models: { chat: [
+      { id: 'chat', meta: {}, capabilities: { tools: true, vision: false, reasoning: false } },
+      { id: 'chat2', meta: {}, capabilities: { tools: true, vision: false, reasoning: false } },
+      { id: 'vision', meta: {}, capabilities: { tools: true, vision: true, reasoning: false } },
+    ] },
+    model: { chat: 'chat', vision: 'vision' },
   }
 }
 
@@ -27,7 +42,6 @@ class LlmError extends Error {
 }
 
 export default class LlmMock extends LlmEngine {
-
   constructor(config: EngineCreateOpts) {
     super(config)
   }
@@ -36,8 +50,12 @@ export default class LlmMock extends LlmEngine {
     return 'mock'
   }
 
-  isVisionModel(model: string): boolean {
-    return model == 'vision'
+  getModelCapabilities(model: string): ModelCapabilities {
+    return {
+      tools: true,
+      vision: model == 'vision',
+      reasoning: model == 'reasoning',
+    }
   }
 
   async getModels(): Promise<any[]> {
@@ -48,8 +66,7 @@ export default class LlmMock extends LlmEngine {
     ]
   }
    
-   
-  async complete(model: string, thread: Message[]): Promise<LlmResponse> {
+  async chat(model: ChatModel, thread: Message[]): Promise<LlmResponse> {
     // this is only used for titling so we pack all the processing that needs to be done:
     // remove <think> content, remove html and markdown, remove prefixes and quotes
     return {
@@ -59,7 +76,7 @@ export default class LlmMock extends LlmEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async stream(model: string, thread: Message[], opts: LlmCompletionOpts): Promise<LlmStreamingResponse> {
+  async stream(model: ChatModel, thread: Message[], opts: LlmCompletionOpts): Promise<LlmStreamingResponse> {
 
     // errors
     if (thread[thread.length-1].content.includes('no api key')) {
@@ -82,8 +99,10 @@ export default class LlmMock extends LlmEngine {
       stream: new RandomChunkStream(JSON.stringify([
         ...thread.map(m => {
           let content = m.contentForModel
-          if (m.attachment?.content && m.attachment.isText()) {
-            content += ` (${m.attachment.content})`
+          for (const attachment of m.attachments) {
+            if (attachment?.content && attachment.isText()) {
+              content += ` (${attachment.content})`
+            }
           }
           return { role: m.role, content: content }}),
         { role: 'assistant', content: 'Be kind. Don\'t mock me' }
@@ -111,8 +130,8 @@ export default class LlmMock extends LlmEngine {
     }
   }
 
-  addImageToPayload(message: Message, payload: LLmCompletionPayload) {
-    payload.images = [ message.attachment.content ]
+  addImageToPayload(attachment: Attachment, payload: LLmCompletionPayload) {
+    payload.images = [ attachment.content ]
   }
 
    

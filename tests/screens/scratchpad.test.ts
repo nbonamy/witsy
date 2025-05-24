@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import LlmMock from '../mocks/llm'
+import LlmMock, { installMockModels } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
@@ -26,6 +26,7 @@ vi.mock('../../src/llms/manager', async () => {
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.isCustomEngine = vi.fn(() => false)
   LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
+  LlmManager.prototype.checkModelListsVersion = vi.fn()
 	return { default: LlmManager }
 })
 
@@ -72,6 +73,7 @@ beforeEach(() => {
   store.config = defaultSettings
   store.config.general.locale = 'en-US'
   store.config.llm.locale = 'fr-FR'
+  installMockModels()
 })
 
 test('Renders correctly', () => {

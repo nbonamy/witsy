@@ -78,7 +78,7 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
       if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
       if (engine === 'openai') return new llm.OpenAI(this.config.engines.openai)
-      if (engine === 'openrouter') return new llm.OpenRouter(this.config.engines.openrouter, this.config.engines.openrouter?.models?.chat)
+      if (engine === 'openrouter') return new llm.OpenRouter(this.config.engines.openrouter)
       if (engine === 'xai') return new llm.XAI(this.config.engines.xai)
 
     } catch { /* empty */ }

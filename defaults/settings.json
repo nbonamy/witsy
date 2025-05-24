@@ -160,7 +160,8 @@
       },
       "model": {
         "chat": "gpt-4o",
-        "image": "dall-e-3"
+        "image": "dall-e-3",
+        "vision": "gpt-4o"
       },
       "realtime": {
         "model": "gpt-4o-mini-realtime-preview",
@@ -174,7 +175,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "claude-3-5-haiku-20241022"
       }
     },
     "google": {
@@ -204,7 +206,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "grok-2-vision-1212"
       }
     },
     "openrouter": {

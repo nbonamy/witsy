@@ -30,6 +30,13 @@
           </Combobox>
         </div>
       </div>
+      <div class="group">
+        <label>{{ t('settings.engines.vision.model') }}</label>
+        <select name="vision_model" v-model="vision_model" :disabled="vision_models.length == 0" @change="save">
+          <option v-for="model in vision_models" :key="model.id" :value="model.id">{{ model.name }}
+          </option>
+        </select>
+      </div>
     </template>
     <template v-if="api === 'azure'">
       <div class="group">
@@ -60,13 +67,14 @@
 import { t } from '../services/i18n'
 
 import { CustomEngineConfig } from '../types/config'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { store } from '../services/store'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
+import { ChatModel } from 'multi-llm-ts'
 
 const props = defineProps({
   engine: {
@@ -83,8 +91,16 @@ const deployment = ref(null)
 const apiVersion = ref(null)
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
-const chat_model = ref(null)
-const chat_models = ref([])
+const chat_model = ref<string>(null)
+const vision_model = ref<string>(null)
+const chat_models = ref<ChatModel[]>([])
+
+const vision_models = computed(() => {
+  return [
+    { id: '', name: t('settings.engines.vision.noFallback') },
+    ...chat_models.value.filter(model => model.capabilities?.vision)
+  ]
+})
 
 onMounted(() => {
   watch(() => props.engine, () => load())
@@ -100,6 +116,7 @@ const load = () => {
   apiVersion.value = engineConfig?.apiVersion || ''
   chat_models.value = engineConfig?.models?.chat || []
   chat_model.value = engineConfig?.model?.chat || ''
+  vision_model.value = engineConfig?.model?.vision || ''
   disableTools.value = engineConfig?.disableTools || false
 }
 
@@ -165,11 +182,12 @@ const save = () => {
   engineConfig.deployment = deployment.value
   engineConfig.apiVersion = apiVersion.value
   engineConfig.model.chat = chat_model.value
+  engineConfig.model.vision = vision_model.value
   engineConfig.disableTools = disableTools.value
 
   // now add model to models if it does not exist
   if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {
-    chat_models.value.unshift({ id: chat_model.value, name: chat_model.value, meta: { owned_by: 'witsy' } })
+    chat_models.value.unshift({ id: chat_model.value, name: chat_model.value, meta: { id: 'chat_model.value', owned_by: 'witsy' }, capabilities: { tools: true, vision: false, reasoning: false } })
     engineConfig.models.chat = chat_models.value
   }
 

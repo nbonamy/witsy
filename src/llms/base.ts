@@ -134,11 +134,29 @@ export default class LlmManagerBase implements ILlmManager {
     }
   }
 
-  getChatModels = (engine: string): llm.Model[] => {
+  getChatModels = (engine: string): llm.ChatModel[] => {
     if (this.isFavoriteEngine(engine)) {
-      return this.config.llm.favorites.map(f => ({ id: f.id, name: `${this.getEngineName(f.engine)}/${f.model}`, meta: {} })).sort((a, b) => a.name.localeCompare(b.name))
+      return this.config.llm.favorites.map(f => {
+        const model = this.getChatModel(f.engine, f.model)
+        return {
+          id: f.id,
+          name: `${this.getEngineName(f.engine)}/${f.model}`,
+          capabilities: model?.capabilities ?? { tools: false, vision: false, reasoning: false },
+          meta: model?.meta ?? { id: f.model },
+        }
+      }).sort((a, b) => a.name.localeCompare(b.name))
     } else {
       return this.config.engines[engine]?.models?.chat || []
+    }
+  }
+
+  getChatModel = (engine: string, model: string): llm.ChatModel => {
+    if (this.isFavoriteEngine(engine)) {
+      const favorite = this.config.llm.favorites.find(f => f.id === model)
+      return this.getChatModel(favorite.engine, favorite.model)
+    } else {
+      const models = this.getChatModels(engine)
+      return models.find(m => m.id === model) || null
     }
   }
   
@@ -229,28 +247,11 @@ export default class LlmManagerBase implements ILlmManager {
     else return this.config.engines[engine].models?.chat?.length > 0
   }
   
-  hasVisionModels = (engine: string): boolean => {
-    if (this.isCustomEngine(engine)) return false
-    if (this.isFavoriteEngine(engine)) throw new Error('This should not be called for favorite engines')
-    const llmEngine = this.igniteEngine(engine)
-    return llmEngine.getVisionModels().length > 0
-  }
-  
-  isVisionModel = (engine: string, model: string): boolean => {
-    if (this.isCustomEngine(engine)) return false
-    if (this.isFavoriteEngine(engine)) throw new Error('This should not be called for favorite engines')
-    const llmEngine = this.igniteEngine(engine)
-    return llmEngine?.isVisionModel(model)
-  }
-  
   canProcessFormat = (engine: string, model: string, format: string) => {
     if (imageFormats.includes(format.toLowerCase())) {
-      const autoSwitch = this.config.llm.autoVisionSwitch
-      if (autoSwitch) {
-        return this.hasVisionModels(engine) || this.isVisionModel(engine, model)
-      } else {
-        return this.isVisionModel(engine, model)
-      }
+      const m = this.getChatModel(engine, model)
+      if (m.capabilities.vision) return true
+      return !!this.config.engines[engine].model?.vision
     } else {
       return textFormats.includes(format.toLowerCase())
     }
@@ -298,6 +299,47 @@ export default class LlmManagerBase implements ILlmManager {
   
   }
 
+  checkModelListsVersion(): void {
+
+    // iterate on all engines
+    let updated = false
+    for (const engine of this.getChatEngines({ favorites: false })) {
+
+      try {
+      
+        if (!this.isEngineConfigured(engine)) {
+          continue
+        }
+
+        const llm = this.igniteEngine(engine)
+        for (const model of this.getChatModels(engine)) {
+          if (!model.capabilities) {
+            try {
+              model.capabilities = llm.getModelCapabilities(model.meta)
+              // console.log(`[${engine}] Model ${model.id} capabilities updated`, JSON.stringify(model.capabilities))
+              updated = true
+            } catch {
+              try {
+                model.capabilities = llm.getModelCapabilities(model.id)
+                // console.log(`[${engine}] Model ${model.id} capabilities updated`, JSON.stringify(model.capabilities))
+                updated = true
+              } catch { /* empty */}
+            }
+          }
+        }
+
+      } catch (e) {
+        console.error(`[${engine}] Error checking model lists version`, e)
+      }
+    }
+
+    // save if needed
+    if (updated) {
+      store.saveSettings()
+    }
+
+  }
+
   saveModels = (engine: string, models: llm.ModelsList): boolean => {
 
     // error?
@@ -324,7 +366,7 @@ export default class LlmManagerBase implements ILlmManager {
         name = name.replace('Mini', 'mini')
         name = name.replace(/-(\d\d\d\d)$/i, (_ ,l1) => ` ${l1}`)
         name = name.replace(/-(\d\d\d\d-\d\d-\d\d)$/i, (_ ,l1) => ` ${l1}`)
-        return { id: m.id, name, meta: m.meta }
+        return { id: m.id, name, capabilities: m.capabilities, meta: m.meta }
       })
       models.image = models.image.map(m => {
         let name = m.name
@@ -339,10 +381,8 @@ export default class LlmManagerBase implements ILlmManager {
       image: [],
       ...models
     }
-    engineConfig.model = {
-      chat: this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat) || '',
-      image: this.getValidModelId(engineConfig, 'image', engineConfig.model?.image) || '',
-    }
+    engineConfig.model.chat = this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat) || ''
+    engineConfig.model.image = this.getValidModelId(engineConfig, 'image', engineConfig.model?.image) || ''
     
     // save only if modified
     const updatedConfig = JSON.stringify(engineConfig)

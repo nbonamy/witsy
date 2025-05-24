@@ -41,6 +41,9 @@ beforeAll(() => {
   store.loadSettings()
   store.loadExperts()
   store.config.llm.imageResize = 0
+  store.config.engines.openai.models.chat.push(
+    { id: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false } },
+  )
 })
 
 beforeEach(() => {

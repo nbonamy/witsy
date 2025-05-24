@@ -1453,7 +1453,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
-      "autoVisionSwitch": "自动切换到视觉模型",
       "conversationLength": "每段对话的消息数量",
       "header": "杂项设置",
       "imageResize": "图像调整大小",
@@ -1598,6 +1597,10 @@
       "sdwebui": {
         "baseURL": "API 基础 URL",
         "ensureApiMode": "确保你处于 API 模式"
+      },
+      "vision": {
+        "model": "视觉模型回退（如果当前模型不支持视觉则自动切换）",
+        "noFallback": "不回退到视觉模型"
       },
       "xai": {
         "aboutModels": "了解更多关于 xAI 模型的信息",
