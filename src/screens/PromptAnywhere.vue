@@ -213,7 +213,7 @@ const processQueryParams = (params?: anyDict) => {
 
   // execute
   if (params?.execute) {
-    onSendPrompt({ prompt: userPrompt, expert: userExpert, attachment: null, docrepo: null })
+    onSendPrompt({ prompt: userPrompt, expert: userExpert, attachments: [], docrepo: null })
     return
   }
 
@@ -422,7 +422,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   try {
 
     // deconstruct params
-    const { prompt, attachment, docrepo, expert } = params
+    const { prompt, attachments, docrepo, expert } = params
     //console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
@@ -451,7 +451,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     // update thread
     const userMessage = new Message('user', finalPrompt)
     userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
-    if (attachment) {
+    for (const attachment of attachments ?? []) {
       attachment.loadContents()
       userMessage.attach(attachment)
     }
@@ -486,7 +486,8 @@ const saveChat = async () => {
 
   // we need a title
   if (!chat.value.title) {
-    const title = await llm.complete(chat.value.model, [
+    const model = llmManager.getChatModel(chat.value.engine, chat.value.model)
+    const title = await llm.complete(model, [
       ...chat.value.messages,
       new Message('user', i18nInstructions(store.config, 'instructions.titlingUser'))
     ], { tools: false })
@@ -526,7 +527,7 @@ const onRetry = () => {
   // and retry
   onSendPrompt({
     prompt: lastMessage.content,
-    attachment: lastMessage.attachment as Attachment,
+    attachments: lastMessage.attachments,
     docrepo: chat.value.docrepo,
     expert: lastMessage.expert
   })

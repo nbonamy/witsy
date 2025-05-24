@@ -67,7 +67,7 @@ test('Send on click', async () => {
   await wrapper.find('.icon.send').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
-    attachment: null,
+    attachments: [],
     docrepo: null,
     expert: null
   })
@@ -81,7 +81,7 @@ test('Sends on enter', async () => {
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
-    attachment: null,
+    attachments: [],
     docrepo: null,
     expert: null
   })
@@ -89,7 +89,7 @@ test('Sends on enter', async () => {
 })
 
 test('Sends with right parameters', async () => {
-  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
+  wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   wrapper.vm.expert = store.experts[2]
   wrapper.vm.docrepo = 'docrepo'
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
@@ -98,7 +98,7 @@ test('Sends with right parameters', async () => {
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
     prompt: 'this is my prompt',
-    attachment: { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false },
+    attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
   })
@@ -138,7 +138,7 @@ test('Stores attachment', async () => {
   expect(window.api.file.pick).toHaveBeenLastCalledWith({
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
-  expect(wrapper.vm.attachment).toEqual({
+  expect(wrapper.vm.attachments).toEqual([{
     mimeType: 'image/png',
     content: 'image64',
     saved: false,
@@ -146,30 +146,32 @@ test('Stores attachment', async () => {
     url: 'file://image.png',
     title: '',
     context: '',
-  })
+  }])
 })
 
 test('Display url attachment', async () => {
-  wrapper.vm.attachment = new Attachment('', '', 'file://image.png')
+  wrapper.vm.attachments = [ new Attachment('', '', 'file://image.png') ]
   await wrapper.vm.$nextTick()
+  expect(wrapper.find('.attachments').exists()).toBe(true)
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
   expect(wrapper.find('.attachment img').attributes('src')).toBe('file://image.png')
 })
 
 test('Display base64 attachment', async () => {
-  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
+  wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   await wrapper.vm.$nextTick()
+  expect(wrapper.find('.attachments').exists()).toBe(true)
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
   expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
 })
 
 test('Remove attachment', async () => {
-  wrapper.vm.attachment = new Attachment('image64', 'image/png', 'file://image.png')
+  wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
   await wrapper.vm.$nextTick()
   await wrapper.find('.attachment').trigger('click')
-  expect(wrapper.vm.attachment).toBeNull()
+  expect(wrapper.vm.attachments).toStrictEqual([])
 })
 
 // test('Accept incoming prompt', async () => {

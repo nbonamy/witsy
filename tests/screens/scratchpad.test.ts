@@ -109,7 +109,7 @@ test('Sends prompt and sets modified', async () => {
 
 test('Sends system prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[0] })
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], docrepo: null, expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
@@ -117,7 +117,7 @@ test('Sends system prompt with params', async () => {
 
 test('Sends user prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[2] })
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], docrepo: null, expert: store.experts[2] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)

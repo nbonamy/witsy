@@ -192,10 +192,10 @@ test('Assistant Chat No Streaming 2', async () => {
 
 test('Assistant Attachment', async () => {
   await assistant!.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
-  expect(assistant!.chat.lastMessage().attachment.content).toStrictEqual('image_content')
-  expect(assistant!.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
-  expect(assistant!.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
-  expect(assistant!.chat.lastMessage().attachment.saved).toStrictEqual(false)
+  expect(assistant!.chat.lastMessage().attachments[0].content).toStrictEqual('image_content')
+  expect(assistant!.chat.lastMessage().attachments[0].mimeType).toStrictEqual('image/png')
+  expect(assistant!.chat.lastMessage().attachments[0].url).toStrictEqual('clipboard://')
+  expect(assistant!.chat.lastMessage().attachments[0].saved).toStrictEqual(false)
 })
 
 test('Assistant System Expert', async () => {

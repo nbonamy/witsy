@@ -39,7 +39,7 @@ export interface Message extends IMessageBase {
   createdAt: number
   expert?: Expert
   toolCall?: ToolCallInfo
-  attachment: Attachment
+  attachments: Attachment[]
   transient: boolean
   uiOnly: boolean
   setExpert(expert: Expert, fallbackPrompt: string): void
