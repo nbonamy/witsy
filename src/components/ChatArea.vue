@@ -1,21 +1,12 @@
 <template>
   <div class="content">
     <header :class="{ 'is-left-most': isLeftMost }">
-      <div class="icon left toggle-sidebar" @click="toggleSideBar">
-        <IconSideBar />
-      </div>
-      <div class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat">
-        <IconNewChat />
-      </div>
-      <div class="title">{{ chat?.title || '&nbsp;' }}</div>
-      <div class="icon settings" @click="showModelSettings = !showModelSettings">
-        <BIconSliders />
-      </div>
-      <div class="icon menu" @click="onMenu">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
+      <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
+      <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
+      <div class="title" @dblclick="onRenameChat">{{ chat?.title || '&nbsp;' }}</div>
+      <div class="spacer"></div>
+      <BIconSliders class="icon settings" @click="showModelSettings = !showModelSettings" />
+      <IconMenu class="icon" @click="onMenu" />
     </header>
     <main>
       <div class="chat-content">
@@ -35,7 +26,6 @@ import { Expert } from '../types/index'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
-import IconNewChat from './IconNewChat.vue'
 import ContextMenu from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
@@ -45,6 +35,8 @@ import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
 import html2pdf from 'html2pdf.js'
 import IconSideBar from '../../assets/sidebar.svg?component'
+import IconNewChat from './IconNewChat.vue'
+import IconMenu from './IconMenu.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
@@ -123,6 +115,10 @@ const toggleSideBar = () => {
 
 const onNewChat = () => {
   emitEvent('new-chat')
+}
+
+const onRenameChat = () => {
+  emitEvent('rename-chat', props.chat)
 }
 
 const onMenu = () => {
@@ -303,48 +299,36 @@ defineExpose({
 
     header {
 
-      display: grid;
-      grid-template-columns: fit-content(24px) fit-content(24px) auto fit-content(24px) fit-content(24px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .spacer {
+        flex: 1;
+        height: 100%;
+      }
 
       .title {
-        grid-column: 3;
+        flex: 0 1 auto;
+        -webkit-app-region: no-drag;
       }
 
       .icon {
         margin-right: 8px;
       }
 
-      .left {
+      .toggle-sidebar {
         position: relative;
-        top: -2px;
+        top: -1px;
         transform: scaleY(120%);
-        grid-column: 1;
       }
 
       .new-chat {
-        grid-column: 2;
         &.hidden {
           display: none;
         }
       }
 
-      .settings {
-        grid-column: 4;
-      }
-
-      .menu {
-        grid-column: 5;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 3px;
-
-        div {
-          width: 16px;
-          height: 1.5px;
-          background-color: var(--chatarea-toolbar-icon-color);
-        }
-      }
     }
 
     main {

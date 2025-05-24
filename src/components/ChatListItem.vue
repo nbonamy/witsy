@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="chat" :class="[{ selected: chat.uuid == active?.uuid }, store.config.appearance.chatList.layout]">
-      <EngineLogo :engine="engine(chat)" :background="true" />
-      <div class="info">
+      <EngineLogo :engine="engine" :background="true" />
+      <div class="info" @dblclick="onRenameChat">
         <div class="title">{{ chat.title }}</div>
         <div class="subtitle">{{ chat.subtitle() }}</div>
       </div>
@@ -16,11 +16,15 @@
 
 <script setup lang="ts">
 
+import { computed } from 'vue'
 import { store } from '../services/store'
 import EngineLogo from './EngineLogo.vue'
 import Chat from '../models/chat'
 
-defineProps({
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
+
+const props = defineProps({
   chat: {
     type: Chat,
     required: true,
@@ -39,9 +43,13 @@ defineProps({
   },
 })
 
-const engine = (chat: Chat) => chat.engine || store.config.llm.engine
+const engine = computed(() => props.chat.engine || store.config.llm.engine)
 
 const emit = defineEmits(['select', 'menu']);
+
+const onRenameChat = () => {
+  emitEvent('rename-chat', props.chat)
+}
 
 </script>
 
