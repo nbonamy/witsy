@@ -195,11 +195,28 @@ test('Assistant Chat No Streaming 2', async () => {
 })
 
 test('Assistant Attachment', async () => {
+
   await assistant!.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
   expect(assistant!.chat.lastMessage().attachments[0].content).toStrictEqual('image_content')
   expect(assistant!.chat.lastMessage().attachments[0].mimeType).toStrictEqual('image/png')
   expect(assistant!.chat.lastMessage().attachments[0].url).toStrictEqual('clipboard://')
   expect(assistant!.chat.lastMessage().attachments[0].saved).toStrictEqual(false)
+
+  await assistant!.attach(new Attachment('file_content', 'text/plain', 'clipboard://', false))
+  expect(assistant!.chat.lastMessage().attachments[1].content).toStrictEqual('file_content')
+  expect(assistant!.chat.lastMessage().attachments[1].mimeType).toStrictEqual('text/plain')
+  expect(assistant!.chat.lastMessage().attachments[1].url).toStrictEqual('clipboard://')
+  expect(assistant!.chat.lastMessage().attachments[1].saved).toStrictEqual(false)
+
+})
+
+test('Assistant sends attachment', async () => {
+  const content = await prompt('Hello LLM', { model: 'chat', attachments: [
+    new Attachment('image_content', 'image/png', 'clipboard://', false),
+    new Attachment('file_content', 'text/plain', 'clipboard://', false)
+  ]})
+  expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant System Expert', async () => {

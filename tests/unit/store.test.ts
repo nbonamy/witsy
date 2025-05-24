@@ -108,8 +108,14 @@ test('Save history', async () => {
       temporary: false,
       modelOpts: { temperature: 1 },
       messages: [
-        { uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi', reasoning: null, expert: null, toolCall: null, attachments: [], usage: null, transient: false, uiOnly: false },
-        { uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello', reasoning: null, expert: null, toolCall: null, attachments: [], usage: null, transient: false, uiOnly: false }
+        {
+          uuid: '1', engine: null, model: null, createdAt: 0, role: 'system', type: 'text', content: 'Hi',
+          reasoning: null, expert: null, toolCall: null, attachments: [], usage: null, transient: false, uiOnly: false
+        },
+        {
+          uuid: '2', engine: 'engine', model: 'model', createdAt: 0, role: 'user', type: 'text', content: 'Hello',
+          reasoning: null, expert: null, toolCall: null, attachments: [], usage: null, transient: false, uiOnly: false
+        }
       ]
     } ],
     quickPrompts: [],

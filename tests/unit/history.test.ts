@@ -25,6 +25,7 @@ vi.mock('fs', async (importOriginal) => {
       'image2.png',
       'image3.jpg',
       'image4.png',
+      'image5.png',
     ]),
     statSync: vi.fn((file) => {
       return {
@@ -95,11 +96,18 @@ test('extract attachments - content', async () => {
 
 })
 
-test('extract attachments - attachment', async () => {
+test('extract attachments - attachments', async () => {
 
   expect(extractAttachmentsFromHistory([
     { messages: [ { attachments: [ { url: 'file://images/image1.png' } ] } ] },
   ] as Chat[], 'images')).toEqual(['image1.png'])
+
+  expect(extractAttachmentsFromHistory([
+    { messages: [ { attachments: [
+      { url: 'file://images/image1.png' },
+      { url: 'file://images folder/image2.png' }
+    ] } ] },
+  ] as Chat[], 'images')).toEqual(['image1.png', 'image2.png'])
 
   expect(extractAttachmentsFromHistory([
     { messages: [ { attachments: [ { url: 'file://images/image1.png' } ] } ] },
@@ -130,13 +138,20 @@ test('extract attachments - mixed', async () => {
     { messages: [ { content: 'file://images folder/image1.png', attachments: [ { url: 'file://images folder/image2.png' } ] } ] },
     { messages: [ { content: '[image3](file://images/image3.png)' } ] },
     { messages: [ { content: 'file://images folder/image4.png' } ] },
-    { messages: [ { content: 'file://images.file6.png', attachments: [ { url: 'file://images folder/image5.png' } ] } ] },
-  ] as Chat[], 'images folder')).toEqual(['image1.png', 'image2.png', 'image4.png', 'image5.png'])
+    { messages: [ { content: 'file://images.file6.png', attachments: [
+      { url: 'file://images folder/image5.png' },
+      { url: 'file://images folder/image7.png' }
+    ] } ] },
+  ] as Chat[], 'images folder')).toEqual(['image1.png', 'image2.png', 'image4.png', 'image5.png', 'image7.png'])
 
 })
 
 test('unused attachments', async () => {
+  // image3 is not listed as as unused because it mtime is too recent
   expect(listUnusedAttachments({ getPath: () => '' } as unknown as App, [
-    { messages: [ { content: 'file://images/image1.png', attachments: [ { url: 'file://images/image2.png' } ] } ] },
+    { messages: [ { content: 'file://images/image1.png', attachments: [
+      { url: 'file://images/image2.png' },
+      { url: 'file://images/image5.png' }
+    ] } ] },
   ] as Chat[])).toEqual(['images/image4.png'])
 })

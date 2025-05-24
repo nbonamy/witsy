@@ -100,7 +100,7 @@ export default class LlmMock extends LlmEngine {
         ...thread.map(m => {
           let content = m.contentForModel
           for (const attachment of m.attachments) {
-            if (attachment?.content && attachment.isText()) {
+            if (attachment?.content) {
               content += ` (${attachment.content})`
             }
           }
