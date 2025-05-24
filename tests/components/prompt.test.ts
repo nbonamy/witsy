@@ -152,6 +152,25 @@ test('Stores attachment', async () => {
   }])
 })
 
+test('Add attachments', async () => {
+  wrapper.find('.attach').trigger('click')
+  expect(wrapper.vm.attachments).toHaveLength(1)
+  wrapper.find('.attach').trigger('click')
+  expect(wrapper.vm.attachments).toHaveLength(2)
+})
+
+test('Remove attachments', async () => {
+  wrapper.vm.attachments = [
+    new Attachment('image64', 'image/png', 'file://image.png'),
+    new Attachment('image64', 'image/png', 'file://image.png')
+  ]
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.attachment:last-child').trigger('click')
+  expect(wrapper.vm.attachments).toHaveLength(1)
+  await wrapper.find('.attachment:last-child').trigger('click')
+  expect(wrapper.vm.attachments).toStrictEqual([])
+})
+
 test('Display url attachment', async () => {
   wrapper.vm.attachments = [ new Attachment('', '', 'file://image.png') ]
   await wrapper.vm.$nextTick()
@@ -168,13 +187,6 @@ test('Display base64 attachment', async () => {
   expect(wrapper.find('.attachment').exists()).toBe(true)
   expect(wrapper.find('.attachment img').exists()).toBe(true)
   expect(wrapper.find('.attachment img').attributes('src')).toBe('data:image/png;base64,image64')
-})
-
-test('Remove attachment', async () => {
-  wrapper.vm.attachments = [ new Attachment('image64', 'image/png', 'file://image.png') ]
-  await wrapper.vm.$nextTick()
-  await wrapper.find('.attachment').trigger('click')
-  expect(wrapper.vm.attachments).toStrictEqual([])
 })
 
 // test('Accept incoming prompt', async () => {
