@@ -23,7 +23,7 @@
     </div>
     <div class="group">
       <label>{{ t('common.llmModel') }}</label>
-      <ModelSelect v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
+      <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
     </div>
     <div class="group">
       <label>{{ t('common.icon') }}</label>
@@ -195,7 +195,7 @@ const onSave = (event: Event) => {
   }
 
   .group input.icon {
-    flex: 0 0 32px;
+    width: 32px;
     text-align: center;
   }
 

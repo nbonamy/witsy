@@ -213,7 +213,8 @@ test('Model settings init chat', async () => {
 
   // load engine/model with defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('mock')
-  await wrapper.find('.model-settings select[name=model]').setValue('chat')
+  await wrapper.findComponent({ name: 'ModelSelect' }).find('.control').trigger('click')
+  await wrapper.findComponent({ name: 'ModelSelect' }).find('.menu .menu-option:nth-child(1)').trigger('click')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('true')
   expect(chat?.tools).toStrictEqual([])
@@ -226,7 +227,8 @@ test('Model settings init chat', async () => {
 
   // load engine/model without defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('openai')
-  await wrapper.find('.model-settings select[name=model]').setValue('chat')
+  await wrapper.findComponent({ name: 'ModelSelect' }).find('.control').trigger('click')
+  await wrapper.findComponent({ name: 'ModelSelect' }).find('.menu .menu-option:nth-child(1)').trigger('click')
   expect(chat?.tools).toStrictEqual(null)
   expect(chat?.modelOpts).toBeUndefined()
 
@@ -240,7 +242,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.content > header .settings').trigger('click')
 
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').exists()).toBe(true)
+  expect(wrapper.findComponent({ name: 'ModelSelect' }).exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').exists()).toBe(true)
@@ -255,7 +257,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.model-settings .toggle').trigger('click')
 
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('mock')
-  expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=model]').element.value).toBe('chat')
+  expect(wrapper.findComponent({ name: 'ModelSelect' }).vm.value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').element.value).toBe('')

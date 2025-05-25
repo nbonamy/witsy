@@ -142,7 +142,7 @@ export default class LlmManagerBase implements ILlmManager {
           id: f.id,
           name: `${this.getEngineName(f.engine)}/${f.model}`,
           capabilities: model?.capabilities ?? { tools: false, vision: false, reasoning: false },
-          meta: model?.meta ?? { id: f.model },
+          meta: model?.meta ?? { id: f.model, name: f.model },
         }
       }).sort((a, b) => a.name.localeCompare(b.name))
     } else {
@@ -318,13 +318,7 @@ export default class LlmManagerBase implements ILlmManager {
               model.capabilities = llm.getModelCapabilities(model.meta)
               // console.log(`[${engine}] Model ${model.id} capabilities updated`, JSON.stringify(model.capabilities))
               updated = true
-            } catch {
-              try {
-                model.capabilities = llm.getModelCapabilities(model.id)
-                // console.log(`[${engine}] Model ${model.id} capabilities updated`, JSON.stringify(model.capabilities))
-                updated = true
-              } catch { /* empty */}
-            }
+            } catch { /* empty */}
           }
         }
 

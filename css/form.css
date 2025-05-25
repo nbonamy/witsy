@@ -4,6 +4,18 @@
 }
 
 form {
+  --form-font-size: var(--form-normal-font-size);
+}
+
+form.medium {
+  --form-font-size: var(--form-medium-font-size);
+}
+
+form.large {
+  --form-font-size: var(--form-large-font-size);
+}
+
+form {
   font-size: var(--form-font-size);
 }
 
@@ -53,17 +65,7 @@ form .control-group {
 
 form.medium {
 
-  font-size: var(--form-medium-font-size);
-
   .group {
-
-    span, a {
-      font-size: var(--form-medium-font-size);
-    }
-
-    input:not([type=checkbox]), select, textarea, button {
-      font-size:var(--form-medium-font-size) !important;
-    }
 
     input:not([type=checkbox]):not([type=range]), select {
       margin: 0;
@@ -86,17 +88,7 @@ form.vertical.medium {
 
 form.large {
 
-  font-size: var(--form-large-font-size);
-
   .group {
-
-    span, a {
-      font-size: var(--form-large-font-size);
-    }
-
-    input:not([type=checkbox]), select, textarea, button {
-      font-size:var(--form-large-font-size) !important;
-    }
 
     input:not([type=checkbox]):not([type=range]), select {
       padding: 0.33rem;
@@ -111,10 +103,6 @@ form.large {
         }
       }
     }
-  }
-
-  button {
-    font-size: var(--form-large-font-size);
   }
 
 }
