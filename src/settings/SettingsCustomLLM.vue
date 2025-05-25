@@ -187,7 +187,7 @@ const save = () => {
 
   // now add model to models if it does not exist
   if (chat_model.value && !chat_models.value.find(m => m.id === chat_model.value)) {
-    chat_models.value.unshift({ id: chat_model.value, name: chat_model.value, meta: { id: 'chat_model.value', owned_by: 'witsy' }, capabilities: { tools: true, vision: false, reasoning: false } })
+    chat_models.value.unshift({ id: chat_model.value, name: chat_model.value, meta: { id: chat_model.value, name: chat_model.value }, capabilities: { tools: true, vision: false, reasoning: false } })
     engineConfig.models.chat = chat_models.value
   }
 

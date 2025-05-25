@@ -76,7 +76,9 @@ test('openai settings', async () => {
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
-  await openai.find('[name=vision_model]').setValue('openai-vision')
+  const visionModelSelect = openai.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.openai.model.vision).toBe('openai-vision')
   expect(store.config.engines.openai.disableTools).toBeFalsy()
   await openai.find('[name=disableTools]').setValue(true)
@@ -94,7 +96,9 @@ test('anthropic settings', async () => {
   expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
-  await anthropic.find('[name=vision_model]').setValue('anthropic-vision')
+  const visionModelSelect = anthropic.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.anthropic.model.vision).toBe('anthropic-vision')
   expect(store.config.engines.anthropic.disableTools).toBeFalsy()
   await anthropic.find('[name=disableTools]').setValue(true)
@@ -112,7 +116,9 @@ test('google settings', async () => {
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await google.find('[name=vision_model]').setValue('google-vision')
+  const visionModelSelect = google.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.google.model.vision).toBe('google-vision')
   expect(store.config.engines.google.disableTools).toBeFalsy()
   await google.find('[name=disableTools]').setValue(true)
@@ -130,7 +136,9 @@ test('xai settings', async () => {
   expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await xai.find('[name=vision_model]').setValue('xai-vision')
+  const visionModelSelect = xai.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.xai.model.vision).toBe('xai-vision')
   expect(store.config.engines.xai.disableTools).toBeFalsy()
   await xai.find('[name=disableTools]').setValue(true)
@@ -148,7 +156,9 @@ test('meta settings', async () => {
   expect(loadMetaModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await meta.find('[name=vision_model]').setValue('meta-vision')
+  const visionModelSelect =  meta.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.meta.model.vision).toBe('meta-vision')
   expect(store.config.engines.meta.disableTools).toBeFalsy()
   await meta.find('[name=disableTools]').setValue(true)
@@ -167,7 +177,9 @@ test('ollama settings', async () => {
   await wait(750) //timeout
   expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
-  await ollama.find('[name=vision_model]').setValue('ollama-vision')
+  const visionModelSelect = ollama.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.ollama.model.vision).toBe('ollama-vision')
   expect(store.config.engines.ollama.disableTools).toBeFalsy()
   await ollama.find('[name=disableTools]').setValue(true)
@@ -185,7 +197,9 @@ test('mistralai settings', async () => {
   expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await mistralai.find('[name=vision_model]').setValue('mistralai-vision')
+  const visionModelSelect = mistralai.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.mistralai.model.vision).toBe('mistralai-vision')
   expect(store.config.engines.mistralai.disableTools).toBeFalsy()
   await mistralai.find('[name=disableTools]').setValue(true)
@@ -211,7 +225,9 @@ test('deepseek settings', async () => {
   expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await deepseek.find('[name=vision_model]').setValue('deepseek-vision')
+  const visionModelSelect = deepseek.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.deepseek.model.vision).toBe('deepseek-vision')
   expect(store.config.engines.deepseek.disableTools).toBeFalsy()
   await deepseek.find('[name=disableTools]').setValue(true)
@@ -229,7 +245,9 @@ test('openrouter settings', async () => {
   expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await openrouter.find('[name=vision_model]').setValue('openrouter-vision')
+  const visionModelSelect = openrouter.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.openrouter.model.vision).toBe('openrouter-vision')
   expect(store.config.engines.openrouter.disableTools).toBeFalsy()
   await openrouter.find('[name=disableTools]').setValue(true)
@@ -247,7 +265,9 @@ test('groq settings', async () => {
   expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await groq.find('[name=vision_model]').setValue('groq-vision')
+  const visionModelSelect = groq.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.groq.model.vision).toBe('groq-vision')
   expect(store.config.engines.groq.disableTools).toBeFalsy()
   await groq.find('[name=disableTools]').setValue(true)
@@ -265,7 +285,9 @@ test('cerebras settings', async () => {
   expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  await cerebras.find('[name=vision_model]').setValue('cerebras-vision')
+  const visionModelSelect = cerebras.findAllComponents({ name: 'ModelSelect' })[1]
+  await visionModelSelect.find('.control').trigger('click')
+  await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.cerebras.model.vision).toBe('cerebras-vision')
   expect(store.config.engines.cerebras.disableTools).toBeFalsy()
   await cerebras.find('[name=disableTools]').setValue(true)
