@@ -9,13 +9,20 @@
     @option-selected="$emit('change')"
   >
 
+    <template #value="{ option }">
+      <span class="label">{{ option.label }}</span>
+      <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
+      <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
+      <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+    </template>
+
     <template #option="{ option }">
       <span class="label">{{ option.label }}</span>
       <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
       <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
       <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
-
     </template>
+
   </VueSelect>
 </template>
 
@@ -82,6 +89,7 @@ const onMenuOpened = async () => {
 :deep() {
 
   --vs-min-height: auto;
+  --vs-padding: 2.75px 12px;
   --vs-font-size: var(--form-font-size);
   --vs-text-color: var(--control-text-color);
   --vs-background-color: var(--control-bg-color);
@@ -100,16 +108,48 @@ const onMenuOpened = async () => {
   --vs-option-selected-text-color: var(--highlighted-color);
   --vs-option-text-color: var(--text-color);
 
-  .indicators-container {
-    opacity: 0.6;
-    padding-right: 0 !important;
-    transform: scale(0.82, 0.92);
-    position: relative;
-    left: 3.2px;
+  .control .single-value .label, .menu .menu-option .label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  } 
 
-    button {
-      box-shadow: none;
-      filter: brightness(2.0);
+  .control {
+  
+    .indicators-container {
+      opacity: 0.6;
+      padding-right: 0 !important;
+      transform: scale(0.82, 0.92);
+      position: relative;
+      left: 3.2px;
+
+      button {
+        box-shadow: none;
+        filter: brightness(2.0);
+      }
+    }
+
+    .value-container {
+
+      padding-right: 0px;
+
+      .single-value {
+
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .capability {
+          width: 1em;
+          opacity: 0.25;
+          &.active {
+            opacity: 1.0;
+          }
+        }
+      }
+
     }
   }
 
@@ -122,6 +162,8 @@ const onMenuOpened = async () => {
     }
 
     .menu-option {
+    
+      display: flex;
       align-items: center;
       gap: 0.375rem;
 
@@ -134,13 +176,6 @@ const onMenuOpened = async () => {
         }
       }
 
-      .label {
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
       .capability {
         width: 0.8em;
         opacity: 0.1;
@@ -148,9 +183,7 @@ const onMenuOpened = async () => {
           opacity: 0.7;
         }
       }
-
     }
-
   }
 
 }
