@@ -58,7 +58,6 @@ form .group .wrapper input {
   padding-left: 6px;
   padding-right: 26px;
   font-family: monospace;
-  font-size: calc(var(--form-font-size) - 0.5px) !important;
 }
 
 .icon {

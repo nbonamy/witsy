@@ -90,16 +90,21 @@ form.large {
 
   .group {
 
-    input:not([type=checkbox]):not([type=range]), select {
-      padding: 0.33rem;
+    input:not([type=checkbox]):not([type=range]) {
+      padding: 5px 0.25rem ;
+      margin: 0.25rem 0;
+    }
+
+    select {
+      padding: 0.25rem 0.25rem;
       margin: 0.25rem 0;
     }
 
     .control-group {
       &:has(input[type=text]), &:has(select) {
         button {
-          padding-top: 6px;
-          padding-bottom: 6px;
+          padding-top: 6.25px;
+          padding-bottom: 6.25px;
         }
       }
     }
