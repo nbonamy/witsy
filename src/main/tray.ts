@@ -109,7 +109,7 @@ export default class {
       {
         label: t('tray.menu.newChat'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat),
-        click: () => window.openMainWindow(),
+        click: () => window.openMainWindow({ queryParams: { view: 'chat'} }),
       },
       {
         label: t('tray.menu.scratchpad'),

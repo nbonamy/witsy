@@ -69,7 +69,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import MenuBarItem from './MenuBarItem.vue'
 
-export type MenuBarMode =
+export type MenuBarMode = 'current' |
   'chat' | 'studio' | 'scratchpad' | 'dictation' | 'voice-mode' |
   'computer-use' | 'docrepo' | 'debug' | 'settings'
 

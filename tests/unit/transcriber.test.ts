@@ -7,6 +7,9 @@ import * as window from '../../src/main/window'
 // mock windows
 vi.mock('../../src/main/window.ts', async () => {
   return {
+    mainWindow: {
+      minimize: vi.fn(),
+    },
     releaseFocus: vi.fn(),
     openTranscribePalette: vi.fn(),
     closeTranscribePalette: vi.fn(),
@@ -33,7 +36,7 @@ test('Open transcriber window', async () => {
 
 test('Insert transcription', async () => {
   await Transcriber.insertTranscription('Hello, World!')
-  expect(window.closeTranscribePalette).toHaveBeenCalled()
+  expect(window.mainWindow.minimize).toHaveBeenCalled()
   expect(window.releaseFocus).toHaveBeenCalled()
   expect(Automator.prototype.pasteText).toHaveBeenLastCalledWith('Hello, World!')
 })

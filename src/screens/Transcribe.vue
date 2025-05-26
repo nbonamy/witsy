@@ -1,33 +1,80 @@
 <template>
-  <div class="transcribe">
-    <div class="controls">
-      <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
-      <Loader class="loader" v-else-if="state === 'processing'" />
-      <BIconRecordCircle v-else class="record" @click="onRecord(false)" />
-      <Waveform :width="350" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+  <div class="transcribe panel-content">
+
+    <div class="panel">
+
+      <header>
+        <div class="title">{{ t('realtimeChat.title') }}</div>
+      </header>
+
+      <main>
+        <form class="vertical">
+
+          <div class="panel-title">{{ t('common.settings') }}</div>
+
+          <div class="group">
+            <label>{{ t('settings.voice.engine') }}</label>
+            <select name="engine" v-model="engine" @change="onChangeEngine">
+              <option v-for="engine in getSTTEngines()" :key="engine.id" :value="engine.id">
+                {{ engine.label }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="group">
+            <label>{{ t('settings.voice.model') }}</label>
+            <select name="model" v-model="model" @change="onChangeModel">
+              <option v-for="model in getSTTModels(engine)" :key="model.id" :value="model.id">
+                {{ model.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="group horizontal">
+            <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" :disabled="pushToTalk" />
+            <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
+          </div>
+          
+          <div class="group horizontal">
+            <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" :disabled="autoStart" />
+            <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
+          </div>
+
+        </form>
+
+      </main>
+
     </div>
-    <div class="result">
-      <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
+
+    <div class="content">
+
+      <header>
+
+      </header>
+
+      <main>
+
+        <div class="controls">
+          <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
+          <Loader class="loader" v-else-if="state === 'processing'" />
+          <BIconRecordCircle v-else class="record" @click="onRecord(false)" />
+          <Waveform :width="400" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+        </div>
+        <div class="result">
+          <textarea v-model="transcription" :placeholder="t('transcribe.clickToRecord') + ' ' + t(pushToTalk ? 'transcribe.spaceKeyHint.pushToTalk' : 'transcribe.spaceKeyHint.toggle')" />
+        </div>
+        <div class="actions">
+          <form class="large" @submit.prevent>
+            <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
+            <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
+            <button name="clear" class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
+            <div class="push"></div>
+            <button name="insert" class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
+            <button name="copy" class="button" @click="onCopy()">{{ t('common.copy') }}</button>
+          </form>
+        </div>
+      </main>
     </div>
-    <div class="actions">
-      <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
-      <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
-      <button name="clear" class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
-      <button name="cancel" class="button push" @click="onCancel()">{{ t('common.cancel') }}</button>
-      <button name="insert" class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
-      <button name="copy" class="button" @click="onCopy()">{{ t('common.copy') }}</button>
-    </div>
-    <form class="option">
-      <div class="group">
-        <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" :disabled="pushToTalk" />
-        <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
-      </div>
-      <div class="group">
-        <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" :disabled="autoStart" />
-        <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
-      </div>
-      <div style="display: none">{{ engineModel }}</div>
-    </form>
   </div>
 </template>
 
@@ -37,6 +84,7 @@ import { StreamingChunk } from '../voice/stt'
 import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import { getSTTEngines, getSTTModels } from '../voice/stt'
 import Waveform from '../components/Waveform.vue'
 import Loader from '../components/Loader.vue'
 import useTranscriber from '../composables/transcriber'
@@ -44,13 +92,14 @@ import useAudioRecorder from '../composables/audio_recorder'
 import Dialog from '../composables/dialog'
 
 // init stuff
-store.loadSettings()
 const { transcriber, processStreamingError } = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
 let pushToTalkMode = false
 
 const isMas = ref(false)
+const engine = ref('')
+const model = ref('')
 const pushToTalk = ref(false)
 const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
 const transcription = ref('')
@@ -72,12 +121,13 @@ onMounted(async () => {
   window.api.on('start-dictation', toggleRecord)
   window.api.on('file-modified', (file) => {
     if (file === 'settings') {
-      store.loadSettings()
+      load()
       initialize()
     }
   })
 
   // init
+  load()
   initialize()
 
   // grab colors
@@ -103,6 +153,21 @@ onUnmounted(() => {
   window.api.off('start-dictation', toggleRecord)
   window.api.off('file-modified')
 })
+
+const load = () => {
+  engine.value = store.config.stt.engine
+  model.value = store.config.stt.model
+}
+
+const onChangeEngine = () => {
+  model.value = getSTTModels(engine.value)[0]?.id || ''
+  onChangeModel()
+}
+
+const onChangeModel = async () => {
+  save()
+  initialize()
+}
 
 const initialize = async () => {
 
@@ -294,9 +359,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // process
   const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
-  if (event.key === 'Escape') {
-    onCancel()
-  } else if (event.code === 'Space') {
+  if (event.code === 'Space') {
     if (state.value !== 'recording') {
       onRecord(pushToTalk.value)
     } else if (!pushToTalk.value) {
@@ -343,18 +406,15 @@ const onCopy = async () => {
     Dialog.alert(t('transcribe.errors.copy'))
     return
   }
-  onCancel()
 }
 
 const onInsert = () => {
   window.api.transcribe.insert(transcription.value)
 }
 
-const onCancel = () => {
-  window.api.transcribe.cancel()
-}
-
 const save = () => {
+  store.config.stt.engine = engine.value
+  store.config.stt.model = model.value
   store.config.stt.autoStart = autoStart.value
   store.config.stt.pushToTalk = pushToTalk.value
   store.saveSettings()
@@ -370,107 +430,90 @@ const refocus = () => {
 
 <style scoped>
 @import '../../css/form.css';
+@import '../../css/panel-content.css';
 </style>
 
 <style scoped>
 
 .transcribe {
 
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--window-bg-color);
-  color: var(--control-placeholder-text-color);
-  font-size: 10pt;
-  padding: 16px 24px;
-  -webkit-app-region: drag;
-
-  > *:last-child {
-    margin-bottom: 32px;
+  .panel {
+    flex-basis: 240px;
+    main {
+      padding: 2rem 1.5rem;
+    }
   }
 
-  input, textarea, button {
-    outline: none;
-  }
+  .content {
 
-  .controls {
-    margin-left: 8px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    font-size: 18pt;
-    gap: 24px;
-    align-items: center;
-    color: var(--text-color);
-  }
+    main {
 
-  .result {
-    display: flex;
-    flex: 1;
-    margin-top: 16px;
-    textarea {
-      flex: 1;
-      background-color: var(--control-textarea-bg-color);
-      color: var(--text-color);
-      border-radius: 6px;
-      font-size: 11.5pt;
-      padding: 8px;
-      border: none;
-      resize: none;
+      padding-top: 12.5%;
+      align-items: stretch;
+      margin: 0 auto;
+      width: 450px;
 
-      &::placeholder {
-        padding: 32px;
-        position: relative !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        text-align: center;
-        line-height: 140%;
-        font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
-        font-size: 14pt;
+      .controls {
+        margin-left: 8px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        font-size: 18pt;
+        gap: 24px;
+        align-items: center;
+        color: var(--text-color);
+      }
+
+      .result {
+        flex-basis: 50%;
+        display: flex;
+        margin-top: 16px;
+        
+        textarea {
+          flex: 1;
+          background-color: var(--control-textarea-bg-color);
+          border: 0.25px solid var(--control-border-color);
+          color: var(--text-color);
+          border-radius: 6px;
+          font-size: 11.5pt;
+          padding: 8px;
+          resize: none;
+
+          &::placeholder {
+            padding: 32px;
+            position: relative !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            text-align: center;
+            line-height: 140%;
+            font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+            font-size: 14pt;
+          }
+        }
+      }
+
+      .actions {
+        
+        margin-top: 1rem;
+
+        form {
+          display: flex;
+          flex-direction: row;
+        }
+
+        .push {
+          flex: 1;
+        }
+      }
+
+      .loader {
+        margin: 8px;
+        background-color: orange;
       }
     }
+
   }
 
-  .actions {
-    margin-top: 8px;
-    display: flex;
-    flex-direction: row;
-
-    .push {
-      margin-left: auto;
-    }
-  }
-
-  .option {
-    margin-top: 8px;
-    .group {
-      padding: 0;
-      margin: 4px 0px;
-      display: flex;
-      gap: 4px;
-    }
-    input[type=checkbox] {
-      flex: 0 0 14px;
-    }
-    label {
-      margin-left: 4px;
-      min-width: fit-content;
-    }
-    select {
-      flex: 0;
-      width: auto;
-      outline: none;
-    }
-  }
-
-  svg, input, textarea, button, select {
-    -webkit-app-region: no-drag;
-  }
-
-  .loader {
-    margin: 8px;
-    background-color: orange;
-  }
 }
 
 </style>
