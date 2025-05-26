@@ -596,7 +596,7 @@ defineExpose({
 }
 
 .studio-settings > * {
-  padding: 0px 24px;
+  padding: 0px 1.5rem;
 }
 
 .studio-settings form .group .subgroup {
