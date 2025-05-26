@@ -4,7 +4,7 @@
     <div class="panel">
 
       <header>
-        <div class="title">{{ t('realtimeChat.title') }}</div>
+        <div class="title">{{ t('transcribe.title') }}</div>
       </header>
 
       <main>
@@ -28,6 +28,11 @@
                 {{ model.label }}
               </option>
             </select>
+          </div>
+
+          <div class="group language">
+            <label>{{ t('settings.voice.spokenLanguage') }}</label>
+            <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
           </div>
 
           <div class="group horizontal">
@@ -89,6 +94,7 @@ import Waveform from '../components/Waveform.vue'
 import Loader from '../components/Loader.vue'
 import useTranscriber from '../composables/transcriber'
 import useAudioRecorder from '../composables/audio_recorder'
+import LangSelect from '../components/LangSelect.vue'
 import Dialog from '../composables/dialog'
 
 // init stuff
@@ -100,6 +106,7 @@ let pushToTalkMode = false
 const isMas = ref(false)
 const engine = ref('')
 const model = ref('')
+const locale = ref('')
 const pushToTalk = ref(false)
 const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
 const transcription = ref('')
@@ -122,13 +129,12 @@ onMounted(async () => {
   window.api.on('file-modified', (file) => {
     if (file === 'settings') {
       load()
-      initialize()
     }
   })
 
   // init
   load()
-  initialize()
+  await initializeAudio()
 
   // grab colors
   try {
@@ -155,6 +161,7 @@ onUnmounted(() => {
 })
 
 const load = () => {
+  locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
   model.value = store.config.stt.model
 }
@@ -166,7 +173,6 @@ const onChangeEngine = () => {
 
 const onChangeModel = async () => {
   save()
-  initialize()
 }
 
 const initialize = async () => {
@@ -258,6 +264,9 @@ const initializeAudio = async () => {
 }
 
 const onRecord = async (ptt: boolean) => {
+
+  // initialize
+  await initialize()
 
   // check
   if (transcriber.ready === false) {
@@ -415,6 +424,7 @@ const onInsert = () => {
 const save = () => {
   store.config.stt.engine = engine.value
   store.config.stt.model = model.value
+  store.config.stt.locale = locale.value
   store.config.stt.autoStart = autoStart.value
   store.config.stt.pushToTalk = pushToTalk.value
   store.saveSettings()
@@ -507,7 +517,7 @@ const refocus = () => {
       }
 
       .loader {
-        margin: 8px;
+        margin: 8px 0px 8px 6px;
         background-color: orange;
       }
     }
