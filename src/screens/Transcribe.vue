@@ -129,7 +129,6 @@ onMounted(async () => {
   // events
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
-  onEvent('start-dictation', toggleRecord)
   window.api.on('start-dictation', toggleRecord)
   window.api.on('file-modified', (file) => {
     if (file === 'settings') {
@@ -137,9 +136,25 @@ onMounted(async () => {
     }
   })
 
+  // when screen is shown
+  onEvent('start-dictation', async () => {
+    if (autoStart.value) {
+      toggleRecord()
+    } else {
+      await initializeAudio()
+    }
+  })
+
+  // when screen is hidden
+  onEvent('stop-dictation', () => {
+    if (state.value === 'recording') {
+      onStop()
+    }
+    audioRecorder.release()
+  })
+
   // init
   load()
-  await initializeAudio()
 
   // grab colors
   try {
