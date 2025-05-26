@@ -139,7 +139,7 @@ const onMenuOpened = async () => {
 
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.6em;
 
         .capability {
           width: 1em;
@@ -191,6 +191,19 @@ const onMenuOpened = async () => {
 form.large .vue-select .menu .menu-option {
   .capability {
     width: 0.9em;
+  }
+}
+
+form:not(.large) .vue-select .control .value-container {
+  .single-value {
+    .capability {
+      display: none;
+    }
+  }
+  &:hover {
+    .single-value .capability {
+      display: inline-block;
+    }
   }
 }
 
