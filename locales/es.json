@@ -68,6 +68,7 @@
     "load": "Cargar",
     "low": "Bajo",
     "medium": "Medio",
+    "model": "Modelo",
     "modelPlaceholder": "Ingrese un nombre de modelo o seleccione uno",
     "move": "Mover",
     "name": "Nombre",
@@ -76,6 +77,7 @@
     "ok": "OK",
     "pick": "Seleccionar",
     "prompt": "Sugerencia",
+    "provider": "Proveedor",
     "pull": "Descargar",
     "read": "Leer",
     "record": "Grabar",
@@ -111,6 +113,7 @@
         "requiredFields": "Algunos campos son obligatorios"
       }
     },
+    "voice": "Voz",
     "warning": "Advertencia",
     "workingWith": "Trabajando con",
     "write": "Escribir"
@@ -408,7 +411,7 @@
       "label": "Tipo de Medio",
       "video": "Video"
     },
-    "model": "Modelo",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Valores predeterminados para este modelo",
     "moreAboutModelParameters": "Aprende sobre los parámetros de este modelo",
     "moreAboutSDWebUIParameters": "Aprende sobre los parámetros de SDWebUI",
@@ -1730,7 +1733,7 @@
       "models": "Modelos",
       "plugins": "Complementos",
       "shortcuts": "Atajos",
-      "voice": "Voz"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automático",
@@ -1748,7 +1751,7 @@
       "groqApiKeyReminder": "Asegúrese de ingresar su clave API de Groq en el panel de Modelos.",
       "initializationError": "Se produjo un error durante la inicialización. Por favor, inténtelo de nuevo.",
       "initializing": "Iniciando…",
-      "model": "Modelo",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos.",
       "selectModel": "Seleccionar un modelo",
       "silenceDetection": "Detección de silencio",
@@ -1770,7 +1773,7 @@
         "kokoroReminder": "Proporcionado",
         "sampleText": "Bienvenido a Witsy, el asistente AI definitivo para su escritorio.",
         "serviceDisclaimer": "El servicio puede dejar de funcionar en cualquier momento.",
-        "voice": "Voz"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "Usar WebGPU",
       "verificationComplete": "¡Verificación completada!",

@@ -87,6 +87,7 @@
     "load": "Carregar",
     "low": "Baixo",
     "medium": "Médio",
+    "model": "Modelo",
     "modelPlaceholder": "Insira um nome de modelo ou selecione um",
     "move": "Mover",
     "name": "Nome",
@@ -95,6 +96,7 @@
     "ok": "OK",
     "pick": "Escolher",
     "prompt": "Prompt",
+    "provider": "Provedor",
     "pull": "Puxar",
     "read": "Ler",
     "record": "Gravar",
@@ -130,6 +132,7 @@
         "requiredFields": "Alguns campos são obrigatórios"
       }
     },
+    "voice": "Voz",
     "warning": "Aviso",
     "workingWith": "Trabalhando com",
     "write": "Escrever"
@@ -427,7 +430,7 @@
       "label": "Tipo de Mídia",
       "video": "Vídeo"
     },
-    "model": "Modelo",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Padrões para este modelo",
     "moreAboutModelParameters": "Saiba mais sobre os parâmetros deste modelo",
     "moreAboutSDWebUIParameters": "Saiba mais sobre os parâmetros do SDWebUI",
@@ -1760,7 +1763,7 @@
       "models": "Modelos",
       "plugins": "Plugins",
       "shortcuts": "Atalhos",
-      "voice": "Voz"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automático",
@@ -1778,7 +1781,7 @@
       "groqApiKeyReminder": "Certifique-se de inserir sua chave de API Groq no painel Modelos.",
       "initializationError": "Ocorreu um erro durante a inicialização. Por favor, tente novamente.",
       "initializing": "Inicializando…",
-      "model": "Modelo",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos.",
       "selectModel": "Selecionar um modelo",
       "silenceDetection": "Detecção de Silêncio",
@@ -1800,7 +1803,7 @@
         "kokoroReminder": "Fornecido",
         "sampleText": "Bem-vindo ao Witsy, o assistente de IA de desktop definitivo.",
         "serviceDisclaimer": "O serviço pode parar de funcionar a qualquer momento.",
-        "voice": "Voz"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "Usar WebGPU",
       "verificationComplete": "Verificação concluída!",

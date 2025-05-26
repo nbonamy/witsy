@@ -5,6 +5,7 @@
     <Chat :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
     <DocRepos :style="{ display: mode === 'docrepo' ? 'flex' : 'none' }" />
+    <RealtimeChat :style="{ display: mode === 'voice-mode' ? 'flex' : 'none' }" />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
 import DocRepos from '../screens/DocRepos.vue'
 import Settings from '../screens/Settings.vue'
+import RealtimeChat from '../screens/RealtimeChat.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -70,8 +72,8 @@ const onMode = async (next: MenuBarMode) => {
     window.api.scratchpad.open()
   } else if (next === 'dictation') {
     window.api.transcribe.start()
-  } else if (next === 'voice-mode') {
-    window.api.voiceMode.start()
+  // } else if (next === 'voice-mode') {
+  //   window.api.voiceMode.start()
   } else if (next === 'computer-use') {
     mode.value = 'chat'
     await nextTick()

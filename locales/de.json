@@ -68,6 +68,7 @@
     "load": "Laden",
     "low": "Niedrig",
     "medium": "Mittel",
+    "model": "Modell",
     "modelPlaceholder": "Geben Sie ein Modell ein oder wählen Sie aus der Liste",
     "move": "Verschieben",
     "name": "Name",
@@ -76,6 +77,7 @@
     "ok": "OK",
     "pick": "Auswählen",
     "prompt": "Prompt",
+    "provider": "Anbieter",
     "pull": "Abrufen",
     "read": "Lesen",
     "record": "Aufzeichnen",
@@ -111,6 +113,7 @@
         "requiredFields": "Einige Felder sind erforderlich"
       }
     },
+    "voice": "Stimme",
     "warning": "Warnung",
     "workingWith": "Arbeiten mit",
     "write": "Schreiben"
@@ -408,7 +411,7 @@
       "label": "Medientyp",
       "video": "Video"
     },
-    "model": "Modell",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Standardwerte für dieses Modell",
     "moreAboutModelParameters": "Erfahren Sie mehr über die Modellparameter",
     "moreAboutSDWebUIParameters": "Erfahren Sie mehr über SDWebUI-Parameter",
@@ -1730,7 +1733,7 @@
       "models": "Modelle",
       "plugins": "Plugins",
       "shortcuts": "Tastenkürzel",
-      "voice": "Audio"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automatisch",
@@ -1748,7 +1751,7 @@
       "groqApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Groq-API-Schlüssel im Modellbereich eingegeben haben.",
       "initializationError": "Während der Initialisierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "initializing": "Initialisiere…",
-      "model": "Modell",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
       "selectModel": "Wählen Sie ein Modell aus",
       "silenceDetection": "Stille-Erkennung",
@@ -1770,7 +1773,7 @@
         "kokoroReminder": "Bereitgestellt",
         "sampleText": "Willkommen bei Witsy, dem ultimativen KI-Desktop-Assistenten.",
         "serviceDisclaimer": "Der Dienst kann jederzeit eingestellt werden.",
-        "voice": "Stimme"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "WebGPU verwenden",
       "verificationComplete": "Verifizierung abgeschlossen!",

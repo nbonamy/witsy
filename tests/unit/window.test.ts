@@ -302,10 +302,8 @@ test('Open Scratchpad window', async () => {
 test('Open Realtime window', async () => {
   window.openRealtimeChatWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/realtime',
-    title: 'Voice Chat'
+    queryParams: { view: 'voice-mode', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/realtime')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
