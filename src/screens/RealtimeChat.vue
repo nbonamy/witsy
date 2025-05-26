@@ -11,7 +11,7 @@
 
         <form class="vertical">
 
-          <div class="title">{{ t('common.settings') }}</div>
+          <div class="panel-title">{{ t('common.settings') }}</div>
   
           <div class="group">
             <label>{{ t('common.provider') }}</label>
@@ -404,16 +404,8 @@ const save = () => {
 
   .panel {
     flex-basis: 280px;
-
     main {
       padding: 2rem 1.5rem;
-
-      .title {
-        font-size: 110%;
-        font-weight: bold;
-        color: var(--sidebar-text-color);
-        margin-bottom: 1rem;
-      }
     }
   }
 
