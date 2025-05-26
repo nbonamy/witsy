@@ -83,7 +83,40 @@ export interface STTEngine {
   endStreaming?(): Promise<void>  
 }
 
-const getSTTEngine = (config: Configuration): STTEngine => {
+export const getSTTEngines = () => {
+  return [
+    { id: 'openai', label: 'OpenAI' },
+    { id: 'falai', label: 'fal.ai' },
+    { id: 'fireworks', label: 'Fireworks.ai' },
+    { id: 'gladia', label: 'Gladia' },
+    { id: 'groq', label: 'Groq' },
+    //{ id: 'huggingface', label: 'Hugging Face' },
+    { id: 'nvidia', label: 'nVidia' },
+    { id: 'whisper', label: 'Whisper' },
+  ]
+}
+
+export const getSTTModels = (engine: string) => {
+  if (engine === 'openai') {
+    return STTOpenAI.models
+  } else if (engine === 'falai') {
+    return STTFalAi.models
+  } else if (engine === 'fireworks') {
+    return STTFireworks.models
+  } else if (engine === 'gladia') {
+    return STTGladia.models
+  } else if (engine === 'groq') {
+    return STTGroq.models
+  } else if (engine === 'huggingface') {
+    return STTHuggingFace.models
+  } else if (engine === 'nvidia') {
+    return STTNvidia.models
+  } else if (engine === 'whisper') {
+    return STTWhisper.models
+  }
+}
+
+export const getSTTEngine = (config: Configuration): STTEngine => {
   const engine = config.stt.engine || 'whisper'
   if (engine === 'openai') {
     return new STTOpenAI(config)
@@ -127,5 +160,3 @@ export const requiresDownload = (engine: string): boolean => {
     throw new Error(`Unknown STT engine ${engine}`)
   }
 }
-
-export default getSTTEngine

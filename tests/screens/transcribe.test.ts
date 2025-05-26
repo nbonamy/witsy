@@ -34,6 +34,10 @@ beforeEach(() => {
 test('Renders correctly', () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   expect(wrapper.exists()).toBe(true)
+  expect(wrapper.find('[name=autoStart]').exists()).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(false)
+  expect(wrapper.find('[name=pushToTalk]').exists()).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(false)
   expect(wrapper.find('.controls').exists()).toBe(true)
   expect(wrapper.find('.controls .record').exists()).toBe(true)
   expect(wrapper.find('.controls').findComponent(Waveform).exists()).toBe(true)
@@ -43,37 +47,31 @@ test('Renders correctly', () => {
   expect(wrapper.find('.actions button[name=stop]').exists()).toBe(false)
   expect(wrapper.find('.actions button[name=record]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=clear]').exists()).toBe(true)
-  expect(wrapper.find('.actions button[name=cancel]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=insert]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=copy]').exists()).toBe(true)
-  expect(wrapper.find('.option').exists()).toBe(true)
-  expect(wrapper.find('.option [name=autoStart]').exists()).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('.option [name=autoStart]').element.disabled).toBe(false)
-  expect(wrapper.find('.option [name=pushToTalk]').exists()).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('.option [name=pushToTalk]').element.disabled).toBe(false)
 })
 
 test('Saves options', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   
-  await wrapper.find('.option [name=autoStart]').setValue(true)
-  expect(wrapper.find<HTMLInputElement>('.option [name=autoStart]').element.disabled).toBe(false)
-  expect(wrapper.find<HTMLInputElement>('.option [name=pushToTalk]').element.disabled).toBe(true)
+  await wrapper.find('[name=autoStart]').setValue(true)
+  expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(false)
+  expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(true)
   expect(wrapper.vm.autoStart).toBe(true)
   expect(wrapper.vm.pushToTalk).toBe(false)
   expect(store.config.stt.autoStart).toBe(true)
   expect(store.config.stt.pushToTalk).toBe(false)
   
-  await wrapper.find('.option [name=autoStart]').setValue(false)
-  await wrapper.find('.option [name=pushToTalk]').setValue(true)
+  await wrapper.find('[name=autoStart]').setValue(false)
+  await wrapper.find('[name=pushToTalk]').setValue(true)
   expect(wrapper.vm.autoStart).toBe(false)
   expect(wrapper.vm.pushToTalk).toBe(true)
   expect(store.config.stt.autoStart).toBe(false)
   expect(store.config.stt.pushToTalk).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('.option [name=autoStart]').element.disabled).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('.option [name=pushToTalk]').element.disabled).toBe(false)
-  
-  await wrapper.find('.option [name=autoStart]').setValue(false)
+  expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(true)
+  expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(false)
+
+  await wrapper.find('[name=autoStart]').setValue(false)
   expect(wrapper.vm.autoStart).toBe(false)
   expect(store.config.stt.autoStart).toBe(false)
   
@@ -164,17 +162,9 @@ test('Copies transcription', async () => {
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
 })
 
-test('Close window', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.find('.actions button[name=cancel]').trigger('click')
-  expect(window.api.transcribe.cancel).toHaveBeenCalled()
-})
-
 test('Keyboard shortcuts', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-  expect(window.api.transcribe.cancel).toHaveBeenCalled()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));

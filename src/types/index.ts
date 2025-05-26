@@ -332,9 +332,7 @@ declare global {
         transcribe(audioBlob: Blob): Promise<{ text: string }>
       },
       transcribe: {
-        start(): void
         insert(text: string): void
-        cancel(): void
       },
       clipboard: {
         readText(): string

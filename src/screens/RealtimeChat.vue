@@ -8,38 +8,28 @@
       </header>
 
       <main>
-
         <form class="vertical">
-
           <div class="panel-title">{{ t('common.settings') }}</div>
-  
           <div class="group">
             <label>{{ t('common.provider') }}</label>
             <select class="tool" v-model="engine" @change="onChangeEngine">
               <option v-for="engine in engines" :value="engine.id" :key="engine.id">{{ engine.name }}</option>
             </select>
           </div>
-
           <div class="group">
             <label>{{ t('common.model') }}</label>
             <select class="tool" v-model="model" @change="save">
               <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
             </select>
           </div>
-
           <div class="group">
             <label>{{ t('common.voice') }}</label>
             <select class="tool" v-model="voice" @change="save">
               <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
             </select>
           </div>
-
         </form>
-
-
       </main>
-
-
     </div>
 
     <div class="content">
@@ -82,7 +72,6 @@ import AnimatedBlob from '../components/AnimatedBlob.vue'
 import NumberFlip from '../components/NumberFlip.vue'
 import useTipsManager from '../composables/tips_manager'
 
-store.load()
 const tipsManager = useTipsManager(store)
 
 type Cost = {

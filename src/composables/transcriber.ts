@@ -1,6 +1,6 @@
 
 import { type Configuration } from '../types/config'
-import getSTTEngine, { StreamingChunk, StreamingChunkError, STTEngine, TranscribeResponse } from '../voice/stt'
+import { getSTTEngine, StreamingChunk, StreamingChunkError, STTEngine, TranscribeResponse } from '../voice/stt'
 import { t } from '../services/i18n'
 import Dialog from './dialog'
 

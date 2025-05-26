@@ -253,10 +253,6 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.25rem;
-
-    button {
-      padding: 0.375rem 0.75rem;
-    }
   }
 
 }

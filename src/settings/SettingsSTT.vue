@@ -7,7 +7,7 @@
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
-        <option v-for="engine in engines()" :key="engine.id" :value="engine.id">
+        <option v-for="engine in getSTTEngines()" :key="engine.id" :value="engine.id">
           {{ engine.label }}
         </option>
       </select>
@@ -94,7 +94,7 @@ import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import InputObfuscated from '../components/InputObfuscated.vue'
-import getSTTEngine, { requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
+import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 import STTFalAi from '../voice/stt-falai'
@@ -125,39 +125,10 @@ const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
 
-const engines = () => [
-  { id: 'openai', label: 'OpenAI' },
-  { id: 'falai', label: 'fal.ai' },
-  { id: 'fireworks', label: 'Fireworks.ai' },
-  { id: 'gladia', label: 'Gladia' },
-  { id: 'groq', label: 'Groq' },
-  //{ id: 'huggingface', label: 'Hugging Face' },
-  { id: 'nvidia', label: 'nVidia' },
-  { id: 'whisper', label: 'Whisper' },
-]
-
 const models = computed(() => {
 
   // get models
-  const models = (() => {
-    if (engine.value === 'openai') {
-      return STTOpenAI.models
-    } else if (engine.value === 'falai') {
-      return STTFalAi.models
-    } else if (engine.value === 'fireworks') {
-      return STTFireworks.models
-    } else if (engine.value === 'gladia') {
-      return STTGladia.models
-    } else if (engine.value === 'groq') {
-      return STTGroq.models
-    } else if (engine.value === 'huggingface') {
-      return STTHuggingFace.models
-    } else if (engine.value === 'nvidia') {
-      return STTNvidia.models
-    } else if (engine.value === 'whisper') {
-      return STTWhisper.models
-    }
-  })()
+  const models = getSTTModels(engine.value)
 
   // add a dummy one if download is required
   return [
