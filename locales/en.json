@@ -87,6 +87,7 @@
     "load": "Load",
     "low": "Low",
     "medium": "Medium",
+    "model": "Model",
     "modelPlaceholder": "Enter a model or select from the list",
     "move": "Move",
     "name": "Name",
@@ -95,6 +96,7 @@
     "ok": "OK",
     "pick": "Pick",
     "prompt": "Prompt",
+    "provider": "Provider",
     "pull": "Pull",
     "read": "Read",
     "record": "Record",
@@ -130,6 +132,7 @@
         "requiredFields": "Some fields are required"
       }
     },
+    "voice": "Voice",
     "warning": "Warning",
     "workingWith": "Working with",
     "write": "Write"
@@ -427,7 +430,7 @@
       "label": "Media Type",
       "video": "Video"
     },
-    "model": "Model",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Defaults for this model",
     "moreAboutModelParameters": "Learn about this model parameters",
     "moreAboutSDWebUIParameters": "Learn about SDWebUI parameters",
@@ -1766,7 +1769,7 @@
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
-      "voice": "Voice"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automatic",
@@ -1784,7 +1787,7 @@
       "groqApiKeyReminder": "Make sure you enter your Groq API key in the Models pane.",
       "initializationError": "An error occured during initialization. Please try again.",
       "initializing": "Initializing…",
-      "model": "Model",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",
@@ -1806,7 +1809,7 @@
         "kokoroReminder": "Provided",
         "sampleText": "Welcome to Witsy, the ultimate AI desktop assistant.",
         "serviceDisclaimer": "The service may stop working at any point in time.",
-        "voice": "Voice"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "Use WebGPU",
       "verificationComplete": "Verification completed!",

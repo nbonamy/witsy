@@ -87,6 +87,7 @@
     "load": "加载",
     "low": "低",
     "medium": "中",
+    "model": "模型",
     "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
     "name": "名称",
@@ -95,6 +96,7 @@
     "ok": "确定",
     "pick": "选择",
     "prompt": "提示",
+    "provider": "提供者",
     "pull": "拉取",
     "read": "读取",
     "record": "记录",
@@ -130,6 +132,7 @@
         "requiredFields": "一些字段是必填的"
       }
     },
+    "voice": "声音",
     "warning": "警告",
     "workingWith": "正在处理",
     "write": "写入"
@@ -427,7 +430,7 @@
       "label": "媒体类型",
       "video": "视频"
     },
-    "model": "模型",
+    "model": "@:{'common.model'}",
     "modelDefaults": "此模型的默认值",
     "moreAboutModelParameters": "了解此模型参数",
     "moreAboutSDWebUIParameters": "了解 SDWebUI 参数",
@@ -1760,7 +1763,7 @@
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
-      "voice": "语音"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 自动",
@@ -1778,7 +1781,7 @@
       "groqApiKeyReminder": "确保你在模型面板中输入了 Groq API 密钥。",
       "initializationError": "初始化过程中出现错误。请重试。",
       "initializing": "正在初始化…",
-      "model": "模型",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
       "selectModel": "选择模型",
       "silenceDetection": "静音检测",
@@ -1800,7 +1803,7 @@
         "kokoroReminder": "已提供",
         "sampleText": "欢迎使用 Witsy，终极 AI 桌面助手。",
         "serviceDisclaimer": "该服务可能随时停止工作。",
-        "voice": "语音"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "使用 WebGPU",
       "verificationComplete": "验证完成！",
