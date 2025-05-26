@@ -403,15 +403,18 @@ const save = () => {
   font-size: 14pt;
 
   .panel {
-
     flex-basis: 280px;
 
     main {
       padding: 2rem 1.5rem;
+
+      .title {
+        font-size: 110%;
+        font-weight: bold;
+        color: var(--sidebar-text-color);
+        margin-bottom: 1rem;
+      }
     }
-
-
-
   }
 
   .content {
