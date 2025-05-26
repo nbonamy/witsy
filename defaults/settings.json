@@ -120,6 +120,7 @@
     "model": "whisper-1",
     "locale": "",
     "autoStart": false,
+    "pushToTalk": false,
     "silenceDetection": true,
     "silenceDuration": 2000,
     "silenceAction": "stop_transcribe",

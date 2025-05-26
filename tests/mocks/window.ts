@@ -316,7 +316,9 @@ const useBrowserMock = () => {
   navigator = {
     // @ts-expect-error mock
     mediaDevices: {
-      getUserMedia: vi.fn(async () => ({} as MediaStream)),
+      getUserMedia: vi.fn(async () => ({
+        getTracks: vi.fn(() => []),
+      } as unknown as MediaStream)),
       getSupportedConstraints: vi.fn(() => ({
         echoCancellation: true,
         autoGainControl: true,

@@ -36,12 +36,12 @@
           </div>
 
           <div class="group horizontal">
-            <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" :disabled="pushToTalk" />
+            <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" />
             <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
           </div>
           
           <div class="group horizontal">
-            <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" :disabled="autoStart" />
+            <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" />
             <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
           </div>
 
@@ -72,10 +72,10 @@
           <form class="large" @submit.prevent>
             <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
             <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
-            <button name="clear" class="button" @click="onClear()" :disabled="state === 'processing'">{{ t('common.clear') }}</button>
+            <button name="clear" class="button" @click="onClear()" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <div class="push"></div>
-            <button name="insert" class="button" @click="onInsert()" v-if="!isMas">{{ t('common.insert') }}</button>
-            <button name="copy" class="button" @click="onCopy()">{{ t('common.copy') }}</button>
+            <button name="insert" class="button" @click="onInsert()" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
+            <button name="copy" class="button" @click="onCopy()" :disabled="!transcription || state === 'processing'">{{ t('common.copy') }}</button>
           </form>
         </div>
       </main>
@@ -97,10 +97,14 @@ import useAudioRecorder from '../composables/audio_recorder'
 import LangSelect from '../components/LangSelect.vue'
 import Dialog from '../composables/dialog'
 
+import useEventBus from '../composables/event_bus'
+const { onEvent } = useEventBus()
+
 // init stuff
 const { transcriber, processStreamingError } = useTranscriber(store.config)
 const audioRecorder = useAudioRecorder(store.config)
 let userStoppedDictation = false
+let pushToTalkCancelled = false
 let pushToTalkMode = false
 
 const isMas = ref(false)
@@ -125,6 +129,7 @@ onMounted(async () => {
   // events
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
+  onEvent('start-dictation', toggleRecord)
   window.api.on('start-dictation', toggleRecord)
   window.api.on('file-modified', (file) => {
     if (file === 'settings') {
@@ -146,11 +151,6 @@ onMounted(async () => {
     }
   }
 
-  // auto start?
-  if (autoStart.value) {
-    onRecord(false)
-  }
-
 })
 
 onUnmounted(() => {
@@ -164,6 +164,8 @@ const load = () => {
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
   model.value = store.config.stt.model
+  pushToTalk.value = store.config.stt.pushToTalk
+  autoStart.value = store.config.stt.autoStart
 }
 
 const onChangeEngine = () => {
@@ -278,6 +280,12 @@ const onRecord = async (ptt: boolean) => {
   previousTranscription = transcription.value.trim()
   if (previousTranscription.length) {
     previousTranscription += ' '
+  }
+
+  // check
+  if (pushToTalkCancelled) {
+    pushToTalkCancelled = false
+    return
   }
 
   // we need this
@@ -400,6 +408,8 @@ const onKeyUp = (event: KeyboardEvent) => {
   if (event.code === 'Space') {
     if (pushToTalkMode && state.value === 'recording') {
       onStop()
+    } else if (pushToTalk.value) {
+      pushToTalkCancelled = true
     }
   }
 }

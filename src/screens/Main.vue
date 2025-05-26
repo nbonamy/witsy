@@ -86,6 +86,11 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = next
   }
 
+  // special
+  if (mode.value === 'dictation') {
+    emitEvent('start-dictation')
+  }
+
 }
 
 </script>

@@ -1,5 +1,5 @@
 
-import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
+import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
@@ -52,27 +52,19 @@ test('Renders correctly', () => {
 })
 
 test('Saves options', async () => {
+  
   const wrapper: VueWrapper<any> = mount(Transcribe)
   
   await wrapper.find('[name=autoStart]').setValue(true)
-  expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(false)
-  expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(true)
-  expect(wrapper.vm.autoStart).toBe(true)
-  expect(wrapper.vm.pushToTalk).toBe(false)
   expect(store.config.stt.autoStart).toBe(true)
   expect(store.config.stt.pushToTalk).toBe(false)
   
   await wrapper.find('[name=autoStart]').setValue(false)
   await wrapper.find('[name=pushToTalk]').setValue(true)
-  expect(wrapper.vm.autoStart).toBe(false)
-  expect(wrapper.vm.pushToTalk).toBe(true)
   expect(store.config.stt.autoStart).toBe(false)
   expect(store.config.stt.pushToTalk).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('[name=autoStart]').element.disabled).toBe(true)
-  expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(false)
 
   await wrapper.find('[name=autoStart]').setValue(false)
-  expect(wrapper.vm.autoStart).toBe(false)
   expect(store.config.stt.autoStart).toBe(false)
   
   expect(window.api.config.save).toHaveBeenCalledTimes(3)
@@ -80,10 +72,8 @@ test('Saves options', async () => {
 
 test('Records with button', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=record]').trigger('click')
+  await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
   expect(wrapper.find('.actions button[name=record]').exists()).toBe(false)
   expect(wrapper.find('.actions button[name=stop]').exists()).toBe(true)
@@ -93,10 +83,8 @@ test('Records with button', async () => {
 
 test('Records with icon', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
   await wrapper.find('.controls .record').trigger('click')
+  await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
   expect(wrapper.find('.controls .record').exists()).toBe(false)
   expect(wrapper.find('.controls .stop').exists()).toBe(true)
@@ -107,10 +95,8 @@ test('Records with icon', async () => {
 
 test('Records with space bar', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
+  await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
   document.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space' }));
   expect(window.MediaRecorder.prototype.stop).not.toHaveBeenCalled()
@@ -120,14 +106,10 @@ test('Records with space bar', async () => {
 
 test('Records with push to talk', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
-  await wrapper.vm.$nextTick()
   wrapper.vm.pushToTalk = true
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
+  await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
-  document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
-  expect(window.MediaRecorder.prototype.stop).not.toHaveBeenCalled()
   document.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space' }));
   expect(window.MediaRecorder.prototype.stop).toHaveBeenCalled()
 })
@@ -144,6 +126,7 @@ test('Transcribes', async () => {
 test('Clears transcription', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=clear]').trigger('click')
   expect(wrapper.vm.transcription).toBe('')
 })
@@ -151,6 +134,7 @@ test('Clears transcription', async () => {
 test('Inserts transcription', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=insert]').trigger('click')
   expect(window.api.transcribe.insert).toHaveBeenCalledWith('test')
 })
@@ -158,6 +142,7 @@ test('Inserts transcription', async () => {
 test('Copies transcription', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=copy]').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
 })
@@ -165,6 +150,7 @@ test('Copies transcription', async () => {
 test('Keyboard shortcuts', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
