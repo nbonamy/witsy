@@ -72,7 +72,7 @@ const processQueryParams = (params: anyDict) => {
 
 const onMode = async (next: MenuBarMode) => {
 
-  console.log('[main] onMode', next)
+  //console.log('[main] onMode', next)
 
   if (next === 'scratchpad') {
     window.api.scratchpad.open()
@@ -89,6 +89,8 @@ const onMode = async (next: MenuBarMode) => {
   // special
   if (mode.value === 'dictation') {
     emitEvent('start-dictation')
+  } else {
+    emitEvent('stop-dictation')
   }
 
 }

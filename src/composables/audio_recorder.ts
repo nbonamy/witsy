@@ -223,6 +223,7 @@ class AudioRecorder {
     this.analyser?.disconnect()
     this.microphone?.disconnect()
     this.audioContext?.close()
+    this.audioContext = null
     this.mediaRecorder = null
     this.analyser = null
     this.sampler = null
