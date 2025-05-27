@@ -7,7 +7,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect v-model="model" :engine="engine" />
+        <ModelSelect :basic="true" v-model="model" :engine="engine" />
       </div>
       <div class="group">
         <label>{{ t('modelSettings.streaming') }}</label>

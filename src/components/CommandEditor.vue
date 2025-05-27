@@ -23,7 +23,7 @@
     </div>
     <div class="group">
       <label>{{ t('common.llmModel') }}</label>
-      <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
+      <ModelSelect :basic="true" id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
     </div>
     <div class="group">
       <label>{{ t('common.icon') }}</label>

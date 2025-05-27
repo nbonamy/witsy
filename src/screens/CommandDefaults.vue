@@ -10,7 +10,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
+        <ModelSelect :basic="true" id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
       </div>
       <div class="group" v-if="isWindows">
         <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>

@@ -556,7 +556,6 @@ const openDebugConsole = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 250px;
 
   form {
     padding: 16px;
