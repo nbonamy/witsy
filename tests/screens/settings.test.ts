@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import LlmFactory from '../../src/llms/llm'
+import { defaultCapabilities } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
@@ -43,10 +44,16 @@ beforeAll(() => {
   // init store
   store.config.engines.anthropic = {
     model: { chat: 'model2' },
-    models: { chat: [
-      { id: 'model1', name: 'Model 1', meta: {}, capabilities: { tools: false, vision: false, reasoning: false } },
-      { id: 'model2', name: 'Model 2', meta: {}, capabilities: { tools: false, vision: false, reasoning: false } }
-     ]
+    models: { _chat: [
+        { id: 'model1', name: 'Model 1', meta: {}, ...defaultCapabilities },
+        { id: 'model2', name: 'Model 2', meta: {}, ...defaultCapabilities }
+      ],
+      get chat() {
+        return this._chat
+      },
+      set chat(value) {
+        this._chat = value
+      },
     }
   }
 

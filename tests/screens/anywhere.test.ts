@@ -15,6 +15,7 @@ import Message from '../../src/models/message'
 import useEventBus  from '../../src/composables/event_bus'
 import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
 import LlmManager from '../../src/llms/manager'
+import { defaultCapabilities } from 'multi-llm-ts'
 const { emitEvent } = useEventBus()
 
 // mock llm
@@ -25,8 +26,8 @@ vi.mock('../../src/llms/manager.ts', async () => {
   LlmManager.prototype.getEngineName = () => 'mock'
   LlmManager.prototype.getCustomEngines = () => []
   LlmManager.prototype.getFavoriteId = () => 'favid'
-  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', capabilities: { tools: false, vision: false, reasoning: false } }])
-  LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', capabilities: { tools: false, vision: false, reasoning: false } }))
+  LlmManager.prototype.getChatModels = vi.fn(() => [{ id: 'chat', name: 'chat', ...defaultCapabilities }])
+  LlmManager.prototype.getChatModel = vi.fn(() => ({ id: 'chat', name: 'chat', ...defaultCapabilities }))
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.igniteEngine = vi.fn(() => new LlmMock(store.config.engines.mock))
   LlmManager.prototype.checkModelListsVersion = vi.fn()
