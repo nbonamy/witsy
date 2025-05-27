@@ -1632,7 +1632,7 @@
       "lastOneUsed": "最后使用的一个",
       "localeLLM": "LLM 语言",
       "localeUI": "界面语言",
-      "promptLLMModel": "提示 LLM 模型",
+      "promptLLMModel": "快速提示 LLM 模型",
       "resetTips": "重置提示",
       "runAtLogin": "登录时运行"
     },

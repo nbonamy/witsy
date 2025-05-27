@@ -1632,7 +1632,7 @@
       "lastOneUsed": "Last one used",
       "localeLLM": "LLM language",
       "localeUI": "Interface language",
-      "promptLLMModel": "Prompt LLM Model",
+      "promptLLMModel": "Quick Prompt LLM Model",
       "resetTips": "Reset tips",
       "runAtLogin": "Run at login"
     },

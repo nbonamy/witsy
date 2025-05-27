@@ -1632,7 +1632,7 @@
       "lastOneUsed": "Último usado",
       "localeLLM": "Idioma do LLM",
       "localeUI": "Idioma da interface",
-      "promptLLMModel": "Modelo LLM de Prompt",
+      "promptLLMModel": "Modelo LLM de Prompt Rápido",
       "resetTips": "Redefinir dicas",
       "runAtLogin": "Executar ao iniciar a sessão"
     },

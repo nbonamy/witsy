@@ -1602,7 +1602,7 @@
       "lastOneUsed": "Zuletzt verwendet",
       "localeLLM": "LLM-Sprache",
       "localeUI": "UI-Sprache",
-      "promptLLMModel": "Prompt LLM-Modell",
+      "promptLLMModel": "Schneller Eingabeaufforderung LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
       "runAtLogin": "Witsy mit Windows starten"
     },
