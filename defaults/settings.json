@@ -162,7 +162,7 @@
       "model": {
         "chat": "gpt-4o",
         "image": "dall-e-3",
-        "vision": "gpt-4o"
+        "vision": "gpt-4.1"
       },
       "realtime": {
         "model": "gpt-4o-mini-realtime-preview",
