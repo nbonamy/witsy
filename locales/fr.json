@@ -1602,7 +1602,7 @@
       "lastOneUsed": "Dernier utilisé",
       "localeLLM": "Langue des modèles",
       "localeUI": "Langue de l'interface",
-      "promptLLMModel": "Modèle pour les requêtes rapides",
+      "promptLLMModel": "Modèle de LLM de prompt rapide",
       "resetTips": "Réinitialiser les conseils",
       "runAtLogin": "Lancer au démarrage"
     },
