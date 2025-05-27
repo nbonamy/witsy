@@ -590,6 +590,10 @@ const openDebugConsole = () => {
         width: fit-content;
       };
     }
+
+    textarea[name="prompt"] {
+      resize: none;
+    }
   }
 }
 
