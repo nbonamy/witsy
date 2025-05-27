@@ -38,7 +38,7 @@ import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import ModelSelect from '../components/ModelSelect.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
-import { ChatModel } from 'multi-llm-ts'
+import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const apiKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
@@ -49,7 +49,7 @@ const chat_models = ref<ChatModel[]>([])
 
 const vision_models = computed(() => {
   return [
-    { id: '', name: t('settings.engines.vision.noFallback'), capabilities: { tools: false, vision: false, reasoning: false } },
+    { id: '', name: t('settings.engines.vision.noFallback'), ...defaultCapabilities },
     ...chat_models.value.filter(model => model.capabilities?.vision)
   ]
 })

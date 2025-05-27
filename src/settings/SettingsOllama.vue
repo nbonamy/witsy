@@ -37,7 +37,7 @@ import { computed, ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { getChatModels } from '../llms/ollama'
-import { ChatModel, Ollama } from 'multi-llm-ts'
+import { ChatModel, defaultCapabilities, Ollama } from 'multi-llm-ts'
 import Dialog from '../composables/dialog'
 import LlmFactory from '../llms/llm'
 import defaults from '../../defaults/settings.json'
@@ -54,7 +54,7 @@ const chat_models = ref<ChatModel[]>([])
 
 const vision_models = computed(() => {
   return [
-    { id: '', name: t('settings.engines.vision.noFallback'), capabilities: { tools: false, vision: false, reasoning: false } },
+    { id: '', name: t('settings.engines.vision.noFallback'), ...defaultCapabilities },
     ...chat_models.value.filter(model => model.capabilities?.vision)
   ]
 })

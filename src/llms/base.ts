@@ -141,7 +141,7 @@ export default class LlmManagerBase implements ILlmManager {
         return {
           id: f.id,
           name: `${this.getEngineName(f.engine)}/${f.model}`,
-          capabilities: model?.capabilities ?? { tools: false, vision: false, reasoning: false },
+          capabilities: model?.capabilities ?? llm.defaultCapabilities.capabilities,
           meta: model?.meta ?? { id: f.model, name: f.model },
         }
       }).sort((a, b) => a.name.localeCompare(b.name))
