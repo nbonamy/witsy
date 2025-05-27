@@ -1,35 +1,51 @@
 
 <template>
-  <VueSelect ref="select" :inputId="id" 
-    v-model="value" :options="models"
-    :is-clearable="false" :is-disabled="disabled"
-    :should-autofocus-option="false"
-    :placeholder="defaultText"
-    @menu-opened="onMenuOpened"
-    @option-selected="$emit('change')"
-  >
+  
+  <template v-if="basic">
 
-    <template #value="{ option }">
-      <span class="label">{{ option.label }}</span>
-      <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
-      <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
-      <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
-    </template>
+    <select name="model" v-model="value" @change="$emit('change')" :disabled="disabled">
+      <option value="" v-if="defaultText">{{ defaultText }}</option>
+      <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
+    </select>
 
-    <template #option="{ option }">
-      <span class="label">{{ option.label }}</span>
-      <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
-      <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
-      <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
-    </template>
+  </template>
 
-  </VueSelect>
+
+  <template v-else>
+
+    <VueSelect ref="select" :inputId="id" 
+      v-model="value" :options="models"
+      :is-clearable="false" :is-disabled="disabled"
+      :should-autofocus-option="false"
+      :placeholder="defaultText"
+      @menu-opened="onMenuOpened"
+      @option-selected="$emit('change')"
+    >
+
+      <template #value="{ option }">
+        <span class="label">{{ option.label }}</span>
+        <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
+        <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
+        <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+      </template>
+
+      <template #option="{ option }">
+        <span class="label">{{ option.label }}</span>
+        <BIconTools :class="{ active: option.capabilities?.tools }" class="capability" />
+        <BIconImage :class="{ active: option.capabilities?.vision }" class="capability" />
+        <BIconLightningChargeFill :class="{ active: option.capabilities?.reasoning }" class="capability" />
+      </template>
+
+    </VueSelect>
+  
+  </template>
+
 </template>
 
 <script setup lang="ts">
 
-import { ChatModel } from 'multi-llm-ts'
-import { ref, computed, nextTick } from 'vue'
+import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
+import { ref, computed, ComputedRef, nextTick } from 'vue'
 import { store } from '../services/store'
 import VueSelect from 'vue3-select-component'
 import LlmFactory, { ILlmManager } from '../llms/llm'
@@ -38,18 +54,33 @@ const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const select = ref<typeof VueSelect|null>(null)
 
-const models = computed(() => (props.models ?? llmManager.getChatModels(props.engine)).map(model => {
-  return {
-    label: model.name,
-    value: model.id,
-    capabilities: model.capabilities,
+const models: ComputedRef<any[]> = computed(() => {
+
+  const models = props.models ?? llmManager.getChatModels(props.engine)
+
+  if (props.basic) {
+    return models
   }
-}))
+
+  return [
+  ...(props.defaultText ? [{ label: props.defaultText, value: '', ...defaultCapabilities }] : []),
+  ...models.map(model => ({
+      label: model.name,
+      value: model.id,
+      capabilities: model.capabilities,
+    }))
+  ]
+
+})
 
 const props = defineProps({
   id: {
     type: String,
     default: 'model'
+  },
+  basic: {
+    type: Boolean,
+    default: false
   },
   engine: String,
   models: Array<ChatModel>,
