@@ -1362,6 +1362,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Veuillez réessayer avec un autre fichier.",
+        "title": "Impossible de parser le contenu de ce fichier."
+      },
       "formatError": {
         "text": "Veuillez réessayer avec un autre fichier.",
         "title": "Ce format de fichier n'est pas pris en charge par ce modèle."

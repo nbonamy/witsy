@@ -388,8 +388,16 @@ const attach = async (contents: string, mimeType: string, url: string) => {
       console.error('Error resizing image', e)
       attachments.value.push(toAttach)
     }
-  } else {
+  } else if (toAttach.isText()) {
+    toAttach.loadContents()
+    if (!toAttach.content) {
+      Dialog.alert(t('prompt.attachment.emptyError.title'), t('prompt.attachment.emptyError.text'))
+      return
+    } else {
       attachments.value.push(toAttach)
+    }
+  } else {
+    attachments.value.push(toAttach)
   }
 }
 

@@ -1392,6 +1392,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "请尝试使用其他文件。",
+        "title": "无法解析此文件的内容。"
+      },
       "formatError": {
         "text": "请尝试使用其他文件。",
         "title": "此文件格式不被此模型支持。"

@@ -10,8 +10,17 @@ export function getPDFRawTextContent(contents: Buffer): Promise<string> {
       reject(errData.parserError)
     })
     pdfParser.on('pdfParser_dataReady', () => {
+
       //console.log('PDF parsing done')
-      resolve(pdfParser.getRawTextContent())
+      const rawText = pdfParser.getRawTextContent()
+
+      // special case for empty pdf (or image only)
+      // ----------------Page (0) Break----------------
+      if (/^-+Page \(\d+\) Break-+$/.test(rawText.trim())) {
+        resolve('')
+      } else {
+        resolve(pdfParser.getRawTextContent())
+      }
     })
     //console.log('Parsing PDF contents...')
     pdfParser.parseBuffer(contents)

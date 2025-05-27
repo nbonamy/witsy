@@ -12,8 +12,6 @@ import path from 'path'
 import fs from 'fs'
 import os from 'os'
 
-const EMPTY_PDF = '----------------Page (0) Break----------------'
-
 let ragConfig
 
 vi.mock('electron', async() => {
@@ -58,7 +56,7 @@ const createTempDir = () => {
   fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.json'))
   fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo2.json'))
   fs.copyFileSync(path.join(os.tmpdir(), 'docrepo.json'), path.join(tempDir, 'docrepo.png'))
-  fs.writeFileSync(path.join(tempDir, 'docrepo.pdf'), EMPTY_PDF)
+  fs.copyFileSync('./tests/fixtures/empty.pdf', path.join(tempDir, 'empty.pdf'))
   return tempDir
 }
 
@@ -153,7 +151,7 @@ test('Doc base invalid documents', async () => {
   await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.jpg'))).rejects.toThrowError(/^Unsupported document type$/)
   await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.png'))).rejects.toThrowError(/^Unsupported document type$/)
   await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'test.docx'))).rejects.toThrowError(/^Unable to load document$/)
-  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'text', EMPTY_PDF))).rejects.toThrowError(/^Empty PDF$/)
+  await expect(() => docbase.addDocument(new DocumentSourceImpl('1', 'file', 'empty.pdf'))).rejects.toThrowError(/^Unable to load document$/)
 })
 
 test('Docrepo invalid documents', async () => {
@@ -164,7 +162,7 @@ test('Docrepo invalid documents', async () => {
   await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.png'))
   await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.mov'))
   await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'test.docx'))
-  await docrepo.addDocument(docbase, 'text', EMPTY_PDF)
+  await docrepo.addDocument(docbase, 'file', path.join(os.tmpdir(), 'empty.pdf'))
   await vi.waitUntil(() => docrepo.queueLength() == 0)
 
   // check docrepo

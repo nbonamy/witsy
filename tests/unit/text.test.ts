@@ -21,6 +21,9 @@ test('PDF', async () => {
   const contents = fs.readFileSync('./tests/fixtures/sample.pdf', 'base64')
   const text = await getTextContent(contents, 'pdf')
   expect(text).toContain('Hello from PDF')
+
+  const empty = fs.readFileSync('./tests/fixtures/empty.pdf', 'base64')
+  expect(await getTextContent(empty, 'pdf')).toBe('')
 })
 
 test('Word', async () => {
