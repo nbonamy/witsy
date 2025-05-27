@@ -1392,6 +1392,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Proszę spróbować ponownie z innym plikiem.",
+        "title": "Nie można przetworzyć zawartości tego pliku."
+      },
       "formatError": {
         "text": "Spróbuj ponownie z innym plikiem.",
         "title": "Ten format pliku nie jest obsługiwany przez ten model."

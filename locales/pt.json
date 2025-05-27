@@ -1392,6 +1392,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Por favor, tente novamente com outro arquivo.",
+        "title": "Incapaz de analisar o conteúdo deste arquivo."
+      },
       "formatError": {
         "text": "Por favor, tente novamente com outro arquivo.",
         "title": "Este formato de arquivo não é suportado por este modelo."

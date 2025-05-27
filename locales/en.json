@@ -1392,6 +1392,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Please try again with another file.",
+        "title": "Unable to parse the content of this file."
+      },
       "formatError": {
         "text": "Please try again with another file.",
         "title": "This file format is not supported by this model."

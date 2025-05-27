@@ -1362,6 +1362,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Por favor, inténtalo de nuevo con otro archivo.",
+        "title": "No se pudo analizar el contenido de este archivo."
+      },
       "formatError": {
         "text": "Por favor, inténtalo de nuevo con otro archivo.",
         "title": "Este formato de archivo no es compatible con este modelo."

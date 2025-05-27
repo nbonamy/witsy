@@ -1362,6 +1362,10 @@
   },
   "prompt": {
     "attachment": {
+      "emptyError": {
+        "text": "Bitte versuchen Sie es erneut mit einer anderen Datei.",
+        "title": "Inhalt dieser Datei kann nicht analysiert werden."
+      },
       "formatError": {
         "text": "Bitte versuchen Sie es mit einer anderen Datei.",
         "title": "Dieses Dateiformat wird von diesem Modell nicht unterstützt."
