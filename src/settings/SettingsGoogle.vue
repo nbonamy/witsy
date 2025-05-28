@@ -11,7 +11,7 @@
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <div class="control-group">
-          <ModelSelect v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
+          <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </div>
         <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">{{ t('settings.engines.google.aboutModels') }}</a><br/>
@@ -20,7 +20,7 @@
     </div>
     <div class="group">
       <label>{{ t('settings.engines.vision.model') }}</label>
-      <ModelSelect v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
+      <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="group horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
@@ -36,7 +36,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 

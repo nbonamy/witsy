@@ -89,7 +89,7 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
-  expect(tab.findComponent({ name: 'ModelSelect' }).exists()).toBe(true)
+  expect(tab.findComponent({ name: 'ModelSelectPlus' }).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
@@ -110,8 +110,8 @@ test('Settings General', async () => {
   checkAndReset()
   
   // set prompt model
-  await tab.findComponent({ name: 'ModelSelect' }).find('.control').trigger('click')
-  await tab.findComponent({ name: 'ModelSelect' }).find('.menu .menu-option:nth-child(2)').trigger('click')
+  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.control').trigger('click')
+  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.menu .menu-option:nth-child(2)').trigger('click')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
   checkAndReset()

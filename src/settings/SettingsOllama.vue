@@ -3,14 +3,14 @@
     <div class="group">
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="control-group">
-        <ModelSelect v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
+        <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
         <button @click.prevent="onDelete"><BIconTrash /></button>
         <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
     </div>
     <div class="group">
       <label>{{ t('settings.engines.vision.model') }}</label>
-      <ModelSelect v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
+      <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/search" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
@@ -41,7 +41,7 @@ import { ChatModel, defaultCapabilities, Ollama } from 'multi-llm-ts'
 import Dialog from '../composables/dialog'
 import LlmFactory from '../llms/llm'
 import defaults from '../../defaults/settings.json'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
 
 const baseURL = ref(null)

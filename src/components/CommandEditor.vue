@@ -23,7 +23,7 @@
     </div>
     <div class="group">
       <label>{{ t('common.llmModel') }}</label>
-      <ModelSelect :basic="true" id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
+      <ModelSelectPlus id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
     </div>
     <div class="group">
       <label>{{ t('common.icon') }}</label>
@@ -51,7 +51,7 @@ import { onMounted, ref, computed, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['command-modified']);

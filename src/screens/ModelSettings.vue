@@ -7,7 +7,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect v-model="model" :engine="engine" @change="onChangeModel"/>
+        <ModelSelectPlus v-model="model" :engine="engine" @change="onChangeModel"/>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
@@ -125,7 +125,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 import VariableTable from '../components/VariableTable.vue'
 import VariableEditor from '../screens/VariableEditor.vue'

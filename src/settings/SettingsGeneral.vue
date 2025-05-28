@@ -7,7 +7,7 @@
       <div class="group prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
         <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
-        <ModelSelect class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+        <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
       </div>
       <div class="group localeUI">
         <label>{{ t('settings.general.localeUI') }}</label>
@@ -49,7 +49,7 @@ import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t, hasLocalization } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 
 const engine = ref(null)
