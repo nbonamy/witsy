@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import LlmMock from '../mocks/llm'
+import LlmMock, { installMockModels } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
 import ScratchPad from '../../src/screens/ScratchPad.vue'
@@ -26,6 +26,7 @@ vi.mock('../../src/llms/manager', async () => {
   LlmManager.prototype.getChatEngineModel = () => ({ engine: 'mock', model: 'chat' })
   LlmManager.prototype.isCustomEngine = vi.fn(() => false)
   LlmManager.prototype.igniteEngine = () => new LlmMock(store.config.engines.mock)
+  LlmManager.prototype.checkModelListsVersion = vi.fn()
 	return { default: LlmManager }
 })
 
@@ -72,6 +73,7 @@ beforeEach(() => {
   store.config = defaultSettings
   store.config.general.locale = 'en-US'
   store.config.llm.locale = 'fr-FR'
+  installMockModels()
 })
 
 test('Renders correctly', () => {
@@ -109,7 +111,7 @@ test('Sends prompt and sets modified', async () => {
 
 test('Sends system prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[0] })
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], docrepo: null, expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
@@ -117,7 +119,7 @@ test('Sends system prompt with params', async () => {
 
 test('Sends user prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachment: new Attachment('file', 'text/plain'), docrepo: null, expert: store.experts[2] })
+  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], docrepo: null, expert: store.experts[2] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)

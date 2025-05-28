@@ -7,10 +7,6 @@
       <div class="group">
         <label>{{ t('settings.advanced.header') }}</label>
       </div>
-      <div class="group vision top horizontal">
-        <input type="checkbox" v-model="autoVisionSwitch" @change="save" />
-        <label>{{ t('settings.advanced.autoVisionSwitch') }}</label>
-      </div>
       <div class="group autosave horizontal">
         <input type="checkbox" v-model="autoSavePrompt" @change="save" />
         <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
@@ -82,7 +78,6 @@ import { ProxyMode } from '../types/config'
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
 const instructions = ref('instructions.default')
-const autoVisionSwitch = ref(null)
 const autoSavePrompt = ref(null)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')
@@ -90,7 +85,6 @@ const conversationLength = ref(null)
 const imageResize = ref(null)
 
 const load = () => {
-  autoVisionSwitch.value = store.config.llm.autoVisionSwitch
   autoSavePrompt.value = store.config.prompt.autosave
   proxyMode.value = store.config.general.proxyMode
   customProxy.value = store.config.general.customProxy
@@ -112,7 +106,6 @@ const onResetDefaultInstructions = () => {
 const save = () => {
 
   // basic stuff
-  store.config.llm.autoVisionSwitch = autoVisionSwitch.value
   store.config.prompt.autosave = autoSavePrompt.value
   store.config.general.proxyMode = proxyMode.value
   store.config.general.customProxy = customProxy.value

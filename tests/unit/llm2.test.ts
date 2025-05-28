@@ -14,13 +14,13 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
     ...mod,
     loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadAzureModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [] })),
+    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [] })),
     loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [ { id: 'image', name: 'image' } ] })),
-    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
+    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [{ id: 'image', name: 'image' }] })),
     loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat' } ], image: [{ id: 'image', name: 'image' }] })),
+    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [{ id: 'image', name: 'image' }] })),
     loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
   }
@@ -121,5 +121,32 @@ test('Load models', async () => {
     apiVersion: '2024-04-03',
   })
   expect(window.api.config?.save).toHaveBeenCalledTimes(6)
+
+})
+
+test('Can process format', async () => {
+
+  store.config.engines.openrouter = {
+    models: {
+      chat: [
+        { id: 'chat', name: 'chat', capabilities: { vision: false, tools: true, reasoning: false } }, 
+        { id: 'vision', name: 'vision', capabilities: { vision: true, tools: true, reasoning: false } }, 
+      ],
+      image: []
+    },
+    model: {
+    }
+  }
+
+  // without autoVisionSwitch
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'txt')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(false)
+  expect(llmManager.canProcessFormat('openrouter', 'vision', 'txt')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'vision', 'jpg')).toBe(true)
+
+  // with autoVisionSwitch
+  store.config.engines.openrouter.model.vision = 'vision'
+  expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(true)
+  expect(llmManager.canProcessFormat('openrouter', 'vision', 'jpg')).toBe(true)
 
 })

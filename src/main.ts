@@ -196,7 +196,7 @@ app.whenReady().then(() => {
   // create the main window
   if (!settings.general.hideOnStartup || process.env.TEST) {
     log.info('Creating initial main window');
-    window.openMainWindow();
+    window.openMainWindow({ queryParams: { view: 'chat'} });
   } else {
     app.dock?.hide();
   }
@@ -556,7 +556,7 @@ ipcMain.on('automation-replace', async (_, payload) => {
 })
 
 ipcMain.on('chat-open', async (_, chatId) => {
-  await window.openMainWindow({ queryParams: { chatId: chatId } });
+  await window.openMainWindow({ queryParams: { view: 'chat', chatId: chatId } });
 })
 
 ipcMain.on('anywhere-prompt', async () => {
@@ -576,16 +576,8 @@ ipcMain.on('readaloud-close-palette', async (_, sourceApp: Application) => {
   await window.closeReadAloudPalette();
 });
 
-ipcMain.on('transcribe-start', async () => {
-  await Transcriber.initTranscription();
-});
-
 ipcMain.on('transcribe-insert', async (_, payload) => {
   await Transcriber.insertTranscription(payload);
-});
-
-ipcMain.on('transcribe-cancel', async () => {
-  await window.closeTranscribePalette();
 });
 
 ipcMain.on('docrepo-open', () => {

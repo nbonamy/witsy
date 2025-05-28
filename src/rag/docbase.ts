@@ -116,13 +116,6 @@ export default class DocumentBaseImpl {
       throw new Error('Unable to load document')
     }
 
-    // special case for empty pdf (or image only
-    // ----------------Page (0) Break----------------
-    if (/^-+Page \(\d+\) Break-+$/.test(text.trim())) {
-      console.log('Empty PDF', source.origin)
-      throw new Error('Empty PDF')
-    }
-
     // check the size
     const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {

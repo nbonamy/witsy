@@ -1,5 +1,5 @@
-import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse } from 'multi-llm-ts'
-import { Configuration } from '../types/config'
+import { LlmEngine, LlmCompletionOpts, LlmChunk, LlmResponse, Model } from 'multi-llm-ts'
+import { Configuration, EngineConfig } from '../types/config'
 import { DocRepoQueryResponseItem } from '../types/rag'
 import { t , i18nInstructions, localeToLangName, getLlmLocale } from './i18n'
 import Message from '../models/message'
@@ -48,6 +48,18 @@ export type GenerationResult =
     const response = messages[messages.length - 1]
     const conversation = this.getConversation(messages)
 
+    // get the models
+    const engineConfig: EngineConfig = this.config.engines[llm.getName()]
+    const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
+    const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
+    if (!model) {
+      console.error('Model not found:', llm.getName(), opts.model)
+      return 'invalid_model'
+    }
+
+    // use tools always
+    model.capabilities.tools = true
+
     try {
 
       // rag?
@@ -70,9 +82,8 @@ export type GenerationResult =
       if (opts.streaming === false) {
 
         // normal completion
-        const llmResponse: LlmResponse = await llm.complete(opts.model, conversation, {
-          models: this.config.engines[llm.getName()]?.models?.chat,
-          autoSwitchVision: this.config.llm.autoVisionSwitch,
+        const llmResponse: LlmResponse = await llm.complete(model, conversation, {
+          visionFallbackModel: visionModel,
           usage: true,
           ...opts
         })
@@ -93,9 +104,8 @@ export type GenerationResult =
 
         // now stream
         this.stopGeneration = false
-        this.stream = await llm.generate(opts.model, conversation, {
-          models: this.config.engines[llm.getName()]?.models?.chat,
-          autoSwitchVision: this.config.llm.autoVisionSwitch,
+        this.stream = llm.generate(model, conversation, {
+          visionFallbackModel: visionModel,
           usage: true,
           ...opts
         })
@@ -145,6 +155,7 @@ export type GenerationResult =
 
       if (error.name !== 'AbortError') {
 
+        const status = error.status ?? error.status_code ?? 0
         const cause = error.cause?.stack?.toString()?.toLowerCase() || ''
         const message = error.message.toLowerCase()
 
@@ -156,56 +167,56 @@ export type GenerationResult =
         }
         
         // missing api key
-        else if ([401, 403].includes(error.status) || message.includes('401') || message.includes('apikey')) {
-          console.error('Missing API key:', error.status, message)
+        else if ([401, 403].includes(status) || message.includes('401') || message.includes('apikey')) {
+          console.error('Missing API key:', status, message)
           response.setText(t('generator.errors.missingApiKey'))
           rc = 'missing_api_key'
         }
         
         // out of credits
-        else if ([400, 402].includes(error.status) && (message.includes('credit') || message.includes('balance'))) {
-          console.error('Out of credits:', error.status, message)
+        else if ([400, 402].includes(status) && (message.includes('credit') || message.includes('balance'))) {
+          console.error('Out of credits:', status, message)
           response.setText(t('generator.errors.outOfCredits'))
           rc = 'out_of_credits'
         
         // quota exceeded
-        } else if ([429].includes(error.status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
-          console.error('Quota exceeded:', error.status, message)
+        } else if ([429].includes(status) && (message.includes('resource') || message.includes('quota') || message.includes('rate limit') || message.includes('too many'))) {
+          console.error('Quota exceeded:', status, message)
           response.setText(t('generator.errors.quotaExceeded'))
           rc = 'quota_exceeded'
 
         // context length or function description too long
-        } else if ([400, 429].includes(error.status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
+        } else if ([400, 429].includes(status) && (message.includes('context length') || message.includes('too long') || message.includes('too large'))) {
           if (message.includes('function.description')) {
-            console.error('Function description too long:', error.status, message)
+            console.error('Function description too long:', status, message)
             response.setText(t('generator.errors.pluginDescriptionTooLong'))
             rc = 'function_description_too_long'
           } else {
-            console.error('Context too long:', error.status, message)
+            console.error('Context too long:', status, message)
             response.setText(t('generator.errors.contextTooLong'))
             rc = 'context_too_long'
           }
         
         // function call not supported
-        } else if ([400, 404].includes(error.status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
-          console.warn('Model does not support function calling:', error.status, message)
+        } else if ([400, 404].includes(status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
+          console.warn('Model does not support function calling:', status, message)
           llm.clearPlugins()
           return this.generate(llm, messages, opts, callback)
 
         // streaming not supported
-        } else if ([400].includes(error.status) && message.includes('\'stream\' does not support true')) {
-          console.warn('Model does not support streaming:', error.status, message)
+        } else if ([400].includes(status) && message.includes('\'stream\' does not support true')) {
+          console.warn('Model does not support streaming:', status, message)
           rc = 'streaming_not_supported'
 
         // invalid model
-        } else if ([404].includes(error.status) && message.includes('model')) {
-          console.error('Provider reports invalid model:', error.status, message)
+        } else if ([404].includes(status) && message.includes('model')) {
+          console.error('Provider reports invalid model:', status, message)
           response.setText(t('generator.errors.invalidModel'))
           rc = 'invalid_model'
 
         // final error: depends if we already have some content and if plugins are enabled
         } else {
-          console.error('Error while generating text:', error.status, error.message)
+          console.error('Error while generating text:', status, message)
           if (response.content === '') {
             if (opts?.contextWindowSize || opts?.maxTokens || opts?.temperature || opts?.top_k || opts?.top_p || Object.keys(opts?.customOpts || {}).length > 0) {
               response.setText(t('generator.errors.tryWithoutParams'))
@@ -257,8 +268,10 @@ export type GenerationResult =
       ...chatMessages.slice(-conversationLength * 2, -1)
     ]
     for (const message of conversation) {
-      if (message.attachment && !message.attachment.content) {
-        message.attachment.loadContents()
+      for (const attachment of message.attachments) {
+        if (attachment && !attachment.content) {
+          attachment.loadContents()
+        }
       }
     }
     return conversation

@@ -65,7 +65,6 @@ test('Renders', async () => {
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
   expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
   expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(332)
-  expect(tab.findAll('.actions button')).toHaveLength(7)
 
 })
 
@@ -98,7 +97,7 @@ test('New expert', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   const editor = tab.findComponent({ name: 'ExpertEditor' })
-  await tab.find('.actions button[name=new]').trigger('click')
+  await tab.find('.list-actions .list-action.new').trigger('click')
 
   // for test stability
   tab.vm.selected = null
@@ -204,7 +203,7 @@ test('Delete prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('click')
-  await tab.find('.actions button[name=delete]').trigger('click')
+  await tab.find('.list-actions .list-action.delete').trigger('click')
   expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
   expect(store.experts).toHaveLength(166)
 
@@ -214,7 +213,7 @@ test('Copy prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   await tab.find('.sticky-table-container tr.expert:nth-of-type(1)').trigger('click')
-  await tab.find('.actions button[name=copy]').trigger('click')
+  await tab.find('.list-actions .list-action.copy').trigger('click')
   expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
   expect(store.experts).toHaveLength(167)
   expect(store.experts[1]).toStrictEqual({
@@ -232,7 +231,7 @@ test('Context Menu', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   expect(tab.findAll('.context-menu')).toHaveLength(0)
-  await tab.find('.actions .right button').trigger('click')
+  await tab.find('.list-actions .list-action.menu').trigger('click')
   await tab.vm.$nextTick()
   expect(tab.findAll('.context-menu')).toHaveLength(1)
 

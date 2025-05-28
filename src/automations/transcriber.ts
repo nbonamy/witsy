@@ -14,8 +14,8 @@ export default class Transcriber {
   static insertTranscription = async (text: string): Promise<void> => {
       
       // done
+      window.mainWindow.minimize();
       await window.releaseFocus();
-      window.closeTranscribePalette();
 
       // now paste
       console.debug(`Processing transcription output: ${text.slice(0, 50)}…`);

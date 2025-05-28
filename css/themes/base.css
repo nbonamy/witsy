@@ -132,6 +132,12 @@
   font-size: 9pt;
 }
 
+.message .attachments {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
 .message .attachment, .message .media {
   width: 100%;
   margin-top: 16px;

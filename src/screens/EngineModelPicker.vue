@@ -100,7 +100,7 @@ const close = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = llmManager.getChatModel(engine.value, false)
+  model.value = llmManager.getDefaultChatModel(engine.value, false)
 }
 
 const onCancel = () => {

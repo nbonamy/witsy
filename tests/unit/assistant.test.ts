@@ -8,7 +8,7 @@ import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant
 import Generator from '../../src/services/generator'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
-import LlmMock from '../mocks/llm'
+import LlmMock, { installMockModels } from '../mocks/llm'
 
 // mock config
 vi.mock('../../src/main/config.ts', async () => {
@@ -87,10 +87,7 @@ beforeEach(() => {
   store.config.llm.forceLocale = false
   store.config.llm.engine = 'mock'
   store.config.instructions = {}
-  store.config.engines.mock = {
-    models: { chat: [ 'chat1', 'chat2' ] },
-    model: { chat: 'chat'  }
-  }
+  installMockModels()
 
   // init assistant
   assistant = new Assistant(store.config)
@@ -110,13 +107,20 @@ test('Assistant parameters', async () => {
     titling: true,
     engine: 'mock',
     model: 'chat',
-    attachment: null,
+    attachments: [],
     docrepo: null,
     expert: null,
     sources: true,
     streaming: true,
-    models: [ 'chat1', 'chat2' ],
-    autoSwitchVision: true,
+    visionFallbackModel: {
+      id: 'vision',
+      meta: {},
+      capabilities: {
+        tools: true,
+        vision: true,
+        reasoning: false,
+      }
+    },
     citations: true,
     usage: true,
   })
@@ -191,11 +195,28 @@ test('Assistant Chat No Streaming 2', async () => {
 })
 
 test('Assistant Attachment', async () => {
+
   await assistant!.attach(new Attachment('image_content', 'image/png', 'clipboard://', false))
-  expect(assistant!.chat.lastMessage().attachment.content).toStrictEqual('image_content')
-  expect(assistant!.chat.lastMessage().attachment.mimeType).toStrictEqual('image/png')
-  expect(assistant!.chat.lastMessage().attachment.url).toStrictEqual('clipboard://')
-  expect(assistant!.chat.lastMessage().attachment.saved).toStrictEqual(false)
+  expect(assistant!.chat.lastMessage().attachments[0].content).toStrictEqual('image_content')
+  expect(assistant!.chat.lastMessage().attachments[0].mimeType).toStrictEqual('image/png')
+  expect(assistant!.chat.lastMessage().attachments[0].url).toStrictEqual('clipboard://')
+  expect(assistant!.chat.lastMessage().attachments[0].saved).toStrictEqual(false)
+
+  await assistant!.attach(new Attachment('file_content', 'text/plain', 'clipboard://', false))
+  expect(assistant!.chat.lastMessage().attachments[1].content).toStrictEqual('file_content')
+  expect(assistant!.chat.lastMessage().attachments[1].mimeType).toStrictEqual('text/plain')
+  expect(assistant!.chat.lastMessage().attachments[1].url).toStrictEqual('clipboard://')
+  expect(assistant!.chat.lastMessage().attachments[1].saved).toStrictEqual(false)
+
+})
+
+test('Assistant sends attachment', async () => {
+  const content = await prompt('Hello LLM', { model: 'chat', attachments: [
+    new Attachment('image_content', 'image/png', 'clipboard://', false),
+    new Attachment('file_content', 'text/plain', 'clipboard://', false)
+  ]})
+  expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
+  expect(content).toBe('[{"role":"system","content":"instructions.default.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant System Expert', async () => {

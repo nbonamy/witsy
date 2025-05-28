@@ -11,16 +11,16 @@
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <div class="control-group">
-          <select v-model="chat_model" :disabled="chat_models.length == 0" @change="save">
-            <option v-for="model in chat_models" :key="model.id" :value="model.id">
-              {{ model.name }}
-            </option>
-          </select>
+          <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </div>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.aboutModels') }}</a><br/>
         <a href="https://api-docs.deepseek.com/quick_start/pricing" target="_blank">{{ t('settings.engines.deepseek.pricing') }}</a>
       </div>
+    </div>
+    <div class="group">
+      <label>{{ t('settings.engines.vision.model') }}</label>
+      <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <div class="group horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
@@ -31,23 +31,34 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const apiKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
-const chat_model = ref(null)
-const chat_models = ref([])
+const chat_model = ref<string>(null)
+const vision_model = ref<string>(null)
+const chat_models = ref<ChatModel[]>([])
+
+const vision_models = computed(() => {
+  return [
+    { id: '', name: t('settings.engines.vision.noFallback'), ...defaultCapabilities },
+    ...chat_models.value.filter(model => model.capabilities?.vision)
+  ]
+})
 
 const load = () => {
   apiKey.value = store.config.engines.deepseek?.apiKey || ''
   chat_models.value = store.config.engines.deepseek?.models?.chat || []
   chat_model.value = store.config.engines.deepseek?.model?.chat || ''
+  vision_model.value = store.config.engines.deepseek?.model?.vision || ''
   disableTools.value = store.config.engines.deepseek?.disableTools || false
 }
 
@@ -91,6 +102,7 @@ const onKeyChange = () => {
 const save = () => {
   store.config.engines.deepseek.apiKey = apiKey.value
   store.config.engines.deepseek.model.chat = chat_model.value
+  store.config.engines.deepseek.model.vision = vision_model.value
   store.config.engines.deepseek.disableTools = disableTools.value
   store.saveSettings()
 }

@@ -28,8 +28,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
   // dictation
   const hasDictation = 
     focusedWindow === window.mainWindow ||
-    focusedWindow === window.promptAnywhereWindow ||
-    focusedWindow === window.transcribePalette
+    focusedWindow === window.promptAnywhereWindow
 
   // done
   return [

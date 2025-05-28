@@ -132,9 +132,7 @@ contextBridge.exposeInMainWorld(
       closePalette: (sourceApp: Application): void => { return ipcRenderer.send('readaloud-close-palette', sourceApp) },
     },
     transcribe: {
-      start: (): void => { return ipcRenderer.send('transcribe-start') },
       insert(text: string): void { return ipcRenderer.send('transcribe-insert', text) },
-      cancel: (): void => { return ipcRenderer.send('transcribe-cancel') },
     },
     markdown: {
       render: (markdown: string): string => { return ipcRenderer.sendSync('markdown-render', markdown) },

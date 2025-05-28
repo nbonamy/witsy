@@ -37,8 +37,8 @@
       <span v-else>{{ t('designStudio.emptyPlaceholder') }}</span>
     </main>
     <main v-else class="media">
-      <video v-if="message.isVideo()" :src="message.attachment.url" :alt="message.content" class="video" controls ref="mediaElement" @loadeddata="updateOverlay" />
-      <img v-else :src="message.attachment.url" @click="onFullScreen" ref="mediaElement" @load="updateOverlay" />
+      <video v-if="message.isVideo()" :src="message.attachments[0].url" :alt="message.content" class="video" controls ref="mediaElement" @loadeddata="updateOverlay" />
+      <img v-else :src="message.attachments[0].url" @click="onFullScreen" ref="mediaElement" @load="updateOverlay" />
       <div v-if="isGenerating" class="overlay loading" ref="overlayElement">
         <Loader />
         <Loader />
@@ -130,20 +130,20 @@ const onInfo = () => {
 
 const onFullScreen = () => {
   if (!props.message) return
-  emit('fullscreen', props.message.attachment.url)
+  emit('fullscreen', props.message.attachments[0].url)
 }
 
 const onCopy = async () => {
   if (!props.message || props.message.isVideo()) return
   copying.value = true
-  await window.api.clipboard.writeImage(props.message.attachment.url)
+  await window.api.clipboard.writeImage(props.message.attachments[0].url)
   setTimeout(() => {
     copying.value = false
   }, 1000)
 }
 
 const onDownload = () => {
-  const url = props.message.attachment.url
+  const url = props.message.attachments[0].url
   window.api.file.download({
     url: url,
     properties: {

@@ -29,8 +29,12 @@
       z-index: 1;
     }
 
-    td.icon, td.shortcut {
+    .enabled, .icon, .shortcut {
       text-align: center;
+    }
+
+    td.enabled {
+      width: 1rem;
     }
 
     td input[type=checkbox] {

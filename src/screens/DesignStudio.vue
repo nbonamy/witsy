@@ -193,7 +193,11 @@ const deleteMedia = (msg: Message) => {
       }
 
       // delete
-      window.api.file.delete(msg.attachment.url)        
+      for (const attachment of msg.attachments) {
+        if (attachment.url) {
+          window.api.file.delete(attachment.url)
+        }
+      }
       chat.value.messages = chat.value.messages.filter((m) => m.uuid !== msg.uuid)
       store.saveHistory()
       
@@ -237,8 +241,10 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 const backupCurrentMessage = (): Message => {
   const backup = Message.fromJson(message.value)
-  if (!backup.attachment.content) {
-    backup.attachment.content = window.api.file.read(backup.attachment.url).contents
+  for (const attachment of backup.attachments) {
+    if (!attachment.content) {
+      attachment.content = window.api.file.read(attachment.url).contents
+    }
   }
   return backup
 }
@@ -262,24 +268,30 @@ const onRedo = () => {
 
 const updateMessage = (msg: Message) => {
   if (!message.value || !msg) return
-  if (message.value.attachment?.url) {
-    window.api.file.delete(message.value.attachment.url)
+  for (const attachment of message.value.attachments) {
+    if (attachment.url) {
+      window.api.file.delete(attachment.url)
+    }
   }
   message.value.content = msg.content
   message.value.engine = msg.engine
   message.value.model = msg.model
   message.value.toolCall = msg.toolCall
-  message.value.attachment.mimeType = msg.attachment.mimeType
   message.value.content = msg.content
-  message.value.attachment.url = window.api.file.save({
-    contents: msg.attachment.content,
-    properties: {
-      filename: msg.attachment.url.split(/[\\/]/).pop(),
-      directory: 'userData',
-      subdir: 'images',
-      prompt: false
-    }
-  })
+  message.value.attachments = []
+  for (const a of msg.attachments) {
+    const attachment = new Attachment('', a.mimeType, a.url)
+    attachment.url = window.api.file.save({
+      contents: a.content,
+      properties: {
+        filename: a.url.split(/[\\/]/).pop(),
+        directory: 'userData',
+        subdir: 'images',
+        prompt: false
+      }
+    })
+    message.value.attach(attachment)
+  }
   message.value.usage = msg.usage
 }
 
@@ -293,7 +305,7 @@ const onUpload = () => {
     message.value = new Message('user', t('common.upload'))
     message.value.engine = 'upload'
     message.value.model = fileContents.url.split(/[\\/]/).pop()
-    message.value.attachment = new Attachment('', fileContents.mimeType, fileUrl)
+    message.value.attach(new Attachment('', fileContents.mimeType, fileUrl))
     clearStacks()
   }
 }
@@ -301,7 +313,7 @@ const onUpload = () => {
 const onMediaGenerationRequest = async (data: any) => {
 
   // save
-  const currentUrl = message.value?.attachment?.url
+  const currentUrl = message.value?.attachments[0]?.url
   const isEditing = data.action === 'edit' && !!currentUrl
   const isTransforming = data.action === 'transform' && !!currentUrl
   let attachReference = isEditing || isTransforming
@@ -405,9 +417,9 @@ const onMediaGenerationRequest = async (data: any) => {
       message.value.createdAt = Date.now()
 
       // delete attachment
-      if (message.value.attachment) {
-        window.api.file.delete(message.value.attachment.url)
-        message.value.attach(null)
+      if (message.value.attachments.length > 0) {
+        window.api.file.delete(message.value.attachments[0].url)
+        message.value.attachments = []
       }
       
       // push at the end of the chat

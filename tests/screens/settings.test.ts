@@ -6,6 +6,7 @@ import { store } from '../../src/services/store'
 import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import LlmFactory from '../../src/llms/llm'
+import { defaultCapabilities } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
@@ -43,10 +44,16 @@ beforeAll(() => {
   // init store
   store.config.engines.anthropic = {
     model: { chat: 'model2' },
-    models: { chat: [
-      { id: 'model1', name: 'Model 1' },
-      { id: 'model2', name: 'Model 2' }
-     ]
+    models: { _chat: [
+        { id: 'model1', name: 'Model 1', meta: {}, ...defaultCapabilities },
+        { id: 'model2', name: 'Model 2', meta: {}, ...defaultCapabilities }
+      ],
+      get chat() {
+        return this._chat
+      },
+      set chat(value) {
+        this._chat = value
+      },
     }
   }
 
@@ -82,6 +89,7 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
+  expect(tab.findComponent({ name: 'ModelSelectPlus' }).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
@@ -102,7 +110,8 @@ test('Settings General', async () => {
   checkAndReset()
   
   // set prompt model
-  tab.find('.group.prompt select.model').setValue('model2')
+  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.control').trigger('click')
+  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.menu .menu-option:nth-child(2)').trigger('click')
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
   checkAndReset()
@@ -205,13 +214,7 @@ test('Settings Appearance', async () => {
 test('Settings Advanced', async () => {
   
   const tab = await switchToTab(wrapper, 9)
-  expect(tab.findAll('.group')).toHaveLength(7)
-
-  expect(store.config.llm.autoVisionSwitch).not.toBe(false)
-  tab.find('.group.vision input').setValue(false)
-  expect(store.config.llm.autoVisionSwitch).toBe(false)
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
+  expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.group.autosave input').setValue(true)

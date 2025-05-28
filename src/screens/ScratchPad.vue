@@ -182,7 +182,7 @@ const resetState = () => {
 const initLlm = () => {
 
   // load engine and model
-  const llmManager = LlmFactory.manager(store.config)
+  const llmManager: ILlmManager = LlmFactory.manager(store.config)
   engine.value = store.config.scratchpad.engine
   model.value = store.config.scratchpad.model
   if (!engine?.value.length || !model?.value.length) {
@@ -293,7 +293,7 @@ const onAction = (action: string|ToolbarAction) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
-        onSendPrompt({ prompt: prompt, attachment: null, docrepo: null, expert: null })
+        onSendPrompt({ prompt: prompt, attachments: [], docrepo: null, expert: null })
       } else {
         emitEvent('llm-done', null)
       }
@@ -439,7 +439,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
   
   // deconstruct params
-  const { prompt, attachment, docrepo, expert } = params
+  const { prompt, attachments, docrepo, expert } = params
   
   // we need a prompt
   if (!prompt) {
@@ -467,7 +467,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // add to thead
   const userMessage = new Message('user', finalPrompt)
   userMessage.setExpert(expert, expertI18n(expert, 'prompt'))
-  if (attachment) {
+  for (const attachment of attachments ?? []) {
     attachment.loadContents()
     userMessage.attach(attachment)
   }

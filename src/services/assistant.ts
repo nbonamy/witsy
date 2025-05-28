@@ -18,7 +18,7 @@ export type GenerationCallback = (event: GenerationEvent) => void
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   titling?: boolean
-  attachment?: Attachment
+  attachments?: Attachment[]
   expert?: Expert
 }
 
@@ -89,7 +89,7 @@ export default class extends Generator {
     const defaults: AssistantCompletionOpts = {
       titling: true,
       ... this.llmManager.getChatEngineModel(),
-      attachment: null,
+      attachments: [],
       docrepo: null,
       expert: null,
       sources: true,
@@ -141,7 +141,7 @@ export default class extends Generator {
     userMessage.setExpert(opts.expert, expertI18n(opts.expert, 'prompt'))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
-    userMessage.attach(opts.attachment)
+    opts.attachments.map(a => userMessage.attach(a))
     this.chat.addMessage(userMessage)
 
     // add assistant message
@@ -220,7 +220,8 @@ export default class extends Generator {
 
       // now get it
       this.initLlm(this.chat.engine)
-      const response = await this.llm.complete(this.chat.model, messages, { tools: false })
+      const model = this.llmManager.getChatModel(this.chat.engine, this.chat.model)
+      const response = await this.llm.complete(model, messages, { tools: false })
       let title = response.content.trim()
       if (title === '') {
         return this.chat.messages[1].content

@@ -87,6 +87,7 @@
     "load": "加载",
     "low": "低",
     "medium": "中",
+    "model": "模型",
     "modelPlaceholder": "输入模型名称或选择一个",
     "move": "移动",
     "name": "名称",
@@ -95,6 +96,7 @@
     "ok": "确定",
     "pick": "选择",
     "prompt": "提示",
+    "provider": "提供者",
     "pull": "拉取",
     "read": "读取",
     "record": "记录",
@@ -130,6 +132,7 @@
         "requiredFields": "一些字段是必填的"
       }
     },
+    "voice": "声音",
     "warning": "警告",
     "workingWith": "正在处理",
     "write": "写入"
@@ -376,7 +379,6 @@
       "prompt": "提示",
       "resetToDefault": "将名称和提示重置为默认值",
       "shortcutDescription": "在命令面板激活时按下这个键以运行此命令。",
-      "title": "命令详情",
       "useDefault": "使用命令默认值",
       "validation": {
         "inputPlaceholder": "模板必须包含 {'{'}input{'}'} 占位符。",
@@ -428,7 +430,7 @@
       "label": "媒体类型",
       "video": "视频"
     },
-    "model": "模型",
+    "model": "@:{'common.model'}",
     "modelDefaults": "此模型的默认值",
     "moreAboutModelParameters": "了解此模型参数",
     "moreAboutSDWebUIParameters": "了解 SDWebUI 参数",
@@ -517,7 +519,6 @@
   },
   "experts": {
     "editor": {
-      "title": "专家详情",
       "triggerApps": "触发应用",
       "triggerAppsDescription": "当从这些应用中调用 Prompt Anywhere 时，将自动选择提示。",
       "validation": {
@@ -1390,6 +1391,16 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "emptyError": {
+        "text": "请尝试使用其他文件。",
+        "title": "无法解析此文件的内容。"
+      },
+      "formatError": {
+        "text": "请尝试使用其他文件。",
+        "title": "此文件格式不被此模型支持。"
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "你现在可以开始说话了…",
@@ -1449,7 +1460,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "始终在聊天历史中保存提示会话",
-      "autoVisionSwitch": "自动切换到视觉模型",
       "conversationLength": "每段对话的消息数量",
       "header": "杂项设置",
       "imageResize": "图像调整大小",
@@ -1526,7 +1536,6 @@
       "import": "导入",
       "importError": "导入命令文件失败",
       "importSuccess": "命令文件导入成功",
-      "more": "更多",
       "new": "新建",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1596,6 +1605,10 @@
         "baseURL": "API 基础 URL",
         "ensureApiMode": "确保你处于 API 模式"
       },
+      "vision": {
+        "model": "视觉模型回退（如果当前模型不支持视觉则自动切换）",
+        "noFallback": "不回退到视觉模型"
+      },
       "xai": {
         "aboutModels": "了解更多关于 xAI 模型的信息",
         "pricing": "xAI 定价"
@@ -1610,7 +1623,6 @@
       "import": "导入",
       "importError": "导入专家文件失败",
       "importSuccess": "专家文件导入成功",
-      "more": "更多",
       "new": "新建",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "按字母顺序排序",
@@ -1624,7 +1636,7 @@
       "lastOneUsed": "最后使用的一个",
       "localeLLM": "LLM 语言",
       "localeUI": "界面语言",
-      "promptLLMModel": "提示 LLM 模型",
+      "promptLLMModel": "快速提示 LLM 模型",
       "resetTips": "重置提示",
       "runAtLogin": "登录时运行"
     },
@@ -1755,7 +1767,7 @@
       "models": "模型",
       "plugins": "插件",
       "shortcuts": "快捷键",
-      "voice": "语音"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 自动",
@@ -1773,7 +1785,7 @@
       "groqApiKeyReminder": "确保你在模型面板中输入了 Groq API 密钥。",
       "initializationError": "初始化过程中出现错误。请重试。",
       "initializing": "正在初始化…",
-      "model": "模型",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
       "selectModel": "选择模型",
       "silenceDetection": "静音检测",
@@ -1795,7 +1807,7 @@
         "kokoroReminder": "已提供",
         "sampleText": "欢迎使用 Witsy，终极 AI 桌面助手。",
         "serviceDisclaimer": "该服务可能随时停止工作。",
-        "voice": "语音"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "使用 WebGPU",
       "verificationComplete": "验证完成！",
