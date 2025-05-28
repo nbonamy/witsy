@@ -359,7 +359,7 @@
       "notEditable": "Dieser Befehl ist nicht bearbeitbar. Der erfasste Inhalt steht Ihnen im Prompt zur Verfügung, damit Sie alles darüber fragen können!",
       "prompt": "Prompt",
       "resetToDefault": "Name und Prompt auf Standardwerte zurücksetzen",
-      "shortcutDescription": "Drücken Sie diese Taste, wenn die Befehls-Palette aktiv ist, um diesen Befehl auszuführen.",
+      "shortcutDescription": "Drücken Sie diese Taste, wenn die Liste der KI-Befehle aktiv ist, um diesen Befehl auszuführen.",
       "useDefault": "Verwenden Sie die Standardeinstellungen für Befehle",
       "validation": {
         "inputPlaceholder": "Die Vorlage muss den Platzhalter {input} enthalten.",
@@ -1483,7 +1483,7 @@
         "openai": "OpenAI"
       },
       "darkTint": "Dunkler Farbton",
-      "lightTint": "Helle Tönung",
+      "lightTint": "Heller Farbton",
       "theme": "Erscheinungsbild",
       "themes": {
         "dark": "Dunkel",
@@ -1618,18 +1618,18 @@
       "description": "Dieses Plugin ermöglicht LLM-Engines den Zugriff auf",
       "failedToInstall": "Fehler beim Installieren des Servers",
       "importJson": {
-        "details": "Fügen Sie hier JSON MCP-Serverdefinitionen von Claude ein.",
+        "details": "Fügen Sie hier JSON-MCP-Serverdefinitionen von Claude ein.",
         "errorArgs": "Ungültige MCP-Serverargumente.",
         "errorCommand": "MCP-Serverbefehl nicht gefunden.",
         "errorEmpty": "JSON darf nicht leer sein.",
         "errorFormat": "Fehler beim Analysieren der JSON-Serverdefinition.",
         "errorMultiple": "Mehrere Server gefunden. Bitte einen Server gleichzeitig einfügen.",
         "menu": "@:{'settings.mcp.importJson.title'}…",
-        "title": "Von Json importieren"
+        "title": "Von JSON importieren"
       },
       "importSmitheryServer": "Smithery.ai-Server importieren…",
       "mcpServers": "MCP-Server",
-      "modelContextProtocol": "Modellkontextprotokoll",
+      "modelContextProtocol": "Model Context Protocol",
       "noServersFound": "Keine MCP-Server gefunden. Klicken Sie auf das +-Symbol oben, um einen neuen Server hinzuzufügen oder die Liste zu aktualisieren.",
       "noTools": "Keine Tools verfügbar",
       "retryWithApiKey": "Es scheint, dass ein API-Schlüssel erforderlich ist, um diesen Server zu installieren. Möchten Sie es mit Ihrem API-Schlüssel erneut versuchen? Andernfalls können Sie den Befehl kopieren und es in einem Terminal versuchen.",
