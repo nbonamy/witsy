@@ -68,6 +68,7 @@
     "load": "Cargar",
     "low": "Bajo",
     "medium": "Medio",
+    "model": "Modelo",
     "modelPlaceholder": "Ingrese un nombre de modelo o seleccione uno",
     "move": "Mover",
     "name": "Nombre",
@@ -76,6 +77,7 @@
     "ok": "OK",
     "pick": "Seleccionar",
     "prompt": "Sugerencia",
+    "provider": "Proveedor",
     "pull": "Descargar",
     "read": "Leer",
     "record": "Grabar",
@@ -111,6 +113,7 @@
         "requiredFields": "Algunos campos son obligatorios"
       }
     },
+    "voice": "Voz",
     "warning": "Advertencia",
     "workingWith": "Trabajando con",
     "write": "Escribir"
@@ -357,7 +360,6 @@
       "prompt": "Aviso",
       "resetToDefault": "Restablecer nombre y aviso a valores predeterminados",
       "shortcutDescription": "Presiona esta tecla cuando la paleta de comandos esté activa para ejecutar este comando.",
-      "title": "Detalles del comando",
       "useDefault": "Usar valores predeterminados de comandos",
       "validation": {
         "inputPlaceholder": "La plantilla debe contener el marcador de posición {'input'}.",
@@ -409,7 +411,7 @@
       "label": "Tipo de Medio",
       "video": "Video"
     },
-    "model": "Modelo",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Valores predeterminados para este modelo",
     "moreAboutModelParameters": "Aprende sobre los parámetros de este modelo",
     "moreAboutSDWebUIParameters": "Aprende sobre los parámetros de SDWebUI",
@@ -498,7 +500,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Detalles del experto",
       "triggerApps": "Aplicaciones desencadenantes",
       "triggerAppsDescription": "El prompt se seleccionará automáticamente cuando Prompt Anywhere se llame desde una de estas aplicaciones",
       "validation": {
@@ -1360,6 +1361,16 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "prompt": {
+    "attachment": {
+      "emptyError": {
+        "text": "Por favor, inténtalo de nuevo con otro archivo.",
+        "title": "No se pudo analizar el contenido de este archivo."
+      },
+      "formatError": {
+        "text": "Por favor, inténtalo de nuevo con otro archivo.",
+        "title": "Este formato de archivo no es compatible con este modelo."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "Puedes empezar a hablar ahora…",
@@ -1419,7 +1430,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Guardar siempre las sesiones de solicitud en el historial de chat",
-      "autoVisionSwitch": "Cambiar automáticamente al modelo de visión",
       "conversationLength": "Mensajes por conversación",
       "header": "Configuraciones misceláneas",
       "imageResize": "Redimensionar imagen",
@@ -1496,7 +1506,6 @@
       "import": "Importar",
       "importError": "Error al importar el archivo de comandos",
       "importSuccess": "Archivo de comandos importado con éxito",
-      "more": "Más",
       "new": "Nuevo",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1566,6 +1575,10 @@
         "baseURL": "URL base de la API",
         "ensureApiMode": "Asegúrate de estar en modo API"
       },
+      "vision": {
+        "model": "Modelo de visión por defecto (cambio automático si el modelo actual no soporta visión)",
+        "noFallback": "No retroceder a un modelo de visión"
+      },
       "xai": {
         "aboutModels": "Más sobre los modelos de xAI",
         "pricing": "Precios de xAI"
@@ -1580,7 +1593,6 @@
       "import": "Importar",
       "importError": "Error al importar el archivo de expertos",
       "importSuccess": "Archivo de expertos importado con éxito",
-      "more": "Más",
       "new": "Nuevo",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Ordenar alfabéticamente",
@@ -1594,7 +1606,7 @@
       "lastOneUsed": "Último usado",
       "localeLLM": "Idioma LLM",
       "localeUI": "Idioma de la interfaz",
-      "promptLLMModel": "Modelo LLM de solicitud",
+      "promptLLMModel": "Modelo LLM de Aviso Rápido",
       "resetTips": "Restablecer consejos",
       "runAtLogin": "Ejecutar al iniciar sesión"
     },
@@ -1725,7 +1737,7 @@
       "models": "Modelos",
       "plugins": "Complementos",
       "shortcuts": "Atajos",
-      "voice": "Voz"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automático",
@@ -1743,7 +1755,7 @@
       "groqApiKeyReminder": "Asegúrese de ingresar su clave API de Groq en el panel de Modelos.",
       "initializationError": "Se produjo un error durante la inicialización. Por favor, inténtelo de nuevo.",
       "initializing": "Iniciando…",
-      "model": "Modelo",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Asegúrese de ingresar su clave API de OpenAI en el panel de Modelos.",
       "selectModel": "Seleccionar un modelo",
       "silenceDetection": "Detección de silencio",
@@ -1765,7 +1777,7 @@
         "kokoroReminder": "Proporcionado",
         "sampleText": "Bienvenido a Witsy, el asistente AI definitivo para su escritorio.",
         "serviceDisclaimer": "El servicio puede dejar de funcionar en cualquier momento.",
-        "voice": "Voz"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "Usar WebGPU",
       "verificationComplete": "¡Verificación completada!",

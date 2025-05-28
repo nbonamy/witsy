@@ -47,8 +47,8 @@ test('Creates tray', async () => {
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0]).toHaveLength(14)
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0].map((item: any) => item.label)).toEqual([
-    'Quick Prompt', 'New Chat', 'Scratchpad', 'Run AI Command', undefined,
-    'Design Studio', undefined,
+    'New Chat', 'Quick Prompt', 'Run AI Command', undefined,
+    'Scratchpad', 'Design Studio', undefined,
     'Read Aloud', 'Start Dictation', 'Voice Chat', undefined,
     'Settings…', undefined,
     'Quit'

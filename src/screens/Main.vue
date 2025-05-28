@@ -5,6 +5,8 @@
     <Chat :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
     <DocRepos :style="{ display: mode === 'docrepo' ? 'flex' : 'none' }" />
+    <RealtimeChat :style="{ display: mode === 'voice-mode' ? 'flex' : 'none' }" />
+    <Transcribe :style="{ display: mode === 'dictation' ? 'flex' : 'none' }" />
   </div>
 </template>
 
@@ -18,9 +20,11 @@ import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
 import DocRepos from '../screens/DocRepos.vue'
 import Settings from '../screens/Settings.vue'
+import RealtimeChat from '../screens/RealtimeChat.vue'
+import Transcribe from '../screens/Transcribe.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent, onEvent } = useEventBus()
+const { emitEvent } = useEventBus()
 
 // init stuff
 store.load()
@@ -33,6 +37,8 @@ const mode = ref<MenuBarMode>('chat')
 const viewParams = ref(null)
 
 onMounted(() => {
+
+  console.log('[main] mounted')
 
   // init
   window.api.on('query-params', (params) => {
@@ -54,7 +60,7 @@ const processQueryParams = (params: anyDict) => {
 
     // switch and save params
     onMode(params.view)
-    viewParams.value = params 
+    viewParams.value = params
 
     // special
     if (params.view === 'docrepo') {
@@ -66,12 +72,10 @@ const processQueryParams = (params: anyDict) => {
 
 const onMode = async (next: MenuBarMode) => {
 
+  //console.log('[main] onMode', next)
+
   if (next === 'scratchpad') {
     window.api.scratchpad.open()
-  } else if (next === 'dictation') {
-    window.api.transcribe.start()
-  } else if (next === 'voice-mode') {
-    window.api.voiceMode.start()
   } else if (next === 'computer-use') {
     mode.value = 'chat'
     await nextTick()
@@ -82,6 +86,13 @@ const onMode = async (next: MenuBarMode) => {
     mode.value = next
   }
 
+  // special
+  if (mode.value === 'dictation') {
+    emitEvent('start-dictation')
+  } else {
+    emitEvent('stop-dictation')
+  }
+
 }
 
 </script>
@@ -89,11 +100,9 @@ const onMode = async (next: MenuBarMode) => {
 <style scoped>
 
 .main {
-  
   display: flex;
   flex-direction: row;
   height: 100vh;
 }
 
 </style>
-

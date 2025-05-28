@@ -87,6 +87,7 @@
     "load": "Load",
     "low": "Low",
     "medium": "Medium",
+    "model": "Model",
     "modelPlaceholder": "Enter a model or select from the list",
     "move": "Move",
     "name": "Name",
@@ -95,6 +96,7 @@
     "ok": "OK",
     "pick": "Pick",
     "prompt": "Prompt",
+    "provider": "Provider",
     "pull": "Pull",
     "read": "Read",
     "record": "Record",
@@ -130,6 +132,7 @@
         "requiredFields": "Some fields are required"
       }
     },
+    "voice": "Voice",
     "warning": "Warning",
     "workingWith": "Working with",
     "write": "Write"
@@ -376,7 +379,6 @@
       "prompt": "Prompt",
       "resetToDefault": "Reset name and prompt to default values",
       "shortcutDescription": "Hit this key when the command palette is active to run this command.",
-      "title": "Command details",
       "useDefault": "Use commands default",
       "validation": {
         "inputPlaceholder": "The template must contain the {'{'}input{'}'} placeholder.",
@@ -428,7 +430,7 @@
       "label": "Media Type",
       "video": "Video"
     },
-    "model": "Model",
+    "model": "@:{'common.model'}",
     "modelDefaults": "Defaults for this model",
     "moreAboutModelParameters": "Learn about this model parameters",
     "moreAboutSDWebUIParameters": "Learn about SDWebUI parameters",
@@ -517,7 +519,6 @@
   },
   "experts": {
     "editor": {
-      "title": "Expert details",
       "triggerApps": "Trigger Apps",
       "triggerAppsDescription": "The prompt will be automatically selected when Prompt Anywhere is called from one of these applications",
       "validation": {
@@ -1390,6 +1391,16 @@
     }
   },
   "prompt": {
+    "attachment": {
+      "emptyError": {
+        "text": "Please try again with another file.",
+        "title": "Unable to parse the content of this file."
+      },
+      "formatError": {
+        "text": "Please try again with another file.",
+        "title": "This file format is not supported by this model."
+      }
+    },
     "conversation": {
       "placeholders": {
         "auto": "You can start talking now…",
@@ -1449,7 +1460,6 @@
   "settings": {
     "advanced": {
       "autoSavePrompt": "Always save prompt sessions in chat history",
-      "autoVisionSwitch": "Automatically switch to vision model",
       "conversationLength": "Messages per conversation",
       "header": "Miscellaneous settings",
       "imageResize": "Image resize",
@@ -1526,7 +1536,6 @@
       "import": "Import",
       "importError": "Failed to import commands file",
       "importSuccess": "Commands file imported successfully",
-      "more": "More",
       "new": "New",
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
@@ -1596,6 +1605,10 @@
         "baseURL": "API Base URL",
         "ensureApiMode": "Make sure you are in API mode"
       },
+      "vision": {
+        "model": "Vision model fallback (automatic switch if current model does not support vision)",
+        "noFallback": "Do not fallback to a vision model"
+      },
       "xai": {
         "aboutModels": "More about xAI models",
         "pricing": "xAI pricing"
@@ -1610,7 +1623,6 @@
       "import": "Import",
       "importError": "Failed to import experts file",
       "importSuccess": "Experts file imported successfully",
-      "more": "More",
       "new": "New",
       "selectAll": "@:{'common.selectAll'}",
       "sortAlpha": "Sort alphabetically",
@@ -1624,7 +1636,7 @@
       "lastOneUsed": "Last one used",
       "localeLLM": "LLM language",
       "localeUI": "Interface language",
-      "promptLLMModel": "Prompt LLM Model",
+      "promptLLMModel": "Quick Prompt LLM Model",
       "resetTips": "Reset tips",
       "runAtLogin": "Run at login"
     },
@@ -1761,7 +1773,7 @@
       "models": "Models",
       "plugins": "Plugins",
       "shortcuts": "Shortcuts",
-      "voice": "Voice"
+      "voice": "@:{'common.voice'}"
     },
     "voice": {
       "automatic": "🤖 Automatic",
@@ -1779,7 +1791,7 @@
       "groqApiKeyReminder": "Make sure you enter your Groq API key in the Models pane.",
       "initializationError": "An error occured during initialization. Please try again.",
       "initializing": "Initializing…",
-      "model": "Model",
+      "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",
@@ -1801,7 +1813,7 @@
         "kokoroReminder": "Provided",
         "sampleText": "Welcome to Witsy, the ultimate AI desktop assistant.",
         "serviceDisclaimer": "The service may stop working at any point in time.",
-        "voice": "Voice"
+        "voice": "@:{'common.voice'}"
       },
       "useWebGpu": "Use WebGPU",
       "verificationComplete": "Verification completed!",

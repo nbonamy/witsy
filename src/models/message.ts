@@ -16,7 +16,7 @@ export default class Message extends MessageBase implements IMessage {
   usage?: LlmUsage
   transient: boolean
   uiOnly: boolean
-  declare attachment: Attachment
+  declare attachments: Attachment[]
 
   constructor(role: LlmRole, content?: string) {
     super(role, content)
@@ -27,7 +27,7 @@ export default class Message extends MessageBase implements IMessage {
     this.type = 'text'
     this.expert = null
     this.toolCall = null
-    this.attachment = null
+    this.attachments = []
     this.usage = null
     this.uiOnly = false
     this.transient = (content == null)
@@ -45,7 +45,9 @@ export default class Message extends MessageBase implements IMessage {
     message.engine = obj.engine || null
     message.model = obj.model || null
     message.createdAt = obj.createdAt
-    message.attachment = obj.attachment ? Attachment.fromJson(obj.attachment) : null
+    message.attachments = 
+      obj.attachment ? [ Attachment.fromJson(obj.attachment) ] :
+      (obj.attachments ? obj.attachments.map(Attachment.fromJson) : [])
     message.reasoning = obj.reasoning || null
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
@@ -66,9 +68,12 @@ export default class Message extends MessageBase implements IMessage {
   }
 
   isVideo(): boolean {
-    if (!this.attachment) return false
-    const url = this.attachment.url
-    return Message.isVideoUrl(url)
+    for (const attachment of this.attachments) {
+      if (Message.isVideoUrl(attachment.url)) {
+        return true
+      }
+    }
+    return false
   }
 
   static isVideoUrl(url: string): boolean {
@@ -124,8 +129,10 @@ export default class Message extends MessageBase implements IMessage {
     if (this.type === 'image' && typeof this.content === 'string') {
       window.api.file.delete(this.content)
     }
-    if (this.attachment?.saved) {
-      window.api.file.delete(this.attachment.url)
+    for (const attachment of this.attachments) {
+      if (attachment.saved) {
+        window.api.file.delete(attachment.url)
+      }
     }
   }
 

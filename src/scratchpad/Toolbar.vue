@@ -84,7 +84,7 @@ const onChangeFontSize = () => {
 
 const onChangeEngine = () => {
   const llmManager = LlmFactory.manager(store.config)
-  model.value = llmManager.getChatModel(engine.value, false)
+  model.value = llmManager.getDefaultChatModel(engine.value, false)
   onChangeModel()
 }
 

@@ -10,8 +10,8 @@
         @click="selectMessage(msg)" 
         @contextmenu.prevent="showContextMenu($event, msg)"
       >
-        <video v-if="msg.isVideo()" class="thumbnail" :src="msg.attachment.url" />
-        <img v-else class="thumbnail" :src="msg.attachment.url" />
+        <video v-if="msg.isVideo()" class="thumbnail" :src="msg.attachments?.[0].url" />
+        <img v-else class="thumbnail" :src="msg.attachments?.[0].url" />
         <div class="description">
           <div class="prompt">{{ msg.content }}</div>
           <div class="info">{{ msg.engine }} - {{ msg.model }}</div>

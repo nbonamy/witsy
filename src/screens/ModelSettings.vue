@@ -7,7 +7,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect v-model="model" :engine="engine" @change="onChangeModel"/>
+        <ModelSelectPlus v-model="model" :engine="engine" @change="onChangeModel"/>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
@@ -125,7 +125,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelect from '../components/ModelSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 import VariableTable from '../components/VariableTable.vue'
 import VariableEditor from '../screens/VariableEditor.vue'
@@ -377,7 +377,7 @@ const clearDefaults = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = llmManager.getChatModel(engine.value, false)
+  model.value = llmManager.getDefaultChatModel(engine.value, false)
   onChangeModel()
 }
 
@@ -556,7 +556,6 @@ const openDebugConsole = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 250px;
 
   form {
     padding: 16px;
@@ -590,6 +589,10 @@ const openDebugConsole = () => {
         margin-left: 0;
         width: fit-content;
       };
+    }
+
+    textarea[name="prompt"] {
+      resize: none;
     }
   }
 }

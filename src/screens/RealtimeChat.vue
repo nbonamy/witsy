@@ -1,38 +1,62 @@
 <template>
-  <div class="realtime">
+  <div class="realtime panel-content">
 
-    <form onsubmit="return false">
-      <div class="toolbar group">
-        <select class="tool" v-model="engine" @change="onChangeEngine">
-          <option v-for="engine in engines" :value="engine.id" :key="engine.id">{{ engine.name }}</option>
-        </select>
-        <select class="tool" v-model="model" @change="save">
-          <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
-        </select>
-        <select class="tool" v-model="voice" @change="save">
-          <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
-        </select>
-      </div>
-    </form>
+    <div class="panel">
+
+      <header>
+        <div class="title">{{ t('realtimeChat.title') }}</div>
+      </header>
+
+      <main>
+        <form class="vertical">
+          <div class="panel-title">{{ t('common.settings') }}</div>
+          <div class="group">
+            <label>{{ t('common.provider') }}</label>
+            <select class="tool" v-model="engine" @change="onChangeEngine">
+              <option v-for="engine in engines" :value="engine.id" :key="engine.id">{{ engine.name }}</option>
+            </select>
+          </div>
+          <div class="group">
+            <label>{{ t('common.model') }}</label>
+            <select class="tool" v-model="model" @change="save">
+              <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
+            </select>
+          </div>
+          <div class="group">
+            <label>{{ t('common.voice') }}</label>
+            <select class="tool" v-model="voice" @change="save">
+              <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
+            </select>
+          </div>
+        </form>
+      </main>
+    </div>
 
     <div class="content">
 
-      <div class="status">{{ status }}</div>
+      <header>
+      </header>
 
-      <!-- <div class="transcript">
-        <div v-for="word in lastWords" :key="word" class="word" v-html="word" />
-      </div> -->
+      <main>
 
-      <AnimatedBlob :active="state === 'active'" @click="onStart" ref="blob"/>
+        <div class="status">{{ status }}</div>
 
-      <div class="cost-container">
-        <div class="total">
-          <div class="title">{{ t('common.estimatedCost') }}</div>
-          <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n: number) => n.toFixed(6)"/></div>
-          <div class="note">{{ t('common.basedOn') }}<br>gpt-4o-realtime-preview-2024-12-17<br>
-            <a href="https://openai.com/api/pricing" target="_blank">{{ t('common.costsAsOf') }}</a> 19-Dec-2024</div>
+        <!-- <div class="transcript">
+          <div v-for="word in lastWords" :key="word" class="word" v-html="word" />
+        </div> -->
+
+        <AnimatedBlob :active="state === 'active'" @click="onStart" ref="blob"/>
+
+        <div class="cost-container">
+          <div class="total">
+            <div class="title">{{ t('common.estimatedCost') }}</div>
+            <div class="value">$ <NumberFlip :value="sessionTotals.cost.total" :animate-initial-number="false" :formatter="(n: number) => n.toFixed(6)"/></div>
+            <div class="note">{{ t('common.basedOn') }}<br>gpt-4o-realtime-preview-2024-12-17<br>
+              <a href="https://openai.com/api/pricing" target="_blank">{{ t('common.costsAsOf') }}</a> 25/05/2025</div>
+          </div>
         </div>
-      </div>
+
+      </main>
 
     </div>
 
@@ -48,7 +72,6 @@ import AnimatedBlob from '../components/AnimatedBlob.vue'
 import NumberFlip from '../components/NumberFlip.vue'
 import useTipsManager from '../composables/tips_manager'
 
-store.load()
 const tipsManager = useTipsManager(store)
 
 type Cost = {
@@ -201,7 +224,7 @@ const createRealtimeSession = async (inStream: MediaStream, token: String, voice
         }
 
         // log
-        console.log(currentStats)
+        //console.log(currentStats)
 
         // update session totals
         const costs = calculateCosts(currentStats)
@@ -242,12 +265,12 @@ const createRealtimeSession = async (inStream: MediaStream, token: String, voice
 const calculateCosts = ({ audioInputTokens, textInputTokens, cachedInputTokens, audioOutputTokens, textOutputTokens }: Stats): Cost => {
 
   // from https://openai.com/api/pricing
-  // for gpt-4o-realtime-preview-2024-12-17
-  const AUDIO_INPUT_COST = 0.00004
-  const AUDIO_OUTPUT_COST = 0.00008
-  const CACHED_AUDIO_COST = 0.0000025
-  const TEXT_INPUT_COST = 0.0000025
-  const TEXT_OUTPUT_COST = 0.00001
+  // for gpt-4o-realtime-preview-2025-05-25
+  const AUDIO_INPUT_COST = 0.00004 // $40 / million audio input tokens
+  const CACHED_AUDIO_COST = 0.0000025 // $2.5 / million cached audio tokens
+  const AUDIO_OUTPUT_COST = 0.00008 // $80 / million audio output tokens
+  const TEXT_INPUT_COST = 0.000005 // $5 / million text input tokens
+  const TEXT_OUTPUT_COST = 0.00002 // $20 / million text output tokens
 
   const audioInputCost = audioInputTokens * AUDIO_INPUT_COST
   const cachedInputCost = cachedInputTokens * CACHED_AUDIO_COST
@@ -357,6 +380,7 @@ const save = () => {
 
 <style scoped>
 @import '../../css/form.css';
+@import '../../css/panel-content.css';
 </style>
 
 <style scoped>
@@ -366,100 +390,63 @@ const save = () => {
   background-color: var(--window-bg-color);
   color: var(--text-color);
   font-size: 14pt;
-  -webkit-app-region: drag;
-}
 
-.realtime * {
-  -webkit-app-region: no-drag;
-}
-
-.macos form .toolbar {
-  padding-left: 90px;
-}
-
-form .toolbar {
-
-  display: flex;
-  flex-direction: row;
-  height: 32px;
-  margin: 0px;
-  padding: 8px 16px;
-  align-items: center;
-  background-color: var(--dialog-header-bg-color);
-  border-bottom: 1px solid var(--scratchpad-bars-border-color);
-  -webkit-app-region: drag;
-  gap: 10px;
-
-  .tool {
-
-    max-width: 128px;
-    white-space: nowrap;
-    padding: 6px 8px;
-    font-size: 11pt;
-    margin: 0;
-
-    &:enabled {
-      -webkit-app-region: no-drag;
-    }
-
-    svg {
-      position: relative;
-      margin-right: 8px;
-      top: 2px;
-    }
-
-  }
-
-  select.tool {
-    border-radius: 6px;
-    font-size: 10pt;
-    padding-right: 0px;
-    width: auto;
-  }
-
-}
-
-.content {
-  height: calc(100% - 50px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.status {
-  margin-bottom: 2rem;
-}
-
-.transcript {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.blobs {
-  cursor: pointer;
-}
-
-.cost-container {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 10pt;
-
-  .value {
-    margin: 4px 0px;
-    font-size: 14pt;
-    font-weight: bold;
-    font-variant-numeric: tabular-nums;
-
-    span {
-      display: inline-flex !important;
+  .panel {
+    flex-basis: 280px;
+    main {
+      padding: 2rem 1.5rem;
     }
   }
-  .note {
-    font-size: 9pt;
+
+  .content {
+
+    main {
+      justify-content: center;
+      align-items: center;
+
+      .status {
+        margin-bottom: 2rem;
+      }
+
+      .transcript {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .blobs {
+        cursor: pointer;
+      }
+
+      .cost-container {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 10pt;
+
+        .value {
+          margin: 4px 0px;
+          font-size: 14pt;
+          font-weight: bold;
+          font-variant-numeric: tabular-nums;
+
+          span {
+            display: inline-flex !important;
+          }
+        }
+        .note {
+          font-size: 9pt;
+        }
+      }
+
+    }
+
   }
+
+}
+
+.macos .realtime .content header {
+  padding-left: 40px;
 }
 
 </style>

@@ -149,7 +149,7 @@ test('Create main window', async () => {
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'Witsy'
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=chat#')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
   expect(window.mainWindow.isVisible()).toBe(true)
   window.closeMainWindow()
   expect(window.mainWindow).toBeNull()
@@ -191,11 +191,22 @@ test('Restores existing main window', async () => {
   expect(BrowserWindow.prototype.loadURL).not.toHaveBeenCalled()
 })
 
+test('Open Chat window', async () => {
+  window.openMainWindow({ queryParams: { view: 'chat' } })
+  expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
+    queryParams: { view: 'chat', }
+  }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=chat#')
+  const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
+  expectCreateWebPreferences(callParams)
+})
+
 test('Open Settings window', async () => {
   window.openSettingsWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     queryParams: { view: 'settings', }
   }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=settings#')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -203,6 +214,7 @@ test('Open Settings window', async () => {
 test('Switch to Settings window', async () => {
   window.openMainWindow()
   window.openSettingsWindow()
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'settings' })
 })
 
@@ -277,12 +289,10 @@ test('Open Readaloud window', async () => {
 
 test('Open Transcribe window', async () => {
   window.openTranscribePalette()
-  expect(window.transcribePalette).toBeInstanceOf(BrowserWindow)
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/transcribe',
-    title: 'Speech-to-Text',
+    queryParams: { view: 'dictation', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/transcribe')
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=dictation#')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -302,10 +312,8 @@ test('Open Scratchpad window', async () => {
 test('Open Realtime window', async () => {
   window.openRealtimeChatWindow()
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
-    hash: '/realtime',
-    title: 'Voice Chat'
+    queryParams: { view: 'voice-mode', }
   }))
-  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/#/realtime')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -315,6 +323,7 @@ test('Open Design Studio window', async () => {
   expect(BrowserWindow.prototype.constructor).toHaveBeenLastCalledWith(expect.objectContaining({
     queryParams: { view: 'studio', }
   }))
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?view=studio#')
   const callParams = (BrowserWindow as unknown as Mock).mock.calls[0][0]
   expectCreateWebPreferences(callParams)
 })
@@ -322,6 +331,7 @@ test('Open Design Studio window', async () => {
 test('Switch to Design Studio window', async () => {
   window.openMainWindow()
   window.openDesignStudioWindow()
+  expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
   expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'studio' })
 })
 

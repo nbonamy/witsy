@@ -4,6 +4,18 @@
 }
 
 form {
+  --form-font-size: var(--form-normal-font-size);
+}
+
+form.medium {
+  --form-font-size: var(--form-medium-font-size);
+}
+
+form.large {
+  --form-font-size: var(--form-large-font-size);
+}
+
+form {
   font-size: var(--form-font-size);
 }
 
@@ -53,17 +65,7 @@ form .control-group {
 
 form.medium {
 
-  font-size: var(--form-medium-font-size);
-
   .group {
-
-    span, a {
-      font-size: var(--form-medium-font-size);
-    }
-
-    input:not([type=checkbox]), select, textarea, button {
-      font-size:var(--form-medium-font-size) !important;
-    }
 
     input:not([type=checkbox]):not([type=range]), select {
       margin: 0;
@@ -86,35 +88,31 @@ form.vertical.medium {
 
 form.large {
 
-  font-size: var(--form-large-font-size);
+  button {
+    font-size: var(--form-font-size);
+    padding: 0.375rem 0.75rem;
+  }
 
   .group {
 
-    span, a {
-      font-size: var(--form-large-font-size);
+    input:not([type=checkbox]):not([type=range]) {
+      padding: 5px 0.25rem ;
+      margin: 0.25rem 0;
     }
 
-    input:not([type=checkbox]), select, textarea, button {
-      font-size:var(--form-large-font-size) !important;
-    }
-
-    input:not([type=checkbox]):not([type=range]), select {
-      padding: 0.33rem;
+    select {
+      padding: 0.25rem 0.25rem;
       margin: 0.25rem 0;
     }
 
     .control-group {
       &:has(input[type=text]), &:has(select) {
         button {
-          padding-top: 6px;
-          padding-bottom: 6px;
+          padding-top: 6.25px;
+          padding-bottom: 6.25px;
         }
       }
     }
-  }
-
-  button {
-    font-size: var(--form-large-font-size);
   }
 
 }
@@ -168,7 +166,9 @@ form .group input:focus, form .group select:focus, form .group textarea:focus {
 }
 
 form .group input[type=checkbox] {
+  width: 14px;
   height: 14px;
+  min-width: 14px !important;
   max-width: 14px !important;
 }
 
@@ -197,6 +197,10 @@ form .group input[type=checkbox] {
   font-size: 8pt;
   font-weight: bold;
   top: -1px;
+}
+
+.macos form.large .group input[type=checkbox]:checked:after {
+  top: -2px;
 }
 
 form .group input[type=range] {

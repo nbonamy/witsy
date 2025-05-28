@@ -12,7 +12,7 @@ test('Build from role and text', () => {
   expect(message.role).toBe('user')
   expect(message.type).toBe('text')
   expect(message.content).toBe('content')
-  expect(message.attachment).toBeNull()
+  expect(message.attachments).toStrictEqual([])
   expect(message.toolCall).toBeNull()
   expect(message.transient).toBe(false)
   expect(message.createdAt - Date.now()).toBeLessThan(100)  
@@ -32,7 +32,7 @@ test('Build from JSON', () => {
   expect(message1.role).toBe('role')
   expect(message1.type).toBe('text')
   expect(message1.content).toBe('content')
-  expect(message1.attachment).toBeNull()
+  expect(message1.attachments).toStrictEqual([])
   expect(message1.transient).toBe(false)
   expect(message1.toolCall).toBeNull()
 
@@ -49,9 +49,29 @@ test('Build from JSON', () => {
   expect(message2.role).toBe('role')
   expect(message2.type).toBe('text')
   expect(message2.content).toBe('content')
-  expect(message2.attachment).not.toBeNull()
+  expect(message2.attachments).toHaveLength(1)
   expect(message2.transient).toBe(false)
   expect(message2.toolCall).toBeNull()
+
+  const message3 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    attachments: [
+      { contents: 'image', mimeType: 'image/png', url: 'url', saved: false },
+      { contents: 'image', mimeType: 'image/png', url: 'url', saved: false },
+    ],
+    transient: true,
+  })
+  expect(message3.uuid).toBe('uuid')
+  expect(message3.role).toBe('role')
+  expect(message3.type).toBe('text')
+  expect(message3.content).toBe('content')
+  expect(message3.attachments).toHaveLength(2)
+  expect(message3.transient).toBe(false)
+  expect(message3.toolCall).toBeNull()
 })
 
 test('Text message', () => {

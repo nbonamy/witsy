@@ -7,6 +7,7 @@ import { store } from '../../src/services/store'
 import { wait } from '../../src/main/utils'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import EmptyChat from '../../src/components/EmptyChat.vue'
+import { installMockModels } from '../mocks/llm'
 
 enableAutoUnmount(afterAll)
 
@@ -38,9 +39,9 @@ beforeEach(() => {
     apiKey: 'key',
     models: {
       chat: [
-        { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo' },
-        { id: 'gpt-4-turbo', name: 'gpt-4-turbo' },
-        { id: 'gpt-4o', name: 'gpt-4o' }
+        { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo', capabilities: { tools: true, vision: false, reasoning: false } },
+        { id: 'gpt-4-turbo', name: 'gpt-4-turbo', capabilities: { tools: true, vision: false, reasoning: false } },
+        { id: 'gpt-4o', name: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false } }
       ]
     },
     model: {
@@ -50,8 +51,8 @@ beforeEach(() => {
   store.config.engines.ollama = {
     models: {
       chat: [
-        { id: 'llama3-8b', name: 'llama3-8b' },
-        { id: 'llama3-70b', name: 'llama3-70b' }
+        { id: 'llama3-8b', name: 'llama3-8b', capabilities: { tools: true, vision: false, reasoning: false } },
+        { id: 'llama3-70b', name: 'llama3-70b', capabilities: { tools: true, vision: false, reasoning: false } }
       ]
     }
   }
@@ -59,11 +60,13 @@ beforeEach(() => {
     apiKey: 'test',
     models: {
       chat: [
-        { id: 'llama3-8b', name: 'llama3-8b' },
-        { id: 'llama3-70b', name: 'llama3-70b' }
+        { id: 'llama3-8b', name: 'llama3-8b', capabilities: { tools: true, vision: false, reasoning: false } },
+        { id: 'llama3-70b', name: 'llama3-70b', capabilities: { tools: true, vision: false, reasoning: false } }
       ]
     }
   }
+
+  installMockModels()
 })
 
 test('Renders correctly', async () => {
@@ -79,7 +82,7 @@ test('Renders correctly', async () => {
 
 test('Renders engines and models', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
-  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(9)
+  expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(10)
   expect(wrapper.findAll('.empty .current .logo')).toHaveLength(1)
   expect(wrapper.findAll('.empty .current select option')).toHaveLength(3)
   expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(1)').element.value).toBe('gpt-3.5-turbo')
@@ -131,15 +134,15 @@ test('Displays and selects favorites', async () => {
   await wrapper.find('.empty .current .logo').trigger('click')
   await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
   expect(wrapper.findAll<HTMLOptionElement>('.empty .current select option')).toHaveLength(2)
-  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(1)').element.value).toBe('mock-chat1')
-  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(2)').element.value).toBe('mock-chat2')
-  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat1')
+  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(1)').element.value).toBe('mock-chat')
+  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(2)').element.value).toBe('mock-vision')
+  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat')
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
-  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat')
   expect(wrapper.find<HTMLElement>('.empty .favorite .shortcut').text()).toBe('emptyChat.favorites.shortcut')
   expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+1' : 'Alt+1')
-  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat2')
-  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat2')
+  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-vision')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-vision')
   expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+2' : 'Alt+2')
 })
 
@@ -147,23 +150,19 @@ test('Activates favorites', async () => {
   mount(EmptyChat)
   document.dispatchEvent(new KeyboardEvent('keydown', { code: '2', key: '2', keyCode: 50, altKey: true }))
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
-  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat2')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-vision')
   document.dispatchEvent(new KeyboardEvent('keydown', { code: '1', key: '1', keyCode: 49, altKey: true }))
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
-  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat')
   document.dispatchEvent(new KeyboardEvent('keydown', { code: '2', key: '2', keyCode: 50, altKey: false }))
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
-  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat1')
+  expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat')
 })
 
 test('Manages favorites', async () => {
 
   // check init
   expect(store.config.llm.favorites).toHaveLength(2)
-  store.config.engines['mock'] = {
-    models: { chat: [] },
-    model: { chat: '' }
-  }
 
   // from open ai model
   const wrapper: VueWrapper<any> = mount(EmptyChat)

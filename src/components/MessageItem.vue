@@ -7,9 +7,11 @@
     </div>
     <div class="body">
 
-      <!-- attachment -->
-      <div v-if="message.attachment">
-        <AttachmentView :attachment="message.attachment" class="attachment" @image-click="onClickAttachment(message.attachment)" />
+      <!-- attachments -->
+      <div class="attachments">
+        <AttachmentView v-for="attachment in message.attachments"
+          :attachment="attachment" class="attachment" @image-click="onClickAttachment(attachment)"
+          />
       </div>
 
       <!-- image for backwards compatibility -->

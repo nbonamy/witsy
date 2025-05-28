@@ -1,5 +1,5 @@
 
-import { EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
+import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { DesignStudioMediaType, Shortcut, strDict } from './index'
 import { PluginConfig } from 'plugins/plugin'
 import { McpClaudeServer, McpServer } from './mcp'
@@ -76,7 +76,6 @@ export type LLMConfig = {
   locale: string
   forceLocale: boolean
   favorites: FavoriteModel[]
-  autoVisionSwitch: boolean
   conversationLength: number
   imageResize: number
   defaults: ModelDefaults[],
@@ -199,7 +198,7 @@ export type RealtimeConfig = {
 }
 
 export type ModelsConfig = {
-  chat: Model[]
+  chat: ChatModel[]
   image?: Model[]
   video?: Model[]
   embedding?: Model[]
@@ -213,6 +212,7 @@ export type ModelConfig = {
   chat?: string
   image?: string
   video?: string
+  vision?: string
 }
 
 export type EngineRealtimeConfig = {

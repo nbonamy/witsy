@@ -162,8 +162,8 @@ export const extractAttachmentsFromHistory = (chats: Chat[], imagesPath: string)
       }
 
       // now check if the message has an attachment
-      if (message.attachment) {
-        const url = message.attachment.url
+      for (const attachment of message.attachments ?? []) {
+        const url = attachment.url
         if (url.startsWith(`file://${imagesPath}`)) {
           let filename = path.basename(url)
           // Remove possible ending parenthesis

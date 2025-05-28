@@ -16,7 +16,6 @@
 
 }
 
-
 .settings, .settings ul, .settings ul li {
   margin: 0;
   padding: 0;
@@ -91,14 +90,58 @@
   flex-direction: column;
   overflow: hidden;
 
+  &:has(.sliding-root) {
+    position: relative;
+    height: 100%;
+  }
+  
   .description {
     margin: 1rem 0.5rem;
   }
 
   main {
+    
     min-width: 500px;
     align-self: center;
     padding: 2rem 4rem;
+    background-color: var(--background-color);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    --editor-width: 66%;
+
+    &.hidden {
+      display: none;
+    }
+
+    &.editor {
+      width: 66.67%;
+    }
+
+    &.sliding-root.hidden {
+      display: flex;
+    }
+
+    &.sliding-pane {
+    
+      box-sizing: border-box;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: var(--window-toolbar-height);
+      z-index: 20;
+      display: flex;
+      transform: translateX(0%);
+
+      &.editor {
+        padding-left: 16.67%;
+        padding-right: 16.67%;
+      }
+      
+      &.hidden {
+        transform: translateX(100%);
+      }
+    
+    }
 
     &:has(.list-panel) {
       padding: 0;
@@ -111,11 +154,45 @@
       min-width: auto;
       align-self: stretch;
 
+      .list-actions {
+        
+        padding: 0.875rem;
+        margin-bottom: 0px;
+        border: 1px solid var(--sidebar-border-color);
+        border-bottom: 0px;
+        background: color-mix(in srgb, var(--sidebar-border-color), transparent 80%);
+        
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+        
+        .push {
+          flex: 1;
+        }
+        
+        .list-action {
+          font-size: 10.5pt;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.25rem;
+          cursor: pointer;
+
+          &.menu {
+            flex-direction: column;
+            div {
+              width: 1rem;
+              border-top: 1px solid var(--text-color);
+            }
+          }
+        }
+      }
+
       .sticky-table-container {
         
-        margin: 0.5rem unset;
-
         th, td {
+          padding: 0.25rem 0.5rem;
           font-size: var(--settings-font-size);
         }
 
@@ -127,6 +204,7 @@
           font-size: 6pt !important;
           padding: 2px 8px;
         }
+
       }
     }
 
@@ -169,6 +247,14 @@
       }
     }
   }
+
+  .buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+  }
+
 }
 
 .settings .actions {

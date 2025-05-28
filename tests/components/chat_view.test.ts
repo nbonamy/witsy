@@ -141,7 +141,7 @@ test('Resets assistant', async () => {
 test('Saves text attachment', async () => {
   mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachment })
+  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
@@ -150,7 +150,7 @@ test('Saves text attachment', async () => {
 test('Saves pdf attachment', async () => {
   mount(ChatView)
   const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachment })
+  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
@@ -159,7 +159,7 @@ test('Saves pdf attachment', async () => {
 test('Saves image attachment', async () => {
   mount(ChatView)
   const attachment = new Attachment('image', 'image/png', 'file://image', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachment })
+  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
@@ -168,7 +168,7 @@ test('Saves image attachment', async () => {
 test('Does not save twice', async () => {
   mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', true)
-  emitEvent('send-prompt', { prompt: 'prompt', attachment })
+  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).not.toHaveBeenCalled()
   expect(attachment.url).toBe('file://text')
   expect(attachment.saved).toBe(true)
@@ -179,16 +179,16 @@ test('Sends prompt', async () => {
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachment: null, docrepo: null, expert: null
+    model: 'gpt-4o', attachments: [], docrepo: null, expert: null
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
   mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt', attachment: 'file' })
+  emitEvent('send-prompt', { prompt: 'prompt', attachments: ['file'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachment: 'file', docrepo: null, expert: null
+    model: 'gpt-4o', attachments: ['file'], docrepo: null, expert: null
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -197,7 +197,7 @@ test('Sends prompt with doc repo', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachment: null, docrepo: 'docrepo', expert: null
+    model: 'gpt-4o', attachments: [], docrepo: 'docrepo', expert: null
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -206,7 +206,7 @@ test('Sends prompt with expert', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachment: null, docrepo: null, expert: { id: 'expert', prompt: 'system' }
+    model: 'gpt-4o', attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -332,7 +332,7 @@ test('Select chat', async () => {
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachment: null, docrepo: null, expert: null
+    model: 'gpt-4o', attachments: [], docrepo: null, expert: null
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -363,9 +363,9 @@ test('Fork Chat on User Message', async () => {
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt2', {
     model: 'model2',
-    attachment: expect.objectContaining({
+    attachments: [ expect.objectContaining({
       content: 'attachment',
-    }),
+    }) ],
     docrepo: 'docrepo',
     expert: expect.objectContaining({ id: 'expert'})
   }, expect.any(Function), expect.any(Function))

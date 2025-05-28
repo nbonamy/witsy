@@ -8,16 +8,20 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { ChatModel } from 'multi-llm-ts'
+import { computed, ComputedRef } from 'vue'
 import { store } from '../services/store'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
-const models = computed(() => llmManager.getChatModels(props.engine))
+const models: ComputedRef<any[]> = computed(() => {
+  return props.models ?? llmManager.getChatModels(props.engine)
+})
 
 const props = defineProps({
   engine: String,
+  models: Array<ChatModel>,
   defaultText: String,
   disabled: {
     type: Boolean,
@@ -29,3 +33,7 @@ const value = defineModel()
 const emit = defineEmits(['change']);
 
 </script>
+
+<style scoped>
+@import '../../css/form.css';
+</style>

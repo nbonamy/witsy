@@ -102,19 +102,14 @@ export default class {
     // add common stuff
     menuItems = menuItems.concat([
       {
+        label: t('tray.menu.newChat'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat),
+        click: () => window.openMainWindow({ queryParams: { view: 'chat'} }),
+      },
+      {
         label: t('tray.menu.quickPrompt'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.prompt),
         click: () => PromptAnywhere.open(),
-      },
-      {
-        label: t('tray.menu.newChat'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.chat),
-        click: () => window.openMainWindow(),
-      },
-      {
-        label: t('tray.menu.scratchpad'),
-        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad),
-        click: () => window.openScratchPad()
       },
       {
         label: t('tray.menu.runAiCommand'),
@@ -123,6 +118,11 @@ export default class {
       },
       {
         type: 'separator'
+      },
+      {
+        label: t('tray.menu.scratchpad'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.scratchpad),
+        click: () => window.openScratchPad()
       },
       {
         label: t('tray.menu.designStudio'),

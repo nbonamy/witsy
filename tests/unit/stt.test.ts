@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
-import getSTTEngine, { requiresDownload } from '../../src/voice/stt'
+import { getSTTEngine, requiresDownload } from '../../src/voice/stt'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTFalAi from '../../src/voice/stt-falai'
 import STTFireworks from '../../src/voice/stt-fireworks'

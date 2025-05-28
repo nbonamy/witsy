@@ -108,9 +108,6 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (!opts.queryParams) {
     opts.queryParams = {};
   }
-  if (!opts.queryParams.view) {
-    opts.queryParams.view = 'chat';
-  }
 
   // if we don't have a window, create one
   if (!mainWindow || mainWindow.isDestroyed()) {
