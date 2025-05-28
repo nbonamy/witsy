@@ -14,7 +14,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelect :basic="true" v-model="model" :engine="engine" />
+        <ModelSelect v-model="model" :engine="engine" />
       </div>
     </template> 
     <template #footer>

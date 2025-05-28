@@ -139,7 +139,7 @@ test('Edit user command', async () => {
   await editor.find('[name=label]').setValue('')
   await editor.find('[name=template]').setValue('{input2')
   await editor.find('[name=engine]').setValue('openai')
-  await editor.findComponent({ name: 'ModelSelect' }).setValue('chat2')
+  await editor.findComponent({ name: 'ModelSelectPlus' }).setValue('chat2')
   await editor.find('[name=icon]').setValue('😀')
   await editor.find('[name=shortcut]').setValue('S')
   await editor.find('button.default').trigger('click')

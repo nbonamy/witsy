@@ -94,7 +94,7 @@ test('Records with icon', async () => {
 })
 
 test('Records with space bar', async () => {
-  const wrapper: VueWrapper<any> = mount(Transcribe)
+  mount(Transcribe)
   document.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()

@@ -76,7 +76,7 @@ test('openai settings', async () => {
     apiKey: 'api-key',
     baseURL: 'base-url'
   }))
-  const visionModelSelect = openai.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = openai.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.openai.model.vision).toBe('openai-vision')
@@ -96,7 +96,7 @@ test('anthropic settings', async () => {
   expect(loadAnthropicModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }), expect.anything())
-  const visionModelSelect = anthropic.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = anthropic.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.anthropic.model.vision).toBe('anthropic-vision')
@@ -116,7 +116,7 @@ test('google settings', async () => {
   expect(loadGoogleModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = google.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = google.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.google.model.vision).toBe('google-vision')
@@ -136,7 +136,7 @@ test('xai settings', async () => {
   expect(loadXAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = xai.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = xai.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.xai.model.vision).toBe('xai-vision')
@@ -156,7 +156,7 @@ test('meta settings', async () => {
   expect(loadMetaModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect =  meta.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect =  meta.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.meta.model.vision).toBe('meta-vision')
@@ -177,7 +177,7 @@ test('ollama settings', async () => {
   await wait(750) //timeout
   expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
   }))
-  const visionModelSelect = ollama.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = ollama.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.ollama.model.vision).toBe('ollama-vision')
@@ -197,7 +197,7 @@ test('mistralai settings', async () => {
   expect(loadMistralAIModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = mistralai.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = mistralai.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.mistralai.model.vision).toBe('mistralai-vision')
@@ -225,7 +225,7 @@ test('deepseek settings', async () => {
   expect(loadDeepSeekModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = deepseek.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = deepseek.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.deepseek.model.vision).toBe('deepseek-vision')
@@ -245,7 +245,7 @@ test('openrouter settings', async () => {
   expect(loadOpenRouterModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = openrouter.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = openrouter.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.openrouter.model.vision).toBe('openrouter-vision')
@@ -265,7 +265,7 @@ test('groq settings', async () => {
   expect(loadGroqModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = groq.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = groq.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.groq.model.vision).toBe('groq-vision')
@@ -285,7 +285,7 @@ test('cerebras settings', async () => {
   expect(loadCerebrasModels).toHaveBeenLastCalledWith(expect.objectContaining({
     apiKey: 'api-key'
   }))
-  const visionModelSelect = cerebras.findAllComponents({ name: 'ModelSelect' })[1]
+  const visionModelSelect = cerebras.findAllComponents({ name: 'ModelSelectPlus' })[1]
   await visionModelSelect.find('.control').trigger('click')
   await visionModelSelect.find('.menu .menu-option:nth-child(2)').trigger('click')
   expect(store.config.engines.cerebras.model.vision).toBe('cerebras-vision')
