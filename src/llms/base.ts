@@ -365,6 +365,7 @@ export default class LlmManagerBase implements ILlmManager {
       models.image = models.image.map(m => {
         let name = m.name
         name = name.replace(/^dall-e-/i, 'DALL-E ')
+        name = name.replace(/^gpt-image-/i, 'GPT Image ')
         return { id: m.id, name, meta: m.meta }
       })
     }
