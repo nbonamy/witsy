@@ -5,7 +5,7 @@
     v-model="value" :options="models"
     :is-clearable="false" :is-disabled="disabled"
     :should-autofocus-option="false"
-    :placeholder="defaultText"
+    :placeholder="defaultText || ''"
     :classes="{ singleValue: capsHoverOnly ? 'caps-hover-only' : '', }"
     @menu-opened="onMenuOpened"
     @option-selected="(option) => $emit('change', option.value)"
@@ -75,7 +75,7 @@ const props = defineProps({
   defaultText: String,
   showIds: {
     type: Boolean,
-    default: true
+    default: false
   },
   capsHoverOnly: {
     type: Boolean,

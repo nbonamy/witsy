@@ -13,7 +13,7 @@
         <EngineLogo :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
         <div class="models" v-if="models?.length">
           <BIconArrowRepeat class="for=symmetry" style="visibility: hidden; margin-right: 0.5rem;" v-if="!showAllEngines && engine != favoriteMockEngine" />
-          <ModelSelectPlus v-if="models?.length" :models="models" :caps-hover-only="true" :show-ids="false" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel" />
+          <ModelSelectPlus v-if="models?.length" :models="models" :caps-hover-only="true" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel" />
           <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ refresh: true, 'rotating': isRefreshing }"/>
         </div>
         <template v-else-if="!showAllEngines">
@@ -30,7 +30,7 @@
           </div>
           <div class="help loading" v-else-if="isRefreshing">
             {{ t('emptyChat.settings.refreshingModels') }}
-            <BIconArrowRepeat class="rotating"/>
+            <BIconArrowRepeat class="refresh rotating"/>
           </div>
           <div class="help models" v-else>
             <span v-html="t('emptyChat.settings.needsModels', { engine: engine })"></span>
