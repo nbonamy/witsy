@@ -9,6 +9,7 @@
 import { ref } from 'vue'
 import { t } from '../services/i18n'
 import Message from '../models/message'
+import { removeMarkdown } from '@excalidraw/markdown-to-text'
 
 const props = defineProps({
   message: {
@@ -21,7 +22,10 @@ const copyLabel = ref(t('common.copy'))
 
 const copy = () => {
   if (props.message.type == 'text') {
-    window.api.clipboard.writeText(props.message.content)
+    window.api.clipboard.writeText(removeMarkdown(props.message.content, {
+      listUnicodeChar: '',
+      stripListLeaders: false,
+    }))
   } else if (props.message.type == 'image') {
     window.api.clipboard.writeImage(props.message.content)
   }

@@ -36,7 +36,7 @@ vi.mock('../../src/composables/audio_player', async () => {
 
 let chat: Chat
 const userMessage: Message = new Message('user', 'Hello')
-const botMessageText: Message = new Message('assistant', 'Hi')
+const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
 botMessageText.usage = { prompt_tokens: 0, completion_tokens: 0 }
 const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
 const botMessageImage2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<img src="https://example.com/image.jpg" alt="description">' })
@@ -110,7 +110,7 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.role').text()).toBe('chat.role.assistant')
   expect(wrapper.find('.role .avatar').exists()).toBe(true)
   expect(wrapper.find('.role .logo').exists()).toBe(true)
-  expect(wrapper.find('.body').text()).toBe('Hi')
+  expect(wrapper.find('.body').text()).toBe('Hi\n\n\nOne\n\n\nTwo')
   expect(wrapper.find('.body .transient').exists()).toBe(false)
   expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
   expect(wrapper.find('.body .think').exists()).toBe(false)
@@ -281,7 +281,7 @@ test('Run assistant text actions', async () => {
   
   // copy
   await wrapper.find('.actions .copy').trigger('click')
-  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi')
+  expect(window.api.clipboard.writeText).toHaveBeenLastCalledWith('Hi\n\n1. One\n\n2. Two')
   expect(wrapper.find('.actions .copy').text()).toBe('common.copied')
 
   // usage
