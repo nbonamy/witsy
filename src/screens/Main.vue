@@ -4,9 +4,9 @@
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
-    <DocRepos :style="{ display: mode === 'docrepo' ? 'flex' : 'none' }" />
-    <RealtimeChat :style="{ display: mode === 'voice-mode' ? 'flex' : 'none' }" />
-    <Transcribe :style="{ display: mode === 'dictation' ? 'flex' : 'none' }" />
+    <DocRepos v-if="mode === 'docrepo'" />
+    <RealtimeChat v-if="mode === 'voice-mode'" />
+    <Transcribe v-if="mode === 'dictation'" />
   </div>
 </template>
 
@@ -84,13 +84,6 @@ const onMode = async (next: MenuBarMode) => {
     window.api.debug.showConsole()
   } else {
     mode.value = next
-  }
-
-  // special
-  if (mode.value === 'dictation') {
-    emitEvent('start-dictation')
-  } else {
-    emitEvent('stop-dictation')
   }
 
 }

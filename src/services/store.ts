@@ -16,13 +16,20 @@ export const store: Store = reactive({
   commands: [], 
   experts: [],
   history: null,
-  chatFilter: null,
-
+  
   rootFolder: {
     id: 'root',
     name: 'Unsorted',
     chats: null
   } as Folder,
+
+  chatState: {
+    filter: null,
+  },
+
+  transcribeState: {
+    transcription: ''
+  },
 
   loadSettings: (): void => {
     

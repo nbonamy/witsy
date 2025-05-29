@@ -3,6 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
+import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
@@ -213,8 +214,9 @@ test('Model settings init chat', async () => {
 
   // load engine/model with defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('mock')
-  await wrapper.findComponent({ name: 'ModelSelectPlus' }).find('.control').trigger('click')
-  await wrapper.findComponent({ name: 'ModelSelectPlus' }).find('.menu .menu-option:nth-child(1)').trigger('click')
+  const modelSelect = findModelSelectoPlus(wrapper)
+  await modelSelect.open()
+  await modelSelect.select(0)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('true')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=reasoning]').element.value).toBe('true')
   expect(chat?.tools).toStrictEqual([])
@@ -227,8 +229,8 @@ test('Model settings init chat', async () => {
 
   // load engine/model without defaults
   await wrapper.find('.model-settings select[name=engine]').setValue('openai')
-  await wrapper.findComponent({ name: 'ModelSelectPlus' }).find('.control').trigger('click')
-  await wrapper.findComponent({ name: 'ModelSelectPlus' }).find('.menu .menu-option:nth-child(1)').trigger('click')
+  await modelSelect.open()
+  await modelSelect.select(0)
   expect(chat?.tools).toStrictEqual(null)
   expect(chat?.modelOpts).toBeUndefined()
 
@@ -242,7 +244,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.content > header .settings').trigger('click')
 
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').exists()).toBe(true)
-  expect(wrapper.findComponent({ name: 'ModelSelectPlus' }).exists()).toBe(true)
+  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').exists()).toBe(true)
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').exists()).toBe(true)
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').exists()).toBe(true)
@@ -257,7 +259,7 @@ test('Model settings update chat', async () => {
   await wrapper.find('.model-settings .toggle').trigger('click')
 
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=engine]').element.value).toBe('mock')
-  expect(wrapper.findComponent({ name: 'ModelSelectPlus' }).vm.value).toBe('chat')
+  expect(findModelSelectoPlus(wrapper).value).toBe('chat')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=plugins]').element.value).toBe('false')
   expect(wrapper.find<HTMLSelectElement>('.model-settings select[name=locale]').element.value).toBe('')
   expect(wrapper.find<HTMLTextAreaElement>('.model-settings textarea[name=prompt]').element.value).toBe('')

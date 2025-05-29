@@ -7,6 +7,7 @@ import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import LlmFactory from '../../src/llms/llm'
 import { defaultCapabilities } from 'multi-llm-ts'
+import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
 
@@ -89,7 +90,7 @@ test('Settings General', async () => {
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
-  expect(tab.findComponent({ name: 'ModelSelectPlus' }).exists()).toBe(true)
+  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
   expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
@@ -110,8 +111,9 @@ test('Settings General', async () => {
   checkAndReset()
   
   // set prompt model
-  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.control').trigger('click')
-  await tab.findComponent({ name: 'ModelSelectPlus' }).find('.menu .menu-option:nth-child(2)').trigger('click')
+  const modelSelect = findModelSelectoPlus(tab)
+  await modelSelect.open()
+  await modelSelect.select(1)
   await wrapper.vm.$nextTick()
   expect(store.config.prompt.model).toBe('model2')
   checkAndReset()

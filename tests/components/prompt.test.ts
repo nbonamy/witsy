@@ -139,24 +139,26 @@ test('Stores attachment', async () => {
   await attach.trigger('click')
   expect(window.api.file.pick).toHaveBeenCalled()
   expect(window.api.file.pick).toHaveBeenLastCalledWith({
+    multiselection: true,
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })
   expect(wrapper.vm.attachments).toEqual([{
     mimeType: 'image/png',
-    content: 'image64',
+    content: 'image1.png_encoded',
     saved: false,
     extracted: false,
-    url: 'file://image.png',
+    url: 'image1.png',
+    title: '',
+    context: '',
+  }, {
+    mimeType: 'image/png',
+    content: 'image2.png_encoded',
+    saved: false,
+    extracted: false,
+    url: 'image2.png',
     title: '',
     context: '',
   }])
-})
-
-test('Add attachments', async () => {
-  wrapper.find('.attach').trigger('click')
-  expect(wrapper.vm.attachments).toHaveLength(1)
-  wrapper.find('.attach').trigger('click')
-  expect(wrapper.vm.attachments).toHaveLength(2)
 })
 
 test('Remove attachments', async () => {
