@@ -333,18 +333,20 @@ const onStopPrompting = () => {
 }
 
 const onAttach = () => {
-  let file = window.api.file.pick({ /*filters: [
+  let files = window.api.file.pick({ multiselection: true, /*filters: [
     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
   ]*/ })
-  if (file) {
-    const fileContents = file as FileContents
-    const format = fileContents.url.split('.').pop()
-    if (llmManager.canProcessFormat(engine(), model(), format)) {
-      const mimeType = extensionToMimeType(format)
-      attach(fileContents.contents, mimeType, fileContents.url)
-    } else {
-      console.error('Cannot attach format', format)
-      Dialog.alert(t('prompt.attachment.formatError.title'), t('prompt.attachment.formatError.text'))
+  if (Array.isArray(files)) {
+    for (const filepath of files) {
+      const fileContents = window.api.file.read(filepath)
+      const format = fileContents.url.split('.').pop()
+      if (llmManager.canProcessFormat(engine(), model(), format)) {
+        const mimeType = extensionToMimeType(format)
+        attach(fileContents.contents, mimeType, fileContents.url)
+      } else {
+        console.error('Cannot attach format', format)
+        Dialog.alert(`${fileContents.url.split('/').pop()}: ${t('prompt.attachment.formatError.title')}`, t('prompt.attachment.formatError.text'))
+      }
     }
   }
 }
@@ -391,7 +393,7 @@ const attach = async (contents: string, mimeType: string, url: string) => {
   } else if (toAttach.isText()) {
     toAttach.loadContents()
     if (!toAttach.content) {
-      Dialog.alert(t('prompt.attachment.emptyError.title'), t('prompt.attachment.emptyError.text'))
+      Dialog.alert(`${url.split('/').pop()}: ${t('prompt.attachment.emptyError.title')}`, t('prompt.attachment.emptyError.text'))
       return
     } else {
       attachments.value.push(toAttach)
