@@ -200,7 +200,7 @@ form .group input[type=checkbox] {
 }
 
 .macos form.large .group input[type=checkbox]:checked:after {
-  top: -2px;
+  top: -2.5px;
 }
 
 form .group input[type=range] {
