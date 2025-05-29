@@ -97,28 +97,28 @@ export default class LlmManager extends LlmManagerBase {
     
     console.log('Loading models for', engine)
     let models: llm.ModelsList|null = null
-    if (engine === 'openai') {
-      models = await llm.loadOpenAIModels(this.config.engines.openai)
-    } else if (engine === 'ollama') {
-      models = await llm.loadOllamaModels(this.config.engines.ollama)
-    } else if (engine === 'meta') {
-      models = await llm.loadMetaModels(this.config.engines.meta)
-    } else if (engine === 'mistralai') {
-      models = await llm.loadMistralAIModels(this.config.engines.mistralai)
-    } else if (engine === 'anthropic') {
+    if (engine === 'anthropic') {
       models = await llm.loadAnthropicModels(this.config.engines.anthropic, getComputerInfo())
+    } else if (engine === 'cerebras') {
+      models = await llm.loadCerebrasModels(this.config.engines.cerebras)
+    } else if (engine === 'deepseek') {
+      models = await llm.loadDeepSeekModels(this.config.engines.deepseek)
     } else if (engine === 'google') {
       models = await llm.loadGoogleModels(this.config.engines.google)
     } else if (engine === 'groq') {
       models = await llm.loadGroqModels(this.config.engines.groq)
-    } else if (engine === 'cerebras') {
-      models = await llm.loadCerebrasModels(this.config.engines.cerebras)
-    } else if (engine === 'xai') {
-      models = await llm.loadXAIModels(this.config.engines.xai)
+    } else if (engine === 'meta') {
+      models = await llm.loadMetaModels(this.config.engines.meta)
+    } else if (engine === 'mistralai') {
+      models = await llm.loadMistralAIModels(this.config.engines.mistralai)
+    } else if (engine === 'ollama') {
+      models = await llm.loadOllamaModels(this.config.engines.ollama)
+    } else if (engine === 'openai') {
+      models = await llm.loadOpenAIModels(this.config.engines.openai)
     } else if (engine === 'openrouter') {
       models = await llm.loadOpenRouterModels(this.config.engines.openrouter)
-    } else if (engine === 'deepseek') {
-      models = await llm.loadDeepSeekModels(this.config.engines.deepseek)
+    } else if (engine === 'xai') {
+      models = await llm.loadXAIModels(this.config.engines.xai)
     }
 
     // save
