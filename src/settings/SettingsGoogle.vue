@@ -11,7 +11,7 @@
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <div class="control-group">
-          <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
+          <ModelSelectPlus v-model="chat_model" :models="chat_models" :show-ids="true" :disabled="chat_models.length == 0" @change="save" />
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </div>
         <a href="https://ai.google.dev/gemini-api/docs/models/gemini" target="_blank">{{ t('settings.engines.google.aboutModels') }}</a><br/>

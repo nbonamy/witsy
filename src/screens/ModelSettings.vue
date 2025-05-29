@@ -7,7 +7,7 @@
       </div>
       <div class="group">
         <label>{{ t('common.llmModel') }}</label>
-        <ModelSelectPlus v-model="model" :caps-hover-only="true" :show-ids="false" :engine="engine" @change="onChangeModel"/>
+        <ModelSelectPlus v-model="model" :caps-hover-only="true" :engine="engine" @change="onChangeModel"/>
       </div>
       <div class="group">
         <label>{{ t('modelSettings.plugins') }}</label>
