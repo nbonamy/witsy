@@ -33,6 +33,7 @@ export default class VideoCreator implements MediaCreator {
       ].map(name => ({ id: name, name }))
     } else if (engine == 'falai') {
       return [
+        'fal-ai/kling-video/v2.1/master/text-to-video',
         'fal-ai/veo2',
         'fal-ai/minimax/video-01',
         'fal-ai/minimax/video-01-live',
