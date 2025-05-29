@@ -13,10 +13,8 @@
         <EngineLogo :engine="engine" :grayscale="true" :custom-label="true" @click="onEngine(engine)" />
         <div class="models" v-if="models?.length">
           <BIconArrowRepeat class="for=symmetry" style="visibility: hidden; margin-right: 0.5rem;" v-if="!showAllEngines && engine != favoriteMockEngine" />
-          <select v-if="models?.length" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel">
-            <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
-          </select>
-          <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ 'rotating': isRefreshing }"/>
+          <ModelSelectPlus v-if="models?.length" :models="models" :caps-hover-only="true" :show-ids="false" v-model="model" class="select-model" :class="{ hidden: showAllEngines }" @change="onSelectModel" @click="onClickModel" />
+          <BIconArrowRepeat v-if="!showAllEngines && engine != favoriteMockEngine" @click="onRefreshModels" :class="{ refresh: true, 'rotating': isRefreshing }"/>
         </div>
         <template v-else-if="!showAllEngines">
           <div class="help apiKey" v-if="!llmManager.isEngineConfigured(engine)">
@@ -54,14 +52,14 @@
 
 <script setup lang="ts">
 
-import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated, nextTick } from 'vue'
+import { ref, shallowReactive, computed, onMounted, onUnmounted, onBeforeUpdate, onUpdated } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import EngineLogo from './EngineLogo.vue'
 import useTipsManager from '../composables/tips_manager'
 import LlmFactory, { favoriteMockEngine } from '../llms/llm'
+import ModelSelectPlus from './ModelSelectPlus.vue'
 import InputObfuscated from './InputObfuscated.vue'
-import Dialog from '../composables/dialog'
 
 const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
@@ -333,18 +331,15 @@ const onClickModel = () => {
   store.saveSettings()
 }
 
-const onSelectModel = (ev: Event) => {
-
-  // target
-  const target = ev.target as HTMLSelectElement
+const onSelectModel = (model: string) => {
 
   // computer-use warning
-  if (llmManager.isComputerUseModel(engine.value, target.value)) {
+  if (llmManager.isComputerUseModel(engine.value, model)) {
     tipsManager.showTip('computerUse')
   }
 
   // continue
-  llmManager.setChatModel(engine.value, target.value)
+  llmManager.setChatModel(engine.value, model)
 }
 
 const addToFavorites = () => {
@@ -363,6 +358,10 @@ const removeFavorite = () => {
 </style>
 
 <style scoped>
+
+.empty {
+  --form-font-size: 10.5pt;
+}
 
 .hidden {
   visibility: hidden;
@@ -461,8 +460,10 @@ const removeFavorite = () => {
 }
 
 .empty .models {
+  
   display: flex;
   align-items: center;
+  width: 400px;
   gap: 8px;
 
   svg {
@@ -494,20 +495,14 @@ const removeFavorite = () => {
 
 .empty .select-model {
   z-index: 2;
-  border: 0.5px solid transparent;
-  outline: none;
   margin-top: 8px;
   padding: 4px 0px;
-  font-size: 11pt;
-  text-align: center;
+  font-size: 10.5pt;
   cursor: pointer;
-  border-radius: 8px;
-  background-color: var(--message-list-bg-color);
-  color: var(--message-list-text-color);
 }
 
-.models:hover .select-model {
-  border: 0.5px solid var(--control-border-color);
+.empty .refresh {
+  font-size: 15.5pt;
 }
 
 .favorite {
