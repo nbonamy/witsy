@@ -3,7 +3,6 @@
     <header class="toolbar">
       <template v-if="message">
         <div class="title">{{ message.content }}</div>
-        <div class="push"></div>
         <div class="icon undo" @click="$emit('undo')" v-if="canUndo || canRedo" :class="{ disabled: isGenerating || !canUndo }">
           <BIconArrowCounterclockwise />
         </div>
