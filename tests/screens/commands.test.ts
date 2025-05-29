@@ -24,7 +24,7 @@ test('Renders correctly', async () => {
   for (let i=0; i<4; i++) {
     const command = wrapper.findAll('.command').at(i)
     expect(command!.find('.icon').text()).toBe(`${i+1}`)
-    expect(command!.find('.label').text()).toBe(i < 1 ? `commands.commands.${i+1}.label` : `Command ${i+1}`)
+    expect(command!.find('.label').text()).toBe(i < 1 ? `commands.commands.uuid${i+1}.label` : `Command ${i+1}`)
   }
 })
 
@@ -37,22 +37,22 @@ test('Closes on Escape', async () => {
 test('Changes selection on arrow keys', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: {  } } } )
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.uuid1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
   await wrapper.vm.$nextTick()
   expect(wrapper.find('.selected .label').text()).toBe('Command 2')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.uuid1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.uuid1.label')
 })
 
 test('Runs on Enter', async () => {
   const wrapper = mount(CommandPicker, { props: { extra: { textId: 6, sourceApp: { id: 'appId', name: 'appName', path: 'appPath' } } } })
   await wrapper.vm.$nextTick()
-  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.1.label')
+  expect(wrapper.find('.selected .label').text()).toBe('commands.commands.uuid1.label')
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
@@ -60,7 +60,7 @@ test('Runs on Enter', async () => {
     command: {
       action: 'chat_window',
       icon: '1',
-      id: 1,
+      id: 'uuid1',
       shortcut: '1',
       state: 'enabled',
     },
@@ -79,7 +79,7 @@ test('Runs command on click', async () => {
     command: {
       action: 'chat_window',
       icon: '1',
-      id: 1,
+      id: 'uuid1',
       shortcut: '1',
       state: 'enabled',
     },
@@ -97,7 +97,7 @@ test('Runs command on click', async () => {
     command: {
       action: 'paste_below',
       icon: '2',
-      id: 2,
+      id: 'uuid2',
       label: 'Command 2',
       shortcut: '2',
       state: 'enabled',

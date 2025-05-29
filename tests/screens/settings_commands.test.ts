@@ -13,13 +13,13 @@ enableAutoUnmount(afterAll)
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
-vi.mock('../../src/services/i18n', async () => {
+vi.mock('../../src/services/i18n', async (importOriginal) => {
+  const mod: any = await importOriginal()
   return {
+    ...mod,
     t: (key: string) => `${key}`,
-    hasLocalization: vi.fn(() => true),
-    i18nInstructions: vi.fn(),
     commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
-    expertI18n: vi.fn(() => {}),
+    commandI18nDefault: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
   }
 })
 

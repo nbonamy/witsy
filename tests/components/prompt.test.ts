@@ -22,6 +22,7 @@ vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
     expertI18n: vi.fn((expert, attr) => `${expert?.id}.${attr}`),
+    commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}.{input}`),
   }
 })
 
@@ -40,6 +41,7 @@ beforeAll(() => {
   useWindowMock()
   store.loadSettings()
   store.loadExperts()
+  store.loadCommands()
   store.config.llm.imageResize = 0
   store.config.engines.openai.models.chat.push(
     { id: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false } },
@@ -246,6 +248,52 @@ test('Clears expert', async () => {
   expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.expert.clear')
   await menu.find('.item:nth-child(4)').trigger('click')
   expect(wrapper.vm.expert).toBeNull()
+})
+
+test('Stores command for later', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  await prompt.trigger('keydown', { key: '#' })
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(4)
+  await menu.find('.item:nth-child(2)').trigger('click')
+  expect(wrapper.vm.command.id).toBe('uuid2')
+  expect(wrapper.find('.input .icon.command.left').exists()).toBe(true)
+  prompt.setValue('this is my prompt')
+  await prompt.trigger('keydown.Enter')
+  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    prompt: 'uuid2.template.this is my prompt',
+    attachments: [],
+    expert: null,
+    docrepo: null,
+  })
+})
+
+test('Selects command and run', async () => {
+  const prompt = wrapper.find<HTMLInputElement>('.input textarea')
+  expect(prompt.element.value).not.toBe('this is my prompt')
+  await prompt.setValue('this is my prompt')
+  const trigger = wrapper.find('.icon.command.right')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(4)
+  await menu.find('.item:nth-child(2)').trigger('click')
+  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    prompt: 'uuid2.template.this is my prompt',
+    attachments: [],
+    expert: null,
+    docrepo: null,
+  })
+})
+
+test('Clears comamnd', async () => {
+  wrapper.vm.command = store.commands[0]
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.input .icon.command.left').trigger('click')
+  expect(wrapper.vm.command).toBeNull()
 })
 
 test('Document repository', async () => {

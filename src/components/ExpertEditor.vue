@@ -44,7 +44,7 @@
 
 import { Expert, ExternalApp, FileContents } from '../types/index'
 import { onMounted, ref, computed, watch } from 'vue'
-import { expertI18n, t } from '../services/i18n'
+import { expertI18n, expertI18nDefault, t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 
 const emit = defineEmits(['expert-modified']);
@@ -72,7 +72,7 @@ const iconData = (app: ExternalApp) => {
 
 const onChangeText = () => {
   if (!props.expert) isEdited.value = false
-  isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18n(props.expert, 'name') || prompt.value !== expertI18n(props.expert, 'prompt')))
+  isEdited.value = ((props.expert?.type === 'system') && (name.value !== expertI18nDefault(props.expert, 'name') || prompt.value !== expertI18nDefault(props.expert, 'prompt')))
 }
 
 onMounted(async () => {
@@ -129,8 +129,8 @@ const onCancel = () => {
 }
 
 const onReset = () => {
-  name.value = expertI18n(props.expert, 'name')
-  prompt.value = expertI18n(props.expert, 'prompt')
+  name.value = expertI18nDefault(props.expert, 'name')
+  prompt.value = expertI18nDefault(props.expert, 'prompt')
   isEdited.value = false
 }
 
@@ -146,8 +146,8 @@ const onSave = (event: Event) => {
   // save it
   emit('expert-modified', {
     id: props.expert.id,
-    name: name.value === expertI18n(props.expert, 'name') ? undefined : name.value,
-    prompt: prompt.value === expertI18n(props.expert, 'prompt') ? undefined : prompt.value,
+    name: name.value === expertI18nDefault(props.expert, 'name') ? undefined : name.value,
+    prompt: prompt.value === expertI18nDefault(props.expert, 'prompt') ? undefined : prompt.value,
     triggerApps: triggerApps.value.map((app) => {
       if (app.icon.contents) {
         app.icon = app.icon.url.replace('file://', '')

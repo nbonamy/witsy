@@ -1,5 +1,5 @@
 
-import { anyDict, Command } from '../types/index'
+import { anyDict, Command, Expert } from '../types/index'
 import { createI18n, hasLocalization } from '../main/i18n.base'
 import { WritableComputedRef } from 'vue'
 import { I18n, Locale } from 'vue-i18n'
@@ -52,18 +52,35 @@ const setLlmLocale = (locale: string): void => {
 const t: CallableFunction = i18n?.global?.t
 const tllm: CallableFunction = i18nLlm?.global?.t
 
-const commandI18n = (command: Command, attr: 'label'|'template'): string => {
-  if (!command?.id) return ''
+type i18nCommandAttr = 'label' | 'template'
+type i18nExpertAttr = 'name' | 'prompt'
+
+const commandI18n = (command: Command|null, attr: i18nCommandAttr): string => {
+  if (!command) return ''
+  if (attr === 'label' && command.label) return command.label
+  if (attr === 'template' && command.template) return command.template
+  return commandI18nDefault(command, attr)
+}
+
+const commandI18nDefault = (command: Command|null, attr: i18nCommandAttr): string => {
   return command ? tllm(`commands.commands.${command.id}.${attr}`) : ''
 }
 
-const expertI18n = (expert: any, attr: 'name'|'prompt'): string => {
-  if (!expert?.id) return ''
+const expertI18n = (expert: Expert|null, attr: i18nExpertAttr): string => {
+  if (!expert) return ''
+  if (attr === 'name' && expert.name) return expert.name
+  if (attr === 'prompt' && expert.prompt) return expert.prompt
+  return expertI18nDefault(expert, attr)
+}
+
+const expertI18nDefault = (expert: Expert|null, attr: i18nExpertAttr): string => {
   return expert ? tllm(`experts.experts.${expert.id}.${attr}`) : ''
 }
 
 export {
   i18n as default,
+  i18nCommandAttr,
+  i18nExpertAttr,
   i18nLlm,
   t,
   tllm,
@@ -73,5 +90,7 @@ export {
   localeToLangName,
   hasLocalization,
   commandI18n,
+  commandI18nDefault,
   expertI18n,
+  expertI18nDefault,
 }
