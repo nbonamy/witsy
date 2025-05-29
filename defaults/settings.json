@@ -187,7 +187,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "gemini-1.5-pro-latest"
       }
     },
     "groq": {
@@ -197,7 +198,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "meta-llama/llama-4-scout-17b-16e-instruct"
       }
     },
     "xai": {
@@ -218,7 +220,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "meta-llama/llama-4-maverick:free"
       }
     },
     "deepseek": {
@@ -249,7 +252,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "Llama-4-Scout-17B-16E-Instruct-FP8"
       }
     },
     "mistralai": {
@@ -259,7 +263,8 @@
       },
       "model": {
         "chat": "",
-        "image": ""
+        "image": "",
+        "vision": "pixtral-large-latest"
       }
     },
     "nvidia": {
