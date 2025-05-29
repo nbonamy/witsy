@@ -310,7 +310,7 @@ defineExpose({
 
       .title {
         flex: 0 1 auto;
-        -webkit-app-region: no-drag;
+        /* -webkit-app-region: no-drag; */
       }
 
       .icon {
