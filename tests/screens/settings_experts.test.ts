@@ -189,6 +189,7 @@ test('Edit system prompt', async () => {
   expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(true)
 
   await editor.find('[name=reset]').trigger('click')
+  await editor.vm.$nextTick()
   expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('experts.experts.uuid1.name')
   expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('experts.experts.uuid1.prompt')
   expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(false)

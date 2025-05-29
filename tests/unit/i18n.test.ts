@@ -5,7 +5,8 @@ import { store } from '../../src/services/store'
 import { createI18n } from 'vue-i18n'
 import { useWindowMock } from '../mocks/window'
 import { getLocaleUI, getLocaleLLM, useI18n } from '../../src/main/i18n'
-import { i18nInstructions, localeToLangName } from '../../src/services/i18n'
+import { commandI18n, commandI18nDefault, expertI18n, expertI18nDefault, i18nInstructions, localeToLangName } from '../../src/services/i18n'
+import { Command, Expert } from '../../src/types'
 
 vi.mock('electron', async() => {
   return {
@@ -93,6 +94,28 @@ test('Localized instructions', async () => {
     instructions: { scratchpad: { default: 'Hello' } }
    }, 'instructions.scratchpad.default')).toBe('Hello')
 
+})
+
+test('Command localization', async () => {
+  expect(commandI18n({ id: 'uuid1' } as Command, 'label')).toBe('mock.commands.commands.uuid1.label')
+  expect(commandI18n({ id: 'uuid1' } as Command, 'template')).toBe('mock.commands.commands.uuid1.template')
+  expect(commandI18nDefault({ id: 'uuid1' } as Command, 'label')).toBe('mock.commands.commands.uuid1.label')
+  expect(commandI18nDefault({ id: 'uuid1' } as Command, 'template')).toBe('mock.commands.commands.uuid1.template')
+  expect(commandI18n({ id: 'uuid1', 'label': 'Label', template: 'Template' } as Command, 'label')).toBe('Label')
+  expect(commandI18n({ id: 'uuid1', 'label': 'Label', template: 'Template' } as Command, 'template')).toBe('Template')
+  expect(commandI18nDefault({ id: 'uuid1', 'label': 'Label', template: 'Template' } as Command, 'label')).toBe('mock.commands.commands.uuid1.label')
+  expect(commandI18nDefault({ id: 'uuid1', 'label': 'Label', template: 'Template' } as Command, 'template')).toBe('mock.commands.commands.uuid1.template')
+})
+
+test('Expert localization', async () => {
+  expect(expertI18n({ id: 'uuid1' } as Expert, 'name')).toBe('mock.experts.experts.uuid1.name')
+  expect(expertI18n({ id: 'uuid1' } as Expert, 'prompt')).toBe('mock.experts.experts.uuid1.prompt')
+  expect(expertI18nDefault({ id: 'uuid1' } as Expert, 'name')).toBe('mock.experts.experts.uuid1.name')
+  expect(expertI18nDefault({ id: 'uuid1' } as Expert, 'prompt')).toBe('mock.experts.experts.uuid1.prompt')
+  expect(expertI18n({ id: 'uuid1', 'name': 'Name', prompt: 'Prompt' } as Expert, 'name')).toBe('Name')
+  expect(expertI18n({ id: 'uuid1', 'name': 'Name', prompt: 'Prompt' } as Expert, 'prompt')).toBe('Prompt')
+  expect(expertI18nDefault({ id: 'uuid1', 'name': 'Name', prompt: 'Prompt' } as Expert, 'name')).toBe('mock.experts.experts.uuid1.name')
+  expect(expertI18nDefault({ id: 'uuid1', 'name': 'Name', prompt: 'Prompt' } as Expert, 'prompt')).toBe('mock.experts.experts.uuid1.prompt')
 })
 
 test('Country code to Name', async () => {

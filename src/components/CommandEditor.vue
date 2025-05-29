@@ -49,7 +49,7 @@
 import { Command } from '../types/index'
 import { onMounted, ref, computed, watch, PropType } from 'vue'
 import { store } from '../services/store'
-import { t, commandI18n } from '../services/i18n'
+import { t, commandI18n, commandI18nDefault } from '../services/i18n'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import Dialog from '../composables/dialog'
@@ -81,7 +81,7 @@ const isEditable = computed(() => {
 
 const onChangeText = () => {
   if (!props.command) isEdited.value = false
-  isEdited.value = ((props.command?.type === 'system') && (label.value !== commandI18n(props.command, 'label') || template.value !== commandI18n(props.command, 'template')))
+  isEdited.value = ((props.command?.type === 'system') && (label.value !== commandI18nDefault(props.command, 'label') || template.value !== commandI18nDefault(props.command, 'template')))
 }
 
 onMounted(async () => {
@@ -144,8 +144,8 @@ const onCancel = () => {
 }
 
 const onReset = () => {
-  label.value = commandI18n(props.command, 'label')
-  template.value = commandI18n(props.command, 'template')
+  label.value = commandI18nDefault(props.command, 'label')
+  template.value = commandI18nDefault(props.command, 'template')
   isEdited.value = false
 }
 
@@ -169,8 +169,8 @@ const onSave = (event: Event) => {
   emit('command-modified', {
     id: props.command.id,
     icon: icon.value,
-    label: label.value === commandI18n(props.command, 'label') ? undefined : label.value,
-    template: template.value === commandI18n(props.command, 'template') ? undefined : template.value,
+    label: label.value === commandI18nDefault(props.command, 'label') ? undefined : label.value,
+    template: template.value === commandI18nDefault(props.command, 'template') ? undefined : template.value,
     action: action.value,
     shortcut: shortcut.value?.toUpperCase() || '',
     engine: engine.value,
