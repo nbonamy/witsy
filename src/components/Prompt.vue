@@ -18,6 +18,7 @@
       <div class="textarea-wrapper">
         <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
         <div v-if="expert" class="icon left expert" @click="onClickActiveExpert"><BIconMortarboard /></div>
+        <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
         <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
       </div>
@@ -26,7 +27,7 @@
     <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
     <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -35,7 +36,7 @@
 
 <script setup lang="ts">
 
-import { FileContents, Expert } from '../types/index'
+import { Expert, Command } from '../types/index'
 import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
@@ -129,6 +130,7 @@ let userStoppedDictation = false
 
 const prompt = ref('')
 const expert = ref<Expert|null>(null)
+const command = ref<Command|null>(null)
 const attachments = ref<Attachment[]>([])
 const docrepo = ref(null)
 const input = ref(null)
@@ -149,6 +151,7 @@ const model = () => props.chat?.model || llmManager.getChatEngineModel().model
 
 const backSpaceHitsToClearExpert = 1
 let backSpaceHitsWhenEmpty = 0
+let runCommandImmediate = false
 
 const actionsCount = computed(() => {
   const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
@@ -315,6 +318,10 @@ const setExpert = (xpert: Expert) => {
 
 const onSendPrompt = () => {
   let message = prompt.value.trim()
+  if (command.value) {
+    message = commandI18n(command.value, 'template').replace('{input}', message)
+    command.value = null
+  }
   prompt.value = defaultPrompt(props.conversationMode)
   nextTick(() => {
     autoGrow(input.value)
@@ -411,7 +418,7 @@ const openExperts = () => {
   const icon = document.querySelector('.prompt .experts')
   const rect = icon?.getBoundingClientRect()
   menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
-  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 16 )  + 24
   showExperts.value = true
 }
 
@@ -425,6 +432,10 @@ const onClickActiveExpert = () => {
   menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
   menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 8 )  + 24
   showActiveExpert.value = true
+}
+
+const onClickActiveCommand = () => {
+  disableCommand()
 }
 
 const onDictate = async () => {
@@ -668,19 +679,28 @@ const disableExpert = () => {
   expert.value = null
 }
 
+const disableCommand = () => {
+  command.value = null
+}
+
 const onCommands = () => {
   showCommands.value = true
+  runCommandImmediate = true
   const textarea = document.querySelector('.prompt textarea')
   const rect = textarea?.getBoundingClientRect()
-  menuX.value = rect?.right - 250
-  menuY.value = rect?.height + 32
+  menuX.value = rect?.right + (props.menusPosition === 'below' ? rect?.y - 150 : 0 ) - 250
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y + 24 : 0 ) + 32
 }
 
 const handleCommandClick = (action: string) => {
   closeContextMenu()
-  const command = store.commands.find(c => c.id === action)
-  prompt.value = commandI18n(command, 'template').replace('{input}', prompt.value)
-  onSendPrompt()
+  command.value = store.commands.find(c => c.id === action)
+  if (prompt.value.endsWith('#')) {
+    prompt.value = prompt.value.slice(0, -1)
+  }
+  if (runCommandImmediate) {
+    onSendPrompt()
+  }
 }
 
 let draftPrompt = ''
@@ -758,10 +778,18 @@ const onKeyDown = (event: KeyboardEvent) => {
       return false
     }
   } else if (event.key === '@') {
-    if (prompt.value === '') {
+    if (props.enableExperts && prompt.value === '') {
       onClickExperts()
       event.preventDefault()
       prompt.value = '@'
+      return false
+    }
+  } else if (event.key === '#') {
+    if (props.enableCommands && prompt.value === '') {
+      onCommands()
+      runCommandImmediate = false
+      prompt.value = '#'
+      event.preventDefault()
       return false
     }
   } else if (event.key === 'Backspace') {
@@ -769,6 +797,7 @@ const onKeyDown = (event: KeyboardEvent) => {
       if (++backSpaceHitsWhenEmpty === backSpaceHitsToClearExpert) {
         backSpaceHitsWhenEmpty = 0
         disableExpert()
+        disableCommand()
       }
     } else {
       backSpaceHitsWhenEmpty = 0

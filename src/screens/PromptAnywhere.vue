@@ -11,7 +11,7 @@
           :enable-doc-repo="false" 
           :enable-attachments="true" 
           :enable-experts="true" 
-          :enable-commands="false" 
+          :enable-commands="true" 
           :enable-conversations="false"
           @mousedown.stop="onMouseDownPrompt"
         >
@@ -50,7 +50,6 @@ import LlmFactory, { ILlmManager } from '../llms/llm'
 import Prompt from '../components/Prompt.vue'
 import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
-import Attachment from '../models/attachment'
 import Message from '../models/message'
 import Chat from '../models/chat'
 

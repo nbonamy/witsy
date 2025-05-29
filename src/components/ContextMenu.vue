@@ -40,6 +40,10 @@ export type MenuAction = {
 
 const props = defineProps({
   actions: Array<MenuAction>,
+  selected: {
+    type: Object as () => MenuAction | null,
+    default: null
+  },
   onClose: {
     type: Function,
     required: true,
@@ -101,14 +105,15 @@ const position = computed(() => {
 });
 
 const isRightAligned = computed(() => {
-  return props.position === 'right' || props.position === 'above-right';
+  return props.position === 'right' || props.position === 'above-right'
 });
 
 onMounted(() => {
   if (props.showFilter) {
-    const input = document.querySelector<HTMLElement>('.context-menu input');
-    input?.focus();
+    const input = document.querySelector<HTMLElement>('.context-menu input')
+    input?.focus()
   }
+  selected.value = props.selected || null
   
   document.addEventListener('keydown', onKeyUp)
   document.addEventListener('keyup', onKeyDown)
