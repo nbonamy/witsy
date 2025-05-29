@@ -135,6 +135,9 @@ const onMenuOpened = async () => {
   --vs-option-selected-text-color: var(--highlighted-color);
   --vs-option-text-color: var(--text-color);
 
+  --capabilty-active-opacity: 0.50;
+  --capabilty-inactive-opacity: 0.15;
+
   .control .single-value .label, .menu .menu-option .model .label, .menu .menu-option .id {
     flex: 1;
     overflow: hidden;
@@ -170,9 +173,9 @@ const onMenuOpened = async () => {
 
         .capability {
           width: 1em;
-          opacity: 0.25;
+          opacity: var(--capabilty-inactive-opacity);
           &.active {
-            opacity: 1.0;
+            opacity: var(--capabilty-active-opacity);
           }
         }
 
@@ -233,7 +236,6 @@ const onMenuOpened = async () => {
 
       &.selected {
         .capability {
-          opacity: 0.2;
           &.active {
             opacity: 1;
           }
@@ -242,9 +244,9 @@ const onMenuOpened = async () => {
 
       .capability {
         width: 0.8em;
-        opacity: 0.1;
+        opacity: var(--capabilty-inactive-opacity);
         &.active {
-          opacity: 0.7;
+          opacity: var(--capabilty-active-opacity);
         }
       }
     }
