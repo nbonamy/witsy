@@ -6,8 +6,9 @@
     :is-clearable="false" :is-disabled="disabled"
     :should-autofocus-option="false"
     :placeholder="defaultText"
+    :classes="{ singleValue: capsHoverOnly ? 'caps-hover-only' : '', }"
     @menu-opened="onMenuOpened"
-    @option-selected="$emit('change')"
+    @option-selected="(option) => $emit('change', option.value)"
   >
 
     <template #value="{ option }">
@@ -61,7 +62,7 @@ const models = computed(() => {
 })
 
 const showId = computed(() => {
-  return models.value.some(model => model.value != model.label)
+  return props.showIds && models.value.some(model => model.value != model.label)
 })
 
 const props = defineProps({
@@ -72,6 +73,14 @@ const props = defineProps({
   engine: String,
   models: Array<ChatModel>,
   defaultText: String,
+  showIds: {
+    type: Boolean,
+    default: true
+  },
+  capsHoverOnly: {
+    type: Boolean,
+    default: false
+  },
   disabled: {
     type: Boolean,
     default: false
@@ -126,7 +135,7 @@ const onMenuOpened = async () => {
   --vs-option-selected-text-color: var(--highlighted-color);
   --vs-option-text-color: var(--text-color);
 
-  .control .single-value .label, .menu .menu-option .label {
+  .control .single-value .label, .menu .menu-option .model .label, .menu .menu-option .id {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -166,8 +175,20 @@ const onMenuOpened = async () => {
             opacity: 1.0;
           }
         }
+
       }
 
+    }
+
+    &:has(.caps-hover-only) {
+      .single-value .capability {
+        display: none;
+      }
+      &:hover {
+        .single-value .capability {
+          display: inline-block;
+        }
+      }
     }
   }
 
@@ -194,9 +215,7 @@ const onMenuOpened = async () => {
         gap: 0.25rem;
 
         .label, .id {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          font-size: var(--vs-font-size);
         }
 
         .id {
@@ -236,19 +255,6 @@ const onMenuOpened = async () => {
 form.large .vue-select .menu .menu-option {
   .capability {
     width: 0.9em;
-  }
-}
-
-form:not(.large) .vue-select .control .value-container {
-  .single-value {
-    .capability {
-      display: none;
-    }
-  }
-  &:hover {
-    .single-value .capability {
-      display: inline-block;
-    }
   }
 }
 
