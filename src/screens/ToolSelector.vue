@@ -67,7 +67,6 @@ const emit = defineEmits(['save'])
 onMounted(async () => {
   watch(() => props.tools, () => {
     selection.value = props.tools
-    initTools()
   }, { immediate: true }) 
 })
 
@@ -137,7 +136,10 @@ const onSave = () => {
 }
 
 defineExpose({
-  show: () => dialog.value.show(),
+  show: () => {
+    initTools()
+    dialog.value.show()
+  },
   close,
 })
 
