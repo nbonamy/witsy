@@ -21,7 +21,6 @@ import ChatArea from '../components/ChatArea.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
 import Message from '../models/message'
-import Attachment from '../models/attachment'
 import Chat from '../models/chat'
 import LlmFactory from '../llms/llm'
 
@@ -461,12 +460,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
   }
 
-  // make sure the chat is part of history
-  if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
-    assistant.value.chat.initTitle()
-    store.addChat(assistant.value.chat)
-  }
-
   // we will need that (function because chat may be updated later)
   const isUsingComputer = () => {
     return llmManager.isComputerUseModel(assistant.value.chat.engine, assistant.value.chat.model)
@@ -503,6 +496,12 @@ const onSendPrompt = async (params: SendPromptParams) => {
       // for computer use
       if (isUsingComputer()) {
         window.api.computer.start()
+      }
+
+      // make sure the chat is part of history
+      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+        assistant.value.chat.initTitle()
+        store.addChat(assistant.value.chat)
       }
 
     } else if (event === 'plugins_disabled') {
