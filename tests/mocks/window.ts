@@ -168,6 +168,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       pick: vi.fn((opts) => {
         if (opts?.location) {
           return 'image.png'
+        } else if (opts?.multiselection) {
+          return ['image1.png', 'image2.png']
         } else {
           return {
             url: 'file://image.png',
@@ -282,9 +284,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       transcribe: vi.fn(async () => ({ text: 'transcribed' })),
     },
     transcribe: {
-      start: vi.fn(),
       insert: vi.fn(),
-      cancel: vi.fn(),
     },
     memory: {
       reset: vi.fn(),

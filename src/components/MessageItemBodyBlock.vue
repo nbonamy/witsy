@@ -39,8 +39,8 @@ let mermaidRenderTimeout: NodeJS.Timeout|null = null
 const mdRender = (content: string) => {
 
   // highlight code
-  if (store.chatFilter) {
-    const regex = new RegExp(store.chatFilter, 'gi')
+  if (store.chatState.filter) {
+    const regex = new RegExp(store.chatState.filter, 'gi')
     content = content.replace(regex, (match) => `==${match}==`);
   }
 

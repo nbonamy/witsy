@@ -8,6 +8,7 @@ import { wait } from '../../src/main/utils'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import EmptyChat from '../../src/components/EmptyChat.vue'
 import { installMockModels } from '../mocks/llm'
+import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
 
@@ -34,6 +35,7 @@ beforeEach(() => {
 
   // store
   store.config.general.tips.engineSelector = true
+  store.config.general.tips.modelSelector = true
   store.config.llm.engine = 'openai'
   store.config.engines.openai = {
     apiKey: 'key',
@@ -84,29 +86,36 @@ test('Renders engines and models', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
   expect(wrapper.findAll('.empty .engines .logo')).toHaveLength(10)
   expect(wrapper.findAll('.empty .current .logo')).toHaveLength(1)
-  expect(wrapper.findAll('.empty .current select option')).toHaveLength(3)
-  expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(1)').element.value).toBe('gpt-3.5-turbo')
-  expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(2)').element.value).toBe('gpt-4-turbo')
-  expect(wrapper.find<HTMLOptionElement>('.empty select option:nth-child(3)').element.value).toBe('gpt-4o')
+  const modelSelector = findModelSelectoPlus(wrapper)
+  await modelSelector.open()
+  expect(modelSelector.getOptions()).toHaveLength(3)
+  expect(modelSelector.getOptions()[0].label).toBe('gpt-3.5-turbo')
+  expect(modelSelector.getOptions()[1].label).toBe('gpt-4-turbo')
+  expect(modelSelector.getOptions()[2].label).toBe('gpt-4o')
 })
 
 test('Selects engine', async () => {
   const manager = LlmFactory.manager(store.config)
   const wrapper: VueWrapper<any> = mount(EmptyChat)
+  expect(wrapper.find('.empty .tip.engine').exists()).toBe(true)
+  expect(wrapper.find('.empty .tip.model').exists()).toBe(false)
   await wrapper.find('.empty .current .logo').trigger('click')
   expect(wrapper.vm.showAllEngines).toBe(true)
-  expect(wrapper.find('.empty .tip').exists()).toBe(false)
   const ollama = 1 + manager.getPriorityEngines().indexOf('ollama')
   await wrapper.find(`.empty .engines .logo:nth-child(${ollama+1})`).trigger('click')
+  await wrapper.vm.$nextTick()
   expect(store.config.llm.engine).toBe('ollama')
-  expect(wrapper.find('.empty .tip').exists()).toBe(true)
+  expect(wrapper.find('.empty .tip.engine').exists()).toBe(false)
+  expect(wrapper.find('.empty .tip.model').exists()).toBe(true)
   expect(wrapper.vm.showAllEngines).toBe(false)
 })
 
 test('Selects model', async () => {
   const wrapper = mount(EmptyChat)
   expect(store.config.engines.openai.model.chat).toBe('gpt-4-turbo')
-  await wrapper.find('.empty .current select').setValue('gpt-4o')
+  const modelSelector = findModelSelectoPlus(wrapper)
+  await modelSelector.open()
+  await modelSelector.select(2)
   expect(store.config.engines.openai.model.chat).toBe('gpt-4o')
 })
 
@@ -133,15 +142,18 @@ test('Displays and selects favorites', async () => {
   const wrapper: VueWrapper<any> = mount(EmptyChat)
   await wrapper.find('.empty .current .logo').trigger('click')
   await wrapper.find('.empty .engines .logo:nth-child(1)').trigger('click')
-  expect(wrapper.findAll<HTMLOptionElement>('.empty .current select option')).toHaveLength(2)
-  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(1)').element.value).toBe('mock-chat')
-  expect(wrapper.find<HTMLOptionElement>('.empty .current select option:nth-child(2)').element.value).toBe('mock-vision')
-  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-chat')
+  const modelSelector = findModelSelectoPlus(wrapper)
+  await modelSelector.open()
+  expect(modelSelector.getOptions()).toHaveLength(2)
+  expect(modelSelector.getOptions()[0].label).toBe('mock_label/chat')
+  expect(modelSelector.getOptions()[1].label).toBe('mock_label/vision')
+  await modelSelector.select(0)
   expect(store.config.llm.engine).toBe(favoriteMockEngine)
   expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-chat')
   expect(wrapper.find<HTMLElement>('.empty .favorite .shortcut').text()).toBe('emptyChat.favorites.shortcut')
   expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+1' : 'Alt+1')
-  await wrapper.find<HTMLSelectElement>('.empty .current select').setValue('mock-vision')
+  await modelSelector.open()
+  await modelSelector.select(1)
   expect(store.config.engines[favoriteMockEngine].model.chat).toBe('mock-vision')
   expect(wrapper.vm.modelShortcut).toBe(process.platform === 'darwin' ? '⌥+2' : 'Alt+2')
 })

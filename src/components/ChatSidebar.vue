@@ -95,12 +95,12 @@ const onNewChat = () => {
 }
 
 const onFilterChange = () => {
-  store.chatFilter = filter.value.trim()
+  store.chatState.filter = filter.value.trim()
 }
 
 const onClearFilter = () => {
   filter.value = ''
-  store.chatFilter = null
+  store.chatState.filter = null
 }
 
 const onNewFolder = async () => {

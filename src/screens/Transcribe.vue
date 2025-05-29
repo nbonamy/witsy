@@ -136,25 +136,15 @@ onMounted(async () => {
     }
   })
 
-  // when screen is shown
-  onEvent('start-dictation', async () => {
-    if (autoStart.value) {
-      toggleRecord()
-    } else {
-      await initializeAudio()
-    }
-  })
-
-  // when screen is hidden
-  onEvent('stop-dictation', () => {
-    if (state.value === 'recording') {
-      onStop()
-    }
-    audioRecorder.release()
-  })
-
   // init
   load()
+
+  // when screen is shown
+  if (autoStart.value) {
+    toggleRecord()
+  } else {
+    await initializeAudio()
+  }
 
   // grab colors
   try {
@@ -169,6 +159,19 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+
+  // save
+  store.transcribeState = {
+    transcription: transcription.value,
+  }
+
+  // stop everything
+  if (state.value === 'recording') {
+    onStop()
+  }
+  audioRecorder.release()
+
+  // events
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.api.off('start-dictation', toggleRecord)
@@ -176,6 +179,7 @@ onUnmounted(() => {
 })
 
 const load = () => {
+  transcription.value = store.transcribeState.transcription
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine
   model.value = store.config.stt.model

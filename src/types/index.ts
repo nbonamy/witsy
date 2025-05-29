@@ -128,13 +128,25 @@ export type Shortcut = {
   [key: string]: boolean | string
 }
 
+export type ChatState = {
+  filter: string|null
+}
+
+export type TranscribeState = {
+  transcription: string
+}
+
 export interface Store {
+
   commands: Command[]
   experts: Expert[]
   config: Configuration
   history: History
   rootFolder: Folder
-  chatFilter: string|null
+
+  chatState: ChatState  
+  transcribeState: TranscribeState
+  
   saveHistory?(): void
   saveSettings?(): void
   load?(): void

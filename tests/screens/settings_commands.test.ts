@@ -6,6 +6,7 @@ import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
+import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
 
@@ -139,7 +140,7 @@ test('Edit user command', async () => {
   await editor.find('[name=label]').setValue('')
   await editor.find('[name=template]').setValue('{input2')
   await editor.find('[name=engine]').setValue('openai')
-  await editor.findComponent({ name: 'ModelSelectPlus' }).setValue('chat2')
+  await findModelSelectoPlus(editor).setValue('chat2')
   await editor.find('[name=icon]').setValue('😀')
   await editor.find('[name=shortcut]').setValue('S')
   await editor.find('button.default').trigger('click')

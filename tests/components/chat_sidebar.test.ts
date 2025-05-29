@@ -92,5 +92,5 @@ test('Filter Textbox', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
   await wrapper.find('.panel header #filter').setValue('Test')
   await wrapper.find('.panel header #filter').trigger('keyup')
-  expect(store.chatFilter).toBe('Test')
+  expect(store.chatState.filter).toBe('Test')
 })

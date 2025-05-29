@@ -48,7 +48,8 @@ test('Check atributtes', async () => {
   expect(store.commands).toEqual([])
   expect(store.experts).toEqual([])
   expect(store.history).toBeNull()
-  expect(store.chatFilter).toBeNull()
+  expect(store.chatState.filter).toBeNull()
+  expect(store.transcribeState.transcription).toBe('')
 })
 
 test('Load', async () => {
