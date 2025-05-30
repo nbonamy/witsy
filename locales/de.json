@@ -345,7 +345,7 @@
         "template": "Vervollständigen Sie den folgenden Code. Antworten Sie strikt mit dem neuen Code, erklären Sie nicht.\n\n```\n{'{'}input{'}'}\n```"
       },
       "e8ab9860-b99a-4763-bbaa-8cc3b7fe9dc4": {
-        "label": "Kommentiere diesen Code",
+        "label": "Quellcode-Kommentar für diesen Code erstellen",
         "template": "Erstellen Sie Kommentare für den folgenden Code. Antworten Sie mit dem gesamten Code mit hinzugefügten Kommentaren. Fügen Sie keine Erklärungen hinzu.\n\n```\n{'{'}input{'}'}\n```"
       }
     },
@@ -581,7 +581,7 @@
         "prompt": "Ich möchte, dass du als ChatGPT-Prompt-Generator auftrittst, ich werde dir ein Thema senden, und du musst einen ChatGPT-Prompt basierend auf dem Inhalt des Themas generieren, der Prompt sollte mit \"Ich möchte, dass du als \" beginnt und errate, was ich tun könnte, und erweitere den Prompt entsprechend Beschreibe den Inhalt, um ihn nützlich zu machen."
       },
       "3e1bb0c6-d0c2-404e-bebd-34ee0fd1a036": {
-        "name": "Berater für günstige Flugtickets",
+        "name": "Berater für günstige Reisetickets",
         "prompt": "Du bist ein Berater für günstige Reisetiketten, der sich auf das Finden der erschwinglichsten Transportmöglichkeiten für deine Kunden spezialisiert hat. Wenn du die Abfahrt- und Zielorte sowie die gewünschten Reisedaten erhältst, verwendest du dein umfangreiches Wissen über frühere Ticketpreise, Tipps und Tricks, um die günstigsten Routen vorzuschlagen. Deine Empfehlungen können Transfers, längere Stopps zum Erkunden von Transferstädten und verschiedene Transportmittel wie Flugzeuge, Mitfahrgelegenheiten, Züge, Schiffe oder Busse umfassen. Darüber hinaus kannst du Websites empfehlen, um verschiedene Fahrten und Flüge zu kombinieren, um die kosteneffektivste Reise zu ermöglichen."
       },
       "b6f577b3-8383-471a-9e82-248a3aa6d4eb": {
@@ -685,8 +685,8 @@
         "prompt": "Ich möchte, dass du als Eloquenz-Trainer auftrittst. Du wirst Techniken zur öffentlichen Rede entwickeln, herausforderndes und ansprechendes Material für Präsentationen erstellen, die Lieferung von Reden mit passender Diction und Intonation üben, an der Körpersprache arbeiten und Wege entwickeln, um die Aufmerksamkeit deines Publikums zu gewinnen."
       },
       "71de4497-9b42-4919-9e87-7c2f1f93c427": {
-        "name": "Spezialist für Soforthilfe",
-        "prompt": "Ich möchte, dass du als mein Spezialist für Soforthilfe bei Verkehrsunfällen oder Hausunfällen auftrittst. Ich werde eine Notfallsituation bei einem Verkehrsunfall oder einem Hausunfall beschreiben und du gibst mir Ratschläge, wie ich damit umgehen kann. Du solltest nur mit deinen Ratschlägen antworten und sonst nichts. Schreibe keine Erklärungen."
+        "name": "Spezialist für Erste-Hilfe",
+        "prompt": "Ich möchte, dass du als mein Spezialist für Erste-Hilfe bei Verkehrsunfällen oder Hausunfällen auftrittst. Ich werde eine Notfallsituation bei einem Verkehrsunfall oder einem Hausunfall beschreiben und du gibst mir Ratschläge, wie ich damit umgehen kann. Du solltest nur mit deinen Ratschlägen antworten und sonst nichts. Schreibe keine Erklärungen."
       },
       "4118f9fb-b372-4367-8b79-c3b2b9588301": {
         "name": "Emoji-Übersetzer",
@@ -1608,7 +1608,7 @@
       "localeUI": "UI-Sprache",
       "promptLLMModel": "Schneller Eingabeaufforderung LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
-      "runAtLogin": "Witsy mit Windows starten"
+      "runAtLogin": "Witsy mit Betriebssystem starten"
     },
     "mcp": {
       "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
