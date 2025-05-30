@@ -14,10 +14,11 @@ export default class STTOpenAI implements STTEngine {
     { id: 'whisper-1', label: 'OpenAI Whisper V2 (online)' },
   ]
 
-    constructor(config: Configuration) {
+    constructor(config: Configuration, baseURL?: string) {
     this.config = config
     this.client = new OpenAI({
       apiKey: config.engines.openai.apiKey,
+      baseURL: baseURL,
       dangerouslyAllowBrowser: true
     })
   }

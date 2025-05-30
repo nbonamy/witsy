@@ -79,6 +79,17 @@ test('stt settings', async () => {
   expect(store.config.stt.engine).toBe('whisper')
   expect(store.config.stt.model).toBe(whisper2.element.value)
 
+  // custom
+  await stt.find('select[name=engine]').setValue('custom')
+  expect(stt.find<HTMLSelectElement>('select[name=model]').exists()).toBe(false)
+  expect(stt.find<HTMLSelectElement>('input[name=baseURL]').exists()).toBe(true)
+  expect(stt.find<HTMLSelectElement>('input[name=model]').exists()).toBe(true)
+  await stt.find<HTMLSelectElement>('input[name=baseURL]').setValue('https://api.custom.com')
+  await stt.find<HTMLInputElement>('input[name=model]').setValue('custom-model')
+  expect(store.config.stt.engine).toBe('custom')
+  expect(store.config.stt.model).toBe('custom-model')
+  expect(store.config.stt.customOpenAI.baseURL).toBe('https://api.custom.com')
+
 })
 
 test('tts settings', async () => {

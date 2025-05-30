@@ -177,6 +177,9 @@ export type STTConfig = {
   pushToTalk: boolean
   silenceDetection: boolean
   silenceDuration: number
+  customOpenAI: {
+    baseURL: string
+  }
   nvidia: {
     prompt: string
   }
