@@ -165,6 +165,11 @@ const onKeyUp = (event: KeyboardEvent) => {
     event.stopPropagation()
     return false
   }
+
+  // select the only action when filtered
+  if (visibleActions.value.length === 1) {
+    selected.value = visibleActions.value[0]
+  }
 }
 
 const onAction = (action: MenuAction) => {

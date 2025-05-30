@@ -20,7 +20,7 @@
         <div v-if="expert" class="icon left expert" @click="onClickActiveExpert"><BIconMortarboard /></div>
         <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
         <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
-        <BIconMagic class="icon command right" @click="onCommands" v-if="enableCommands && prompt" />
+        <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt" />
       </div>
     </div>
     <slot name="after" />
@@ -29,7 +29,7 @@
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
 </template>
@@ -683,9 +683,9 @@ const disableCommand = () => {
   command.value = null
 }
 
-const onCommands = () => {
+const onCommands = (immediate: boolean) => {
   showCommands.value = true
-  runCommandImmediate = true
+  runCommandImmediate = immediate
   const textarea = document.querySelector('.prompt textarea')
   const rect = textarea?.getBoundingClientRect()
   menuX.value = rect?.right + (props.menusPosition === 'below' ? rect?.y - 150 : 0 ) - 250
@@ -717,6 +717,11 @@ const onKeyDown = (event: KeyboardEvent) => {
       return false
     }
   } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+
+    // not if context menu is open
+    if (isContextMenuOpen()) {
+      return
+    }
 
     // need an history provider
     if (!props.historyProvider) {
@@ -786,8 +791,7 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
   } else if (event.key === '#') {
     if (props.enableCommands && prompt.value === '') {
-      onCommands()
-      runCommandImmediate = false
+      onCommands(false)
       prompt.value = '#'
       event.preventDefault()
       return false
