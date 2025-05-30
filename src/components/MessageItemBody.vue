@@ -85,6 +85,11 @@ const computeBlocks = (content: string|null): Block[] => {
   //   content = closeOpenMarkdownTags(content)
   // }
 
+  // user message does not have this
+  if (props.message.role !== 'assistant') {
+    return [{ type: 'text', content }]
+  }
+
   // extract each <img> in a separate block
   let match
   let lastIndex = 0

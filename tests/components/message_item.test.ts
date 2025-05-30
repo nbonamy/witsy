@@ -35,7 +35,7 @@ vi.mock('../../src/composables/audio_player', async () => {
 })
 
 let chat: Chat
-const userMessage: Message = new Message('user', 'Hello')
+const userMessage: Message = new Message('user', 'Hello <img src="https://example.com/image.jpg" alt="description">')
 const botMessageText: Message = new Message('assistant', '**Hi**\n\n1. One \n\n2. Two')
 botMessageText.usage = { prompt_tokens: 0, completion_tokens: 0 }
 const botMessageImage: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '![image](https://example.com/image.jpg)' })
@@ -90,7 +90,7 @@ test('User message', async () => {
   expect(wrapper.find('.role').text()).toBe('chat.role.user')
   expect(wrapper.find('.avatar').exists()).toBe(true)
   expect(wrapper.find('.logo').exists()).toBe(false)
-  expect(wrapper.find('.body').text()).toBe('Hello')
+  expect(wrapper.find('.body').text()).toBe('Hello <img src="https://example.com/image.jpg" alt="description">')
   expect(wrapper.find('.body .transient').exists()).toBe(false)
   expect(wrapper.find('.body .toggle-reasoning').exists()).toBe(false)
   expect(wrapper.find('.body .think').exists()).toBe(false)
