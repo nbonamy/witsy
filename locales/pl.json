@@ -384,6 +384,15 @@
         "inputPlaceholder": "Szablon musi zawierać symbol zastępczy {'{'}input{'}'}.",
         "requiredFields": "Wszystkie pola oznaczone * są wymagane."
       }
+    },
+    "picker": {
+      "help": "Możesz przytrzymać następujące klawisze modyfikacyjne podczas wybierania polecenia, aby przyspieszyć swoją pracę. Możesz puścić te klawisze zaraz po wybraniu polecenia.<ul><li><b>{ctrl}</b>: skopiuje wygenerowany tekst do schowka</li><li><b>{shift}</b>: wstawi wygenerowany tekst do aktualnej aplikacji.</li><li><b>{shift}+{ctrl}</b>: zastąpi zaznaczony tekst wygenerowanym tekstem.</li></ul>",
+      "usage": {
+        "copy": "Tryb kopiowania aktywowany",
+        "default": "Kliknij, aby dowiedzieć się więcej...",
+        "insert": "Tryb wstawiania aktywowany",
+        "replace": "Tryb zastępowania aktywowany"
+      }
     }
   },
   "computerUse": {

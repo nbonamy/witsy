@@ -3,11 +3,11 @@
     <MessageItem :message="message" :show-role="false" :show-actions="false" />
     <div class="actions">
       <MessageItemActionCopy :message="message" ref="actionCopy" />
-      <div class="action replace" v-if="!isMas && showReplace && !message.transient" @click="onReplace">
-        <BIconArrowLeftRight /> {{ t('common.replace') }}
-      </div>
       <div class="action insert" v-if="!isMas && !message.transient" @click="onInsert">
         <BIconArrowReturnLeft /> {{ t('common.insert') }}
+      </div>
+      <div class="action replace" v-if="!isMas && showReplace && !message.transient" @click="onReplace">
+        <BIconArrowLeftRight /> {{ t('common.replace') }}
       </div>
       <MessageItemActionRead :message="message" :audio-state="audioState" :read-aloud="onReadAloud" />
       <div class="action continue" v-if="!message.transient" @click="onChat">
@@ -199,7 +199,10 @@ const onRetry = async (message: Message) => {
 }
 
 defineExpose({
-  cleanUp
+  cleanUp,
+  onCopy: () => actionCopy.value?.copy(),
+  onInsert,
+  onReplace
 })
 
 </script>

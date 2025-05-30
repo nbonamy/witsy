@@ -384,6 +384,15 @@
         "inputPlaceholder": "The template must contain the {'{'}input{'}'} placeholder.",
         "requiredFields": "All fields marked with * are required."
       }
+    },
+    "picker": {
+      "help": "You can hold the following modifier keys while selecting your command to accelerate your workflow. You may release those keys right after the command is selected.<ul><li><b>{ctrl}</b>: will copy the generated text to your clipboard</li><li><b>{shift}</b>: will insert the generated text into the current application.</li><li><b>{shift}+{ctrl}</b>: will replace the selected text with the generated text.</li></ul>",
+      "usage": {
+        "copy": "Copy mode activated",
+        "default": "Click to learn more...",
+        "insert": "Insert mode activated",
+        "replace": "Replace mode activated"
+      }
     }
   },
   "computerUse": {

@@ -474,6 +474,16 @@ const onSendPrompt = async (params: SendPromptParams) => {
       saveChat()
     }
 
+    // command action
+    if (showParams?.action === 'copy') {
+      output.value.onCopy()
+      onClose()
+    } else if (showParams?.action === 'insert') {
+      output.value.onInsert()
+    } else if (showParams?.action === 'replace') {
+      output.value.onReplace()
+    }
+
   } catch (err) {
     console.error(err)
     response.value.setText('An error occurred while generating the response.')

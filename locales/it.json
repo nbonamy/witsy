@@ -365,6 +365,15 @@
         "inputPlaceholder": "Il template deve contenere il segnaposto {'{'}input{'}'}.",
         "requiredFields": "Tutti i campi contrassegnati con * sono obbligatori."
       }
+    },
+    "picker": {
+      "help": "Puoi tenere premuti i seguenti tasti modificatori mentre selezioni il tuo comando per accelerare il tuo flusso di lavoro. Puoi rilasciare quei tasti subito dopo aver selezionato il comando.<ul><li><b>{ctrl}</b>: copierà il testo generato negli appunti</li><li><b>{shift}</b>: inserirò il testo generato nell'applicazione corrente.</li><li><b>{shift}+{ctrl}</b>: sostituirà il testo selezionato con il testo generato.</li></ul>",
+      "usage": {
+        "copy": "Modalità copia attivata",
+        "default": "Clicca per saperne di più...",
+        "insert": "Modalità inserimento attivata",
+        "replace": "Modalità sostituzione attivata"
+      }
     }
   },
   "computerUse": {

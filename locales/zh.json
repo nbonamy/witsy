@@ -384,6 +384,15 @@
         "inputPlaceholder": "模板必须包含 {'{'}input{'}'} 占位符。",
         "requiredFields": "所有标记为 * 的字段均为必填项。"
       }
+    },
+    "picker": {
+      "help": "在选择命令时，您可以按住以下修饰键以加快您的工作流程。选择命令后，您可以立即释放这些键。<ul><li><b>{ctrl}</b>：将生成的文本复制到您的剪贴板</li><li><b>{shift}</b>：将生成的文本插入到当前应用程序中。</li><li><b>{shift}+{ctrl}</b>：将选定的文本替换为生成的文本。</li></ul>",
+      "usage": {
+        "copy": "复制模式已激活",
+        "default": "点击了解更多...",
+        "insert": "插入模式已激活",
+        "replace": "替换模式已激活"
+      }
     }
   },
   "computerUse": {

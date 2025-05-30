@@ -30,8 +30,11 @@ export interface Automator {
   pasteText(): Promise<void>
 }
 
+export type CommandAction = 'default' | 'copy' | 'insert' | 'replace'
+
 export type RunCommandParams = {
   textId: string
   sourceApp: Application | null
   command: Command
+  action: CommandAction
 }

@@ -365,6 +365,15 @@
         "inputPlaceholder": "Le template doit contenir le marqueur {'{'}input{'}'}.",
         "requiredFields": "Tous les champs marqués d'un * sont obligatoires."
       }
+    },
+    "picker": {
+      "help": "Vous pouvez maintenir les touches de modification suivantes tout en sélectionnant votre commande pour accélérer votre flux de travail. Vous pouvez relâcher ces touches juste après que la commande soit sélectionnée.<ul><li><b>{ctrl}</b>: copiera le texte généré dans votre presse-papiers</li><li><b>{shift}</b>: insérera le texte généré dans l'application actuelle.</li><li><b>{shift}+{ctrl}</b>: remplacera le texte sélectionné par le texte généré.</li></ul>",
+      "usage": {
+        "copy": "Mode copie activé",
+        "default": "Cliquez pour en savoir plus...",
+        "insert": "Mode insertion activé",
+        "replace": "Mode remplacement activé"
+      }
     }
   },
   "computerUse": {

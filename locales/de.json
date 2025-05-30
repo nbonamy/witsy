@@ -365,6 +365,15 @@
         "inputPlaceholder": "Die Vorlage muss den Platzhalter {input} enthalten.",
         "requiredFields": "Alle mit * gekennzeichneten Felder sind erforderlich."
       }
+    },
+    "picker": {
+      "help": "Sie können die folgenden Modifikatortasten gedrückt halten, während Sie Ihren Befehl auswählen, um Ihren Workflow zu beschleunigen. Sie können diese Tasten sofort nach der Auswahl des Befehls loslassen.<ul><li><b>{ctrl}</b>: Kopiert den generierten Text in Ihre Zwischenablage</li><li><b>{shift}</b>: Fügt den generierten Text in die aktuelle Anwendung ein.</li><li><b>{shift}+{ctrl}</b>: Ersetzt den ausgewählten Text durch den generierten Text.</li></ul>",
+      "usage": {
+        "copy": "Kopiermodus aktiviert",
+        "default": "Klicken Sie hier, um mehr zu erfahren...",
+        "insert": "Einfügemodus aktiviert",
+        "replace": "Ersetzungsmodus aktiviert"
+      }
     }
   },
   "computerUse": {

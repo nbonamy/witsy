@@ -75,9 +75,15 @@ const onMediaLoaded = (message: Message) => {
 
 const computeBlocks = (content: string|null): Block[] => {
 
+  // if no content, return empty
   if (!content || content.trim().length === 0 || content.replaceAll('\n', '').trim().length === 0) {
     return []
   }
+
+  // // if transient make sure we close markdown tags
+  // if (props.message.transient) {
+  //   content = closeOpenMarkdownTags(content)
+  // }
 
   // extract each <img> in a separate block
   let match
@@ -132,6 +138,79 @@ const computeBlocks = (content: string|null): Block[] => {
   //console.log(blocks)
   return blocks
 
+}
+
+const closeOpenMarkdownTags = (input: string): string => {
+  
+  const tagPairs: { tag:string }[] = [
+    { tag: '```' },
+    { tag: '~~~' },
+    { tag: '**' },
+    { tag: '__' },
+    { tag: '*'},
+    { tag: '_'},
+    { tag: '`' }
+  ];
+
+  let i :number = 0;
+  const stack: { tag: string; index: number }[] = [];
+
+  // Track active tags
+  while (i < input.length) {
+
+    let matched = false;
+    for (const { tag } of tagPairs) {
+      
+      if (input.startsWith(tag, i)) {
+        // Check if top of stack has same tag (closing)
+        const top = stack[stack.length - 1];
+        if (top && top.tag === tag) {
+          stack.pop();
+        } else {
+          stack.push({ tag, index: i });
+        }
+        i += tag.length;
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      i++;
+    }
+  }
+
+  // Handle mismatched inline like **t* -> **t**
+  if (input.match(/\*\*[^*]+?\*$/)) {
+    input += '*';
+    return input;
+  }
+  if (input.match(/__[^_]+?_$/)) {
+    input += '_';
+    return input;
+  }
+
+  // Close any remaining tags
+  while (stack.length > 0) {
+    const { tag } = stack.pop();
+    input += tag;
+  }
+
+  // Handle links and images
+  const unmatchedLeftBracket = input.lastIndexOf('[');
+  const unmatchedRightBracket = input.lastIndexOf(']');
+  const unmatchedLeftParen = input.lastIndexOf('](');
+  const unmatchedRightParen = input.lastIndexOf(')');
+
+  if (unmatchedLeftBracket > unmatchedRightBracket) {
+    input += ']';
+  }
+
+  if (unmatchedLeftParen > unmatchedRightParen) {
+    input += ')';
+  }
+
+  return input;
 }
 
 </script>
