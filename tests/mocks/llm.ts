@@ -1,5 +1,5 @@
 
-import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel } from 'multi-llm-ts'
+import { LlmEngine, LLmCompletionPayload, LlmChunk, LlmCompletionOpts, LlmResponse, LlmStreamingResponse, EngineCreateOpts, ModelCapabilities, ChatModel, ModelMetadata, ModelGeneric } from 'multi-llm-ts'
 import { store } from '../../src/services/store'
 import Message from '../../src/models/message'
 import { RandomChunkStream, InfiniteStream } from './streams'
@@ -46,15 +46,15 @@ export default class LlmMock extends LlmEngine {
     super(config)
   }
 
-  getName(): string {
+  getId(): string {
     return 'mock'
   }
 
-  getModelCapabilities(model: string): ModelCapabilities {
+  getModelCapabilities(model: ModelMetadata): ModelCapabilities {
     return {
       tools: true,
-      vision: model == 'vision',
-      reasoning: model == 'reasoning',
+      vision: (model as ModelGeneric).id == 'vision',
+      reasoning: (model as ModelGeneric).id == 'reasoning',
     }
   }
 
