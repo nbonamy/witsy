@@ -7,6 +7,7 @@ import STTGroq from './stt-groq'
 import STTHuggingFace from './stt-huggingface'
 import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
+import STTSpeechmatics from './stt-speechmatics'
 import STTWhisper from './stt-whisper'
 
 export type DownloadStatus = {
@@ -85,13 +86,14 @@ export interface STTEngine {
 
 export const getSTTEngines = () => {
   return [
-    { id: 'openai', label: 'OpenAI' },
     { id: 'falai', label: 'fal.ai' },
     { id: 'fireworks', label: 'Fireworks.ai' },
     { id: 'gladia', label: 'Gladia' },
     { id: 'groq', label: 'Groq' },
     //{ id: 'huggingface', label: 'Hugging Face' },
     { id: 'nvidia', label: 'nVidia' },
+    { id: 'openai', label: 'OpenAI' },
+    { id: 'speechmatics', label: 'Speechmatics' },
     { id: 'whisper', label: 'Whisper' },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
@@ -104,6 +106,8 @@ export const getSTTModels = (engine: string) => {
     return STTFalAi.models
   } else if (engine === 'fireworks') {
     return STTFireworks.models
+  } else if (engine === 'speechmatics') {
+    return STTSpeechmatics.models
   } else if (engine === 'gladia') {
     return STTGladia.models
   } else if (engine === 'groq') {
@@ -137,6 +141,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTGladia(config)
   } else if (engine === 'fireworks') {
     return new STTFireworks(config)
+  } else if (engine === 'speechmatics') {
+    return new STTSpeechmatics(config)
   } else if (engine === 'custom') {
     return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
   } else {
@@ -161,6 +167,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTGladia.requiresDownload()
   } else if (engine === 'fireworks') {
     return STTFireworks.requiresDownload()
+  } else if (engine === 'speechmatics') {
+    return STTSpeechmatics.requiresDownload()
   } else if (engine === 'custom') {
     return STTOpenAI.requiresDownload()
   } else {

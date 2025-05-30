@@ -5,7 +5,6 @@ export default class STTFireworks implements STTEngine {
 
   config: Configuration
   streamingSession: WebSocket
-  partialTranscription: string
 
   static readonly models = [
     { id: 'realtime', label: 'Fireworks (realtime)' },
@@ -14,7 +13,6 @@ export default class STTFireworks implements STTEngine {
   constructor(config: Configuration) {
     this.config = config
     this.streamingSession = null
-    this.partialTranscription = ''
   }
 
   get name(): string {

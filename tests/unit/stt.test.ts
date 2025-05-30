@@ -3,13 +3,14 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import { getSTTEngine, requiresDownload } from '../../src/voice/stt'
-import STTOpenAI from '../../src/voice/stt-openai'
 import STTFalAi from '../../src/voice/stt-falai'
 import STTFireworks from '../../src/voice/stt-fireworks'
 import STTGladia from '../../src/voice/stt-gladia'
 import STTGroq from '../../src/voice/stt-groq'
 import STTHuggingFace from '../../src/voice/stt-huggingface'
+import STTSpeechmatics from '../../src/voice/stt-speechmatics'
 import STTNvidia from '../../src/voice/stt-nvidia'
+import STTOpenAI from '../../src/voice/stt-openai'
 import STTWhisper from '../../src/voice/stt-whisper'
 import { fal } from '@fal-ai/client'
 
@@ -239,6 +240,23 @@ test('Instantiates Fireworks', async () => {
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'fireworks', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).rejects.toThrowError()
+})
+
+test('Instantiates Speechmatics', async () => {
+  store.config.stt.engine = 'speechmatics'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTSpeechmatics)
+  expect(engine.isStreamingModel('realtime')).toBe(true)
+  expect(engine.requiresPcm16bits!.call('realtime')).toBe(false)
+  expect(engine).toHaveProperty('startStreaming')
+  expect(engine).toHaveProperty('sendAudioChunk')
+  expect(engine).toHaveProperty('endStreaming')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'speechmatics', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).rejects.toThrowError()
 })
 

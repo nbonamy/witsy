@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -92,6 +92,8 @@
     "@mistralai/mistralai": "^1.1.0",
     "@modelcontextprotocol/sdk": "^1.11.2",
     "@nut-tree-fork/nut-js": "^4.2.6",
+    "@speechmatics/auth": "^0.0.1",
+    "@speechmatics/real-time-client": "^6.0.0",
     "applescript": "^1.0.0",
     "autolib": "github:nbonamy/witsy-autolib#d2869783d69a4885c9c87e85e579fdb8038c0ba3",
     "bootstrap-icons-vue": "^1.11.3",

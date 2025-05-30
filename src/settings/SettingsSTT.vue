@@ -20,6 +20,10 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="fireworksAPIKey" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'speechmatics'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="speechmaticsAPIKey" @blur="save" />
+    </div>
     <div class="group" v-if="engine == 'huggingface'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="huggingFaceAPIKey" @blur="save" />
@@ -121,6 +125,7 @@ const falAiAPIKey = ref(null)
 const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
+const speechmaticsAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
 const whisperGPU = ref(true)
@@ -169,6 +174,7 @@ const load = () => {
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
   fireworksAPIKey.value = store.config.engines.fireworks.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
+  speechmaticsAPIKey.value = store.config.engines.speechmatics.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
@@ -184,6 +190,7 @@ const save = () => {
   store.config.engines.falai.apiKey = falAiAPIKey.value
   store.config.engines.fireworks.apiKey = fireworksAPIKey.value
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
+  store.config.engines.speechmatics.apiKey = speechmaticsAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
