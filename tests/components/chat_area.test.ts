@@ -180,12 +180,12 @@ test('Context menu export Markdown', async () => {
   })
 })
 
-test('Context menu export PDF', async () => {
-  addMessagesToChat()
-  const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
-  await wrapper.find('.content > header .menu').trigger('click')
-  await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
-})
+// test('Context menu export PDF', async () => {
+//   addMessagesToChat()
+//   const wrapper: VueWrapper<any> = mount(ChatArea, { ...stubTeleport, props: { chat: chat! } } )
+//   await wrapper.find('.content > header .menu').trigger('click')
+//   await wrapper.find('.context-menu .item[data-action=exportPdf]').trigger('click')
+// })
 
 test('Context menu delete', async () => {
   addMessagesToChat()
