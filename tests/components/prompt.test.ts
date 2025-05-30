@@ -255,7 +255,7 @@ test('Stores command for later', async () => {
   await prompt.trigger('keydown', { key: '#' })
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.filter').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.vm.command.id).toBe('uuid2')
@@ -278,7 +278,7 @@ test('Selects command and run', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.filter').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
