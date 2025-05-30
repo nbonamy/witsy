@@ -356,6 +356,17 @@
         "image": ""
       }
     },
+    "speechmatics": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "fireworks": {
       "apiKey": "",
       "models": {

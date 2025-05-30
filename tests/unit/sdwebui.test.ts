@@ -5,7 +5,6 @@ import SDWebUI from '../../src/services/sdwebui'
 
 // @ts-expect-error mocking
 global.fetch = async (url: string) => {
-  console.log('fetch', url)
   if (url.includes('models')) {
     return {
       json: () => ([
