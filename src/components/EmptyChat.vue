@@ -152,7 +152,7 @@ const onEngine = (engine: string) => {
         elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         elems.container.style.opacity = Math.min(1, 1.25 * (progress - 0.25)).toString()
         if (progress >= 1) {
-          elems.clone.remove()
+          try { elems.clone.remove() } catch { /* empty */ }
           elems.container.style.opacity = '1'
           elems.source.parentElement.style.pointerEvents = 'none'
         }
@@ -184,7 +184,7 @@ const onEngine = (engine: string) => {
         elems.clone.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         elems.container.style.opacity = Math.max(0, 1 - 1.25 * progress).toString()
         if (progress >= 1) {
-          elems.clone.remove()
+          try { elems.clone.remove() } catch { /* empty */ }
           elems.container.style.opacity = '0'
           elems.source.style.opacity = '1'
           elems.target.style.opacity = '1'
