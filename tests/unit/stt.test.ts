@@ -50,7 +50,10 @@ global.fetch = async (url) => {
 }
 
 vi.mock('openai', async () => {
-  const OpenAI = vi.fn()
+  const OpenAI = vi.fn((opts: any) => {
+    OpenAI.prototype.apiKey = opts.apiKey
+    OpenAI.prototype.baseURL = opts.baseURL
+  })
   OpenAI.prototype.audio = {
     transcriptions: {
       create: () =>  ({ text: 'transcribed' })
@@ -237,6 +240,22 @@ test('Instantiates Fireworks', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'fireworks', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).rejects.toThrowError()
+})
+
+test('Instantiates Custom OpenAI', async () => {
+  store.config.stt.engine = 'custom'
+  store.config.stt.model = 'custom-model'
+  store.config.stt.customOpenAI.baseURL = 'https://api.custom.com/v1'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTOpenAI)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  expect((engine as STTOpenAI).client.baseURL).toBe('https://api.custom.com/v1')
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
 test('Throws error on unknown engine', async () => {

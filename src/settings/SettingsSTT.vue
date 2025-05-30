@@ -40,7 +40,7 @@
       <input type="checkbox" v-model="whisperGPU" @change="save" />
       <label>{{ t('settings.voice.useWebGpu') }}</label>
     </div>
-    <div class="group">
+    <div class="group" v-if="engine != 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="subgroup">
         <select name="model" v-model="model" @change="onChangeModel">
@@ -52,6 +52,16 @@
         </div>
       </div>
     </div>
+    <template v-else>
+      <div class="group">
+        <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
+        <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
+      </div>
+      <div class="group">
+        <label>{{ t('settings.voice.model') }}</label>
+        <input name="model" v-model="model" @change="onChangeModel"/>
+      </div>
+    </template>
     <div class="group">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
       <select name="duration" v-model="duration" @change="save">
@@ -93,18 +103,11 @@ import { Configuration } from '../types/config'
 import { Ref, ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
+import defaults from '../../defaults/settings.json'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
-import STTFalAi from '../voice/stt-falai'
-import STTFireworks from '../voice/stt-fireworks'
-import STTGladia from '../voice/stt-gladia'
-import STTGroq from '../voice/stt-groq'
-import STTHuggingFace from '../voice/stt-huggingface'
-import STTNvidia from '../voice/stt-nvidia'
-import STTOpenAI from '../voice/stt-openai'
-import STTWhisper from '../voice/stt-whisper'
 
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'
@@ -113,7 +116,7 @@ type FilesProgressInfo = { [key: string]: DownloadProgress }
 
 const locale = ref('')
 const engine = ref('openai')
-const model = ref('whisper-1')
+const model = ref('')
 const falAiAPIKey = ref(null)
 const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
@@ -121,6 +124,7 @@ const huggingFaceAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
 const whisperGPU = ref(true)
+const baseURL = ref('')
 const duration = ref(null)
 const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
 //const action = ref(null)
@@ -161,11 +165,12 @@ const load = () => {
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine || 'openai'
-  model.value = store.config.stt.model || 'whisper-1'
+  model.value = store.config.stt.model || ''
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
   fireworksAPIKey.value = store.config.engines.fireworks.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
+  baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
   whisperGPU.value = store.config.stt.whisper.gpu ?? true
@@ -181,6 +186,7 @@ const save = () => {
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
+  store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
   store.config.stt.whisper.gpu = whisperGPU.value
   //store.config.stt.silenceAction = action.value
@@ -188,14 +194,14 @@ const save = () => {
 }
 
 const onChangeEngine = () => {
-  model.value = models.value[0].id
+  model.value = models.value.length ? models.value[0].id : ''
   onChangeModel()
 }
 
 const onChangeModel = async () => {
 
   // dummy selector
-  if (model.value === '') {
+  if (engine.value !== 'custom' && model.value === '') {
     return
   }
 

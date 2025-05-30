@@ -93,6 +93,7 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: 'Hugging Face' },
     { id: 'nvidia', label: 'nVidia' },
     { id: 'whisper', label: 'Whisper' },
+    { id: 'custom', label: 'Custom OpenAI' },
   ]
 }
 
@@ -113,6 +114,8 @@ export const getSTTModels = (engine: string) => {
     return STTNvidia.models
   } else if (engine === 'whisper') {
     return STTWhisper.models
+  } else if (engine === 'custom') {
+    return []
   }
 }
 
@@ -134,6 +137,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTGladia(config)
   } else if (engine === 'fireworks') {
     return new STTFireworks(config)
+  } else if (engine === 'custom') {
+    return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
@@ -156,6 +161,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTGladia.requiresDownload()
   } else if (engine === 'fireworks') {
     return STTFireworks.requiresDownload()
+  } else if (engine === 'custom') {
+    return STTOpenAI.requiresDownload()
   } else {
     throw new Error(`Unknown STT engine ${engine}`)
   }
