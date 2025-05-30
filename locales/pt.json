@@ -384,6 +384,15 @@
         "inputPlaceholder": "O modelo deve conter o placeholder {'{'}input{'}'}.",
         "requiredFields": "Todos os campos marcados com * são obrigatórios."
       }
+    },
+    "picker": {
+      "help": "Você pode segurar as seguintes teclas modificadoras enquanto seleciona seu comando para acelerar seu fluxo de trabalho. Você pode soltar essas teclas assim que o comando for selecionado.<ul><li><b>{ctrl}</b>: copiará o texto gerado para sua área de transferência</li><li><b>{shift}</b>: inserirá o texto gerado no aplicativo atual.</li><li><b>{shift}+{ctrl}</b>: substituirá o texto selecionado pelo texto gerado.</li></ul>",
+      "usage": {
+        "copy": "Modo de cópia ativado",
+        "default": "Clique para saber mais...",
+        "insert": "Modo de inserção ativado",
+        "replace": "Modo de substituição ativado"
+      }
     }
   },
   "computerUse": {

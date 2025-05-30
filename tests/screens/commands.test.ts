@@ -57,6 +57,7 @@ test('Runs on Enter', async () => {
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
+    action: 'default',
     command: {
       action: 'chat_window',
       icon: '1',
@@ -76,6 +77,7 @@ test('Runs command on click', async () => {
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
+    action: 'default',
     command: {
       action: 'chat_window',
       icon: '1',
@@ -94,6 +96,7 @@ test('Runs command on click', async () => {
   expect(window.api.commands.run).toHaveBeenLastCalledWith({
     textId: 6,
     sourceApp: { id: 'appId', name: 'appName', path: 'appPath' },
+    action: 'default',
     command: {
       action: 'paste_below',
       icon: '2',

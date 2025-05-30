@@ -365,6 +365,15 @@
         "inputPlaceholder": "La plantilla debe contener el marcador de posición {'input'}.",
         "requiredFields": "Todos los campos marcados con * son obligatorios."
       }
+    },
+    "picker": {
+      "help": "Puedes mantener las siguientes teclas modificadoras mientras seleccionas tu comando para acelerar tu flujo de trabajo. Puedes soltar esas teclas justo después de que se seleccione el comando.<ul><li><b>{ctrl}</b>: copiará el texto generado en tu portapapeles</li><li><b>{shift}</b>: insertará el texto generado en la aplicación actual.</li><li><b>{shift}+{ctrl}</b>: reemplazará el texto seleccionado con el texto generado.</li></ul>",
+      "usage": {
+        "copy": "Modo copiar activado",
+        "default": "Haz clic para aprender más...",
+        "insert": "Modo insertar activado",
+        "replace": "Modo reemplazar activado"
+      }
     }
   },
   "computerUse": {

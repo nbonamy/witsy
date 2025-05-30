@@ -108,17 +108,18 @@ export default class Commander {
       const prompt = template.replace('{input}', text);
 
       // build the params
-      const params = {
+      const promptParams = {
         promptId: putCachedText(prompt),
         sourceApp: sourceApp,
         engine: engine || command.engine,
         model: model || command.model,
         execute: command.id != askMeAnythingId,
+        action: params.action || 'default',
         replace: true,
       };
       
       // and open the window
-      window.openPromptAnywhere(params);
+      window.openPromptAnywhere(promptParams);
       return true;
 
     } catch (error) {
