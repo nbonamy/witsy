@@ -49,7 +49,7 @@ export type GenerationResult =
     const conversation = this.getConversation(messages)
 
     // get the models
-    const engineConfig: EngineConfig = this.config.engines[llm.getName()]
+    const engineConfig: EngineConfig = this.config.engines[llm.getId()]
     const model = engineConfig?.models?.chat?.find((m: Model) => m.id === opts.model)
     const visionModel = engineConfig?.models?.chat?.find((m: Model) => m.id === engineConfig.model?.vision)
     if (!model) {

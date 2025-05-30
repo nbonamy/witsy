@@ -216,14 +216,15 @@ export default class LlmManagerBase implements ILlmManager {
 
   }
 
-  igniteCustomEngine = (engine: string): llm.LlmEngine => {
+  igniteCustomEngine = (engineId: string): llm.LlmEngine => {
     
-    const engineConfig = this.config.engines[engine] as CustomEngineConfig
+    const engineConfig = this.config.engines[engineId] as CustomEngineConfig
     if (engineConfig.api === 'openai') {
       const engine: llm.OpenAI = new llm.OpenAI({ 
         apiKey: engineConfig.apiKey,
         baseURL: engineConfig.baseURL
       })
+      engine.getId = () => engineId
       engine.getName = () => engineConfig.label
       return engine
     } else if (engineConfig.api === 'azure') {
@@ -233,12 +234,13 @@ export default class LlmManagerBase implements ILlmManager {
         deployment: engineConfig.deployment,
         apiVersion: engineConfig.apiVersion,
       })
+      engine.getId = () => engineId
       engine.getName = () => engineConfig.label
       return engine
     }
 
     // error
-    throw new Error(`Cannot ignite custom engine ${engine}`)
+    throw new Error(`Cannot ignite custom engine ${engineId}`)
 
   }
   

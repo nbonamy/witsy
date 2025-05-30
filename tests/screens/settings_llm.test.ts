@@ -294,4 +294,3 @@ test('cerebras settings', async () => {
   await cerebras.find('[name=disableTools]').setValue(true)
   expect(store.config.engines.cerebras.disableTools).toBeTruthy()
 })
-

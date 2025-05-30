@@ -1,7 +1,7 @@
 {
   "name": "witsy",
   "productName": "Witsy",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "Witsy: desktop AI assistant",
   "repository": {
     "type": "git",
@@ -117,7 +117,7 @@
     "mermaid": "^11.6.0",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^4.0.0-beta.6",
+    "multi-llm-ts": "^4.0.0-beta.7",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",
     "ollama": "^0.5.15",
