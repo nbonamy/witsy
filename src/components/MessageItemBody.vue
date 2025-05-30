@@ -107,7 +107,7 @@ const computeBlocks = (content: string|null): Block[] => {
 
       // now image
       let imageUrl = decodeURIComponent(match[match.length - 1])
-      if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://')) {
+      if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://') && !imageUrl.startsWith('data:image/')) {
         imageUrl = `file://${imageUrl}`
       }
 
