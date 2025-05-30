@@ -113,7 +113,7 @@
         "requiredFields": "Einige Felder sind erforderlich"
       }
     },
-    "voice": "Stimme",
+    "voice": "Audio",
     "warning": "Warnung",
     "workingWith": "Arbeiten mit",
     "write": "Schreiben"
@@ -1279,7 +1279,7 @@
     "file": {
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Neuer Chat",
-      "quickPrompt": "Neuer Prompt",
+      "quickPrompt": "Quick Prompt",
       "scratchpad": "@:{'scratchpad.title'}",
       "title": "Datei"
     },
@@ -1364,7 +1364,7 @@
     "attachment": {
       "emptyError": {
         "text": "Bitte versuchen Sie es erneut mit einer anderen Datei.",
-        "title": "Inhalt dieser Datei kann nicht analysiert werden."
+        "title": "Der Inhalt dieser Datei kann nicht analysiert werden."
       },
       "formatError": {
         "text": "Bitte versuchen Sie es mit einer anderen Datei.",
@@ -1606,7 +1606,7 @@
       "lastOneUsed": "Zuletzt verwendet",
       "localeLLM": "LLM-Sprache",
       "localeUI": "UI-Sprache",
-      "promptLLMModel": "Schneller Eingabeaufforderung LLM-Modell",
+      "promptLLMModel": "Quick Prompt LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
       "runAtLogin": "Witsy mit Betriebssystem starten"
     },
