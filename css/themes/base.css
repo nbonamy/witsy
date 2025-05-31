@@ -80,8 +80,17 @@
 .message .body .text pre.hljs {
   overflow-x: auto;
   padding: 12px;
-  padding-bottom: 16px;
   overflow: auto;
+  margin-bottom: 8px;
+}
+
+.message p:has(.copy-code) {
+  margin-top: 0px !important;
+}
+
+.message .variable-font-size .copy-code {
+  cursor: pointer;
+  font-size: 0.95em !important;
 }
 
 .message .body .toggle-reasoning {
