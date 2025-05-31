@@ -1,6 +1,6 @@
 <template>
   <div class="media-container">
-    <video :src="url" :alt="desc" class="media video" @load="onMediaLoaded" controls v-if="isVideo()"/>
+    <video :src="url" :alt="desc" class="media video" @load="onMediaLoaded" controls v-if="isVideo()"></video>
     <img :src="url" :alt="desc" class="media image" @click="onFullscreen" @load="onMediaLoaded" v-else/>
     <div class="media-actions">
       <BIconInfoCircle v-if="prompt" class="action info" @click="onInfo"/>

@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
-import { closeOpenMarkdownTags } from '../../src/services/markdown'
+import { closeOpenMarkdownTags, getCodeBlocks } from '../../src/services/markdown'
 
 test('renders markdown', () => {
   const markdown = '# Hello World'
@@ -199,5 +199,81 @@ test('close open markdowntags', () => {
   expect(closeOpenMarkdownTags('```python\ndef function():\n    print("hello"')).toBe('```python\ndef function():\n    print("hello"```')
   expect(closeOpenMarkdownTags('Check this [link](https://example.com/very/long/url/that/might/be/cut')).toBe('Check this [link](https://example.com/very/long/url/that/might/be/cut)')
 
+})
+
+test('getCodeBlocks', () => {
+
+  // no code blocks
+  expect(getCodeBlocks('')).toEqual([])
+  expect(getCodeBlocks('This is just text')).toEqual([])
+  expect(getCodeBlocks('This has **bold** and *italic*')).toEqual([])
+
+  // Simple code blocks
+  expect(getCodeBlocks('`inline code`')).toEqual([{ start: 0, end: 12 }])
+  expect(getCodeBlocks('```block code```')).toEqual([{ start: 0, end: 15 }])
+  expect(getCodeBlocks('~~~block code~~~')).toEqual([{ start: 0, end: 15 }])
+
+  // Code blocks with text before and after
+  expect(getCodeBlocks('Here is `code` in text')).toEqual([{ start: 8, end: 13 }])
+  expect(getCodeBlocks('Before ```code``` after')).toEqual([{ start: 7, end: 16 }])
+  expect(getCodeBlocks('Start ~~~code~~~ end')).toEqual([{ start: 6, end: 15 }])
+
+  // Multiple code blocks
+  expect(getCodeBlocks('`first` and `second`')).toEqual([
+    { start: 0, end: 6 },
+    { start: 12, end: 19 }
+  ])
+  expect(getCodeBlocks('```first``` and ```second```')).toEqual([
+    { start: 0, end: 10 },
+    { start: 16, end: 27 }
+  ])
+
+  // Mixed code block types
+  expect(getCodeBlocks('`inline` and ```block```')).toEqual([
+    { start: 0, end: 7 },
+    { start: 13, end: 23 }
+  ])
+  expect(getCodeBlocks('~~~first~~~ and `second`')).toEqual([
+    { start: 0, end: 10 },
+    { start: 16, end: 23 }
+  ])
+
+  // Unclosed code blocks (should extend to end)
+  expect(getCodeBlocks('`unclosed code')).toEqual([{ start: 0, end: 13 }])
+  expect(getCodeBlocks('```unclosed block')).toEqual([{ start: 0, end: 16 }])
+  expect(getCodeBlocks('~~~unclosed block')).toEqual([{ start: 0, end: 16 }])
+
+  // Unclosed with text before
+  expect(getCodeBlocks('Text before `unclosed')).toEqual([{ start: 12, end: 20 }])
+  expect(getCodeBlocks('Text before ```unclosed')).toEqual([{ start: 12, end: 22 }])
+
+  // Nested scenarios (outer tags win)
+  expect(getCodeBlocks('```outer `inner` code```')).toEqual([{ start: 0, end: 23 }])
+  expect(getCodeBlocks('~~~outer ```inner``` code~~~')).toEqual([{ start: 0, end: 27 }])
+  expect(getCodeBlocks('`outer ```inner``` code`')).toEqual([{ start: 0, end: 23 }])
+
+  // Nested with different types
+  expect(getCodeBlocks('```js\n`inline`\nconsole.log();\n```')).toEqual([{ start: 0, end: 32 }])
+  expect(getCodeBlocks('~~~\n```nested```\n~~~')).toEqual([{ start: 0, end: 19 }])
+
+  // Adjacent code blocks
+  expect(getCodeBlocks('```first``````second```')).toEqual([
+    { start: 0, end: 10 },
+    { start: 11, end: 22 }
+  ])
+  expect(getCodeBlocks('`first``second`')).toEqual([
+    { start: 0, end: 6 },
+    { start: 7, end: 14 }
+  ])
+
+  // Edge case: tag characters without forming actual tags
+  expect(getCodeBlocks('This has ` but not code')).toEqual([{ start: 9, end: 22 }])
+  expect(getCodeBlocks('This has ``` but not')).toEqual([{ start: 9, end: 19 }])
+
+  // Multiple mixed with unclosed
+  expect(getCodeBlocks('`closed` and ```unclosed')).toEqual([
+    { start: 0, end: 7 },
+    { start: 13, end: 23 }
+  ])
 })
 
