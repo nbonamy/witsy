@@ -24,7 +24,7 @@
 import { ref, inject, computed, onMounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import { closeOpenMarkdownTags } from '../services/markdown'
+import { closeOpenMarkdownTags, getCodeBlocks } from '../services/markdown'
 import MessageItemBodyBlock, { Block } from './MessageItemBodyBlock.vue'
 import Message from '../models/message'
 
@@ -86,10 +86,14 @@ const computeBlocks = (content: string|null): Block[] => {
     return [{ type: 'text', content }]
   }
 
-  // // if transient make sure we close markdown tags
+  // if transient make sure we close markdown tags
   if (props.message.transient) {
     content = closeOpenMarkdownTags(content)
   }
+
+  // now get the code blocks
+  const codeBlocks: { start: number, end: number, content: string }[] = getCodeBlocks(content)
+  //console.log('Code blocks:', codeBlocks)
 
   // extract each <img> in a separate block
   let match
@@ -100,6 +104,11 @@ const computeBlocks = (content: string|null): Block[] => {
   for (const regex of [ regex1, regex2 ]) {
   
     while (match = regex.exec(content)) {
+
+      // check if we are inside a code block
+      if (codeBlocks.find(block => match.index >= block.start && match.index < block.end)) {
+        continue
+      }
 
       // 1st add test until here
       if (match.index > lastIndex) {
