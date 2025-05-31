@@ -63,8 +63,8 @@ test('Renders', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   expect(tab.findAll('.sticky-table-container')).toHaveLength(1)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
-  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(332)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(165)
+  expect(tab.findAll('.sticky-table-container tr.expert button')).toHaveLength(330)
 
 })
 
@@ -103,16 +103,16 @@ test('New expert', async () => {
   tab.vm.selected = null
 
   // new command creates
-  expect(store.experts).toHaveLength(166)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  expect(store.experts).toHaveLength(165)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(165)
   await editor.find('[name=name]').setValue('expert')
   await editor.find('[name=prompt]').setValue('prompt')
   await editor.find('button.default').trigger('click')
 
   // check
-  expect(store.experts).toHaveLength(167)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
-  expect(store.experts[166]).toStrictEqual({
+  expect(store.experts).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  expect(store.experts[165]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
     name: 'expert',
@@ -126,7 +126,7 @@ test('Edit user prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
   const editor = tab.findComponent({ name: 'ExpertEditor' })
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('dblclick')
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(166)').trigger('dblclick')
 
   expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('expert')
   expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('prompt')
@@ -141,9 +141,9 @@ test('Edit user prompt', async () => {
   await editor.find('button.default').trigger('click')
 
   // check
-  expect(store.experts).toHaveLength(167)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
-  expect(store.experts[166]).toStrictEqual({
+  expect(store.experts).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  expect(store.experts[165]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
     name: 'expert2',
@@ -173,8 +173,8 @@ test('Edit system prompt', async () => {
 
   await editor.find('button.default').trigger('click')
 
-  expect(store.experts).toHaveLength(167)
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
+  expect(store.experts).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
   expect(store.experts[0]).toMatchObject({
     id: 'uuid1',
     type: 'system',
@@ -203,10 +203,10 @@ test('Edit system prompt', async () => {
 test('Delete prompt', async () => {
 
   const tab = await switchToTab(wrapper, expertsIndex)
-  await tab.find('.sticky-table-container tr.expert:nth-of-type(167)').trigger('click')
+  await tab.find('.sticky-table-container tr.expert:nth-of-type(166)').trigger('click')
   await tab.find('.list-actions .list-action.delete').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
-  expect(store.experts).toHaveLength(166)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(165)
+  expect(store.experts).toHaveLength(165)
 
 })
 
@@ -215,8 +215,8 @@ test('Copy prompt', async () => {
   const tab = await switchToTab(wrapper, expertsIndex)
   await tab.find('.sticky-table-container tr.expert:nth-of-type(1)').trigger('click')
   await tab.find('.list-actions .list-action.copy').trigger('click')
-  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(167)
-  expect(store.experts).toHaveLength(167)
+  expect(tab.findAll('.sticky-table-container tr.expert')).toHaveLength(166)
+  expect(store.experts).toHaveLength(166)
   expect(store.experts[1]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
