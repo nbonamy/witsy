@@ -168,6 +168,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Close markdown when streaming
 - [x] Multiple attachments
 - [x] Custom OpenAI STT support
 - [x] AI Commands copy/insert/replace shortcuts
