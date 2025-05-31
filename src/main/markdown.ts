@@ -17,7 +17,7 @@ const mdOptions: MarkdownIt.Options = {
       }
       code += '</code></pre>';
       code += '<p><a onclick="navigator.clipboard.writeText(window.api.base64.decode(\'' + Buffer.from(str).toString('base64') + '\'));';
-      code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000); return false;" class="copy">Copy code</a></p>';
+      code += 'this.innerHTML = \'Copied!\'; setTimeout(() => this.innerHTML = \'Copy code\', 1000); return false;" class="copy-code">Copy code</a></p>';
       return code;
     } catch (error) {
       console.log(error)
