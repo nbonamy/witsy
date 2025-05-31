@@ -168,6 +168,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Multiple attachments
+- [x] Custom OpenAI STT support
+- [x] AI Commands copy/insert/replace shortcuts
+- [x] Defaults at folder level
+- [x] Tool selection for chat
+- [x] Realtime STT with Speechmatics
 - [x] Meta/Llama AI support
 - [x] Realtime STT with Fireworks
 - [x] OpenAI image generation
