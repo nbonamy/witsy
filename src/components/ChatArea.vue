@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="chat-area content">
     <header :class="{ 'is-left-most': isLeftMost }">
       <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
       <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
@@ -211,7 +211,8 @@ const onExportPdf = async () => {
 
     // copy and clean-up
     const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area').cloneNode(true) as HTMLElement
-    content.querySelectorAll('.toolbar .action')?.forEach(action => action.remove())
+    content.querySelectorAll('header .icon')?.forEach(action => action.remove())
+    content.querySelector('.model-settings')?.remove()
     content.querySelector('.message .actions')?.remove()
     content.querySelector('.overflow')?.remove()
     content.querySelector('.prompt')?.remove()
@@ -222,9 +223,9 @@ const onExportPdf = async () => {
     content.querySelector<HTMLElement>('main').style.overflow = 'visible'
 
     // adjust title
-    //content.querySelector<HTMLElement>('.toolbar').style.marginTop = '-12px'
-    content.querySelector<HTMLElement>('.toolbar').style.marginLeft = '12px'
-    content.querySelector<HTMLElement>('.toolbar').style.marginRight = '12px'
+    //content.querySelector<HTMLElement>('header').style.marginTop = '-12px'
+    content.querySelector<HTMLElement>('header').style.marginLeft = '12px'
+    content.querySelector<HTMLElement>('header').style.marginRight = '12px'
 
     // replace images with their b64 version
     content.querySelectorAll<HTMLImageElement>('.message .body img').forEach((img) => {
