@@ -61,6 +61,18 @@ export const loadExperts = (source: App|string): Expert[] => {
     }
   }
 
+  // delete deprecated experts
+  const deprecated = [
+    '6e197c43-1074-479b-89d5-3ab8d54ad36b' // doctor
+  ]
+  for (const id of deprecated) {
+    const index = experts.findIndex((expert: Expert) => expert.id === id)
+    if (index !== -1) {
+      experts.splice(index, 1)
+      updated = true
+    }
+  }
+
   // save if needed
   if (updated) {
     saveExperts(source, experts)
