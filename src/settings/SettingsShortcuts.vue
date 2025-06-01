@@ -99,7 +99,7 @@ defineExpose({ load })
 
 .settings form.tab-content:deep() main {
 
-  --label-width: 250px;
+  --label-width: 190px;
   
   max-width: 600px;
   
@@ -111,6 +111,12 @@ defineExpose({ load })
     &:not(:has(label)) {
       margin-top: -0.25rem;
       padding-left: calc(var(--label-width) + 0.5rem);
+      span {
+        width: 220px
+      }
+    }
+    label + * {
+      width: 150px !important;
     }
   }
 }

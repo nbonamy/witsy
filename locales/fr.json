@@ -1859,7 +1859,7 @@
       "quickPrompt": "@:{'menu.file.quickPrompt'}",
       "quit": "Quitter",
       "readAloud": "Lire à haute voix",
-      "runAiCommand": "Exécuter une commande IA",
+      "runAiCommand": "Exécuter Commande IA",
       "scratchpad": "@:{'menu.file.scratchpad'}",
       "settings": "@:{'menu.app.settings'}",
       "startDictation": "@:{'menu.edit.startDictation'}",
