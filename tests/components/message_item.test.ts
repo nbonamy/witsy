@@ -352,8 +352,8 @@ test('Format code', async () => {
   botMessageText.setText('```javascript\nconsole.log(variable)\n```')
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body pre[class=hljs] code[class="hljs variable-font-size"]').exists()).toBe(true)
-  expect(wrapper.find('.body .copy').exists()).toBe(true)
-  expect(wrapper.find('.body .copy').text()).toBe('Copy code')
+  expect(wrapper.find('.body .copy-code').exists()).toBe(true)
+  expect(wrapper.find('.body .copy-code').text()).toBe('Copy code')
 })
 
 test('Format math equations katex', async () => {
