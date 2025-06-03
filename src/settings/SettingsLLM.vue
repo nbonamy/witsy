@@ -1,173 +1,96 @@
 <template>
   <form class="tab-content vertical large">
     <header>
-      <div class="title">{{ t('settings.tabs.models') }}</div>
-      <BIconTrash class="icon delete" @click="onDeleteCustom" v-if="isCustom" />
+      <div class="title">{{ t('settings.tabs.llm') }}</div>
     </header>
     <main>
-      <div class="list-panel">
-        <div class="master">
-          <div class="list">
-            <div class="item" @click="showCreateCustom()">
-              <BIconPlusCircle class="logo create" />
-              {{ t('settings.engines.custom.create') }}
-            </div>
-            <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
-              <EngineLogo :engine="engine.id" :grayscale="true" />
-              {{ engine.label }}
-            </div>
+      <div class="group prompt">
+        <label>{{ t('settings.general.promptLLMModel') }}</label>
+        <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
+        <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+      </div>
+      <div class="group localeLLM">
+        <label>{{ t('settings.general.localeLLM') }}</label>
+        <div class="subgroup">
+          <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
+          <div class="checkbox">
+            <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
+            <div class="label">{{ t('settings.general.forceLocale') }}</div>
           </div>
         </div>
-        <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
       </div>
-      <CreateEngine ref="createEngine" @create="onCreateCustom" />
+      <div class="group length">
+        <label>{{ t('settings.advanced.conversationLength') }}</label>
+        <input type="number" min="1" v-model="conversationLength" @change="save">
+      </div>
     </main>
   </form>
 </template>
 
 <script setup lang="ts">
 
-import { CustomEngineConfig } from '../types/config'
-import { Ref, ref, computed, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
-import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
-import EngineLogo from '../components/EngineLogo.vue'
-import CreateEngine from '../screens/CreateEngine.vue'
-import SettingsAnthropic from './SettingsAnthropic.vue'
-import SettingsAzure from './SettingsAzure.vue'
-import SettingsCerebras from './SettingsCerebras.vue'
-import SettingsDeepSeek from './SettingsDeepSeek.vue'
-import SettingsGoogle from './SettingsGoogle.vue'
-import SettingsGroq from './SettingsGroq.vue'
-import SettingsMeta from './SettingsMeta.vue'
-import SettingsMistralAI from './SettingsMistralAI.vue'
-import SettingsOllama from './SettingsOllama.vue'
-import SettingsOpenAI from './SettingsOpenAI.vue'
-import SettingsOpenRouter from './SettingsOpenRouter.vue'
-import SettingsXAI from './SettingsXAI.vue'
-import SettingsCustomLLM from './SettingsCustomLLM.vue'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import { hasLocalization, t } from '../services/i18n'
+import EngineSelect from '../components/EngineSelect.vue'
+import ModelSelectPlus from '../components/ModelSelectPlus.vue'
+import LangSelect from '../components/LangSelect.vue'
 
-type Engine = {
-  id: string,
-  label: string
-}
+const isMas = ref(false)
+const engine = ref(null)
+const model = ref(null)
+const localeLLM = ref(null)
+const isLocalized = ref(false)
+const forceLocale = ref(false)
+const conversationLength = ref(null)
 
-const llmManager: ILlmManager = LlmFactory.manager(store.config)
-
-const createEngine = ref(null)
-const currentEngine:Ref<string> = ref(llmManager.getChatEngines({ favorites: false })[0])
-const engineSettings = ref(null)
-
-const isCustom = computed(() => llmManager.isCustomEngine(currentEngine.value))
-
-const engines = computed(() => {
-  const engines = llmManager.getChatEngines({ favorites: false }).map(id => {
-    if (llmManager.isCustomEngine(id)) {
-      return {
-        id: id,
-        label: (store.config.engines[id] as CustomEngineConfig).label
-      }
-    } else {
-      return {
-        id: id,
-        label: {
-          anthropic: 'Anthropic',
-          azure: 'Azure',
-          cerebras: 'Cerebras',
-          deepseek: 'DeepSeek',
-          google: 'Google',
-          groq: 'Groq',
-          meta: 'Meta',
-          mistralai: 'Mistral AI',
-          ollama: 'Ollama',
-          openai: 'OpenAI',
-          openrouter: 'OpenRouter',
-          xai: 'xAI',
-        }[id]
-      }
-    }
-  })
-
-  // add azure after mistralai
-  const idx = engines.findIndex(e => e.id == 'mistralai')
-  engines.splice(idx + 1, 0, {
-    id: 'azure',
-    label: 'Azure'
-  })
-
-  // done
-  return engines
+const models = computed(() => {
+  if (!engine.value || engine.value == '') return []
+  if (!store.config.engines[engine.value]) {
+    engine.value = ''
+    model.value = ''
+    save()
+    return []
+  }
+  return store.config.engines[engine.value].models.chat
 })
 
-const currentView = computed(() => {
-  if (currentEngine.value == 'anthropic') return SettingsAnthropic
-  if (currentEngine.value == 'azure') return SettingsAzure
-  if (currentEngine.value == 'cerebras') return SettingsCerebras
-  if (currentEngine.value == 'deepseek') return SettingsDeepSeek
-  if (currentEngine.value == 'google') return SettingsGoogle
-  if (currentEngine.value == 'groq') return SettingsGroq
-  if (currentEngine.value == 'meta') return SettingsMeta
-  if (currentEngine.value == 'mistralai') return SettingsMistralAI
-  if (currentEngine.value == 'ollama') return SettingsOllama
-  if (currentEngine.value == 'openai') return SettingsOpenAI
-  if (currentEngine.value == 'openrouter') return SettingsOpenRouter
-  if (currentEngine.value == 'xai') return SettingsXAI
-  return SettingsCustomLLM
-})
-
-const selectEngine = (engine: Engine) => {
-  currentEngine.value = engine.id
-  nextTick(() => engineSettings.value.load())
-}
-
-const showCreateCustom = (apiSpec?: string) => {
-  createEngine.value.show(apiSpec || (currentEngine.value === 'azure' ? 'azure' : 'openai'))
-}
-
-const onCreateCustom = (payload: { label: string, api: string, baseURL: string, apiKey: string, deployment: string, apiVersion: string}) => {
-  const uuid = 'c' + crypto.randomUUID().replace(/-/g, '')
-  store.config.engines[uuid] = {
-    label: payload.label,
-    api: payload.api,
-    baseURL: payload.baseURL,
-    apiKey: payload.apiKey,
-    deployment: payload.deployment,
-    apiVersion: payload.apiVersion,
-    models: { chat: [], image: [] },
-    model: { chat: '', image: '' }
-  }
-  store.saveSettings()
-  selectEngine({ id: uuid } as Engine)
-  nextTick(() => engineSettings.value.loadModels())
-}
-
-const onDeleteCustom = () => {
-  Dialog.show({
-    target: document.querySelector('.settings .plugins'),
-    title: t('settings.engines.custom.confirmDelete'),
-    text: t('common.confirmation.cannotUndo'),
-    confirmButtonText: t('common.delete'),
-    showCancelButton: true,
-  }).then((result) => {
-    if (result.isConfirmed) {
-      delete store.config.engines[currentEngine.value]
-      selectEngine({ id: llmManager.getChatEngines()[0] } as Engine)
-      store.saveSettings()
-    }
-  })
-}
-
-const load = (payload: { engine: string }) => {
-  if (payload?.engine) {
-    selectEngine({ id: payload.engine } as Engine)
-  } else {
-    engineSettings.value.load()
-  }
+const load = () => {
+  isMas.value = window.api.isMasBuild
+  engine.value = store.config.prompt.engine || ''
+  model.value = store.config.prompt.model || ''
+  localeLLM.value = store.config.llm.locale
+  forceLocale.value = store.config.llm.forceLocale
+  conversationLength.value = store.config.llm.conversationLength || 5
+  onChangeLocaleLLM()
 }
 
 const save = () => {
+  store.config.prompt.engine = engine.value
+  store.config.prompt.model = model.value
+  store.config.llm.locale = localeLLM.value
+  store.config.llm.forceLocale = forceLocale.value
+  store.config.llm.conversationLength = conversationLength.value
+  store.saveSettings()
+}
+
+const onChangeEngine = () => {
+  if (engine.value == '') model.value = ''
+  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
+  save()
+}
+
+const onChangeModel = () => {
+  save()
+}
+
+const onChangeLocaleLLM = () => {
+  save()
+  isLocalized.value = hasLocalization(window.api.config.getI18nMessages(), window.api.config.localeLLM())
+  if (!isLocalized.value) {
+    forceLocale.value = true
+    save()
+  }
 }
 
 defineExpose({ load })
@@ -177,4 +100,27 @@ defineExpose({ load })
 <style scoped>
 @import '../../css/dialog.css';
 @import '../../css/form.css';
+@import '../../css/themes/base.css';
+@import '../../css/themes/openai.css';
+@import '../../css/themes/conversation.css';
+</style>
+
+<style scoped>
+
+.localeLLM div.checkbox {
+  display: flex;
+  align-items: start;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.localeLLM div.checkbox input[type="checkbox"] {
+  flex-basis: 25px;
+  margin-left: 0px;
+}
+
+.localeLLM div.checkbox div.label {
+  margin-top: 2px;
+}
+
 </style>

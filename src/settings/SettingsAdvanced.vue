@@ -11,6 +11,7 @@
         <input type="checkbox" v-model="autoSavePrompt" @change="save" />
         <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       </div>
+      <label>&nbsp;</label>
       <div class="group proxy">
         <label>{{ t('settings.advanced.proxy.title') }}</label>
         <select name="proxyMode" v-model="proxyMode" @change="save">
@@ -22,10 +23,6 @@
       <div class="group custom-proxy" v-if="proxyMode === 'custom'">
         <label>{{ t('settings.advanced.proxy.custom') }}</label>
         <input type="text" name="customProxy" v-model="customProxy" @change="save">
-      </div>
-      <div class="group length">
-        <label>{{ t('settings.advanced.conversationLength') }}</label>
-        <input type="number" min="1" v-model="conversationLength" @change="save">
       </div>
       <div class="group size">
         <label>{{ t('settings.advanced.imageResize') }}</label>
@@ -81,14 +78,12 @@ const instructions = ref('instructions.default')
 const autoSavePrompt = ref(null)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')
-const conversationLength = ref(null)
 const imageResize = ref(null)
 
 const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
   proxyMode.value = store.config.general.proxyMode
   customProxy.value = store.config.general.customProxy
-  conversationLength.value = store.config.llm.conversationLength || 5
   imageResize.value = store.config.llm.imageResize || 768
   onChangeInstructions()
 }
@@ -109,7 +104,6 @@ const save = () => {
   store.config.prompt.autosave = autoSavePrompt.value
   store.config.general.proxyMode = proxyMode.value
   store.config.general.customProxy = customProxy.value
-  store.config.llm.conversationLength = conversationLength.value
   store.config.llm.imageResize = parseInt(imageResize.value)
 
   // update prompt

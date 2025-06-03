@@ -4,24 +4,40 @@
       <div class="title">{{ t('settings.tabs.general') }}</div>
     </header>
     <main>
-      <div class="group prompt">
-        <label>{{ t('settings.general.promptLLMModel') }}</label>
-        <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
-        <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
+      <div class="group appearance">
+        <label>{{ t('settings.general.theme') }}</label>
+        <div class="subgroup">
+          <div @click="setAppearanceTheme('light')" :class="{ selected: appearance == 'light' }">
+            <img src="/assets/appearance-light.png" />
+            {{ t('settings.general.themes.light') }}
+          </div>
+          <div @click="setAppearanceTheme('dark')" :class="{ selected: appearance == 'dark' }">
+            <img src="/assets/appearance-dark.png" />
+            {{ t('settings.general.themes.dark') }}
+          </div>
+          <div @click="setAppearanceTheme('system')" :class="{ selected: appearance == 'system' }">
+            <img src="/assets/appearance-system.png" />
+            {{ t('settings.general.themes.system') }}
+          </div>
+        </div>
+      </div>
+      <div class="group lightTint" v-if="appearanceTheme.getTheme() === 'light'">
+        <label>{{ t('settings.general.lightTint') }}</label>
+        <select v-model="lightTint" @change="onTintChange">
+          <option value="white">{{ t('settings.general.tints.white') }}</option>
+          <option value="gray">{{ t('settings.general.tints.gray') }}</option>
+        </select>
+      </div>
+      <div class="group darkTint" v-if="appearanceTheme.getTheme() === 'dark'">
+        <label>{{ t('settings.general.darkTint') }}</label>
+        <select v-model="darkTint" @change="onTintChange">
+          <option value="black">{{ t('settings.general.tints.black') }}</option>
+          <option value="blue">{{ t('settings.general.tints.blue') }}</option>
+        </select>
       </div>
       <div class="group localeUI">
         <label>{{ t('settings.general.localeUI') }}</label>
         <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
-      </div>
-      <div class="group localeLLM">
-        <label>{{ t('settings.general.localeLLM') }}</label>
-        <div class="subgroup">
-          <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
-          <div class="checkbox">
-            <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
-            <div class="label">{{ t('settings.general.forceLocale') }}</div>
-          </div>
-        </div>
       </div>
       <div class="group reset-tips">
         <label>{{ t('settings.general.resetTips') }}</label>
@@ -45,46 +61,48 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { store } from '../services/store'
-import { t, hasLocalization } from '../services/i18n'
-import EngineSelect from '../components/EngineSelect.vue'
-import ModelSelectPlus from '../components/ModelSelectPlus.vue'
+import { t } from '../services/i18n'
+import useAppearanceTheme from '../composables/appearance_theme'
 import LangSelect from '../components/LangSelect.vue'
 
-const engine = ref(null)
-const model = ref(null)
+// events
+import useEventBus from '../composables/event_bus'
+const { emitEvent } = useEventBus()
+
+// init
+const appearanceTheme = useAppearanceTheme()
+
+const appearance = ref(null)
+const darkTint = ref(null)
+const lightTint = ref(null)
 const locales = ref([])
 const localeUI = ref(null)
-const localeLLM = ref(null)
-const isLocalized = ref(false)
-const forceLocale = ref(false)
 const runAtLogin = ref(false)
 const hideOnStartup = ref(false)
 const keepRunning = ref(false)
 
-const models = computed(() => {
-  if (!engine.value || engine.value == '') return []
-  if (!store.config.engines[engine.value]) {
-    engine.value = ''
-    model.value = ''
-    save()
-    return []
-  }
-  return store.config.engines[engine.value].models.chat
-})
+const setAppearanceTheme = (value: string) => {
+  appearance.value = value
+  window.api.setAppearanceTheme(value)
+  save()
+}
+
+const onTintChange = () => {
+  save()
+  emitEvent('appearance-tint-changed')
+}
 
 const load = () => {
-  engine.value = store.config.prompt.engine || ''
-  model.value = store.config.prompt.model || ''
+  appearance.value = store.config.appearance.theme || 'system'
+  lightTint.value = store.config.appearance.lightTint || 'white'
+  darkTint.value = store.config.appearance.darkTint || 'black'
   locales.value = Object.keys(window.api.config.getI18nMessages())
   localeUI.value = store.config.general.locale
-  localeLLM.value = store.config.llm.locale
-  forceLocale.value = store.config.llm.forceLocale
   runAtLogin.value = window.api.runAtLogin.get()
   hideOnStartup.value = store.config.general.hideOnStartup
   keepRunning.value = store.config.general.keepRunning
-  onChangeLocaleLLM()
 }
 
 const onResetTips = () => {
@@ -92,31 +110,11 @@ const onResetTips = () => {
   store.saveSettings()
 }
 
-const onChangeEngine = () => {
-  if (engine.value == '') model.value = ''
-  else model.value = store.config.engines[engine.value].models.chat?.[0]?.id
-  save()
-}
-
-const onChangeModel = () => {
-  save()
-}
-
-const onChangeLocaleLLM = () => {
-  save()
-  isLocalized.value = hasLocalization(window.api.config.getI18nMessages(), window.api.config.localeLLM())
-  if (!isLocalized.value) {
-    forceLocale.value = true
-    save()
-  }
-}
-
 const save = () => {
-  store.config.prompt.engine = engine.value
-  store.config.prompt.model = model.value
+  store.config.appearance.theme = appearance.value
+  store.config.appearance.lightTint = lightTint.value
+  store.config.appearance.darkTint = darkTint.value
   store.config.general.locale = localeUI.value
-  store.config.llm.locale = localeLLM.value
-  store.config.llm.forceLocale = forceLocale.value
   window.api.runAtLogin.set(runAtLogin.value)
   store.config.general.hideOnStartup = hideOnStartup.value
   store.config.general.keepRunning = keepRunning.value
@@ -142,20 +140,42 @@ form .group label {
   min-width: 170px;
 }
 
-.localeLLM div.checkbox {
+.appearance {
+  padding-bottom: 8px;
+  margin-top: 0px;
+}
+
+.appearance .subgroup {
+  margin-top: 1rem;
   display: flex;
-  align-items: start;
-  margin-top: 8px;
-  gap: 6px;
+  flex-direction: row;
+  justify-content: center;
+  gap: 3rem;
 }
 
-.localeLLM div.checkbox input[type="checkbox"] {
-  flex-basis: 25px;
-  margin-left: 0px;
+.appearance .subgroup div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.localeLLM div.checkbox div.label {
-  margin-top: 2px;
+.appearance img {
+  height: auto;
+  width: 64px;
+  object-fit: contain;
+  padding: 1px;
+  border: 3px solid transparent;
+}
+
+.appearance div {
+  text-align: center;
+}
+
+.appearance div.selected img {
+  border: 3px solid var(--highlight-color);
+  border-radius: 8px;
 }
 
 </style>
