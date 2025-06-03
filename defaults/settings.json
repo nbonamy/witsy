@@ -33,6 +33,7 @@
     },
     "chat": {
       "showReasoning": true,
+      "showToolCalls": "calling",
       "theme": "openai",
       "fontFamily": "",
       "fontSize": 3

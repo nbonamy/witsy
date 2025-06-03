@@ -85,15 +85,9 @@ for (let i=1; i<tabs.length; i++) {
 
 test('Settings General', async () => {
   
-  const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, 0)
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
-  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
-  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
-  expect(store.config.prompt.engine).toBe('')
-  expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
   
   // helper
   const checkAndReset = (times: number = 1) => {
@@ -101,83 +95,6 @@ test('Settings General', async () => {
     expect(store.saveSettings).toHaveBeenCalledTimes(times)
     vi.clearAllMocks()
   }
-
-  // set prompt engine
-  tab.find('.group.prompt select.engine').setValue('anthropic')
-  await wrapper.vm.$nextTick()
-  expect(store.config.llm.forceLocale).toBe(false)
-  expect(store.config.prompt.engine).toBe('anthropic')
-  expect(store.config.prompt.model).toBe('model1')
-  checkAndReset()
-  
-  // set prompt model
-  const modelSelect = findModelSelectoPlus(tab)
-  await modelSelect.open()
-  await modelSelect.select(1)
-  await wrapper.vm.$nextTick()
-  expect(store.config.prompt.model).toBe('model2')
-  checkAndReset()
-
-  // set ui locale to french
-  expect(store.config.general.locale).toBe('')
-  tab.find('.group.localeUI select').setValue('fr-FR')
-  expect(store.config.general.locale).toBe('fr-FR')
-  checkAndReset()
-
-  // set it back to default
-  tab.find('.group.localeUI select').setValue('')
-  expect(store.config.general.locale).toBe('')
-  checkAndReset()
-
-  // set llm locale to french: translation exists so forceLocale is false
-  expect(store.config.llm.locale).toBe('')
-  expect(store.config.llm.forceLocale).toBe(false)
-  tab.find('.group.localeLLM select').setValue('fr-FR')
-  expect(store.config.llm.locale).toBe('fr-FR')
-  expect(store.config.llm.forceLocale).toBe(false)
-  checkAndReset()
-
-  // set forceLocale to true
-  tab.find('.group.localeLLM input').setValue(true)
-  expect(store.config.llm.forceLocale).toBe(true)
-  checkAndReset()
-
-  // set it back to false
-  tab.find('.group.localeLLM input').setValue(false)
-  expect(store.config.llm.forceLocale).toBe(false)
-  checkAndReset()
-
-  // set llm locale to spanish: translation does not exist so forceLocale is true
-  expect(store.config.llm.locale).not.toBe('es-ES')
-  tab.find('.group.localeLLM select').setValue('es-ES')
-  expect(store.config.llm.locale).toBe('es-ES')
-  expect(store.config.llm.forceLocale).toBe(true)
-  checkAndReset(2)
-
-  // now run at login
-  expect(window.api.runAtLogin.get()).not.toBe(true)
-  tab.find('.group.run-at-login input').setValue(true)
-  expect(window.api.runAtLogin.get()).toBe(true)
-  checkAndReset()
-
-  // hide on startup
-  expect(store.config.general.hideOnStartup).not.toBe(true)
-  tab.find('.group.hide-on-startup input').setValue(true)
-  expect(store.config.general.hideOnStartup).toBe(true)
-  checkAndReset()
-
-  // and keep running
-  expect(store.config.general.keepRunning).not.toBe(false)
-  tab.find('.group.keep-running input').setValue(false)
-  expect(store.config.general.keepRunning).toBe(false)
-  checkAndReset()
-
-})
-
-test('Settings Appearance', async () => {
-  
-  const tab = await switchToTab(wrapper, 1)
-  expect(tab.findAll('.group')).toHaveLength(7)
 
   expect(store.config.appearance.theme).toBe('system')
 
@@ -199,10 +116,115 @@ test('Settings Appearance', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
+  // set ui locale to french
+  expect(store.config.general.locale).toBe('')
+  tab.find('.group.localeUI select').setValue('fr-FR')
+  expect(store.config.general.locale).toBe('fr-FR')
+  checkAndReset()
+
+  // set it back to default
+  tab.find('.group.localeUI select').setValue('')
+  expect(store.config.general.locale).toBe('')
+  checkAndReset()
+
+  // now run at login
+  expect(window.api.runAtLogin.get()).not.toBe(true)
+  tab.find('.group.run-at-login input').setValue(true)
+  expect(window.api.runAtLogin.get()).toBe(true)
+  checkAndReset()
+
+  // hide on startup
+  expect(store.config.general.hideOnStartup).not.toBe(true)
+  tab.find('.group.hide-on-startup input').setValue(true)
+  expect(store.config.general.hideOnStartup).toBe(true)
+  checkAndReset()
+
+  // and keep running
+  expect(store.config.general.keepRunning).not.toBe(false)
+  tab.find('.group.keep-running input').setValue(false)
+  expect(store.config.general.keepRunning).toBe(false)
+  checkAndReset()
+
+})
+
+test('Settings LLM', async () => {
+  
+  const manager = LlmFactory.manager(store.config)
+  const tab = await switchToTab(wrapper, 1)
+  expect(tab.findAll('.group')).toHaveLength(3)
+  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
+  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
+  expect(store.config.prompt.engine).toBe('')
+  expect(store.config.prompt.model).toBe('')
+  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
+
+  // set prompt engine
+  tab.find('.group.prompt select.engine').setValue('anthropic')
+  await wrapper.vm.$nextTick()
+  expect(store.config.llm.forceLocale).toBe(false)
+  expect(store.config.prompt.engine).toBe('anthropic')
+  expect(store.config.prompt.model).toBe('model1')
+  vi.clearAllMocks()
+  
+  // set prompt model
+  const modelSelect = findModelSelectoPlus(tab)
+  await modelSelect.open()
+  await modelSelect.select(1)
+  await wrapper.vm.$nextTick()
+  expect(store.config.prompt.model).toBe('model2')
+  vi.clearAllMocks()
+
+  // set llm locale to french: translation exists so forceLocale is false
+  expect(store.config.llm.locale).toBe('')
+  expect(store.config.llm.forceLocale).toBe(false)
+  tab.find('.group.localeLLM select').setValue('fr-FR')
+  expect(store.config.llm.locale).toBe('fr-FR')
+  expect(store.config.llm.forceLocale).toBe(false)
+  vi.clearAllMocks()
+
+  // set forceLocale to true
+  tab.find('.group.localeLLM input').setValue(true)
+  expect(store.config.llm.forceLocale).toBe(true)
+  vi.clearAllMocks()
+
+  // set it back to false
+  tab.find('.group.localeLLM input').setValue(false)
+  expect(store.config.llm.forceLocale).toBe(false)
+  vi.clearAllMocks()
+
+  // set llm locale to spanish: translation does not exist so forceLocale is true
+  expect(store.config.llm.locale).not.toBe('es-ES')
+  tab.find('.group.localeLLM select').setValue('es-ES')
+  expect(store.config.llm.locale).toBe('es-ES')
+  expect(store.config.llm.forceLocale).toBe(true)
+  vi.clearAllMocks()
+
+  expect(store.config.llm.conversationLength).not.toBe(10)
+  tab.find('.group.length input').setValue(10)
+  expect(store.config.llm.conversationLength).toBe(10)
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+})
+
+test('Settings Chat', async () => {
+  
+  const tab = await switchToTab(wrapper, 2)
+  expect(tab.findAll('.group')).toHaveLength(6)
+
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
   tab.find('.group.theme select').setValue('conversation')
   expect(store.config.appearance.chat.theme).toBe('conversation')
   expect(store.saveSettings).toHaveBeenCalledOnce()
+  vi.clearAllMocks()
+
+  expect(store.config.appearance.chat.showToolCalls).toBe('calling')
+  tab.find('.group.tools select').setValue('never')
+  expect(store.config.appearance.chat.showToolCalls).toBe('never')
+  expect(store.saveSettings).toHaveBeenCalledOnce()
+  tab.find('.group.tools select').setValue('always')
+  expect(store.config.appearance.chat.showToolCalls).toBe('always')
+  expect(store.saveSettings).toHaveBeenCalledTimes(2)
   vi.clearAllMocks()
 
   expect(store.config.appearance.chat.fontSize).not.toBe('2')
@@ -215,8 +237,8 @@ test('Settings Appearance', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = await switchToTab(wrapper, 9)
-  expect(tab.findAll('.group')).toHaveLength(6)
+  const tab = await switchToTab(wrapper, 10)
+  expect(tab.findAll('.group')).toHaveLength(5)
 
   expect(store.config.prompt.autosave).not.toBe(true)
   tab.find('.group.autosave input').setValue(true)
@@ -241,12 +263,6 @@ test('Settings Advanced', async () => {
   await tab.find('[name=customProxy]').setValue('http://localhost:8080')
   expect(store.config.general.proxyMode).toBe('custom')
   expect(store.config.general.customProxy).toBe('http://localhost:8080')
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
-
-  expect(store.config.llm.conversationLength).not.toBe(10)
-  tab.find('.group.length input').setValue(10)
-  expect(store.config.llm.conversationLength).toBe(10)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

@@ -7,7 +7,8 @@
       <main>
         <ul>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-          <SettingsTab class="appearance" :title="t('settings.tabs.appearance')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
+          <SettingsTab class="llm" :title="t('settings.tabs.llm')"><BIconBox class="icon" /></SettingsTab>
+          <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
           <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
@@ -21,8 +22,9 @@
     </div>
     <div class="content">
       <SettingsGeneral ref="settingsGeneral" />
-      <SettingsAppearance ref="settingsAppearance" />
       <SettingsLLM ref="settingsLLM" />
+      <SettingsChat ref="settingsChat" />
+      <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
       <SettingsCommands ref="settingsCommands" />
@@ -41,11 +43,12 @@ import { ref, onMounted, onUnmounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
-import SettingsAppearance from '../settings/SettingsAppearance.vue'
+import SettingsLLM from '../settings/SettingsLLM.vue'
+import SettingsChat from '../settings/SettingsChat.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
 import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
-import SettingsLLM from '../settings/SettingsLLM.vue'
+import SettingsModels from '../settings/SettingsModels.vue'
 import SettingsPlugins from '../settings/SettingsPlugins.vue'
 import SettingsMcp from '../settings/SettingsMcp.vue'
 import SettingsVoice from '../settings/SettingsVoice.vue'
@@ -65,8 +68,9 @@ const props = defineProps({
 const tabs = ref<HTMLElement>(null)
 const initialTab = ref('general')
 const settingsGeneral = ref(null)
-const settingsAppearance = ref(null)
 const settingsLLM = ref(null)
+const settingsChat = ref(null)
+const settingsModels = ref(null)
 const settingsPlugins = ref(null)
 const settingsMcp = ref(null)
 const settingsCommands = ref(null)
@@ -77,8 +81,9 @@ const settingsAdvanced = ref(null)
 
 const settings = [
   settingsGeneral,
-  settingsAppearance,
   settingsLLM,
+  settingsChat,
+  settingsModels,
   settingsPlugins,
   settingsMcp,
   settingsCommands,
@@ -95,7 +100,7 @@ onMounted(async () => {
     if (params?.initialTab) {
       showTab(params.initialTab)
       if (params.initialTab === 'models' && params.engine) {
-        settingsLLM.value?.load({ engine: params.engine })
+        settingsModels.value?.load({ engine: params.engine })
       }
       if (params.initialTab === 'voice' && params.engine) {
         settingsVoice.value?.load({ engine: params.engine })
