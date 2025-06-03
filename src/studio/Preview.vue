@@ -113,8 +113,8 @@ const onInfo = () => {
   let text = `Engine: ${props.message.engine}\nModel: ${props.message.model}`
 
   // add extra params
-  if (props.message.toolCall?.calls) {
-    props.message.toolCall.calls.forEach((call) => {
+  if (props.message.toolCalls) {
+    props.message.toolCalls.forEach((call) => {
       Object.keys(call.params).forEach((key) => {
         text += `\n${key}: ${call.params[key]}`
       })

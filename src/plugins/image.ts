@@ -40,7 +40,7 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return `#${this.config.engine}# Painting pixels…`
+    return `Painting pixels…`
   }
 
   getParameters(): PluginParameter[] {

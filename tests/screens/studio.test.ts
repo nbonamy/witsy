@@ -280,10 +280,7 @@ test('Generates - Custom Params OpenAI', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://openai/dall-e-3/prompt'
     }) ],
-    toolCall: {
-      status: expect.any(String),
-      calls: [ expect.objectContaining({ params: { quality: 'hd', style: 'vivid' } }) ]
-    }
+    toolCalls: [ expect.objectContaining({ params: { quality: 'hd', style: 'vivid' } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
@@ -333,10 +330,7 @@ test('Generates - Custom Params HuggingFace', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://huggingface/sdxl/prompt'
     }) ],
-    toolCall: {
-      status: expect.any(String),
-      calls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
-    }
+    toolCalls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
@@ -394,10 +388,7 @@ test('Generates - User Params', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://replicate/flux/prompt'
     }) ],
-    toolCall: {
-      status: expect.any(String),
-      calls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
-    }
+    toolCalls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
@@ -477,7 +468,7 @@ test('Upload', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://file_saved'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -524,7 +515,7 @@ test('Edit', async () => {
       url: 'file://file_saved',
       content: 'file://file_saved_encoded'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
   expect(wrapper.vm.message).toMatchObject({
@@ -535,7 +526,7 @@ test('Edit', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://google/gemini-2/prompt'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
 })
@@ -579,7 +570,7 @@ test('Edit with preserve', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://google/gemini-2/prompt'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
 })
@@ -620,7 +611,7 @@ test('Undo / Redo', async () => {
       url: 'file://file_saved',
       content: '',
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
   expect(wrapper.vm.redoStack[0]).toMatchObject({
@@ -632,7 +623,7 @@ test('Undo / Redo', async () => {
       url: 'file://google/gemini-2/prompt',
       content: 'file://google/gemini-2/prompt_encoded',
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
   expect(preview.find('.icon.undo').classes()).toContain('disabled')
@@ -657,7 +648,7 @@ test('Undo / Redo', async () => {
       url: 'file://file_saved',
       content: 'file://file_saved_encoded'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
   expect(wrapper.vm.message).toMatchObject({
@@ -668,7 +659,7 @@ test('Undo / Redo', async () => {
     attachments: [ expect.objectContaining({
       url: 'file://file_saved'
     }) ],
-    toolCall: null
+    toolCalls: []
   })
 
 })

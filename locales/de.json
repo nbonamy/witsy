@@ -1318,6 +1318,11 @@
       "active": "Denken",
       "hide": "Begründung ausblenden",
       "show": "Begründung anzeigen"
+    },
+    "toolCall": {
+      "call": "Tool-Aufruf: {name}",
+      "params": "Parameter",
+      "results": "Ergebnisse"
     }
   },
   "modelPull": {
@@ -1470,36 +1475,28 @@
       "resetToDefault": "Auf Standardwert zurücksetzen",
       "systemInstructions": "System-Prompt"
     },
-    "appearance": {
-      "chatFont": "Chat-Schriftart",
-      "chatFontExample": {
+    "chat": {
+      "font": "Chat-Schriftart",
+      "fontExample": {
         "text": "So sieht eine Chatnachricht aus.",
         "title": "Beispiel für eine Chatnachricht"
       },
-      "chatFontSize": "Chat-Schriftgröße",
-      "chatListLayout": "Layout der Chatliste",
-      "chatListLayouts": {
+      "fontSize": "Chat-Schriftgröße",
+      "listLayout": "Layout der Chatliste",
+      "listLayouts": {
         "compact": "Kompakt",
         "cozy": "Gemütlich"
       },
-      "chatTheme": "Chat-Theme",
-      "chatThemes": {
+      "showToolCalls": {
+        "always": "Immer",
+        "calling": "Nur während der Tool-Ausführung",
+        "never": "Nie",
+        "title": "Tool-Aufrufe anzeigen"
+      },
+      "theme": "Chat-Theme",
+      "themes": {
         "conversation": "Unterhaltung",
         "openai": "OpenAI"
-      },
-      "darkTint": "Dunkler Farbton",
-      "lightTint": "Heller Farbton",
-      "theme": "Erscheinungsbild",
-      "themes": {
-        "dark": "Dunkel",
-        "light": "Hell",
-        "system": "System"
-      },
-      "tints": {
-        "black": "Schwarz",
-        "blue": "Blau",
-        "gray": "Grau",
-        "white": "Weiß"
       }
     },
     "commands": {
@@ -1605,15 +1602,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "Dunkler Farbton",
       "forceLocale": "Modell auffordern, immer diese Sprache zu sprechen (Ergebnisse können variieren)",
       "hideOnStartup": "Hauptfenster beim Start ausblenden",
       "keepInStatusBar": "Im System-Tray behalten",
       "lastOneUsed": "Zuletzt verwendet",
+      "lightTint": "Heller Farbton",
       "localeLLM": "LLM-Sprache",
       "localeUI": "UI-Sprache",
       "promptLLMModel": "Quick Prompt LLM-Modell",
       "resetTips": "Tipps zurücksetzen",
-      "runAtLogin": "Witsy mit Betriebssystem starten"
+      "runAtLogin": "Witsy mit Betriebssystem starten",
+      "theme": "Erscheinungsbild",
+      "themes": {
+        "dark": "Dunkel",
+        "light": "Hell",
+        "system": "System"
+      },
+      "tints": {
+        "black": "Schwarz",
+        "blue": "Blau",
+        "gray": "Grau",
+        "white": "Weiß"
+      }
     },
     "mcp": {
       "addCustomServer": "Benutzerdefinierten Server hinzufügen…",
@@ -1734,10 +1745,11 @@
     },
     "tabs": {
       "advanced": "Erweitert",
-      "appearance": "Aussehen",
+      "chat": "Chat",
       "commands": "Befehle",
       "experts": "Experten",
       "general": "Allgemein",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "Modelle",
       "plugins": "Plugins",

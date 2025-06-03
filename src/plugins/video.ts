@@ -35,7 +35,7 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return `#${this.config.engine}# Animating frames…`
+    return `Animating frames…`
   }
 
   getParameters(): PluginParameter[] {

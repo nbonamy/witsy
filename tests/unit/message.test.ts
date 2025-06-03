@@ -13,7 +13,7 @@ test('Build from role and text', () => {
   expect(message.type).toBe('text')
   expect(message.content).toBe('content')
   expect(message.attachments).toStrictEqual([])
-  expect(message.toolCall).toBeNull()
+  expect(message.toolCalls).toStrictEqual([])
   expect(message.transient).toBe(false)
   expect(message.createdAt - Date.now()).toBeLessThan(100)  
 })
@@ -34,7 +34,7 @@ test('Build from JSON', () => {
   expect(message1.content).toBe('content')
   expect(message1.attachments).toStrictEqual([])
   expect(message1.transient).toBe(false)
-  expect(message1.toolCall).toBeNull()
+  expect(message1.toolCalls).toStrictEqual([])
 
   const message2 = Message.fromJson({
     uuid: 'uuid',
@@ -51,7 +51,7 @@ test('Build from JSON', () => {
   expect(message2.content).toBe('content')
   expect(message2.attachments).toHaveLength(1)
   expect(message2.transient).toBe(false)
-  expect(message2.toolCall).toBeNull()
+  expect(message2.toolCalls).toStrictEqual([])
 
   const message3 = Message.fromJson({
     uuid: 'uuid',
@@ -71,7 +71,26 @@ test('Build from JSON', () => {
   expect(message3.content).toBe('content')
   expect(message3.attachments).toHaveLength(2)
   expect(message3.transient).toBe(false)
-  expect(message3.toolCall).toBeNull()
+  expect(message3.toolCalls).toStrictEqual([])
+
+  // backwards compatibility with toolCall
+  const message4 = Message.fromJson({
+    uuid: 'uuid',
+    type: 'text',
+    createdAt: 1,
+    role: 'role',
+    content: 'content',
+    toolCall: { calls: [
+      { name: 'tool1', params: ['arg1'], result: 'result1' },
+      { name: 'tool2', params: ['arg2'], result: 'result2' },
+    ], status: 'done' },
+    transient: true,
+  })
+  expect(message4.toolCalls).toStrictEqual([
+    { id: '1', name: 'tool1', done: true, status: undefined, params: ['arg1'], result: 'result1' },
+    { id: '2', name: 'tool2', done: true, status: undefined, params: ['arg2'], result: 'result2' }
+  ])
+
 })
 
 test('Text message', () => {
@@ -94,19 +113,23 @@ test('Image message', () => {
 
 test('Tool call message', () => {
   const message = new Message('user')
-  message.setToolCall({ type: 'tool', name: 'tool', status: 'Calling a tool', done: false })
-  expect(message.toolCall).not.toBeNull()
-  expect(message.toolCall!.status).toBe('Calling a tool')
-  expect(message.toolCall!.calls).toStrictEqual([])
-  message.setToolCall({ type: 'tool', name: 'tool', status: 'Calling a tool', done: true })
-  expect(message.toolCall!.status).toBeNull()
-  expect(message.toolCall!.calls).toStrictEqual([])
-  message.setToolCall({ type: 'tool', name: 'tool1', call: { params: ['arg1'], result: 'result1' }, done: true })
-  expect(message.toolCall!.status).toBeNull()
-  expect(message.toolCall!.calls.length).toBe(1)
-  expect(message.toolCall!.calls[0]).toStrictEqual({ name: 'tool1', params: ['arg1'], result: 'result1' })
-  message.setToolCall({ type: 'tool', name: 'tool2', call: { params: ['arg2'], result: 'result2' }, done: true })
-  expect(message.toolCall!.calls.length).toBe(2)
-  expect(message.toolCall!.calls[0]).toStrictEqual({ name: 'tool1', params: ['arg1'], result: 'result1' })
-  expect(message.toolCall!.calls[1]).toStrictEqual({ name: 'tool2', params: ['arg2'], result: 'result2' })
+
+  // same tool update
+  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Preparing the tool', done: false })
+  expect(message.toolCalls).toHaveLength(1)
+  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Calling the tool', done: false })
+  expect(message.toolCalls).toHaveLength(1)
+  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: undefined, done: true })
+  expect(message.toolCalls).toHaveLength(1)
+
+  // new tool
+  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  expect(message.toolCalls).toHaveLength(2)
+  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: true })
+  expect(message.toolCalls).toHaveLength(2)
+
+  // special google case
+  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  expect(message.toolCalls).toHaveLength(3)
+
 })

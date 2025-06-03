@@ -1337,6 +1337,11 @@
       "active": "Myślenie",
       "hide": "Ukryj uzasadnienie",
       "show": "Pokaż uzasadnienie"
+    },
+    "toolCall": {
+      "call": "Wywołanie narzędzia: {name}",
+      "params": "Parametry",
+      "results": "Wyniki"
     }
   },
   "modelPull": {
@@ -1500,36 +1505,28 @@
       "resetToDefault": "Przywróć wartość domyślną",
       "systemInstructions": "Instrukcje systemowe"
     },
-    "appearance": {
-      "chatFont": "Czcionka czatu",
-      "chatFontExample": {
+    "chat": {
+      "font": "Czcionka czatu",
+      "fontExample": {
         "text": "Tak wygląda wiadomość czatu.",
         "title": "Przykład wiadomości czatu"
       },
-      "chatFontSize": "Rozmiar czcionki czatu",
-      "chatListLayout": "Układ listy czatów",
-      "chatListLayouts": {
+      "fontSize": "Rozmiar czcionki czatu",
+      "listLayout": "Układ listy czatu",
+      "listLayouts": {
         "compact": "Kompaktowy",
-        "cozy": "Wygodny"
+        "cozy": "Przytulny"
       },
-      "chatTheme": "Motyw czatu",
-      "chatThemes": {
-        "conversation": "Konwersacja",
-        "openai": "OpenAI"
+      "showToolCalls": {
+        "always": "Zawsze",
+        "calling": "Tylko podczas wykonywania narzędzi",
+        "never": "Nigdy",
+        "title": "Pokaż wywołania narzędzi"
       },
-      "darkTint": "Odcień ciemny",
-      "lightTint": "Jasny odcień",
-      "theme": "Motyw",
+      "theme": "Motyw czatu",
       "themes": {
-        "dark": "Ciemny",
-        "light": "Jasny",
-        "system": "Systemowy"
-      },
-      "tints": {
-        "black": "Czarny",
-        "blue": "Niebieski",
-        "gray": "Szary",
-        "white": "Biały"
+        "conversation": "Rozmowa",
+        "openai": "OpenAI"
       }
     },
     "commands": {
@@ -1635,15 +1632,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "Ciemny odcień",
       "forceLocale": "Wymuszanie języka interfejsu",
       "hideOnStartup": "Ukryj okno przy starcie",
       "keepInStatusBar": "Pokaż na pasku menu",
       "lastOneUsed": "Ostatnio używany",
+      "lightTint": "Jasny odcień",
       "localeLLM": "Język LLM",
       "localeUI": "Język interfejsu",
       "promptLLMModel": "Szybki model podpowiedzi LLM",
       "resetTips": "Resetuj podpowiedzi i wskazówki",
-      "runAtLogin": "Uruchom przy logowaniu"
+      "runAtLogin": "Uruchom przy logowaniu",
+      "theme": "Wygląd",
+      "themes": {
+        "dark": "Ciemny",
+        "light": "Jasny",
+        "system": "Systemowy"
+      },
+      "tints": {
+        "black": "Czarny",
+        "blue": "Niebieski",
+        "gray": "Szary",
+        "white": "Biały"
+      }
     },
     "load": {
       "error": {
@@ -1770,10 +1781,11 @@
     },
     "tabs": {
       "advanced": "Zaawansowane",
-      "appearance": "Wygląd",
+      "chat": "Czat",
       "commands": "Polecenia",
       "experts": "Eksperci",
       "general": "Ogólne",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "Modele",
       "plugins": "Wtyczki",

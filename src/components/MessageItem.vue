@@ -23,14 +23,14 @@
       </div>
 
       <!-- content -->
-      <div v-if="message.type == 'text' && message.content !== null">
+      <div class="message-content" v-if="message.type == 'text' && message.content !== null">
         <MessageItemBody :message="message" @media-loaded="onMediaLoaded" />
       </div>
 
       <!-- transient information -->
-      <div v-if="message.transient" class="transient">
-        <Loader />
-        <span v-if="message.toolCall?.status" class="tool-call" v-html="toolStatus"></span>
+      <div v-if="message.transient" class="message-transient">
+        <MessageItemToolBlock :tool-call="runningTool" v-if="runningTool" />
+        <Loader v-else />
       </div>
 
     </div>
@@ -49,6 +49,7 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import UserAvatar from '../../assets/person.crop.circle.svg?component'
 import MessageItemBody from './MessageItemBody.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
+import MessageItemToolBlock from './MessageItemToolBlock.vue'
 import MessageItemActions from './MessageItemActions.vue'
 import Chat from '../models/chat'
 import Attachment from '../models/attachment'
@@ -137,9 +138,11 @@ const imageUrl = computed(() => {
 
 })
 
-const toolStatus = computed(() => {
-  if (!props.message.toolCall?.status) return ''
-  return props.message.toolCall.status.replaceAll(/#(.*?)#/g, '<span class="tag">$1</span>')
+const runningTool = computed(() => {
+  if (store.config.appearance.chat.showToolCalls === 'never') return null
+  if (props.message.toolCalls.length === 0) return null
+  const lastToolCall = props.message.toolCalls[props.message.toolCalls.length - 1]
+  return lastToolCall.done ? null : lastToolCall
 })
 
 // using simple css :hover
@@ -209,39 +212,10 @@ img {
   cursor: pointer;
 }
 
-.transient {
+.message-transient {
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  .tool-call {
-    margin-left: 8px;
-    font-size: 10.5pt;
-    color: var(--message-list-tip-text-color);
-
-    --tag-bg-color-mix: 92.5%;
-    --tag-fg-color-mix: 75%;
-
-    &:deep() .tag {
-      font-family: monospace;
-      background-color: color-mix(in srgb, var(--text-color), transparent var(--tag-bg-color-mix));
-      color: color-mix(in srgb, var(--text-color), var(--message-list-tip-text-color) var(--tag-fg-color-mix));
-      padding: 2px 4px;
-      margin: 0px 2px;
-      border-radius: 4px;
-      font-size: 9.5pt;
-      position: relative;
-      top: -1px;
-    }
-
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .transient .tool-call {
-    --tag-bg-color-mix: 80%;
-    --tag-fg-color-mix: 75%;
-  }
 }
 
 </style>

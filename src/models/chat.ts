@@ -113,7 +113,7 @@ export default class Chat implements ChatBase {
 
   subtitle(): string {
     if (this.messages.length > 2 && this.messages[2].type == 'text') {
-      return this.messages[2].content
+      return this.messages[2].content.replace(/<[^>]*>/g, '')
     } else {
       return ''
     }

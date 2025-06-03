@@ -38,8 +38,10 @@ const mdPreprocess = (markdown: string) => {
 
 const mdPostprocess = (html: string) => {
   // we want to preserve ollama <think> content as-is: <think>...</think>
+  // and our own <tool> content as-is: <tool>...</tool>
   let postprocessed = html
-  postprocessed = postprocessed.replaceAll('&lt;think&gt;', '<think>').replace(/&lt;\/think&gt;/g, '</think>')
+  postprocessed = postprocessed.replace(/&lt;think&gt;/g, '<think>').replace(/&lt;\/think&gt;/g, '</think>')
+  postprocessed = postprocessed.replace(/&lt;tool index=&quot;(\d+)&quot;&gt;/g, '<tool index="$1">').replace(/&lt;\/tool&gt;/g, '</tool>')
   return postprocessed
 }
   

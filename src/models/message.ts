@@ -1,5 +1,5 @@
 
-import { ToolCallInfo, MessageType, Message as IMessage } from '../types'
+import { ToolCall, MessageType, Message as IMessage } from '../types'
 import { LlmRole, LlmChunkTool, LlmUsage, Message as MessageBase, LlmChunkContent } from 'multi-llm-ts'
 import Attachment from './attachment'
 import Expert from './expert'
@@ -12,7 +12,7 @@ export default class Message extends MessageBase implements IMessage {
   createdAt: number
   type: MessageType
   expert?: Expert
-  toolCall?: ToolCallInfo
+  toolCalls?: ToolCall[]
   usage?: LlmUsage
   transient: boolean
   uiOnly: boolean
@@ -26,7 +26,7 @@ export default class Message extends MessageBase implements IMessage {
     this.createdAt = Date.now()
     this.type = 'text'
     this.expert = null
-    this.toolCall = null
+    this.toolCalls = []
     this.attachments = []
     this.usage = null
     this.uiOnly = false
@@ -51,7 +51,12 @@ export default class Message extends MessageBase implements IMessage {
     message.reasoning = obj.reasoning || null
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
-    message.toolCall = obj.toolCall || null
+    message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
+      ...tc,
+      id: (idx + 1).toString(),
+      done: true,
+      status: undefined
+    })) || []
     message.usage = obj.usage || null
     message.uiOnly = obj.uiOnly || false
     return message
@@ -105,24 +110,37 @@ export default class Message extends MessageBase implements IMessage {
   }
 
   setToolCall(toolCall: LlmChunkTool): void {
-    if (this.toolCall == null) {
-      this.toolCall = {
-        status: null,
-        calls: []
-      }
+    
+    // find previous
+    let call = this.toolCalls.find(c => c.id === toolCall.id)
+    if (call && (call.done || call.name !== toolCall.name)) {
+      // google does not have a unique id
+      // so we use done to move to the next one
+      call = null
     }
-    if (toolCall.done) {
-      this.toolCall.status = null
-      if (toolCall.call) {
-        this.toolCall.calls.push({
-          name: toolCall.name,
-          params: toolCall.call.params,
-          result: toolCall.call.result
-        })
-      }
+
+    // if found update else add
+    if (call) {
+      call.done = toolCall.done
+      call.status = toolCall.status
+      call.params = toolCall.call?.params || null
+      call.result = toolCall.call?.result || null
     } else {
-      this.toolCall.status = toolCall.status
+      this.toolCalls.push({
+        id: toolCall.id,
+        name: toolCall.name,
+        status: toolCall.status,
+        done: toolCall.done,
+        params: toolCall.call?.params || null,
+        result: toolCall.call?.result || null,
+      })
+      this.appendText({
+        type: 'content',
+        text: `<tool index="${this.toolCalls.length-1}"></tool>`,
+        done: false,
+      })
     }
+
   }
 
   delete(): void {

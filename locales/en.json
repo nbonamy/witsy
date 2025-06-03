@@ -1337,6 +1337,11 @@
       "active": "Thinking",
       "hide": "Hide reasoning",
       "show": "Show reasoning"
+    },
+    "toolCall": {
+      "call": "Tool call: {name}",
+      "params": "Parameters",
+      "results": "Results"
     }
   },
   "modelPull": {
@@ -1500,36 +1505,28 @@
       "resetToDefault": "Reset to default value",
       "systemInstructions": "System instructions"
     },
-    "appearance": {
-      "chatFont": "Chat font",
-      "chatFontExample": {
+    "chat": {
+      "font": "Chat font",
+      "fontExample": {
         "text": "This is how a chat message looks like.",
         "title": "Chat message example"
       },
-      "chatFontSize": "Chat font size",
-      "chatListLayout": "Chat list layout",
-      "chatListLayouts": {
+      "fontSize": "Chat font size",
+      "listLayout": "Chat list layout",
+      "listLayouts": {
         "compact": "Compact",
         "cozy": "Cozy"
       },
-      "chatTheme": "Chat theme",
-      "chatThemes": {
+      "showToolCalls": {
+        "always": "Always",
+        "calling": "During tool execution only",
+        "never": "Never",
+        "title": "Show tool calls"
+      },
+      "theme": "Chat theme",
+      "themes": {
         "conversation": "Conversation",
         "openai": "OpenAI"
-      },
-      "darkTint": "Dark tint",
-      "lightTint": "Light tint",
-      "theme": "Appearance",
-      "themes": {
-        "dark": "Dark",
-        "light": "Light",
-        "system": "System"
-      },
-      "tints": {
-        "black": "Black",
-        "blue": "Blue",
-        "gray": "Gray",
-        "white": "White"
       }
     },
     "commands": {
@@ -1635,15 +1632,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "Dark tint",
       "forceLocale": "Ask model to always speak this language (results may vary)",
       "hideOnStartup": "Hide main window on start",
       "keepInStatusBar": "Keep in Status Bar",
       "lastOneUsed": "Last one used",
+      "lightTint": "Light tint",
       "localeLLM": "LLM language",
       "localeUI": "Interface language",
       "promptLLMModel": "Quick Prompt LLM Model",
       "resetTips": "Reset tips",
-      "runAtLogin": "Run at login"
+      "runAtLogin": "Run at login",
+      "theme": "Appearance",
+      "themes": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+      },
+      "tints": {
+        "black": "Black",
+        "blue": "Blue",
+        "gray": "Gray",
+        "white": "White"
+      }
     },
     "load": {
       "error": {
@@ -1770,10 +1781,11 @@
     },
     "tabs": {
       "advanced": "Advanced",
-      "appearance": "Appearance",
+      "chat": "Chat",
       "commands": "Commands",
       "experts": "Experts",
       "general": "General",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "Models",
       "plugins": "Plugins",

@@ -1318,6 +1318,11 @@
       "active": "Réfléchir",
       "hide": "Cacher le raisonnement",
       "show": "Afficher le raisonnement"
+    },
+    "toolCall": {
+      "call": "Appel d'outil : {name}",
+      "params": "Paramètres",
+      "results": "Résultats"
     }
   },
   "modelPull": {
@@ -1470,36 +1475,28 @@
       "resetToDefault": "Réinitialiser à la valeur par défaut",
       "systemInstructions": "Instructions système"
     },
-    "appearance": {
-      "chatFont": "Police des conversations",
-      "chatFontExample": {
+    "chat": {
+      "font": "Police de chat",
+      "fontExample": {
         "text": "Voici à quoi ressemble un message de chat.",
         "title": "Exemple de message de chat"
       },
-      "chatFontSize": "Taille de police",
-      "chatListLayout": "Liste des conversations",
-      "chatListLayouts": {
+      "fontSize": "Taille de police de chat",
+      "listLayout": "Mise en page de la liste de chat",
+      "listLayouts": {
         "compact": "Compact",
-        "cozy": "Aéré"
+        "cozy": "Confortable"
       },
-      "chatTheme": "Thème des conversations",
-      "chatThemes": {
+      "showToolCalls": {
+        "always": "Toujours",
+        "calling": "Seulement pendant l'exécution de l'outil",
+        "never": "Jamais",
+        "title": "Afficher les appels d'outils"
+      },
+      "theme": "Thème de chat",
+      "themes": {
         "conversation": "Conversation",
         "openai": "OpenAI"
-      },
-      "darkTint": "Teinte sombre",
-      "lightTint": "Teinte claire",
-      "theme": "Apparence",
-      "themes": {
-        "dark": "Sombre",
-        "light": "Clair",
-        "system": "Système"
-      },
-      "tints": {
-        "black": "Noir",
-        "blue": "Bleu",
-        "gray": "Gris",
-        "white": "Blanc"
       }
     },
     "commands": {
@@ -1605,15 +1602,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "Nuance sombre",
       "forceLocale": "Demander au modèle de toujours parler cette langue (résultats peuvent varier)",
       "hideOnStartup": "Masquer au démarrage",
       "keepInStatusBar": "Garder dans la barre d'état",
       "lastOneUsed": "Dernier utilisé",
+      "lightTint": "Nuance claire",
       "localeLLM": "Langue des modèles",
       "localeUI": "Langue de l'interface",
       "promptLLMModel": "Modèle de LLM de prompt rapide",
       "resetTips": "Réinitialiser les conseils",
-      "runAtLogin": "Lancer au démarrage"
+      "runAtLogin": "Lancer au démarrage",
+      "theme": "Apparence",
+      "themes": {
+        "dark": "Sombre",
+        "light": "Clair",
+        "system": "Système"
+      },
+      "tints": {
+        "black": "Noir",
+        "blue": "Bleu",
+        "gray": "Gris",
+        "white": "Blanc"
+      }
     },
     "mcp": {
       "addCustomServer": "Ajouter un serveur personnalisé…",
@@ -1734,10 +1745,11 @@
     },
     "tabs": {
       "advanced": "Avancé",
-      "appearance": "Apparence",
+      "chat": "Chat",
       "commands": "Commandes",
       "experts": "Experts",
       "general": "Général",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "Modèles",
       "plugins": "Plugins",

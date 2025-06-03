@@ -20,13 +20,17 @@ export interface Attachment extends IAttachmentBase {
   b64Contents(): string
 }
 
+export type ToolCall = {
+  id: string
+  status?: string
+  done: boolean
+  name: string
+  params: any
+  result: any
+}
+
 export type ToolCallInfo = {
-  status: string
-  calls: {
-    name: string
-    params: any
-    result: any
-  }[]
+  calls: ToolCall[]
 }
 
 export type MessageType = 'text' | 'image'
@@ -38,7 +42,7 @@ export interface Message extends IMessageBase {
   type: MessageType
   createdAt: number
   expert?: Expert
-  toolCall?: ToolCallInfo
+  toolCalls?: ToolCall[]
   attachments: Attachment[]
   transient: boolean
   uiOnly: boolean
