@@ -1,23 +1,27 @@
 <template>
   <div ref="messageItemBodyBlock">
     <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size" ></div>
-   <MessageItemMediaBlock :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" v-else-if="block.type == 'media'" />
+    <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
+    <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
   </div>
 </template>
 
 <script setup lang="ts">
 
+import { ToolCall } from '../types/index'
 import { nextTick, PropType, ref, Ref, h, render } from 'vue'
 import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
+import MessageItemToolBlock from './MessageItemToolBlock.vue'
 import { store } from '../services/store'
 
 export type Block = {
-  type: 'text'|'media'
+  type: 'text'|'media'|'tool'
   content?: string
   url?: string
   desc?: string
   prompt?: string
+  toolCall?: ToolCall
 }
 
 defineProps({

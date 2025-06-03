@@ -149,7 +149,7 @@ const handleActionClick = async (action: string) => {
         engine: msg.engine,
         model: msg.model,
         prompt: msg.content,
-        params: msg.toolCall?.calls?.[0]?.params || {}
+        params: msg.toolCalls?.[0]?.params || {}
       })
     })
   } else if (action === 'rename') {
@@ -276,7 +276,7 @@ const updateMessage = (msg: Message) => {
   message.value.content = msg.content
   message.value.engine = msg.engine
   message.value.model = msg.model
-  message.value.toolCall = msg.toolCall
+  message.value.toolCalls = msg.toolCalls
   message.value.content = msg.content
   message.value.attachments = []
   for (const a of msg.attachments) {
@@ -440,14 +440,13 @@ const onMediaGenerationRequest = async (data: any) => {
       if (referenceKey) {
         params[referenceKey] = kReferenceParamValue
       }
-      message.value.toolCall = {
-        status: 'done',
-        calls: [{
-          name: data.action,
-          params: params,
-          result: 'success'
-        }]
-      }
+      message.value.toolCalls = [{
+        id: crypto.randomUUID(),
+        name: data.action,
+        params: params,
+        result: 'success',
+        done: true
+      }]
     }
 
     // save

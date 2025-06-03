@@ -133,11 +133,14 @@ export type AutomationConfig = {
   altWinCopyPaste: boolean
 }
 
+export type ChatToolMode = 'never' | 'calling' | 'always'
+
 export type ChatAppearance = {
   showReasoning: boolean
   theme: string
   fontFamily: string
   fontSize: number
+  showToolCalls: ChatToolMode
 }
 
 export type ChatListMode = 'timeline' | 'folder'

@@ -1318,6 +1318,11 @@
       "active": "Pensando",
       "hide": "Nascondi ragionamento",
       "show": "Mostra ragionamento"
+    },
+    "toolCall": {
+      "call": "Chiamata allo strumento: {name}",
+      "params": "Parametri",
+      "results": "Risultati"
     }
   },
   "modelPull": {
@@ -1470,36 +1475,28 @@
       "resetToDefault": "Reimposta al valore predefinito",
       "systemInstructions": "Istruzioni di sistema"
     },
-    "appearance": {
-      "chatFont": "Carattere chat",
-      "chatFontExample": {
+    "chat": {
+      "font": "Carattere chat",
+      "fontExample": {
         "text": "Ecco come appare un messaggio chat.",
         "title": "Esempio di messaggio chat"
       },
-      "chatFontSize": "Dimensione carattere chat",
-      "chatListLayout": "Layout lista chat",
-      "chatListLayouts": {
+      "fontSize": "Dimensione carattere chat",
+      "listLayout": "Layout elenco chat",
+      "listLayouts": {
         "compact": "Compatto",
         "cozy": "Accogliente"
       },
-      "chatTheme": "Tema chat",
-      "chatThemes": {
+      "showToolCalls": {
+        "always": "Sempre",
+        "calling": "Solo durante l'esecuzione dello strumento",
+        "never": "Mai",
+        "title": "Mostra chiamate agli strumenti"
+      },
+      "theme": "Tema chat",
+      "themes": {
         "conversation": "Conversazione",
         "openai": "OpenAI"
-      },
-      "darkTint": "Tinta scura",
-      "lightTint": "Tinta chiara",
-      "theme": "Aspetto",
-      "themes": {
-        "dark": "Scuro",
-        "light": "Chiaro",
-        "system": "Sistema"
-      },
-      "tints": {
-        "black": "Nero",
-        "blue": "Blu",
-        "gray": "Grigio",
-        "white": "Bianco"
       }
     },
     "commands": {
@@ -1605,15 +1602,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "Tonalità scura",
       "forceLocale": "Chiedi al modello di parlare sempre questa lingua (i risultati possono variare)",
       "hideOnStartup": "Nascondi la finestra principale all'avvio",
       "keepInStatusBar": "Mantieni nella barra di stato",
       "lastOneUsed": "Ultimo utilizzato",
+      "lightTint": "Tonalità chiara",
       "localeLLM": "Lingua LLM",
       "localeUI": "Lingua dell'interfaccia",
       "promptLLMModel": "Modello LLM di Prompt Veloce",
       "resetTips": "Ripristina suggerimenti",
-      "runAtLogin": "Esegui all'accesso"
+      "runAtLogin": "Esegui all'accesso",
+      "theme": "Aspetto",
+      "themes": {
+        "dark": "Scuro",
+        "light": "Chiaro",
+        "system": "Sistema"
+      },
+      "tints": {
+        "black": "Nero",
+        "blue": "Blu",
+        "gray": "Grigio",
+        "white": "Bianco"
+      }
     },
     "mcp": {
       "addCustomServer": "Aggiungi server personalizzato…",
@@ -1734,10 +1745,11 @@
     },
     "tabs": {
       "advanced": "Avanzate",
-      "appearance": "Aspetto",
+      "chat": "Chat",
       "commands": "Comandi",
       "experts": "Esperti",
       "general": "Generale",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "Modelli",
       "plugins": "Plugin",

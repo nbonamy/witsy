@@ -92,16 +92,17 @@ const computeBlocks = (content: string|null): Block[] => {
   }
 
   // now get the code blocks
-  const codeBlocks: { start: number, end: number, content: string }[] = getCodeBlocks(content)
+  const codeBlocks: { start: number, end: number }[] = getCodeBlocks(content)
   //console.log('Code blocks:', codeBlocks)
 
-  // extract each <img> in a separate block
-  let match
+  // extract each special tags in a separate block
+  let match: RegExpExecArray | null
   let lastIndex = 0
   const blocks: Block[] = []
-  const regex1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
-  const regex2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
-  for (const regex of [ regex1, regex2 ]) {
+  const regexMedia1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
+  const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
+  const regexTool1 = /<tool index="(\d*)"><\/tool>/g
+  for (const regex of [ regexMedia1, regexMedia2, regexTool1 ]) {
   
     while (match = regex.exec(content)) {
 
@@ -115,7 +116,20 @@ const computeBlocks = (content: string|null): Block[] => {
         blocks.push({ type: 'text', content: content.substring(lastIndex, match.index) })
       }
 
-      // now image
+      // tool
+      if ([regexTool1].includes(regex)) {
+        if (store.config.appearance.chat.showToolCalls === 'always' && props.message.toolCalls) {
+          const index = parseInt(match[1])
+          const toolCall = props.message.toolCalls[index]
+          if (toolCall && toolCall.done) {
+            blocks.push({ type: 'tool', toolCall: toolCall })
+          }
+        }
+        lastIndex = regex.lastIndex
+        continue
+      }
+
+      // now media
       let imageUrl = decodeURIComponent(match[match.length - 1])
       if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://') && !imageUrl.startsWith('data:image/')) {
         imageUrl = `file://${imageUrl}`
@@ -123,8 +137,8 @@ const computeBlocks = (content: string|null): Block[] => {
 
       // try to find the prompt
       let prompt = null
-      if (props.message.toolCall?.calls) {
-        for (const call of props.message.toolCall.calls) {
+      if (props.message.toolCalls) {
+        for (const call of props.message.toolCalls) {
           const toolPath = call.result?.path || call.result?.url
           if (toolPath === match[match.length - 1] || toolPath === decodeURIComponent(match[match.length - 1])) {
             prompt = call.params.prompt

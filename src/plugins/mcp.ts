@@ -24,13 +24,13 @@ export default class extends MultiToolPlugin {
 
   getPreparationDescription(name: string): string {
     const tool = window.api.mcp.originalToolName(name)
-    return `Preparing to use MCP tool #${tool}#…`
+    return `Preparing to use MCP tool ${tool}…`
   }
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRunningDescription(name: string, args: any): string {
     const tool = window.api.mcp.originalToolName(name)
-    return `MCP tool #${tool}# is currently running…`
+    return `MCP tool ${tool} is currently running…`
   }
 
   async getTools(): Promise<any> {

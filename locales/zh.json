@@ -1337,6 +1337,11 @@
       "active": "思考中",
       "hide": "隐藏推理",
       "show": "显示推理"
+    },
+    "toolCall": {
+      "call": "工具调用: {name}",
+      "params": "参数",
+      "results": "结果"
     }
   },
   "modelPull": {
@@ -1500,36 +1505,28 @@
       "resetToDefault": "重置为默认值",
       "systemInstructions": "系统指令"
     },
-    "appearance": {
-      "chatFont": "聊天字体",
-      "chatFontExample": {
+    "chat": {
+      "font": "聊天字体",
+      "fontExample": {
         "text": "这就是聊天信息的样子。",
         "title": "聊天信息示例"
       },
-      "chatFontSize": "聊天字体大小",
-      "chatListLayout": "聊天列表布局",
-      "chatListLayouts": {
+      "fontSize": "聊天字体大小",
+      "listLayout": "聊天列表布局",
+      "listLayouts": {
         "compact": "紧凑",
         "cozy": "舒适"
       },
-      "chatTheme": "聊天主题",
-      "chatThemes": {
+      "showToolCalls": {
+        "always": "总是",
+        "calling": "仅在工具执行期间",
+        "never": "从不",
+        "title": "显示工具调用"
+      },
+      "theme": "聊天主题",
+      "themes": {
         "conversation": "对话",
         "openai": "OpenAI"
-      },
-      "darkTint": "深色色调",
-      "lightTint": "浅色调",
-      "theme": "外观",
-      "themes": {
-        "dark": "深色",
-        "light": "浅色",
-        "system": "系统"
-      },
-      "tints": {
-        "black": "黑色",
-        "blue": "蓝色",
-        "gray": "灰色",
-        "white": "白色"
       }
     },
     "commands": {
@@ -1635,15 +1632,29 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "general": {
+      "darkTint": "深色",
       "forceLocale": "要求模型始终使用此语言（结果可能有所不同）",
       "hideOnStartup": "启动时隐藏主窗口",
       "keepInStatusBar": "保留在状态栏",
       "lastOneUsed": "最后使用的一个",
+      "lightTint": "浅色",
       "localeLLM": "LLM 语言",
       "localeUI": "界面语言",
       "promptLLMModel": "快速提示 LLM 模型",
       "resetTips": "重置提示",
-      "runAtLogin": "登录时运行"
+      "runAtLogin": "登录时运行",
+      "theme": "外观",
+      "themes": {
+        "dark": "黑暗",
+        "light": "明亮",
+        "system": "系统"
+      },
+      "tints": {
+        "black": "黑色",
+        "blue": "蓝色",
+        "gray": "灰色",
+        "white": "白色"
+      }
     },
     "mcp": {
       "addCustomServer": "添加自定义服务器…",
@@ -1764,10 +1775,11 @@
     },
     "tabs": {
       "advanced": "高级",
-      "appearance": "外观",
+      "chat": "聊天",
       "commands": "命令",
       "experts": "专家",
       "general": "常规",
+      "llm": "LLM",
       "mcp": "MCP",
       "models": "模型",
       "plugins": "插件",
