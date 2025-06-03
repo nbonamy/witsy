@@ -90,7 +90,7 @@ window.setStore(store);
 const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     prompt: PromptAnywhere.open,
-    chat: window.openMainWindow,
+    chat: () => window.openMainWindow({ queryParams: { view: 'chat' } }),
     command: () => Commander.initCommand(app),
     readaloud: () => ReadAloud.read(app),
     transcribe: Transcriber.initTranscription,
