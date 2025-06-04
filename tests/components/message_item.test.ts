@@ -104,6 +104,7 @@ test('User message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(true)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
   
 })
 
@@ -124,6 +125,7 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(true)
+  expect(wrapper.find('.actions .tools').exists()).toBe(true)
 })
 
 test('Assistant legacy image message', async () => {
@@ -144,6 +146,7 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(true)
 })
 
 test('Assistant image markdown message', async () => {
@@ -164,6 +167,7 @@ test('Assistant image markdown message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(true)
 })
 
 test('Assistant image html message', async () => {
@@ -231,13 +235,14 @@ test('Transient message', async () => {
   expect(wrapper.find('.body .message-transient').exists()).toBe(true)
   expect(wrapper.find('.body .message-transient .loader').exists()).toBe(true)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
-  expect(wrapper.find('.role .actions .copy').exists()).toBe(false)
-  expect(wrapper.find('.role .actions .read').exists()).toBe(false)
-  expect(wrapper.find('.role .actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .copy').exists()).toBe(false)
+  expect(wrapper.find('.actions .read').exists()).toBe(false)
+  expect(wrapper.find('.actions .edit').exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
 
 test('Tool call running calling', async () => {
-  botMessageTransient.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
   expect(wrapper.find('.body .message-transient').text()).toBe('Calling a tool')
@@ -246,7 +251,7 @@ test('Tool call running calling', async () => {
 
 test('Tool call running never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
-  botMessageTransient.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
@@ -254,30 +259,34 @@ test('Tool call running never', async () => {
 
 test('Tool call running always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
-  botMessageTransient.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
+  botMessageTransient.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: false })
   const wrapper = await mount(botMessageTransient)
   expect(wrapper.find('.body .message-transient').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 })
 
 test('Tool call done calling', async () => {
-  botMessageText.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  store.config.appearance.chat.showToolCalls = 'calling'
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
-  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(true)
 })
 
 test('Tool call done never', async () => {
   store.config.appearance.chat.showToolCalls = 'never'
-  botMessageText.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  expect(wrapper.find('.actions .tools').exists()).toBe(true)
 })
 
 test('Tool call done always', async () => {
   store.config.appearance.chat.showToolCalls = 'always'
-  botMessageText.setToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
   const wrapper = await mount(botMessageText)
   expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
 
 test('Toggle actions', async () => {
@@ -300,7 +309,10 @@ test('Run user actions', async () => {
 })
 
 test('Run assistant text actions', async () => {
-  const wrapper = await mount(botMessageText, )
+  
+  store.config.appearance.chat.showToolCalls = 'calling'
+  botMessageText.addToolCall({ type: 'tool', id: 'tool', name: 'tool', status: 'Calling a tool', done: true })
+  const wrapper = await mount(botMessageText)
   
   // copy
   await wrapper.find('.actions .copy').trigger('click')
@@ -329,9 +341,24 @@ test('Run assistant text actions', async () => {
   await wrapper.find('.actions .fork').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('fork-chat', botMessageText)
 
+  // tools
+  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+  await wrapper.find('.actions .tools').trigger('click')
+  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(true)
+  await wrapper.find('.actions .tools').trigger('click')
+  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
 
   // await wait(1500)
   // expect(wrapper.find('.actions .copy').text()).not.toBe('common.copied')
+})
+
+test('Run assistant tool action without tools', async () => {
+
+  botMessageText.clearToolCalls()
+  const wrapper = await mount(botMessageText)
+  await wrapper.find('.actions .tools').trigger('click')
+  expect(wrapper.find('.body .message-content').findComponent({ name: 'MessageItemToolBlock' }).exists()).toBe(false)
+
 })
 
 test('Run assistant legacy image actions', async () => {

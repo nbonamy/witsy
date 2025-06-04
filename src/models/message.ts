@@ -109,7 +109,7 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
-  setToolCall(toolCall: LlmChunkTool): void {
+  addToolCall(toolCall: LlmChunkTool): void {
     
     // find previous
     let call = this.toolCalls.find(c => c.id === toolCall.id)
@@ -141,6 +141,10 @@ export default class Message extends MessageBase implements IMessage {
       })
     }
 
+  }
+
+  clearToolCalls(): void {
+    this.toolCalls = []
   }
 
   delete(): void {

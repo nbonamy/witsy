@@ -16,7 +16,10 @@
         <BIconTrash /> {{ t('common.delete') }}
       </div>
       <div class="action fork" @click="onFork(message)">
-        <ForIcon /> {{ t('common.fork') }}
+        <ForkIcon /> {{ t('common.fork') }}
+      </div>
+      <div class="action tools" @click="onTools(message)" v-if="message.role == 'assistant' && store.config.appearance.chat.showToolCalls != 'always'">
+        <BIconTools /> {{ t('common.tools') }}
       </div>
     </template>
   </div>
@@ -30,10 +33,12 @@ import Message from '../models/message'
 import Dialog from '../composables/dialog'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import ForIcon from '../../assets/fork.svg?component'
+import ForkIcon from '../../assets/fork.svg?component'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+const emit = defineEmits(['show-tools'])
 
 const props = defineProps({
   message: {
@@ -116,6 +121,20 @@ const onUsage = (message: Message) => {
 
 const onFork = (message: Message) => {
   emitEvent('fork-chat', message)
+}
+
+const onTools = (message: Message) => {
+
+  if (message.toolCalls.length === 0) {
+    Dialog.show({
+      title: t('message.actions.tools.noTools.title'),
+      text: t('message.actions.tools.noTools.text'),
+    })
+    return
+  }
+  
+  // default
+  emit('show-tools')
 }
 
 </script>

@@ -120,6 +120,7 @@
       "add": "Dodaj do słownika"
     },
     "stop": "Stop",
+    "tools": "Narzędzia",
     "type": "Typ",
     "undo": "Cofnij",
     "upload": "Prześlij",
@@ -1326,6 +1327,12 @@
         "text": "Bieżąca wersja zostanie utracona.",
         "title": "Czy na pewno chcesz ponownie wygenerować tę wiadomość?"
       },
+      "tools": {
+        "noTools": {
+          "text": "Podczas generowania tej wiadomości nie użyto żadnych narzędzi.",
+          "title": "Brak informacji o używanych narzędziach."
+        }
+      },
       "usage": {
         "prompt": "Tokeny zachęty: {prompt}",
         "reasoning": "Tokeny uzasadnienia: {uzasadnienie}",
@@ -1689,7 +1696,7 @@
       "serverNotFound": "Serwer, do którego próbujesz się połączyć, nie istnieje.",
       "servers": "serwerów. Wykrywanie i instalowanie serwerów MCP z poziomu",
       "smithery": "Smithery",
-      "tools": "Narzędzia",
+      "tools": "@:{'common.tools'}",
       "totalTools": "Łącznie {count} narzędzi{count > 1 ? 'i' : 'e'} dostępne"
     },
     "plugins": {

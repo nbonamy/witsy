@@ -49,7 +49,8 @@ export interface Message extends IMessageBase {
   setExpert(expert: Expert, fallbackPrompt: string): void
   setText(text: string): void
   setImage(url: string): void
-  setToolCall(toolCall: LlmChunkTool): void
+  addToolCall(toolCall: LlmChunkTool): void
+  clearToolCalls(): void
   isVideo(): boolean
   delete(): void
 }
@@ -241,7 +242,7 @@ declare global {
       isMasBuild: boolean
       userDataPath: string
       on: (signal: string, callback: (value: any) => void) => void
-      off: (signal: string, callback?: (value: any) => void) => void
+      off: (signal: string, callback: (value: any) => void) => void
       setAppearanceTheme(theme: string): void
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]

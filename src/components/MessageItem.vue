@@ -24,7 +24,7 @@
 
       <!-- content -->
       <div class="message-content" v-if="message.type == 'text' && message.content !== null">
-        <MessageItemBody :message="message" @media-loaded="onMediaLoaded" />
+        <MessageItemBody :message="message" :show-tool-calls="showToolCalls" @media-loaded="onMediaLoaded" />
       </div>
 
       <!-- transient information -->
@@ -34,14 +34,15 @@
       </div>
 
     </div>
-    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" v-if="hovered" />
+    <MessageItemActions :message="message" :read-aloud="onReadAloud" :audio-state="audioState" @show-tools="onShowTools" v-if="hovered" />
     <audio ref="audio" />
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
+import { ChatToolMode } from '../types/config'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
@@ -83,8 +84,9 @@ const emits = defineEmits(['media-loaded'])
 
 const theme = ref('light')
 const hovered = ref(false)
-const audio: Ref<HTMLAudioElement|null> = ref(null)
-const audioState: Ref<{state: string, messageId: string|null}> = ref({
+const audio = ref<HTMLAudioElement|null>(null)
+const showToolCalls = ref<ChatToolMode>(store.config.appearance.chat.showToolCalls)
+const audioState = ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,
 })
@@ -110,6 +112,12 @@ onMounted(() => {
   onEvent('appearance-theme-change', (th: string) => {
     theme.value = th
   })
+
+  // settings change
+  watch(() => store.config.appearance.chat.showToolCalls, (value) => {
+    showToolCalls.value = value
+  })
+
 })
 
 onUnmounted(() => {
@@ -168,6 +176,14 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
 
 const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value!, message.uuid, message.content)
+}
+
+const onShowTools = () => {
+  if (showToolCalls.value !== 'always') {
+    showToolCalls.value = 'always'
+  } else {
+    showToolCalls.value = 'never'
+  }
 }
 
 defineExpose({

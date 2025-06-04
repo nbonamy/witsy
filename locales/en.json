@@ -120,6 +120,7 @@
       "add": "Add to dictionary"
     },
     "stop": "Stop",
+    "tools": "Tools",
     "type": "Type",
     "undo": "Undo",
     "upload": "Upload",
@@ -1326,6 +1327,12 @@
         "text": "Current version will be lost.",
         "title": "Are you sure you want to generate this message again?"
       },
+      "tools": {
+        "noTools": {
+          "text": "No tools were called during this message generation.",
+          "title": "No Tool call information available."
+        }
+      },
       "usage": {
         "prompt": "Prompt tokens: {prompt}",
         "reasoning": "Reasoning tokens: {reasoning}",
@@ -1689,7 +1696,7 @@
       "serverNotFound": "The server you are trying to connect does not exist.",
       "servers": "servers. Discover and install MCP servers from the",
       "smithery": "Smithery",
-      "tools": "Tools",
+      "tools": "@:{'common.tools'}",
       "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
     },
     "plugins": {

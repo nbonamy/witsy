@@ -101,6 +101,7 @@
       "add": "Agregar al diccionario"
     },
     "stop": "Detener",
+    "tools": "Herramientas",
     "type": "Tipo",
     "undo": "Deshacer",
     "upload": "Subir",
@@ -1307,6 +1308,12 @@
         "text": "La versión actual se perderá.",
         "title": "¿Está seguro de que desea generar este mensaje nuevamente?"
       },
+      "tools": {
+        "noTools": {
+          "text": "No se llamaron herramientas durante la generación de este mensaje.",
+          "title": "No hay información de llamada de herramientas disponible."
+        }
+      },
       "usage": {
         "prompt": "Tokens de prompt: {prompt}",
         "reasoning": "Tokens de razonamiento: {reasoning}",
@@ -1653,7 +1660,7 @@
       "serverNotFound": "El servidor al que intentas conectarte no existe.",
       "servers": ". Descubra e instale servidores MCP desde",
       "smithery": "Smithery",
-      "tools": "Herramientas",
+      "tools": "@:{'common.tools'}",
       "totalTools": "Un total de {count} servicio{count > 1 ? 's' : ''} disponible"
     },
     "plugins": {
