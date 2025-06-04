@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 
+import { Application } from '../types/automation'
 import { ref, onMounted, onUnmounted, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
@@ -40,8 +41,8 @@ import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import MessageItem from '../components/MessageItem.vue'
 import MessageItemActionCopy from '../components/MessageItemActionCopy.vue'
 import MessageItemActionRead from '../components/MessageItemActionRead.vue'
-import { Application } from '../types/automation'
 import Message from '../models/message'
+import Dialog from '../composables/dialog'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
@@ -65,10 +66,6 @@ const props = defineProps({
   sourceApp: {
     type: Object as PropType<Application>,
     required: false,
-  },
-  allowDirectKeys: {
-    type: Boolean,
-    default: false,
   },
   showReplace: {
     type: Boolean,
@@ -123,28 +120,28 @@ const onKeyDown = (ev: KeyboardEvent) => {
   const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
   // now check
-  if ((props.allowDirectKeys || isCommand) && ev.key == 'c') {
+  if (isCommand && ev.key == 'c') {
     const selection = window.getSelection()
     if (selection == null || selection.isCollapsed) {
       ev.preventDefault()
       actionCopy.value?.copy()
     }
-  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'i') {
+  } else if (isCommand && ev.key == 'i') {
     ev.preventDefault()
     onInsert()
-  } else if (props.showReplace && (props.allowDirectKeys || isCommand) && ev.key == 'r') {
+  } else if (props.showReplace && isCommand && ev.key == 'r') {
     ev.preventDefault()
     onReplace()
-  } else if ((props.allowDirectKeys || isCommand) && ev.key == 't') {
+  } else if (isCommand && ev.key == 't') {
     ev.preventDefault()
     onReadAloud(props.message)
-  } else if (((props.allowDirectKeys || isCommand) && ev.key == 'x') || (isCommand && ev.key == 'Escape')) {
+  } else if ((isCommand && ev.key == 'x') || (isCommand && ev.key == 'Escape')) {
     ev.preventDefault()
     onClear()
-  } else if ((props.allowDirectKeys || isCommand) && ev.key == 'w') {
+  } else if (isCommand && ev.key == 'w') {
     ev.preventDefault()
     onScratchPad()
-  } else if ((props.allowDirectKeys || isCommand) && ev.key == 's') {
+  } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
     onChat()
   }
@@ -166,14 +163,20 @@ const onClose = () => {
 }
 
 const onReplace = () => {
-  window.api.automation.replace(props.message.content, props.sourceApp)
+  if (!window.api.automation.replace(props.message.content, props.sourceApp)) {
+    Dialog.alert(t('common.errorCopyClipboard'), t('common.tryAgain'))
+  }
 }
 
 const onInsert = () => {
-  if (!props.showReplace) {
+
+  // when replace is hidden it means that we do not if text is selected or not
+  // so insert becomes replace. when replace is shown, insert is an insert
+  const rc = props.showReplace ?
+    window.api.automation.insert(props.message.content, props.sourceApp) :
     window.api.automation.replace(props.message.content, props.sourceApp)
-  } else {
-    window.api.automation.insert(props.message.content, props.sourceApp)
+  if (!rc) {
+    Dialog.alert(t('common.errorCopyClipboard'), t('common.tryAgain'))
   }
 }
 

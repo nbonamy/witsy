@@ -15,6 +15,8 @@ import log from 'electron-log/main';
 import { fixPath, getCachedText } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
+import Automator from './automations/automator';
+import Automation, { AutomationAction } from './automations/automation'
 import Commander, { notEditablePrompts } from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
@@ -39,7 +41,6 @@ import * as menu from './main/menu';
 import * as text from './main/text';
 import * as i18n from './main/i18n';
 import * as debug from './main/network';
-import Automator, { AutomationAction } from 'automations/automator';
 import { useI18n } from './main/i18n';
 
 let commander: Commander = null
@@ -360,12 +361,13 @@ ipcMain.on('clipboard-read-text', (event) => {
 });
 
 ipcMain.on('clipboard-write-text', (event, payload) => {
-  clipboard.writeText(payload);
+  event.returnValue = Automation.writeTextToClipboard(payload);
 });
 
 ipcMain.on('clipboard-write-image', (event, payload) => {
   const image = nativeImage.createFromPath(payload.replace('file://', ''))
   clipboard.writeImage(image);
+  event.returnValue = true;
 });
 
 ipcMain.on('config-get-locale-ui', (event) => {
@@ -545,14 +547,14 @@ ipcMain.on('automation-get-text', (event, payload) => {
   event.returnValue = getCachedText(payload);
 })
 
-ipcMain.on('automation-insert', async (_, payload) => {
+ipcMain.on('automation-insert', async (event, payload) => {
   const { text, sourceApp } = payload
-  await Automator.automate(text, sourceApp, AutomationAction.INSERT_BELOW);
+  event.returnValue = await Automation.automate(text, sourceApp, AutomationAction.INSERT_BELOW);
 })
 
-ipcMain.on('automation-replace', async (_, payload) => {
+ipcMain.on('automation-replace', async (event, payload) => {
   const { text, sourceApp } = payload
-  await Automator.automate(text, sourceApp, AutomationAction.REPLACE);
+  event.returnValue = await Automation.automate(text, sourceApp, AutomationAction.REPLACE);
 })
 
 ipcMain.on('chat-open', async (_, chatId) => {

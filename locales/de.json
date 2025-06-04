@@ -43,6 +43,7 @@
     "embeddings": "Embeddings",
     "enabled": "Aktiviert",
     "error": "Fehler!",
+    "errorCopyClipboard": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten.",
     "errorModelRefresh": "Fehler beim Aktualisieren der Modelle. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "esc": "Esc",
     "estimatedCost": "Geschätzte Kosten:",
@@ -102,6 +103,7 @@
     },
     "stop": "Stop",
     "tools": "Werkzeuge",
+    "tryAgain": "Bitte versuche es erneut.",
     "type": "Typ",
     "undo": "Rückgängig",
     "upload": "Hochladen",
@@ -1852,7 +1854,7 @@
     "autoStart": "Beginne mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
     "errors": {
-      "copy": "Beim Kopieren des Textes in die Zwischenablage ist ein Fehler aufgetreten. Sie können versuchen, ihn manuell zu kopieren.",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Fehler beim Zugriff auf das Mikrofon",
       "notAuthorized": {
         "text": "Klicken Sie auf OK, um das Einstellungsfenster zu öffnen und Ihren API-Schlüssel zu überprüfen.",

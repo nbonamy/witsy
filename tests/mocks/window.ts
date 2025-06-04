@@ -112,8 +112,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     },
     automation: {
       getText: vi.fn(() => 'text'),
-      insert: vi.fn(),
-      replace: vi.fn(),
+      insert: vi.fn(() => true),
+      replace: vi.fn(() => true),
     },
     settings: {
       open: vi.fn(),
@@ -156,9 +156,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       encode: (s) => `${s}_encoded`,
     },
     clipboard: {
-      readText: vi.fn(),
-      writeText: vi.fn(),
-      writeImage: vi.fn(),
+      readText: vi.fn(() => 'clipboard'),
+      writeText: vi.fn(() => true),
+      writeImage: vi.fn(() => true),
     },
     file: {
       read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
@@ -324,7 +324,6 @@ const useBrowserMock = () => {
         autoGainControl: true,
       })),
     },
-
   }
 
   // eslint-disable-next-line no-global-assign

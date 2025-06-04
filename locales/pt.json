@@ -43,6 +43,7 @@
     "embeddings": "Embeddings",
     "enabled": "Ativado",
     "error": "Erro!",
+    "errorCopyClipboard": "Ocorreu um erro ao copiar o texto para a área de transferência.",
     "errorModelRefresh": "Erro ao atualizar modelos. Verifique sua conexão e tente novamente.",
     "esc": "Esc",
     "estimatedCost": "Custo estimado:",
@@ -121,6 +122,7 @@
     },
     "stop": "Parar",
     "tools": "Ferramentas",
+    "tryAgain": "Por favor, tente novamente.",
     "type": "Tipo",
     "undo": "Desfazer",
     "upload": "Carregar",
@@ -1882,7 +1884,7 @@
     "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
     "errors": {
-      "copy": "Erro ao copiar texto para a área de transferência",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Erro ao acessar o microfone",
       "notAuthorized": {
         "text": "Clique em OK para abrir a janela Configurações e verificar sua chave de API.",

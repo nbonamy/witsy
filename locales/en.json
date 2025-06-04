@@ -43,6 +43,7 @@
     "embeddings": "Embeddings",
     "enabled": "Enabled",
     "error": "Error!",
+    "errorCopyClipboard": "An error occured while copying the text to the clipboard.",
     "errorModelRefresh": "Error refreshing models. Check your connection and try again.",
     "esc": "Esc",
     "estimatedCost": "Estimated cost:",
@@ -121,6 +122,7 @@
     },
     "stop": "Stop",
     "tools": "Tools",
+    "tryAgain": "Please try again.",
     "type": "Type",
     "undo": "Undo",
     "upload": "Upload",
@@ -1888,7 +1890,7 @@
     "autoStart": "Start transcribing when window opens",
     "clickToRecord": "Click the record button when you are ready!",
     "errors": {
-      "copy": "Error copying text to clipboard",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Error accessing microphone",
       "notAuthorized": {
         "text": "Click OK to open the Settings window and check your API key.",

@@ -300,8 +300,8 @@ declare global {
       }
       automation: {
         getText(id: string): string
-        insert(text: string, sourceApp: Application): void
-        replace(text: string, sourceApp: Application): void
+        insert(text: string, sourceApp: Application): boolean
+        replace(text: string, sourceApp: Application): boolean
       }
       chat: {
         open(chatId: string): void
@@ -353,8 +353,8 @@ declare global {
       },
       clipboard: {
         readText(): string
-        writeText(text: string): void
-        writeImage(path: string): void
+        writeText(text: string): boolean
+        writeImage(path: string): boolean
       },
       markdown: {
         render(markdown: string): string

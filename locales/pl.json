@@ -43,6 +43,7 @@
     "embeddings": "Osadzenia",
     "enabled": "Włączone",
     "error": "Błąd!",
+    "errorCopyClipboard": "Wystąpił błąd podczas kopiowania tekstu do schowka.",
     "errorModelRefresh": "Błąd odświeżania modeli. Sprawdź swoje połączenie i spróbuj ponownie.",
     "esc": "Esc",
     "estimatedCost": "Szacowany koszt:",
@@ -121,6 +122,7 @@
     },
     "stop": "Stop",
     "tools": "Narzędzia",
+    "tryAgain": "Proszę spróbować ponownie.",
     "type": "Typ",
     "undo": "Cofnij",
     "upload": "Prześlij",
@@ -1888,7 +1890,7 @@
     "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
     "errors": {
-      "copy": "Błąd podczas kopiowania tekstu do schowka",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Błąd dostępu do mikrofonu",
       "notAuthorized": {
         "text": "Kliknij OK, aby otworzyć okno Ustawienia i sprawdzić swój klucz API.",

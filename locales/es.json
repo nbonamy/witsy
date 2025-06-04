@@ -43,6 +43,7 @@
     "embeddings": "Vectores",
     "enabled": "Activado",
     "error": "¡Error!",
+    "errorCopyClipboard": "Ocurrió un error al copiar el texto al portapapeles.",
     "errorModelRefresh": "Error al actualizar los modelos. Verifica tu conexión e inténtalo de nuevo.",
     "esc": "Esc",
     "estimatedCost": "Costo estimado:",
@@ -102,6 +103,7 @@
     },
     "stop": "Detener",
     "tools": "Herramientas",
+    "tryAgain": "Por favor, intenta de nuevo.",
     "type": "Tipo",
     "undo": "Deshacer",
     "upload": "Subir",
@@ -1852,7 +1854,7 @@
     "autoStart": "Iniciar transcripción al abrir la ventana",
     "clickToRecord": "¡Haz clic en el botón de grabar cuando estés listo!",
     "errors": {
-      "copy": "Error al copiar el texto en el portapapeles",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Error al acceder al micrófono",
       "notAuthorized": {
         "text": "Haz clic en Aceptar para abrir la ventana de Configuración y verificar tu clave API.",

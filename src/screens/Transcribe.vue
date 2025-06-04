@@ -86,7 +86,7 @@
 <script setup lang="ts">
 
 import { StreamingChunk } from '../voice/stt'
-import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { getSTTEngines, getSTTModels } from '../voice/stt'
@@ -96,9 +96,6 @@ import useTranscriber from '../composables/transcriber'
 import useAudioRecorder from '../composables/audio_recorder'
 import LangSelect from '../components/LangSelect.vue'
 import Dialog from '../composables/dialog'
-
-import useEventBus from '../composables/event_bus'
-const { onEvent } = useEventBus()
 
 // init stuff
 const { transcriber, processStreamingError } = useTranscriber(store.config)
@@ -118,10 +115,6 @@ const autoStart = ref(false)
 const foregroundColorActive = ref('')
 const foregroundColorInactive = ref('')
 
-const engineModel = computed(() => {
-  return transcriber.engine ? transcriber.engine.name + ' / ' + transcriber.model : ''
-})
-
 let previousTranscription = ''
 
 onMounted(async () => {
@@ -130,11 +123,7 @@ onMounted(async () => {
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
   window.api.on('start-dictation', toggleRecord)
-  window.api.on('file-modified', (file) => {
-    if (file === 'settings') {
-      load()
-    }
-  })
+  window.api.on('file-modified', onFileModified)
 
   // init
   load()
@@ -175,8 +164,14 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.api.off('start-dictation', toggleRecord)
-  window.api.off('file-modified')
+  window.api.off('file-modified', onFileModified)
 })
+
+const onFileModified = (file: string) => {
+  if (file === 'settings') {
+    load()
+  }
+}
 
 const load = () => {
   transcription.value = store.transcribeState.transcription

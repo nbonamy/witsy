@@ -131,8 +131,4 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
-  window.api.off('file-modified')
-})
-
 </script>

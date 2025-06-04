@@ -43,6 +43,7 @@
     "embeddings": "Incorporamenti",
     "enabled": "Abilitato",
     "error": "Errore!",
+    "errorCopyClipboard": "Si è verificato un errore durante la copia del testo negli appunti.",
     "errorModelRefresh": "Errore durante l'aggiornamento dei modelli. Controlla la tua connessione e riprova.",
     "esc": "Esc",
     "estimatedCost": "Costo stimato:",
@@ -102,6 +103,7 @@
     },
     "stop": "Ferma",
     "tools": "Strumenti",
+    "tryAgain": "Per favore riprova.",
     "type": "Tipo",
     "undo": "Annulla",
     "upload": "Carica",
@@ -1852,7 +1854,7 @@
     "autoStart": "Inizia la trascrizione quando si apre la finestra",
     "clickToRecord": "Clicca sul pulsante di registrazione quando sei pronto!",
     "errors": {
-      "copy": "Errore durante la copia del testo negli appunti",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Errore nell'accesso al microfono",
       "notAuthorized": {
         "text": "Clicca su OK per aprire la finestra delle Impostazioni e controllare la tua chiave API.",

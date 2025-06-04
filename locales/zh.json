@@ -43,6 +43,7 @@
     "embeddings": "嵌入",
     "enabled": "已启用",
     "error": "错误！",
+    "errorCopyClipboard": "复制文本到剪贴板时发生错误。",
     "errorModelRefresh": "刷新模型时出错。请检查您的连接并重试。",
     "esc": "Esc",
     "estimatedCost": "预估成本：",
@@ -121,6 +122,7 @@
     },
     "stop": "停止",
     "tools": "工具",
+    "tryAgain": "请再试一次。",
     "type": "类型",
     "undo": "撤销",
     "upload": "上传",
@@ -1882,7 +1884,7 @@
     "autoStart": "窗口打开时开始转录",
     "clickToRecord": "准备好了就点击录音按钮！",
     "errors": {
-      "copy": "复制文本到剪贴板时出错",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "访问麦克风时出错",
       "notAuthorized": {
         "text": "点击确定以打开设置窗口并检查您的API密钥。",

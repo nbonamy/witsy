@@ -20,22 +20,21 @@ const logo = ref(null)
 const state = ref('')
 
 onMounted(() => {
-
   logo.value.src = document.querySelector<HTMLImageElement>('#logo').src
-
-  window.api.on('computer-status', (chunk: LlmChunk) => {
-    if (chunk.type === 'tool' && chunk.name === 'computer') {
-      state.value = t(`computerUse.action.${chunk.call.params.action}`)
-    } else {
-      state.value = t('computerUse.state.working')
-    }
-  })
-
+  window.api.on('computer-status', onComputerStatus)
 })
 
 onUnmounted(() => {
-  window.api.off('computer-status')
+  window.api.off('computer-status', onComputerStatus)
 })
+
+const onComputerStatus = (chunk: LlmChunk) => {
+  if (chunk.type === 'tool' && chunk.name === 'computer') {
+    state.value = t(`computerUse.action.${chunk.call.params.action}`)
+  } else {
+    state.value = t('computerUse.state.working')
+  }
+}
 
 const onStop = () => {
   window.api.computer.stop()
