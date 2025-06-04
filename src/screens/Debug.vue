@@ -68,7 +68,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Loader from '../components/Loader.vue'
 import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
+import 'vue3-json-viewer/dist/vue3-json-viewer.css'
 
 // load store
 store.loadSettings()
