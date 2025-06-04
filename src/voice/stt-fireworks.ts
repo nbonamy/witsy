@@ -49,7 +49,7 @@ export default class STTFireworks implements STTEngine {
     throw new Error('Transcription not supported in Fireworks STT engine')
   }
 
-  async startStreaming(callback: StreamingCallback, opts?: Record<string, string>): Promise<void> {
+  async startStreaming(model: string, callback: StreamingCallback, opts?: Record<string, string>): Promise<void> {
 
     // check for API key before attempting connection
     if (!this.config.engines.fireworks?.apiKey) {

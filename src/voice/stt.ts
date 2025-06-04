@@ -79,7 +79,7 @@ export interface STTEngine {
   // streaming
   isStreamingModel(model: string): boolean
   requiresPcm16bits?(model: string): boolean
-  startStreaming?(callback: StreamingCallback, opts?: object): Promise<void>  
+  startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>  
   sendAudioChunk?(chunk: Blob): Promise<void>  
   endStreaming?(): Promise<void>  
 }
