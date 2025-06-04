@@ -60,7 +60,7 @@ class Transcriber {
     }
 
     this.streaming = true
-    await this.engine.startStreaming((chunk: StreamingChunk) => {
+    await this.engine.startStreaming(this.model, (chunk: StreamingChunk) => {
       callback(chunk)
     })
   }

@@ -1,6 +1,6 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } from './stt'
-import { RealtimeClient } from '@speechmatics/real-time-client';
+import { OperatingPoint, RealtimeClient } from '@speechmatics/real-time-client';
 import { createSpeechmaticsJWT } from '@speechmatics/auth';
 
 export default class STTSpeechmatics implements STTEngine {
@@ -9,7 +9,8 @@ export default class STTSpeechmatics implements STTEngine {
   client: RealtimeClient|null
 
   static readonly models = [
-    { id: 'realtime', label: 'Speechmatics (realtime)' },
+    { id: 'realtime', label: 'Standard (realtime)' },
+    { id: 'enhanced', label: 'Enhanced (realtime)' },
   ]
 
   constructor(config: Configuration) {
@@ -25,8 +26,9 @@ export default class STTSpeechmatics implements STTEngine {
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isStreamingModel(model: string): boolean {
-    return model === 'realtime'
+    return true
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,7 +54,7 @@ export default class STTSpeechmatics implements STTEngine {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async startStreaming(callback: StreamingCallback, opts?: Record<string, string>): Promise<void> {
+  async startStreaming(model: string, callback: StreamingCallback, opts?: Record<string, string>): Promise<void> {
 
     // check for API key before attempting connection
     if (!this.config.engines.speechmatics?.apiKey) {
@@ -116,6 +118,7 @@ export default class STTSpeechmatics implements STTEngine {
     // we can start
     await this.client.start(jwt, {
       transcription_config: {
+        operating_point: model === 'enhanced' ? OperatingPoint.Enhanced : OperatingPoint.Standard,
         language: this.config.stt.locale?.substring(0, 2) || 'en',
         enable_partials: true,
       },
