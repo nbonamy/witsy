@@ -101,6 +101,7 @@
       "add": "Ajouter au dictionnaire"
     },
     "stop": "Arrêter",
+    "tools": "Outils",
     "type": "Type",
     "undo": "Annuler",
     "upload": "Télécharger",
@@ -1307,6 +1308,12 @@
         "text": "La version actuelle sera perdue.",
         "title": "Êtes-vous sûr de vouloir regénérer ce message ?"
       },
+      "tools": {
+        "noTools": {
+          "text": "Aucun outil n'a été appelé durant la génération de ce message.",
+          "title": "Aucune information d'appel d'outil disponible."
+        }
+      },
       "usage": {
         "prompt": "Tokens de prompt : {prompt}",
         "reasoning": "Tokens de raisonnement : {reasoning}",
@@ -1653,7 +1660,7 @@
       "serverNotFound": "Le serveur auquel vous essayez de vous connecter n'existe pas.",
       "servers": ". Découvrez et installez des serveurs MCP depuis",
       "smithery": "Smithery",
-      "tools": "Outils",
+      "tools": "@:{'common.tools'}",
       "totalTools": "Total de {count} service{count > 1 ? 's' : ''} disponible{count > 1 ? 's' : ''}"
     },
     "plugins": {

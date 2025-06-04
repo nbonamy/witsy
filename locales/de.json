@@ -101,6 +101,7 @@
       "add": "Zum Wörterbuch hinzufügen"
     },
     "stop": "Stop",
+    "tools": "Werkzeuge",
     "type": "Typ",
     "undo": "Rückgängig",
     "upload": "Hochladen",
@@ -1307,6 +1308,12 @@
         "text": "Die aktuelle Version geht verloren.",
         "title": "Sind Sie sicher, dass Sie diese Nachricht erneut generieren möchten?"
       },
+      "tools": {
+        "noTools": {
+          "text": "Es wurden während dieser Nachrichtenübermittlung keine Werkzeuge aufgerufen.",
+          "title": "Keine Informationen zu Werkzeugaufrufen verfügbar."
+        }
+      },
       "usage": {
         "prompt": "Prompt-Token: {prompt}",
         "reasoning": "Begründungs-Token: {reasoning}",
@@ -1653,7 +1660,7 @@
       "serverNotFound": "Der Server, mit dem Sie sich verbinden möchten, existiert nicht.",
       "servers": "Server. Entdecken und installieren Sie MCP-Server von der",
       "smithery": "Smithery",
-      "tools": "Werkzeuge",
+      "tools": "@:{'common.tools'}",
       "totalTools": "Insgesamt {count} Dienst{count > 1 ? 'e' : ''} verfügbar"
     },
     "plugins": {

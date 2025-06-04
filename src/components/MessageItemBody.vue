@@ -21,7 +21,8 @@
 
 <script setup lang="ts">
 
-import { ref, inject, computed, onMounted } from 'vue'
+import { ChatToolMode } from '../types/config'
+import { ref, inject, computed, onMounted, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { closeOpenMarkdownTags, getCodeBlocks } from '../services/markdown'
@@ -40,6 +41,10 @@ const userToggleReasoning = inject('onToggleReasoning', (value: boolean) => {
 const props = defineProps({
   message: {
     type: Message,
+    required: true,
+  },
+  showToolCalls: {
+    type: String as PropType<ChatToolMode>,
     required: true,
   },
 })
@@ -118,7 +123,7 @@ const computeBlocks = (content: string|null): Block[] => {
 
       // tool
       if ([regexTool1].includes(regex)) {
-        if (store.config.appearance.chat.showToolCalls === 'always' && props.message.toolCalls) {
+        if (props.showToolCalls === 'always' && props.message.toolCalls.length) {
           const index = parseInt(match[1])
           const toolCall = props.message.toolCalls[index]
           if (toolCall && toolCall.done) {

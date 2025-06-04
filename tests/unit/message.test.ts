@@ -115,21 +115,21 @@ test('Tool call message', () => {
   const message = new Message('user')
 
   // same tool update
-  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(1)
-  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Calling the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: 'Calling the tool', done: false })
   expect(message.toolCalls).toHaveLength(1)
-  message.setToolCall({ type: 'tool', id: '1', name: 'tool1', status: undefined, done: true })
+  message.addToolCall({ type: 'tool', id: '1', name: 'tool1', status: undefined, done: true })
   expect(message.toolCalls).toHaveLength(1)
 
   // new tool
-  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(2)
-  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: true })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: true })
   expect(message.toolCalls).toHaveLength(2)
 
   // special google case
-  message.setToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
+  message.addToolCall({ type: 'tool', id: '2', name: 'tool2', status: 'Preparing the tool', done: false })
   expect(message.toolCalls).toHaveLength(3)
 
 })

@@ -120,6 +120,7 @@
       "add": "添加到字典"
     },
     "stop": "停止",
+    "tools": "工具",
     "type": "类型",
     "undo": "撤销",
     "upload": "上传",
@@ -1326,6 +1327,12 @@
         "text": "当前版本将丢失。",
         "title": "你确定要重新生成这条消息吗？"
       },
+      "tools": {
+        "noTools": {
+          "text": "在此消息生成过程中没有调用任何工具。",
+          "title": "没有可用的工具调用信息。"
+        }
+      },
       "usage": {
         "prompt": "提示词：{prompt}",
         "reasoning": "推理词：{reasoning}",
@@ -1683,7 +1690,7 @@
       "serverNotFound": "您尝试连接的服务器不存在。",
       "servers": "服务器。从",
       "smithery": "Smithery",
-      "tools": "工具",
+      "tools": "@:{'common.tools'}",
       "totalTools": "总共 {count} 个服务可用"
     },
     "plugins": {

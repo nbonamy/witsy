@@ -126,11 +126,6 @@ onMounted(async () => {
 
 })
 
-onUnmounted(() => {
-  window.api.off('show')
-  window.api.off('file-modified')
-})
-
 const showTab = (tab: string) => {
   const el = document.querySelector<HTMLElement>(`.settings .tab.${tab} input`)
   if (el) {
