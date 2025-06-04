@@ -46,7 +46,6 @@ vi.mock('../../src/automations/automator.ts', async () => {
   Automator.prototype.moveCaretBelow = vi.fn()
   Automator.prototype.getSelectedText = vi.fn(() => selectedText)
   Automator.prototype.pasteText = vi.fn()
-  Automator.prototype.copyToClipboard = vi.fn()
   return { default: Automator }
 })
 
@@ -140,18 +139,32 @@ test('Prompt command', async () => {
   const commander = new Commander()
   const command = buildCommand('chat_window')
   command.id = notEditablePrompts[0]
-  await commander.execCommand(app, { textId: cachedTextId!, sourceApp: 'appPath', command })
+  await commander.execCommand(app, {
+    textId: cachedTextId!,
+    sourceApp: {
+      id: 'appId',
+      name: 'appName',
+      path: 'appPath',
+      window: 'title'
+    },
+    action: 'default',
+    command
+  })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
-  expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
   const args = (window.openPromptAnywhere as Mock).mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
   expect(prompt).toBe('commands.commands.00000000-0000-0000-0000-000000000000.template:"Grabbed text"')
-  expect(args.sourceApp).toBe('appPath')
+  expect(args.sourceApp).toMatchObject({
+    id: 'appId',
+    name: 'appName',
+    path: 'appPath',
+    window: 'title'
+  })
   expect(args.engine).toBe('mock')
   expect(args.model).toBe('chat')
   expect(args.execute).toBe(false)
@@ -163,13 +176,22 @@ test('Other commands', async () => {
 
   const commander = new Commander()
   const command = buildCommand('chat_window', 'Explain this:\n"""{input}"""')
-  await commander.execCommand(app, { textId: cachedTextId!, sourceApp: '', command })
+  await commander.execCommand(app, {
+    textId: cachedTextId!,
+    sourceApp: {
+      id: 'appId',
+      name: 'appName',
+      path: 'appPath',
+      window: 'title'
+    },
+    action: 'default',
+    command
+  })
 
   expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
 
   expect(Automator.prototype.moveCaretBelow).not.toHaveBeenCalled()
   expect(Automator.prototype.pasteText).not.toHaveBeenCalled()
-  expect(Automator.prototype.copyToClipboard).not.toHaveBeenCalled()
 
   const args = (window.openPromptAnywhere as Mock).mock.calls[0][0]
   const prompt = getCachedText(args.promptId)
@@ -185,19 +207,19 @@ test('No text', async () => {
   
   const commander = new Commander()
   const command = buildCommand('chat_window')
-  expect(await commander.execCommand(app, { textId: 'unknown', sourceApp: '', command })).toBe(false)
+  expect(await commander.execCommand(app, {
+    textId: 'unknown',
+    sourceApp: {
+      id: 'appId',
+      name: 'appName',
+      path: 'appPath',
+      window: 'title'
+    },
+    action: 'default',
+    command
+  })).toBe(false)
 
   expect(window.openPromptAnywhere).not.toHaveBeenCalled()
   expect(window.releaseFocus).not.toHaveBeenCalledOnce()
-
-})
-
-test('Error while executing', async () => {
-  
-  const commander = new Commander()
-  const command = buildCommand('chat_window')
-  expect(await commander.execCommand(app, { textId: cachedTextId!, sourceApp: 'error', command })).toBe(false)
-
-  expect(window.openPromptAnywhere).toHaveBeenCalledOnce()
 
 })

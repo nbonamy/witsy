@@ -106,21 +106,23 @@ onMounted(() => {
 
   requests.value = window.api.debug.getNetworkHistory()
 
-  window.api.on('network', (request: NetworkRequest) => {
-    //console.log('Received Network request:', request)
-    const existingIndex = requests.value.findIndex((r) => r.id === request.id)
-    if (existingIndex >= 0) {
-      requests.value[existingIndex] = request
-    } else {
-      requests.value.push(request)
-    }
-  })
+  window.api.on('network', onNetworkRequest)
 
 })
 
 onUnmounted(() => {
-  window.api.off('network')
+  window.api.off('network', onNetworkRequest)
 })
+
+const onNetworkRequest = (request: NetworkRequest) => {
+  //console.log('Received Network request:', request)
+  const existingIndex = requests.value.findIndex((r) => r.id === request.id)
+  if (existingIndex >= 0) {
+    requests.value[existingIndex] = request
+  } else {
+    requests.value.push(request)
+  }
+}
 
 const jsonData = (data: string) => {
   try {

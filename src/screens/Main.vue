@@ -50,10 +50,6 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
-  window.api.off('query-params')
-})
-
 const processQueryParams = (params: anyDict) => {
   console.log('[main] processing query params', JSON.stringify(params))
   if (params.view) {

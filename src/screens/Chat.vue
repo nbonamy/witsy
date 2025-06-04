@@ -137,12 +137,6 @@ onMounted(() => {
 
 })
 
-onUnmounted(() => {
-  window.api.off('delete-chat')
-  window.api.off('computer-stop')
-  window.api.off('update-available')
-})
-
 const onNewChat = () => {
   assistant.value.initChat()
   updateChatEngineModel()

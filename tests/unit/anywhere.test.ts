@@ -38,7 +38,6 @@ vi.mock('../../src/automations/automator.ts', async () => {
   Automator.prototype.moveCaretBelow =  vi.fn()
   Automator.prototype.getSelectedText = vi.fn(() => 'Grabbed text')
   Automator.prototype.pasteText = vi.fn()
-  Automator.prototype.copyToClipboard = vi.fn()
   return { default: Automator }
 })
 

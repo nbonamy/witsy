@@ -69,8 +69,8 @@ contextBridge.exposeInMainWorld(
     },
     clipboard: {
       readText: (): string => { return ipcRenderer.sendSync('clipboard-read-text') },
-      writeText: (text: string): void => { return ipcRenderer.send('clipboard-write-text', text) },
-      writeImage: (path: string): void => { return ipcRenderer.send('clipboard-write-image', path) },
+      writeText: (text: string): boolean => { return ipcRenderer.sendSync('clipboard-write-text', text) },
+      writeImage: (path: string): boolean => { return ipcRenderer.sendSync('clipboard-write-image', path) },
     },
     shortcuts: {
       register: (): void => { return ipcRenderer.send('shortcuts-register') },
@@ -89,8 +89,8 @@ contextBridge.exposeInMainWorld(
     },
     automation: {
       getText: (id: string): string => { return ipcRenderer.sendSync('automation-get-text', id) },
-      replace: (text: string, sourceApp: Application): void => { return ipcRenderer.send('automation-replace', { text, sourceApp }) },
-      insert: (text: string, sourceApp: Application): void => { return ipcRenderer.send('automation-insert', { text, sourceApp }) },
+      replace: (text: string, sourceApp: Application): boolean => { return ipcRenderer.sendSync('automation-replace', { text, sourceApp }) },
+      insert: (text: string, sourceApp: Application): boolean => { return ipcRenderer.sendSync('automation-insert', { text, sourceApp }) },
     },
     chat: {
       open: (chatid: string): void => { return ipcRenderer.send('chat-open', chatid) },

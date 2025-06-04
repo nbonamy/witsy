@@ -43,6 +43,7 @@
     "embeddings": "Vecteurs",
     "enabled": "Activé",
     "error": "Erreur !",
+    "errorCopyClipboard": "Une erreur s'est produite lors de la copie du texte dans le presse-papiers.",
     "errorModelRefresh": "Erreur lors de l'actualisation des modèles. Vérifiez votre connexion et réessayez.",
     "esc": "Échap",
     "estimatedCost": "Coût estimé :",
@@ -102,6 +103,7 @@
     },
     "stop": "Arrêter",
     "tools": "Outils",
+    "tryAgain": "Veuillez réessayer.",
     "type": "Type",
     "undo": "Annuler",
     "upload": "Télécharger",
@@ -1852,7 +1854,7 @@
     "autoStart": "Commencer la transcription à l'ouverture de la fenêtre",
     "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
     "errors": {
-      "copy": "Erreur lors de la copie du texte dans le presse-papiers",
+      "copy": "@:{'common.errorCopyClipboard'}",
       "microphone": "Erreur d'accès au microphone",
       "notAuthorized": {
         "text": "Cliquez sur OK pour ouvrir la fenêtre des paramètres et vérifier votre clé API.",

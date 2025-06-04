@@ -1,16 +1,10 @@
 
 import { Application, Automator as AutomatorImpl } from '../types/automation';
-import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { clipboard } from 'electron';
 import MacosAutomator from './macos'
 import WindowsAutomator from './windows'
 import NutAutomator from './nut'
-import * as window from '../main/window'
-
-export enum AutomationAction {
-  INSERT_BELOW,
-  REPLACE
-}
+import Automation from './automation';
 
 export default class Automator {
   
@@ -82,60 +76,37 @@ export default class Automator {
     }
   }
 
-  async pasteText(textToPaste: string): Promise<void> {
+  async pasteClipboard(): Promise<void> {
+    try {
+      await this.automator.pasteText();
+    } catch (error) {
+      console.error(error);
+    } 
+  }
+
+  async pasteText(textToPaste: string): Promise<boolean> {
 
     try {
 
       // save and set
       const clipboardText = clipboard.readText();
-      clipboard.writeText(textToPaste);
+
+      // try to write text to clipboard
+      const copied = await Automation.writeTextToClipboard(textToPaste);
+      if (!copied) {
+        return false;
+      }
 
       // paste it
-      await this.automator.pasteText();
+      this.pasteClipboard();
 
       // restore
-      clipboard.writeText(clipboardText);
+      await Automation.writeTextToClipboard(clipboardText);
+      return true;
     
     } catch (error) {
       console.error(error);
-    }
-
-  }
-
-  async copyToClipboard(text: string): Promise<void> {
-    await clipboard.writeText(text)
-  }
-
-  static automate = async (text: string, sourceApp: Application|null, action: AutomationAction): Promise<void> => {
-
-    try {
-
-      const result = removeMarkdown(text, {
-        stripListLeaders: false,
-        listUnicodeChar: ''
-      });
-
-      // close prompt anywhere
-      await window.closePromptAnywhere(sourceApp);
-
-      // now paste
-      console.debug(`Processing LLM output: "${result.slice(0, 50)}"…`);
-
-      // we need an automator
-      const automator = new Automator();
-      if (action === AutomationAction.INSERT_BELOW) {
-        await automator.moveCaretBelow()
-        await automator.pasteText(result)
-      } else if (action === AutomationAction.REPLACE) {
-        await automator.deleteSelectedText()
-        await automator.pasteText(result)
-      }
-
-      // done
-      return;
-
-    } catch (error) {
-      console.error('Error while testing', error);
+      return false;
     }
 
   }

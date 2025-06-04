@@ -87,21 +87,22 @@ onMounted(() => {
     store.history.chats.push(chat.value)
   }
 
-  // main event
-  window.api.on('delete-media', () => {
-    if (message.value) {
-      deleteMedia(message.value)
-    }
-  })
-
-  // keyboard
+  // events
+  window.api.on('delete-media', onDeleteMedia)
   document.addEventListener('keydown', onKeyDown)
+
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
-  window.api.off('delete-media')
+  window.api.off('delete-media', onDeleteMedia)
 })
+
+const onDeleteMedia = () => {
+  if (message.value) {
+    deleteMedia(message.value)
+  }
+}
 
 const onReset = () => {
   selectMessage(null)

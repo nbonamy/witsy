@@ -1,15 +1,20 @@
 
 import { vi, expect, test, beforeEach, Mock } from 'vitest'
 import { clipboard } from 'electron'
-import Automator, { AutomationAction } from '../../src/automations/automator'
+import Automator from '../../src/automations/automator'
+import Automation, { AutomationAction }  from '../../src/automations/automation'
 import MacosAutomator from '../../src/automations/macos'
 import RobotAutomator from '../../src/automations/robot'
 import * as window from '../../src/main/window'
 
+let clipboardText = undefined
+
 vi.mock('electron', () => ({
   clipboard: {
-    readText: vi.fn(),
-    writeText: vi.fn()
+    readText: vi.fn(() => clipboardText),
+    writeText: vi.fn((text) => {
+      clipboardText = text;
+    })
   }
 }))
 
@@ -75,15 +80,9 @@ test('Paste text', async () => {
   expect(prototype.pasteText).toHaveBeenCalled()
 })
 
-test('Copy to clipboard', async () => {
-  const automator = new Automator()
-  await automator.copyToClipboard('text')
-  expect(clipboard.writeText).toHaveBeenLastCalledWith('text')
-})
-
 test('Insert below', async () => {
 
-  await Automator.automate('Explain this', null, AutomationAction.INSERT_BELOW)
+  await Automation.automate('Explain this', null, AutomationAction.INSERT_BELOW)
 
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
 
@@ -98,7 +97,7 @@ test('Insert below', async () => {
 
 test('Replace', async () => {
 
-  await Automator.automate('Explain this', null, AutomationAction.REPLACE)
+  await Automation.automate('Explain this', null, AutomationAction.REPLACE)
 
   expect(window.closePromptAnywhere).toHaveBeenCalledOnce()
 

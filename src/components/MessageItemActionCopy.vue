@@ -1,5 +1,5 @@
 <template>
-  <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="copy">
+  <div class="action copy" v-if="message.role == 'assistant' && !message.transient" @click="onCopy">
     <BIconClipboard /> {{ copyLabel }}
   </div>
 </template>
@@ -8,8 +8,9 @@
 
 import { ref } from 'vue'
 import { t } from '../services/i18n'
-import Message from '../models/message'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
+import Message from '../models/message'
+import Dialog from '../composables/dialog'
 
 const props = defineProps({
   message: {
@@ -20,12 +21,22 @@ const props = defineProps({
 
 const copyLabel = ref(t('common.copy'))
 
-const copy = () => {
+const onCopy = () => {
   if (props.message.type == 'text') {
-    window.api.clipboard.writeText(removeMarkdown(props.message.content, {
+
+    const textToCopy = removeMarkdown(props.message.content, {
       listUnicodeChar: '',
       stripListLeaders: false,
-    }))
+    })
+
+    // try both ways
+    if (!window.api.clipboard.writeText(textToCopy)) {
+      navigator.clipboard.writeText(textToCopy)
+        .catch(err => {
+          Dialog.alert(t('common.errorCopyClipboard'), t('common.tryAgain'))
+        })
+    }
+  
   } else if (props.message.type == 'image') {
     window.api.clipboard.writeImage(props.message.content)
   }
@@ -34,7 +45,7 @@ const copy = () => {
 }
 
 defineExpose({
-  copy
+  copy: onCopy,
 })
 </script>
 
