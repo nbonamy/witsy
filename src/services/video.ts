@@ -34,6 +34,7 @@ export default class VideoCreator implements MediaCreator {
     } else if (engine == 'falai') {
       return [
         'fal-ai/kling-video/v2.1/master/text-to-video',
+        'fal-ai/veo3',
         'fal-ai/veo2',
         'fal-ai/minimax/video-01',
         'fal-ai/minimax/video-01-live',
@@ -41,7 +42,6 @@ export default class VideoCreator implements MediaCreator {
         'fal-ai/mochi-v1',
         'fal-ai/stepfun-video',
         'fal-ai/hunyuan-video',
-        'fal-ai/fast-svd/text-to-video',
       ].map(name => ({ id: name, name }))
     } else {
       return []
