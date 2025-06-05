@@ -155,7 +155,6 @@ const onAppMenu = (event: Event) => {
   }
 
   .app-menu {
-    height: 1rem;
     cursor: pointer;
   }
 
