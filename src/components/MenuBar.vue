@@ -186,7 +186,7 @@ const onAppMenu = (event: Event) => {
 }
 
 .macos .menubar-wrapper .app-menu {
-  /* display: none; */
+  display: none;
 }
 
 </style>
