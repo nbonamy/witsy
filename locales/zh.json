@@ -1293,6 +1293,7 @@
   },
   "menu": {
     "app": {
+      "about": "关于Witsy",
       "checkForUpdates": "检查更新…",
       "quit": "退出 Witsy",
       "settings": "@:{'common.settings'}…"
@@ -1304,6 +1305,7 @@
       "title": "编辑"
     },
     "file": {
+      "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "新建聊天",
       "quickPrompt": "新建提示",

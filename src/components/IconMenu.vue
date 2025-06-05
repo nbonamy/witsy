@@ -1,6 +1,6 @@
 
 <template>
-  <div class="menu">
+  <div class="menu-icon">
     <div></div>
     <div></div>
     <div></div>
@@ -9,7 +9,7 @@
 
 <style scoped>
 
-.menu {
+.menu-icon {
   display: flex;
   flex-direction: column;
   justify-content: center;

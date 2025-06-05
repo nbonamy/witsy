@@ -30,12 +30,16 @@ contextBridge.exposeInMainWorld(
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
     showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('show-dialog', opts) },
     listFonts: (): string[] => { return ipcRenderer.sendSync('fonts-list') },
+    closeMainWindow: (): void => { return ipcRenderer.send('close-main-window') },
+    showAbout: (): void => { return ipcRenderer.send('show-about') },
     debug: {
       showConsole: (): void => { return ipcRenderer.send('show-debug-console') },
       getNetworkHistory: (): NetworkRequest[] => { return ipcRenderer.sendSync('get-network-history') },
       clearNetworkHistory: (): void => { return ipcRenderer.send('clear-network-history') },
+      openFolder: (name: string): void => { return ipcRenderer.send('open-app-folder', name) },
     },
     update: {
+      check: (): void => { return ipcRenderer.send('update-check') },
       isAvailable: (): boolean => { return ipcRenderer.sendSync('update-is-available') },
       apply: (): void => { return ipcRenderer.send('update-apply') },
     },

@@ -88,6 +88,7 @@
     "@huggingface/inference": "^2.8.1",
     "@huggingface/transformers": "^3.5.1",
     "@iktakahiro/markdown-it-katex": "^4.0.1",
+    "@imengyu/vue3-context-menu": "^1.5.0",
     "@langchain/textsplitters": "^0.0.3",
     "@mistralai/mistralai": "^1.1.0",
     "@modelcontextprotocol/sdk": "^1.11.2",

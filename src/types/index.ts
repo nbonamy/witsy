@@ -244,13 +244,16 @@ declare global {
       on: (signal: string, callback: (value: any) => void) => void
       off: (signal: string, callback: (value: any) => void) => void
       setAppearanceTheme(theme: string): void
+      showAbout(): void
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]
+      closeMainWindow(): void
       fullscreen(window: string, state: boolean): void
       debug: {
         showConsole(): void
         getNetworkHistory(): NetworkRequest[]
         clearNetworkHistory(): void
+        openFolder(name: string): void
       }
       runAtLogin: {
         get(): boolean
@@ -284,6 +287,7 @@ declare global {
         unregister(): void
       }
       update: {
+        check(): void
         isAvailable(): boolean
         apply(): void
       }

@@ -7,7 +7,7 @@ import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
 import fontList from 'font-list';
-import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu, Notification } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu, Notification, shell } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
@@ -310,6 +310,18 @@ app.on('render-process-gone', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+ipcMain.on('close-main-window', () => {
+  window.mainWindow.close();
+});
+
+ipcMain.on('show-about', () => {
+  app.showAboutPanel();
+});
+
+ipcMain.on('update-check', () => {
+  autoUpdater.check()
+})
+
 ipcMain.on('update-is-available', (event) => {
   event.returnValue = autoUpdater.updateAvailable;
 });
@@ -337,6 +349,10 @@ ipcMain.on('get-network-history', (event) => {
 
 ipcMain.on('clear-network-history', () => {
   debug.clearNetworkHistory();
+})
+
+ipcMain.on('open-app-folder', (event, name) => {
+  shell.openPath(app.getPath(name))
 })
 
 ipcMain.on('get-app-path', (event) => {
