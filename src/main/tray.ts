@@ -86,18 +86,18 @@ export default class {
       ]
     } 
   
-    // for other platform
-    if (process.platform !== 'darwin') {
-      menuItems = [
-        ...menuItems,
-        { role: 'about' },
-        { 
-          label: t('menu.app.checkForUpdates'),
-          click: () => this.autoUpdater.check()
-        },
-        { type: 'separator' },
-      ]
-    }
+    // // for other platform
+    // if (process.platform !== 'darwin') {
+    //   menuItems = [
+    //     ...menuItems,
+    //     { role: 'about' },
+    //     { 
+    //       label: t('menu.app.checkForUpdates'),
+    //       click: () => this.autoUpdater.check()
+    //     },
+    //     { type: 'separator' },
+    //   ]
+    // }
   
     // add common stuff
     menuItems = menuItems.concat([

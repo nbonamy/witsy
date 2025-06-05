@@ -110,7 +110,7 @@ const onAppMenu = (event: Event) => {
   ContextMenu.showContextMenu({
     x: rect.x + rect.width,
     y: rect.y + 8,
-    theme: useAppearanceTheme().getTheme() === 'dark' ? 'flat dark' : 'flat',
+    theme: useAppearanceTheme().getTheme() === 'dark' ? 'default dark' : 'default',
     preserveIconWidth: false,
     items: [
       { 
@@ -138,6 +138,48 @@ const onAppMenu = (event: Event) => {
 
 </script>
 
+<style>
+
+:root {
+  --mx-menu-backgroud-radius: 0.5rem;
+}
+
+.mx-context-menu {
+  
+  padding: 0.375rem 0;
+  border: 0.5px solid color-mix(in srgb, var(--control-border-color), transparent 25%);
+
+  .mx-context-menu-item {
+
+    .label {
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+    }
+
+    .mx-right-arrow {
+      height: 10px;
+    }
+  }
+
+  .mx-context-menu-item-sperator {
+    background-color: transparent;
+  }
+}
+
+body[data-tint=blue] .mx-context-menu {
+  background-color: var(--background-color);
+  border-color: color-mix(in srgb, var(--control-border-color), transparent 25%);
+
+  .mx-context-menu-item {
+    &.open, &:hover {
+      background-color: color-mix(in srgb, var(--background-color) 50%, var(--control-button-active-bg-color) 50%);
+    }
+  }
+}
+
+
+</style>
 <style scoped>
 
 .menubar-wrapper {

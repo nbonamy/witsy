@@ -262,7 +262,7 @@
   
   [data-tint=blue], [data-tint=blue] * {
 
-    --background-color: #12202f;
+    --background-color: rgb(18, 32, 47);
     --background-color-light: rgb(24, 40, 55);
     --window-bg-color: var(--background-color-light);
     --text-color: rgb(230, 230, 235);
