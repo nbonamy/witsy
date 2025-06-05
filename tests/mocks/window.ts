@@ -37,9 +37,17 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
     setAppearanceTheme: vi.fn(),
+    showAbout: vi.fn(),
     showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
     listFonts: vi.fn(() => []),
     fullscreen: vi.fn(),
+    closeMainWindow: vi.fn(),
+    debug: {
+      showConsole: vi.fn(),
+      getNetworkHistory: vi.fn(() => []),
+      clearNetworkHistory: vi.fn(),
+      openFolder: vi.fn(),
+    },
     runAtLogin: {
       get: () => runAtLogin,
       set: vi.fn((state) => {
@@ -47,6 +55,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       })
     },
     update: {
+      check: vi.fn(),
       isAvailable: vi.fn(() => false),
       apply: vi.fn(),
     },
