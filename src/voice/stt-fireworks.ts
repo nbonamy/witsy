@@ -1,6 +1,30 @@
 import { Configuration } from 'types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } from './stt'
 
+type FireworksWord = {
+  word: string,
+  language: string,
+  probability: number,
+  hallucination_score: number,
+  is_final: boolean,
+}
+
+type FireworksSegment = {
+  id: string,
+  seek: number,
+  text: string,
+  language: string,
+  words: FireworksWord[],
+}
+
+type FireworksDataMessage = {
+  task: 'transcribe',
+  language: string,
+  text: string,
+  words: FireworksWord[],
+  segments: FireworksSegment[],
+}
+
 export default class STTFireworks implements STTEngine {
 
   config: Configuration
@@ -68,12 +92,15 @@ export default class STTFireworks implements STTEngine {
     queryParams.append('Authorization', `Bearer ${this.config.engines.fireworks.apiKey}`)
     queryParams.append('response_format', 'verbose_json')
     queryParams.append('language', this.config.stt.locale?.substring(0, 2) || 'en')
-    if (opts?.prompt) queryParams.append('prompt', opts.prompt)
+    if (opts?.prompt) {
+      queryParams.append('prompt', opts.prompt)
+    } else if (this.config.stt.vocabulary.length > 0) {
+      queryParams.append('prompt', this.config.stt.vocabulary.map((vocab) => vocab.text).join(', '))
+    }
     if (opts?.temperature !== undefined) queryParams.append('temperature', opts.temperature.toString())
 
     // The final WebSocket URL
     const wsUrl = `${baseWsUrl}${wsPath}?${queryParams.toString()}`
-
     this.streamingSession = new WebSocket(wsUrl)
 
     this.streamingSession.onerror = (error) => {
@@ -86,16 +113,25 @@ export default class STTFireworks implements STTEngine {
       callback({ type: 'status', status: 'connected' })
     }
 
+    const segments: Record<string, any> = {}
+
     this.streamingSession.onmessage = (event) => {
 
       // parse the event data
-      const data = JSON.parse(event.data)
+      const data: FireworksDataMessage = JSON.parse(event.data)
       if (data?.task !== 'transcribe') {
         return
       }
 
-      // send the whole text as words do not have spacing
-      callback({ type: 'text', content: data.text })
+      // store the segments
+      if (data.segments) {
+        data.segments.forEach((segment: FireworksSegment) => {
+          segments[segment.id] = segment
+        })
+      }
+
+      // send the whole text by joining all segments
+      callback({ type: 'text', content: Object.values(segments).map((s: FireworksSegment) => s.text).join(' ') })
 
     }
 
