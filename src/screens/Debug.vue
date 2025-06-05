@@ -41,6 +41,12 @@
             <pre>Waiting for response...</pre>
           </div>
           <template v-else>
+            <div class="section" v-if="activeTab === 'request' && parameters">
+              <h3>Query Parameters</h3>
+              <div class="json expanded">
+                <JsonViewer :value="parameters" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+              </div>
+            </div>
             <div class="section" v-if="headers">
               <h3>Headers</h3>
               <div class="json expanded">
@@ -59,6 +65,12 @@
       </main>
       <main v-if="selected && selected.type === 'websocket'">
         <div class="tab-content">
+          <div class="section" v-if="parameters">
+            <h3>Query Parameters</h3>
+            <div class="json expanded">
+              <JsonViewer :value="parameters" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+            </div>
+          </div>
           <div class="section" v-if="headers">
             <h3>Headers</h3>
             <div class="json expanded">
@@ -66,11 +78,17 @@
             </div>
           </div>
           <div class="section" v-if="selected.frames.length > 0">
-            <h3>Frames</h3>
-            <div class="json" v-for="frame in selected.frames">
-              <!-- {{  frame.payloadData }} -->
-              <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
-            </div>
+            <form class="header">
+              <h3>Frames</h3>
+              <input type="checkbox" v-model="showSent" /> Sent
+              &nbsp;&nbsp;&nbsp;
+              <input type="checkbox" v-model="showReceived" /> Received
+            </form>
+            <template v-for="frame in selected.frames">
+              <div v-if="(showSent && frame.type === 'sent') || (showReceived && frame.type === 'received')" class="json">
+                <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
+              </div>
+            </template>
           </div>
         </div>
       </main>
@@ -94,7 +112,20 @@ store.loadSettings()
 const requests = ref<NetworkRequest[]>([])
 const selected = ref<NetworkRequest | null>(null)
 const activeTab = ref<'request'|'response'>('request')
+const showSent = ref(true)
+const showReceived = ref(true)
 const copying = ref(false)
+
+const parameters = computed(() => {
+  if (selected.value.url.includes('?')) {
+    const urlParams = new URLSearchParams(selected.value.url.split('?')[1])
+    const params: Record<string, string> = {}
+    urlParams.forEach((value, key) => {
+      params[key] = key.toLocaleLowerCase() === 'authorization' ? '*** hidden ***' : value
+    })
+    return params
+  }
+})
 
 const headers = computed(() => {
   if (activeTab.value === 'request' && selected.value?.type === 'http') {
@@ -184,6 +215,7 @@ const selectRequest = (request: NetworkRequest) => {
 
 <style scoped>
 @import '../../css/panel-content.css';
+@import '../../css/form.css';
 </style>
 
 <style scoped>
@@ -301,12 +333,18 @@ const selectRequest = (request: NetworkRequest) => {
 
   .section {
     margin-bottom: 20px;
-  }
 
-  .section h3 {
-    margin-bottom: 8px;
-    font-size: 1rem;
-    color: var(--text-color);
+    .header {
+      display: flex;
+      align-items: center;
+    }    
+    
+    h3 {
+      flex: 1;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
   }
 
   pre {
