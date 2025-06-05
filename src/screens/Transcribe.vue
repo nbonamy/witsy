@@ -482,7 +482,7 @@ const refocus = () => {
 
     main {
 
-      padding-top: 12.5%;
+      padding: 15% 0;
       align-items: stretch;
       margin: 0 auto;
       width: 450px;
@@ -499,7 +499,7 @@ const refocus = () => {
       }
 
       .result {
-        flex-basis: 50%;
+        flex: 1;
         display: flex;
         margin-top: 16px;
         
