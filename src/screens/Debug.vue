@@ -80,8 +80,8 @@
 
 <script setup lang="ts">
 
-import { NetworkRequest } from '../types'
-import { ref, Ref, computed, onMounted, onUnmounted } from 'vue'
+import { NetworkRequest, WebSocketFrame } from '../types'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Loader from '../components/Loader.vue'
@@ -91,13 +91,13 @@ import 'vue3-json-viewer/dist/vue3-json-viewer.css'
 // load store
 store.loadSettings()
 
-const requests: Ref<NetworkRequest[]> = ref([])
-const selected: Ref<NetworkRequest | null> = ref(null)
-const activeTab: Ref<'request'|'response'> = ref('request')
+const requests = ref<NetworkRequest[]>([])
+const selected = ref<NetworkRequest | null>(null)
+const activeTab = ref<'request'|'response'>('request')
 const copying = ref(false)
 
 const headers = computed(() => {
-  if (activeTab.value === 'request' && selected.type === 'http') {
+  if (activeTab.value === 'request' && selected.value?.type === 'http') {
     return selected.value?.headers || {}
   } else {
     return selected.value?.responseHeaders || {}
