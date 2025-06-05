@@ -75,6 +75,7 @@ test('processes http requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: '123',
+    type: 'http',
     url: 'http://example.com',
     method: 'GET',
     headers: {
@@ -127,6 +128,7 @@ test('processes http requests', async () => {
 
   expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
     id: '123',
+    type: 'http',
     url: 'http://example.com',
     method: 'GET',
     headers: {
@@ -151,7 +153,6 @@ test('processes http requests', async () => {
 
 test('discards invalid requests', async () => {
 
-
   const window = new BrowserWindow()
   interceptNetwork(window)
   const messageHandler = window.webContents.debugger.on.mock.calls[0][1]
@@ -175,6 +176,286 @@ test('discards invalid requests', async () => {
     request: {
       url: 'chrome-extension://binary',
     }
+  })
+
+  expect(debugWindow.webContents.send).not.toHaveBeenCalled()
+
+})
+
+test('processes websocket requests', async () => {
+
+  const window = new BrowserWindow()
+  interceptNetwork(window)
+  const messageHandler = window.webContents.debugger.on.mock.calls[0][1]
+
+  // Create WebSocket connection
+  messageHandler({}, 'Network.webSocketCreated', {
+    requestId: 'ws-123',
+    url: 'wss://api.example.com/stream',
+    initiator: {}
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [],
+  })
+
+  // Handle handshake response
+  await messageHandler({}, 'Network.webSocketHandshakeResponseReceived', {
+    requestId: 'ws-123',
+    response: {
+      status: 101,
+      statusText: 'Switching Protocols',
+      headers: {
+        'upgrade': 'websocket',
+        'connection': 'Upgrade',
+        'authorization': 'Bearer secret123'
+      }
+    }
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [],
+    statusCode: 101,
+    statusText: 'Switching Protocols',
+    responseHeaders: {
+      'upgrade': 'websocket',
+      'connection': 'Upgrade',
+      'authorization': '*** hidden ***'
+    }
+  })
+
+  // Send frame
+  await messageHandler({}, 'Network.webSocketFrameSent', {
+    requestId: 'ws-123',
+    timestamp: 1234567890,
+    response: {
+      opcode: 1,
+      mask: true,
+      payloadData: 'Hello WebSocket!'
+    }
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [{
+      type: 'sent',
+      timestamp: 1234567890,
+      opcode: 1,
+      mask: true,
+      payloadData: 'Hello WebSocket!',
+      payloadLength: 16
+    }],
+    statusCode: 101,
+    statusText: 'Switching Protocols',
+    responseHeaders: {
+      'upgrade': 'websocket',
+      'connection': 'Upgrade',
+      'authorization': '*** hidden ***'
+    }
+  })
+
+  // Receive frame
+  await messageHandler({}, 'Network.webSocketFrameReceived', {
+    requestId: 'ws-123',
+    timestamp: 1234567891,
+    response: {
+      opcode: 1,
+      mask: false,
+      payloadData: 'Hello from server!'
+    }
+  })
+
+  // Send another frame
+  await messageHandler({}, 'Network.webSocketFrameSent', {
+    requestId: 'ws-123',
+    timestamp: 1234567892,
+    response: {
+      opcode: 1,
+      mask: true,
+      payloadData: 'How are you?'
+    }
+  })
+
+  // Receive another frame
+  await messageHandler({}, 'Network.webSocketFrameReceived', {
+    requestId: 'ws-123',
+    timestamp: 1234567893,
+    response: {
+      opcode: 1,
+      mask: false,
+      payloadData: 'I am doing well, thanks!'
+    }
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [
+      {
+        type: 'sent',
+        timestamp: 1234567890,
+        opcode: 1,
+        mask: true,
+        payloadData: 'Hello WebSocket!',
+        payloadLength: 16
+      },
+      {
+        type: 'received',
+        timestamp: 1234567891,
+        opcode: 1,
+        mask: false,
+        payloadData: 'Hello from server!',
+        payloadLength: 18
+      },
+      {
+        type: 'sent',
+        timestamp: 1234567892,
+        opcode: 1,
+        mask: true,
+        payloadData: 'How are you?',
+        payloadLength: 12
+      },
+      {
+        type: 'received',
+        timestamp: 1234567893,
+        opcode: 1,
+        mask: false,
+        payloadData: 'I am doing well, thanks!',
+        payloadLength: 24
+      }
+    ],
+    statusCode: 101,
+    statusText: 'Switching Protocols',
+    responseHeaders: {
+      'upgrade': 'websocket',
+      'connection': 'Upgrade',
+      'authorization': '*** hidden ***'
+    }
+  })
+
+  // Close WebSocket
+  await messageHandler({}, 'Network.webSocketClosed', {
+    requestId: 'ws-123',
+    timestamp: 1234567894
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [
+      {
+        type: 'sent',
+        timestamp: 1234567890,
+        opcode: 1,
+        mask: true,
+        payloadData: 'Hello WebSocket!',
+        payloadLength: 16
+      },
+      {
+        type: 'received',
+        timestamp: 1234567891,
+        opcode: 1,
+        mask: false,
+        payloadData: 'Hello from server!',
+        payloadLength: 18
+      },
+      {
+        type: 'sent',
+        timestamp: 1234567892,
+        opcode: 1,
+        mask: true,
+        payloadData: 'How are you?',
+        payloadLength: 12
+      },
+      {
+        type: 'received',
+        timestamp: 1234567893,
+        opcode: 1,
+        mask: false,
+        payloadData: 'I am doing well, thanks!',
+        payloadLength: 24
+      }
+    ],
+    statusCode: 101,
+    statusText: 'Switching Protocols',
+    responseHeaders: {
+      'upgrade': 'websocket',
+      'connection': 'Upgrade',
+      'authorization': '*** hidden ***'
+    },
+    endTime: 1234567894
+  })
+
+})
+
+test('handles websocket errors', async () => {
+
+  const window = new BrowserWindow()
+  interceptNetwork(window)
+  const messageHandler = window.webContents.debugger.on.mock.calls[0][1]
+
+  // Create WebSocket connection
+  messageHandler({}, 'Network.webSocketCreated', {
+    requestId: 'ws-error-123',
+    url: 'wss://api.example.com/stream'
+  })
+
+  // WebSocket error
+  await messageHandler({}, 'Network.webSocketFrameError', {
+    requestId: 'ws-error-123',
+    timestamp: 1234567890,
+    errorMessage: 'Connection failed'
+  })
+
+  expect(debugWindow.webContents.send).toHaveBeenLastCalledWith('network', {
+    id: 'ws-error-123',
+    type: 'websocket',
+    url: 'wss://api.example.com/stream',
+    method: 'WEBSOCKET',
+    headers: {},
+    postData: '',
+    frames: [],
+    errorMessage: 'Connection failed',
+    endTime: 1234567890
+  })
+
+})
+
+test('discards invalid websocket requests', async () => {
+
+  const window = new BrowserWindow()
+  interceptNetwork(window)
+  const messageHandler = window.webContents.debugger.on.mock.calls[0][1]
+
+  // Try to create WebSocket with dev server URL (should be filtered)
+  messageHandler({}, 'Network.webSocketCreated', {
+    requestId: 'ws-invalid-123',
+    url: 'ws://localhost:3000/socket'
   })
 
   expect(debugWindow.webContents.send).not.toHaveBeenCalled()
