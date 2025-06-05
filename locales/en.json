@@ -1803,6 +1803,10 @@
     },
     "voice": {
       "automatic": "🤖 Automatic",
+      "customVocabulary": {
+        "label": "Custom Vocabulary (support varies by model)",
+        "placeholder": "Custom vocabulary to guide the model. Enter one expression per line."
+      },
       "deleteConfirmation": {
         "text": "You will have to download all local models again.",
         "title": "Are you sure you want to delete all local models?"

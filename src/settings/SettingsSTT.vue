@@ -4,6 +4,10 @@
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
       <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
     </div>
+    <div class="group vocabulary">
+      <label>{{ t('settings.voice.customVocabulary.label') }}</label>
+      <textarea v-model="vocabulary" name="vocabulary" @change="save" :placeholder="t('settings.voice.customVocabulary.placeholder')"></textarea>
+    </div>
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
@@ -119,6 +123,7 @@ let initMode: InitModelMode = 'download'
 type FilesProgressInfo = { [key: string]: DownloadProgress }
 
 const locale = ref('')
+const vocabulary = ref('')
 const engine = ref('openai')
 const model = ref('')
 const falAiAPIKey = ref(null)
@@ -168,6 +173,7 @@ const progressText = computed(() => {
 const load = () => {
   const detection = store.config.stt.silenceDetection
   duration.value = detection ? store.config.stt.silenceDuration || 2000 : 0
+  vocabulary.value = store.config.stt.vocabulary.map(v => v.text).join('\n') || ''
   locale.value = store.config.stt.locale || ''
   engine.value = store.config.stt.engine || 'openai'
   model.value = store.config.stt.model || ''
@@ -185,6 +191,7 @@ const load = () => {
 
 const save = () => {
   store.config.stt.locale = locale.value
+  store.config.stt.vocabulary = vocabulary.value.split('\n').filter(line => line.trim().length > 0).map(line => ({ text: line.trim() }))
   store.config.stt.silenceDetection = (duration.value != 0)
   store.config.stt.silenceDuration = parseInt(duration.value)
   store.config.engines.falai.apiKey = falAiAPIKey.value

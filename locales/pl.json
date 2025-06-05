@@ -1803,6 +1803,10 @@
     },
     "voice": {
       "automatic": "Automatyczny",
+      "customVocabulary": {
+        "label": "Słownictwo niestandardowe (wsparcie zależy od modelu)",
+        "placeholder": "Niestandardowe słownictwo do prowadzenia modelu. Wprowadź jedno wyrażenie w każdej linii."
+      },
       "deleteConfirmation": {
         "text": "Konieczne będzie ponowne pobranie wszystkich modeli lokalnych.",
         "title": "Czy na pewno chcesz usunąć wszystkie modele lokalne?"

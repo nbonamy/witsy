@@ -1797,6 +1797,10 @@
     },
     "voice": {
       "automatic": "🤖 自动",
+      "customVocabulary": {
+        "label": "自定义词汇（支持因型号而异）",
+        "placeholder": "自定义词汇来引导模型。每行输入一个表达式。"
+      },
       "deleteConfirmation": {
         "text": "你将需要重新下载所有本地模型。",
         "title": "你确定要删除所有本地存储的模型吗？"

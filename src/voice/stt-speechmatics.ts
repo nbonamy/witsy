@@ -120,53 +120,10 @@ export default class STTSpeechmatics implements STTEngine {
       transcription_config: {
         operating_point: model === 'enhanced' ? OperatingPoint.Enhanced : OperatingPoint.Standard,
         language: this.config.stt.locale?.substring(0, 2) || 'en',
+        additional_vocab: this.config.stt.vocabulary?.map(v => v.text) || [],
         enable_partials: true,
       },
     });
-
-
-    // const baseWsUrl = 'wss://eu2.rt.speechmatics.com/v2'
-    // const wsPath = '/v1/audio/transcriptions/streaming'
-
-    // const queryParams = new URLSearchParams()
-    // queryParams.append('Authorization', `Bearer ${this.config.engines.fireworks.apiKey}`)
-    // queryParams.append('response_format', 'verbose_json')
-    // queryParams.append('language', this.config.stt.locale?.substring(0, 2) || 'en')
-    // if (opts?.prompt) queryParams.append('prompt', opts.prompt)
-    // if (opts?.temperature !== undefined) queryParams.append('temperature', opts.temperature.toString())
-
-    // // The final WebSocket URL
-    // const wsUrl = `${baseWsUrl}${wsPath}?${queryParams.toString()}`
-
-    // this.streamingSession = new WebSocket(wsUrl)
-
-    // this.streamingSession.onerror = (error) => {
-    //   console.log('[fireworks] websocket error', error)
-    //   callback({ type: 'error', status: 'error', error: 'WebSocket connection error' })
-    // }
-
-    // this.streamingSession.onopen = () => {
-    //   console.log('[fireworks] websocket connected')
-    //   callback({ type: 'status', status: 'connected' })
-    // }
-
-    // this.streamingSession.onmessage = (event) => {
-
-    //   // parse the event data
-    //   const data = JSON.parse(event.data)
-    //   if (data?.task !== 'transcribe') {
-    //     return
-    //   }
-
-    //   // send the whole text as words do not have spacing
-    //   callback({ type: 'text', content: data.text })
-
-    // }
-
-    // this.streamingSession.onclose = () => {
-    //   console.log('[fireworks] websocket closed')
-    //   callback({ type: 'status', status: 'done' })
-    // }
 
   }
 
