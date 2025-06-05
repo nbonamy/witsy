@@ -1274,6 +1274,7 @@
   },
   "menu": {
     "app": {
+      "about": "Über Witsy",
       "checkForUpdates": "Auf Updates überprüfen…",
       "quit": "Witsy beenden",
       "settings": "@:{'common.settings'}…"
@@ -1285,6 +1286,7 @@
       "title": "Bearbeiten"
     },
     "file": {
+      "closeWindow": "Fenster schließen",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Neuer Chat",
       "quickPrompt": "Quick Prompt",

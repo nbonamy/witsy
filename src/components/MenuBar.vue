@@ -5,8 +5,11 @@
 
     <div class="corner"></div>
 
-      <div class="menu">
+    <div class="app-menu" @click.prevent="onAppMenu">
+      <IconMenu />
+    </div>
 
+    <div class="menu">
 
       <MenuBarItem class="chat" action="chat" :active="mode === 'chat'" @click="emit('change', 'chat')">
         <BIconChatSquareQuote />
@@ -68,6 +71,9 @@ import { onMounted, ref, computed, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import MenuBarItem from './MenuBarItem.vue'
+import IconMenu from './IconMenu.vue'
+import ContextMenu from '@imengyu/vue3-context-menu'
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 
 export type MenuBarMode = 'current' |
   'chat' | 'studio' | 'scratchpad' | 'dictation' | 'voice-mode' |
@@ -94,6 +100,38 @@ onMounted(() => {
   })
 })
 
+const onAppMenu = (event: Event) => {
+
+  const appMenu = document.querySelector('.app-menu') as HTMLElement;
+  const rect = appMenu.getBoundingClientRect();
+
+
+  ContextMenu.showContextMenu({
+    x: rect.x + rect.width,
+    y: rect.y + 8,
+    theme: 'flat',
+    preserveIconWidth: false,
+    items: [
+      { 
+        label: t('menu.file.title'),
+        children: [
+          { label: t('menu.app.about'), onClick: () => window.api.showAbout() },
+          { label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() },
+          { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.closeMainWindow() },
+        ]
+      },
+      { 
+        label: t('menu.help.title'),
+        children: [
+          { label: t('menu.view.debug'), divided: 'down', onClick: () => window.api.debug.showConsole() },
+          { label: t('menu.help.goToDataFolder'), onClick: () => window.api.debug.openFolder('userData') },
+          { label: t('menu.help.goToLogFolder'), onClick: () => window.api.debug.openFolder('logs') },
+        ]
+      },
+    ]
+  })
+}
+
 </script>
 
 <style scoped>
@@ -110,6 +148,15 @@ onMounted(() => {
     border-bottom: 1px solid var(--toolbar-border-color);
     width: var(--menubar-width);
     height: var(--window-toolbar-height);
+  }
+
+  .app-menu {
+    height: 1rem;
+    background-color: var(--menubar-bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
   }
 
   .menu {
@@ -137,6 +184,10 @@ onMounted(() => {
 
   }
 
+}
+
+.macos .menubar-wrapper .app-menu {
+  display: none;
 }
 
 </style>
