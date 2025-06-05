@@ -3,10 +3,10 @@
 
   <div class="menubar-wrapper">
 
-    <div class="corner"></div>
-
-    <div class="app-menu" @click.prevent="onAppMenu">
-      <IconMenu />
+    <div class="corner">
+      <div class="app-menu" @click.prevent="onAppMenu">
+        <IconMenu />
+      </div>
     </div>
 
     <div class="menu">
@@ -149,14 +149,14 @@ const onAppMenu = (event: Event) => {
     border-bottom: 1px solid var(--toolbar-border-color);
     width: var(--menubar-width);
     height: var(--window-toolbar-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .app-menu {
     height: 1rem;
     background-color: var(--menubar-bg-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     cursor: pointer;
   }
 
@@ -188,7 +188,7 @@ const onAppMenu = (event: Event) => {
 }
 
 .macos .menubar-wrapper .app-menu {
-  display: none;
+  /* display: none; */
 }
 
 </style>
