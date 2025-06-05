@@ -117,15 +117,18 @@ const onAppMenu = (event: Event) => {
         label: t('menu.file.title'),
         children: [
           { label: t('menu.app.about'), onClick: () => window.api.showAbout() },
-          { label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() },
+          ...(window.api.update.isAvailable() ?
+            [{ label: t('menu.tray.installUpdate'), onClick: () => window.api.update.apply() }] :
+            [{ label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() }]
+          ),
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.closeMainWindow() },
         ]
       },
       { 
         label: t('menu.help.title'),
         children: [
-          { label: t('menu.view.debug'), divided: 'down', onClick: () => window.api.debug.showConsole() },
-          { label: t('menu.help.goToDataFolder'), onClick: () => window.api.debug.openFolder('userData') },
+          { label: t('menu.view.debug'), onClick: () => window.api.debug.showConsole() },
+          { label: t('menu.help.goToDataFolder'), divided: 'up', onClick: () => window.api.debug.openFolder('userData') },
           { label: t('menu.help.goToLogFolder'), onClick: () => window.api.debug.openFolder('logs') },
         ]
       },
