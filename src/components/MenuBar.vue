@@ -72,6 +72,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import MenuBarItem from './MenuBarItem.vue'
 import IconMenu from './IconMenu.vue'
+import useAppearanceTheme from '../composables/appearance_theme' 
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 
@@ -109,7 +110,7 @@ const onAppMenu = (event: Event) => {
   ContextMenu.showContextMenu({
     x: rect.x + rect.width,
     y: rect.y + 8,
-    theme: 'flat',
+    theme: useAppearanceTheme().getTheme() === 'dark' ? 'flat dark' : 'flat',
     preserveIconWidth: false,
     items: [
       { 
