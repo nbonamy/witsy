@@ -156,7 +156,6 @@ const onAppMenu = (event: Event) => {
 
   .app-menu {
     height: 1rem;
-    background-color: var(--menubar-bg-color);
     cursor: pointer;
   }
 
