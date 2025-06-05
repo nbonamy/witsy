@@ -411,15 +411,28 @@ declare global {
   }
 }
 
-export type NetworkRequest = {
+export interface NetworkRequest {
   id: string
+  type?: 'http' | 'websocket'
   url: string
   method: string
   headers: Record<string, string>
-  postData: string
+  postData?: string
   statusCode?: number
   statusText?: string
   responseHeaders?: Record<string, string>
   mimeType?: string
   responseBody?: string
+  errorMessage?: string
+  frames?: WebSocketFrame[]
+  endTime?: number
+}
+
+export interface WebSocketFrame {
+  type: 'sent' | 'received'
+  timestamp: number
+  opcode: number
+  mask: boolean
+  payloadData: string
+  payloadLength: number
 }

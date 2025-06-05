@@ -1,3 +1,4 @@
+
 <template>
   <div class="debug panel-content window">
     <div class="panel">
@@ -30,7 +31,7 @@
           <div class="title">{{ selected.method }} {{ selected.url }}</div>
         </template>
       </header>
-      <main v-if="selected">
+      <main v-if="selected && selected.type === 'http'">
         <div class="tabs">
           <button :class="{ active: activeTab === 'request' }" @click="activeTab = 'request'">Request</button>
           <button :class="{ active: activeTab === 'response' }" @click="activeTab = 'response'">Response</button>
@@ -56,6 +57,23 @@
           </template>
         </div>
       </main>
+      <main v-if="selected && selected.type === 'websocket'">
+        <div class="tab-content">
+          <div class="section" v-if="headers">
+            <h3>Headers</h3>
+            <div class="json expanded">
+              <JsonViewer :value="headers" :expand-depth="1" :copyable="copyable" sort theme="jv-dark" :expanded="true" />
+            </div>
+          </div>
+          <div class="section" v-if="selected.frames.length > 0">
+            <h3>Frames</h3>
+            <div class="json" v-for="frame in selected.frames">
+              <!-- {{  frame.payloadData }} -->
+              <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 </template>
@@ -79,7 +97,7 @@ const activeTab: Ref<'request'|'response'> = ref('request')
 const copying = ref(false)
 
 const headers = computed(() => {
-  if (activeTab.value === 'request') {
+  if (activeTab.value === 'request' && selected.type === 'http') {
     return selected.value?.headers || {}
   } else {
     return selected.value?.responseHeaders || {}
@@ -103,11 +121,8 @@ const copyable = computed(() => {
 })
 
 onMounted(() => {
-
   requests.value = window.api.debug.getNetworkHistory()
-
   window.api.on('network', onNetworkRequest)
-
 })
 
 onUnmounted(() => {
@@ -129,6 +144,21 @@ const jsonData = (data: string) => {
     return JSON.parse(data)
   } catch (e) {
     return null
+  }
+}
+
+const jsonFrame = (frame: WebSocketFrame) => {
+  try {
+    const jsonData = JSON.parse(frame.payloadData)
+    return {
+      type: frame.type,
+      data: jsonData,
+    }
+  } catch (e) {
+    return {
+      type: frame.type,
+      data: frame.payloadData,
+    }
   }
 }
 
@@ -304,6 +334,7 @@ const selectRequest = (request: NetworkRequest) => {
   }
 
   .json {
+    margin-bottom: 1rem;
     background-color: rgb(13,13,13);
     border-radius: 8px;
     color: white;
