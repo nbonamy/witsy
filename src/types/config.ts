@@ -170,10 +170,15 @@ export type ScratchpadConfig = {
   fontSize: string
 }
 
+export type STTVocabulary = {
+  text: string
+}
+
 //export type SilenceAction = 'nothing' | 'stop_transcribe' | 'stop_execute' | 'execute_continue'
 
 export type STTConfig = {
   locale: string
+  vocabulary: STTVocabulary[]
   engine: string
   model: string
   autoStart: boolean

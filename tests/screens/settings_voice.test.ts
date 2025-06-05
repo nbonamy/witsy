@@ -42,6 +42,13 @@ test('stt settings', async () => {
   await stt.find('select[name=locale]').setValue('fr-FR')
   expect(store.config.stt.locale).toBe('fr-FR')
 
+  // vocabulary
+  expect(stt.find<HTMLTextAreaElement>('textarea[name=vocabulary]').element.value).toBe('')
+  await stt.find('textarea[name=vocabulary]').setValue('word1\nword2\nword3')
+  expect(store.config.stt.vocabulary).toStrictEqual([
+    { text: 'word1' }, { text: 'word2' }, { text: 'word3' }
+  ])
+
   // silence detection
   expect(stt.find<HTMLSelectElement>('select[name=duration]').element.value).toBe('2000')
   await stt.find('select[name=duration]').setValue('0')
@@ -89,6 +96,20 @@ test('stt settings', async () => {
   expect(store.config.stt.engine).toBe('custom')
   expect(store.config.stt.model).toBe('custom-model')
   expect(store.config.stt.customOpenAI.baseURL).toBe('https://api.custom.com')
+
+})
+
+test('stt vocabulary load', async () => {
+
+  store.config.stt.vocabulary = [
+    { text: 'word1' }, { text: 'word2' }, { text: 'word3' }
+  ]  
+
+  const tab = await switchToTab(wrapper, voiceIndex)
+  await tab.find('.list-panel .list .item:nth-child(1)').trigger('click')
+  const stt = tab.findComponent({ name: 'SettingsSTT' })
+
+  expect(stt.find<HTMLTextAreaElement>('textarea[name=vocabulary]').element.value).toBe('word1\nword2\nword3')
 
 })
 

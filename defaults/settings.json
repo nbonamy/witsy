@@ -120,6 +120,7 @@
     "engine": "openai",
     "model": "whisper-1",
     "locale": "",
+    "vocabulary": [],
     "autoStart": false,
     "pushToTalk": false,
     "silenceDetection": true,

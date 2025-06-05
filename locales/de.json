@@ -1767,6 +1767,10 @@
     },
     "voice": {
       "automatic": "🤖 Automatisch",
+      "customVocabulary": {
+        "label": "Benutzerdefinierter Wortschatz (Unterstützung variiert je nach Modell)",
+        "placeholder": "Benutzerdefinierter Wortschatz zur Anleitung des Modells. Geben Sie einen Ausdruck pro Zeile ein."
+      },
       "deleteConfirmation": {
         "text": "Sie müssen alle lokalen Modelle erneut herunterladen.",
         "title": "Sind Sie sicher, dass Sie alle lokalen Modelle löschen möchten?"

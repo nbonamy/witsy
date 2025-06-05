@@ -1767,6 +1767,10 @@
     },
     "voice": {
       "automatic": "🤖 Automatico",
+      "customVocabulary": {
+        "label": "Vocabolario personalizzato (il supporto varia in base al modello)",
+        "placeholder": "Vocabolario personalizzato per guidare il modello. Inserisci un'espressione per riga."
+      },
       "deleteConfirmation": {
         "text": "Dovrai scaricare di nuovo tutti i modelli locali.",
         "title": "Sei sicuro di voler eliminare tutti i modelli locali?"
