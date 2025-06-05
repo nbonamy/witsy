@@ -91,6 +91,13 @@ class AudioPlayer {
 
       } else if (response.content instanceof Response) {
         this.player.feedWithResponse(response.content)
+      } else if (response.content instanceof ReadableStream) {
+        const reader = response.content.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          this.player.feed(value);
+        }
       } else if ('read' in response.content) {
         for await (const chunk of response.content) {
           this.player.feed(chunk);
