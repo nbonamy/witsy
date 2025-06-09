@@ -99,7 +99,7 @@ class AudioPlayer {
           this.player.feed(value);
         }
       } else if ('read' in response.content) {
-        for await (const chunk of response.content) {
+        for await (const chunk of response.content as AsyncIterable<Uint8Array>) {
           this.player.feed(chunk);
         }
       } else {
