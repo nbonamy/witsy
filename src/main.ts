@@ -376,8 +376,8 @@ ipcMain.on('clipboard-read-text', (event) => {
   event.returnValue = text;
 });
 
-ipcMain.on('clipboard-write-text', (event, payload) => {
-  event.returnValue = Automation.writeTextToClipboard(payload);
+ipcMain.on('clipboard-write-text', async (event, payload) => {
+  event.returnValue = await Automation.writeTextToClipboard(payload);
 });
 
 ipcMain.on('clipboard-write-image', (event, payload) => {
