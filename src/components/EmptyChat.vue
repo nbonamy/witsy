@@ -448,6 +448,7 @@ const removeFavorite = () => {
     font-size: var(--form-large-font-size);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
   }
 
