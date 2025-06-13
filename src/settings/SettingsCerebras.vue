@@ -11,7 +11,7 @@
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="subgroup">
         <div class="control-group">
-          <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
+          <ModelSelectPlus v-model="chat_model" :models="chat_models" :height="300" :disabled="chat_models.length == 0" @change="save" />
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </div>
         <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">{{ t('settings.engines.cerebras.aboutModels') }}</a><br/>

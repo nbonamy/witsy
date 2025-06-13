@@ -81,6 +81,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  height: {
+    type: Number,
+    default: 200
+  },
   disabled: {
     type: Boolean,
     default: false
@@ -116,6 +120,7 @@ const onMenuOpened = async () => {
 :deep() {
 
   --vs-min-height: auto;
+  --vs-menu-height: v-bind(`${height}px`);
   --vs-padding: 2.75px 12px;
   --vs-font-size: var(--form-font-size);
   --vs-text-color: var(--control-text-color);

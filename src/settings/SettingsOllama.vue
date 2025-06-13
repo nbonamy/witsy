@@ -10,7 +10,7 @@
     </div>
     <div class="group">
       <label>{{ t('settings.engines.vision.model') }}</label>
-      <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
+      <ModelSelectPlus v-model="vision_model" :models="vision_models" :height="300" :disabled="vision_models.length == 0" @change="save" />
     </div>
     <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/search" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
