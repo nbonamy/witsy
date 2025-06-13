@@ -1299,6 +1299,9 @@
       "learnMore": "En savoir plus",
       "title": "Aide"
     },
+    "tray": {
+      "installUpdate": "installer la mise à jour"
+    },
     "view": {
       "debug": "Ouvrir la console de débogage",
       "title": "Affichage"
@@ -1560,6 +1563,9 @@
       "groq": {
         "aboutModels": "A propos des modèles Groq",
         "pricing": "Tarification Groq"
+      },
+      "lmstudio": {
+        "apiBaseURL": "URL de base de l'API"
       },
       "meta": {
         "aboutModels": "En savoir plus sur les modèles Meta Llama",

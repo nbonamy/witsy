@@ -3,7 +3,7 @@ import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../t
 import { saveFileContents, download } from '../services/download'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import Replicate, { FileOutput } from 'replicate'
 import { fal } from '@fal-ai/client'
 import OpenAI, { toFile } from 'openai'
@@ -180,18 +180,14 @@ export default class ImageCreator implements MediaCreator {
   // monitor https://github.com/googleapis/js-genai
   async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
-    const client = new GoogleGenerativeAI(store.config.engines.google.apiKey)
+    const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
   
-    const generativeModel = client.getGenerativeModel({
-      model: model,
-      generationConfig: {
-        // @ts-expect-error google
-        responseModalities: ['Text', 'Image']
-      },
-    });
-
     try {
-      const response = await generativeModel.generateContent({
+      const response = await client.models.generateContent({
+        model: model,
+        config: {
+          responseModalities: ['Text', 'Image']
+        },
         contents: [{
           role: 'user',
           parts: [
@@ -206,16 +202,16 @@ export default class ImageCreator implements MediaCreator {
         }]
       });
 
-      if (response.response.promptFeedback?.blockReason) {
+      if (response.promptFeedback?.blockReason) {
         return { 
-          error: `Google Generative AI blocked the request: ${response.response.promptFeedback.blockReason}`
+          error: `Google Generative AI blocked the request: ${response.promptFeedback.blockReason}`
         }
       }
 
-      if (!response.response.candidates?.[0]?.content) {
-        if (response.response.candidates?.[0]?.finishReason) {
+      if (!response.candidates?.[0]?.content) {
+        if (response.candidates?.[0]?.finishReason) {
           return { 
-            error: `Google Generative AI finished with reason: ${response.response.candidates[0].finishReason}`
+            error: `Google Generative AI finished with reason: ${response.candidates[0].finishReason}`
           }
         }
         return { 
@@ -223,7 +219,7 @@ export default class ImageCreator implements MediaCreator {
         }
       }
 
-      for (const part of  response.response.candidates[0].content.parts) {
+      for (const part of  response.candidates[0].content.parts) {
         if (part.inlineData) {
           const imageData = part.inlineData.data;
           const fileUrl = saveFileContents('png', imageData)

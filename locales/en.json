@@ -1591,6 +1591,9 @@
         "aboutModels": "More about Groq models",
         "pricing": "Groq pricing"
       },
+      "lmstudio": {
+        "apiBaseURL": "API Base URL"
+      },
       "meta": {
         "aboutModels": "More about Meta Llama models",
         "pricing": "Meta Llama pricing"

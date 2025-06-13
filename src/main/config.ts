@@ -185,6 +185,9 @@ const nullifyDefaults = (settings: anyDict) => {
   if (settings.engines.ollama.baseURL == '' || settings.engines.ollama.baseURL === defaultSettings.engines.ollama.baseURL) {
     delete settings.engines.ollama.baseURL
   }
+  if (settings.engines.lmstudio.baseURL == '' || settings.engines.lmstudio.baseURL === defaultSettings.engines.lmstudio.baseURL) {
+    delete settings.engines.lmstudio.baseURL
+  }
   if (settings.engines.sdwebui.baseURL == '' || settings.engines.sdwebui.baseURL === defaultSettings.engines.sdwebui.baseURL) {
     delete settings.engines.sdwebui.baseURL
   }

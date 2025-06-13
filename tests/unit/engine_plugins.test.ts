@@ -13,7 +13,7 @@ import Computer from '../../src/plugins/computer'
 import Mcp from '../../src/plugins/mcp'
 import { MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { fal } from '@fal-ai/client'
 import tavily from '../../src/vendor/tavily'
 import Replicate from 'replicate'
@@ -95,23 +95,21 @@ vi.mock('openai', async () => {
 })
 
 // google
-vi.mock('@google/generative-ai', async () => {
-  const GoogleGenerativeAI = vi.fn()
-  GoogleGenerativeAI.prototype.getGenerativeModel = vi.fn(() => ({
+vi.mock('@google/genai', async () => {
+  const GoogleGenAI = vi.fn()
+  GoogleGenAI.prototype.models = {
     generateContent: vi.fn(() => ({
-      response: {
-        candidates: [{
-          content: {
-            parts: [
-              { inlineData: { data: 'base64encodedimage' } },
-            ]
-          }
-        }]
-      }
+      candidates: [{
+        content: {
+          parts: [
+            { inlineData: { data: 'base64encodedimage' } },
+          ]
+        }
+      }]
     }))
-  }))
+  }
   return {
-    GoogleGenerativeAI
+    GoogleGenAI
   }
 })
 
@@ -272,12 +270,11 @@ test('Image Plugin google', async () => {
   store.config.engines.falai.model.image = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
-  expect(GoogleGenerativeAI.prototype.getGenerativeModel).toHaveBeenLastCalledWith({
+  expect(GoogleGenAI.prototype.models.generateContent).toHaveBeenLastCalledWith({
     model: 'test-model',
-    generationConfig: { responseModalities: ['Text', 'Image'] }
+    config: { responseModalities: ['Text', 'Image'] },
+    contents: [ { role: 'user', parts: [ { text: 'test prompt' } ] } ]
   })
-  // expect(GoogleGenerativeAI.prototype.getGenerativeModel().generateContent).toHaveBeenLastCalledWith({
-  // })
   expect(result).toStrictEqual({
     url: 'file://file_saved',
   })

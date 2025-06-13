@@ -12,7 +12,7 @@ export default class LlmManager extends LlmManagerBase {
   }
 
   getStandardEngines = (): string[] => {
-    return [ 'openai', 'anthropic', 'google', 'xai', 'meta', 'ollama', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
+    return [ 'openai', 'anthropic', 'google', 'xai', 'meta', 'ollama', 'lmstudio', 'mistralai', 'deepseek', 'openrouter', 'groq', 'cerebras' ]
   }
 
   getPriorityEngines = (): string[] => {
@@ -29,6 +29,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'deepseek') return llm.DeepSeek.isConfigured(this.config.engines.deepseek)
     if (engine === 'google') return llm.Google.isConfigured(this.config.engines.google)
     if (engine === 'groq') return llm.Groq.isConfigured(this.config.engines.groq)
+    if (engine === 'lmstudio') return llm.LMStudio.isConfigured(this.config.engines.lmstudio)
     if (engine === 'meta') return llm.Meta.isConfigured(this.config.engines.meta)
     if (engine === 'mistralai') return llm.MistralAI.isConfigured(this.config.engines.mistralai)
     if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
@@ -46,6 +47,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'deepseek') return llm.DeepSeek.isReady(this.config.engines.deepseek, this.config.engines.deepseek?.models)
     if (engine === 'google') return llm.Google.isReady(this.config.engines.google, this.config.engines.google?.models)
     if (engine === 'groq') return llm.Groq.isReady(this.config.engines.groq, this.config.engines.groq?.models)
+    if (engine === 'lmstudio') return llm.LMStudio.isReady(this.config.engines.lmstudio, this.config.engines.lmstudio?.models)
     if (engine === 'meta') return llm.Meta.isReady(this.config.engines.meta, this.config.engines.meta?.models)
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
     if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
@@ -74,6 +76,7 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'deepseek') return new llm.DeepSeek(this.config.engines.deepseek)
       if (engine === 'google') return new llm.Google(this.config.engines.google)
       if (engine === 'groq') return new llm.Groq({ ...this.config.engines.groq, maxRetries: 0 })
+      if (engine === 'lmstudio') return new llm.LMStudio(this.config.engines.lmstudio)
       if (engine === 'meta') return new llm.Meta(this.config.engines.meta)
       if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
       if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
@@ -107,6 +110,8 @@ export default class LlmManager extends LlmManagerBase {
       models = await llm.loadGoogleModels(this.config.engines.google)
     } else if (engine === 'groq') {
       models = await llm.loadGroqModels(this.config.engines.groq)
+    } else if (engine === 'lmstudio') {
+      models = await llm.loadLMStudioModels(this.config.engines.lmstudio)
     } else if (engine === 'meta') {
       models = await llm.loadMetaModels(this.config.engines.meta)
     } else if (engine === 'mistralai') {

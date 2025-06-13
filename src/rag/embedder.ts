@@ -6,7 +6,7 @@ import similarity from 'compute-cosine-similarity'
 //import { FlagEmbedding, EmbeddingModel } from 'fastembed'
 import { Ollama } from 'ollama'
 import OpenAI from 'openai'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { Embedding } from 'openai/resources'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 // import path from 'path'
@@ -30,7 +30,7 @@ export default class Embedder {
   model: string
   openai: OpenAI
   ollama: Ollama
-  google: GoogleGenerativeAI
+  google: GoogleGenAI
   //fastembed: FlagEmbedding
 
   static async init(app: App, config: Configuration, engine: string, model: string): Promise<Embedder> {
@@ -62,7 +62,7 @@ export default class Embedder {
 
     } else if (this.engine === 'google') {
 
-      this.google = new GoogleGenerativeAI(this.config.engines.google.apiKey)
+      this.google = new GoogleGenAI({ apiKey: this.config.engines.google.apiKey })
       return
 
     } else if (this.engine === 'ollama') {
@@ -124,14 +124,11 @@ export default class Embedder {
 
     // google
     if (this.google) {
-      const result: number[][] = []
-      const model = this.google.getGenerativeModel({ model: this.model })
-      // calling await model.embedContent(texts) returns only one embedding
-      for (const text of texts) {
-        const response = await model.embedContent(text)
-        result.push(response.embedding.values)
-      }
-      return result
+      const response = await this.google.models.embedContent({
+        model: this.model,
+        contents: texts
+      })
+      return response.embeddings!.values().toArray().map((item: any) => item.values)
     }
 
     // ollama

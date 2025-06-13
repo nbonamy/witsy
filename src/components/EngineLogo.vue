@@ -20,6 +20,7 @@ import LogoCerberas from '../../assets/cerebras.svg?component'
 import LogoDeepSeek from '../../assets/deepseek.svg?component'
 import LogoGoogle from '../../assets/google.svg?component'
 import LogoGroq from '../../assets/groq.svg?component'
+import LogoLMStudio from '../../assets/lmstudio.svg?component'
 import LogoMeta from '../../assets/meta.svg?component'
 import LogoMistralAI from '../../assets/mistralai.svg?component'
 import LogoOllama from '../../assets/ollama.svg?component'
@@ -36,6 +37,7 @@ const logos: { [key: string]: any } = {
   deepseek: LogoDeepSeek,
   google: LogoGoogle,
   groq: LogoGroq,
+  lmstudio: LogoLMStudio,
   meta: LogoMeta,
   mistralai: LogoMistralAI,
   ollama: LogoOllama,

@@ -9,6 +9,7 @@
     <option value="xai">xAI</option>
     <option value="meta">Meta</option>
     <option value="ollama">Ollama</option>
+    <option value="lmstudio">LM Studio</option>
     <option value="mistralai">MistralAI</option>
     <option value="deepseek">DeepSeek</option>
     <option value="openrouter">OpenRouter</option>
