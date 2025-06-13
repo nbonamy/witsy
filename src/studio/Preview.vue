@@ -227,6 +227,11 @@ const onDelete = () => {
       opacity: 0.5;
       z-index: 100;
       pointer-events: none;
+
+      &.loading .loader {
+        background-color: white;
+        opacity: 0.7;
+      }
     }
   }
 }
