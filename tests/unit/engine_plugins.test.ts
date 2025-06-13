@@ -11,13 +11,17 @@ import YouTube from '../../src/plugins/youtube'
 import Memory from '../../src/plugins/memory'
 import Computer from '../../src/plugins/computer'
 import Mcp from '../../src/plugins/mcp'
-import { MultiToolPlugin } from 'multi-llm-ts'
+import { MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { fal } from '@fal-ai/client'
 import tavily from '../../src/vendor/tavily'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
+
+const context: PluginExecutionContext = {
+  model: 'mock',
+}
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
@@ -342,7 +346,7 @@ test('Browse Plugin', async () => {
   expect(browse.getParameters()[0].type).toBe('string')
   expect(browse.getParameters()[0].description).not.toBeFalsy()
   expect(browse.getParameters()[0].required).toBe(true)
-  expect(await browse.execute({ url: 'https://google.com' })).toStrictEqual({ content: 'fetched_content' })
+  expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({ content: 'fetched_content' })
 })
 
 test('Search Plugin Local', async () => {
@@ -356,7 +360,7 @@ test('Search Plugin Local', async () => {
   expect(search.getParameters()[0].type).toBe('string')
   expect(search.getParameters()[0].description).not.toBeFalsy()
   expect(search.getParameters()[0].required).toBe(true)
-  expect(await search.execute({ query: 'test' })).toStrictEqual({
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
       { title: 'title1', url: 'url1', content: 'page_con' },
@@ -369,7 +373,7 @@ test('Search Plugin Local', async () => {
 test('Search Plugin Tavily', async () => {
   store.config.plugins.search.engine = 'tavily'
   const search = new Search(store.config.plugins.search)
-  expect(await search.execute({ query: 'test' })).toStrictEqual({
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
       { title: 'title', url: 'url', content: 'fetched_' }
@@ -382,7 +386,7 @@ test('Search Plugin Tavily', async () => {
 test('Search Plugin Brave', async () => {
   store.config.plugins.search.engine = 'brave'
   const search = new Search(store.config.plugins.search)
-  expect(await search.execute({ query: 'test' })).toStrictEqual({
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
     query: 'test',
     results: [
       { url: 'url1', title: 'title1', content: 'desc1' },
@@ -409,8 +413,8 @@ test('Python Plugin', async () => {
   expect(python.getParameters()[0].type).toBe('string')
   expect(python.getParameters()[0].description).not.toBeFalsy()
   expect(python.getParameters()[0].required).toBe(true)
-  expect(await python.execute({ script: 'print("hello")' })).toHaveProperty('result')
-  expect((await python.execute({ script: 'print("hello")' })).result).toBe('bonjour')
+  expect(await python.execute(context, { script: 'print("hello")' })).toHaveProperty('result')
+  expect((await python.execute(context, { script: 'print("hello")' })).result).toBe('bonjour')
 })
 
 test('YouTube Plugin', async () => {
@@ -424,7 +428,7 @@ test('YouTube Plugin', async () => {
   expect(youtube.getParameters()[0].type).toBe('string')
   expect(youtube.getParameters()[0].description).not.toBeFalsy()
   expect(youtube.getParameters()[0].required).toBe(true)
-  expect(await youtube.execute({ url: 'test' })).toStrictEqual({
+  expect(await youtube.execute(context, { url: 'test' })).toStrictEqual({
     title: 'title',
     channel: 'channel',
     content: 'line1'
@@ -452,11 +456,11 @@ test('Memory Plugin', async () => {
   expect(memory.getParameters()[2].type).toBe('string')
   expect(memory.getParameters()[2].description).not.toBeFalsy()
   expect(memory.getParameters()[2].required).toBe(false)
-  expect(await memory.execute({ action: 'store', content: ['test'] })).toStrictEqual({ success: true })
+  expect(await memory.execute(context, { action: 'store', content: ['test'] })).toStrictEqual({ success: true })
   expect(window.api.memory.store).toHaveBeenLastCalledWith(['test'])
-  expect(await memory.execute({ action: 'retrieve', query: 'fact' })).toStrictEqual({ content: ['fact1'] })
+  expect(await memory.execute(context, { action: 'retrieve', query: 'fact' })).toStrictEqual({ content: ['fact1'] })
   expect(window.api.memory.retrieve).toHaveBeenLastCalledWith('fact')
-  expect(await memory.execute({ action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
+  expect(await memory.execute(context, { action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
   expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
 })
 
@@ -472,7 +476,7 @@ test('Computer Plugin', async () => {
   expect(computer.getParameters()).toStrictEqual([])
 
   // all actions should return a screenshot
-  const result = await computer.execute({ action: 'whatever' })
+  const result = await computer.execute(context, { action: 'whatever' })
   expect(window.api.computer.takeScreenshot).toHaveBeenCalled()
   expect(result).toStrictEqual({
     content: [
@@ -506,13 +510,13 @@ test('MCP Plugin', async () => {
   expect(mcp.handlesTool('tool2')).toBe(true)
   expect(mcp.handlesTool('tool3')).toBe(false)
   
-  expect(await mcp.execute({
+  expect(await mcp.execute(context, {
     tool: 'tool1',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result' })
   expect(window.api.mcp.callTool).toHaveBeenLastCalledWith('tool1', { param1: 'value1' })
   
-  expect(await mcp.execute({
+  expect(await mcp.execute(context, {
     tool: 'tool2',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ result: 'result2' })
@@ -526,7 +530,7 @@ test('MCP Plugin', async () => {
   expect(mcp.handlesTool('tool2')).toBe(false)
   expect(mcp.handlesTool('tool3')).toBe(false)
 
-  expect(await mcp.execute({
+  expect(await mcp.execute(context, {
     tool: 'tool2',
     parameters: { param1: 'value1' }
   })).toStrictEqual({ error: 'Tool tool2 is not handled by this plugin or has been disabled' })

@@ -1,5 +1,5 @@
 
-import { CustomToolPlugin, MultiToolPlugin, Plugin } from 'multi-llm-ts'
+import { CustomToolPlugin, MultiToolPlugin, Plugin, PluginExecutionContext } from 'multi-llm-ts'
 
 export class Plugin1 extends Plugin {
   
@@ -24,7 +24,7 @@ export class Plugin1 extends Plugin {
   }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async execute(parameters: any): Promise<any> {
+  async execute(context: PluginExecutionContext, parameters: any): Promise<any> {
     return 'result1'
   }
 }
@@ -74,7 +74,7 @@ export class Plugin2 extends CustomToolPlugin {
     }]
   }
 
-  async execute(parameters: any): Promise<any> {
+  async execute(context: PluginExecutionContext, parameters: any): Promise<any> {
     return parameters
   }
 }

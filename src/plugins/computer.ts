@@ -1,6 +1,6 @@
 
 import { ComputerAction, anyDict } from '../types/index'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 
 export default class extends Plugin {
@@ -33,7 +33,7 @@ export default class extends Plugin {
     return []
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     // we need an action
     if (!parameters.action) {

@@ -1,6 +1,6 @@
 
 import { anyDict } from 'types/index'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import Tavily from '../vendor/tavily'
 import { convert } from 'html-to-text'
@@ -46,7 +46,7 @@ export default class extends Plugin {
     ]
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
     if (this.config.engine === 'local') {
       return this.local(parameters)
     } else if (this.config.engine === 'tavily') {
