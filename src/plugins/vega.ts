@@ -1,7 +1,7 @@
 
 import { anyDict } from 'types/index'
 import { saveFileContents } from '../services/download'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import * as vega from 'vega'
 
@@ -41,7 +41,7 @@ export default class extends Plugin {
 
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
     const spec = JSON.parse(parameters.spec)
     const view = new vega.View(vega.parse(spec)).renderer('none').initialize()
     const image = await view.toImageURL('png')

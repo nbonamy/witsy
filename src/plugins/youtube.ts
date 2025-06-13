@@ -1,6 +1,6 @@
 
 import { anyDict } from '../types/index'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { YoutubeTranscript } from 'youtube-transcript'
 import ytv from 'ytv'
@@ -42,7 +42,7 @@ export default class extends Plugin {
     ]
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     try {
       const info = await ytv.get_info(parameters.url)

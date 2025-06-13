@@ -120,7 +120,7 @@
     "mermaid": "^11.6.0",
     "minimatch": "^10.0.1",
     "mitt": "^3.0.1",
-    "multi-llm-ts": "^4.0.0-beta.13",
+    "multi-llm-ts": "^4.0.0-beta.16",
     "number-flip-animation": "github:nbonamy/number-flip-animation",
     "officeparser": "^5.1.1",
     "ollama": "^0.5.15",

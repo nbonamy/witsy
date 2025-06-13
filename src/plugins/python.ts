@@ -1,6 +1,6 @@
 
 import { anyDict } from '../types/index'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 
 export default class extends Plugin {
@@ -41,7 +41,7 @@ export default class extends Plugin {
   }
 
    
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     // make sure last line is a print
     let script = parameters.script

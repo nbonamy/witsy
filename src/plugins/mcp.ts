@@ -1,7 +1,7 @@
 
 import { anyDict } from 'types/index'
 import { PluginConfig } from './plugin'
-import { MultiToolPlugin, LlmTool } from 'multi-llm-ts'
+import { MultiToolPlugin, LlmTool, PluginExecutionContext } from 'multi-llm-ts'
 
 export default class extends MultiToolPlugin {
 
@@ -55,7 +55,7 @@ export default class extends MultiToolPlugin {
     return handled && (!this.toolsEnabled || this.toolsEnabled.includes(name))
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     // avoid unauthorized call
     if (!this.handlesTool(parameters.tool)) {

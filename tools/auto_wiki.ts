@@ -61,7 +61,7 @@ class ReadFilePlugin extends llm.Plugin {
       { name: 'path', type: 'string', description: 'The path to the file to read' }
     ]
   }
-  async execute(parameters: any) {
+  async execute(context: llm.PluginExecutionContext, parameters: any) {
     try {
       return { success: true, content: await fs.promises.readFile(parameters.path, 'utf-8') }
     } catch (e) {
@@ -82,7 +82,7 @@ class WriteFilePlugin extends llm.Plugin {
       { name: 'path', type: 'string', description: 'The path to the file to write' },
       { name: 'content', type: 'string', description: 'The content to write' }
     ]
-  } async execute(parameters: any) {
+  } async execute(context: llm.PluginExecutionContext, parameters: any) {
     try {
       await fs.promises.writeFile(parameters.path, parameters.content, 'utf-8')
       return { success: true }

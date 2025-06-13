@@ -1,6 +1,6 @@
 
 import { anyDict } from 'types/index'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { i18nInstructions } from '../services/i18n'
 
@@ -56,7 +56,7 @@ export default class extends Plugin {
     ]
   }
 
-  async execute(parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     try {
       if (parameters.action === 'store') {
