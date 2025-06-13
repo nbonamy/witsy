@@ -1299,6 +1299,9 @@
       "learnMore": "Aprender más",
       "title": "Ayuda"
     },
+    "tray": {
+      "installUpdate": "instalarActualización"
+    },
     "view": {
       "debug": "Abrir Consola de depuración",
       "title": "Vista"
@@ -1560,6 +1563,9 @@
       "groq": {
         "aboutModels": "Más sobre los modelos de Groq",
         "pricing": "Precios de Groq"
+      },
+      "lmstudio": {
+        "apiBaseURL": "URL base de la API"
       },
       "meta": {
         "aboutModels": "Más sobre los modelos Meta Llama",

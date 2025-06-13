@@ -283,6 +283,18 @@
         "image": ""
       }
     },
+    "lmstudio": {
+      "apiKey": "dummy",
+      "baseURL": "http://localhost:1234/v1",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "ollama": {
       "baseURL": "http://127.0.0.1:11434",
       "keepAlive": "",

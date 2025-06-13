@@ -155,9 +155,20 @@ export type GenerationResult =
 
       if (error.name !== 'AbortError') {
 
-        const status = error.status ?? error.status_code ?? 0
+        // get the error message
         const cause = error.cause?.stack?.toString()?.toLowerCase() || ''
         const message = error.message.toLowerCase()
+
+        // best case status is the http status code
+        // if not we can try to find it in the message
+        let status = error.status ?? error.status_code ?? 0
+        if (status === 0) {
+          // extract from message with \d\d\d
+          const statusMatch = message.match(/\b(\d{3})\b/)
+          if (statusMatch) {
+            status = parseInt(statusMatch[0])
+          }
+        }
 
         // proxy
         if (!error.status && (cause.includes('proxy') || cause.includes('network'))) {

@@ -27,6 +27,7 @@ test('Load default settings', () => {
   expect(config.settingsFileHadError()).toBe(false)
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
+  loaded.engines.lmstudio.baseURL = defaultSettings.engines.lmstudio.baseURL
   loaded.engines.sdwebui.baseURL = defaultSettings.engines.sdwebui.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
   expect(loaded.general.locale).toBe('')
@@ -39,6 +40,7 @@ test('Load settings with error', () => {
   expect(config.settingsFileHadError()).toBe(true)
   loaded.engines.openai.baseURL = defaultSettings.engines.openai.baseURL
   loaded.engines.ollama.baseURL = defaultSettings.engines.ollama.baseURL
+  loaded.engines.lmstudio.baseURL = defaultSettings.engines.lmstudio.baseURL
   loaded.engines.sdwebui.baseURL = defaultSettings.engines.sdwebui.baseURL
   expect(loaded).toStrictEqual(defaultSettings)
 })

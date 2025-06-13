@@ -36,12 +36,12 @@ beforeEach(async () => {
 
 test('should render', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  expect(tab.findAll('.list-panel .master .list .item').length).toBe(15)
+  expect(tab.findAll('.list-panel .master .list .item').length).toBe(16)
 })
 
 test('custom settings openai', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(14)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(15)').trigger('click')
   await tab.vm.$nextTick()
   const custom = tab.findComponent({ name: 'SettingsCustomLLM' })
   expect(custom.exists()).toBe(true)
@@ -69,7 +69,7 @@ test('custom settings openai', async () => {
 
 test('custom settings azure', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(15)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(16)').trigger('click')
   await tab.vm.$nextTick()
   const custom = tab.findComponent({ name: 'SettingsCustomLLM' })
   expect(custom.exists()).toBe(true)
@@ -97,7 +97,7 @@ test('custom settings azure', async () => {
 
 test('delete custom engine', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(15)').trigger('click')
+  await tab.find('.list-panel .list .item:nth-child(16)').trigger('click')
   await tab.vm.$nextTick()
   await tab.find<HTMLButtonElement>('.icon.delete').trigger('click')
   expect(store.config.engines.custom1).toBeDefined()
