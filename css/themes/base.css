@@ -171,6 +171,13 @@
   background-image: url(https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png);
 }
 
+.message .message-transient {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 0.25rem;
+}
+
 .message .media-container .media-actions {
   display: none;
   position: absolute;

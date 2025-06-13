@@ -228,10 +228,4 @@ img {
   cursor: pointer;
 }
 
-.message-transient {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
 </style>
