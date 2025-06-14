@@ -2,15 +2,38 @@
 import Swal, { DialogResult as SwalDialogResult } from 'sweetalert2/dist/sweetalert2.js'
 import { t } from '../services/i18n'
 
+export type DialogOptions = {
+  title: string
+  text?: string
+  target?: HTMLElement
+  html?: string
+  iconHtml?: string
+  customClass?: Record<string, string>
+  input?: string
+  inputLabel?: string
+  inputValue?: string
+  inputOptions?: Record<string, any>
+  inputAttributes?: Record<string, any>
+  inputPlaceholder?: string
+  showCancelButton?: boolean
+  showDenyButton?: boolean
+  reverseButtons?: boolean
+  confirmButtonText?: string
+  cancelButtonText?: string
+  denyButtonText?: string
+  preConfirm?: (value: any) => any
+  willOpen?: (e: any) => void
+}
+
 export type DialogResult = {
-  isConfirmed: boolean,
-  isDenied: boolean,
-  isDismissed: boolean,
+  isConfirmed: boolean
+  isDenied: boolean
+  isDismissed: boolean
 }
 
 const Dialog = {
 
-  show: (opts: any): Promise<DialogResult|typeof SwalDialogResult> => {
+  show: (opts: DialogOptions): Promise<DialogResult|typeof SwalDialogResult> => {
 
     // if no input we rely on system dialogs
     if (!opts.input && !opts.html) {
@@ -75,7 +98,7 @@ const Dialog = {
     return Dialog.show({ title, text })
   },
 
-  system: async (opts: any): Promise<DialogResult> => {
+  system: async (opts: DialogOptions): Promise<DialogResult> => {
 
     const buttons  = [ opts.confirmButtonText ?? t('common.ok') ]
     const indices = { confirm: 0, deny: -1, cancel: -1 }

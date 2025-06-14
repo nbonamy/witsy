@@ -1838,14 +1838,16 @@
     },
     "doNotShowAgain": "Ne plus afficher",
     "favoriteModels": {
-      "title": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !"
+      "text": "Cliquez sur l'icône LLM : vos modèles préférés seront regroupés sous l'icône étoile !",
+      "title": "Accès rapide à vos modèles favoris"
     },
     "folderDefaults": {
       "text": "Sélectionnez Nouveau chat dans le menu contextuel du dossier pour utiliser les valeurs par défaut du dossier.",
       "title": "Valeurs par défaut du dossier enregistrées avec succès !"
     },
     "folderList": {
-      "title": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier."
+      "text": "La liste des dossiers est un excellent moyen d'organiser vos sessions de chat. Cliquez sur l'icône de dossier en bas de la barre latérale pour créer de nouveaux dossiers.\n\nLe menu à droite de chaque dossier vous permet de gérer vos dossiers.\n\nLe menu contextuel de vos chats vous permet de les déplacer vers un dossier.",
+      "title": "Organisez vos discussions dans des dossiers !"
     },
     "pluginsDisabled": {
       "text": "Ce modèle a renvoyé une erreur concernant les plugins. Ils ont été désactivés automatiquement pour que vous puissiez continuer votre conversation.",

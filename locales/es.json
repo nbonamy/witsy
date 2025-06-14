@@ -1838,13 +1838,15 @@
     },
     "doNotShowAgain": "No mostrar de nuevo",
     "favoriteModels": {
-      "title": "¡Haz clic en el icono LLM: tus modelos preferidos estarán agrupados bajo el icono de estrella!"
+      "text": "¡Haz clic en el icono LLM: tus modelos preferidos estarán agrupados bajo el icono de estrella!",
+      "title": "Acceso rápido a tus modelos favoritos"
     },
     "folderDefaults": {
-      "text": "Seleccione Nuevo chat en el menú contextual de la carpeta para utilizar los valores predeterminados de la carpeta.",
-      "title": "¡Valores predeterminados de la carpeta guardados con éxito!"
+      "text": "¡Valores predeterminados de la carpeta guardados con éxito!",
+      "title": "¡Defaults de carpeta guardados con éxito!"
     },
     "folderList": {
+      "text": "La lista de carpetas es una excelente manera de organizar tus sesiones de chat. Haz clic en el icono de la carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta.",
       "title": "La lista de carpetas es una excelente forma de organizar tus sesiones de chat. Haz clic en el icono de carpeta en la parte inferior de la barra lateral para crear nuevas carpetas.\n\nEl menú a la derecha de cada carpeta te permite gestionar tus carpetas.\n\nEl menú contextual de tus chats te permite moverlos a una carpeta."
     },
     "pluginsDisabled": {

@@ -104,6 +104,7 @@ class TipsManager {
   showFolderListTip = async () => {
     await Dialog.show({
       title: t('tips.folderList.title'),
+      text: t('tips.folderList.text'),
     })
     return true
   }
@@ -111,6 +112,7 @@ class TipsManager {
   showFavoriteModelsTip = async () => {
     await Dialog.show({
       title: t('tips.favoriteModels.title'),
+      text: t('tips.favoriteModels.text'),
     })
     return true
   }
