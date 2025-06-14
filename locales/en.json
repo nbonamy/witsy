@@ -1871,14 +1871,16 @@
     },
     "doNotShowAgain": "Do not show again",
     "favoriteModels": {
-      "title": "Click on the LLM icon: your preferred models will be grouped under the star icon!"
+      "text": "Click on the LLM icon: your preferred models will be grouped under the star icon!",
+      "title": "Quick access to your favorite models"
     },
     "folderDefaults": {
       "text": "Select New chat in the folder context menu to use the folder defaults.",
       "title": "Folder defaults saved successfully!"
     },
     "folderList": {
-      "title": "The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.\n\nThe menu on the right of every folder allows you to manage your folders.\n\nThe context menu of your chats allows you to move them to a folder."
+      "text": "The folder list is a great way to organize your chat sessions. Click on the folder icon at the bottom of the sidebar to create new folders.\n\nThe menu on the right of every folder allows you to manage your folders.\n\nThe context menu of your chats allows you to move them to a folder.",
+      "title": "Organize your chats in folders!"
     },
     "pluginsDisabled": {
       "text": "This model returned an error with regards to plugins. They have been disabled automatically so you can continue your conversation.",

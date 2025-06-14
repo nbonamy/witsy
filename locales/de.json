@@ -1838,14 +1838,16 @@
     },
     "doNotShowAgain": "Nicht mehr anzeigen",
     "favoriteModels": {
-      "title": "Klicken Sie auf das LLM-Symbol: Ihre bevorzugten Modelle werden unter dem Sternsymbol gruppiert!"
+      "text": "Klicken Sie auf das LLM-Symbol: Ihre bevorzugten Modelle werden unter dem Sternsymbol gruppiert!",
+      "title": "Schneller Zugriff auf Ihre Lieblingsmodelle"
     },
     "folderDefaults": {
       "text": "Wählen Sie 'Neuer Chat' im Kontextmenü des Ordners, um die Ordnerstandards zu verwenden.",
       "title": "Ordnerstandards erfolgreich gespeichert!"
     },
     "folderList": {
-      "title": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben."
+      "text": "Die Ordnerliste ist eine großartige Möglichkeit, Ihre Chatsitzungen zu organisieren. Klicken Sie auf das Ordnersymbol unten in der Seitenleiste, um neue Ordner zu erstellen.\n\nDas Menü rechts neben jedem Ordner ermöglicht es Ihnen, Ihre Ordner zu verwalten.\n\nDas Kontextmenü Ihrer Chats ermöglicht es Ihnen, sie in einen Ordner zu verschieben.",
+      "title": "Organisieren Sie Ihre Chats in Ordnern!"
     },
     "pluginsDisabled": {
       "text": "Bei diesem Modell ist ein Plugin-Fehler aufgetreten. Die Plugins wurden automatisch deaktiviert, damit Sie Ihre Konversation fortsetzen können.",
