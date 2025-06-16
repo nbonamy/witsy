@@ -22,9 +22,11 @@ import ChatArea from '../components/ChatArea.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import DocRepos from './DocRepos.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
+import AgentRunner from '../services/runner'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import Chat from '../models/chat'
+import Agent from '../models/agent'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 
 // bus
@@ -34,7 +36,7 @@ const { onEvent, emitEvent } = useEventBus()
 // init stuff
 store.load()
 const tipsManager = useTipsManager(store)
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 const assistant = ref(new Assistant(store.config))
 
 const chatEditor: Ref<typeof ChatEditor> = ref(null)

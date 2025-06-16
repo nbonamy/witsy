@@ -1,23 +1,21 @@
 
 import { anyDict } from 'types/index'
-import Plugin, { PluginConfig } from './plugin'
-import { LlmTool } from 'multi-llm-ts'
+import { PluginConfig } from './plugin'
+import { MultiToolPlugin, LlmTool } from 'multi-llm-ts'
 
-export default class extends Plugin {
+export default class extends MultiToolPlugin {
 
+  config: PluginConfig
   tools: LlmTool[]
-  
+
   constructor(config: PluginConfig) {
-    super(config)
+    super()
+    this.config = config
     this.tools = []
   }
 
   isEnabled(): boolean {
     return this.config?.enabled && window.api.mcp.isAvailable()
-  }
-
-  isMultiTool(): boolean {
-    return true
   }
 
   getName(): string {
@@ -35,10 +33,16 @@ export default class extends Plugin {
     return `MCP tool #${tool}# is currently running…`
   }
 
-  async getTools(): Promise<anyDict|Array<anyDict>> {
+  async getTools(): Promise<any> {
     try {
       this.tools = await window.api.mcp.getTools()
-      return this.tools
+      if (this.toolsEnabled) {
+        return this.tools.filter((tool: any) => {
+          return this.toolsEnabled.includes(tool.function.name)
+        })
+      } else {
+        return this.tools
+      }
     } catch (error) {
       console.error(error)
       this.tools = []
@@ -47,7 +51,8 @@ export default class extends Plugin {
   }
 
   handlesTool(name: string): boolean {
-    return this.tools.find((tool: any) => tool.function.name === name) !== undefined
+    const handled = this.tools.find((tool: any) => tool.function.name === name) !== undefined
+    return handled && (!this.toolsEnabled || this.toolsEnabled.includes(name))
   }
 
   async execute(parameters: anyDict): Promise<anyDict> {

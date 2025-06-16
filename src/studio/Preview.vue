@@ -196,7 +196,7 @@ const onDelete = () => {
     text-align: center;
  
     span {
-      font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+      font-family: var(--serif-font);
       font-style: italic;
       font-size: 24pt;
     }

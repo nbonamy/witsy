@@ -18,6 +18,7 @@ import Transcribe from './screens/Transcribe.vue'
 import ScratchPad from './screens/ScratchPad.vue'
 import DesignStudio from './screens/DesignStudio.vue'
 import ComputerStatus from './screens/ComputerStatus.vue'
+import AgentForge from './screens/AgentForge.vue'
 import Debug from './screens/Debug.vue'
 import i18n, { i18nLlm, t } from './services/i18n'
 
@@ -40,6 +41,7 @@ const routes: { [key: string]: any } = {
   '/transcribe': Transcribe,
   '/scratchpad': ScratchPad,
   '/studio': DesignStudio,
+  '/forge': AgentForge,
   '/computer': ComputerStatus,
   '/debug': Debug,
 }

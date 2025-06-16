@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload, Agent } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload, Agent, AgentRun } from './types';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -109,7 +109,14 @@ contextBridge.exposeInMainWorld(
       import: (): void => { return ipcRenderer.sendSync('experts-import') },
     },
     agents: {
+      forge(): void { return ipcRenderer.send('agents-open-forge') },
       load: (): Agent[] => { return JSON.parse(ipcRenderer.sendSync('agents-load')) },
+      save(agent: Agent): boolean { return ipcRenderer.sendSync('agents-save', JSON.stringify(agent)) },
+      delete(agentId: string): boolean { return ipcRenderer.sendSync('agents-delete', agentId) },
+      getRuns(agentId: string): AgentRun[] { return JSON.parse(ipcRenderer.sendSync('agents-get-runs', agentId)) },
+      saveRun(run: AgentRun): boolean { return ipcRenderer.sendSync('agents-save-run', JSON.stringify(run)) },
+      deleteRun(agentId: string, runId: string): boolean { return ipcRenderer.sendSync('agents-delete-run', { agentId, runId }) },
+      deleteRuns(agentId: string): boolean { return ipcRenderer.sendSync('agents-delete-runs', agentId); },
     },
     docrepo: {
       list(): strDict[] { return JSON.parse(ipcRenderer.sendSync('docrepo-list')) },

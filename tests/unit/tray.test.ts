@@ -45,9 +45,10 @@ test('Creates tray', async () => {
   tray.install()
   expect(tray.tray).toBeDefined()
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
-  expect((Menu.buildFromTemplate as Mock).mock.calls[0][0]).toHaveLength(14)
+  expect((Menu.buildFromTemplate as Mock).mock.calls[0][0]).toHaveLength(16)
   expect((Menu.buildFromTemplate as Mock).mock.calls[0][0].map((item: any) => item.label)).toEqual([
     'Quick Prompt', 'New Chat', 'Scratchpad', 'Run AI Command', undefined,
+    'Agent Forge', undefined,
     'Design Studio', undefined,
     'Read Aloud', 'Start Dictation', 'Voice Chat', undefined,
     'Settings…', undefined,

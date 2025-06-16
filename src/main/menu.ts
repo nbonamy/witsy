@@ -12,6 +12,7 @@ export type MenuCallbacks = {
   newChat: () => void
   scratchpad: () => void
   studio: () => void
+  forge: () => void
 }
 
 const isMac = process.platform === 'darwin'
@@ -105,6 +106,12 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           label: t('menu.file.scratchpad'),
           accelerator: shortcutAccelerator(shortcuts?.scratchpad),
           click: () => callbacks.scratchpad()
+        },
+        { type: 'separator' },
+        {
+          label: t('menu.file.agentForge'),
+          accelerator: shortcutAccelerator(shortcuts?.forge),
+          click: () => callbacks.forge()
         },
         { type: 'separator' },
         {

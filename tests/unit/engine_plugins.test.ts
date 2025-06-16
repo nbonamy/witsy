@@ -17,6 +17,7 @@ import { fal } from '@fal-ai/client'
 import tavily from '../../src/vendor/tavily'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
+import { MultiToolPlugin } from 'multi-llm-ts'
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
@@ -467,6 +468,7 @@ test('Computer Plugin', async () => {
   // basic stuff
   const computer = new Computer(store.config.plugins.computer)
   expect(computer.isEnabled()).toBe(true)
+  expect(computer.serializeInTools()).toBe(false)
   expect(computer.getName()).toBe('computer')
   expect(computer.getDescription()).toBe('')
   expect(computer.getPreparationDescription()).toBe('Using your computer…')
@@ -493,7 +495,7 @@ test('Computer Plugin', async () => {
 test('MCP Plugin', async () => {
   const mcp = new Mcp(store.config.plugins.mcp)
   expect(mcp.isEnabled()).toBe(true)
-  expect(mcp.isMultiTool()).toBe(true)
+  expect(mcp instanceof MultiToolPlugin).toBe(true)
   expect(mcp.getName()).toBe('Model Context Protocol')
   expect(mcp.getPreparationDescription('tool')).toBe('Preparing to use MCP tool #tool#…')
   expect(mcp.getRunningDescription('tool', {})).toBe('MCP tool #tool# is currently running…')

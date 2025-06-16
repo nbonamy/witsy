@@ -29,6 +29,10 @@
       </div>
     </div>
     <div class="actions" :class="{ hidden: showAllEngines }">
+      <div class="action" @click="onAgentForge">
+        <BIconRobot />
+        {{ t('agent.forge.title') }}
+      </div>
       <div class="action" @click="onCreateMedia">
         <BIconPaletteFill />
         {{ t('designStudio.title') }}
@@ -341,6 +345,10 @@ const onCreateMedia = () => {
   window.api.studio.start()
 }
 
+const onAgentForge = () => {
+  window.api.agents.forge()
+}
+
 const onScratchpad = () => {
   window.api.scratchpad.open()
 }
@@ -377,7 +385,7 @@ const onComputerUse = () => {
 }
 
 .empty .tip {
-  font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+  font-family: var(--serif-font);
   text-align: center;
   font-style: italic;
   font-size: 11pt;

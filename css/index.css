@@ -8,6 +8,8 @@
 
 :root {
 
+  --serif-font: Garamond, Georgia, Times, 'Times New Roman', serif;
+
   --background-color: #fff;
   --background-color-light: var(--background-color);
   --window-bg-color: #e0e0e0;
@@ -63,6 +65,8 @@
   --info-panel-width: 270px;
 
   --create-panel-width: 300px;
+
+  --forge-panel-width: 270px;
 
   --prompt-icon-color: var(--icon-color);
   --prompt-input-bg-color: var(--message-list-bg-color);

@@ -55,6 +55,7 @@ export default class LlmMock extends LlmEngine {
     return {
       type: 'text',
       content: `<think>Reasoning...</think># <b>${thread[0].content}:\n"Title"</b>`,
+      toolCalls: []
     }
   }
 

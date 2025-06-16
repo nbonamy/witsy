@@ -5,47 +5,56 @@ import { type Agent as AgentBase } from '../types/index'
 export default class Agent implements AgentBase {
 
   id: string
+  createdAt: number
+  updatedAt: number
   name: string
   description: string
-  engine: string|null
-  model: string|null
-  modelOpts: LlmModelOpts|null = null
-  disableStreaming: boolean = false
-  locale: string|null
+  engine: string
+  model: string
+  locale: string
+  modelOpts: LlmModelOpts|null
+  disableStreaming: boolean
   tools: string[]|null
   docrepo: string|null
   instructions: string
   prompt: string|null
+  schedule: string|null
 
   constructor() {
     this.id = crypto.randomUUID()
+    this.createdAt = Date.now()
+    this.updatedAt = Date.now()
     this.name = ''
     this.description = ''
-    this.engine = null
-    this.model = null
-    this.modelOpts = null
-    this.disableStreaming = false
-    this.locale = null
+    this.engine = ''
+    this.model = ''
+    this.modelOpts = {}
+    this.disableStreaming = true
+    this.locale = ''
     this.tools = null
     this.docrepo = null
     this.instructions = ''
     this.prompt = null
+    this.schedule = null
   }
 
   static fromJson(obj: any): Agent {
     const agent = new Agent()
     agent.id = obj.id || crypto.randomUUID()
+    agent.createdAt = obj.createdAt ?? Date.now()
+    agent.updatedAt = obj.updatedAt ?? Date.now()
     agent.name = obj.name
     agent.description = obj.description
-    agent.engine = obj.engine
-    agent.model = obj.model
-    agent.modelOpts = obj.modelOpts
-    agent.disableStreaming = obj.disableStreaming
-    agent.locale = obj.locale
-    agent.tools = obj.tools
-    agent.docrepo = obj.docrepo
-    agent.instructions = obj.instructions
-    agent.prompt = obj.prompt
+    agent.engine = obj.engine ?? ''
+    agent.model = obj.model ?? ''
+    agent.modelOpts = obj.modelOpts ?? null
+    agent.disableStreaming = obj.disableStreaming ?? true
+    agent.locale = obj.locale ?? ''
+    agent.tools = obj.tools ?? null
+    agent.docrepo = obj.docrepo ?? null
+    agent.instructions = obj.instructions ?? ''
+    agent.prompt = obj.prompt ?? null
+    agent.schedule = obj.schedule ?? null
     return agent
   }
   
