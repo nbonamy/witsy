@@ -77,6 +77,20 @@ export type GenerationResult =
           ...opts
         })
 
+        // fake tool calls
+        for (const toolCall of llmResponse.toolCalls) {
+          const chunk: LlmChunk = {
+            type: 'tool',
+            name: toolCall.name,
+            call: {
+              params: toolCall.params,
+              result: toolCall.result
+            },
+            done: true
+          }
+          callback?.call(null, chunk)
+        }
+
         // fake streaming
         const chunk: LlmChunk = {
           type: 'content',

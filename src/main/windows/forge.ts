@@ -2,21 +2,21 @@ import { app, BrowserWindow } from 'electron';
 import { electronStore, createWindow, ensureOnCurrentScreen, titleBarOptions } from './index';
 import { useI18n } from '../i18n';
 
-const storeBoundsId = 'studio.bounds'
+const storeBoundsId = 'forge.bounds'
 
-export let designStudioWindow: BrowserWindow = null;
+export let agentForgeWindow: BrowserWindow = null;
 
-export const openDesignStudioWindow = (): void => {
+export const openAgentForgeWindow = (): void => {
 
   // if we don't have a window, create one
-  if (!designStudioWindow || designStudioWindow.isDestroyed()) {
+  if (!agentForgeWindow || agentForgeWindow.isDestroyed()) {
 
     // get bounds from here
     const bounds: Electron.Rectangle = electronStore?.get(storeBoundsId) as Electron.Rectangle;
 
-    designStudioWindow = createWindow({
-      title: useI18n(app)('menu.file.designStudio'),
-      hash: '/studio',
+    agentForgeWindow = createWindow({
+      title: useI18n(app)('menu.file.agentForge'),
+      hash: '/forge',
       x: bounds?.x,
       y: bounds?.y,
       width: bounds?.width || 1280,
@@ -29,27 +29,27 @@ export const openDesignStudioWindow = (): void => {
       showInDock: true,
     });
 
-    designStudioWindow.on('close', () => {
-      electronStore.set(storeBoundsId, designStudioWindow.getBounds());
+    agentForgeWindow.on('close', () => {
+      electronStore.set(storeBoundsId, agentForgeWindow.getBounds());
     })
 
     // handle window close
-    designStudioWindow.on('closed', () => {
-      designStudioWindow = null;
+    agentForgeWindow.on('closed', () => {
+      agentForgeWindow = null;
     });
 
     // // open the DevTools
     // if (process.env.DEBUG) {
-    //   designStudioWindow.webContents.openDevTools({ mode: 'right' });
+    //   agentForgeWindow.webContents.openDevTools({ mode: 'right' });
     // }
 
   }
 
   // check
-  ensureOnCurrentScreen(designStudioWindow);
+  ensureOnCurrentScreen(agentForgeWindow);
 
   // focus
   app.focus({ steal: true });
-  designStudioWindow.focus();
+  agentForgeWindow.focus();
 
 };

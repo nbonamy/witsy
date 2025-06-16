@@ -338,7 +338,7 @@ const refocus = () => {
         transform: translateY(-50%) !important; 
         text-align: center;
         line-height: 140%;
-        font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+        font-family: var(--serif-font);
         font-size: 14pt;
       }
     }

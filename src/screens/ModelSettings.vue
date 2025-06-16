@@ -129,7 +129,7 @@ import { LlmReasoningEffort } from 'multi-llm-ts'
 import { Ollama } from 'ollama/dist/browser.cjs'
 
 const editor = ref(null)
-const llmManager = LlmFactory.manager(store.config)
+const llmManager: ILlmManager = LlmFactory.manager(store.config)
 const engine: Ref<string> = ref(null)
 const model: Ref<string> = ref(null)
 const disableStreaming: Ref<boolean> = ref(false)

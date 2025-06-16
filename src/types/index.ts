@@ -19,13 +19,15 @@ export interface Attachment extends IAttachmentBase {
   b64Contents(): string
 }
 
+export type ToolExecInfo = {
+  name: string
+  params: any
+  result: any
+}
+
 export type ToolCallInfo = {
   status: string
-  calls: {
-    name: string
-    params: any
-    result: any
-  }[]
+  calls: ToolExecInfo[]
 }
 
 export type MessageType = 'text' | 'image'
@@ -77,8 +79,10 @@ export interface Chat {
   delete(): void
 }
 
-export interface Agent {
+export type Agent = {
   id: string
+  createdAt: number
+  updatedAt: number
   name: string
   description: string
   engine: string|null
@@ -90,6 +94,23 @@ export interface Agent {
   docrepo: string|null
   instructions: string
   prompt: string|null
+  schedule: string|null
+}
+
+export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook'
+export type AgentRunStatus = 'running' | 'success' | 'error'
+
+export type AgentRun = {
+  id: string
+  agentId: string
+  createdAt: number
+  updatedAt: number
+  trigger: AgentRunTrigger
+  status: AgentRunStatus
+  prompt: string
+  error?: string
+  messages: Message[]
+  toolCalls: ToolExecInfo[]
 }
 
 export type Folder = {
@@ -316,7 +337,14 @@ declare global {
         export(): boolean
       }
       agents: {
+        forge(): void
         load(): Agent[]
+        save(agent: Agent): boolean
+        delete(agentId: string): boolean
+        getRuns(agentId: string): AgentRun[]
+        saveRun(run: AgentRun): boolean
+        deleteRun(agentId: string, runId: string): boolean
+        deleteRuns(agentId: string): boolean
       }
       docrepo: {
         list(): DocumentBase[]

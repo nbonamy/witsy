@@ -23,12 +23,18 @@ export default class {
     this.autoUpdater = autoUpdater;
   }
 
-  install = () => {
-
+  uninstall = () => {
     // delete previous one
     if (this.tray) {
       this.tray.destroy();
+      this.tray = null;
     }
+  }
+
+  install = () => {
+
+    // delete previous one
+    this.uninstall();
   
     // need to know if an update is available
     const updateAvailable = this.autoUpdater.updateAvailable;
@@ -115,6 +121,14 @@ export default class {
         label: t('tray.menu.runAiCommand'),
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.command),
         click: () => Commander.initCommand(this.app),
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: t('tray.menu.agentForge'),
+        accelerator: shortcuts.shortcutAccelerator(configShortcuts?.forge),
+        click: () => window.openAgentForgeWindow(),
       },
       {
         type: 'separator'

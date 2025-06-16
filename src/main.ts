@@ -9,13 +9,13 @@ import process from 'node:process';
 import fontList from 'font-list';
 import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 import { fixPath, getCachedText, wait } from './main/utils';
 
 import AutoUpdater from './main/autoupdate';
 import Commander, { notEditablePrompts } from './automations/commander';
+import Automator, { AutomationAction } from 'automations/automator';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
@@ -26,6 +26,7 @@ import Embedder from './rag/embedder';
 import Mcp from './main/mcp';
 import Computer from './main/computer';
 import TrayIconManager from './main/tray';
+import Scheduler from './main/scheduler';
 
 import * as config from './main/config';
 import * as history from './main/history';
@@ -40,12 +41,15 @@ import * as menu from './main/menu';
 import * as text from './main/text';
 import * as i18n from './main/i18n';
 import * as debug from './main/network';
-import Automator, { AutomationAction } from 'automations/automator';
+import * as interpreter from './main/interpreter';
 import { useI18n } from './main/i18n';
+
+import Agent from './models/agent';
 
 let commander: Commander = null
 let docRepo: DocumentRepository = null
 let memoryManager: MemoryManager = null
+let scheduler: Scheduler = null
 let mcp: Mcp = null
 
 // first-thing: single instance
@@ -170,6 +174,7 @@ app.whenReady().then(() => {
       scratchpad: window.openScratchPad,
       settings: window.openSettingsWindow,
       studio: window.openDesignStudioWindow,
+      forge: window.openAgentForgeWindow,
     }, settings.shortcuts);
   }
   window.addWindowListener({
@@ -229,6 +234,10 @@ app.whenReady().then(() => {
   // create the memory manager
   memoryManager = new MemoryManager(app);
 
+  // create and start the scheduler
+  scheduler = new Scheduler(app, mcp);
+  scheduler.start();
+
   // some platforms have a one-time automator initialization to do so give them a chance
   new Automator();
 
@@ -253,8 +262,12 @@ app.on('before-quit', (ev) => {
 
   const closeAllWindows = () => {
     BrowserWindow.getAllWindows().forEach((win) => {
-      win.removeAllListeners('close');
-      win.close();
+      try {
+        if (!win.isDestroyed()) {
+          win.removeAllListeners('close');
+          win.close();
+        }
+      } catch { /* empty */ }
     });
   }
 
@@ -441,8 +454,38 @@ ipcMain.on('experts-import', (event) => {
   event.returnValue = experts.importExperts(app);
 });
 
+ipcMain.on('agents-open-forge',  () => {
+  window.openAgentForgeWindow();
+});
+
 ipcMain.on('agents-load', (event) => {
   event.returnValue = JSON.stringify(agents.loadAgents(app));
+});
+
+ipcMain.on('agents-save', (event, payload) => {
+  const agent = Agent.fromJson(JSON.parse(payload));
+  event.returnValue = agents.saveAgent(app, agent);
+});
+
+ipcMain.on('agents-delete', (event, payload) => {
+  event.returnValue = agents.deleteAgent(app, payload);
+});
+
+ipcMain.on('agents-get-runs', (event, agentId) => {
+  event.returnValue = JSON.stringify(agents.getAgentRuns(app, agentId));
+});
+
+ipcMain.on('agents-save-run', (event, payload) => {
+  event.returnValue = agents.saveAgentRun(app, JSON.parse(payload));
+});
+
+ipcMain.on('agents-delete-run', (event, payload) => {
+  const { agentId, runId } = JSON.parse(payload);
+  event.returnValue = agents.deleteAgentRun(app, agentId, runId);
+});
+
+ipcMain.on('agents-delete-runs', (event, payload) => {
+  event.returnValue = agents.deleteAgentRuns(app, payload);
 });
 
 ipcMain.on('settings-open', (event, payload) => {
@@ -528,7 +571,7 @@ ipcMain.on('markdown-render', (event, payload) => {
 
 ipcMain.on('code-python-run', async (event, payload) => {
   try {
-    const result = await PythonShell.runString(payload);
+    const result = await interpreter.runPython(payload);
     event.returnValue = {
       result: result
     }
@@ -820,5 +863,3 @@ ipcMain.on('studio-start', () => {
 ipcMain.on('voice-mode-start', () => {
   window.openRealtimeChatWindow();
 })
-
-

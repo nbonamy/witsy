@@ -9,7 +9,7 @@ export default class extends Plugin {
     super(config)
   }
 
-  sezializeInTools(): boolean {
+  serializeInTools(): boolean {
     return false
   }
 

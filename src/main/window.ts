@@ -11,6 +11,7 @@ export * from './windows/transcribe';
 export * from './windows/scratchpad';
 export * from './windows/computer';
 export * from './windows/studio';
+export * from './windows/forge';
 export * from './windows/debug';
 
 export const showMasLimitsDialog = () => {
