@@ -19,6 +19,7 @@ const DEFAULT_MODEL = 'gpt-4o-mini'
 // Parse command line arguments
 const args = process.argv.slice(2)
 const shouldFix = args.includes('--fix')
+const shouldDelete = !args.includes('--no-delete')
 
 // Helper types
 interface LocaleData {
@@ -546,8 +547,9 @@ async function checkWrongLinkedTranslations() {
 
 // do it
 (async () => {
+  
   const hasMissingTranslations = await checkMissingTranslations()
-  const hasUnusedTranslations = await checkUnusedTranslations()
+  const hasUnusedTranslations = shouldDelete ? await checkUnusedTranslations() : false
   const hasWrongLinkedTranslations = await checkWrongLinkedTranslations()
 
   if ((hasMissingTranslations || hasUnusedTranslations || hasWrongLinkedTranslations) && !shouldFix) {
