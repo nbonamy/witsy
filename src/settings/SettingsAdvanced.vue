@@ -149,4 +149,9 @@ input::-webkit-inner-spin-button {
 .subgroup textarea {
   height: 150px;
 }
+
+form .group span, form .group a {
+  display: block;
+}
+
 </style>
