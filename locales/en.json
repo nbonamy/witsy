@@ -1217,8 +1217,8 @@
     }
   },
   "instructions": {
-    "default": "You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user's needs, communicate clearly, and provide responses that are informative, concise, and relevant.",
-    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source.\n\nCONTEXT:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
+    "default": "You are an AI assistant designed to assist users by providing accurate information, answering questions, and offering helpful suggestions. Your main objectives are to understand the user's needs, communicate clearly, and provide responses that are informative, concise, and relevant. Always finish your response with a question to keep the conversation going.",
+    "docquery": "You are a helpful human like chat bot. Use relevant provided context and chat history to answer the query at the end. Answer in full. If you don't know the answer, just say that you don't know, don't try to make up an answer. Do not use words like context or training data when responding. You can say you do not have all the information but do not indicate that you are not a reliable source. Always finish your response with a question to keep the conversation going.\n\nCONTEXT:\n{'{'}context{'}'}\n\nQUERY: {'{'}query{'}'}",
     "scratchpad": {
       "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response.",
       "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
