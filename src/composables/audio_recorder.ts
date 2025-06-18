@@ -266,7 +266,7 @@ class AudioRecorder {
     }
 
     // if silence detected
-    if (this.lastNoise && now - this.lastNoise > this.config.stt.silenceDuration) {
+    if (this.config.stt.silenceDuration && this.lastNoise && now - this.lastNoise > this.config.stt.silenceDuration) {
       this.listener.onSilenceDetected()
     }
 

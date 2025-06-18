@@ -15,6 +15,8 @@ interface WindowMockOpts {
   customEngine?: boolean
 }
 
+let clipboard = ''
+
 const useWindowMock = (opts?: WindowMockOpts) => {
 
   // merge with deafults
@@ -165,8 +167,8 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       encode: (s) => `${s}_encoded`,
     },
     clipboard: {
-      readText: vi.fn(() => 'clipboard'),
-      writeText: vi.fn(() => true),
+      readText: vi.fn(() => clipboard),
+      writeText: vi.fn((text) => clipboard = text),
       writeImage: vi.fn(() => true),
     },
     file: {
