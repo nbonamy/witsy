@@ -76,7 +76,7 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 
-export type MenuBarMode = 'current' |
+export type MenuBarMode = 'none' |
   'chat' | 'studio' | 'scratchpad' | 'dictation' | 'voice-mode' |
   'computer-use' | 'docrepo' | 'debug' | 'settings'
 

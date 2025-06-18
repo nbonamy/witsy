@@ -13,7 +13,7 @@
 <script setup lang="ts">
 
 import { anyDict } from '../types/index'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import Chat from '../screens/Chat.vue'
@@ -39,6 +39,11 @@ const viewParams = ref(null)
 onMounted(() => {
 
   console.log('[main] mounted')
+
+  // when close
+  window.api.on('window-closed', () => {
+    mode.value = 'none'
+  })
 
   // init
   window.api.on('query-params', (params) => {

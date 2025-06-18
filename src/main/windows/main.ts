@@ -94,6 +94,9 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     undockWindow(mainWindow);
     event.preventDefault();
 
+    // notify the app
+    mainWindow.webContents.send('window-closed');
+
   })
 
   mainWindow.on('closed', () => {
