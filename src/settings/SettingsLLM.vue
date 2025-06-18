@@ -4,7 +4,15 @@
       <div class="title">{{ t('settings.tabs.llm') }}</div>
     </header>
     <main>
-      <div class="group prompt">
+      <div class="group chat-prompt">
+        <label>{{ t('settings.llm.prompt.label') }}</label>
+        <select v-model="chatPrompt" @change="save">
+          <option value="default">{{ t('settings.llm.prompt.default') }}</option>
+          <option value="structured">{{ t('settings.llm.prompt.structured') }}</option>
+        </select>
+        <span>{{ t('settings.llm.prompt.custom') }}</span>
+      </div>
+      <div class="group quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
         <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
         <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
@@ -29,6 +37,7 @@
 
 <script setup lang="ts">
 
+import { PromptType } from '../types/config'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { hasLocalization, t } from '../services/i18n'
@@ -37,6 +46,7 @@ import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 
 const isMas = ref(false)
+const chatPrompt = ref<PromptType>('structured')
 const engine = ref(null)
 const model = ref(null)
 const localeLLM = ref(null)
@@ -57,6 +67,7 @@ const models = computed(() => {
 
 const load = () => {
   isMas.value = window.api.isMasBuild
+  chatPrompt.value = store.config.llm.prompt || 'structured'
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
   localeLLM.value = store.config.llm.locale
@@ -66,6 +77,7 @@ const load = () => {
 }
 
 const save = () => {
+  store.config.llm.prompt = chatPrompt.value
   store.config.prompt.engine = engine.value
   store.config.prompt.model = model.value
   store.config.llm.locale = localeLLM.value

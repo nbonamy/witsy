@@ -16,22 +16,6 @@
   overflow-wrap: anywhere;
 }
 
-.message .body * {
-  line-height: 1.3;
-}
-
-.message .body pre.hljs {
-  line-height: 1.5;
-}
-
-.message .body .text pre {
-  white-space: pre-wrap !important;
-}
-
-.message .text {
-  user-select: text;
-}
-
 .messages.size1 .variable-font-size, .messages.size1 .variable-font-size * {
   font-size: 10pt;
 }
@@ -70,6 +54,73 @@
 
 .messages.size5 pre.hljs, messages.size5 code.variable-font-size, .messages.size5 .variable-font-size code, .messages.size5 code.variable-font-size * {
   font-size: 14pt;
+}
+
+.message .body * {
+  line-height: 1.3;
+}
+
+.message .body .variable-font-size h3 {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 0.5px solid var(--control-list-border-color);
+  font-size: 1.1em;
+}
+
+.message .body .variable-font-size hr {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-top: 0.5px solid var(--control-list-border-color);
+}
+
+.message .body .variable-font-size hr:has(+ h3) {
+  display: none;
+}
+
+.message .body strong {
+  font-weight: 550;
+}
+
+.message .body ul {
+  margin-bottom: 2rem;
+  li {
+    margin: 0.75rem 0px;
+  }
+}
+
+.message .body .variable-font-size table {
+
+  border-collapse: collapse;
+  margin: 2rem 0px;
+
+  thead tr th, tbody tr td {
+    padding: 0.5rem 0px;
+    padding-right: 1rem;
+    text-align: left;
+    font-size: 0.9em;
+  }
+  
+  thead tr th *, tbody tr td * {
+    font-size: 1em;
+  }
+
+  thead {
+    border-bottom: 1px solid var(--control-list-border-color);
+  }
+
+}
+
+
+.message .body pre.hljs {
+  line-height: 1.5;
+}
+
+.message .body .text pre {
+  white-space: pre-wrap !important;
+}
+
+.message .text {
+  user-select: text;
 }
 
 .message .body .text pre.hljs code.hljs {

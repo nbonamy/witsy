@@ -151,15 +151,21 @@ test('Settings LLM', async () => {
   
   const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, 1)
-  expect(tab.findAll('.group')).toHaveLength(3)
+  expect(tab.findAll('.group')).toHaveLength(4)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
   expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
+  expect(tab.findAll('.group.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
+
+  // set default prompt
+  expect(store.config.llm.prompt).toBe('structured')
+  tab.find('.group.chat-prompt select').setValue('default')
+  expect(store.config.llm.prompt).toBe('default')
+  vi.clearAllMocks()
 
   // set prompt engine
-  tab.find('.group.prompt select.engine').setValue('anthropic')
+  tab.find('.group.quick-prompt select.engine').setValue('anthropic')
   await wrapper.vm.$nextTick()
   expect(store.config.llm.forceLocale).toBe(false)
   expect(store.config.prompt.engine).toBe('anthropic')
@@ -277,7 +283,7 @@ test('Settings Advanced', async () => {
     key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
-    'instructions.default', 'instructions.titling', 'instructions.titlingUser', 'instructions.docquery',
+    'instructions.default', 'instructions.structured', 'instructions.titling', 'instructions.titlingUser', 'instructions.docquery',
     'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
     'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
     'instructions.scratchpad.simplify', 'instructions.scratchpad.expand', 'instructions.scratchpad.complete',
