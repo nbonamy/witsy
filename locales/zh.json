@@ -1909,6 +1909,11 @@
       "transcription": "转录过程中发生错误",
       "unknown": "发生未知错误。请再试一次。"
     },
+    "help": {
+      "clear": "{shortcut} 清除转录",
+      "copy": "{shortcut} 复制转录",
+      "cut": "{shortcut} 复制并关闭窗口"
+    },
     "spaceKeyHint": {
       "pushToTalk": "您也可以按住空格键进行录音。",
       "toggle": "您也可以按空格键开始录音，再次按空格键停止录音。"

@@ -1909,6 +1909,11 @@
       "transcription": "Ocorreu um erro durante a transcrição",
       "unknown": "Ocorreu um erro desconhecido. Por favor, tente novamente."
     },
+    "help": {
+      "clear": "{atalho} para limpar a transcrição",
+      "copy": "{shortcut} para copiar a transcrição",
+      "cut": "{shortcut} para copiar e fechar a janela"
+    },
     "spaceKeyHint": {
       "pushToTalk": "Você também pode pressionar e segurar a barra de espaço para gravar.",
       "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."

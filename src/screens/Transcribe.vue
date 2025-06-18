@@ -78,6 +78,11 @@
             <button name="copy" class="button" @click="onCopy()" :disabled="!transcription || state === 'processing'">{{ t('common.copy') }}</button>
           </form>
         </div>
+        <div class="help">
+          <div>{{ t('transcribe.help.clear', { shortcut: `${meta}+X` })}}</div>
+          <div>{{ t('transcribe.help.copy', { shortcut: `${meta}+C` })}}</div>
+          <div>{{ t('transcribe.help.cut', { shortcut: `Shift+${meta}+C` })}}</div>
+        </div>
       </main>
     </div>
   </div>
@@ -86,7 +91,7 @@
 <script setup lang="ts">
 
 import { StreamingChunk } from '../voice/stt'
-import { Ref, ref, onMounted, onUnmounted } from 'vue'
+import { Ref, ref, onMounted, onUnmounted, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { getSTTEngines, getSTTModels } from '../voice/stt'
@@ -116,6 +121,8 @@ const foregroundColorActive = ref('')
 const foregroundColorInactive = ref('')
 
 let previousTranscription = ''
+
+const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
 
 onMounted(async () => {
 
@@ -390,6 +397,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // process
   const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+  const isShiftCommand = event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
   if (event.code === 'Space') {
     if (state.value !== 'recording') {
       onRecord(pushToTalk.value)
@@ -401,10 +409,14 @@ const onKeyDown = (event: KeyboardEvent) => {
     onInsert()
   // } else if (event.key === 'Backspace') {
   //   transcription.value = transcription.value.slice(0, -1)
-  } else if (event.key === 'Delete') {
+  } else if (event.key === 'x' && isCommand) {
     onClear()
-  } else if (event.key === 'c' && isCommand) {
+  } else if (event.key === 'c' && isCommand && !event.shiftKey) {
     onCopy()
+  } else if (event.key === 'c' && isShiftCommand) {
+    if (onCopy()) {
+      window.api.closeMainWindow()
+    }
   } else if (event.key === 'i' && isCommand) {
     onInsert()
   }
@@ -433,12 +445,13 @@ const onClear = () => {
   refocus()
 }
 
-const onCopy = async () => {
+const onCopy = () => {
   window.api.clipboard.writeText(transcription.value)
   if (window.api.clipboard.readText() != transcription.value) {
     Dialog.alert(t('transcribe.errors.copy'))
-    return
+    return false
   }
+  return true
 }
 
 const onInsert = () => {
@@ -538,6 +551,12 @@ const refocus = () => {
         .push {
           flex: 1;
         }
+      }
+
+      .help {
+        margin-top: 0.5rem;
+        font-size: 10pt;
+        text-align: right;
       }
 
       .loader {

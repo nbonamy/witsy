@@ -1912,6 +1912,11 @@
       "transcription": "Error occurred during transcription",
       "unknown": "An unknown error occurred. Please try again."
     },
+    "help": {
+      "clear": "{shortcut} to clear the transcription",
+      "copy": "{shortcut} to copy the transcription",
+      "cut": "{shortcut} to copy and close the window"
+    },
     "spaceKeyHint": {
       "pushToTalk": "You can also press and hold the Space bar to record.",
       "toggle": "You can also hit Space to start recording and hit again to stop it."
