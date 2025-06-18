@@ -151,14 +151,26 @@ test('Keyboard shortcuts', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
   wrapper.vm.transcription = 'test'
   await wrapper.vm.$nextTick()
+
+  // copy
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'c' }));
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
+
+  // copy and close
+  document.dispatchEvent(new KeyboardEvent('keydown', { shiftKey: true, metaKey: true, key: 'c' }));
+  expect(window.api.clipboard.writeText).toHaveBeenNthCalledWith(2, 'test')
+  expect(window.api.closeMainWindow).toHaveBeenCalled()
+  
+  // insert
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
   expect(window.api.transcribe.insert).toHaveBeenNthCalledWith(1, 'test')
+
+  // insert
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'Enter' }));
   expect(window.api.transcribe.insert).toHaveBeenNthCalledWith(2, 'test')
-  // document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace' }));
-  // expect(wrapper.vm.transcription).toBe('tes')
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete' }));
+
+  // clear
+  document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'x' }));
   expect(wrapper.vm.transcription).toBe('')
+  
 })
