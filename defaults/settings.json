@@ -17,6 +17,7 @@
     "locale": "",
     "forceLocale": false,
     "engine": "openai",
+    "prompt": "structured",
     "favorites": [],
     "autoVisionSwitch": true,
     "conversationLength": 20,

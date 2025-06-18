@@ -291,10 +291,10 @@ export type GenerationResult =
   getSystemInstructions(instructions?: string): string {
 
     // default
-    let instr = instructions || i18nInstructions(this.config, 'instructions.default')
+    let instr = instructions || i18nInstructions(this.config, `instructions.${this.config.llm.prompt}`)
 
     // forced locale
-    if (instr === i18nInstructions(null, 'instructions.default') && this.config.llm.forceLocale) {
+    if (instr === i18nInstructions(null, `instructions.${this.config.llm.prompt}`) && this.config.llm.forceLocale) {
       const lang = localeToLangName(getLlmLocale())
       if (lang.length) {
         instr += ' ' + i18nInstructions(this.config, 'instructions.setLang', { lang })

@@ -23,6 +23,7 @@ for (const locale of Object.keys(messages)) {
 
     // check if the locale has instructions
     expect(messages[locale].instructions.default).toBeDefined()
+    expect(messages[locale].instructions.structured).toBeDefined()
     expect(messages[locale].instructions.docquery).toBeDefined()
     expect(messages[locale].instructions.setDate).toBeDefined()
     expect(messages[locale].instructions.setLang).toBeDefined()

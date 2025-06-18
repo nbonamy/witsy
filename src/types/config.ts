@@ -71,7 +71,10 @@ export type ModelDefaults = {
   prompt: string
 } & LlmModelOpts
 
+export type PromptType = 'default' | 'structured'
+
 export type LLMConfig = {
+  prompt: PromptType  
   engine: string
   locale: string
   forceLocale: boolean
@@ -97,6 +100,14 @@ export type AppearanceConfig = {
   chat: ChatAppearance
 }
 
+export type PromptConfig = {
+  engine: string
+  model: string
+  disableStreaming: boolean
+  disableTools: boolean
+  autosave: boolean
+}
+
 export type DesignStudioModel = {
   engine: string
   model: string
@@ -115,14 +126,6 @@ export type DesignStudioConfig = {
   favorites: DesignStudioModel[]
   defaults: DesignStudioModelDefaults[]
 } & Record<DesignStudioMediaType, DesignStudioMediaTypeDefaults>
-
-export type PromptConfig = {
-  engine: string
-  model: string
-  disableStreaming: boolean
-  disableTools: boolean
-  autosave: boolean
-}
 
 export type CommandsConfig = {
   engine: string

@@ -38,7 +38,8 @@
         <label>{{ t('settings.advanced.systemInstructions') }}</label>
         <div class="subgroup">
           <select v-model="instructions" @change="onChangeInstructions">
-            <option value="instructions.default">{{ t('settings.advanced.instructions.chat') }}</option>
+            <option value="instructions.default">{{ t('settings.advanced.instructions.chat_standard') }}</option>
+            <option value="instructions.structured">{{ t('settings.advanced.instructions.chat_structured') }}</option>
             <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
             <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
             <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
@@ -55,7 +56,7 @@
             <option value="instructions.scratchpad.expand">{{ t('settings.advanced.instructions.scratchpad_expand') }}</option>
             <option value="instructions.scratchpad.complete">{{ t('settings.advanced.instructions.scratchpad_complete') }}</option>
           </select>
-          <textarea v-model="prompt" @change="save" @keyup="save" />
+          <textarea v-model="prompt" @input="save" />
           <a href="#" @click="onResetDefaultInstructions" v-if="isPromptOverridden">{{ t('settings.advanced.resetToDefault') }}</a>
           <span v-else>{{ t('settings.advanced.overridingHelp') }}</span>
         </div>
@@ -136,6 +137,10 @@ defineExpose({ load })
 
 <style scoped>
 
+.settings .tab-content main {
+  min-width: 600px;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -148,6 +153,7 @@ input::-webkit-inner-spin-button {
 
 .subgroup textarea {
   height: 150px;
+  resize: vertical !important;
 }
 
 form .group span, form .group a {
