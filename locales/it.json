@@ -1879,6 +1879,11 @@
       "transcription": "Si è verificato un errore durante la trascrizione",
       "unknown": "Si è verificato un errore sconosciuto. Per favore riprova."
     },
+    "help": {
+      "clear": "{shortcut} per cancellare la trascrizione",
+      "copy": "{shortcut} per copiare la trascrizione",
+      "cut": "{shortcut} per copiare e chiudere la finestra"
+    },
     "spaceKeyHint": {
       "pushToTalk": "Puoi anche tenere premuto il tasto Spazio per registrare.",
       "toggle": "Puoi anche premere il tasto Spazio per iniziare a registrare e premere di nuovo per fermarlo."

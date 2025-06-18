@@ -1915,6 +1915,11 @@
       "transcription": "Wystąpił błąd podczas transkrypcji",
       "unknown": "Wystąpił nieznany błąd. Proszę spróbować ponownie."
     },
+    "help": {
+      "clear": "{skrót} aby wyczyścić transkrypcję",
+      "copy": "{shortcut} aby skopiować transkrypcję",
+      "cut": "{shortcut} aby skopiować i zamknąć okno"
+    },
     "spaceKeyHint": {
       "pushToTalk": "Możesz także nacisnąć i przytrzymać spację, aby nagrywać.",
       "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."

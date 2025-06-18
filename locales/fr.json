@@ -1879,6 +1879,11 @@
       "transcription": "Une erreur est survenue pendant la transcription",
       "unknown": "Une erreur inconnue est survenue. Veuillez réessayer."
     },
+    "help": {
+      "clear": "{raccourci} pour effacer la transcription",
+      "copy": "{shortcut} pour copier la transcription",
+      "cut": "{shortcut} pour copier et fermer la fenêtre"
+    },
     "spaceKeyHint": {
       "pushToTalk": "Vous pouvez également appuyer et maintenir la barre d'espace pour enregistrer.",
       "toggle": "Vous pouvez également appuyer sur la barre d'espace pour commencer à enregistrer et appuyer à nouveau pour l'arrêter."

@@ -1879,6 +1879,11 @@
       "transcription": "Es ist ein Fehler bei der Transkription aufgetreten",
       "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     },
+    "help": {
+      "clear": "{shortcut} um die Transkription zu löschen",
+      "copy": "{shortcut} um die Transkription zu kopieren",
+      "cut": "{shortcut} um zu kopieren und das Fenster zu schließen"
+    },
     "spaceKeyHint": {
       "pushToTalk": "Sie können auch die Leertaste gedrückt halten, um aufzuzeichnen.",
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."

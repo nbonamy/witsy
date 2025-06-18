@@ -1879,6 +1879,11 @@
       "transcription": "Se produjo un error durante la transcripción",
       "unknown": "Se produjo un error desconocido. Por favor, inténtalo de nuevo."
     },
+    "help": {
+      "clear": "{shortcut} para borrar la transcripción",
+      "copy": "{shortcut} para copiar la transcripción",
+      "cut": "{shortcut} para copiar y cerrar la ventana"
+    },
     "spaceKeyHint": {
       "pushToTalk": "También puedes presionar y mantener la barra espaciadora para grabar.",
       "toggle": "También puedes presionar la barra espaciadora para comenzar a grabar y presionar nuevamente para detenerlo."
