@@ -622,10 +622,7 @@ const onResponseResize = (deltaX: number) => {
 
   .prompt {
 
-    flex-direction: column-reverse;
-    justify-content: start;
-    align-items: flex-start;
-    padding-left: 12px !important;
+    padding-left: 0.75rem !important;
     
     .app {
       width: calc(100% - 12px);
@@ -648,13 +645,48 @@ const onResponseResize = (deltaX: number) => {
       }
     }
 
+    .attachments {
+      padding-left: 0.25rem;
+      .attachment {
+        opacity: 0.8;
+        border-color: color-mix(in srgb, var(--prompt-input-border-color), var(--text-color) 50%);
+      }
+    }
+
+    .input {
+
+      margin-bottom: 0px;
+      
+      .textarea-wrapper {
+        textarea {
+          max-height: 100px;
+          background-color: var(--anywhere-bg-color);
+          padding: 6px 16px 6px 8px;
+          font-size: 16pt;
+          &::placeholder {
+            opacity: 0.5;
+          }
+        }
+
+        .icon.left {
+          margin: 4px 0px 0px 8px !important;
+          svg {
+            font-size: 14pt;
+            height: auto;
+          }
+        }
+
+      }
+    }
+    
     .actions {
-      width: calc(100% - 12px);
-      padding: 4px 12px;
+      width: calc(100% - 0.75rem);
+      padding: 0.25rem 0 0.5rem 0.5rem;
       
       .icon {
-        margin-right: 8px;
+        margin-right: 0.5rem;
       }
+      
       .info {
         display: flex;
         align-items: flex-end;
@@ -672,45 +704,6 @@ const onResponseResize = (deltaX: number) => {
       }
     }
 
-    .input {
-      width: 100%;
-      border: none;
-      border-radius: 0px;
-      background-color: var(--anywhere-bg-color);
-
-      .attachment {
-        margin-left: 4px;
-      }
-      
-      .textarea-wrapper {
-        textarea {
-          max-height: 100px;
-          border-radius: 0px;
-          background-color: var(--anywhere-bg-color);
-          padding: 6px 16px 6px 8px;
-          font-size: 16pt;
-          &::placeholder {
-            opacity: 0.5;
-          }
-        }
-
-        .icon.left {
-          position: static;
-          margin: 4px 0px 0px 8px;
-          color: var(--text-color);
-          
-          svg {
-            font-size: 14pt;
-            height: auto;
-          }
-        }
-
-        .icon.left + textarea {
-          padding-left: 16px;
-        }
-      }
-    }
-    
     .icon {
       cursor: pointer;
       margin-top: 4px;

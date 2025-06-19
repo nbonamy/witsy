@@ -169,9 +169,9 @@ test('Remove attachments', async () => {
     new Attachment('image64', 'image/png', 'file://image.png')
   ]
   await wrapper.vm.$nextTick()
-  await wrapper.find('.attachment:last-child').trigger('click')
+  await wrapper.find('.attachment:last-child .delete').trigger('click')
   expect(wrapper.vm.attachments).toHaveLength(1)
-  await wrapper.find('.attachment:last-child').trigger('click')
+  await wrapper.find('.attachment:last-child .delete').trigger('click')
   expect(wrapper.vm.attachments).toStrictEqual([])
 })
 

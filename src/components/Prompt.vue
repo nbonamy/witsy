@@ -1,7 +1,26 @@
 <template>
   <div class="prompt">
     <slot name="before" />
+    <div class="attachments" v-if="attachments.length > 0">
+      <div class="attachment" v-for="(attachment, index) in attachments" :key="index">
+        <AttachmentView :attachment="attachment" />
+        <div class="title" v-if="!attachment.isImage()">{{ attachment.filenameShort }}</div>
+        <BIconXLg class="delete" @click="onDetach(attachment)" />
+      </div>
+    </div>
+    <div class="input" @paste="onPaste">
+      <div class="textarea-wrapper">
+        <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
+        <div v-if="expert" class="icon left expert" @click="onClickActiveExpert"><BIconMortarboard /></div>
+        <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
+        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
+        <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt" />
+        <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
+        <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
+      </div>
+    </div>
     <div class="actions" :class="actionsCount">
+      <BIconJournal :class="{ icon: true, instructions: true }" @click="onClickInstructions" />
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
@@ -9,23 +28,8 @@
       <slot name="actions" />
     </div>
     <slot name="between" />
-    <div class="input" @paste="onPaste">
-      <div class="attachments" >
-        <div class="attachment" @click="onDetach(attachment)" v-for="(attachment, index) in attachments" :key="index">
-          <AttachmentView :attachment="attachment" />
-        </div>
-      </div>
-      <div class="textarea-wrapper">
-        <div class="icon left processing loader-wrapper" v-if="isProcessing"><Loader /><Loader /><Loader /></div>
-        <div v-if="expert" class="icon left expert" @click="onClickActiveExpert"><BIconMortarboard /></div>
-        <div v-if="command" class="icon left command" @click="onClickActiveCommand"><BIconCommand /></div>
-        <textarea v-model="prompt" :placeholder="placeholder" @keydown="onKeyDown" @keyup="onKeyUp" ref="input" autofocus="true" :disabled="conversationMode?.length > 0" />
-        <BIconMagic class="icon command right" @click="onCommands(true)" v-if="enableCommands && prompt" />
-      </div>
-    </div>
     <slot name="after" />
-    <BIconStopCircleFill class="icon stop" @click="onStopPrompting" v-if="isPrompting" />
-    <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
+    <ContextMenu v-if="showInstructions" :on-close="closeContextMenu" :actions="instructionsMenuItems" @action-clicked="setInstructions" :selected="chatInstructions" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
     <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
@@ -41,7 +45,7 @@ import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
-import { expertI18n, commandI18n, t } from '../services/i18n'
+import { expertI18n, commandI18n, t, i18nInstructions } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
@@ -135,6 +139,7 @@ const attachments = ref<Attachment[]>([])
 const docrepo = ref(null)
 const input = ref(null)
 const docRepos = ref<DocumentBase[]>([])
+const showInstructions = ref(false)
 const showDocRepo = ref(false)
 const showExperts = ref(false)
 const showActiveExpert = ref(false)
@@ -168,6 +173,31 @@ const isPrompting = computed(() => {
 
 const docRepoActive = computed(() => {
   return props.chat?.docrepo || docrepo.value
+})
+
+const instructions = [ 'standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary' ]
+
+const instructionsMenuItems = computed(() => {
+  return [
+    { label: t('prompt.instructions.title'), action: '', disabled: true },
+    { label: t('prompt.instructions.default'), action: 'null' },
+    ...instructions.map((id) => {
+      return { label: t(`settings.llm.instructions.${id}`), action: id }
+    }),
+  ]
+})
+
+const chatInstructions = computed(() => {
+
+  for (const id of instructions) {
+    if (props.chat.instructions === i18nInstructions(store.config, `instructions.chat.${id}`)) {
+      return { label: id, action: id }
+    }
+  }
+
+  // default
+  return { label: '', action: 'null' }
+
 })
 
 const docReposMenuItems = computed(() => {
@@ -293,6 +323,15 @@ const loadDocRepos = () => {
   }
 }
 
+const setInstructions = (action: string) => {
+  closeContextMenu()
+  if (action === 'null') {
+    props.chat.instructions = null
+  } else {
+    props.chat.instructions = i18nInstructions(store.config, `instructions.chat.${action}`)
+  }
+}
+
 const onSetPrompt = (message: Message) => {
   prompt.value = message.content
   attachments.value = message.attachments
@@ -412,6 +451,14 @@ const attach = async (contents: string, mimeType: string, url: string) => {
 
 const onDetach = (attachment: Attachment) => {
   attachments.value = attachments.value.filter((a: Attachment) => a !== attachment)
+}
+
+const onClickInstructions = () => {
+  const icon = document.querySelector('.prompt .instructions')
+  const rect = icon?.getBoundingClientRect()
+  menuX.value = rect?.left + (props.menusPosition === 'below' ? -10 : 0)
+  menuY.value = rect?.height + (props.menusPosition === 'below' ? rect?.y : 16 )  + 24
+  showInstructions.value = true
 }
 
 const openExperts = () => {
@@ -655,6 +702,7 @@ const isContextMenuOpen = () => {
 }
 
 const closeContextMenu = () => {
+  showInstructions.value = false
   showDocRepo.value = false
   showExperts.value = false
   showCommands.value = false
@@ -866,162 +914,182 @@ defineExpose({
 }
 
 .prompt {
+  
   padding: 8px 12px;
   display: flex;
-  align-items: center;
-}
-
-.prompt .icon {
-  cursor: pointer;
-  color: var(--prompt-icon-color);
-}
-
-.prompt .icon.active {
-  color: var(--highlight-color);
-}
-
-.prompt .icon.dictate.active {
-  color: red;
-}
-
-.prompt .actions {
-  display: flex;
-}
-
-.prompt .actions-many .icon {
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-.prompt .actions-many .icon.attach {
-  padding-left: 3px;
-  padding-right: 3px;
-}
-
-.prompt .actions-many .icon.dictate {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.input {
-  background-color: var(--prompt-input-bg-color);
+  flex-direction: column;
+  align-items: stretch;
   border: 1px solid var(--prompt-input-border-color);
-  border-radius: 16px;
-  margin: 0px 8px;
-  overflow: hidden;
-  flex: 1;
-}
-
-.input .attachments {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-left: 8px;
-}
-
-.input .attachment {
-  margin-top: 4px;
-  margin-left: 8px;
-  cursor: pointer;
-}
-
-.attachment .icon {
-  height: 18pt !important;
-  width: 18pt !important;
-}
-
-.input .textarea-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.input .textarea-wrapper .icon.left {
-  margin-left: 16px;
-}
-
-.input .textarea-wrapper .icon.left.expert {
-  margin-top: 2px;
-  margin-right: 4px;
-  color: var(--prompt-input-text-color);
-  cursor: pointer;
-  svg {
-    height: 12pt;
-  }
-}
-
-.input .textarea-wrapper .icon.left:not(:first-of-type).expert {
-  margin-left: 4px;
-}
-
-.input .textarea-wrapper .icon.left.loader-wrapper {
-  margin-left: 4px;
-  margin-top: -8px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  transform: scale(0.5);
-  :nth-child(1), :nth-child(3) {
-    animation-delay: 250ms;
-  }
-  .loader {
-    background-color: var(--control-placeholder-text-color);
-  }
-}
-
-.input .textarea-wrapper .icon.right {
-  position: absolute;
-  border-radius: 16px;
-  margin-top: -2px;
-  margin-left: 8px;
-  right: 12px;
-}
-
-.input .textarea-wrapper textarea {
+  border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
-  color: var(--prompt-input-text-color);
-  border: none;
-  resize: none;
-  box-sizing: border-box;
-  border-radius: 16px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-left: 16px;
-  padding-right: 36px;
-  padding-top: 5px;
-  padding-bottom: 7px;
-  width: 100%;
-}
+  margin: 1rem;
 
-.input .textarea-wrapper .icon.left + textarea {
-  padding-left: 8px;
-}
+  .icon {
+    cursor: pointer;
+    color: var(--prompt-icon-color);
 
-.input .textarea-wrapper textarea::placeholder {
-  color: var(--control-placeholder-text-color);
-  opacity: 0.5;
-}
+    &.active {
+      color: var(--highlight-color);
+    }
 
-.input .textarea-wrapper textarea:focus {
-  outline: none;
-  flex: 1;
-}
+    &.dictate.active {
+      color: red;
+    }
 
-.input .textarea-wrapper textarea:disabled {
-  color: var(--control-placeholder-text-color);
+  }
+
+  .attachments {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+
+    .attachment {
+      
+      padding: 0.5rem 0.25rem;
+      border: 1px solid var(--prompt-input-border-color);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      &:has(img) {
+        padding: 0.125rem 0.25rem;
+      }
+
+      .icon {
+        height: 1.25rem !important;
+        width: 1.25rem !important;
+      }
+
+      img {
+        height: 2rem !important;
+        width: 2rem !important;
+        border-radius: 0.125rem;
+        object-fit: cover;
+      }
+
+      .title {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .delete {
+        padding-left: 0.25rem;
+        cursor: pointer;
+      }
+
+    }
+  }
+
+  .input {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.5rem;
+
+    .textarea-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+      overflow: hidden;
+
+      .icon.left {
+        margin-left: 16px;
+      }
+
+      .icon.left.expert {
+        margin-top: 2px;
+        margin-right: 4px;
+        color: var(--prompt-input-text-color);
+        cursor: pointer;
+        svg {
+          height: 12pt;
+        }
+      }
+
+      .icon.left:not(:first-of-type).expert {
+        margin-left: 4px;
+      }
+
+      .icon.left.loader-wrapper {
+        margin-left: 4px;
+        margin-top: -8px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        transform: scale(0.5);
+        :nth-child(1), :nth-child(3) {
+          animation-delay: 250ms;
+        }
+        .loader {
+          background-color: var(--control-placeholder-text-color);
+        }
+      }
+
+      textarea {
+        background-color: var(--prompt-input-bg-color);
+        color: var(--prompt-input-text-color);
+        border: none;
+        resize: none;
+        box-sizing: border-box;
+        border-radius: 16px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 100%;
+      }
+
+      .icon.left + textarea {
+        padding-left: 8px;
+      }
+
+      textarea::placeholder {
+        color: var(--control-placeholder-text-color);
+        opacity: 0.5;
+      }
+
+      textarea:focus {
+        outline: none;
+        flex: 1;
+      }
+
+      textarea:disabled {
+        color: var(--control-placeholder-text-color);
+      }
+
+    }
+
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.25rem;
+
+    .icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .icon.experts {
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+
+    .icon.dictate {
+      margin-left: -2px;
+    }
+
+  }
+
 }
 
 .windows .input, .windows .input .textarea-wrapper textarea {
   border-radius: 0px;
-}
-
-.input .attachment img {
-  height: 36pt !important;
-  width: 36pt !important;
-  object-fit: cover;
 }
 
 ::-webkit-scrollbar {
