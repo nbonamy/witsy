@@ -70,7 +70,7 @@ export type GenerationResult =
         //console.log('Sources', JSON.stringify(sources, null, 2));
         if (sources.length > 0) {
           const context = sources.map((source) => source.content).join('\n\n');
-          const instructions = i18nInstructions(this.config, 'instructions.docquery')
+          const instructions = i18nInstructions(this.config, 'instructions.chat.docquery')
           const prompt = instructions.replace('{context}', context).replace('{query}', userMessage.content);
           conversation[conversation.length - 1] = new Message('user', prompt);
         }
@@ -291,19 +291,19 @@ export type GenerationResult =
   getSystemInstructions(instructions?: string): string {
 
     // default
-    let instr = instructions || i18nInstructions(this.config, `instructions.${this.config.llm.prompt}`)
+    let instr = instructions || i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
 
     // forced locale
-    if (instr === i18nInstructions(null, `instructions.${this.config.llm.prompt}`) && this.config.llm.forceLocale) {
+    if (instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && this.config.llm.forceLocale) {
       const lang = localeToLangName(getLlmLocale())
       if (lang.length) {
-        instr += ' ' + i18nInstructions(this.config, 'instructions.setLang', { lang })
+        instr += ' ' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
       }
     }
 
     // // add date and time
     if (Generator.addDateAndTimeToSystemInstr) {
-      instr += ' ' + i18nInstructions(this.config, 'instructions.setDate', { date: new Date().toLocaleString() })
+      instr += ' ' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
     }
 
     // done

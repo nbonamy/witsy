@@ -498,7 +498,7 @@ const saveChat = async () => {
     const model = llmManager.getChatModel(chat.value.engine, chat.value.model)
     const title = await llm.complete(model, [
       ...chat.value.messages,
-      new Message('user', i18nInstructions(store.config, 'instructions.titlingUser'))
+      new Message('user', i18nInstructions(store.config, 'instructions.utils.titlingUser'))
     ], { tools: false })
     chat.value.title = title.content
   }

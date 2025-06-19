@@ -64,7 +64,7 @@ beforeAll(() => {
         disableStreaming: true,
         tools: [ 'tool1' ],
         locale: 'en',
-        prompt: 'prompt',
+        instructions: 'instructions',
         docrepo: 'docrepo',
         expert: 'uuid1',
         modelOpts: {
@@ -244,7 +244,7 @@ test('New chat in folder with defaults', async () => {
   expect(wrapper.vm.assistant.chat.disableStreaming).toBe(true)
   expect(wrapper.vm.assistant.chat.tools).toStrictEqual(['tool1'])
   expect(wrapper.vm.assistant.chat.locale).toBe('en')
-  expect(wrapper.vm.assistant.chat.prompt).toBe('prompt')
+  expect(wrapper.vm.assistant.chat.instructions).toBe('instructions')
   expect(wrapper.vm.assistant.chat.docrepo).toBe('docrepo')
   expect(wrapper.vm.assistant.chat.modelOpts).toStrictEqual({
     temperature: 0.7,

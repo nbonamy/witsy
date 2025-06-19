@@ -102,12 +102,13 @@ export default class extends Generator {
       this.initChat()
     }
 
-    // we need messages
+    // create system message if not exists
     if (this.chat.messages.length === 0) {
-      this.chat.addMessage(new Message('system', this.chat.prompt || this.getSystemInstructions()))
-    } else {
-      this.chat.messages[0].content = this.chat.prompt || this.getSystemInstructions()
+      this.chat.addMessage(new Message('system', ''))
     }
+
+    // update system message with latest instructions
+    this.chat.messages[0].content = this.chat.instructions || this.getSystemInstructions()
 
     // make sure we have the right engine and model
     // special case: chat was started without an apiKey
@@ -212,10 +213,10 @@ export default class extends Generator {
 
       // build messages
       const messages = [
-        new Message('system', i18nInstructions(this.config, 'instructions.titling')),
+        new Message('system', i18nInstructions(this.config, 'instructions.utils.titling')),
         this.chat.messages[1],
         this.chat.messages[2],
-        new Message('user', i18nInstructions(this.config, 'instructions.titlingUser'))
+        new Message('user', i18nInstructions(this.config, 'instructions.utils.titlingUser'))
       ]
 
       // now get it

@@ -78,9 +78,9 @@ test('render <think>', () => {
 })
 
 test('render mix', () => {
-  const markdown = '<think>Reasoning...</think># <b>instructions.default:\n"Title"</b>'
+  const markdown = '<think>Reasoning...</think># <b>instructions.chat.standard:\n"Title"</b>'
   const html = renderMarkdown(markdown)
-  expect(html).toContain('<p><think>Reasoning...</think># &lt;b&gt;instructions.default:\n&quot;Title&quot;&lt;/b&gt;</p>')
+  expect(html).toContain('<p><think>Reasoning...</think># &lt;b&gt;instructions.chat.standard:\n&quot;Title&quot;&lt;/b&gt;</p>')
 })
 
 test('close open markdowntags', () => {

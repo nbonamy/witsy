@@ -27,7 +27,7 @@ export const settingsFilePath = (app: App): string => {
 
 export const settingsFileHadError = (): boolean => errorLoadingConfig
 
-const mergeConfig = (defaults: anyDict, overrides: anyDict): anyDict => {
+const mergeConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
   const result = JSON.parse(JSON.stringify(defaults))
   
@@ -60,6 +60,7 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
 
   // backwards compatibility
   if ('tint' in config.appearance) {
+    // @ts-expect-error backwards compatibility
     config.appearance.darkTint = config.appearance.tint
     delete config.appearance.tint
   }
@@ -73,12 +74,17 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
   }
 
   // backwards compatibility
+  // @ts-expect-error backwards compatibility
   if (config.openai || config.ollama) {
     config.engines = {
+      // @ts-expect-error backwards compatibility
       openai: config.openai,
+      // @ts-expect-error backwards compatibility
       ollama: config.ollama
     }
+    // @ts-expect-error backwards compatibility
     delete config.openai
+    // @ts-expect-error backwards compatibility
     delete config.ollama
   }
 
@@ -90,6 +96,17 @@ const buildConfig = (defaults: anyDict, overrides: anyDict): Configuration => {
       tavilyApiKey: config.plugins.tavily.apiKey
     }
     delete config.plugins.tavily
+  }
+
+  // backwards compatibility
+  for (const modelDefaults of config.llm.defaults) {
+    // @ts-expect-error backwards compatibility
+    if (modelDefaults.prompt) {
+    // @ts-expect-error backwards compatibility
+      modelDefaults.instructions = modelDefaults.prompt
+    // @ts-expect-error backwards compatibility
+      delete modelDefaults.prompt
+    }
   }
 
   // nullify defaults
@@ -179,16 +196,16 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
 }
 
 const nullifyDefaults = (settings: anyDict) => {
-  if (settings.engines.openai.baseURL == '' || settings.engines.openai.baseURL === defaultSettings.engines.openai.baseURL) {
+  if (settings.engines.openai && (settings.engines.openai.baseURL == '' || settings.engines.openai.baseURL === defaultSettings.engines.openai.baseURL)) {
     delete settings.engines.openai.baseURL
   }
-  if (settings.engines.ollama.baseURL == '' || settings.engines.ollama.baseURL === defaultSettings.engines.ollama.baseURL) {
+  if (settings.engines.ollama && (settings.engines.ollama.baseURL == '' || settings.engines.ollama.baseURL === defaultSettings.engines.ollama.baseURL)) {
     delete settings.engines.ollama.baseURL
   }
-  if (settings.engines.lmstudio.baseURL == '' || settings.engines.lmstudio.baseURL === defaultSettings.engines.lmstudio.baseURL) {
+  if (settings.engines.lmstudio && (settings.engines.lmstudio.baseURL == '' || settings.engines.lmstudio.baseURL === defaultSettings.engines.lmstudio.baseURL)) {
     delete settings.engines.lmstudio.baseURL
   }
-  if (settings.engines.sdwebui.baseURL == '' || settings.engines.sdwebui.baseURL === defaultSettings.engines.sdwebui.baseURL) {
+  if (settings.engines.sdwebui && (settings.engines.sdwebui.baseURL == '' || settings.engines.sdwebui.baseURL === defaultSettings.engines.sdwebui.baseURL)) {
     delete settings.engines.sdwebui.baseURL
   }
 }

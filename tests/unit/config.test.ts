@@ -54,6 +54,15 @@ test('Load overridden settings', () => {
   expect(loaded2.engines.openai.models.chat).toStrictEqual(['model1', 'model2'])
 })
 
+test('Backwards compatibility', () => {
+  const loaded = config.loadSettings('./tests/fixtures/config_compat.json')
+  expect(loaded.general.proxyMode).toBe('bypass')
+  expect(loaded.appearance.darkTint).toBe('blue')
+  expect(loaded.engines.openai.model.chat).toBe('model1')
+  expect(loaded.engines.ollama.model.chat).toBe('model2')
+  expect(loaded.llm.defaults[0].instructions).toBe('instructions')
+})
+
 test('Save settings', () => {
   const loaded = config.loadSettings('')
   config.saveSettings('settings.json', loaded)

@@ -186,7 +186,7 @@ const handleActionClick = async (action: string) => {
       model: chat.model,
       disableStreaming: chat.disableStreaming,
       tools: chat.tools,
-      prompt: chat.prompt,
+      instructions: chat.instructions,
       locale: chat.locale,
       expert: chat.messages.findLast((m) => m.expert)?.expert?.id || null,
       docrepo: chat.docrepo,

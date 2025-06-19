@@ -22,13 +22,13 @@ for (const locale of Object.keys(messages)) {
     const t = createI18n(messages, locale).global.t as CallableFunction
 
     // check if the locale has instructions
-    expect(messages[locale].instructions.default).toBeDefined()
-    expect(messages[locale].instructions.structured).toBeDefined()
-    expect(messages[locale].instructions.docquery).toBeDefined()
-    expect(messages[locale].instructions.setDate).toBeDefined()
-    expect(messages[locale].instructions.setLang).toBeDefined()
-    expect(messages[locale].instructions.titling).toBeDefined()
-    expect(messages[locale].instructions.titlingUser).toBeDefined()
+    expect(messages[locale].instructions.chat.standard).toBeDefined()
+    expect(messages[locale].instructions.chat.structured).toBeDefined()
+    expect(messages[locale].instructions.chat.docquery).toBeDefined()
+    expect(messages[locale].instructions.utils.setDate).toBeDefined()
+    expect(messages[locale].instructions.utils.setLang).toBeDefined()
+    expect(messages[locale].instructions.utils.titling).toBeDefined()
+    expect(messages[locale].instructions.utils.titlingUser).toBeDefined()
     expect(messages[locale].instructions.scratchpad.complete).toBeDefined()
     expect(messages[locale].instructions.scratchpad.expand).toBeDefined()
     expect(messages[locale].instructions.scratchpad.improve).toBeDefined()
@@ -40,8 +40,8 @@ for (const locale of Object.keys(messages)) {
     expect(messages[locale].instructions.scratchpad.title).toBeDefined()
 
     // check templates are properly formatted
-    expect(t('instructions.docquery').includes('{context}')).toBe(true)
-    expect(t('instructions.docquery').includes('{query}')).toBe(true)
+    expect(t('instructions.chat.docquery').includes('{context}')).toBe(true)
+    expect(t('instructions.chat.docquery').includes('{query}')).toBe(true)
     expect(t('instructions.scratchpad.prompt').includes('{document}')).toBe(true)
     expect(t('instructions.scratchpad.prompt').includes('{ask}')).toBe(true)
 

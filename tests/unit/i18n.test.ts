@@ -82,13 +82,13 @@ test('Init i18n', async () => {
 
 test('Localized instructions', async () => {
 
-  expect(i18nInstructions({ instructions: {} }, 'instructions.default')).not.toBe('instructions.default')
+  expect(i18nInstructions({ instructions: {} }, 'instructions.chat.standard')).not.toBe('instructions.chat.standard')
 
-  expect(i18nInstructions({ instructions: { titling: 'hello'} }, 'instructions.default')).not.toBe('instructions.default')
+  expect(i18nInstructions({ instructions: { titling: 'hello'} }, 'instructions.chat.standard')).not.toBe('instructions.chat.standard')
 
   expect(i18nInstructions({
-    instructions: { default: 'Hello' }
-   }, 'instructions.default')).toBe('Hello')
+    instructions: { chat: { standard: 'Hello' } }
+   }, 'instructions.chat.standard')).toBe('Hello')
 
    expect(i18nInstructions({
     instructions: { scratchpad: { default: 'Hello' } }

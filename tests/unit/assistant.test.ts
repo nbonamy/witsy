@@ -126,26 +126,26 @@ test('Assistant parameters', async () => {
   })
 })
 
-test('Assistant prompt', async () => {
+test('Assistant instructions', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions1 = await assistant!.chat.messages[0].content
-  expect(instructions1).toContain('instructions.structured.en-US')
-  expect(instructions1).not.toContain('instructions.setLang.en-US')
-  store.config.llm.prompt = 'default'
+  expect(instructions1).toContain('instructions.chat.structured.en-US')
+  expect(instructions1).not.toContain('instructions.utils.setLang.en-US')
+  store.config.llm.instructions = 'standard'
   await prompt('Hello LLM')
   const instructions2 = await assistant!.chat.messages[0].content
-  expect(instructions2).toContain('instructions.default.en-US')
-  expect(instructions2).not.toContain('instructions.setLang.en-US')
-  store.config.llm.prompt = 'structured'
+  expect(instructions2).toContain('instructions.chat.standard.en-US')
+  expect(instructions2).not.toContain('instructions.utils.setLang.en-US')
+  store.config.llm.instructions = 'structured'
 })
 
 test('Assistant language default', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.structured.en-US')
-  expect(instructions).not.toContain('instructions.setLang.en-US')
+  expect(instructions).toContain('instructions.chat.structured.en-US')
+  expect(instructions).not.toContain('instructions.utils.setLang.en-US')
 })
 
 test('Assistant language override', async () => {
@@ -153,25 +153,29 @@ test('Assistant language override', async () => {
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.structured.fr-FR')
-  expect(instructions).toContain('instructions.setLang.fr-FR')
+  expect(instructions).toContain('instructions.chat.structured.fr-FR')
+  expect(instructions).toContain('instructions.utils.setLang.fr-FR')
 })
 
 test('Assistant language unknown', async () => {
   store.config.llm.locale = 'xx-XX'
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.structured.xx-XX')
-  expect(instructions).not.toContain('instructions.setLang.fr-FR')
+  expect(instructions).toContain('instructions.chat.structured.xx-XX')
+  expect(instructions).not.toContain('instructions.utils.setLang.fr-FR')
 })
 
 test('User-defined instructions', async () => {
   store.config.instructions = {
-    default: 'You are a chat assistant',
-    structured: 'You are a structured assistant',
-    titling: 'You are a titling assistant',
-    titlingUser: 'Provide a title',
-    docquery: '{context} / {query}'
+    chat: {
+      default: 'You are a chat assistant',
+      structured: 'You are a structured assistant',
+      docquery: '{context} / {query}'
+    },
+    utils: {
+      titling: 'You are a titling assistant',
+      titlingUser: 'Provide a title',
+    }
   }
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')
@@ -182,31 +186,31 @@ test('User-defined instructions', async () => {
 
 test('Assistant Chat Streaming', async () => {
   const content = await prompt('Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.structured.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
 })
 
 test('Assistant Chat No Streaming 1', async () => {
   const content = await prompt('Hello LLM', { model: 'chat', streaming: false })
-  expect(content).toBe('<think>Reasoning...</think># <b>instructions.structured.fr-FR:\n"Title"</b>')
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.structured.fr-FR:\n"Title"</b>')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
 })
 
 test('Assistant Chat No Streaming 2', async () => {
   assistant!.initChat()
   assistant!.chat.disableStreaming = true
   const content = await prompt('Hello LLM')
-  expect(content).toBe('<think>Reasoning...</think># <b>instructions.structured.fr-FR:\n"Title"</b>')
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.structured.fr-FR:\n"Title"</b>')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
 })
 
 test('Assistant Attachment', async () => {
@@ -231,35 +235,35 @@ test('Assistant sends attachment', async () => {
     new Attachment('file_content', 'text/plain', 'clipboard://', false)
   ]})
   expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
-  expect(content).toBe('[{"role":"system","content":"instructions.structured.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant System Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[0], docrepo: undefined } as AssistantCompletionOpts)
-  expect(content).toBe('[{"role":"system","content":"instructions.structured.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant User Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[2], docrepo: undefined } as AssistantCompletionOpts)
-  expect(content).toBe('[{"role":"system","content":"instructions.structured.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.structured.fr-FR"},{"role":"user","content":"instructions.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.fr-FR"},{"role":"user","content":"instructions.chat.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
 })
 
 // test('Assistant Locale Override', async () => {
 //   assistant!.chat.locale = 'es-ES'
 //   const content = await prompt('Hello LLM')
-//   expect(content).toBe('[{"role":"system","content":"instructions.structured.es-ES instructions.setLang.es-ES"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+//   expect(content).toBe('[{"role":"system","content":"instructions.chat.structured.es-ES instructions.utils.setLang.es-ES"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 // })
 
 test('Assistant prompt override', async () => {
-  assistant!.chat.prompt = 'UserPrompt'
+  assistant!.chat.instructions = 'UserInstructions'
   const content = await prompt('Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"UserPrompt"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"UserInstructions"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Conversaton Length 1', async () => {

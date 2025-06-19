@@ -164,7 +164,7 @@ const onNewChatInFolder = (folderId: string) => {
   if (folder.defaults) {
     chat.disableStreaming = folder.defaults.disableStreaming
     chat.tools = folder.defaults.tools
-    chat.prompt = folder.defaults.prompt
+    chat.instructions = folder.defaults.instructions
     chat.locale = folder.defaults.locale
     chat.docrepo = folder.defaults.docrepo
     chat.modelOpts = folder.defaults.modelOpts

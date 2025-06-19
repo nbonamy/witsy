@@ -14,7 +14,7 @@ export default class Chat implements ChatBase {
   lastModified: number
   engine: string|null
   model: string|null
-  prompt: string|null
+  instructions: string|null
   disableStreaming: boolean = false
   tools: ToolSelection = null
   modelOpts: LlmModelOpts|null = null
@@ -32,7 +32,7 @@ export default class Chat implements ChatBase {
     this.lastModified = Date.now()
     this.engine = null
     this.model = null
-    this.prompt = null
+    this.instructions = null
     this.disableStreaming = false
     this.tools = null
     this.modelOpts = null
@@ -51,7 +51,7 @@ export default class Chat implements ChatBase {
     chat.lastModified = obj.lastModified || obj.createdAt
     chat.engine = obj.engine || 'openai'
     chat.model = obj.model
-    chat.prompt = obj.prompt
+    chat.instructions = obj.instructions || obj.prompt
     chat.disableStreaming = obj.disableStreaming
     chat.tools = obj.disableTools === true ? [] : (obj.tools || null)
     chat.modelOpts = obj.modelOpts
@@ -76,7 +76,7 @@ export default class Chat implements ChatBase {
     // header
     this.title = obj.title
     this.lastModified = obj.lastModified
-    this.prompt = obj.prompt
+    this.instructions = obj.instructions
     this.disableStreaming = obj.disableStreaming
     this.tools = obj.disableTools === true ? [] : (obj.tools || null)
     this.modelOpts = obj.modelOpts

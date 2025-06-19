@@ -3,6 +3,11 @@
     {
       "id": "1",
       "name": "Folder 1",
+      "defaults": {
+        "engine": "openai",
+        "model": "model1",
+        "prompt": "instructions"
+      },
       "chats": [
         "1",
         "2"
