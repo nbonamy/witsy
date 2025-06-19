@@ -15,6 +15,8 @@ export interface Attachment extends IAttachmentBase {
   url: string
   extracted: boolean
   saved: boolean
+  get filename(): string
+  get filenameShort(): string
   extractText(): void
   loadContents(): void
   b64Contents(): string
@@ -62,7 +64,7 @@ export interface Chat {
   lastModified: number
   engine: string|null
   model: string|null
-  prompt: string|null
+  instructions: string|null
   messages: Message[]
   temporary: boolean
   disableStreaming: boolean
@@ -94,7 +96,7 @@ export type Folder = {
     model: string
     disableStreaming: boolean
     tools: ToolSelection
-    prompt: string|null
+    instructions: string|null
     locale: string|null
     docrepo: string|null
     expert: string|null

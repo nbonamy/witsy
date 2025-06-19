@@ -23,6 +23,21 @@ export default class Attachment extends AttachmentBase implements IAttachment{
     }
   }
 
+  get filename(): string {
+    return this.url.split('/').pop() || 'unknown'
+  }
+
+  get filenameShort(): string {
+    const fullname = this.filename
+    let extension = fullname.includes('.') ? '.' + fullname.split('.').slice(-1) : ''
+    let filename = extension.length ? fullname.split('.').slice(0, -1).join('.') : fullname
+    if (filename.length > 12) {
+      filename = filename.slice(0, 10) + '…'
+      extension = extension.substring(1)
+    }
+    return filename + extension
+  }
+
   loadContents(): void {
 
     // not if we already have

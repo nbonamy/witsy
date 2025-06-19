@@ -81,7 +81,7 @@
 
   --prompt-icon-color: var(--icon-color);
   --prompt-input-bg-color: var(--message-list-bg-color);
-  --prompt-input-border-color: #bbb;
+  --prompt-input-border-color: #e6e6e6;
   --prompt-input-text-color: var(--text-color);
 
   --dialog-border-color: #d0d0d0;
