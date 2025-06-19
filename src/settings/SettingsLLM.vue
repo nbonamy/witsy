@@ -5,12 +5,17 @@
     </header>
     <main>
       <div class="group chat-prompt">
-        <label>{{ t('settings.llm.prompt.label') }}</label>
-        <select v-model="chatPrompt" @change="save">
-          <option value="default">{{ t('settings.llm.prompt.default') }}</option>
-          <option value="structured">{{ t('settings.llm.prompt.structured') }}</option>
+        <label>{{ t('settings.llm.instructions.label') }}</label>
+        <select v-model="instructions" @change="save">
+          <option value="standard">{{ t('settings.llm.instructions.standard') }}</option>
+          <option value="structured">{{ t('settings.llm.instructions.structured') }}</option>
+          <option value="playful">{{ t('settings.llm.instructions.playful') }}</option>
+          <option value="empathic">{{ t('settings.llm.instructions.empathic') }}</option>
+          <option value="uplifting">{{ t('settings.llm.instructions.uplifting') }}</option>
+          <option value="reflective">{{ t('settings.llm.instructions.reflective') }}</option>
+          <option value="visionary">{{ t('settings.llm.instructions.visionary') }}</option>
         </select>
-        <span>{{ t('settings.llm.prompt.custom') }}</span>
+        <span>{{ t('settings.llm.instructions.custom') }}</span>
       </div>
       <div class="group quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
@@ -37,7 +42,7 @@
 
 <script setup lang="ts">
 
-import { PromptType } from '../types/config'
+import { InstructionsType } from '../types/config'
 import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { hasLocalization, t } from '../services/i18n'
@@ -46,7 +51,7 @@ import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import LangSelect from '../components/LangSelect.vue'
 
 const isMas = ref(false)
-const chatPrompt = ref<PromptType>('structured')
+const instructions = ref<InstructionsType>('structured')
 const engine = ref(null)
 const model = ref(null)
 const localeLLM = ref(null)
@@ -67,7 +72,7 @@ const models = computed(() => {
 
 const load = () => {
   isMas.value = window.api.isMasBuild
-  chatPrompt.value = store.config.llm.prompt || 'structured'
+  instructions.value = store.config.llm.instructions || 'structured'
   engine.value = store.config.prompt.engine || ''
   model.value = store.config.prompt.model || ''
   localeLLM.value = store.config.llm.locale
@@ -77,7 +82,7 @@ const load = () => {
 }
 
 const save = () => {
-  store.config.llm.prompt = chatPrompt.value
+  store.config.llm.instructions = instructions.value
   store.config.prompt.engine = engine.value
   store.config.prompt.model = model.value
   store.config.llm.locale = localeLLM.value

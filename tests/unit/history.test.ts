@@ -37,19 +37,24 @@ vi.mock('fs', async (importOriginal) => {
   }}
 })
 
-test('load history', async () => {
+test('Load history', async () => {
   const history = await loadHistory(app)
   expect(history.folders).toHaveLength(2)
   expect(history.chats).toHaveLength(3)
 })
 
-test('save history', async () => {
+test('Backwards compatibility', async () => {
+  const history = await loadHistory(app)
+  expect(history.folders[0].defaults.instructions).toBe('instructions')
+})
+
+test('Save history', async () => {
   const history = await loadHistory(app)
   await saveHistory(app, history)
   expect(fs.writeFileSync).toHaveBeenLastCalledWith('tests/fixtures/history.json', expect.any(String))
 })
 
-test('extract attachments - invalid', async () => {
+test('Extract attachments - invalid', async () => {
   expect(extractAttachmentsFromHistory([
     { messages: [ { content: 'Hello, world!' } ] },
     { messages: [ { content: 'http://images.image.png' } ] },
@@ -58,7 +63,7 @@ test('extract attachments - invalid', async () => {
   ] as Chat[], 'images')).toEqual([])
 })
 
-test('extract attachments - content', async () => {
+test('Extract attachments - content', async () => {
 
   expect(extractAttachmentsFromHistory([
     { messages: [ { content: 'file://images/image.png' } ] }
@@ -121,7 +126,7 @@ test('extract attachments - attachments', async () => {
 
 })
 
-test('extract attachments - mixed', async () => {
+test('Extract attachments - mixed', async () => {
 
   expect(extractAttachmentsFromHistory([
     { messages: [ { content: 'Hello, world!' } ] },
@@ -146,7 +151,7 @@ test('extract attachments - mixed', async () => {
 
 })
 
-test('unused attachments', async () => {
+test('Unused attachments', async () => {
   // image3 is not listed as as unused because it mtime is too recent
   expect(listUnusedAttachments({ getPath: () => '' } as unknown as App, [
     { messages: [ { content: 'file://images/image1.png', attachments: [

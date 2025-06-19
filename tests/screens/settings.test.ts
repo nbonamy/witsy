@@ -159,9 +159,9 @@ test('Settings LLM', async () => {
   expect(tab.findAll('.group.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
 
   // set default prompt
-  expect(store.config.llm.prompt).toBe('structured')
-  tab.find('.group.chat-prompt select').setValue('default')
-  expect(store.config.llm.prompt).toBe('default')
+  expect(store.config.llm.instructions).toBe('structured')
+  tab.find('.group.chat-prompt select').setValue('standard')
+  expect(store.config.llm.instructions).toBe('standard')
   vi.clearAllMocks()
 
   // set prompt engine
@@ -283,7 +283,9 @@ test('Settings Advanced', async () => {
     key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
-    'instructions.default', 'instructions.structured', 'instructions.titling', 'instructions.titlingUser', 'instructions.docquery',
+    'instructions.chat.standard', 'instructions.chat.structured', 'instructions.chat.playful',
+    'instructions.chat.empathic', 'instructions.chat.uplifting', 'instructions.chat.reflective', 'instructions.chat.visionary', 
+    'instructions.utils.titling', 'instructions.utils.titlingUser', 'instructions.chat.docquery',
     'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
     'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
     'instructions.scratchpad.simplify', 'instructions.scratchpad.expand', 'instructions.scratchpad.complete',

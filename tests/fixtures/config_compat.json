@@ -1,0 +1,25 @@
+{
+  "general": {
+    "bypassProxy": true
+  },
+  "appearance": {
+    "tint": "blue"
+  },
+  "openai": {
+    "model": {
+      "chat": "model1"
+    }
+  },
+  "ollama": {
+    "model": {
+      "chat": "model2"
+    }
+  },
+  "llm": {
+    "defaults": [{
+      "engine": "openai",
+      "model": "model",
+      "prompt": "instructions"
+    }]
+  }
+}

@@ -149,25 +149,25 @@ test('Renders prompt response', async () => {
 test('Submits prompt with streaming', async () => {
   const wrapper = await prompt()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits prompt without streaming', async () => {
   const wrapper = await prompt({ disableStreaming: true })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('Reasoning...# <b>instructions.structured:\n"Title"</b>')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('Reasoning...# <b>instructions.chat.structured:\n"Title"</b>')
 })
 
 test('Submits system prompt with params', async () => {
   const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits system user with params', async () => {
   const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"prompt3\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Does not execute command response', async () => {
@@ -190,7 +190,7 @@ test('Executes command response', async () => {
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   expect(wrapper.find('.response').exists()).toBe(true)
   expect(wrapper.findComponent(MessageItem).exists()).toBe(true)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"text"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.find('.response .copy').exists()).toBe(true)
   expect(wrapper.find('.response .insert').exists()).toBe(true)
   expect(wrapper.find('.response .replace').exists()).toBe(true)
@@ -236,16 +236,16 @@ test('Closes when click on icon', async () => {
 
 test('Manages conversation', async () => {
   const wrapper = await prompt()
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Resets chat with defaults', async () => {
   const wrapper = await prompt()
   setLlmDefaults('mock', 'chat')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   wrapper.find('.clear').trigger('click')
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.chat.messages).toHaveLength(0)
@@ -257,7 +257,7 @@ test('Resets chat with defaults', async () => {
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
   emitEvent('send-prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.structured"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Brings back chat', async () => {

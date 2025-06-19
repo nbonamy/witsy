@@ -38,11 +38,16 @@
         <label>{{ t('settings.advanced.systemInstructions') }}</label>
         <div class="subgroup">
           <select v-model="instructions" @change="onChangeInstructions">
-            <option value="instructions.default">{{ t('settings.advanced.instructions.chat_standard') }}</option>
-            <option value="instructions.structured">{{ t('settings.advanced.instructions.chat_structured') }}</option>
-            <option value="instructions.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
-            <option value="instructions.titling">{{ t('settings.advanced.instructions.titling') }}</option>
-            <option value="instructions.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
+            <option value="instructions.chat.standard">{{ t('settings.advanced.instructions.chat_standard') }}</option>
+            <option value="instructions.chat.structured">{{ t('settings.advanced.instructions.chat_structured') }}</option>
+            <option value="instructions.chat.playful">{{ t('settings.advanced.instructions.chat_playful') }}</option>
+            <option value="instructions.chat.empathic">{{ t('settings.advanced.instructions.chat_empathic') }}</option>
+            <option value="instructions.chat.uplifting">{{ t('settings.advanced.instructions.chat_uplifting') }}</option>
+            <option value="instructions.chat.reflective">{{ t('settings.advanced.instructions.chat_reflective') }}</option>
+            <option value="instructions.chat.visionary">{{ t('settings.advanced.instructions.chat_visionary') }}</option>
+            <option value="instructions.chat.docquery">{{ t('settings.advanced.instructions.docquery') }}</option>
+            <option value="instructions.utils.titling">{{ t('settings.advanced.instructions.titling') }}</option>
+            <option value="instructions.utils.titlingUser">{{ t('settings.advanced.instructions.titlingUser') }}</option>
             <option value="plugins.image.description">{{ t('settings.advanced.instructions.image_plugin') }}</option>
             <option value="plugins.video.description">{{ t('settings.advanced.instructions.video_plugin') }}</option>
             <option value="plugins.memory.description">{{ t('settings.advanced.instructions.memory_plugin') }}</option>
@@ -75,7 +80,7 @@ import { ProxyMode } from '../types/config'
 
 const prompt = ref(null)
 const isPromptOverridden = ref(false)
-const instructions = ref('instructions.default')
+const instructions = ref('instructions.chat.standard')
 const autoSavePrompt = ref(null)
 const proxyMode = ref<ProxyMode>('default')
 const customProxy = ref('')

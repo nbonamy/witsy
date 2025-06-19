@@ -68,13 +68,13 @@ export type ModelDefaults = {
   disableTools?: boolean // backwards compatibility
   tools: ToolSelection
   locale: string
-  prompt: string
+  instructions: string
 } & LlmModelOpts
 
-export type PromptType = 'default' | 'structured'
+export type InstructionsType = 'standard' | 'structured' | 'playful' | 'empathic' | 'uplifting' | 'reflective' | 'visionary'
 
 export type LLMConfig = {
-  prompt: PromptType  
+  instructions: InstructionsType  
   engine: string
   locale: string
   forceLocale: boolean

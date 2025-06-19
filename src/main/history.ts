@@ -41,6 +41,14 @@ export const loadHistory = async (app: App): Promise<History> => {
       history = { folders: [], chats: history }
     }
 
+    // backwards compatibility for folder defaults
+    for (const folder of history.folders) {
+      if (folder.defaults?.prompt) {
+        folder.defaults.instructions = folder.defaults.prompt
+        delete folder.defaults.prompt
+      }
+    }
+
     // clean-up in case deletions were missed
     cleanAttachmentsFolder(app, history)
     

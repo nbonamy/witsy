@@ -27,7 +27,7 @@
       </div>
       <div class="group">
         <label>{{ t('modelSettings.prompt') }}</label>
-        <textarea name="prompt" v-model="prompt" :placeholder="t('modelSettings.promptPlaceholder')" rows="4" @change="save"></textarea>
+        <textarea name="instructions" v-model="instructions" :placeholder="t('modelSettings.promptPlaceholder')" rows="4" @change="save"></textarea>
       </div>
       <div class="group" v-if="isReasoningFlagSupported">
         <label>{{ t('modelSettings.extendedThinking') }}</label>
@@ -144,7 +144,7 @@ const disableStreaming: Ref<boolean> = ref(false)
 const disableTools: Ref<boolean> = ref(false)
 const tools: Ref<string[]> = ref(null)
 const locale = ref('')
-const prompt = ref('')
+const instructions = ref('')
 const showAdvanced = ref(false)
 const contextWindowSize: Ref<number> = ref(undefined)
 const maxTokens: Ref<number> = ref(undefined)
@@ -173,7 +173,7 @@ const canSaveAsDefaults = computed(() => {
     disableTools.value === true ||
     tools.value !== null ||
     locale.value !== '' ||
-    prompt.value !== '' ||
+    instructions.value !== '' ||
     contextWindowSize.value !== undefined ||
     maxTokens.value !== undefined ||
     temperature.value !== undefined ||
@@ -236,7 +236,7 @@ onMounted(async () => {
     disableTools.value = areToolsDisabled(props.chat.tools)
     tools.value = props.chat.tools
     locale.value = props.chat.locale || ''
-    prompt.value = props.chat.prompt || ''
+    instructions.value = props.chat.instructions || ''
     contextWindowSize.value = props.chat.modelOpts?.contextWindowSize
     maxTokens.value = props.chat.modelOpts?.maxTokens
     temperature.value = props.chat.modelOpts?.temperature
@@ -315,7 +315,7 @@ const loadDefaults = () => {
     disableTools.value = areToolsDisabled(defaults.tools)
     tools.value = defaults.tools
     locale.value = defaults.locale || ''
-    prompt.value = defaults.prompt || ''
+    instructions.value = defaults.instructions || ''
     contextWindowSize.value = defaults.contextWindowSize
     maxTokens.value = defaults.maxTokens
     temperature.value = defaults.temperature
@@ -329,7 +329,7 @@ const loadDefaults = () => {
     disableTools.value = false
     tools.value = null
     locale.value = ''
-    prompt.value = ''
+    instructions.value = ''
     contextWindowSize.value = undefined
     maxTokens.value = undefined
     temperature.value = undefined
@@ -349,7 +349,7 @@ const saveAsDefaults = () => {
     disableStreaming: disableStreaming.value,
     tools: tools.value,
     locale: locale.value.trim() || undefined,
-    prompt: prompt.value.trim() || undefined,
+    instructions: instructions.value.trim() || undefined,
     contextWindowSize: contextWindowSize.value,
     maxTokens: maxTokens.value,
     temperature: temperature.value,
@@ -456,7 +456,7 @@ const save = () => {
     props.chat.disableStreaming = disableStreaming.value
     props.chat.tools = disableTools.value ? [] : (tools.value || null)
     props.chat.locale = locale.value.trim() || undefined,
-    props.chat.prompt = prompt.value.trim() || undefined,
+    props.chat.instructions = instructions.value.trim() || undefined,
     props.chat.modelOpts = {
       contextWindowSize: contextWindowSizeValue,
       maxTokens: maxTokensValue,
@@ -591,8 +591,9 @@ const openDebugConsole = () => {
       };
     }
 
-    textarea[name="prompt"] {
-      resize: none;
+    textarea[name="instructions"] {
+      flex: auto;
+      resize: vertical;
     }
   }
 }
