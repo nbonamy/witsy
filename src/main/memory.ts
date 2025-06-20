@@ -45,23 +45,30 @@ export default class MemoryManager {
 
   async store(contents: string[]): Promise<boolean> {
 
-    // we need a connection and embedder
-    await this.connect()
-    const embedder = await this.embedder()
+    try {
 
-    // embed each content separately
-    for (const content of contents) {
-      const embeddings = await embedder.embed([content])
-      const uuid = crypto.randomUUID()
-      await this.db.insert(uuid, content, embeddings[0], {
-        uuid: uuid,
-        type: 'text',
-        title: '',
-        url: '',
-      })
+      // we need a connection and embedder
+      await this.connect()
+      const embedder = await this.embedder()
+
+      // embed each content separately
+      for (const content of contents) {
+        const embeddings = await embedder.embed([content])
+        const uuid = crypto.randomUUID()
+        await this.db.insert(uuid, content, embeddings[0], {
+          uuid: uuid,
+          type: 'text',
+          title: '',
+          url: '',
+        })
+      }
+
+      return true
+
+    } catch (error) {
+      console.error('Error storing memory:', error)
+      return false
     }
-
-    return true
   }
   
   async query(query: string): Promise<string[]> {
@@ -133,6 +140,5 @@ export default class MemoryManager {
     const settings = await config.loadSettings(this.app)
     return await Embedder.init(this.app, settings, settings.plugins.memory.engine, settings.plugins.memory.model)
   }
-
 
 }

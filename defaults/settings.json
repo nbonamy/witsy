@@ -415,7 +415,9 @@
       "engine": "openai"
     },
     "memory": {
-      "enabled": false
+      "enabled": false,
+      "engine": "openai",
+      "model": "text-embedding-3-small"
     },
     "video": {
       "enabled": true,

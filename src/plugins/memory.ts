@@ -61,8 +61,11 @@ export default class extends Plugin {
     try {
       if (parameters.action === 'store') {
         console.log('[memory] storing:', parameters.content)
-        window.api.memory.store(parameters.content)
-        return { success: true }
+        if (window.api.memory.store(parameters.content)) {
+          return { success: true }
+        } else {
+          return { error: 'Failed to store information' }
+        }
       } else if (parameters.action === 'retrieve') {
         console.log('[memory] retrieving:', parameters.query)
         const content = window.api.memory.retrieve(parameters.query)
