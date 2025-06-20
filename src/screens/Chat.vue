@@ -8,8 +8,10 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { LlmChunkContent } from 'multi-llm-ts'
 import { strDict } from '../types'
+import { MenuBarMode } from '../components/MenuBar.vue'
+import { Ref, ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
@@ -26,7 +28,6 @@ import LlmFactory from '../llms/llm'
 
 // bus
 import useEventBus from '../composables/event_bus'
-import { LlmChunkContent } from 'multi-llm-ts'
 const { onEvent, emitEvent } = useEventBus()
 
 // init stuff
@@ -65,7 +66,7 @@ onMounted(() => {
   onEvent('retry-generation', onRetryGeneration)
   onEvent('stop-prompting', onStopGeneration)
   onEvent('toggle-sidebar', onToggleSidebar)
-  onEvent('activate-computer-use', onComputerUse)
+  onEvent('main-view-changed', onMainViewChanged)
 
   // main events
   window.api.on('delete-chat', () => {
@@ -569,8 +570,12 @@ const onToggleSidebar = () => {
   }
 }
 
-const onComputerUse = () => {
+const onMainViewChanged = (mode: MenuBarMode) => {
   
+  if (mode !== 'computer-use') {
+    return
+  }
+
   assistant.value.initChat()
   assistant.value.chat.engine = 'anthropic'
   assistant.value.chat.model = 'computer-use'
