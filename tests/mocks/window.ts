@@ -43,7 +43,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
     listFonts: vi.fn(() => []),
     fullscreen: vi.fn(),
-    closeMainWindow: vi.fn(),
+    main: {
+      setMode: vi.fn(),
+      close: vi.fn(),
+    },
     debug: {
       showConsole: vi.fn(),
       getNetworkHistory: vi.fn(() => []),

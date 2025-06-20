@@ -1,5 +1,6 @@
 
-import { CreateWindowOpts } from 'types/window';
+import { MainWindowMode } from '../../types/index';
+import { CreateWindowOpts } from '../../types/window';
 import { app, BrowserWindow, Menu, MenuItem, Notification } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
 import { loadSettings, saveSettings } from '../config';
@@ -9,6 +10,13 @@ const storeBoundsId = 'main.bounds'
 
 let firstOpen = true;
 export let mainWindow: BrowserWindow = null;
+let mainWindowMode: MainWindowMode = 'none';
+
+export const getMainWindowMode = (): MainWindowMode => mainWindowMode
+
+export const setMainWindowMode = (mode: MainWindowMode): void => {
+  mainWindowMode = mode;
+}
 
 export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
 

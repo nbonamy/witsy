@@ -27,6 +27,7 @@ const dockedWindows: Set<number> = new Set();
 // listener
 export interface WindowListener {
   onWindowCreated: (window: BrowserWindow) => void;
+  onWindowFocused: (window: BrowserWindow) => void;
   onWindowTitleChanged: (window: BrowserWindow) => void;
   onWindowClosed: (window: BrowserWindow) => void;
 }
@@ -155,6 +156,13 @@ export const createWindow = (opts: CreateWindowOpts = {}) => {
     // notify
     for (const listener of listeners) {
       listener.onWindowCreated(window);
+    }
+  });
+
+  // notify listeners
+  window.on('focus', () => {
+    for (const listener of listeners) {
+      listener.onWindowFocused?.(window);
     }
   });
 

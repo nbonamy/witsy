@@ -89,6 +89,11 @@ const onMode = async (next: MenuBarMode) => {
   await nextTick()
   emitEvent('main-view-changed', next)
 
+  // for menu update
+  if (mode.value !== 'computer-use' && mode.value !== 'scratchpad' && mode.value !== 'debug') {
+    window.api.main.setMode(mode.value)
+  }
+
 }
 
 </script>

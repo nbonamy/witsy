@@ -415,7 +415,7 @@ const onKeyDown = (event: KeyboardEvent) => {
     onCopy()
   } else if (event.key === 'c' && isShiftCommand) {
     if (onCopy()) {
-      window.api.closeMainWindow()
+      window.api.main.close()
     }
   } else if (event.key === 'i' && isCommand) {
     onInsert()
