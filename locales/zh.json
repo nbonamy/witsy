@@ -1351,6 +1351,7 @@
         }
       },
       "usage": {
+        "cached": "缓存的提示标记：{cached}",
         "prompt": "提示词：{prompt}",
         "reasoning": "推理词：{reasoning}",
         "response": "回答词：{completion}",

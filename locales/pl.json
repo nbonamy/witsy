@@ -1351,6 +1351,7 @@
         }
       },
       "usage": {
+        "cached": "Zbuforowane tokeny zapytań: {cached}",
         "prompt": "Tokeny zachęty: {prompt}",
         "reasoning": "Tokeny uzasadnienia: {uzasadnienie}",
         "response": "Tokeny odpowiedzi: {uzupełnienie}",

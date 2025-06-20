@@ -1332,6 +1332,7 @@
         }
       },
       "usage": {
+        "cached": "Token dei prompt memorizzati: {cached}",
         "prompt": "Token di prompt: {prompt}",
         "reasoning": "Token di ragionamento: {reasoning}",
         "response": "Token di risposta: {completion}",

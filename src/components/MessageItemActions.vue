@@ -107,10 +107,13 @@ const onUsage = (message: Message) => {
   const totalTokens = message.usage.prompt_tokens + message.usage.completion_tokens
   const text = [
     t('message.actions.usage.prompt', { prompt: message.usage.prompt_tokens }),
+    message.usage?.prompt_tokens_details?.cached_tokens ? 
+      t('message.actions.usage.cached', { cached: message.usage.prompt_tokens_details.cached_tokens }) : 
+      null,
     t('message.actions.usage.response', { completion: message.usage.completion_tokens }),
     message.usage.completion_tokens_details?.reasoning_tokens ? 
       t('message.actions.usage.reasoning', { reasoning: message.usage.completion_tokens_details.reasoning_tokens }) : 
-      null
+      null,
   ].filter(Boolean).join('\n')
 
   Dialog.show({
