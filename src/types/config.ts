@@ -220,6 +220,7 @@ export type ModelsConfig = {
   computer?: Model[]
   tts?: Model[]
   stt?: Model[]
+  other?: Record<string, Model[]>
 }
 
 export type ModelConfig = {
