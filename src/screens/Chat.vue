@@ -11,7 +11,7 @@
 import { LlmChunkContent } from 'multi-llm-ts'
 import { strDict } from '../types'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { Ref, ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { Ref, ref, onMounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
@@ -120,7 +120,9 @@ onMounted(() => {
   }, 500)
 
   // make sure engine and model are always up-to-date
-  watch(() => store.config, updateChatEngineModel, { immediate: true, deep: true })
+  watch(() => store.config.llm.engine, updateChatEngineModel, { immediate: true, deep: true })
+  watch(() => store.config.engines, updateChatEngineModel, { immediate: true, deep: true })
+  watch(() => store.config.llm.defaults, updateChatEngineModel, { immediate: true, deep: true })
 
   // watch props for changes
   watch(() => props.extra, (params) => {
