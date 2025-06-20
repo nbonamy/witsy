@@ -45,7 +45,7 @@ import { DocumentBase } from '../types/rag'
 import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
-import { expertI18n, commandI18n, t, i18nInstructions } from '../services/i18n'
+import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
 import { BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
@@ -335,7 +335,25 @@ const setInstructions = (action: string) => {
   if (action === 'null') {
     instructions.value = null
   } else {
+
+    // use chat llm locale if set
+    let llmLocale = null
+    const forceLocale = store.config.llm.forceLocale
+    if (props.chat?.locale) {
+      llmLocale = getLlmLocale()
+      setLlmLocale(props.chat.locale)
+      store.config.llm.forceLocale = true
+    }
+
+    // get the instructions
     instructions.value = i18nInstructions(store.config, `instructions.chat.${action}`)
+
+    // restore
+    if (llmLocale) {
+      setLlmLocale(llmLocale)
+      store.config.llm.forceLocale = forceLocale
+    }
+
   }
   if (props.chat) {
     props.chat.instructions = instructions.value
@@ -933,7 +951,6 @@ defineExpose({
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
-  margin: 1rem;
 
   .icon {
     cursor: pointer;

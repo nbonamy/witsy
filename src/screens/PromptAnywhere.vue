@@ -594,7 +594,6 @@ const onResponseResize = (deltaX: number) => {
       box-shadow: var(--window-box-shadow);
       border-radius: var(--border-radius);
       resize: horizontal;
-      margin: 0px;
       padding: 1rem 1.25rem;
     }
 
