@@ -347,6 +347,7 @@ defineExpose({
 
         &:deep() .prompt {
           padding-bottom: 12px;
+          margin: 1rem;
         }
       }
 
