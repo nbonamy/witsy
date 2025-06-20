@@ -123,6 +123,7 @@ test('Assistant parameters', async () => {
       }
     },
     citations: true,
+    caching: true,
     usage: true,
   })
 })

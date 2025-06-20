@@ -1348,6 +1348,7 @@
         }
       },
       "usage": {
+        "cached": "Cached prompt tokens: {cached}",
         "prompt": "Prompt tokens: {prompt}",
         "reasoning": "Reasoning tokens: {reasoning}",
         "response": "Response tokens: {completion}",

@@ -1332,6 +1332,7 @@
         }
       },
       "usage": {
+        "cached": "Tokens de prompt depuis le cache : {cached}",
         "prompt": "Tokens de prompt : {prompt}",
         "reasoning": "Tokens de raisonnement : {reasoning}",
         "response": "Tokens de réponse : {completion}",

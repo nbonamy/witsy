@@ -1332,6 +1332,7 @@
         }
       },
       "usage": {
+        "cached": "Zwischengespeicherte Aufforderungstoken: {cached}",
         "prompt": "Prompt-Token: {prompt}",
         "reasoning": "Begründungs-Token: {reasoning}",
         "response": "Antwort-Token: {completion}",
