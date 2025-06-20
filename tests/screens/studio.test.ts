@@ -181,7 +181,7 @@ test('History', async () => {
   await history.vm.$nextTick()
   expect(history.emitted()['select-message']).toHaveLength(1)
   expect(history.emitted()['select-message'][0]).toStrictEqual([
-    expect.objectContaining({ uuid: '2' })
+    expect.objectContaining({ event: expect.any(Object), message: expect.objectContaining({ uuid: '2' }) })
   ])
 
   await history.find('.message:nth-child(2)').trigger('contextmenu')
@@ -222,7 +222,8 @@ test('Generates - Basic', async () => {
     'openai', 'dall-e-3', { prompt: 'prompt' }, undefined
   )
 
-  expect (wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection).toHaveLength(1)
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
@@ -234,13 +235,13 @@ test('Generates - Basic', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
 })
 
 test('Generates - Custom Params OpenAI', async () => {
 
-  const wrapper = mount(DesignStudio)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
@@ -273,8 +274,8 @@ test('Generates - Custom Params OpenAI', async () => {
     'openai', 'dall-e-3', { prompt: 'prompt', quality: 'hd', style: 'vivid' }, undefined
   )
 
-  // @ts-expect-error mock
-  expect (wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection).toHaveLength(1)
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
@@ -284,14 +285,13 @@ test('Generates - Custom Params OpenAI', async () => {
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
-  // @ts-expect-error mock
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
 })
 
 test('Generates - Custom Params HuggingFace', async () => {
 
-  const wrapper = mount(DesignStudio)
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
@@ -323,8 +323,8 @@ test('Generates - Custom Params HuggingFace', async () => {
     'huggingface', 'sdxl', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
   )
 
-  // @ts-expect-error mock
-  expect (wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection).toHaveLength(1)
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
@@ -334,8 +334,7 @@ test('Generates - Custom Params HuggingFace', async () => {
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
-  // @ts-expect-error mock
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
 })
 
@@ -382,7 +381,8 @@ test('Generates - User Params', async () => {
     'replicate', 'flux', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
   )
 
-  expect (wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection).toHaveLength(1)
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
@@ -392,15 +392,14 @@ test('Generates - User Params', async () => {
   })
 
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
 })
 
 test('Preview', async () => {
 
-  const wrapper = mount(DesignStudio)
-  // @ts-expect-error mock
-  wrapper.vm.message = store.history.chats[0].messages[1]
+  const wrapper: VueWrapper<any> = mount(DesignStudio)
+  wrapper.vm.selection = [store.history.chats[0].messages[1]]
   await wrapper.vm.$nextTick()
 
   // rendered
@@ -460,7 +459,8 @@ test('Upload', async () => {
       prompt: false
     }
   })
-  expect(wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection).toHaveLength(1)
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload',
     engine: 'upload',
@@ -500,8 +500,9 @@ test('Edit', async () => {
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 
+  expect(wrapper.vm.selection).toHaveLength(1)
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -518,7 +519,7 @@ test('Edit', async () => {
     toolCalls: []
   })
 
-  expect(wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload / prompt',
     engine: 'google',
@@ -556,13 +557,14 @@ test('Edit with preserve', async () => {
 
   expect(window.api.file.delete).toHaveBeenLastCalledWith('file://file_saved')
 
+  expect(wrapper.vm.selection).toHaveLength(1)
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
-  expect(wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
     engine: 'google',
@@ -599,10 +601,11 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
 
+  expect(wrapper.vm.selection).toHaveLength(1)
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
-  expect(wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload',
     engine: 'upload',
@@ -636,8 +639,9 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 
+  expect(wrapper.vm.selection).toHaveLength(1)
   expect(store.history.chats[0].messages).toHaveLength(4)
-  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.message)
+  expect(store.history.chats[0].messages[3]).toMatchObject(wrapper.vm.selection[0])
 
   expect(wrapper.vm.undoStack[0]).toMatchObject({
     role: 'user',
@@ -651,7 +655,7 @@ test('Undo / Redo', async () => {
     toolCalls: []
   })
 
-  expect(wrapper.vm.message).toMatchObject({
+  expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload / prompt',
     engine: 'google',

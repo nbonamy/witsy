@@ -403,7 +403,8 @@
     "title": "Consola de depuración"
   },
   "designStudio": {
-    "confirmDelete": "¿Estás seguro de que deseas eliminar este medio?",
+    "confirmDeleteMultiple": "¿Está seguro de que desea eliminar estos medios?",
+    "confirmDeleteSingle": "¿Estás seguro de que deseas eliminar este medio?",
     "emptyPlaceholder": "¡Deja volar tu creatividad!",
     "error": {
       "invalidParams": "Se reportó un error sobre tus parámetros: {detail}. Por favor, verifica los parámetros y vuelve a intentarlo.",

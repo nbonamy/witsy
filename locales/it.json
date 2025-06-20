@@ -403,7 +403,8 @@
     "title": "Console di debug"
   },
   "designStudio": {
-    "confirmDelete": "Sei sicuro di voler eliminare questo media?",
+    "confirmDeleteMultiple": "Sei sicuro di voler eliminare questi media?",
+    "confirmDeleteSingle": "Sei sicuro di voler eliminare questo media?",
     "emptyPlaceholder": "Lascia che la tua creatività si scateni!",
     "error": {
       "invalidParams": "È stato segnalato un errore sui tuoi parametri: {detail}. Controlla i parametri e riprova.",

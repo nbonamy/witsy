@@ -403,7 +403,8 @@
     "title": "Debugging-Konsole"
   },
   "designStudio": {
-    "confirmDelete": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
+    "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Medien löschen möchten?",
+    "confirmDeleteSingle": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
     "emptyPlaceholder": "Lassen Sie Ihrer Kreativität freien Lauf!",
     "error": {
       "invalidParams": "Ein Fehler wurde bezüglich Ihrer Parameter gemeldet: {detail}. Bitte überprüfen Sie die Parameter und versuchen Sie es erneut.",

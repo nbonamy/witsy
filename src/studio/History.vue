@@ -5,9 +5,9 @@
       <div 
         v-for="msg in history" 
         class="message" 
-        :class="{ selected: msg.uuid === selectedMessage?.uuid }" 
+        :class="{ selected: selectedMessages.some(m => m.uuid === msg.uuid) }" 
         :key="msg.uuid" 
-        @click="selectMessage(msg)" 
+        @click="selectMessage($event, msg)" 
         @contextmenu.prevent="showContextMenu($event, msg)"
       >
         <video v-if="msg.isVideo()" class="thumbnail" :src="msg.attachments?.[0].url" />
@@ -30,16 +30,16 @@ defineProps({
     type: Array as () => Message[],
     required: true
   },
-  selectedMessage: {
-    type: Object as () => Message,
-    default: null
+  selectedMessages: {
+    type: Array as () => Message[],
+    default: () => [] as Message[]
   }
 })
 
 const emit = defineEmits(['select-message', 'context-menu'])
 
-const selectMessage = (msg: Message) => {
-  emit('select-message', msg)
+const selectMessage = (event: MouseEvent, msg: Message) => {
+  emit('select-message', { event, message: msg })
 }
 
 const showContextMenu = (event: MouseEvent, msg: Message) => {

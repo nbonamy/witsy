@@ -422,7 +422,8 @@
     "title": "Console de Depuração"
   },
   "designStudio": {
-    "confirmDelete": "Tem certeza de que deseja excluir esta mídia?",
+    "confirmDeleteMultiple": "Você tem certeza de que deseja excluir estes mídias?",
+    "confirmDeleteSingle": "Tem certeza de que deseja excluir esta mídia?",
     "emptyPlaceholder": "Deixe sua criatividade fluir!",
     "error": {
       "invalidParams": "Um erro foi relatado sobre seus parâmetros: {detail}. Por favor, verifique os parâmetros e tente novamente.",

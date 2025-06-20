@@ -422,7 +422,8 @@
     "title": "Debug Console"
   },
   "designStudio": {
-    "confirmDelete": "Are you sure you want to delete this media?",
+    "confirmDeleteMultiple": "Are you sure you want to delete these media?",
+    "confirmDeleteSingle": "Are you sure you want to delete this media?",
     "emptyPlaceholder": "Let your creativity go wild!",
     "error": {
       "invalidParams": "An error was reported about your parameters: {detail}. Please check the parameters and try again.",
@@ -1311,6 +1312,7 @@
     "edit": {
       "deleteChat": "Delete Chat",
       "deleteMedia": "Delete Media",
+      "selectAll": "Select All",
       "startDictation": "Start Dictation",
       "title": "Edit"
     },
