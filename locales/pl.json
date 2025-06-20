@@ -1451,7 +1451,7 @@
       "clear": "Wyczyść"
     },
     "instructions": {
-      "default": "Użyj domyślnych ustawień",
+      "default": "⚙️ Użyj domyślnych ustawień",
       "title": "Instrukcje modelu"
     },
     "placeholders": {
@@ -1696,14 +1696,14 @@
     "llm": {
       "instructions": {
         "custom": "Możesz spersonalizować te prompty w zakładce Zaawansowane.",
-        "empathic": "Ciepły i empatyczny",
+        "empathic": "❤️ Ciepły i empatyczny",
         "label": "@:{'common.prompt'}",
-        "playful": "Zabawny i dowcipny",
-        "reflective": "Przemyślany i refleksyjny",
-        "standard": "Prosto i informacyjnie",
-        "structured": "Angażująco i pomocnie",
-        "uplifting": "Inspirujący i podnoszący na duchu",
-        "visionary": "Futurystyczny i wizjonerski"
+        "playful": "😜 Zabawny i dowcipny",
+        "reflective": "🤔 Przemyślany i refleksyjny",
+        "standard": "📘 Prosto i informacyjnie",
+        "structured": "🎯 Angażująco i pomocnie",
+        "uplifting": "🌟 Inspirujący i podnoszący na duchu",
+        "visionary": "🚀 Futurystyczny i wizjonerski"
       }
     },
     "load": {

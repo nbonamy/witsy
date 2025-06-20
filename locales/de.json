@@ -1421,7 +1421,7 @@
       "clear": "Experte löschen"
     },
     "instructions": {
-      "default": "Standardkonfiguration verwenden",
+      "default": "⚙️ Standardkonfiguration verwenden",
       "title": "Modellanweisungen"
     },
     "placeholders": {
@@ -1666,14 +1666,14 @@
     "llm": {
       "instructions": {
         "custom": "Sie können diese Eingabeaufforderungen im Tab \"Erweitert\" anpassen.",
-        "empathic": "Warm und empathisch",
+        "empathic": "❤️ Warm und empathisch",
         "label": "@:{'common.prompt'}",
-        "playful": "Verspielt und witzig",
-        "reflective": "Nachdenklich und reflektierend",
-        "standard": "Einfach und informativ",
-        "structured": "Ansprechend und hilfreich",
-        "uplifting": "Inspiriert und ermutigend",
-        "visionary": "Zukunftsorientiert und visionär"
+        "playful": "😜 Verspielt und witzig",
+        "reflective": "🤔 Nachdenklich und reflektierend",
+        "standard": "📘 Einfach und informativ",
+        "structured": "🎯 Ansprechend und hilfreich",
+        "uplifting": "🌟 Inspiriert und ermutigend",
+        "visionary": "🚀 Zukunftsorientiert und visionär"
       }
     },
     "mcp": {

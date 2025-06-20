@@ -1421,7 +1421,7 @@
       "clear": "Supprimer l'expert"
     },
     "instructions": {
-      "default": "Utiliser la configuration par défaut",
+      "default": "⚙️ Utiliser la configuration par défaut",
       "title": "Instructions du modèle"
     },
     "placeholders": {
@@ -1666,14 +1666,14 @@
     "llm": {
       "instructions": {
         "custom": "Vous pouvez personnaliser ces invites dans l'onglet Avancé.",
-        "empathic": "Chaleureux et empathique",
+        "empathic": "❤️ Chaleureux et empathique",
         "label": "@:{'common.prompt'}",
-        "playful": "Joueur et spirituel",
-        "reflective": "Réfléchi et contemplatif",
-        "standard": "Direct et informatif",
-        "structured": "Engageant et utile",
-        "uplifting": "Inspirant et encourageant",
-        "visionary": "Futuriste et visionnaire"
+        "playful": "😜 Joueur et spirituel",
+        "reflective": "🤔 Réfléchi et contemplatif",
+        "standard": "📘 Direct et informatif",
+        "structured": "🎯 Engageant et utile",
+        "uplifting": "🌟 Inspirant et encourageant",
+        "visionary": "🚀 Futuriste et visionnaire"
       }
     },
     "mcp": {

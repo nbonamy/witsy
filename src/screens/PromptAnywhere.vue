@@ -212,7 +212,7 @@ const processQueryParams = (params?: anyDict) => {
 
   // execute
   if (params?.execute) {
-    onSendPrompt({ prompt: userPrompt, expert: userExpert, attachments: [], docrepo: null })
+    onSendPrompt({ instructions: null, prompt: userPrompt, expert: userExpert, attachments: [], docrepo: null })
     return
   }
 
@@ -421,7 +421,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   try {
 
     // deconstruct params
-    const { prompt, attachments, docrepo, expert } = params
+    const { instructions, prompt, attachments, docrepo, expert } = params
     //console.log('PromptAnywhere.onSendPrompt', prompt, attachment, docrepo, expert)
   
     // this should not happen but it happens
@@ -434,9 +434,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
     }
 
     // system instructions
+    const systemInstructions = generator.getSystemInstructions(instructions)
     if (chat.value.messages.length === 0) {
-      const systemInstructions = generator.getSystemInstructions()
       chat.value.addMessage(new Message('system', systemInstructions))
+    } else if (instructions) {
+      chat.value.messages[0].content = systemInstructions
     }
 
     // final prompt
@@ -535,6 +537,7 @@ const onRetry = () => {
 
   // and retry
   onSendPrompt({
+    instructions: chat.value.instructions,
     prompt: lastMessage.content,
     attachments: lastMessage.attachments,
     docrepo: chat.value.docrepo,
@@ -568,37 +571,39 @@ const onResponseResize = (deltaX: number) => {
   flex-direction: column;
   align-items: center;
   justify-content: stretch;
-}
 
-.container {
+  .container {
 
-  --width-ratio: 2.25;
-  --padding-top: 12%;
-  --border-radius: 16px;
+    --width-ratio: 2.25;
+    --padding-top: 12%;
+    --border-radius: 16px;
 
-  position: relative;
-  padding-left: 16px;
-  padding-right: 16px;
-  margin: 0 auto;
+    position: relative;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin: 0 auto;
 
-  display: flex;
-  height: calc(100% - (1.5 * var(--padding-top)));
-  flex-direction: column;
-  justify-content: start;
-  align-items: stretch;
-  overflow: hidden;
+    display: flex;
+    height: calc(100% - (1.5 * var(--padding-top)));
+    flex-direction: column;
+    justify-content: start;
+    align-items: stretch;
+    overflow: hidden;
 
-  .prompt {
-    box-shadow: var(--window-box-shadow);
-    border-radius: var(--border-radius);
-    resize: horizontal;
-    padding: 10px 16px;
-  }
+    .prompt {
+      box-shadow: var(--window-box-shadow);
+      border-radius: var(--border-radius);
+      resize: horizontal;
+      margin: 0px;
+      padding: 1rem 1.25rem;
+    }
 
-  /* this is to have space between prompt and response */
-  /* that does not close the window if clicked */
-  .spacer {
-    flex: 0 0 32px;
+    /* this is to have space between prompt and response */
+    /* that does not close the window if clicked */
+    .spacer {
+      flex: 0 0 32px;
+    }
+
   }
 
 }
@@ -622,8 +627,6 @@ const onResponseResize = (deltaX: number) => {
 
   .prompt {
 
-    padding-left: 0.75rem !important;
-    
     .app {
       width: calc(100% - 12px);
       display: flex;
@@ -680,11 +683,17 @@ const onResponseResize = (deltaX: number) => {
     }
     
     .actions {
+      
       width: calc(100% - 0.75rem);
       padding: 0.25rem 0 0.5rem 0.5rem;
       
       .icon {
         margin-right: 0.5rem;
+      }
+
+      .icon.instructions {
+        margin-top: 4.5px;
+        margin-right: 8px;
       }
       
       .info {

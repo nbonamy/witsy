@@ -51,6 +51,7 @@ beforeEach(() => {
 
 type PromptParams = {
   disableStreaming?: boolean
+  instructions?: string|null
   attachments?: Attachment[]
   docrepo?: string
   expert?: Expert
@@ -62,7 +63,7 @@ const prompt = async (params?: PromptParams) => {
   await wrapper.vm.$nextTick()
   wrapper.vm.chat.disableStreaming = params?.disableStreaming
   installMockModels()
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: params?.attachments, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
+  emitEvent('send-prompt', { prompt: 'Hello LLM', instructions: params?.instructions, attachments: params?.attachments, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   return wrapper
 }
@@ -159,9 +160,9 @@ test('Submits prompt without streaming', async () => {
 })
 
 test('Submits system prompt with params', async () => {
-  const wrapper = await prompt({ attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
+  const wrapper = await prompt({ instructions: 'instructions', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.structured"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file_decoded)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Submits system user with params', async () => {

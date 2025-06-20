@@ -1451,7 +1451,7 @@
       "clear": "Limpar especialista"
     },
     "instructions": {
-      "default": "Usar configuração padrão",
+      "default": "⚙️ Usar configuração padrão",
       "title": "Instruções do modelo"
     },
     "placeholders": {
@@ -1696,14 +1696,14 @@
     "llm": {
       "instructions": {
         "custom": "Você pode personalizar esses prompts na aba Avançado.",
-        "empathic": "Aconchegante e empático",
+        "empathic": "❤️ Aconchegante e empático",
         "label": "@:{'common.prompt'}",
-        "playful": "Brincalhão e espirituoso",
-        "reflective": "Reflexivo e ponderado",
-        "standard": "Direto e informativo",
-        "structured": "Atrativo e útil",
-        "uplifting": "Inspirador e edificante",
-        "visionary": "Futurista e visionário"
+        "playful": "😜 Brincalhão e espirituoso",
+        "reflective": "🤔 Reflexivo e ponderado",
+        "standard": "📘 Direto e informativo",
+        "structured": "🎯 Atrativo e útil",
+        "uplifting": "🌟 Inspirador e edificante",
+        "visionary": "🚀 Futurista e visionário"
       }
     },
     "mcp": {

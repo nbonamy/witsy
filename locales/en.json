@@ -1448,7 +1448,7 @@
       "clear": "Clear expert"
     },
     "instructions": {
-      "default": "Use configuration default",
+      "default": "⚙️ Use configuration default",
       "title": "Model instructions"
     },
     "placeholders": {
@@ -1693,14 +1693,14 @@
     "llm": {
       "instructions": {
         "custom": "You can personalize those prompts in the Advanced tab.",
-        "empathic": "Warm and empathic",
+        "empathic": "❤️ Warm and empathic",
         "label": "@:{'common.prompt'}",
-        "playful": "Playful and witty",
-        "reflective": "Thoughtful and reflective",
-        "standard": "Straightforward and informative",
-        "structured": "Engaging and helpful",
-        "uplifting": "Inspiring and uplifting",
-        "visionary": "Futuristic and visionary"
+        "playful": "😜 Playful and witty",
+        "reflective": "🤔 Thoughtful and reflective",
+        "standard": "📘 Straightforward and informative",
+        "structured": "🎯 Engaging and helpful",
+        "uplifting": "🌟 Inspiring and uplifting",
+        "visionary": "🚀 Futuristic and visionary"
       }
     },
     "load": {
