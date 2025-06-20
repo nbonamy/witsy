@@ -11,7 +11,7 @@ export default class extends Plugin {
   }
 
   isEnabled(): boolean {
-    return this.config?.enabled
+    return this.config?.enabled && this.config?.engine && this.config?.model
   }
 
   getName(): string {

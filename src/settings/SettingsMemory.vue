@@ -4,10 +4,10 @@
       {{ t('settings.plugins.memory.description') }}
     </div>
     <div class="group horizontal">
-      <input type="checkbox" v-model="enabled" @change="save" />
+      <input type="checkbox" v-model="enabled" :disabled="!ready" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
-    <EmbeddingSelector v-if="!hasFacts" :disabled="!enabled || hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
+    <EmbeddingSelector v-if="!hasFacts" :disabled="hasFacts" v-model:engine="engine" v-model:model="model" @update="save"/>
     <div v-else class="group">
       <label></label>
       <div class="warning">{{ t('settings.plugins.memory.hasFacts') }}</div>
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -36,11 +36,16 @@ const engine = ref('openai')
 const model = ref('')
 const inspector = ref(null)
 
+const ready = computed(() => {
+  return store.config.plugins.memory.engine && store.config.plugins.memory.model
+})
+
 const load = () => {
   hasFacts.value = window.api.memory.isNotEmpty()
-  enabled.value = store.config.plugins.memory.enabled || false
   engine.value = store.config.plugins.memory.engine || 'openai'
   model.value = store.config.plugins.memory.model || ''
+  enabled.value = store.config.plugins.memory.enabled || false
+  if (!ready.value) enabled.value = false
 }
 
 const save = () => {
