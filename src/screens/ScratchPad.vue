@@ -608,7 +608,6 @@ const onStopPrompting = async () => {
     background-color: var(--dialog-header-bg-color);
     border-radius: 0px;
     padding-bottom: 0.25rem;
-    margin: 0px;
 
     &:deep() {
     
