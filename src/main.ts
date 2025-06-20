@@ -88,6 +88,20 @@ const store = new Store({ name: 'window' });
 window.setStore(store);
 
 // this is going to be called later
+const installMenu = () => {
+  const settings = config.loadSettings(app);
+  menu.installMenu(app, {
+    quit: app.quit,
+    checkForUpdates: autoUpdater.check,
+    quickPrompt: PromptAnywhere.open,
+    newChat: window.openMainWindow,
+    scratchpad: window.openScratchPad,
+    settings: window.openSettingsWindow,
+    studio: window.openDesignStudioWindow,
+  }, settings.shortcuts);
+}
+
+// this is going to be called later
 const registerShortcuts = () => {
   shortcuts.registerShortcuts(app, {
     prompt: PromptAnywhere.open,
@@ -165,21 +179,11 @@ app.whenReady().then(() => {
   nativeTheme.themeSource = settings.appearance.theme;
 
   // install the menu
-  const installMenu = () => {
-    menu.installMenu(app, {
-      quit: app.quit,
-      checkForUpdates: autoUpdater.check,
-      quickPrompt: PromptAnywhere.open,
-      newChat: window.openMainWindow,
-      scratchpad: window.openScratchPad,
-      settings: window.openSettingsWindow,
-      studio: window.openDesignStudioWindow,
-    }, settings.shortcuts);
-  }
   window.addWindowListener({
-    onWindowCreated: installMenu,
-    onWindowTitleChanged: installMenu,
-    onWindowClosed: installMenu,
+    onWindowCreated: () => setTimeout(installMenu, 500), 
+    onWindowFocused: () => setTimeout(installMenu, 500), 
+    onWindowTitleChanged: () => setTimeout(installMenu, 500), 
+    onWindowClosed: () => setTimeout(installMenu, 500), 
   });
   installMenu();
 
@@ -310,7 +314,12 @@ app.on('render-process-gone', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.on('close-main-window', () => {
+ipcMain.on('main-window-set-mode', (event, mode) => {
+  window.setMainWindowMode(mode);
+  installMenu();
+});
+
+ipcMain.on('main-window-close', () => {
   window.mainWindow.close();
 });
 

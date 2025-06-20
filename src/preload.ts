@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload } from './types';
+import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode } from './types';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -30,8 +30,11 @@ contextBridge.exposeInMainWorld(
     setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync('set-appearance-theme', theme) },
     showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke('show-dialog', opts) },
     listFonts: (): string[] => { return ipcRenderer.sendSync('fonts-list') },
-    closeMainWindow: (): void => { return ipcRenderer.send('close-main-window') },
     showAbout: (): void => { return ipcRenderer.send('show-about') },
+    main: {
+      setMode: (mode: MainWindowMode): void => { return ipcRenderer.send('main-window-set-mode', mode) },
+      close: (): void => { return ipcRenderer.send('main-window-close') },
+    },
     debug: {
       showConsole: (): void => { return ipcRenderer.send('show-debug-console') },
       getNetworkHistory: (): NetworkRequest[] => { return ipcRenderer.sendSync('get-network-history') },

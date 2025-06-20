@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 
+import { MainWindowMode } from '../types/index'
 import { onMounted, ref, computed, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
@@ -76,9 +77,7 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 
-export type MenuBarMode = 'none' |
-  'chat' | 'studio' | 'scratchpad' | 'dictation' | 'voice-mode' |
-  'computer-use' | 'docrepo' | 'debug' | 'settings'
+export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
 
 const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
@@ -106,7 +105,6 @@ const onAppMenu = (event: Event) => {
   const appMenu = document.querySelector('.app-menu') as HTMLElement;
   const rect = appMenu.getBoundingClientRect();
 
-
   ContextMenu.showContextMenu({
     x: rect.x + rect.width,
     y: rect.y + 8,
@@ -121,7 +119,7 @@ const onAppMenu = (event: Event) => {
             [{ label: t('menu.tray.installUpdate'), onClick: () => window.api.update.apply() }] :
             [{ label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() }]
           ),
-          { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.closeMainWindow() },
+          { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },
         ]
       },
       { 

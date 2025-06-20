@@ -11,6 +11,8 @@ import { ToolSelection } from './llm'
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'voice-mode' | 'docrepo' | 'settings'
+
 export interface Attachment extends IAttachmentBase {
   url: string
   extracted: boolean
@@ -249,8 +251,11 @@ declare global {
       showAbout(): void
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]
-      closeMainWindow(): void
       fullscreen(window: string, state: boolean): void
+      main: {
+        setMode(mode: MainWindowMode): void
+        close(): void
+      }
       debug: {
         showConsole(): void
         getNetworkHistory(): NetworkRequest[]

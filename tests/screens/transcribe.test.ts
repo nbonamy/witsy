@@ -159,7 +159,7 @@ test('Keyboard shortcuts', async () => {
   // copy and close
   document.dispatchEvent(new KeyboardEvent('keydown', { shiftKey: true, metaKey: true, key: 'c' }));
   expect(window.api.clipboard.writeText).toHaveBeenNthCalledWith(2, 'test')
-  expect(window.api.closeMainWindow).toHaveBeenCalled()
+  expect(window.api.main.close).toHaveBeenCalled()
   
   // insert
   document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true, key: 'i' }));
