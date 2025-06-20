@@ -403,7 +403,8 @@
     "title": "Console de débogage"
   },
   "designStudio": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce média ?",
+    "confirmDeleteMultiple": "Êtes-vous sûr de vouloir supprimer ces médias ?",
+    "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer ce média ?",
     "emptyPlaceholder": "Laissez libre cours à votre créativité !",
     "error": {
       "invalidParams": "Une erreur a été signalée concernant vos paramètres : {detail}. Veuillez vérifier les paramètres et réessayer.",
@@ -1220,7 +1221,7 @@
       "title": "Suggérez un titre pour l'EXTRAIT. Retournez le titre suivi du texte complet de l'EXTRAIT."
     },
     "utils": {
-      "setDate": "La date est l'heure courante sont {date}",
+      "setDate": "La date et l'heure courantes sont {date}",
       "setLang": "Toujours répondre en {lang} même si le reste de la conversation est dans une autre langue y compris les messages de l'utilisateur.",
       "titling": "Vous êtes un assistant dont la tâche est de trouver le meilleur titre pour la conversation ci-dessous. Le titre doit être composé de quelques mots seulement.",
       "titlingUser": "Donnez un titre à la conversation ci-dessus. Ne renvoyez rien d'autre que le titre. N'entourez pas les réponses de guillemets."

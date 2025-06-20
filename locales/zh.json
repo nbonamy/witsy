@@ -422,7 +422,8 @@
     "title": "调试控制台"
   },
   "designStudio": {
-    "confirmDelete": "你确定要删除这个媒体吗？",
+    "confirmDeleteMultiple": "您确定要删除这些媒体吗？",
+    "confirmDeleteSingle": "你确定要删除这个媒体吗？",
     "emptyPlaceholder": "让你的创造力尽情发挥吧！",
     "error": {
       "invalidParams": "关于你的参数报告了一个错误：{detail}。请检查参数并重试。",

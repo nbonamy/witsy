@@ -422,7 +422,8 @@
     "title": "Konsola debugowania"
   },
   "designStudio": {
-    "confirmDelete": "Czy na pewno chcesz usunąć ten nośnik?",
+    "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te media?",
+    "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten nośnik?",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
     "error": {
       "invalidParams": "Zgłoszono błąd dotyczący parametrów: {detail}. Sprawdź parametry i spróbuj ponownie.",
