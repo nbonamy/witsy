@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, computed, onMounted } from 'vue'
+import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import AnimatedBlob from '../components/AnimatedBlob.vue'
@@ -167,6 +167,10 @@ onMounted(() => {
   engine.value = store.config.realtime.engine
   onChangeEngine()
 
+})
+
+onUnmounted(() => {
+  stopSession()
 })
 
 const onChangeEngine = () => {
@@ -336,25 +340,22 @@ const startSession = async () => {
 }
 
 const stopSession = () => {
-  if (peerConnection) {
-    peerConnection.close()
-    peerConnection = null
-  }
 
-  if (audioContext) {
-    audioContext.close()
-    audioContext = null
-  }
+  // close
+  peerConnection?.close()
+  peerConnection = null
 
-  if (audioStream) {
-    audioStream.getTracks().forEach(track => track.stop())
-    audioStream = null
-  }
+  // close
+  audioContext?.close()
+  audioContext = null
 
-  if (simInterval) {
-    clearInterval(simInterval)
-    simInterval = null
-  }
+  // stop
+  audioStream?.getTracks().forEach(track => track.stop())
+  audioStream = null
+
+  // reset
+  clearInterval(simInterval)
+  simInterval = null
 
   // done
   status.value = kWelcomeMessage
