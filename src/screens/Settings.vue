@@ -39,6 +39,7 @@
 <script setup lang="ts">
 
 import { OpenSettingsPayload } from '../types/index'
+import { MenuBarMode } from '../components/MenuBar.vue'
 import { ref, onMounted, onUnmounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
@@ -55,6 +56,10 @@ import SettingsVoice from '../settings/SettingsVoice.vue'
 import SettingsAdvanced from '../settings/SettingsAdvanced.vue'
 import WIconMcp from '../../assets/mcp.svg?component'
 import { installTabs, showActiveTab } from '../composables/tabs'
+
+// bus
+import useEventBus from '../composables/event_bus'
+const { onEvent } = useEventBus()
 
 const props = defineProps({
   extra: {
@@ -121,6 +126,13 @@ onMounted(async () => {
   installTabs(tabs.value)
   showActiveTab(tabs.value)
 
+  // events
+  onEvent('main-view-changed', (mode: MenuBarMode) => {
+    if (mode === 'settings') {
+      onOpenSettings()
+    }
+  })
+
   // load
   onOpenSettings(props.extra)
 
@@ -133,7 +145,7 @@ const showTab = (tab: string) => {
   }
 }
 
-const onOpenSettings = (payload: OpenSettingsPayload) => {
+const onOpenSettings = (payload?: OpenSettingsPayload) => {
 
   // load all panels
   for (const setting of settings) {

@@ -123,7 +123,7 @@ const onMagicAction = (event: Event, action: string) => {
   
   position: absolute;
   right: 20px;
-  bottom: 64px;
+  bottom: 72px;
   border: 1px solid var(--scratchpad-actionbar-border-color);
   border-radius: 20px;
   padding: 16px 12px;

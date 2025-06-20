@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="actions" :class="actionsCount">
-      <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" />
+      <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" v-if="enableInstructions" />
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
@@ -87,6 +87,10 @@ const props = defineProps({
     type: String,
     required: false,
     default: t('prompt.placeholders.default')
+  },
+  enableInstructions: {
+    type: Boolean,
+    default: true
   },
   enableDocRepo: {
     type: Boolean,

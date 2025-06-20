@@ -5,7 +5,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-commands="false" :conversation-mode="conversationMode" />
+    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" />
     <audio/>
   </div>
 </template>
@@ -293,7 +293,7 @@ const onAction = (action: string|ToolbarAction) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
-        onSendPrompt({ prompt: prompt, attachments: [], docrepo: null, expert: null })
+        onSendPrompt({ instructions: null, prompt: prompt, attachments: [], docrepo: null, expert: null })
       } else {
         emitEvent('llm-done', null)
       }
@@ -439,7 +439,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
   
   // deconstruct params
-  const { prompt, attachments, docrepo, expert } = params
+  const { instructions, prompt, attachments, docrepo, expert } = params
   
   // we need a prompt
   if (!prompt) {
@@ -599,8 +599,45 @@ const onStopPrompting = async () => {
   }
 
   .prompt {
+    
+    flex-direction: row-reverse;
+    align-items: baseline;
+
+    border: none;
     border-top: 1px solid var(--scratchpad-bars-border-color);
     background-color: var(--dialog-header-bg-color);
+    border-radius: 0px;
+    padding-bottom: 0.25rem;
+    margin: 0px;
+
+    &:deep() {
+    
+      .input {
+
+        .textarea-wrapper {
+          
+          textarea {
+            border: 1px solid var(--scratchpad-bars-border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+
+            &::-webkit-scrollbar {
+              width: 0px;
+            }
+
+          }
+
+        }
+
+      }
+
+      .actions {
+        padding-right: 0.5rem;
+        position: relative;
+        top: 2px;
+      }
+
+    }
   }
 }
 

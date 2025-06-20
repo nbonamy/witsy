@@ -79,13 +79,15 @@ const onMode = async (next: MenuBarMode) => {
     window.api.scratchpad.open()
   } else if (next === 'computer-use') {
     mode.value = 'chat'
-    await nextTick()
-    emitEvent('activate-computer-use')
   } else if (next === 'debug') {
     window.api.debug.showConsole()
   } else {
     mode.value = next
   }
+
+  // notify those who care
+  await nextTick()
+  emitEvent('main-view-changed', next)
 
 }
 
