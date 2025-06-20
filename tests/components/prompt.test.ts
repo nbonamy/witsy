@@ -18,12 +18,16 @@ const emitEventMock = vi.fn((event, ...args) => {
   }
 })
 
+let locale = 'default'
+
 vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
+    getLlmLocale: vi.fn(() => locale),
+    setLlmLocale: vi.fn(l => locale = l),
     expertI18n: vi.fn((expert, attr) => `${expert?.id}.${attr}`),
     commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}.{input}`),
-    i18nInstructions: vi.fn((config, instructions) => instructions),
+    i18nInstructions: vi.fn((config, instructions) => `${instructions}-${locale}`),
   }
 })
 
@@ -239,7 +243,17 @@ test('Selects instructions', async () => {
   await trigger.trigger('click')
   const menu2 = wrapper.find('.context-menu')
   await menu2.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.instructions).toBe('instructions.chat.structured')
+  expect(wrapper.vm.instructions).toBe('instructions.chat.structured-default')
+})
+
+test('Selects instructions based on chat locale', async () => {
+  wrapper.vm.chat.locale = 'fr-FR'
+  const trigger = wrapper.find('.icon.instructions')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  await menu.find('.item:nth-child(5)').trigger('click')
+  expect(wrapper.vm.instructions).toBe('instructions.chat.playful-fr-FR')
+  expect(locale).toBe('default')
 })
 
 test('Selects expert', async () => {

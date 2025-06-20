@@ -294,16 +294,16 @@ export type GenerationResult =
     let instr = instructions || i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
 
     // forced locale
-    if (instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && this.config.llm.forceLocale) {
+    if (/*instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && */this.config.llm.forceLocale) {
       const lang = localeToLangName(getLlmLocale())
       if (lang.length) {
-        instr += ' ' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
+        instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setLang', { lang })
       }
     }
 
     // // add date and time
     if (Generator.addDateAndTimeToSystemInstr) {
-      instr += ' ' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
+      instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
     }
 
     // done
