@@ -1,6 +1,6 @@
 <template>
   <div class="messages-list" :style="fontStyle">
-    <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @wheel="onScroll">
+    <div class="messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" ref="divScroller" @scroll="onScroll">
       <div v-for="message in chat?.messages" :key="message.uuid">
         <MessageItem v-if="message.role != 'system'" :chat="chat" :message="message" class="message" @media-loaded="onMediaLoaded" ref="items" />
       </div>
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
+import { ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
 import { LlmChunk } from 'multi-llm-ts'
 import MessageItem from './MessageItem.vue'
@@ -24,7 +24,7 @@ import Chat from '../models/chat'
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
 
-const divScroller: Ref<HTMLElement|null> = ref(null)
+const divScroller = ref<HTMLElement|null>(null)
 const overflown = ref(false)
 
 const itemRefs = useTemplateRef<typeof MessageItem>('items')
@@ -118,8 +118,9 @@ const onNewChunk = async (chunk: LlmChunk) => {
 }
 
 const onScroll = () => {
-  overflown.value = divScroller.value!.scrollTop + divScroller.value!.clientHeight < divScroller.value!.scrollHeight
+  overflown.value = divScroller.value!.scrollTop + divScroller.value!.clientHeight < divScroller.value!.scrollHeight - 1
   scrollOnChunk = !overflown.value
+  divScroller.value?.focus()
 }
 
 </script>
