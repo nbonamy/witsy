@@ -182,7 +182,7 @@ test('User-defined instructions', async () => {
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('You are a standard assistant')
+  expect(instructions).toBe('You are a standard assistant\n\ninstructions.utils.setLang.fr-FR')
   expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 

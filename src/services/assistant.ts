@@ -96,6 +96,7 @@ export default class extends Generator {
       expert: null,
       sources: true,
       citations: true,
+      caching: true,
     }
     opts = {...defaults, ...opts }
 
@@ -110,7 +111,7 @@ export default class extends Generator {
     }
 
     // update system message with latest instructions
-    this.chat.messages[0].content = this.chat.instructions || this.getSystemInstructions()
+    this.chat.messages[0].content = this.getSystemInstructions(this.chat.instructions)
 
     // make sure we have the right engine and model
     // special case: chat was started without an apiKey
