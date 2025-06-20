@@ -23,6 +23,7 @@ vi.mock('../../src/services/i18n', async () => {
     t: (key: string) => `${key}`,
     expertI18n: vi.fn((expert, attr) => `${expert?.id}.${attr}`),
     commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}.{input}`),
+    i18nInstructions: vi.fn((config, instructions) => instructions),
   }
 })
 
@@ -71,6 +72,7 @@ test('Send on click', async () => {
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
     docrepo: null,
@@ -85,6 +87,7 @@ test('Sends on enter', async () => {
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
     docrepo: null,
@@ -102,6 +105,7 @@ test('Sends with right parameters', async () => {
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    instructions: null,
     prompt: 'this is my prompt',
     attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
@@ -223,6 +227,21 @@ test('History navigation', async () => {
 
 })
 
+test('Selects instructions', async () => {
+  const trigger = wrapper.find('.icon.instructions')
+  await trigger.trigger('click')
+  const menu = wrapper.find('.context-menu')
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.filter').length).toBe(0)
+  expect(menu.findAll('.item').length).toBe(9)
+  await menu.find('.item:nth-child(2)').trigger('click')
+  expect(wrapper.vm.instructions).toBe(null)
+  await trigger.trigger('click')
+  const menu2 = wrapper.find('.context-menu')
+  await menu2.find('.item:nth-child(4)').trigger('click')
+  expect(wrapper.vm.instructions).toBe('instructions.chat.structured')
+})
+
 test('Selects expert', async () => {
   const trigger = wrapper.find('.icon.experts')
   await trigger.trigger('click')
@@ -263,6 +282,7 @@ test('Stores command for later', async () => {
   prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    instructions: null,
     prompt: 'uuid2.template.this is my prompt',
     attachments: [],
     expert: null,
@@ -282,6 +302,7 @@ test('Selects command and run', async () => {
   expect(menu.findAll('.item').length).toBe(4)
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+    instructions: null,
     prompt: 'uuid2.template.this is my prompt',
     attachments: [],
     expert: null,

@@ -107,6 +107,7 @@ test('Assistant parameters', async () => {
     titling: true,
     engine: 'mock',
     model: 'chat',
+    instructions: null,
     attachments: [],
     docrepo: null,
     expert: null,

@@ -357,6 +357,7 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
   if (messageIsFromUser) {
     //emitEvent('set-prompt', message)
     onSendPrompt({
+      instructions: chat.instructions,
       prompt: message.content,
       attachments: message.attachments,
       docrepo: fork.docrepo,
@@ -433,7 +434,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { prompt, attachments, docrepo, expert } = params
+  const { instructions, prompt, attachments, docrepo, expert } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -462,6 +463,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // prompt
   await assistant.value.prompt(prompt, {
     model: assistant.value.chat.model,
+    instructions: instructions || assistant.value.chat.instructions,
     attachments: attachments || [],
     docrepo: docrepo || null,
     expert: expert || null,
@@ -531,6 +533,7 @@ const onRetryGeneration = async (message: Message) => {
 
   // and retry
   onSendPrompt({
+    instructions: assistant.value.chat.instructions,
     prompt: lastMessage.content,
     attachments: lastMessage.attachments,
     docrepo: assistant.value.chat.docrepo,

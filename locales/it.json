@@ -1421,7 +1421,7 @@
       "clear": "Rimuovi esperto"
     },
     "instructions": {
-      "default": "Usa la configurazione predefinita",
+      "default": "⚙️ Usa la configurazione predefinita",
       "title": "Istruzioni del modello"
     },
     "placeholders": {
@@ -1666,14 +1666,14 @@
     "llm": {
       "instructions": {
         "custom": "Puoi personalizzare questi prompt nella scheda Avanzate.",
-        "empathic": "Caldo e empatico",
+        "empathic": "❤️ Caldo e empatico",
         "label": "@:{'common.prompt'}",
-        "playful": "Giocoso e spiritoso",
-        "reflective": "Riflessivo e ponderato",
-        "standard": "Semplice e informativo",
-        "structured": "Coinvolgente e utile",
-        "uplifting": "Ispiratore e incoraggiante",
-        "visionary": "Futuristico e visionario"
+        "playful": "😜 Giocoso e spiritoso",
+        "reflective": "🤔 Riflessivo e ponderato",
+        "standard": "📘 Semplice e informativo",
+        "structured": "🎯 Coinvolgente e utile",
+        "uplifting": "🌟 Ispiratore e incoraggiante",
+        "visionary": "🚀 Futuristico e visionario"
       }
     },
     "mcp": {

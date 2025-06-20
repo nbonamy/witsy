@@ -1421,7 +1421,7 @@
       "clear": "Eliminar experto"
     },
     "instructions": {
-      "default": "Usar configuración predeterminada",
+      "default": "⚙️ Usar configuración predeterminada",
       "title": "Instrucciones del modelo"
     },
     "placeholders": {
@@ -1666,14 +1666,14 @@
     "llm": {
       "instructions": {
         "custom": "Puedes personalizar esos mensajes en la pestaña Avanzada.",
-        "empathic": "Cálido y empático",
+        "empathic": "❤️ Cálido y empático",
         "label": "@:{'common.prompt'}",
-        "playful": "Divertido e ingenioso",
-        "reflective": "Reflexivo y pensativo",
-        "standard": "Directo e informativo",
-        "structured": "Atractivo y útil",
-        "uplifting": "Inspirador y alentador",
-        "visionary": "Futurista y visionario"
+        "playful": "😜 Divertido e ingenioso",
+        "reflective": "🤔 Reflexivo y pensativo",
+        "standard": "📘 Directo e informativo",
+        "structured": "🎯 Atractivo y útil",
+        "uplifting": "🌟 Inspirador y alentador",
+        "visionary": "🚀 Futurista y visionario"
       }
     },
     "mcp": {

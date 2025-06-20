@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="actions" :class="actionsCount">
-      <BIconJournal :class="{ icon: true, instructions: true }" @click="onClickInstructions" />
+      <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" />
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
@@ -62,6 +62,7 @@ import Loader from './Loader.vue'
 import Chat from '../models/chat'
 
 export type SendPromptParams = {
+  instructions: string|null,
   prompt: string,
   attachments: Attachment[]
   docrepo: string|null,
@@ -133,6 +134,7 @@ const llmManager: ILlmManager = LlmFactory.manager(store.config)
 let userStoppedDictation = false
 
 const prompt = ref('')
+const instructions = ref(null)
 const expert = ref<Expert|null>(null)
 const command = ref<Command|null>(null)
 const attachments = ref<Attachment[]>([])
@@ -175,13 +177,13 @@ const docRepoActive = computed(() => {
   return props.chat?.docrepo || docrepo.value
 })
 
-const instructions = [ 'standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary' ]
+const instructionIds = [ 'standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary' ]
 
 const instructionsMenuItems = computed(() => {
   return [
     { label: t('prompt.instructions.title'), action: '', disabled: true },
     { label: t('prompt.instructions.default'), action: 'null' },
-    ...instructions.map((id) => {
+    ...instructionIds.map((id) => {
       return { label: t(`settings.llm.instructions.${id}`), action: id }
     }),
   ]
@@ -189,7 +191,7 @@ const instructionsMenuItems = computed(() => {
 
 const chatInstructions = computed(() => {
 
-  for (const id of instructions) {
+  for (const id of instructionIds) {
     if (props.chat.instructions === i18nInstructions(store.config, `instructions.chat.${id}`)) {
       return { label: id, action: id }
     }
@@ -265,6 +267,7 @@ onMounted(() => {
   // reset doc repo and expert
   watch(() => props.chat || {}, () => {
     docrepo.value = props.chat?.docrepo
+    instructions.value = props.chat?.instructions || null
   }, { immediate: true })
 
 })
@@ -326,9 +329,12 @@ const loadDocRepos = () => {
 const setInstructions = (action: string) => {
   closeContextMenu()
   if (action === 'null') {
-    props.chat.instructions = null
+    instructions.value = null
   } else {
-    props.chat.instructions = i18nInstructions(store.config, `instructions.chat.${action}`)
+    instructions.value = i18nInstructions(store.config, `instructions.chat.${action}`)
+  }
+  if (props.chat) {
+    props.chat.instructions = instructions.value
   }
 }
 
@@ -365,6 +371,7 @@ const onSendPrompt = () => {
   nextTick(() => {
     autoGrow(input.value)
     emitEvent('send-prompt', {
+      instructions: instructions.value || null,
       prompt: message,
       attachments: attachments.value || null,
       docrepo: docrepo.value || null,
@@ -1069,10 +1076,17 @@ defineExpose({
   .actions {
     display: flex;
     gap: 0.25rem;
-
+    margin-left: 4px;
+    
     .icon {
       width: 1rem;
       height: 1rem;
+    }
+
+    .icon.instructions {
+      transform: scaleY(110%);
+      margin-top: 1px;
+      margin-right: 4px;
     }
 
     .icon.experts {

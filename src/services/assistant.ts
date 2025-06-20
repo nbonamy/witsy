@@ -18,6 +18,7 @@ export type GenerationCallback = (event: GenerationEvent) => void
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
   titling?: boolean
+  instructions?: string|null
   attachments?: Attachment[]
   expert?: Expert
 }
@@ -87,8 +88,9 @@ export default class extends Generator {
 
     // merge with defaults
     const defaults: AssistantCompletionOpts = {
-      titling: true,
       ... this.llmManager.getChatEngineModel(),
+      instructions: null,
+      titling: true,
       attachments: [],
       docrepo: null,
       expert: null,
