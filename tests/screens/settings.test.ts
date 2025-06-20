@@ -159,9 +159,9 @@ test('Settings LLM', async () => {
   expect(tab.findAll('.group.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
 
   // set default prompt
-  expect(store.config.llm.instructions).toBe('structured')
-  tab.find('.group.chat-prompt select').setValue('standard')
   expect(store.config.llm.instructions).toBe('standard')
+  tab.find('.group.chat-prompt select').setValue('playful')
+  expect(store.config.llm.instructions).toBe('playful')
   vi.clearAllMocks()
 
   // set prompt engine
