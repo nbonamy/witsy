@@ -268,6 +268,18 @@ const onKeyDown = (event: KeyboardEvent) => {
     return
   }
 
+  // select all: don't trigger if focus is on input or textarea
+  if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
+    const activeElement = document.activeElement
+    if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+      return
+    }
+    event.preventDefault()
+    onSelectAll()
+    return
+  }
+
+
   // keyboard navigation
   if (selection.value.length == 1 && mode.value === 'history' && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
     const currentIndex = history.value.findIndex((m) => m.uuid === selection.value[0].uuid)

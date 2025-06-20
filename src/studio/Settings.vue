@@ -40,8 +40,32 @@
         <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
       </div>
 
+      <!-- <div class="group" v-if="hasFixedModels">
+        <label>{{ t('designStudio.model') }}</label>
+
+        <template v-if="allowModelEntry">
+          <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
+            <button name="favorite" @click.prevent="toggleFavorite">
+              <BIconStarFill v-if="isFavorite"/>
+              <BIconStar v-else/>
+            </button>
+          </ComboBox>
+          <button v-if="allowModelRefresh" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+        </template>
+
+        <template v-else>
+          <div class="subgroup">
+            <select v-model="model" name="model" @change="onChangeModel">
+              <option v-for="model in models" :value="model.id">{{ model.name }}</option>
+            </select>
+            <button v-if="allowModelRefresh" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          </div>
+        </template>
+      
+      </div> -->
+
       <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
-        <input type="checkbox" v-model="transform" name="transform" />
+        <input type="checkbox" v-model="transform" name="transform" @change="onChangeTransform"/>
         <label>{{ t('designStudio.transform') }}</label>
       </div>
 
@@ -139,6 +163,7 @@ import ComboBox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
 import VariableTable from '../components/VariableTable.vue'
+// import Replicate from '../services/replicate'
 import SDWebUI from '../services/sdwebui'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 
@@ -185,14 +210,31 @@ const creator: Record<string, MediaCreator> = {
 }
 
 const hasFixedModels = computed(() => {
-  return mediaType.value === 'image' && (['openai', 'google', 'sdwebui', 'xai'].includes(engine.value))
+  return (mediaType.value === 'image' && (['openai', 'google', 'sdwebui', 'xai'].includes(engine.value)))
 })
+
+// const allowModelEntry = computed(() => {
+//   return ['replicate', 'falai', 'sdwebui'].includes(engine.value)
+// })
+
+// const allowModelRefresh = computed(() => {
+//   return ['openai', 'google', 'replicate', 'sdwebui', 'xai'].includes(engine.value)
+// })
 
 const engines = computed(() => {
   return creator[mediaType.value].getEngines(true)
 })
 
 const models = computed(() => {
+  
+  // // if we have a specific list then return it
+  // const modalities = mediaType.value === 'video'
+  //   ? (transform.value ? 'video-to-video' : 'text-to-video')
+  //   : (transform.value ? 'image-to-image' : 'text-to-image')
+  // if (store.config.engines[engine.value]?.models?.other?.[modalities]?.length) {
+  //   return store.config.engines[engine.value].models.other[modalities]
+  // }
+
   if (hasFixedModels.value) {
     return store.config.engines[engine.value]?.models?.[mediaType.value] || []
   } else {
@@ -401,6 +443,11 @@ const onChangeEngine = () => {
   onChangeModel()
 }
 
+const onChangeTransform = () => {
+  model.value = models.value[0]?.id
+  onChangeModel()
+}
+
 const onChangeModel = () => {
   // imageToVideo.value = false
   if (!canTransform.value) {
@@ -424,7 +471,7 @@ const getModels = async () => {
 
   // openai
   if (['openai', 'google', 'xai'].includes(engine.value)) {
-    const llmManager = LlmFactory.manager(store.config)
+    const llmManager: ILlmManager = LlmFactory.manager(store.config)
     let success = await llmManager.loadModels(engine.value)
     if (!success) {
       Dialog.alert(t('common.errorModelRefresh'))
@@ -432,6 +479,17 @@ const getModels = async () => {
       return
     }
   }
+
+  // // replicate
+  // if (engine.value === 'replicate') {
+  //   const replicate = new Replicate(store.config)
+  //   let success = await replicate.loadModels()
+  //   if (!success) {
+  //     Dialog.alert(t('common.errorModelRefresh'))
+  //     setEphemeralRefreshLabel(t('common.error'))
+  //     return
+  //   }
+  // }
 
   // sdwebui
   if (engine.value == 'sdwebui') {
@@ -450,6 +508,7 @@ const getModels = async () => {
   }
 
   // done
+  store.saveSettings()
   setEphemeralRefreshLabel(t('common.done'))
 
 }

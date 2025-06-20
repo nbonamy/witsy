@@ -116,20 +116,22 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
               accelerator: shortcutAccelerator({ key: 'Backspace', meta: true }),
               click: () => window.notifyBrowserWindows('delete-media')
             }] : []),
-            ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
-              label: t('menu.edit.selectAll'),
-              accelerator: shortcutAccelerator({ key: 'A', meta: true }),
-              click: () => window.notifyBrowserWindows('select-all-media')
-            }] : []),
+            { role: 'selectAll' },
+            // ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
+            //   label: t('menu.edit.selectAll'),
+            //   accelerator: shortcutAccelerator({ key: 'A', meta: true }),
+            //   click: () => window.notifyBrowserWindows('select-all-media')
+            // }] : []),
           ]
           : [
             { role: 'delete' },
             { type: 'separator' },
-            ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
-              label: t('menu.edit.deleteMedia'),
-              accelerator: shortcutAccelerator({ key: 'Backspace', ctrl: true }),
-              click: () => window.notifyBrowserWindows('select-all-media')
-            }] : []),
+            { role: 'selectAll' },
+            // ...(focusedWindow === window.mainWindow && window.getMainWindowMode() === 'studio' ? [{
+            //   label: t('menu.edit.selectAll'),
+            //   accelerator: shortcutAccelerator({ key: 'Backspace', ctrl: true }),
+            //   click: () => window.notifyBrowserWindows('select-all-media')
+            // }] : []),
           ]),
           ...(hasDictation ? [
             { type: 'separator' },
