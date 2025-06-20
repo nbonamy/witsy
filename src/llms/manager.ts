@@ -126,6 +126,13 @@ export default class LlmManager extends LlmManagerBase {
       models = await llm.loadXAIModels(this.config.engines.xai)
     }
 
+    // // clear meta as we do not need it
+    // for (const type of Object.keys(models || {})) {
+    //   for (const model of models[type]) {
+    //     delete model.meta
+    //   }
+    // }
+
     // save
     return this.saveModels(engine, models)
     
