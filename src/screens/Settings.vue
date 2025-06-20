@@ -40,7 +40,7 @@
 
 import { OpenSettingsPayload } from '../types/index'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { ref, onMounted, onUnmounted, watch, nextTick, PropType } from 'vue'
+import { ref, onMounted, watch, nextTick, PropType } from 'vue'
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
