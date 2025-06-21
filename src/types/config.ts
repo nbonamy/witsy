@@ -211,22 +211,27 @@ export type RealtimeConfig = {
 
 }
 
+export type ModelType = 'chat' | 'image' | 'video' | 'embedding' | 'realtime' | 'computer' | 'tts' | 'stt' | 'imageEdit' | 'videoEdit'
+
 export type ModelsConfig = {
   chat: ChatModel[]
   image?: Model[]
+  imageEdit?: Model[]
   video?: Model[]
+  videoEdit?: Model[]
   embedding?: Model[]
   realtime?: Model[]
   computer?: Model[]
   tts?: Model[]
   stt?: Model[]
-  other?: Record<string, Model[]>
 }
 
 export type ModelConfig = {
   chat?: string
   image?: string
+  imageEdit?: string
   video?: string
+  videoEdit?: string
   vision?: string
 }
 

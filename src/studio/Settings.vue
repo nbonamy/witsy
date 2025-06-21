@@ -17,30 +17,8 @@
         </select>
       </div>
 
-      <div class="group" v-if="hasFixedModels">
-        <label>{{ t('designStudio.model') }}</label>
-        <div class="subgroup">
-          <select v-model="model" name="model" @change="onChangeModel">
-            <option v-for="model in models" :value="model.id">{{ model.name }}</option>
-          </select>
-          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-        </div>
-      </div>
-
-      <div class="group" v-else>
-        <label>{{ t('designStudio.model') }}</label>
-        <ComboBox name="model" :items="models" v-model="model" @change="onChangeModel">
-          <button name="favorite" @click.prevent="toggleFavorite">
-            <BIconStarFill v-if="isFavorite"/>
-            <BIconStar v-else/>
-          </button>
-        </ComboBox>
-        <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
-        <a v-if="engine === 'replicate'" :href="replicateModelsLink" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
-        <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
-      </div>
-
-      <!-- <div class="group" v-if="hasFixedModels">
+      <div class="group">
+        
         <label>{{ t('designStudio.model') }}</label>
 
         <template v-if="allowModelEntry">
@@ -50,7 +28,10 @@
               <BIconStar v-else/>
             </button>
           </ComboBox>
-          <button v-if="allowModelRefresh" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
+          <a v-if="engine === 'replicate'" :href="replicateModelsLink" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
+          <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
         </template>
 
         <template v-else>
@@ -58,11 +39,11 @@
             <select v-model="model" name="model" @change="onChangeModel">
               <option v-for="model in models" :value="model.id">{{ model.name }}</option>
             </select>
-            <button v-if="allowModelRefresh" @click.prevent="onRefresh">{{ refreshLabel }}</button>
+            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
           </div>
         </template>
       
-      </div> -->
+      </div>
 
       <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
         <input type="checkbox" v-model="transform" name="transform" @change="onChangeTransform"/>
@@ -163,8 +144,10 @@ import ComboBox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
 import VariableTable from '../components/VariableTable.vue'
-// import Replicate from '../services/replicate'
+import Replicate from '../services/replicate'
+import HuggingFace from '../services/huggingface'
 import SDWebUI from '../services/sdwebui'
+import Falai from '../services/falai'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 
 import useEventBus from '../composables/event_bus'
@@ -209,31 +192,32 @@ const creator: Record<string, MediaCreator> = {
   video: videoCreator,
 }
 
-const hasFixedModels = computed(() => {
-  return (mediaType.value === 'image' && (['openai', 'google', 'sdwebui', 'xai'].includes(engine.value)))
+const modelType = computed((): DesignStudioMediaType => {
+  return mediaType.value + (transform.value ? 'Edit' : '') as DesignStudioMediaType
 })
-
-// const allowModelEntry = computed(() => {
-//   return ['replicate', 'falai', 'sdwebui'].includes(engine.value)
-// })
-
-// const allowModelRefresh = computed(() => {
-//   return ['openai', 'google', 'replicate', 'sdwebui', 'xai'].includes(engine.value)
-// })
 
 const engines = computed(() => {
   return creator[mediaType.value].getEngines(true)
 })
 
+const hasFixedModels = computed(() => {
+  return (mediaType.value === 'image' && (['openai', 'google', 'sdwebui', 'xai'].includes(engine.value)))
+})
+
+const allowModelEntry = computed(() => {
+  return ['replicate', 'falai', 'sdwebui', 'huggingface' ].includes(engine.value)
+})
+
 const models = computed(() => {
   
-  // // if we have a specific list then return it
-  // const modalities = mediaType.value === 'video'
-  //   ? (transform.value ? 'video-to-video' : 'text-to-video')
-  //   : (transform.value ? 'image-to-image' : 'text-to-image')
-  // if (store.config.engines[engine.value]?.models?.other?.[modalities]?.length) {
-  //   return store.config.engines[engine.value].models.other[modalities]
-  // }
+  // if we have a specific list then return it
+  if (store.config.engines[engine.value]?.models?.[modelType.value]?.length) {
+    return [
+      ...[ { id: model.value, name: model.value } ],
+      ...store.config.studio.favorites.filter((f) => f.engine === engine.value).map((f) => ({ id: f.model, name: f.model })),
+      ...store.config.engines[engine.value].models[modelType.value]
+    ]
+  }
 
   if (hasFixedModels.value) {
     return store.config.engines[engine.value]?.models?.[mediaType.value] || []
@@ -242,7 +226,7 @@ const models = computed(() => {
       ...[ { id: model.value, name: model.value } ],
       ...store.config.studio.favorites.filter((f) => f.engine === engine.value).map((f) => ({ id: f.model, name: f.model })),
       ...store.config.studio.defaults.filter((d) => d.engine === engine.value).map((d) => ({ id: d.model, name: d.model })),
-      ...creator[mediaType.value].getModels(engine.value)
+      ...store.config.engines[engine.value]?.models?.[mediaType.value] || []
     ].filter((model, index, self) => 
       index === self.findIndex((m) => m.id === model.id)
     )
@@ -419,8 +403,8 @@ onMounted(() => {
   })
 
   mediaType.value = store.config.studio.type || 'image'
-  engine.value = store.config.studio[mediaType.value]?.engine || (mediaType.value === 'image' ? 'openai' : 'replicate')
-  model.value = store.config.studio[mediaType.value]?.[engine.value] || (mediaType.value === 'image' ? 'dall-e-2' : '')
+  engine.value = store.config.studio[modelType.value]?.engine || (mediaType.value === 'image' ? 'openai' : 'replicate')
+  model.value = store.config.studio[modelType.value]?.[engine.value] || (mediaType.value === 'image' ? 'dall-e-2' : '')
   onLoadDefaults()
 
   watch(() => props.currentMedia, () => {
@@ -433,18 +417,18 @@ onMounted(() => {
 })
 
 const onChangeMediaType = () => {
-  engine.value = store.config.studio[mediaType.value]?.engine || engines.value[0]?.id
-  model.value = store.config.studio[mediaType.value]?.[engine.value] || models.value[0]?.id
+  engine.value = store.config.studio[modelType.value]?.engine || engines.value[0]?.id
+  model.value = store.config.studio[modelType.value]?.[engine.value] || models.value[0]?.id
   onChangeModel()
 }
 
 const onChangeEngine = () => {
-  model.value = store.config.studio[mediaType.value]?.[engine.value] || models.value[0]?.id
+  model.value = store.config.studio[modelType.value]?.[engine.value] || models.value[0]?.id
   onChangeModel()
 }
 
 const onChangeTransform = () => {
-  model.value = models.value[0]?.id
+  model.value = store.config.studio[modelType.value]?.[engine.value] || models.value[0]?.id
   onChangeModel()
 }
 
@@ -480,16 +464,38 @@ const getModels = async () => {
     }
   }
 
-  // // replicate
-  // if (engine.value === 'replicate') {
-  //   const replicate = new Replicate(store.config)
-  //   let success = await replicate.loadModels()
-  //   if (!success) {
-  //     Dialog.alert(t('common.errorModelRefresh'))
-  //     setEphemeralRefreshLabel(t('common.error'))
-  //     return
-  //   }
-  // }
+  // fal.ai
+  if (engine.value === 'falai') {
+    const falai = new Falai(store.config)
+    let success = await falai.loadModels()
+    if (!success) {
+      Dialog.alert(t('common.errorModelRefresh'))
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
+
+  // replicate
+  if (engine.value === 'replicate') {
+    const replicate = new Replicate(store.config)
+    let success = await replicate.loadModels()
+    if (!success) {
+      Dialog.alert(t('common.errorModelRefresh'))
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
+
+  // huggingface
+  if (engine.value === 'huggingface') {
+    const huggingface = new HuggingFace(store.config)
+    let success = await huggingface.loadModels()
+    if (!success) {
+      Dialog.alert(t('common.errorModelRefresh'))
+      setEphemeralRefreshLabel(t('common.error'))
+      return
+    }
+  }
 
   // sdwebui
   if (engine.value == 'sdwebui') {
@@ -588,14 +594,14 @@ const loadSettings = (settings: any) => {
 
 const saveSettings = () => {
   store.config.studio.type = mediaType.value
-  if (!store.config.studio[mediaType.value]) {
-    store.config.studio[mediaType.value] = {
+  if (!store.config.studio[modelType.value]) {
+    store.config.studio[modelType.value] = {
       engine: engine.value,
     }
-    store.config.studio[mediaType.value][engine.value] = model.value
+    store.config.studio[modelType.value][engine.value] = model.value
   } else {
-    store.config.studio[mediaType.value].engine = engine.value
-    store.config.studio[mediaType.value][engine.value] = model.value
+    store.config.studio[modelType.value].engine = engine.value
+    store.config.studio[modelType.value][engine.value] = model.value
   }
   store.saveSettings()
 }

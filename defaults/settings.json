@@ -64,11 +64,19 @@
     "type": "image",
     "image": {
       "engine": "openai",
-      "openai": "dall-e-2"
+      "openai": "gpt-image-1"
+    },
+    "imageEdit": {
+      "engine": "google",
+      "openai": "gemini-2.0-flash-exp"
     },
     "video": {
       "engine": "replicate",
-      "replicate": "wavespeedai/wan-2.1-t2v-480p"
+      "replicate": "google/veo-3"
+    },
+    "videoEdit": {
+      "engine": "replicate",
+      "replicate": "arielreplicate/deoldify_video"
     },
     "favorites": [],
     "defaults": []
@@ -167,7 +175,7 @@
       },
       "model": {
         "chat": "gpt-4o",
-        "image": "dall-e-3",
+        "image": "gpt-image-1",
         "vision": "gpt-4.1"
       },
       "realtime": {

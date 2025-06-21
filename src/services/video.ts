@@ -2,7 +2,6 @@
 import { anyDict, MediaCreator, MediaCreationEngine, MediaReference } from '../types/index'
 import { store } from '../services/store'
 import { saveFileContents, download } from '../services/download'
-import { Model } from 'multi-llm-ts'
 import Replicate, { FileOutput } from 'replicate'
 import { fal } from '@fal-ai/client'
 
@@ -19,43 +18,10 @@ export default class VideoCreator implements MediaCreator {
     return engines
   }
 
-  static getModels(engine: string): Model[] {
-    if (engine == 'replicate') {
-      return [
-        'wavespeedai/wan-2.1-t2v-480p',
-        'minimax/video-01',
-        'minimax/video-01-live',
-        'tencent/hunyuan-video',
-        'fofr/Itx-video',
-        'luma/ray',
-        'haiper-ai/haiper-video-2',
-        'genmoai/mochi-1'
-      ].map(name => ({ id: name, name }))
-    } else if (engine == 'falai') {
-      return [
-        'fal-ai/kling-video/v2.1/master/text-to-video',
-        'fal-ai/veo3',
-        'fal-ai/veo2',
-        'fal-ai/minimax/video-01',
-        'fal-ai/minimax/video-01-live',
-        'fal-ai/minimax/video-01-director',
-        'fal-ai/mochi-v1',
-        'fal-ai/stepfun-video',
-        'fal-ai/hunyuan-video',
-      ].map(name => ({ id: name, name }))
-    } else {
-      return []
-    }
-  }
-
   getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     return VideoCreator.getEngines(checkApiKey)
   }
-
-  getModels(engine: string): Model[] {
-    return VideoCreator.getModels(engine)
-  }
-
+   
   async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any> {
     if (engine === 'replicate') {
       return this.replicate(model, parameters)

@@ -1,4 +1,4 @@
-import { Model, xAIBaseURL } from 'multi-llm-ts'
+import { xAIBaseURL } from 'multi-llm-ts'
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index'
 import { saveFileContents, download } from '../services/download'
 import { store } from '../services/store'
@@ -35,44 +35,8 @@ export default class ImageCreator implements MediaCreator {
     return engines
   }
 
-  static getModels(engine: string): Model[] {
-    if (engine == 'huggingface') {
-      return [
-        'black-forest-labs/FLUX.1-schnell',
-        'black-forest-labs/FLUX.1-dev',
-        'dreamlike-art/dreamlike-photoreal-2.0',
-        'prompthero/openjourney',
-        'stabilityai/stable-diffusion-3.5-large-turbo',
-      ].sort().map(name => ({ id: name, name }))
-    } else if (engine == 'replicate') {
-      return [
-        'black-forest-labs/flux-1.1-pro',
-        'black-forest-labs/flux-schnell',
-        'ideogram-ai/ideogram-v2',
-        'recraft-ai/recraft-v3-svg',
-        'fofr/any-comfyui-workflow',
-      ].sort().map(name => ({ id: name, name }))
-    } else if (engine == 'falai') {
-      return [
-        'fal-ai/recraft-v3',
-        'fal-ai/flux-pro/v1.1-ultra',
-        'fal-ai/ideogram/v2',
-        'fal-ai/flux-pro/v1.1-ultra-finetuned',
-        'fal-ai/minimax-image',
-        'fal-ai/aura-flow',
-        'fal-ai/flux/dev',
-      ].sort().map(name => ({ id: name, name }))
-    } else {
-      return []
-    }
-  }
-
   getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     return ImageCreator.getEngines(checkApiKey)
-  }
-
-  getModels(engine: string): Model[] {
-    return ImageCreator.getModels(engine)
   }
 
   async execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {

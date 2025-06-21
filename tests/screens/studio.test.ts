@@ -30,14 +30,14 @@ beforeAll(() => {
     const settings = defaultSettings as unknown as Configuration
     settings.studio.image = {
       engine: 'openai',
-      openai: 'dall-e-3',
+      openai: 'gpt-image-1',
       replicate: 'flux',
       huggingface: 'sdxl',
     }
     settings.engines.openai = {
       apiKey: 'openai',
       models: { chat: [], image: [
-        { id: 'dall-e-3', name: 'dall-e-3' },
+        { id: 'gpt-image-1', name: 'gpt-image-1' },
         { id: 'dall-e-3', name: 'dall-e-3' }
       ] }, model: { chat: '', image: ''}
     }
@@ -121,7 +121,7 @@ test('Settings', async () => {
   await wrapper.vm.$nextTick()
   expect(settings.find<HTMLSelectElement>('[name=type]').element.value).toBe('image')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('openai')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('dall-e-3')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('gpt-image-1')
   expect(settings.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('')
   expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
@@ -139,7 +139,7 @@ test('Settings', async () => {
 
   await settings.find<HTMLSelectElement>('[name=type]').setValue('video')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('replicate')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('wavespeedai/wan-2.1-t2v-480p')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('google/veo-3')
   expect(settings.find('.expander').exists()).toBe(true)
 })
 
@@ -212,14 +212,14 @@ test('Generates - Basic', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'openai',
-      model: 'dall-e-3',
+      model: 'gpt-image-1',
       prompt: 'prompt',
       params: {}
     })
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'openai', 'dall-e-3', { prompt: 'prompt' }, undefined
+    'openai', 'gpt-image-1', { prompt: 'prompt' }, undefined
   )
 
   expect(wrapper.vm.selection).toHaveLength(1)
@@ -227,7 +227,7 @@ test('Generates - Basic', async () => {
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
-      url: 'file://openai/dall-e-3/prompt'
+      url: 'file://openai/gpt-image-1/prompt'
     }) ]
   })
 

@@ -1,5 +1,5 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, Model, LlmChunk } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -227,11 +227,10 @@ export type MediaReference = {
 
 export interface MediaCreator {
   getEngines(checkApiKey: boolean): MediaCreationEngine[]
-  getModels(engine: string): Model[]
   execute(engine: string, model: string, parameters: anyDict, reference?: MediaReference): Promise<any>
 }
 
-export type DesignStudioMediaType = 'image' | 'video'
+export type DesignStudioMediaType = 'image' | 'video' | 'imageEdit' | 'videoEdit'
 
 export type OpenSettingsPayload = {
   initialTab?: string

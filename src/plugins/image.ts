@@ -59,7 +59,7 @@ export default class extends Plugin {
     if (this.config.engine == 'openai') {
 
       // rest depends on model
-      if (store.config.engines.openai.model.image === 'dall-e-2') {
+      if (this.config.model === 'dall-e-2') {
 
         parameters.push({
           name: 'size',
@@ -69,7 +69,7 @@ export default class extends Plugin {
           required: false
         })
 
-      } else if (store.config.engines.openai.model.image === 'dall-e-3') {
+      } else if (this.config.model === 'dall-e-3') {
 
         parameters.push({
           name: 'quality',
@@ -131,7 +131,7 @@ export default class extends Plugin {
   }
 
   execute(parameters: anyDict): Promise<any> {
-    return this.creator.execute(this.config.engine, store.config.engines[this.config.engine].model.image, parameters)
+    return this.creator.execute(this.config.engine, this.config.model, parameters)
   }
 
 }

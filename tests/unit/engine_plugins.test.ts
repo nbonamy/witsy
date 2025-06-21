@@ -171,12 +171,22 @@ beforeAll(() => {
   store.config.plugins.youtube = {
     enabled: true,
   }
+  store.config.plugins.image = {
+    enabled: true,
+    engine: 'openai',
+    model: 'dall-e-2',
+  }
+  store.config.plugins.video = {
+    enabled: true,
+    engine: 'replicate',
+    model: 'video-model',
+  }
   store.config.engines = {
-    openai: { apiKey: 'test-api-key', model: { image: 'dall-e-2' } },
-    google: { apiKey: 'test-api-key', model: { image: 'test-model' } },
-    huggingface: { apiKey: 'test-api-key', model: { image: 'test-model' } },
-    replicate: { apiKey: 'test-api-key', model: { image: 'test-model' } },
-    falai: { apiKey: 'test-api-key', model: { image: 'test-model' } }
+    openai: { apiKey: 'test-api-key' },
+    google: { apiKey: 'test-api-key', },
+    huggingface: { apiKey: 'test-api-key' },
+    replicate: { apiKey: 'test-api-key', },
+    falai: { apiKey: 'test-api-key',  }
   }
 })
 
@@ -202,6 +212,7 @@ test('Image Plugin', async () => {
 test('Image Plugin OpenAI', async () => {
 
   store.config.plugins.image.engine = 'openai'
+  store.config.plugins.image.model = 'dall-e-2'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
   expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
@@ -218,6 +229,7 @@ test('Image Plugin OpenAI', async () => {
 test('Image Plugin HuggingFace', async () => {
 
   store.config.plugins.image.engine = 'huggingface'
+  store.config.plugins.image.model = 'test-model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
   expect(HfInference.prototype.textToImage).toHaveBeenLastCalledWith(expect.objectContaining({
@@ -233,7 +245,7 @@ test('Image Plugin HuggingFace', async () => {
 test('Image Plugin Replicate', async () => {
 
   store.config.plugins.image.engine = 'replicate'
-  store.config.engines.replicate.model.image = 'image/model'
+  store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
@@ -251,7 +263,7 @@ test('Image Plugin Replicate', async () => {
 test('Image Plugin fal.ai', async () => {
 
   store.config.plugins.image.engine = 'falai'
-  store.config.engines.falai.model.image = 'image/model'
+  store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
@@ -267,11 +279,11 @@ test('Image Plugin fal.ai', async () => {
 test('Image Plugin google', async () => {
 
   store.config.plugins.image.engine = 'google'
-  store.config.engines.falai.model.image = 'image/model'
+  store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ prompt: 'test prompt' })
   expect(GoogleGenAI.prototype.models.generateContent).toHaveBeenLastCalledWith({
-    model: 'test-model',
+    model: 'image/model',
     config: { responseModalities: ['Text', 'Image'] },
     contents: [ { role: 'user', parts: [ { text: 'test prompt' } ] } ]
   })
@@ -302,7 +314,7 @@ test('Video Plugin', async () => {
 test('Video Plugin Replicate', async () => {
   
   store.config.plugins.video.engine = 'replicate'
-  store.config.engines.replicate.model.video = 'video/model'
+  store.config.plugins.video.model = 'video/model'
   const video = new Video(store.config.plugins.video)
   const result = await video.execute({ prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
@@ -319,7 +331,7 @@ test('Video Plugin Replicate', async () => {
 test('Video Plugin fal.ai', async () => {
 
   store.config.plugins.video.engine = 'falai'
-  store.config.engines.falai.model.video = 'video/model'
+  store.config.plugins.video.model = 'video/model'
   const video = new Video(store.config.plugins.video)
   const result = await video.execute({ prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
