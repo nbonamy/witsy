@@ -107,7 +107,7 @@ const computeBlocks = (content: string|null): Block[] => {
   const regexMedia1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   const regexTool1 = /<tool index="(\d*)"><\/tool>/g
-  for (const regex of [ regexMedia1, regexMedia2, regexTool1 ]) {
+  for (const regex of [ regexTool1, regexMedia1, regexMedia2 ]) {
   
     while (match = regex.exec(content)) {
 
