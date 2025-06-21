@@ -2,7 +2,7 @@
 import { anyDict } from '../types/index'
 import { store } from '../services/store'
 import { i18nInstructions } from '../services/i18n'
-import { PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import VideoCreator from '../services/video'
 
@@ -55,7 +55,7 @@ export default class extends Plugin {
   
   }
 
-  execute(parameters: anyDict): Promise<any> {
+  execute(context: PluginExecutionContext, parameters: anyDict): Promise<any> {
     return this.creator.execute(this.config.engine, this.config.model, parameters)
   }
 

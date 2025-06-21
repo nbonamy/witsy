@@ -214,7 +214,7 @@ test('Image Plugin OpenAI', async () => {
   store.config.plugins.image.engine = 'openai'
   store.config.plugins.image.model = 'dall-e-2'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ prompt: 'test prompt' })
+  const result = await image.execute({ model: 'dall-e-2' }, { prompt: 'test prompt' })
   expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'dall-e-2',
     prompt: 'test prompt',
@@ -231,7 +231,7 @@ test('Image Plugin HuggingFace', async () => {
   store.config.plugins.image.engine = 'huggingface'
   store.config.plugins.image.model = 'test-model'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ prompt: 'test prompt' })
+  const result = await image.execute({ model: 'test-model' }, { prompt: 'test prompt' })
   expect(HfInference.prototype.textToImage).toHaveBeenLastCalledWith(expect.objectContaining({
     model: 'test-model',
     inputs: 'test prompt',
@@ -247,7 +247,7 @@ test('Image Plugin Replicate', async () => {
   store.config.plugins.image.engine = 'replicate'
   store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ prompt: 'test prompt' })
+  const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
@@ -265,7 +265,7 @@ test('Image Plugin fal.ai', async () => {
   store.config.plugins.image.engine = 'falai'
   store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ prompt: 'test prompt' })
+  const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
   expect(fal.subscribe).toHaveBeenLastCalledWith('image/model', expect.objectContaining({
     input: { prompt: 'test prompt', }
@@ -281,7 +281,7 @@ test('Image Plugin google', async () => {
   store.config.plugins.image.engine = 'google'
   store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ prompt: 'test prompt' })
+  const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
   expect(GoogleGenAI.prototype.models.generateContent).toHaveBeenLastCalledWith({
     model: 'image/model',
     config: { responseModalities: ['Text', 'Image'] },
@@ -316,7 +316,7 @@ test('Video Plugin Replicate', async () => {
   store.config.plugins.video.engine = 'replicate'
   store.config.plugins.video.model = 'video/model'
   const video = new Video(store.config.plugins.video)
-  const result = await video.execute({ prompt: 'test prompt' })
+  const result = await video.execute({ model: 'video/model' }, { prompt: 'test prompt' })
   expect(Replicate.prototype.run).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
     input: {
       prompt: 'test prompt',
@@ -333,7 +333,7 @@ test('Video Plugin fal.ai', async () => {
   store.config.plugins.video.engine = 'falai'
   store.config.plugins.video.model = 'video/model'
   const video = new Video(store.config.plugins.video)
-  const result = await video.execute({ prompt: 'test prompt' })
+  const result = await video.execute({ model: 'video/model' }, { prompt: 'test prompt' })
   expect(fal.config).toHaveBeenLastCalledWith({ credentials: 'test-api-key' })
   expect(fal.subscribe).toHaveBeenLastCalledWith('video/model', expect.objectContaining({
     input: { prompt: 'test prompt', }
