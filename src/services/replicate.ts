@@ -1,5 +1,5 @@
 
-import { Configuration } from '../types/config';
+import { Configuration, ModelType } from '../types/config';
 
 export const baseURL = 'https://api.replicate.com/v1/'
 
@@ -13,10 +13,12 @@ export default class Replicate {
 
   async loadModels(): Promise<boolean> {
     try {
-      await this.loadCollection('text-to-image', 'text-to-image')
-      await this.loadCollection('image-to-image', 'image-editing')
-      await this.loadCollection('text-to-video', 'text-to-video')
-      await this.loadCollection('video-to-video', 'ai-enhance-videos')
+      await Promise.all([
+        this.loadCollection('text-to-image', 'image'),
+        this.loadCollection('image-editing', 'imageEdit'),
+        this.loadCollection('text-to-video', 'video'),
+        this.loadCollection('ai-enhance-videos', 'videoEdit')
+      ])
       return true
     } catch (e) {
       console.error('Error loading SDWebUI Models', e)
@@ -24,11 +26,15 @@ export default class Replicate {
     }
   }
 
-  async loadCollection(name: string, slug: string): Promise<boolean> {
+  async loadCollection(name: string, type: ModelType): Promise<boolean> {
 
     try {
     
-      const response = await fetch(`${baseURL}/collections/${slug}`, {
+      if (!this.config.engines.replicate.models[type]) {
+        this.config.engines.replicate.models[type] = []
+      }
+
+      const response = await fetch(`${baseURL}/collections/${name}`, {
         headers: { 'Authorization': `Bearer ${this.config.engines.replicate.apiKey}` }
       })
       if (!response.ok) {
@@ -36,11 +42,7 @@ export default class Replicate {
       }
 
       const collection = await response.json()
-      if (!this.config.engines.replicate.models.other) {
-        this.config.engines.replicate.models.other = {}
-      }
-      
-      this.config.engines.replicate.models.other[name] = collection.models.map((model: any) => ({
+      this.config.engines.replicate.models[type] = collection.models.map((model: any) => ({
         id: `${model.owner}/${model.name}`,
         name: `${model.owner}/${model.name}`,
       })).filter((model: any, index: number, array: any[]) => 
@@ -48,7 +50,7 @@ export default class Replicate {
       ).sort((a: any, b: any) => a.name.localeCompare(b.name))
 
     } catch (e) {
-      console.error(`Error loading collection ${slug}`, e)
+      console.error(`Error loading collection ${name}`, e)
       return null
     }
   }

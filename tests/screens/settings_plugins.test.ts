@@ -30,8 +30,38 @@ beforeAll(() => {
 
   store.config.engines.huggingface.apiKey = 'hf-api-key'
   store.config.engines.replicate.apiKey = 'repl-api-key'
+  store.config.engines.falai.apiKey = 'falai-api-key'
   store.config.plugins.search.tavilyApiKey = 'tavily-api-key'
   store.config.plugins.python.binpath = 'python3'
+
+  store.config.engines.replicate.models = {
+    image: [
+      { id: 'repl-image1', name: 'repl-image1' },
+      { id: 'repl-image2', name: 'repl-image2' },
+    ],
+    video: [
+      { id: 'repl-video1', name: 'repl-video1' },
+      { id: 'repl-video2', name: 'repl-video2' },
+    ]
+  }
+
+  store.config.engines.falai.models = {
+    image: [
+      { id: 'falai-image1', name: 'falai-image1' },
+      { id: 'falai-image2', name: 'falai-image2' },
+    ],
+    video: [
+      { id: 'falai-video1', name: 'falai-video1' },
+      { id: 'falai-video2', name: 'falai-video2' },
+    ]
+  }
+
+  store.config.engines.huggingface.models = {
+    image: [
+      { id: 'hf1', name: 'hf1' },
+      { id: 'hf2', name: 'hf2' },
+    ]
+  }
     
   // wrapper
   wrapper = mount(Settings)
@@ -64,19 +94,31 @@ test('image settings', async () => {
 
   // huggingface
   await image.findAll('select')[0].setValue('huggingface')
+  expect(store.config.plugins.image.engine).toBe('huggingface')
   expect(image.find<HTMLInputElement>('input[type=password]').element.value).toBe('hf-api-key')
-  expect(image.findAll('select')[1].find('option').text()).toBe('black-forest-labs/FLUX.1-dev')
-  const hfoption2 = image.findAll('select')[1].findAll('option')[1]
-  await image.findAll('select')[1].setValue(hfoption2.element.value)
-  expect(store.config.engines.huggingface.model.image).toBe(hfoption2.element.value)
+  expect(image.findAll('select')[1].find('option').text()).toBe('hf1')
+  await image.findAll('select')[1].setValue('hf2')
+  expect(store.config.plugins.image.engine).toBe('huggingface')
+  expect(store.config.plugins.image.model).toBe('hf2')
 
   // replicate
   await image.findAll('select')[0].setValue('replicate')
+  expect(store.config.plugins.image.engine).toBe('replicate')
   expect(image.find<HTMLInputElement>('input[type=password]').element.value).toBe('repl-api-key')
-  expect(image.findAll('select')[1].find('option').text()).toBe('black-forest-labs/flux-1.1-pro')
-  const reploption2 = image.findAll('select')[1].findAll('option')[1]
-  await image.findAll('select')[1].setValue(reploption2.element.value)
-  expect(store.config.engines.replicate.model.image).toBe(reploption2.element.value)
+  expect(image.findAll('select')[1].find('option').text()).toBe('repl-image1')
+  await image.findAll('select')[1].setValue('repl-image2')
+  expect(store.config.plugins.image.engine).toBe('replicate')
+  expect(store.config.plugins.image.model).toBe('repl-image2')
+
+  // falai
+  await image.findAll('select')[0].setValue('falai')
+  expect(store.config.plugins.image.engine).toBe('falai')
+  expect(image.find<HTMLInputElement>('input[type=password]').element.value).toBe('falai-api-key')
+  expect(image.findAll('select')[1].find('option').text()).toBe('falai-image1')
+  await image.findAll('select')[1].setValue('falai-image2')
+  expect(store.config.plugins.image.engine).toBe('falai')
+  expect(store.config.plugins.image.model).toBe('falai-image2')
+
 })
 
 test('video settings', async () => {
@@ -90,11 +132,21 @@ test('video settings', async () => {
 
   // replicate
   await video.findAll('select')[0].setValue('replicate')
+  expect(store.config.plugins.video.engine).toBe('replicate')
   expect(video.find<HTMLInputElement>('input[type=password]').element.value).toBe('repl-api-key')
-  expect(video.findAll('select')[1].find('option').text()).toBe(store.config.engines.replicate.model.video)
-  const reploption2 = video.findAll('select')[1].findAll('option')[1]
-  await video.findAll('select')[1].setValue(reploption2.element.value)
-  expect(store.config.engines.replicate.model.video).toBe(reploption2.element.value)
+  expect(video.findAll('select')[1].find('option').text()).toBe('repl-video1')
+  await video.findAll('select')[1].setValue('repl-video2')
+  expect(store.config.plugins.video.engine).toBe('replicate')
+  expect(store.config.plugins.video.model).toBe('repl-video2')
+
+  // falai
+  await video.findAll('select')[0].setValue('falai')
+  expect(store.config.plugins.video.engine).toBe('falai')
+  expect(video.find<HTMLInputElement>('input[type=password]').element.value).toBe('falai-api-key')
+  expect(video.findAll('select')[1].find('option').text()).toBe('falai-video1')
+  await video.findAll('select')[1].setValue('falai-video2')
+  expect(store.config.plugins.video.engine).toBe('falai')
+  expect(store.config.plugins.video.model).toBe('falai-video2')
 })
 
 test('browse settings', async () => {

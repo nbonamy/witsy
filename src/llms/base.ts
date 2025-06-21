@@ -1,5 +1,5 @@
 
-import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
+import { Configuration, CustomEngineConfig, EngineConfig, ModelType } from '../types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel } from './anthropic'
 import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
@@ -392,8 +392,8 @@ export default class LlmManagerBase implements ILlmManager {
   
   }  
   
-  getValidModelId = (engineConfig: EngineConfig, type: string, modelId: string) => {
-    const models: llm.Model[] = engineConfig?.models?.[type as keyof typeof engineConfig.models]
+  getValidModelId = (engineConfig: EngineConfig, type: ModelType, modelId: string) => {
+    const models: llm.Model[] = engineConfig?.models?.[type]
     const m = models?.find(m => m.id == modelId)
     return m ? modelId : (models?.[0]?.id || null)
   }

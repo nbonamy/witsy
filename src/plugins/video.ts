@@ -56,7 +56,7 @@ export default class extends Plugin {
   }
 
   execute(parameters: anyDict): Promise<any> {
-    return this.creator.execute(this.config.engine, store.config.engines[this.config.engine].model.video, parameters)
+    return this.creator.execute(this.config.engine, this.config.model, parameters)
   }
 
 }
