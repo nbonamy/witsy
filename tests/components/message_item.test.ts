@@ -49,6 +49,8 @@ const botMessageVideoCode3: Message = Message.fromJson({ role: 'assistant', type
 const botMessageImageLegacy: Message = Message.fromJson({ role: 'assistant', type: 'image', content: 'https://example.com/image.jpg' })
 const botMessageTransient: Message = Message.fromJson({ role: 'assistant', type: 'text', content :'Hi' })
 const botMessageReasoning: Message = Message.fromJson({ role: 'assistant', type: 'text', reasoning: 'Hum', content :'Hi' })
+const botMessageToolMedia1: Message = Message.fromJson({ role: 'assistant', type: 'text', content: '<tool index="0"></tool>Here:\n\n![image](file:///data/image.jpg)\n\nWelcome!' })
+const botMessageToolMedia2: Message = Message.fromJson({ role: 'assistant', type: 'text', content: 'Sure!\n\n<tool index="0"></tool>![image](file:///data/image.jpg)\n\nWelcome!' })
 
 beforeAll(() => {
   useWindowMock()
@@ -227,6 +229,18 @@ test('Assistant image message formats', async () => {
   const wrapper8 = await mount(botMessageVideoCode3)
   expect(wrapper8.find('.body').text()).toBe('video:\n<video controls src="file:///data/video.mp4" />')
   expect(wrapper8.find('.body video').exists()).toBe(false)
+})
+
+test('Assistant image message with tool media', async () => {
+
+  const wrapper1 = await mount(botMessageToolMedia1)
+  expect(wrapper1.find('.body').text()).toBe('Here:\nWelcome!')
+  expect(wrapper1.findAll('.body img').length).toBe(1)
+
+  const wrapper2 = await mount(botMessageToolMedia2)
+  expect(wrapper2.find('.body').text()).toBe('Sure!\nWelcome!')
+  expect(wrapper2.findAll('.body img').length).toBe(1)
+
 })
 
 test('Transient message', async () => {
