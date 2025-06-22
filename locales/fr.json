@@ -1293,6 +1293,7 @@
     "edit": {
       "deleteChat": "Supprimer la conversation",
       "deleteMedia": "Supprimer le média",
+      "selectAll": "Sélectionner tout",
       "startDictation": "Démarrer la dictée",
       "title": "Édition"
     },
@@ -1309,9 +1310,6 @@
       "goToLogFolder": "Ouvrir le dossier des journaux",
       "learnMore": "En savoir plus",
       "title": "Aide"
-    },
-    "tray": {
-      "installUpdate": "installer la mise à jour"
     },
     "view": {
       "debug": "Ouvrir la console de débogage",
@@ -1339,6 +1337,9 @@
         "response": "Tokens de réponse : {completion}",
         "title": "Total de tokens : {total}"
       }
+    },
+    "content": {
+      "empty": "Contenu vide"
     },
     "reasoning": {
       "active": "Réfléchir",
@@ -1395,6 +1396,52 @@
     "toolsCount": "Aucun outil sélectionné | 1 outil sélectionné | {count} outils sélectionnés",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "plugins": {
+    "browse": {
+      "completed": "Contenu téléchargé depuis {url}",
+      "error": "Erreur lors du téléchargement du contenu",
+      "running": "Téléchargement du contenu…"
+    },
+    "image": {
+      "completed": "Image générée avec succès",
+      "error": "Erreur lors de la génération de l'image",
+      "running": "Peinture des pixels…"
+    },
+    "mcp": {
+      "completed": "Commande MCP \"{tool}\" exécutée avec succès",
+      "error": "Erreur lors de l'exécution de la commande MCP \"{tool}\"",
+      "running": "Exécution de la commande MCP \"{tool}\"…",
+      "starting": "Initialisation de la commande MCP \"{tool}\"…"
+    },
+    "memory": {
+      "error": "Erreur lors de l'accès à la mémoire à long terme",
+      "retrieved": "Trouvé {count} faits liés dans la mémoire à long terme",
+      "retrieving": "Interrogation de la mémoire à long terme…",
+      "starting": "Initialisation de la mémoire à long terme…",
+      "stored": "Mémoire à long terme mise à jour avec succès",
+      "storing": "Stockage des faits dans la mémoire à long terme…"
+    },
+    "python": {
+      "completed": "Code Python exécuté avec succès",
+      "error": "Erreur lors de l'exécution du code Python",
+      "running": "Exécution du code Python…"
+    },
+    "search": {
+      "completed": "Aucun résultat trouvé pour \"{query}\" | Trouvé {count} résultat pour \"{query}\" | Trouvé {count} résultats pour \"{query}\"",
+      "error": "Erreur lors de la recherche sur Internet",
+      "running": "Recherche sur Internet…"
+    },
+    "video": {
+      "completed": "Vidéo générée avec succès",
+      "error": "Erreur lors de la génération de la vidéo",
+      "running": "Animation des images…"
+    },
+    "youtube": {
+      "completed": "Transcription téléchargée pour \"{title}\"",
+      "error": "Erreur lors du téléchargement de la transcription de la vidéo",
+      "running": "Téléchargement de la transcription…"
+    }
   },
   "prompt": {
     "attachment": {

@@ -2,6 +2,7 @@
 import { anyDict } from 'types/index'
 import { PluginConfig } from './plugin'
 import { MultiToolPlugin, LlmTool, PluginExecutionContext } from 'multi-llm-ts'
+import { t } from '../services/i18n'
 
 export default class extends MultiToolPlugin {
 
@@ -24,13 +25,22 @@ export default class extends MultiToolPlugin {
 
   getPreparationDescription(name: string): string {
     const tool = window.api.mcp.originalToolName(name)
-    return `Preparing to use MCP tool ${tool}…`
+    return t('plugins.mcp.starting', { tool: tool })
   }
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRunningDescription(name: string, args: any): string {
     const tool = window.api.mcp.originalToolName(name)
-    return `MCP tool ${tool} is currently running…`
+    return t('plugins.mcp.running', { tool: tool })
+  }
+
+  getCompletedDescription(name: string, args: any, results: any): string | undefined {
+    const tool = window.api.mcp.originalToolName(name)
+    if (results.error) {
+      return t('plugins.mcp.error', { tool: tool, error: results.error })
+    } else {
+      return t('plugins.mcp.completed', { tool: tool, args, results })
+    }
   }
 
   async getTools(): Promise<any> {

@@ -1293,6 +1293,7 @@
     "edit": {
       "deleteChat": "Eliminar conversación",
       "deleteMedia": "Eliminar Medio",
+      "selectAll": "Seleccionar todo",
       "startDictation": "Iniciar dictado",
       "title": "Editar"
     },
@@ -1309,9 +1310,6 @@
       "goToLogFolder": "Ir a la carpeta de registros",
       "learnMore": "Aprender más",
       "title": "Ayuda"
-    },
-    "tray": {
-      "installUpdate": "instalarActualización"
     },
     "view": {
       "debug": "Abrir Consola de depuración",
@@ -1339,6 +1337,9 @@
         "response": "Tokens de respuesta: {completion}",
         "title": "Total de tokens: {total}"
       }
+    },
+    "content": {
+      "empty": "Contenido vacío"
     },
     "reasoning": {
       "active": "Pensando",
@@ -1395,6 +1396,52 @@
     "toolsCount": "Ninguna herramienta seleccionada | 1 herramienta seleccionada | {count} herramientas seleccionadas",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "plugins": {
+    "browse": {
+      "completed": "Contenido descargado de {url}",
+      "error": "Error al descargar el contenido",
+      "running": "Descargando contenido…"
+    },
+    "image": {
+      "completed": "Imagen generada con éxito",
+      "error": "Error al generar la imagen",
+      "running": "Pintando píxeles…"
+    },
+    "mcp": {
+      "completed": "Comando MCP \"{tool}\" ejecutado con éxito",
+      "error": "Error al ejecutar el comando MCP \"{tool}\"",
+      "running": "Ejecutando el comando MCP \"{tool}\"…",
+      "starting": "Inicializando el comando MCP \"{tool}\"…"
+    },
+    "memory": {
+      "error": "Error al acceder a la memoria a largo plazo",
+      "retrieved": "Se encontraron {count} hechos relacionados en la memoria a largo plazo",
+      "retrieving": "Consultando la memoria a largo plazo…",
+      "starting": "Inicializando la memoria a largo plazo…",
+      "stored": "Memoria a largo plazo actualizada con éxito",
+      "storing": "Almacenando hechos en la memoria a largo plazo…"
+    },
+    "python": {
+      "completed": "Código Python ejecutado con éxito",
+      "error": "Error al ejecutar el código Python",
+      "running": "Ejecutando código Python…"
+    },
+    "search": {
+      "completed": "No se encontraron resultados para \"{query}\" | Se encontró {count} resultado para \"{query}\" | Se encontraron {count} resultados para \"{query}\"",
+      "error": "Error al buscar en internet",
+      "running": "Buscando en internet…"
+    },
+    "video": {
+      "completed": "Video generado con éxito",
+      "error": "Error al generar el video",
+      "running": "Animando fotogramas…"
+    },
+    "youtube": {
+      "completed": "Transcripción descargada para \"{title}\"",
+      "error": "Error al descargar la transcripción del video",
+      "running": "Descargando transcripción…"
+    }
   },
   "prompt": {
     "attachment": {

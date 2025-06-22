@@ -3,6 +3,7 @@ import { anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import { convert } from 'html-to-text'
 import Plugin, { PluginConfig } from './plugin'
+import { t } from '../services/i18n'
 
 export default class extends Plugin {
 
@@ -27,7 +28,15 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return 'Downloading content…'
+    return t('plugins.browse.running')
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.browse.error')
+    } else {
+      return t('plugins.browse.completed', { url: args.url })
+    }
   }
 
   getParameters(): PluginParameter[] {
@@ -54,7 +63,7 @@ export default class extends Plugin {
       return { content: text }
 
     } catch (error) {
-      return error
+      return { error: error }
     }
 
   }  

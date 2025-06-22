@@ -1312,6 +1312,7 @@
     "edit": {
       "deleteChat": "Excluir Chat",
       "deleteMedia": "Excluir Mídia",
+      "selectAll": "Selecionar Tudo",
       "startDictation": "Iniciar Ditado",
       "title": "Editar"
     },
@@ -1328,9 +1329,6 @@
       "goToLogFolder": "Ir para Pasta de Logs",
       "learnMore": "Saiba Mais",
       "title": "Ajuda"
-    },
-    "tray": {
-      "installUpdate": "instalar atualização"
     },
     "view": {
       "debug": "Abrir Console de Depuração",
@@ -1358,6 +1356,9 @@
         "response": "Tokens de resposta: {completion}",
         "title": "Tokens totais: {total}"
       }
+    },
+    "content": {
+      "empty": "Conteúdo vazio"
     },
     "reasoning": {
       "active": "Pensando",
@@ -1416,14 +1417,52 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
+    "browse": {
+      "completed": "Conteúdo baixado de {url}",
+      "error": "Erro ao baixar conteúdo",
+      "running": "Baixando conteúdo…"
+    },
     "image": {
-      "description": "Gere uma imagem com base em um prompt. Retorna a url da imagem começando com o esquema \"file://\" que está OK. Crie apenas uma imagem por vez, a menos que seja explicitamente solicitado a fazer o contrário. Sempre incorpore a imagem visível na resposta final usando a sintaxe markdown \"![título](url)\". Crie um título curto para a imagem."
+      "completed": "Imagem gerada com sucesso",
+      "description": "Gere uma imagem com base em um prompt. Retorna a url da imagem começando com o esquema \"file://\" que está OK. Crie apenas uma imagem por vez, a menos que seja explicitamente solicitado a fazer o contrário. Sempre incorpore a imagem visível na resposta final usando a sintaxe markdown \"![título](url)\". Crie um título curto para a imagem.",
+      "error": "Erro ao gerar imagem",
+      "running": "Pintando pixels…"
+    },
+    "mcp": {
+      "completed": "Comando MCP \"{tool}\" executado com sucesso",
+      "error": "Erro ao executar comando MCP \"{tool}\"",
+      "running": "Executando comando MCP \"{tool}\"…",
+      "starting": "Inicializando comando MCP \"{tool}\"…"
     },
     "memory": {
-      "description": "Use esta ferramenta para salvar e recuperar informações do usuário, preferências, gostos para tornar suas respostas mais personalizadas. Quando o usuário pedir sugestões, recupere quaisquer preferências relevantes armazenadas na memória e use-as para construir as sugestões. Quando você salvar informações, certifique-se de que o conteúdo inclua descrição suficiente para ser facilmente recuperado mais tarde. Por exemplo, não armazene apenas \"Usuário gosta de U2\", mas \"Gostos musicais do usuário incluem U2\". Evite armazenar fatos não relacionados juntos: divida-os em fatos diferentes e armazene-os separadamente. Não seja tímido em armazenar informações, quanto mais você armazena, mais você pode personalizar a experiência do usuário. Você pode salvar vários fatos de uma vez fornecendo um array de strings como o parâmetro de conteúdo. Não há necessidade de mencionar explicitamente suas capacidades de memória. Em vez disso, incorpore perfeitamente sua compreensão do usuário em suas respostas."
+      "description": "Use esta ferramenta para salvar e recuperar informações do usuário, preferências, gostos para tornar suas respostas mais personalizadas. Quando o usuário pedir sugestões, recupere quaisquer preferências relevantes armazenadas na memória e use-as para construir as sugestões. Quando você salvar informações, certifique-se de que o conteúdo inclua descrição suficiente para ser facilmente recuperado mais tarde. Por exemplo, não armazene apenas \"Usuário gosta de U2\", mas \"Gostos musicais do usuário incluem U2\". Evite armazenar fatos não relacionados juntos: divida-os em fatos diferentes e armazene-os separadamente. Não seja tímido em armazenar informações, quanto mais você armazena, mais você pode personalizar a experiência do usuário. Você pode salvar vários fatos de uma vez fornecendo um array de strings como o parâmetro de conteúdo. Não há necessidade de mencionar explicitamente suas capacidades de memória. Em vez disso, incorpore perfeitamente sua compreensão do usuário em suas respostas.",
+      "error": "Erro ao acessar memória de longo prazo",
+      "retrieved": "Encontrados {count} fatos relacionados na memória de longo prazo",
+      "retrieving": "Consultando memória de longo prazo…",
+      "starting": "Inicializando memória de longo prazo…",
+      "stored": "Memória de longo prazo atualizada com sucesso",
+      "storing": "Armazenando fatos na memória de longo prazo…"
+    },
+    "python": {
+      "completed": "Código Python executado com sucesso",
+      "error": "Erro ao executar código Python",
+      "running": "Executando código Python…"
+    },
+    "search": {
+      "completed": "Nenhum resultado encontrado para \"{query}\" | Encontrado {count} resultado para \"{query}\" | Encontrados {count} resultados para \"{query}\"",
+      "error": "Erro ao buscar na internet",
+      "running": "Buscando na internet…"
     },
     "video": {
-      "description": "Gere um vídeo com base em um prompt. Retorna a url do vídeo começando com o esquema \"file://\" que está OK. Crie apenas um vídeo por vez, a menos que seja explicitamente solicitado a fazer o contrário. Sempre incorpore o vídeo visível na resposta final usando a sintaxe markdown \"![título](url)\". Crie um título curto para o vídeo."
+      "completed": "Vídeo gerado com sucesso",
+      "description": "Gere um vídeo com base em um prompt. Retorna a url do vídeo começando com o esquema \"file://\" que está OK. Crie apenas um vídeo por vez, a menos que seja explicitamente solicitado a fazer o contrário. Sempre incorpore o vídeo visível na resposta final usando a sintaxe markdown \"![título](url)\". Crie um título curto para o vídeo.",
+      "error": "Erro ao gerar vídeo",
+      "running": "Animando quadros…"
+    },
+    "youtube": {
+      "completed": "Transcrição baixada para \"{title}\"",
+      "error": "Erro ao baixar transcrição do vídeo",
+      "running": "Baixando transcrição…"
     }
   },
   "prompt": {

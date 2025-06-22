@@ -1,7 +1,7 @@
 
 import { anyDict } from '../types/index'
 import { store } from '../services/store'
-import { i18nInstructions } from '../services/i18n'
+import { i18nInstructions, t } from '../services/i18n'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import VideoCreator from '../services/video'
@@ -35,7 +35,15 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return `Animating frames…`
+    return t('plugins.video.running')
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.video.error')
+    } else {
+      return t('plugins.video.completed', { engine: this.config.engine, model: this.config.model, prompt: args.prompt })
+    }
   }
 
   getParameters(): PluginParameter[] {

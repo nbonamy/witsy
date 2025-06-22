@@ -2,7 +2,7 @@
 import { anyDict } from 'types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
-import { i18nInstructions } from '../services/i18n'
+import { i18nInstructions, t } from '../services/i18n'
 
 export default class extends Plugin {
 
@@ -24,11 +24,25 @@ export default class extends Plugin {
   }
 
   getPreparationDescription(): string {
-    return this.getRunningDescription()
+    return t('plugins.memory.starting')
   }
 
-  getRunningDescription(): string {
-    return 'Personnalizing…'
+  getRunningDescription(tool: string, args: any): string {
+    if (args.action === 'store') {
+      return t('plugins.memory.storing', { content: args.content })
+    } else if (args.action === 'retrieve') {
+      return t('plugins.memory.retrieving', { query: args.query })
+    }
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.memory.error')
+    } else if (args.action === 'store') {
+      return t('plugins.memory.stored')
+    } else if (args.action === 'retrieve') {
+      return t('plugins.memory.retrieved', { count: results.content.length })
+    }
   }
 
   getParameters(): PluginParameter[] {

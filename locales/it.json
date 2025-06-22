@@ -1293,6 +1293,7 @@
     "edit": {
       "deleteChat": "Elimina chat",
       "deleteMedia": "Elimina Media",
+      "selectAll": "Seleziona tutto",
       "startDictation": "Inizia dettatura",
       "title": "Modifica"
     },
@@ -1309,9 +1310,6 @@
       "goToLogFolder": "Vai alla cartella dei log",
       "learnMore": "Scopri di più",
       "title": "Aiuto"
-    },
-    "tray": {
-      "installUpdate": "installa aggiornamento"
     },
     "view": {
       "debug": "Apri Console di debug",
@@ -1339,6 +1337,9 @@
         "response": "Token di risposta: {completion}",
         "title": "Token totali: {total}"
       }
+    },
+    "content": {
+      "empty": "Contenuto vuoto"
     },
     "reasoning": {
       "active": "Pensando",
@@ -1395,6 +1396,52 @@
     "toolsCount": "Nessun strumento selezionato | 1 strumento selezionato | {count} strumenti selezionati",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "plugins": {
+    "browse": {
+      "completed": "Contenuto scaricato da {url}",
+      "error": "Errore durante il download dei contenuti",
+      "running": "Download dei contenuti…"
+    },
+    "image": {
+      "completed": "Immagine generata con successo",
+      "error": "Errore durante la generazione dell'immagine",
+      "running": "Painting pixels…"
+    },
+    "mcp": {
+      "completed": "Comando MCP \"{tool}\" eseguito con successo",
+      "error": "Errore durante l'esecuzione del comando MCP \"{tool}\"",
+      "running": "Esecuzione del comando MCP \"{tool}\"…",
+      "starting": "Inizializzazione del comando MCP \"{tool}\"…"
+    },
+    "memory": {
+      "error": "Errore durante l'accesso alla memoria a lungo termine",
+      "retrieved": "Trovati {count} fatti correlati nella memoria a lungo termine",
+      "retrieving": "Interrogazione della memoria a lungo termine…",
+      "starting": "Inizializzazione della memoria a lungo termine…",
+      "stored": "Memoria a lungo termine aggiornata con successo",
+      "storing": "Memorizzazione di fatti nella memoria a lungo termine…"
+    },
+    "python": {
+      "completed": "Codice Python eseguito con successo",
+      "error": "Errore durante l'esecuzione del codice Python",
+      "running": "Esecuzione del codice Python…"
+    },
+    "search": {
+      "completed": "Nessun risultato trovato per \"{query}\" | Trovato {count} risultato per \"{query}\" | Trovati {count} risultati per \"{query}\"",
+      "error": "Errore durante la ricerca su internet",
+      "running": "Ricerca su internet…"
+    },
+    "video": {
+      "completed": "Video generato con successo",
+      "error": "Errore durante la generazione del video",
+      "running": "Animazione dei fotogrammi…"
+    },
+    "youtube": {
+      "completed": "Trascrizione scaricata per \"{title}\"",
+      "error": "Errore durante il download della trascrizione video",
+      "running": "Download della trascrizione…"
+    }
   },
   "prompt": {
     "attachment": {

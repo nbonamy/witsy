@@ -5,6 +5,7 @@ import path from 'path'
 import glob from 'glob'
 import * as llm from 'multi-llm-ts'
 import { sortLocales } from './i18n_sort'
+import { minimatch } from 'minimatch'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -285,7 +286,7 @@ async function checkMissingTranslations() {
     for (const key of allKeys) {
       for (const locale in locales) {
         if (!keyExists(locales[locale], key)) {
-          if (!key.startsWith('plugins.') || locale === 'en') {
+          if (!minimatch(key, 'plugins.*.description') || locale === 'en') {
             missingTranslations[locale].push(key)
           }
         }

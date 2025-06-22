@@ -3,6 +3,7 @@ import { anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import { YoutubeTranscript } from 'youtube-transcript'
+import { t } from '../services/i18n'
 import ytv from 'ytv'
 
 export default class extends Plugin {
@@ -28,7 +29,15 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return 'Downloading transcript…'
+    return t('plugins.youtube.running')
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error || !results.content) {
+      return t('plugins.youtube.error')
+    } else {
+      return t('plugins.youtube.completed', { title: results.title })
+    }
   }
 
   getParameters(): PluginParameter[] {

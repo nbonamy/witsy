@@ -1,7 +1,7 @@
 
 import { anyDict } from '../types/index'
 import { store } from '../services/store'
-import { i18nInstructions } from '../services/i18n'
+import { i18nInstructions, t } from '../services/i18n'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import ImageCreator from '../services/image'
@@ -40,7 +40,15 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return `Painting pixels…`
+    return t('plugins.image.running')
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.image.error')
+    } else {
+      return t('plugins.image.completed', { engine: this.config.engine, model: this.config.model, prompt: args.prompt })
+    }
   }
 
   getParameters(): PluginParameter[] {
@@ -131,7 +139,11 @@ export default class extends Plugin {
   }
 
   execute(context: PluginExecutionContext, parameters: anyDict): Promise<any> {
-    return this.creator.execute(this.config.engine, this.config.model, parameters)
+    try {
+      return this.creator.execute(this.config.engine, this.config.model, parameters)
+    } catch (error) {
+      return Promise.resolve({ error: error })
+    }
   }
 
 }

@@ -1293,6 +1293,7 @@
     "edit": {
       "deleteChat": "Chat löschen",
       "deleteMedia": "Medium löschen",
+      "selectAll": "Alles auswählen",
       "startDictation": "Diktat starten",
       "title": "Bearbeiten"
     },
@@ -1309,9 +1310,6 @@
       "goToLogFolder": "Zum Protokollordner gehen",
       "learnMore": "Mehr erfahren",
       "title": "Hilfe"
-    },
-    "tray": {
-      "installUpdate": "menu.tray.installUpdate"
     },
     "view": {
       "debug": "Debug-Konsole öffnen",
@@ -1339,6 +1337,9 @@
         "response": "Antwort-Token: {completion}",
         "title": "Insgesamt Tokens: {total}"
       }
+    },
+    "content": {
+      "empty": "Leerer Inhalt"
     },
     "reasoning": {
       "active": "Denken",
@@ -1395,6 +1396,52 @@
     "toolsCount": "Kein Werkzeug ausgewählt | 1 Werkzeug ausgewählt | {count} Werkzeuge ausgewählt",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "plugins": {
+    "browse": {
+      "completed": "Inhalt von {url} heruntergeladen",
+      "error": "Fehler beim Herunterladen des Inhalts",
+      "running": "Inhalt wird heruntergeladen…"
+    },
+    "image": {
+      "completed": "Bild erfolgreich generiert",
+      "error": "Fehler beim Generieren des Bildes",
+      "running": "Pixel werden gemalt…"
+    },
+    "mcp": {
+      "completed": "MCP-Befehl \"{tool}\" erfolgreich ausgeführt",
+      "error": "Fehler beim Ausführen des MCP-Befehls \"{tool}\"",
+      "running": "MCP-Befehl \"{tool}\" wird ausgeführt…",
+      "starting": "MCP-Befehl \"{tool}\" wird initialisiert…"
+    },
+    "memory": {
+      "error": "Fehler beim Zugriff auf das Langzeitgedächtnis",
+      "retrieved": "{count} verwandte Fakten im Langzeitgedächtnis gefunden",
+      "retrieving": "Langzeitgedächtnis wird abgefragt…",
+      "starting": "Langzeitgedächtnis wird initialisiert…",
+      "stored": "Langzeitgedächtnis erfolgreich aktualisiert",
+      "storing": "Fakten im Langzeitgedächtnis werden gespeichert…"
+    },
+    "python": {
+      "completed": "Python-Code erfolgreich ausgeführt",
+      "error": "Fehler beim Ausführen des Python-Codes",
+      "running": "Python-Code wird ausgeführt…"
+    },
+    "search": {
+      "completed": "Keine Ergebnisse für \"{query}\" gefunden | {count} Ergebnis für \"{query}\" gefunden | {count} Ergebnisse für \"{query}\" gefunden",
+      "error": "Fehler bei der Internetsuche",
+      "running": "Im Internet wird gesucht…"
+    },
+    "video": {
+      "completed": "Video erfolgreich generiert",
+      "error": "Fehler beim Generieren des Videos",
+      "running": "Frames werden animiert…"
+    },
+    "youtube": {
+      "completed": "Transkript für \"{title}\" heruntergeladen",
+      "error": "Fehler beim Herunterladen des Video-Transkripts",
+      "running": "Transkript wird heruntergeladen…"
+    }
   },
   "prompt": {
     "attachment": {

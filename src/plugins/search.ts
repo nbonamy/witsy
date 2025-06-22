@@ -4,6 +4,7 @@ import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import Tavily from '../vendor/tavily'
 import { convert } from 'html-to-text'
+import { t } from '../services/i18n'
 
 export default class extends Plugin {
 
@@ -32,9 +33,17 @@ export default class extends Plugin {
   }
 
   getRunningDescription(): string {
-    return `Searching the internet…`
+    return t('plugins.search.running')
   }
 
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.search.error')
+    } else {
+      return t('plugins.search.completed', { count: results.results.length, query: args.query })
+    }
+  }
+  
   getParameters(): PluginParameter[] {
     return [
       {
