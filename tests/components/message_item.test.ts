@@ -127,7 +127,7 @@ test('Assistant text message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(true)
-  expect(wrapper.find('.actions .tools').exists()).toBe(true)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
 
 test('Assistant legacy image message', async () => {
@@ -148,7 +148,7 @@ test('Assistant legacy image message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(true)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
 
 test('Assistant image markdown message', async () => {
@@ -169,7 +169,7 @@ test('Assistant image markdown message', async () => {
   expect(wrapper.find('.actions .fork').exists()).toBe(true)
   expect(wrapper.find('.actions .edit').exists()).toBe(false)
   expect(wrapper.find('.actions .usage').exists()).toBe(false)
-  expect(wrapper.find('.actions .tools').exists()).toBe(true)
+  expect(wrapper.find('.actions .tools').exists()).toBe(false)
 })
 
 test('Assistant image html message', async () => {
