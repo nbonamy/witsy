@@ -34,7 +34,7 @@
     },
     "chat": {
       "showReasoning": true,
-      "showToolCalls": "calling",
+      "showToolCalls": "always",
       "theme": "openai",
       "fontFamily": "",
       "fontSize": 3
