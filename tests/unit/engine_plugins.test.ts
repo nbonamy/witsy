@@ -79,6 +79,16 @@ vi.mock('youtube-transcript', async () => {
   } }
 })
 
+// youtube transcript
+vi.mock('youtube-transcript-api', async () => {
+  const TranscriptClient = vi.fn()
+  TranscriptClient.prototype.ready = true
+  TranscriptClient.prototype.getTranscript = vi.fn(() => ({
+    tracks: [ { transcript: [ { text: 'line1' } ] } ],
+  }))
+  return { default: TranscriptClient }
+})
+
 // youtube info
 vi.mock('ytv', async () => {
   return { default: {

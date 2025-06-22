@@ -2,7 +2,8 @@
 import { anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
-import { YoutubeTranscript } from 'youtube-transcript'
+// import { YoutubeTranscript } from 'youtube-transcript'
+import TranscriptClient from 'youtube-transcript-api'
 import { t } from '../services/i18n'
 import ytv from 'ytv'
 
@@ -36,7 +37,7 @@ export default class extends Plugin {
     if (results.error || !results.content) {
       return t('plugins.youtube.error')
     } else {
-      return t('plugins.youtube.completed', { title: results.title })
+      return t('plugins.youtube.completed', { title: results.title || 'video' })
     }
   }
 
@@ -55,12 +56,23 @@ export default class extends Plugin {
 
     try {
       const info = await ytv.get_info(parameters.url)
-      const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
+
+      // const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
+
+      // extract id from "https://www.youtube.com/watch?v=TE1EMFcFuJ4&t=468"
+
+      const client = new TranscriptClient()
+      await client.ready
+      const id = this.extractVideoId(parameters.url)
+      const transcripts = await client.getTranscript(id)
+      const transcript = transcripts.tracks[0].transcript
+
       return {
         title: info.title,
         channel: info.channel_name,
         content: transcript.map((line: any) => line.text).join(' ')
       }
+
     } catch (error) {
       console.error(error)
       return { error: error }
@@ -68,4 +80,13 @@ export default class extends Plugin {
 
   }  
 
+  private extractVideoId(videoId: string) {
+    if (videoId.length === 11)  return videoId
+    const regex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i;
+    const matchId = videoId.match(regex)
+    if (matchId && matchId.length) {
+      return matchId[1]
+    }
+    return null
+  }
 }
