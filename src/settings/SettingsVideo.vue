@@ -19,7 +19,8 @@
 
     <div class="group">
       <label>{{ t('settings.engines.apiKey') }}</label>
-      <InputObfuscated v-model="apiKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
     </div>
     <div class="group">
       <label>{{ t('settings.plugins.video.videoModel') }}</label>
@@ -55,26 +56,6 @@ const refreshLabel = ref(t('common.refresh'))
 
 const engines = computed(() => VideoCreator.getEngines(false))
 const models = computed(() => store.config.engines[engine.value]?.models?.video || [])
-
-const apiKey = computed({
-
-  get() {
-    if (engine.value === 'replicate') {
-      return replicateAPIKey.value
-    } else if (engine.value === 'falai') {
-      return falaiAPIKey.value
-    }
-    return null
-  },
-  set(value) {
-    if (engine.value === 'replicate') {
-      replicateAPIKey.value = value
-    } else if (engine.value === 'falai') {
-      falaiAPIKey.value = value
-    }
-  }
-
-})
 
 const load = () => {
   enabled.value = store.config.plugins.video.enabled || false
