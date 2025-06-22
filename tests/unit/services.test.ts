@@ -35,6 +35,19 @@ global.fetch = async (url: string) => {
 
 }
 
+vi.mock('@huggingface/hub', () => {
+  return {
+    listModels: vi.fn((async (args: any) => {
+      return [
+        { name: `${args.search.task}/model1` },
+        { name: `${args.search.task}/model2` },
+      ]
+    }))
+  }
+
+})
+
+
 beforeEach(() => {
   vi.resetAllMocks()
   store.config = {
@@ -85,10 +98,22 @@ test('Load Fal.ai Models Error', async () => {
 test('Load HuggingFace Models', async () => {
   const huggingface = new HuggingFace(store.config)
   expect(await huggingface.loadModels()).toBe(true)
-  expect(store.config.engines.huggingface.models.image.length).toBeGreaterThan(0)
-  expect(store.config.engines.huggingface.models.imageEdit).toHaveLength(0)
-  expect(store.config.engines.huggingface.models.video).toHaveLength(0)
-  expect(store.config.engines.huggingface.models.videoEdit).toHaveLength(0)
+  expect(store.config.engines.huggingface.models.image).toStrictEqual([
+    { id: 'text-to-image/model1', name: 'text-to-image/model1' },
+    { id: 'text-to-image/model2', name: 'text-to-image/model2' },
+  ])
+  expect(store.config.engines.huggingface.models.imageEdit).toStrictEqual([
+    { id: 'image-to-image/model1', name: 'image-to-image/model1' },
+    { id: 'image-to-image/model2', name: 'image-to-image/model2' },
+  ])
+  expect(store.config.engines.huggingface.models.video).toStrictEqual([
+    { id: 'text-to-video/model1', name: 'text-to-video/model1' },
+    { id: 'text-to-video/model2', name: 'text-to-video/model2' },
+  ])
+  expect(store.config.engines.huggingface.models.videoEdit).toStrictEqual([
+    // { id: 'video-to-video/model1', name: 'video-to-video/model1' },
+    // { id: 'video-to-video/model2', name: 'video-to-video/model2' },
+  ])
 })
 
 test('Load Replicate Models', async () => {

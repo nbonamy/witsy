@@ -1846,6 +1846,9 @@
       },
       "video": {
         "description": "This plugin allows LLM engines to create videos from a text description.",
+        "falai": {
+          "aboutModels": "More about fal.ai models"
+        },
         "provider": "Provider",
         "replicate": {
           "aboutModels": "More about Replicate models"

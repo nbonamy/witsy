@@ -1840,6 +1840,9 @@
       },
       "video": {
         "description": "此插件允许 LLM 引擎根据文本描述创建视频。",
+        "falai": {
+          "aboutModels": "关于fal.ai模型的更多信息"
+        },
         "provider": "提供者",
         "replicate": {
           "aboutModels": "了解更多关于 Replicate 模型的信息"

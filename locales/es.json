@@ -1818,6 +1818,9 @@
       },
       "video": {
         "description": "Este complemento permite que los motores LLM creen videos a partir de una descripción de texto.",
+        "falai": {
+          "aboutModels": "Más sobre los modelos de fal.ai"
+        },
         "provider": "Proveedor",
         "replicate": {
           "aboutModels": "Más sobre los modelos de Replicate"

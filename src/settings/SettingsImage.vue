@@ -1,12 +1,15 @@
 <template>
   <div>
+
     <div class="description">
       {{ t('settings.plugins.image.description') }}
     </div>
+
     <div class="group horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
+
     <div class="group">
       <label>{{ t('settings.plugins.image.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
@@ -19,8 +22,8 @@
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="subgroup">
           <div class="control-group">
-            <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
-              <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
+            <select v-model="model" :disabled="models.length == 0" @change="save">
+              <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
               </option>
             </select>
             <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
@@ -30,55 +33,7 @@
       </div>
     </template>
 
-    <template v-if="engine == 'replicate'">
-      <div class="group">
-        <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="replicateAPIKey" @blur="save" />
-      </div>
-      <div class="group">
-        <label>{{ t('settings.plugins.image.imageModel') }}</label>
-        <div class="subgroup">
-          <Combobox :items="replicate_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-          </Combobox>
-          <a href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a><br/>
-        </div>
-      </div>
-    </template>
-
-    <template v-if="engine == 'falai'">
-      <div class="group">
-        <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="falaiAPIKey" @blur="save" />
-      </div>
-      <div class="group">
-        <label>{{ t('settings.plugins.image.imageModel') }}</label>
-        <div class="subgroup">
-          <Combobox :items="falai_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-          </Combobox>
-          <a href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a><br/>
-        </div>
-      </div>
-    </template>
-
-    <template v-if="engine == 'huggingface'">
-      <div class="group">
-        <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="huggingAPIKey" @blur="save" />
-      </div>
-      <div class="group">
-        <label>{{ t('settings.plugins.image.imageModel') }}</label>
-        <div class="subgroup">
-          <Combobox :items="hf_models" :placeholder="t('common.modelPlaceholder')" v-model="image_model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-          </Combobox>
-          <a href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a><br/>
-        </div>
-      </div>
-    </template>
-
-    <template v-if="engine == 'sdwebui'">
+    <template v-else-if="engine == 'sdwebui'">
       <div class="group">
         <label>{{ t('settings.engines.sdwebui.baseURL') }}</label>
         <div class="subgroup">
@@ -89,11 +44,29 @@
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="control-group">
-          <select v-model="image_model" :disabled="image_models.length == 0" @change="save">
-            <option v-for="model in image_models" :key="model.id" :value="model.id">{{ model.name }}
+          <select v-model="model" :disabled="models.length == 0" @change="save">
+            <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
             </option>
           </select>
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+        </div>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="group">
+        <label>{{ t('settings.engines.apiKey') }}</label>
+        <InputObfuscated v-model="apiKey" @blur="save" />
+      </div>
+      <div class="group">
+        <label>{{ t('settings.plugins.image.imageModel') }}</label>
+        <div class="subgroup">
+          <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
+            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          </Combobox>
+          <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a>
+          <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
+          <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
         </div>
       </div>
     </template>
@@ -110,27 +83,48 @@ import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
-import Falai from '../services/falai'
-import Replicate from '../services/replicate'
-import HuggingFace from '../services/huggingface'
-import SDWebUI, { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
+import ModelLoaderFactory from '../services/model_loader'
 
 const enabled = ref(false)
 const engine = ref(null)
+const model = ref(null)
 const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const sdwebuiBaseURL = ref('')
 const refreshLabel = ref(t('common.refresh'))
-const image_model = ref(null)
-const image_models = ref([])
 
 const engines = computed(() => ImageCreator.getEngines(false))
+const models = computed(() => store.config.engines[engine.value]?.models?.image || [])
 
-const hf_models = computed(() => store.config.engines.huggingface?.models?.image || [])
-const falai_models = computed(() => store.config.engines.falai?.models?.image || [])
-const replicate_models = computed(() => store.config.engines.replicate?.models?.image || [])
+const apiKey = computed({
+
+  get() {
+    if (engine.value === 'huggingface') {
+      return huggingAPIKey.value
+    } else if (engine.value === 'replicate') {
+      return replicateAPIKey.value
+    } else if (engine.value === 'falai') {
+      return falaiAPIKey.value
+    } else if (engine.value === 'sdwebui') {
+      return sdwebuiBaseURL.value
+    }
+    return null
+  },
+  set(value) {
+    if (engine.value === 'huggingface') {
+      huggingAPIKey.value = value
+    } else if (engine.value === 'replicate') {
+      replicateAPIKey.value = value
+    } else if (engine.value === 'falai') {
+      falaiAPIKey.value = value
+    } else if (engine.value === 'sdwebui') {
+      sdwebuiBaseURL.value = value
+    }
+  }
+
+})
 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
@@ -139,12 +133,11 @@ const load = () => {
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   sdwebuiBaseURL.value = store.config.engines.sdwebui?.baseURL || ''
-  onChangeEngine()
+  model.value = store.config.plugins.image.model || null
 }
 
 const onChangeEngine = () => {
-  image_models.value = store.config.engines[engine.value]?.models?.image || []
-  image_model.value = store.config.plugins.image.model || image_models.value[0]?.id || null
+  model.value = models.value[0]?.id || ''
   save()
 }
 
@@ -160,59 +153,13 @@ const setEphemeralRefreshLabel = (text: string) => {
 
 const getModels = async () => {
 
-  // openai
-  if (engine.value === 'openai' || engine.value === 'google' || engine.value === 'xai') {
-    const llmManager = LlmFactory.manager(store.config)
-    let success = await llmManager.loadModels(engine.value)
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
-  }
-
-  // replicate
-  if (engine.value === 'replicate') {
-    const replicate = new Replicate(store.config)
-    let success = await replicate.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
-  }
-
-  // falai
-  if (engine.value === 'falai') {
-    const falai = new Falai(store.config)
-    let success = await falai.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
-  }
-
-  // huggingface
-  if (engine.value === 'huggingface') {
-    const huggingface = new HuggingFace(store.config)
-    let success = await huggingface.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
-  }
-
-  // sdwebui
-  if (engine.value == 'sdwebui') {
-    const sdwebui = new SDWebUI(store.config)
-    let success = await sdwebui.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
+  // do it
+  let loader = ModelLoaderFactory.create(store.config, engine.value)
+  let success = await loader.loadModels()
+  if (!success) {
+    Dialog.alert(t('common.errorModelRefresh'))
+    setEphemeralRefreshLabel(t('common.error'))
+    return
   }
 
   // reload
@@ -226,10 +173,10 @@ const getModels = async () => {
 const save = () => {
   store.config.plugins.image.enabled = enabled.value
   store.config.plugins.image.engine = engine.value
-  store.config.plugins.image.model = image_model.value
+  store.config.plugins.image.model = model.value
+  store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.huggingface.apiKey = huggingAPIKey.value
   store.config.engines.replicate.apiKey = replicateAPIKey.value
-  store.config.engines.falai.apiKey = falaiAPIKey.value
   store.config.engines.sdwebui.baseURL = sdwebuiBaseURL.value
   store.saveSettings()
 }

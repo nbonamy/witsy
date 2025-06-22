@@ -1818,6 +1818,9 @@
       },
       "video": {
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Videos aus einer Textbeschreibung zu erstellen.",
+        "falai": {
+          "aboutModels": "Mehr über fal.ai-Modelle"
+        },
         "provider": "Anbieter",
         "replicate": {
           "aboutModels": "Mehr über Replicate-Modelle"

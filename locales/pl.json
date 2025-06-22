@@ -1846,6 +1846,9 @@
       },
       "video": {
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie filmów na podstawie opisu tekstowego.",
+        "falai": {
+          "aboutModels": "Więcej o modelach fal.ai"
+        },
         "provider": "Dostawca",
         "replicate": {
           "aboutModels": "Więcej informacji o powielaniu modeli"
