@@ -56,7 +56,9 @@
     <template v-else>
       <div class="group">
         <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="apiKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'huggingface'" v-model="huggingAPIKey" @blur="save" />
+        <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
       </div>
       <div class="group">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
@@ -64,9 +66,9 @@
           <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
             <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
           </Combobox>
-          <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a>
           <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
           <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
+          <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-image" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels') }}</a>
         </div>
       </div>
     </template>
@@ -97,34 +99,6 @@ const refreshLabel = ref(t('common.refresh'))
 
 const engines = computed(() => ImageCreator.getEngines(false))
 const models = computed(() => store.config.engines[engine.value]?.models?.image || [])
-
-const apiKey = computed({
-
-  get() {
-    if (engine.value === 'huggingface') {
-      return huggingAPIKey.value
-    } else if (engine.value === 'replicate') {
-      return replicateAPIKey.value
-    } else if (engine.value === 'falai') {
-      return falaiAPIKey.value
-    } else if (engine.value === 'sdwebui') {
-      return sdwebuiBaseURL.value
-    }
-    return null
-  },
-  set(value) {
-    if (engine.value === 'huggingface') {
-      huggingAPIKey.value = value
-    } else if (engine.value === 'replicate') {
-      replicateAPIKey.value = value
-    } else if (engine.value === 'falai') {
-      falaiAPIKey.value = value
-    } else if (engine.value === 'sdwebui') {
-      sdwebuiBaseURL.value = value
-    }
-  }
-
-})
 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
