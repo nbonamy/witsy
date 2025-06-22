@@ -224,7 +224,7 @@ test('Settings Chat', async () => {
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 
-  expect(store.config.appearance.chat.showToolCalls).toBe('calling')
+  expect(store.config.appearance.chat.showToolCalls).toBe('always')
   tab.find('.group.tools select').setValue('never')
   expect(store.config.appearance.chat.showToolCalls).toBe('never')
   expect(store.saveSettings).toHaveBeenCalledOnce()
