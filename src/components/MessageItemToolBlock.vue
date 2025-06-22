@@ -13,6 +13,10 @@
         {{ t('message.toolCall.params') }}
       </div>
       <div class="tool-values-list">
+        <div class="tool-value">
+          <div class="value-key">tool</div>
+          <div class="value-value">{{ toolCall.name }}</div>
+        </div>
         <div class="tool-value" v-for="(value, key) in toolCall.params" :key="key">
           <div class="value-key">{{ key }}</div>
           <div class="value-value">{{ value }}</div>
@@ -94,10 +98,12 @@ const toggleOpen = () => {
     display: flex;
     padding: 0.5rem 1rem;
     align-items: center;
+    
     .tool-name {
       flex: 1;
       font-weight: 600;
     }
+    
     .tool-loader {
       height: 1rem;
       display: flex;
@@ -108,6 +114,7 @@ const toggleOpen = () => {
         height: 0.375rem;
         background-color: var(--dimmed-text-color);
       }
+    
     }
   }
 
