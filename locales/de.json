@@ -1399,7 +1399,7 @@
   },
   "plugins": {
     "browse": {
-      "completed": "Inhalt von {url} heruntergeladen",
+      "completed": "Inhalt von \"{title}\" heruntergeladen",
       "error": "Fehler beim Herunterladen des Inhalts",
       "running": "Inhalt wird heruntergeladen…"
     },

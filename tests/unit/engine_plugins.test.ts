@@ -25,7 +25,7 @@ const context: PluginExecutionContext = {
 
 // @ts-expect-error mocking
 global.fetch = vi.fn(async () => ({
-  text: () => 'fetched_content',
+  text: () => '<html><head><title>title</title></head><body>fetched_content</body></html>',
   json: () => ({
     web: {
       results: [
@@ -366,13 +366,16 @@ test('Browse Plugin', async () => {
   expect(browse.getDescription()).not.toBeFalsy()
   expect(browse.getPreparationDescription()).toBe('plugins.browse.running')
   expect(browse.getRunningDescription()).toBe('plugins.browse.running')
-  expect(browse.getCompletedDescription('', { url: 'url' }, { content: 'content' })).toBe('plugins.browse.completed {"url":"url"}')
+  expect(browse.getCompletedDescription('', { url: 'url' }, { title: 'title', content: 'content' })).toBe('plugins.browse.completed {"title":"title"}')
   expect(browse.getCompletedDescription('', { url: 'url' }, { error: 'error' })).toBe('plugins.browse.error')
   expect(browse.getParameters()[0].name).toBe('url')
   expect(browse.getParameters()[0].type).toBe('string')
   expect(browse.getParameters()[0].description).not.toBeFalsy()
   expect(browse.getParameters()[0].required).toBe(true)
-  expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({ content: 'fetched_content' })
+  expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({
+    title: 'title',
+    content: 'fetched_content'
+  })
 })
 
 test('Search Plugin Local', async () => {
