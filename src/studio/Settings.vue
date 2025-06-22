@@ -207,9 +207,11 @@ const allowModelEntry = computed(() => {
 })
 
 const addCurrentModel = (models: Model[]): Model[] => {
-  const currentModel = models.find((m) => m.id === model.value)
-  if (!currentModel) {
-    models.unshift({ id: model.value, name: model.value })
+  if (model.value) {
+    const currentModel = models.find((m) => m.id === model.value)
+    if (!currentModel) {
+      models.unshift({ id: model.value, name: model.value })
+    }
   }
   return models
 }
