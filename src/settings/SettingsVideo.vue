@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -66,7 +66,8 @@ const load = () => {
   onChangeEngine()
 }
 
-const onChangeEngine = () => {
+const onChangeEngine = async () => {
+  await nextTick()
   model.value = models.value[0]?.id || ''
   save()
 }

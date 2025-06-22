@@ -2,11 +2,11 @@
 <template>
   <div v-if="showHelp" class="help">{{ t('common.comboBox.help') }}</div>
   <div class="control-group">
-    <div class="wrapper" :class="{ focused: focus }">
-      <select v-model="selected" :disabled="disabled" @change="onSelect">
+    <div class="wrapper" :class="{ focused: focused, opened: opened }">
+      <select v-model="selected" :disabled="disabled" @mousedown="onOpen" @change="onSelect">
         <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <input type="text" :name="name" v-model="value" :placeholder="placeholder" :disabled="disabled" :required="required" @change="onChange" @focus="onFocus" @blur="onBlur" />
+      <input type="text" :name="name" v-model="value" :placeholder="placeholder" :disabled="disabled" :required="required" @click.stop @change="onChange" @focus="onFocus" @blur="onBlur" />
     </div>
     <slot></slot>
   </div>
@@ -24,7 +24,8 @@ export type ComboBoxItem = {
 
 const emit = defineEmits(['blur', 'change']);
 
-const focus = ref(false)
+const focused = ref(false)
+const opened = ref(false)
 const value = defineModel()
 const selected = ref(null)
 
@@ -37,12 +38,17 @@ defineProps({
   name: { type: String, default: '' },
 })
 
+const onOpen = () => {
+  selected.value = value.value
+  opened.value = true
+}
+
 const onFocus = () => {
-  focus.value = true
+  focused.value = true
 }
 
 const onBlur = () => {
-  focus.value = false
+  focused.value = false
   emit('blur')
 }
 
@@ -51,6 +57,7 @@ const onChange = () => {
 }
 
 const onSelect = (event: Event) => {
+  opened.value = false
   value.value = (event.target as HTMLSelectElement).value
   selected.value = null
   emit('change')
@@ -90,6 +97,10 @@ form .group .wrapper {
     &:focus {
       outline: none !important;
     }
+  }
+
+  &.opened input {
+    visibility: hidden;
   }
 }
 
