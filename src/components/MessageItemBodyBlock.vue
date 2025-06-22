@@ -1,6 +1,7 @@
 <template>
   <div ref="messageItemBodyBlock">
-    <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size" ></div>
+    <div v-if="block.type == 'empty'" class="text empty variable-font-size"><p>{{ t('message.content.empty') }}</p></div>
+    <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
     <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
     <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
   </div>
@@ -14,9 +15,10 @@ import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
 import { store } from '../services/store'
+import { t } from '../services/i18n'
 
 export type Block = {
-  type: 'text'|'media'|'tool'
+  type: 'empty'|'text'|'media'|'tool'
   content?: string
   url?: string
   desc?: string

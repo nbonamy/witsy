@@ -17,6 +17,7 @@
   --window-bg-color: #e0e0e0;
   --text-color: #000;
   --dimmed-text-color: #444;
+  --faded-text-color: #666;
   --icon-color: #5b5b5b;
   --highlight-color: #0366eb;
   --highlighted-color: #fff;
@@ -162,7 +163,8 @@
     --background-color-light: #303030;
     --window-bg-color: var(--background-color-light);
     --text-color: #e0e0e0;
-    --dimmed-text-color: #808080;
+    --dimmed-text-color: #d0d0d0;
+    --faded-text-color: #c0c0c0;
     --icon-color: #9a9a9a;
     --highlight-color: rgb(11, 132, 255);
     --link-color: rgb(65, 156, 255);

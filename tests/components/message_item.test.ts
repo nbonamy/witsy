@@ -218,6 +218,10 @@ test('Assistant image message formats', async () => {
   expect(wrapper5.find('.body').text()).toBe('image: <img src="https://example.com/image.jpg" alt="description">')
   expect(wrapper5.find('.body img').exists()).toBe(false)
 
+})
+
+test('Assistant image message with HTML code', async () => {
+
   const wrapper6 = await mount(botMessageImageCode3)
   expect(wrapper6.find('.body').text()).toBe('image:\n<img src="https://example.com/image.jpg" alt="description">')
   expect(wrapper6.find('.body img').exists()).toBe(false)

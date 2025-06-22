@@ -53,12 +53,17 @@ const isThinking = computed(() => {
   return props.message.transient && props.message.reasoning?.length && !props.message.content?.length
 })
 
-const reasoningBlocks = computed(() => {
+const reasoningBlocks = computed((): Block[] => {
   return computeBlocks(props.message.reasoning)
 })
 
-const contentBlocks = computed(() => {
-  return computeBlocks(props.message.content)
+const contentBlocks = computed((): Block[] => {
+  const blocks = computeBlocks(props.message.content)
+  if (blocks.length === 0 && !props.message.transient) {
+    return [{ type: 'empty' }]
+  } else {
+    return blocks
+  }
 })
 
 const onToggleReasoning = () => {
@@ -98,43 +103,71 @@ const computeBlocks = (content: string|null): Block[] => {
 
   // now get the code blocks
   const codeBlocks: { start: number, end: number }[] = getCodeBlocks(content)
-  //console.log('Code blocks:', codeBlocks)
 
   // extract each special tags in a separate block
-  let match: RegExpExecArray | null
   let lastIndex = 0
   const blocks: Block[] = []
   const regexMedia1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
   const regexTool1 = /<tool index="(\d*)"><\/tool>/g
-  for (const regex of [ regexTool1, regexMedia1, regexMedia2 ]) {
-  
-    while (match = regex.exec(content)) {
 
-      // check if we are inside a code block
-      if (codeBlocks.find(block => match.index >= block.start && match.index < block.end)) {
-        continue
+  while (lastIndex < content.length) {
+    
+    // Find the next match for each regex from current position
+    const matches = []
+    
+    // Reset regex lastIndex to search from current position
+    regexTool1.lastIndex = lastIndex
+    regexMedia1.lastIndex = lastIndex
+    regexMedia2.lastIndex = lastIndex
+    
+    const toolMatch = regexTool1.exec(content)
+    const media1Match = regexMedia1.exec(content)
+    const media2Match = regexMedia2.exec(content)
+    
+    // Collect valid matches (not inside code blocks)
+    if (toolMatch && !codeBlocks.find(block => toolMatch.index >= block.start && toolMatch.index < block.end)) {
+      matches.push({ match: toolMatch, type: 'tool', regex: regexTool1 })
+    }
+    if (media1Match && !codeBlocks.find(block => media1Match.index >= block.start && media1Match.index < block.end)) {
+      matches.push({ match: media1Match, type: 'media1', regex: regexMedia1 })
+    }
+    if (media2Match && !codeBlocks.find(block => media2Match.index >= block.start && media2Match.index < block.end)) {
+      matches.push({ match: media2Match, type: 'media2', regex: regexMedia2 })
+    }
+    
+    // If no matches found, add remaining content as text and break
+    if (matches.length === 0) {
+      if (lastIndex < content.length) {
+        blocks.push({ type: 'text', content: content.substring(lastIndex) })
       }
-
-      // 1st add test until here
-      if (match.index > lastIndex) {
-        blocks.push({ type: 'text', content: content.substring(lastIndex, match.index) })
-      }
-
-      // tool
-      if ([regexTool1].includes(regex)) {
-        if (props.showToolCalls === 'always' && props.message.toolCalls.length) {
-          const index = parseInt(match[1])
-          const toolCall = props.message.toolCalls[index]
-          if (toolCall && toolCall.done) {
-            blocks.push({ type: 'tool', toolCall: toolCall })
-          }
+      break
+    }
+    
+    // Find the match with the lowest index (earliest in the string)
+    const nextMatch = matches.reduce((earliest, current) => 
+      current.match.index < earliest.match.index ? current : earliest
+    )
+    
+    const match = nextMatch.match
+    const matchType = nextMatch.type
+    
+    // Add text content before this match
+    if (match.index > lastIndex) {
+      blocks.push({ type: 'text', content: content.substring(lastIndex, match.index) })
+    }
+    
+    // Process the match based on its type
+    if (matchType === 'tool') {
+      if (props.showToolCalls === 'always' && props.message.toolCalls.length) {
+        const index = parseInt(match[1])
+        const toolCall = props.message.toolCalls[index]
+        if (toolCall && toolCall.done) {
+          blocks.push({ type: 'tool', toolCall: toolCall })
         }
-        lastIndex = regex.lastIndex
-        continue
       }
-
-      // now media
+    } else if (matchType === 'media1' || matchType === 'media2') {
+      // Process media (both types)
       let imageUrl = decodeURIComponent(match[match.length - 1])
       if (!imageUrl.startsWith('http') && !imageUrl.startsWith('file://') && !imageUrl.startsWith('data:image/')) {
         imageUrl = `file://${imageUrl}`
@@ -155,23 +188,15 @@ const computeBlocks = (content: string|null): Block[] => {
       // done
       const desc = match.length === 3 ? match[1] : 'Video'
       blocks.push({ type: 'media', url: imageUrl, desc, prompt })
-
-      // continue
-      lastIndex = regex.lastIndex
-
     }
-  
-  }
-
-  // add last block
-  if (lastIndex != content.length) {
-    blocks.push({ type: 'text', content: content.substring(lastIndex) })
+    
+    // Update lastIndex to continue after this match
+    // This is the key fix - use the end position of the selected match
+    lastIndex = match.index + match[0].length
   }
 
   // done
-  //console.log(blocks)
   return blocks
-
 }
 
 </script>

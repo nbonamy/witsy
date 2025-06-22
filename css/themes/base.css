@@ -77,6 +77,11 @@
   display: none;
 }
 
+.message .body .empty {
+  font-style: italic;
+  color: var(--faded-text-color);
+}
+
 .message .body strong {
   font-weight: 550;
 }
