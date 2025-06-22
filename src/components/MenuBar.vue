@@ -116,7 +116,7 @@ const onAppMenu = (event: Event) => {
         children: [
           { label: t('menu.app.about'), onClick: () => window.api.showAbout() },
           ...(window.api.update.isAvailable() ?
-            [{ label: t('menu.tray.installUpdate'), onClick: () => window.api.update.apply() }] :
+            [{ label: t('tray.menu.installUpdate'), onClick: () => window.api.update.apply() }] :
             [{ label: t('menu.app.checkForUpdates'), onClick: () => window.api.update.check() }]
           ),
           { label: t('menu.file.closeWindow'), divided: 'up', onClick: () => window.api.main.close() },
