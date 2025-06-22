@@ -102,9 +102,10 @@ test('Params and result rendering', async () => {
   expect(wrapper.find('.tool-params').exists()).toBe(true)
   expect(wrapper.find('.tool-result').exists()).toBe(true)
 
-  expect(wrapper.findAll('.tool-params .tool-value')).toHaveLength(2)
-  expect(wrapper.find('.tool-params .tool-value:nth-of-type(1)').text()).toBe('key1value1')
-  expect(wrapper.find('.tool-params .tool-value:nth-of-type(2)').text()).toBe('key2value2')
+  expect(wrapper.findAll('.tool-params .tool-value')).toHaveLength(3)
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(1)').text()).toBe('tooltool3')
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(2)').text()).toBe('key1value1')
+  expect(wrapper.find('.tool-params .tool-value:nth-of-type(3)').text()).toBe('key2value2')
 
   expect(wrapper.findAll('.tool-result .tool-value')).toHaveLength(1)
   expect(wrapper.find('.tool-result .tool-value:nth-of-type(1)').text()).toBe('resultresponse')
