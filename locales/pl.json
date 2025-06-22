@@ -1312,6 +1312,7 @@
     "edit": {
       "deleteChat": "Usuń czat",
       "deleteMedia": "Usuń nośnik",
+      "selectAll": "Zaznacz wszystko",
       "startDictation": "Rozpocznij dyktowanie",
       "title": "Edytuj"
     },
@@ -1328,9 +1329,6 @@
       "goToLogFolder": "Przejdź do folderu dziennika",
       "learnMore": "Dowiedz się więcej",
       "title": "Pomoc"
-    },
-    "tray": {
-      "installUpdate": "zainstaluj aktualizację"
     },
     "view": {
       "debug": "Otwórz konsolę debugowania",
@@ -1358,6 +1356,9 @@
         "response": "Tokeny odpowiedzi: {uzupełnienie}",
         "title": "Łączna liczba żetonów: {łącznie}"
       }
+    },
+    "content": {
+      "empty": "Pusty zawartość"
     },
     "reasoning": {
       "active": "Myślenie",
@@ -1416,14 +1417,52 @@
     "topP": "Top P"
   },
   "plugins": {
+    "browse": {
+      "completed": "Zawartość pobrana z {url}",
+      "error": "Błąd podczas pobierania zawartości",
+      "running": "Pobieranie zawartości…"
+    },
     "image": {
-      "description": "Generuje obrazy przy użyciu modeli uczenia maszynowego"
+      "completed": "Obraz został pomyślnie wygenerowany",
+      "description": "Generuje obrazy przy użyciu modeli uczenia maszynowego",
+      "error": "Błąd podczas generowania obrazu",
+      "running": "Malowanie pikseli…"
+    },
+    "mcp": {
+      "completed": "Polecenie MCP \"{tool}\" zostało pomyślnie wykonane",
+      "error": "Błąd podczas wykonywania polecenia MCP \"{tool}\"",
+      "running": "Wykonywanie polecenia MCP \"{tool}\"…",
+      "starting": "Inicjowanie polecenia MCP \"{tool}\"…"
     },
     "memory": {
-      "description": "Przechowuje informacje w pamięci, aby były dostępne w przyszłych konwersacjach"
+      "description": "Przechowuje informacje w pamięci, aby były dostępne w przyszłych konwersacjach",
+      "error": "Błąd podczas dostępu do pamięci długoterminowej",
+      "retrieved": "Znaleziono {count} związanych faktów w pamięci długoterminowej",
+      "retrieving": "Zapytanie pamięci długoterminowej…",
+      "starting": "Inicjowanie pamięci długoterminowej…",
+      "stored": "Pamięć długoterminowa została pomyślnie zaktualizowana",
+      "storing": "Zapisywanie faktów w pamięci długoterminowej…"
+    },
+    "python": {
+      "completed": "Kod Python został pomyślnie wykonany",
+      "error": "Błąd podczas wykonywania kodu Python",
+      "running": "Wykonywanie kodu Python…"
+    },
+    "search": {
+      "completed": "Nie znaleziono wyników dla \"{query}\" | Znaleziono {count} wynik dla \"{query}\" | Znaleziono {count} wyniki dla \"{query}\"",
+      "error": "Błąd podczas przeszukiwania internetu",
+      "running": "Przeszukiwanie internetu…"
     },
     "video": {
-      "description": "Generuje wideo przy użyciu modeli uczenia maszynowego"
+      "completed": "Wideo zostało pomyślnie wygenerowane",
+      "description": "Generuje wideo przy użyciu modeli uczenia maszynowego",
+      "error": "Błąd podczas generowania wideo",
+      "running": "Animowanie klatek…"
+    },
+    "youtube": {
+      "completed": "Transkrypcja pobrana dla \"{title}\"",
+      "error": "Błąd podczas pobierania transkrypcji wideo",
+      "running": "Pobieranie transkrypcji…"
     }
   },
   "prompt": {

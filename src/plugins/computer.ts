@@ -2,6 +2,7 @@
 import { ComputerAction, anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
+import { t } from '../services/i18n'
 
 export default class extends Plugin {
 

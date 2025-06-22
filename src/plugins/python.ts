@@ -2,6 +2,7 @@
 import { anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
+import { t } from '../services/i18n'
 
 export default class extends Plugin {
 
@@ -26,7 +27,15 @@ export default class extends Plugin {
   }
       
   getRunningDescription(): string {
-    return 'Executing code…'
+    return t('plugins.python.running')
+  }
+
+  getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+    if (results.error) {
+      return t('plugins.python.error', { error: results.error })
+    } else {
+      return t('plugins.python.completed', { result: results.result })
+    }
   }
 
   getParameters(): PluginParameter[] {
