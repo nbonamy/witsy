@@ -59,8 +59,6 @@ export default class extends Plugin {
 
       // const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
 
-      // extract id from "https://www.youtube.com/watch?v=TE1EMFcFuJ4&t=468"
-
       const client = new TranscriptClient()
       await client.ready
       const id = this.extractVideoId(parameters.url)
@@ -68,8 +66,8 @@ export default class extends Plugin {
       const transcript = transcripts.tracks[0].transcript
 
       return {
-        title: info.title,
-        channel: info.channel_name,
+        title: info.title || transcripts.title,
+        channel: info.channel_name || transcripts.author,
         content: transcript.map((line: any) => line.text).join(' ')
       }
 
