@@ -1,12 +1,15 @@
 <template>
   <div>
+    
     <div class="description">
       {{ t('settings.plugins.video.description') }}
     </div>
+    
     <div class="group horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
+    
     <div class="group">
       <label>{{ t('settings.plugins.video.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
@@ -14,37 +17,20 @@
       </select>
     </div>
 
-    <template v-if="engine == 'replicate'">
-      <div class="group">
-        <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="replicateAPIKey" @blur="save" />
+    <div class="group">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="apiKey" @blur="save" />
+    </div>
+    <div class="group">
+      <label>{{ t('settings.plugins.video.videoModel') }}</label>
+      <div class="subgroup">
+        <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
+          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+        </Combobox>
+        <a v-if="engine === 'replicate'" href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.video.replicate.aboutModels') }}</a>
+        <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.video.falai.aboutModels') }}</a>
       </div>
-      <div class="group">
-        <label>{{ t('settings.plugins.video.videoModel') }}</label>
-        <div class="subgroup">
-          <Combobox :items="replicate_models" :placeholder="t('common.modelPlaceholder')" v-model="video_model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-          </Combobox>
-          <a href="https://replicate.com/collections/text-to-video" target="_blank">{{ t('settings.plugins.video.replicate.aboutModels') }}</a><br/>
-        </div>
-      </div>
-    </template>
-    
-    <template v-if="engine == 'falai'">
-      <div class="group">
-        <label>{{ t('settings.engines.apiKey') }}</label>
-        <InputObfuscated v-model="falaiAPIKey" @blur="save" />
-      </div>
-      <div class="group">
-        <label>{{ t('settings.plugins.video.videoModel') }}</label>
-        <div class="subgroup">
-          <Combobox :items="falai_models" :placeholder="t('common.modelPlaceholder')" v-model="video_model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
-          </Combobox>
-          <a href="https://fal.ai/models?categories=text-to-video" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a><br/>
-        </div>
-      </div>
-    </template>
+    </div>
 
   </div>
 </template>
@@ -58,30 +44,49 @@ import Dialog from '../composables/dialog'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import VideoCreator from '../services/video'
-import Falai from '../services/falai'
-import Replicate from '../services/replicate'
+import ModelLoaderFactory from '../services/model_loader'
 
 const enabled = ref(false)
 const engine = ref(null)
+const model = ref(null)
 const replicateAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const refreshLabel = ref(t('common.refresh'))
-const video_model = ref(null)
 
 const engines = computed(() => VideoCreator.getEngines(false))
-const replicate_models = computed(() => store.config.engines.replicate?.models?.video || [])
-const falai_models = computed(() => store.config.engines.falai?.models?.video || [])
+const models = computed(() => store.config.engines[engine.value]?.models?.video || [])
+
+const apiKey = computed({
+
+  get() {
+    if (engine.value === 'replicate') {
+      return replicateAPIKey.value
+    } else if (engine.value === 'falai') {
+      return falaiAPIKey.value
+    }
+    return null
+  },
+  set(value) {
+    if (engine.value === 'replicate') {
+      replicateAPIKey.value = value
+    } else if (engine.value === 'falai') {
+      falaiAPIKey.value = value
+    }
+  }
+
+})
 
 const load = () => {
   enabled.value = store.config.plugins.video.enabled || false
   engine.value = store.config.plugins.video.engine || 'replicate'
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
+  model.value = store.config.plugins.video.model || ''
   onChangeEngine()
 }
 
 const onChangeEngine = () => {
-  video_model.value = store.config.plugins.video.model || ''
+  model.value = models.value[0]?.id || ''
   save()
 }
 
@@ -97,26 +102,13 @@ const setEphemeralRefreshLabel = (text: string) => {
 
 const getModels = async () => {
 
-  // replicate
-  if (engine.value === 'replicate') {
-    const replicate = new Replicate(store.config)
-    let success = await replicate.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
-  }
-
-  // falai
-  if (engine.value === 'falai') {
-    const falai = new Falai(store.config)
-    let success = await falai.loadModels()
-    if (!success) {
-      Dialog.alert(t('common.errorModelRefresh'))
-      setEphemeralRefreshLabel(t('common.error'))
-      return
-    }
+  // do it
+  let loader = ModelLoaderFactory.create(store.config, engine.value)
+  let success = await loader.loadModels()
+  if (!success) {
+    Dialog.alert(t('common.errorModelRefresh'))
+    setEphemeralRefreshLabel(t('common.error'))
+    return
   }
 
   // reload
@@ -130,7 +122,7 @@ const getModels = async () => {
 const save = () => {
   store.config.plugins.video.enabled = enabled.value
   store.config.plugins.video.engine = engine.value
-  store.config.plugins.video.model = video_model.value
+  store.config.plugins.video.model = model.value
   store.config.engines.replicate.apiKey = replicateAPIKey.value
   store.config.engines.falai.apiKey = falaiAPIKey.value
   store.saveSettings()

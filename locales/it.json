@@ -1818,6 +1818,9 @@
       },
       "video": {
         "description": "Questo plugin consente ai motori LLM di creare video a partire da una descrizione testuale.",
+        "falai": {
+          "aboutModels": "Maggiori informazioni sui modelli di fal.ai"
+        },
         "provider": "Fornitore",
         "replicate": {
           "aboutModels": "Ulteriori informazioni sui modelli Replicate"

@@ -1840,6 +1840,9 @@
       },
       "video": {
         "description": "Este plugin permite que os mecanismos LLM criem vídeos a partir de uma descrição de texto.",
+        "falai": {
+          "aboutModels": "Mais sobre os modelos fal.ai"
+        },
         "provider": "Provedor",
         "replicate": {
           "aboutModels": "Mais sobre os modelos Replicate"

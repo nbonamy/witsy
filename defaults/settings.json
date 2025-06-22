@@ -62,21 +62,11 @@
   },
   "studio": {
     "type": "image",
-    "image": {
-      "engine": "openai",
-      "openai": "gpt-image-1"
-    },
-    "imageEdit": {
-      "engine": "google",
-      "openai": "gemini-2.0-flash-exp"
-    },
-    "video": {
-      "engine": "replicate",
-      "replicate": "google/veo-3"
-    },
-    "videoEdit": {
-      "engine": "replicate",
-      "replicate": "arielreplicate/deoldify_video"
+    "engines": {
+      "image": "openai",
+      "imageEdit": "google",
+      "video": "replicate",
+      "videoEdit": "replicate"
     },
     "favorites": [],
     "defaults": []
@@ -201,7 +191,8 @@
       },
       "model": {
         "chat": "",
-        "image": "",
+        "image": "gemini-2.0-flash-exp",
+        "imageEdit": "gemini-2.0-flash-exp",
         "vision": "gemini-1.5-pro-latest"
       }
     },
@@ -337,7 +328,8 @@
       "model": {
         "chat": "",
         "image": "black-forest-labs/flux-schnell",
-        "video": "wavespeedai/wan-2.1-t2v-480p"
+        "video": "google/veo-3",
+        "videoEdit": "arielreplicate/deoldify_video"
       }
     },
     "elevenlabs": {

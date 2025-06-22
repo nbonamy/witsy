@@ -1,9 +1,10 @@
 
-import { Configuration, ModelType } from '../types/config';
+import { Configuration, ModelType } from '../types/config'
+import { ModelLoader } from './model_loader'
 
 export const baseURL = 'https://api.replicate.com/v1/'
 
-export default class Replicate {
+export default class Replicate implements ModelLoader {
 
   config: Configuration
 

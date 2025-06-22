@@ -1,9 +1,10 @@
 
-import { Configuration, ModelType } from '../types/config';
+import { Configuration, ModelType } from '../types/config'
+import { ModelLoader } from './model_loader'
 
 export const baseURL = 'https://fal.ai'
 
-export default class Falai {
+export default class Falai implements ModelLoader {
 
   config: Configuration
 

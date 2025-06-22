@@ -85,6 +85,7 @@
     "@excalidraw/markdown-to-text": "^0.1.2",
     "@fal-ai/client": "^1.4.0",
     "@google/genai": "^1.5.0",
+    "@huggingface/hub": "^2.2.0",
     "@huggingface/inference": "^2.8.1",
     "@huggingface/transformers": "^3.5.1",
     "@iktakahiro/markdown-it-katex": "^4.0.1",

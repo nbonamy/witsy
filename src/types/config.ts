@@ -16,14 +16,14 @@ export type Configuration = {
   studio: DesignStudioConfig
   shortcuts: ShortcutsConfig
   scratchpad: ScratchpadConfig
-  engines: {[key: string]: EngineConfig|CustomEngineConfig}
-  plugins: {[key: string]: PluginConfig}
+  engines: Record<string, EngineConfig|CustomEngineConfig>
+  plugins: Record<string, PluginConfig>
   stt: STTConfig
   tts: TTSConfig
   rag: RagConfig
   realtime: RealtimeConfig
   mcp: McpConfig
-  mcpServers: { [key: string]: McpClaudeServer }
+  mcpServers: Record<string, McpClaudeServer>
 }
 
 export type WitsyEngineCreateOpts = EngineCreateOpts & {
@@ -117,15 +117,12 @@ export type DesignStudioModelDefaults = DesignStudioModel & {
   params: Record<string, string>
 }
 
-export type DesignStudioMediaTypeDefaults = {
-  engine: string
-} & Record<string, string>
-
 export type DesignStudioConfig = {
   type: DesignStudioMediaType
+  engines: Record<DesignStudioMediaType, string>
   favorites: DesignStudioModel[]
   defaults: DesignStudioModelDefaults[]
-} & Record<DesignStudioMediaType, DesignStudioMediaTypeDefaults>
+}
 
 export type CommandsConfig = {
   engine: string

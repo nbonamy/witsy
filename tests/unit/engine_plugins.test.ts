@@ -185,7 +185,7 @@ beforeAll(() => {
   store.config.plugins.image = {
     enabled: true,
     engine: 'openai',
-    model: 'dall-e-2',
+    model: 'gpt-image-1',
   }
   store.config.plugins.video = {
     enabled: true,
@@ -213,7 +213,7 @@ test('Image Plugin', async () => {
   expect(image.getDescription()).toBe('plugins.image.description.fr-FR')
   expect(image.getPreparationDescription()).toBe('plugins.image.running')
   expect(image.getRunningDescription()).toBe('plugins.image.running')
-  expect(image.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.image.completed {"engine":"openai","model":"dall-e-2","prompt":"prompt"}')
+  expect(image.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.image.completed {"engine":"openai","model":"gpt-image-1","prompt":"prompt"}')
   expect(image.getCompletedDescription('', { prompt: 'prompt' }, { error: 'err' })).toBe('plugins.image.error')
   expect(image.getParameters()[0].name).toBe('prompt')
   expect(image.getParameters()[0].type).toBe('string')
@@ -225,18 +225,24 @@ test('Image Plugin', async () => {
 test('Image Plugin OpenAI', async () => {
 
   store.config.plugins.image.engine = 'openai'
-  store.config.plugins.image.model = 'dall-e-2'
+  store.config.plugins.image.model = 'gpt-image-1'
   const image = new Image(store.config.plugins.image)
-  const result = await image.execute({ model: 'dall-e-2' }, { prompt: 'test prompt' })
+  const result = await image.execute({ model: 'gpt-image-1' }, { prompt: 'test prompt' })
   expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
-    model: 'dall-e-2',
+    model: 'gpt-image-1',
     prompt: 'test prompt',
-    response_format: 'b64_json',
   }))
   expect(result).toStrictEqual({
     url: 'file://file_saved',
   })
 
+  store.config.plugins.image.model = 'dall-e-2'
+  await image.execute({ model: 'dall-e-2' }, { prompt: 'test prompt' })
+  expect(OpenAI.prototype.images.generate).toHaveBeenLastCalledWith(expect.objectContaining({
+    model: 'dall-e-2',
+    prompt: 'test prompt',
+    response_format: 'b64_json',
+  }))
 })
 
 test('Image Plugin HuggingFace', async () => {

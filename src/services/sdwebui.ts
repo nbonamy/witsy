@@ -1,10 +1,11 @@
 
-import { Configuration } from '../types/config';
-import { Model } from 'multi-llm-ts';
+import { Configuration } from '../types/config'
+import { Model } from 'multi-llm-ts'
+import { ModelLoader } from './model_loader'
 
 export const baseURL = 'http://127.0.0.1:7860'
 
-export default class SDWebUI {
+export default class SDWebUI implements ModelLoader {
 
   config: Configuration
 

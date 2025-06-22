@@ -28,38 +28,33 @@ beforeAll(() => {
   
   window.api.config.load = () => {
     const settings = defaultSettings as unknown as Configuration
-    settings.studio.image = {
-      engine: 'openai',
-      openai: 'gpt-image-1',
-      replicate: 'flux',
-      huggingface: 'sdxl',
-    }
+    settings.studio.engines.image = 'openai'
     settings.engines.openai = {
       apiKey: 'openai',
       models: { chat: [], image: [
         { id: 'gpt-image-1', name: 'gpt-image-1' },
         { id: 'dall-e-3', name: 'dall-e-3' }
-      ] }, model: { chat: '', image: ''}
+      ] }, model: { chat: '', image: 'gpt-image-1'}
     }
     settings.engines.google = {
       apiKey: 'google ',
       models: { chat: [], image: [
         { id: 'gemini-2', name: 'gemini-2' },
-      ] }, model: { chat: '', image: ''}
+      ] }, model: { chat: '', image: 'gemini-2'}
     }
     settings.engines.huggingface = {
       apiKey: 'huggingface',
       models: { chat: [], image: [
         { id: 'huggingface1', name: 'huggingface1' },
         { id: 'huggingface2', name: 'huggingface2' }
-      ] }, model: { chat: '', image: ''}
+      ] }, model: { chat: '', image: 'huggingface1' }
     }
     settings.engines.replicate = {
       apiKey: 'replicate',
       models: { chat: [], image: [
         { id: 'replicate1', name: 'replicate1' },
         { id: 'replicate2', name: 'replicate2' }
-      ] }, model: { chat: '', image: ''}
+      ] }, model: { chat: '', image: 'replicate1', video: 'facehugging1'}
     }
     return settings
   }
@@ -127,19 +122,19 @@ test('Settings', async () => {
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
-  expect(settings.find<HTMLInputElement>('[name=model]').element.value).toBe('flux')
+  expect(settings.find<HTMLInputElement>('[name=model]').element.value).toBe('replicate1')
   expect(settings.find('.expander').exists()).toBe(true)
   await settings.find('.expander').trigger('click')
   expect(settings.find('.list-with-actions').exists()).toBe(true)
 
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('huggingface')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('sdxl')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('huggingface1')
   expect(settings.find('.expander').exists()).toBe(true)
   expect(settings.find('.list-with-actions').exists()).toBe(false)
 
   await settings.find<HTMLSelectElement>('[name=type]').setValue('video')
   expect(settings.find<HTMLSelectElement>('[name=engine]').element.value).toBe('replicate')
-  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('google/veo-3')
+  expect(settings.find<HTMLSelectElement>('[name=model]').element.value).toBe('facehugging1')
   expect(settings.find('.expander').exists()).toBe(true)
 })
 
@@ -156,7 +151,7 @@ test('Favorites', async () => {
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('replicate')
   expect(settings.find<HTMLButtonElement>('[name=favorite]').exists()).toBe(true)
   await settings.find<HTMLButtonElement>('[name=favorite]').trigger('click')
-  expect(store.config.studio.favorites).toStrictEqual([ { engine: 'replicate', model: 'flux' } ])
+  expect(store.config.studio.favorites).toStrictEqual([ { engine: 'replicate', model: 'replicate1' } ])
 
   await settings.find<HTMLButtonElement>('[name=favorite]').trigger('click')
   expect(store.config.studio.favorites).toStrictEqual([])
@@ -313,14 +308,14 @@ test('Generates - Custom Params HuggingFace', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'huggingface',
-      model: 'sdxl',
+      model: 'huggingface1',
       prompt: 'prompt',
       params: { negative_prompt: 'no no no', width: '1000' },
     }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'huggingface', 'sdxl', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
+    'huggingface', 'huggingface1', { prompt: 'prompt', negative_prompt: 'no no no', width: 1000 }, undefined
   )
 
   expect(wrapper.vm.selection).toHaveLength(1)
@@ -328,7 +323,7 @@ test('Generates - Custom Params HuggingFace', async () => {
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
-      url: 'file://huggingface/sdxl/prompt'
+      url: 'file://huggingface/huggingface1/prompt'
     }) ],
     toolCalls: [ expect.objectContaining({ params: { negative_prompt: 'no no no', width: 1000 } }) ]
   })
@@ -371,14 +366,14 @@ test('Generates - User Params', async () => {
       action: 'create',
       mediaType: 'image',
       engine: 'replicate',
-      model: 'flux',
+      model: 'replicate1',
       prompt: 'prompt',
       params: { string: 'value', number: '100', boolean: 'true' },
     }),
   ])
 
   expect(ImageCreator.prototype.execute).toHaveBeenLastCalledWith(
-    'replicate', 'flux', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
+    'replicate', 'replicate1', { prompt: 'prompt', string: 'value', number: 100, boolean: true }, undefined
   )
 
   expect(wrapper.vm.selection).toHaveLength(1)
@@ -386,7 +381,7 @@ test('Generates - User Params', async () => {
     role: 'user',
     content: 'prompt',
     attachments: [ expect.objectContaining({
-      url: 'file://replicate/flux/prompt'
+      url: 'file://replicate/replicate1/prompt'
     }) ],
     toolCalls: [ expect.objectContaining({ params: { string: 'value', number: 100, boolean: true } }) ]
   })
