@@ -1399,7 +1399,7 @@
   },
   "plugins": {
     "browse": {
-      "completed": "Contenido descargado de {url}",
+      "completed": "Contenido descargado de \"{title}\"",
       "error": "Error al descargar el contenido",
       "running": "Descargando contenido…"
     },

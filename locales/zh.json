@@ -1418,7 +1418,7 @@
   },
   "plugins": {
     "browse": {
-      "completed": "内容已从 {url} 下载",
+      "completed": "内容已从 \"{title}\" 下载",
       "error": "下载内容时出错",
       "running": "正在下载内容…"
     },

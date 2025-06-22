@@ -35,7 +35,7 @@ export default class extends Plugin {
     if (results.error) {
       return t('plugins.browse.error')
     } else {
-      return t('plugins.browse.completed', { url: args.url })
+      return t('plugins.browse.completed', { title: results.title })
     }
   }
 
@@ -53,14 +53,27 @@ export default class extends Plugin {
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
 
     try {
+
+      // get the html
       const response = await fetch(parameters.url)
       const html = await response.text()
+
+      // extract title from html code using a regex
+      const titleMatch = html.match(/<title>(.*?)<\/title>/i)
+      const title = titleMatch ? titleMatch[1] : parameters.url
+
+      // convert the html to text
       const text = convert(html, {
         selectors: [
           { selector: 'img', format: 'skip' }
         ]
       })
-      return { content: text }
+
+      // done
+      return {
+        title: title,
+        content: text
+      }
 
     } catch (error) {
       return { error: error }

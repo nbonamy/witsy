@@ -1418,7 +1418,7 @@
   },
   "plugins": {
     "browse": {
-      "completed": "Conteúdo baixado de {url}",
+      "completed": "Conteúdo baixado de \"{title}\"",
       "error": "Erro ao baixar conteúdo",
       "running": "Baixando conteúdo…"
     },

@@ -1418,7 +1418,7 @@
   },
   "plugins": {
     "browse": {
-      "completed": "Zawartość pobrana z {url}",
+      "completed": "Zawartość pobrana z \"{title}\"",
       "error": "Błąd podczas pobierania zawartości",
       "running": "Pobieranie zawartości…"
     },
