@@ -25,6 +25,7 @@
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
+      <Waveform v-if="enableWaveform && dictating":width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       <slot name="actions" />
     </div>
     <slot name="between" />
@@ -54,6 +55,7 @@ import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
 import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
+import Waveform from '../components/Waveform.vue'
 import ContextMenu, { type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
@@ -117,6 +119,10 @@ const props = defineProps({
     default: true
   },
   enableConversations: {
+    type: Boolean,
+    default: true
+  },
+  enableWaveform: {
     type: Boolean,
     default: true
   },
@@ -255,13 +261,9 @@ const conversationMenu = computed(() => {
 
 onMounted(() => {
 
-  // global shorcuts
-  document.addEventListener('keydown', onGlobalKeyDown)
-
   // event
   onEvent('set-prompt', onSetPrompt)
   window.api.on('docrepo-modified', loadDocRepos)
-  window.api.on('start-dictation', onDictate)
   autoGrow(input.value)
 
   // other stuff
@@ -277,9 +279,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', onGlobalKeyDown)
   window.api.off('docrepo-modified', loadDocRepos)
-  window.api.off('start-dictation', onDictate)
 })
 
 const defaultPrompt = (conversationMode: string) => {
@@ -610,6 +610,8 @@ const startDictation = async () => {
 
             // focus
             input.value.focus()
+            await nextTick()
+            autoGrow(input.value)
 
             // conversation tip
             if (props.enableConversations) {
@@ -912,9 +914,12 @@ const autoGrow = (element: HTMLElement) => {
 
 defineExpose({
 
-  getPrompt: () => {
-    return prompt.value
-  },
+  getPrompt: () => prompt.value,
+  focus: () => input.value.focus(),
+
+  setExpert,
+  isContextMenuOpen,
+  startDictation: onDictate,
 
   setPrompt: (message: string|Message) => {
     if (message instanceof Message) {
@@ -923,14 +928,6 @@ defineExpose({
       onSetPrompt(new Message('user', message))
     }
   },
-
-  setExpert,
-    
-  focus: () => {
-    input.value.focus()
-  },
-
-  isContextMenuOpen,
 
 })
 
@@ -1097,7 +1094,8 @@ defineExpose({
   .actions {
     display: flex;
     gap: 0.25rem;
-    margin-left: 4px;
+    margin-left: 0.25rem;
+    padding-bottom: 0.25rem;
     
     .icon {
       width: 1rem;

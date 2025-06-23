@@ -377,6 +377,10 @@ const save = () => {
   store.saveSettings()
 }
 
+defineExpose({
+  startDictation: onStart,
+})
+
 </script>
 
 <style scoped>

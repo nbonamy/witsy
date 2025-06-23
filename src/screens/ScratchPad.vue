@@ -5,7 +5,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" />
+    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" ref="prompt" />
     <audio/>
   </div>
 </template>
@@ -15,7 +15,7 @@ import { t, i18nInstructions, expertI18n } from '../services/i18n'
 
 // components
 import { FileContents } from '../types'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
 import LlmFactory, { ILlmManager } from '../llms/llm'
@@ -23,7 +23,7 @@ import ScratchpadToolbar, { ToolbarAction } from '../scratchpad/Toolbar.vue'
 import ScratchpadActionBar from '../scratchpad/ActionBar.vue'
 import EditableText from '../components/EditableText.vue'
 import Prompt, { SendPromptParams } from '../components/Prompt.vue'
-import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
+import useAudioPlayer, { AudioState, AudioStatus } from '../composables/audio_player'
 import Dialog from '../composables/dialog'
 import Generator, { GenerationResult } from '../services/generator'
 import Message from '../models/message'
@@ -38,17 +38,18 @@ store.load()
 
 const placeholder = ref(t('scratchpad.placeholder').replaceAll('\n', '<br/>'))
 
-const chat = ref(null)
-const editor = ref(null)
+const chat = ref<Chat>(null)
+const prompt = ref<typeof Prompt>(null)
+const editor = ref<typeof EditableText>(null)
 const processing = ref(false)
-const engine = ref(null)
-const model = ref(null)
-const fontFamily = ref(null)
-const fontSize = ref(null)
-const undoStack = ref([])
-const redoStack = ref([])
-const audioState = ref('idle')
-const copyState = ref('idle')
+const engine = ref<string>(null)
+const model = ref<string>(null)
+const fontFamily = ref<string>(null)
+const fontSize = ref<string>(null)
+const undoStack = ref<Array<any>>([])
+const redoStack = ref<Array<any>>([])
+const audioState = ref<AudioState>('idle')
+const copyState = ref<string>('idle')
 const modified = ref(false)
 const conversationMode = ref(null)
 
@@ -75,6 +76,7 @@ onMounted(() => {
   onEvent('action', onAction)
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)
+  window.api.on('start-dictation', onStartDictation)
 
   // load settings
   fontFamily.value = store.config.scratchpad.fontFamily || 'serif'
@@ -145,6 +147,16 @@ onMounted(() => {
   }
 
 })
+
+onUnmounted(() => {
+  window.api.off('start-dictation', onStartDictation)
+  audioPlayer.removeListener(onAudioPlayerStatus)
+  clearTimeout(modifiedCheckTimeout)
+})
+
+const onStartDictation = () => {
+  prompt.value?.startDictation()
+}
 
 const updateTitle = () => {
   let title = 'Scratchpad'
@@ -599,44 +611,7 @@ const onStopPrompting = async () => {
   }
 
   .prompt {
-    
-    flex-direction: row-reverse;
-    align-items: baseline;
-
-    border: none;
-    border-top: 1px solid var(--scratchpad-bars-border-color);
-    background-color: var(--dialog-header-bg-color);
-    border-radius: 0px;
-    padding-bottom: 0.25rem;
-
-    &:deep() {
-    
-      .input {
-
-        .textarea-wrapper {
-          
-          textarea {
-            border: 1px solid var(--scratchpad-bars-border-color);
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-
-            &::-webkit-scrollbar {
-              width: 0px;
-            }
-
-          }
-
-        }
-
-      }
-
-      .actions {
-        padding-right: 0.5rem;
-        position: relative;
-        top: 2px;
-      }
-
-    }
+    margin: 1rem;
   }
 }
 
