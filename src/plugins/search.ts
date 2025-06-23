@@ -40,10 +40,10 @@ export default class extends Plugin {
     if (results.error) {
       return t('plugins.search.error')
     } else {
-      return t('plugins.search.completed', { count: results.results.length, query: args.query })
+      return t('plugins.search.completed', { query: args.query, count: results.results.length })
     }
   }
-  
+
   getParameters(): PluginParameter[] {
     return [
       {
@@ -68,6 +68,7 @@ export default class extends Plugin {
   }
 
   async local(parameters: anyDict): Promise<anyDict> {
+
     try {
       const results = await window.api.search.query(parameters.query, this.config.maxResults || 5)
       const response = {
@@ -86,6 +87,7 @@ export default class extends Plugin {
   }
 
   async tavily(parameters: anyDict): Promise<anyDict> {
+
     try {
 
       // tavily
@@ -119,9 +121,9 @@ export default class extends Plugin {
   }
 
   async brave(parameters: anyDict): Promise<anyDict> {
-    
+
     try {
-      
+
       const baseUrl = 'https://api.search.brave.com/res/v1/web/search'
       const response = await fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${this.config.maxResults || 5}`, {
         headers: {
@@ -135,9 +137,9 @@ export default class extends Plugin {
       return {
         query: parameters.query,
         results: data.web.results.map((result: any) => ({
-            url: result.url,
-            title: result.title,
-            content: this.truncateContent(result.description)
+          url: result.url,
+          title: result.title,
+          content: this.truncateContent(result.description)
         }))
       }
 

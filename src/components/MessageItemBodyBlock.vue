@@ -4,6 +4,7 @@
     <div v-if="block.type == 'text'" v-html="mdRender(block.content!)" class="text variable-font-size"></div>
     <MessageItemMediaBlock v-else-if="block.type == 'media'" :url="block.url!" :desc="block.desc" :prompt="block.prompt" @media-loaded="onMediaLoaded()" />
     <MessageItemToolBlock v-else-if="block.type == 'tool'" :tool-call="block.toolCall!" />
+    <MessageItemSearchResultBlock v-else-if="block.type == 'search'" :tool-call="block.toolCall!" />
   </div>
 </template>
 
@@ -14,11 +15,12 @@ import { nextTick, PropType, ref, Ref, h, render } from 'vue'
 import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
+import MessageItemSearchResultBlock from './MessageItemSearchResultBlock.vue' 
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 
 export type Block = {
-  type: 'empty'|'text'|'media'|'tool'
+  type: 'empty'|'text'|'media'|'tool'|'search'
   content?: string
   url?: string
   desc?: string

@@ -61,8 +61,13 @@ export default class LocalSearch {
 
             // now get content
             try {
-              result.content = await this.getContents(result.url)
+
+              // get full content
+              const { title, content } = await this.getContents(result.url)
+              result.title = title || result.title
+              result.content = content
             }
+
             catch (e) {
               console.error(`Error while getting content for ${result.url}`, e)
               continue
@@ -97,7 +102,7 @@ export default class LocalSearch {
 
   }
 
-  protected getContents(url: string): Promise<string> {
+  protected getContents(url: string): Promise<LocalSearchResult> {
 
     return new Promise((resolve, reject) => {
 
@@ -111,8 +116,9 @@ export default class LocalSearch {
       win.webContents.on('dom-ready', async () => {
         
         try {
+          const title = await win.webContents.executeJavaScript(`document.title`)
           const html = await win.webContents.executeJavaScript(`document.body.outerHTML`)
-          resolve(html)
+          resolve({ url, title, content: html })
         } catch (e) {
           reject(e)
         } finally {
