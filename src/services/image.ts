@@ -98,7 +98,16 @@ export default class ImageCreator implements MediaCreator {
   async replicate(model: string, parameters: any/*, reference?: MediaReference*/): Promise<any> {
 
     // init
-    const client = new Replicate({ auth: store.config.engines.replicate.apiKey }); 
+    const client = new Replicate({ auth: store.config.engines.replicate.apiKey });
+
+    // check if we know a version
+    const m = store.config.engines.replicate?.models?.image?.find((m: any) => m.id === model)
+    // @ts-expect-error not standard meta
+    if (m?.meta?.version) {
+      // @ts-expect-error not standard meta
+      model = `${model}:${m.meta.version}`
+    }
+
 
     // call
     console.log(`[replicate] prompting model ${model}`)

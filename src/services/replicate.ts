@@ -46,6 +46,9 @@ export default class Replicate implements ModelLoader {
       this.config.engines.replicate.models[type] = collection.models.map((model: any) => ({
         id: `${model.owner}/${model.name}`,
         name: `${model.owner}/${model.name}`,
+        ...(model.latest_version?.id ? { meta: {
+          version: model.latest_version.id
+        }} : {}),
       })).filter((model: any, index: number, array: any[]) => 
         array.findIndex((m: any) => m.id === model.id) === index
       ).sort((a: any, b: any) => a.name.localeCompare(b.name))

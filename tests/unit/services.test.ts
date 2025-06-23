@@ -26,7 +26,7 @@ global.fetch = async (url: string) => {
       ok: true,
       json: () => ({
         models: [
-          { owner: collection, name: 'model1' },
+          { owner: collection, name: 'model1', latest_version: { id: 'v1' } },
           { owner: collection, name: 'model2' },
         ]
       })
@@ -120,19 +120,19 @@ test('Load Replicate Models', async () => {
   const replicate = new Replicate(store.config)
   expect(await replicate.loadModels()).toBe(true)
   expect(store.config.engines.replicate.models.image).toStrictEqual([
-    { id: 'text-to-image/model1', name: 'text-to-image/model1' },
+    { id: 'text-to-image/model1', name: 'text-to-image/model1', meta: { version: 'v1' } },
     { id: 'text-to-image/model2', name: 'text-to-image/model2' },
   ])
   expect(store.config.engines.replicate.models.imageEdit).toStrictEqual([
-    { id: 'image-editing/model1', name: 'image-editing/model1' },
+    { id: 'image-editing/model1', name: 'image-editing/model1', meta: { version: 'v1' } },
     { id: 'image-editing/model2', name: 'image-editing/model2' },
   ])
   expect(store.config.engines.replicate.models.video).toStrictEqual([
-    { id: 'text-to-video/model1', name: 'text-to-video/model1' },
+    { id: 'text-to-video/model1', name: 'text-to-video/model1', meta: { version: 'v1' } },
     { id: 'text-to-video/model2', name: 'text-to-video/model2' },
   ])
   expect(store.config.engines.replicate.models.videoEdit).toStrictEqual([
-    { id: 'ai-enhance-videos/model1', name: 'ai-enhance-videos/model1' },
+    { id: 'ai-enhance-videos/model1', name: 'ai-enhance-videos/model1', meta: { version: 'v1' } },
     { id: 'ai-enhance-videos/model2', name: 'ai-enhance-videos/model2' },
   ])
 })
