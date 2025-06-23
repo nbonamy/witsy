@@ -26,9 +26,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
   const focusedWindow = BrowserWindow.getFocusedWindow()
 
   // dictation
-  const hasDictation = 
-    focusedWindow === window.mainWindow ||
-    focusedWindow === window.promptAnywhereWindow
+  const hasDictation = focusedWindow && (
+    (focusedWindow === window.mainWindow && window.mainWindowCanDictate()) ||
+    focusedWindow === window.promptAnywhereWindow ||
+    focusedWindow.title.includes(t('tray.menu.scratchpad'))
+  )
 
   // done
   return [
@@ -138,7 +140,7 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             {
               label: t('menu.edit.startDictation'),
               accelerator: shortcutAccelerator({ key: 'T', meta: true }),
-              click: () => window.notifyBrowserWindows('start-dictation')
+              click: () => window.notifyFocusedWindow('start-dictation')
             }]: []
           ),
       ]

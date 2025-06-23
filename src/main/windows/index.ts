@@ -372,6 +372,17 @@ export const notifyBrowserWindows = (event: string, ...args: any[]) => {
   }
 }
 
+export const notifyFocusedWindow = (event: string, ...args: any[]) => {
+  try {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow && !focusedWindow.isDestroyed()) {
+      focusedWindow.webContents.send(event, ...args);
+    }
+  } catch (error) {
+    console.error('Error while notifying focused window', error)
+  }
+}
+
 export const enableClickThrough = (window: BrowserWindow) => {
 
   // if not visible then schedule it

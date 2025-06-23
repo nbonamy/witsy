@@ -128,7 +128,9 @@ export default class STTSpeechmatics implements STTEngine {
   }
 
   async sendAudioChunk(chunk: Blob): Promise<void> {
-    this.client?.sendAudio(chunk)
+    if (this.client?.socketState === 'open') {
+      this.client?.sendAudio(chunk)
+    }
   }
 
   async endStreaming(): Promise<void> {

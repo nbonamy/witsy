@@ -62,7 +62,7 @@
         <div class="controls">
           <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
           <Loader class="loader" v-else-if="state === 'processing'" />
-          <BIconRecordCircle v-else class="record" @click="onRecord(false)" />
+          <BIconRecordCircle v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
           <Waveform :width="400" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
         </div>
         <div class="result">
@@ -75,7 +75,7 @@
             <button name="clear" class="button" @click="onClear()" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <div class="push"></div>
             <button name="insert" class="button" @click="onInsert()" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
-            <button name="copy" class="button" @click="onCopy()" :disabled="!transcription || state === 'processing'">{{ t('common.copy') }}</button>
+            <button name="copy" class="button" @click="onCopy()" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
           </form>
         </div>
         <div class="help">
@@ -109,16 +109,19 @@ let userStoppedDictation = false
 let pushToTalkCancelled = false
 let pushToTalkMode = false
 
+type State = 'idle'|'initializing'|'recording'|'processing'
+
 const isMas = ref(false)
 const engine = ref('')
 const model = ref('')
 const locale = ref('')
 const pushToTalk = ref(false)
-const state: Ref<'idle'|'recording'|'processing'> = ref('idle')
+const state: Ref<State> = ref('idle')
 const transcription = ref('')
 const autoStart = ref(false)
 const foregroundColorActive = ref('')
 const foregroundColorInactive = ref('')
+const copying = ref(false)
 
 let previousTranscription = ''
 
@@ -129,7 +132,6 @@ onMounted(async () => {
   // events
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
-  window.api.on('start-dictation', toggleRecord)
   window.api.on('file-modified', onFileModified)
 
   // init
@@ -170,12 +172,12 @@ onUnmounted(() => {
   // events
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
-  window.api.off('start-dictation', toggleRecord)
   window.api.off('file-modified', onFileModified)
 })
 
 const onFileModified = (file: string) => {
   if (file === 'settings') {
+    store.transcribeState.transcription = transcription.value
     load()
   }
 }
@@ -215,7 +217,7 @@ const initialize = async () => {
 }
 
 const toggleRecord = () => {
-  if (state.value === 'processing') {
+  if (state.value === 'initializing' || state.value === 'processing') {
     return
   } else if (state.value === 'recording') {
     onStop()
@@ -288,6 +290,15 @@ const initializeAudio = async () => {
 
 const onRecord = async (ptt: boolean) => {
 
+  // we need to be idle to start recording
+  if (state.value !== 'idle') {
+    return
+  }
+
+  // init
+  console.log('onRecord: push-to-talk=', ptt)
+  state.value = 'initializing'
+
   // initialize
   await initialize()
 
@@ -335,6 +346,7 @@ const onRecord = async (ptt: boolean) => {
 
   // check
   if (!connected) {
+    state.value = 'idle'
     return
   }
 
@@ -350,6 +362,7 @@ const onRecord = async (ptt: boolean) => {
   } catch (err) {
     console.error('Error accessing microphone:', err)
     Dialog.alert(t('transcribe.errors.microphone'))
+    state.value = 'idle'
   }
 
 }
@@ -392,7 +405,10 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   // if focus is on textarea, ignore
   if ((event.target as HTMLElement).nodeName === 'TEXTAREA') {
-    return
+    const textarea = event.target as HTMLTextAreaElement
+    if (textarea.selectionStart !== textarea.selectionEnd) {
+      return
+    }
   }
 
   // process
@@ -450,6 +466,11 @@ const onCopy = () => {
   if (window.api.clipboard.readText() != transcription.value) {
     Dialog.alert(t('transcribe.errors.copy'))
     return false
+  } else {
+    copying.value = true
+    setTimeout(() => {
+      copying.value = false
+    }, 2000)
   }
   return true
 }
@@ -472,6 +493,10 @@ const refocus = () => {
   const focusedElement = document.activeElement as HTMLElement
   focusedElement?.blur()
 }
+
+defineExpose({
+  startDictation: toggleRecord,
+})
 
 </script>
 

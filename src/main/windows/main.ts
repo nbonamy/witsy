@@ -14,6 +14,12 @@ let mainWindowMode: MainWindowMode = 'none';
 
 export const getMainWindowMode = (): MainWindowMode => mainWindowMode
 
+export const mainWindowCanDictate = (): boolean => {
+  return mainWindowMode === 'chat' ||
+    mainWindowMode === 'dictation' ||
+    mainWindowMode === 'voice-mode'
+}
+
 export const setMainWindowMode = (mode: MainWindowMode): void => {
   mainWindowMode = mode;
 }

@@ -2,11 +2,11 @@
   <div class="main">
     <MenuBar :mode="mode" @change="onMode"/>
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
-    <Chat :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
+    <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
     <DocRepos v-if="mode === 'docrepo'" />
-    <RealtimeChat v-if="mode === 'voice-mode'" />
-    <Transcribe v-if="mode === 'dictation'" />
+    <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
+    <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
   </div>
 </template>
 
@@ -25,6 +25,10 @@ import Transcribe from '../screens/Transcribe.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
+
+const chat = ref<typeof Chat>(null)
+const transcribe = ref<typeof Transcribe>(null)
+const realtime = ref<typeof RealtimeChat>(null)
 
 // init stuff
 store.load()
@@ -52,6 +56,9 @@ onMounted(() => {
   if (props.extra) {
     processQueryParams(props.extra)
   }
+
+  // dictation
+  window.api.on('start-dictation', onDictate)
 
 })
 
@@ -94,6 +101,16 @@ const onMode = async (next: MenuBarMode) => {
     window.api.main.setMode(mode.value)
   }
 
+}
+
+const onDictate = () => {
+  if (mode.value === 'chat') {
+    chat.value?.startDictation()
+  } else if (mode.value === 'dictation') {
+    transcribe.value?.startDictation()
+  } else if (mode.value === 'voice-mode') {
+    realtime.value?.startDictation()
+  }
 }
 
 </script>

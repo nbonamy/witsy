@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { expertI18n, i18nInstructions, t } from '../services/i18n'
 import { anyDict, ExternalApp } from '../types'
-import { Ref, ref, computed, onMounted, onUnmounted, provide } from 'vue'
+import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
 import { store } from '../services/store'
 import { availablePlugins } from '../plugins/plugins'
 import { LlmEngine } from 'multi-llm-ts'
@@ -65,12 +65,12 @@ store.load()
 const generator = new Generator(store.config)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
-const prompt = ref(null)
-const engineModelPicker: Ref<typeof EngineModelPicker> = ref(null)
-const sourceApp: Ref<ExternalApp|null> = ref(null)
+const prompt = ref<typeof Prompt>(null)
+const engineModelPicker = ref<typeof EngineModelPicker>(null)
+const sourceApp = ref<ExternalApp | null>(null)
 const output = ref(null)
-const chat: Ref<Chat> = ref(new Chat())
-const response: Ref<Message> = ref(null)
+const chat = ref<Chat>(new Chat())
+const response = ref<Message>(null)
 const showReplace = ref(false)
 
 const containerTop = ref(0)
@@ -115,6 +115,7 @@ onMounted(() => {
   // events
   onEvent('send-prompt', onSendPrompt)
   onEvent('stop-prompting', onStopGeneration)
+  window.api.on('start-dictation', onDictate)
   window.api.on('show', onShow)
 
   // query params
@@ -127,11 +128,16 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
+  window.api.off('start-dictation', onDictate)
   window.api.off('show', onShow)
 })
 
 const onShow = (params?: anyDict) => {
   processQueryParams(params)
+}
+
+const onDictate = () => {
+  prompt.value?.startDictation()
 }
 
 const processQueryParams = (params?: anyDict) => {

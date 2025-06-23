@@ -270,8 +270,12 @@ const onExportPdf = async () => {
 
 defineExpose({
 
-  setExpert(expert: Expert) {
+  setExpert: (expert: Expert) => {
     prompt.value.setExpert(expert)
+  },
+
+  startDictation: () => {
+    prompt.value.startDictation()
   },
 
 })
@@ -340,6 +344,7 @@ defineExpose({
         flex: 1;
         display: flex;
         flex-direction: column;
+        max-width: 100%;
 
         &:deep() > div:first-child {
           flex: 1;
