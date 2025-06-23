@@ -159,11 +159,15 @@ const computeBlocks = (content: string|null): Block[] => {
     
     // Process the match based on its type
     if (matchType === 'tool') {
-      if (props.showToolCalls === 'always' && props.message.toolCalls.length) {
+      if (props.message.toolCalls.length) {
         const index = parseInt(match[1])
         const toolCall = props.message.toolCalls[index]
         if (toolCall && toolCall.done) {
-          blocks.push({ type: 'tool', toolCall: toolCall })
+          if (props.showToolCalls === 'always') {
+            blocks.push({ type: 'tool', toolCall: toolCall })
+          } else if (toolCall.name === 'search_internet') {
+            blocks.push({ type: 'search', toolCall: toolCall })
+          }
         }
       }
     } else if (matchType === 'media1' || matchType === 'media2') {

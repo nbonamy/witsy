@@ -13,6 +13,8 @@ vi.mock('electron', async () => {
       executeJavaScript: vi.fn((script) => {
         if (script === 'document.body.outerHTML') {
           return `<html><body>test</body></html>`
+        } else if (script === 'document.title') {
+          return 'title'
         } else {
           return [
             { title: 'title1', url: 'url1' },
@@ -34,9 +36,9 @@ test('search', async () => {
   const search = new LocalSearch()
   const res = await search.search('witsy', 3)
   expect(res).toEqual([
-    { title: 'title1', url: 'url1', content: '<html><body>test</body></html>' },
-    { title: 'title2', url: 'url2', content: '<html><body>test</body></html>' },
-    { title: 'title4', url: 'url4', content: '<html><body>test</body></html>' },
+    { title: 'title', url: 'url1', content: '<html><body>test</body></html>' },
+    { title: 'title', url: 'url2', content: '<html><body>test</body></html>' },
+    { title: 'title', url: 'url4', content: '<html><body>test</body></html>' },
   ])
 
 })

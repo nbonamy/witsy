@@ -8,6 +8,9 @@
       <BIconChevronDown v-else-if="!isOpen" class="tool-unfold"/>
       <BIconChevronUp v-else class="tool-fold" />
     </div>
+    <div class="tool-results" v-if="isOpen">
+      <MessageItemSearchToolBlock v-if="toolCall.name === 'search_internet' && toolCall.result?.results?.length" :toolCall="toolCall" /> 
+    </div>
     <div class="tool-values tool-params" v-if="toolCall?.params && isOpen">
       <div class="tool-values-header">
         {{ t('message.toolCall.params') }}
@@ -42,6 +45,7 @@
 import { ToolCall } from '../types/index'
 import { ref, onMounted, computed } from 'vue'
 import { t } from '../services/i18n'
+import MessageItemSearchToolBlock from './MessageItemSearchToolBlock.vue'
 import Loader from './Loader.vue'
 
 const props = defineProps({
@@ -86,6 +90,7 @@ const toggleOpen = () => {
 <style scoped>
 
 .tool-container {
+  
   width: 100%;
   margin: 1rem 0;
   background-color: color-mix(in srgb, var(--control-border-color), transparent 95%);
@@ -116,6 +121,11 @@ const toggleOpen = () => {
       }
     
     }
+  }
+
+  .tool-results {
+    padding: 1rem;
+    padding-top: 0.5rem;
   }
 
   .tool-values {
