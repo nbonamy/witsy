@@ -86,6 +86,7 @@ const onSave = () => {
   store.config.rag.searchResultCount = parseInt(searchResultCount.value)
   store.config.rag.relevanceCutOff = parseFloat(relevanceCutOff.value)
   store.saveSettings()
+  onCancel()
 }
 
 const onCancel = () => {
