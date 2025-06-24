@@ -47,7 +47,7 @@ export default class DocumentBaseImpl {
   async connect(): Promise<void> {
     if (!this.db) {
       this.db = await VectorDB.connect(databasePath(this.app, this.uuid))
-      console.log('Connected to database', this.name)
+      console.log('[rag] Connected to database', this.name)
     }
   }
 
@@ -56,7 +56,7 @@ export default class DocumentBaseImpl {
       const dbPath = databasePath(this.app, this.uuid)
       fs.rmSync(dbPath, { recursive: true, force: true })
     } catch (err) {
-      console.warn('Error deleting database', this.name, err)
+      console.warn('[rag] Error deleting database', this.name, err)
     }
   }
 
@@ -87,7 +87,7 @@ export default class DocumentBaseImpl {
     }
 
     // now store
-    console.log(`Added document "${source.url}" to database "${this.name}"`)
+    console.log(`[rag] Added document "${source.url}" to database "${this.name}"`)
 
     // done
     return source.uuid
@@ -103,23 +103,23 @@ export default class DocumentBaseImpl {
     const config: Configuration = loadSettings(this.app)
     const loader = new Loader(config)
     if (!loader.isParseable(source.type, source.origin)) {
-      throw new Error('Unsupported document type')
+      throw new Error('[rag] Unsupported document type')
     }
 
     // log
-    console.log(`Processing document [${source.type}] ${source.origin}`)
+    console.log(`[rag] Extracting text from [${source.type}] ${source.origin}`)
 
     // load the content
     const text = await loader.load(source.type, source.origin)
     if (!text) {
-      console.log('Unable to load document', source.origin)
+      console.log('[rag] Unable to load document', source.origin)
       throw new Error('Unable to load document')
     }
 
     // check the size
     const maxDocumentSizeMB = config.rag?.maxDocumentSizeMB ?? defaultSettings.rag.maxDocumentSizeMB
     if (text.length > maxDocumentSizeMB * 1024 * 1024) {
-      console.log(`Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
+      console.log(`[rag] Document is too large (max ${maxDocumentSizeMB}MB)`, source.origin)
       throw new Error(`Document is too large (max ${maxDocumentSizeMB}MB)`)
     }
 
@@ -132,6 +132,7 @@ export default class DocumentBaseImpl {
     }
 
     // now split
+    console.log(`[rag] Splitting document into chunks`)
     const splitter = new Splitter(config)
     const chunks = await splitter.split(text)
 
@@ -139,41 +140,47 @@ export default class DocumentBaseImpl {
     // 1 token = 4 bytes
     // max tokens = 8192 (apply a 75% contingency)
     const batchSize = Math.min(EMBED_BATCH_SIZE, Math.floor(8192.0 * .75 / (splitter.chunkSize / 4.0)))
-    //console.log(`Batch size: ${batchSize}`)
-    
-    // now embed
-    const documents = []
+    const batchCount = Math.ceil(chunks.length / batchSize)
+    const logInterval = Math.max(1, Math.floor(batchCount / 10))
+    console.log(`[rag] Embedding ${chunks.length} chunks into ${batchCount} batches`)
+
+    // we manage transactions for performance
+    let transactionSize = 0
+    await this.db.beginTransaction()
+
+    // now embed and store
+    let batchIndex = 0
     const embedder = await Embedder.init(this.app, config, this.embeddingEngine, this.embeddingModel)
     while (chunks.length > 0) {
+      
+      // log
+      if (++batchIndex % logInterval === 0) {
+        console.log(`[rag] Embedding batch ${batchIndex} of ${batchCount} (${chunks.length} chunks left)`)
+      }
+
+      // embed
       const batch = chunks.splice(0, batchSize)
-      //console.log(`Embedding ${batch.length} chunks`)
       const embeddings = await embedder.embed(batch)
       //console.log('Embeddings', JSON.stringify(embeddings, null, 2))
+
+      // store each embedding as a document
       for (let i = 0; i < batch.length; i++) {
-        // console.log(JSON.stringify({
-        //   content: batch[i],
-        //   vector: embeddings[i]
-        // }))
-        documents.push({
-          content: batch[i],
-          vector: embeddings[i],
+        await this.db.insert(source.uuid, batch[i], embeddings[i], {
+          uuid: source.uuid,
+          type: source.type,
+          title: source.getTitle(),
+          url: source.url
         })
+        if (++transactionSize === 1000) {
+          await this.db.commitTransaction()
+          await this.db.beginTransaction()
+          transactionSize = 0
+        }
       }
     }
 
-    // debug
-    //console.log('Documents:', documents)
-    
-    // now store each document
-    for (const document of documents) {
-      await this.db.insert(source.uuid, document.content, document.vector, {
-        uuid: source.uuid,
-        type: source.type,
-        title: source.getTitle(),
-        url: source.url
-      })
-
-    }
+    // finalize
+    await this.db.commitTransaction()
 
     // done
     callback?.()
@@ -187,7 +194,7 @@ export default class DocumentBaseImpl {
 
     // add to the database using transaction
     await this.connect()
-    await this.db.beginTransaction()
+    // await this.db.beginTransaction()
 
     // iterate
     let added = 0
@@ -201,9 +208,9 @@ export default class DocumentBaseImpl {
 
         // commit?
         if ((++added) % ADD_COMMIT_EVERY === 0) {
-          await this.db.commitTransaction()
+          // await this.db.commitTransaction()
           callback?.()
-          await this.db.beginTransaction()
+          // await this.db.beginTransaction()
         }
 
       } catch {
@@ -212,7 +219,7 @@ export default class DocumentBaseImpl {
     }
 
     // done
-    await this.db.commitTransaction()
+    // await this.db.commitTransaction()
     callback?.()
 
   }
@@ -282,8 +289,8 @@ export default class DocumentBaseImpl {
 
     // now query
     await this.connect()
-    const results = await this.db.query(text, query[0], searchResultCount+10)
-    
+    const results = await this.db.query(text, query[0], searchResultCount + 10)
+
     // filter and transform
     const filtered = results
       .filter((result) => result.score > relevanceCutOff)
@@ -302,7 +309,7 @@ export default class DocumentBaseImpl {
 
     // done
     return filtered
-     
+
   }
 
 }

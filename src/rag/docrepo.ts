@@ -118,7 +118,7 @@ export default class DocumentRepository {
 
     } catch (error) {
       if (error.code !== 'ENOENT') {
-        console.log('Error retrieving docrepo', error)
+        console.log('[rag] Error retrieving docrepo', error)
       }
     }
 
@@ -143,7 +143,7 @@ export default class DocumentRepository {
       notifyBrowserWindows('docrepo-modified')
       
     } catch (error) {
-      console.log('Error saving docrepo', error)
+      console.log('[rag] Error saving docrepo', error)
     }
   }
 
@@ -155,7 +155,7 @@ export default class DocumentRepository {
     this.contents.push(base)
 
     // log
-    //console.log('Created document database', databasePath(this.app, id))
+    //console.log('[rag] Created document database', databasePath(this.app, id))
 
     // save and done
     this.save()
@@ -217,7 +217,7 @@ export default class DocumentRepository {
     const base = await this.connect(baseId)
     
     // check if it exists
-    console.log('Adding document', origin)
+    console.log('[rag] Adding document', origin)
     let document: DocumentSourceImpl = base.documents.find(d => d.origin == origin)
     if (!document) {
       document = new DocumentSourceImpl(uuidv4(), type, origin)
@@ -254,7 +254,7 @@ export default class DocumentRepository {
       }
 
       // log
-      console.log('Processing document', queueItem.origin)
+      console.log('[rag] Processing document', queueItem.origin)
 
       // add the document
       let error = null

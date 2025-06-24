@@ -218,13 +218,13 @@ const onAddFolder = () => {
 }
 
 const onAddDocDone = (payload: DocRepoAddDocResponse) => {
-  console.log('onAddDocDone', JSON.stringify(payload))
+  // console.log('onAddDocDone', JSON.stringify(payload))
   const queueLength = payload.queueLength
   loading.value = queueLength > 0
 }
 
 const onAddDocError = (payload: DocRepoAddDocResponse) => {
-  console.log('onAddDocError', JSON.stringify(payload))
+  // console.log('onAddDocError', JSON.stringify(payload))
   const queueLength = payload.queueLength
   loading.value = queueLength > 0
   Dialog.alert(payload.error)
