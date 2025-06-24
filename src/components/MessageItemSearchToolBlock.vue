@@ -53,8 +53,6 @@ const onFaviconError = (event: Event) => {
 }
 
 .result-title {
-  flex: 1;
-  max-width: 100%;
   font-size: 14px;
   line-height: 1.4;
   white-space: nowrap;
