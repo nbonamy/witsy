@@ -90,7 +90,7 @@ const load = () => {
   autoSavePrompt.value = store.config.prompt.autosave
   proxyMode.value = store.config.general.proxyMode
   customProxy.value = store.config.general.customProxy
-  imageResize.value = store.config.llm.imageResize || 768
+  imageResize.value = store.config.llm.imageResize ?? 768
   onChangeInstructions()
 }
 
