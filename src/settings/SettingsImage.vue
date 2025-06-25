@@ -103,11 +103,11 @@ const models = computed(() => store.config.engines[engine.value]?.models?.image 
 const load = () => {
   enabled.value = store.config.plugins.image.enabled || false
   engine.value = store.config.plugins.image.engine || 'openai'
+  model.value = store.config.plugins.image.model || null
   huggingAPIKey.value = store.config.engines.huggingface?.apiKey || ''
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
   sdwebuiBaseURL.value = store.config.engines.sdwebui?.baseURL || ''
-  model.value = store.config.plugins.image.model || null
 }
 
 const onChangeEngine = async () => {
