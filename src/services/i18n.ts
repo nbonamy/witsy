@@ -7,13 +7,13 @@ import { I18n, Locale } from 'vue-i18n'
 let i18n: I18n|null = null
 let i18nLlm: I18n|null = null
 
-if (!i18n) {
+if (!i18n && typeof window !== 'undefined') {
   const locale = window.api?.config?.localeUI() || 'en-US'
   const messages = window.api?.config?.getI18nMessages()
   i18n = createI18n(messages, locale)
 }
 
-if (!i18nLlm) {
+if (!i18nLlm && typeof window !== 'undefined') {
   const locale = window.api?.config?.localeLLM() || 'en-US'
   const messages = window.api?.config?.getI18nMessages()
   i18nLlm = createI18n(messages, locale)

@@ -60,10 +60,9 @@ const models = computed(() => store.config.engines[engine.value]?.models?.video 
 const load = () => {
   enabled.value = store.config.plugins.video.enabled || false
   engine.value = store.config.plugins.video.engine || 'replicate'
+  model.value = store.config.plugins.video.model || ''
   replicateAPIKey.value = store.config.engines.replicate?.apiKey || ''
   falaiAPIKey.value = store.config.engines.falai?.apiKey || ''
-  model.value = store.config.plugins.video.model || ''
-  onChangeEngine()
 }
 
 const onChangeEngine = async () => {

@@ -35,6 +35,7 @@ beforeAll(() => {
   store.config.plugins.python.binpath = 'python3'
 
   store.config.engines.replicate.models = {
+    chat: [],
     image: [
       { id: 'repl-image1', name: 'repl-image1' },
       { id: 'repl-image2', name: 'repl-image2' },
@@ -46,6 +47,7 @@ beforeAll(() => {
   }
 
   store.config.engines.falai.models = {
+    chat: [],
     image: [
       { id: 'falai-image1', name: 'falai-image1' },
       { id: 'falai-image2', name: 'falai-image2' },
@@ -57,6 +59,7 @@ beforeAll(() => {
   }
 
   store.config.engines.huggingface.models = {
+    chat: [],
     image: [
       { id: 'hf1', name: 'hf1' },
       { id: 'hf2', name: 'hf2' },
@@ -121,6 +124,13 @@ test('image settings', async () => {
 
 })
 
+test('image settings reload', async () => {
+  const tab = await switchToTab(wrapper, pluginIndex)
+  await tab.find('.list-panel .list .item[data-id=image]').trigger('click')
+  const image = tab.findComponent({ name: 'SettingsImage' })
+  expect(image.vm.model).toBe('falai-image2')
+})
+
 test('video settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
   await tab.find('.list-panel .list .item[data-id=video]').trigger('click')
@@ -147,6 +157,13 @@ test('video settings', async () => {
   await video.findAll('select')[1].setValue('falai-video2')
   expect(store.config.plugins.video.engine).toBe('falai')
   expect(store.config.plugins.video.model).toBe('falai-video2')
+})
+
+test('video settings reload', async () => {
+  const tab = await switchToTab(wrapper, pluginIndex)
+  await tab.find('.list-panel .list .item[data-id=video]').trigger('click')
+  const video = tab.findComponent({ name: 'SettingsVideo' })
+  expect(video.vm.model).toBe('falai-video2')
 })
 
 test('browse settings', async () => {

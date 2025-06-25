@@ -92,7 +92,7 @@ const toggleOpen = () => {
 .tool-container {
   
   width: 100%;
-  margin: 1rem 0;
+  margin: 0 0 1rem 0;
   background-color: color-mix(in srgb, var(--control-border-color), transparent 95%);
   border: 1px solid var(--control-border-color);
   border-radius: 8px;
@@ -126,6 +126,9 @@ const toggleOpen = () => {
   .tool-results {
     padding: 1rem;
     padding-top: 0.5rem;
+    &:empty {
+      display: none;
+    }
   }
 
   .tool-values {
