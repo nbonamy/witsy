@@ -45,6 +45,7 @@ beforeAll(() => {
   // init store
   store.config.engines.anthropic = {
     model: { chat: 'model2' },
+    // @ts-expect-error testing
     models: { _chat: [
         { id: 'model1', name: 'Model 1', meta: {}, ...defaultCapabilities },
         { id: 'model2', name: 'Model 2', meta: {}, ...defaultCapabilities }
@@ -279,7 +280,9 @@ test('Settings Advanced', async () => {
   vi.clearAllMocks()
 
   // helper to get instructions at any level
+  // @ts-expect-error testing
   store.config.get = (key: string): string => 
+    // @ts-expect-error testing
     key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
@@ -295,21 +298,36 @@ test('Settings Advanced', async () => {
   for (const instr in instructions) {
 
     // check it is not set
+    // @ts-expect-error testing
     expect(store.config.get(instructions[instr])).toBeUndefined()
 
     // select and set value
     await tab.find('.group.instruction select').setValue(instructions[instr])
     await tab.find('.group.instruction textarea').setValue('bot')
+    // @ts-expect-error testing
     expect(store.config.get(instructions[instr])).toBe('bot')
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 
     // reset default
     await tab.find('.group.instruction a').trigger('click')
+    // @ts-expect-error testing
     expect(store.config.get(instructions[instr])).toBeUndefined()
     expect(store.saveSettings).toHaveBeenCalledOnce()
     vi.clearAllMocks()
 
   }
 
+})
+
+test('Settings Advanced Image resize none - save', async () => {
+  const tab = await switchToTab(wrapper, 10)
+  expect(store.config.llm.imageResize).toBe(1024)
+  tab.find('.group.size select').setValue(0)
+  expect(store.config.llm.imageResize).toBe(0)
+})
+
+test('Settings Advanced Image resize none - reload', async () => {
+  const tab = await switchToTab(wrapper, 10)
+  expect(tab.find<HTMLSelectElement>('.group.size select').element.value).toBe('0')
 })
