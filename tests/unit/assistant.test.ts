@@ -81,17 +81,19 @@ beforeEach(() => {
   vi.clearAllMocks()
 
   // init store
+  // @ts-expect-error mocking
   store.config = defaults
   store.config.general.locale = 'en-US'
   store.config.llm.locale = 'fr-FR'
   store.config.llm.forceLocale = false
   store.config.llm.engine = 'mock'
+  // @ts-expect-error mocking
   store.config.instructions = {}
   installMockModels()
 
   // init assistant
   assistant = new Assistant(store.config)
-  assistant!.setLlm(new LlmMock(store.config))
+  assistant!.setLlm(new LlmMock({}))
   assistant.initLlm = () => {}
 })
 
@@ -177,7 +179,8 @@ test('User-defined instructions', async () => {
     utils: {
       titling: 'You are a titling assistant',
       titlingUser: 'Provide a title',
-    }
+    },
+    scratchpad: {},
   }
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')

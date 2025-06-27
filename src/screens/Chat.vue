@@ -364,7 +364,8 @@ const forkChat = (chat: Chat, message: Message, title: string, engine: string, m
       prompt: message.content,
       attachments: message.attachments,
       docrepo: fork.docrepo,
-      expert: message.expert
+      expert: message.expert,
+      deepResearch: message.deepResearch || false,
     })
   }
 }
@@ -437,7 +438,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert } = params
+  const { instructions, prompt, attachments, docrepo, expert, deepResearch } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -470,6 +471,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
     attachments: attachments || [],
     docrepo: docrepo || null,
     expert: expert || null,
+    deepResearch: deepResearch || false,
   }, (chunk) => {
   
     // if we get a chunk, emit it
@@ -540,7 +542,8 @@ const onRetryGeneration = async (message: Message) => {
     prompt: lastMessage.content,
     attachments: lastMessage.attachments,
     docrepo: assistant.value.chat.docrepo,
-    expert: lastMessage.expert
+    expert: lastMessage.expert,
+    deepResearch: lastMessage.deepResearch || false,
   })
 
 }

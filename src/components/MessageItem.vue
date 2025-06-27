@@ -29,7 +29,7 @@
 
       <!-- transient information -->
       <div v-if="message.transient" class="message-transient">
-        <MessageItemToolBlock :tool-call="runningTool" v-if="runningTool" />
+        <MessageItemToolBlock v-for="runningTool in runningTools" :tool-call="runningTool" v-if="runningTools" />
         <Loader v-else />
       </div>
 
@@ -146,11 +146,10 @@ const imageUrl = computed(() => {
 
 })
 
-const runningTool = computed(() => {
+const runningTools = computed(() => {
   if (store.config.appearance.chat.showToolCalls === 'never') return null
-  if (props.message.toolCalls.length === 0) return null
-  const lastToolCall = props.message.toolCalls[props.message.toolCalls.length - 1]
-  return lastToolCall.done ? null : lastToolCall
+  const runningTools = props.message.toolCalls.filter(toolCall => !toolCall.done)
+  return runningTools.length ? runningTools : null
 })
 
 // using simple css :hover

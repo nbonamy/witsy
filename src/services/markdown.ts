@@ -12,14 +12,14 @@ export const closeOpenMarkdownTags = (input: string): string => {
     '`'
   ]
 
-  const codeTags = ['```', '~~~', '`']
+  const codeTags = ['```', '~~~', '`', '"']
 
   let i: number = 0
   const stack: string[] = []
   let inCodeBlock = false
 
-  // Track active tags
-  while (i < input.length) {
+  // track active tags: remove tool call tags as id could contain anything...
+  while (i < input.replace(/<tool[^>]*?><\/tool>/g, '').length) {
 
     let matched = false
     for (const tag of mdTags) {

@@ -218,7 +218,7 @@ const processQueryParams = (params?: anyDict) => {
 
   // execute
   if (params?.execute) {
-    onSendPrompt({ instructions: null, prompt: userPrompt, expert: userExpert, attachments: [], docrepo: null })
+    onSendPrompt({ prompt: userPrompt, expert: userExpert })
     return
   }
 

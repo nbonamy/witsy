@@ -6,6 +6,23 @@ import Tavily from '../vendor/tavily'
 import { convert } from 'html-to-text'
 import { t } from '../services/i18n'
 
+export type SearchResultItem = {
+  title: string
+  url: string
+  content: string
+}
+
+export type SearchResult = {
+  query: string
+  results: SearchResultItem[]
+}
+
+export type SearchResponse = {
+  query?: string
+  results?: SearchResultItem[]
+  error?: string
+}
+
 export default class extends Plugin {
 
   constructor(config: PluginConfig) {
@@ -55,7 +72,7 @@ export default class extends Plugin {
     ]
   }
 
-  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
+  async execute(context: PluginExecutionContext, parameters: anyDict): Promise<SearchResponse> {
     if (this.config.engine === 'local') {
       return this.local(parameters)
     } else if (this.config.engine === 'tavily') {
@@ -67,7 +84,7 @@ export default class extends Plugin {
     }
   }
 
-  async local(parameters: anyDict): Promise<anyDict> {
+  async local(parameters: anyDict): Promise<SearchResponse> {
 
     try {
       const results = await window.api.search.query(parameters.query, this.config.maxResults || 5)
@@ -86,7 +103,7 @@ export default class extends Plugin {
     }
   }
 
-  async tavily(parameters: anyDict): Promise<anyDict> {
+  async tavily(parameters: anyDict): Promise<SearchResponse> {
 
     try {
 
@@ -120,7 +137,7 @@ export default class extends Plugin {
     }
   }
 
-  async brave(parameters: anyDict): Promise<anyDict> {
+  async brave(parameters: anyDict): Promise<SearchResponse> {
 
     try {
 
@@ -134,12 +151,18 @@ export default class extends Plugin {
 
       const data = await response.json()
 
+      // content returned by brave is very short
+      for (const result of data.web.results) {
+        const html = await fetch(result.url).then(response => response.text())
+        result.content = this.htmlToText(html)
+      }
+
       return {
         query: parameters.query,
         results: data.web.results.map((result: any) => ({
           url: result.url,
           title: result.title,
-          content: this.truncateContent(result.description)
+          content: result.content
         }))
       }
 

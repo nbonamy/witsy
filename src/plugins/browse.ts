@@ -1,6 +1,6 @@
 
 import { anyDict } from '../types/index'
-import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
+import { PluginExecutionContext, PluginParameter, mimeTypeToExtension } from 'multi-llm-ts'
 import { convert } from 'html-to-text'
 import Plugin, { PluginConfig } from './plugin'
 import { t } from '../services/i18n'
@@ -56,29 +56,61 @@ export default class extends Plugin {
 
       // get the html
       const response = await fetch(parameters.url)
-      const html = await response.text()
-
-      // extract title from html code using a regex
-      const titleMatch = html.match(/<title>(.*?)<\/title>/i)
-      const title = titleMatch ? titleMatch[1] : parameters.url
-
-      // convert the html to text
-      const text = convert(html, {
-        selectors: [
-          { selector: 'img', format: 'skip' }
-        ]
-      })
-
-      // done
-      return {
-        title: title,
-        content: text
+      if (!response.ok) {
+        return { error: `Failed to fetch URL: ${response.status} ${response.statusText}` }
       }
+
+      // check mime type
+      const contentType = response.headers?.get('content-type') || 'text/plain'
+      if (contentType.includes('pdf') || contentType.includes('officedocument')) {
+        return this.processDocument(response)
+      }
+
+      // should be readable text
+      const source = await response.text()
+
+      // html needs some work
+      if (contentType.includes('text/html')) {
+
+        // extract title from html code using a regex
+        const titleMatch = source.match(/<title>(.*?)<\/title>/i)
+        const title = titleMatch ? titleMatch[1] : parameters.url
+
+        // convert the html to text
+        const text = convert(source, {
+          selectors: [
+            { selector: 'img', format: 'skip' }
+          ]
+        })
+
+        // done
+        return {
+          title: title,
+          content: text
+        }
+      }
+
+      // assume it's plain text
+      return {
+        content: source,
+      }
+
 
     } catch (error) {
       return { error: error }
     }
 
-  }  
+  }
+  async processDocument(response: Response): Promise<anyDict> {
+    const arrayBuffer = await response.arrayBuffer()
+    const uint8Array = new Uint8Array(arrayBuffer)
+    const b64 = btoa(String.fromCharCode(...uint8Array))
+    const contentType = response.headers.get('content-type')
+    const format = mimeTypeToExtension(contentType)
+    return {
+      title: response.url,
+      content: window.api.file.extractText(b64, format),
+    }
+  }
 
 }

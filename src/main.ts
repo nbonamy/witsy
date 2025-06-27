@@ -9,7 +9,6 @@ import process from 'node:process';
 import fontList from 'font-list';
 import { app, BrowserWindow, ipcMain, nativeImage, clipboard, dialog, nativeTheme, systemPreferences, Menu, Notification, shell } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import { PythonShell } from 'python-shell';
 import Store from 'electron-store';
 import log from 'electron-log/main';
 import { fixPath, getCachedText } from './main/utils';
@@ -33,6 +32,7 @@ import * as config from './main/config';
 import * as history from './main/history';
 import * as commands from './main/commands';
 import * as experts from './main/experts';
+import * as agents from './main/agents';
 import * as file from './main/file';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
@@ -41,6 +41,7 @@ import * as menu from './main/menu';
 import * as text from './main/text';
 import * as i18n from './main/i18n';
 import * as debug from './main/network';
+import * as interpreter from './main/interpreter';
 import { useI18n } from './main/i18n';
 
 let commander: Commander = null
@@ -477,6 +478,39 @@ ipcMain.on('experts-import', (event) => {
   event.returnValue = experts.importExperts(app);
 });
 
+ipcMain.on('agents-open-forge',  () => {
+  //window.openAgentForgeWindow();
+});
+
+ipcMain.on('agents-load', (event) => {
+  event.returnValue = JSON.stringify(agents.loadAgents(app));
+});
+
+ipcMain.on('agents-save', (event, payload) => {
+  event.returnValue = agents.saveAgent(app, JSON.parse(payload));
+});
+
+ipcMain.on('agents-delete', (event, payload) => {
+  event.returnValue = agents.deleteAgent(app, payload);
+});
+
+ipcMain.on('agents-get-runs', (event, agentId) => {
+  event.returnValue = JSON.stringify(agents.getAgentRuns(app, agentId));
+});
+
+ipcMain.on('agents-save-run', (event, payload) => {
+  event.returnValue = agents.saveAgentRun(app, JSON.parse(payload));
+});
+
+ipcMain.on('agents-delete-run', (event, payload) => {
+  const { agentId, runId } = JSON.parse(payload);
+  event.returnValue = agents.deleteAgentRun(app, agentId, runId);
+});
+
+ipcMain.on('agents-delete-runs', (event, payload) => {
+  event.returnValue = agents.deleteAgentRuns(app, payload);
+});
+
 ipcMain.on('settings-open', (event, payload) => {
   window.openSettingsWindow(payload);
 });
@@ -556,7 +590,7 @@ ipcMain.on('markdown-render', (event, payload) => {
 
 ipcMain.on('code-python-run', async (event, payload) => {
   try {
-    const result = await PythonShell.runString(payload);
+    const result = await interpreter.runPython(payload);
     event.returnValue = {
       result: result
     }

@@ -305,7 +305,7 @@ const onAction = (action: string|ToolbarAction) => {
       const contents = editor.value.getContent()
       if (contents.content.trim().length) {
         const prompt = i18nInstructions(store.config, `instructions.scratchpad.${toolbarAction.value}`)
-        onSendPrompt({ instructions: null, prompt: prompt, attachments: [], docrepo: null, expert: null })
+        onSendPrompt({ prompt: prompt })
       } else {
         emitEvent('llm-done', null)
       }
@@ -451,7 +451,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
   
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert } = params
+  const { prompt, attachments, expert } = params
   
   // we need a prompt
   if (!prompt) {

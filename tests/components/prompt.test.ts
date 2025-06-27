@@ -49,7 +49,7 @@ beforeAll(() => {
   store.loadCommands()
   store.config.llm.imageResize = 0
   store.config.engines.openai.models.chat.push(
-    { id: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false } },
+    { id: 'gpt-4o', name: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
   )
 })
 
@@ -80,7 +80,8 @@ test('Send on click', async () => {
     prompt: 'this is my prompt',
     attachments: [],
     docrepo: null,
-    expert: null
+    expert: null,
+    deepResearch: false,
   })
   expect(prompt.element.value).toBe('')
 })
@@ -95,7 +96,8 @@ test('Sends on enter', async () => {
     prompt: 'this is my prompt',
     attachments: [],
     docrepo: null,
-    expert: null
+    expert: null,
+    deepResearch: false,
   })
   expect(prompt.element.value).toBe('')
 })
@@ -114,6 +116,7 @@ test('Sends with right parameters', async () => {
     attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
+    deepResearch: false,
   })
   expect(prompt.element.value).toBe('')
 })
@@ -301,6 +304,7 @@ test('Stores command for later', async () => {
     attachments: [],
     expert: null,
     docrepo: null,
+    deepResearch: false,
   })
 })
 
@@ -321,6 +325,7 @@ test('Selects command and run', async () => {
     attachments: [],
     expert: null,
     docrepo: null,
+    deepResearch: false,
   })
 })
 

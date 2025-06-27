@@ -9,7 +9,10 @@ export interface GenerationOpts extends LlmCompletionOpts {
   streaming?: boolean
   docrepo?: string
   sources?: boolean
+  noToolsInContent?: boolean
 }
+
+export type LlmChunkCallback = (chunk: LlmChunk) => void
 
 export type GenerationResult = 
   'success' |
@@ -39,7 +42,7 @@ export type GenerationResult =
     this.llm = null
   }
 
-  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, callback?: (chunk: LlmChunk) => void): Promise<GenerationResult> {
+  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, callback?: LlmChunkCallback): Promise<GenerationResult> {
 
     // return code
     let rc: GenerationResult = 'success'
@@ -88,6 +91,21 @@ export type GenerationResult =
           ...opts
         })
 
+        // // fake tool calls
+        // for (const toolCall of llmResponse.toolCalls) {
+        //   const chunk: LlmChunk = {
+        //     type: 'tool',
+        //     id: crypto.randomUUID(),
+        //     name: toolCall.name,
+        //     call: {
+        //       params: toolCall.params,
+        //       result: toolCall.result
+        //     },
+        //     done: true
+        //   }
+        //   callback?.call(null, chunk)
+        // }
+
         // fake streaming
         const chunk: LlmChunk = {
           type: 'content',
@@ -117,7 +135,7 @@ export type GenerationResult =
           if (msg.type === 'usage') {
             response.usage = msg.usage
           } else if (msg.type === 'tool') {
-            response.addToolCall(msg)
+            response.addToolCall(msg, opts.noToolsInContent ? false : true)
             callback?.call(null, msg)
           } else if (msg.type === 'content') {
             if (msg && sources && sources.length > 0) {
