@@ -24,6 +24,7 @@ export const fixPath = async (): Promise<void> => {
 
     // on windows everything is fine
     if (process.platform === 'win32') {
+      console.log('PATH', process.env.PATH)
       return
     }
 
