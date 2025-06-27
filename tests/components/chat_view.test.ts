@@ -179,7 +179,7 @@ test('Sends prompt', async () => {
   emitEvent('send-prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: null
+    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -188,7 +188,7 @@ test('Sends prompt with instructions', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', instructions: 'instructions' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: 'instructions', attachments: [], docrepo: null, expert: null
+    model: 'gpt-4o', instructions: 'instructions', attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -197,7 +197,7 @@ test('Sends prompt with attachment', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', attachments: ['file'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: ['file'], docrepo: null, expert: null
+    model: 'gpt-4o', instructions: null, attachments: ['file'], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -206,7 +206,7 @@ test('Sends prompt with doc repo', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: 'docrepo', expert: null
+    model: 'gpt-4o', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -215,7 +215,7 @@ test('Sends prompt with expert', async () => {
   emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }
+    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -341,7 +341,7 @@ test('Select chat', async () => {
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachments: [], docrepo: null, expert: null
+    model: 'gpt-4o', attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
@@ -376,7 +376,8 @@ test('Fork Chat on User Message', async () => {
       content: 'attachment',
     }) ],
     docrepo: 'docrepo',
-    expert: expect.objectContaining({ id: 'expert'})
+    expert: expect.objectContaining({ id: 'expert'}),
+    deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 

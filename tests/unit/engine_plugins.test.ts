@@ -24,17 +24,35 @@ const context: PluginExecutionContext = {
 }
 
 // @ts-expect-error mocking
-global.fetch = vi.fn(async () => ({
-  text: () => '<html><head><title>title</title></head><body>fetched_content</body></html>',
-  json: () => ({
-    web: {
-      results: [
-        { url: 'url1', title: 'title1', description: 'desc1' },
-        { url: 'url2', title: 'title2', description: 'desc2' }
-      ]
+global.fetch = vi.fn(async (url: string) => {
+  if (url.endsWith('.pdf')) {
+    return {
+      url,
+      ok: true,
+      headers: {
+        get: () => 'application/pdf',
+      },
+      arrayBuffer: () => new TextEncoder().encode('pdf').buffer
     }
-  })
-}))
+  } else {
+    return {
+      url,
+      ok: true,
+      headers: {
+        get: () => 'text/html; charset=UTF-8',
+      },
+      text: () => '<html><head><title>title</title></head><body>fetched_content</body></html>',
+      json: () => ({
+        web: {
+          results: [
+            { url: 'url1', title: 'title1', description: 'desc1' },
+            { url: 'url2', title: 'title2', description: 'desc2' }
+          ]
+        }
+      })
+    }
+  }
+})
 
 // mock i18n
 vi.mock('../../src/services/i18n', async () => {
@@ -193,16 +211,95 @@ beforeAll(() => {
     model: 'video-model',
   }
   store.config.engines = {
-    openai: { apiKey: 'test-api-key' },
-    google: { apiKey: 'test-api-key', },
-    huggingface: { apiKey: 'test-api-key' },
-    replicate: { apiKey: 'test-api-key', },
-    falai: { apiKey: 'test-api-key',  }
+    openai: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
+    google: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
+    huggingface: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
+    replicate: { apiKey: 'test-api-key', models: { chat: [] }, model: {} },
+    falai: { apiKey: 'test-api-key', models: { chat: [] }, model: {} }
   }
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
+})
+
+test('Browse Plugin', async () => {
+  const browse = new Browse(store.config.plugins.browse)
+  expect(browse.isEnabled()).toBe(true)
+  expect(browse.getName()).toBe('extract_webpage_content')
+  expect(browse.getDescription()).not.toBeFalsy()
+  expect(browse.getPreparationDescription()).toBe('plugins.browse.running')
+  expect(browse.getRunningDescription()).toBe('plugins.browse.running')
+  expect(browse.getCompletedDescription('', { url: 'url' }, { title: 'title', content: 'content' })).toBe('plugins.browse.completed {"title":"title"}')
+  expect(browse.getCompletedDescription('', { url: 'url' }, { error: 'error' })).toBe('plugins.browse.error')
+  expect(browse.getParameters()[0].name).toBe('url')
+  expect(browse.getParameters()[0].type).toBe('string')
+  expect(browse.getParameters()[0].description).not.toBeFalsy()
+  expect(browse.getParameters()[0].required).toBe(true)
+  expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({
+    title: 'title',
+    content: 'fetched_content'
+  })
+  expect(await browse.execute(context, { url: 'https://google.com/dummy.pdf' })).toStrictEqual({
+    title: 'https://google.com/dummy.pdf',
+    content: 'cGRm_extracted'
+  })  
+})
+
+test('Search Plugin Local', async () => {
+  const search = new Search(store.config.plugins.search)
+  expect(search.isEnabled()).toBe(true)
+  expect(search.getName()).toBe('search_internet')
+  expect(search.getDescription()).not.toBeFalsy()
+  expect(search.getPreparationDescription()).toBe('plugins.search.running')
+  expect(search.getRunningDescription()).toBe('plugins.search.running')
+  expect(search.getCompletedDescription('', { query: 'query' }, { results: [] })).toBe('plugins.search.completed {"query":"query","count":0}')
+  expect(search.getCompletedDescription('', { query: 'query' }, { results: [ {} ] })).toBe('plugins.search.completed {"query":"query","count":1}')
+  expect(search.getCompletedDescription('', { query: 'query' }, { error: 'error' })).toBe('plugins.search.error')
+  expect(search.getParameters()[0].name).toBe('query')
+  expect(search.getParameters()[0].type).toBe('string')
+  expect(search.getParameters()[0].description).not.toBeFalsy()
+  expect(search.getParameters()[0].required).toBe(true)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title1', url: 'url1', content: 'page_con' },
+      { title: 'title2', url: 'url2', content: 'page_con' }
+    ]
+  })
+  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
+})
+
+test('Search Plugin Tavily', async () => {
+  store.config.plugins.search.engine = 'tavily'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(tavily .prototype.search).toHaveBeenLastCalledWith('test', {})
+  expect(window.api.search.query).not.toHaveBeenCalled()
+})
+
+test('Search Plugin Brave', async () => {
+  store.config.plugins.search.engine = 'brave'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { url: 'url1', title: 'title1', content: 'fetched_content' },
+      { url: 'url2', title: 'title2', content: 'fetched_content' }
+    ]
+  })
+  expect(fetch).toHaveBeenNthCalledWith(1, 'https://api.search.brave.com/res/v1/web/search?q=test&count=5', {
+    headers: {
+      'Accept': 'application/json',
+      'X-Subscription-Token': store.config.plugins.search.braveApiKey
+    }
+  })
+  expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
 test('Image Plugin', async () => {
@@ -363,81 +460,6 @@ test('Video Plugin fal.ai', async () => {
     url: 'file://file_downloaded',
   })
 
-})
-
-test('Browse Plugin', async () => {
-  const browse = new Browse(store.config.plugins.browse)
-  expect(browse.isEnabled()).toBe(true)
-  expect(browse.getName()).toBe('extract_webpage_content')
-  expect(browse.getDescription()).not.toBeFalsy()
-  expect(browse.getPreparationDescription()).toBe('plugins.browse.running')
-  expect(browse.getRunningDescription()).toBe('plugins.browse.running')
-  expect(browse.getCompletedDescription('', { url: 'url' }, { title: 'title', content: 'content' })).toBe('plugins.browse.completed {"title":"title"}')
-  expect(browse.getCompletedDescription('', { url: 'url' }, { error: 'error' })).toBe('plugins.browse.error')
-  expect(browse.getParameters()[0].name).toBe('url')
-  expect(browse.getParameters()[0].type).toBe('string')
-  expect(browse.getParameters()[0].description).not.toBeFalsy()
-  expect(browse.getParameters()[0].required).toBe(true)
-  expect(await browse.execute(context, { url: 'https://google.com' })).toStrictEqual({
-    title: 'title',
-    content: 'fetched_content'
-  })
-})
-
-test('Search Plugin Local', async () => {
-  const search = new Search(store.config.plugins.search)
-  expect(search.isEnabled()).toBe(true)
-  expect(search.getName()).toBe('search_internet')
-  expect(search.getDescription()).not.toBeFalsy()
-  expect(search.getPreparationDescription()).toBe('plugins.search.running')
-  expect(search.getRunningDescription()).toBe('plugins.search.running')
-  expect(search.getCompletedDescription('', { query: 'query' }, { results: [] })).toBe('plugins.search.completed {"query":"query","count":0}')
-  expect(search.getCompletedDescription('', { query: 'query' }, { results: [ {} ] })).toBe('plugins.search.completed {"query":"query","count":1}')
-  expect(search.getCompletedDescription('', { query: 'query' }, { error: 'error' })).toBe('plugins.search.error')
-  expect(search.getParameters()[0].name).toBe('query')
-  expect(search.getParameters()[0].type).toBe('string')
-  expect(search.getParameters()[0].description).not.toBeFalsy()
-  expect(search.getParameters()[0].required).toBe(true)
-  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
-    query: 'test',
-    results: [
-      { title: 'title1', url: 'url1', content: 'page_con' },
-      { title: 'title2', url: 'url2', content: 'page_con' }
-    ]
-  })
-  expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
-})
-
-test('Search Plugin Tavily', async () => {
-  store.config.plugins.search.engine = 'tavily'
-  const search = new Search(store.config.plugins.search)
-  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
-    query: 'test',
-    results: [
-      { title: 'title', url: 'url', content: 'fetched_' }
-    ]
-  })
-  expect(tavily .prototype.search).toHaveBeenLastCalledWith('test', {})
-  expect(window.api.search.query).not.toHaveBeenCalled()
-})
-
-test('Search Plugin Brave', async () => {
-  store.config.plugins.search.engine = 'brave'
-  const search = new Search(store.config.plugins.search)
-  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
-    query: 'test',
-    results: [
-      { url: 'url1', title: 'title1', content: 'desc1' },
-      { url: 'url2', title: 'title2', content: 'desc2' }
-    ]
-  })
-  expect(fetch).toHaveBeenLastCalledWith('https://api.search.brave.com/res/v1/web/search?q=test&count=5', {
-    headers: {
-      'Accept': 'application/json',
-      'X-Subscription-Token': store.config.plugins.search.braveApiKey
-    }
-  })
-  expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
 test('Python Plugin', async () => {

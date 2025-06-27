@@ -22,7 +22,8 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
     capabilities: {
       tools: false,
       vision: true,
-      reasoning: false
+      reasoning: false,
+      caching: false,
     }
   })
   return {

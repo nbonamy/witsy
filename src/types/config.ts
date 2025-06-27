@@ -24,6 +24,7 @@ export type Configuration = {
   realtime: RealtimeConfig
   mcp: McpConfig
   mcpServers: Record<string, McpClaudeServer>
+  features?: Record<string, any>
 }
 
 export type WitsyEngineCreateOpts = EngineCreateOpts & {
@@ -85,11 +86,12 @@ export type LLMConfig = {
 }
 
 export type InstructionsConfig = {
-  default: string
-  titling: string
-  titlingUser: string
-  docquery: string
+  chat: strDict
   scratchpad: strDict
+  utils: {
+    titling: string
+    titlingUser: string
+  }
 }
 
 export type AppearanceConfig = {

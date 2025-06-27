@@ -1,0 +1,22 @@
+{
+  "id": "agent1",
+  "createdAt": 1000000000000,
+  "updatedAt": 1000000005000,
+  "name": "Name1",
+  "description": "Description1",
+  "engine": "engine1",
+  "model": "model1",
+  "locale": "locale1",
+  "modelOpts": {},
+  "disableStreaming": true,
+  "tools": [
+    "tool1",
+    "tool2"
+  ],
+  "agents": [],
+  "docrepo": null,
+  "instructions": "instructions1",
+  "prompt": "prompt1",
+  "parameters": [ { "name": "param1", "type": "string", "description": "Description1", "required": true } ],
+  "schedule": "*/5 * * * *"
+}

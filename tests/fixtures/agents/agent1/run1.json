@@ -1,0 +1,33 @@
+{
+  "id": "run1",
+  "agentId": "agent1",
+  "createdAt": 2000000005000,
+  "updatedAt": 2000000015000,
+  "trigger": "manual",
+  "status": "success",
+  "prompt": "prompt",
+  "messages": [
+    {
+      "role": "system",
+      "content": "instructions1"
+    },
+    {
+      "role": "user",
+      "content": "prompt"
+    },
+    {
+      "role": "assistant",
+      "content": "response"
+    }
+  ],
+  "toolCalls": [
+    {
+      "name": "tool1",
+      "params": {
+        "param1": "value1",
+        "param2": "value2"
+      },
+      "result": "result"
+    }
+  ]
+}

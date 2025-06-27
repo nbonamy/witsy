@@ -12,6 +12,7 @@ export default class Message extends MessageBase implements IMessage {
   createdAt: number
   type: MessageType
   expert?: Expert
+  deepResearch?: boolean
   toolCalls?: ToolCall[]
   usage?: LlmUsage
   transient: boolean
@@ -26,6 +27,7 @@ export default class Message extends MessageBase implements IMessage {
     this.createdAt = Date.now()
     this.type = 'text'
     this.expert = null
+    this.deepResearch = false
     this.toolCalls = []
     this.attachments = []
     this.usage = null
@@ -51,6 +53,7 @@ export default class Message extends MessageBase implements IMessage {
     message.reasoning = obj.reasoning || null
     message.transient = false
     message.expert = obj.expert ? Expert.fromJson(obj.expert) : null
+    message.deepResearch = obj.deepResearch || false
     message.toolCalls = obj.toolCalls || obj.toolCall?.calls?.map((tc: any, idx: number) => ({
       ...tc,
       id: (idx + 1).toString(),
@@ -109,7 +112,7 @@ export default class Message extends MessageBase implements IMessage {
     }
   }
 
-  addToolCall(toolCall: LlmChunkTool): void {
+  addToolCall(toolCall: LlmChunkTool, addToContent: boolean = true): void {
     
     // find previous
     let call = this.toolCalls.find(c => c.id === toolCall.id)
@@ -134,11 +137,13 @@ export default class Message extends MessageBase implements IMessage {
         params: toolCall.call?.params || null,
         result: toolCall.call?.result || null,
       })
-      this.appendText({
-        type: 'content',
-        text: `<tool index="${this.toolCalls.length-1}"></tool>`,
-        done: false,
-      })
+      if (addToContent) {
+        this.appendText({
+          type: 'content',
+          text: `<tool id="${toolCall.id}"></tool>`,
+          done: false,
+        })
+      }
     }
 
   }

@@ -12,7 +12,7 @@
       <div class="chat-content">
         <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
         <EmptyChat v-else />
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" class="prompt" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="enableDeepResearch" class="prompt" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
@@ -50,6 +50,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   }
+})
+
+const enableDeepResearch = computed(() => {
+  return store.config.features?.deepResearch
 })
 
 const chatMenuPosition = computed(() => {

@@ -1,15 +1,17 @@
 
 import { Expert } from 'types'
 import { Configuration } from 'types/config'
-import { LlmEngine, LlmChunk } from 'multi-llm-ts'
+import { LlmEngine } from 'multi-llm-ts'
 import { expertI18n, getLlmLocale, i18nInstructions, setLlmLocale } from './i18n'
-import Generator, { GenerationResult, GenerationOpts } from './generator'
+import Generator, { GenerationResult, GenerationOpts, LlmChunkCallback } from './generator'
 import { removeMarkdown } from '@excalidraw/markdown-to-text'
 import { availablePlugins } from '../plugins/plugins'
 import Chat from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import LlmFactory, { ILlmManager } from '../llms/llm'
+// import { useDeepResearchMultiAgent } from './deepresearch_ma'
+import { runDeepResearchMultiStep } from './deepresearch_ms'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
 
@@ -17,6 +19,7 @@ export type GenerationCallback = (event: GenerationEvent) => void
 
 export interface AssistantCompletionOpts extends GenerationOpts {
   engine?: string
+  deepResearch?: boolean
   titling?: boolean
   instructions?: string|null
   attachments?: Attachment[]
@@ -69,7 +72,7 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void, generationCallback?: GenerationCallback): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<void> {
 
     // check
     prompt = prompt.trim()
@@ -140,11 +143,18 @@ export default class extends Generator {
       this.llm.clearPlugins()
     }
 
+    // save this
+    const hadPlugins = this.llm.plugins.length > 0
+
+    // deep research?
+    const deepReseach = opts?.deepResearch
+
     // add user message
     const userMessage = new Message('user', prompt)
     userMessage.setExpert(opts.expert, expertI18n(opts.expert, 'prompt'))
     userMessage.engine = opts.engine
     userMessage.model = opts.model
+    userMessage.deepResearch = deepReseach
     opts.attachments.map(a => userMessage.attach(a))
     this.chat.addMessage(userMessage)
 
@@ -152,18 +162,35 @@ export default class extends Generator {
     const assistantMessage = new Message('assistant')
     assistantMessage.engine = opts.engine
     assistantMessage.model = opts.model
+    assistantMessage.deepResearch = deepReseach
     this.chat.addMessage(assistantMessage)
     callback?.call(null, null)
 
-    // generate text
-    generationCallback?.call(null, 'before_generation')
-    const hadPlugins = this.llm.plugins.length > 0
-    let rc: GenerationResult = await this._prompt(opts, callback)
+    // deep research will come with its own instructions
+    let rc: GenerationResult = 'error'
+    if (deepReseach) {
+      // const dpOpts = useDeepResearchMultiAgent(this.config, this.llm, this.chat, opts)
+      // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
+      // opts = { ...opts, ...dpOpts }
 
-    // check if streaming is not supported
-    if (rc === 'streaming_not_supported') {
-      this.chat.disableStreaming = true
+      rc = await runDeepResearchMultiStep(this.config, this.llm, this.chat, {
+        ...opts,
+        breadth: 4,
+        depth: 2,
+      })
+      
+    } else {
+
+      // generate text
+      generationCallback?.call(null, 'before_generation')
       rc = await this._prompt(opts, callback)
+
+      // check if streaming is not supported
+      if (rc === 'streaming_not_supported') {
+        this.chat.disableStreaming = true
+        rc = await this._prompt(opts, callback)
+      }
+
     }
 
     // titling
@@ -191,7 +218,7 @@ export default class extends Generator {
   
   }
 
-  async _prompt(opts: AssistantCompletionOpts, callback: (chunk: LlmChunk) => void): Promise<GenerationResult> {
+  async _prompt(opts: AssistantCompletionOpts, callback: LlmChunkCallback): Promise<GenerationResult> {
     return await this.generate(this.llm, this.chat.messages, {
       ...opts,
       ...this.chat.modelOpts,

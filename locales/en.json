@@ -112,6 +112,28 @@
     "reset": "Reset",
     "retry": "Retry",
     "save": "Save",
+    "schedule": {
+      "disabled": "Disabled",
+      "minutes": "Minutes",
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "every": "Every",
+      "hours_on_minute": "hour(s) on minute",
+      "days_at": "day(s), at",
+      "at": "at",
+      "sunday": "Sun",
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "on_the": "On the",
+      "day_of_every": "day of every",
+      "months": "month(s)"
+    },
     "search": "Search…",
     "selectAll": "Select All",
     "selectNone": "Unselect All",
@@ -139,6 +161,58 @@
     "warning": "Warning",
     "workingWith": "Working with",
     "write": "Write"
+  },
+  "agent": {
+    "create": {
+      "information": "General Information",
+      "introduction": "An agent is a specialized AI that can perform tasks for you. You can create an agent to automate tasks, such as writing emails, summarizing documents, or generating reports. You can also create an agent to help you with specific tasks, such as writing code or creating presentations.",
+      "invocation": "Agent Triggers",
+      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+      "llm": "Model Configuration",
+      "settings": "Model Settings",
+      "tools": {
+        "title": "Tools Access",
+        "custom": "Restrict access to specific tools",
+        "selectAll": "@:{'common.selectAll'}",
+        "selectNone": "@:{'common.selectNone'}"
+      }
+    },
+    "description": "@:{'common.description'}",
+    "forge": {
+      "create": "Create Agent",
+      "edit": "Edit Agent",
+      "empty": "Select an existing agent or create a new one.",
+      "title": "Agent Forge"
+    },
+    "goal": "Goal",
+    "history": {
+      "clear": "Clear history",
+      "date": "Date",
+      "empty": "No history yet…",
+      "trigger": "Trigger",
+      "duration": "Duration",
+      "neverRun": "Never",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "log": "Log"
+    },
+    "lastRun": "Last executed",
+    "name": "@:{'common.name'}",
+    "nextRun": "Scheduled on",
+    "prompt": "Default Prompt",
+    "run": "Run now",
+    "runCount": "Total executions",
+    "tools": {
+      "name": "@:{'common.name'}",
+      "description": "@:{'common.description'}"
+    },
+    "trigger": {
+      "manual": "Manual",
+      "manual_description": "Agents can always be manually triggered",
+      "nextRuns": "Next Runs",
+      "schedule": "Schedule",
+      "webhook": "Webhook URL"
+    }
   },
   "automation": {
     "commander": {
@@ -420,6 +494,14 @@
   },
   "debugConsole": {
     "title": "Debug Console"
+  },
+  "deepresearch": {
+    "prompt": {
+      "completed": "Prompt generation completed for {agent}",
+      "error": "An error occurred while generating prompt for {agent}",
+      "running": "Generating prompt for {agent}…",
+      "starting": "Generating prompt"
+    }
   },
   "designStudio": {
     "confirmDeleteMultiple": "Are you sure you want to delete these media?",
@@ -1417,6 +1499,12 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
+    "agent": {
+      "completed": "Agent {agent} executed successfully",
+      "error": "Error while executing agent {agent}",
+      "running": "Executing agent {agent}…",
+      "starting": "Initializing agent {agent}…"
+    },
     "browse": {
       "completed": "Content downloaded from \"{title}\"",
       "error": "Error while downloading content",

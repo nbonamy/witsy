@@ -199,6 +199,9 @@ test('close open markdowntags', () => {
   expect(closeOpenMarkdownTags('```python\ndef function():\n    print("hello"')).toBe('```python\ndef function():\n    print("hello"```')
   expect(closeOpenMarkdownTags('Check this [link](https://example.com/very/long/url/that/might/be/cut')).toBe('Check this [link](https://example.com/very/long/url/that/might/be/cut)')
 
+  // does not close _ when tool calls
+  expect(closeOpenMarkdownTags('<tool call="call_123"></tool>')).toBe('<tool call="call_123"></tool>')
+
 })
 
 test('getCodeBlocks', () => {

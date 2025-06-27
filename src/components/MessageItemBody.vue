@@ -109,7 +109,7 @@ const computeBlocks = (content: string|null): Block[] => {
   const blocks: Block[] = []
   const regexMedia1 = /!\[([^\]]*)\]\(([^\)]*)\)/g
   const regexMedia2 = /<(?:img|video)[^>]*?src="([^"]*)"[^>]*?>/g
-  const regexTool1 = /<tool index="(\d*)"><\/tool>/g
+  const regexTool1 = /<tool (id|index)="([^\"]*)"><\/tool>/g
 
   while (lastIndex < content.length) {
     
@@ -121,13 +121,13 @@ const computeBlocks = (content: string|null): Block[] => {
     regexMedia1.lastIndex = lastIndex
     regexMedia2.lastIndex = lastIndex
     
-    const toolMatch = regexTool1.exec(content)
+    const tool1Match = regexTool1.exec(content)
     const media1Match = regexMedia1.exec(content)
     const media2Match = regexMedia2.exec(content)
     
     // Collect valid matches (not inside code blocks)
-    if (toolMatch && !codeBlocks.find(block => toolMatch.index >= block.start && toolMatch.index < block.end)) {
-      matches.push({ match: toolMatch, type: 'tool', regex: regexTool1 })
+    if (tool1Match && !codeBlocks.find(block => tool1Match.index >= block.start && tool1Match.index < block.end)) {
+      matches.push({ match: tool1Match, type: 'tool', regex: regexTool1 })
     }
     if (media1Match && !codeBlocks.find(block => media1Match.index >= block.start && media1Match.index < block.end)) {
       matches.push({ match: media1Match, type: 'media1', regex: regexMedia1 })
@@ -160,8 +160,9 @@ const computeBlocks = (content: string|null): Block[] => {
     // Process the match based on its type
     if (matchType === 'tool') {
       if (props.message.toolCalls.length) {
-        const index = parseInt(match[1])
-        const toolCall = props.message.toolCalls[index]
+        const toolCall =
+          match[1] === 'id' ? props.message.toolCalls.find(call => call.id === match[2]) :
+          match[1] === 'index' ? props.message.toolCalls[parseInt(match[2])] : null
         if (toolCall && toolCall.done) {
           if (props.showToolCalls === 'always') {
             blocks.push({ type: 'tool', toolCall: toolCall })
@@ -200,6 +201,7 @@ const computeBlocks = (content: string|null): Block[] => {
   }
 
   // done
+  //console.log('Computed blocks:', content, blocks)
   return blocks
 }
 

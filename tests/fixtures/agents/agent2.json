@@ -1,0 +1,23 @@
+{
+  "id": "agent2",
+  "createdAt": 1000000000000,
+  "updatedAt": 1000000005000,
+  "name": "Name2",
+  "description": "Description2",
+  "engine": "engine2",
+  "model": "model2",
+  "locale": "locale2",
+  "modelOpts": {},
+  "disableStreaming": true,
+  "tools": [
+    "tool1",
+    "tool2"
+  ],
+  "agents": [
+    "agent1"
+  ],
+  "docrepo": null,
+  "instructions": "instructions2",
+  "prompt": "prompt2",
+  "schedule": "*/5 * * * *"
+}

@@ -1,5 +1,5 @@
 
-import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk } from 'multi-llm-ts'
+import { LlmModelOpts, LlmChunkTool, Message as IMessageBase, Attachment as IAttachmentBase, LlmTool, LlmChunk, PluginParameter, LlmUsage } from 'multi-llm-ts'
 import { Configuration } from './config'
 import { Size } from 'electron'
 import { Application, RunCommandParams } from './automation'
@@ -47,6 +47,7 @@ export interface Message extends IMessageBase {
   createdAt: number
   expert?: Expert
   toolCalls?: ToolCall[]
+  usage?: LlmUsage
   attachments: Attachment[]
   transient: boolean
   uiOnly: boolean
@@ -87,6 +88,43 @@ export interface Chat {
   lastMessage(): Message
   subtitle(): string
   delete(): void
+}
+
+export interface Agent {
+  id: string
+  createdAt: number
+  updatedAt: number
+  name: string
+  description: string
+  engine: string|null
+  model: string|null
+  modelOpts: LlmModelOpts|null
+  disableStreaming: boolean
+  locale: string|null
+  tools: string[]|null
+  agents: string[]|null
+  docrepo: string|null
+  instructions: string
+  prompt: string|null
+  parameters: PluginParameter[]
+  schedule: string|null
+  buildPrompt(parameters: anyDict): string|null
+}
+
+export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
+export type AgentRunStatus = 'running' | 'success' | 'error'
+
+export type AgentRun = {
+  id: string
+  agentId: string
+  createdAt: number
+  updatedAt: number
+  trigger: AgentRunTrigger
+  status: AgentRunStatus
+  prompt: string
+  error?: string
+  messages: Message[]
+  toolCalls: ToolCall[]
 }
 
 export type Folder = {
@@ -149,6 +187,7 @@ export interface Store {
 
   commands: Command[]
   experts: Expert[]
+  agents: Agent[]
   config: Configuration
   history: History
   rootFolder: Folder
@@ -156,19 +195,20 @@ export interface Store {
   chatState: ChatState  
   transcribeState: TranscribeState
   
-  saveHistory?(): void
-  saveSettings?(): void
-  load?(): void
-  loadSettings?(): void
-  loadCommands?(): void
-  loadExperts?(): void
-  loadHistory?(): void
+  saveHistory(): void
+  saveSettings(): void
+  load(): void
+  loadSettings(): void
+  loadCommands(): void
+  loadExperts(): void
+  loadAgents(): void
+  loadHistory(): void
   initChatWithDefaults(chat: Chat): void
-  addChat?(chat: Chat, folderId?: string): void
-  removeChat?(chat: Chat): void
-  addQuickPrompt?(prompt: string): void
-  //addPadPrompt?(prompt: string): void
-  mergeHistory?(chats: any[]): void
+  addChat(chat: Chat, folderId?: string): void
+  removeChat(chat: Chat): void
+  addQuickPrompt(prompt: string): void
+  // addPadPrompt(prompt: string): void
+  // mergeHistory(chats: any[]): void
   dump?(): void
 }
 
@@ -337,6 +377,16 @@ declare global {
         save(experts: Expert[]): void
         import(): boolean
         export(): boolean
+      }
+      agents: {
+        forge(): void
+        load(): Agent[]
+        save(agent: Agent): boolean
+        delete(agentId: string): boolean
+        getRuns(agentId: string): AgentRun[]
+        saveRun(run: AgentRun): boolean
+        deleteRun(agentId: string, runId: string): boolean
+        deleteRuns(agentId: string): boolean
       }
       docrepo: {
         open(): void

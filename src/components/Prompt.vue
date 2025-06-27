@@ -26,6 +26,10 @@
       <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
       <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
       <Waveform v-if="enableWaveform && dictating":width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
+      <div v-if="enableDeepResearch" class="icon research" :class="{ active: deepResearchActive }" @click="onDeepResearch">
+        <BIconBinoculars />
+        <span>Deep Research</span>
+      </div>
       <slot name="actions" />
     </div>
     <slot name="between" />
@@ -47,7 +51,7 @@ import { StreamingChunk } from '../voice/stt'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { expertI18n, commandI18n, t, i18nInstructions, getLlmLocale, setLlmLocale } from '../services/i18n'
-import { BIconStars } from 'bootstrap-icons-vue'
+import { BIconBinoculars, BIconStars } from 'bootstrap-icons-vue'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import { mimeTypeToExtension, extensionToMimeType } from 'multi-llm-ts'
 import useAudioRecorder, { isAudioRecordingSupported } from '../composables/audio_recorder'
@@ -64,11 +68,12 @@ import Loader from './Loader.vue'
 import Chat from '../models/chat'
 
 export type SendPromptParams = {
-  instructions: string|null,
+  instructions?: string,
   prompt: string,
-  attachments: Attachment[]
-  docrepo: string|null,
-  expert: Expert|null
+  attachments?: Attachment[]
+  docrepo?: string,
+  expert?: Expert,
+  deepResearch?: boolean
 }
 
 export type HistoryProvider = (event: KeyboardEvent) => string[]
@@ -126,6 +131,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  enableDeepResearch: {
+    type: Boolean,
+    default: false
+  },
   processing: {
     type: Boolean,
     default: false
@@ -157,6 +166,7 @@ const showExperts = ref(false)
 const showActiveExpert = ref(false)
 const showCommands = ref(false)
 const showConversationMenu = ref(false)
+const deepResearchActive = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
@@ -292,6 +302,10 @@ const defaultPrompt = (conversationMode: string) => {
   }
 }
 
+const onDeepResearch = () => {
+  deepResearchActive.value = !deepResearchActive.value
+}
+
 const initDictation = async () => {
 
   // needed?
@@ -393,11 +407,12 @@ const onSendPrompt = () => {
   nextTick(() => {
     autoGrow(input.value)
     emitEvent('send-prompt', {
-      instructions: instructions.value || null,
+      instructions: instructions.value,
       prompt: message,
-      attachments: attachments.value || null,
-      docrepo: docrepo.value || null,
-      expert: expert.value || null
+      attachments: attachments.value,
+      docrepo: docrepo.value,
+      expert: expert.value,
+      deepResearch: deepResearchActive.value,
     } as SendPromptParams)
     attachments.value = []
   })
@@ -1115,6 +1130,18 @@ defineExpose({
 
     .icon.dictate {
       margin-left: -2px;
+    }
+
+    .icon.research {
+      margin: 0 0.25rem;
+      width: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.25rem;
+      span {
+        font-size: 0.95em;
+      }
     }
 
   }
