@@ -16,6 +16,7 @@ export type LlmChunkCallback = (chunk: LlmChunk) => void
 
 export type GenerationResult = 
   'success' |
+  'stopped' |
   'missing_api_key' |
   'out_of_credits' |
   'quota_exceeded' |
@@ -130,6 +131,7 @@ export type GenerationResult =
         for await (const msg of this.stream) {
           if (this.stopGeneration) {
             response.appendText({ type: 'content', text: '', done: true })
+            rc = 'stopped'
             break
           }
           if (msg.type === 'usage') {

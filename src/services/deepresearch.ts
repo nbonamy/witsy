@@ -1,5 +1,19 @@
 
+import { LlmEngine } from 'multi-llm-ts'
+import { GenerationResult } from './generator'
+import { AssistantCompletionOpts } from './assistant'
 import Agent from '../models/agent'
+import Chat from '../models/chat'
+
+export type DeepResearchOpts = AssistantCompletionOpts & {
+  breadth: number, // number of sections to create
+  depth: number, // number of queries per section
+}
+
+export interface DeepResearch {
+  stop(): void
+  run(engine: LlmEngine, chat: Chat, opts: DeepResearchOpts): Promise<GenerationResult>
+}
 
 export const planningAgent = Agent.fromJson({
   name: 'planning',

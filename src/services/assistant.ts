@@ -11,7 +11,8 @@ import Message from '../models/message'
 import Attachment from '../models/attachment'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 // import { useDeepResearchMultiAgent } from './deepresearch_ma'
-import { runDeepResearchMultiStep } from './deepresearch_ms'
+import DeepResearchMultiStep from './deepresearch_ms'
+import { DeepResearch } from './deepresearch'
 
 export type GenerationEvent = 'before_generation' | 'plugins_disabled' | 'before_title'
 
@@ -29,14 +30,21 @@ export interface AssistantCompletionOpts extends GenerationOpts {
 export default class extends Generator {
 
   llmManager: ILlmManager
+  deepResearch: DeepResearch
   chat: Chat
 
   constructor(config: Configuration) {
     super(config)
     this.llm = null
     this.stream = null
+    this.deepResearch = null
     this.llmManager = LlmFactory.manager(config)
     this.chat = new Chat()
+  }
+
+  async stop() {
+    this.deepResearch?.stop()
+    super.stop()
   }
 
   setChat(chat: Chat) {
@@ -72,7 +80,7 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<void> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<GenerationResult> {
 
     // check
     prompt = prompt.trim()
@@ -173,7 +181,8 @@ export default class extends Generator {
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }
 
-      rc = await runDeepResearchMultiStep(this.config, this.llm, this.chat, {
+      this.deepResearch = new DeepResearchMultiStep(this.config)
+      rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
         breadth: 4,
         depth: 2,
@@ -215,6 +224,9 @@ export default class extends Generator {
       setLlmLocale(llmLocale)
       this.config.llm.forceLocale = forceLocale
     }
+
+    // done
+    return rc
   
   }
 

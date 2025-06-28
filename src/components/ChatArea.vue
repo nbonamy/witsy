@@ -278,6 +278,10 @@ defineExpose({
     prompt.value.setExpert(expert)
   },
 
+  setDeepResearch: (active: boolean) => {
+    prompt.value.setDeepResearch(active)
+  },
+
   startDictation: () => {
     prompt.value.startDictation()
   },

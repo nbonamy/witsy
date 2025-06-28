@@ -306,6 +306,10 @@ const onDeepResearch = () => {
   deepResearchActive.value = !deepResearchActive.value
 }
 
+const setDeepResearch = (active: boolean) => {
+  deepResearchActive.value = active
+}
+
 const initDictation = async () => {
 
   // needed?
@@ -933,6 +937,7 @@ defineExpose({
   focus: () => input.value.focus(),
 
   setExpert,
+  setDeepResearch,
   isContextMenuOpen,
   startDictation: onDictate,
 

@@ -161,10 +161,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 ## TODO
 
 - [ ] Workspaces / Projects (whatever the name is)
-- [ ] Agents (multi-step, scheduling...)
 - [ ] Proper database (SQLite3) storage (??)
 
 ## WIP
+
+- [ ] DeepResearch
+- [ ] Agents (multi-step, scheduling...)
 
 ## DONE
 
