@@ -174,6 +174,9 @@ export default class extends Generator {
     this.chat.addMessage(assistantMessage)
     callback?.call(null, null)
 
+    // callback
+    generationCallback?.call(null, 'before_generation')
+
     // deep research will come with its own instructions
     let rc: GenerationResult = 'error'
     if (deepReseach) {
@@ -191,7 +194,6 @@ export default class extends Generator {
     } else {
 
       // generate text
-      generationCallback?.call(null, 'before_generation')
       rc = await this._prompt(opts, callback)
 
       // check if streaming is not supported
