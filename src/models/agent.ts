@@ -42,7 +42,12 @@ export default class Agent implements AgentBase {
     this.schedule = null
   }
 
-  static fromJson(obj: any): Agent {
+  static fromJson(
+    obj: any,
+    preparationDescription?: () => string,
+    runningDescription?: (args: any) => string,
+    completedDescription?: (args: any, results: any) => string
+  ): Agent {
     const agent = new Agent()
     agent.id = obj.id || crypto.randomUUID()
     agent.createdAt = obj.createdAt ?? Date.now()
@@ -61,6 +66,9 @@ export default class Agent implements AgentBase {
     agent.prompt = obj.prompt ?? null
     agent.parameters = obj.parameters ?? []
     agent.schedule = obj.schedule ?? null
+    agent.getPreparationDescription = preparationDescription
+    agent.getRunningDescription = runningDescription
+    agent.getCompletedDescription = completedDescription
     return agent
   }
 
@@ -74,4 +82,8 @@ export default class Agent implements AgentBase {
     return prompt
   }
   
+  getPreparationDescription?: () => string
+  getRunningDescription?: (args: any) => string
+  getCompletedDescription?: (args: any, results: any) => string
+
 }

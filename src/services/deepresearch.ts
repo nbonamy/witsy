@@ -2,6 +2,7 @@
 import { LlmEngine } from 'multi-llm-ts'
 import { GenerationResult } from './generator'
 import { AssistantCompletionOpts } from './assistant'
+import { t } from './i18n'
 import Agent from '../models/agent'
 import Chat from '../models/chat'
 
@@ -75,7 +76,11 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
       minimum: 1
     }
   ],
-});
+},
+  () => t('deepresearch.planning.starting'),
+  () => t('deepresearch.planning.running'),
+  () => t('deepresearch.planning.completed'),
+)
 
 export const searchAgent = Agent.fromJson({
   name: 'search',
@@ -103,7 +108,11 @@ Remove all <tool> tags from the content and return it as plain text.`,
       required: true
     },
   ],
-});
+},
+  () => t('deepresearch.search.starting'),
+  (args) => t('deepresearch.search.running', { query: args.searchQuery }),
+  () => t('deepresearch.search.completed'),
+)
 
 export const analysisAgent = Agent.fromJson({
   name: 'analysis',
@@ -147,10 +156,14 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
       required: true
     }
   ]
-});
+},
+  () => t('deepresearch.analysis.starting'),
+  () => t('deepresearch.analysis.running'),
+  () => t('deepresearch.analysis.completed'),
+)
 
-export const sectionAgent = Agent.fromJson({
-  name: 'section',
+export const writerAgent = Agent.fromJson({
+  name: 'writer',
   description: 'Section generator that creates detailed, coherent sections of research reports based on analyzed information and section objectives. Ensures each section is well-structured and contributes to the overall narrative.',
   tools: [
     'run_python_code'
@@ -208,13 +221,20 @@ Key Learnings: {{keyLearnings}}`,
     },
     {
       name: 'keyLearnings',
-      type: 'string',
+      type: 'array',
       description: 'The key learnings that have been extracted for this section',
+      items: {
+        type: 'string'
+      },
       required: true
     }
   ]
 
-});
+},
+  () => t('deepresearch.writer.starting'),
+  (args) => t('deepresearch.writer.running', { title: args.sectionTitle }),
+  (args) => t('deepresearch.writer.completed', { title: args.sectionTitle }),
+)
 
 export const synthesisAgent = Agent.fromJson({
   name: 'synthesis',
@@ -260,12 +280,15 @@ Output Type: {{outputType}}`,
       required: true
     }
   ]
-});
+}, () => t('deepresearch.synthesis.starting'),
+  (args) => args.outputType === 'conclusion' ? t('deepresearch.synthesis.conclusion.running') : t('deepresearch.synthesis.execsum.running'),
+  (args) => args.outputType === 'conclusion' ? t('deepresearch.synthesis.conclusion.completed') : t('deepresearch.synthesis.execsum.completed'),
+)
 
-export const deepResearchAgents = [
+export const deepResearchAgents: Agent[] = [
   planningAgent,
   searchAgent,
   analysisAgent,
-  sectionAgent,
+  writerAgent,
   synthesisAgent,
 ]

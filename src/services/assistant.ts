@@ -10,7 +10,7 @@ import Chat from '../models/chat'
 import Message from '../models/message'
 import Attachment from '../models/attachment'
 import LlmFactory, { ILlmManager } from '../llms/llm'
-// import { useDeepResearchMultiAgent } from './deepresearch_ma'
+import DeepResearchMultiAgent from './deepresearch_ma'
 import DeepResearchMultiStep from './deepresearch_ms'
 import { DeepResearch } from './deepresearch'
 
@@ -80,7 +80,7 @@ export default class extends Generator {
     return this.llm !== null
   }
 
-  async prompt(prompt: string, opts: AssistantCompletionOpts, callback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<GenerationResult> {
+  async prompt(prompt: string, opts: AssistantCompletionOpts, llmCallback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<GenerationResult> {
 
     // check
     prompt = prompt.trim()
@@ -172,7 +172,7 @@ export default class extends Generator {
     assistantMessage.model = opts.model
     assistantMessage.deepResearch = deepReseach
     this.chat.addMessage(assistantMessage)
-    callback?.call(null, null)
+    llmCallback?.call(null, null)
 
     // callback
     generationCallback?.call(null, 'before_generation')
@@ -184,22 +184,23 @@ export default class extends Generator {
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }
 
-      this.deepResearch = new DeepResearchMultiStep(this.config)
+      const useMultiAgent = true
+      this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config) : new DeepResearchMultiStep(this.config)
       rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
-        breadth: 4,
-        depth: 2,
+        breadth: 1,
+        depth: 1,
       })
       
     } else {
 
       // generate text
-      rc = await this._prompt(opts, callback)
+      rc = await this._prompt(opts, llmCallback)
 
       // check if streaming is not supported
       if (rc === 'streaming_not_supported') {
         this.chat.disableStreaming = true
-        rc = await this._prompt(opts, callback)
+        rc = await this._prompt(opts, llmCallback)
       }
 
     }
@@ -232,11 +233,11 @@ export default class extends Generator {
   
   }
 
-  async _prompt(opts: AssistantCompletionOpts, callback: LlmChunkCallback): Promise<GenerationResult> {
+  async _prompt(opts: AssistantCompletionOpts, llmCallback: LlmChunkCallback): Promise<GenerationResult> {
     return await this.generate(this.llm, this.chat.messages, {
       ...opts,
       ...this.chat.modelOpts,
-    }, callback)
+    }, llmCallback)
   }
 
   async attach(file: Attachment) {

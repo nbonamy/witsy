@@ -200,8 +200,8 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           }
 
           // now we can run the section agent to generate the section content
-          const sectionGenerator = new Runner(this.config, dr.sectionAgent)
-          const sectionContent = await sectionGenerator.run('workflow', dr.sectionAgent.buildPrompt({
+          const sectionGenerator = new Runner(this.config, dr.writerAgent)
+          const sectionContent = await sectionGenerator.run('workflow', dr.writerAgent.buildPrompt({
             sectionNumber: index + 1,
             sectionTitle: section.title,
             sectionObjective: section.description,

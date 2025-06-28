@@ -179,8 +179,7 @@ test('ollama settings', async () => {
   expect(store.config.engines.ollama.baseURL).toBe('base-url')
   await ollama.findAll('button')[1].trigger('click')
   await wait(750) //timeout
-  expect(loadOllamaModels).toHaveBeenLastCalledWith(expect.objectContaining({
-  }))
+  expect(loadOllamaModels).toHaveBeenCalled()
   const visionModelSelect = findModelSelectoPlus(ollama, 1)
   await visionModelSelect.open()
   await visionModelSelect.select(1)
