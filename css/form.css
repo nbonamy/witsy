@@ -255,12 +255,17 @@ form .group span, form .group a {
   font-size: var(--form-font-size);
 }
 
-form .slidergroup {
+form .slider-group {
   position: relative;
   display: inline;
   flex: 1;
   top: -3px;
   margin: 0.25rem 0px;
+}
+
+form .slider-label {
+  display: inline-block;
+  margin: 0 8px !important;
 }
 
 form.vertical {

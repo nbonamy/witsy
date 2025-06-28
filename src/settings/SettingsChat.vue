@@ -36,8 +36,8 @@
       <div class="group font-size">
         <label>{{ t('settings.chat.fontSize') }}</label>
         <div class="control-group">
-          <span class="fontsize small">A</span>
-          <div class="slidergroup">
+          <span class="slider-label small">A</span>
+          <div class="slider-group">
             <input type="range" min="1" max="5" v-model="fontSize" @input="save" />
             <datalist id="fontsize">
               <option value="1"></option>
@@ -47,7 +47,7 @@
               <option value="5"></option>
             </datalist>
           </div>
-          <span class="fontsize large">A</span>
+          <span class="slider-label large">A</span>
         </div>
       </div>
       <div class="group example">
@@ -126,16 +126,11 @@ defineExpose({ load })
 
 <style scoped>
 
-.fontsize {
-  display: inline-block;
-  margin: 0 8px !important;
-}
-
-.fontsize.small {
+.slider-label.small {
   font-size: 8pt;
 }
 
-.fontsize.large {
+.slider-label.large {
   font-size: 12pt;
 }
 

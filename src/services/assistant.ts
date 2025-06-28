@@ -184,12 +184,12 @@ export default class extends Generator {
       // this.chat.messages[0].content = this.getSystemInstructions(this.chat.messages[0].content)
       // opts = { ...opts, ...dpOpts }
 
-      const useMultiAgent = true
+      const useMultiAgent = this.config.deepresearch.runtime === 'ma'
       this.deepResearch = useMultiAgent ? new DeepResearchMultiAgent(this.config) : new DeepResearchMultiStep(this.config)
       rc = await this.deepResearch.run(this.llm, this.chat, {
         ...opts,
-        breadth: 1,
-        depth: 1,
+        breadth: this.config.deepresearch.breadth,
+        depth: this.config.deepresearch.depth,
       })
       
     } else {

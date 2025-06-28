@@ -12,6 +12,7 @@ export type Configuration = {
   commands: CommandsConfig
   automation: AutomationConfig
   instructions: InstructionsConfig
+  deepresearch: DeepResearchConfig
   appearance: AppearanceConfig
   studio: DesignStudioConfig
   shortcuts: ShortcutsConfig
@@ -92,6 +93,14 @@ export type InstructionsConfig = {
     titling: string
     titlingUser: string
   }
+}
+
+export type DeepResearchRuntime = 'ma' | 'ms'
+
+export type DeepResearchConfig = {
+  runtime: DeepResearchRuntime
+  breadth: number
+  depth: number
 }
 
 export type AppearanceConfig = {

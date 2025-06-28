@@ -7,23 +7,25 @@
       <main>
         <ul>
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
-          <SettingsTab class="llm" :title="t('settings.tabs.llm')"><BIconBox class="icon" /></SettingsTab>
+          <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BIconBox class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
+          <SettingsTab v-if="enableDeepResearch" class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><BIconBinoculars class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
           <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
-          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)"><BIconMagic class="icon" /></SettingsTab>
-          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)"><BIconMortarboard class="icon" /></SettingsTab>
+          <SettingsTab class="commands" :title="t('settings.tabs.commands')" @change="load(settingsCommands)" :checked="initialTab == 'commands'"><BIconMagic class="icon" /></SettingsTab>
+          <SettingsTab class="experts" :title="t('settings.tabs.experts')" @change="load(settingsExperts)" :checked="initialTab == 'experts'"><BIconMortarboard class="icon" /></SettingsTab>
           <SettingsTab class="voice" :title="t('settings.tabs.voice')" :checked="initialTab == 'voice'"><BIconMegaphone class="icon" /></SettingsTab>
-          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')"><BIconCommand class="icon" /></SettingsTab>
-          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)"><BIconTools class="icon" /></SettingsTab>
+          <SettingsTab class="shortcuts" :title="t('settings.tabs.shortcuts')" :checked="initialTab == 'shortcuts'"><BIconCommand class="icon" /></SettingsTab>
+          <SettingsTab class="advanced" :title="t('settings.tabs.advanced')" @change="load(settingsAdvanced)" :checked="initialTab == 'advanced'"><BIconTools class="icon" /></SettingsTab>
         </ul>
       </main>
-    </div>
+  </div>
     <div class="content">
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
+      <SettingsDeepResearch v-if="enableDeepResearch" ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
@@ -40,12 +42,14 @@
 
 import { OpenSettingsPayload } from '../types/index'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { ref, onMounted, watch, nextTick, PropType } from 'vue'
+import { ref, onMounted, watch, nextTick, PropType, computed } from 'vue'
+import { store } from '../services/store' 
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
 import SettingsLLM from '../settings/SettingsLLM.vue'
 import SettingsChat from '../settings/SettingsChat.vue'
+import SettingsDeepResearch from '../settings/SettingsDeepResearch.vue'
 import SettingsCommands from '../settings/SettingsCommands.vue'
 import SettingsExperts from '../settings/SettingsExperts.vue'
 import SettingsShortcuts from '../settings/SettingsShortcuts.vue'
@@ -75,6 +79,7 @@ const initialTab = ref('general')
 const settingsGeneral = ref(null)
 const settingsLLM = ref(null)
 const settingsChat = ref(null)
+const settingsDeepResearch = ref(null)
 const settingsModels = ref(null)
 const settingsPlugins = ref(null)
 const settingsMcp = ref(null)
@@ -88,6 +93,7 @@ const settings = [
   settingsGeneral,
   settingsLLM,
   settingsChat,
+  settingsDeepResearch,
   settingsModels,
   settingsPlugins,
   settingsMcp,
@@ -97,6 +103,10 @@ const settings = [
   settingsShortcuts,
   settingsAdvanced
 ]
+
+const enableDeepResearch = computed(() => {
+  return store.config.features?.deepResearch
+})
 
 onMounted(async () => {
 

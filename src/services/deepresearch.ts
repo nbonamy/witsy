@@ -77,9 +77,9 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
     }
   ],
 },
-  () => t('deepresearch.planning.starting'),
-  () => t('deepresearch.planning.running'),
-  () => t('deepresearch.planning.completed'),
+  () => t('deepResearch.planning.starting'),
+  () => t('deepResearch.planning.running'),
+  () => t('deepResearch.planning.completed'),
 )
 
 export const searchAgent = Agent.fromJson({
@@ -109,9 +109,9 @@ Remove all <tool> tags from the content and return it as plain text.`,
     },
   ],
 },
-  () => t('deepresearch.search.starting'),
-  (args) => t('deepresearch.search.running', { query: args.searchQuery }),
-  () => t('deepresearch.search.completed'),
+  () => t('deepResearch.search.starting'),
+  (args) => t('deepResearch.search.running', { query: args.searchQuery }),
+  () => t('deepResearch.search.completed'),
 )
 
 export const analysisAgent = Agent.fromJson({
@@ -157,9 +157,9 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
     }
   ]
 },
-  () => t('deepresearch.analysis.starting'),
-  () => t('deepresearch.analysis.running'),
-  () => t('deepresearch.analysis.completed'),
+  () => t('deepResearch.analysis.starting'),
+  () => t('deepResearch.analysis.running'),
+  () => t('deepResearch.analysis.completed'),
 )
 
 export const writerAgent = Agent.fromJson({
@@ -231,9 +231,9 @@ Key Learnings: {{keyLearnings}}`,
   ]
 
 },
-  () => t('deepresearch.writer.starting'),
-  (args) => t('deepresearch.writer.running', { title: args.sectionTitle }),
-  (args) => t('deepresearch.writer.completed', { title: args.sectionTitle }),
+  () => t('deepResearch.writer.starting'),
+  (args) => t('deepResearch.writer.running', { title: args.sectionTitle }),
+  (args) => t('deepResearch.writer.completed', { title: args.sectionTitle }),
 )
 
 export const synthesisAgent = Agent.fromJson({
@@ -280,9 +280,9 @@ Output Type: {{outputType}}`,
       required: true
     }
   ]
-}, () => t('deepresearch.synthesis.starting'),
-  (args) => args.outputType === 'conclusion' ? t('deepresearch.synthesis.conclusion.running') : t('deepresearch.synthesis.execsum.running'),
-  (args) => args.outputType === 'conclusion' ? t('deepresearch.synthesis.conclusion.completed') : t('deepresearch.synthesis.execsum.completed'),
+}, () => t('deepResearch.synthesis.starting'),
+  (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.running') : t('deepResearch.synthesis.execsum.running'),
+  (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.completed') : t('deepResearch.synthesis.execsum.completed'),
 )
 
 export const deepResearchAgents: Agent[] = [

@@ -28,7 +28,7 @@
       <Waveform v-if="enableWaveform && dictating":width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       <div v-if="enableDeepResearch" class="icon research" :class="{ active: deepResearchActive }" @click="onDeepResearch">
         <BIconBinoculars />
-        <span>Deep Research</span>
+        <span>{{ t('common.deepResearch') }}</span>
       </div>
       <slot name="actions" />
     </div>

@@ -33,6 +33,7 @@
     "costsAsOf": "costs as of",
     "create": "Create",
     "customize": "Customize…",
+    "deepResearch": "Deep Research",
     "default": "Default",
     "delete": "Delete",
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
@@ -495,7 +496,7 @@
   "debugConsole": {
     "title": "Debug Console"
   },
-  "deepresearch": {
+  "deepResearch": {
     "analysis": {
       "completed": "Analysis completed: key learnings available!",
       "error": "An error occured while analyzing search results",
@@ -1735,6 +1736,23 @@
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
     },
+    "deepResearch": {
+      "runtime": "Runtime",
+      "runtimes": {
+        "ma": "Multi-agent (LLM-driven)",
+        "ms": "Multi-step (Witsy-driven)"
+      },
+      "breadth": "Breadth of research",
+      "breadths": {
+        "narrow": "Narrow",
+        "wide": "Wide"
+      },
+      "depth": "Depth of research",
+      "depths": {
+        "shallow": "Standard",
+        "deep": "Deep"
+      }
+    },
     "engines": {
       "anthropic": {
         "aboutModels": "More about Anthropic models",
@@ -1995,6 +2013,7 @@
       "advanced": "Advanced",
       "chat": "Chat",
       "commands": "Commands",
+      "deepResearch": "@:{'common.deepResearch'}",
       "experts": "Experts",
       "general": "General",
       "llm": "LLM",
