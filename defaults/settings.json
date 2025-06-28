@@ -24,6 +24,11 @@
     "imageResize": 768,
     "defaults": []
   },
+  "deepresearch": {
+    "runtime": "ms",
+    "breadth": 4,
+    "depth": 1
+  },
   "appearance": {
     "theme": "system",
     "lighTint": "white",
