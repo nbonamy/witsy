@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - N/A
 
 ### Fixed
-- N/A
+- PDF export when tools displayed
 
 ### Removed
 - N/A
