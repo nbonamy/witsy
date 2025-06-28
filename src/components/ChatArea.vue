@@ -197,7 +197,7 @@ const onExportPdf = async () => {
   const image = document.createElement('img')
 
   try {
-
+    
     // first take a screenshot so that theme flickering is invisible to user
     const canvas = await html2canvas(document.documentElement)
 
@@ -215,7 +215,8 @@ const onExportPdf = async () => {
 
     // copy and clean-up
     const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area').cloneNode(true) as HTMLElement
-    content.querySelectorAll('header .icon')?.forEach(action => action.remove())
+    content.querySelectorAll('header .icon')?.forEach(icon => icon.remove())
+    content.querySelectorAll('.message .tool-container')?.forEach(tool => tool.remove())
     content.querySelector('.model-settings')?.remove()
     content.querySelector('.message .actions')?.remove()
     content.querySelector('.overflow')?.remove()
