@@ -113,26 +113,26 @@
     "retry": "Retry",
     "save": "Save",
     "schedule": {
-      "disabled": "Disabled",
-      "minutes": "Minutes",
-      "hourly": "Hourly",
-      "daily": "Daily",
-      "weekly": "Weekly",
-      "monthly": "Monthly",
-      "every": "Every",
-      "hours_on_minute": "hour(s) on minute",
-      "days_at": "day(s), at",
       "at": "at",
-      "sunday": "Sun",
+      "daily": "Daily",
+      "day_of_every": "day of every",
+      "days_at": "day(s), at",
+      "disabled": "Disabled",
+      "every": "Every",
+      "friday": "Fri",
+      "hourly": "Hourly",
+      "hours_on_minute": "hour(s) on minute",
+      "minutes": "Minutes",
       "monday": "Mon",
+      "monthly": "Monthly",
+      "months": "month(s)",
+      "on_the": "On the",
+      "saturday": "Sat",
+      "sunday": "Sun",
+      "thursday": "Thu",
       "tuesday": "Tue",
       "wednesday": "Wed",
-      "thursday": "Thu",
-      "friday": "Fri",
-      "saturday": "Sat",
-      "on_the": "On the",
-      "day_of_every": "day of every",
-      "months": "month(s)"
+      "weekly": "Weekly"
     },
     "search": "Search…",
     "selectAll": "Select All",
@@ -171,10 +171,10 @@
       "llm": "Model Configuration",
       "settings": "Model Settings",
       "tools": {
-        "title": "Tools Access",
         "custom": "Restrict access to specific tools",
         "selectAll": "@:{'common.selectAll'}",
-        "selectNone": "@:{'common.selectNone'}"
+        "selectNone": "@:{'common.selectNone'}",
+        "title": "Tools Access"
       }
     },
     "description": "@:{'common.description'}",
@@ -188,13 +188,13 @@
     "history": {
       "clear": "Clear history",
       "date": "Date",
-      "empty": "No history yet…",
-      "trigger": "Trigger",
       "duration": "Duration",
+      "empty": "No history yet…",
+      "log": "Log",
       "neverRun": "Never",
       "prompt": "@:{'common.prompt'}",
       "status": "Status",
-      "log": "Log"
+      "trigger": "Trigger"
     },
     "lastRun": "Last executed",
     "name": "@:{'common.name'}",
@@ -203,8 +203,8 @@
     "run": "Run now",
     "runCount": "Total executions",
     "tools": {
-      "name": "@:{'common.name'}",
-      "description": "@:{'common.description'}"
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
     },
     "trigger": {
       "manual": "Manual",
@@ -496,11 +496,41 @@
     "title": "Debug Console"
   },
   "deepresearch": {
-    "prompt": {
-      "completed": "Prompt generation completed for {agent}",
-      "error": "An error occurred while generating prompt for {agent}",
-      "running": "Generating prompt for {agent}…",
-      "starting": "Generating prompt"
+    "analysis": {
+      "completed": "Analysis completed: key learnings available!",
+      "error": "An error occured while analyzing search results",
+      "running": "Analyzing search results to extract key learnings…",
+      "starting": "Analyzing search results to extract key learnings…"
+    },
+    "planning": {
+      "completed": "Analyis completed: the research plan is ready!",
+      "error": "An error occurred while generating the research plan",
+      "running": "Analyzing your request and creating a research plan…",
+      "starting": "Analyzing your request and creating a research plan…"
+    },
+    "search": {
+      "completed": "Internet search completed. Results available for analysis!",
+      "error": "An error occurred while searching the Internet",
+      "running": "Searching the Internet for \"{query}\"…",
+      "starting": "Starting web browser to search the Internet…"
+    },
+    "writer": {
+      "completed": "Section \"{title}\" completed!",
+      "error": "An error occurred while writing the report section",
+      "running": "Writing report section \"{title}\" based on key learnings…",
+      "starting": "Writing report section based on key learnings…"
+    },
+    "synthesis": {
+      "starting": "Synthesizing content…",
+      "error": "An error occured while synthesizing content",
+      "conclusion": {
+        "running": "Writing the report conclusion…",
+        "completed": "Conclusion ready to be integrated in the report!"
+      },
+      "execsum": {
+        "running": "Extracting key information for the executive summary…",
+        "completed": "Executive summary ready to be added to the report!"
+      }
     }
   },
   "designStudio": {

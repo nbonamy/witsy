@@ -5,7 +5,6 @@ import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import ChatList from '../../src/components/ChatList.vue'
-import defaults from '../../defaults/settings.json'
 import Chat from '../../src/models/chat'
 import Message from '../../src/models/message'
 
@@ -35,14 +34,14 @@ vi.mock('../../src/composables/event_bus', async () => {
 
 beforeAll(() => {
   useWindowMock()
-  store.config = defaults
+  store.loadSettings()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
   const now = new Date()
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1).getTime();
-  store.history = { folders: [], chats: [] }
+  store.history = { folders: [], chats: [], quickPrompts: [] }
   for (let i = 0; i < 10; i++) {
     const chat = new Chat()
     chat.title = `Chat ${i}`

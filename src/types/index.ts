@@ -108,7 +108,10 @@ export interface Agent {
   prompt: string|null
   parameters: PluginParameter[]
   schedule: string|null
-  buildPrompt(parameters: anyDict): string|null
+  buildPrompt: (parameters: anyDict) => string|null
+  getPreparationDescription?: () => string
+  getRunningDescription?: (args: any) => string
+  getCompletedDescription?: (args: any, results: any) => string
 }
 
 export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'

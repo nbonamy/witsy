@@ -43,7 +43,7 @@ export type GenerationResult =
     this.llm = null
   }
 
-  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, callback?: LlmChunkCallback): Promise<GenerationResult> {
+  async generate(llm: LlmEngine, messages: Message[], opts: GenerationOpts, llmCallback?: LlmChunkCallback): Promise<GenerationResult> {
 
     // return code
     let rc: GenerationResult = 'success'
@@ -117,7 +117,7 @@ export type GenerationResult =
         // append text
         response.appendText(chunk)
         response.usage = llmResponse.usage
-        callback?.call(null, chunk)
+        llmCallback?.call(null, chunk)
 
       } else {
 
@@ -138,16 +138,16 @@ export type GenerationResult =
             response.usage = msg.usage
           } else if (msg.type === 'tool') {
             response.addToolCall(msg, opts.noToolsInContent ? false : true)
-            callback?.call(null, msg)
+            llmCallback?.call(null, msg)
           } else if (msg.type === 'content') {
             if (msg && sources && sources.length > 0) {
               msg.done = false
             }
             response.appendText(msg)
-            callback?.call(null, msg)
+            llmCallback?.call(null, msg)
           } else if (msg.type === 'reasoning') {
             response.appendText(msg)
-            callback?.call(null, msg)
+            llmCallback?.call(null, msg)
           }
         }
 
@@ -167,7 +167,7 @@ export type GenerationResult =
         let sourcesText = '\n\nSources:\n\n'
         sourcesText += sources.map((source) => `- [${source.metadata.title}](${source.metadata.url})`).join('\n')
         response.appendText({ type: 'content', text: sourcesText, done: true })
-        callback?.call(null, { type: 'content', text: sourcesText, done: true })
+        llmCallback?.call(null, { type: 'content', text: sourcesText, done: true })
       }
 
     } catch (error) {
@@ -232,7 +232,7 @@ export type GenerationResult =
         } else if ([400, 404].includes(status) && llm.plugins.length > 0 && (message.includes('function call') || message.includes('tools') || message.includes('tool calling') || message.includes('tool use') || message.includes('tool choice'))) {
           console.warn('Model does not support function calling:', status, message)
           llm.clearPlugins()
-          return this.generate(llm, messages, opts, callback)
+          return this.generate(llm, messages, opts, llmCallback)
 
         // streaming not supported
         } else if ([400].includes(status) && message.includes('\'stream\' does not support true')) {
@@ -262,7 +262,7 @@ export type GenerationResult =
           rc = 'error'
         }
       } else {
-        callback?.call(null, { type: 'content', text: null, done: true })
+        llmCallback?.call(null, { type: 'content', text: null, done: true })
       }
     }
 
