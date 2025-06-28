@@ -465,7 +465,7 @@ const onSendPrompt = async (params: SendPromptParams) => {
   }
 
   // prompt
-  await assistant.value.prompt(prompt, {
+  const rc = await assistant.value.prompt(prompt, {
     model: assistant.value.chat.model,
     instructions: instructions || assistant.value.chat.instructions,
     attachments: attachments || [],
@@ -515,6 +515,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
   // for computer use
   if (isUsingComputer()) {
     window.api.computer.close()
+  }
+
+  // done with deep research
+  if (rc === 'success') {
+    chatArea.value?.setDeepResearch(false)
   }
 
   // save
