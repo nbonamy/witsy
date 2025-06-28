@@ -93,8 +93,8 @@ const toggleOpen = () => {
   
   width: 100%;
   margin: 0 0 1rem 0;
-  background-color: color-mix(in srgb, var(--control-border-color), transparent 95%);
-  border: 1px solid var(--control-border-color);
+  background-color: var(--tool-bg-color);
+  border: 1px solid var(--tool-border-color);
   border-radius: 8px;
   font-size: 0.9em;
   cursor: pointer;
@@ -132,7 +132,7 @@ const toggleOpen = () => {
   }
 
   .tool-values {
-    border-top: 1px solid var(--control-border-color);
+    border-top: 1px solid var(--tool-border-color);
     padding: 0.5rem;
 
     .tool-values-header {
@@ -152,11 +152,11 @@ const toggleOpen = () => {
 
         .value-key {
           font-weight: 500;
-          color: color-mix(in srgb, var(--dimmed-text-color), transparent 20%);
+          color: var(--tool-key-text-color);
         }
 
         .value-value {
-          color: var(--highlight-color);
+          color: var(--tool-value-text-color);
         }
       }
     }

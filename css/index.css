@@ -76,6 +76,11 @@
   --message-list-overflow-bg-color: var(--background-color);
   --message-list-overflow-border-color: #ccc;
 
+  --tool-border-color: var(--control-border-color);
+  --tool-bg-color: #fcfcfc;
+  --tool-key-text-color: #686868;
+  --tool-value-text-color: var(--highlight-color);
+
   --info-panel-width: 300px;
 
   --create-panel-width: 300px;
@@ -204,6 +209,9 @@
     --message-list-actions-text-color: var(--icon-color);
     --message-list-overflow-bg-color: #000;
 
+    --tool-bg-color: #232323;
+    --tool-key-text-color: #adadad;
+
     --prompt-input-border-color: #3c3c3c;
     --prompt-input-text-color: var(--sidebar-text-color);
 
@@ -315,6 +323,9 @@
     --message-list-tip-text-color: var(--text-color);
     --message-list-actions-text-color: var(--icon-color);
     --message-list-overflow-bg-color: rgb(10, 20, 50);
+
+    --tool-bg-color: #132131;
+    --tool-key-text-color: #73889a;
 
     --prompt-icon-color: var(--icon-color);
     --prompt-input-bg-color: var(--message-list-bg-color);
