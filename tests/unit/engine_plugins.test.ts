@@ -279,7 +279,7 @@ test('Search Plugin Tavily', async () => {
       { title: 'title', url: 'url', content: 'fetched_' }
     ]
   })
-  expect(tavily .prototype.search).toHaveBeenLastCalledWith('test', {})
+  expect(tavily.prototype.search).toHaveBeenLastCalledWith('test', { max_results: 5 })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
