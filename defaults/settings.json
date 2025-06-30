@@ -27,7 +27,8 @@
   "deepresearch": {
     "runtime": "ms",
     "breadth": 4,
-    "depth": 1
+    "depth": 1,
+    "searchResults": 8
   },
   "appearance": {
     "theme": "system",

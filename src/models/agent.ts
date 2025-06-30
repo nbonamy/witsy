@@ -76,7 +76,10 @@ export default class Agent implements AgentBase {
     if (!this.prompt) return null
     let prompt = this.prompt
     for (const param of Object.keys(parameters)) {
-      const value = parameters[param]
+      let value = parameters[param]
+      if (Array.isArray(value)) {
+        value = value.join(', ')
+      }
       prompt = prompt.replace(new RegExp(`{{${param}}}`, 'g'), value)
     }
     return prompt

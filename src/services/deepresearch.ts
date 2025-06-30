@@ -9,6 +9,7 @@ import Chat from '../models/chat'
 export type DeepResearchOpts = AssistantCompletionOpts & {
   breadth: number, // number of sections to create
   depth: number, // number of queries per section
+  searchResults: number, // number of search results to retrieve per query
 }
 
 export interface DeepResearch {
@@ -96,16 +97,25 @@ export const searchAgent = Agent.fromJson({
   
 Your sole responsibility is to run the search_internet tool with the provided search query and extract relevant content from the results.
 
+When running the search_internet tool, forward the value of the maxResults parameter to the tool as the maxResults parameter. This will limit the number of search results returned by the tool.
+
 Do not summarize of analyze the content, just return the raw search results and extracted content.
 
 Remove all <tool> tags from the content and return it as plain text.`,
-  prompt: `Execute targeted search for: {{searchQuery}}`,
+  prompt: `Execute targeted search for: {{searchQuery}}.
+maxResults to return: {{maxResults}}`,
   parameters: [
     {
       name: 'searchQuery',
       type: 'string',
       description: 'Specific search query to execute',
       required: true
+    },
+    {
+      name: 'maxResults',
+      type: 'number',
+      description: 'The maximum number of search results to return',
+      required: true,
     },
   ],
 },
@@ -246,13 +256,13 @@ export const synthesisAgent = Agent.fromJson({
   //docrepo: 'research_reports',
   instructions: `You are a synthesis agent, responsible summarizing information for executive summaries or conclusions.
 
-Your task is to synthesize the provided section contents into a comprehensive executive summary or conclusion based on the user request: do not generate both.
+Your task is to synthesize the provided key learnings into a comprehensive executive summary or conclusion based on the user request: do not generate both.
 
-When generating the executive summary, focus on the key findings and insights from the research sections, ensuring it provides a clear overview of the research conducted. Make sure it is in a TL;DR format (but do not say it is a TL;DR) so it can be easily digested: one or two paragraphs with 3 to 5 key learnings. Do not include a conclusion in the executive summary, just the key findings and insights.
+When generating the executive summary, focus on the key findings and insights from the research, ensuring it provides a clear overview of the research conducted. Make sure it is in a TL;DR format (but do not say it is a TL;DR) so it can be easily digested: one or two paragraphs with 3 to 5 key learnings. Do not include a conclusion in the executive summary, just the key findings and insights.
 
 When generating the conclusion, summarize the overall findings and implications of the research, providing a final perspective on the topic. Keep it also concise, but ensure it encapsulates the essence of the research and its significance.
 
-Start your content with "# Executive Summary" or "# Conclusion" as appropriate, and then provide the content of the summary or conclusion. Don't say things like "I'll synthesize" or "I'll summarize" or "This is the executive summary" or "This is the conclusion". Just provide the content directly.
+Start your content with "# Executive Summary" or "# Conclusion" as appropriate, and then provide the content of the summary or conclusion. Don't say things like "I'll synthesize" or "I'll summarize" or "This is the executive summary" or "This is the conclusion". Just provide the content directly. Make sure the executive summary or conclusion is in the same language as the research topic and key learnings.
   `,
   prompt: `Synthesize research findings into a comprehensive report:
 
@@ -268,15 +278,18 @@ Output Type: {{outputType}}`,
     },
     {
       name: 'keyLearnings',
-      type: 'string',
-      description: 'The key learnings that have been extracted from the analysis',
+      type: 'array',
+      description: 'All the key learnings from all sections that have been extracted from the analysis',
+      items: {
+        type: 'string'
+      },
       required: true
     },
     {
       name: 'outputType',
       type: 'string',
       description: 'The format of the output desired',
-      enum: ['executive summary', 'conclusion'],
+      enum: ['executive_summary', 'conclusion'],
       required: true
     }
   ]

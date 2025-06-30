@@ -1739,8 +1739,8 @@
     "deepResearch": {
       "runtime": "Runtime",
       "runtimes": {
-        "ma": "Multi-agent (LLM-driven)",
-        "ms": "Multi-step (Witsy-driven)"
+        "ma": "Multi-agent (full agentic, LLM-driven)",
+        "ms": "Multi-step (hybrid code/agent, Witsy-driven)"
       },
       "breadth": "Breadth of research",
       "breadths": {
