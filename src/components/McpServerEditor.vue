@@ -247,14 +247,22 @@ const onSave = () => {
 
   } else {
 
-    emit('save', {
+    const trimmedTitle = title.value.trim()
+
+    const payload: any = {
       type: type.value,
       command: command.value,
       url: url.value,
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
-      title: title.value.trim(),
-    })
+    }
+
+    // include title only when non-empty or when it existed before (allows deletion)
+    if (trimmedTitle.length || props.server?.title !== undefined) {
+      payload.title = trimmedTitle
+    }
+
+    emit('save', payload)
 
   }
 
