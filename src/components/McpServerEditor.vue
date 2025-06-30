@@ -9,6 +9,10 @@
         <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
       </select>
     </div>
+    <div class="group">
+      <label>{{ t('common.title') }}</label>
+      <input type="text" name="title" v-model="title" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+    </div>
     <div class="group" v-if="['http', 'sse'].includes(type)">
       <label>{{ t('common.url') }}</label>
       <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
@@ -99,6 +103,7 @@ const cwd = ref('')
 const env: Ref<{ [key: string]: string }> = ref({})
 const apiKey = ref('')
 const selectedVar: Ref<{ key: string, value: string }> = ref(null)
+const title = ref('')
 
 const props = defineProps({
   server: {
@@ -120,6 +125,7 @@ const emit = defineEmits(['cancel', 'save', 'install'])
 onMounted(async () => {
   watch(() => props || {}, async () => {
     type.value = props.type || 'stdio'
+    title.value = props.server?.title || ''
     command.value = props.server?.command || ''
     url.value = props.server?.url || ''
     cwd.value = props.server?.cwd || ''
@@ -247,6 +253,7 @@ const onSave = () => {
       url: url.value,
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
+      title: title.value.trim(),
     })
 
   }

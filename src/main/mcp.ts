@@ -211,6 +211,13 @@ export default class {
     if (original) {
       original.type = server.type
       original.state = server.state
+      if (server.title !== undefined) {
+        if (server.title.trim().length) {
+          original.title = server.title.trim()
+        } else {
+          delete original.title
+        }
+      }
       original.command = server.command
       original.url = server.url
       original.cwd = server.cwd

@@ -7,10 +7,11 @@ export type McpServerType = 'stdio' | 'sse' | 'http'
 export type McpInstallStatus = 'success' | 'api_key_missing' | 'not_found' | 'error'
 
 export type McpServer = {
-  uuid: string|null
-  registryId: string|null
+  uuid: string | null
+  registryId: string | null
   state: 'enabled' | 'disabled'
   type: McpServerType
+  title?: string
   command?: string
   url: string
   cwd?: string
