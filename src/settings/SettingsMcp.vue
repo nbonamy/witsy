@@ -52,18 +52,19 @@ const onCreate = (createType: McpCreateType, url?: string) => {
     type: createType === 'smithery' ? 'stdio' : createType,
     command: '',
     url: url || '', 
+    title: '',
   }
 }
 
 // @ts-expect-error lazy
-const onEdited = async ({ type, command, url, cwd, env, headers }) => {
+const onEdited = async ({ type, command, url, cwd, env, headers, title }) => {
 
   // build a dummy server
   const server: McpServer = {
     uuid: selected.value.uuid,
     registryId: selected.value.registryId,
     state: selected.value.state,
-    type, command, url, cwd, env, headers
+    type, command, url, cwd, env, headers, title
   }
 
   selected.value = null
