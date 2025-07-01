@@ -104,3 +104,6 @@ officeParserTemp
 #
 autolib/bin
 autolib/build
+
+# 
+.claude
