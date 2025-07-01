@@ -197,6 +197,28 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       find: vi.fn(() => 'file.ext'),
       extractText: vi.fn((s) => `${s}_extracted`),
       getAppInfo: vi.fn(),
+      listDirectory: vi.fn((dirPath: string, includeHidden?: boolean) => [
+        { name: 'file1.txt', isDirectory: false, size: 100 },
+        { name: 'subdir', isDirectory: true },
+        ...(includeHidden ? [{ name: '.hidden', isDirectory: false, size: 50 }] : [])
+      ]),
+      exists: vi.fn((filePath: string) => filePath.includes('existing')),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      writeNew: vi.fn((filePath: string, content: string) => {
+        if (filePath.includes('exists')) {
+          throw new Error('File already exists')
+        }
+        return { success: true }
+      }),
+      normalize: vi.fn((filePath: string) => {
+        if (filePath.startsWith('~/')) {
+          return filePath.replace('~', '/home/user')
+        }
+        if (!filePath.startsWith('/')) {
+          return `/home/user/${filePath}`
+        }
+        return filePath
+      }),
     },
     docrepo: {
       open: vi.fn(),

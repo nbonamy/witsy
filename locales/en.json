@@ -515,23 +515,23 @@
       "running": "Searching the Internet for \"{query}\"…",
       "starting": "Starting web browser to search the Internet…"
     },
+    "synthesis": {
+      "conclusion": {
+        "completed": "Conclusion ready to be integrated in the report!",
+        "running": "Writing the report conclusion…"
+      },
+      "error": "An error occured while synthesizing content",
+      "execsum": {
+        "completed": "Executive summary ready to be added to the report!",
+        "running": "Extracting key information for the executive summary…"
+      },
+      "starting": "Synthesizing content…"
+    },
     "writer": {
       "completed": "Section \"{title}\" completed!",
       "error": "An error occurred while writing the report section",
       "running": "Writing report section \"{title}\" based on key learnings…",
       "starting": "Writing report section based on key learnings…"
-    },
-    "synthesis": {
-      "starting": "Synthesizing content…",
-      "error": "An error occured while synthesizing content",
-      "conclusion": {
-        "running": "Writing the report conclusion…",
-        "completed": "Conclusion ready to be integrated in the report!"
-      },
-      "execsum": {
-        "running": "Extracting key information for the executive summary…",
-        "completed": "Executive summary ready to be added to the report!"
-      }
     }
   },
   "designStudio": {
@@ -1541,6 +1541,29 @@
       "error": "Error while downloading content",
       "running": "Downloading content…"
     },
+    "filesystem": {
+      "default": {
+        "completed": "Filesystem operation completed",
+        "running": "Performing filesystem operation…",
+        "starting": "Preparing filesystem operation…"
+      },
+      "error": "Error during filesystem operation: {error}",
+      "list": {
+        "completed": "No item found in {path} | Found 1 item in {path} | Found {count} items in {path}",
+        "running": "Listing contents of {path}…",
+        "starting": "Preparing to list directory contents…"
+      },
+      "read": {
+        "completed": "File {path} read successfully",
+        "running": "Reading file {path}…",
+        "starting": "Preparing to read file…"
+      },
+      "write": {
+        "completed": "Successfully wrote file {path}",
+        "running": "Writing file {path}…",
+        "starting": "Preparing to write file…"
+      }
+    },
     "image": {
       "completed": "Image generated successfully",
       "description": "Generate an image based on a prompt. Returns the url of the image starting with the \"file://\" scheme which is OK. Create only one image at a time unless explicitely asked to do otherwise. Always embed the image visible in the final response using \"![title](url)\" markdown syntax. Come up with a short title for the image.",
@@ -1737,11 +1760,6 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "deepResearch": {
-      "runtime": "Runtime",
-      "runtimes": {
-        "ma": "Multi-agent (full agentic, LLM-driven)",
-        "ms": "Multi-step (hybrid code/agent, Witsy-driven)"
-      },
       "breadth": "Breadth of research",
       "breadths": {
         "narrow": "Narrow",
@@ -1749,8 +1767,13 @@
       },
       "depth": "Depth of research",
       "depths": {
-        "shallow": "Standard",
-        "deep": "Deep"
+        "deep": "Deep",
+        "shallow": "Standard"
+      },
+      "runtime": "Runtime",
+      "runtimes": {
+        "ma": "Multi-agent (full agentic, LLM-driven)",
+        "ms": "Multi-step (hybrid code/agent, Witsy-driven)"
       }
     },
     "engines": {
@@ -1923,6 +1946,14 @@
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",
         "title": "Download"
+      },
+      "filesystem": {
+        "addPath": "Add Directory",
+        "allowedPaths": "Allowed Directories",
+        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories.",
+        "directoryPath": "Directory Path",
+        "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
+        "title": "Filesystem"
       },
       "image": {
         "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",

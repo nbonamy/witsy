@@ -184,6 +184,91 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
   return fileList;
 }
 
+export const listDirectory = (app: App, dirPath: string, includeHidden: boolean = false): { name: string, isDirectory: boolean, size?: number }[] => {
+  try {
+    const items = fs.readdirSync(dirPath, { withFileTypes: true })
+    
+    return items
+      .filter(item => includeHidden || !item.name.startsWith('.'))
+      .map(item => {
+        const itemPath = path.join(dirPath, item.name)
+        const result: { name: string, isDirectory: boolean, size?: number } = {
+          name: item.name,
+          isDirectory: item.isDirectory()
+        }
+        
+        if (!item.isDirectory()) {
+          try {
+            const stats = fs.statSync(itemPath)
+            result.size = stats.size
+          } catch {
+            // Ignore errors for individual files
+          }
+        }
+        
+        return result
+      })
+  } catch (error) {
+    console.error('Error while listing directory', error)
+    throw error
+  }
+}
+
+export const fileExists = (app: App, filePath: string): boolean => {
+  try {
+    return fs.existsSync(filePath)
+  } catch (error) {
+    console.error('Error while checking file existence', error)
+    return false
+  }
+}
+
+export const writeNewFile = (app: App, filePath: string, content: string): void => {
+  try {
+    if (fs.existsSync(filePath)) {
+      throw new Error(`File already exists: ${filePath}`)
+    }
+    
+    // Ensure directory exists
+    const dir = path.dirname(filePath)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+    
+    fs.writeFileSync(filePath, content, 'utf8')
+  } catch (error) {
+    console.error('Error while writing new file', error)
+    throw error
+  }
+}
+
+export const normalizePath = (app: App, filePath: string): string => {
+  try {
+    // Handle tilde expansion for home directory
+    if (filePath.startsWith('~/')) {
+      const homeDir = process.env.HOME || process.env.USERPROFILE
+      if (homeDir) {
+        filePath = path.join(homeDir, filePath.slice(2))
+      }
+    } else if (filePath === '~') {
+      const homeDir = process.env.HOME || process.env.USERPROFILE
+      if (homeDir) {
+        filePath = homeDir
+      }
+    } else if (!path.isAbsolute(filePath)) {
+      // Make relative paths relative to home directory
+      const homeDir = process.env.HOME || process.env.USERPROFILE
+      if (homeDir) {
+        filePath = path.join(homeDir, filePath)
+      }
+    }
+    
+    return path.resolve(filePath)
+  } catch (error) {
+    console.error('Error while normalizing path', error)
+    return filePath
+  }
+}
 
 export const findProgram = (app: App, program: string) => {
   try {
