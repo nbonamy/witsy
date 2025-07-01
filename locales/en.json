@@ -161,7 +161,8 @@
     "voice": "Voice",
     "warning": "Warning",
     "workingWith": "Working with",
-    "write": "Write"
+    "write": "Write",
+    "yes": "Yes"
   },
   "agent": {
     "create": {
@@ -1544,22 +1545,34 @@
     "filesystem": {
       "default": {
         "completed": "Filesystem operation completed",
+        "error": "Error during filesystem operation: {error}",
         "running": "Performing filesystem operation…",
         "starting": "Preparing filesystem operation…"
       },
-      "error": "Error during filesystem operation: {error}",
+      "delete": {
+        "completed": "Successfully deleted {path}",
+        "declined": "User declined to delete {path}",
+        "error": "Error while deleting {path}",
+        "running": "Deleting {path}…",
+        "starting": "Preparing to delete {path}…"
+      },
+      "invalidPath": "This operation is not part of the allowed paths: {path}",
       "list": {
         "completed": "No item found in {path} | Found 1 item in {path} | Found {count} items in {path}",
+        "error": "Error while listing contents of {path}",
         "running": "Listing contents of {path}…",
         "starting": "Preparing to list directory contents…"
       },
       "read": {
         "completed": "File {path} read successfully",
+        "error": "Error while reading file {path}",
         "running": "Reading file {path}…",
         "starting": "Preparing to read file…"
       },
       "write": {
         "completed": "Successfully wrote file {path}",
+        "error": "Error while writing file {path}",
+        "declined": "User declined to overwrite {path}",
         "running": "Writing file {path}…",
         "starting": "Preparing to write file…"
       }
@@ -1950,7 +1963,13 @@
       "filesystem": {
         "addPath": "Add Directory",
         "allowedPaths": "Allowed Directories",
-        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories.",
+        "allowWrite": "Allow write operations (existing file overwrite and delete",
+        "skipConfirmation": "DANGEROUS: Do not confirm write operations",
+        "skipConfirmationWarning": {
+          "text": "If you disable write operations confirmation, models may decide to overwrite/delete files. You will not be able to interrupt such operations. Do you really want to continue?",
+          "title": "Are you sure you want to disable write operation confirmation?"
+        },
+        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
         "directoryPath": "Directory Path",
         "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
         "title": "Filesystem"

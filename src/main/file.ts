@@ -81,6 +81,9 @@ export const deleteFile = (app: App, filepath: string) => {
     if (path.startsWith('file://')) {
       path = path.slice(7);
     }
+    if (!fs.existsSync(path)) {
+      return false;
+    }
     fs.unlinkSync(path);
     return true;
   } catch (error) {
@@ -223,12 +226,8 @@ export const fileExists = (app: App, filePath: string): boolean => {
   }
 }
 
-export const writeNewFile = (app: App, filePath: string, content: string): void => {
+export const writeFile = (app: App, filePath: string, content: string): boolean => {
   try {
-    if (fs.existsSync(filePath)) {
-      throw new Error(`File already exists: ${filePath}`)
-    }
-    
     // Ensure directory exists
     const dir = path.dirname(filePath)
     if (!fs.existsSync(dir)) {
@@ -236,9 +235,10 @@ export const writeNewFile = (app: App, filePath: string, content: string): void 
     }
     
     fs.writeFileSync(filePath, content, 'utf8')
+    return true
   } catch (error) {
     console.error('Error while writing new file', error)
-    throw error
+    return false
   }
 }
 

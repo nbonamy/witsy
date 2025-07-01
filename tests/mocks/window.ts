@@ -5,6 +5,7 @@ import { Command, Expert } from '../../src/types/index'
 import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
 import defaultSettings from '../../defaults/settings.json'
 import { McpInstallStatus } from '../../src/types/mcp'
+import { ListDirectoryResponse } from '../../src/types/filesystem'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -193,23 +194,20 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         }
       }),
       pickDir: vi.fn(() => 'picked_folder'),
-      delete: vi.fn(),
+      delete: vi.fn(() => true),
       find: vi.fn(() => 'file.ext'),
       extractText: vi.fn((s) => `${s}_extracted`),
       getAppInfo: vi.fn(),
-      listDirectory: vi.fn((dirPath: string, includeHidden?: boolean) => [
-        { name: 'file1.txt', isDirectory: false, size: 100 },
-        { name: 'subdir', isDirectory: true },
-        ...(includeHidden ? [{ name: '.hidden', isDirectory: false, size: 50 }] : [])
-      ]),
+      listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
+        success: true,
+        items: [
+          { name: 'file1.txt', isDirectory: false, size: 100 },
+          { name: 'subdir', isDirectory: true },
+          ...(includeHidden ? [{ name: '.hidden', isDirectory: false, size: 50 }] : [])
+        ]
+      })),
       exists: vi.fn((filePath: string) => filePath.includes('existing')),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      writeNew: vi.fn((filePath: string, content: string) => {
-        if (filePath.includes('exists')) {
-          throw new Error('File already exists')
-        }
-        return { success: true }
-      }),
+      write: vi.fn(() => true),
       normalize: vi.fn((filePath: string) => {
         if (filePath.startsWith('~/')) {
           return filePath.replace('~', '/home/user')
