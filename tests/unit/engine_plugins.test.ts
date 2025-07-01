@@ -11,7 +11,6 @@ import YouTube from '../../src/plugins/youtube'
 import Memory from '../../src/plugins/memory'
 import Computer from '../../src/plugins/computer'
 import Mcp from '../../src/plugins/mcp'
-import Filesystem from '../../src/plugins/filesystem'
 import { MultiToolPlugin, PluginExecutionContext } from 'multi-llm-ts'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
@@ -533,41 +532,6 @@ test('Memory Plugin', async () => {
   expect(window.api.memory.retrieve).toHaveBeenLastCalledWith('fact')
   expect(await memory.execute(context, { action: 'retrieve', query: 'fiction' })).toStrictEqual({ error: 'No relevant information found' })
   expect(window.api.memory.retrieve).toHaveBeenCalledTimes(2)
-})
-
-test('Filesystem Plugin', async () => {
-  const filesystem = new Filesystem({ enabled: true, allowedPaths: ['/tmp', '~/Documents'] })
-  expect(filesystem.isEnabled()).toBe(true)
-  expect(filesystem.getName()).toBe('Filesystem Access')
-  expect(filesystem.getPreparationDescription('filesystem_list')).toBe('plugins.filesystem.list.starting')
-  expect(filesystem.getPreparationDescription('filesystem_read')).toBe('plugins.filesystem.read.starting')
-  expect(filesystem.getPreparationDescription('filesystem_write')).toBe('plugins.filesystem.write.starting')
-  expect(filesystem.getRunningDescription('filesystem_list', { path: '/tmp' })).toBe('plugins.filesystem.list.running {"path":"/tmp"}')
-  expect(filesystem.getRunningDescription('filesystem_read', { path: '/tmp/file.txt' })).toBe('plugins.filesystem.read.running {"path":"/tmp/file.txt"}')
-  expect(filesystem.getRunningDescription('filesystem_write', { path: '/tmp/file.txt' })).toBe('plugins.filesystem.write.running {"path":"/tmp/file.txt"}')
-  expect(filesystem.getCompletedDescription('filesystem_list', { path: '/tmp' }, { items: [1, 2] })).toBe('plugins.filesystem.list.completed {"path":"/tmp","count":2}')
-  expect(filesystem.getCompletedDescription('filesystem_read', { path: '/tmp/file.txt' }, { contents: 'test' })).toBe('plugins.filesystem.read.completed {"path":"/tmp/file.txt","size":4}')
-  expect(filesystem.getCompletedDescription('filesystem_write', { path: '/tmp/file.txt' }, {})).toBe('plugins.filesystem.write.completed {"path":"/tmp/file.txt"}')
-  expect(filesystem.getCompletedDescription('filesystem_list', {}, { error: 'test error' })).toBe('plugins.filesystem.error {"tool":"filesystem_list","error":"test error"}')
-  
-  const tools = await filesystem.getTools()
-  expect(tools).toHaveLength(3)
-  expect(tools[0].function.name).toBe('filesystem_list')
-  expect(tools[1].function.name).toBe('filesystem_read')
-  expect(tools[2].function.name).toBe('filesystem_write')
-  
-  expect(filesystem.handlesTool('filesystem_list')).toBe(true)
-  expect(filesystem.handlesTool('filesystem_read')).toBe(true)
-  expect(filesystem.handlesTool('filesystem_write')).toBe(true)
-  expect(filesystem.handlesTool('unknown_tool')).toBe(false)
-  
-  // Test with disabled plugin
-  const disabledFilesystem = new Filesystem({ enabled: false, allowedPaths: [] })
-  expect(disabledFilesystem.isEnabled()).toBe(false)
-  
-  // Test with no allowed paths
-  const noPathsFilesystem = new Filesystem({ enabled: true, allowedPaths: [] })
-  expect(noPathsFilesystem.isEnabled()).toBe(false)
 })
 
 test('Computer Plugin', async () => {

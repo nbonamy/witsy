@@ -233,22 +233,13 @@ test('File exists', async () => {
   fs.unlinkSync(testFile)
 })
 
-test('Write new file', async () => {
+test('Write file', async () => {
+  
   const tempDir = os.tmpdir()
-  const testFile = path.join(tempDir, 'new-file-test.txt')
+  const testFile = path.join(tempDir, 'test.txt')
   const content = 'test content'
-  
-  // File doesn't exist - should succeed
-  expect(() => file.writeNewFile(app, testFile, content)).not.toThrow()
+  expect(() => file.writeFile(app, testFile, content)).not.toThrow()
   expect(fs.readFileSync(testFile, 'utf8')).toBe(content)
-  
-  // File exists - should throw
-  expect(() => file.writeNewFile(app, testFile, 'new content')).toThrow('File already exists')
-  
-  // Original content should be unchanged
-  expect(fs.readFileSync(testFile, 'utf8')).toBe(content)
-  
-  // Cleanup
   fs.unlinkSync(testFile)
 })
 
@@ -257,12 +248,8 @@ test('Write new file with directory creation', async () => {
   const testDir = path.join(tempDir, 'new-dir', 'nested')
   const testFile = path.join(testDir, 'nested-file.txt')
   const content = 'nested content'
-  
-  // Directory doesn't exist - should create it
-  expect(() => file.writeNewFile(app, testFile, content)).not.toThrow()
+  expect(() => file.writeFile(app, testFile, content)).not.toThrow()
   expect(fs.readFileSync(testFile, 'utf8')).toBe(content)
-  
-  // Cleanup
   fs.rmSync(path.join(tempDir, 'new-dir'), { recursive: true, force: true })
 })
 

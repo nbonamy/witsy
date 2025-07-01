@@ -585,20 +585,26 @@ ipcMain.on('get-app-info', async (event, payload) => {
 });
 
 ipcMain.on('list-directory', (event, dirPath, includeHidden) => {
-  event.returnValue = file.listDirectory(app, dirPath, includeHidden);
+  try {
+    event.returnValue = {
+      success: true,
+      items: file.listDirectory(app, dirPath, includeHidden)
+    }
+  } catch (error) {
+    console.error('Error while listing directory', error);
+    event.returnValue = {
+      success: false,
+      error: error.message
+    }
+  }
 });
 
 ipcMain.on('file-exists', (event, filePath) => {
   event.returnValue = file.fileExists(app, filePath);
 });
 
-ipcMain.on('write-new-file', (event, filePath, content) => {
-  try {
-    file.writeNewFile(app, filePath, content);
-    event.returnValue = { success: true };
-  } catch (error) {
-    event.returnValue = { error: error.message };
-  }
+ipcMain.on('write-file', (event, filePath, content) => {
+  event.returnValue = file.writeFile(app, filePath, content);
 });
 
 ipcMain.on('normalize-path', (event, filePath) => {

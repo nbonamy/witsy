@@ -7,6 +7,7 @@ import { DocRepoQueryResponseItem, DocumentBase } from './rag'
 import { LocalSearchResult } from '../main/search'
 import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
+import { ListDirectoryResponse } from './filesystem'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -280,6 +281,7 @@ export type OpenSettingsPayload = {
   engine?: string
 }
 
+
 declare global {
   interface Window {
     api: {
@@ -323,13 +325,13 @@ declare global {
         download(opts: FileDownloadParams): string
         pick(opts: anyDict): string|string[]|FileContents
         pickDir(): string
-        delete(filepath: string): void
+        delete(filepath: string): boolean
         find(name: string): string
         extractText(contents: string, format: string): string
         getAppInfo(filepath: string): ExternalApp
-        listDirectory(dirPath: string, includeHidden?: boolean): { name: string, isDirectory: boolean, size?: number }[]
+        listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
         exists(filePath: string): boolean
-        writeNew(filePath: string, content: string): any
+        write(filePath: string, content: string): boolean
         normalize(filePath: string): string
       }
       settings: {
