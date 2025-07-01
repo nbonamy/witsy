@@ -327,6 +327,10 @@ declare global {
         find(name: string): string
         extractText(contents: string, format: string): string
         getAppInfo(filepath: string): ExternalApp
+        listDirectory(dirPath: string, includeHidden?: boolean): { name: string, isDirectory: boolean, size?: number }[]
+        exists(filePath: string): boolean
+        writeNew(filePath: string, content: string): any
+        normalize(filePath: string): string
       }
       settings: {
         open(payload?: OpenSettingsPayload): void

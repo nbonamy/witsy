@@ -70,6 +70,10 @@ contextBridge.exposeInMainWorld(
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
       getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync('get-app-info', filepath) },
+      listDirectory: (dirPath: string, includeHidden?: boolean): { name: string, isDirectory: boolean, size?: number }[] => { return ipcRenderer.sendSync('list-directory', dirPath, includeHidden) },
+      exists: (filePath: string): boolean => { return ipcRenderer.sendSync('file-exists', filePath) },
+      writeNew: (filePath: string, content: string): any => { return ipcRenderer.sendSync('write-new-file', filePath, content) },
+      normalize: (filePath: string): string => { return ipcRenderer.sendSync('normalize-path', filePath) },
     },
     settings: {
       open: (payload?: OpenSettingsPayload): void => { return ipcRenderer.send('settings-open', payload) },

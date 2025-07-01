@@ -33,6 +33,10 @@ beforeAll(() => {
   store.config.engines.falai.apiKey = 'falai-api-key'
   store.config.plugins.search.tavilyApiKey = 'tavily-api-key'
   store.config.plugins.python.binpath = 'python3'
+  store.config.plugins.filesystem = {
+    enabled: false,
+    allowedPaths: []
+  }
 
   store.config.engines.replicate.models = {
     chat: [],
@@ -238,4 +242,22 @@ test('python settings', async () => {
   expect(window.api.file.pick).toHaveBeenCalled()
   expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('image.png')
   expect(store.config.plugins.python.binpath).toBe('image.png')
+})
+
+test('filesystem settings', async () => {
+  const tab = await switchToTab(wrapper, pluginIndex)
+  await tab.find('.list-panel .list .item[data-id=filesystem]').trigger('click')
+  const filesystem = tab.findComponent({ name: 'SettingsFilesystem' })
+  expect(filesystem.find('input[type=checkbox]').exists()).toBeTruthy()
+  expect(filesystem.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
+  await filesystem.find<HTMLInputElement>('input[type=checkbox]').setValue(true)
+  expect(store.config.plugins.filesystem.enabled).toBe(true)
+  
+  // Test allowed paths table
+  expect(filesystem.find('.sticky-table-container table').exists()).toBeTruthy()
+  expect(filesystem.find('.actions .button.add').exists()).toBeTruthy()
+  expect(filesystem.find('.actions .button.remove').exists()).toBeTruthy()
+  
+  // Test remove button is initially disabled (no selection)
+  expect(filesystem.find('.actions .button.remove').attributes('disabled')).toBeDefined()
 })

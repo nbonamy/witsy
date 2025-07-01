@@ -584,6 +584,27 @@ ipcMain.on('get-app-info', async (event, payload) => {
   event.returnValue = await file.getAppInfo(app, payload);
 });
 
+ipcMain.on('list-directory', (event, dirPath, includeHidden) => {
+  event.returnValue = file.listDirectory(app, dirPath, includeHidden);
+});
+
+ipcMain.on('file-exists', (event, filePath) => {
+  event.returnValue = file.fileExists(app, filePath);
+});
+
+ipcMain.on('write-new-file', (event, filePath, content) => {
+  try {
+    file.writeNewFile(app, filePath, content);
+    event.returnValue = { success: true };
+  } catch (error) {
+    event.returnValue = { error: error.message };
+  }
+});
+
+ipcMain.on('normalize-path', (event, filePath) => {
+  event.returnValue = file.normalizePath(app, filePath);
+});
+
 ipcMain.on('markdown-render', (event, payload) => {
   event.returnValue = markdown.renderMarkdown(payload);
 });
