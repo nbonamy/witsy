@@ -160,6 +160,11 @@
     },
     "voice": "Voice",
     "warning": "Warning",
+    "wizard": {
+      "last": "Done",
+      "next": "Next",
+      "prev": "Back"
+    },
     "workingWith": "Working with",
     "write": "Write",
     "yes": "Yes"
@@ -181,10 +186,10 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "Create Agent",
       "edit": "Edit Agent",
-      "empty": "Select an existing agent or create a new one.",
-      "title": "Agent Forge"
+      "empty": "Select an existing agent or create a new one."
     },
     "goal": "Goal",
     "history": {
@@ -1544,6 +1549,10 @@
       "running": "Downloading content…"
     },
     "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "The model is trying to overwrite or delete a file. Do you want to allow this?"
+      },
       "default": {
         "completed": "Filesystem operation completed",
         "error": "Error during filesystem operation: {error}",
@@ -1962,11 +1971,9 @@
         "title": "Download"
       },
       "filesystem": {
-        "addPath": "Add Directory",
         "allowedPaths": "Allowed Directories",
         "allowWrite": "Allow write operations (existing file overwrite and delete",
         "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
-        "directoryPath": "Directory Path",
         "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
         "skipConfirmation": "DANGEROUS: Do not confirm write operations",
         "skipConfirmationWarning": {
