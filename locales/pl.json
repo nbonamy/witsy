@@ -1793,7 +1793,7 @@
         "deep": "Głęboka",
         "shallow": "Standardowa"
       },
-      "runtime": "Czas działania",
+      "runtime": "Typ głębokich badań",
       "runtimes": {
         "ma": "Multi-agent (pełny agentyczny, napędzany LLM)",
         "ms": "Wieloetapowy (hybrydowy kod/agent, napędzany Witsy)"

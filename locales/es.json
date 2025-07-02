@@ -33,7 +33,7 @@
     "costsAsOf": "costos a partir de",
     "create": "Crear",
     "customize": "Personalizar…",
-    "deepResearch": "Investigación Profunda",
+    "deepResearch": "Deep Research",
     "default": "Predeterminado",
     "delete": "Eliminar",
     "differentLocales": "Tu configuración regional del LLM es diferente de la de tu interfaz. Los textos mostrados están en la configuración regional del LLM o en tu configuración regional si los has personalizado.",
@@ -1771,7 +1771,7 @@
         "deep": "Profunda",
         "shallow": "Estándar"
       },
-      "runtime": "Tiempo de ejecución",
+      "runtime": "Tipo de investigación profunda",
       "runtimes": {
         "ma": "Multi-agente (completo, dirigido por LLM)",
         "ms": "Multi-paso (híbrido código/agente, dirigido por Witsy)"

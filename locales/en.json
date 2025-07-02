@@ -1793,7 +1793,7 @@
         "deep": "Deep",
         "shallow": "Standard"
       },
-      "runtime": "Runtime",
+      "runtime": "Deep Research type",
       "runtimes": {
         "ma": "Multi-agent (full agentic, LLM-driven)",
         "ms": "Multi-step (hybrid code/agent, Witsy-driven)"

@@ -33,7 +33,7 @@
     "costsAsOf": "coûts au",
     "create": "Créer",
     "customize": "Personnaliser…",
-    "deepResearch": "Recherche Approfondie",
+    "deepResearch": "Deep Research",
     "default": "Défaut",
     "delete": "Supprimer",
     "differentLocales": "La langue de votre LLM est différente de la langue de votre interface. Les textes affichés sont dans la langue du LLM ou votre langue si vous les avez personnalisés",
@@ -1763,15 +1763,15 @@
     "deepResearch": {
       "breadth": "Étendue de la recherche",
       "breadths": {
-        "narrow": "Étroit",
+        "narrow": "Étroite",
         "wide": "Large"
       },
       "depth": "Profondeur de la recherche",
       "depths": {
-        "deep": "Approfondi",
+        "deep": "Approfondie",
         "shallow": "Standard"
       },
-      "runtime": "Durée d'exécution",
+      "runtime": "Type de Recherche Approfondie",
       "runtimes": {
         "ma": "Multi-agent (agent complet, dirigé par LLM)",
         "ms": "Multi-étapes (hybride code/agent, dirigé par Witsy)"
