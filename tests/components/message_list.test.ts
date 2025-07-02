@@ -7,9 +7,6 @@ import MessageList from '../../src/components/MessageList.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
-import useEventBus from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
-
 enableAutoUnmount(afterAll)
 
 let wrapper: VueWrapper<any>
