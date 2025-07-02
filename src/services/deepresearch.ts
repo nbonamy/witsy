@@ -81,6 +81,7 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
   () => t('deepResearch.planning.starting'),
   () => t('deepResearch.planning.running'),
   () => t('deepResearch.planning.completed'),
+  () => t('deepResearch.planning.error'),
 )
 
 export const searchAgent = Agent.fromJson({
@@ -122,6 +123,7 @@ maxResults to return: {{maxResults}}`,
   () => t('deepResearch.search.starting'),
   (args) => t('deepResearch.search.running', { query: args.searchQuery }),
   () => t('deepResearch.search.completed'),
+  () => t('deepResearch.search.error'),
 )
 
 export const analysisAgent = Agent.fromJson({
@@ -170,6 +172,7 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
   () => t('deepResearch.analysis.starting'),
   () => t('deepResearch.analysis.running'),
   () => t('deepResearch.analysis.completed'),
+  () => t('deepResearch.analysis.error'),
 )
 
 export const writerAgent = Agent.fromJson({
@@ -244,6 +247,7 @@ Key Learnings: {{keyLearnings}}`,
   () => t('deepResearch.writer.starting'),
   (args) => t('deepResearch.writer.running', { title: args.sectionTitle }),
   (args) => t('deepResearch.writer.completed', { title: args.sectionTitle }),
+  (args) => t('deepResearch.writer.error', { title: args.sectionTitle }),
 )
 
 export const synthesisAgent = Agent.fromJson({
@@ -296,6 +300,7 @@ Output Type: {{outputType}}`,
 }, () => t('deepResearch.synthesis.starting'),
   (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.running') : t('deepResearch.synthesis.execsum.running'),
   (args) => args.outputType === 'conclusion' ? t('deepResearch.synthesis.conclusion.completed') : t('deepResearch.synthesis.execsum.completed'),
+  () => t('deepResearch.synthesis.error'),
 )
 
 export const deepResearchAgents: Agent[] = [

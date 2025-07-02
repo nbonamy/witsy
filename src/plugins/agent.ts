@@ -76,14 +76,21 @@ export default class extends Plugin {
   }
 
   getCompletedDescription(tool: string, args: any, results: any): string | undefined {
+
+    // error
+    if (results.status === 'error ') {
+      if (this.agent.getErrorDescription) {
+        return this.agent.getErrorDescription(args, results)
+      } else {
+        return t('plugins.agent.error', { agent: this.agent.name, error: results.error })
+      }
+    }
+
+    // success
     if (this.agent.getCompletedDescription) {
       return this.agent.getCompletedDescription(args, results)
     } else {
-      if (results.error) {
-        return t('plugins.agent.error', { agent: this.agent.name })
-      } else {
-        return t('plugins.agent.completed', { agent: this.agent.name })
-      }
+      return t('plugins.agent.completed', { agent: this.agent.name })
     }
   }
 
@@ -160,10 +167,10 @@ export default class extends Plugin {
         }
 
       } else if (run.status === 'error') {
-        return { error: run.error }
+        return { status: 'error', error: run.error }
       }
     } catch (error) {
-      return { error: error }
+      return { status: 'error', error: error }
     }
 
   }

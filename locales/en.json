@@ -528,10 +528,10 @@
       },
       "starting": "Synthesizing content…"
     },
-    "usage": "Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
+    "usage": "[BETA] Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
-      "error": "An error occurred while writing the report section",
+      "error": "An error occurred while writing the \"{title}\" report section",
       "running": "Writing report section \"{title}\" based on key learnings…",
       "starting": "Writing report section based on key learnings…"
     }
@@ -1572,8 +1572,8 @@
       },
       "write": {
         "completed": "Successfully wrote file {path}",
-        "error": "Error while writing file {path}",
         "declined": "User declined to overwrite {path}",
+        "error": "Error while writing file {path}",
         "running": "Writing file {path}…",
         "starting": "Preparing to write file…"
       }
@@ -1965,14 +1965,14 @@
         "addPath": "Add Directory",
         "allowedPaths": "Allowed Directories",
         "allowWrite": "Allow write operations (existing file overwrite and delete",
+        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
+        "directoryPath": "Directory Path",
+        "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
         "skipConfirmation": "DANGEROUS: Do not confirm write operations",
         "skipConfirmationWarning": {
           "text": "If you disable write operations confirmation, models may decide to overwrite/delete files. You will not be able to interrupt such operations. Do you really want to continue?",
           "title": "Are you sure you want to disable write operation confirmation?"
         },
-        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
-        "directoryPath": "Directory Path",
-        "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
         "title": "Filesystem"
       },
       "image": {

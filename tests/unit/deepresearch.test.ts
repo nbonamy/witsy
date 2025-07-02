@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, no-case-declarations */
+ 
+ 
 import { vi, expect, test, beforeEach } from 'vitest'
 import { Configuration } from '../../src/types/config'
 import { LlmEngine } from 'multi-llm-ts'
@@ -22,6 +25,7 @@ vi.mock('../../src/services/runner', () => {
 })
 
 import Runner from '../../src/services/runner'
+import { AgentRun } from '../../src/types'
 
 const mockConfig: Configuration = {
   deepresearch: {
@@ -49,25 +53,25 @@ const mockOpts: dr.DeepResearchOpts = {
 }
 
 // Setup mock data
-const planningResult = {
+const planningResult: AgentRun = {
   messages: [new Message('assistant', JSON.stringify({
     sections: [{ title: 'Test', description: 'Test desc', queries: ['test query'] }]
   }))]
-}
+} as AgentRun
 
-const analysisResult = {
+const analysisResult: AgentRun = {
   messages: [new Message('assistant', JSON.stringify({
     learnings: ['Learning 1', 'Learning 2']
   }))]
-}
+} as AgentRun
 
-const writerResult = {
+const writerResult: AgentRun = {
   messages: [new Message('assistant', '# Test Section\nContent here')]
-}
+} as AgentRun
 
-const synthesisResult = {
+const synthesisResult: AgentRun = {
   messages: [new Message('assistant', '# Executive Summary\nSummary here')]
-}
+} as AgentRun
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -153,8 +157,8 @@ test('Search agent prompt building', () => {
     maxResults: 10
   })
 
-  expect(prompt).toContain('quantum entanglement')
-  expect(prompt).toContain('10')
+  expect(prompt).toContain('Execute targeted search for: quantum entanglement')
+  expect(prompt).toContain('maxResults to return: 10')
 })
 
 test('Search agent parameters', () => {
@@ -207,10 +211,10 @@ test('Writer agent prompt building', () => {
     keyLearnings: ['Entanglement is non-local', 'Bell\'s theorem proves it']
   })
 
-  expect(prompt).toContain('1')
-  expect(prompt).toContain('Quantum Entanglement')
-  expect(prompt).toContain('Explain quantum entanglement')
-  expect(prompt).toContain('Entanglement is non-local')
+  expect(prompt).toContain('Section Number: 1')
+  expect(prompt).toContain('Section Title: Quantum Entanglement')
+  expect(prompt).toContain('Section Objective: Explain quantum entanglement')
+  expect(prompt).toContain('Key Learnings: Entanglement is non-local, Bell\'s theorem proves it')
 })
 
 test('Writer agent parameters', () => {
@@ -288,20 +292,186 @@ test('DeepResearchMultiStep stop functionality', () => {
   expect(stopSpy).toHaveBeenCalled()
 })
 
-test('DeepResearchMultiStep successful run', async () => {
+test('DeepResearchMultiStep complete agent chain execution', async () => {
   const deepResearch = new DeepResearchMultiStep(mockConfig)
   const chat = new Chat()
   chat.messages = [
-    new Message('system', 'You are a helpful assistant'),
-    new Message('user', 'Research quantum computing'),
+    new Message('system', 'You are a deep research assistant'),
+    new Message('user', 'Research topic'),
     new Message('assistant', '')
   ]
 
+  // Track execution order and calls
+  const executionLog: string[] = []
+  const agentCalls: any[] = []
+
+  // Mock SearchPlugin with tracking
+  // @ts-expect-error mock
+  vi.mocked(SearchPlugin).mockImplementation(() => ({
+    getName: () => 'search_internet',
+    getRunningDescription: () => 'Searching...',
+    getCompletedDescription: () => 'Search completed',
+    execute: vi.fn().mockImplementation(async (context, params) => {
+      executionLog.push(`search:${params.query}`)
+      return {
+        results: [{ 
+          title: `Search Result for ${params.query}`, 
+          content: `Content about ${params.query}`, 
+          url: `https://example.com/${params.query.replace(/\s+/g, '-')}` 
+        }]
+      }
+    })
+  }))
+
+  // Mock Generator with tracking
+  // @ts-expect-error mock
+  vi.mocked(Generator).mockImplementation(() => ({
+     
+    generate: vi.fn().mockImplementation(async (engine, messages, options) => {
+      executionLog.push('status_update')
+      // Add the status update to the response message
+      const lastMessage = messages[messages.length - 1]
+      lastMessage.appendText({
+        type: 'content',
+        text: `Status: ${messages[messages.length - 2]?.content || 'Starting'}`,
+        done: false
+      })
+      return 'success'
+    }),
+    stop: vi.fn()
+  }))
+
+  // Mock Runner with detailed tracking and realistic responses
+  // @ts-expect-error mock
+  vi.mocked(Runner).mockImplementation((config, agent) => {
+    return {
+      run: vi.fn().mockImplementation(async (workflow, prompt, options) => {
+        const agentName = agent.name
+        executionLog.push(`agent:${agentName}`)
+        agentCalls.push({ agent: agentName, prompt, options })
+
+        switch (agentName) {
+          case 'planning':
+            return { messages: [
+              new Message('assistant', JSON.stringify({
+                sections: [
+                  { title: 'Section 1', description: 'Objective 1', queries: ['q1_1', 'q1_2'] },
+                  { title: 'Section 2', description: 'Objective 2', queries: ['q2_1'] }
+                ]
+              }))
+            ]}
+
+          case 'analysis':
+            return { messages: [
+              new Message('assistant', JSON.stringify({ learnings: [ 'kl1', 'kl2', 'kl3' ], }))
+            ]}
+
+          case 'writer':
+            // Extract section info for content generation
+            const titleMatch = prompt.match(/Section Title: (.+?)(?:\n|$)/)
+            const numberMatch = prompt.match(/Section Number: (.+?)(?:\n|$)/)
+            const sectionTitle = titleMatch ? titleMatch[1] : 'Unknown Section'
+            const sectionNumber = numberMatch ? numberMatch[1] : '?'
+            return { messages: [
+              new Message('assistant', `## ${sectionNumber}. ${sectionTitle}\n\n` )
+            ]}
+
+          case 'synthesis':
+            const outputTypeMatch = prompt.match(/Output Type: (.+?)(?:\n|$)/)
+            const outputType = outputTypeMatch ? outputTypeMatch[1] : 'unknown'
+            
+            if (outputType === 'executive_summary') {
+              return { messages: [
+                new Message('assistant', `# Executive Summary\n\n` )
+              ]}
+            } else {
+              return { messages: [
+                new Message('assistant', `# Conclusion\n\n`)
+              ]}
+            }
+
+          default:
+            return {
+              messages: [new Message('assistant', `Response from ${agentName} agent`)]
+            }
+        }
+      })
+    }
+  })
+
   const result = await deepResearch.run(mockEngine, chat, mockOpts)
   expect(result).toBe('success')
-  
-  // Verify Runner was called
-  expect(Runner).toHaveBeenCalled()
+
+  // Verify the final response contains all sections
+  const responseContent = chat.messages[chat.messages.length - 1].content
+  expect(responseContent).toContain('# Executive Summary')
+  expect(responseContent).toContain('## 1. Section 1')
+  expect(responseContent).toContain('## 2. Section 2')
+  expect(responseContent).toContain('# Conclusion')
+  expect(responseContent).toContain('Sources:')
+
+  // Verify search results are included as sources
+  expect(responseContent).toContain('[Search Result for q1_1](https://example.com/q1_1)')
+  expect(responseContent).toContain('[Search Result for q1_2](https://example.com/q1_2)')
+  expect(responseContent).toContain('[Search Result for q2_1](https://example.com/q2_1)')
+
+  // Verify complete execution chain
+  const expectedExecutionFlow = [
+    'status_update',
+    'agent:planning',
+    'status_update',
+    'search:q1_1',
+    'search:q1_2',
+    'search:q2_1',
+    'status_update',
+    'agent:analysis',
+    'agent:writer',
+    'agent:analysis',
+    'agent:writer',
+    'status_update',
+    'agent:synthesis',
+    'agent:synthesis',
+    'status_update',
+  ]
+
+  // Check that all expected steps were executed
+  expectedExecutionFlow.forEach((step, index) => {
+    expect(executionLog).toContain(step)
+  })
+
+  // Verify Runner was called the expected number of times
+  expect(Runner).toHaveBeenCalledTimes(6) // 1 planning + 2 analysis + 2 writer + 2 synthesis = 6
+
+  // Verify agent call sequence
+  const agentCallSequence = agentCalls.map(call => call.agent)
+  expect(agentCallSequence).toEqual([
+    'planning', 'analysis', 'analysis', 'writer', 'writer', 'synthesis', 'synthesis'
+  ])
+
+  // Verify the planning agent was called with correct parameters
+  const planningCall = agentCalls.find(call => call.agent === 'planning')
+  expect(planningCall.prompt).toContain('Research topic')
+  expect(planningCall.prompt).toContain('3 sections')
+  expect(planningCall.prompt).toContain('2 search queries')
+
+  // Verify analysis agents received section objectives
+  const analysisCalls = agentCalls.filter(call => call.agent === 'analysis')
+  expect(analysisCalls).toHaveLength(2)
+  expect(analysisCalls[0].prompt).toContain('Objective 1')
+  expect(analysisCalls[1].prompt).toContain('Objective 2')
+
+  // Verify writer agents received proper section data
+  const writerCalls = agentCalls.filter(call => call.agent === 'writer')
+  expect(writerCalls).toHaveLength(2)
+  expect(writerCalls[0].prompt).toContain('Section 1')
+  expect(writerCalls[1].prompt).toContain('Section 2')
+
+  // Verify synthesis agents were called for both executive summary and conclusion
+  const synthesisCalls = agentCalls.filter(call => call.agent === 'synthesis')
+  expect(synthesisCalls).toHaveLength(2)
+  expect(synthesisCalls[0].prompt).toContain('executive_summary')
+  expect(synthesisCalls[1].prompt).toContain('conclusion')
+
 })
 
 test('DeepResearchMultiStep JSON parsing error handling', async () => {

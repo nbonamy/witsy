@@ -46,7 +46,8 @@ export default class Agent implements AgentBase {
     obj: any,
     preparationDescription?: () => string,
     runningDescription?: (args: any) => string,
-    completedDescription?: (args: any, results: any) => string
+    completedDescription?: (args: any, results: any) => string,
+    errorDescription?: (args: any, results: any) => string
   ): Agent {
     const agent = new Agent()
     agent.id = obj.id || crypto.randomUUID()
@@ -69,6 +70,7 @@ export default class Agent implements AgentBase {
     agent.getPreparationDescription = preparationDescription
     agent.getRunningDescription = runningDescription
     agent.getCompletedDescription = completedDescription
+    agent.getErrorDescription = errorDescription
     return agent
   }
 
@@ -88,5 +90,6 @@ export default class Agent implements AgentBase {
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string
+  getErrorDescription?: (args: any, results: any) => string
 
 }

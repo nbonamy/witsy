@@ -113,6 +113,7 @@ export interface Agent {
   getPreparationDescription?: () => string
   getRunningDescription?: (args: any) => string
   getCompletedDescription?: (args: any, results: any) => string
+  getErrorDescription?: (args: any, results: any) => string
 }
 
 export type AgentRunTrigger = 'manual' | 'schedule' | 'webhook' | 'workflow'
