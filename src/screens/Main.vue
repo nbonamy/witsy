@@ -8,6 +8,7 @@
     <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
     <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
   </div>
+  <Fullscreen window="main" />
 </template>
 
 <script setup lang="ts">
@@ -22,6 +23,7 @@ import DocRepos from '../screens/DocRepos.vue'
 import Settings from '../screens/Settings.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Transcribe from '../screens/Transcribe.vue'
+import Fullscreen from '../components/Fullscreen.vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()

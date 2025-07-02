@@ -67,13 +67,3 @@ test('Shows user and assistant messages', async () => {
   await wrapper.setProps({ chat: chat })
   expect(wrapper.findAll('.message')).toHaveLength(2)
 })
-
-test('Fullscreen image', async () => {
-  emitEvent('fullscreen', 'https://example.com/image.jpg')
-  await wrapper.vm.$nextTick()
-  expect(wrapper.find('.fullscreen').exists()).toBe(true)
-  expect(window.api.fullscreen).toHaveBeenLastCalledWith('main', true)
-  await wrapper.find('.fullscreen').trigger('click')
-  expect(wrapper.find('.fullscreen').exists()).toBe(false)
-  expect(window.api.fullscreen).toHaveBeenLastCalledWith('main', false)
-})
