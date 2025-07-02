@@ -9,7 +9,6 @@
       <BIconArrowDown />
     </div>
   </div>
-  <Fullscreen window="main" />
 </template>
 
 <script setup lang="ts">
@@ -18,7 +17,6 @@ import { ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
 import { store } from '../services/store'
 import { LlmChunk } from 'multi-llm-ts'
 import MessageItem from './MessageItem.vue'
-import Fullscreen from './Fullscreen.vue'
 import Chat from '../models/chat'
 
 import useEventBus from '../composables/event_bus'

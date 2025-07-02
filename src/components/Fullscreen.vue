@@ -8,7 +8,7 @@
 <script setup lang="ts">
 
 import { strDict } from '../types/index'
-import { ref, Ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import useEventBus from '../composables/event_bus'
 const { onEvent } = useEventBus()
@@ -20,8 +20,8 @@ const props = defineProps({
   }
 })
 
-const fullScreenImageUrl: Ref<string|null> = ref(null)
-const fullScreenTheme: Ref<string|null> = ref(null)
+const fullScreenImageUrl = ref<string|null>(null)
+const fullScreenTheme = ref<string|null>(null)
 
 onMounted(() => {
   onEvent('fullscreen', onFullscreen)
