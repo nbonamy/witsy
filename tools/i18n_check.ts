@@ -15,7 +15,7 @@ const LOCALES_DIR = 'locales'
 const I18N_KEY_PATTERN_T = /[ "](?:\$t|t)\(['"]([^'"]+)['"]/g
 const I18N_KEY_PATTERN_I = /i18nInstructions\((?:[^,]+),\s*['"]([^'"]+)['"]/g
 const DEFAULT_ENGINE = 'openai'
-const DEFAULT_MODEL = 'gpt-4o-mini'
+const DEFAULT_MODEL = 'gpt-4.1-mini'
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -198,7 +198,7 @@ Example response:
 }
 
 // Main function
-async function checkMissingTranslations() {
+async function checkMissingTranslations(unusedKeys: Set<string> = new Set()) {
   try {
     // Get all locale files
     const localeFiles = fs.readdirSync(LOCALES_DIR)
@@ -273,7 +273,11 @@ async function checkMissingTranslations() {
     })
 
     allKeys = Array.from(keyUsages.keys())
-    console.log(`Found ${allKeys.length} unique i18n keys in source files.`)
+    
+    // Filter out unused keys
+    allKeys = allKeys.filter(key => !unusedKeys.has(key))
+    
+    console.log(`Found ${allKeys.length} unique i18n keys in source files (excluding ${unusedKeys.size} unused keys).`)
 
     // Check for missing translations
     const missingTranslations: MissingTranslations = {}
@@ -315,8 +319,8 @@ async function checkMissingTranslations() {
           keys.forEach(key => {
             // For English, use the key itself as the value
             if (locale === 'en') {
-              setNestedValue(locales[locale], key, key);
-              console.log(`  + Added "${key}" = "${key}"`);
+              //setNestedValue(locales[locale], key, key);
+              console.log(`  ‼️ Skipping missing EN "${key}"`);
             }
             // For other languages, prepare for translation
             else if (keyExists(locales.en, key)) {
@@ -325,8 +329,8 @@ async function checkMissingTranslations() {
             }
             else {
               // If no English value, use the key itself
-              setNestedValue(locales[locale], key, key);
-              console.log(`  + Added "${key}" = "${key}" (no English value found)`);
+              //setNestedValue(locales[locale], key, key);
+              console.log(`  ⏭️ Skipped "${key}" (no English value found)`);
             }
           });
 
@@ -399,9 +403,11 @@ async function checkMissingTranslations() {
   }
 }
 
-async function checkUnusedTranslations() {
+// Modify checkUnusedTranslations to return unused keys instead of just a boolean
+async function checkUnusedTranslations(): Promise<Set<string>> {
+  const allUnusedKeys = new Set<string>()
+  
   try {
-
     // Get all locale files
     const localeFiles = fs.readdirSync(LOCALES_DIR)
       .filter(file => file.endsWith('.json'))
@@ -411,7 +417,6 @@ async function checkUnusedTranslations() {
 
     // Load and process each locale file
     for (const file of localeFiles) {
-
       const localeName = path.basename(file, '.json')
       const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
       const allKeys = Object.keys(flatten(localeData))
@@ -437,6 +442,9 @@ async function checkUnusedTranslations() {
           }
         })
       }
+
+      // Add to global unused keys set
+      unusedKeys.forEach(key => allUnusedKeys.add(key))
 
       // Fix unused keys if --fix flag is provided
       if (shouldFix && unusedKeys.size > 0) {
@@ -473,7 +481,7 @@ async function checkUnusedTranslations() {
       console.log('\n✅ Removed all unused translation keys.')
     }
 
-    return hasUnusedKeys
+    return allUnusedKeys
   } catch (error) {
     console.error('Error checking unused translations:', error)
     process.exit(1)
@@ -549,9 +557,16 @@ async function checkWrongLinkedTranslations() {
 // do it
 (async () => {
   
-  const hasMissingTranslations = await checkMissingTranslations()
-  const hasUnusedTranslations = shouldDelete ? await checkUnusedTranslations() : false
+  // Always check for unused translations to get the list
+  const unusedKeys = shouldDelete ? await checkUnusedTranslations() : new Set<string>()
+  
+  // Then check for missing translations, excluding unused keys
+  const hasMissingTranslations = await checkMissingTranslations(unusedKeys)
+  
+  // Finally check for wrong linked translations
   const hasWrongLinkedTranslations = await checkWrongLinkedTranslations()
+
+  const hasUnusedTranslations = unusedKeys.size > 0
 
   if ((hasMissingTranslations || hasUnusedTranslations || hasWrongLinkedTranslations) && !shouldFix) {
     process.exit(1)
