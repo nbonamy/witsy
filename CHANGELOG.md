@@ -6,12 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - DeepResearch
+- Fileystem plugin to read/write local files
 
 ### Changed
-- N/A
+- Text headings font size and spacing 
 
 ### Fixed
 - PDF export when tools displayed
+- Fullscreen exit requiring multiple clicks
 
 ### Removed
 - N/A
