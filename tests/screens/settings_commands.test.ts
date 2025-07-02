@@ -4,9 +4,10 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import { findModelSelectoPlus } from '../utils'
+import { ChatModel } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
@@ -37,7 +38,7 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const commandsIndex = 6
+const commandsIndex = tabs.indexOf('settingsCommands')
 
 beforeAll(() => {
 
@@ -49,7 +50,10 @@ beforeAll(() => {
   store.commands[1].id = 'command'
   store.config.engines.openai = {
     models: {
-      chat: [ { id: 'chat1', name: 'chat1' }, { id: 'chat2', name: 'chat2' } ]
+      chat: [ { id: 'chat1', name: 'chat1'} as ChatModel, { id: 'chat2', name: 'chat2' } as ChatModel ]
+    },
+    model: {
+      chat: 'chat1'
     }
   }
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'

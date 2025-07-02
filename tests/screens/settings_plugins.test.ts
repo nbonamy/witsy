@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import { ModelsList, loadOpenAIModels } from 'multi-llm-ts'
 import { wait } from '../../src/main/utils'
 import Settings from '../../src/screens/Settings.vue'
@@ -20,7 +20,7 @@ HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
 
 let wrapper: VueWrapper<any>
-const pluginIndex = 4
+const pluginIndex = tabs.indexOf('settingsPlugins')
 
 beforeAll(() => {
   useWindowMock()
