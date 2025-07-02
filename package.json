@@ -17,7 +17,7 @@
     "lint": "eslint '**/*.ts' ; vue-tsc --noEmit",
     "credits": "npx @opengovsg/credits-generator",
     "test": "vitest",
-    "test-ci": "vitest run --coverage.enabled=true --coverage.reporter='text-summary'",
+    "test-ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",
     "testui": "vitest --ui --coverage.enabled=true",
     "teste2e": "WITSY_HOME=/tmp vitest --config ./vitest.config.e2e.mjs './tests/e2e/**' ./tests/e2e/**"
   },
