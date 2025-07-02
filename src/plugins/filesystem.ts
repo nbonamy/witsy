@@ -222,21 +222,21 @@ export default class extends MultiToolPlugin {
       return { error: t('plugins.filesystem.invalidPath', { path: args.path }) }
     }
 
-    args.path = window.api.file.normalize(args.path)
+    const path = window.api.file.normalize(args.path)
 
     try {
       switch (tool) {
         case 'filesystem_list':
-          return await this.listDirectory(args.path, args.includeHidden || false)
+          return await this.listDirectory(path, args.includeHidden || false)
         
         case 'filesystem_read':
-          return await this.readFile(args.path)
+          return await this.readFile(path)
         
         case 'filesystem_write':
-          return await this.writeFile(args.path, args.content)
+          return await this.writeFile(path, args.content)
         
         case 'filesystem_delete':
-          return await this.deleteFile(args.path)
+          return await this.deleteFile(path)
         
         default:
           return { error: `Unknown tool: ${tool}` }

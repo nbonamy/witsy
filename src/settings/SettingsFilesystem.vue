@@ -29,8 +29,8 @@
             </table>
           </div>
           <div class="actions">
-            <button class="button add" @click="addPath"><BIconPlus /></button>
-            <button class="button remove" @click="removePath" :disabled="selectedPath === null"><BIconDash /></button>
+            <button class="button add" @click.prevent="addPath"><BIconPlus /></button>
+            <button class="button remove" @click.prevent="removePath" :disabled="selectedPath === null"><BIconDash /></button>
           </div>
         </div>
         <div class="note">
