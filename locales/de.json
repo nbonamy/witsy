@@ -1771,7 +1771,7 @@
         "deep": "Tief",
         "shallow": "Standard"
       },
-      "runtime": "Laufzeit",
+      "runtime": "Typ der Tiefenrecherche",
       "runtimes": {
         "ma": "Multi-Agent (voll agentenbasiert, LLM-gesteuert)",
         "ms": "Multi-Schritt (hybride Code/Agent, Witsy-gesteuert)"

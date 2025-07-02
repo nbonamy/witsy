@@ -33,7 +33,7 @@
     "costsAsOf": "custos a partir de",
     "create": "Criar",
     "customize": "Personalizar…",
-    "deepResearch": "Pesquisa Profunda",
+    "deepResearch": "Deep Research",
     "default": "Padrão",
     "delete": "Excluir",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
@@ -1793,7 +1793,7 @@
         "deep": "Profunda",
         "shallow": "Padrão"
       },
-      "runtime": "Tempo de execução",
+      "runtime": "Tipo de Pesquisa Profunda",
       "runtimes": {
         "ma": "Multi-agente (totalmente agentivo, conduzido por LLM)",
         "ms": "Multi-etapas (híbrido código/agente, conduzido por Witsy)"

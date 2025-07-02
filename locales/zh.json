@@ -1793,7 +1793,7 @@
         "deep": "深入",
         "shallow": "标准"
       },
-      "runtime": "运行时",
+      "runtime": "深度研究类型",
       "runtimes": {
         "ma": "多代理（完全代理驱动，基于 LLM）",
         "ms": "多步（混合代码/代理，基于 Witsy）"
