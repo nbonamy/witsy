@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - PDF export when tools displayed
 - Fullscreen exit requiring multiple clicks
+- YouTube transcript download
 
 ### Removed
 - N/A
