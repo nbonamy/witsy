@@ -1972,7 +1972,7 @@
       },
       "filesystem": {
         "allowedPaths": "Allowed Directories",
-        "allowWrite": "Allow write operations (existing file overwrite and delete",
+        "allowWrite": "Allow write operations (existing file overwrite and delete)",
         "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
         "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
         "skipConfirmation": "DANGEROUS: Do not confirm write operations",
