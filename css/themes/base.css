@@ -73,15 +73,15 @@
 }
 
 .message .body .variable-font-size h2 {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   font-size: 1.15em;
 }
 
 .message .body .variable-font-size h3 {
   margin-top: 1rem;
   padding-top: 1rem;
-  font-size: 1.1em;
+  font-size: 1.075em;
 }
 
 .message .body .variable-font-size hr {
