@@ -528,6 +528,7 @@
       },
       "starting": "Synthesizing content…"
     },
+    "usage": "Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
       "error": "An error occurred while writing the report section",
