@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.10.0] - YYYY-MM-DD
+## [2.10.0] - 2025-07-03
 
 ### Added
 - DeepResearch
