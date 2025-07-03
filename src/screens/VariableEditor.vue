@@ -86,6 +86,7 @@ const onSave = () => {
   close()
 
   emit('save', {
+    ...props.variable,
     key: key.value,
     value: value.value,
   })

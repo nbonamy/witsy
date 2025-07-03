@@ -1392,6 +1392,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Zmienne środowiskowe",
+      "httpHeaders": "Niestandardowe nagłówki HTTP",
       "selectCommand": "Wybierz polecenie",
       "serverPackage": "Pakiet serwera",
       "smitheryApiKey": "Klucz API Smithery.ai",

@@ -1392,6 +1392,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Environment Variables",
+      "httpHeaders": "Custom HTTP Headers",
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
       "smitheryApiKey": "Smithery.ai API Key",

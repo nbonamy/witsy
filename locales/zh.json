@@ -1392,6 +1392,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "环境变量",
+      "httpHeaders": "自定义 HTTP 头",
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
