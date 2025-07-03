@@ -1,5 +1,6 @@
 
-import { ExternalApp, FileContents, anyDict } from 'types/index';
+import { ExternalApp, FileContents, anyDict } from '../types/index';
+import { DirectoryItem } from '../types/filesystem';
 import { App, dialog } from 'electron';
 import { extensionToMimeType } from 'multi-llm-ts';
 import { execSync } from 'child_process';
@@ -187,7 +188,7 @@ export const listFilesRecursively = (directoryPath: string): string[] => {
   return fileList;
 }
 
-export const listDirectory = (app: App, dirPath: string, includeHidden: boolean = false): { name: string, isDirectory: boolean, size?: number }[] => {
+export const listDirectory = (app: App, dirPath: string, includeHidden: boolean = false): DirectoryItem[] => {
   try {
     const items = fs.readdirSync(dirPath, { withFileTypes: true })
     
@@ -195,8 +196,9 @@ export const listDirectory = (app: App, dirPath: string, includeHidden: boolean 
       .filter(item => includeHidden || !item.name.startsWith('.'))
       .map(item => {
         const itemPath = path.join(dirPath, item.name)
-        const result: { name: string, isDirectory: boolean, size?: number } = {
+        const result: DirectoryItem = {
           name: item.name,
+          fullPath: itemPath,
           isDirectory: item.isDirectory()
         }
         

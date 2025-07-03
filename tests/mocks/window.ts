@@ -201,9 +201,9 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
         success: true,
         items: [
-          { name: 'file1.txt', isDirectory: false, size: 100 },
-          { name: 'subdir', isDirectory: true },
-          ...(includeHidden ? [{ name: '.hidden', isDirectory: false, size: 50 }] : [])
+          { name: 'file1.txt', fullPath: '/home/user/file1.txt', isDirectory: false, size: 100 },
+          { name: 'subdir', fullPath: '/home/user/subdir', isDirectory: true },
+          ...(includeHidden ? [{ name: '.hidden', fullPath: '/home/user/.hidden', isDirectory: false, size: 50 }] : [])
         ]
       })),
       exists: vi.fn((filePath: string) => filePath.includes('existing')),

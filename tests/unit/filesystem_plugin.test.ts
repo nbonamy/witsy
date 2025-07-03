@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from 'vitest'
+import { vi, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import FilesystemPlugin from '../../src/plugins/filesystem'
@@ -12,6 +12,11 @@ const context: PluginExecutionContext = {
 
 beforeEach(() => {
   useWindowMock()
+
+  window.api.file.exists = vi.fn((path: string) => {
+    return path.startsWith('/home/user/Documents/test')
+  })
+
   store.config = {
     plugins: {
       filesystem: {
@@ -69,6 +74,16 @@ test('Filesystem plugin handles tools correctly - write allowed', async () => {
   expect(plugin.handlesTool('unknown_tool')).toBe(false)
 })
 
+test('Filesystem plugin map path to allowed paths', () => {
+
+  const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
+  expect(plugin.mapToAllowedPaths('/tmp/test')).toBe('/tmp/test')
+  expect(plugin.mapToAllowedPaths('Documents')).toBe('/home/user/Documents')
+  expect(plugin.mapToAllowedPaths('~/Documents/test')).toBe('/home/user/Documents/test')
+  expect(plugin.mapToAllowedPaths('./Documents/test')).toBe('/home/user/Documents/test')
+  expect(plugin.mapToAllowedPaths('Documents/test/subdir')).toBe('/home/user/Documents/test/subdir')
+})
+
 test('Filesystem plugin path validation', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const allowedResult = await plugin.execute(context, {
@@ -91,8 +106,8 @@ test('Filesystem plugin list directory', async () => {
   })
   expect(window.api.file.listDirectory).toHaveBeenCalledWith('/tmp/test', false)
   expect(result.items).toEqual([
-    { name: 'file1.txt', isDirectory: false, size: 100 },
-    { name: 'subdir', isDirectory: true }
+    { name: 'file1.txt', fullPath: '/home/user/file1.txt', isDirectory: false, size: 100 },
+    { name: 'subdir', fullPath: '/home/user/subdir', isDirectory: true }
   ])
 })
 
@@ -130,7 +145,7 @@ test('Filesystem plugin write file - overwrite disallowed', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_write',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.error).toContain('File already exists')
   expect(window.api.file.write).not.toHaveBeenCalled()
@@ -141,7 +156,7 @@ test('Filesystem plugin write file - overwrite allowed', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_write',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
   expect(window.api.showDialog).toHaveBeenCalled()
@@ -154,7 +169,7 @@ test('Filesystem plugin write file - overwrite allowed and skipped', async () =>
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_write',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
   expect(window.api.showDialog).not.toHaveBeenCalled()
@@ -165,7 +180,7 @@ test('Filesystem plugin delete file - disallowed', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_delete',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.error).toContain('not handled')
   expect(window.api.file.delete).not.toHaveBeenCalled()
@@ -176,7 +191,7 @@ test('Filesystem plugin delete file - allowed', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_delete',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
   expect(window.api.showDialog).toHaveBeenCalled()
@@ -189,7 +204,7 @@ test('Filesystem plugin delete file - allowed and skipped', async () => {
   const plugin = new FilesystemPlugin(store.config.plugins.filesystem)
   const result = await plugin.execute(context, {
     tool: 'filesystem_delete',
-    parameters: { path: '/tmp/existing.txt', content: 'test content' }
+    parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
   expect(window.api.showDialog).not.toHaveBeenCalled()
