@@ -1,11 +1,14 @@
 
-export type ListDirectorySuccess = {
-  success: true
-  items: {
+export type DirectoryItem = {
     name: string
+    fullPath: string
     isDirectory: boolean
     size?: number
-  }[]
+  }
+
+export type ListDirectorySuccess = {
+  success: true
+  items: DirectoryItem[]
 }
 
 export type ReadFileSuccess = {

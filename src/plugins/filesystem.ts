@@ -25,14 +25,14 @@ export default class extends MultiToolPlugin {
         type: 'function',
         function: {
           name: 'filesystem_list',
-          description: 'List files and directories in a specified path',
+          description: 'List files and directories in a specified path. Avoid using absolute paths unless you know it from a previous call or provided by the user.',
           parameters: {
             type: 'object',
             properties: {
               path: {
                 name: 'path',
                 type: 'string',
-                description: 'The directory path to list contents from'
+                description: 'The directory path to list contents from.',
               },
               includeHidden: {
                 name: 'includeHidden',
@@ -197,17 +197,50 @@ export default class extends MultiToolPlugin {
     return handled && (!this.toolsEnabled || this.toolsEnabled.includes(name))
   }
 
-  private async isPathAllowed(targetPath: string): Promise<boolean> {
+  mapToAllowedPaths(targetPath: string): string|null {
+
+    // if no allowed paths are configured, return null
     if (!this.config.allowedPaths || this.config.allowedPaths.length === 0) {
-      return false
+      return null
     }
 
+    // try to find the target path in the allowed paths
     const normalizedTarget = window.api.file.normalize(targetPath)
-    
-    return this.config.allowedPaths.some(allowedPath => {
+    for (const allowedPath of this.config.allowedPaths) {
       const normalizedAllowed = window.api.file.normalize(allowedPath)
-      return normalizedTarget.startsWith(normalizedAllowed)
-    })
+      if (normalizedTarget.startsWith(normalizedAllowed)) {
+        return normalizedTarget
+      }
+    }
+
+    // else let's try to see if the target path is a subdirectory of any allowed path
+    for (const allowedPath of this.config.allowedPaths) {
+      const normalizedAllowed = window.api.file.normalize(allowedPath)
+      const path = window.api.file.normalize(`${normalizedAllowed}/./${targetPath}`)
+      if (window.api.file.exists(path)) {
+        return path
+      }
+    }
+
+    // else we can handle this case:
+    // - allowed = /Documents
+    // - target = ./Documents/folder/test.txt
+    const dirSep = window.api.platform === 'win32' ? '\\' : '/'
+    const path = targetPath.startsWith('./') ? targetPath.slice(2) : targetPath
+    const targetParts = path.split(dirSep)
+    for (const allowedPath of this.config.allowedPaths) {
+      const normalizedAllowed = window.api.file.normalize(allowedPath)
+      const allowedParts = normalizedAllowed.split(dirSep)
+      if (allowedParts.length && allowedParts[allowedParts.length - 1] === targetParts[0]) {
+        const targetPath = allowedParts.slice(0, -1).join(dirSep) + dirSep + path
+        if (window.api.file.exists(targetPath)) {
+          return targetPath
+        }
+      }
+    }
+
+    // if we reach here, it means the path is not allowed
+    return null
   }
 
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<anyDict> {
@@ -218,11 +251,10 @@ export default class extends MultiToolPlugin {
 
     const { tool, parameters: args } = parameters
 
-    if (!(await this.isPathAllowed(args.path))) {
+    const path = await this.mapToAllowedPaths(args.path)
+    if (!path) {
       return { error: t('plugins.filesystem.invalidPath', { path: args.path }) }
     }
-
-    const path = window.api.file.normalize(args.path)
 
     try {
       switch (tool) {

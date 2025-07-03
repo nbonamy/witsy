@@ -201,17 +201,17 @@ test('List directory', async () => {
   // Test without hidden files
   const items = file.listDirectory(app, testDir, false)
   expect(items).toEqual(expect.arrayContaining([
-    { name: 'test.txt', isDirectory: false, size: expect.any(Number) },
-    { name: 'subdir', isDirectory: true }
+    { name: 'test.txt', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: 'subdir', fullPath: expect.any(String), isDirectory: true }
   ]))
   expect(items.find(item => item.name === '.hidden')).toBeUndefined()
   
   // Test with hidden files
   const itemsWithHidden = file.listDirectory(app, testDir, true)
   expect(itemsWithHidden).toEqual(expect.arrayContaining([
-    { name: 'test.txt', isDirectory: false, size: expect.any(Number) },
-    { name: '.hidden', isDirectory: false, size: expect.any(Number) },
-    { name: 'subdir', isDirectory: true }
+    { name: 'test.txt', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: '.hidden', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: 'subdir', fullPath: expect.any(String), isDirectory: true }
   ]))
   
   // Cleanup
