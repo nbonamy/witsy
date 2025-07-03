@@ -169,6 +169,15 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
       // status
       await this.generateStatusUpdate(`I have gathered information for all sections. I am going to analyze the information and generate content for each section.`, response)
 
+      // add empty checkbox for each section
+      for (const section of sections) {
+        response.appendText({
+          type: 'content',
+          text: `\n\n- ⬜️ ${section.title}\n\n`,
+          done: false,
+        })
+      }
+
       // anaylyze and generate content for each section
       const sectionsContent = await Promise.all(
         
@@ -222,11 +231,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           response.usage = addUsages(response.usage, sectionContentMessage.usage)
 
           // status
-          response.appendText({
-            type: 'content',
-            text: `\n\n- ✅ ${section.title}\n\n`,
-            done: false,
-          })
+          response.content = response.content.replaceAll(`\n\n- ⬜️ ${section.title}\n\n`, `\n\n- ✅ ${section.title}\n\n`)
 
           // done
           return sectionContentMessage.content
