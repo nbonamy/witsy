@@ -1373,6 +1373,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Variables de entorno",
+      "httpHeaders": "Encabezados HTTP personalizados",
       "selectCommand": "Seleccionar comando",
       "serverPackage": "Paquete del servidor",
       "smitheryApiKey": "Clave API de Smithery.ai",

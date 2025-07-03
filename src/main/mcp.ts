@@ -215,6 +215,7 @@ export default class {
       original.url = server.url
       original.cwd = server.cwd
       original.env = server.env
+      original.headers = server.headers
       edited = true
     }
 
@@ -239,6 +240,7 @@ export default class {
       originalMcp.args = server.url.split(' ')
       originalMcp.cwd = server.cwd
       originalMcp.env = server.env
+      originalMcp.headers = server.headers
       edited = true
     }
 
@@ -475,9 +477,11 @@ export default class {
     try {
 
       // get transport
-      const transport = new StreamableHTTPClientTransport(
-        new URL(server.url)
-      )
+      const transport = new StreamableHTTPClientTransport(new URL(server.url), {
+        requestInit: {
+          headers: server.headers || {},
+        }
+      })
       transport.onerror = (e) => {
         this.logs[server.uuid].push(e.message)
       }

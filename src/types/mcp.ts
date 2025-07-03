@@ -15,6 +15,7 @@ export type McpServer = {
   url: string
   cwd?: string
   env?: strDict
+  headers?: strDict
 }
 
 export type McpClient = {
@@ -33,6 +34,7 @@ export type McpClaudeServer = {
   args: string[]
   cwd?: string
   env?: strDict
+  headers?: strDict
 }
 
 export type McpServerStatus = McpServer & {

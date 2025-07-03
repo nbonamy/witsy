@@ -99,10 +99,11 @@ test('Server edit', async () => {
     url: 'http://localhost:3000',
     cwd: 'cwd1',
     env: {},
+    headers: {},
   })
 })
 
-test('Normal server add', async () => {
+test('Normal server add - SSE', async () => {
 
   expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
   await mcp.find<HTMLElement>('.icon.add').trigger('click')
@@ -127,11 +128,12 @@ test('Normal server add', async () => {
     command: 'npx',
     url: 'script1.js',
     cwd: '',
-    env: { },
+    env: {},
+    headers: {},
   })
 
-  // fake select the server 
-  mcp.vm.selected = (window.api.mcp.editServer as Mock).mock.calls[0][0]
+  // fake select the server
+  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
   // add cwd
@@ -170,10 +172,11 @@ test('Normal server add', async () => {
     url: 'script1.js',
     cwd: '',//'picked_folder',
     env: { key1: 'value1', key2: 'value2' },
+    headers: {},
   })
 
   // fake select the server 
-  mcp.vm.selected = (window.api.mcp.editServer as Mock).mock.calls[1][0]
+  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
   await mcp.vm.$nextTick()
 
   // edit variable
@@ -199,6 +202,100 @@ test('Normal server add', async () => {
     url: 'script1.js',
     cwd: '',//'picked_folder',
     env: { key3: 'value3' },
+    headers: {},
+  })
+
+})
+
+test('Normal server add - HTTP', async () => {
+
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+  await mcp.find<HTMLElement>('.icon.add').trigger('click')
+  const menu = mcp.findComponent({ name: 'ContextMenu' })
+  expect(menu.exists()).toBe(true)
+  expect(menu.findAll('.item').length).toBe(3)
+  await menu.find('.item[data-action=custom]').trigger('click')
+  expect(mcp.findComponent({ name: 'ContextMenu' }).exists()).toBe(false)
+
+  const editor = mcp.findComponent(McpServerEditor)
+  await editor.find<HTMLSelectElement>('select[name=type]').setValue('http')
+  await editor.find<HTMLInputElement>('input[name=url]').setValue('http://www.mcp.com')
+  
+  // save
+  await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'http',
+    command: '',
+    url: 'http://www.mcp.com',
+    cwd: '',
+    env: {},
+    headers: {},
+  })
+
+  // fake select the server 
+  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
+  await mcp.vm.$nextTick()
+
+  // add variable
+  await editor.find<HTMLButtonElement>('button.add').trigger('click')
+  const editor2 = editor.findComponent({ name: 'VariableEditor' })
+  expect(editor2.find<HTMLInputElement>('input[name=key]').element.value).toBe('')
+  expect(editor2.find<HTMLInputElement>('input[name=value]').element.value).toBe('')
+  await editor2.find<HTMLInputElement>('input[name=key]').setValue('key1')
+  await editor2.find<HTMLInputElement>('input[name=value]').setValue('value1')
+  await editor2.find<HTMLButtonElement>('button[name=save]').trigger('click')
+
+  // add variable
+  await editor.find<HTMLButtonElement>('button.add').trigger('click')
+  await editor2.find<HTMLInputElement>('input[name=key]').setValue('key2')
+  await editor2.find<HTMLInputElement>('input[name=value]').setValue('value2')
+  await editor2.find<HTMLButtonElement>('button[name=save]').trigger('click')
+
+  // save
+  await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'http',
+    command: '',
+    url: 'http://www.mcp.com',
+    cwd: '',
+    env: {},
+    headers: { key1: 'value1', key2: 'value2' },
+  })
+
+  // fake select the server 
+  mcp.vm.onEdit((window.api.mcp.editServer as Mock).mock.calls[0][0])
+  await mcp.vm.$nextTick()
+
+  // edit variable
+  await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('click')
+  await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('dblclick')
+  expect(editor2.find<HTMLInputElement>('input[name=key]').element.value).toBe('key1')
+  expect(editor2.find<HTMLInputElement>('input[name=value]').element.value).toBe('value1')
+  await editor2.find<HTMLInputElement>('input[name=key]').setValue('key3')
+  await editor2.find<HTMLInputElement>('input[name=value]').setValue('value3')
+  await editor2.find<HTMLButtonElement>('button[name=save]').trigger('click')
+
+  // delete
+  await editor.find<HTMLTableRowElement>('.sticky-table-container tbody tr:nth-child(1)').trigger('click')
+  await editor.find<HTMLButtonElement>('button.remove').trigger('click')
+
+  await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
+  expect(window.api.mcp.editServer).toHaveBeenLastCalledWith({
+    uuid: null,
+    registryId: null,
+    state: 'enabled',
+    type: 'http',
+    command: '',
+    url: 'http://www.mcp.com',
+    cwd: '',
+    env: {},
+    headers: { key3: 'value3' },
   })
 
 })
