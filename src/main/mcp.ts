@@ -263,9 +263,8 @@ export default class {
     this.clients = []
   }
 
-
   reload = async (): Promise<void> => {
-    this.shutdown()
+    await this.shutdown()
     await this.connect()
   }
 
@@ -300,6 +299,15 @@ export default class {
   }
 
   private connectToServer = async(server: McpServer): Promise<boolean> => {
+
+    // first check if we already have a client for this server
+    const existingClient = this.clients.find(client => client.server.uuid === server.uuid)
+    if (existingClient) {
+      try {
+        await existingClient.client.close()
+      } catch { /* empty */}
+      this.clients = this.clients.filter(client => client !== existingClient)
+    }
 
     // clear logs
     this.logs[server.uuid] = []
