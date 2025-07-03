@@ -282,6 +282,13 @@ test('Connect', async () => {
   ])
 })
 
+test('Does not connect twice', async () => {
+  const mcp = new Mcp(app)
+  expect(await mcp.connect())
+  expect(await mcp.connect())
+  expect(mcp.clients).toHaveLength(4)
+})
+
 test('Name conversion', async () => {
   const mcp = new Mcp(app)
   expect(mcp.originalToolName('tool1___90ab')).toBe('tool1')
