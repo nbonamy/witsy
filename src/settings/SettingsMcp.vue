@@ -52,7 +52,6 @@ const onCreate = (createType: McpCreateType, url?: string) => {
     type: createType === 'smithery' ? 'stdio' : createType,
     command: '',
     url: url || '', 
-    title: '',
   }
 }
 
@@ -60,12 +59,22 @@ const onCreate = (createType: McpCreateType, url?: string) => {
 const onEdited = async ({ type, command, url, cwd, env, headers, title }) => {
 
   // build a dummy server
-  const server: McpServer = {
+  const baseServer: any = {
     uuid: selected.value.uuid,
     registryId: selected.value.registryId,
     state: selected.value.state,
+<<<<<<< HEAD
     type, command, url, cwd, env, headers, title
+=======
+    type, command, url, cwd, env,
+>>>>>>> 64aeed22 (feat: make MCP server title field optional)
   }
+
+  if (title !== undefined) {
+    baseServer.title = title
+  }
+
+  const server: McpServer = baseServer
 
   selected.value = null
 
