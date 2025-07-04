@@ -284,15 +284,28 @@ const onSave = () => {
 
   } else {
 
-    emit('save', {
+    const trimmedTitle = title.value.trim()
+
+    const payload: any = {
       type: type.value,
       command: command.value,
       url: url.value,
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
+<<<<<<< HEAD
       headers: JSON.parse(JSON.stringify(headers.value)),
       title: title.value.trim(),
     })
+=======
+    }
+
+    // include title only when non-empty or when it existed before (allows deletion)
+    if (trimmedTitle.length || props.server?.title !== undefined) {
+      payload.title = trimmedTitle
+    }
+
+    emit('save', payload)
+>>>>>>> 64aeed22 (feat: make MCP server title field optional)
 
   }
 
