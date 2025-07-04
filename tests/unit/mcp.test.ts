@@ -3,6 +3,7 @@ import { vi, test, expect, beforeEach } from 'vitest'
 import { app } from 'electron'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import mcpConfig from '../fixtures/mcp.json'
 import Mcp from '../../src/main/mcp'
@@ -111,13 +112,44 @@ test('Initialization', async () => {
   ])
 })
 
-test('Create server', async () => {
+test('Create server - Stdio', async () => {
+
+  const mcp = new Mcp(app)
+  expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' } })).toBe(true)
+  expect(mcp.getServers()).toHaveLength(7)
+
+  expect(getDefaultEnvironment).toHaveBeenCalledTimes(1)
+  expect(SSEClientTransport).not.toHaveBeenCalled()
+  expect(StreamableHTTPClientTransport).not.toHaveBeenCalled()
+  expect(StdioClientTransport).toHaveBeenLastCalledWith({
+    command: 'node',
+    args: ['script.js'],
+    cwd: 'cwd1',
+    env: { KEY: 'value', PATH: '/tmp' },
+    stderr: 'pipe'
+  })
+
+  expect(mcp.getServers().find(s => s.url === 'script.js')).toBeDefined()
+  expect(config.mcp.servers.find(s => s.url === 'script.js')).toStrictEqual({
+    uuid: expect.any(String),
+    registryId: expect.any(String),
+    state: 'enabled',
+    type: 'stdio',
+    command: 'node',
+    url: 'script.js',
+    cwd: 'cwd1',
+    env: { KEY: 'value' },
+  })
+})
+
+test('Create server - SSE', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'sse', url: 'http://localhost:3001'})).toBe(true)
   expect(mcp.getServers()).toHaveLength(7)
   
   expect(getDefaultEnvironment).not.toHaveBeenCalled()
   expect(StdioClientTransport).not.toHaveBeenCalled()
+  expect(StreamableHTTPClientTransport).not.toHaveBeenCalled()
   expect(SSEClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'))
   expect(Client.prototype.connect).toHaveBeenLastCalledWith({
     onerror: expect.any(Function),
@@ -134,6 +166,39 @@ test('Create server', async () => {
     url: 'http://localhost:3001',
     cwd: undefined,
     env: undefined,
+    headers: undefined,
+  })
+})
+
+test('Create server - HTTP', async () => {
+  const mcp = new Mcp(app)
+  expect(await mcp.editServer({ uuid: null, registryId: null, state: 'enabled', type: 'http', url: 'http://localhost:3001', headers: { key: 'value' }})).toBe(true)
+  expect(mcp.getServers()).toHaveLength(7)
+  
+  expect(getDefaultEnvironment).not.toHaveBeenCalled()
+  expect(StdioClientTransport).not.toHaveBeenCalled()
+  expect(SSEClientTransport).not.toHaveBeenCalled()
+  expect(StreamableHTTPClientTransport).toHaveBeenLastCalledWith(new URL('http://localhost:3001/'), {
+    requestInit: {
+      headers: { key: 'value' },
+    }
+  })
+  expect(Client.prototype.connect).toHaveBeenLastCalledWith({
+    onerror: expect.any(Function),
+    onmessage: expect.any(Function),
+  })
+  
+  expect(mcp.getServers().find(s => s.url === 'http://localhost:3001')).toBeDefined()
+  expect(config.mcp.servers.find(s => s.url === 'http://localhost:3001')).toStrictEqual({
+    uuid: expect.any(String),
+    registryId: expect.any(String),
+    state: 'enabled',
+    type: 'http',
+    command: undefined,
+    url: 'http://localhost:3001',
+    cwd: undefined,
+    env: undefined,
+    headers: { key: 'value' },
   })
 })
 
@@ -280,6 +345,13 @@ test('Connect', async () => {
       function: { name: 'tool3_____s1', description: 'tool3 description', parameters: { type: 'object', properties: {}, required: [] } }
     },
   ])
+})
+
+test('Does not connect twice', async () => {
+  const mcp = new Mcp(app)
+  expect(await mcp.connect())
+  expect(await mcp.connect())
+  expect(mcp.clients).toHaveLength(4)
 })
 
 test('Name conversion', async () => {

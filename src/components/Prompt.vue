@@ -941,6 +941,8 @@ defineExpose({
   isContextMenuOpen,
   startDictation: onDictate,
 
+  isDeepResearchActive: () => deepResearchActive.value,
+
   setPrompt: (message: string|Message) => {
     if (message instanceof Message) {
       onSetPrompt(message)

@@ -3,7 +3,7 @@ import { anyDict } from '../types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 // import { YoutubeTranscript } from 'youtube-transcript'
-import TranscriptClient from 'youtube-transcript-api'
+import TranscriptAPI from 'youtube-transcript-api'
 import { t } from '../services/i18n'
 import ytv from 'ytv'
 
@@ -59,11 +59,11 @@ export default class extends Plugin {
 
       // const transcript = await YoutubeTranscript.fetchTranscript(parameters.url)
 
-      const client = new TranscriptClient()
-      await client.ready
+      // const client = new TranscriptClient()
+      // await client.ready
       const id = this.extractVideoId(parameters.url)
-      const transcripts = await client.getTranscript(id)
-      const transcript = transcripts.tracks[0].transcript
+      const transcripts = await TranscriptAPI.getTranscript(id)
+      const transcript = transcripts//.tracks[0].transcript
 
       return {
         title: info.title || transcripts.title,

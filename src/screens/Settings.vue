@@ -9,7 +9,7 @@
           <SettingsTab class="general" :title="t('settings.tabs.general')" :checked="initialTab == 'general'"><BIconGear class="icon" /></SettingsTab>
           <SettingsTab class="llm" :title="t('settings.tabs.llm')" :checked="initialTab == 'llm'"><BIconBox class="icon" /></SettingsTab>
           <SettingsTab class="chat" :title="t('settings.tabs.chat')"><BIconLayoutTextWindowReverse class="icon" /></SettingsTab>
-          <SettingsTab v-if="enableDeepResearch" class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><BIconBinoculars class="icon" /></SettingsTab>
+          <SettingsTab class="deepresearch" :title="t('settings.tabs.deepResearch')" :checked="initialTab == 'deepresearch'"><BIconBinoculars class="icon" /></SettingsTab>
           <SettingsTab class="models" :title="t('settings.tabs.models')" :checked="initialTab == 'models'"><BIconCpu class="icon" /></SettingsTab>
           <SettingsTab class="plugins" :title="t('settings.tabs.plugins')" :checked="initialTab == 'plugins'"><BIconTools class="icon" /></SettingsTab>
           <SettingsTab class="mcp" :title="t('settings.tabs.mcp')" @change="load(settingsMcp)" :checked="initialTab == 'mcp'"><WIconMcp class="icon" /></SettingsTab>
@@ -25,7 +25,7 @@
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
-      <SettingsDeepResearch v-if="enableDeepResearch" ref="settingsDeepResearch" />
+      <SettingsDeepResearch ref="settingsDeepResearch" />
       <SettingsModels ref="settingsModels" />
       <SettingsPlugins ref="settingsPlugins" />
       <SettingsMcp ref="settingsMcp" />
@@ -43,7 +43,6 @@
 import { OpenSettingsPayload } from '../types/index'
 import { MenuBarMode } from '../components/MenuBar.vue'
 import { ref, onMounted, watch, nextTick, PropType, computed } from 'vue'
-import { store } from '../services/store' 
 import { t } from '../services/i18n'
 import SettingsTab from '../settings/SettingsTab.vue'
 import SettingsGeneral from '../settings/SettingsGeneral.vue'
@@ -103,10 +102,6 @@ const settings = [
   settingsShortcuts,
   settingsAdvanced
 ]
-
-const enableDeepResearch = computed(() => {
-  return store.config.features?.deepResearch
-})
 
 onMounted(async () => {
 

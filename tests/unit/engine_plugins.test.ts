@@ -98,13 +98,18 @@ vi.mock('youtube-transcript', async () => {
 })
 
 // youtube transcript
+// vi.mock('youtube-transcript-api', async () => {
+//   const TranscriptClient = vi.fn()
+//   TranscriptClient.prototype.ready = true
+//   TranscriptClient.prototype.getTranscript = vi.fn(() => ({
+//     tracks: [ { transcript: [ { text: 'line1' } ] } ],
+//   }))
+//   return { default: TranscriptClient }
+// })
 vi.mock('youtube-transcript-api', async () => {
-  const TranscriptClient = vi.fn()
-  TranscriptClient.prototype.ready = true
-  TranscriptClient.prototype.getTranscript = vi.fn(() => ({
-    tracks: [ { transcript: [ { text: 'line1' } ] } ],
-  }))
-  return { default: TranscriptClient }
+  return { default: {
+    getTranscript: vi.fn(() => ([ { text: 'line1' } ]))
+  } }
 })
 
 // youtube info
@@ -279,7 +284,7 @@ test('Search Plugin Tavily', async () => {
       { title: 'title', url: 'url', content: 'fetched_' }
     ]
   })
-  expect(tavily .prototype.search).toHaveBeenLastCalledWith('test', {})
+  expect(tavily.prototype.search).toHaveBeenLastCalledWith('test', { max_results: 5 })
   expect(window.api.search.query).not.toHaveBeenCalled()
 })
 

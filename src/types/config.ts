@@ -101,6 +101,7 @@ export type DeepResearchConfig = {
   runtime: DeepResearchRuntime
   breadth: number
   depth: number
+  searchResults: number
 }
 
 export type AppearanceConfig = {

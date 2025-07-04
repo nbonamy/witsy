@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import { wait } from '../../src/main/utils'
 import {
@@ -44,7 +44,7 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const llmIndex = 3
+const llmIndex = tabs.indexOf('settingsModels')
 
 beforeAll(() => {
   useWindowMock()

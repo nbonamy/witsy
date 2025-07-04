@@ -38,8 +38,9 @@
 
 import { ToolSelection } from '../types/llm'
 import { ref, Ref, onMounted, watch, PropType } from 'vue'
+import { store } from '../services/store'
 import { t } from '../services/i18n'
-import { availablePlugins } from '../plugins/plugins'
+import { availablePlugins, PluginInstance } from '../plugins/plugins'
 import { Plugin } from 'multi-llm-ts'
 import ModalDialog from '../components/ModalDialog.vue'
 import McpPlugin from '../plugins/mcp'
@@ -72,8 +73,10 @@ onMounted(async () => {
 
 const initTools = async () => {
   tools.value = []
-  for (const pluginClass of Object.values(availablePlugins)) {
-    const plugin = new pluginClass({})
+  for (const pluginName in availablePlugins) {
+    
+    const pluginClass = availablePlugins[pluginName]
+    const plugin: PluginInstance = new pluginClass(store.config.plugins[pluginName])
     if ('getTools' in plugin) {
 
       const pluginTools = await plugin.getTools()

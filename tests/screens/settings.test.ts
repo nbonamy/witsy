@@ -86,7 +86,7 @@ for (let i=1; i<tabs.length; i++) {
 
 test('Settings General', async () => {
   
-  const tab = await switchToTab(wrapper, 0)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsGeneral'))
   expect(tab.findAll('.group')).toHaveLength(7)
   expect(tab.findAll('.group.localeUI select option')).toHaveLength(3)
   
@@ -151,7 +151,7 @@ test('Settings General', async () => {
 test('Settings LLM', async () => {
   
   const manager = LlmFactory.manager(store.config)
-  const tab = await switchToTab(wrapper, 1)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
   expect(tab.findAll('.group')).toHaveLength(4)
   expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
   expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
@@ -216,7 +216,7 @@ test('Settings LLM', async () => {
 
 test('Settings Chat', async () => {
   
-  const tab = await switchToTab(wrapper, 2)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsChat'))
   expect(tab.findAll('.group')).toHaveLength(6)
 
   expect(store.config.appearance.chat.theme).not.toBe('conversation')
@@ -244,7 +244,7 @@ test('Settings Chat', async () => {
 
 test('Settings Advanced', async () => {
   
-  const tab = await switchToTab(wrapper, 10)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsAdvanced'))
   expect(tab.findAll('.group')).toHaveLength(5)
 
   expect(store.config.prompt.autosave).not.toBe(true)
@@ -321,13 +321,13 @@ test('Settings Advanced', async () => {
 })
 
 test('Settings Advanced Image resize none - save', async () => {
-  const tab = await switchToTab(wrapper, 10)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsAdvanced'))
   expect(store.config.llm.imageResize).toBe(1024)
   tab.find('.group.size select').setValue(0)
   expect(store.config.llm.imageResize).toBe(0)
 })
 
 test('Settings Advanced Image resize none - reload', async () => {
-  const tab = await switchToTab(wrapper, 10)
+  const tab = await switchToTab(wrapper, tabs.indexOf('settingsAdvanced'))
   expect(tab.find<HTMLSelectElement>('.group.size select').element.value).toBe('0')
 })
