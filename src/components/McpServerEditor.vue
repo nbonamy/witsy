@@ -68,10 +68,23 @@
         <VariableTable 
           :variables="env"
           :selectedVariable="selectedVar"
-          @select="onSelectVar"
-          @add="onAddVar"
-          @edit="onEditVar"
-          @delete="onDelVar"
+          @select="onSelectVar('env', $event)"
+          @add="onAddVar('env')"
+          @edit="onEditVar('env', $event)"
+          @delete="onDelVar('env')"
+        />
+      </div>
+    </template>
+    <template v-if="type === 'http'">
+      <div class="group">
+        <label>{{ t('mcp.serverEditor.httpHeaders') }}</label>
+        <VariableTable 
+          :variables="headers"
+          :selectedVariable="selectedVar"
+          @select="onSelectVar('header', $event)"
+          @add="onAddVar('header')"
+          @edit="onEditVar('header', $event)"
+          @delete="onDelVar('header')"
         />
       </div>
     </template>
@@ -85,8 +98,9 @@
 
 <script setup lang="ts">
 
+import { strDict } from '../types/index'
 import { McpServer, McpServerType } from '../types/mcp'
-import { Ref, ref, onMounted, watch, PropType, nextTick } from 'vue'
+import { ref, onMounted, watch, PropType } from 'vue'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import VariableEditor from '../screens/VariableEditor.vue'
@@ -94,15 +108,24 @@ import VariableTable from '../components/VariableTable.vue'
 
 export type McpCreateType = McpServerType | 'smithery'
 
+export type McpServerVariableType = 'env' | 'header'
+
+export type McpServerVariable = {
+  type: McpServerVariableType
+  key: string
+  value: string
+}
+
 const editor = ref(null)
 const type = ref('stdio')
 const command = ref('')
 const source = ref('')
 const url = ref('')
 const cwd = ref('')
-const env: Ref<{ [key: string]: string }> = ref({})
+const env = ref<strDict>({})
+const headers = ref<strDict>({})
 const apiKey = ref('')
-const selectedVar: Ref<{ key: string, value: string }> = ref(null)
+const selectedVar = ref<McpServerVariable>(null)
 const title = ref('')
 
 const props = defineProps({
@@ -130,6 +153,7 @@ onMounted(async () => {
     url.value = props.server?.url || ''
     cwd.value = props.server?.cwd || ''
     env.value = props.server?.env || {}
+    headers.value = props.server?.headers || {}
     apiKey.value = props.apiKey || ''
   }, { deep: true, immediate: true })
 })
@@ -177,34 +201,47 @@ const pickWorkDir = () => {
   }
 }
 
-const onSelectVar = (key: string) => {
-  selectedVar.value = { key, value: env.value[key] }
+const getVarDict = (type: McpServerVariableType) => {
+  if (type === 'env') {
+    return env.value
+  } else if (type === 'header') {
+    return headers.value
+  }
+  return {}
 }
 
-const onAddVar = () => {
-  selectedVar.value = { key: '', value: '' }
+const onSelectVar = (type: McpServerVariableType, key: string) => {
+  selectedVar.value = { type, key, value: env.value[key] }
+}
+
+const onAddVar = (type: McpServerVariableType) => {
+  selectedVar.value = { type, key: '', value: '' }
   editor.value.show()
 }
 
-const onDelVar = () => {
+const onDelVar = (type: McpServerVariableType) => {
   if (selectedVar.value) {
-    delete env.value[selectedVar.value.key]
-    env.value = { ...env.value }
+    let dict = getVarDict(type)
+    delete dict[selectedVar.value.key]
+    dict = { ...dict }
   }
 }
 
-const onEditVar = (key: string) => {
-  selectedVar.value = { key, value: env.value[key] }
+const onEditVar = (type: McpServerVariableType, key: string) => {
+  const dict = getVarDict(type)
+  selectedVar.value = { type, key, value: dict[key] }
   editor.value.show()
 }
 
-const onSaveVar = (variable: { key: string, value: string }) => {
+const onSaveVar = (variable: McpServerVariable) => {
+  console.log(variable)
   if (variable.key.length) {
+    let dict = getVarDict(variable.type)
     if (variable.key != selectedVar.value.key) {
-      delete env.value[selectedVar.value.key]
+      delete dict[selectedVar.value.key]
     }
-    env.value[variable.key] = variable.value
-    env.value = { ...env.value }
+    dict[variable.key] = variable.value
+    dict = { ...dict }
   }
 }
 
@@ -255,6 +292,7 @@ const onSave = () => {
       url: url.value,
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
+      headers: JSON.parse(JSON.stringify(headers.value)),
     }
 
     // include title only when non-empty or when it existed before (allows deletion)

@@ -10,9 +10,15 @@
     </header>
     <main>
       <div class="chat-content">
-        <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
-        <EmptyChat v-else />
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="enableDeepResearch" class="prompt" ref="prompt" />
+        <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
+        <EmptyChat class="chat-content-main" v-else />
+        <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
+          {{  t('deepResearch.usage') }}
+          <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
+            <BIconXLg />
+          </div>
+        </div>
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
@@ -41,6 +47,9 @@ import IconMenu from './IconMenu.vue'
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
+import useTipsManager from '../composables/tips_manager'
+const tipsManager = useTipsManager(store)
+
 const props = defineProps({
   chat: {
     type: Chat,
@@ -50,10 +59,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   }
-})
-
-const enableDeepResearch = computed(() => {
-  return store.config.features?.deepResearch
 })
 
 const chatMenuPosition = computed(() => {
@@ -273,6 +278,10 @@ const onExportPdf = async () => {
 
 }
 
+const onHideDeepResearchUsage = () => {
+  tipsManager.setTipShown('deepResearchUsage')
+}
+
 defineExpose({
 
   setExpert: (expert: Expert) => {
@@ -355,7 +364,24 @@ defineExpose({
         flex-direction: column;
         max-width: 100%;
 
-        &:deep() > div:first-child {
+        .deep-research-usage {
+          padding: 1rem 1.5rem;
+          padding-bottom: 0rem;
+          color: var(--faded-text-color);
+          height: auto;
+          border-top: 1px solid var(--sidebar-border-color);
+
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+
+          .deep-research-usage-close {
+            cursor: pointer;
+            font-size: 14pt;
+          }
+        }
+
+        &:deep() .chat-content-main {
           flex: 1;
         }
 

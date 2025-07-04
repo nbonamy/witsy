@@ -34,6 +34,7 @@
     "costsAsOf": "koszty na dzień",
     "create": "Utwórz",
     "customize": "Dostosuj…",
+    "deepResearch": "Deep Research",
     "default": "Domyślny",
     "delete": "Usuń",
     "differentLocales": "Ustawienia regionalne LLM różnią się od ustawień regionalnych interfejsu. Wyświetlane teksty są w języku LLM lub w twoim języku, jeśli je dostosowałeś.",
@@ -113,6 +114,28 @@
     "reset": "Resetuj",
     "retry": "Ponów próbę",
     "save": "Zapisz",
+    "schedule": {
+      "at": "o",
+      "daily": "Codziennie",
+      "day_of_every": "dzień każdego",
+      "days_at": "dzień (dni), o",
+      "disabled": "Wyłączone",
+      "every": "Co",
+      "friday": "Pią",
+      "hourly": "Co godzinę",
+      "hours_on_minute": "godzina (godziny) o minucie",
+      "minutes": "Minuty",
+      "monday": "Pon",
+      "monthly": "Co miesiąc",
+      "months": "miesiąc(e)",
+      "on_the": "W",
+      "saturday": "Sob",
+      "sunday": "Nie",
+      "thursday": "Czw",
+      "tuesday": "Wto",
+      "wednesday": "Śro",
+      "weekly": "Co tydzień"
+    },
     "search": "Szukaj...",
     "selectAll": "Wybierz wszystko",
     "selectNone": "Anuluj wybór wszystkich",
@@ -138,8 +161,66 @@
     },
     "voice": "Głos",
     "warning": "Ostrzeżenie",
+    "wizard": {
+      "last": "Gotowe",
+      "next": "Dalej",
+      "prev": "Wstecz"
+    },
     "workingWith": "Praca z",
-    "write": "Napisz"
+    "write": "Napisz",
+    "yes": "Tak"
+  },
+  "agent": {
+    "create": {
+      "information": "Informacje ogólne",
+      "introduction": "Agent to wyspecjalizowana sztuczna inteligencja, która może wykonywać zadania dla Ciebie. Możesz stworzyć agenta do automatyzacji zadań, takich jak pisanie e-maili, streszczanie dokumentów lub generowanie raportów. Możesz także stworzyć agenta, który pomoże Ci w konkretnych zadaniach, takich jak pisanie kodu czy tworzenie prezentacji.",
+      "invocation": "Wyzwalacze agenta",
+      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+      "llm": "Konfiguracja modelu",
+      "settings": "Ustawienia modelu",
+      "tools": {
+        "custom": "Ogranicz dostęp do konkretnych narzędzi",
+        "selectAll": "@:{'common.selectAll'}",
+        "selectNone": "@:{'common.selectNone'}",
+        "title": "Dostęp do narzędzi"
+      }
+    },
+    "description": "@:{'common.description'}",
+    "forge": {
+      "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
+      "create": "Utwórz agenta",
+      "edit": "Edytuj agenta",
+      "empty": "Wybierz istniejącego agenta lub stwórz nowego."
+    },
+    "goal": "Cel",
+    "history": {
+      "clear": "Wyczyść historię",
+      "date": "Data",
+      "duration": "Czas trwania",
+      "empty": "Brak historii…",
+      "log": "Dziennik",
+      "neverRun": "Nigdy",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "trigger": "Wyzwalacz"
+    },
+    "lastRun": "Ostatnie wykonanie",
+    "name": "@:{'common.name'}",
+    "nextRun": "Zaplanowano na",
+    "prompt": "Domyślny prompt",
+    "run": "Uruchom teraz",
+    "runCount": "Łączna liczba wykonań",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
+    },
+    "trigger": {
+      "manual": "Ręczny",
+      "manual_description": "Agenci mogą być zawsze wyzwalani ręcznie",
+      "nextRuns": "Następne wykonania",
+      "schedule": "Harmonogram",
+      "webhook": "Adres URL webhook"
+    }
   },
   "automation": {
     "commander": {
@@ -421,6 +502,45 @@
   },
   "debugConsole": {
     "title": "Konsola debugowania"
+  },
+  "deepResearch": {
+    "analysis": {
+      "completed": "Analiza zakończona: kluczowe wnioski dostępne!",
+      "error": "Wystąpił błąd podczas analizy wyników wyszukiwania",
+      "running": "Analizuję wyniki wyszukiwania, aby wydobyć kluczowe wnioski…",
+      "starting": "Analizuję wyniki wyszukiwania, aby wydobyć kluczowe wnioski…"
+    },
+    "planning": {
+      "completed": "Analiza zakończona: plan badań jest gotowy!",
+      "error": "Wystąpił błąd podczas tworzenia planu badań",
+      "running": "Analizuję Twoją prośbę i tworzę plan badań…",
+      "starting": "Analizuję Twoją prośbę i tworzę plan badań…"
+    },
+    "search": {
+      "completed": "Wyszukiwanie w Internecie zakończone. Wyniki dostępne do analizy!",
+      "error": "Wystąpił błąd podczas wyszukiwania w Internecie",
+      "running": "Przeszukuję Internet dla „{query}”…",
+      "starting": "Uruchamiam przeglądarkę internetową, aby przeszukać Internet…"
+    },
+    "synthesis": {
+      "conclusion": {
+        "completed": "Zakończenie gotowe do integracji w raporcie!",
+        "running": "Piszę zakończenie raportu…"
+      },
+      "error": "Wystąpił błąd podczas syntezy treści",
+      "execsum": {
+        "completed": "Streszczenie wykonawcze gotowe do dodania do raportu!",
+        "running": "Wydobywam kluczowe informacje do streszczenia wykonawczego…"
+      },
+      "starting": "Syntezuję treść…"
+    },
+    "usage": "[BETA] Deep Research dostarcza dogłębne informacje na wybrany temat, przeglądając wiele źródeł i podkreślając kluczowe ustalenia. Uwaga: ta funkcja wykorzystuje więcej tokenów niż zwykły czat.",
+    "writer": {
+      "completed": "Sekcja „{title}” ukończona!",
+      "error": "Wystąpił błąd podczas pisania sekcji raportu „{title}”",
+      "running": "Piszę sekcję raportu „{title}” na podstawie kluczowych wniosków…",
+      "starting": "Piszę sekcję raportu na podstawie kluczowych wniosków…"
+    }
   },
   "designStudio": {
     "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te media?",
@@ -1273,6 +1393,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Zmienne środowiskowe",
+      "httpHeaders": "Niestandardowe nagłówki HTTP",
       "selectCommand": "Wybierz polecenie",
       "serverPackage": "Pakiet serwera",
       "smitheryApiKey": "Klucz API Smithery.ai",
@@ -1418,10 +1539,55 @@
     "topP": "Top P"
   },
   "plugins": {
+    "agent": {
+      "completed": "Agent {agent} wykonany pomyślnie",
+      "error": "Błąd podczas wykonywania agenta {agent}",
+      "running": "Wykonywanie agenta {agent}…",
+      "starting": "Inicjowanie agenta {agent}…"
+    },
     "browse": {
       "completed": "Zawartość pobrana z \"{title}\"",
       "error": "Błąd podczas pobierania zawartości",
       "running": "Pobieranie zawartości…"
+    },
+    "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "Model próbuje nadpisać lub usunąć plik. Czy chcesz na to pozwolić?"
+      },
+      "default": {
+        "completed": "Operacja na systemie plików zakończona",
+        "error": "Błąd podczas operacji na systemie plików: {error}",
+        "running": "Wykonuję operację na systemie plików…",
+        "starting": "Przygotowuję operację na systemie plików…"
+      },
+      "delete": {
+        "completed": "Pomyślnie usunięto {path}",
+        "declined": "Użytkownik odmówił usunięcia {path}",
+        "error": "Błąd podczas usuwania {path}",
+        "running": "Usuwam {path}…",
+        "starting": "Przygotowuję do usunięcia {path}…"
+      },
+      "invalidPath": "Ta operacja nie jest częścią dozwolonych ścieżek: {path}",
+      "list": {
+        "completed": "Nie znaleziono elementów w {path} | Znaleziono 1 element w {path} | Znaleziono {count} elementów w {path}",
+        "error": "Błąd podczas listowania zawartości {path}",
+        "running": "Listuję zawartość {path}…",
+        "starting": "Przygotowuję listę zawartości katalogu…"
+      },
+      "read": {
+        "completed": "Plik {path} odczytany pomyślnie",
+        "error": "Błąd podczas odczytu pliku {path}",
+        "running": "Odczytuję plik {path}…",
+        "starting": "Przygotowuję do odczytu pliku…"
+      },
+      "write": {
+        "completed": "Pomyślnie zapisano plik {path}",
+        "declined": "Użytkownik odmówił nadpisania {path}",
+        "error": "Błąd podczas zapisu pliku {path}",
+        "running": "Zapisuję plik {path}…",
+        "starting": "Przygotowuję do zapisu pliku…"
+      }
     },
     "image": {
       "completed": "Obraz został pomyślnie wygenerowany",
@@ -1618,6 +1784,23 @@
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
     },
+    "deepResearch": {
+      "breadth": "Zakres badań",
+      "breadths": {
+        "narrow": "Wąski",
+        "wide": "Szeroki"
+      },
+      "depth": "Głębokość badań",
+      "depths": {
+        "deep": "Głęboka",
+        "shallow": "Standardowa"
+      },
+      "runtime": "Typ głębokich badań",
+      "runtimes": {
+        "ma": "Multi-agent (pełny agentyczny, napędzany LLM)",
+        "ms": "Wieloetapowy (hybrydowy kod/agent, napędzany Witsy)"
+      }
+    },
     "engines": {
       "anthropic": {
         "aboutModels": "Więcej o modelach antropicznych",
@@ -1789,6 +1972,18 @@
         "description": "Ta wtyczka umożliwia silnikom LLM pobieranie treści z Internetu i wykorzystywanie ich do generowania dokładniejszych odpowiedzi.",
         "title": "Pobierz"
       },
+      "filesystem": {
+        "allowedPaths": "Dozwolone katalogi",
+        "allowWrite": "Zezwól na operacje zapisu (nadpisywanie i usuwanie istniejących plików)",
+        "description": "Ten plugin pozwala silnikom LLM na interakcję z Twoim lokalnym systemem plików. Mogą listować zawartość katalogów, czytać pliki i tworzyć nowe pliki w określonych katalogach. Jeśli dasz uprawnienia, mogą także nadpisywać i usuwać istniejące pliki.",
+        "pathsNote": "Modele mogą mieć dostęp tylko do plików i katalogów w ścieżkach, które określisz powyżej. Wybieraj katalogi ostrożnie i udzielaj dostępu tylko do folderów, którym ufasz.",
+        "skipConfirmation": "NIEBEZPIECZNE: Nie potwierdzaj operacji zapisu",
+        "skipConfirmationWarning": {
+          "text": "Jeśli wyłączysz potwierdzenie operacji zapisu, modele mogą zdecydować o nadpisaniu/usunięciu plików. Nie będziesz mógł przerwać takich operacji. Czy na pewno chcesz kontynuować?",
+          "title": "Czy na pewno chcesz wyłączyć potwierdzenie operacji zapisu?"
+        },
+        "title": "System plików"
+      },
       "image": {
         "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",
         "description": "Ta wtyczka umożliwia silnikom LLM tworzenie obrazów na podstawie opisu tekstowego.",
@@ -1878,6 +2073,7 @@
       "advanced": "Zaawansowane",
       "chat": "Czat",
       "commands": "Polecenia",
+      "deepResearch": "@:{'common.deepResearch'}",
       "experts": "Eksperci",
       "general": "Ogólne",
       "llm": "LLM",

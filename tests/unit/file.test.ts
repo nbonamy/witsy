@@ -185,3 +185,90 @@ test('Get app info', async () => {
     })
   }
 })
+
+test('List directory', async () => {
+  const tempDir = os.tmpdir()
+  const testDir = path.join(tempDir, 'test-dir')
+  
+  // Create test directory and files
+  if (!fs.existsSync(testDir)) {
+    fs.mkdirSync(testDir)
+  }
+  fs.writeFileSync(path.join(testDir, 'test.txt'), 'test content')
+  fs.writeFileSync(path.join(testDir, '.hidden'), 'hidden content')
+  fs.mkdirSync(path.join(testDir, 'subdir'), { recursive: true })
+  
+  // Test without hidden files
+  const items = file.listDirectory(app, testDir, false)
+  expect(items).toEqual(expect.arrayContaining([
+    { name: 'test.txt', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: 'subdir', fullPath: expect.any(String), isDirectory: true }
+  ]))
+  expect(items.find(item => item.name === '.hidden')).toBeUndefined()
+  
+  // Test with hidden files
+  const itemsWithHidden = file.listDirectory(app, testDir, true)
+  expect(itemsWithHidden).toEqual(expect.arrayContaining([
+    { name: 'test.txt', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: '.hidden', fullPath: expect.any(String), isDirectory: false, size: expect.any(Number) },
+    { name: 'subdir', fullPath: expect.any(String), isDirectory: true }
+  ]))
+  
+  // Cleanup
+  fs.rmSync(testDir, { recursive: true, force: true })
+})
+
+test('File exists', async () => {
+  const tempDir = os.tmpdir()
+  const testFile = path.join(tempDir, 'exists-test.txt')
+  
+  // File doesn't exist
+  expect(file.fileExists(app, testFile)).toBe(false)
+  
+  // Create file
+  fs.writeFileSync(testFile, 'test')
+  expect(file.fileExists(app, testFile)).toBe(true)
+  
+  // Cleanup
+  fs.unlinkSync(testFile)
+})
+
+test('Write file', async () => {
+  
+  const tempDir = os.tmpdir()
+  const testFile = path.join(tempDir, 'test.txt')
+  const content = 'test content'
+  expect(() => file.writeFile(app, testFile, content)).not.toThrow()
+  expect(fs.readFileSync(testFile, 'utf8')).toBe(content)
+  fs.unlinkSync(testFile)
+})
+
+test('Write new file with directory creation', async () => {
+  const tempDir = os.tmpdir()
+  const testDir = path.join(tempDir, 'new-dir', 'nested')
+  const testFile = path.join(testDir, 'nested-file.txt')
+  const content = 'nested content'
+  expect(() => file.writeFile(app, testFile, content)).not.toThrow()
+  expect(fs.readFileSync(testFile, 'utf8')).toBe(content)
+  fs.rmSync(path.join(tempDir, 'new-dir'), { recursive: true, force: true })
+})
+
+test('Normalize path', async () => {
+  const homeDir = os.homedir()
+  
+  // Test tilde expansion
+  expect(file.normalizePath(app, '~/Documents')).toBe(path.resolve(homeDir, 'Documents'))
+  expect(file.normalizePath(app, '~')).toBe(path.resolve(homeDir))
+  
+  // Test relative paths (should be relative to home)
+  expect(file.normalizePath(app, 'Documents')).toBe(path.resolve(homeDir, 'Documents'))
+  expect(file.normalizePath(app, 'Downloads/file.txt')).toBe(path.resolve(homeDir, 'Downloads/file.txt'))
+  
+  // Test absolute paths (should remain unchanged)
+  const absolutePath = process.platform === 'win32' ? 'C:\\temp\\file.txt' : '/tmp/file.txt'
+  expect(file.normalizePath(app, absolutePath)).toBe(path.resolve(absolutePath))
+  
+  // Test current directory
+  expect(file.normalizePath(app, '.')).toBe(path.resolve(homeDir, '.'))
+  expect(file.normalizePath(app, '..')).toBe(path.resolve(homeDir, '..'))
+})

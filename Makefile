@@ -82,7 +82,7 @@ build-release:
 	@git diff --quiet || (echo "There are uncommitted changes. Stopping." && exit 1)
 	@$(MAKE) increment-build-number
 	@$(MAKE) commit-build-number
-	gh release create v$(VERSION) --title $(VERSION) --generate-notes --draft
+	gh release create v$(VERSION) --title $(VERSION) --notes "[CHANGELOG.md](CHANGELOG.md)" --draft
 	gh workflow run build-darwin-arm64.yml --ref $(CURRENT_BRANCH)
 	gh workflow run build-darwin-x64.yml --ref $(CURRENT_BRANCH)
 	gh workflow run build-linux-x64.yml --ref $(CURRENT_BRANCH)

@@ -3,11 +3,11 @@ import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 
 let wrapper: VueWrapper<any>
-const voiceIndex = 8
+const voiceIndex = tabs.indexOf('settingsVoice')
 
 beforeAll(() => {
   useWindowMock()

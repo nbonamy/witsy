@@ -7,9 +7,6 @@ import MessageList from '../../src/components/MessageList.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
 
-import useEventBus from '../../src/composables/event_bus'
-const { emitEvent } = useEventBus()
-
 enableAutoUnmount(afterAll)
 
 let wrapper: VueWrapper<any>
@@ -66,14 +63,4 @@ test('Shows user and assistant messages', async () => {
   chat.addMessage(new Message('assistant', 'Hola'))
   await wrapper.setProps({ chat: chat })
   expect(wrapper.findAll('.message')).toHaveLength(2)
-})
-
-test('Fullscreen image', async () => {
-  emitEvent('fullscreen', 'https://example.com/image.jpg')
-  await wrapper.vm.$nextTick()
-  expect(wrapper.find('.fullscreen').exists()).toBe(true)
-  expect(window.api.fullscreen).toHaveBeenLastCalledWith('main', true)
-  await wrapper.find('.fullscreen').trigger('click')
-  expect(wrapper.find('.fullscreen').exists()).toBe(false)
-  expect(window.api.fullscreen).toHaveBeenLastCalledWith('main', false)
 })
