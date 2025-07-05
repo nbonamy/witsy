@@ -2192,7 +2192,8 @@
       "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."
     },
     "spaceToTalk": "Pressione e segure a barra de espaço para falar",
-    "title": "Voz para Texto"
+    "title": "Voz para Texto",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

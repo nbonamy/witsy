@@ -2170,7 +2170,8 @@
       "toggle": "Vous pouvez également appuyer sur la barre d'espace pour commencer à enregistrer et appuyer à nouveau pour l'arrêter."
     },
     "spaceToTalk": "Appuyez et maintenez la barre d'espace pour parler",
-    "title": "Dictée Vocale"
+    "title": "Dictée Vocale",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

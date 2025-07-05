@@ -2170,7 +2170,8 @@
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."
     },
     "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
-    "title": "Diktiermodus"
+    "title": "Diktiermodus",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

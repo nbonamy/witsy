@@ -2170,7 +2170,8 @@
       "toggle": "Puoi anche premere il tasto Spazio per iniziare a registrare e premere di nuovo per fermarlo."
     },
     "spaceToTalk": "Tieni premuto il tasto spazio per parlare",
-    "title": "Da Voce a Testo"
+    "title": "Da Voce a Testo",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

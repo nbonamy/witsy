@@ -72,8 +72,12 @@
           <form class="large" @submit.prevent>
             <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
             <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'">{{ t('common.record') }}</button>
-            <button name="clear" class="button" @click="onClear()" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
+            <div class="upload-section">
+              <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
+              <button class="button" @click="triggerFileUpload" :disabled="state === 'processing'"> {{ t('transcribe.upload') }} </button>
+            </div>
             <div class="push"></div>
+            <button name="clear" class="button" @click="onClear()" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert()" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
             <button name="copy" class="button" @click="onCopy()" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
           </form>
@@ -122,6 +126,7 @@ const autoStart = ref(false)
 const foregroundColorActive = ref('')
 const foregroundColorInactive = ref('')
 const copying = ref(false)
+const fileInput = ref(null)
 
 let previousTranscription = ''
 
@@ -494,6 +499,36 @@ const refocus = () => {
   focusedElement?.blur()
 }
 
+const triggerFileUpload = () => {
+  fileInput.value?.click()
+}
+
+const onFileSelected = async (event: Event) => {
+  
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  console.log(target, files)
+  if (!files || files.length === 0) return
+  const file = files[0]
+
+  try {
+    state.value = 'processing'
+    await transcriber.initialize()
+    const response = await transcriber.transcribeFile(file)
+    if (transcription.value.length && ',;.?!'.indexOf(transcription.value[transcription.value.length - 1]) === -1) {
+      transcription.value += ' '
+    }
+    transcription.value += response.text
+    
+  } catch (error) {
+    console.error('Error transcribing file:', error)
+    Dialog.alert(t('transcribe.errors.transcription'), `${file.name}: ${error.message}`)
+  } finally {
+    target.value = '' 
+    state.value = 'idle'
+  }
+}
+
 defineExpose({
   startDictation: toggleRecord,
 })
@@ -587,6 +622,12 @@ defineExpose({
       .loader {
         margin: 8px 0px 8px 6px;
         background-color: orange;
+      }
+
+      .upload-section {
+        .file-input {
+          display: none;
+        }
       }
     }
 

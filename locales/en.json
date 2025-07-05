@@ -2198,7 +2198,8 @@
       "toggle": "You can also hit Space to start recording and hit again to stop it."
     },
     "spaceToTalk": "Press and hold space to talk",
-    "title": "Speech-to-Text"
+    "title": "Speech-to-Text",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
