@@ -2170,7 +2170,8 @@
       "toggle": "También puedes presionar la barra espaciadora para comenzar a grabar y presionar nuevamente para detenerlo."
     },
     "spaceToTalk": "Mantén presionada la barra espaciadora para hablar",
-    "title": "Texto a Voz"
+    "title": "Texto a Voz",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

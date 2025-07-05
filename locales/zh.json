@@ -2192,7 +2192,8 @@
       "toggle": "您也可以按空格键开始录音，再次按空格键停止录音。"
     },
     "spaceToTalk": "按住空格键开始讲话",
-    "title": "语音转文本"
+    "title": "语音转文本",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

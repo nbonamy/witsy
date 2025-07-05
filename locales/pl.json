@@ -2198,7 +2198,8 @@
       "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."
     },
     "spaceToTalk": "Naciśnij i przytrzymaj spację, aby mówić",
-    "title": "Zamiana mowy na tekst"
+    "title": "Zamiana mowy na tekst",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
