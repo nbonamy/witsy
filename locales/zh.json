@@ -2170,8 +2170,10 @@
   "transcribe": {
     "autoStart": "窗口打开时开始转录",
     "clickToRecord": "准备好了就点击录音按钮！",
+    "dropzone": "放入音频文件",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "请放入有效的音频文件（.mp3 或 .wav）",
       "microphone": "访问麦克风时出错",
       "notAuthorized": {
         "text": "点击确定以打开设置窗口并检查您的API密钥。",

@@ -2176,8 +2176,10 @@
   "transcribe": {
     "autoStart": "Start transcribing when window opens",
     "clickToRecord": "Click the record button when you are ready!",
+    "dropzone": "Drop audio file",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Please drop a valid audio file (.mp3 or .wav)",
       "microphone": "Error accessing microphone",
       "notAuthorized": {
         "text": "Click OK to open the Settings window and check your API key.",

@@ -63,9 +63,17 @@
           <form class="large" @submit.prevent>
             <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
             <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'"><BIconMic />&nbsp;{{ t('common.record') }}</button>
-            <div class="upload-section">
-              <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
-              <button name="upload" class="button" @click="triggerFileUpload" :disabled="state === 'processing'"><BIconUpload />&nbsp;{{ t('transcribe.upload') }} </button>
+            <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
+            <button name="upload" class="button" @click="triggerFileUpload" :disabled="state === 'processing'"><BIconUpload />&nbsp;{{ t('transcribe.upload') }} </button>
+            <div 
+              class="dropzone" 
+              :class="{ 'drag-over': isDragOver, 'disabled': state === 'processing' }"
+              @drop="onDrop"
+              @dragover="onDragOver"
+              @dragenter="onDragEnter"
+              @dragleave="onDragLeave"
+            >
+              <BIconSoundwave />&nbsp;{{ t('transcribe.dropzone') }}
             </div>
           </form>
         </div>
@@ -126,6 +134,7 @@ import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
+import { BIconSoundwave } from 'bootstrap-icons-vue'
 const { emitEvent } = useEventBus()
 
 // init stuff
@@ -153,6 +162,7 @@ const showTranslateMenu = ref(false)
 const showCommandsMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
+const isDragOver = ref(false)
 
 let previousTranscription = ''
 
@@ -543,12 +553,63 @@ const triggerFileUpload = () => {
 }
 
 const onFileSelected = async (event: Event) => {
-  
   const target = event.target as HTMLInputElement
   const files = target.files
   if (!files || files.length === 0) return
   const file = files[0]
+  
+  await processAudioFile(file)
+  target.value = '' // Clear the input
+}
 
+const onDragOver = (event: DragEvent) => {
+  if (state.value === 'processing') return
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'copy'
+}
+
+const onDragEnter = (event: DragEvent) => {
+  if (state.value === 'processing') return
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const onDragLeave = (event: DragEvent) => {
+  if (state.value === 'processing') return
+  event.preventDefault()
+  // Only set to false if we're leaving the dropzone itself, not a child element
+  if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
+    isDragOver.value = false
+  }
+}
+
+const onDrop = async (event: DragEvent) => {
+  if (state.value === 'processing') return
+  
+  event.preventDefault()
+  isDragOver.value = false
+  
+  const files = event.dataTransfer?.files
+  if (!files || files.length === 0) return
+  
+  const file = files[0]
+  
+  // Check if it's an audio file
+  const validTypes = ['audio/mp3', 'audio/wav', 'audio/mpeg', 'audio/wave']
+  const validExtensions = ['.mp3', '.wav']
+  const isValidType = validTypes.includes(file.type) || 
+                     validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+  
+  if (!isValidType) {
+    Dialog.alert(t('transcribe.errors.invalidFileType'))
+    return
+  }
+  
+  // Process the file using the same logic as onFileSelected
+  await processAudioFile(file)
+}
+
+const processAudioFile = async (file: File) => {
   try {
     state.value = 'processing'
     await transcriber.initialize()
@@ -562,7 +623,6 @@ const onFileSelected = async (event: Event) => {
     console.error('Error transcribing file:', error)
     Dialog.alert(t('transcribe.errors.transcription'), `${file.name}: ${error.message}`)
   } finally {
-    target.value = '' 
     state.value = 'idle'
   }
 }
@@ -584,7 +644,6 @@ const onTranslate = async (ev: MouseEvent) => {
 }
 
 const handleTranslateClick = async (action: string) => {
-  console.log(action)
   showTranslateMenu.value = false
   if (!action) return
   const lang = action.split(' ').slice(1).join(' ')
@@ -654,13 +713,49 @@ button {
 
       .controls {
         margin-bottom: 3rem;
+        
         form {
           display: flex;
           flex-direction: row;
           justify-content: center;
-          button {
-            width: 150px;
+          align-items: center;
+          gap: 12px;
+
+          > * {
+            flex: 1;
+            white-space: nowrap;
           }
+
+          .file-input {
+            display: none;
+          }
+            
+          .dropzone {
+            padding: 0.39rem 0.75rem;
+            border: 1px dashed var(--control-border-color);
+            border-radius: var(--control-button-border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--form-font-size);
+            color: var(--control-text-color);
+            background-color: var(--control-bg-color);
+            
+            &.drag-over {
+              border-color: var(--highlight-color);
+              background-color: var(--highlight-color);
+              color: white;
+            }
+            
+            &.disabled {
+              cursor: not-allowed;
+              color: var(--control-button-disabled-text-color);
+              border-color: var(--control-button-disabled-border-color);
+              background-color: var(--control-button-disabled-bg-color);
+            }
+            
+          }
+
         }
       }
 
@@ -673,8 +768,14 @@ button {
         gap: 24px;
         align-items: center;
         color: var(--text-color);
-      }
 
+        .loader {
+          margin: 8px 0px 8px 6px;
+          background-color: orange;
+        }
+
+      }
+      
       .result {
         flex: 1;
         display: flex;
@@ -724,16 +825,6 @@ button {
         text-align: right;
       }
 
-      .loader {
-        margin: 8px 0px 8px 6px;
-        background-color: orange;
-      }
-
-      .upload-section {
-        .file-input {
-          display: none;
-        }
-      }
     }
 
   }
