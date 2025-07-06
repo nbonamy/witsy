@@ -18,6 +18,7 @@ vi.mock('../../src/services/i18n', async () => {
   return {
     t: (key: string) => `${key}`,
     i18nInstructions: (config: any, key: string) => `${key}`,
+    allLanguages: [ { locale: 'en-US', label: 'English' }, { locale: 'fr-FR', label: 'French' } ],
   }
 })
 

@@ -9,6 +9,8 @@ import { TranscribeResponse } from '../../src/voice/stt'
 
 enableAutoUnmount(afterEach)
 
+const emitEventMock = vi.fn()
+
 vi.mock('../../src/composables/transcriber', () => {
   return { default: vi.fn(() => ({
     transcriber: {
@@ -21,9 +23,24 @@ vi.mock('../../src/composables/transcriber', () => {
   })) }
 })
 
+vi.mock('../../src/services/i18n', async () => {
+  return {
+    allLanguages: [ { locale: 'en-US', label: '🇬🇧 English UK' }, { locale: 'fr-FR', label: '🇫🇷 Français' } ],
+    t: (key: string, values: Record<string, any>) => !values ? key : `${key}-${Object.values(values)}`,
+    commandI18n: vi.fn(() => 'command {input} done'),
+  }
+})
+
+vi.mock('../../src/composables/event_bus', async () => {
+  return { default: () => ({
+    emitEvent: emitEventMock
+  })}
+})
+
 beforeAll(() => {
   useWindowMock()
   useBrowserMock()
+  store.loadCommands()
 })
 
 beforeEach(() => {
@@ -39,13 +56,16 @@ test('Renders correctly', () => {
   expect(wrapper.find('[name=pushToTalk]').exists()).toBe(true)
   expect(wrapper.find<HTMLInputElement>('[name=pushToTalk]').element.disabled).toBe(false)
   expect(wrapper.find('.controls').exists()).toBe(true)
-  expect(wrapper.find('.controls .record').exists()).toBe(true)
-  expect(wrapper.find('.controls').findComponent(Waveform).exists()).toBe(true)
+  expect(wrapper.find('.controls button[name=record]').exists()).toBe(true)
+  expect(wrapper.find('.controls button[name=upload]').exists()).toBe(true)
+  expect(wrapper.find('.controls button[name=stop]').exists()).toBe(false)
+  expect(wrapper.find('.visualizer').findComponent(Waveform).exists()).toBe(true)
   expect(wrapper.find('.result').exists()).toBe(true)
   expect(wrapper.find('.result textarea').exists()).toBe(true)
   expect(wrapper.find('.actions').exists()).toBe(true)
-  expect(wrapper.find('.actions button[name=stop]').exists()).toBe(false)
-  expect(wrapper.find('.actions button[name=record]').exists()).toBe(true)
+  expect(wrapper.find('.actions button[name=summarize]').exists()).toBe(true)
+  expect(wrapper.find('.actions button[name=translate]').exists()).toBe(true)
+  expect(wrapper.find('.actions button[name=commands]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=clear]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=insert]').exists()).toBe(true)
   expect(wrapper.find('.actions button[name=copy]').exists()).toBe(true)
@@ -72,25 +92,25 @@ test('Saves options', async () => {
 
 test('Records with button', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.find('.actions button[name=record]').trigger('click')
+  await wrapper.find('.controls button[name=record]').trigger('click')
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
-  expect(wrapper.find('.actions button[name=record]').exists()).toBe(false)
-  expect(wrapper.find('.actions button[name=stop]').exists()).toBe(true)
-  await wrapper.find('.actions button[name=stop]').trigger('click')
+  expect(wrapper.find('.controls button[name=record]').exists()).toBe(false)
+  expect(wrapper.find('.controls button[name=stop]').exists()).toBe(true)
+  await wrapper.find('.controls button[name=stop]').trigger('click')
   expect(window.MediaRecorder.prototype.stop).toHaveBeenCalled()
 })
 
 test('Records with icon', async () => {
   const wrapper: VueWrapper<any> = mount(Transcribe)
-  await wrapper.find('.controls .record').trigger('click')
+  await wrapper.find('.visualizer .record').trigger('click')
   await vi.waitUntil(() => ((window.MediaRecorder.prototype.start as Mock).mock.calls.length))
   expect(window.MediaRecorder.prototype.start).toHaveBeenCalled()
-  expect(wrapper.find('.controls .record').exists()).toBe(false)
-  expect(wrapper.find('.controls .stop').exists()).toBe(true)
-  await wrapper.find('.controls .stop').trigger('click')
+  expect(wrapper.find('.controls button[name=record]').exists()).toBe(false)
+  expect(wrapper.find('.controls button[name=stop]').exists()).toBe(true)
+  await wrapper.find('.controls button[name=stop]').trigger('click')
   expect(window.MediaRecorder.prototype.stop).toHaveBeenCalled()
-  expect(wrapper.find('.controls .loader').exists()).toBe(true)
+  expect(wrapper.find('.visualizer .loader').exists()).toBe(true)
 })
 
 test('Records with space bar', async () => {
@@ -145,6 +165,43 @@ test('Copies transcription', async () => {
   await wrapper.vm.$nextTick()
   await wrapper.find('.actions button[name=copy]').trigger('click')
   expect(window.api.clipboard.writeText).toHaveBeenCalledWith('test')
+})
+
+test('Summarizes transcription', async () => {
+  const wrapper: VueWrapper<any> = mount(Transcribe)
+  wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.actions button[name=summarize]').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+    prompt: 'transcribe.summarizePrompt',
+    attachments: [ expect.objectContaining({ content: 'test_encoded' } ) ],
+    submit: true,
+  })
+})
+
+test('Translates transcription', async () => {
+  const wrapper: VueWrapper<any> = mount(Transcribe)
+  wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.actions button[name=translate]').trigger('click')
+  await wrapper.find('.context-menu .item:nth-child(2)').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+    prompt: 'transcribe.translatePrompt-English UK',
+    attachments: [ expect.objectContaining({ content: 'test_encoded' } ) ],
+    submit: true,
+  })
+})
+
+test('Commands transcription', async () => {
+  const wrapper: VueWrapper<any> = mount(Transcribe)
+  wrapper.vm.transcription = 'test'
+  await wrapper.vm.$nextTick()
+  await wrapper.find('.actions button[name=commands]').trigger('click')
+  await wrapper.find('.context-menu .item:nth-child(3)').trigger('click')
+  expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
+    prompt: 'command test done',
+    submit: true,
+  })
 })
 
 test('Keyboard shortcuts', async () => {

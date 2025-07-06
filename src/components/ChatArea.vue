@@ -22,17 +22,17 @@
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
-    <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
+    <ContextMenu v-if="showChatMenu" @close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { Expert } from '../types/index'
+import { Expert, Message } from '../types/index'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
 import Prompt from './Prompt.vue'
@@ -61,7 +61,7 @@ const props = defineProps({
   }
 })
 
-const chatMenuPosition = computed(() => {
+const chatMenuPosition = computed((): MenuPosition => {
   return /*window.api.platform == 'win32' ? 'left' :*/ 'right'
 })
 
@@ -132,7 +132,7 @@ const onRenameChat = () => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
+  menuX.value = 16 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
   menuY.value = 32 + (window.api.platform == 'win32' ? 18 : 4)
 }
 
@@ -284,6 +284,14 @@ const onHideDeepResearchUsage = () => {
 
 defineExpose({
 
+  setPrompt: (userPrompt: string|Message) => {
+    prompt.value.setPrompt(userPrompt)
+  },
+
+  attach: (attachment: File) => {
+    prompt.value.attach(attachment)
+  },
+
   setExpert: (expert: Expert) => {
     prompt.value.setExpert(expert)
   },
@@ -294,6 +302,10 @@ defineExpose({
 
   startDictation: () => {
     prompt.value.startDictation()
+  },
+
+  sendPrompt: () => {
+    prompt.value.sendPrompt()
   },
 
 })

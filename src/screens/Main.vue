@@ -26,7 +26,7 @@ import Transcribe from '../screens/Transcribe.vue'
 import Fullscreen from '../components/Fullscreen.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
 const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
@@ -58,6 +58,11 @@ onMounted(() => {
   if (props.extra) {
     processQueryParams(props.extra)
   }
+
+  // new chat
+  onEvent('new-chat', () => {
+    onMode('chat')
+  })
 
   // dictation
   window.api.on('start-dictation', onDictate)

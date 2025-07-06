@@ -2170,7 +2170,11 @@
       "toggle": "Vous pouvez également appuyer sur la barre d'espace pour commencer à enregistrer et appuyer à nouveau pour l'arrêter."
     },
     "spaceToTalk": "Appuyez et maintenez la barre d'espace pour parler",
+    "summarize": "Résumé",
+    "summarizePrompt": "Résumez le texte de manière concise, en utilisant la même langue dans laquelle il est écrit, un langage simple et clair, et en gardant le même temps. Ne retournez rien d'autre que le résumé. Ne mettez pas les réponses entre guillemets.",
     "title": "Dictée Vocale",
+    "translate": "Traduire en…",
+    "translatePrompt": "Traduisez le texte suivant en {lang}. Ne retournez rien d'autre que la traduction. Ne mettez pas les réponses entre guillemets.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {

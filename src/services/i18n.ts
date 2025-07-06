@@ -1,6 +1,6 @@
 
 import { anyDict, Command, Expert } from '../types/index'
-import { createI18n, hasLocalization } from '../main/i18n.base'
+import { createI18n, hasLocalization, allLanguages } from '../main/i18n.base'
 import { WritableComputedRef } from 'vue'
 import { I18n, Locale } from 'vue-i18n'
 
@@ -78,6 +78,7 @@ const expertI18nDefault = (expert: Expert|null, attr: i18nExpertAttr): string =>
 }
 
 export {
+  allLanguages,
   i18n as default,
   i18nCommandAttr,
   i18nExpertAttr,

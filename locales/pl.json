@@ -2198,7 +2198,11 @@
       "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."
     },
     "spaceToTalk": "Naciśnij i przytrzymaj spację, aby mówić",
+    "summarize": "Podsumuj",
+    "summarizePrompt": "Podsumuj tekst zwięźle, używając tego samego języka, w którym jest napisany, prostym i jasnym językiem, zachowując ten sam czas. Nie zwracaj niczego poza podsumowaniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
     "title": "Zamiana mowy na tekst",
+    "translate": "Przetłumacz na…",
+    "translatePrompt": "Przetłumacz poniższy tekst na {lang}. Nie zwracaj niczego poza tłumaczeniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
