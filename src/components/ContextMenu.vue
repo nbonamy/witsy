@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, PropType } from 'vue'
 import Overlay from '../components/Overlay.vue'
 import { t } from '../services/i18n'
 
@@ -38,19 +38,26 @@ export type MenuAction = {
   wrap?: boolean
 }
 
+export type MenuPosition = 'below' | 'above' | 'right' | 'above-right'
+
 const props = defineProps({
   actions: Array<MenuAction>,
   selected: {
     type: Object as () => MenuAction | null,
     default: null
   },
-  onClose: {
-    type: Function,
-    required: true,
+  position: {
+    type: String as PropType<MenuPosition>,
+    default: 'below',
   },
-  position: String,
-  x: Number,
-  y: Number,
+  x: {
+    type: Number,
+    required: true
+  },
+  y: {
+    type: Number,
+    required: true
+  },
   showFilter: {
     type: Boolean,
     default: false
@@ -61,7 +68,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['action-clicked'])
+const emit = defineEmits(['close', 'action-clicked'])
 
 const list = ref(null)
 const filter = ref('')
@@ -93,8 +100,8 @@ const position = computed(() => {
     }
   } else if (props.position === 'below') {
     return {
+      top: props.y + 'px',
       left: props.x + 'px',
-      top: props.y + 'px'
     }
   } else {
     return {
@@ -125,7 +132,7 @@ onUnmounted(() => {
 })
 
 const onOverlay = () => {
-  props.onClose()
+  emit('close')
 }
 
 const onMouseMove = (action: MenuAction) => {
@@ -160,7 +167,7 @@ const onKeyDown = (event: KeyboardEvent) => {
  
 const onKeyUp = (event: KeyboardEvent) => {
  if (event.key === 'Escape') {
-    props.onClose()
+    emit('close')
     event.preventDefault()
     event.stopPropagation()
     return false

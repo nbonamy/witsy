@@ -2170,7 +2170,11 @@
       "toggle": "También puedes presionar la barra espaciadora para comenzar a grabar y presionar nuevamente para detenerlo."
     },
     "spaceToTalk": "Mantén presionada la barra espaciadora para hablar",
+    "summarize": "Resumir",
+    "summarizePrompt": "Resume el texto de manera concisa, usando el mismo idioma en que está escrito, lenguaje simple y llano y mantén el mismo tiempo verbal. No devuelvas nada más que el resumen. No pongas las respuestas entre comillas.",
     "title": "Texto a Voz",
+    "translate": "Traducir a…",
+    "translatePrompt": "Traduce el siguiente texto al {lang}. No devuelvas nada más que la traducción. No pongas las respuestas entre comillas.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {

@@ -16,7 +16,7 @@ import { fixPath, getCachedText } from './main/utils';
 import AutoUpdater from './main/autoupdate';
 import Automator from './automations/automator';
 import Automation, { AutomationAction } from './automations/automation'
-import Commander, { notEditablePrompts } from './automations/commander';
+import Commander, { askMeAnythingId, notEditablePrompts } from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
@@ -444,7 +444,11 @@ ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
   window.closeCommandPicker(sourceApp);
 });
 
-ipcMain.on('command-is-prompt-editable', (event, payload) => {
+ipcMain.on('commands-ask-me-anything-id', (event) => {
+  event.returnValue = askMeAnythingId;
+});
+
+ipcMain.on('commands-is-prompt-editable', (event, payload) => {
   event.returnValue = !notEditablePrompts.includes(payload);
 });
 

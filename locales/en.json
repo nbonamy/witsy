@@ -2198,7 +2198,11 @@
       "toggle": "You can also hit Space to start recording and hit again to stop it."
     },
     "spaceToTalk": "Press and hold space to talk",
+    "summarize": "Summarize",
+    "summarizePrompt": "Summarize the text in a concise manner, using the same language it is written, plain and simple language and keep the same tense. Do not return anything other than the summary. Do not wrap responses in quotes.",
     "title": "Speech-to-Text",
+    "translate": "Translate to…",
+    "translatePrompt": "Translate the following text in {lang}. Do not return anything other than the translation. Do not wrap responses in quotes.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {

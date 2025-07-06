@@ -34,12 +34,12 @@
     </div>
     <slot name="between" />
     <slot name="after" />
-    <ContextMenu v-if="showInstructions" :on-close="closeContextMenu" :actions="instructionsMenuItems" @action-clicked="setInstructions" :selected="chatInstructions" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showInstructions" @close="closeContextMenu" :actions="instructionsMenuItems" @action-clicked="setInstructions" :selected="chatInstructions" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showDocRepo" @close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" @close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showActiveExpert" @close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showCommands" @close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showConversationMenu" @close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
 </template>
 
@@ -60,7 +60,7 @@ import useTranscriber from '../composables/transcriber'
 import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
 import Waveform from '../components/Waveform.vue'
-import ContextMenu, { type MenuAction } from './ContextMenu.vue'
+import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
@@ -112,7 +112,7 @@ const props = defineProps({
     default: true
   },
   menusPosition: {
-    type: String,
+    type: String as PropType<MenuPosition>,
     default: 'above'
   },
   enableCommands: {
@@ -949,6 +949,16 @@ defineExpose({
     } else {
       onSetPrompt(new Message('user', message))
     }
+  },
+
+  attach: (toAttach: Attachment[]) => {
+    for (const attachment of toAttach) {
+      attachments.value.push(attachment)
+    }
+  },
+
+  sendPrompt: () => {
+    onSendPrompt()
   },
 
 })

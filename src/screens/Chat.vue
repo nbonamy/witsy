@@ -140,13 +140,19 @@ onMounted(() => {
 
 })
 
-const onNewChat = () => {
+const onNewChat = async (payload?: any) => {
+  const { prompt, attachments, submit } = payload || {}
   assistant.value.initChat()
   updateChatEngineModel()
+  if (prompt) chatArea.value?.setPrompt(prompt)
+  if (attachments) chatArea.value?.attach(attachments)
   chatArea.value?.setExpert(null)
-  nextTick(() => {
-    emitEvent('new-llm-chunk', null)
-  })
+  chatArea.value?.setDeepResearch(false)
+  await nextTick()
+  emitEvent('new-llm-chunk', null)
+  if (submit) {
+    chatArea.value?.sendPrompt()
+  }
 }
 
 const onNewChatInFolder = (folderId: string) => {

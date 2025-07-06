@@ -2170,7 +2170,11 @@
       "toggle": "Puoi anche premere il tasto Spazio per iniziare a registrare e premere di nuovo per fermarlo."
     },
     "spaceToTalk": "Tieni premuto il tasto spazio per parlare",
+    "summarize": "Riassumere",
+    "summarizePrompt": "Riassumi il testo in modo conciso, usando la stessa lingua in cui è scritto, con un linguaggio semplice e chiaro e mantieni lo stesso tempo verbale. Non restituire altro oltre al riassunto. Non racchiudere le risposte tra virgolette.",
     "title": "Da Voce a Testo",
+    "translate": "Traduci in…",
+    "translatePrompt": "Traduci il seguente testo in {lang}. Non restituire altro oltre alla traduzione. Non racchiudere le risposte tra virgolette.",
     "upload": "@:{'common.upload'}"
   },
   "tray": {
