@@ -51,7 +51,7 @@
 
     </div>
 
-    <div class="content">
+    <div class="content" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" >
 
       <header>
 
@@ -65,13 +65,7 @@
             <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'"><BIconMic />&nbsp;{{ t('common.record') }}</button>
             <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
             <button name="upload" class="button" @click="triggerFileUpload" :disabled="state === 'processing'"><BIconUpload />&nbsp;{{ t('transcribe.upload') }} </button>
-            <div 
-              class="dropzone" 
-              :class="{ 'drag-over': isDragOver, 'disabled': state === 'processing' }"
-              @drop="onDrop"
-              @dragover="onDragOver"
-              @dragenter="onDragEnter"
-              @dragleave="onDragLeave"
+            <div class="dropzone" :class="{ 'drag-over': isDragOver, 'disabled': state === 'processing' }"
             >
               <BIconSoundwave />&nbsp;{{ t('transcribe.dropzone') }}
             </div>
@@ -135,6 +129,7 @@ import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
 import { BIconSoundwave } from 'bootstrap-icons-vue'
+import { HTML } from 'mermaid/dist/diagram-api/types'
 const { emitEvent } = useEventBus()
 
 // init stuff
@@ -557,9 +552,8 @@ const onFileSelected = async (event: Event) => {
   const files = target.files
   if (!files || files.length === 0) return
   const file = files[0]
-  
   await processAudioFile(file)
-  target.value = '' // Clear the input
+  target.value = ''
 }
 
 const onDragOver = (event: DragEvent) => {
@@ -579,6 +573,11 @@ const onDragLeave = (event: DragEvent) => {
   event.preventDefault()
   // Only set to false if we're leaving the dropzone itself, not a child element
   if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
+    // for a very strange reason, when dragging over the textarea, the relatedTarget is a div with no parent and no children
+    const relatedTarget = event.relatedTarget as HTMLElement
+    if (relatedTarget && relatedTarget.nodeName === 'DIV' && relatedTarget.parentElement === null && relatedTarget.children.length === 0) {
+      return
+    }
     isDragOver.value = false
   }
 }
