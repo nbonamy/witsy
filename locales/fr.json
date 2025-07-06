@@ -2148,8 +2148,10 @@
   "transcribe": {
     "autoStart": "Commencer la transcription à l'ouverture de la fenêtre",
     "clickToRecord": "Cliquez sur le bouton d'enregistrement quand vous êtes prêt !",
+    "dropzone": "Déposez le fichier audio",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Veuillez déposer un fichier audio valide (.mp3 ou .wav)",
       "microphone": "Erreur d'accès au microphone",
       "notAuthorized": {
         "text": "Cliquez sur OK pour ouvrir la fenêtre des paramètres et vérifier votre clé API.",

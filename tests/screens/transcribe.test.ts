@@ -58,6 +58,8 @@ test('Renders correctly', () => {
   expect(wrapper.find('.controls').exists()).toBe(true)
   expect(wrapper.find('.controls button[name=record]').exists()).toBe(true)
   expect(wrapper.find('.controls button[name=upload]').exists()).toBe(true)
+  expect(wrapper.find('.controls input[type=file]').exists()).toBe(true)
+  expect(wrapper.find('.controls .dropzone').exists()).toBe(true)
   expect(wrapper.find('.controls button[name=stop]').exists()).toBe(false)
   expect(wrapper.find('.visualizer').findComponent(Waveform).exists()).toBe(true)
   expect(wrapper.find('.result').exists()).toBe(true)
