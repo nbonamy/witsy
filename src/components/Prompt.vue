@@ -503,19 +503,22 @@ const onDetach = (attachment: Attachment) => {
 }
 
 const onDragOver = (event: DragEvent) => {
+  if (!props.enableAttachments) return
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'copy'
 }
 
 const onDragEnter = (event: DragEvent) => {
+  if (!props.enableAttachments) return
   event.preventDefault()
   isDragOver.value = true
 }
 
 const onDragLeave = (event: DragEvent) => {
+  if (!props.enableAttachments) return
   event.preventDefault()
   // Only set to false if we're leaving the dropzone itself, not a child element
-  if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
+  if (!(event.currentTarget as HTMLElement)?.contains(event.relatedTarget as Node)) {
     // for a very strange reason, when dragging over the textarea, the relatedTarget is a div with no parent and no children
     const relatedTarget = event.relatedTarget as HTMLElement
     if (relatedTarget && relatedTarget.nodeName === 'DIV' && relatedTarget.parentElement === null && relatedTarget.children.length === 0) {
@@ -526,6 +529,7 @@ const onDragLeave = (event: DragEvent) => {
 }
 
 const onDrop = async (event: DragEvent) => {
+  if (!props.enableAttachments) return
   event.preventDefault()
   isDragOver.value = false
   
