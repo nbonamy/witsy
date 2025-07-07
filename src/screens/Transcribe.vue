@@ -572,7 +572,7 @@ const onDragLeave = (event: DragEvent) => {
   if (state.value === 'processing') return
   event.preventDefault()
   // Only set to false if we're leaving the dropzone itself, not a child element
-  if (!event.currentTarget?.contains(event.relatedTarget as Node)) {
+  if (!(event.currentTarget as HTMLElement)?.contains(event.relatedTarget as Node)) {
     // for a very strange reason, when dragging over the textarea, the relatedTarget is a div with no parent and no children
     const relatedTarget = event.relatedTarget as HTMLElement
     if (relatedTarget && relatedTarget.nodeName === 'DIV' && relatedTarget.parentElement === null && relatedTarget.children.length === 0) {
