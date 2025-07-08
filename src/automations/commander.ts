@@ -10,7 +10,7 @@ import Automator from './automator'
 import Automation from './automation'
 import * as window from '../main/window'
 
-const askMeAnythingId = '00000000-0000-0000-0000-000000000000'
+export const askMeAnythingId = '00000000-0000-0000-0000-000000000000'
 
 export const notEditablePrompts = [
   askMeAnythingId

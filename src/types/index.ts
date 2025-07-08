@@ -372,6 +372,7 @@ declare global {
         cancel(): void
         closePicker(sourceApp: Application): void
         run(params: RunCommandParams): void
+        askMeAnythingId(): string
         isPromptEditable(id: string): boolean
         import(): boolean
         export(): boolean

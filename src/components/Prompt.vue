@@ -1,5 +1,5 @@
 <template>
-  <div class="prompt">
+  <div class="prompt" :class="{ 'drag-over': isDragOver }" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave">
     <slot name="before" />
     <div class="attachments" v-if="attachments.length > 0">
       <div class="attachment" v-for="(attachment, index) in attachments" :key="index">
@@ -34,12 +34,12 @@
     </div>
     <slot name="between" />
     <slot name="after" />
-    <ContextMenu v-if="showInstructions" :on-close="closeContextMenu" :actions="instructionsMenuItems" @action-clicked="setInstructions" :selected="chatInstructions" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showDocRepo" :on-close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showExperts" :on-close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showActiveExpert" :on-close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showCommands" :on-close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
-    <ContextMenu v-if="showConversationMenu" :on-close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showInstructions" @close="closeContextMenu" :actions="instructionsMenuItems" @action-clicked="setInstructions" :selected="chatInstructions" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showDocRepo" @close="closeContextMenu" :actions="docReposMenuItems" @action-clicked="handleDocRepoClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showExperts" @close="closeContextMenu" :show-filter="true" :actions="expertsMenuItems" :selected="expertsMenuItems[0]" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showActiveExpert" @close="closeContextMenu" :actions="activeExpertMenuItems" @action-clicked="handleExpertClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showCommands" @close="closeContextMenu" :show-filter="true" :actions="commands" @action-clicked="handleCommandClick" :x="menuX" :y="menuY" :position="menusPosition" />
+    <ContextMenu v-if="showConversationMenu" @close="closeContextMenu" :actions="conversationMenu" @action-clicked="handleConversationClick" :x="menuX" :y="menuY" :position="menusPosition" />
   </div>
 </template>
 
@@ -60,7 +60,7 @@ import useTranscriber from '../composables/transcriber'
 import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
 import Waveform from '../components/Waveform.vue'
-import ContextMenu, { type MenuAction } from './ContextMenu.vue'
+import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
 import Attachment from '../models/attachment'
 import Message from '../models/message'
@@ -112,7 +112,7 @@ const props = defineProps({
     default: true
   },
   menusPosition: {
-    type: String,
+    type: String as PropType<MenuPosition>,
     default: 'above'
   },
   enableCommands: {
@@ -170,6 +170,7 @@ const deepResearchActive = ref(false)
 const hasDictation = ref(false)
 const dictating = ref(false)
 const processing = ref(false)
+const isDragOver = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
@@ -499,6 +500,87 @@ const attach = async (contents: string, mimeType: string, url: string) => {
 
 const onDetach = (attachment: Attachment) => {
   attachments.value = attachments.value.filter((a: Attachment) => a !== attachment)
+}
+
+const onDragOver = (event: DragEvent) => {
+  if (!props.enableAttachments) return
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'copy'
+}
+
+const onDragEnter = (event: DragEvent) => {
+  if (!props.enableAttachments) return
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const onDragLeave = (event: DragEvent) => {
+  if (!props.enableAttachments) return
+  event.preventDefault()
+  // Only set to false if we're leaving the dropzone itself, not a child element
+  if (!(event.currentTarget as HTMLElement)?.contains(event.relatedTarget as Node)) {
+    // for a very strange reason, when dragging over the textarea, the relatedTarget is a div with no parent and no children
+    const relatedTarget = event.relatedTarget as HTMLElement
+    if (relatedTarget && relatedTarget.nodeName === 'DIV' && relatedTarget.parentElement === null && relatedTarget.children.length === 0) {
+      return
+    }
+    isDragOver.value = false
+  }
+}
+
+const onDrop = async (event: DragEvent) => {
+  if (!props.enableAttachments) return
+  event.preventDefault()
+  isDragOver.value = false
+  
+  const files = event.dataTransfer?.files
+  if (!files || files.length === 0) return
+  
+  // Process all dropped files
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    
+    try {
+      // Check if the format is supported by the LLM
+      const format = file.name.split('.').pop()?.toLowerCase()
+      if (!format || !llmManager.canProcessFormat(engine(), model(), format)) {
+        console.error('Cannot attach format', format)
+        Dialog.alert(`${file.name}: ${t('prompt.attachment.formatError.title')}`, t('prompt.attachment.formatError.text'))
+        continue
+      }
+      
+      // Read the file as base64
+      const reader = new FileReader()
+      
+      reader.onload = async (event) => {
+        if (event.target?.readyState === FileReader.DONE) {
+          const result = event.target.result as string
+          
+          // Extract mime type and base64 content
+          const mimeType = result.split(';')[0].split(':')[1]
+          const contents = result.split(',')[1]
+          
+          // Create the file URL for display
+          const url = `file://${file.name}`
+          
+          // Call the existing attach function
+          await attach(contents, mimeType, url)
+        }
+      }
+      
+      reader.onerror = () => {
+        console.error('Error reading file:', file.name)
+        Dialog.alert(`${file.name}: Error reading file`)
+      }
+      
+      // Read the file as data URL (base64)
+      reader.readAsDataURL(file)
+      
+    } catch (error) {
+      console.error('Error processing dropped file:', error)
+      Dialog.alert(`${file.name}: Error processing file`)
+    }
+  }
 }
 
 const onClickInstructions = () => {
@@ -951,6 +1033,16 @@ defineExpose({
     }
   },
 
+  attach: (toAttach: Attachment[]) => {
+    for (const attachment of toAttach) {
+      attachments.value.push(attachment)
+    }
+  },
+
+  sendPrompt: () => {
+    onSendPrompt()
+  },
+
 })
 
 </script>
@@ -970,6 +1062,10 @@ defineExpose({
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
   background-color: var(--prompt-input-bg-color);
+
+  &.drag-over {
+    border: 1px dashed var(--highlight-color);
+  }
 
   .icon {
     cursor: pointer;

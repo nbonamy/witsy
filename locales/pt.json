@@ -2171,8 +2171,10 @@
   "transcribe": {
     "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
+    "dropzone": "Solte o arquivo de áudio",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Por favor, solte um arquivo de áudio válido (.mp3 ou .wav)",
       "microphone": "Erro ao acessar o microfone",
       "notAuthorized": {
         "text": "Clique em OK para abrir a janela Configurações e verificar sua chave de API.",
@@ -2193,7 +2195,12 @@
       "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."
     },
     "spaceToTalk": "Pressione e segure a barra de espaço para falar",
-    "title": "Voz para Texto"
+    "summarize": "Resumir",
+    "summarizePrompt": "Resuma o texto de forma concisa, usando a mesma língua em que está escrito, linguagem simples e clara e mantenha o mesmo tempo verbal. Não retorne nada além do resumo. Não coloque as respostas entre aspas.",
+    "title": "Voz para Texto",
+    "translate": "Traduzir para…",
+    "translatePrompt": "Traduza o texto a seguir para {lang}. Não retorne nada além da tradução. Não coloque as respostas entre aspas.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

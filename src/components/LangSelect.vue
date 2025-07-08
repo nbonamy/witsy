@@ -14,29 +14,7 @@
 <script setup lang="ts">
 
 import { computed } from 'vue'
-
-const allLanguages = [
-  { locale: 'en-US', label: '🇬🇧 English' },
-  { locale: 'fr-FR', label: '🇫🇷 Français' },
-  { locale: 'es-ES', label: '🇪🇸 Español' },
-  { locale: 'de-DE', label: '🇩🇪 Deutsch' },
-  { locale: 'it-IT', label: '🇮🇹 Italiano' },
-  { locale: 'pt-PT', label: '🇵🇹 Português' },
-  { locale: 'nl-NL', label: '🇳🇱 Nederlands' },
-  { locale: 'pl-PL', label: '🇵🇱 Polski' },
-  { locale: 'ru-RU', label: '🇷🇺 Русский' },
-  { locale: 'ja-JP', label: '🇯🇵 日本語' },
-  { locale: 'ko-KR', label: '🇰🇷 한국어' },
-  { locale: 'zh-CN', label: '🇨🇳 中文' },
-  { locale: 'vi-VN', label: '🇻🇳 Tiếng Việt' },
-  { locale: 'th-TH', label: '🇹🇭 ไทย' },
-  { locale: 'id-ID', label: '🇮🇩 Bahasa Indonesia' },
-  { locale: 'hi-IN', label: '🇮🇳 हिन्दी' },
-  { locale: 'ar-SA', label: '🇸🇦 العربية' },
-  { locale: 'tr-TR', label: '🇹🇷 Türkçe' },
-  { locale: 'ms-MY', label: '🇲🇾 Bahasa Melayu' },
-  { locale: 'sw-KE', label: '🇰🇪 Kiswahili' },
-]
+import { allLanguages } from '../services/i18n'
 
 const locale = defineModel()
 

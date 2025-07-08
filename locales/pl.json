@@ -2177,8 +2177,10 @@
   "transcribe": {
     "autoStart": "Rozpocznij transkrypcję po otwarciu okna",
     "clickToRecord": "Kliknij przycisk nagrywania, gdy będziesz gotowy!",
+    "dropzone": "Upuść plik audio",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Proszę upuścić prawidłowy plik audio (.mp3 lub .wav)",
       "microphone": "Błąd dostępu do mikrofonu",
       "notAuthorized": {
         "text": "Kliknij OK, aby otworzyć okno Ustawienia i sprawdzić swój klucz API.",
@@ -2199,7 +2201,12 @@
       "toggle": "Możesz także nacisnąć spację, aby rozpocząć nagrywanie, a następnie ponownie nacisnąć, aby je zatrzymać."
     },
     "spaceToTalk": "Naciśnij i przytrzymaj spację, aby mówić",
-    "title": "Zamiana mowy na tekst"
+    "summarize": "Podsumuj",
+    "summarizePrompt": "Podsumuj tekst zwięźle, używając tego samego języka, w którym jest napisany, prostym i jasnym językiem, zachowując ten sam czas. Nie zwracaj niczego poza podsumowaniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
+    "title": "Zamiana mowy na tekst",
+    "translate": "Przetłumacz na…",
+    "translatePrompt": "Przetłumacz poniższy tekst na {lang}. Nie zwracaj niczego poza tłumaczeniem. Nie umieszczaj odpowiedzi w cudzysłowach.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
