@@ -63,11 +63,12 @@ const onEdited = async ({ type, command, url, cwd, env, headers, title }) => {
     uuid: selected.value.uuid,
     registryId: selected.value.registryId,
     state: selected.value.state,
-<<<<<<< HEAD
-    type, command, url, cwd, env, headers, title
-=======
-    type, command, url, cwd, env,
->>>>>>> 64aeed22 (feat: make MCP server title field optional)
+    type,
+    command,
+    url,
+    cwd,
+    env,
+    headers,
   }
 
   if (title !== undefined) {
