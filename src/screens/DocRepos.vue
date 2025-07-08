@@ -25,7 +25,7 @@
         <BIconTrash class="icon delete" @click="onDeleteRepo" v-if="selectedRepo" />
       </header>
       <main v-if="selectedRepo">
-        <form class="header">
+        <form class="header large">
           <div class="group name">
             <label>{{ t('common.name') }}</label>
             <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
