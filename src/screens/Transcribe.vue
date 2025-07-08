@@ -128,8 +128,6 @@ import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
-import { BIconSoundwave } from 'bootstrap-icons-vue'
-import { HTML } from 'mermaid/dist/diagram-api/types'
 const { emitEvent } = useEventBus()
 
 // init stuff
