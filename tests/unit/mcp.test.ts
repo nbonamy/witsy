@@ -221,6 +221,29 @@ test('Edit normal server', async () => {
   })
 })
 
+test('Edit server title', async () => {
+  const mcp = new Mcp(app)
+  // set a non-empty title (trimmed)
+  expect(await mcp.editServer({
+    uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
+    url: 'http://localhost:3001', title: '  My Title  '
+  })).toBe(true)
+  const withTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc')
+  expect(withTitle?.title).toBe('My Title')
+  const cfgWithTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc')
+  expect(cfgWithTitle?.title).toBe('My Title')
+
+  // clear the title by providing an empty string
+  expect(await mcp.editServer({
+    uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
+    url: 'http://localhost:3001', title: ''
+  })).toBe(true)
+  const noTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc')
+  expect(noTitle?.title).toBeUndefined()
+  const cfgNoTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc')
+  expect(cfgNoTitle?.title).toBeUndefined()
+})
+
 test('Edit mcp server', async () => {
   const mcp = new Mcp(app)
   expect(await mcp.editServer({ uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'node', url: '-f exec s1.js'})).toBe(true)
