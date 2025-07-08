@@ -12,7 +12,7 @@
       <ChatListItem :chat="chat" :selection="selection" :active="active" :selectMode="selectMode" @click="onSelectChat(chat)" @contextmenu.prevent="showChatContextMenu($event, chat)" />
     </template>
   </section>
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">

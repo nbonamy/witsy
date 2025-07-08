@@ -53,6 +53,16 @@ class Transcriber {
 
   }
 
+  transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
+    if ('transcribeFile' in this.engine && typeof this.engine.transcribeFile === 'function') {
+      return this.engine.transcribeFile(file, opts)
+    } else {
+      const blob = new Blob([file], { type: file.type })
+      const audioChunks = [blob]
+      return this.transcribe(audioChunks, opts)
+    }
+  }
+
   async startStreaming(callback: (chunk: StreamingChunk) => void): Promise<void> {
 
     if (!this.requiresStreaming || !this.engine?.startStreaming) {

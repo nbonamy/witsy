@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11.0] - 2025-07-07
+
+### Added
+- Custom HTTP Headers for MCP Streamable
+- File upload for transcriptions (with dropzone)
+- Summarize/Translate/Run AI command for transcription
+- Drag and drop to attach files
+
+### Changed
+- N/A 
+
+### Fixed
+- N/A 
+
+### Removed
+- N/A
+
+
+
 ## [2.10.0] - 2025-07-03
 
 ### Added

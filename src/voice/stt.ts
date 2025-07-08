@@ -81,7 +81,10 @@ export interface STTEngine {
   requiresPcm16bits?(model: string): boolean
   startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>  
   sendAudioChunk?(chunk: Blob): Promise<void>  
-  endStreaming?(): Promise<void>  
+  endStreaming?(): Promise<void>
+
+  // file conversion
+  transcribeFile?(file: File, opts?: object): Promise<TranscribeResponse>
 }
 
 export const getSTTEngines = () => {

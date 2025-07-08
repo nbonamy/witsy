@@ -57,7 +57,7 @@
       </div>
     </div>
   </div>
-  <ContextMenu v-if="showAddMenu" :on-close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
+  <ContextMenu v-if="showAddMenu" @close="closeAddMenu" :actions="addMenuActions" @action-clicked="handleAddAction" :x="addMenuX" :y="addMenuY" position="right"/>
 </template>
 
 <script setup lang="ts">

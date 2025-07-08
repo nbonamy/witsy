@@ -2149,8 +2149,10 @@
   "transcribe": {
     "autoStart": "Beginne mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
+    "dropzone": "Audiodatei ablegen",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Bitte legen Sie eine gültige Audiodatei ab (.mp3 oder .wav)",
       "microphone": "Fehler beim Zugriff auf das Mikrofon",
       "notAuthorized": {
         "text": "Klicken Sie auf OK, um das Einstellungsfenster zu öffnen und Ihren API-Schlüssel zu überprüfen.",
@@ -2171,7 +2173,12 @@
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."
     },
     "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
-    "title": "Diktiermodus"
+    "summarize": "Zusammenfassen",
+    "summarizePrompt": "Fassen Sie den Text kurz und prägnant zusammen, verwenden Sie die gleiche Sprache, in der er geschrieben ist, einfache und klare Sprache und behalten Sie die gleiche Zeitform bei. Geben Sie nichts anderes als die Zusammenfassung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
+    "title": "Diktiermodus",
+    "translate": "Übersetzen in…",
+    "translatePrompt": "Übersetzen Sie den folgenden Text ins {lang}. Geben Sie nichts anderes als die Übersetzung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
