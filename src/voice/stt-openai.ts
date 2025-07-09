@@ -52,6 +52,7 @@ export default class STTOpenAI implements STTEngine {
     return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
 
     // call
