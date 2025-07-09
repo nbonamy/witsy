@@ -275,9 +275,10 @@ export default class LlmManagerBase implements ILlmManager {
   loadModelsCustom = async (engine: string): Promise<boolean> => {
 
     const engineConfig = store.config.engines[engine] as CustomEngineConfig
+    if (!engineConfig) return false
     console.log('Loading models for', engineConfig.label)
     let models: llm.ModelsList|null = null
-
+    
     // depends on base api
     if (engineConfig.api === 'openai') {
       const openaiConfig = {

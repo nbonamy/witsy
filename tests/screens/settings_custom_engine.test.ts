@@ -22,7 +22,7 @@ let wrapper: VueWrapper<any>
 const llmIndex = tabs.indexOf('settingsModels')
 
 beforeAll(() => {
-  useWindowMock({ customEngine: true})
+  useWindowMock({ customEngine: true })
   useBrowserMock()
   store.loadSettings()
   store.load = () => {}
