@@ -12,7 +12,7 @@ import { ListDirectoryResponse } from './filesystem'
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
 
-export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'voice-mode' | 'docrepo' | 'settings'
+export type MainWindowMode = 'none' | 'chat' | 'studio' | 'dictation' | 'agents' | 'voice-mode' | 'docrepo' | 'settings'
 
 export interface Attachment extends IAttachmentBase {
   url: string
@@ -97,6 +97,7 @@ export interface Agent {
   updatedAt: number
   name: string
   description: string
+  primary: boolean
   engine: string|null
   model: string|null
   modelOpts: LlmModelOpts|null

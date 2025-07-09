@@ -99,6 +99,7 @@ const installMenu = () => {
     scratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
     studio: window.openDesignStudioWindow,
+    forge: window.openAgentForgeWindow,
   }, settings.shortcuts);
 }
 
@@ -113,6 +114,7 @@ const registerShortcuts = () => {
     scratchpad: window.openScratchPad,
     realtime: window.openRealtimeChatWindow,
     studio: window.openDesignStudioWindow,
+    forge: window.openAgentForgeWindow,
   });
 }
 

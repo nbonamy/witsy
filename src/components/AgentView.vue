@@ -1,38 +1,42 @@
 
 <template>
 
-  <div class="header">
-    <form>
-      <div class="group">
-        <label>{{ t('agent.description') }}</label>
-        {{ agent.description }}
-      </div>
-      <div class="group">
-        <label>{{ t('agent.runCount') }}</label>
-        {{ runs.length }}
-      </div>
-      <div class="group">
-        <label>{{ t('agent.lastRun') }}</label>
-        {{ lastRun }}
-      </div>
-      <div class="group" v-if="agent.schedule">
-        <label>{{ t('agent.nextRun') }}</label>
-        {{ nextRun }}
-      </div>
-      <div class="group">
-        <label>&nbsp;</label>
-        <button @click.prevent="onRun">{{ t('agent.run') }}</button>
-        <button @click.prevent="onEdit">{{ t('common.edit') }}</button>
-        <button @click.prevent="onClearHistory">{{ t('agent.history.clear') }}</button>
-        <button @click.prevent="onDelete">{{ t('common.delete') }}</button>
-      </div>
+  <div v-if="agent">
+  
+    <div class="header">
+      <form>
+        <div class="group">
+          <label>{{ t('agent.description') }}</label>
+          {{ agent.description }}
+        </div>
+        <div class="group">
+          <label>{{ t('agent.runCount') }}</label>
+          {{ runs.length }}
+        </div>
+        <div class="group">
+          <label>{{ t('agent.lastRun') }}</label>
+          {{ lastRun }}
+        </div>
+        <div class="group" v-if="agent.schedule">
+          <label>{{ t('agent.nextRun') }}</label>
+          {{ nextRun }}
+        </div>
+        <div class="group">
+          <label>&nbsp;</label>
+          <button @click.prevent="onRun">{{ t('agent.run') }}</button>
+          <button @click.prevent="onEdit">{{ t('common.edit') }}</button>
+          <button @click.prevent="onClearHistory">{{ t('agent.history.clear') }}</button>
+          <button @click.prevent="onDelete">{{ t('common.delete') }}</button>
+        </div>
 
 
-    </form>
+      </form>
+
+    </div>
+
+    <AgentHistory :agent="agent" :runs="runs" />
 
   </div>
-
-  <AgentHistory :agent="agent" :runs="runs" />
 
 </template>
 
@@ -50,7 +54,7 @@ const runs: Ref<AgentRun[]> = ref([])
 const props = defineProps({
   agent: {
     type: Object as PropType<Agent>,
-    required: true,
+    default: null,
   },
 })
 
@@ -71,6 +75,7 @@ const nextRun = computed(() => {
 
 onMounted(() => {
   watch(() => props.agent, () => {
+    if (!props.agent) return
     runs.value = window.api.agents.getRuns(props.agent.id)
   }, { immediate: true })
 })

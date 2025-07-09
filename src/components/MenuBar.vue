@@ -31,6 +31,11 @@
         <span>{{ t('transcribe.title') }}</span>
       </MenuBarItem>
 
+      <MenuBarItem action="agents" :active="mode === 'agents'" @click="emit('change', 'agents')" v-if="store.config.features?.agents">
+        <BIconRobot />
+        <span>{{ t('agent.forge.title') }}</span>
+      </MenuBarItem>
+
       <MenuBarItem action="voice-mode" :active="mode === 'voice-mode'" @click="emit('change', 'voice-mode')">
         <BIconChatSquareDots />
         <span>{{ t('realtimeChat.title') }}</span>
@@ -77,7 +82,7 @@ import useAppearanceTheme from '../composables/appearance_theme'
 import ContextMenu from '@imengyu/vue3-context-menu'
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 
-export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug'
+export type MenuBarMode = MainWindowMode | 'scratchpad' | 'computer-use' | 'debug' | 'agents'
 
 const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')

@@ -12,6 +12,7 @@ export interface ShortcutCallbacks {
   scratchpad: () => void
   realtime: () => void
   studio: () => void
+  forge: () => void
 }
 
 export type Application = {

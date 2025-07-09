@@ -174,7 +174,99 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      background-color: var(--background-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 
+      &.hidden {
+        display: none;
+      }
+
+      &.sliding-root.hidden {
+        display: flex;
+      }
+
+      &.sliding-pane {
+      
+        box-sizing: border-box;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: var(--window-toolbar-height);
+        z-index: 20;
+        display: flex;
+        transform: translateX(0%);
+
+        &.hidden {
+          transform: translateX(100%);
+        }
+      
+      }
+
+      &:has(.list-panel) {
+        padding: 0;
+        min-width: auto;
+        align-self: stretch;
+      }
+
+      &:has(.sticky-table-container) {
+
+        min-width: auto;
+        align-self: stretch;
+
+        .list-actions {
+          
+          padding: 0.875rem;
+          margin-bottom: 0px;
+          border: 1px solid var(--sidebar-border-color);
+          border-bottom: 0px;
+          background: color-mix(in srgb, var(--sidebar-border-color), transparent 80%);
+          
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1.5rem;
+          
+          .push {
+            flex: 1;
+          }
+          
+          .list-action {
+            font-size: 10.5pt;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.25rem;
+            cursor: pointer;
+
+            &.menu {
+              flex-direction: column;
+              div {
+                width: 1rem;
+                border-top: 1px solid var(--text-color);
+              }
+            }
+          }
+        }
+
+        .sticky-table-container {
+          
+          th, td {
+            padding: 0.25rem 0.5rem;
+            font-size: var(--settings-font-size);
+          }
+
+          th {
+            font-weight: 600;
+          }
+        
+          td button {
+            font-size: 6pt !important;
+            padding: 2px 8px;
+          }
+
+        }
+      }
+    
     }
 
   }

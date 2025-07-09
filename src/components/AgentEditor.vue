@@ -1,12 +1,9 @@
 
 <template>
-  <dialog class="dialog agent-create" id="agent-create">
-    <form method="dialog">
-      <DialogHeader :title="t(mode == 'edit' ? 'agent.forge.edit' : 'agent.forge.create')" @close="onClose" />
-      <main>
-        <FormWizard ref="wizard" step-size="xs" color="#337ab7">
-          
-          <template #title>{{  t('agent.create.introduction') }}</template>
+  <form class="agent-editor large" @keydown.enter.prevent="onSave">
+    <FormWizard ref="wizard" step-size="xs" color="#337ab7">
+      
+      <template #title>{{  t('agent.create.introduction') }}</template>
           
           <TabContent :title="t('agent.create.information')" :beforeChange="validateInformation">
             <div class="group">
@@ -131,34 +128,31 @@
           </TabContent>
 
 
-          <template v-slot:footer="props">
-            <div class="wizard-footer-left">
-              <button @click.prevent="onClose">{{ t('common.cancel') }}</button>
-              <button v-if="mode == 'edit'" @click.prevent="save">{{ t('common.save') }}</button>
-            </div>
-            <div class="wizard-footer-right">
-              <button v-if="props.activeTabIndex > 0" @click.prevent="props.prevTab()">{{ t('common.wizard.prev') }}</button>
-              <button v-if="!props.isLastStep" @click.prevent="props.nextTab()">{{ t('common.wizard.next') }}</button>
-              <button v-else @click.prevent="save" class="finish-button">{{ t('common.wizard.last') }}</button>
-            </div>
-          </template>
+      <template v-slot:footer="wizardProps">
+        <div class="wizard-footer-left">
+          <button @click.prevent="onCancel" class="alert-neutral" formnovalidate>{{ t('common.cancel') }}</button>
+          <button v-if="props.mode == 'edit'" @click.prevent="save" class="alert-confirm">{{ t('common.save') }}</button>
+        </div>
+        <div class="wizard-footer-right">
+          <button v-if="wizardProps.activeTabIndex > 0" @click.prevent="wizardProps.prevTab()">{{ t('common.wizard.prev') }}</button>
+          <button v-if="!wizardProps.isLastStep" @click.prevent="wizardProps.nextTab()">{{ t('common.wizard.next') }}</button>
+          <button v-else @click.prevent="save" class="finish-button alert-confirm">{{ t('common.wizard.last') }}</button>
+        </div>
+      </template>
 
-        </FormWizard>
-      </main>
-    </form>
-  </dialog>
+    </FormWizard>
+  </form>
 </template>
 
 <script setup lang="ts">
 
-import { ref, Ref, onMounted, computed } from 'vue'
+import { ref, Ref, onMounted, computed, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { MultiToolPlugin } from 'multi-llm-ts'
 // @ts-expect-error not sure why vscode complains
 import { FormWizard, TabContent } from 'vue3-form-wizard'
 import { CronExpressionParser } from 'cron-parser'
-import DialogHeader from '../components/DialogHeader.vue'
 import EngineSelect from '../components/EngineSelect.vue'
 import ModelSelect from '../components/ModelSelect.vue'
 import LangSelect from '../components/LangSelect.vue'
@@ -177,10 +171,22 @@ type Tool = {
   plugin: Plugin
 }
 
+const props = defineProps({
+  agent: {
+    type: Object as PropType<Agent>,
+    default: (): Agent | null => null,
+  },
+  mode: {
+    type: String as PropType<'create'|'edit'>,
+    default: 'create',
+  },
+})
+
+const emit = defineEmits(['cancel', 'save'])
+
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const wizard = ref(null)
-const mode: Ref<'create'|'edit'> = ref('create')
 const agent: Ref<Agent> = ref(new Agent())
 const tools: Ref<Tool[]> = ref([])
 const customTools = ref(false)
@@ -288,39 +294,40 @@ const isToolActive = (tool: Tool) => {
   return !agent.value.tools || agent.value.tools.includes(tool.id)
 }
 
+onMounted(async () => {
+  watch(() => props || {}, async () => {
+    agent.value = props.agent ? JSON.parse(JSON.stringify(props.agent)) : new Agent()
+    await initTools()
+    if (wizard.value) {
+      wizard.value.reset()
+    }
+  }, { deep: true, immediate: true })
+})
+
+const onCancel = () => {
+  emit('cancel')
+}
+
 const save = async () => {
   if (validateInvocation()) {
     const rc = await window.api.agents.save(JSON.parse(JSON.stringify(agent.value)))
-    if (rc) onClose()
+    if (rc) {
+      emit('save', agent.value)
+    }
   }
 }
 
-const onClose = () => {
-  document.querySelector<HTMLDialogElement>('#agent-create').close()
-}
-
-defineExpose({
-  open: (ag?: Agent) => {
-    agent.value = ag ?? new Agent()
-    mode.value = ag ? 'edit' : 'create'
-    initTools()
-    wizard.value.reset()
-    document.querySelector<HTMLDialogElement>('#agent-create').showModal()
-  }
-})
 
 </script>
 
 <style scoped>
-@import '../../css/dialog.css';
 @import '../../css/form.css';
 @import '../../css/sticky-header-table.css';
 </style>
 
 <style scoped>
 
-dialog.agent-create {
-  width: 700px;
+.agent-editor {
 
   &:deep() .vue-form-wizard .wizard-header {
     padding: 0px;
@@ -330,7 +337,7 @@ dialog.agent-create {
     font-size: 11pt;
   }
 
-  form .group {
+  .group {
     align-items: baseline;
   }
 
