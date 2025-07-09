@@ -173,6 +173,7 @@ export type ShortcutsConfig = {
   transcribe: Shortcut
   realtime: Shortcut
   studio: Shortcut
+  forge: Shortcut
 }
 
 export type ScratchpadConfig = {

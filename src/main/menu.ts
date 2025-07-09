@@ -1,6 +1,7 @@
 import { ShortcutsConfig } from 'types/config'
 import { App, BrowserWindow, Menu, shell } from 'electron'
 import { shortcutAccelerator } from './shortcuts'
+import { loadSettings } from './config'
 import * as window from './window'
 import { useI18n } from './i18n';
 
@@ -12,6 +13,7 @@ export type MenuCallbacks = {
   newChat: () => void
   scratchpad: () => void
   studio: () => void
+  forge: () => void
 }
 
 const isMac = process.platform === 'darwin'
@@ -21,6 +23,9 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
 
   // i18n
   const t = useI18n(app)
+
+  // config
+  const config = loadSettings(app)
 
   // get focused window
   const focusedWindow = BrowserWindow.getFocusedWindow()
@@ -91,6 +96,13 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
           accelerator: shortcutAccelerator(shortcuts?.studio),
           click: () => callbacks.studio()
         },
+        ...(config.features?.agents ? [
+          {
+            label: t('menu.file.agentForge'),
+            accelerator: shortcutAccelerator(shortcuts?.forge),
+            click: () => callbacks.forge()
+          }
+        ] : []),
         { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
       ]
