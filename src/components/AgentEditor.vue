@@ -146,7 +146,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref, onMounted, computed, watch, PropType } from 'vue'
+import { ref, onMounted, computed, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { MultiToolPlugin } from 'multi-llm-ts'
@@ -187,8 +187,8 @@ const emit = defineEmits(['cancel', 'save'])
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const wizard = ref(null)
-const agent: Ref<Agent> = ref(new Agent())
-const tools: Ref<Tool[]> = ref([])
+const agent = ref<Agent>(new Agent())
+const tools = ref<Tool[]>([])
 const customTools = ref(false)
 const webhook = ref('')
 

@@ -91,13 +91,15 @@ export interface Chat {
   delete(): void
 }
 
+export type AgentType = 'runnable' | 'support'
+
 export interface Agent {
   id: string
   createdAt: number
   updatedAt: number
   name: string
   description: string
-  primary: boolean
+  type: AgentType
   engine: string|null
   model: string|null
   modelOpts: LlmModelOpts|null

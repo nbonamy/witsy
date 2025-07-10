@@ -191,8 +191,8 @@
       "create": "Create Agent",
       "edit": "Edit Agent",
       "list": {
-        "primary": "Executable agents",
-        "secondary": "Support agents"
+        "runnable": "Executable agents",
+        "support": "Support agents"
       },
       "view": "View Agent",
       "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
@@ -226,6 +226,10 @@
       "nextRuns": "Next Runs",
       "schedule": "Schedule",
       "webhook": "Webhook URL"
+    },
+    "view": {
+      "header": "Agent Summary",
+      "history": "History"
     }
   },
   "automation": {

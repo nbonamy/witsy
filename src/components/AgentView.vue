@@ -3,8 +3,14 @@
 
   <div v-if="agent">
   
-    <div class="header">
-      <form>
+    <div class="header list-large-with-header">
+      <div class="header">
+        <label>{{ t('agent.view.header') }}</label>
+        <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
+        <BIconPencil class="icon edit" @click="onEdit" />
+        <BIconTrash class="icon delete" @click="onDelete" />
+      </div>
+      <form class="list large">
         <div class="group">
           <label>{{ t('agent.description') }}</label>
           {{ agent.description }}
@@ -21,21 +27,23 @@
           <label>{{ t('agent.nextRun') }}</label>
           {{ nextRun }}
         </div>
-        <div class="group">
-          <label>&nbsp;</label>
-          <button @click.prevent="onRun">{{ t('agent.run') }}</button>
-          <button @click.prevent="onEdit">{{ t('common.edit') }}</button>
-          <button @click.prevent="onClearHistory">{{ t('agent.history.clear') }}</button>
-          <button @click.prevent="onDelete">{{ t('common.delete') }}</button>
-        </div>
-
-
       </form>
 
     </div>
 
-    <AgentHistory :agent="agent" :runs="runs" />
-
+    <div class="runs list-large-with-header">
+      <div class="header">
+        <label>{{ t('agent.view.history') }}</label>
+        <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
+      </div>
+      <div class="list">
+        <AgentHistory :agent="agent" :runs="runs" v-if="runs.length"/>
+        <div class="empty" v-else>
+          {{ t('agent.history.empty') }}
+        </div>
+      </div>
+    </div>
+  
   </div>
 
 </template>
@@ -101,17 +109,16 @@ const onDelete = () => {
 
 <style scoped>
 @import '../../css/form.css';
+@import '../../css/list-large-with-header.css';
 </style>
 
 <style scoped>
 
 .header {
 
-  background-color: var(--dialog-body-bg-color);
-  border-top: 1px solid var(--control-border-color);
-  border-bottom: 1px solid var(--control-border-color);
-  min-height: 100px;
-  padding: 2rem;
+  .list {
+    gap: 0px;
+  }
 
   .group {
     align-items: flex-start;
@@ -127,8 +134,13 @@ const onDelete = () => {
     label::after {
       content: none !important;
     }
-
+    
   }
+
+}
+
+.runs .list {
+  overflow-x: scroll;
 
 }
 

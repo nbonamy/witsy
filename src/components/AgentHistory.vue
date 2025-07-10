@@ -64,8 +64,7 @@ const props = defineProps({
   table {
 
     th, td {
-      font-size: 10pt;
-      padding: 4px;
+      font-size: 10.5pt !important;
     }
 
     th {
