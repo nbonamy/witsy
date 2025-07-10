@@ -11,7 +11,7 @@
 <script setup lang="ts">
 
 import { ToolCall } from '../types/index'
-import { nextTick, PropType, ref, Ref, h, render } from 'vue'
+import { nextTick, PropType, ref, h, render } from 'vue'
 import MessageItemMermaidBlock from './MessageItemMermaidBlock.vue'
 import MessageItemMediaBlock from './MessageItemMediaBlock.vue'
 import MessageItemToolBlock from './MessageItemToolBlock.vue'
@@ -41,7 +41,7 @@ const onMediaLoaded = () => {
   emits('media-loaded')
 }
 
-const messageItemBodyBlock: Ref<HTMLElement> = ref(null)
+const messageItemBodyBlock= ref<HTMLElement>(null)
 let mermaidRenderTimeout: NodeJS.Timeout|null = null
 
 const mdRender = (content: string) => {

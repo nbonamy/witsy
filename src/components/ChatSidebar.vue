@@ -32,7 +32,7 @@
 <script setup lang="ts">
 
 import { ChatListMode } from '../types/config'
-import { ref, onMounted, Ref, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { v4 as uuidv4 } from 'uuid'
@@ -53,13 +53,13 @@ const props = defineProps({
   },
 })
 
-const visible: Ref<boolean> = ref(true)
-const width: Ref<number> = ref(0)
+const visible= ref<boolean>(true)
+const width= ref<number>(0)
 const manualResize = ref(true)
-const chatListDisplayMode: Ref<ChatListMode> = ref('timeline')
-const chatList: Ref<typeof ChatList|null> = ref(null)
-const filter: Ref<string> = ref('')
-const selectMode: Ref<boolean> = ref(false)
+const chatListDisplayMode= ref<ChatListMode>('timeline')
+const chatList= ref<typeof ChatList|null>(null)
+const filter= ref<string>('')
+const selectMode= ref<boolean>(false)
 
 let panelOffet = 0
 

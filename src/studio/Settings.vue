@@ -134,7 +134,7 @@
 <script setup lang="ts">
 
 import { MediaCreator, DesignStudioMediaType } from '../types/index'
-import { onMounted, ref, Ref, computed, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { t } from '../services/i18n'
 import { store, kReferenceParamValue } from '../services/store'
 import Message from '../models/message'
@@ -172,11 +172,11 @@ const props = defineProps({
 const emit = defineEmits(['upload', 'generate'])
 
 const editor = ref(null)
-const mediaType: Ref<DesignStudioMediaType> = ref('image')
+const mediaType= ref<DesignStudioMediaType>('image')
 const engine = ref('')
 const model = ref('')
 const prompt = ref('')
-const params: Ref<Record<string, string>> = ref({})
+const params = ref<Record<string, string>>({})
 const transform = ref(false)
 const preserve = ref(false)
 const showParams = ref(false)

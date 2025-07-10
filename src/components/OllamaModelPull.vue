@@ -40,8 +40,8 @@ const props = defineProps({
 
 const emit = defineEmits(['done'])
 
-const pull_model: Ref<string|null> = ref(null)
-const pull_progress: Ref<string|null> = ref(null)
+const pull_model= ref<string|null>(null)
+const pull_progress= ref<string|null>(null)
 const pullStream: Ref<AbortableAsyncIterator<ProgressResponse>|null> = ref(null)
 
 let ollama = new Ollama(store.config.engines.ollama)

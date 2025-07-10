@@ -27,7 +27,7 @@
 
 import { anyDict, Command, ExternalApp } from '../types'
 import { CommandAction } from '../types/automation'
-import { ref, Ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
 
@@ -40,10 +40,10 @@ const props = defineProps({
   extra: Object
 })
 
-const list: Ref<HTMLElement | null> = ref(null)
-const commands: Ref<Command[]> = ref([])
-const selected: Ref<Command | null> = ref(null)
-const sourceApp: Ref<ExternalApp | null> = ref(null)
+const list= ref<HTMLElement | null>(null)
+const commands= ref<Command[]>([])
+const selected= ref<Command | null>(null)
+const sourceApp= ref<ExternalApp | null>(null)
 const action = ref<CommandAction>('default')
 const showHelp = ref(false)
 

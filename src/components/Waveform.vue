@@ -22,7 +22,7 @@ const props = defineProps({
   audioRecorder: Object
 })
 
-const waveform: Ref<HTMLCanvasElement|null> = ref(null)
+const waveform= ref<HTMLCanvasElement|null>(null)
 
 onMounted(() => {
   draw()

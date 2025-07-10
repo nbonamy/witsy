@@ -18,7 +18,7 @@
 <script setup lang="ts">
 
 import { Folder } from '../types/index'
-import { Ref, ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -79,12 +79,12 @@ const visibleFolders = computed(() => {
 
 const emit = defineEmits(['select', 'menu']);
 
-const expandedFolders: Ref<string[]> = ref([ store.rootFolder.id ])
+const expandedFolders= ref<string[]>([ store.rootFolder.id ])
 
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const targetRow: Ref<string|null> = ref(null)
+const targetRow= ref<string|null>(null)
 const contextMenuActions = () => {
   const folder = store.history.folders.find((f) => f.id === targetRow.value)
   return [

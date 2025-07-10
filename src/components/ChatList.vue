@@ -15,7 +15,7 @@
 <script setup lang="ts">
 
 import { ChatListMode } from '../types/config'
-import { type Ref, ref, computed, onMounted, PropType } from 'vue'
+import { ref, computed, onMounted, PropType } from 'vue'
 import { store, kMediaChatId } from '../services/store'
 import { t } from '../services/i18n'
 import ContextMenu from './ContextMenu.vue'
@@ -46,8 +46,8 @@ const props = defineProps({
   }
 })
 
-const selection: Ref<string[]> = ref([])
-const divChats: Ref<HTMLElement|null> = ref(null)
+const selection= ref<string[]>([])
+const divChats= ref<HTMLElement|null>(null)
 
 defineExpose({
   getSelection: () => selection.value,
@@ -65,7 +65,7 @@ const visibleChats = computed(() => store.history.chats.filter((c: Chat) => {
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
-const targetRow: Ref<Chat|null> = ref(null)
+const targetRow= ref<Chat|null>(null)
 
 const contextMenuActions = () => [
   { label: t('common.rename'), action: 'rename' },

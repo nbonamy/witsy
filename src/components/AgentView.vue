@@ -52,12 +52,12 @@
 <script setup lang="ts">
 
 import { Agent, AgentRun } from '../types/index'
-import { ref, Ref, PropType, onMounted, watch, computed } from 'vue'
+import { ref, PropType, onMounted, watch, computed } from 'vue'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
 import AgentHistory from './AgentHistory.vue'
 
-const runs: Ref<AgentRun[]> = ref([]) 
+const runs= ref<AgentRun[]>([]) 
 
 const props = defineProps({
   agent: {

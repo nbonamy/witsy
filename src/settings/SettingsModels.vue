@@ -28,7 +28,7 @@
 <script setup lang="ts">
 
 import { CustomEngineConfig } from '../types/config'
-import { Ref, ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -58,7 +58,7 @@ type Engine = {
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const createEngine = ref(null)
-const currentEngine:Ref<string> = ref(llmManager.getChatEngines({ favorites: false })[0])
+const currentEngine= ref<string>(llmManager.getChatEngines({ favorites: false })[0])
 const engineSettings = ref(null)
 
 const isCustom = computed(() => llmManager.isCustomEngine(currentEngine.value))

@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { DocRepoAddDocResponse, DocumentBase, DocumentSource } from '../types/rag'
 import { extensionToMimeType } from 'multi-llm-ts'
 import { store } from '../services/store'
@@ -94,7 +94,7 @@ const { onEvent, emitEvent } = useEventBus()
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
 const docRepos = ref(null)
-const selectedRepo: Ref<DocumentBase | null> = ref(null)
+const selectedRepo= ref<DocumentBase | null>(null)
 const modelReady = ref(true)
 const loading = ref(false)
 

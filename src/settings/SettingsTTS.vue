@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
@@ -77,8 +77,8 @@ const openaiAPIKey = ref(null)
 const groqAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const elevenlabsAPIKey = ref(null)
-const audio: Ref<HTMLAudioElement|null> = ref(null)
-  const audioState: Ref<{state: string, messageId: string|null}> = ref({
+const audio= ref<HTMLAudioElement|null>(null)
+  const audioState= ref<{state: string, messageId: string|null}>({
   state: 'idle',
   messageId: null,
 })

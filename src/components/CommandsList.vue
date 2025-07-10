@@ -36,7 +36,7 @@
 <script setup lang="ts">
 
 import { Command } from '../types'
-import { Ref, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t, commandI18n } from '../services/i18n'
 import { saveCommands } from '../services/commands'
@@ -45,10 +45,10 @@ import CommandDefaults from '../screens/CommandDefaults.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
 
-const commands: Ref<Command[]> = ref(null)
-const selected: Ref<Command> = ref(null)
-const defaults: Ref<typeof CommandDefaults> = ref(null)
-const moreButton: Ref<HTMLElement> = ref(null)
+const commands= ref<Command[]>(null)
+const selected= ref<Command>(null)
+const defaults= ref<typeof CommandDefaults>(null)
+const moreButton= ref<HTMLElement>(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)

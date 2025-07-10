@@ -18,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const container: Ref<HTMLElement|null> = ref(null)
+const container= ref<HTMLElement|null>(null)
 
 let child: HTMLElement|null = null
 let lastX: number|null = null
