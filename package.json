@@ -45,7 +45,6 @@
     "@types/plist": "^3.0.5",
     "@types/uuid": "^10.0.0",
     "@types/vue3-json-viewer": "^2.2.0",
-    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@typescript-eslint/parser": "^8.32.0",
     "@vitejs/plugin-vue": "^5.2.4",
