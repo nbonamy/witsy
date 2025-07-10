@@ -115,9 +115,25 @@ You can connect each chat with a document repository: Witsy will first search fo
 
 ## Transcription / Dictation (Speech-to-Text)
 
-You can transcribe audio recorded on the microphone to text. Transcription can be done using OpenAI Whisper online model (requires API key) or using local Whisper model (requires download of large files). Once the text is transcribed you can:
+You can transcribe audio recorded on the microphone to text. Transcription can be done using a variety of state of the art speech to text models (which require API key) or using local Whisper model (requires download of large files).
+
+Currently Witsy supports the following speech to text models:
+GPT4o-Transcribe
+Gladia
+Speechmatics (Standards + Enhanced)
+Groq Whisper V3
+Fireworks.ai Realtime Transcription
+fal.ai Wizper V3
+fal.ai ElevenLabs
+nVidia Microsoft Phi-4 Multimodal 
+
+Witsy supports quick shortcuts, so your transcript is always only one button press away. 
+
+Once the text is transcribed you can:
 
 - Copy it to your clipboard
+- Summarize it
+- Translate it to any language
 - Insert it in the application that was running before you activated the dictation
 
 ## Anthropic Computer Use
@@ -150,8 +166,14 @@ To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your AP
 
 To use Ollama models, you need to install [Ollama](https://ollama.com) and download some [models](https://ollama.com/search).
 
-To use text-to-speech, you need an [OpenAI API key](https://platform.openai.com/api-keys).
-
+To use text-to-speech, you need an 
+- [OpenAI API key](https://platform.openai.com/api-keys).
+- [Fal.ai API Key](https://fal.ai/dashboard/keys)
+- [Fireworks.ai API Key](https://app.fireworks.ai/settings/users/api-keys)
+- [Groq API Key](https://console.groq.com/keys)
+- [Speechmatics API Key](https://portal.speechmatics.com/settings/api-keys)
+- [Gladia API Key](https://app.gladia.io/account) 
+  
 To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 <p align="center">
@@ -160,6 +182,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## TODO
 
+- [ ] Implement Soniox for STT
 - [ ] Workspaces / Projects (whatever the name is)
 - [ ] Proper database (SQLite3) storage (??)
 
@@ -169,6 +192,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Transcribe Local Audio Files
 - [x] DeepResearch
 - [x] Local filesystem access plugin
 - [x] Close markdown when streaming
