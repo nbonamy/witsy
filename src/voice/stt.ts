@@ -7,6 +7,7 @@ import STTGroq from './stt-groq'
 import STTHuggingFace from './stt-huggingface'
 import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
+import STTSoniox from './stt-soniox'
 import STTSpeechmatics from './stt-speechmatics'
 import STTWhisper from './stt-whisper'
 
@@ -79,9 +80,9 @@ export interface STTEngine {
   // streaming
   isStreamingModel(model: string): boolean
   requiresPcm16bits?(model: string): boolean
-  startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>  
-  sendAudioChunk?(chunk: Blob): Promise<void>  
-  endStreaming?(): Promise<void>  
+  startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>
+  sendAudioChunk?(chunk: Blob): Promise<void>
+  endStreaming?(): Promise<void>
 }
 
 export const getSTTEngines = () => {
@@ -93,6 +94,7 @@ export const getSTTEngines = () => {
     //{ id: 'huggingface', label: 'Hugging Face' },
     { id: 'nvidia', label: 'nVidia' },
     { id: 'openai', label: 'OpenAI' },
+    { id: 'soniox', label: 'Soniox' },
     { id: 'speechmatics', label: 'Speechmatics' },
     { id: 'whisper', label: 'Whisper' },
     { id: 'custom', label: 'Custom OpenAI' },
@@ -106,6 +108,8 @@ export const getSTTModels = (engine: string) => {
     return STTFalAi.models
   } else if (engine === 'fireworks') {
     return STTFireworks.models
+  } else if (engine === 'soniox') {
+    return STTSoniox.models
   } else if (engine === 'speechmatics') {
     return STTSpeechmatics.models
   } else if (engine === 'gladia') {
@@ -141,6 +145,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTGladia(config)
   } else if (engine === 'fireworks') {
     return new STTFireworks(config)
+  } else if (engine === 'soniox') {
+    return new STTSoniox(config)
   } else if (engine === 'speechmatics') {
     return new STTSpeechmatics(config)
   } else if (engine === 'custom') {
@@ -167,6 +173,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTGladia.requiresDownload()
   } else if (engine === 'fireworks') {
     return STTFireworks.requiresDownload()
+  } else if (engine === 'soniox') {
+    return STTSoniox.requiresDownload()
   } else if (engine === 'speechmatics') {
     return STTSpeechmatics.requiresDownload()
   } else if (engine === 'custom') {

@@ -1,7 +1,7 @@
-
 <div align="center">
 
-  <a href="https://witsyai.com" target="_blank"><img src="assets/icon.png" width="128" alt="Witsy Logo"></a>
+<a href="https://witsyai.com" target="_blank"><img src="assets/icon.png" width="128" alt="Witsy Logo"></a>
+
   <div><b>Witsy</b></div>
   <div>Desktop AI Assistant<br/>Universal MCP Client</div>
 
@@ -30,15 +30,15 @@ Download Witsy from [witsyai.com](https://witsyai.com) or from the [releases](ht
 
 On macOS you can also `brew install --cask witsy`.
 
-
 ## What is Witsy?
 
 Witsy is a BYOK (Bring Your Own Keys) AI application: it means you need to have API keys for the LLM providers you want to use. Alternatively,
 you can use [Ollama](https://ollama.com) to run models locally on your machine for free and use them in Witsy.
 
-It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows you to run MCP servers with virtually any LLM!***
+It is the first of very few (only?) universal MCP clients:<br/>**_Witsy allows you to run MCP servers with virtually any LLM!_**
 
 Non-exhaustive feature list:
+
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
@@ -71,6 +71,7 @@ Non-exhaustive feature list:
 ## Prompt Anywhere
 
 Generate content in any application:
+
 - From any editable content in any application
 - Hit the Prompt anywhere shortcut (Shift+Control+Space / ^⇧Space)
 - Enter your prompt in the window that pops up
@@ -81,6 +82,7 @@ On Mac, you can define an expert that will automatically be triggered depending 
 ## AI Commands
 
 AI commands are quick helpers accessible from a shortcut that leverage LLM to boost your productivity:
+
 - Select any text in any application
 - Hit the AI command shorcut (Alt+Control+Space / ⌃⌥Space)
 - Select one of the commands and let LLM do their magic!
@@ -124,7 +126,6 @@ You can transcribe audio recorded on the microphone to text. Transcription can b
 
 https://www.youtube.com/watch?v=vixl7I07hBk
 
-
 ## Setup
 
 You can download a binary from from [witsyai.com](https://witsyai.com), from the [releases](https://github.com/nbonamy/witsy/releases) page or build yourself:
@@ -137,6 +138,7 @@ npm start
 ## Prerequisites
 
 To use OpenAI, Anthropic, Google or Mistral AI models, you need to enter your API key:
+
 - [OpenAI](https://platform.openai.com/api-keys)
 - [Anthropic](https://console.anthropic.com/settings/keys)
 - [Google](https://aistudio.google.com/app/apikey)
@@ -170,6 +172,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Realtime STT & MT with Soniox
 - [x] Close markdown when streaming
 - [x] Multiple attachments
 - [x] Custom OpenAI STT support
@@ -232,7 +235,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 - [x] Google function calling
 - [x] Anthropic function calling
 - [x] Scratchpad
-- [x] Dictation: OpenAI Whisper + Whisper WebGPU 
+- [x] Dictation: OpenAI Whisper + Whisper WebGPU
 - [x] Auto-select expert based on foremost app (Mac only)
 - [x] Cerebras support
 - [x] Local files RAG

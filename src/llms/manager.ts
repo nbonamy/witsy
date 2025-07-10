@@ -20,7 +20,7 @@ export default class LlmManager extends LlmManagerBase {
   }
 
   getNonChatEngines = (): string[] => {
-    return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia', 'fireworks', 'speechmatics' ]
+    return [ 'huggingface', 'replicate', 'elevenlabs', 'sdwebui', 'falai', 'gladia', 'nvidia', 'fireworks', 'soniox', 'speechmatics' ]
   }
 
   isEngineConfigured = (engine: string): boolean => {
@@ -39,8 +39,8 @@ export default class LlmManager extends LlmManagerBase {
     if (this.isFavoriteEngine(engine)) return true
     if (this.isCustomEngine(engine)) return true
     return false
-  }  
-  
+  }
+
   isEngineReady = (engine: string): boolean => {
     if (engine === 'anthropic') return llm.Anthropic.isReady(this.config.engines.anthropic, this.config.engines.anthropic?.models)
     if (engine === 'cerebras') return llm.Cerebras.isReady(this.config.engines.cerebras, this.config.engines.cerebras?.models)
@@ -50,7 +50,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'lmstudio') return llm.LMStudio.isReady(this.config.engines.lmstudio, this.config.engines.lmstudio?.models)
     if (engine === 'meta') return llm.Meta.isReady(this.config.engines.meta, this.config.engines.meta?.models)
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
-    if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
+    if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models)
     if (engine === 'openai') return llm.OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
     if (engine === 'openrouter') return llm.OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return llm.XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
@@ -58,7 +58,7 @@ export default class LlmManager extends LlmManagerBase {
     if (this.isCustomEngine(engine)) return true
     return false
   }
-  
+
   igniteEngine = (engine: string): llm.LlmEngine => {
 
     try {
@@ -91,13 +91,13 @@ export default class LlmManager extends LlmManagerBase {
     return new llm.OpenAI(this.config.engines.openai)
 
   }
-  
+
   loadModels = async (engine: string): Promise<boolean> => {
 
     if (this.isCustomEngine(engine)) {
       return this.loadModelsCustom(engine)
     }
-    
+
     console.log('Loading models for', engine)
     let models: llm.ModelsList|null = null
     if (engine === 'anthropic') {
@@ -135,8 +135,7 @@ export default class LlmManager extends LlmManagerBase {
 
     // save
     return this.saveModels(engine, models)
-    
+
   }
 
 }
-

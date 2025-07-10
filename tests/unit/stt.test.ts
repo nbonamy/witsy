@@ -12,6 +12,7 @@ import STTSpeechmatics from '../../src/voice/stt-speechmatics'
 import STTNvidia from '../../src/voice/stt-nvidia'
 import STTOpenAI from '../../src/voice/stt-openai'
 import STTWhisper from '../../src/voice/stt-whisper'
+import STTSoniox from '../../src/voice/stt-soniox'
 import { fal } from '@fal-ai/client'
 
 const initCallback = vi.fn()
@@ -274,6 +275,24 @@ test('Instantiates Custom OpenAI', async () => {
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+
+test('Instantiates Soniox', async () => {
+  store.config.stt.engine = 'soniox'
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTSoniox)
+  expect(engine.isStreamingModel('realtime')).toBe(true)
+  expect(engine.requiresPcm16bits!.call('realtime')).toBe(false)
+  expect(engine).toHaveProperty('startStreaming')
+  expect(engine).toHaveProperty('sendAudioChunk')
+  expect(engine).toHaveProperty('endStreaming')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'soniox', status: 'ready', model: expect.any(String) })
+  //await expect(engine.transcribe(new Blob())).rejects.toThrowError()
 })
 
 test('Throws error on unknown engine', async () => {

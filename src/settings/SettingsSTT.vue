@@ -6,7 +6,8 @@
     </div>
     <div class="group vocabulary">
       <label>{{ t('settings.voice.customVocabulary.label') }}</label>
-      <textarea v-model="vocabulary" name="vocabulary" @change="save" :placeholder="t('settings.voice.customVocabulary.placeholder')"></textarea>
+      <textarea v-model="vocabulary" name="vocabulary" @change="save"
+        :placeholder="t('settings.voice.customVocabulary.placeholder')"></textarea>
     </div>
     <div class="group">
       <label>{{ t('settings.voice.engine') }}</label>
@@ -23,6 +24,10 @@
     <div class="group" v-if="engine == 'fireworks'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="fireworksAPIKey" @blur="save" />
+    </div>
+    <div class="group" v-if="engine == 'soniox'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="sonioxAPIKey" @blur="save" />
     </div>
     <div class="group" v-if="engine == 'speechmatics'">
       <label>{{ t('settings.engines.apiKey') }}</label>
@@ -63,11 +68,11 @@
     <template v-else>
       <div class="group">
         <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
-        <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
+        <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save" />
       </div>
       <div class="group">
         <label>{{ t('settings.voice.model') }}</label>
-        <input name="model" v-model="model" @change="onChangeModel"/>
+        <input name="model" v-model="model" @change="onChangeModel" />
       </div>
     </template>
     <div class="group">
@@ -130,6 +135,7 @@ const falAiAPIKey = ref(null)
 const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
+const sonioxAPIKey = ref(null)
 const speechmaticsAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
@@ -163,10 +169,10 @@ const progressText = computed(() => {
     acc.total += p.total
     return acc
   }, { loaded: 0, total: 0 })
-  
+
   const percent = Math.floor(loadedTotal.loaded / loadedTotal.total * 100)
-  return initMode === 'download' 
-    ? t('settings.voice.downloading', { percent }) 
+  return initMode === 'download'
+    ? t('settings.voice.downloading', { percent })
     : t('settings.voice.verifying', { percent })
 })
 
@@ -180,6 +186,7 @@ const load = () => {
   falAiAPIKey.value = store.config.engines.falai.apiKey || null
   fireworksAPIKey.value = store.config.engines.fireworks.apiKey || null
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
+  sonioxAPIKey.value = store.config.engines.soniox.apiKey || null
   speechmaticsAPIKey.value = store.config.engines.speechmatics.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
@@ -197,6 +204,7 @@ const save = () => {
   store.config.engines.falai.apiKey = falAiAPIKey.value
   store.config.engines.fireworks.apiKey = fireworksAPIKey.value
   store.config.engines.gladia.apiKey = gladiaAPIKey.value
+  store.config.engines.soniox.apiKey = sonioxAPIKey.value
   store.config.engines.speechmatics.apiKey = speechmaticsAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
@@ -245,7 +253,7 @@ const onChangeModel = async () => {
     changeEngine()
     return
   }
-  
+
   // show dialog
   Dialog.show({
     target: document.querySelector('.settings .voice'),
@@ -272,7 +280,7 @@ const initializeEngine = async (sttEngine: STTEngine) => {
 
     // debug
     //console.log(data)
-    
+
     // cast
     const taskStatus = data as TaskStatus
     const dowloadProgress = data as DownloadProgress
