@@ -12,7 +12,7 @@ export default class STTSoniox implements STTEngine {
 
   static readonly models = [
     { id: 'realtime', label: 'Soniox (realtime)' },
-    { id: 'async', label: 'Soniox (async)' },
+    // { id: 'async', label: 'Soniox (async)' },
   ]
 
   constructor(config: Configuration) {
@@ -33,7 +33,7 @@ export default class STTSoniox implements STTEngine {
     return model === 'realtime'
   }
 
-  requiresPcm16bits?(model: string): boolean {
+  requiresPcm16bits(model: string): boolean {
     return false
   }
 
@@ -71,7 +71,7 @@ export default class STTSoniox implements STTEngine {
     this.streamingCallback = callback;
 
     this.ws = new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');
-    // All callbacks must use arrow functions to keep "this" binding
+
     this.ws.onopen = () => this.onWebsocketOpen();
     this.ws.onmessage = (event) => this.onWebSocketMessage(event);
     this.ws.onerror = (event) => this.onWebSocketError(event);
@@ -88,7 +88,7 @@ export default class STTSoniox implements STTEngine {
 
   async endStreaming(): Promise<void> {
     if (this.ws && this.connected) {
-      this.ws.send(''); // End-of-stream (empty frame)
+      this.ws.send(''); // End-of-stream (send empty string message)
     }
   }
 
