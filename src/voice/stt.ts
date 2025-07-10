@@ -83,9 +83,6 @@ export interface STTEngine {
   startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>
   sendAudioChunk?(chunk: Blob): Promise<void>
   endStreaming?(): Promise<void>
-  startStreaming?(model: string, callback: StreamingCallback, opts?: object): Promise<void>
-  sendAudioChunk?(chunk: Blob): Promise<void>
-  endStreaming?(): Promise<void>
 
   // file conversion
   transcribeFile?(file: File, opts?: object): Promise<TranscribeResponse>
