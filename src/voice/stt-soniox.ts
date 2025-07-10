@@ -124,13 +124,8 @@ export default class STTSoniox implements STTEngine {
   private onWebSocketMessage(event: MessageEvent) {
     console.debug('Soniox WebSocket message received:', event);
     try {
-      let data: any;
-      if (typeof event.data === "string") {
-        data = JSON.parse(event.data);
-      } else if (event.data instanceof ArrayBuffer) {
-        // optional: decode as needed if server sends binary
-        data = JSON.parse(new TextDecoder().decode(new Uint8Array(event.data)));
-      }
+      const data = JSON.parse(event.data);
+
       if (data) {
         for (const token of data.tokens) {
           this.streamingCallback?.({
