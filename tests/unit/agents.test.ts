@@ -82,6 +82,7 @@ test('Save agent', () => {
     updatedAt: 1000000005000,
     name: 'Name3',
     description: 'Description3',
+    primary: true,
     engine: 'engine3',
     model: 'model3',
     locale: 'locale3',

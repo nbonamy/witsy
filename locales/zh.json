@@ -33,6 +33,7 @@
     "costsAsOf": "截至",
     "create": "创建",
     "customize": "自定义…",
+    "deepResearch": "深度研究",
     "default": "默认",
     "delete": "删除",
     "differentLocales": "您的语言模型语言与界面语言不同。显示的文本为语言模型的语言或您自定义的语言。",
@@ -112,6 +113,28 @@
     "reset": "重置",
     "retry": "重试",
     "save": "保存",
+    "schedule": {
+      "at": "在",
+      "daily": "每日",
+      "day_of_every": "天，每",
+      "days_at": "天，于",
+      "disabled": "禁用",
+      "every": "每",
+      "friday": "周五",
+      "hourly": "每小时",
+      "hours_on_minute": "小时，分时",
+      "minutes": "分钟",
+      "monday": "周一",
+      "monthly": "每月",
+      "months": "个月",
+      "on_the": "在第",
+      "saturday": "周六",
+      "sunday": "周日",
+      "thursday": "周四",
+      "tuesday": "周二",
+      "wednesday": "周三",
+      "weekly": "每周"
+    },
     "search": "搜索…",
     "selectAll": "全选",
     "selectNone": "全不选",
@@ -137,8 +160,66 @@
     },
     "voice": "声音",
     "warning": "警告",
+    "wizard": {
+      "last": "完成",
+      "next": "下一步",
+      "prev": "上一步"
+    },
     "workingWith": "正在处理",
-    "write": "写入"
+    "write": "写入",
+    "yes": "是"
+  },
+  "agent": {
+    "create": {
+      "information": "基本信息",
+      "introduction": "代理是一种可以为您执行任务的专用 AI。您可以创建代理来自动化任务，如写邮件、总结文档或生成报告。您也可以创建代理来帮助您完成特定任务，如编写代码或制作演示文稿。",
+      "invocation": "代理触发器",
+      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+      "llm": "模型配置",
+      "settings": "模型设置",
+      "tools": {
+        "custom": "限制访问特定工具",
+        "selectAll": "@:{'common.selectAll'}",
+        "selectNone": "@:{'common.selectNone'}",
+        "title": "工具访问"
+      }
+    },
+    "description": "@:{'common.description'}",
+    "forge": {
+      "confirmDelete": "您确定要删除此代理吗？",
+      "create": "创建代理",
+      "edit": "编辑代理",
+      "empty": "请选择现有代理或创建新代理。"
+    },
+    "goal": "目标",
+    "history": {
+      "clear": "清除历史",
+      "date": "日期",
+      "duration": "持续时间",
+      "empty": "暂无历史记录…",
+      "log": "日志",
+      "neverRun": "从未",
+      "prompt": "@:{'common.prompt'}",
+      "status": "状态",
+      "trigger": "触发器"
+    },
+    "lastRun": "上次执行",
+    "name": "@:{'common.name'}",
+    "nextRun": "计划执行于",
+    "prompt": "默认提示",
+    "run": "立即运行",
+    "runCount": "执行总数",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
+    },
+    "trigger": {
+      "manual": "手动",
+      "manual_description": "代理始终可手动触发",
+      "nextRuns": "下一次运行",
+      "schedule": "计划",
+      "webhook": "Webhook URL"
+    }
   },
   "automation": {
     "commander": {
@@ -420,6 +501,45 @@
   },
   "debugConsole": {
     "title": "调试控制台"
+  },
+  "deepResearch": {
+    "analysis": {
+      "completed": "分析完成：关键发现已获得！",
+      "error": "分析搜索结果时发生错误",
+      "running": "分析搜索结果以提取关键发现…",
+      "starting": "分析搜索结果以提取关键发现…"
+    },
+    "planning": {
+      "completed": "分析完成：研究计划已准备好！",
+      "error": "生成研究计划时发生错误",
+      "running": "分析您的请求并创建研究计划…",
+      "starting": "分析您的请求并创建研究计划…"
+    },
+    "search": {
+      "completed": "互联网搜索完成。结果可供分析！",
+      "error": "搜索互联网时发生错误",
+      "running": "正在互联网上搜索 \"{query}\"…",
+      "starting": "启动网络浏览器搜索互联网…"
+    },
+    "synthesis": {
+      "conclusion": {
+        "completed": "结论已准备好整合进报告！",
+        "running": "撰写报告结论…"
+      },
+      "error": "综合内容时发生错误",
+      "execsum": {
+        "completed": "执行摘要已准备好添加到报告！",
+        "running": "提取执行摘要中的关键信息…"
+      },
+      "starting": "内容综合中…"
+    },
+    "usage": "[测试版] 深度研究通过审阅多个来源并突出关键发现，提供您所选主题的深入见解。请注意：此功能使用的令牌比普通聊天多。",
+    "writer": {
+      "completed": "章节 \"{title}\" 完成！",
+      "error": "撰写 \"{title}\" 报告章节时出错",
+      "running": "根据关键发现撰写报告章节 \"{title}\"…",
+      "starting": "根据关键发现撰写报告章节…"
+    }
   },
   "designStudio": {
     "confirmDeleteMultiple": "您确定要删除这些媒体吗？",
@@ -1272,6 +1392,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "环境变量",
+      "httpHeaders": "自定义 HTTP 头",
       "selectCommand": "选择命令",
       "serverPackage": "服务器包",
       "smitheryApiKey": "Smithery.ai API 密钥",
@@ -1417,10 +1538,55 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
+    "agent": {
+      "completed": "代理 {agent} 执行成功",
+      "error": "执行代理 {agent} 时出错",
+      "running": "执行代理 {agent}…",
+      "starting": "初始化代理 {agent}…"
+    },
     "browse": {
       "completed": "内容已从 \"{title}\" 下载",
       "error": "下载内容时出错",
       "running": "正在下载内容…"
+    },
+    "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "模型正在尝试覆盖或删除文件。您是否允许此操作？"
+      },
+      "default": {
+        "completed": "文件系统操作完成",
+        "error": "文件系统操作出错：{error}",
+        "running": "正在执行文件系统操作…",
+        "starting": "准备文件系统操作…"
+      },
+      "delete": {
+        "completed": "成功删除 {path}",
+        "declined": "用户拒绝删除 {path}",
+        "error": "删除 {path} 时出错",
+        "running": "正在删除 {path}…",
+        "starting": "准备删除 {path}…"
+      },
+      "invalidPath": "此操作不在允许路径范围内：{path}",
+      "list": {
+        "completed": "在 {path} 中未发现项目 | 在 {path} 中发现 1 个项目 | 在 {path} 中发现 {count} 个项目",
+        "error": "列出 {path} 内容时出错",
+        "running": "正在列出 {path} 的内容…",
+        "starting": "准备列出目录内容…"
+      },
+      "read": {
+        "completed": "成功读取文件 {path}",
+        "error": "读取文件 {path} 时出错",
+        "running": "正在读取文件 {path}…",
+        "starting": "准备读取文件…"
+      },
+      "write": {
+        "completed": "成功写入文件 {path}",
+        "declined": "用户拒绝覆盖 {path}",
+        "error": "写入文件 {path} 时出错",
+        "running": "正在写入文件 {path}…",
+        "starting": "准备写入文件…"
+      }
     },
     "image": {
       "completed": "图像生成成功",
@@ -1617,6 +1783,23 @@
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
     },
+    "deepResearch": {
+      "breadth": "研究广度",
+      "breadths": {
+        "narrow": "狭窄",
+        "wide": "广泛"
+      },
+      "depth": "研究深度",
+      "depths": {
+        "deep": "深入",
+        "shallow": "标准"
+      },
+      "runtime": "深度研究类型",
+      "runtimes": {
+        "ma": "多代理（完全代理驱动，基于 LLM）",
+        "ms": "多步（混合代码/代理，基于 Witsy）"
+      }
+    },
     "engines": {
       "anthropic": {
         "aboutModels": "了解更多关于 Anthropic 模型的信息",
@@ -1782,6 +1965,18 @@
         "description": "此插件允许 LLM 引擎从互联网下载内容，并使用它生成更准确的回答。",
         "title": "下载"
       },
+      "filesystem": {
+        "allowedPaths": "允许的目录",
+        "allowWrite": "允许写操作（覆盖现有文件和删除）",
+        "description": "此插件允许 LLM 引擎与您的本地文件系统交互。它们可以列出目录内容，读取文件，并在指定目录中创建新文件。如果您授权，它们也可以覆盖和删除现有文件。",
+        "pathsNote": "模型只能访问您上面指定路径内的文件和目录。请谨慎选择目录，只授予您信任的文件夹访问权限。",
+        "skipConfirmation": "危险：不确认写操作",
+        "skipConfirmationWarning": {
+          "text": "如果禁用写操作确认，模型可能会决定覆盖/删除文件。您将无法中断此类操作。确定继续吗？",
+          "title": "确定要禁用写操作确认吗？"
+        },
+        "title": "文件系统"
+      },
       "image": {
         "apiKeyReminder": "确保你在 Witsy 设置的模型面板中输入了你的 API 密钥。",
         "description": "此插件允许 LLM 引擎根据文本描述创建图像。",
@@ -1871,6 +2066,7 @@
       "advanced": "高级",
       "chat": "聊天",
       "commands": "命令",
+      "deepResearch": "@:{'common.deepResearch'}",
       "experts": "专家",
       "general": "常规",
       "llm": "LLM",
@@ -1974,8 +2170,10 @@
   "transcribe": {
     "autoStart": "窗口打开时开始转录",
     "clickToRecord": "准备好了就点击录音按钮！",
+    "dropzone": "放入音频文件",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "请放入有效的音频文件（.mp3 或 .wav）",
       "microphone": "访问麦克风时出错",
       "notAuthorized": {
         "text": "点击确定以打开设置窗口并检查您的API密钥。",
@@ -1996,7 +2194,12 @@
       "toggle": "您也可以按空格键开始录音，再次按空格键停止录音。"
     },
     "spaceToTalk": "按住空格键开始讲话",
-    "title": "语音转文本"
+    "summarize": "总结",
+    "summarizePrompt": "用简洁的方式总结文本，使用文本原有语言，语言平实简单，保持相同时态。只返回总结内容，不返回其他内容。答案不要添加引号。",
+    "title": "语音转文本",
+    "translate": "翻译成…",
+    "translatePrompt": "将以下文本翻译成{lang}。只返回翻译内容，不返回其他内容。答案不要添加引号。",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

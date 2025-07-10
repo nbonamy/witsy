@@ -33,6 +33,7 @@
     "costsAsOf": "custos a partir de",
     "create": "Criar",
     "customize": "Personalizar…",
+    "deepResearch": "Deep Research",
     "default": "Padrão",
     "delete": "Excluir",
     "differentLocales": "Seu LLM locale é diferente do seu locale de interface. Os textos exibidos estão no locale do LLM ou no seu locale se você os customizou.",
@@ -112,6 +113,28 @@
     "reset": "Redefinir",
     "retry": "Tentar novamente",
     "save": "Salvar",
+    "schedule": {
+      "at": "às",
+      "daily": "Diário",
+      "day_of_every": "dia de cada",
+      "days_at": "dia(s), às",
+      "disabled": "Desativado",
+      "every": "A cada",
+      "friday": "Sex",
+      "hourly": "A cada hora",
+      "hours_on_minute": "hora(s) no minuto",
+      "minutes": "Minutos",
+      "monday": "Seg",
+      "monthly": "Mensal",
+      "months": "mês(es)",
+      "on_the": "No",
+      "saturday": "Sáb",
+      "sunday": "Dom",
+      "thursday": "Qui",
+      "tuesday": "Ter",
+      "wednesday": "Qua",
+      "weekly": "Semanal"
+    },
     "search": "Pesquisar…",
     "selectAll": "Selecionar Tudo",
     "selectNone": "Desmarcar Tudo",
@@ -137,8 +160,66 @@
     },
     "voice": "Voz",
     "warning": "Aviso",
+    "wizard": {
+      "last": "Concluído",
+      "next": "Próximo",
+      "prev": "Voltar"
+    },
     "workingWith": "Trabalhando com",
-    "write": "Escrever"
+    "write": "Escrever",
+    "yes": "Sim"
+  },
+  "agent": {
+    "create": {
+      "information": "Informações Gerais",
+      "introduction": "Um agente é uma IA especializada que pode executar tarefas para você. Você pode criar um agente para automatizar tarefas, como escrever e-mails, resumir documentos ou gerar relatórios. Também pode criar um agente para ajudar com tarefas específicas, como escrever código ou criar apresentações.",
+      "invocation": "Gatilhos do Agente",
+      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+      "llm": "Configuração do Modelo",
+      "settings": "Configurações do Modelo",
+      "tools": {
+        "custom": "Restringir acesso a ferramentas específicas",
+        "selectAll": "@:{'common.selectAll'}",
+        "selectNone": "@:{'common.selectNone'}",
+        "title": "Acesso às Ferramentas"
+      }
+    },
+    "description": "@:{'common.description'}",
+    "forge": {
+      "confirmDelete": "Tem certeza de que deseja excluir este agente?",
+      "create": "Criar Agente",
+      "edit": "Editar Agente",
+      "empty": "Selecione um agente existente ou crie um novo."
+    },
+    "goal": "Objetivo",
+    "history": {
+      "clear": "Limpar histórico",
+      "date": "Data",
+      "duration": "Duração",
+      "empty": "Ainda sem histórico…",
+      "log": "Log",
+      "neverRun": "Nunca",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "trigger": "Acionador"
+    },
+    "lastRun": "Última execução",
+    "name": "@:{'common.name'}",
+    "nextRun": "Agendado para",
+    "prompt": "Prompt Padrão",
+    "run": "Executar agora",
+    "runCount": "Total de execuções",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
+    },
+    "trigger": {
+      "manual": "Manual",
+      "manual_description": "Agentes podem sempre ser acionados manualmente",
+      "nextRuns": "Próximas Execuções",
+      "schedule": "Agendamento",
+      "webhook": "URL do Webhook"
+    }
   },
   "automation": {
     "commander": {
@@ -420,6 +501,45 @@
   },
   "debugConsole": {
     "title": "Console de Depuração"
+  },
+  "deepResearch": {
+    "analysis": {
+      "completed": "Análise concluída: aprendizados chave disponíveis!",
+      "error": "Ocorreu um erro ao analisar os resultados da busca",
+      "running": "Analisando resultados da busca para extrair aprendizados chave…",
+      "starting": "Analisando resultados da busca para extrair aprendizados chave…"
+    },
+    "planning": {
+      "completed": "Análise concluída: o plano de pesquisa está pronto!",
+      "error": "Ocorreu um erro ao gerar o plano de pesquisa",
+      "running": "Analisando sua solicitação e criando um plano de pesquisa…",
+      "starting": "Analisando sua solicitação e criando um plano de pesquisa…"
+    },
+    "search": {
+      "completed": "Busca na Internet concluída. Resultados disponíveis para análise!",
+      "error": "Ocorreu um erro ao pesquisar na Internet",
+      "running": "Pesquisando na Internet por \"{query}\"…",
+      "starting": "Iniciando navegador para pesquisar na Internet…"
+    },
+    "synthesis": {
+      "conclusion": {
+        "completed": "Conclusão pronta para ser integrada ao relatório!",
+        "running": "Escrevendo a conclusão do relatório…"
+      },
+      "error": "Ocorreu um erro ao sintetizar o conteúdo",
+      "execsum": {
+        "completed": "Resumo executivo pronto para ser adicionado ao relatório!",
+        "running": "Extraindo informações chave para o resumo executivo…"
+      },
+      "starting": "Sintetizando conteúdo…"
+    },
+    "usage": "[BETA] A Pesquisa Profunda oferece insights detalhados sobre o tópico escolhido ao revisar múltiplas fontes e destacar descobertas chave. Por favor, note: esta funcionalidade usa mais tokens que o chat comum.",
+    "writer": {
+      "completed": "Seção \"{title}\" concluída!",
+      "error": "Ocorreu um erro ao escrever a seção \"{title}\" do relatório",
+      "running": "Escrevendo seção do relatório \"{title}\" baseada nos aprendizados chave…",
+      "starting": "Escrevendo seção do relatório baseada nos aprendizados chave…"
+    }
   },
   "designStudio": {
     "confirmDeleteMultiple": "Você tem certeza de que deseja excluir estes mídias?",
@@ -1272,6 +1392,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Variáveis de Ambiente",
+      "httpHeaders": "Cabeçalhos HTTP Personalizados",
       "selectCommand": "Selecionar comando",
       "serverPackage": "Pacote do Servidor",
       "smitheryApiKey": "Chave da API do Smithery.ai",
@@ -1417,10 +1538,55 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
+    "agent": {
+      "completed": "Agente {agent} executado com sucesso",
+      "error": "Erro ao executar agente {agent}",
+      "running": "Executando agente {agent}…",
+      "starting": "Inicializando agente {agent}…"
+    },
     "browse": {
       "completed": "Conteúdo baixado de \"{title}\"",
       "error": "Erro ao baixar conteúdo",
       "running": "Baixando conteúdo…"
+    },
+    "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "O modelo está tentando sobrescrever ou excluir um arquivo. Deseja permitir isso?"
+      },
+      "default": {
+        "completed": "Operação no sistema de arquivos concluída",
+        "error": "Erro durante operação no sistema de arquivos: {error}",
+        "running": "Executando operação no sistema de arquivos…",
+        "starting": "Preparando operação no sistema de arquivos…"
+      },
+      "delete": {
+        "completed": "{path} deletado com sucesso",
+        "declined": "Usuário recusou deletar {path}",
+        "error": "Erro ao deletar {path}",
+        "running": "Deletando {path}…",
+        "starting": "Preparando para deletar {path}…"
+      },
+      "invalidPath": "Esta operação não faz parte dos caminhos permitidos: {path}",
+      "list": {
+        "completed": "Nenhum item encontrado em {path} | 1 item encontrado em {path} | {count} itens encontrados em {path}",
+        "error": "Erro ao listar conteúdo de {path}",
+        "running": "Listando conteúdo de {path}…",
+        "starting": "Preparando para listar conteúdo do diretório…"
+      },
+      "read": {
+        "completed": "Arquivo {path} lido com sucesso",
+        "error": "Erro ao ler arquivo {path}",
+        "running": "Lendo arquivo {path}…",
+        "starting": "Preparando para ler arquivo…"
+      },
+      "write": {
+        "completed": "Arquivo {path} escrito com sucesso",
+        "declined": "Usuário recusou sobrescrever {path}",
+        "error": "Erro ao escrever arquivo {path}",
+        "running": "Escrevendo arquivo {path}…",
+        "starting": "Preparando para escrever arquivo…"
+      }
     },
     "image": {
       "completed": "Imagem gerada com sucesso",
@@ -1617,6 +1783,23 @@
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
     },
+    "deepResearch": {
+      "breadth": "Abrangência da pesquisa",
+      "breadths": {
+        "narrow": "Restrita",
+        "wide": "Ampla"
+      },
+      "depth": "Profundidade da pesquisa",
+      "depths": {
+        "deep": "Profunda",
+        "shallow": "Padrão"
+      },
+      "runtime": "Tipo de Pesquisa Profunda",
+      "runtimes": {
+        "ma": "Multi-agente (totalmente agentivo, conduzido por LLM)",
+        "ms": "Multi-etapas (híbrido código/agente, conduzido por Witsy)"
+      }
+    },
     "engines": {
       "anthropic": {
         "aboutModels": "Mais sobre os modelos Anthropic",
@@ -1782,6 +1965,18 @@
         "description": "Este plugin permite que os mecanismos LLM baixem conteúdo da Internet e o usem para gerar respostas mais precisas.",
         "title": "Download"
       },
+      "filesystem": {
+        "allowedPaths": "Diretórios Permitidos",
+        "allowWrite": "Permitir operações de escrita (sobrescrever e deletar arquivos existentes)",
+        "description": "Este plugin permite que motores LLM interajam com seu sistema de arquivos local. Eles podem listar conteúdos de diretórios, ler arquivos e criar novos arquivos em diretórios especificados. Se você autorizar, também podem sobrescrever e deletar arquivos existentes.",
+        "pathsNote": "Os modelos só podem acessar arquivos e diretórios dentro dos caminhos que você especificar acima. Escolha os diretórios com cuidado e conceda acesso apenas a pastas nas quais confia que a IA interaja.",
+        "skipConfirmation": "PERIGOSO: Não confirmar operações de escrita",
+        "skipConfirmationWarning": {
+          "text": "Se desativar a confirmação das operações de escrita, os modelos poderão decidir sobrescrever/deletar arquivos. Você não poderá interromper essas operações. Deseja realmente continuar?",
+          "title": "Tem certeza de que deseja desativar a confirmação das operações de escrita?"
+        },
+        "title": "Sistema de Arquivos"
+      },
       "image": {
         "apiKeyReminder": "Certifique-se de inserir sua chave de API no painel Modelos das Configurações do Witsy.",
         "description": "Este plugin permite que os mecanismos LLM criem imagens a partir de uma descrição de texto.",
@@ -1871,6 +2066,7 @@
       "advanced": "Avançado",
       "chat": "Chat",
       "commands": "Comandos",
+      "deepResearch": "@:{'common.deepResearch'}",
       "experts": "Especialistas",
       "general": "Geral",
       "llm": "LLM",
@@ -1974,8 +2170,10 @@
   "transcribe": {
     "autoStart": "Iniciar transcrição quando a janela abrir",
     "clickToRecord": "Clique no botão de gravar quando estiver pronto!",
+    "dropzone": "Solte o arquivo de áudio",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Por favor, solte um arquivo de áudio válido (.mp3 ou .wav)",
       "microphone": "Erro ao acessar o microfone",
       "notAuthorized": {
         "text": "Clique em OK para abrir a janela Configurações e verificar sua chave de API.",
@@ -1996,7 +2194,12 @@
       "toggle": "Você também pode pressionar a barra de espaço para começar a gravar e pressionar novamente para parar."
     },
     "spaceToTalk": "Pressione e segure a barra de espaço para falar",
-    "title": "Voz para Texto"
+    "summarize": "Resumir",
+    "summarizePrompt": "Resuma o texto de forma concisa, usando a mesma língua em que está escrito, linguagem simples e clara e mantenha o mesmo tempo verbal. Não retorne nada além do resumo. Não coloque as respostas entre aspas.",
+    "title": "Voz para Texto",
+    "translate": "Traduzir para…",
+    "translatePrompt": "Traduza o texto a seguir para {lang}. Não retorne nada além da tradução. Não coloque as respostas entre aspas.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

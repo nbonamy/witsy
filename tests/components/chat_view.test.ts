@@ -24,6 +24,7 @@ vi.mock('../../src/services/i18n', async () => {
     commandI18n: vi.fn(() => {}),
     expertI18n: vi.fn(() => {}),
     i18nInstructions: (config: any, key: string) => `${key}`,
+    allLanguages: [ { locale: 'en-US', label: 'English' }, { locale: 'fr-FR', label: 'French' } ],
   }
 })
 

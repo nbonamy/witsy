@@ -215,6 +215,7 @@ export default class {
       original.url = server.url
       original.cwd = server.cwd
       original.env = server.env
+      original.headers = server.headers
       edited = true
     }
 
@@ -239,6 +240,7 @@ export default class {
       originalMcp.args = server.url.split(' ')
       originalMcp.cwd = server.cwd
       originalMcp.env = server.env
+      originalMcp.headers = server.headers
       edited = true
     }
 
@@ -263,9 +265,8 @@ export default class {
     this.clients = []
   }
 
-
   reload = async (): Promise<void> => {
-    this.shutdown()
+    await this.shutdown()
     await this.connect()
   }
 
@@ -300,6 +301,15 @@ export default class {
   }
 
   private connectToServer = async(server: McpServer): Promise<boolean> => {
+
+    // first check if we already have a client for this server
+    const existingClient = this.clients.find(client => client.server.uuid === server.uuid)
+    if (existingClient) {
+      try {
+        await existingClient.client.close()
+      } catch { /* empty */}
+      this.clients = this.clients.filter(client => client !== existingClient)
+    }
 
     // clear logs
     this.logs[server.uuid] = []
@@ -467,9 +477,11 @@ export default class {
     try {
 
       // get transport
-      const transport = new StreamableHTTPClientTransport(
-        new URL(server.url)
-      )
+      const transport = new StreamableHTTPClientTransport(new URL(server.url), {
+        requestInit: {
+          headers: server.headers || {},
+        }
+      })
       transport.onerror = (e) => {
         this.logs[server.uuid].push(e.message)
       }

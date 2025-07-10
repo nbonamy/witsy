@@ -190,6 +190,7 @@ export default class extends Generator {
         ...opts,
         breadth: this.config.deepresearch.breadth,
         depth: this.config.deepresearch.depth,
+        searchResults: this.config.deepresearch.searchResults,
       })
       
     } else {

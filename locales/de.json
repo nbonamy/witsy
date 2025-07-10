@@ -33,6 +33,7 @@
     "costsAsOf": "Kosten ab",
     "create": "Erstellen",
     "customize": "Anpassen…",
+    "deepResearch": "Deep Research",
     "default": "Standard",
     "delete": "Löschen",
     "differentLocales": "Ihre LLM-Lokalisierung ist anders als Ihre Schnittstellenlokalisierung. Die angezeigten Texte sind in der LLM-Lokalisierung oder Ihrer Lokalisierung, wenn Sie sie angepasst haben.",
@@ -93,6 +94,28 @@
     "reset": "Zurücksetzen",
     "retry": "Erneut versuchen",
     "save": "Speichern",
+    "schedule": {
+      "at": "um",
+      "daily": "Täglich",
+      "day_of_every": "Tag jeden",
+      "days_at": "Tag(e), um",
+      "disabled": "Deaktiviert",
+      "every": "Jede(r)",
+      "friday": "Fr",
+      "hourly": "Stündlich",
+      "hours_on_minute": "Stunde(n) zur Minute",
+      "minutes": "Minuten",
+      "monday": "Mo",
+      "monthly": "Monatlich",
+      "months": "Monat(e)",
+      "on_the": "Am",
+      "saturday": "Sa",
+      "sunday": "So",
+      "thursday": "Do",
+      "tuesday": "Di",
+      "wednesday": "Mi",
+      "weekly": "Wöchentlich"
+    },
     "search": "Suchen…",
     "selectAll": "Alle auswählen",
     "selectNone": "Alle abwählen",
@@ -118,8 +141,66 @@
     },
     "voice": "Audio",
     "warning": "Warnung",
+    "wizard": {
+      "last": "Fertig",
+      "next": "Weiter",
+      "prev": "Zurück"
+    },
     "workingWith": "Arbeiten mit",
-    "write": "Schreiben"
+    "write": "Schreiben",
+    "yes": "Ja"
+  },
+  "agent": {
+    "create": {
+      "information": "Allgemeine Informationen",
+      "introduction": "Ein Agent ist eine spezialisierte KI, die Aufgaben für Sie ausführen kann. Sie können einen Agenten erstellen, um Aufgaben zu automatisieren, wie z.B. E-Mails schreiben, Dokumente zusammenfassen oder Berichte erstellen. Sie können auch einen Agenten erstellen, um Sie bei spezifischen Aufgaben zu unterstützen, wie Code schreiben oder Präsentationen erstellen.",
+      "invocation": "Agent-Auslöser",
+      "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
+      "llm": "Modellkonfiguration",
+      "settings": "Modelleinstellungen",
+      "tools": {
+        "custom": "Zugriff auf bestimmte Werkzeuge beschränken",
+        "selectAll": "@:{'common.selectAll'}",
+        "selectNone": "@:{'common.selectNone'}",
+        "title": "Werkzeugzugriff"
+      }
+    },
+    "description": "@:{'common.description'}",
+    "forge": {
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
+      "create": "Agent erstellen",
+      "edit": "Agent bearbeiten",
+      "empty": "Wählen Sie einen bestehenden Agenten aus oder erstellen Sie einen neuen."
+    },
+    "goal": "Ziel",
+    "history": {
+      "clear": "Verlauf löschen",
+      "date": "Datum",
+      "duration": "Dauer",
+      "empty": "Noch keine Historie…",
+      "log": "Protokoll",
+      "neverRun": "Nie",
+      "prompt": "@:{'common.prompt'}",
+      "status": "Status",
+      "trigger": "Auslöser"
+    },
+    "lastRun": "Zuletzt ausgeführt",
+    "name": "@:{'common.name'}",
+    "nextRun": "Geplant für",
+    "prompt": "Standard-Prompt",
+    "run": "Jetzt ausführen",
+    "runCount": "Gesamtausführungen",
+    "tools": {
+      "description": "@:{'common.description'}",
+      "name": "@:{'common.name'}"
+    },
+    "trigger": {
+      "manual": "Manuell",
+      "manual_description": "Agenten können jederzeit manuell ausgelöst werden",
+      "nextRuns": "Nächste Ausführungen",
+      "schedule": "Zeitplan",
+      "webhook": "Webhook-URL"
+    }
   },
   "automation": {
     "commander": {
@@ -401,6 +482,45 @@
   },
   "debugConsole": {
     "title": "Debugging-Konsole"
+  },
+  "deepResearch": {
+    "analysis": {
+      "completed": "Analyse abgeschlossen: Wichtige Erkenntnisse verfügbar!",
+      "error": "Fehler bei der Analyse der Suchergebnisse",
+      "running": "Analysiere Suchergebnisse, um wichtige Erkenntnisse zu gewinnen…",
+      "starting": "Analysiere Suchergebnisse, um wichtige Erkenntnisse zu gewinnen…"
+    },
+    "planning": {
+      "completed": "Analyse abgeschlossen: Forschungsplan ist fertig!",
+      "error": "Fehler beim Erstellen des Forschungsplans",
+      "running": "Analysiere Ihre Anfrage und erstelle einen Forschungsplan…",
+      "starting": "Analysiere Ihre Anfrage und erstelle einen Forschungsplan…"
+    },
+    "search": {
+      "completed": "Internetsuche abgeschlossen. Ergebnisse zur Analyse bereit!",
+      "error": "Fehler bei der Internetsuche",
+      "running": "Suche im Internet nach \"{query}\"…",
+      "starting": "Starte Webbrowser zur Internetsuche…"
+    },
+    "synthesis": {
+      "conclusion": {
+        "completed": "Abschluss bereit zur Integration in den Bericht!",
+        "running": "Schreibe Abschluss des Berichts…"
+      },
+      "error": "Fehler bei der Synthese der Inhalte",
+      "execsum": {
+        "completed": "Zusammenfassung bereit zur Einfügung in den Bericht!",
+        "running": "Extrahiere Schlüsselinformationen für die Zusammenfassung…"
+      },
+      "starting": "Inhalte werden synthetisiert…"
+    },
+    "usage": "[BETA] Deep Research liefert gründliche Einblicke zu Ihrem gewählten Thema, indem es mehrere Quellen überprüft und wichtige Erkenntnisse hervorhebt. Bitte beachten Sie: Dieses Feature verwendet mehr Tokens als der reguläre Chat.",
+    "writer": {
+      "completed": "Abschnitt \"{title}\" abgeschlossen!",
+      "error": "Fehler beim Schreiben des Berichtabschnitts \"{title}\"",
+      "running": "Schreibe Berichtabschnitt \"{title}\" basierend auf wichtigen Erkenntnissen…",
+      "starting": "Schreibe Berichtabschnitt basierend auf wichtigen Erkenntnissen…"
+    }
   },
   "designStudio": {
     "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Medien löschen möchten?",
@@ -1253,6 +1373,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Umgebungsvariablen",
+      "httpHeaders": "Benutzerdefinierte HTTP-Header",
       "selectCommand": "Befehl auswählen",
       "serverPackage": "Serverpaket",
       "smitheryApiKey": "Smithery.ai API-Schlüssel",
@@ -1398,10 +1519,55 @@
     "topP": "TopP [0.0 … 1.0]"
   },
   "plugins": {
+    "agent": {
+      "completed": "Agent {agent} erfolgreich ausgeführt",
+      "error": "Fehler bei der Ausführung von Agent {agent}",
+      "running": "Agent {agent} wird ausgeführt…",
+      "starting": "Agent {agent} wird initialisiert…"
+    },
     "browse": {
       "completed": "Inhalt von \"{title}\" heruntergeladen",
       "error": "Fehler beim Herunterladen des Inhalts",
       "running": "Inhalt wird heruntergeladen…"
+    },
+    "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "Das Modell versucht, eine Datei zu überschreiben oder zu löschen. Möchten Sie dies erlauben?"
+      },
+      "default": {
+        "completed": "Dateisystem-Operation abgeschlossen",
+        "error": "Fehler bei Dateisystem-Operation: {error}",
+        "running": "Führe Dateisystem-Operation aus…",
+        "starting": "Bereite Dateisystem-Operation vor…"
+      },
+      "delete": {
+        "completed": "Löschen von {path} erfolgreich",
+        "declined": "Benutzer lehnte Löschen von {path} ab",
+        "error": "Fehler beim Löschen von {path}",
+        "running": "Lösche {path}…",
+        "starting": "Bereite Löschung von {path} vor…"
+      },
+      "invalidPath": "Dieser Pfad ist nicht in den erlaubten Pfaden enthalten: {path}",
+      "list": {
+        "completed": "Keine Elemente in {path} gefunden | 1 Element in {path} gefunden | {count} Elemente in {path} gefunden",
+        "error": "Fehler beim Auflisten der Inhalte von {path}",
+        "running": "Liste Inhalte von {path} auf…",
+        "starting": "Bereite Verzeichnisauflistung vor…"
+      },
+      "read": {
+        "completed": "Datei {path} erfolgreich gelesen",
+        "error": "Fehler beim Lesen der Datei {path}",
+        "running": "Lese Datei {path}…",
+        "starting": "Bereite Dateilesen vor…"
+      },
+      "write": {
+        "completed": "Datei {path} erfolgreich geschrieben",
+        "declined": "Benutzer lehnte Überschreiben von {path} ab",
+        "error": "Fehler beim Schreiben der Datei {path}",
+        "running": "Schreibe Datei {path}…",
+        "starting": "Bereite Dateischreiben vor…"
+      }
     },
     "image": {
       "completed": "Bild erfolgreich generiert",
@@ -1595,6 +1761,23 @@
       "selectAll": "@:{'common.selectAll'}",
       "unselectAll": "@:{'common.selectNone'}"
     },
+    "deepResearch": {
+      "breadth": "Breite der Forschung",
+      "breadths": {
+        "narrow": "Eng",
+        "wide": "Weit"
+      },
+      "depth": "Tiefe der Forschung",
+      "depths": {
+        "deep": "Tief",
+        "shallow": "Standard"
+      },
+      "runtime": "Typ der Tiefenrecherche",
+      "runtimes": {
+        "ma": "Multi-Agent (voll agentenbasiert, LLM-gesteuert)",
+        "ms": "Multi-Schritt (hybride Code/Agent, Witsy-gesteuert)"
+      }
+    },
     "engines": {
       "anthropic": {
         "aboutModels": "Mehr über Anthropic-Modelle",
@@ -1760,6 +1943,18 @@
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Inhalte aus dem Internet herunterzuladen und zur Erzeugung genauerer Antworten zu verwenden.",
         "title": "Herunterladen"
       },
+      "filesystem": {
+        "allowedPaths": "Erlaubte Verzeichnisse",
+        "allowWrite": "Schreiboperationen erlauben (vorhandene Dateien überschreiben und löschen)",
+        "description": "Dieses Plugin ermöglicht es LLM-Engines, mit Ihrem lokalen Dateisystem zu interagieren. Sie können Verzeichnisinhalte auflisten, Dateien lesen und neue Dateien in angegebenen Verzeichnissen erstellen. Wenn Sie die Erlaubnis geben, können sie auch vorhandene Dateien überschreiben und löschen.",
+        "pathsNote": "Modelle können nur auf Dateien und Verzeichnisse in den oben angegebenen Pfaden zugreifen. Wählen Sie Verzeichnisse sorgfältig aus und gewähren Sie nur Zugriff auf Ordner, denen Sie vertrauen.",
+        "skipConfirmation": "GEFÄHRLICH: Schreiboperationen nicht bestätigen",
+        "skipConfirmationWarning": {
+          "text": "Wenn Sie die Bestätigung für Schreiboperationen deaktivieren, können Modelle Dateien ohne Unterbrechung überschreiben/löschen. Möchten Sie wirklich fortfahren?",
+          "title": "Sind Sie sicher, dass Sie die Bestätigung für Schreiboperationen deaktivieren möchten?"
+        },
+        "title": "Dateisystem"
+      },
       "image": {
         "apiKeyReminder": "Stellen Sie sicher, dass Sie Ihren API-Schlüssel im Modellbereich der Witsy-Einstellungen eingegeben haben.",
         "description": "Dieses Plugin ermöglicht es LLM-Engines, Bilder aus einer Textbeschreibung zu erstellen.",
@@ -1849,6 +2044,7 @@
       "advanced": "Erweitert",
       "chat": "Chat",
       "commands": "Befehle",
+      "deepResearch": "@:{'common.deepResearch'}",
       "experts": "Experten",
       "general": "Allgemein",
       "llm": "LLM",
@@ -1952,8 +2148,10 @@
   "transcribe": {
     "autoStart": "Beginne mit der Transkription, wenn das Fenster geöffnet wird",
     "clickToRecord": "Klicken Sie auf die Aufnahmetaste, wenn Sie bereit sind!",
+    "dropzone": "Audiodatei ablegen",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Bitte legen Sie eine gültige Audiodatei ab (.mp3 oder .wav)",
       "microphone": "Fehler beim Zugriff auf das Mikrofon",
       "notAuthorized": {
         "text": "Klicken Sie auf OK, um das Einstellungsfenster zu öffnen und Ihren API-Schlüssel zu überprüfen.",
@@ -1974,7 +2172,12 @@
       "toggle": "Sie können auch die Leertaste drücken, um die Aufnahme zu starten, und erneut drücken, um sie zu stoppen."
     },
     "spaceToTalk": "Drücken und halten Sie die Leertaste, um zu sprechen",
-    "title": "Diktiermodus"
+    "summarize": "Zusammenfassen",
+    "summarizePrompt": "Fassen Sie den Text kurz und prägnant zusammen, verwenden Sie die gleiche Sprache, in der er geschrieben ist, einfache und klare Sprache und behalten Sie die gleiche Zeitform bei. Geben Sie nichts anderes als die Zusammenfassung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
+    "title": "Diktiermodus",
+    "translate": "Übersetzen in…",
+    "translatePrompt": "Übersetzen Sie den folgenden Text ins {lang}. Geben Sie nichts anderes als die Übersetzung zurück. Fassen Sie die Antworten nicht in Anführungszeichen.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {

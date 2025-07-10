@@ -7,6 +7,7 @@ import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
 import { McpServer, McpStatus, McpTool } from './types/mcp';
+import { ListDirectoryResponse } from './types/filesystem';
 import { LocalSearchResult } from './main/search';
 import { Size } from './main/computer';
 import { LlmChunk, LlmTool } from 'multi-llm-ts';
@@ -66,10 +67,14 @@ contextBridge.exposeInMainWorld(
       pick: (opts: any): string|strDict|string[] => { return ipcRenderer.sendSync('pick-file', JSON.stringify(opts)) },
       pickDir: (): string => { return ipcRenderer.sendSync('pick-directory') },
       download: (opts: FileDownloadParams): string => { return ipcRenderer.sendSync('download', JSON.stringify(opts)) },
-      delete: (filepath: string): void => { return ipcRenderer.send('delete-file', filepath) },
+      delete: (filepath: string): void => { return ipcRenderer.sendSync('delete-file', filepath) },
       find: (name: string): string => { return ipcRenderer.sendSync('find-program', name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync('get-text-content', contents, format) },
       getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync('get-app-info', filepath) },
+      listDirectory: (dirPath: string, includeHidden?: boolean): ListDirectoryResponse => { return ipcRenderer.sendSync('list-directory', dirPath, includeHidden) },
+      exists: (filePath: string): boolean => { return ipcRenderer.sendSync('file-exists', filePath) },
+      write: (filePath: string, content: string): any => { return ipcRenderer.sendSync('write-file', filePath, content) },
+      normalize: (filePath: string): string => { return ipcRenderer.sendSync('normalize-path', filePath) },
     },
     settings: {
       open: (payload?: OpenSettingsPayload): void => { return ipcRenderer.send('settings-open', payload) },
@@ -107,7 +112,8 @@ contextBridge.exposeInMainWorld(
       save: (data: Command[]) => { return ipcRenderer.send('commands-save', JSON.stringify(data)) },
       export: (): void => { return ipcRenderer.sendSync('commands-export') },
       import: (): void => { return ipcRenderer.sendSync('commands-import') },
-      isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('command-is-prompt-editable', id) },
+      askMeAnythingId: (): string => { return ipcRenderer.sendSync('commands-ask-me-anything-id') },
+      isPromptEditable: (id: string): boolean => { return ipcRenderer.sendSync('commands-is-prompt-editable', id) },
       run: (params: RunCommandParams): void => { return ipcRenderer.send('command-run', JSON.stringify(params)) },
       closePicker: (sourceApp: Application): void => { return ipcRenderer.send('command-picker-close', sourceApp) },
     },

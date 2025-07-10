@@ -21,8 +21,7 @@
       @undo="onUndo" @redo="onRedo"
     />
   </div>
-  <Fullscreen window="create" />
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
+  <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
@@ -32,7 +31,6 @@ import { t } from '../services/i18n'
 import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
 import { saveFileContents } from '../services/download'
 import Dialog from '../composables/dialog'
-import Fullscreen from '../components/Fullscreen.vue'
 import ContextMenu from '../components/ContextMenu.vue'
 import Settings from '../studio/Settings.vue'
 import History from '../studio/History.vue'

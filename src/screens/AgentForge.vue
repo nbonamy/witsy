@@ -1,113 +1,98 @@
 <template>
-  <div class="agent-forge window" @keydown="onKeyDown">
+  <div class="panel-content">
     <div class="panel">
-      <div class="actions">
-        <BIconPlusSquare @click="onCreate" />
-      </div>
-      <AgentList :agents="store.agents" :selected="selected" @select="selectAgent" @menu="showContextMenu" />
+      <header>
+      </header>
     </div>
     <div class="content">
-      <div class="toolbar">
-        <template v-if="selected">
-          <div class="title">{{ selected.name }}</div>
-          <div class="action run" @click="onRun">
-            <BIconPlayFill />
-          </div>
-        </template>
-      </div>
-      <div class="agent" v-if="selected">
-        <AgentView :agent="selected" @run="onRun" @edit="editAgent" @delete="deleteAgent" />
-      </div>
-      <form class="empty" v-else>
-        <div>{{ t('agent.forge.empty') }}</div>
-        <button @click="onCreate" class="create-button">
-          <BIconPlusSquare />
-          {{ t('agent.forge.create') }}
-        </button>
-      </form>
+      <header v-if="mode === 'create'">
+        <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
+        <div class="title">{{ t('agent.forge.create') }}</div>
+      </header>
+      <header v-else-if="mode === 'view'">
+        <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
+        <div class="title">{{ selected.name }}</div>
+      </header>
+      <header v-else>
+        <div class="title">{{ t('agent.forge.title') }}</div>
+      </header>
+      <main class="empty sliding-root" :class="{ hidden: mode !== 'list' }" v-if="store.agents.length === 0">
+        <BIconRobot @click="onCreate" />
+        {{ t('agent.forge.empty') }}
+      </main>
+      <main class="list sliding-root" :class="{ hidden: mode !== 'list' }" v-else>
+        <AgentList :agents="store.agents" @create="onCreate" @run="onRun" @view="viewAgent" @delete="deleteAgent" />
+      </main>
+      <main class="sliding-pane" :class="{ hidden: mode === 'list' }" @transitionend="onTransitionEnd">
+        <AgentEditor :style="{ display: isPaneVisible('create') ? 'block' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
+        <AgentView :style="{ display: isPaneVisible('view') ? 'block' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
+      </main>
     </div>
   </div>
-  <AgentEditor ref="agentEditor" />
-  <ContextMenu v-if="showMenu" :on-close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
 
 <script setup lang="ts">
-import { Agent } from '../types/index'
-import { ref, Ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import ContextMenu from '../components/ContextMenu.vue'
 import AgentList from '../components/AgentList.vue'
 import AgentView from '../components/AgentView.vue'
-import AgentEditor from './AgentEditor.vue'
+import AgentEditor from '../components/AgentEditor.vue'
 import AgentRunner from '../services/runner'
+import Agent from '../models/agent'
 
 defineProps({
   extra: Object
 })
 
-const selected: Ref<Agent> = ref(null)
-const agentEditor: Ref<typeof AgentEditor> = ref(null)
+type AgentForgeMode = 'list' | 'create' | 'view'
 
-const showMenu = ref(false)
-const menuX = ref(0)
-const menuY = ref(0)
-const targetRow: Ref<Agent|null> = ref(null)
+const mode = ref<AgentForgeMode>('list')
+const prevMode = ref<AgentForgeMode>('list')
+const selected = ref<Agent|null>(null)
 
-const contextMenuActions = () => [
-  { label: t('common.edit'), action: 'edit' },
-  //{ label: t('common.rename'), action: 'rename' },
-  { label: t('common.delete'), action: 'delete' },
-]
-
-store.loadSettings()
-store.loadAgents()
+const isPaneVisible = (paneMode: AgentForgeMode) => {
+  return mode.value === paneMode || prevMode.value === paneMode
+}
 
 onMounted(() => {
-
-  // keyboard
-  document.addEventListener('keydown', onKeyDown)
 })
 
-const selectAgent = (agent: Agent) => {
-  selected.value = agent
-}
-
-const onCreate = () => {
-  agentEditor.value.open()
-} 
-
-const showContextMenu = ({ event, agent }: { event: MouseEvent, agent: Agent }) => {
-  showMenu.value = true
-  targetRow.value = agent
-  menuX.value = event.clientX
-  menuY.value = event.clientY
-}
-
-const closeContextMenu = () => {
-  showMenu.value = false;
-}
-
-const handleActionClick = async (action: string) => {
-  
-  // close
-  closeContextMenu()
-
-  // init
-  let agent = targetRow.value
-  if (!agent) return
-
-  // process
-  if (action === 'edit') {
-    editAgent(agent)
-  } else if (action === 'delete') {
-    deleteAgent(agent)
+const selectAgent = async (agent: Agent|null) => {
+  if (!agent) {
+    prevMode.value = mode.value
+    mode.value = 'list'
+    // selected reset will be done in onTransitionEnd
+  } else {
+    viewAgent(agent)
   }
 }
 
-const editAgent = (agent: Agent) => {
-  agentEditor.value.open(agent)
+const onTransitionEnd = async () => {
+  if (mode.value === 'list') {
+    selected.value = null
+    prevMode.value = null
+  }
+}
+
+const onCreate = () => {
+  mode.value = 'create'
+  selected.value = new Agent()
+}
+
+const onSaved = async (agent: Agent) => {
+  viewAgent(agent)
+}
+
+const onRun = (agent: Agent) => {
+  const runner = new AgentRunner(store.config, agent)
+  runner.run('manual')
+}
+
+const viewAgent = (agent: Agent) => {
+  mode.value = 'view'
+  selected.value = agent
 }
 
 const deleteAgent = (agent: Agent) => {
@@ -118,48 +103,55 @@ const deleteAgent = (agent: Agent) => {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-
-
+      window.api.agents.delete(agent.id)
     }
   })
-}
-
-const onKeyDown = (event: KeyboardEvent) => {
-}
-
-const onRun = () => {
-  const runner = new AgentRunner(store.config, selected.value)
-  runner.run('manual')
 }
 
 </script>
 
 <style scoped>
+@import '../../css/dialog.css';
 @import '../../css/form.css';
 @import '../../css/panel-content.css';
 </style>
 
 <style scoped>
 
-.panel {
-  flex: 0 0 var(--forge-panel-width);
-  > .hidden {
-    display: none;
+.panel-content {
+  
+  .panel {
+    flex-basis: 1rem;
+  }
+  
+  .content {
+
+    main {
+    
+      padding: 2rem 4rem;
+
+      &.empty {
+
+        padding: 10% 25%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10rem;
+        gap: 2rem;
+        text-align: center;
+
+        color: var(--faded-text-color);
+
+        svg {
+          cursor: pointer;
+          width: 10rem;
+          height: 10rem;
+          opacity: 20%;
+        }
+      }
+
+    }
   }
 }
-
-.content .empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-  opacity: 0.66;
-  text-align: center;
-  line-height: 140%;
-  font-family: var(--serif-font);
-  font-size: 14pt;
-} 
 
 </style>

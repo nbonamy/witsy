@@ -5,9 +5,11 @@
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
     <DocRepos v-if="mode === 'docrepo'" />
+    <AgentForge v-if="mode === 'agents'" ref="agents" />
     <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
     <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
   </div>
+  <Fullscreen window="main" />
 </template>
 
 <script setup lang="ts">
@@ -19,12 +21,14 @@ import MenuBar, { MenuBarMode } from '../components/MenuBar.vue'
 import Chat from '../screens/Chat.vue'
 import DesignStudio from '../screens/DesignStudio.vue'
 import DocRepos from '../screens/DocRepos.vue'
+import AgentForge from '../screens/AgentForge.vue'
 import Settings from '../screens/Settings.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Transcribe from '../screens/Transcribe.vue'
+import Fullscreen from '../components/Fullscreen.vue'
 
 import useEventBus from '../composables/event_bus'
-const { emitEvent } = useEventBus()
+const { emitEvent, onEvent } = useEventBus()
 
 const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
@@ -56,6 +60,11 @@ onMounted(() => {
   if (props.extra) {
     processQueryParams(props.extra)
   }
+
+  // new chat
+  onEvent('new-chat', () => {
+    onMode('chat')
+  })
 
   // dictation
   window.api.on('start-dictation', onDictate)

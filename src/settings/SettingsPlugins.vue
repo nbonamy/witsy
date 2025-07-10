@@ -33,7 +33,8 @@ import SettingsVideo from './SettingsVideo.vue'
 import SettingsYouTube from './SettingsYouTube.vue'
 import SettingsMemory from './SettingsMemory.vue'
 import SettingsVega from './SettingsVega.vue'
-import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill } from 'bootstrap-icons-vue'
+import SettingsFilesystem from './SettingsFilesystem.vue'
+import { BIconBinocularsFill, BIconCameraReelsFill, BIconCloudArrowDownFill, BIconPaletteFill, BIconYoutube, BIconPersonVcardFill, BIconFolderFill } from 'bootstrap-icons-vue'
 import WIconPython from '../../assets/python.svg?component'
 import WIconVega from '../../assets/vega.svg?component'
 
@@ -61,6 +62,7 @@ const plugins = computed((): PluginUI[] => {
         memory: { icon: BIconPersonVcardFill },
         youtube: { icon: BIconYoutube },
         vega: { icon: WIconVega },
+        filesystem: { icon: BIconFolderFill },
         // mcp: { icon: WIconMcp },
       }[plugin],
     }
@@ -77,6 +79,7 @@ const currentView = computed(() => {
   if (currentPlugin.value == 'youtube') return SettingsYouTube
   if (currentPlugin.value == 'memory') return SettingsMemory
   if (currentPlugin.value == 'vega') return SettingsVega
+  if (currentPlugin.value == 'filesystem') return SettingsFilesystem
 })
 
 const selectPlugin = (plugin: PluginUI) => {

@@ -4,7 +4,7 @@ import Commander from '../automations/commander';
 import PromptAnywhere from '../automations/anywhere';
 import ReadAloud from '../automations/readaloud';
 import Transcriber from '../automations/transcriber';
-import * as config from './config';
+import { loadSettings } from './config';
 import * as window from './window';
 import * as shortcuts from './shortcuts';
 import { useI18n } from './i18n';
@@ -72,8 +72,9 @@ export default class {
     const t = useI18n(this.app);
 
     // load the config
-    const configShortcuts = config.loadSettings(this.app).shortcuts;
-  
+    const config = loadSettings(this.app);
+    const configShortcuts = config.shortcuts;
+
     // visible does not seem to work for role 'about' and type 'separator' so we need to add them manually
     let menuItems: Array<Electron.MenuItemConstructorOptions> = []
   
@@ -100,6 +101,7 @@ export default class {
     // }
   
     // add common stuff
+    // @ts-expect-error unknown with config.features
     menuItems = menuItems.concat([
       {
         label: t('tray.menu.newChat'),
@@ -129,6 +131,13 @@ export default class {
         accelerator: shortcuts.shortcutAccelerator(configShortcuts?.studio),
         click: () => window.openDesignStudioWindow(),
       },
+      ...(config.features?.agents ? [
+        {
+          label: t('tray.menu.agentForge'),
+          accelerator: shortcuts.shortcutAccelerator(configShortcuts?.forge),
+          click: () => window.openAgentForgeWindow(),
+        },
+      ]: []),
       {
         type: 'separator'
       },

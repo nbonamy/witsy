@@ -1,76 +1,68 @@
 
 <template>
-  <div class="agents">
-    <div class="agent" :class="{ selected: selected === agent }" v-for="agent in agents" :key="agent.id" @click="selectAgent(agent)" @contextmenu.prevent="showContextMenu($event, agent)">
-      <div class="name">{{ agent.name }}</div>
-      <div class="description">{{ agent.description }}</div>
+  <div v-for="agents in [primaryAgents, secondaryAgents]" :set="type = agents[0]?.primary ? 'primary' : 'secondary'":key="type">
+    <div class="agents list-large-with-header" v-if="agents.length">
+      <div class="header">
+        <label>{{ t(`agent.forge.list.${type}`) }}</label>
+        <BIconPlusLg class="icon create" @click.prevent="$emit('create')" />
+      </div>
+      <div class="list" v-if="agents.length">
+        <template v-for="agent in agents" :key="agent.uuid">
+          <div class="item" @click="$emit('view', agent)">
+            <div class="info">
+              <div class="text">{{ agent.name }}</div>
+              <div class="subtext">{{ agent.name }}</div>
+            </div>
+            <div class="actions">
+              <BIconPlay v-if="type === 'primary'" class="run" @click.prevent.stop="$emit('run', agent)" />
+              <BIconSearch class="edit" @click.prevent.stop="$emit('view', agent)" />
+              <BIconTrash class="delete" @click.prevent.stop="$emit('delete', agent)" />
+            </div>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+
 import { Agent } from '../types/index'
-import { PropType } from 'vue'
+import { computed, PropType } from 'vue'
+import { t } from '../services/i18n'
 
-const emit = defineEmits(['select', 'menu']) 
+let type: string = ''
 
-defineProps({
-  agents: Array as PropType<Agent[]>,
-  selected: Object as PropType<Agent>,
+const emit = defineEmits(['create', 'view', 'run', 'delete']) 
+
+const primaryAgents = computed(() => {
+  return props.agents.filter(agent => agent.primary)
 })
 
-const selectAgent = (agent: Agent) => {
-  emit('select', agent)
-}
+const secondaryAgents = computed(() => {
+  return props.agents.filter(agent => !agent.primary)
+})
 
-const showContextMenu = (event: MouseEvent, agent: Agent) => {
-  event.preventDefault()
-  emit('menu', { event, agent })
-}
+const props = defineProps({
+  agents: Array as PropType<Agent[]>,
+})
 
 </script>
 
 <style scoped>
+@import '../../css/list-large-with-header.css';
+</style>
+
+<style scoped>
 
 .agents {
+  font-size: 110%;
 
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px;
-  overflow-y: auto;
-  height: calc(100vh - var(--create-panel-height) - var(--header-height) - var(--footer-height));
-
-  .agent {
-
-    margin: 2px 8px;
-    margin-right: 16px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border-radius: 8px;
-    cursor: pointer;
-    gap: 4px;
-
-    &.selected {
-      background-color: var(--sidebar-selected-color);
-      color: var(--color-selected-text);
-    }
-
-    .name {
-      font-weight: bold;
-      font-size: 10.5pt;
-    }
-
-    .description {
-      font-size: 9.5pt;
-      max-height: 30px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
+  .run {
+    transform: scale(1.66);
   }
-
 }
+
+
 
 </style>

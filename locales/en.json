@@ -36,6 +36,7 @@
     "deepResearch": "Deep Research",
     "default": "Default",
     "delete": "Delete",
+    "description": "Description",
     "differentLocales": "Your LLM locale is different than your interface locale. The texts displayed are im the LLM locale or your locale if you customized them.",
     "disabled": "Disabled",
     "documents": "Documents",
@@ -160,8 +161,14 @@
     },
     "voice": "Voice",
     "warning": "Warning",
+    "wizard": {
+      "last": "Done",
+      "next": "Next",
+      "prev": "Back"
+    },
     "workingWith": "Working with",
-    "write": "Write"
+    "write": "Write",
+    "yes": "Yes"
   },
   "agent": {
     "create": {
@@ -180,9 +187,15 @@
     },
     "description": "@:{'common.description'}",
     "forge": {
+      "confirmDelete": "Are you sure you want to delete this agent?",
       "create": "Create Agent",
       "edit": "Edit Agent",
-      "empty": "Select an existing agent or create a new one.",
+      "list": {
+        "primary": "Executable agents",
+        "secondary": "Support agents"
+      },
+      "view": "View Agent",
+      "empty": "Unlock the agentic power of Witsy by creating your first agent! Click the robot head to get started.",
       "title": "Agent Forge"
     },
     "goal": "Goal",
@@ -515,23 +528,24 @@
       "running": "Searching the Internet for \"{query}\"…",
       "starting": "Starting web browser to search the Internet…"
     },
+    "synthesis": {
+      "conclusion": {
+        "completed": "Conclusion ready to be integrated in the report!",
+        "running": "Writing the report conclusion…"
+      },
+      "error": "An error occured while synthesizing content",
+      "execsum": {
+        "completed": "Executive summary ready to be added to the report!",
+        "running": "Extracting key information for the executive summary…"
+      },
+      "starting": "Synthesizing content…"
+    },
+    "usage": "[BETA] Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
-      "error": "An error occurred while writing the report section",
+      "error": "An error occurred while writing the \"{title}\" report section",
       "running": "Writing report section \"{title}\" based on key learnings…",
       "starting": "Writing report section based on key learnings…"
-    },
-    "synthesis": {
-      "starting": "Synthesizing content…",
-      "error": "An error occured while synthesizing content",
-      "conclusion": {
-        "running": "Writing the report conclusion…",
-        "completed": "Conclusion ready to be integrated in the report!"
-      },
-      "execsum": {
-        "running": "Extracting key information for the executive summary…",
-        "completed": "Executive summary ready to be added to the report!"
-      }
     }
   },
   "designStudio": {
@@ -1385,6 +1399,7 @@
   "mcp": {
     "serverEditor": {
       "environmentVariables": "Environment Variables",
+      "httpHeaders": "Custom HTTP Headers",
       "selectCommand": "Select command",
       "serverPackage": "Server Package",
       "smitheryApiKey": "Smithery.ai API Key",
@@ -1430,6 +1445,7 @@
       "title": "Edit"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Close Window",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "New Chat",
@@ -1540,6 +1556,45 @@
       "completed": "Content downloaded from \"{title}\"",
       "error": "Error while downloading content",
       "running": "Downloading content…"
+    },
+    "filesystem": {
+      "confirmWrite": {
+        "text": "{path}",
+        "title": "The model is trying to overwrite or delete a file. Do you want to allow this?"
+      },
+      "default": {
+        "completed": "Filesystem operation completed",
+        "error": "Error during filesystem operation: {error}",
+        "running": "Performing filesystem operation…",
+        "starting": "Preparing filesystem operation…"
+      },
+      "delete": {
+        "completed": "Successfully deleted {path}",
+        "declined": "User declined to delete {path}",
+        "error": "Error while deleting {path}",
+        "running": "Deleting {path}…",
+        "starting": "Preparing to delete {path}…"
+      },
+      "invalidPath": "This operation is not part of the allowed paths: {path}",
+      "list": {
+        "completed": "No item found in {path} | Found 1 item in {path} | Found {count} items in {path}",
+        "error": "Error while listing contents of {path}",
+        "running": "Listing contents of {path}…",
+        "starting": "Preparing to list directory contents…"
+      },
+      "read": {
+        "completed": "File {path} read successfully",
+        "error": "Error while reading file {path}",
+        "running": "Reading file {path}…",
+        "starting": "Preparing to read file…"
+      },
+      "write": {
+        "completed": "Successfully wrote file {path}",
+        "declined": "User declined to overwrite {path}",
+        "error": "Error while writing file {path}",
+        "running": "Writing file {path}…",
+        "starting": "Preparing to write file…"
+      }
     },
     "image": {
       "completed": "Image generated successfully",
@@ -1737,11 +1792,6 @@
       "unselectAll": "@:{'common.selectNone'}"
     },
     "deepResearch": {
-      "runtime": "Runtime",
-      "runtimes": {
-        "ma": "Multi-agent (LLM-driven)",
-        "ms": "Multi-step (Witsy-driven)"
-      },
       "breadth": "Breadth of research",
       "breadths": {
         "narrow": "Narrow",
@@ -1749,8 +1799,13 @@
       },
       "depth": "Depth of research",
       "depths": {
-        "shallow": "Standard",
-        "deep": "Deep"
+        "deep": "Deep",
+        "shallow": "Standard"
+      },
+      "runtime": "Deep Research type",
+      "runtimes": {
+        "ma": "Multi-agent (full agentic, LLM-driven)",
+        "ms": "Multi-step (hybrid code/agent, Witsy-driven)"
       }
     },
     "engines": {
@@ -1923,6 +1978,18 @@
       "browse": {
         "description": "This plugin allows LLM engines to download content from the Internet and use it to generate more accurate responses.",
         "title": "Download"
+      },
+      "filesystem": {
+        "allowedPaths": "Allowed Directories",
+        "allowWrite": "Allow write operations (existing file overwrite and delete)",
+        "description": "This plugin allows LLM engines to interact with your local filesystem. They can list directory contents, read files, and create new files in specified directories. If you give authorization they can also overwrite and delete existing files.",
+        "pathsNote": "Models can only access files and directories within the paths you specify above. Choose directories carefully and only grant access to folders you trust the AI to interact with.",
+        "skipConfirmation": "DANGEROUS: Do not confirm write operations",
+        "skipConfirmationWarning": {
+          "text": "If you disable write operations confirmation, models may decide to overwrite/delete files. You will not be able to interrupt such operations. Do you really want to continue?",
+          "title": "Are you sure you want to disable write operation confirmation?"
+        },
+        "title": "Filesystem"
       },
       "image": {
         "apiKeyReminder": "Make sure you enter your API key in the Models pane of Witsy Settings.",
@@ -2117,8 +2184,10 @@
   "transcribe": {
     "autoStart": "Start transcribing when window opens",
     "clickToRecord": "Click the record button when you are ready!",
+    "dropzone": "Drop audio file",
     "errors": {
       "copy": "@:{'common.errorCopyClipboard'}",
+      "invalidFileType": "Please drop a valid audio file (.mp3 or .wav)",
       "microphone": "Error accessing microphone",
       "notAuthorized": {
         "text": "Click OK to open the Settings window and check your API key.",
@@ -2139,10 +2208,16 @@
       "toggle": "You can also hit Space to start recording and hit again to stop it."
     },
     "spaceToTalk": "Press and hold space to talk",
-    "title": "Speech-to-Text"
+    "summarize": "Summarize",
+    "summarizePrompt": "Summarize the text in a concise manner, using the same language it is written, plain and simple language and keep the same tense. Do not return anything other than the summary. Do not wrap responses in quotes.",
+    "title": "Speech-to-Text",
+    "translate": "Translate to…",
+    "translatePrompt": "Translate the following text in {lang}. Do not return anything other than the translation. Do not wrap responses in quotes.",
+    "upload": "@:{'common.upload'}"
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Install update and restart…",
       "newChat": "@:{'menu.file.newChat'}",

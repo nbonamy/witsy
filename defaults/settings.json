@@ -27,7 +27,8 @@
   "deepresearch": {
     "runtime": "ms",
     "breadth": 4,
-    "depth": 1
+    "depth": 1,
+    "searchResults": 8
   },
   "appearance": {
     "theme": "system",
@@ -444,6 +445,12 @@
     },
     "mcp": {
       "enabled": true
+    },
+    "filesystem": {
+      "enabled": false,
+      "allowedPaths": [],
+      "allowWrite": false,
+      "skipConfirmation": false
     }
   },
   "mcp": {

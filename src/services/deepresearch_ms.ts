@@ -140,9 +140,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
               response.addToolCall(seachToolCall)
 
               // execute
-              let r = await search.execute({ model: opts.model }, { query: query })
+              let r = await search.execute({ model: opts.model }, { query: query, maxResults: this.config.deepresearch.searchResults })
               if (r.error) {
-                r = await search.execute({ model: opts.model }, { query: query })
+                r = await search.execute({ model: opts.model }, { query: query, maxResults: this.config.deepresearch.searchResults })
               }
               if (r.results) {
                 results.push(...r.results)
@@ -163,8 +163,20 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
       )
 
+      // we need this for executive summary and conclusion
+      const allKeyLearnings: string[] = []
+
       // status
       await this.generateStatusUpdate(`I have gathered information for all sections. I am going to analyze the information and generate content for each section.`, response)
+
+      // add empty checkbox for each section
+      for (const section of sections) {
+        response.appendText({
+          type: 'content',
+          text: `\n\n- ⬜️ ${section.title}\n\n`,
+          done: false,
+        })
+      }
 
       // anaylyze and generate content for each section
       const sectionsContent = await Promise.all(
@@ -194,6 +206,9 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
             keyLearnings = searchResults[index].map(result => `- ${result.title}: ${result.content}`)
           }
 
+          // add to all key learnings
+          allKeyLearnings.push(...keyLearnings)
+
           // check if are aborted
           if (this.abortController?.signal.aborted) {
             return ''
@@ -216,11 +231,7 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
           response.usage = addUsages(response.usage, sectionContentMessage.usage)
 
           // status
-          response.appendText({
-            type: 'content',
-            text: `\n\n- ✅ ${section.title}\n\n`,
-            done: false,
-          })
+          response.content = response.content.replaceAll(`\n\n- ⬜️ ${section.title}\n\n`, `\n\n- ✅ ${section.title}\n\n`)
 
           // done
           return sectionContentMessage.content
@@ -233,10 +244,16 @@ export default class DeepResearchMultiStep implements dr.DeepResearch {
 
       // run agents
       const synthesis = new Runner(this.config, dr.synthesisAgent)
-      const execSummary = await synthesis.run('workflow', `Synthesize research findings into a comprehensive executive summary:
-        - Section Contents: ${sectionsContent.join('\n')}`, { ephemeral: true, ...opts })
-      const conclusion = await synthesis.run('workflow', `Synthesize research findings into a comprehensive conclusion:
-      - Section Contents: ${sectionsContent.join('\n')}`, { ephemeral: true, ...opts })
+      const execSummary = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt({
+        researchTopic: researchTopic,
+        keyLearnings: allKeyLearnings.join('\n'),
+        outputType: 'executive_summary',
+      }), { ephemeral: true, ...opts })
+      const conclusion = await synthesis.run('workflow', dr.synthesisAgent.buildPrompt({
+        researchTopic: researchTopic,
+        keyLearnings: allKeyLearnings.join('\n'),
+        outputType: 'conclusion',
+      }), { ephemeral: true, ...opts })
 
       // status
       await this.generateStatusUpdate(`Done! Here is your report`, response)

@@ -4,9 +4,10 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import { ModelsList, loadAzureModels, loadOpenAIModels } from 'multi-llm-ts'
+import { CustomEngineConfig } from '../../src/types/config'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -18,10 +19,10 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const llmIndex = 3
+const llmIndex = tabs.indexOf('settingsModels')
 
 beforeAll(() => {
-  useWindowMock({ customEngine: true})
+  useWindowMock({ customEngine: true })
   useBrowserMock()
   store.loadSettings()
   store.load = () => {}
@@ -124,11 +125,11 @@ test('create custom engine openai', async () => {
   await create.find('button[name=save]').trigger('click')
   expect(Object.keys(store.config.engines)).toHaveLength(enginesCount + 1)
   const engineId = Object.keys(store.config.engines).pop()
-  expect(store.config.engines[engineId!].label).toBe('custom_openai2')
-  expect(store.config.engines[engineId!].api).toBe('openai')
-  expect(store.config.engines[engineId!].baseURL).toBe('http://localhost/api/v2')
-  expect(store.config.engines[engineId!].apiKey).toBe('012')
-  expect(store.config.engines[engineId!].models).toEqual({ chat: [], image: [] })
+  expect((store.config.engines[engineId!] as CustomEngineConfig).label).toBe('custom_openai2')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).api).toBe('openai')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).baseURL).toBe('http://localhost/api/v2')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).apiKey).toBe('012')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).models).toEqual({ chat: [], image: [] })
 })
 
 test('create custom engine azure', async () => {
@@ -148,11 +149,11 @@ test('create custom engine azure', async () => {
   await create.find('button[name=save]').trigger('click')
   expect(Object.keys(store.config.engines)).toHaveLength(enginesCount + 1)
   const engineId = Object.keys(store.config.engines).pop()
-  expect(store.config.engines[engineId!].label).toBe('custom_azure2')
-  expect(store.config.engines[engineId!].api).toBe('azure')
-  expect(store.config.engines[engineId!].baseURL).toBe('https://witsy2.azure.com/')
-  expect(store.config.engines[engineId!].apiKey).toBe('345')
-  expect(store.config.engines[engineId!].deployment).toBe('deployment')
-  expect(store.config.engines[engineId!].apiVersion).toBe('2025-04-03')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).label).toBe('custom_azure2')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).api).toBe('azure')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).baseURL).toBe('https://witsy2.azure.com/')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).apiKey).toBe('345')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).deployment).toBe('deployment')
+  expect((store.config.engines[engineId!] as CustomEngineConfig).apiVersion).toBe('2025-04-03')
   expect(store.config.engines[engineId!].models).toEqual({ chat: [], image: [] })
 })

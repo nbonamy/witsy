@@ -10,23 +10,29 @@
     </header>
     <main>
       <div class="chat-content">
-        <MessageList :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
-        <EmptyChat v-else />
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="enableDeepResearch" class="prompt" ref="prompt" />
+        <MessageList class="chat-content-main" :chat="chat" :conversation-mode="conversationMode" v-if="chat?.hasMessages()"/>
+        <EmptyChat class="chat-content-main" v-else />
+        <div class="deep-research-usage" v-if="prompt?.isDeepResearchActive() && tipsManager.isTipAvailable('deepResearchUsage')">
+          {{  t('deepResearch.usage') }}
+          <div class="deep-research-usage-close" @click="onHideDeepResearchUsage">
+            <BIconXLg />
+          </div>
+        </div>
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
-    <ContextMenu v-if="showChatMenu" :on-close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
+    <ContextMenu v-if="showChatMenu" @close="closeChatMenu" :actions="chatMenuActions" @action-clicked="handleActionClick" :x="menuX" :y="menuY" :position="chatMenuPosition"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { Expert } from '../types/index'
+import { Expert, Message } from '../types/index'
 import { Ref, ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
 import Prompt from './Prompt.vue'
@@ -41,6 +47,9 @@ import IconMenu from './IconMenu.vue'
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
 
+import useTipsManager from '../composables/tips_manager'
+const tipsManager = useTipsManager(store)
+
 const props = defineProps({
   chat: {
     type: Chat,
@@ -52,11 +61,7 @@ const props = defineProps({
   }
 })
 
-const enableDeepResearch = computed(() => {
-  return store.config.features?.deepResearch
-})
-
-const chatMenuPosition = computed(() => {
+const chatMenuPosition = computed((): MenuPosition => {
   return /*window.api.platform == 'win32' ? 'left' :*/ 'right'
 })
 
@@ -127,7 +132,7 @@ const onRenameChat = () => {
 
 const onMenu = () => {
   showChatMenu.value = true
-  menuX.value = 16 + (chatMenuPosition.value == 'left' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
+  menuX.value = 16 + (chatMenuPosition.value == 'below' ? document.querySelector<HTMLElement>('.sidebar')!.offsetWidth : 0) 
   menuY.value = 32 + (window.api.platform == 'win32' ? 18 : 4)
 }
 
@@ -273,7 +278,19 @@ const onExportPdf = async () => {
 
 }
 
+const onHideDeepResearchUsage = () => {
+  tipsManager.setTipShown('deepResearchUsage')
+}
+
 defineExpose({
+
+  setPrompt: (userPrompt: string|Message) => {
+    prompt.value.setPrompt(userPrompt)
+  },
+
+  attach: (attachment: File) => {
+    prompt.value.attach(attachment)
+  },
 
   setExpert: (expert: Expert) => {
     prompt.value.setExpert(expert)
@@ -285,6 +302,10 @@ defineExpose({
 
   startDictation: () => {
     prompt.value.startDictation()
+  },
+
+  sendPrompt: () => {
+    prompt.value.sendPrompt()
   },
 
 })
@@ -355,7 +376,24 @@ defineExpose({
         flex-direction: column;
         max-width: 100%;
 
-        &:deep() > div:first-child {
+        .deep-research-usage {
+          padding: 1rem 1.5rem;
+          padding-bottom: 0rem;
+          color: var(--faded-text-color);
+          height: auto;
+          border-top: 1px solid var(--sidebar-border-color);
+
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+
+          .deep-research-usage-close {
+            cursor: pointer;
+            font-size: 14pt;
+          }
+        }
+
+        &:deep() .chat-content-main {
           flex: 1;
         }
 

@@ -4,8 +4,9 @@ import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
-import { switchToTab } from './settings_utils'
+import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
+import { ChatModel } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
@@ -34,7 +35,7 @@ vi.mock('../../src/services/store.ts', async (importOriginal) => {
 })
 
 let wrapper: VueWrapper<any>
-const expertsIndex = 7
+const expertsIndex = tabs.indexOf('settingsExperts')
 
 beforeAll(() => {
 
@@ -46,7 +47,10 @@ beforeAll(() => {
   store.experts[0].id = 'uuid1'
   store.config.engines.openai = {
     models: {
-      chat: [ { id: 'chat1', name: 'chat1' }, { id: 'chat2', name: 'chat2' } ]
+      chat: [ { id: 'chat1', name: 'chat1'} as ChatModel, { id: 'chat2', name: 'chat2' } as ChatModel ]
+    },
+    model: {
+      chat: 'chat1'
     }
   }
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
@@ -159,7 +163,9 @@ test('Edit system prompt', async () => {
   const editor = tab.findComponent({ name: 'ExpertEditor' })
   await tab.find('.sticky-table-container tr.expert:nth-of-type(1)').trigger('dblclick')
 
+  // @ts-expect-error backwards compatibility check
   expect(store.experts[1].label).toBeUndefined()
+  // @ts-expect-error backwards compatibility check
   expect(store.experts[1].template).toBeUndefined()
 
   expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('experts.experts.uuid1.name')

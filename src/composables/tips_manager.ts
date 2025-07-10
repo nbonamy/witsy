@@ -5,7 +5,8 @@ import Dialog from './dialog'
 export type TipId = 
   'engineSelector' | 'modelSelector' | 'conversation' |
   'computerUse' | 'realtime' | 'folderList' |
-  'favoriteModels' | 'pluginsDisabled' | 'folderDefaults'
+  'favoriteModels' | 'pluginsDisabled' | 'folderDefaults' |
+  'deepResearchUsage'
 
 type TipHandler = () => Promise<boolean>
 
@@ -54,8 +55,9 @@ class TipsManager {
 
     // callbacks
     const callbacks: Record<TipId, TipHandler> = {
-      'engineSelector': async () => { return false},
-      'modelSelector': async () => { return false},
+      'engineSelector': async () => { return false },
+      'modelSelector': async () => { return false },
+      'deepResearchUsage': async () => { return false },
       'conversation': this.showConversationTip,
       'computerUse': this.showComputerUseWarning,
       'realtime': this.showRealtimeTip,

@@ -167,12 +167,12 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## WIP
 
-- [ ] DeepResearch
 - [ ] Agents (multi-step, scheduling...)
 
 ## DONE
 
-- [x] Realtime STT & MT with Soniox
+- [x] DeepResearch
+- [x] Local filesystem access plugin
 - [x] Close markdown when streaming
 - [x] Multiple attachments
 - [x] Custom OpenAI STT support

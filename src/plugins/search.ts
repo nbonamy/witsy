@@ -68,26 +68,35 @@ export default class extends Plugin {
         type: 'string',
         description: 'The query to search for',
         required: true
+      },
+      {
+        name: 'maxResults',
+        type: 'number',
+        description: 'The maximum number of results to return',
+        required: false,
       }
     ]
   }
 
   async execute(context: PluginExecutionContext, parameters: anyDict): Promise<SearchResponse> {
+
+    const maxResults = parameters.maxResults || this.config.maxResults || 5
+    
     if (this.config.engine === 'local') {
-      return this.local(parameters)
+      return this.local(parameters, maxResults)
     } else if (this.config.engine === 'tavily') {
-      return this.tavily(parameters)
+      return this.tavily(parameters, maxResults)
     } else if (this.config.engine === 'brave') {
-      return this.brave(parameters)
+      return this.brave(parameters, maxResults)
     } else {
       return { error: 'Invalid engine' }
     }
   }
 
-  async local(parameters: anyDict): Promise<SearchResponse> {
+  async local(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
-      const results = await window.api.search.query(parameters.query, this.config.maxResults || 5)
+      const results = await window.api.search.query(parameters.query, maxResults)
       const response = {
         query: parameters.query,
         results: results.map(result => ({
@@ -103,13 +112,14 @@ export default class extends Plugin {
     }
   }
 
-  async tavily(parameters: anyDict): Promise<SearchResponse> {
+  async tavily(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       // tavily
       const tavily = new Tavily(this.config.tavilyApiKey)
       const results = await tavily.search(parameters.query, {
+        max_results: maxResults,
         //include_answer: true,
         //include_raw_content: true,
       })
@@ -137,12 +147,12 @@ export default class extends Plugin {
     }
   }
 
-  async brave(parameters: anyDict): Promise<SearchResponse> {
+  async brave(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
 
     try {
 
       const baseUrl = 'https://api.search.brave.com/res/v1/web/search'
-      const response = await fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${this.config.maxResults || 5}`, {
+      const response = await fetch(`${baseUrl}?q=${encodeURIComponent(parameters.query)}&count=${maxResults}`, {
         headers: {
           'Accept': 'application/json',
           'X-Subscription-Token': this.config.braveApiKey

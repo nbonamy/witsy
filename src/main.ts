@@ -16,7 +16,7 @@ import { fixPath, getCachedText } from './main/utils';
 import AutoUpdater from './main/autoupdate';
 import Automator from './automations/automator';
 import Automation, { AutomationAction } from './automations/automation'
-import Commander, { notEditablePrompts } from './automations/commander';
+import Commander, { askMeAnythingId, notEditablePrompts } from './automations/commander';
 import PromptAnywhere from './automations/anywhere';
 import ReadAloud from './automations/readaloud';
 import Transcriber from './automations/transcriber';
@@ -99,6 +99,7 @@ const installMenu = () => {
     scratchpad: window.openScratchPad,
     settings: window.openSettingsWindow,
     studio: window.openDesignStudioWindow,
+    forge: window.openAgentForgeWindow,
   }, settings.shortcuts);
 }
 
@@ -113,6 +114,7 @@ const registerShortcuts = () => {
     scratchpad: window.openScratchPad,
     realtime: window.openRealtimeChatWindow,
     studio: window.openDesignStudioWindow,
+    forge: window.openAgentForgeWindow,
   });
 }
 
@@ -444,7 +446,11 @@ ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
   window.closeCommandPicker(sourceApp);
 });
 
-ipcMain.on('command-is-prompt-editable', (event, payload) => {
+ipcMain.on('commands-ask-me-anything-id', (event) => {
+  event.returnValue = askMeAnythingId;
+});
+
+ipcMain.on('commands-is-prompt-editable', (event, payload) => {
   event.returnValue = !notEditablePrompts.includes(payload);
 });
 
@@ -582,6 +588,33 @@ ipcMain.on('get-text-content', async (event, contents, format) => {
 
 ipcMain.on('get-app-info', async (event, payload) => {
   event.returnValue = await file.getAppInfo(app, payload);
+});
+
+ipcMain.on('list-directory', (event, dirPath, includeHidden) => {
+  try {
+    event.returnValue = {
+      success: true,
+      items: file.listDirectory(app, dirPath, includeHidden)
+    }
+  } catch (error) {
+    console.error('Error while listing directory', error);
+    event.returnValue = {
+      success: false,
+      error: error.message
+    }
+  }
+});
+
+ipcMain.on('file-exists', (event, filePath) => {
+  event.returnValue = file.fileExists(app, filePath);
+});
+
+ipcMain.on('write-file', (event, filePath, content) => {
+  event.returnValue = file.writeFile(app, filePath, content);
+});
+
+ipcMain.on('normalize-path', (event, filePath) => {
+  event.returnValue = file.normalizePath(app, filePath);
 });
 
 ipcMain.on('markdown-render', (event, payload) => {
