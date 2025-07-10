@@ -128,7 +128,8 @@ const deleteAgent = (agent: Agent) => {
 
     main {
     
-      padding: 2rem 4rem;
+      padding: 2rem 2rem;
+      padding-left: 1rem;
 
       &.empty {
 
@@ -150,6 +151,17 @@ const deleteAgent = (agent: Agent) => {
         }
       }
 
+      &:deep() .list-large-with-header {
+        padding: 1rem 0;
+
+        &:first-child {
+          padding-top: 0;
+        }
+
+        &:last-child {
+          padding-bottom: 3rem;
+        }
+      }
     }
   }
 }

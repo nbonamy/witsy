@@ -1,6 +1,6 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
-import { anyDict, type Agent as AgentBase } from '../types/index'
+import { AgentType, anyDict, type Agent as AgentBase } from '../types/index'
 
 export default class Agent implements AgentBase {
 
@@ -9,7 +9,7 @@ export default class Agent implements AgentBase {
   updatedAt: number
   name: string
   description: string
-  primary: boolean
+  type: AgentType
   engine: string
   model: string
   locale: string
@@ -29,7 +29,7 @@ export default class Agent implements AgentBase {
     this.updatedAt = Date.now()
     this.name = ''
     this.description = ''
-    this.primary = true
+    this.type = 'runnable'
     this.engine = ''
     this.model = ''
     this.modelOpts = {}
@@ -57,7 +57,7 @@ export default class Agent implements AgentBase {
     agent.updatedAt = obj.updatedAt ?? Date.now()
     agent.name = obj.name
     agent.description = obj.description
-    agent.primary = obj.primary ?? true
+    agent.type = obj.type ?? 'runnable'
     agent.engine = obj.engine ?? ''
     agent.model = obj.model ?? ''
     agent.modelOpts = obj.modelOpts ?? null

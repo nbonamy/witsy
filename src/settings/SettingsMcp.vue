@@ -163,7 +163,7 @@ defineExpose({ load })
 main {
   width: calc(100% - 4rem);
   &.editor {
-    width: 500px;
+    width: 100%;
     align-self: center !important;
   }
 }

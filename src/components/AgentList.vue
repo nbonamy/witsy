@@ -1,6 +1,6 @@
 
 <template>
-  <div v-for="agents in [primaryAgents, secondaryAgents]" :set="type = agents[0]?.primary ? 'primary' : 'secondary'":key="type">
+  <div v-for="agents in [runnableAgents, supportAgents]" :set="type = agents[0]?.type":key="type">
     <div class="agents list-large-with-header" v-if="agents.length">
       <div class="header">
         <label>{{ t(`agent.forge.list.${type}`) }}</label>
@@ -14,7 +14,7 @@
               <div class="subtext">{{ agent.name }}</div>
             </div>
             <div class="actions">
-              <BIconPlay v-if="type === 'primary'" class="run" @click.prevent.stop="$emit('run', agent)" />
+              <BIconPlayCircle v-if="type === 'runnable'" class="run" @click.prevent.stop="$emit('run', agent)" />
               <BIconSearch class="edit" @click.prevent.stop="$emit('view', agent)" />
               <BIconTrash class="delete" @click.prevent.stop="$emit('delete', agent)" />
             </div>
@@ -35,12 +35,12 @@ let type: string = ''
 
 const emit = defineEmits(['create', 'view', 'run', 'delete']) 
 
-const primaryAgents = computed(() => {
-  return props.agents.filter(agent => agent.primary)
+const runnableAgents = computed(() => {
+  return props.agents.filter(agent => agent.type === 'runnable')
 })
 
-const secondaryAgents = computed(() => {
-  return props.agents.filter(agent => !agent.primary)
+const supportAgents = computed(() => {
+  return props.agents.filter(agent => agent.type === 'support')
 })
 
 const props = defineProps({
@@ -58,9 +58,10 @@ const props = defineProps({
 .agents {
   font-size: 110%;
 
-  .run {
-    transform: scale(1.66);
+  .create {
+    transform: scale(1.125);
   }
+
 }
 
 

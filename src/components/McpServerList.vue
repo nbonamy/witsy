@@ -22,7 +22,7 @@
       <div class="header">
         <label>{{ t('settings.mcp.mcpServers') }}</label>
         <Spinner v-if="loading" />
-        <BIconPlusLg class="icon add" ref="addButton" @click.prevent="onAdd"></BIconPlusLg>
+        <BIconPlusLg class="icon add large" ref="addButton" @click.prevent="onAdd"></BIconPlusLg>
         <BIconArrowClockwise class="icon reload" @click.prevent="onReload" />
         <BIconArrowRepeat class="icon restart" @click.prevent="onRestart" />
       </div>
