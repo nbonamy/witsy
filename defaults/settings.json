@@ -377,6 +377,17 @@
         "image": ""
       }
     },
+    "soniox": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
     "speechmatics": {
       "apiKey": "",
       "models": {
