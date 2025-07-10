@@ -1,5 +1,4 @@
 import { Configuration } from 'types/config'
-// REMOVE: import WebSocket from 'ws';
 import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback } from './stt'
 
 export default class STTSoniox implements STTEngine {
