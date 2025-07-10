@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref, PropType } from 'vue'
+import { ref, PropType } from 'vue'
 
 export type MovableType = 'none' | 'drag' | 'position'
 
@@ -25,7 +25,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const header: Ref<HTMLElement|null> = ref(null)
+const header= ref<HTMLElement|null>(null)
 
 const onClose = () => {
   emit('close')

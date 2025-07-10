@@ -33,7 +33,7 @@
 <script setup lang="ts">
 
 import { Expert } from '../types/index'
-import { Ref, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { store } from '../services/store'
 import { expertI18n, t } from '../services/i18n'
@@ -43,9 +43,9 @@ import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
 import { BIconThreeDotsVertical } from 'bootstrap-icons-vue'
 
-const experts: Ref<Expert[]> = ref(null)
-const selected: Ref<Expert> = ref(null)
-const moreButton: Ref<HTMLElement> = ref(null)
+const experts= ref<Expert[]>(null)
+const selected= ref<Expert>(null)
+const moreButton= ref<HTMLElement>(null)
 const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)

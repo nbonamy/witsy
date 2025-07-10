@@ -113,7 +113,7 @@
 <script setup lang="ts">
 
 import { StreamingChunk } from '../voice/stt'
-import { Ref, ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { store } from '../services/store'
 import { commandI18n, t } from '../services/i18n'
 import { getSTTEngines, getSTTModels } from '../voice/stt'
@@ -144,7 +144,7 @@ const engine = ref('')
 const model = ref('')
 const locale = ref('')
 const pushToTalk = ref(false)
-const state: Ref<State> = ref('idle')
+const state= ref<State>('idle')
 const transcription = ref('')
 const autoStart = ref(false)
 const foregroundColorActive = ref('')

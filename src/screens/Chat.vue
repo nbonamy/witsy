@@ -11,7 +11,7 @@
 import { LlmChunkContent } from 'multi-llm-ts'
 import { strDict } from '../types'
 import { MenuBarMode } from '../components/MenuBar.vue'
-import { Ref, ref, onMounted, nextTick, watch } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { saveFileContents } from '../services/download'
@@ -35,12 +35,12 @@ const tipsManager = useTipsManager(store)
 const llmManager = LlmFactory.manager(store.config)
 const assistant = ref(new Assistant(store.config))
 
-const chatArea: Ref<typeof ChatArea> = ref(null)
-const chatEditor: Ref<typeof ChatEditor> = ref(null)
-const sidebar: Ref<typeof ChatSidebar> = ref(null)
+const chatArea= ref<typeof ChatArea>(null)
+const chatEditor= ref<typeof ChatEditor>(null)
+const sidebar= ref<typeof ChatSidebar>(null)
 const chatEditorTitle = ref('')
 const chatEditorConfirmButtonText = ref('common.save')
-const chatEditorCallback: Ref<ChatEditorCallback> = ref(() => {})
+const chatEditorCallback= ref<ChatEditorCallback>(() => {})
 
 const props = defineProps({
   extra: Object

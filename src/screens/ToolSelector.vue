@@ -37,7 +37,7 @@
 <script setup lang="ts">
 
 import { ToolSelection } from '../types/llm'
-import { ref, Ref, onMounted, watch, PropType } from 'vue'
+import { ref, onMounted, watch, PropType } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { availablePlugins, PluginInstance } from '../plugins/plugins'
@@ -53,8 +53,8 @@ type Tool = {
 }
 
 const dialog = ref(null)
-const tools: Ref<Tool[]> = ref([])
-const selection: Ref<string[]> = ref([])
+const tools= ref<Tool[]>([])
+const selection= ref<string[]>([])
 
 const props = defineProps({
   tools: {

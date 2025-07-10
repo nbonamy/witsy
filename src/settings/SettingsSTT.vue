@@ -108,7 +108,7 @@
 <script setup lang="ts">
 
 import { Configuration } from '../types/config'
-import { Ref, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import defaults from '../../defaults/settings.json'
@@ -136,7 +136,7 @@ const nvidiaPrompt = ref(null)
 const whisperGPU = ref(true)
 const baseURL = ref('')
 const duration = ref(null)
-const progress: Ref<FilesProgressInfo|TaskStatus> = ref(null)
+const progress= ref<FilesProgressInfo|TaskStatus>(null)
 //const action = ref(null)
 
 const models = computed(() => {

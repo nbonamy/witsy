@@ -29,7 +29,7 @@
 <script setup lang="ts">
 
 import { Expert, Message } from '../types/index'
-import { Ref, ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { kMediaChatId, store } from '../services/store'
 import { t } from '../services/i18n'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
@@ -107,8 +107,8 @@ const historyProvider = (event: KeyboardEvent): string[] => {
 
 }
 
-const prompt: Ref<typeof Prompt> = ref(null)
-const conversationMode: Ref<string> = ref('')
+const prompt= ref<typeof Prompt>(null)
+const conversationMode= ref<string>('')
 const showModelSettings = ref(false)
 const showChatMenu = ref(false)
 const menuX = ref(0)

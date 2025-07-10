@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 
-import { ref, Ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import mermaid, { RenderResult } from 'mermaid'
 
 import useEventBus from '../composables/event_bus'
@@ -29,7 +29,7 @@ const props = defineProps({
   },
 })
 
-const render: Ref<RenderResult|null> = ref(null)
+const render= ref<RenderResult|null>(null)
 const viewCode = ref(false)
 const copyLabel = ref('Copy Code')
 const theme = ref('light')

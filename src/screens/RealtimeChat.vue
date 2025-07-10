@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 
-import { Ref, ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import AnimatedBlob from '../components/AnimatedBlob.vue'
@@ -93,7 +93,7 @@ let peerConnection: RTCPeerConnection = null
 let audioContext: AudioContext = null
 let audioStream: MediaStream = null
 
-const sessionTotals: Ref<Stats> = ref({
+const sessionTotals= ref<Stats>({
   audioInputTokens: 0,
   textInputTokens: 0,
   cachedInputTokens: 0,
@@ -109,12 +109,12 @@ const sessionTotals: Ref<Stats> = ref({
 const kWelcomeMessage = t('common.clickToStart')
 
 const blob = ref<typeof AnimatedBlob>(null)
-const engine: Ref<string> = ref('openai')
-const model: Ref<string> = ref('gpt-4o-mini-realtime-preview')
-const voice: Ref<string> = ref('ash')
+const engine= ref<string>('openai')
+const model= ref<string>('gpt-4o-mini-realtime-preview')
+const voice= ref<string>('ash')
 const status = ref(kWelcomeMessage)
-const state: Ref<'idle'|'active'> = ref('idle')
-const lastWords: Ref<string[]> = ref(['bon', 'jour', ' nicolas'])
+const state= ref<'idle'|'active'>('idle')
+const lastWords= ref<string[]>(['bon', 'jour', ' nicolas'])
 
 const engines = computed(() => ([
   { id: 'openai', name: 'OpenAI' },

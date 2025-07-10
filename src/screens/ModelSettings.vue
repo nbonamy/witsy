@@ -120,7 +120,7 @@
 <script setup lang="ts">
 
 import { anyDict } from '../types/index'
-import { ref, Ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -138,22 +138,22 @@ import { Ollama } from 'ollama/dist/browser.cjs'
 const editor = ref(null)
 const selector = ref(null)
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
-const engine: Ref<string> = ref(null)
-const model: Ref<string> = ref(null)
-const disableStreaming: Ref<boolean> = ref(false)
-const disableTools: Ref<boolean> = ref(false)
-const tools: Ref<string[]> = ref(null)
+const engine= ref<string>(null)
+const model= ref<string>(null)
+const disableStreaming= ref<boolean>(false)
+const disableTools= ref<boolean>(false)
+const tools= ref<string[]>(null)
 const locale = ref('')
 const instructions = ref('')
 const showAdvanced = ref(false)
-const contextWindowSize: Ref<number> = ref(undefined)
-const maxTokens: Ref<number> = ref(undefined)
-const temperature: Ref<number> = ref(undefined)
-const top_k: Ref<number> = ref(undefined)
-const top_p: Ref<number> = ref(undefined)
-const reasoning: Ref<boolean> = ref(undefined)
-const reasoningEffort: Ref<LlmReasoningEffort> = ref(undefined)
-const customParams: Ref<Record<string, string>> = ref({})
+const contextWindowSize= ref<number>(undefined)
+const maxTokens= ref<number>(undefined)
+const temperature= ref<number>(undefined)
+const top_k= ref<number>(undefined)
+const top_p= ref<number>(undefined)
+const reasoning= ref<boolean>(undefined)
+const reasoningEffort= ref<LlmReasoningEffort>(undefined)
+const customParams = ref<Record<string, string>>({})
 const selectedParam = ref(null)
 
 const props = defineProps({
