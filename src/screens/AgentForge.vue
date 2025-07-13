@@ -1,9 +1,5 @@
 <template>
   <div class="panel-content">
-    <div class="panel">
-      <header>
-      </header>
-    </div>
     <div class="content">
       <header v-if="mode === 'create'">
         <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
@@ -20,12 +16,12 @@
         <BIconRobot @click="onCreate" />
         {{ t('agent.forge.empty') }}
       </main>
-      <main class="list sliding-root" :class="{ hidden: mode !== 'list' }" v-else>
+      <main class="list sliding-root" :class="{ visible: mode === 'list' }" v-else>
         <AgentList :agents="store.agents" @create="onCreate" @run="onRun" @view="viewAgent" @delete="deleteAgent" />
       </main>
-      <main class="sliding-pane" :class="{ hidden: mode === 'list' }" @transitionend="onTransitionEnd">
-        <AgentEditor :style="{ display: isPaneVisible('create') ? 'block' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
-        <AgentView :style="{ display: isPaneVisible('view') ? 'block' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
+      <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
+        <AgentEditor :style="{ display: isPaneVisible('create') ? 'flex' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
+        <AgentView :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
       </main>
     </div>
   </div>
@@ -126,10 +122,14 @@ const deleteAgent = (agent: Agent) => {
   
   .content {
 
+    header {
+      padding-left: 2rem;
+    }
+
     main {
     
-      padding: 2rem 2rem;
-      padding-left: 1rem;
+      padding: 2rem;
+      width: calc(100% - 4rem);
 
       &.empty {
 

@@ -1,48 +1,54 @@
 
 <template>
 
-  <div v-if="agent">
-  
-    <div class="header list-large-with-header">
-      <div class="header">
-        <label>{{ t('agent.view.header') }}</label>
-        <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
-        <BIconPencil class="icon edit" @click="onEdit" />
-        <BIconTrash class="icon delete" @click="onDelete" />
-      </div>
-      <form class="list large">
-        <div class="group">
-          <label>{{ t('agent.description') }}</label>
-          {{ agent.description }}
-        </div>
-        <div class="group">
-          <label>{{ t('agent.runCount') }}</label>
-          {{ runs.length }}
-        </div>
-        <div class="group">
-          <label>{{ t('agent.lastRun') }}</label>
-          {{ lastRun }}
-        </div>
-        <div class="group" v-if="agent.schedule">
-          <label>{{ t('agent.nextRun') }}</label>
-          {{ nextRun }}
-        </div>
-      </form>
+  <div class="agent-view" v-if="agent">
 
+    <div class="viewer" v-if="!editing">
+    
+      <div class="header list-large-with-header">
+        <div class="header">
+          <label>{{ t('agent.view.header') }}</label>
+          <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
+          <BIconPencil class="icon edit" @click="onEdit" />
+          <BIconTrash class="icon delete" @click="onDelete" />
+        </div>
+        <form class="list large">
+          <div class="group">
+            <label>{{ t('agent.description') }}</label>
+            {{ agent.description }}
+          </div>
+          <div class="group">
+            <label>{{ t('agent.runCount') }}</label>
+            {{ runs.length }}
+          </div>
+          <div class="group">
+            <label>{{ t('agent.lastRun') }}</label>
+            {{ lastRun }}
+          </div>
+          <div class="group" v-if="agent.schedule">
+            <label>{{ t('agent.nextRun') }}</label>
+            {{ nextRun }}
+          </div>
+        </form>
+
+      </div>
+
+      <div class="runs list-large-with-header">
+        <div class="header">
+          <label>{{ t('agent.view.history') }}</label>
+          <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
+        </div>
+        <div class="list">
+          <AgentHistory :agent="agent" :runs="runs" v-if="runs.length"/>
+          <div class="empty" v-else>
+            {{ t('agent.history.empty') }}
+          </div>
+        </div>
+      </div>
+    
     </div>
 
-    <div class="runs list-large-with-header">
-      <div class="header">
-        <label>{{ t('agent.view.history') }}</label>
-        <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
-      </div>
-      <div class="list">
-        <AgentHistory :agent="agent" :runs="runs" v-if="runs.length"/>
-        <div class="empty" v-else>
-          {{ t('agent.history.empty') }}
-        </div>
-      </div>
-    </div>
+    <AgentEditor class="editor" mode="create" :agent="agent" @cancel="editing = false;" @save="editing = false" />
   
   </div>
 
@@ -55,9 +61,11 @@ import { Agent, AgentRun } from '../types/index'
 import { ref, PropType, onMounted, watch, computed } from 'vue'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
+import AgentEditor from './AgentEditor.vue'
 import AgentHistory from './AgentHistory.vue'
 
-const runs= ref<AgentRun[]>([]) 
+const runs= ref<AgentRun[]>([])
+const editing = ref(false)
 
 const props = defineProps({
   agent: {
@@ -84,6 +92,7 @@ const nextRun = computed(() => {
 onMounted(() => {
   watch(() => props.agent, () => {
     if (!props.agent) return
+    editing.value = false
     runs.value = window.api.agents.getRuns(props.agent.id)
   }, { immediate: true })
 })
@@ -93,7 +102,7 @@ const onRun = () => {
 }
 
 const onEdit = () => {
-  emit('edit', props.agent)
+  editing.value = true
 }
 
 const onClearHistory = () => {
@@ -114,35 +123,52 @@ const onDelete = () => {
 
 <style scoped>
 
-.header {
+.agent-view {
+  
+  display: flex;
+  flex-direction: row;
+  height: 100%;
 
-  .list {
-    gap: 0px;
+  .viewer {
+  
+    .header {
+
+      .list {
+        gap: 0px;
+      }
+
+      .group {
+        align-items: flex-start;
+        font-size: 10.5pt;
+
+        label {
+          min-width: 120px;
+          margin-right: 16px;
+          font-weight: bold;
+          text-align: right;
+        }
+
+        label::after {
+          content: none !important;
+        }
+        
+      }
+
+    }
+
+    .runs .list {
+      overflow-x: scroll;
+    }
+
   }
 
-  .group {
-    align-items: flex-start;
-    font-size: 10.5pt;
-
-    label {
-      min-width: 120px;
-      margin-right: 16px;
-      font-weight: bold;
-      text-align: right;
-    }
-
-    label::after {
-      content: none !important;
-    }
-    
+  .editor {
+    flex: 1;
+    width: 100%;
   }
 
 }
 
-.runs .list {
-  overflow-x: scroll;
-
-}
 
 
 </style>
