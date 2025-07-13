@@ -28,8 +28,13 @@ export const fixPath = async (): Promise<void> => {
       return
     }
 
+    // nu requires some tweaking
+    const shell = process.env.SHELL || '/bin/bash'
+    const isNu = shell === 'nu' || shell.endsWith('/nu')
+    const echo = isNu ? 'print' : 'echo -n'
+
     // macOS and Linux need to fix the PATH
-    const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_ENV_DELIMITER_"; printenv PATH; echo -n "_SHELL_ENV_DELIMITER_";'`
+    const command = `${shell} -l -c '${echo} "_SHELL_ENV_DELIMITER_"; printenv PATH; ${echo} "_SHELL_ENV_DELIMITER_";'`
     const output = execSync(command).toString();
     let path = output.split('_SHELL_ENV_DELIMITER_')[1].trim();
     const paths = path.split(':')
@@ -49,7 +54,7 @@ export const fixPath = async (): Promise<void> => {
     // try to deal with nvm using nvm
     let nvmFixed = false
     try {
-      const command = `${process.env.SHELL} -l -c 'echo -n "_SHELL_NVM_DELIMITER_"; nvm which current; echo -n "_SHELL_NVM_DELIMITER_";'`
+      const command = `${shell} -l -c '${echo} "_SHELL_NVM_DELIMITER_"; nvm which current; ${echo} "_SHELL_NVM_DELIMITER_";'`
       const output = execSync(command).toString();
       let nbp = output.split('_SHELL_NVM_DELIMITER_')[1].trim()
       if (fs.existsSync(nbp)) {
