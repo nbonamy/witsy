@@ -1,6 +1,7 @@
 
 import { LlmModelOpts, PluginParameter } from 'multi-llm-ts'
 import { AgentType, anyDict, type Agent as AgentBase } from '../types/index'
+import { ZodType } from 'zod'
 
 export default class Agent implements AgentBase {
 
@@ -14,6 +15,10 @@ export default class Agent implements AgentBase {
   model: string
   locale: string
   modelOpts: LlmModelOpts|null
+  structuredOutput?: {
+    name: string
+    structure: ZodType
+  }
   disableStreaming: boolean
   tools: string[]|null
   agents: string[]|null
