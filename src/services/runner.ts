@@ -74,6 +74,7 @@ export default class extends Generator {
       // merge with defaults
       const defaults: GenerationOpts = {
         ... this.llmManager.getChatEngineModel(),
+        structuredOutput: this.agent.structuredOutput,
         docrepo: null,
         sources: true,
         citations: true,

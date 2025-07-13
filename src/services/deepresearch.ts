@@ -5,6 +5,7 @@ import { AssistantCompletionOpts } from './assistant'
 import { t } from './i18n'
 import Agent from '../models/agent'
 import Chat from '../models/chat'
+import { z } from 'zod'
 
 export type DeepResearchOpts = AssistantCompletionOpts & {
   breadth: number, // number of sections to create
@@ -83,6 +84,16 @@ Your output will ONLY consist of the list of sections as a JSON object with no m
   () => t('deepResearch.planning.completed'),
   () => t('deepResearch.planning.error'),
 )
+planningAgent.structuredOutput = {
+  name: 'planning',
+  structure: z.object({
+    sections: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      queries: z.array(z.string())
+    }))
+  })
+}
 
 export const searchAgent = Agent.fromJson({
   name: 'search',
@@ -174,6 +185,12 @@ Your output will ONLY consist of the list of learnings as a JSON object with no 
   () => t('deepResearch.analysis.completed'),
   () => t('deepResearch.analysis.error'),
 )
+analysisAgent.structuredOutput = {
+  name: 'analysis',
+  structure: z.object({
+    learnings: z.array(z.string())
+  })
+}
 
 export const writerAgent = Agent.fromJson({
   name: 'writer',

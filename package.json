@@ -146,7 +146,8 @@
     "webm-to-wav-converter": "^1.1.0",
     "youtube-transcript": "^1.2.1",
     "youtube-transcript-api": "^2.0.4",
-    "ytv": "^1.0.3"
+    "ytv": "^1.0.3",
+    "zod": "^3.25.76"
   },
   "build": {
     "appId": "com.nabocorp.witsy",
