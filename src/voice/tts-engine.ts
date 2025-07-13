@@ -1,5 +1,5 @@
 
-import { Configuration } from 'types/config'
+import { Configuration } from '../types/config'
 import * as nodeStream from 'stream'
 
 export type SynthesisStream = nodeStream.Readable

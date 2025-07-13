@@ -1,6 +1,6 @@
 
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
-import { DesignStudioMediaType, Shortcut, strDict } from './index'
+import { DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
 import { PluginConfig } from 'plugins/plugin'
 import { McpClaudeServer, McpServer } from './mcp'
 import { ToolSelection } from './llm'
@@ -37,6 +37,7 @@ export type EngineConfig = WitsyEngineCreateOpts & {
   model: ModelConfig
   realtime?: EngineRealtimeConfig
   disableTools?: boolean
+  voices?: TTSVoice[]
 }
 
 export type CustomEngineConfig = EngineConfig & {
@@ -218,7 +219,6 @@ export type TTSConfig = {
 
 export type RealtimeConfig = {
   engine: string
-
 }
 
 export type ModelType = 'chat' | 'image' | 'video' | 'embedding' | 'realtime' | 'computer' | 'tts' | 'stt' | 'imageEdit' | 'videoEdit'

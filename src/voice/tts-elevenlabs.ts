@@ -1,4 +1,5 @@
 
+import { TTSVoice } from '../types/index'
 import { Configuration } from '../types/config'
 import { SynthesisResponse, TTSEngine } from './tts-engine'
 import { ElevenLabsClient } from 'elevenlabs'
@@ -18,7 +19,7 @@ export default class TTSElevenLabs extends TTSEngine {
   ]
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static readonly voices = (model: string) => [
+  static readonly voices = (model: string): TTSVoice[] => [
     { id: 'Xb7hH8MSUJpSbSDYk0k2', label: 'Alice' },
     // { id: 'aEO01A4wXwd1O8GPgGlF', label: 'Arabella' },
     { id: '9BWtsMINqrJLrRacOk9x', label: 'Aria' },
@@ -47,6 +48,19 @@ export default class TTSElevenLabs extends TTSEngine {
     this.client = new ElevenLabsClient({
       apiKey: this.config.engines.elevenlabs.apiKey
     })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async getVoices(model: string): Promise<TTSVoice[]> {
+    const voices = await this.client.voices.getAll()
+    return voices.voices.sort((a, b) => {
+      if (a.is_owner && !b.is_owner) return 1
+      if (!a.is_owner && b.is_owner) return -1
+      return a.name.localeCompare(b.name)
+    }).map(voice => ({
+      id: voice.voice_id,
+      label: voice.name || voice.voice_id,
+    }))
   }
 
   async synthetize(text: string, opts?: { model?: string, voice?: string}): Promise<SynthesisResponse> {
