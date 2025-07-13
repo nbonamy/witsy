@@ -39,14 +39,39 @@ export default class {
   }
 
   getServers = (): McpServer[] => {
+
+    // load
     const config = loadSettings(this.app)
+
+    // backwards compatibility
+    // @ts-expect-error backwards compatibility
+    if (config.mcp.disabledMcpServers) {
+
+      // @ts-expect-error backwards compatibility
+      for (const server of config.mcp.disabledMcpServers) {
+        // create extra entry
+        if (!config.mcp.mcpServersExtra[server]) {
+          config.mcp.mcpServersExtra[server] = {}
+        }
+        config.mcp.mcpServersExtra[server].state = 'disabled'
+      }
+
+      // delete
+      // @ts-expect-error backwards compatibility
+      delete config.mcp.disabledMcpServers
+      saveSettings(this.app, config)
+
+    }
+
+    // now we can do it
     return [
       ...config.mcp.servers,
       ...Object.keys(config.mcpServers).reduce((arr: McpServer[], key: string) => {
         arr.push({
           uuid: key.replace('@', ''),
           registryId: key,
-          state: config.mcp.disabledMcpServers?.includes(key) ? 'disabled' : 'enabled',
+          label: config.mcp.mcpServersExtra[key]?.label || undefined,
+          state: config.mcp.mcpServersExtra[key]?.state || 'enabled',
           type: 'stdio',
           command: config.mcpServers[key].command,
           url: config.mcpServers[key].args.join(' '),
@@ -211,11 +236,11 @@ export default class {
     if (original) {
       original.type = server.type
       original.state = server.state
-      if (server.title !== undefined) {
-        if (server.title.trim().length) {
-          original.title = server.title.trim()
+      if (server.label !== undefined) {
+        if (server.label.trim().length) {
+          original.label = server.label.trim()
         } else {
-          delete original.title
+          delete original.label
         }
       }
       original.command = server.command
@@ -230,16 +255,21 @@ export default class {
     const originalMcp = config.mcpServers[server.registryId]
     if (originalMcp) {
 
-      // state is outside of mcpServers
-      if (server.state === 'disabled') {
-        if (!config.mcp.disabledMcpServers) {
-          config.mcp.disabledMcpServers = []
+      // extra information
+      if (!config.mcp.mcpServersExtra[server.registryId]) {
+        config.mcp.mcpServersExtra[server.registryId] = {}
+      }
+
+      // state
+      config.mcp.mcpServersExtra[server.registryId].state = server.state
+      
+      // label
+      if (server.label !== undefined) {
+        if (server.label.trim().length) {
+          config.mcp.mcpServersExtra[server.registryId].label = server.label.trim()
+        } else {
+          delete config.mcp.mcpServersExtra[server.registryId].label
         }
-        if (!config.mcp.disabledMcpServers.includes(server.registryId)) {
-          config.mcp.disabledMcpServers.push(server.registryId)
-        }
-      } else {
-        config.mcp.disabledMcpServers = config.mcp.disabledMcpServers.filter((s: string) => s !== server.registryId)
       }
 
       // rest is normal

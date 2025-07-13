@@ -8,7 +8,6 @@
     "cancel": "Cancelar",
     "chat": "Chat",
     "clear": "Limpiar",
-    "title": "Título",
     "clickToStart": "Haz clic en el blob para comenzar a chatear",
     "close": "Cerrar",
     "colon": "noespaciado",
@@ -60,6 +59,7 @@
     "insert": "Insertar",
     "install": "Instalar",
     "key": "Clave",
+    "label": "Etiqueta",
     "language": {
       "auto": "🤖 Igual que la interfaz",
       "system": "🖥️ Idioma del sistema",
@@ -154,7 +154,6 @@
   "agent": {
     "create": {
       "information": "Información General",
-      "introduction": "Un agente es una IA especializada que puede realizar tareas por ti. Puedes crear un agente para automatizar tareas como escribir correos, resumir documentos o generar informes. También puedes crear un agente para ayudarte con tareas específicas, como escribir código o crear presentaciones.",
       "invocation": "Disparadores del Agente",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "Configuración del Modelo",
@@ -170,12 +169,11 @@
     "forge": {
       "confirmDelete": "¿Estás seguro de que quieres eliminar este agente?",
       "create": "Crear Agente",
-      "edit": "Editar Agente",
-      "empty": "Selecciona un agente existente o crea uno nuevo."
+      "empty": "Selecciona un agente existente o crea uno nuevo.",
+      "title": "Forja del Agente"
     },
     "goal": "Objetivo",
     "history": {
-      "clear": "Borrar historial",
       "date": "Fecha",
       "duration": "Duración",
       "empty": "Aún sin historial…",
@@ -201,6 +199,10 @@
       "nextRuns": "Próximas ejecuciones",
       "schedule": "Programación",
       "webhook": "URL del Webhook"
+    },
+    "view": {
+      "header": "Resumen del Agente",
+      "history": "Historial"
     }
   },
   "automation": {
@@ -1420,6 +1422,7 @@
       "title": "Editar"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Cerrar ventana",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nueva conversación",
@@ -2182,6 +2185,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Instalar actualización y reiniciar…",
       "newChat": "@:{'menu.file.newChat'}",

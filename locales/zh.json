@@ -8,7 +8,6 @@
     "cancel": "取消",
     "chat": "聊天",
     "clear": "清除",
-    "title": "标题",
     "clickToStart": "点击气泡开始聊天",
     "close": "关闭",
     "colon": "notspaced",
@@ -60,6 +59,7 @@
     "insert": "插入",
     "install": "安装",
     "key": "密钥",
+    "label": "标签",
     "language": {
       "auto": "🤖 与界面相同",
       "system": "🖥️ 系统语言",
@@ -173,7 +173,6 @@
   "agent": {
     "create": {
       "information": "基本信息",
-      "introduction": "代理是一种可以为您执行任务的专用 AI。您可以创建代理来自动化任务，如写邮件、总结文档或生成报告。您也可以创建代理来帮助您完成特定任务，如编写代码或制作演示文稿。",
       "invocation": "代理触发器",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "模型配置",
@@ -189,12 +188,11 @@
     "forge": {
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "创建代理",
-      "edit": "编辑代理",
-      "empty": "请选择现有代理或创建新代理。"
+      "empty": "请选择现有代理或创建新代理。",
+      "title": "代理锻造"
     },
     "goal": "目标",
     "history": {
-      "clear": "清除历史",
       "date": "日期",
       "duration": "持续时间",
       "empty": "暂无历史记录…",
@@ -220,6 +218,10 @@
       "nextRuns": "下一次运行",
       "schedule": "计划",
       "webhook": "Webhook URL"
+    },
+    "view": {
+      "header": "代理摘要",
+      "history": "历史"
     }
   },
   "automation": {
@@ -1439,6 +1441,7 @@
       "title": "编辑"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "新建聊天",
@@ -2204,6 +2207,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "安装更新并重启…",
       "newChat": "@:{'menu.file.newChat'}",

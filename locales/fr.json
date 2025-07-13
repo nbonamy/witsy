@@ -8,7 +8,6 @@
     "cancel": "Annuler",
     "chat": "Conversation",
     "clear": "Effacer",
-    "title": "Titre",
     "clickToStart": "Cliquez sur le blob pour commencer à discuter",
     "close": "Fermer",
     "colon": "spaced",
@@ -60,6 +59,7 @@
     "insert": "Insérer",
     "install": "Installer",
     "key": "Clé",
+    "label": "Étiquette",
     "language": {
       "auto": "🤖 Identique à l'interface",
       "system": "🖥️ Langue du système",
@@ -154,7 +154,6 @@
   "agent": {
     "create": {
       "information": "Informations générales",
-      "introduction": "Un agent est une IA spécialisée capable d'exécuter des tâches pour vous. Vous pouvez créer un agent pour automatiser des tâches telles que rédiger des e-mails, résumer des documents ou générer des rapports. Vous pouvez aussi créer un agent pour vous aider avec des tâches spécifiques, comme écrire du code ou créer des présentations.",
       "invocation": "Déclencheurs de l'agent",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "Configuration du modèle",
@@ -170,12 +169,11 @@
     "forge": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet agent ?",
       "create": "Créer un agent",
-      "edit": "Modifier l'agent",
-      "empty": "Sélectionnez un agent existant ou créez-en un nouveau."
+      "empty": "Sélectionnez un agent existant ou créez-en un nouveau.",
+      "title": "Forge d'agent"
     },
     "goal": "Objectif",
     "history": {
-      "clear": "Effacer l'historique",
       "date": "Date",
       "duration": "Durée",
       "empty": "Pas encore d'historique…",
@@ -201,6 +199,10 @@
       "nextRuns": "Prochaines exécutions",
       "schedule": "Planification",
       "webhook": "URL du webhook"
+    },
+    "view": {
+      "header": "Résumé de l'agent",
+      "history": "Historique"
     }
   },
   "automation": {
@@ -1420,6 +1422,7 @@
       "title": "Édition"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Fermer la fenêtre",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nouvelle conversation",
@@ -2182,6 +2185,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Installer la mise à jour et redémarrer…",
       "newChat": "@:{'menu.file.newChat'}",
