@@ -87,6 +87,7 @@ const getType = (server: McpServer) => {
 }
 
 const getDescription = (server: McpServer) => {
+  if (server.title && server.title.trim().length) return server.title
   if (['http', 'sse'].includes(server.type)) return server.url
   if (server.url.includes('@smithery/cli')) {
     const index = server.command === 'cmd' && server.url.startsWith('/c') ? 2 : 0 
