@@ -170,6 +170,10 @@
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Crea agente",
       "empty": "Seleziona un agente esistente o creane uno nuovo.",
+      "list": {
+        "runnable": "Agenti eseguibili",
+        "support": "Agenti di supporto"
+      },
       "title": "Forgia Agente"
     },
     "goal": "Obiettivo",

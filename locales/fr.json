@@ -170,6 +170,10 @@
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet agent ?",
       "create": "Créer un agent",
       "empty": "Sélectionnez un agent existant ou créez-en un nouveau.",
+      "list": {
+        "runnable": "Agents exécutables",
+        "support": "Agents de support"
+      },
       "title": "Forge d'agent"
     },
     "goal": "Objectif",

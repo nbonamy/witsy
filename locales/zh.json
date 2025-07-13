@@ -189,6 +189,10 @@
       "confirmDelete": "您确定要删除此代理吗？",
       "create": "创建代理",
       "empty": "请选择现有代理或创建新代理。",
+      "list": {
+        "runnable": "可执行代理",
+        "support": "支持代理"
+      },
       "title": "代理锻造"
     },
     "goal": "目标",

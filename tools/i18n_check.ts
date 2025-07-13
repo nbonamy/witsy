@@ -430,7 +430,8 @@ async function checkUnusedTranslations(): Promise<Set<string>> {
         !key.match(/^computerUse\.action\..*$/) &&
         !key.match(/^commands\.commands\..*$/) &&
         !key.match(/^experts\.experts\..*$/) &&
-        !key.match(/^tray\.notification\..*$/)
+        !key.match(/^tray\.notification\..*$/) &&
+        !key.match(/^agent\.forge\.list\..*$/)
       ))
 
       // Check each source file for key usage
