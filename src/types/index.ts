@@ -510,3 +510,8 @@ export interface WebSocketFrame {
   payloadData: string
   payloadLength: number
 }
+
+export type TTSVoice = {
+  id: string
+  label: string
+}

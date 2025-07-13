@@ -40,6 +40,9 @@
             {{ voice.label }}
           </option>
         </select>
+        <button class="control" @click.prevent="onRefreshVoices" v-if="canRefreshVoices">
+          {{ t('common.refresh') }}
+        </button>
         <button class="control" @click.prevent="onPlay">
           <BIconPlayFill v-if="audioState.state === 'idle'"/>
           <BIconStopFill v-else />
@@ -113,6 +116,10 @@ const models = computed(() => {
 
 })
 
+const canRefreshVoices = computed(() => {
+  return engine.value === 'elevenlabs'
+})
+
 const voices = computed(() => {
 
   // get models
@@ -121,7 +128,11 @@ const voices = computed(() => {
   } else if (engine.value === 'groq') {
     return TTSGroq.voices(model.value)
   } else if (engine.value === 'elevenlabs') {
-    return TTSElevenLabs.voices(model.value)
+    if (store.config.engines.elevenlabs?.voices?.length) {
+      return store.config.engines.elevenlabs.voices
+    } else {
+      return TTSElevenLabs.voices(model.value)
+    }
   } else if (engine.value === 'falai') {
     return TTSFalAi.voices(model.value)
   // } else if (engine.value === 'replicate') {
@@ -162,6 +173,17 @@ const onPlay = () => {
     audioPlayer.stop()
   } else {
     audioPlayer.play(audio.value!, 'sample', t('settings.voice.tts.sampleText'))
+  }
+}
+
+const onRefreshVoices = async () => {
+  if (engine.value === 'elevenlabs') {
+    const engine = new TTSElevenLabs(store.config)
+    const voices = await engine.getVoices(model.value)
+    if (voices?.length) {
+      store.config.engines.elevenlabs.voices = voices
+      store.saveSettings()
+    }
   }
 }
 
