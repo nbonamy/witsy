@@ -189,6 +189,10 @@
       "confirmDelete": "Czy na pewno chcesz usunąć tego agenta?",
       "create": "Utwórz agenta",
       "empty": "Wybierz istniejącego agenta lub stwórz nowego.",
+      "list": {
+        "runnable": "Agenci wykonywalni",
+        "support": "Agenci wsparcia"
+      },
       "title": "Kuźnia agentów"
     },
     "goal": "Cel",
