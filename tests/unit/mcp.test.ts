@@ -1,5 +1,6 @@
 
 import { vi, test, expect, beforeEach } from 'vitest'
+import type { McpServer } from '../../src/types/mcp'
 import { app } from 'electron'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js'
@@ -219,6 +220,29 @@ test('Edit normal server', async () => {
     type: 'sse',
     url: 'http://localhost:3001',
   })
+})
+
+test('Edit server title', async () => {
+  const mcp = new Mcp(app)
+  // set a non-empty title (trimmed)
+  expect(await mcp.editServer({
+    uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
+    url: 'http://localhost:3001', title: '  My Title  '
+  })).toBe(true)
+  const withTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(withTitle?.title).toBe('My Title')
+  const cfgWithTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(cfgWithTitle?.title).toBe('My Title')
+
+  // clear the title by providing an empty string
+  expect(await mcp.editServer({
+    uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
+    url: 'http://localhost:3001', title: ''
+  })).toBe(true)
+  const noTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(noTitle?.title).toBeUndefined()
+  const cfgNoTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(cfgNoTitle?.title).toBeUndefined()
 })
 
 test('Edit mcp server', async () => {
