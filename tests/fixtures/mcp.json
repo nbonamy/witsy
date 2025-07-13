@@ -6,7 +6,8 @@
       { "uuid": "3456-7890-abcd", "registryId": "3456-7890-abcd", "state": "disabled", "type": "stdio", "command": "python3", "url": "script.py" },
       { "uuid": "4567-890a-bcde", "registryId": "4567-890a-bcde", "state": "enabled", "type": "http", "url": "http://localhost:3002" }
     ],
-    "disabledMcpServers": [ "mcp2" ]
+    "disabledMcpServers": [ "mcp2" ],
+    "mcpServersExtra": {}
   },
   "mcpServers": {
     "s1": {

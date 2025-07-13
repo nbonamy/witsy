@@ -10,8 +10,8 @@
       </select>
     </div>
     <div class="group">
-      <label>{{ t('common.title') }}</label>
-      <input type="text" name="title" v-model="title" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
+      <label>{{ t('common.label') }}</label>
+      <input type="text" name="label" v-model="label" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
     </div>
     <div class="group" v-if="['http', 'sse'].includes(type)">
       <label>{{ t('common.url') }}</label>
@@ -118,6 +118,7 @@ export type McpServerVariable = {
 
 const editor = ref(null)
 const type = ref('stdio')
+const label = ref('')
 const command = ref('')
 const source = ref('')
 const url = ref('')
@@ -126,7 +127,6 @@ const env = ref<strDict>({})
 const headers = ref<strDict>({})
 const apiKey = ref('')
 const selectedVar = ref<McpServerVariable>(null)
-const title = ref('')
 
 const props = defineProps({
   server: {
@@ -148,7 +148,7 @@ const emit = defineEmits(['cancel', 'save', 'install'])
 onMounted(async () => {
   watch(() => props || {}, async () => {
     type.value = props.type || 'stdio'
-    title.value = props.server?.title || ''
+    label.value = props.server?.label || ''
     command.value = props.server?.command || ''
     url.value = props.server?.url || ''
     cwd.value = props.server?.cwd || ''
@@ -284,7 +284,7 @@ const onSave = () => {
 
   } else {
 
-    const trimmedTitle = title.value.trim()
+    const trimmedLabel = label.value.trim()
 
     const payload: any = {
       type: type.value,
@@ -293,12 +293,12 @@ const onSave = () => {
       cwd: cwd.value,
       env: JSON.parse(JSON.stringify(env.value)),
       headers: JSON.parse(JSON.stringify(headers.value)),
-      title: title.value.trim(),
+      label: label.value.trim(),
     }
 
-    // include title only when non-empty or when it existed before (allows deletion)
-    if (trimmedTitle.length || props.server?.title !== undefined) {
-      payload.title = trimmedTitle
+    // include label only when non-empty or when it existed before (allows deletion)
+    if (trimmedLabel.length || props.server?.label !== undefined) {
+      payload.label = trimmedLabel
     }
 
     emit('save', payload)

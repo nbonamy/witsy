@@ -8,7 +8,6 @@
     "cancel": "Cancelar",
     "chat": "Bate-papo",
     "clear": "Limpar",
-    "title": "Título",
     "clickToStart": "Clique na bolha para começar a conversar",
     "close": "Fechar",
     "colon": "spaced",
@@ -60,6 +59,7 @@
     "insert": "Inserir",
     "install": "Instalar",
     "key": "Chave",
+    "label": "Etiqueta",
     "language": {
       "auto": "🤖 Mesmo da interface",
       "system": "🖥️ Idioma do sistema",
@@ -173,7 +173,6 @@
   "agent": {
     "create": {
       "information": "Informações Gerais",
-      "introduction": "Um agente é uma IA especializada que pode executar tarefas para você. Você pode criar um agente para automatizar tarefas, como escrever e-mails, resumir documentos ou gerar relatórios. Também pode criar um agente para ajudar com tarefas específicas, como escrever código ou criar apresentações.",
       "invocation": "Gatilhos do Agente",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "Configuração do Modelo",
@@ -189,12 +188,11 @@
     "forge": {
       "confirmDelete": "Tem certeza de que deseja excluir este agente?",
       "create": "Criar Agente",
-      "edit": "Editar Agente",
-      "empty": "Selecione um agente existente ou crie um novo."
+      "empty": "Selecione um agente existente ou crie um novo.",
+      "title": "Forja do Agente"
     },
     "goal": "Objetivo",
     "history": {
-      "clear": "Limpar histórico",
       "date": "Data",
       "duration": "Duração",
       "empty": "Ainda sem histórico…",
@@ -220,6 +218,10 @@
       "nextRuns": "Próximas Execuções",
       "schedule": "Agendamento",
       "webhook": "URL do Webhook"
+    },
+    "view": {
+      "header": "Resumo do Agente",
+      "history": "Histórico"
     }
   },
   "automation": {
@@ -1439,6 +1441,7 @@
       "title": "Editar"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Fechar Janela",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Novo Chat",
@@ -2204,6 +2207,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Instalar atualização e reiniciar…",
       "newChat": "@:{'menu.file.newChat'}",

@@ -8,7 +8,6 @@
     "cancel": "Annulla",
     "chat": "Chat",
     "clear": "Pulisci",
-    "title": "Titolo",
     "clickToStart": "Clicca sul blob per iniziare a chattare",
     "close": "Chiudi",
     "colon": "non spazioso",
@@ -60,6 +59,7 @@
     "insert": "Inserisci",
     "install": "Installa",
     "key": "Chiave",
+    "label": "Etichetta",
     "language": {
       "auto": "🤖 Stesso dell'interfaccia",
       "system": "🖥️ Lingua di sistema",
@@ -154,7 +154,6 @@
   "agent": {
     "create": {
       "information": "Informazioni generali",
-      "introduction": "Un agente è un'IA specializzata che può svolgere compiti per te. Puoi creare un agente per automatizzare attività, come scrivere email, riassumere documenti o generare rapporti. Puoi anche creare un agente per aiutarti con compiti specifici, come scrivere codice o creare presentazioni.",
       "invocation": "Attivatori dell'agente",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "Configurazione del modello",
@@ -170,12 +169,11 @@
     "forge": {
       "confirmDelete": "Sei sicuro di voler eliminare questo agente?",
       "create": "Crea agente",
-      "edit": "Modifica agente",
-      "empty": "Seleziona un agente esistente o creane uno nuovo."
+      "empty": "Seleziona un agente esistente o creane uno nuovo.",
+      "title": "Forgia Agente"
     },
     "goal": "Obiettivo",
     "history": {
-      "clear": "Cancella cronologia",
       "date": "Data",
       "duration": "Durata",
       "empty": "Nessuna cronologia ancora…",
@@ -201,6 +199,10 @@
       "nextRuns": "Prossime esecuzioni",
       "schedule": "Programma",
       "webhook": "URL Webhook"
+    },
+    "view": {
+      "header": "Riepilogo Agente",
+      "history": "Cronologia"
     }
   },
   "automation": {
@@ -1420,6 +1422,7 @@
       "title": "Modifica"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Chiudi Finestra",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nuova chat",
@@ -2182,6 +2185,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Installa aggiornamento e riavvia…",
       "newChat": "@:{'menu.file.newChat'}",

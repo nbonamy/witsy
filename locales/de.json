@@ -8,7 +8,6 @@
     "cancel": "Abbrechen",
     "chat": "Chat",
     "clear": "Löschen",
-    "title": "Titel",
     "clickToStart": "Klicken Sie auf die Blase, um mit dem Chatten zu beginnen",
     "close": "Schließen",
     "colon": "nichtabstand",
@@ -60,6 +59,7 @@
     "insert": "Einfügen",
     "install": "Installieren",
     "key": "Schlüssel",
+    "label": "Beschriftung",
     "language": {
       "auto": "🤖 Gleich wie die Schnittstelle",
       "system": "🖥️ Systemsprache",
@@ -154,7 +154,6 @@
   "agent": {
     "create": {
       "information": "Allgemeine Informationen",
-      "introduction": "Ein Agent ist eine spezialisierte KI, die Aufgaben für Sie ausführen kann. Sie können einen Agenten erstellen, um Aufgaben zu automatisieren, wie z.B. E-Mails schreiben, Dokumente zusammenfassen oder Berichte erstellen. Sie können auch einen Agenten erstellen, um Sie bei spezifischen Aufgaben zu unterstützen, wie Code schreiben oder Präsentationen erstellen.",
       "invocation": "Agent-Auslöser",
       "lastOneUsed": "@:{'settings.general.lastOneUsed'}",
       "llm": "Modellkonfiguration",
@@ -170,12 +169,11 @@
     "forge": {
       "confirmDelete": "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
       "create": "Agent erstellen",
-      "edit": "Agent bearbeiten",
-      "empty": "Wählen Sie einen bestehenden Agenten aus oder erstellen Sie einen neuen."
+      "empty": "Wählen Sie einen bestehenden Agenten aus oder erstellen Sie einen neuen.",
+      "title": "Agenten-Werkstatt"
     },
     "goal": "Ziel",
     "history": {
-      "clear": "Verlauf löschen",
       "date": "Datum",
       "duration": "Dauer",
       "empty": "Noch keine Historie…",
@@ -201,6 +199,10 @@
       "nextRuns": "Nächste Ausführungen",
       "schedule": "Zeitplan",
       "webhook": "Webhook-URL"
+    },
+    "view": {
+      "header": "Agentenübersicht",
+      "history": "Verlauf"
     }
   },
   "automation": {
@@ -1420,6 +1422,7 @@
       "title": "Bearbeiten"
     },
     "file": {
+      "agentForge": "@:{'agent.forge.title'}",
       "closeWindow": "Fenster schließen",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Neuer Chat",
@@ -2182,6 +2185,7 @@
   },
   "tray": {
     "menu": {
+      "agentForge": "@:{'menu.file.agentForge'}",
       "designStudio": "@:{'menu.file.designStudio'}",
       "installUpdate": "Update installieren und neu starten…",
       "newChat": "@:{'menu.file.newChat'}",

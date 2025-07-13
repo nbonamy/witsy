@@ -108,8 +108,8 @@ test('Initialization', async () => {
     { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000' },
     { uuid: '3456-7890-abcd', registryId: '3456-7890-abcd', state: 'disabled', type: 'stdio', command: 'python3', url: 'script.py' },
     { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002' },
-    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' } },
-    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
+    { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' } },
+    { uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run mcp2.js', cwd: undefined, env: undefined }
   ])
 })
 
@@ -222,27 +222,27 @@ test('Edit normal server', async () => {
   })
 })
 
-test('Edit server title', async () => {
+test('Edit server label', async () => {
   const mcp = new Mcp(app)
-  // set a non-empty title (trimmed)
+  // set a non-empty label (trimmed)
   expect(await mcp.editServer({
     uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
-    url: 'http://localhost:3001', title: '  My Title  '
+    url: 'http://localhost:3001', label: '  My Title  '
   })).toBe(true)
-  const withTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
-  expect(withTitle?.title).toBe('My Title')
-  const cfgWithTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
-  expect(cfgWithTitle?.title).toBe('My Title')
+  const withLabel = mcp.getServers().find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(withLabel?.label).toBe('My Title')
+  const cfgWithLabel = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
+  expect(cfgWithLabel?.label).toBe('My Title')
 
-  // clear the title by providing an empty string
+  // clear the label by providing an empty string
   expect(await mcp.editServer({
     uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse',
-    url: 'http://localhost:3001', title: ''
+    url: 'http://localhost:3001', label: ''
   })).toBe(true)
   const noTitle = mcp.getServers().find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
-  expect(noTitle?.title).toBeUndefined()
+  expect(noTitle?.label).toBeUndefined()
   const cfgNoTitle = config.mcp.servers.find(s => s.uuid === '2345-6789-0abc') as McpServer | undefined
-  expect(cfgNoTitle?.title).toBeUndefined()
+  expect(cfgNoTitle?.label).toBeUndefined()
 })
 
 test('Edit mcp server', async () => {
@@ -268,19 +268,20 @@ test('Edit mcp server', async () => {
     command: 'node',
     url: '-f exec s1.js',
   })
-  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.mcpServersExtra['mcp2'].state).toEqual('disabled')
   expect(config.mcpServers['s1']).toMatchObject({
     command: 'node',
     args: ['-f', 'exec', 's1.js'],
   })
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.mcpServersExtra['mcp2'].state).toEqual('disabled')
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.mcp.disabledMcpServers).toEqual([])
+  expect(config.mcp.mcpServersExtra['mcp2'].state).toEqual('enabled')
   expect(await mcp.editServer({ uuid: 'mcp2', registryId: 'mcp2', state: 'disabled', type: 'stdio', command: 'npx', url: '-y run mcp2.js'})).toBe(true)
-  expect(config.mcp.disabledMcpServers).toEqual(['mcp2'])
+  expect(config.mcp.mcpServersExtra['mcp2'].state).toEqual('disabled')
   expect(await mcp.editServer({ uuid: 's1', registryId: 's1', state: 'disabled', type: 'stdio', command: 'node', url: '-f exec s1.js'})).toBe(true)
-  expect(config.mcp.disabledMcpServers).toEqual(['mcp2', 's1'])
+  expect(config.mcp.mcpServersExtra['mcp2'].state).toEqual('disabled')
+  expect(config.mcp.mcpServersExtra['s1'].state).toEqual('disabled')
 })
 
 test('Delete server', async () => {
@@ -308,7 +309,7 @@ test('Connect', async () => {
       { uuid: '1234-5678-90ab', registryId: '1234-5678-90ab', state: 'enabled', type: 'stdio', command: 'node', url: 'script.js', cwd: 'cwd1', env: { KEY: 'value' }, tools: ['tool1___90ab', 'tool2___90ab', 'tool3___90ab'] },
       { uuid: '2345-6789-0abc', registryId: '2345-6789-0abc', state: 'enabled', type: 'sse', url: 'http://localhost:3000', tools: ['tool1___0abc', 'tool2___0abc', 'tool3___0abc'] },
       { uuid: '4567-890a-bcde', registryId: '4567-890a-bcde', state: 'enabled', type: 'http', url: 'http://localhost:3002', tools: ['tool1___bcde', 'tool2___bcde', 'tool3___bcde'] },
-      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
+      { uuid: 's1', registryId: 's1', state: 'enabled', type: 'stdio', label: undefined, command: 'npx', url: '-y run s1.js', cwd: 'cwd2', env: { KEY: 'value' }, tools: ['tool1_____s1', 'tool2_____s1', 'tool3_____s1'] },
     ],
     logs: {
       '1234-5678-90ab': [],

@@ -444,7 +444,7 @@
   },
   "mcp": {
     "servers": [],
-    "disabledMcpServers": [],
+    "mcpServersExtra": {},
     "smitheryApiKey": ""
   },
   "mcpServers": {}

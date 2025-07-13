@@ -1,8 +1,8 @@
 
 import { ChatModel, EngineCreateOpts, Model, LlmModelOpts } from 'multi-llm-ts'
 import { DesignStudioMediaType, Shortcut, strDict, TTSVoice } from './index'
-import { PluginConfig } from 'plugins/plugin'
-import { McpClaudeServer, McpServer } from './mcp'
+import { PluginConfig } from '../plugins/plugin'
+import { McpClaudeServer, McpServer, McpServerState } from './mcp'
 import { ToolSelection } from './llm'
 
 export type Configuration = {
@@ -258,8 +258,14 @@ export type RagConfig = {
   relevanceCutOff?: number
 }
 
+export type McpServerExtra = {
+  label?: string
+  state?: McpServerState
+}
+
 export type McpConfig = {
   servers: McpServer[]
-  disabledMcpServers: string[]
+  //disabledMcpServers: string[]
+  mcpServersExtra: Record<string, McpServerExtra>
   smitheryApiKey: string
 }
