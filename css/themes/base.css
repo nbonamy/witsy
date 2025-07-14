@@ -183,6 +183,7 @@
   vertical-align: bottom;
   animation: ellipsis-animation steps(1,end) 2s infinite;
   content: "\2026";
+  margin-left: -3.5px
 }
 
 @keyframes ellipsis-animation {
