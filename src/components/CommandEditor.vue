@@ -90,7 +90,7 @@ onMounted(async () => {
     // update values
     icon.value = props.command?.icon || '⚡️'
     label.value = props.command?.label || commandI18n(props.command, 'label')
-    template.value = props.command?.template || commandI18n(props.command, 'template')
+    template.value = props.command?.id ? (props.command?.template || commandI18n(props.command, 'template')) : ''
     action.value = props.command?.action || 'chat_window'
     shortcut.value = props.command?.shortcut
     engine.value = props.command?.engine

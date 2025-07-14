@@ -81,7 +81,7 @@ onMounted(async () => {
     // update values
     type.value = props.expert?.type || 'user'
     name.value = props.expert?.name || expertI18n(props.expert, 'name')
-    prompt.value = props.expert?.prompt || expertI18n(props.expert, 'prompt')
+    prompt.value = props.expert?.id ? (props.expert?.prompt || expertI18n(props.expert, 'prompt')) : ''
     triggerApps.value = JSON.parse(JSON.stringify(props.expert?.triggerApps || []))
     diffLang.value = window.api.config.localeUI() !== window.api.config.localeLLM()
     selectedApp.value = null

@@ -12,7 +12,7 @@
       <header v-else>
         <div class="title">{{ t('agent.forge.title') }}</div>
       </header>
-      <main class="empty sliding-root" :class="{ hidden: mode !== 'list' }" v-if="store.agents.length === 0">
+      <main class="empty sliding-root" :class="{ visible: mode === 'list' }" v-if="store.agents.length === 0">
         <BIconRobot @click="onCreate" />
         {{ t('agent.forge.empty') }}
       </main>
