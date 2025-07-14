@@ -19,7 +19,7 @@ jobs:
         id: package-version
         uses: beaconbrigade/package-json-version@v0.3.2
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: Build script
         run: ./build/build.ps1
       - name: List packages
