@@ -7,10 +7,10 @@
     <header v-else>
       <div class="title">{{ t('settings.tabs.experts') }}</div>
     </header>
-    <main class="list sliding-root" :class="{ hidden: edited }">
+    <main class="list sliding-root" :class="{ visible: !edited }">
       <ExpertsList ref="list" @edit="onEdit" @create="onCreate" />
     </main>
-    <main class="editor sliding-pane" :class="{ hidden: !edited }"> 
+    <main class="editor sliding-pane" :class="{ visible: edited }"> 
       <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
     </main>
   </form>
