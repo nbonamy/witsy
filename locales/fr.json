@@ -58,6 +58,7 @@
     "icon": "Icône",
     "insert": "Insérer",
     "install": "Installer",
+    "instructions": "Instructions du modèle",
     "key": "Clé",
     "label": "Étiquette",
     "language": {
@@ -1645,7 +1646,7 @@
     },
     "instructions": {
       "default": "⚙️ Utiliser la configuration par défaut",
-      "title": "Instructions du modèle"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "Appuyez sur Entrée pour soumettre, Maj+Entrée pour ajouter une nouvelle ligne"
@@ -1907,7 +1908,7 @@
       "instructions": {
         "custom": "Vous pouvez personnaliser ces invites dans l'onglet Avancé.",
         "empathic": "❤️ Chaleureux et empathique",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 Joueur et spirituel",
         "reflective": "🤔 Réfléchi et contemplatif",
         "standard": "📘 Direct et informatif",

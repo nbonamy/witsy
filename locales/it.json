@@ -58,6 +58,7 @@
     "icon": "Icona",
     "insert": "Inserisci",
     "install": "Installa",
+    "instructions": "Istruzioni del modello",
     "key": "Chiave",
     "label": "Etichetta",
     "language": {
@@ -1645,7 +1646,7 @@
     },
     "instructions": {
       "default": "⚙️ Usa la configurazione predefinita",
-      "title": "Istruzioni del modello"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "Premi Invio per inviare, Maiusc+Invio per aggiungere una nuova riga"
@@ -1907,7 +1908,7 @@
       "instructions": {
         "custom": "Puoi personalizzare questi prompt nella scheda Avanzate.",
         "empathic": "❤️ Caldo e empatico",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 Giocoso e spiritoso",
         "reflective": "🤔 Riflessivo e ponderato",
         "standard": "📘 Semplice e informativo",

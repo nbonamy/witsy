@@ -200,6 +200,7 @@ Example response:
 // Main function
 async function checkMissingTranslations(unusedKeys: Set<string> = new Set()) {
   try {
+    
     // Get all locale files
     const localeFiles = fs.readdirSync(LOCALES_DIR)
       .filter(file => file.endsWith('.json'))
@@ -417,12 +418,14 @@ async function checkUnusedTranslations(): Promise<Set<string>> {
 
     // Load and process each locale file
     for (const file of localeFiles) {
+      
       const localeName = path.basename(file, '.json')
       const localeData = JSON.parse(fs.readFileSync(file, 'utf8'))
-      const allKeys = Object.keys(flatten(localeData))
+      const flattenData = flatten(localeData)
+      const allKeys = Object.keys(flattenData)
 
-      // Find all source files
-      const srcFiles = glob.sync(`${SRC_DIR}/**/*.{ts,vue}`)
+      // some keys are not referenced in the code explicitly, so we need to filter them out
+      // for instance the id might be built programmatically...
       const unusedKeys = new Set(allKeys.filter(key =>
         !key.match(/^settings\.plugins\.[^.]+\.title$/) &&
         !key.match(/^common\.language\.[a-z]{2}-[A-Z]{2}$/) &&
@@ -434,7 +437,21 @@ async function checkUnusedTranslations(): Promise<Set<string>> {
         !key.match(/^agent\.forge\.list\..*$/)
       ))
 
+      // also the translation file itself can reference other keys using "@:{'id'}" syntax
+      for (const key of allKeys) {
+        const value = flattenData[key]
+        const regex = /@:\{'([^}]+)'\}/g
+        let match
+        while ((match = regex.exec(value)) !== null) {
+          const referencedKey = match[1]
+          if (allKeys.includes(referencedKey)) {
+            unusedKeys.delete(referencedKey)
+          }
+        }
+      }
+
       // Check each source file for key usage
+      const srcFiles = glob.sync(`${SRC_DIR}/**/*.{ts,vue}`)
       for (const srcFile of srcFiles) {
         const content = fs.readFileSync(srcFile, 'utf8')
         allKeys.forEach(key => {
@@ -561,14 +578,13 @@ async function checkWrongLinkedTranslations() {
   // Always check for unused translations to get the list
   const unusedKeys = shouldDelete ? await checkUnusedTranslations() : new Set<string>()
   
+  // Check for wrong linked translations
+  const hasWrongLinkedTranslations = await checkWrongLinkedTranslations()
+
   // Then check for missing translations, excluding unused keys
   const hasMissingTranslations = await checkMissingTranslations(unusedKeys)
   
-  // Finally check for wrong linked translations
-  const hasWrongLinkedTranslations = await checkWrongLinkedTranslations()
-
   const hasUnusedTranslations = unusedKeys.size > 0
-
   if ((hasMissingTranslations || hasUnusedTranslations || hasWrongLinkedTranslations) && !shouldFix) {
     process.exit(1)
   }

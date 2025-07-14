@@ -58,6 +58,7 @@
     "icon": "Symbol",
     "insert": "Einfügen",
     "install": "Installieren",
+    "instructions": "Modellanweisungen",
     "key": "Schlüssel",
     "label": "Beschriftung",
     "language": {
@@ -1645,7 +1646,7 @@
     },
     "instructions": {
       "default": "⚙️ Standardkonfiguration verwenden",
-      "title": "Modellanweisungen"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "Drücken Sie Enter zum Senden, Shift+Enter um eine neue Zeile hinzuzufügen"
@@ -1907,7 +1908,7 @@
       "instructions": {
         "custom": "Sie können diese Eingabeaufforderungen im Tab \"Erweitert\" anpassen.",
         "empathic": "❤️ Warm und empathisch",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 Verspielt und witzig",
         "reflective": "🤔 Nachdenklich und reflektierend",
         "standard": "📘 Einfach und informativ",

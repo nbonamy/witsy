@@ -58,6 +58,7 @@
     "icon": "Ikona",
     "insert": "Wstaw",
     "install": "Zainstaluj",
+    "instructions": "Instrukcje modelu",
     "key": "Klucz",
     "label": "Etykieta",
     "language": {
@@ -1667,7 +1668,7 @@
     },
     "instructions": {
       "default": "⚙️ Użyj domyślnych ustawień",
-      "title": "Instrukcje modelu"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "Naciśnij Enter, aby przesłać, Shift+Enter, aby dodać nową linię"
@@ -1929,7 +1930,7 @@
       "instructions": {
         "custom": "Możesz spersonalizować te prompty w zakładce Zaawansowane.",
         "empathic": "❤️ Ciepły i empatyczny",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 Zabawny i dowcipny",
         "reflective": "🤔 Przemyślany i refleksyjny",
         "standard": "📘 Prosto i informacyjnie",
