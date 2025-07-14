@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11.2] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A 
+
+### Fixed
+- xAI function calling (https://github.com/nbonamy/witsy/issues/317) 
+
+### Removed
+- N/A
+
+
 ## [2.11.1] - 2025-07-14
 
 ### Added
