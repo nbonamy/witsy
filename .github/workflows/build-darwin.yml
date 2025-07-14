@@ -47,7 +47,7 @@ jobs:
           python3 -m pip install setuptools
           npm install -g appdmg@0.6.6          
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: Build script
         run: make mac-${{ inputs.arch }}
         env:

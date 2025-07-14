@@ -23,7 +23,7 @@ jobs:
       - name: Install required packages
         run: npm install -g node-gyp
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: Build script
         run: make linux-x64
         env:
