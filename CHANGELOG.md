@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 - N/A 
 
 ### Fixed
-- xAI function calling (https://github.com/nbonamy/witsy/issues/317) 
+- xAI function calling (https://github.com/nbonamy/witsy/issues/317)
+- Settings Commands and Experts display issue
 
 ### Removed
 - N/A
