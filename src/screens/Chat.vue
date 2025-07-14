@@ -114,7 +114,7 @@ onMounted(() => {
   // check for updates
   window.api.on('update-available', onUpdateAvailable)
   setTimeout(() => {
-    if (window.api.update.isAvailable()) {
+    if (typeof window !== 'undefined' && window.api.update.isAvailable()) {
       onUpdateAvailable()
     }
   }, 500)
