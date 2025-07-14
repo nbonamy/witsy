@@ -2033,10 +2033,9 @@
         "description": "This plugin allows LLM engines to search the Internet and use the results as input to generate up-to-date responses.",
         "engine": "Engine",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Local Google Search",
-          "tavily": "Tavily"
+          "local": "Local Google Search"
         },
+        "exaApiKey": "Exa API Key",
         "getApiKey": "Get your API key",
         "tavilyApiKey": "Tavily API Key",
         "title": "Web Search",

@@ -107,6 +107,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.2.0",
     "elevenlabs": "^1.58.0",
+    "exa-js": "^1.8.20",
     "floating-vue": "^5.2.2",
     "font-list": "^1.5.1",
     "groq-sdk": "^0.21.0",

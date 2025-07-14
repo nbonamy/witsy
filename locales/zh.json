@@ -2027,10 +2027,9 @@
         "description": "此插件允许 LLM 引擎搜索互联网，并将结果作为输入生成最新的回答。",
         "engine": "引擎",
         "engines": {
-          "brave": "Brave Search",
-          "local": "本地 Google 搜索",
-          "tavily": "Tavily"
+          "local": "本地 Google 搜索"
         },
+        "exaApiKey": "Exa API 密钥",
         "getApiKey": "获取你的 API 密钥",
         "tavilyApiKey": "Tavily API 密钥",
         "title": "网络搜索",

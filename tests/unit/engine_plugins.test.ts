@@ -16,6 +16,7 @@ import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
 import { fal } from '@fal-ai/client'
 import tavily from '../../src/vendor/tavily'
+import { Exa } from 'exa-js'
 import Replicate from 'replicate'
 import OpenAI from 'openai'
 
@@ -88,6 +89,15 @@ vi.mock('../../src/vendor/tavily', async () => {
     { title: 'title', url: 'url', content: 'content' }
   ] }))
   return { default: Tavily }
+})
+
+// exa
+vi.mock('exa-js', async () => {
+  const Exa = vi.fn()
+  Exa.prototype.searchAndContents = vi.fn(() => ({ results: [
+    { title: 'title', url: 'url', text: 'fetched_' }
+  ] }))
+  return { Exa }
 })
 
 // youtube transcript
@@ -194,6 +204,7 @@ beforeAll(() => {
   store.config.plugins.search = {
     enabled: true,
     engine: 'local',
+    exaApiKey: '123',
     tavilyApiKey: '123',
     braveApiKey: '456',
     contentLength: 8
@@ -273,6 +284,19 @@ test('Search Plugin Local', async () => {
     ]
   })
   expect(window.api.search.query).toHaveBeenLastCalledWith('test', 5)
+})
+
+test('Search Plugin Exa', async () => {
+  store.config.plugins.search.engine = 'exa'
+  const search = new Search(store.config.plugins.search)
+  expect(await search.execute(context, { query: 'test' })).toStrictEqual({
+    query: 'test',
+    results: [
+      { title: 'title', url: 'url', content: 'fetched_' }
+    ]
+  })
+  expect(Exa.prototype.searchAndContents).toHaveBeenLastCalledWith('test', { text: true, numResults: 5 })
+  expect(window.api.search.query).not.toHaveBeenCalled()
 })
 
 test('Search Plugin Tavily', async () => {

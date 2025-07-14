@@ -2027,10 +2027,9 @@
         "description": "Este plugin permite que os mecanismos LLM pesquisem na Internet e usem os resultados como entrada para gerar respostas atualizadas.",
         "engine": "Mecanismo",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Pesquisa Local do Google",
-          "tavily": "Tavily"
+          "local": "Pesquisa Local do Google"
         },
+        "exaApiKey": "Chave API Exa",
         "getApiKey": "Obtenha sua chave de API",
         "tavilyApiKey": "Chave de API Tavily",
         "title": "Pesquisa na Web",

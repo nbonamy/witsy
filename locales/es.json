@@ -2005,10 +2005,9 @@
         "description": "Este complemento permite que los motores LLM busquen en Internet y utilicen los resultados como entrada para generar respuestas actualizadas.",
         "engine": "Motor",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Búsqueda local en Google",
-          "tavily": "Tavily"
+          "local": "Búsqueda local en Google"
         },
+        "exaApiKey": "Clave API de Exa",
         "getApiKey": "Obtenga su clave API",
         "tavilyApiKey": "Clave API de Tavily",
         "title": "Búsqueda Web",

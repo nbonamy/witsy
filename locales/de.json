@@ -2005,10 +2005,9 @@
         "description": "Mit diesem Plugin können LLM-Engines das Internet durchsuchen und die Suchergebnisse als Input verwenden, um aktuellere Antworten zu generieren.",
         "engine": "Engine",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Lokale Google-Suche",
-          "tavily": "Tavily"
+          "local": "Lokale Google-Suche"
         },
+        "exaApiKey": "Exa API-Schlüssel",
         "getApiKey": "Holen Sie sich Ihren API-Schlüssel",
         "tavilyApiKey": "Tavily API-Schlüssel",
         "title": "Websuche",
