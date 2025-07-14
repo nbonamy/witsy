@@ -2005,10 +2005,9 @@
         "description": "Questo plugin consente ai motori LLM di cercare su Internet e utilizzare i risultati come input per generare risposte aggiornate.",
         "engine": "Motore",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Ricerca Google Locale",
-          "tavily": "Tavily"
+          "local": "Ricerca Google Locale"
         },
+        "exaApiKey": "Chiave API Exa",
         "getApiKey": "Ottieni la tua chiave API",
         "tavilyApiKey": "Chiave API Tavily",
         "title": "Ricerca Web",

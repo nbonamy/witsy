@@ -2033,10 +2033,9 @@
         "description": "Ta wtyczka pozwala silnikom LLM przeszukiwać Internet i wykorzystywać wyniki jako dane wejściowe do generowania aktualnych odpowiedzi.",
         "engine": "Silnik",
         "engines": {
-          "brave": "Brave Search",
-          "local": "Lokalne wyszukiwanie Google",
-          "tavily": "Tavily"
+          "local": "Lokalne wyszukiwanie Google"
         },
+        "exaApiKey": "Klucz API Exa",
         "getApiKey": "Uzyskaj klucz API",
         "tavilyApiKey": "Klucz API Tavily",
         "title": "Wyszukiwanie w sieci",

@@ -3,6 +3,7 @@ import { anyDict } from 'types/index'
 import { PluginExecutionContext, PluginParameter } from 'multi-llm-ts'
 import Plugin, { PluginConfig } from './plugin'
 import Tavily from '../vendor/tavily'
+import { Exa } from 'exa-js'
 import { convert } from 'html-to-text'
 import { t } from '../services/i18n'
 
@@ -33,7 +34,8 @@ export default class extends Plugin {
     return this.config?.enabled && (
       (this.config.engine == 'local') ||
       (this.config.engine == 'tavily' && this.config.tavilyApiKey?.trim().length > 0) ||
-      (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0)
+      (this.config.engine == 'brave' && this.config.braveApiKey?.trim().length > 0) ||
+      (this.config.engine == 'exa' && this.config.exaApiKey?.trim().length > 0)
     )
   }
 
@@ -88,6 +90,8 @@ export default class extends Plugin {
       return this.tavily(parameters, maxResults)
     } else if (this.config.engine === 'brave') {
       return this.brave(parameters, maxResults)
+    } else if (this.config.engine === 'exa') {
+      return this.exa(parameters, maxResults)
     } else {
       return { error: 'Invalid engine' }
     }
@@ -179,6 +183,31 @@ export default class extends Plugin {
     } catch (error) {
       return { error: error.message }
     }
+  }
+
+  async exa(parameters: anyDict, maxResults: number): Promise<SearchResponse> {
+
+    try {
+
+      const exa = new Exa(this.config.exaApiKey)
+      const results = await exa.searchAndContents(parameters.query, {
+        text: true,
+        numResults: maxResults,
+      })
+
+      return {
+        query: parameters.query,
+        results: results.results.map(result => ({
+          title: result.title,
+          url: result.url,
+          content: result.text
+        }))
+      }
+
+    } catch (error) {
+      return { error: error.message }
+    }
+
   }
 
   htmlToText(html: string): string {
