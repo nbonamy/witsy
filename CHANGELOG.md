@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11.1] - 2025-07-14
+
+### Added
+- Support for Elevenlabs custom voices (https://github.com/nbonamy/witsy/issues/313)
+- MCP Server label (https://github.com/nbonamy/witsy/pull/303)
+- Exa native search engine (https://github.com/nbonamy/witsy/issues/310)
+
+### Changed
+- N/A 
+
+### Fixed
+- MCP Server start when using Nushell (https://github.com/nbonamy/witsy/issues/315) 
+
+### Removed
+- N/A
+
+
 ## [2.11.0] - 2025-07-07
 
 ### Added
@@ -18,7 +35,6 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - N/A
-
 
 
 ## [2.10.0] - 2025-07-03
