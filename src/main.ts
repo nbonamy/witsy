@@ -4,6 +4,7 @@ import { Configuration } from './types/config';
 import { Application, RunCommandParams } from './types/automation';
 import { McpInstallStatus, McpTool } from './types/mcp';
 import { LlmTool } from 'multi-llm-ts';
+import * as IPC from './ipc_consts';
 
 import process from 'node:process';
 import fontList from 'font-list';
@@ -79,7 +80,7 @@ if (require('electron-squirrel-startup')) {
 const autoUpdater = new AutoUpdater(app, {
   preInstall: () => quitAnyway = true,
   onUpdateAvailable: () => {
-    window.notifyBrowserWindows('update-available');
+    window.notifyBrowserWindows(IPC.UPDATE_AVAILABLE);
     trayIconManager.install();
   },
 });
@@ -215,7 +216,7 @@ app.whenReady().then(() => {
     console.log('Settings changed');
 
     // notify browser windows
-    window.notifyBrowserWindows('file-modified', 'settings');
+    window.notifyBrowserWindows(IPC.FILE_MODIFIED, 'settings');
 
     // update tray icon
     trayIconManager.install();
@@ -317,144 +318,144 @@ app.on('render-process-gone', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.on('main-window-set-mode', (event, mode) => {
+ipcMain.on(IPC.MAIN_WINDOW_SET_MODE, (event, mode) => {
   window.setMainWindowMode(mode);
   installMenu();
 });
 
-ipcMain.on('main-window-close', () => {
+ipcMain.on(IPC.MAIN_WINDOW_CLOSE, () => {
   window.mainWindow.close();
 });
 
-ipcMain.on('show-about', () => {
+ipcMain.on(IPC.SHOW_ABOUT, () => {
   app.showAboutPanel();
 });
 
-ipcMain.on('update-check', () => {
+ipcMain.on(IPC.UPDATE_CHECK, () => {
   autoUpdater.check()
 })
 
-ipcMain.on('update-is-available', (event) => {
+ipcMain.on(IPC.UPDATE_IS_AVAILABLE, (event) => {
   event.returnValue = autoUpdater.updateAvailable;
 });
 
-ipcMain.on('update-apply', () => {
+ipcMain.on(IPC.UPDATE_APPLY, () => {
   autoUpdater.install();
 });
 
-ipcMain.on('set-appearance-theme', (event, theme) => {
+ipcMain.on(IPC.SET_APPEARANCE_THEME, (event, theme) => {
   nativeTheme.themeSource = theme;
   event.returnValue = theme;
 });
 
-ipcMain.handle('show-dialog', (event, payload): Promise<Electron.MessageBoxReturnValue> => {
+ipcMain.handle(IPC.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {
   return dialog.showMessageBox(payload);
 });
 
-ipcMain.on('show-debug-console', () => {
+ipcMain.on(IPC.SHOW_DEBUG_CONSOLE, () => {
   window.openDebugWindow();
 })
 
-ipcMain.on('get-network-history', (event) => {
+ipcMain.on(IPC.GET_NETWORK_HISTORY, (event) => {
   event.returnValue = debug.getNetworkHistory();
 })
 
-ipcMain.on('clear-network-history', () => {
+ipcMain.on(IPC.CLEAR_NETWORK_HISTORY, () => {
   debug.clearNetworkHistory();
 })
 
-ipcMain.on('open-app-folder', (event, name) => {
+ipcMain.on(IPC.OPEN_APP_FOLDER, (event, name) => {
   shell.openPath(app.getPath(name))
 })
 
-ipcMain.on('get-app-path', (event) => {
+ipcMain.on(IPC.GET_APP_PATH, (event) => {
   event.returnValue = app.getPath('userData');
 });
 
-ipcMain.on('fonts-list', async (event) => {
+ipcMain.on(IPC.FONTS_LIST, async (event) => {
   event.returnValue = process.mas ? [] : await fontList.getFonts();
 });
 
-ipcMain.on('store-get-value', (event, payload) => {
+ipcMain.on(IPC.STORE_GET_VALUE, (event, payload) => {
   event.returnValue = store.get(payload.key, payload.fallback);
 });
 
-ipcMain.on('store-set-value', (event, payload) => {
+ipcMain.on(IPC.STORE_SET_VALUE, (event, payload) => {
   store.set(payload.key, payload.value);
 });
 
-ipcMain.on('clipboard-read-text', (event) => {
+ipcMain.on(IPC.CLIPBOARD_READ_TEXT, (event) => {
   const text = clipboard.readText();
   event.returnValue = text;
 });
 
-ipcMain.on('clipboard-write-text', async (event, payload) => {
+ipcMain.on(IPC.CLIPBOARD_WRITE_TEXT, async (event, payload) => {
   event.returnValue = await Automation.writeTextToClipboard(payload);
 });
 
-ipcMain.on('clipboard-write-image', (event, payload) => {
+ipcMain.on(IPC.CLIPBOARD_WRITE_IMAGE, (event, payload) => {
   const image = nativeImage.createFromPath(payload.replace('file://', ''))
   clipboard.writeImage(image);
   event.returnValue = true;
 });
 
-ipcMain.on('config-get-locale-ui', (event) => {
+ipcMain.on(IPC.CONFIG_GET_LOCALE_UI, (event) => {
   event.returnValue = i18n.getLocaleUI(app);
 });
 
-ipcMain.on('config-get-locale-llm', (event) => {
+ipcMain.on(IPC.CONFIG_GET_LOCALE_LLM, (event) => {
   event.returnValue = i18n.getLocaleLLM(app);
 });
 
-ipcMain.on('config-get-i18n-messages', (event) => {
+ipcMain.on(IPC.CONFIG_GET_I18N_MESSAGES, (event) => {
   event.returnValue = i18n.getLocaleMessages(app);
 });
 
-ipcMain.on('config-load', (event) => {
+ipcMain.on(IPC.CONFIG_LOAD, (event) => {
   event.returnValue = JSON.stringify(config.loadSettings(app));
 });
 
-ipcMain.on('config-save', (event, payload) => {
+ipcMain.on(IPC.CONFIG_SAVE, (event, payload) => {
   config.saveSettings(app, JSON.parse(payload) as Configuration);
 });
 
-ipcMain.on('history-load', async (event) => {
+ipcMain.on(IPC.HISTORY_LOAD, async (event) => {
   event.returnValue = JSON.stringify(await history.loadHistory(app));
 });
 
-ipcMain.on('history-save', (event, payload) => {
+ipcMain.on(IPC.HISTORY_SAVE, (event, payload) => {
   event.returnValue = history.saveHistory(app, JSON.parse(payload) as History);
 });
 
-ipcMain.on('commands-load', (event) => {
+ipcMain.on(IPC.COMMANDS_LOAD, (event) => {
   event.returnValue = JSON.stringify(commands.loadCommands(app));
 });
 
-ipcMain.on('commands-save', (event, payload) => {
+ipcMain.on(IPC.COMMANDS_SAVE, (event, payload) => {
   event.returnValue = commands.saveCommands(app, JSON.parse(payload) as Command[]);
 });
 
-ipcMain.on('commands-export', (event) => {
+ipcMain.on(IPC.COMMANDS_EXPORT, (event) => {
   event.returnValue = commands.exportCommands(app);
 });
 
-ipcMain.on('commands-import', (event) => {
+ipcMain.on(IPC.COMMANDS_IMPORT, (event) => {
   event.returnValue = commands.importCommands(app);
 });
 
-ipcMain.on('command-picker-close', async (_, sourceApp: Application) => {
+ipcMain.on(IPC.COMMAND_PICKER_CLOSE, async (_, sourceApp: Application) => {
   window.closeCommandPicker(sourceApp);
 });
 
-ipcMain.on('commands-ask-me-anything-id', (event) => {
+ipcMain.on(IPC.COMMANDS_ASK_ME_ANYTHING_ID, (event) => {
   event.returnValue = askMeAnythingId;
 });
 
-ipcMain.on('commands-is-prompt-editable', (event, payload) => {
+ipcMain.on(IPC.COMMANDS_IS_PROMPT_EDITABLE, (event, payload) => {
   event.returnValue = !notEditablePrompts.includes(payload);
 });
 
-ipcMain.on('command-run', async (event, payload) => {
+ipcMain.on(IPC.COMMAND_RUN, async (event, payload) => {
 
   // prepare
   const args: RunCommandParams = JSON.parse(payload);
@@ -468,64 +469,64 @@ ipcMain.on('command-run', async (event, payload) => {
   
 });
 
-ipcMain.on('experts-load', (event) => {
+ipcMain.on(IPC.EXPERTS_LOAD, (event) => {
   event.returnValue = JSON.stringify(experts.loadExperts(app));
 });
 
-ipcMain.on('experts-save', (event, payload) => {
+ipcMain.on(IPC.EXPERTS_SAVE, (event, payload) => {
   event.returnValue = experts.saveExperts(app, JSON.parse(payload) as Expert[]);
 });
 
-ipcMain.on('experts-export', (event) => {
+ipcMain.on(IPC.EXPERTS_EXPORT, (event) => {
   event.returnValue = experts.exportExperts(app);
 });
 
-ipcMain.on('experts-import', (event) => {
+ipcMain.on(IPC.EXPERTS_IMPORT, (event) => {
   event.returnValue = experts.importExperts(app);
 });
 
-ipcMain.on('agents-open-forge',  () => {
+ipcMain.on(IPC.AGENTS_OPEN_FORGE,  () => {
   //window.openAgentForgeWindow();
 });
 
-ipcMain.on('agents-load', (event) => {
+ipcMain.on(IPC.AGENTS_LOAD, (event) => {
   event.returnValue = JSON.stringify(agents.loadAgents(app));
 });
 
-ipcMain.on('agents-save', (event, payload) => {
+ipcMain.on(IPC.AGENTS_SAVE, (event, payload) => {
   event.returnValue = agents.saveAgent(app, JSON.parse(payload));
 });
 
-ipcMain.on('agents-delete', (event, payload) => {
+ipcMain.on(IPC.AGENTS_DELETE, (event, payload) => {
   event.returnValue = agents.deleteAgent(app, payload);
 });
 
-ipcMain.on('agents-get-runs', (event, agentId) => {
+ipcMain.on(IPC.AGENTS_GET_RUNS, (event, agentId) => {
   event.returnValue = JSON.stringify(agents.getAgentRuns(app, agentId));
 });
 
-ipcMain.on('agents-save-run', (event, payload) => {
+ipcMain.on(IPC.AGENTS_SAVE_RUN, (event, payload) => {
   event.returnValue = agents.saveAgentRun(app, JSON.parse(payload));
 });
 
-ipcMain.on('agents-delete-run', (event, payload) => {
+ipcMain.on(IPC.AGENTS_DELETE_RUN, (event, payload) => {
   const { agentId, runId } = JSON.parse(payload);
   event.returnValue = agents.deleteAgentRun(app, agentId, runId);
 });
 
-ipcMain.on('agents-delete-runs', (event, payload) => {
+ipcMain.on(IPC.AGENTS_DELETE_RUNS, (event, payload) => {
   event.returnValue = agents.deleteAgentRuns(app, payload);
 });
 
-ipcMain.on('settings-open', (event, payload) => {
+ipcMain.on(IPC.SETTINGS_OPEN, (event, payload) => {
   window.openSettingsWindow(payload);
 });
 
-ipcMain.on('run-at-login-get', (event) => {
+ipcMain.on(IPC.RUN_AT_LOGIN_GET, (event) => {
   event.returnValue = app.getLoginItemSettings();
 });
 
-ipcMain.on('run-at-login-set', (_, value) => {
+ipcMain.on(IPC.RUN_AT_LOGIN_SET, (_, value) => {
   if (app.getLoginItemSettings().openAtLogin != value) {
     app.setLoginItemSettings({
       openAtLogin: value,
@@ -534,15 +535,15 @@ ipcMain.on('run-at-login-set', (_, value) => {
   }
 });
 
-ipcMain.on('shortcuts-register', () => {
+ipcMain.on(IPC.SHORTCUTS_REGISTER, () => {
   registerShortcuts();
 });
 
-ipcMain.on('shortcuts-unregister', () => {
+ipcMain.on(IPC.SHORTCUTS_UNREGISTER, () => {
   shortcuts.unregisterShortcuts();
 });
 
-ipcMain.on('fullscreen', (_, payload) => {
+ipcMain.on(IPC.FULLSCREEN, (_, payload) => {
   if (payload.window === 'main') {
     window.mainWindow.setFullScreen(payload.state);
   } else if (payload.window === 'create') {
@@ -550,47 +551,47 @@ ipcMain.on('fullscreen', (_, payload) => {
   }
 });
 
-ipcMain.on('delete-file', (event, payload) => {
+ipcMain.on(IPC.DELETE_FILE, (event, payload) => {
   event.returnValue = file.deleteFile(app, payload);
 });
 
-ipcMain.on('pick-file', (event, payload) => {
+ipcMain.on(IPC.PICK_FILE, (event, payload) => {
   event.returnValue = file.pickFile(app, JSON.parse(payload));
 });
 
-ipcMain.on('pick-directory', (event) => {
+ipcMain.on(IPC.PICK_DIRECTORY, (event) => {
   event.returnValue = file.pickDirectory(app);
 });
 
-ipcMain.on('find-program', (event, payload) => {
+ipcMain.on(IPC.FIND_PROGRAM, (event, payload) => {
   event.returnValue = file.findProgram(app, payload);
 });
 
-ipcMain.on('read-file', (event, payload) => {
+ipcMain.on(IPC.READ_FILE, (event, payload) => {
   event.returnValue = file.getFileContents(app, payload);
 });
 
-ipcMain.on('read-icon', async (event, payload) => {
+ipcMain.on(IPC.READ_ICON, async (event, payload) => {
   event.returnValue = await file.getIconContents(app, payload);
 });
 
-ipcMain.on('save-file', (event, payload) => {
+ipcMain.on(IPC.SAVE_FILE, (event, payload) => {
   event.returnValue = file.writeFileContents(app, JSON.parse(payload));
 });
 
-ipcMain.on('download', async (event, payload) => {
+ipcMain.on(IPC.DOWNLOAD, async (event, payload) => {
   event.returnValue = await file.downloadFile(app, JSON.parse(payload));
 });
 
-ipcMain.on('get-text-content', async (event, contents, format) => {
+ipcMain.on(IPC.GET_TEXT_CONTENT, async (event, contents, format) => {
   event.returnValue = await text.getTextContent(contents, format);
 });
 
-ipcMain.on('get-app-info', async (event, payload) => {
+ipcMain.on(IPC.GET_APP_INFO, async (event, payload) => {
   event.returnValue = await file.getAppInfo(app, payload);
 });
 
-ipcMain.on('list-directory', (event, dirPath, includeHidden) => {
+ipcMain.on(IPC.LIST_DIRECTORY, (event, dirPath, includeHidden) => {
   try {
     event.returnValue = {
       success: true,
@@ -605,23 +606,23 @@ ipcMain.on('list-directory', (event, dirPath, includeHidden) => {
   }
 });
 
-ipcMain.on('file-exists', (event, filePath) => {
+ipcMain.on(IPC.FILE_EXISTS, (event, filePath) => {
   event.returnValue = file.fileExists(app, filePath);
 });
 
-ipcMain.on('write-file', (event, filePath, content) => {
+ipcMain.on(IPC.WRITE_FILE, (event, filePath, content) => {
   event.returnValue = file.writeFile(app, filePath, content);
 });
 
-ipcMain.on('normalize-path', (event, filePath) => {
+ipcMain.on(IPC.NORMALIZE_PATH, (event, filePath) => {
   event.returnValue = file.normalizePath(app, filePath);
 });
 
-ipcMain.on('markdown-render', (event, payload) => {
+ipcMain.on(IPC.MARKDOWN_RENDER, (event, payload) => {
   event.returnValue = markdown.renderMarkdown(payload);
 });
 
-ipcMain.on('code-python-run', async (event, payload) => {
+ipcMain.on(IPC.CODE_PYTHON_RUN, async (event, payload) => {
   try {
     const result = await interpreter.runPython(payload);
     event.returnValue = {
@@ -635,54 +636,54 @@ ipcMain.on('code-python-run', async (event, payload) => {
   }
 })
 
-ipcMain.on('automation-get-text', (event, payload) => {
+ipcMain.on(IPC.AUTOMATION_GET_TEXT, (event, payload) => {
   event.returnValue = getCachedText(payload);
 })
 
-ipcMain.on('automation-insert', async (event, payload) => {
+ipcMain.on(IPC.AUTOMATION_INSERT, async (event, payload) => {
   const { text, sourceApp } = payload
   event.returnValue = await Automation.automate(text, sourceApp, AutomationAction.INSERT_BELOW);
 })
 
-ipcMain.on('automation-replace', async (event, payload) => {
+ipcMain.on(IPC.AUTOMATION_REPLACE, async (event, payload) => {
   const { text, sourceApp } = payload
   event.returnValue = await Automation.automate(text, sourceApp, AutomationAction.REPLACE);
 })
 
-ipcMain.on('chat-open', async (_, chatId) => {
+ipcMain.on(IPC.CHAT_OPEN, async (_, chatId) => {
   await window.openMainWindow({ queryParams: { view: 'chat', chatId: chatId } });
 })
 
-ipcMain.on('anywhere-prompt', async () => {
+ipcMain.on(IPC.ANYWHERE_PROMPT, async () => {
   await PromptAnywhere.open();
 });
 
-ipcMain.on('anywhere-close', async (_, sourceApp: Application) => {
+ipcMain.on(IPC.ANYWHERE_CLOSE, async (_, sourceApp: Application) => {
   await PromptAnywhere.close(sourceApp);
 })
 
-ipcMain.on('anywhere-resize', async (_, payload) => {
+ipcMain.on(IPC.ANYWHERE_RESIZE, async (_, payload) => {
   await window.resizePromptAnywhere(payload.deltaX, payload.deltaY);
 })
 
-ipcMain.on('readaloud-close-palette', async (_, sourceApp: Application) => {
+ipcMain.on(IPC.READALOUD_CLOSE_PALETTE, async (_, sourceApp: Application) => {
   await window.releaseFocus({ sourceApp });
   await window.closeReadAloudPalette();
 });
 
-ipcMain.on('transcribe-insert', async (_, payload) => {
+ipcMain.on(IPC.TRANSCRIBE_INSERT, async (_, payload) => {
   await Transcriber.insertTranscription(payload);
 });
 
-ipcMain.on('docrepo-open', () => {
+ipcMain.on(IPC.DOCREPO_OPEN, () => {
   window.openMainWindow({ queryParams: { view: 'docrepo' } });
 });
 
-ipcMain.on('docrepo-list', (event) => {
+ipcMain.on(IPC.DOCREPO_LIST, (event) => {
   event.returnValue = JSON.stringify(docRepo.list());
 });
 
-ipcMain.on('docrepo-connect', async (event, baseId) => {
+ipcMain.on(IPC.DOCREPO_CONNECT, async (event, baseId) => {
   try {
     await docRepo.connect(baseId, true);
     event.returnValue = true
@@ -692,7 +693,7 @@ ipcMain.on('docrepo-connect', async (event, baseId) => {
   }
 });
 
-ipcMain.on('docrepo-disconnect', async (event) => {
+ipcMain.on(IPC.DOCREPO_DISCONNECT, async (event) => {
   try {
     await docRepo.disconnect();
     event.returnValue = true
@@ -702,7 +703,7 @@ ipcMain.on('docrepo-disconnect', async (event) => {
   }
 });
 
-ipcMain.on('docrepo-create', async (event, payload) => {
+ipcMain.on(IPC.DOCREPO_CREATE, async (event, payload) => {
   try {
     const { title, embeddingEngine, embeddingModel } = payload;
     event.returnValue = await docRepo.create(title, embeddingEngine, embeddingModel);
@@ -712,7 +713,7 @@ ipcMain.on('docrepo-create', async (event, payload) => {
   }
 });
 
-ipcMain.on('docrepo-rename', async (event, payload) => {
+ipcMain.on(IPC.DOCREPO_RENAME, async (event, payload) => {
   try {
     const { baseId, title } = payload;
     await docRepo.rename(baseId, title);
@@ -723,7 +724,7 @@ ipcMain.on('docrepo-rename', async (event, payload) => {
   }
 });
 
-ipcMain.on('docrepo-delete', async (event, baseId) => {
+ipcMain.on(IPC.DOCREPO_DELETE, async (event, baseId) => {
   try {
     await docRepo.delete(baseId);
     event.returnValue = true
@@ -733,7 +734,7 @@ ipcMain.on('docrepo-delete', async (event, baseId) => {
   }
 });
 
-ipcMain.on('docrepo-add-document', async (_, payload) => {
+ipcMain.on(IPC.DOCREPO_ADD_DOCUMENT, async (_, payload) => {
   try {
     const { baseId, type, url } = payload;
     await docRepo.addDocument(baseId, type, url);
@@ -742,10 +743,10 @@ ipcMain.on('docrepo-add-document', async (_, payload) => {
   }
 });
 
-ipcMain.on('docrepo-remove-document', async (event, payload) => {
+ipcMain.on(IPC.DOCREPO_REMOVE_DOCUMENT, async (event, payload) => {
   try {
     const { baseId, docId } = payload;
-    console.log('docrepo-remove-document', baseId, docId);
+    console.log(IPC.DOCREPO_REMOVE_DOCUMENT, baseId, docId);
     await docRepo.removeDocument(baseId, docId);
     event.returnValue = true
   } catch (error) {
@@ -754,10 +755,10 @@ ipcMain.on('docrepo-remove-document', async (event, payload) => {
   }
 });
 
-ipcMain.handle('docrepo-query', async(_, payload) => {
+ipcMain.handle(IPC.DOCREPO_QUERY, async(_, payload) => {
   try {
     const { baseId, text } = payload;
-    console.log('docrepo-query', baseId, text);
+    console.log(IPC.DOCREPO_QUERY, baseId, text);
     const results = await docRepo.query(baseId, text);
     console.log('docrepo-query results returned = ', results.length);
     return results
@@ -767,7 +768,7 @@ ipcMain.handle('docrepo-query', async(_, payload) => {
   }
 });
 
-ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
+ipcMain.on(IPC.DOCREPO_IS_EMBEDDING_AVAILABLE, async(event, payload) => {
   try {
     const { engine, model } = payload;
     event.returnValue = Embedder.isModelReady(app, engine, model);
@@ -777,138 +778,138 @@ ipcMain.on('docrepo-is-embedding-available', async(event, payload) => {
   }
 });
 
-ipcMain.on('mcp-is-available', (event) => {
+ipcMain.on(IPC.MCP_IS_AVAILABLE, (event) => {
   event.returnValue = mcp !== null;
 });
 
-ipcMain.on('mcp-get-servers', (event) => {
+ipcMain.on(IPC.MCP_GET_SERVERS, (event) => {
   event.returnValue = mcp ? mcp.getServers() : [];
 });
 
-ipcMain.handle('mcp-edit-server', async (_, server): Promise<boolean> => {
+ipcMain.handle(IPC.MCP_EDIT_SERVER, async (_, server): Promise<boolean> => {
   return mcp ? await mcp.editServer(JSON.parse(server)) : false;
 });
 
-ipcMain.handle('mcp-delete-server', async (_, uuid): Promise<boolean> => {
+ipcMain.handle(IPC.MCP_DELETE_SERVER, async (_, uuid): Promise<boolean> => {
   return await mcp?.deleteServer(uuid) || false;
 });
 
-ipcMain.on('mcp-get-install-command', (event, payload) => {
+ipcMain.on(IPC.MCP_GET_INSTALL_COMMAND, (event, payload) => {
   const { registry, server } = payload;
   event.returnValue = mcp ? mcp.getInstallCommand(registry, server, '') : '';
 });
 
-ipcMain.handle('mcp-install-server', async (_, payload): Promise<McpInstallStatus> => {
+ipcMain.handle(IPC.MCP_INSTALL_SERVER, async (_, payload): Promise<McpInstallStatus> => {
   const { registry, server, apiKey } = payload;
   return await mcp?.installServer(registry, server, apiKey) || 'error';
 });
 
-ipcMain.handle('mcp-reload', async () => {
+ipcMain.handle(IPC.MCP_RELOAD, async () => {
   await mcp?.reload();
 });
 
-ipcMain.on('mcp-get-status', (event): void => {
+ipcMain.on(IPC.MCP_GET_STATUS, (event): void => {
   event.returnValue = mcp ? mcp.getStatus() : null;
 });
 
-ipcMain.handle('mcp-get-server-tools', async (_, payload): Promise<McpTool[]> => {
+ipcMain.handle(IPC.MCP_GET_SERVER_TOOLS, async (_, payload): Promise<McpTool[]> => {
   return mcp ? await mcp.getServerTools(payload) : [];
 });
 
-ipcMain.handle('mcp-get-tools', async (): Promise<LlmTool[]> => {
+ipcMain.handle(IPC.MCP_GET_TOOLS, async (): Promise<LlmTool[]> => {
   return mcp ? await mcp.getTools() : [];
 });
 
-ipcMain.handle('mcp-call-tool', async (_, payload) => {
+ipcMain.handle(IPC.MCP_CALL_TOOL, async (_, payload) => {
   return mcp ? await mcp.callTool(payload.name, payload.parameters) : null;
 });
 
-ipcMain.on('mcp-original-tool-name', (event, payload) => {
+ipcMain.on(IPC.MCP_ORIGINAL_TOOL_NAME, (event, payload) => {
   event.returnValue = mcp ? mcp.originalToolName(payload) : null;
 });
 
-ipcMain.on('scratchpad-open', async (_, payload) => {
+ipcMain.on(IPC.SCRATCHPAD_OPEN, async (_, payload) => {
   await window.openScratchPad(payload);
 });
 
-ipcMain.on('computer-is-available', async (event) => {
+ipcMain.on(IPC.COMPUTER_IS_AVAILABLE, async (event) => {
   event.returnValue = await Computer.isAvailable();
 });
 
-ipcMain.on('computer-get-scaled-screen-size', (event) => {
+ipcMain.on(IPC.COMPUTER_GET_SCALED_SCREEN_SIZE, (event) => {
   event.returnValue = Computer.getScaledScreenSize();
 });
 
-ipcMain.on('computer-get-screen-number', (event) => {
+ipcMain.on(IPC.COMPUTER_GET_SCREEN_NUMBER, (event) => {
   event.returnValue = Computer.getScreenNumber();
 });
 
-ipcMain.on('computer-get-screenshot', async (event) => {
+ipcMain.on(IPC.COMPUTER_GET_SCREENSHOT, async (event) => {
   event.returnValue = await Computer.takeScreenshot();
 });
 
-ipcMain.on('computer-execute-action', async (event, payload) => {
+ipcMain.on(IPC.COMPUTER_EXECUTE_ACTION, async (event, payload) => {
   event.returnValue = await Computer.executeAction(payload);
 });
 
-ipcMain.on('computer-start', async () => {
+ipcMain.on(IPC.COMPUTER_START, async () => {
   window.mainWindow?.minimize();
   window.openComputerStatusWindow();
 });
 
-ipcMain.on('computer-close', async () => {
+ipcMain.on(IPC.COMPUTER_CLOSE, async () => {
   window.closeComputerStatusWindow();
   window.mainWindow?.restore();
 });
 
-ipcMain.on('computer-stop', async () => {
+ipcMain.on(IPC.COMPUTER_STOP, async () => {
   try {
-    window.mainWindow?.webContents.send('computer-stop');
+    window.mainWindow?.webContents.send(IPC.COMPUTER_STOP);
   } catch { /* empty */ }
 });
 
-ipcMain.on('computer-status', async (_, payload) => {
+ipcMain.on(IPC.COMPUTER_STATUS, async (_, payload) => {
   try {
-    window.computerStatusWindow?.webContents.send('computer-status', payload);
+    window.computerStatusWindow?.webContents.send(IPC.COMPUTER_STATUS, payload);
   } catch { /* empty */ }
 });
 
-ipcMain.on('memory-reset', async () => {
+ipcMain.on(IPC.MEMORY_RESET, async () => {
   await memoryManager.reset();
 });
 
-ipcMain.on('memory-has-facts', async (event) => {
+ipcMain.on(IPC.MEMORY_HAS_FACTS, async (event) => {
   event.returnValue = await memoryManager.isNotEmpty();
 });
 
-ipcMain.on('memory-facts', async (event) => {
+ipcMain.on(IPC.MEMORY_FACTS, async (event) => {
   event.returnValue = await memoryManager.list();
 });
 
-ipcMain.on('memory-store', async (event, payload) => {
+ipcMain.on(IPC.MEMORY_STORE, async (event, payload) => {
   event.returnValue = await memoryManager.store(payload);
 });
 
-ipcMain.on('memory-retrieve', async (event, payload) => {
+ipcMain.on(IPC.MEMORY_RETRIEVE, async (event, payload) => {
   event.returnValue = await memoryManager.query(payload);
 });
 
-ipcMain.on('memory-delete', async (event, payload) => {
+ipcMain.on(IPC.MEMORY_DELETE, async (event, payload) => {
   event.returnValue = await memoryManager.delete(payload);
 });
 
-ipcMain.handle('search-query', async (_, payload) => {
+ipcMain.handle(IPC.SEARCH_QUERY, async (_, payload) => {
   const { query, num } = payload;
   const localSearch = new LocalSearch();
   const results = localSearch.search(query, num);
   return results;
 });
 
-ipcMain.on('studio-start', () => {
+ipcMain.on(IPC.STUDIO_START, () => {
   window.openDesignStudioWindow();
 })
 
-ipcMain.on('voice-mode-start', () => {
+ipcMain.on(IPC.VOICE_MODE_START, () => {
   window.openRealtimeChatWindow();
 })
 
