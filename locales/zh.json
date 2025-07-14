@@ -58,6 +58,7 @@
     "icon": "图标",
     "insert": "插入",
     "install": "安装",
+    "instructions": "模型说明",
     "key": "密钥",
     "label": "标签",
     "language": {
@@ -1667,7 +1668,7 @@
     },
     "instructions": {
       "default": "⚙️ 使用配置默认",
-      "title": "模型说明"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "按回车提交，Shift+回车添加新行"
@@ -1929,7 +1930,7 @@
       "instructions": {
         "custom": "您可以在高级选项卡中个性化这些提示。",
         "empathic": "❤️ 温暖和同理心",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 活泼而机智",
         "reflective": "🤔 深思熟虑和反思",
         "standard": "📘 直接且信息丰富",

@@ -58,6 +58,7 @@
     "icon": "Icon",
     "insert": "Insert",
     "install": "Install",
+    "instructions": "Model instructions",
     "key": "Key",
     "label": "Label",
     "language": {
@@ -1667,7 +1668,7 @@
     },
     "instructions": {
       "default": "⚙️ Use configuration default",
-      "title": "Model instructions"
+      "title": "@:{'common.instructions'}"
     },
     "placeholders": {
       "default": "Enter to submit, Shift+Enter to add a new line"
@@ -1927,9 +1928,9 @@
     },
     "llm": {
       "instructions": {
-        "custom": "You can personalize those prompts in the Advanced tab.",
+        "custom": "You can personalize those instructions in the Advanced tab.",
         "empathic": "❤️ Warm and empathic",
-        "label": "@:{'common.prompt'}",
+        "label": "@:{'common.instructions'}",
         "playful": "😜 Playful and witty",
         "reflective": "🤔 Thoughtful and reflective",
         "standard": "📘 Straightforward and informative",
