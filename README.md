@@ -38,6 +38,37 @@ you can use [Ollama](https://ollama.com) to run models locally on your machine f
 
 It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows you to run MCP servers with virtually any LLM!***
 
+## Supported AI Providers
+
+Witsy supports a comprehensive range of AI providers across different capabilities:
+
+| Provider | Chat | Image Creation | Video Creation | Text-to-Speech | Speech-to-Text |
+|----------|------|----------------|----------------|----------------|----------------|
+| **OpenAI** | ✅ | ✅ (DALL-E) | ❌ | ✅ | ✅ (Whisper) |
+| **Anthropic** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Google (Gemini)** | ✅ | ✅ (Imagen) | ❌ | ❌ | ❌ |
+| **xAI (Grok)** | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **Meta (Llama)** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Ollama** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **LM Studio** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **MistralAI** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **DeepSeek** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **OpenRouter** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Groq** | ✅ | ❌ | ❌ | ✅ | ✅ |
+| **Cerebras** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Azure OpenAI** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Custom OpenAI-compatible** | ✅ | ❌ | ❌ | ❌ | ✅ |
+| **Replicate** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **fal.ai** | ❌ | ✅ | ✅ | ❌ | ✅ |
+| **HuggingFace** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Stable Diffusion WebUI** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **ElevenLabs** | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **Fireworks.ai** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Gladia** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **nVidia** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Speechmatics** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Local Whisper** | ❌ | ❌ | ❌ | ❌ | ✅ |
+
 Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
