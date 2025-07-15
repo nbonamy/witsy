@@ -40,34 +40,13 @@ It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows y
 
 ## Supported AI Providers
 
-Witsy supports a comprehensive range of AI providers across different capabilities:
-
-| Provider | Chat | Image Creation | Video Creation | Text-to-Speech | Speech-to-Text |
-|----------|------|----------------|----------------|----------------|----------------|
-| **OpenAI** | ✅ | ✅ (DALL-E) | ❌ | ✅ | ✅ (Whisper) |
-| **Anthropic** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Google (Gemini)** | ✅ | ✅ (Imagen) | ❌ | ❌ | ❌ |
-| **xAI (Grok)** | ✅ | ✅ | ❌ | ❌ | ❌ |
-| **Meta (Llama)** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Ollama** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **LM Studio** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **MistralAI** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **DeepSeek** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **OpenRouter** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Groq** | ✅ | ❌ | ❌ | ✅ | ✅ |
-| **Cerebras** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Azure OpenAI** | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **Custom OpenAI-compatible** | ✅ | ❌ | ❌ | ❌ | ✅ |
-| **Replicate** | ❌ | ✅ | ✅ | ❌ | ❌ |
-| **fal.ai** | ❌ | ✅ | ✅ | ❌ | ✅ |
-| **HuggingFace** | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **Stable Diffusion WebUI** | ❌ | ✅ | ❌ | ❌ | ❌ |
-| **ElevenLabs** | ❌ | ❌ | ❌ | ✅ | ❌ |
-| **Fireworks.ai** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **Gladia** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **nVidia** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **Speechmatics** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **Local Whisper** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Capability | Providers |
+|------------|-----------|
+| **Chat** | OpenAI, Anthropic, Google (Gemini), xAI (Grok), Meta (Llama), Ollama, LM Studio, MistralAI, DeepSeek, OpenRouter, Groq, Cerebras, Azure OpenAI, Custom OpenAI-compatible |
+| **Image Creation** | OpenAI (DALL-E), Google (Imagen), xAI (Grok), Replicate, fal.ai, HuggingFace, Stable Diffusion WebUI |
+| **Video Creation** | Replicate, fal.ai |
+| **Text-to-Speech** | OpenAI, ElevenLabs, Groq |
+| **Speech-to-Text** | OpenAI (Whisper), fal.ai, Fireworks.ai, Gladia, Groq, nVidia, Speechmatics, Local Whisper, Custom OpenAI-compatible |
 
 Non-exhaustive feature list:
 - OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
