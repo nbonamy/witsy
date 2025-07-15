@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Dodaj",
     "arguments": "Argumenty",
     "askMeAnything": "Zapytaj mnie o cokolwiek",
     "back": "Powrót",
@@ -21,6 +22,7 @@
       "continue": "Kontynuuj",
       "continueQuestion": "Masz niezapisane zmiany. Jeśli będziesz kontynuować, stracisz swoją pracę.",
       "delete": "Czy na pewno chcesz usunąć ten element?",
+      "deleteCustomInstruction": "Czy na pewno chcesz usunąć tę niestandardową instrukcję?",
       "deleteDocument": "Czy na pewno chcesz usunąć ten dokument?",
       "deleteMemory": "Czy na pewno chcesz usunąć tę pamięć?",
       "deleteRepository": "Czy na pewno chcesz usunąć to repozytorium?",
@@ -1928,7 +1930,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "Możesz spersonalizować te prompty w zakładce Zaawansowane.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Edytor instrukcji"
+        },
         "empathic": "❤️ Ciepły i empatyczny",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Zabawny i dowcipny",

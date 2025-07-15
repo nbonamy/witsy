@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Ajouter",
     "arguments": "Arguments",
     "askMeAnything": "Demandez-moi ce que vous voulez !",
     "back": "Retour",
@@ -21,6 +22,7 @@
       "continue": "Continuer",
       "continueQuestion": "Vous avez des modifications non enregistrées. Vous perdrez votre travail si vous continuez.",
       "delete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      "deleteCustomInstruction": "Êtes-vous sûr de vouloir supprimer cette instruction personnalisée ?",
       "deleteDocument": "Êtes-vous sûr de vouloir supprimer ce document ?",
       "deleteMemory": "Êtes-vous sûr de vouloir supprimer cette mémoire ?",
       "deleteRepository": "Êtes-vous sûr de vouloir supprimer ce dépôt ?",
@@ -1906,7 +1908,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "Vous pouvez personnaliser ces invites dans l'onglet Avancé.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Éditeur d'instructions"
+        },
         "empathic": "❤️ Chaleureux et empathique",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Joueur et spirituel",

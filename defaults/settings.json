@@ -22,7 +22,8 @@
     "autoVisionSwitch": true,
     "conversationLength": 20,
     "imageResize": 768,
-    "defaults": []
+    "defaults": [],
+    "customInstructions": []
   },
   "deepresearch": {
     "runtime": "ms",

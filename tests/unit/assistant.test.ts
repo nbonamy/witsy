@@ -319,3 +319,158 @@ test('Stop generation', async () => {
   })
   expect(assistant!.chat.lastMessage().transient).toBe(false)
 })
+
+test('Custom instructions with valid ID', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction',
+      instructions: 'You are a test assistant with custom behavior'
+    },
+    {
+      id: 'custom2', 
+      label: 'Another Custom Instruction',
+      instructions: 'You are another custom assistant'
+    }
+  ]
+  
+  // Set LLM to use custom instruction
+  store.config.llm.instructions = 'custom1'
+  store.config.llm.forceLocale = true
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang.fr-FR')
+})
+
+test('Custom instructions with second valid ID', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction',
+      instructions: 'You are a test assistant with custom behavior'
+    },
+    {
+      id: 'custom2', 
+      label: 'Another Custom Instruction',
+      instructions: 'You are another custom assistant'
+    }
+  ]
+  
+  // Set LLM to use second custom instruction
+  store.config.llm.instructions = 'custom2'
+  store.config.llm.forceLocale = true
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('You are another custom assistant\n\ninstructions.utils.setLang.fr-FR')
+})
+
+test('Custom instructions fallback to default when ID not found', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction', 
+      instructions: 'You are a test assistant with custom behavior'
+    }
+  ]
+  
+  // Set LLM to use non-existent custom instruction
+  store.config.llm.instructions = 'custom999'
+  store.config.llm.forceLocale = true
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  // Should fallback to i18n default since custom ID not found
+  expect(instructions).toBe('instructions.chat.custom999.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+})
+
+test('Custom instructions with empty array', async () => {
+  // Set empty custom instructions array
+  store.config.llm.customInstructions = []
+  
+  // Set LLM to use custom instruction ID that doesn't exist
+  store.config.llm.instructions = 'custom1'
+  store.config.llm.forceLocale = true
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  // Should fallback to i18n since no custom instructions exist
+  expect(instructions).toBe('instructions.chat.custom1.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+})
+
+test('Custom instructions without force locale', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction',
+      instructions: 'You are a test assistant with custom behavior'
+    }
+  ]
+  
+  // Disable force locale
+  store.config.llm.forceLocale = false
+  store.config.llm.instructions = 'custom1'
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  // Should not include language instruction
+  expect(instructions).toBe('You are a test assistant with custom behavior')
+})
+
+test('Custom instructions mixed with defaults', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction',
+      instructions: 'You are a test assistant with custom behavior'
+    }
+  ]
+  
+  store.config.llm.forceLocale = true
+  
+  // Test with default instruction first
+  store.config.llm.instructions = 'structured'
+  await prompt('Hello LLM')
+  let instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('instructions.chat.structured.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+  
+  // Switch to custom instruction
+  store.config.llm.instructions = 'custom1'
+  await prompt('Hello LLM')
+  instructions = await assistant!.chat.messages[0].content  
+  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang.fr-FR')
+  
+  // Switch back to default
+  store.config.llm.instructions = 'standard'
+  await prompt('Hello LLM')
+  instructions = await assistant!.chat.messages[0].content
+  expect(instructions).toBe('instructions.chat.standard.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+})
+
+test('Custom instructions with chat override', async () => {
+  // Add custom instructions to store
+  store.config.llm.customInstructions = [
+    {
+      id: 'custom1',
+      label: 'Test Custom Instruction',
+      instructions: 'You are a test assistant with custom behavior'
+    }
+  ]
+  
+  // Set LLM to use custom instruction
+  store.config.llm.instructions = 'custom1'
+  
+  // Override with chat-specific instructions
+  assistant!.chat.instructions = 'Chat override instructions'
+  
+  await prompt('Hello LLM')
+  const instructions = await assistant!.chat.messages[0].content
+  // Chat override should take precedence over custom instructions
+  expect(instructions).toBe('Chat override instructions')
+})

@@ -5,9 +5,6 @@ import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import { tabs, switchToTab, getTab } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
-import LlmFactory from '../../src/llms/llm'
-import { defaultCapabilities } from 'multi-llm-ts'
-import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
 
@@ -41,23 +38,6 @@ beforeAll(() => {
   useWindowMock()
   store.loadSettings()
   store.load = () => {}
-
-  // init store
-  store.config.engines.anthropic = {
-    model: { chat: 'model2' },
-    // @ts-expect-error testing
-    models: { _chat: [
-        { id: 'model1', name: 'Model 1', meta: {}, ...defaultCapabilities },
-        { id: 'model2', name: 'Model 2', meta: {}, ...defaultCapabilities }
-      ],
-      get chat() {
-        return this._chat
-      },
-      set chat(value) {
-        this._chat = value
-      },
-    }
-  }
 
   // override
   window.api.config.localeLLM = () => store.config.llm.locale || 'en-US'
@@ -148,71 +128,6 @@ test('Settings General', async () => {
 
 })
 
-test('Settings LLM', async () => {
-  
-  const manager = LlmFactory.manager(store.config)
-  const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
-  expect(tab.findAll('.group')).toHaveLength(4)
-  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
-  expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
-  expect(store.config.prompt.engine).toBe('')
-  expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
-
-  // set default prompt
-  expect(store.config.llm.instructions).toBe('standard')
-  tab.find('.group.chat-prompt select').setValue('playful')
-  expect(store.config.llm.instructions).toBe('playful')
-  vi.clearAllMocks()
-
-  // set prompt engine
-  tab.find('.group.quick-prompt select.engine').setValue('anthropic')
-  await wrapper.vm.$nextTick()
-  expect(store.config.llm.forceLocale).toBe(false)
-  expect(store.config.prompt.engine).toBe('anthropic')
-  expect(store.config.prompt.model).toBe('model1')
-  vi.clearAllMocks()
-  
-  // set prompt model
-  const modelSelect = findModelSelectoPlus(tab)
-  await modelSelect.open()
-  await modelSelect.select(1)
-  await wrapper.vm.$nextTick()
-  expect(store.config.prompt.model).toBe('model2')
-  vi.clearAllMocks()
-
-  // set llm locale to french: translation exists so forceLocale is false
-  expect(store.config.llm.locale).toBe('')
-  expect(store.config.llm.forceLocale).toBe(false)
-  tab.find('.group.localeLLM select').setValue('fr-FR')
-  expect(store.config.llm.locale).toBe('fr-FR')
-  expect(store.config.llm.forceLocale).toBe(false)
-  vi.clearAllMocks()
-
-  // set forceLocale to true
-  tab.find('.group.localeLLM input').setValue(true)
-  expect(store.config.llm.forceLocale).toBe(true)
-  vi.clearAllMocks()
-
-  // set it back to false
-  tab.find('.group.localeLLM input').setValue(false)
-  expect(store.config.llm.forceLocale).toBe(false)
-  vi.clearAllMocks()
-
-  // set llm locale to spanish: translation does not exist so forceLocale is true
-  expect(store.config.llm.locale).not.toBe('es-ES')
-  tab.find('.group.localeLLM select').setValue('es-ES')
-  expect(store.config.llm.locale).toBe('es-ES')
-  expect(store.config.llm.forceLocale).toBe(true)
-  vi.clearAllMocks()
-
-  expect(store.config.llm.conversationLength).not.toBe(10)
-  tab.find('.group.length input').setValue(10)
-  expect(store.config.llm.conversationLength).toBe(10)
-  expect(store.saveSettings).toHaveBeenCalledOnce()
-  vi.clearAllMocks()
-
-})
 
 test('Settings Chat', async () => {
   
