@@ -58,73 +58,78 @@ const onRenameChat = () => {
 .container {
   margin: 0rem 0.5rem;
   margin-right: 1rem;
-  padding: 0.1rem 0rem;
+  padding: 0rem;
   cursor: pointer;
-}
 
-.chat {
-  margin: 0;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 0.5rem;
-}
+  .chat {
+    margin: 0;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 0.5rem;
+  
+    &.selected {
+      background-color: var(--sidebar-selected-color);
+    }
 
-.chat.selected {
-  background-color: var(--sidebar-selected-color);
-}
+    .info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
 
-.chat .info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
+      * {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
 
-.chat .info * {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+    .logo {
+      width: var(--sidebar-logo-size);
+      height: var(--sidebar-logo-size);
+      margin-right: 0.5rem;
+    }
 
-.chat .logo {
-  width: var(--sidebar-logo-size);
-  height: var(--sidebar-logo-size);
-  margin-right: 0.5rem;
-}
+    .title {
+      font-weight: bold;
+      font-size: 10.5pt;
+    }
 
-.chat .title {
-  font-weight: bold;
-  font-size: 10.5pt;
-}
+    .subtitle {
+      font-size: 9pt;
+    }
 
-.chat .subtitle {
-  font-size: 9pt;
-}
+    .select {
+      margin-left: 1rem;
+      text-align: right;
+      flex: 1;
+    }
 
-.chat .select {
-  margin-left: 1rem;
-  text-align: right;
-  flex: 1;
-}
+    &.compact {
+  
+      margin: 0px;
+      margin-left: 0.5rem;
+      padding: 0.25rem 0.5rem;
 
-.chat.compact {
-  margin: 0px 0.5rem;
-  padding: 0.25rem 0.75rem;
-}
+      .logo {
+        width: calc(var(--sidebar-logo-size) / 2);
+        height: calc(var(--sidebar-logo-size) / 2);
+      }
 
-.chat.compact .logo {
-  width: calc(var(--sidebar-logo-size) / 2);
-  height: calc(var(--sidebar-logo-size) / 2);
-}
+      .title {
+        font-weight: normal;
+        font-size: 10.5pt;
+      }
 
-.chat.compact .title {
-  font-weight: normal;
-  font-size: 10.5pt;
-}
+      .subtitle {
+        display: none;
+      }
 
-.chat.compact .subtitle {
-  display: none;
+    }
+
+  }
+
 }
 
 
