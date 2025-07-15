@@ -38,12 +38,24 @@ you can use [Ollama](https://ollama.com) to run models locally on your machine f
 
 It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows you to run MCP servers with virtually any LLM!***
 
+## Supported AI Providers
+
+| Capability | Providers |
+|------------|-----------|
+| **Chat** | OpenAI, Anthropic, Google (Gemini), xAI (Grok), Meta (Llama), Ollama, LM Studio, MistralAI, DeepSeek, OpenRouter, Groq, Cerebras, Azure OpenAI, any provider who supports the OpenAI API standard |
+| **Image Creation** | OpenAI (DALL-E), Google (Imagen), xAI (Grok), Replicate, fal.ai, HuggingFace, Stable Diffusion WebUI |
+| **Video Creation** | Replicate, fal.ai |
+| **Text-to-Speech** | OpenAI, ElevenLabs, Groq |
+| **Speech-to-Text** | OpenAI (Whisper), fal.ai, Fireworks.ai, Gladia, Groq, nVidia, Speechmatics, Local Whisper, any provider who supports the OpenAI API standard |
+| **Search Engines** | Tavily, Brave, Exa, Local Google Search |
+| **MCP Repositories** | Smithery.ai
+| **Embeddings** | OpenAI, Ollama |
+
 Non-exhaustive feature list:
-- OpenAI, Ollama, Anthropic, MistralAI, Google, xAI, Azure, OpenRouter, DeepSeek, Groq and Cerebras models supported
 - Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
-- Text-to-image and text-to video with OpenAI, Google, xAI, Replicate, fal.ai and HuggingFace
-- Image-to-image (image editing) and image-to-video with Google, Replicate and fal.ai
+- Text-to-image and text-to video
+- Image-to-image (image editing) and image-to-video
 - LLM plugins to augment LLM: execute python code, search the Internet...
 - Anthropic MCP server support
 - Scratchpad to interactively create the best content with any model!
@@ -51,8 +63,8 @@ Non-exhaustive feature list:
 - AI commands runnable on highlighted text in almost any application
 - Experts prompts to specialize your bot on a specific topic
 - Long-term memory plugin to increase relevance of LLM answers
-- Read aloud of assistant messages (requires OpenAI or ElevenLabs API key)
-- Read aloud of any text in other applications (requires OpenAI or ElevenLabs API key)
+- Read aloud of assistant messages
+- Read aloud of any text in other applications
 - Chat with your local files and documents (RAG)
 - Transcription/Dictation (Speech-to-Text)
 - Realtime Chat aka Voice Mode
