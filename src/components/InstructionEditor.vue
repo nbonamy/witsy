@@ -10,6 +10,7 @@
     </div>
     <div class="buttons">
       <button type="button" @click="onCancel">{{ t('common.cancel') }}</button>
+      <button type="button" @click="onReset" v-if="isDefaultInstruction">{{ t('common.reset') }}</button>
       <button type="button" @click="onSave" class="default" :disabled="!isValid">{{ t('common.save') }}</button>
     </div>
   </div>
@@ -19,7 +20,7 @@
 
 import { CustomInstruction } from '../types/config'
 import { ref, computed, watch } from 'vue'
-import { t } from '../services/i18n'
+import { i18nInstructions, t } from '../services/i18n'
 
 interface Props {
   instruction: CustomInstruction | null
@@ -65,6 +66,10 @@ watch(() => props.instruction, (newInstruction) => {
     }
   }
 }, { immediate: true })
+
+const onReset = () => {
+  localInstruction.value.instructions = i18nInstructions(null, `instructions.chat.${localInstruction.value.id.replace('default_', '')}`)
+}
 
 const onCancel = () => {
   emit('cancel')
