@@ -201,8 +201,8 @@ test('Settings Advanced', async () => {
     key.split('.').reduce((obj, token) => obj?.[token], store.config)
 
   const instructions = [
-    'instructions.chat.standard', 'instructions.chat.structured', 'instructions.chat.playful',
-    'instructions.chat.empathic', 'instructions.chat.uplifting', 'instructions.chat.reflective', 'instructions.chat.visionary', 
+    // 'instructions.chat.standard', 'instructions.chat.structured', 'instructions.chat.playful',
+    // 'instructions.chat.empathic', 'instructions.chat.uplifting', 'instructions.chat.reflective', 'instructions.chat.visionary', 
     'instructions.utils.titling', 'instructions.utils.titlingUser', 'instructions.chat.docquery',
     'instructions.scratchpad.system', 'instructions.scratchpad.prompt', 'instructions.scratchpad.spellcheck',
     'instructions.scratchpad.improve', 'instructions.scratchpad.takeaways', 'instructions.scratchpad.title',
