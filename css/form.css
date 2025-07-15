@@ -165,6 +165,12 @@ form .group input:focus, form .group select:focus, form .group textarea:focus {
   outline: 2px solid #83aaf2;
 }
 
+form .group input:disabled, form .group select:disabled, form .group textarea:disabled {
+  background-color: var(--control-button-disabled-bg-color);
+  color: var(--control-button-disabled-text-color);
+  cursor: not-allowed;
+}
+
 form .group input[type=checkbox] {
   width: 14px;
   height: 14px;

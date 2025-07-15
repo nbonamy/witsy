@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Agregar",
     "arguments": "Argumentos",
     "askMeAnything": "Pregúntame cualquier cosa",
     "back": "Atrás",
@@ -21,6 +22,7 @@
       "continue": "Continuar",
       "continueQuestion": "Tienes cambios no guardados. Perderás tu trabajo si continúas.",
       "delete": "¿Estás seguro de que deseas eliminar este elemento?",
+      "deleteCustomInstruction": "¿Estás seguro de que deseas eliminar esta instrucción personalizada?",
       "deleteDocument": "¿Estás seguro de que deseas eliminar este documento?",
       "deleteMemory": "¿Estás seguro de que deseas eliminar esta memoria?",
       "deleteRepository": "¿Estás seguro de que deseas eliminar este repositorio?",
@@ -1906,7 +1908,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "Puedes personalizar esos mensajes en la pestaña Avanzada.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Editor de instrucciones"
+        },
         "empathic": "❤️ Cálido y empático",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Divertido e ingenioso",

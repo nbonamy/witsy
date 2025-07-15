@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "添加",
     "arguments": "参数",
     "askMeAnything": "问我任何问题",
     "back": "返回",
@@ -21,6 +22,7 @@
       "continue": "继续",
       "continueQuestion": "您有未保存的更改。如果您继续，您的工作将丢失。",
       "delete": "您确定要删除此项目吗？",
+      "deleteCustomInstruction": "您确定要删除此自定义指令吗？",
       "deleteDocument": "您确定要删除此文档吗？",
       "deleteMemory": "您确定要删除此记忆吗？",
       "deleteRepository": "您确定要删除此仓库吗？",
@@ -1928,7 +1930,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "您可以在高级选项卡中个性化这些提示。",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "指令编辑器"
+        },
         "empathic": "❤️ 温暖和同理心",
         "label": "@:{'common.instructions'}",
         "playful": "😜 活泼而机智",

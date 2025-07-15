@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Adicionar",
     "arguments": "Parâmetros",
     "askMeAnything": "Pergunte-me qualquer coisa",
     "back": "Voltar",
@@ -21,6 +22,7 @@
       "continue": "Continue",
       "continueQuestion": "Você tem alterações não salvas. Se fechar esta janela, perderá seu trabalho.",
       "delete": "Você tem certeza que deseja excluir este item?",
+      "deleteCustomInstruction": "Tem certeza de que deseja excluir esta instrução personalizada?",
       "deleteDocument": "Você tem certeza que deseja excluir este documento?",
       "deleteMemory": "Você tem certeza que deseja excluir essa memória?",
       "deleteRepository": "Você tem certeza que deseja excluir esse repositório?",
@@ -1928,7 +1930,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "Você pode personalizar esses prompts na aba Avançado.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Editor de Instruções"
+        },
         "empathic": "❤️ Aconchegante e empático",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Brincalhão e espirituoso",

@@ -42,7 +42,7 @@
   --control-button-active-bg-color: #f2f2f2;
   --control-button-disabled-bg-color: #f2f2f2;
   --control-button-disabled-border-color: var(--control-button-border-color);
-  --control-button-disabled-text-color: #c6c6c6;
+  --control-button-disabled-text-color: #888;
   --control-textarea-bg-color: var(--background-color);
   --control-placeholder-text-color: rgb(117, 117, 117);
   --control-list-bg-color: var(--background-color);
@@ -423,6 +423,7 @@ button:disabled {
   background-color: var(--control-button-disabled-bg-color);
   border: 1px solid var(--control-button-disabled-border-color);
   color: var(--control-button-disabled-text-color);
+  cursor: not-allowed;
 }
 
 button:active:enabled {

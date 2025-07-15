@@ -311,7 +311,16 @@ export type GenerationResult =
   getSystemInstructions(instructions?: string): string {
 
     // default
-    let instr = instructions || i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
+    let instr = instructions
+    if (!instr) {
+      // Check if it's a custom instruction
+      const customInstruction = this.config.llm.customInstructions?.find((ci: any) => ci.id === this.config.llm.instructions)
+      if (customInstruction) {
+        instr = customInstruction.instructions
+      } else {
+        instr = i18nInstructions(this.config, `instructions.chat.${this.config.llm.instructions}`)
+      }
+    }
 
     // forced locale
     if (/*instr === i18nInstructions(null, `instructions.chat.${this.config.llm.instructions}`) && */this.config.llm.forceLocale) {

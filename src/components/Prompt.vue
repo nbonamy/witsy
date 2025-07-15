@@ -207,14 +207,27 @@ const instructionsMenuItems = computed(() => {
     ...instructionIds.map((id) => {
       return { label: t(`settings.llm.instructions.${id}`), action: id }
     }),
+    ...store.config.llm.customInstructions.map((custom) => {
+      return { label: custom.label, action: `custom:${custom.id}` }
+    })
   ]
 })
 
 const chatInstructions = computed(() => {
 
+  // Check default instructions first
   for (const id of instructionIds) {
     if (props.chat.instructions === i18nInstructions(store.config, `instructions.chat.${id}`)) {
       return { label: id, action: id }
+    }
+  }
+
+  // Check custom instructions
+  if (store.config.llm.customInstructions?.length > 0) {
+    for (const custom of store.config.llm.customInstructions) {
+      if (props.chat.instructions === custom.instructions) {
+        return { label: custom.label, action: `custom:${custom.id}` }
+      }
     }
   }
 
@@ -353,8 +366,15 @@ const setInstructions = (action: string) => {
   closeContextMenu()
   if (action === 'null') {
     instructions.value = null
+  } else if (action.startsWith('custom:')) {
+    // Handle custom instructions
+    const customId = action.replace('custom:', '')
+    const customInstruction = store.config.llm.customInstructions?.find(c => c.id === customId)
+    if (customInstruction) {
+      instructions.value = customInstruction.instructions
+    }
   } else {
-
+    // Handle default instructions
     // use chat llm locale if set
     let llmLocale = null
     const forceLocale = store.config.llm.forceLocale
@@ -372,7 +392,6 @@ const setInstructions = (action: string) => {
       setLlmLocale(llmLocale)
       store.config.llm.forceLocale = forceLocale
     }
-
   }
   if (props.chat) {
     props.chat.instructions = instructions.value

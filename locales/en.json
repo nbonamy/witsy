@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Add",
     "arguments": "Arguments",
     "askMeAnything": "Ask me anything",
     "back": "Back",
@@ -21,6 +22,7 @@
       "continue": "Continue",
       "continueQuestion": "You have unsaved changes. You will lose your work if you continue.",
       "delete": "Are you sure you want to delete this item?",
+      "deleteCustomInstruction": "Are you sure you want to delete this custom instruction?",
       "deleteDocument": "Are you sure you want to delete this document?",
       "deleteMemory": "Are you sure you want to delete this memory?",
       "deleteRepository": "Are you sure you want to delete this repository?",
@@ -1928,7 +1930,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "You can personalize those instructions in the Advanced tab.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Instruction Editor"
+        },
         "empathic": "❤️ Warm and empathic",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Playful and witty",

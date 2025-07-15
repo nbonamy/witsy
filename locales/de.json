@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Hinzufügen",
     "arguments": "Argumente",
     "askMeAnything": "Frag mich, was du willst!",
     "back": "Zurück",
@@ -21,6 +22,7 @@
       "continue": "Fortfahren",
       "continueQuestion": "Sie haben ungespeicherte Änderungen. Sie verlieren Ihre Eingaben, wenn Sie fortfahren.",
       "delete": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
+      "deleteCustomInstruction": "Sind Sie sicher, dass Sie diese benutzerdefinierte Anweisung löschen möchten?",
       "deleteDocument": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
       "deleteMemory": "Sind Sie sicher, dass Sie dieses Gedächtnis löschen möchten?",
       "deleteRepository": "Sind Sie sicher, dass Sie diese Dokumentensammlung löschen möchten?",
@@ -1906,7 +1908,11 @@
     },
     "llm": {
       "instructions": {
-        "custom": "Sie können diese Eingabeaufforderungen im Tab \"Erweitert\" anpassen.",
+        "editor": {
+          "instructions": "@:{'common.instructions'}",
+          "label": "@:{'common.label'}",
+          "title": "Anweisungs-Editor"
+        },
         "empathic": "❤️ Warm und empathisch",
         "label": "@:{'common.instructions'}",
         "playful": "😜 Verspielt und witzig",
