@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.11.2] - WIP
+## [2.12.0] - WIP
+
+### Added
+- Add, Edit & Delete System Prompts (https://github.com/nbonamy/witsy/issues/308)
+
+### Changed
+- N/A 
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+
+## [2.11.2] - 2025-07-14
 
 ### Added
 - N/A
