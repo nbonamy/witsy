@@ -52,7 +52,6 @@ It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows y
 | **Embeddings** | OpenAI, Ollama |
 
 Non-exhaustive feature list:
-- Connect other providers (together, siliconflow, fireworks...) through OpenAI compatibility layer
 - Chat completion with vision models support (describe an image)
 - Text-to-image and text-to video
 - Image-to-image (image editing) and image-to-video
