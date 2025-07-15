@@ -79,6 +79,8 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
   align-items: center;
   border-radius: 4px;
   gap: 1rem;
+  word-break: break-word;
+  overflow: hidden;
 }
 
 .history .message .thumbnail {
