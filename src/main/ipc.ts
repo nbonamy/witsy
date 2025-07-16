@@ -217,12 +217,12 @@ export const installIpc = (
     event.returnValue = experts.importExperts(app);
   });
 
-  ipcMain.on(IPC.BACKUP.EXPORT, (event) => {
-    event.returnValue = backup.exportBackup(app);
+  ipcMain.on(IPC.BACKUP.EXPORT, async (event) => {
+    event.returnValue = await backup.exportBackup(app);
   });
 
-  ipcMain.on(IPC.BACKUP.IMPORT, (event) => {
-    event.returnValue = backup.importBackup(app, quitApp);
+  ipcMain.on(IPC.BACKUP.IMPORT, async (event) => {
+    event.returnValue = await backup.importBackup(app, quitApp);
   });
 
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {
