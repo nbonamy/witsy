@@ -334,6 +334,10 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         { title: 'title1', url: 'url1', content: '<html>page_content1<img src="test" /></html>' },
         { title: 'title2', url: 'url2', content: '<html>header<main id="main">page_content2</main></html>' },
       ])
+    },
+    backup: {
+      export: vi.fn(() => true),
+      import: vi.fn(() => true),
     }
   }
 

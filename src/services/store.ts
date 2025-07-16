@@ -46,6 +46,12 @@ export const store: Store = reactive({
     window.api.on('file-modified', (file) => {
       if (file === 'settings') {
         loadSettings()
+      } else if (file === 'commands') {
+        loadCommands()
+      } else if (file === 'experts') {
+        loadExperts()
+      } else if (file === 'agents') {
+        loadAgents()
       }
     })
 

@@ -227,6 +227,27 @@
     "error": "Erreur lors de la vérification des mises à jour. Veuillez réessayer plus tard.",
     "uptodate": "Vous utilisez déjà la dernière version de Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "Cela écrasera vos paramètres, historique, experts et commandes actuels. Cette action est irréversible.",
+        "message": "Êtes-vous sûr de vouloir restaurer vos données et paramètres à partir d'une sauvegarde ?",
+        "restore": "Restaurer",
+        "title": "Restaurer la sauvegarde"
+      },
+      "error": {
+        "detail": "Erreur : {error}",
+        "message": "Échec de la restauration des paramètres à partir de la sauvegarde.",
+        "title": "Échec de la restauration"
+      },
+      "files": "Fichiers de sauvegarde",
+      "restart": {
+        "detail": "L'application va maintenant redémarrer pour appliquer toutes les modifications.",
+        "message": "Les données et paramètres ont été restaurés avec succès depuis la sauvegarde.",
+        "title": "Restauration terminée"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Exporter en Markdown",
@@ -1430,6 +1451,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Sauvegarder les données et les paramètres…",
+      "backupImport": "Restaurer la sauvegarde…",
       "closeWindow": "Fermer la fenêtre",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nouvelle conversation",

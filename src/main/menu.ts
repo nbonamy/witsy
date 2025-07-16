@@ -14,6 +14,8 @@ export type MenuCallbacks = {
   scratchpad: () => void
   studio: () => void
   forge: () => void
+  backupExport: () => void
+  backupImport: () => void
 }
 
 const isMac = process.platform === 'darwin'
@@ -103,6 +105,15 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
             click: () => callbacks.forge()
           }
         ] : []),
+        { type: 'separator' },
+        {
+          label: t('menu.file.backupExport'),
+          click: () => callbacks.backupExport()
+        },
+        {
+          label: t('menu.file.backupImport'),
+          click: () => callbacks.backupImport()
+        },
         { type: 'separator' },
         isMac ? { role: 'close' } : { role: 'quit' }
       ]

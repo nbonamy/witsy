@@ -38,6 +38,7 @@ import * as text from './text';
 import * as i18n from './i18n';
 import * as debug from './network';
 import * as interpreter from './interpreter';
+import * as backup from './backup';
 
 export const installIpc = (
   store: Store,
@@ -46,7 +47,8 @@ export const installIpc = (
   memoryManager: MemoryManager,
   mcp: Mcp,
   installMenu: () => void,
-  registerShortcuts: () => void
+  registerShortcuts: () => void,
+  quitApp: () => void,
 ): void => {
 
   ipcMain.on(IPC.MAIN_WINDOW.SET_MODE, (event, mode) => {
@@ -213,6 +215,14 @@ export const installIpc = (
 
   ipcMain.on(IPC.EXPERTS.IMPORT, (event) => {
     event.returnValue = experts.importExperts(app);
+  });
+
+  ipcMain.on(IPC.BACKUP.EXPORT, (event) => {
+    event.returnValue = backup.exportBackup(app);
+  });
+
+  ipcMain.on(IPC.BACKUP.IMPORT, (event) => {
+    event.returnValue = backup.importBackup(app, quitApp);
   });
 
   ipcMain.on(IPC.AGENTS.OPEN_FORGE,  () => {

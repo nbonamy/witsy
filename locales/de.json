@@ -227,6 +227,27 @@
     "error": "Fehler bei der Überprüfung auf Updates. Bitte versuchen Sie es später erneut.",
     "uptodate": "Sie verwenden bereits die neueste Version von Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "Dies überschreibt Ihre aktuellen Einstellungen, den Verlauf, Experten und Befehle. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "message": "Sind Sie sicher, dass Sie Ihre Daten und Einstellungen aus einem Backup wiederherstellen möchten?",
+        "restore": "Wiederherstellen",
+        "title": "Backup wiederherstellen"
+      },
+      "error": {
+        "detail": "Fehler: {error}",
+        "message": "Die Wiederherstellung der Einstellungen aus dem Backup ist fehlgeschlagen.",
+        "title": "Wiederherstellung fehlgeschlagen"
+      },
+      "files": "Backup-Dateien",
+      "restart": {
+        "detail": "Die Anwendung wird nun neu gestartet, um alle Änderungen anzuwenden.",
+        "message": "Daten und Einstellungen wurden erfolgreich aus dem Backup wiederhergestellt.",
+        "title": "Wiederherstellung abgeschlossen"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Als Markdown exportieren",
@@ -1430,6 +1451,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Daten und Einstellungen sichern…",
+      "backupImport": "Backup wiederherstellen…",
       "closeWindow": "Fenster schließen",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Neuer Chat",

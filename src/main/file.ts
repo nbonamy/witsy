@@ -11,7 +11,7 @@ import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
 
-export const getFileContents = (app: App, filepath: string): FileContents => {
+export const getFileContents = (app: App, filepath: string): FileContents|null => {
 
   try {
     if (filepath.startsWith('file://')) {
@@ -34,7 +34,7 @@ export const getFileContents = (app: App, filepath: string): FileContents => {
 
 }
 
-export const getIconContents = (app: App, filepath: string): FileContents => {
+export const getIconContents = (app: App, filepath: string): FileContents|null => {
 
   try {
 
@@ -75,7 +75,7 @@ export const getIconContents = (app: App, filepath: string): FileContents => {
 
 }
 
-export const deleteFile = (app: App, filepath: string) => {
+export const deleteFile = (app: App, filepath: string): boolean => {
 
   try {
     let path = filepath;
@@ -94,7 +94,7 @@ export const deleteFile = (app: App, filepath: string) => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict): string | string[] | FileContents => {
+export const pickFile = (app: App, payload: anyDict): string|string[]|FileContents|null => {
 
   try {
 
@@ -133,7 +133,7 @@ export const pickFile = (app: App, payload: anyDict): string | string[] | FileCo
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const pickDirectory = (app: App): string => {
+export const pickDirectory = (app: App): string|null => {
 
   try {
 

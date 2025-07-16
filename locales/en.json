@@ -246,6 +246,27 @@
     "error": "Error while checking for updates. Please try again later.",
     "uptodate": "You are already using the latest version of Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "This will overwrite your current settings, history, experts, and commands. This action cannot be undone.",
+        "message": "Are you sure you want to restore your data and settings from a backup?",
+        "restore": "Restore",
+        "title": "Restore Backup"
+      },
+      "error": {
+        "detail": "Error: {error}",
+        "message": "Failed to restore settings from backup.",
+        "title": "Restore Failed"
+      },
+      "files": "Backup files",
+      "restart": {
+        "detail": "The application will now restart to apply all changes.",
+        "message": "Data and settings have been successfully restored from backup.",
+        "title": "Restore Complete"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Export as Markdown",
@@ -1449,6 +1470,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Backup data and settings…",
+      "backupImport": "Restore backup…",
       "closeWindow": "Close Window",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "New Chat",

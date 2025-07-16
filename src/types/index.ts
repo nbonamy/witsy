@@ -481,6 +481,10 @@ declare global {
       voiceMode: {
         start(): void
       }
+      backup: {
+        export(): boolean
+        import(): boolean
+      }
     }
   }
 }

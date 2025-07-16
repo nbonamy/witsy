@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add, Edit & Delete System Prompts (https://github.com/nbonamy/witsy/issues/308)
+- Backup/Restore of data and settings
 
 ### Changed
 - N/A 

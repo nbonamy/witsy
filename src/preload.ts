@@ -208,6 +208,10 @@ contextBridge.exposeInMainWorld(
     },
     voiceMode: {
       start: (): void => { return ipcRenderer.send(IPC.VOICE_MODE.START) },
+    },
+    backup: {
+      export: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.EXPORT) },
+      import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
     }
   },
 );
