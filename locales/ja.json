@@ -2168,7 +2168,7 @@
       "verifying": "検証中: {percent}%"
     }
   },
-"sidebar": {
+  "sidebar": {
     "newFolder": {
       "placeholder": "新しいフォルダー名",
       "title": "新しいフォルダー"
