@@ -246,6 +246,27 @@
     "error": "Erro ao verificar atualizações. Por favor, tente novamente mais tarde.",
     "uptodate": "Você já está usando a versão mais recente do Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "Isso irá sobrescrever suas configurações, histórico, especialistas e comandos atuais. Esta ação não pode ser desfeita.",
+        "message": "Tem certeza de que deseja restaurar seus dados e configurações a partir de um backup?",
+        "restore": "Restaurar",
+        "title": "Restaurar Backup"
+      },
+      "error": {
+        "detail": "Erro: {error}",
+        "message": "Falha ao restaurar configurações a partir do backup.",
+        "title": "Falha na Restauração"
+      },
+      "files": "Arquivos de backup",
+      "restart": {
+        "detail": "O aplicativo será reiniciado agora para aplicar todas as alterações.",
+        "message": "Dados e configurações foram restaurados com sucesso a partir do backup.",
+        "title": "Restauração Concluída"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Exportar como Markdown",
@@ -1449,6 +1470,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Fazer backup de dados e configurações…",
+      "backupImport": "Restaurar backup…",
       "closeWindow": "Fechar Janela",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Novo Chat",

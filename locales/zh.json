@@ -246,6 +246,27 @@
     "error": "检查更新时出错。请稍后再试。",
     "uptodate": "您已经使用的是 Witsy 的最新版本。"
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "这将覆盖您当前的设置、历史记录、专家和命令。此操作无法撤销。",
+        "message": "您确定要从备份中恢复您的数据和设置吗？",
+        "restore": "恢复",
+        "title": "恢复备份"
+      },
+      "error": {
+        "detail": "错误：{error}",
+        "message": "从备份恢复设置失败。",
+        "title": "恢复失败"
+      },
+      "files": "备份文件",
+      "restart": {
+        "detail": "应用程序现在将重新启动以应用所有更改。",
+        "message": "数据和设置已成功从备份中恢复。",
+        "title": "恢复完成"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "导出为 Markdown",
@@ -1449,6 +1470,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "备份数据和设置…",
+      "backupImport": "恢复备份…",
       "closeWindow": "关闭窗口",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "新建聊天",

@@ -205,3 +205,8 @@ export const VOICE_MODE = {
 export const SETTINGS = {
   OPEN: 'settings-open',
 } as const;
+
+export const BACKUP = {
+  EXPORT: 'backup-export',
+  IMPORT: 'backup-import',
+} as const;

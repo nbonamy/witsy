@@ -227,6 +227,27 @@
     "error": "Errore durante il controllo degli aggiornamenti. Riprova più tardi.",
     "uptodate": "Stai già utilizzando l'ultima versione di Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "Questo sovrascriverà le tue impostazioni attuali, la cronologia, gli esperti e i comandi. Questa azione non può essere annullata.",
+        "message": "Sei sicuro di voler ripristinare i dati e le impostazioni da un backup?",
+        "restore": "Ripristina",
+        "title": "Ripristina Backup"
+      },
+      "error": {
+        "detail": "Errore: {error}",
+        "message": "Ripristino delle impostazioni dal backup non riuscito.",
+        "title": "Ripristino non riuscito"
+      },
+      "files": "File di backup",
+      "restart": {
+        "detail": "L'applicazione si riavvierà ora per applicare tutte le modifiche.",
+        "message": "Dati e impostazioni sono stati ripristinati con successo dal backup.",
+        "title": "Ripristino completato"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Esporta come Markdown",
@@ -1430,6 +1451,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Esegui backup di dati e impostazioni…",
+      "backupImport": "Ripristina backup…",
       "closeWindow": "Chiudi Finestra",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nuova chat",

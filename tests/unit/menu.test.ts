@@ -22,8 +22,14 @@ test('installMenu', () => {
   installMenu(app, {
     quit: vi.fn(),
     checkForUpdates: vi.fn(),
+    quickPrompt: vi.fn(),
     newChat: vi.fn(),
+    scratchpad: vi.fn(),
     settings: vi.fn(),
+    studio: vi.fn(),
+    forge: vi.fn(),
+    backupExport: vi.fn(),
+    backupImport: vi.fn(),
   }, null)
   expect(Menu.buildFromTemplate).toHaveBeenCalled()
   expect(Menu.setApplicationMenu).toHaveBeenLastCalledWith({})

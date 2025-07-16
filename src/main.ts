@@ -24,6 +24,7 @@ import * as config from './main/config';
 import * as shortcuts from './main/shortcuts';
 import * as window from './main/window';
 import * as menu from './main/menu';
+import * as backup from './main/backup';
 
 let mcp: Mcp = null
 
@@ -78,6 +79,8 @@ const installMenu = () => {
     settings: window.openSettingsWindow,
     studio: window.openDesignStudioWindow,
     forge: window.openAgentForgeWindow,
+    backupExport: async () => await backup.exportBackup(app),
+    backupImport: async () => await backup.importBackup(app, quitApp),
   }, settings.shortcuts);
 }
 
@@ -226,7 +229,7 @@ app.whenReady().then(async () => {
   new Automator();
 
   // install IPC handlers
-  installIpc(store, autoUpdater, docRepo, memoryManager, mcp, installMenu, registerShortcuts);
+  installIpc(store, autoUpdater, docRepo, memoryManager, mcp, installMenu, registerShortcuts, quitApp);
 
   // we want some windows to be as fast as possible
   if (!process.env.TEST) {

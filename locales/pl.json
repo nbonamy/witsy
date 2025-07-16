@@ -246,6 +246,27 @@
     "error": "Błąd podczas sprawdzania aktualizacji. Spróbuj ponownie później.",
     "uptodate": "Korzystasz już z najnowszej wersji Witsy."
   },
+  "backup": {
+    "restore": {
+      "confirm": {
+        "detail": "Spowoduje to nadpisanie bieżących ustawień, historii, ekspertów i poleceń. Tej akcji nie można cofnąć.",
+        "message": "Czy na pewno chcesz przywrócić dane i ustawienia z kopii zapasowej?",
+        "restore": "Przywróć",
+        "title": "Przywróć kopię zapasową"
+      },
+      "error": {
+        "detail": "Błąd: {error}",
+        "message": "Nie udało się przywrócić ustawień z kopii zapasowej.",
+        "title": "Przywracanie nie powiodło się"
+      },
+      "files": "Pliki kopii zapasowej",
+      "restart": {
+        "detail": "Aplikacja zostanie teraz ponownie uruchomiona, aby zastosować wszystkie zmiany.",
+        "message": "Dane i ustawienia zostały pomyślnie przywrócone z kopii zapasowej.",
+        "title": "Przywracanie zakończone"
+      }
+    }
+  },
   "chat": {
     "actions": {
       "exportMarkdown": "Eksportuj jako Markdown",
@@ -1449,6 +1470,8 @@
     },
     "file": {
       "agentForge": "@:{'agent.forge.title'}",
+      "backupExport": "Eksportuj kopię zapasową danych i ustawień…",
+      "backupImport": "Przywróć kopię zapasową…",
       "closeWindow": "Zamknij okno",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nowy czat",
