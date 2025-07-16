@@ -203,6 +203,7 @@ To use Internet search you need a [Tavily API key](https://app.tavily.com/home).
 
 ## DONE
 
+- [x] Backup/Restore of data and settings
 - [x] Transcribe Local Audio Files
 - [x] DeepResearch
 - [x] Local filesystem access plugin
