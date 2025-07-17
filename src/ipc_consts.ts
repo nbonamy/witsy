@@ -115,6 +115,13 @@ export const AUTOMATION = {
   REPLACE: 'automation-replace',
 } as const;
 
+export const PERMISSIONS = {
+  CHECK_ACCESSIBILITY: 'permissions-check-accessibility',
+  CHECK_AUTOMATION: 'permissions-check-automation',
+  OPEN_ACCESSIBILITY_SETTINGS: 'permissions-open-accessibility-settings',
+  OPEN_AUTOMATION_SETTINGS: 'permissions-open-automation-settings',
+} as const;
+
 export const CLIPBOARD = {
   READ_TEXT: 'clipboard-read-text',
   WRITE_TEXT: 'clipboard-write-text',
