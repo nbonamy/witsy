@@ -636,9 +636,7 @@
       "title": "Document Repositories defaults"
     },
     "create": {
-      "defaultName": "Document Repository",
-      "embeddingWarning": "embedding model cannot be changed once repository is created",
-      "title": "Create Document Repository"
+      "embeddingWarning": "embedding model cannot be changed once repository is created"
     },
     "repositories": {
       "clickToCreate": "Click on the + button to create one.",

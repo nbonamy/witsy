@@ -636,12 +636,12 @@
       "title": "文档仓库默认设置"
     },
     "create": {
-      "defaultName": "文档仓库",
-      "embeddingWarning": "创建仓库后无法更改嵌入模型",
-      "title": "创建文档仓库"
+      "embeddingWarning": "创建仓库后无法更改嵌入模型"
     },
     "repositories": {
       "clickToCreate": "点击 + 按钮创建。",
+      "createTitle": "创建仓库",
+      "documentsCount": "无文档|1 个文档|{count} 个文档",
       "noDocuments": "您还没有任何文档。点击上面的图标以添加文档或文件夹。",
       "noRepositories": "您还没有任何仓库。",
       "title": "文档仓库"
