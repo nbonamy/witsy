@@ -107,6 +107,12 @@ contextBridge.exposeInMainWorld(
       replace: (text: string, sourceApp: Application): boolean => { return ipcRenderer.sendSync(IPC.AUTOMATION.REPLACE, { text, sourceApp }) },
       insert: (text: string, sourceApp: Application): boolean => { return ipcRenderer.sendSync(IPC.AUTOMATION.INSERT, { text, sourceApp }) },
     },
+    permissions: {
+      checkAccessibility: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.PERMISSIONS.CHECK_ACCESSIBILITY) },
+      checkAutomation: (): Promise<boolean> => { return ipcRenderer.invoke(IPC.PERMISSIONS.CHECK_AUTOMATION) },
+      openAccessibilitySettings: (): Promise<void> => { return ipcRenderer.invoke(IPC.PERMISSIONS.OPEN_ACCESSIBILITY_SETTINGS) },
+      openAutomationSettings: (): Promise<void> => { return ipcRenderer.invoke(IPC.PERMISSIONS.OPEN_AUTOMATION_SETTINGS) },
+    },
     chat: {
       open: (chatid: string): void => { return ipcRenderer.send(IPC.CHAT.OPEN, chatid) },
     },

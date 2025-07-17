@@ -24,6 +24,7 @@ import LocalSearch from './search';
 import Embedder from '../rag/embedder';
 import Computer from './computer';
 import Mcp from './mcp';
+import MacOSPermissions from './permissions';
 
 import * as IPC from '../ipc_consts';
 import * as config from './config';
@@ -682,6 +683,33 @@ export const installIpc = (
   ipcMain.handle(IPC.OLLAMA.DOWNLOAD_CANCEL, async () => {
     const cancelled = ollama.cancelDownload();
     return { success: cancelled };
+  });
+
+  // Permissions handlers (macOS only)
+  ipcMain.handle(IPC.PERMISSIONS.CHECK_ACCESSIBILITY, async () => {
+    if (process.platform === 'darwin') {
+      return await MacOSPermissions.checkAccessibility();
+    }
+    return true; // Non-macOS platforms don't need these permissions
+  });
+
+  ipcMain.handle(IPC.PERMISSIONS.CHECK_AUTOMATION, async () => {
+    if (process.platform === 'darwin') {
+      return await MacOSPermissions.checkAutomation();
+    }
+    return true; // Non-macOS platforms don't need these permissions
+  });
+
+  ipcMain.handle(IPC.PERMISSIONS.OPEN_ACCESSIBILITY_SETTINGS, async () => {
+    if (process.platform === 'darwin') {
+      return await MacOSPermissions.openAccessibilitySettings();
+    }
+  });
+
+  ipcMain.handle(IPC.PERMISSIONS.OPEN_AUTOMATION_SETTINGS, async () => {
+    if (process.platform === 'darwin') {
+      return await MacOSPermissions.openAutomationSettings();
+    }
   });
 
 }
