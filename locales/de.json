@@ -617,12 +617,12 @@
       "title": "Standardwerte für Dokumentensammlungen"
     },
     "create": {
-      "defaultName": "Dokumentensammlung",
-      "embeddingWarning": "Das Embedding-Modell kann nicht geändert werden, sobald die Dokumentensammlung erstellt wurde.",
-      "title": "Dokumentensammlung erstellen"
+      "embeddingWarning": "Das Embedding-Modell kann nicht geändert werden, sobald die Dokumentensammlung erstellt wurde."
     },
     "repositories": {
       "clickToCreate": "Klicken Sie auf die Schaltfläche +, um eines zu erstellen.",
+      "createTitle": "Repository erstellen",
+      "documentsCount": "Kein Dokument|1 Dokument|{count} Dokumente",
       "noDocuments": "Sie haben noch keine Dokumente hinzugefügt. Klicken Sie auf die Symbole oben, um Dokumente oder Ordner hinzuzufügen.",
       "noRepositories": "Sie haben noch keine Dokumentensammlung.",
       "title": "Dokumentensammlungen"

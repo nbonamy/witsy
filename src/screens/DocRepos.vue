@@ -17,16 +17,16 @@
         <div class="title">{{ t('docRepo.repositories.title') }}</div>
       </header>
       <main class="list sliding-root" :class="{ visible: mode === 'list' }">
-        <DocRepoList :docRepos="docRepos || []" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" @delete="onDeleteRepo" />
+        <List :docRepos="docRepos || []" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" @delete="onDeleteRepo" />
       </main>
       <main class="sliding-pane" :class="{ visible: mode === 'view' }" @transitionend="onTransitionEnd">
-        <DocRepoView :selectedRepo="selectedRepo" @rename="onChangeRepoName" />
+        <View :selectedRepo="selectedRepo" @rename="onChangeRepoName" />
       </main>
       <main class="sliding-pane editor" :class="{ visible: mode === 'create' }" @transitionend="onTransitionEnd">
-        <DocRepoCreate @cancel="onCreateCancel" @save="onCreateSave" />
+        <Create @cancel="onCreateCancel" @save="onCreateSave" />
       </main>
       <main class="sliding-pane editor" :class="{ visible: mode === 'config' }" @transitionend="onTransitionEnd">
-        <DocRepoConfig @close="onConfigClose" />
+        <Config @close="onConfigClose" />
       </main>
     </div>
   </div>
@@ -38,14 +38,14 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { DocumentBase } from '../types/rag'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
-import DocRepoConfig from '../components/DocRepoConfig.vue'
-import DocRepoList from '../components/DocRepoList.vue'
-import DocRepoView from '../components/DocRepoView.vue'
-import DocRepoCreate from '../components/DocRepoCreate.vue'
+import Config from '../docrepo/Config.vue'
+import List from '../docrepo/List.vue'
+import View from '../docrepo/View.vue'
+import Create from '../docrepo/Create.vue'
 
 // bus
 import useEventBus from '../composables/event_bus'
-const { onEvent, emitEvent } = useEventBus()
+const { onEvent } = useEventBus()
 
 type DocRepoMode = 'list' | 'view' | 'create' | 'config'
 

@@ -617,12 +617,12 @@
       "title": "Configuraciones predeterminadas de los Repositorios de Documentos"
     },
     "create": {
-      "defaultName": "Repositorio de Documentos",
-      "embeddingWarning": "el modelo de incrustación no puede ser cambiado una vez que se crea el repositorio",
-      "title": "Crear Repositorio de Documentos"
+      "embeddingWarning": "el modelo de incrustación no puede ser cambiado una vez que se crea el repositorio"
     },
     "repositories": {
       "clickToCreate": "Haga clic en el botón + para crear uno.",
+      "createTitle": "Crear Repositorio",
+      "documentsCount": "No hay documentos|1 documento|{count} documentos",
       "noDocuments": "Aún no tienes documentos. Haz clic en los iconos de arriba para añadir documentos o carpetas.",
       "noRepositories": "Aún no tienes ningún repositorio.",
       "title": "Repositorios de Documentos"

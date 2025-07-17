@@ -636,12 +636,12 @@
       "title": "Domyślne ustawienia repozytoriów dokumentów"
     },
     "create": {
-      "defaultName": "Repozytorium dokumentów",
-      "embeddingWarning": "model osadzania nie może zostać zmieniony po utworzeniu repozytorium",
-      "title": "Tworzenie repozytorium dokumentów"
+      "embeddingWarning": "model osadzania nie może zostać zmieniony po utworzeniu repozytorium"
     },
     "repositories": {
       "clickToCreate": "Kliknij przycisk +, aby go utworzyć.",
+      "createTitle": "Utwórz repozytorium",
+      "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
       "noDocuments": "Nie masz jeszcze żadnych dokumentów. Kliknij na ikony powyżej, aby dodać dokumenty lub foldery.",
       "noRepositories": "Nie masz jeszcze żadnych repozytoriów.",
       "title": "Repozytoria dokumentów"

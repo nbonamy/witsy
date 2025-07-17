@@ -617,12 +617,12 @@
       "title": "Impostazioni predefinite dei repository di documenti"
     },
     "create": {
-      "defaultName": "Repository di documenti",
-      "embeddingWarning": "il modello di embedding non può essere cambiato una volta creato il repository",
-      "title": "Crea Repository di Documenti"
+      "embeddingWarning": "il modello di embedding non può essere cambiato una volta creato il repository"
     },
     "repositories": {
       "clickToCreate": "Clicca sul pulsante + per crearne uno.",
+      "createTitle": "Crea repository",
+      "documentsCount": "Nessun documento|1 documento|{count} documenti",
       "noDocuments": "Non hai ancora documenti. Fai clic sulle icone sopra per aggiungere documenti o cartelle.",
       "noRepositories": "Non hai ancora repository.",
       "title": "Repository di documenti"

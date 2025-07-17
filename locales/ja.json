@@ -636,12 +636,12 @@
       "title": "ドキュメントリポジトリのデフォルト"
     },
     "create": {
-      "defaultName": "ドキュメントリポジトリ",
-      "embeddingWarning": "リポジトリ作成後は埋め込みモデルを変更できません",
-      "title": "ドキュメントリポジトリを作成"
+      "embeddingWarning": "リポジトリ作成後は埋め込みモデルを変更できません"
     },
     "repositories": {
       "clickToCreate": "+ ボタンをクリックして作成してください。",
+      "createTitle": "リポジトリを作成",
+      "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
       "noDocuments": "まだドキュメントがありません。上のアイコンをクリックしてドキュメントまたはフォルダを追加してください。",
       "noRepositories": "まだリポジトリがありません。",
       "title": "ドキュメントリポジトリ"

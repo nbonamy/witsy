@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { t } from '../services/i18n'
-import EmbeddingSelector from './EmbeddingSelector.vue'
+import EmbeddingSelector from '../components/EmbeddingSelector.vue'
 import Dialog from '../composables/dialog'
 
 // emits

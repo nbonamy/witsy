@@ -46,7 +46,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import LlmFactory, { ILlmManager } from '../llms/llm'
 import Dialog from '../composables/dialog'
-import Spinner from './Spinner.vue'
+import Spinner from '../components/Spinner.vue'
 
 const llmManager: ILlmManager = LlmFactory.manager(store.config)
 
