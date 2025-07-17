@@ -367,6 +367,12 @@ declare global {
         insert(text: string, sourceApp: Application): boolean
         replace(text: string, sourceApp: Application): boolean
       }
+      permissions: {
+        checkAccessibility(): Promise<boolean>
+        checkAutomation(): Promise<boolean>
+        openAccessibilitySettings(): Promise<void>
+        openAutomationSettings(): Promise<void>
+      }
       chat: {
         open(chatId: string): void
       }
