@@ -11,7 +11,7 @@
       
       <!-- Checking Ollama installation -->
       <div v-if="status === 'checking'" class="status-section">
-        <EngineLogo engine="ollama" class="ollama-logo animated" />
+        <EngineLogo engine="ollama" class="ollama-logo animated" :grayscale="true" />
         <p class="section-status">{{ t('onboarding.ollama.checking') }}</p>
       </div>
 
