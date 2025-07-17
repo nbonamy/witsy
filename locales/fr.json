@@ -86,6 +86,7 @@
     "provider": "Fournisseur",
     "pull": "Télécharger",
     "read": "Lire",
+    "recommended": "Recommandé",
     "record": "Enregistrer",
     "redo": "Rétablir",
     "refresh": "Rafraîchir",
@@ -1579,6 +1580,7 @@
         "message": "Êtes-vous sûr de vouloir passer la personnalisation de votre expérience ?",
         "title": "Vous n'avez pas terminé votre personnalisation."
       },
+      "selectStyle": "Choisissez maintenant comment vous souhaitez que votre assistant réponde.<br/>Cela sera combiné avec vos informations personnelles pour créer les instructions parfaites.",
       "subtitle": "En répondant à quelques questions, Witsy pourra personnaliser votre expérience et fournir de meilleures réponses. Vous pouvez passer cette étape si vous le souhaitez, mais il est fortement recommandé pour que Witsy soit plus personnel.",
       "title": "Faites connaître Witsy à votre sujet !"
     },
@@ -1601,6 +1603,26 @@
       "retry": "Réessayer",
       "subtitle": "Exécutez des modèles IA directement sur votre ordinateur pour une confidentialité totale et un accès hors ligne.",
       "title": "IA locale avec Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Nécessaire pour que Witsy puisse lire le texte d'autres applications et s'intégrer parfaitement à votre flux de travail.",
+        "title": "Accessibilité"
+      },
+      "automation": {
+        "description": "Assurez-vous d'accorder la permission \"Événements système\" à Witsy dans l'écran des paramètres d'automatisation.",
+        "title": "Automatisation"
+      },
+      "denied": "Non accordé",
+      "granted": "Accordé",
+      "info": "Ces autorisations permettent à Witsy d'offrir toutes ses fonctionnalités. Vous pouvez les accorder maintenant ou plus tard dans les Préférences Système.",
+      "leave": {
+        "message": "Êtes-vous sûr de vouloir continuer sans accorder toutes les autorisations ? Certaines fonctionnalités pourraient ne pas fonctionner correctement.",
+        "title": "Autorisations non entièrement accordées"
+      },
+      "openSettings": "Ouvrir les réglages",
+      "subtitle": "Sur macOS, Witsy nécessite certaines autorisations pour offrir la meilleure expérience.",
+      "title": "Autorisations du système"
     },
     "studio": {
       "subtitle": "Le studio de design IA est un outil puissant pour créer et modifier des designs grâce à l'IA. Vous pouvez l'utiliser pour générer de nouveaux designs ou modifier des existants. Une fois configuré, les modèles de langage pourront aussi l'utiliser pour créer des designs.",

@@ -123,40 +123,16 @@
 
   &.vertical {
     
-    align-items: normal;
-    
     .group {
 
-      width: calc(100% - 1rem);
-
       &.horizontal {
-        flex-direction: row;
         gap: 0.125rem !important;
       }
       
-      label {
-        font-weight: 600;
-      }
-
-      [type=checkbox] + label {
-        font-weight: normal;
-      }
-  
-      .subgroup, .slider-group {
-        width: 100%;
-      }
-
       textarea {
         resize: none;
       }
     }
-  }
-
-  .buttons {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.25rem;
   }
 
 }

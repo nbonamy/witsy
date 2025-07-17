@@ -12,15 +12,16 @@
       <Ollama v-if="step === 3" />
       <Studio v-if="step === 4" />
       <Voice v-if="step === 5" />
-      <Instructions ref="instructions" v-if="step === 6" />
-      <Done v-if="step === 7" />
+      <Permissions ref="permissions" v-if="step === 6 && isMacOS" />
+      <Instructions ref="instructions" v-if="step === 7" />
+      <Done v-if="step === 8" />
     </main>
 
     <footer>
       <form class="large">
         <button v-if="step !== 1" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
-        <button v-if="step !== 7" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
-        <button v-if="step === 7" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
+        <button v-if="step !== 8" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
+        <button v-if="step === 8" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
       </form>
     </footer>
 
@@ -30,12 +31,13 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { t } from '../services/i18n'
 import Welcome from '../onboarding/Welcome.vue'
 import Chat from '../onboarding/Chat.vue'
 import Ollama from '../onboarding/Ollama.vue'
 import Instructions from '../onboarding/Instructions.vue'
+import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
 import Done from '../onboarding/Done.vue'
@@ -44,22 +46,44 @@ defineEmits(['close']);
 
 const step = ref(1);
 const instructions = ref<typeof Instructions>(null);
+const permissions = ref<typeof Permissions>(null);
+
+// Check if we're on macOS
+const isMacOS = computed(() => window.api?.platform === 'darwin');
 
 const onPrev = () => {
   if (step.value === 1) return;
-  step.value--;
+  
+  // If going back from Instructions (step 7) to Permissions (step 6) on non-macOS, skip to step 5
+  if (step.value === 7 && !isMacOS.value) {
+    step.value = 5;
+  } else {
+    step.value--;
+  }
 }
 
 const onNext = async () => {
 
-  if (instructions.value) {
+  // Check canLeave for Permissions screen (step 6) on macOS
+  if (permissions.value && step.value === 6 && isMacOS.value) {
+    if (!await permissions.value.canLeave()) {
+      return;
+    }
+  }
+
+  // Check canLeave for Instructions screen (step 7)
+  if (instructions.value && step.value === 7) {
     if (!await instructions.value.canLeave()) {
       return;
     }
   }
 
-  // advance
-  step.value++;
+  // If advancing from Voice (step 5) on non-macOS, skip Permissions and go to Instructions (step 7)
+  if (step.value === 5 && !isMacOS.value) {
+    step.value = 7;
+  } else {
+    step.value++;
+  }
 }
 
 </script>
@@ -164,7 +188,9 @@ const onNext = async () => {
     width: 100%;
     form {
       display: flex;
-
+      button {
+        outline: none;
+      }
       .next, .last {
         margin-left: auto;
       }

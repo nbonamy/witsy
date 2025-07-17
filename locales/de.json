@@ -86,6 +86,7 @@
     "provider": "Anbieter",
     "pull": "Abrufen",
     "read": "Lesen",
+    "recommended": "Empfohlen",
     "record": "Aufzeichnen",
     "redo": "Wiederherstellen",
     "refresh": "Aktualisieren",
@@ -1579,6 +1580,7 @@
         "message": "Sind Sie sicher, dass Sie die Personalisierung Ihrer Erfahrung überspringen möchten?",
         "title": "Sie haben Ihre Personalisierung nicht abgeschlossen."
       },
+      "selectStyle": "Wählen Sie nun aus, wie Ihr Assistent reagieren soll.<br/>Dies wird mit Ihren persönlichen Informationen kombiniert, um die perfekten Anweisungen zu erstellen.",
       "subtitle": "Indem Sie ein paar Fragen beantworten, kann Witsy Ihre Erfahrung personalisieren und bessere Antworten liefern. Sie können diesen Schritt überspringen, wenn Sie möchten, aber es wird sehr empfohlen, um Witsy persönlicher zu machen.",
       "title": "Lassen Sie Witsy Sie kennenlernen!"
     },
@@ -1601,6 +1603,26 @@
       "retry": "Erneut versuchen",
       "subtitle": "Führen Sie KI-Modelle direkt auf Ihrem Computer aus für vollständige Privatsphäre und Offline-Zugriff.",
       "title": "Lokale KI mit Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Erforderlich, damit Witsy Text aus anderen Anwendungen lesen und sich nahtlos in Ihren Arbeitsablauf integrieren kann.",
+        "title": "Bedienungshilfen"
+      },
+      "automation": {
+        "description": "Stellen Sie sicher, dass Sie Witsy in den Automatisierungseinstellungen die Berechtigung \"Systemereignisse\" erteilen.",
+        "title": "Automatisierung"
+      },
+      "denied": "Nicht erteilt",
+      "granted": "Erteilt",
+      "info": "Diese Berechtigungen ermöglichen es Witsy, das volle Funktionsspektrum bereitzustellen. Sie können diese jetzt oder später in den Systemeinstellungen erteilen.",
+      "leave": {
+        "message": "Sind Sie sicher, dass Sie ohne Erteilung aller Berechtigungen fortfahren möchten? Einige Funktionen funktionieren möglicherweise nicht richtig.",
+        "title": "Berechtigungen nicht vollständig erteilt"
+      },
+      "openSettings": "Einstellungen öffnen",
+      "subtitle": "Unter macOS benötigt Witsy bestimmte Berechtigungen, um das beste Erlebnis zu bieten.",
+      "title": "Systemberechtigungen"
     },
     "studio": {
       "subtitle": "Das AI Design Studio ist ein leistungsstarkes Werkzeug zum Erstellen und Bearbeiten von Designs mithilfe von KI. Sie können es verwenden, um neue Designs zu generieren oder bestehende zu verändern. Sobald konfiguriert, können auch Sprachmodelle es zur Erstellung von Designs verwenden.",

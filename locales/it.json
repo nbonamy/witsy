@@ -86,6 +86,7 @@
     "provider": "Fornitore",
     "pull": "Scarica",
     "read": "Leggi",
+    "recommended": "Consigliato",
     "record": "Registra",
     "redo": "Ripristina",
     "refresh": "Aggiorna",
@@ -1579,6 +1580,7 @@
         "message": "Sei sicuro di voler saltare la personalizzazione della tua esperienza?",
         "title": "Non hai completato la tua personalizzazione."
       },
+      "selectStyle": "Ora scegli come vorresti che il tuo assistente rispondesse.<br/>Questo verrà combinato con le tue informazioni personali per creare le istruzioni perfette.",
       "subtitle": "Rispondendo a qualche domanda, Witsy potrà personalizzare la tua esperienza e fornire risposte migliori. Puoi saltare questo passaggio se vuoi, ma è altamente consigliato per rendere Witsy più personale.",
       "title": "Fai sapere a Witsy chi sei!"
     },
@@ -1601,6 +1603,26 @@
       "retry": "Riprova",
       "subtitle": "Esegui modelli AI direttamente sul tuo computer per privacy completa e accesso offline.",
       "title": "AI Locale con Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Necessario per permettere a Witsy di leggere il testo da altre applicazioni e integrarsi perfettamente con il tuo flusso di lavoro.",
+        "title": "Accessibilità"
+      },
+      "automation": {
+        "description": "Assicurati di concedere il permesso \"Eventi di sistema\" a Witsy nella schermata delle impostazioni di Automazione.",
+        "title": "Automazione"
+      },
+      "denied": "Non Concesso",
+      "granted": "Concesso",
+      "info": "Questi permessi permettono a Witsy di offrire l'intera gamma di funzionalità. Puoi concessi ora o più tardi nelle Preferenze di Sistema.",
+      "leave": {
+        "message": "Sei sicuro di voler continuare senza concedere tutti i permessi? Alcune funzionalità potrebbero non funzionare correttamente.",
+        "title": "Permessi non completamente concessi"
+      },
+      "openSettings": "Apri Impostazioni",
+      "subtitle": "Su macOS, Witsy necessita di determinati permessi per offrire la migliore esperienza.",
+      "title": "Permessi di sistema"
     },
     "studio": {
       "subtitle": "Lo Studio di Design AI è uno strumento potente per creare e modificare design usando l'intelligenza artificiale. Puoi usarlo per generare nuovi design o modificare quelli esistenti. Una volta configurati, anche i modelli linguistici potranno usarlo per creare design.",

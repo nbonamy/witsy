@@ -105,6 +105,7 @@
     "provider": "Dostawca",
     "pull": "Pobierz",
     "read": "Czytaj",
+    "recommended": "Polecane",
     "record": "Nagrywaj",
     "redo": "Ponów",
     "refresh": "Odśwież",
@@ -1598,6 +1599,7 @@
         "message": "Czy na pewno chcesz pominąć personalizację swojego doświadczenia?",
         "title": "Nie ukończyłeś personalizacji."
       },
+      "selectStyle": "Wybierz teraz, jak chciałbyś, aby Twój asystent odpowiadał.<br/>Zostanie to połączone z Twoimi danymi osobowymi, aby stworzyć idealne instrukcje.",
       "subtitle": "Odpowiadając na kilka pytań, Witsy będzie mógł spersonalizować Twoje doświadczenie i zapewnić lepsze odpowiedzi. Możesz pominąć ten krok, ale zdecydowanie zalecamy, aby Witsy był bardziej osobisty.",
       "title": "Poznaj Witsy!"
     },
@@ -1620,6 +1622,26 @@
       "retry": "Spróbuj ponownie",
       "subtitle": "Uruchamiaj modele AI bezpośrednio na swoim komputerze dla pełnej prywatności i dostępu offline.",
       "title": "Lokalna AI z Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Wymagane, aby Witsy mógł czytać tekst z innych aplikacji i płynnie integrować się z Twoim workflow.",
+        "title": "Dostępność"
+      },
+      "automation": {
+        "description": "Upewnij się, że przyznałeś Witsy uprawnienia „System Events” w ekranie ustawień Automatyzacji.",
+        "title": "Automatyzacja"
+      },
+      "denied": "Nie przyznano",
+      "granted": "Przyznano",
+      "info": "Te uprawnienia pozwalają Witsy korzystać z pełnego zakresu funkcji. Możesz je przyznać teraz lub później w Preferencjach systemowych.",
+      "leave": {
+        "message": "Czy na pewno chcesz kontynuować bez przyznania wszystkich uprawnień? Niektóre funkcje mogą nie działać poprawnie.",
+        "title": "Uprawnienia nie zostały w pełni przyznane"
+      },
+      "openSettings": "Otwórz ustawienia",
+      "subtitle": "Na macOS Witsy potrzebuje pewnych uprawnień, aby zapewnić najlepsze doświadczenia.",
+      "title": "Uprawnienia systemowe"
     },
     "studio": {
       "subtitle": "AI Design Studio to potężne narzędzie do tworzenia i edycji projektów za pomocą AI. Możesz używać go do generowania nowych projektów lub modyfikowania istniejących. Po konfiguracji modele językowe również będą mogły z niego korzystać do tworzenia projektów.",

@@ -10,10 +10,34 @@
     <main class="instructions-chat">
       
       <!-- Confirmation screen when system prompt is detected -->
-      <div v-if="showConfirmation" class="confirmation-area">
+      <div v-if="stage === 'confirm'" class="confirmation-area">
         <BIconPersonVcard />
         <h2>{{ t('onboarding.instructions.done.title') }}</h2>
         <p>{{ t('onboarding.instructions.done.text') }}</p>
+      </div>
+
+      <!-- Instruction selection screen -->
+      <div v-else-if="stage === 'select'" class="instruction-selection">
+
+        <div class="selection-header" v-html="t('onboarding.instructions.selectStyle')"></div>
+
+        <div class="instructions-grid">
+          <div 
+            v-for="instructionType in getStandardInstructions()" 
+            :key="instructionType.id"
+            class="instruction-card"
+            :class="[ instructionType.id ]"
+            @click="selectInstruction(instructionType.id)"
+          >
+            <div v-if="instructionType.id === 'structured'" class="recommended-badge">
+              {{ t('common.recommended') }}
+            </div>
+            <div class="instruction-header">
+              <span class="instruction-emoji">{{ instructionType.emoji }}</span>
+              <span class="instruction-name">{{ instructionType.name }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Regular chat interface -->
@@ -76,9 +100,12 @@ import Chat from '../models/chat'
 // Constants
 const SYSTEM_PROMPT_MARKER = "SYSTEM PROMPT"
 
+type Stage = 'prompt' | 'select' | 'confirm'
+
 const latestText = ref(null)
 const isProcessing = ref(false)
-const showConfirmation = ref(false)
+const stage = ref<Stage>('prompt')
+const detectedSystemPrompt = ref('')
 
 const assistant = new Assistant(store.config)
 
@@ -151,8 +178,8 @@ const processMessage = async (prompt: string) => {
     const upperFinalText = finalText.toUpperCase()
     
     if (upperFinalText.startsWith(SYSTEM_PROMPT_MARKER)) {
-      showConfirmation.value = true
-      processSystemPrompt(finalText.substring(SYSTEM_PROMPT_MARKER.length).trim())
+      detectedSystemPrompt.value = finalText.substring(SYSTEM_PROMPT_MARKER.length).trim()
+      stage.value = 'select'
     }
 
   } catch (error) {
@@ -163,23 +190,58 @@ const processMessage = async (prompt: string) => {
   }
 }
 
-const processSystemPrompt = (instructions: string) => {
+const getStandardInstructions = () => {
+  const defaultInstructions = ['standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary']
+  
+  return defaultInstructions.map(type => {
+    const label = t(`settings.llm.instructions.${type}`)
+    return {
+      id: type,
+      name: label.split(' ').slice(1).join(' '), // Remove emoji from name
+      emoji: label.split(' ')[0], // Extract emoji
+      description: getInstructionDescription(type)
+    }
+  })
+}
 
-  // we prepend the structured instructions
-  instructions = t('instructions.chat.structured') + '\n\n' + instructions
+const getInstructionDescription = (type: string) => {
+  const fullInstruction = t(`instructions.chat.${type}`)
+  // Extract the first sentence or first few words as description
+  const lines = fullInstruction.split('\n')
+  const firstLine = lines[0]
+  
+  // Try to find the first sentence
+  const sentences = firstLine.split('.')
+  if (sentences.length > 1 && sentences[0].length > 20) {
+    return sentences[0] + '.'
+  }
+  
+  // If no good sentence break, take first 100 characters
+  return firstLine.length > 100 ? firstLine.substring(0, 97) + '...' : firstLine
+}
+
+const selectInstruction = (instructionId: string) => {
+  processSystemPrompt(instructionId, detectedSystemPrompt.value)
+}
+
+const processSystemPrompt = (instructionId: string, customInstructions: string) => {
+
+  // Build the final instructions using the selected type and custom content
+  let finalInstructions = t(`instructions.chat.${instructionId}`) + '\n\n' + customInstructions
   
   // we create a personalized system prompt
   const id = crypto.randomUUID()
   store.config.llm.customInstructions.push({
     id,
-    instructions,
+    instructions: finalInstructions,
     label: t('onboarding.instructions.instructions_label'),
   })
 
   // select it by default
   store.config.llm.instructions = id
 
-  // done
+  // show confirmation and mark as completed
+  stage.value = 'confirm'
   completed = true
   store.saveSettings()
 
@@ -299,6 +361,95 @@ header {
 
 .prompt-area {
   width: 100%;
+}
+
+.instruction-selection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  border: 1px solid var(--prompt-input-border-color);
+  border-radius: 1rem;
+}
+
+.selection-header {
+  margin: 3rem 0;
+  margin-top: 1rem;
+  font-size: 1.2em;
+  font-weight: 400;
+  color: var(--dimmed-text-color);
+  text-align: center;
+}
+
+.instructions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.instruction-card {
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--control-border-color);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &:hover {
+    border-color: var(--highlight-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.structured {
+    padding-top: 2rem;
+    border-color: var(--highlight-color);
+    .instruction-name {
+      font-weight: 600;
+    }
+  }
+}
+
+.instruction-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.instruction-emoji {
+  font-size: 1.5em;
+  flex-shrink: 0;
+}
+
+.instruction-name {
+  font-size: 0.95em;
+  font-weight: 400;
+  flex: 1;
+}
+
+.recommended-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--highlight-color);
+  color: white;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-top-left-radius: 0.65rem;
+  border-top-right-radius: 0.65rem;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 </style>
