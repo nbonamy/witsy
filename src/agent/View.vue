@@ -39,7 +39,7 @@
           <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
         </div>
         <div class="list">
-          <AgentHistory :agent="agent" :runs="runs" v-if="runs.length"/>
+          <History :agent="agent" :runs="runs" v-if="runs.length"/>
           <div class="empty" v-else>
             {{ t('agent.history.empty') }}
           </div>
@@ -48,7 +48,7 @@
     
     </div>
 
-    <AgentEditor class="editor" mode="create" :agent="agent" @cancel="editing = false;" @save="editing = false" />
+    <Editor class="editor" mode="create" :agent="agent" @cancel="editing = false;" @save="editing = false" />
   
   </div>
 
@@ -61,8 +61,8 @@ import { Agent, AgentRun } from '../types/index'
 import { ref, PropType, onMounted, watch, computed } from 'vue'
 import { t } from '../services/i18n'
 import { CronExpressionParser } from 'cron-parser'
-import AgentEditor from './AgentEditor.vue'
-import AgentHistory from './AgentHistory.vue'
+import Editor from './Editor.vue'
+import History from './History.vue'
 
 const runs= ref<AgentRun[]>([])
 const editing = ref(false)
