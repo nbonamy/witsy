@@ -73,7 +73,7 @@ onMounted(() => {
   window.api.on('start-dictation', onDictate)
 
   // show onboarding
-  if (store.config.features?.onboarding && !store.config.general.onboardingDone) {
+  if (!store.config.general.onboardingDone) {
     onboard.value = true
   }
 
