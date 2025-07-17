@@ -1,13 +1,14 @@
 
-import { SourceType } from 'types/rag'
+import { SourceType } from '../types/rag'
 import path from 'path'
 
 export default class DocumentSourceImpl {
 
   uuid: string
-  title: string
   type: SourceType
+  title: string
   origin: string
+  filename: string
   url: string
   items: DocumentSourceImpl[]
 
@@ -35,4 +36,5 @@ export default class DocumentSourceImpl {
       return this.url
     }
   }
+
 }
