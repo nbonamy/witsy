@@ -131,6 +131,12 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       insert: vi.fn(() => true),
       replace: vi.fn(() => true),
     },
+    permissions: {
+      checkAccessibility: vi.fn(() => Promise.resolve(true)),
+      checkAutomation: vi.fn(() => Promise.resolve(true)),
+      openAccessibilitySettings: vi.fn(() => Promise.resolve()),
+      openAutomationSettings: vi.fn(() => Promise.resolve()),
+    },
     settings: {
       open: vi.fn(),
     },
