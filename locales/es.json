@@ -1360,6 +1360,10 @@
       "uplifting": "Eres un asistente de IA inspirador, alentador y motivador. Tu objetivo es ayudar a los usuarios a sentirse empoderados, motivados y capaces, ya sea que enfrenten un desafío, exploren una idea o trabajen hacia un objetivo.\n\nObjetivos:\n- Inspirar confianza y empuje hacia adelante, especialmente cuando el usuario se sienta incierto o atascado.\n- Enmarcar la información positivamente sin ignorar los desafíos.\n- Usar un lenguaje alentador que energice al usuario y promueva la autoconfianza.\n- Siempre entregar sustancia: tu optimismo debe apoyar, no reemplazar, el contenido útil.\n\nTono y estilo:\n- Usa un tono entusiasta, sincero y empoderador.\n- Habla sobre el potencial y crecimiento del usuario, incluso en situaciones difíciles.\n- Evita ser demasiado sentimental o demasiado casual. Sé humano, fuerte y alentador.\n- Usa un lenguaje activo y orientado al futuro que enfatice el progreso y la autonomía.\n\nEstructura:\n- Comienza con una introducción corta y enérgica que resalte lo que es posible.\n- Usa secciones claras y viñetas cuando sea necesario, especialmente si estás proporcionando pasos o comparaciones.\n- Ofrece opciones y posibilidades con un espíritu de “puedes hacerlo”.\n- Usa un lenguaje vívido o metáforas cuando sea apropiado para agregar profundidad emocional, pero evita la exageración o vanidad.\n\nConversación:\n- Anima a seguir implicándose mostrando curiosidad por el viaje, objetivos o ideas del usuario.\n- Siempre termina tu respuesta con una pregunta para mantener la conversación.",
       "visionary": "Eres un asistente de IA futurista y visionario. Tu papel es ayudar a los usuarios a imaginar lo que podría ser, explorar la frontera de las ideas y abordar problemas con un pensamiento audaz y orientado hacia el futuro. Tus respuestas deben ser ambiciosas, imaginativas y fundamentadas en la percepción.\n\nObjetivos:\n- Despertar curiosidad y pensamiento creativo sobre las posibilidades futuras.\n- Ayudar a los usuarios a explorar tecnologías emergentes, tendencias a largo plazo o conceptos transformadores.\n- Inspirar acción y optimismo mientras te mantienes intelectualmente creíble.\n- Traducir visiones complejas o abstractas en ideas que se sientan alcanzables y concretas.\n\nTono y estilo:\n- Usa un lenguaje confiado, elevado y orientado hacia el futuro.\n- Sé audaz e imaginativo en tus ideas, pero siempre mantente dentro del ámbito de la especulación reflexiva.\n- Habla con la voz de un estratega, innovador o futurista: alguien que ve lo que otros no ven, pero lo explica con claridad.\n- Evita el hype o las palabras vacías; prefiera la claridad por encima de la ostentación.\n\nEstructura:\n- Comienza con una introducción convincente y orientada al futuro que establezca un tono visionario.\n- Desglosa ideas en secciones o pasos claramente etiquetados.\n- Utiliza comparaciones, escenarios o pronósticos para dar vida a ideas abstractas.\n- Al discutir desarrollos futuros, reconoce la incertidumbre mientras ofreces perspectivas fundamentadas o probabilidades.\n\nConversación:\n- Anima al usuario a pensar más allá de los límites convencionales e imaginar lo que podría ser posible en su ámbito o vida.\n- Siempre termina tu respuesta con una pregunta para mantener la conversación en marcha."
     },
+    "onboarding": {
+      "instructions": "Tu objetivo es crear un prompt sistema para personalizar tus respuestas a un usuario específico. Solo busca hechos. El tono de la conversación será elegido por el usuario después. Lo harás haciendo preguntas sobre el usuario: nombre, edad, nacionalidad, profesión, pasatiempos, cosas que le gustan, etc. No preguntes todas las preguntas a la vez. Mantén una conversación. Basado en las respuestas del usuario, una vez que creas tener suficiente información, comienza tu respuesta con \"SYSTEM PROMPT\" y luego escribe el prompt sistema que usarás para personalizar tus respuestas a este usuario. No escribas nada más en tu respuesta. No uses sintaxis Markdown como '## Título ##' o '** Texto **'. No incluyas nada más en la respuesta, incluyendo cosas como 'aquí está el...'. ",
+      "prompt": "Vamos: reconoce tu tarea y comienza a hacer preguntas para crear mis instrucciones personales del sistema."
+    },
     "scratchpad": {
       "complete": "Completa la frase que sigue, asegurándote de que encaje en el contexto general. Incluye el texto original. Si el texto actual es código, completa el fragmento de código. No uses comillas en tu respuesta.",
       "expand": "Amplía el EXTRACTO añadiendo más información, ejemplos y explicaciones. No expliques los cambios que hiciste.",
@@ -1464,6 +1468,7 @@
       "goToDataFolder": "Ir a la carpeta de datos",
       "goToLogFolder": "Ir a la carpeta de registros",
       "learnMore": "Aprender más",
+      "runOnboarding": "Ejecutar asistente de bienvenida",
       "title": "Ayuda"
     },
     "view": {
@@ -1551,6 +1556,64 @@
     "toolsCount": "Ninguna herramienta seleccionada | 1 herramienta seleccionada | {count} herramientas seleccionadas",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "onboarding": {
+    "chat": {
+      "error": "Por favor revisa tu clave API y vuelve a intentarlo.",
+      "status": "{engine} ya está configurado.<br/>{count} modelos disponibles.",
+      "subtitle": "Puedes chatear con Witsy usando modelos de lenguaje de todos los proveedores principales. Ingresa tus claves API abajo para comenzar. Si no tienes claves API, no te preocupes: en la siguiente pantalla podrás configurar Witsy para usar modelos locales a través de Ollama.",
+      "success": "Clave de {engine} validada.<br/>{count} modelos encontrados!",
+      "title": "Tus proveedores de modelos de chat"
+    },
+    "done": {
+      "subtitle": "¡Estás todo configurado y listo para empezar!<br/>¡Comienza a chatear con Witsy y explora sus capacidades!",
+      "title": "¡Todo listo!"
+    },
+    "instructions": {
+      "done": {
+        "text": "Tus sesiones de chat ahora serán más personalizadas basadas en la información que proporcionaste. Siempre puedes actualizar tus instrucciones en Configuración.",
+        "title": "¡Tus instrucciones personales se han guardado con éxito!"
+      },
+      "instructions_label": "😉 Instrucciones personalizadas",
+      "leave": {
+        "message": "¿Estás seguro de que deseas omitir la personalización de tu experiencia?",
+        "title": "No completaste tu personalización."
+      },
+      "subtitle": "Al responder unas pocas preguntas, Witsy podrá personalizar tu experiencia y ofrecer mejores respuestas. Puedes saltarte este paso si quieres, pero se recomienda mucho para que Witsy se sienta más personal.",
+      "title": "¡Que Witsy sepa sobre ti!"
+    },
+    "ollama": {
+      "browseModels": "Descubre más modelos en https://ollama.com/search",
+      "cancelling": "Cancelando...",
+      "checkAgain": "Verificar de nuevo",
+      "checking": "Verificando la instalación de Ollama...",
+      "download": "Descargar Ollama",
+      "downloadComplete": "Descarga completa",
+      "downloadCompleteMessage": "El instalador de Ollama está listo. Por favor ejecútalo para completar la instalación.",
+      "downloadError": "La descarga falló. Por favor intenta de nuevo o instala Ollama manualmente.",
+      "downloading": "Descargando...",
+      "install": "Instalar Ollama",
+      "installedModels": "Modelos disponibles",
+      "noModelsInstalled": "Aún no hay modelos instalados. Puedes agregar modelos de Ollama usando las opciones abajo.",
+      "notInstalled": "Ollama aún no está instalado. ¿Quieres descargarlo e instalarlo?",
+      "openFolder": "Abrir carpeta de descargas",
+      "pullModels": "Agregar nuevos modelos",
+      "retry": "Intentar de nuevo",
+      "subtitle": "Ejecuta modelos de IA directamente en tu computadora para completa privacidad y acceso sin conexión.",
+      "title": "IA Local con Ollama"
+    },
+    "studio": {
+      "subtitle": "El Estudio de Diseño con IA es una herramienta poderosa para crear y editar diseños usando IA. Puedes usarlo para generar diseños nuevos o modificar existentes. Una vez configurado, los modelos de lenguaje también podrán usarlo para crear diseños.",
+      "title": "Estudio de Diseño con IA"
+    },
+    "voice": {
+      "subtitle": "¡Interactúa con Witsy usando tu voz! Witsy puede leer en voz alta no solo las respuestas de tus sesiones de chat con modelos de lenguaje, sino también cualquier texto mostrado en pantalla en otras aplicaciones.",
+      "title": "Interacción por Voz"
+    },
+    "welcome": {
+      "subtitle": "Witsy es un asistente de IA poderoso que puede ayudarte con una amplia variedad de tareas. Puedes chatear con él, pedirle que escriba documentos e incluso ejecutar código en tu computadora. ¡Comencemos!",
+      "title": "¡Bienvenido a Witsy!"
+    }
   },
   "plugins": {
     "agent": {

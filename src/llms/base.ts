@@ -8,6 +8,31 @@ import { PluginInstance, PluginsList } from '../plugins/plugins'
 import { store } from '../services/store'
 import * as llm from 'multi-llm-ts'
 
+export const engineNames: Record<string, string> = {
+  'anthropic': 'Anthropic',
+  'cerebras': 'Cerebras',
+  'deepseek': 'DeepSeek',
+  'elevenlabs': 'ElevenLabs',
+  'falai': 'fal.ai', 
+  'fireworks': 'Fireworks.ai',
+  'gladia': 'Gladia',
+  'google': 'Google',
+  'groq': 'Groq',
+  'huggingface': 'HuggingFace',
+  'lmstudio': 'LM Studio',
+  'meta': 'Meta',
+  'mistralai': 'Mistral AI',
+  'nvidia': 'nVidia',
+  'ollama': 'Ollama',
+  'openai': 'OpenAI',
+  'openrouter': 'OpenRouter',
+  'replicate': 'Replicate',
+  'sdwebui': 'Stable Diffusion web UI',
+  'speechmatics': 'Speechmatics',
+  'whisper': 'Whisper',
+  'xai': 'xAI',
+}
+
 export default class LlmManagerBase implements ILlmManager {
 
   config: Configuration

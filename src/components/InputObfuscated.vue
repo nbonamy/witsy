@@ -35,7 +35,10 @@ const onToggleView = () => {
   }
 }
 
-const onKeyUp = () => {
+const onKeyUp = (event: KeyboardEvent) => {
+  if (event.key === 'Tab') {
+    return false
+  }
   emit('change')
 }
 
@@ -65,9 +68,10 @@ form .group .wrapper input {
   background-color: var(--control-bg-color);
   cursor: pointer;
   position: absolute;
-  top: calc(50% - 0.5rem);
+  top: calc(50% - 0.5rem + 1px);
   padding-left: 0.5rem;
-  right: 0.5rem;
+  padding-right: 0.5rem;
+  right: 1px;
   z-index: 2;
 }
 

@@ -1,5 +1,6 @@
 
 import { Configuration } from 'types/config'
+import { engineNames } from '../llms/base'
 import STTFalAi from './stt-falai'
 import STTFireworks from './stt-fireworks'
 import STTGladia from './stt-gladia'
@@ -89,15 +90,15 @@ export interface STTEngine {
 
 export const getSTTEngines = () => {
   return [
-    { id: 'falai', label: 'fal.ai' },
-    { id: 'fireworks', label: 'Fireworks.ai' },
-    { id: 'gladia', label: 'Gladia' },
-    { id: 'groq', label: 'Groq' },
-    //{ id: 'huggingface', label: 'Hugging Face' },
-    { id: 'nvidia', label: 'nVidia' },
-    { id: 'openai', label: 'OpenAI' },
-    { id: 'speechmatics', label: 'Speechmatics' },
-    { id: 'whisper', label: 'Whisper' },
+    { id: 'openai', label: engineNames.openai },
+    { id: 'fireworks', label: engineNames.fireworks },
+    { id: 'speechmatics', label: engineNames.speechmatics },
+    { id: 'gladia', label: engineNames.gladia },
+    { id: 'nvidia', label: engineNames.nvidia },
+    { id: 'falai', label: engineNames.falai },
+    //{ id: 'huggingface', label: engineNames.huggingface },
+    { id: 'groq', label: engineNames.groq },
+    { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
 }

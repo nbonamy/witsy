@@ -14,6 +14,8 @@
           :enable-commands="true" 
           :enable-conversations="false"
           @mousedown.stop="onMouseDownPrompt"
+          @prompt="onSendPrompt"
+          @stop="onStopGeneration"
         >
           <template #after>
             <div class="app" v-if="sourceApp">
@@ -52,9 +54,6 @@ import OutputPanel from '../components/OutputPanel.vue'
 import Generator from '../services/generator'
 import Message from '../models/message'
 import Chat from '../models/chat'
-
-import useEventBus from '../composables/event_bus'
-const { onEvent } = useEventBus()
 
 const promptChatTimeout = 1000 * 60 * 5
 
@@ -113,8 +112,6 @@ onMounted(() => {
   document.addEventListener('keydown', onKeyDown)  
 
   // events
-  onEvent('send-prompt', onSendPrompt)
-  onEvent('stop-prompting', onStopGeneration)
   window.api.on('start-dictation', onDictate)
   window.api.on('show', onShow)
 

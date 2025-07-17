@@ -18,7 +18,7 @@
             <BIconXLg />
           </div>
         </div>
-        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" ref="prompt" />
+        <Prompt :chat="chat" :conversation-mode="conversationMode" :history-provider="historyProvider" :enable-deep-research="true" class="prompt" @prompt="onSendPrompt" @stop="onStopGeneration" ref="prompt" />
       </div>
       <ModelSettings class="model-settings" :class="{ visible: showModelSettings }" :chat="chat"/>
     </main>
@@ -35,7 +35,7 @@ import { t } from '../services/i18n'
 import ContextMenu, { MenuPosition } from './ContextMenu.vue'
 import MessageList from './MessageList.vue'
 import EmptyChat from './EmptyChat.vue'
-import Prompt from './Prompt.vue'
+import Prompt, { SendPromptParams } from './Prompt.vue'
 import ModelSettings from '../screens/ModelSettings.vue'
 import Chat from '../models/chat'
 import html2canvas from 'html2canvas'
@@ -114,9 +114,19 @@ const showChatMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
+const emit = defineEmits(['prompt', 'stop'])
+
 onMounted(() => {
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
 })
+
+const onSendPrompt = (payload: SendPromptParams) => {
+  emit('prompt', payload)
+}
+
+const onStopGeneration = () => {
+  emit('stop', null)
+}
 
 const toggleSideBar = () => {
   emitEvent('toggle-sidebar')

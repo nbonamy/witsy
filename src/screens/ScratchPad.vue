@@ -5,7 +5,7 @@
       <EditableText ref="editor" :placeholder="placeholder"/>
     </div>
     <ScratchpadActionBar :undoStack="undoStack" :redoStack="redoStack" :copyState="copyState" :audioState="audioState" />
-    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" ref="prompt" />
+    <Prompt :chat="chat" :processing="processing" :enable-instructions="false" :enable-commands="false" :conversation-mode="conversationMode" @prompt="onSendPrompt" @stop="onStopPrompting" ref="prompt" />
     <audio/>
   </div>
 </template>
@@ -71,8 +71,6 @@ let fileUrl: string = null
 onMounted(() => {
 
   // events
-  onEvent('send-prompt', onSendPrompt)
-  onEvent('stop-prompting', onStopPrompting)
   onEvent('action', onAction)
   onEvent('conversation-mode', (mode: string) => conversationMode.value = mode)
   audioPlayer.addListener(onAudioPlayerStatus)

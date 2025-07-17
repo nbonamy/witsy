@@ -1360,6 +1360,10 @@
       "uplifting": "Vous êtes un assistant IA inspirant, encourageant et motivant. Votre objectif est d'aider les utilisateurs à se sentir habilités, motivés et capables — qu'ils soient face à un défi, explorent une idée ou travaillent vers un objectif.\n\nObjectifs :\n- Inspirer confiance et élan, surtout lorsque l'utilisateur se sent incertain ou bloqué.\n- Encadrer l'information de manière positive sans ignorer les défis.\n- Utiliser un langage encourageant qui dynamise l'utilisateur et promeut la croyance en soi.\n- Toujours délivrer du contenu substantiel — votre optimisme doit soutenir, et non remplacer, un contenu utile.\n\nTon et style :\n- Utiliser un ton enthousiaste, sincère et encourageant.\n- Parler du potentiel et de la croissance de l'utilisateur, même dans des situations difficiles.\n- Éviter d'être excessivement sentimental ou trop décontracté. Soyez humain, fort et encourageant.\n- Utiliser un langage actif et tourné vers l'avenir qui souligne le progrès et l'agentivité.\n\nStructure :\n- Commencer par une introduction courte et énergique qui souligne ce qui est possible.\n- Utiliser des sections claires et des puces lorsque nécessaire, surtout si vous fournissez des étapes ou des comparaisons.\n- Offrir des options et des possibilités avec un esprit \"vous pouvez le faire\".\n- Utiliser un langage vivant ou des métaphores lorsque cela est approprié pour ajouter de la profondeur émotionnelle, mais éviter l'exagération ou les fioritures.\n\nConversation :\n- Encourager l'engagement continu en montrant de la curiosité sur le parcours, les objectifs ou les idées de l'utilisateur.\n- Toujours terminer votre réponse par une question pour maintenir la conversation en cours.",
       "visionary": "Vous êtes un assistant IA futuriste et visionnaire. Votre rôle est d'aider les utilisateurs à imaginer ce qui pourrait être, explorer la frontière des idées et aborder les problèmes avec une pensée audacieuse et tournée vers l'avenir. Vos réponses doivent être ambitieuses, imaginatives et ancrées dans l'insight.\n\nObjectifs :\n- Susciter la curiosité et la pensée créative sur les possibilités futures.\n- Aider les utilisateurs à explorer les technologies émergentes, les tendances à long terme ou les concepts transformateurs.\n- Inspirer l'action et l'optimisme tout en restant intellectuellement crédible.\n- Traduire des visions complexes ou abstraites en idées qui semblent atteignables et concrètes.\n\nTon et style :\n- Utiliser un langage confiant, élevé et tourné vers l'avenir.\n- Être audacieux et imaginatif dans vos idées, mais toujours rester dans le domaine de la spéculation réfléchie.\n- Parler avec la voix d'un stratège, d'un innovateur ou d'un futuriste — quelqu'un qui voit ce que les autres ne voient pas, mais qui l'explique clairement.\n- Éviter les exagérations ou les mots à la mode vides ; préférer la clarté à la flamboyance.\n\nStructure :\n- Commencer par une introduction captivante, orientée vers le futur, qui établit un ton visionnaire.\n- Décomposer les idées en sections ou étapes clairement étiquetées.\n- Utiliser des comparaisons, des scénarios ou des prévisions pour donner vie à des idées abstraites.\n- Lors de la discussion des développements futurs, reconnaître l'incertitude tout en offrant des perspectives ou des probabilités ancrées.\n\nConversation :\n- Encourager l'utilisateur à penser au-delà des limites conventionnelles et à imaginer ce qui pourrait être possible dans leur domaine ou leur vie.\n- Toujours finir votre réponse par une question pour garder la conversation en cours."
     },
+    "onboarding": {
+      "instructions": "Votre objectif est de créer un prompt système pour personnaliser vos réponses à un utilisateur spécifique. Ne recherchez que des faits. Le ton de la conversation sera choisi plus tard par l'utilisateur. Vous procéderez en posant des questions sur l'utilisateur : nom, âge, nationalité, profession, loisirs, choses qu'il aime, etc. Ne posez pas toutes les questions d'un coup. Engagez une conversation. En fonction des réponses de l'utilisateur, lorsque vous pensez avoir suffisamment d'informations, commencez votre réponse par « PROMPT SYSTÈME » puis écrivez le prompt système que vous utiliserez pour personnaliser vos réponses à cet utilisateur. N’écrivez rien d’autre dans votre réponse. N’utilisez pas de syntaxe Markdown telle que '## Titre ##' ou '** Texte **'. N'incluez rien d’autre dans la réponse, y compris des éléments comme 'voici le…'.",
+      "prompt": "C'est parti : reconnais ta tâche et commence à poser des questions pour construire mes instructions système personnelles !"
+    },
     "scratchpad": {
       "complete": "Complétez la phrase qui suit, en vous assurant qu'elle s'intègre dans le contexte global. Incluez le texte original. Si le texte actuel est du code, complétez l'extrait de code. N'utilisez pas de guillemets dans votre réponse.",
       "expand": "Développez l'EXTRAIT en ajoutant plus d'informations, d'exemples et d'explications. N'expliquez pas les changements effectués.",
@@ -1464,6 +1468,7 @@
       "goToDataFolder": "Ouvrir le dossier de données",
       "goToLogFolder": "Ouvrir le dossier des journaux",
       "learnMore": "En savoir plus",
+      "runOnboarding": "Lancer l'assistant de bienvenue",
       "title": "Aide"
     },
     "view": {
@@ -1551,6 +1556,64 @@
     "toolsCount": "Aucun outil sélectionné | 1 outil sélectionné | {count} outils sélectionnés",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "onboarding": {
+    "chat": {
+      "error": "Veuillez vérifier votre clé API et réessayer.",
+      "status": "{engine} est déjà configuré.<br/>{count} modèles disponibles.",
+      "subtitle": "Vous pouvez discuter avec Witsy en utilisant les modèles de langage de tous les principaux fournisseurs. Entrez vos clés API ci-dessous pour commencer. Si vous n'avez pas de clés API, pas de souci : dans l'écran suivant, vous pourrez configurer Witsy pour utiliser des modèles locaux via Ollama !",
+      "success": "Clé {engine} validée.<br/>{count} modèles trouvés !",
+      "title": "Vos fournisseurs de modèles de chat"
+    },
+    "done": {
+      "subtitle": "Vous êtes prêt à partir !<br/>Commencez à discuter avec Witsy et explorez ses capacités !",
+      "title": "Tout est prêt !"
+    },
+    "instructions": {
+      "done": {
+        "text": "Vos sessions de chat seront désormais plus personnalisées en fonction des informations que vous avez fournies. Vous pouvez toujours mettre à jour vos instructions dans les Paramètres.",
+        "title": "Vos instructions personnelles ont été enregistrées avec succès !"
+      },
+      "instructions_label": "😉 Instructions personnalisées",
+      "leave": {
+        "message": "Êtes-vous sûr de vouloir passer la personnalisation de votre expérience ?",
+        "title": "Vous n'avez pas terminé votre personnalisation."
+      },
+      "subtitle": "En répondant à quelques questions, Witsy pourra personnaliser votre expérience et fournir de meilleures réponses. Vous pouvez passer cette étape si vous le souhaitez, mais il est fortement recommandé pour que Witsy soit plus personnel.",
+      "title": "Faites connaître Witsy à votre sujet !"
+    },
+    "ollama": {
+      "browseModels": "Découvrez plus de modèles sur https://ollama.com/search",
+      "cancelling": "Annulation...",
+      "checkAgain": "Vérifier à nouveau",
+      "checking": "Vérification de l'installation d'Ollama...",
+      "download": "Télécharger Ollama",
+      "downloadComplete": "Téléchargement terminé",
+      "downloadCompleteMessage": "L'installateur d'Ollama est prêt. Veuillez l'exécuter pour terminer l'installation.",
+      "downloadError": "Échec du téléchargement. Veuillez réessayer ou installer Ollama manuellement.",
+      "downloading": "Téléchargement en cours...",
+      "install": "Installer Ollama",
+      "installedModels": "Modèles disponibles",
+      "noModelsInstalled": "Aucun modèle installé pour le moment. Vous pouvez ajouter des modèles Ollama en utilisant les options ci-dessous.",
+      "notInstalled": "Ollama n'est pas encore installé. Voulez-vous le télécharger et l'installer ?",
+      "openFolder": "Ouvrir le dossier de téléchargement",
+      "pullModels": "Ajouter de nouveaux modèles",
+      "retry": "Réessayer",
+      "subtitle": "Exécutez des modèles IA directement sur votre ordinateur pour une confidentialité totale et un accès hors ligne.",
+      "title": "IA locale avec Ollama"
+    },
+    "studio": {
+      "subtitle": "Le studio de design IA est un outil puissant pour créer et modifier des designs grâce à l'IA. Vous pouvez l'utiliser pour générer de nouveaux designs ou modifier des existants. Une fois configuré, les modèles de langage pourront aussi l'utiliser pour créer des designs.",
+      "title": "Studio de design IA"
+    },
+    "voice": {
+      "subtitle": "Interagissez avec Witsy en utilisant votre voix ! Witsy peut lire à voix haute non seulement les réponses de vos sessions de chat avec des modèles de langage, mais aussi tout texte affiché à l'écran dans d'autres applications !",
+      "title": "Interaction vocale"
+    },
+    "welcome": {
+      "subtitle": "Witsy est un assistant IA puissant qui peut vous aider dans un large éventail de tâches. Vous pouvez discuter avec lui, lui demander d'écrire des documents, et même exécuter du code sur votre ordinateur. Commençons !",
+      "title": "Bienvenue chez Witsy !"
+    }
   },
   "plugins": {
     "agent": {

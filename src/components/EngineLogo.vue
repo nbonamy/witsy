@@ -1,7 +1,8 @@
 
 <template>
   <div :class="[ 'logo', engine, background ? 'background' : '' ]">
-    <component :is="logo" :class="[ 'svg', klass, grayscale ? 'grayscale' : '' ]" />
+    <component v-if="isComponent" :is="logo" :class="[ 'svg', klass, grayscale ? 'grayscale' : '' ]" />
+    <img v-else :src="logo" :class="[ 'img', klass, grayscale ? 'grayscale' : '' ]" />
     <div class="label" v-if="customLabel && label">{{ label }}</div>
   </div>
 </template>
@@ -18,14 +19,21 @@ import LogoAnthropic from '../../assets/anthropic.svg?component'
 import LogoAzure from '../../assets/azure.svg?component'
 import LogoCerberas from '../../assets/cerebras.svg?component'
 import LogoDeepSeek from '../../assets/deepseek.svg?component'
+import LogoElevenLabs from '../../assets/elevenlabs.svg?component'
+import LogoFalai from '../../assets/falai.svg?component'
+import LogoFireworks from '../../assets/fireworks.svg?component'
+// PNG logos imported as URL strings
 import LogoGoogle from '../../assets/google.svg?component'
 import LogoGroq from '../../assets/groq.svg?component'
+import LogoHuggingFace from '../../assets/huggingface.svg?component'
 import LogoLMStudio from '../../assets/lmstudio.svg?component'
 import LogoMeta from '../../assets/meta.svg?component'
 import LogoMistralAI from '../../assets/mistralai.svg?component'
+import LogoNvidia from '../../assets/nvidia.svg?component'
 import LogoOllama from '../../assets/ollama.svg?component'
 import LogoOpenAI from '../../assets/openai.svg?component'
 import LogoOpenRouter from '../../assets/openrouter.svg?component'
+import LogoReplicate from '../../assets/replicate.svg?component'
 import LogoXAI from '../../assets/xai.svg?component'
 
 const llmManager = LlmFactory.manager(store.config)
@@ -35,15 +43,26 @@ const logos: { [key: string]: any } = {
   azure: LogoAzure,
   cerebras: LogoCerberas,
   deepseek: LogoDeepSeek,
+  elevenlabs: LogoElevenLabs,
+  falai: LogoFalai,
+  fireworks: LogoFireworks,
   google: LogoGoogle,
   groq: LogoGroq,
+  huggingface: LogoHuggingFace,
   lmstudio: LogoLMStudio,
   meta: LogoMeta,
   mistralai: LogoMistralAI,
+  nvidia: LogoNvidia,
   ollama: LogoOllama,
   openai: LogoOpenAI,
   openrouter: LogoOpenRouter,
+  replicate: LogoReplicate,
   xai: LogoXAI,
+}
+
+const pngLogos: { [key: string]: string } = {
+  gladia: window.api.getAssetPath('./assets/gladia.png'),
+  speechmatics: window.api.getAssetPath('./assets/speechmatics.png')
 }
 
 const props = defineProps({
@@ -67,12 +86,18 @@ const props = defineProps({
 
 const logo = computed(() => {
   if (props.engine == favoriteMockEngine) return LogoFavorite
+  if (pngLogos[props.engine]) return pngLogos[props.engine]
   if (logos[props.engine]) return logos[props.engine]
   if (llmManager.isCustomEngine(props.engine)) {
     const engineConfig = store.config?.engines?.[props.engine] as CustomEngineConfig
     if (engineConfig?.api === 'azure') return LogoAzure
   }
     return LogoCustom
+})
+
+const isComponent = computed(() => {
+  const logoValue = logo.value
+  return typeof logoValue !== 'string'
 })
 
 const label = computed(() => {
@@ -133,6 +158,17 @@ const klass = computed(() => {
 
   }
 
+  .img {
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+
+    &.grayscale {
+      filter: grayscale(100%);
+    }
+
+  }
+
   .label {
     position: absolute;
     background-color: var(--background-color);
@@ -156,6 +192,16 @@ const klass = computed(() => {
       &.grayscale {
         fill: var(--text-color);
       }
+    }
+
+    .img {
+      &.grayscale {
+        filter: grayscale(100%) brightness(0.8);
+      }
+    }
+
+    &.gladia, &.speechmatics {
+      filter: invert(1);
     }
 
   }

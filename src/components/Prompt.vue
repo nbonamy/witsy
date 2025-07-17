@@ -174,6 +174,8 @@ const isDragOver = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 
+const emit = defineEmits(['prompt', 'stop'])
+
 const engine = () => props.chat?.engine || llmManager.getChatEngineModel().engine
 const model = () => props.chat?.model || llmManager.getChatEngineModel().model
 
@@ -430,7 +432,7 @@ const onSendPrompt = () => {
   prompt.value = defaultPrompt(props.conversationMode)
   nextTick(() => {
     autoGrow(input.value)
-    emitEvent('send-prompt', {
+    emit('prompt', {
       instructions: instructions.value,
       prompt: message,
       attachments: attachments.value,
@@ -443,7 +445,7 @@ const onSendPrompt = () => {
 }
 
 const onStopPrompting = () => {
-  emitEvent('stop-prompting', null)
+  emit('stop', null)
 }
 
 const onAttach = () => {

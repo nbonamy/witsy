@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <MenuBar :mode="mode" @change="onMode"/>
+    <MenuBar :mode="mode" @change="onMode" @run-onboarding="onRunOnboarding" />
     <Settings :style="{ display: mode === 'settings' ? 'flex' : 'none' }" :extra="viewParams" />
     <Chat ref="chat" :style="{ display: mode === 'chat' ? 'flex' : 'none' }" :extra="viewParams" />
     <DesignStudio :style="{ display: mode === 'studio' ? 'flex' : 'none' }" />
@@ -9,6 +9,7 @@
     <RealtimeChat v-if="mode === 'voice-mode'" ref="realtime" />
     <Transcribe v-if="mode === 'dictation'" ref="transcribe" />
   </div>
+  <Onboarding v-if="onboard" @close="onOnboardingDone" />
   <Fullscreen window="main" />
 </template>
 
@@ -25,6 +26,7 @@ import AgentForge from '../screens/AgentForge.vue'
 import Settings from '../screens/Settings.vue'
 import RealtimeChat from '../screens/RealtimeChat.vue'
 import Transcribe from '../screens/Transcribe.vue'
+import Onboarding from '../screens/Onboarding.vue'
 import Fullscreen from '../components/Fullscreen.vue'
 
 import useEventBus from '../composables/event_bus'
@@ -33,6 +35,7 @@ const { emitEvent, onEvent } = useEventBus()
 const chat = ref<typeof Chat>(null)
 const transcribe = ref<typeof Transcribe>(null)
 const realtime = ref<typeof RealtimeChat>(null)
+const onboard = ref(false)
 
 // init stuff
 store.load()
@@ -68,6 +71,14 @@ onMounted(() => {
 
   // dictation
   window.api.on('start-dictation', onDictate)
+
+  // show onboarding
+  if (store.config.features?.onboarding && !store.config.general.onboardingDone) {
+    onboard.value = true
+  }
+
+  // show it again
+  window.api.on('run-onboarding', onRunOnboarding)
 
 })
 
@@ -120,6 +131,18 @@ const onDictate = () => {
   } else if (mode.value === 'voice-mode') {
     realtime.value?.startDictation()
   }
+}
+
+const onRunOnboarding = () => {
+  onboard.value = true
+  store.config.general.onboardingDone = false
+  store.saveSettings()
+}
+
+const onOnboardingDone = () => {
+  onboard.value = false
+  store.config.general.onboardingDone = true
+  store.saveSettings()
 }
 
 </script>

@@ -88,7 +88,7 @@ const hasComputerUse = computed(() => {
   return store.config.engines.anthropic.apiKey && store.config.engines.anthropic.models?.chat?.find(m => m.id === 'computer-use')
 })
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'run-onboarding'])
 
 const mode = ref('chat')
 
@@ -113,7 +113,7 @@ const onAppMenu = (event: Event) => {
   ContextMenu.showContextMenu({
     x: rect.x + rect.width,
     y: rect.y + 8,
-    theme: useAppearanceTheme().getTheme() === 'dark' ? 'default dark' : 'default',
+    theme: useAppearanceTheme().isDark ? 'default dark' : 'default',
     preserveIconWidth: false,
     items: [
       { 
@@ -132,7 +132,8 @@ const onAppMenu = (event: Event) => {
       { 
         label: t('menu.help.title'),
         children: [
-          { label: t('menu.view.debug'), onClick: () => window.api.debug.showConsole() },
+          { label: t('menu.help.runOnboarding'), onClick: () => emit('run-onboarding') },
+          { label: t('menu.view.debug'), divided: 'up', onClick: () => window.api.debug.showConsole() },
           { label: t('menu.help.goToDataFolder'), divided: 'up', onClick: () => window.api.debug.openFolder('userData') },
           { label: t('menu.help.goToLogFolder'), onClick: () => window.api.debug.openFolder('logs') },
         ]

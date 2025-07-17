@@ -11,12 +11,9 @@ import PromptAnywhere from '../../src/screens/PromptAnywhere.vue'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Generator from '../../src/services/generator'
 import Message from '../../src/models/message'
-
-import useEventBus  from '../../src/composables/event_bus'
 import EngineModelPicker from '../../src/screens/EngineModelPicker.vue'
 import LlmManager from '../../src/llms/manager'
 import { defaultCapabilities } from 'multi-llm-ts'
-const { emitEvent } = useEventBus()
 
 // mock llm
 vi.mock('../../src/llms/manager.ts', async () => {
@@ -63,7 +60,7 @@ const prompt = async (params?: PromptParams) => {
   await wrapper.vm.$nextTick()
   wrapper.vm.chat.disableStreaming = params?.disableStreaming
   installMockModels()
-  emitEvent('send-prompt', { prompt: 'Hello LLM', instructions: params?.instructions, attachments: params?.attachments, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', instructions: params?.instructions, attachments: params?.attachments, docrepo: params?.docrepo, expert: params?.expert } as SendPromptParams)
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   return wrapper
 }
@@ -238,7 +235,7 @@ test('Closes when click on icon', async () => {
 test('Manages conversation', async () => {
   const wrapper = await prompt()
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.standard"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
-  emitEvent('send-prompt', { prompt: 'Bye LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.standard"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"[{"role":"system","content":"instructions.chat.standard"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
@@ -256,7 +253,7 @@ test('Resets chat with defaults', async () => {
   expect(wrapper.vm.chat.modelOpts).toBeDefined()
   expect(wrapper.findComponent(MessageItem).exists()).toBeFalsy()
   expect(wrapper.findComponent(Prompt).vm.getPrompt()).toBe('')
-  emitEvent('send-prompt', { prompt: 'Bye LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Bye LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(MessageItem).text()).toBe('[{"role":"system","content":"instructions.chat.standard"},{"role":"user","content":"Bye LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
@@ -267,7 +264,7 @@ test('Brings back chat', async () => {
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
   const chatId = wrapper.vm.chat.uuid
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   wrapper.find('.close').trigger('click')
   wrapper.vm.onShow()
@@ -291,7 +288,7 @@ test('Auto saves chat', async () => {
   installMockModels()
   wrapper.vm.onShow()
   await wrapper.vm.$nextTick()
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.vm.chat.title).not.toBeNull()
   expect(store.history.chats).toHaveLength(1)

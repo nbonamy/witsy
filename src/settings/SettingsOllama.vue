@@ -12,7 +12,7 @@
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :height="300" :disabled="vision_models.length == 0" @change="save" />
     </div>
-    <OllamaModelPull :pullable-models="getChatModels" info-url="https://ollama.com/search" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
+    <OllamaModelPull :pullable-models="getChatModels()" info-url="https://ollama.com/search" info-text="{{ t('settings.engines.ollama.browseModels') }}" @done="onRefresh"/>
     <div class="group">
       <label>{{ t('settings.engines.ollama.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.ollama.baseURL" @keydown.enter.prevent="save" @change="save"/>

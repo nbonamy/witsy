@@ -345,7 +345,7 @@ test('Settings LLM delete custom instruction with confirmation', async () => {
   
   // Check that instruction was removed
   expect(store.config.llm.customInstructions).toHaveLength(0)
-  expect(store.config.llm.instructions).toBe('standard')
+  expect(store.config.llm.instructions).toBe('structured')
   expect(store.saveSettings).toHaveBeenCalled()
 })
 

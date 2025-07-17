@@ -6,7 +6,7 @@
     </div>
     <div class="group">
       <label>{{ t('settings.llm.instructions.editor.instructions') }}</label>
-      <textarea v-model="localInstruction.instructions" rows="10"></textarea>
+      <textarea v-model="localInstruction.instructions"></textarea>
     </div>
     <div class="buttons">
       <button type="button" @click="onCancel">{{ t('common.cancel') }}</button>
@@ -96,9 +96,8 @@ const onSave = () => {
 
 .instruction-editor {
   
-  textarea {
-    height: 200px;
-    resize: vertical !important;
+  .group textarea {
+    min-height: 400px !important;
   }
 
 }

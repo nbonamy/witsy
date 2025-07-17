@@ -42,6 +42,7 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     setAppearanceTheme: vi.fn(),
     showAbout: vi.fn(),
     showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
+    getAssetPath: vi.fn(() => ''),
     listFonts: vi.fn(() => []),
     fullscreen: vi.fn(),
     main: {

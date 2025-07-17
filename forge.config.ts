@@ -89,6 +89,8 @@ const config: ForgeConfig = {
       'assets/trayUpdateWhite.png',
       'assets/trayUpdateWhite@2x.png',
       'assets/icon.ico',
+      'assets/gladia.png',
+      'assets/speechmatics.png',
     ],
     ...(process.env.TEST ? {} : osxPackagerConfig),
     afterCopy: [

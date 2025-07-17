@@ -104,7 +104,7 @@ test('Initalizes correctly', async () => {
 
 test('Sends prompt and sets modified', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
@@ -112,7 +112,7 @@ test('Sends prompt and sets modified', async () => {
 
 test('Sends system prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
@@ -120,7 +120,7 @@ test('Sends system prompt with params', async () => {
 
 test('Sends user prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
@@ -128,7 +128,7 @@ test('Sends user prompt with params', async () => {
 
 test('Clears chat', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   emitEvent('action', 'clear')
@@ -138,7 +138,7 @@ test('Clears chat', async () => {
 
 test('Undo/redo', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
@@ -163,7 +163,7 @@ test('Loads chat', async () => {
 
 test('Saves chat', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
   emitEvent('action', 'save')
   expect(window.api.file.save).toHaveBeenCalled()
@@ -181,7 +181,7 @@ test('Sets engine', async () => {
 test('Replaces selection', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   wrapper.vm.editor.setContent({ content: 'Hello SELECTED LLM', start: 6, end: 14})
-  emitEvent('send-prompt', { prompt: 'Hello LLM' })
+  await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
   expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"instructions.scratchpad.prompt.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
   const content = wrapper.vm.editor.getContent()

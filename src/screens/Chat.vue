@@ -1,7 +1,7 @@
 <template>
   <div class="chat panel-content">
     <ChatSidebar :chat="assistant.chat" ref="sidebar" />
-    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" />
+    <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @stop="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
   </div>
 </template>
@@ -62,9 +62,7 @@ onMounted(() => {
   onEvent('rename-folder', onRenameFolder)
   onEvent('delete-folder', onDeleteFolder)
   onEvent('select-chat', onSelectChat)
-  onEvent('send-prompt', onSendPrompt)
   onEvent('retry-generation', onRetryGeneration)
-  onEvent('stop-prompting', onStopGeneration)
   onEvent('toggle-sidebar', onToggleSidebar)
   onEvent('main-view-changed', onMainViewChanged)
 

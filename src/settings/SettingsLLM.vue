@@ -190,7 +190,7 @@ const onDeleteInstruction = async () => {
     const index = customInstructions.value.findIndex(ci => ci.id === instructions.value)
     if (index >= 0) {
       customInstructions.value.splice(index, 1)
-      instructions.value = 'standard'
+      instructions.value = 'structured'
       save()
     }
   }
