@@ -19,7 +19,7 @@
         <BIconSendFill class="icon send" @click="onSendPrompt" v-else />
       </div>
     </div>
-    <div class="actions" :class="actionsCount">
+    <div class="actions">
       <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" v-if="enableInstructions" />
       <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
       <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
@@ -182,11 +182,6 @@ const model = () => props.chat?.model || llmManager.getChatEngineModel().model
 const backSpaceHitsToClearExpert = 1
 let backSpaceHitsWhenEmpty = 0
 let runCommandImmediate = false
-
-const actionsCount = computed(() => {
-  const count = (props.enableAttachments ? 1 : 0) + (props.enableExperts ? 1 : 0) + (props.enableDictation ? 1 : 0)
-  return `actions-${count > 1 ? 'many' : count}`
-})
 
 const isProcessing = computed(() => {
   return processing.value || props.processing
@@ -1152,7 +1147,6 @@ defineExpose({
     overflow: hidden;
     display: flex;
     flex-direction: row;
-    margin-bottom: 0.5rem;
 
     .textarea-wrapper {
       flex: 1;
@@ -1233,8 +1227,13 @@ defineExpose({
   .actions {
     display: flex;
     gap: 0.25rem;
+    margin-top: 0.5rem;
     margin-left: 0.25rem;
     padding-bottom: 0.25rem;
+
+    &:not(:has(*)) {
+      display: none;
+    }
     
     .icon {
       width: 1rem;
