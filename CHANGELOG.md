@@ -11,10 +11,11 @@ All notable changes to this project will be documented in this file.
 - Japanese localization (https://github.com/nbonamy/witsy/pull/326)
 
 ### Changed
-- N/A 
+- Document Repository UI update 
 
 ### Fixed
 - Design Studio History label overflow fix
+- Duplicated models (https://github.com/nbonamy/witsy/issues/331)
 
 ### Removed
 - N/A
