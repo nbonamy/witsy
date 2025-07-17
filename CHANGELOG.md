@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add, Edit & Delete System Prompts (https://github.com/nbonamy/witsy/issues/308)
 - Backup/Restore of data and settings
 - Onboarding experience
+- Japanese localization (https://github.com/nbonamy/witsy/pull/326)
 
 ### Changed
 - N/A 

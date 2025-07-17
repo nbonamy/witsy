@@ -2051,7 +2051,7 @@
         "errorEmpty": "JSON cannot be empty.",
         "errorFormat": "Error while parsing JSON server definition.",
         "errorMultiple": "Multiple servers found. Please paste one server at a time.",
-        "menu": "@:{'settings.mcp.importJson.title'}rom",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
         "title": "Import from Json"
       },
       "importSmitheryServer": "Import Smithery.ai server…",

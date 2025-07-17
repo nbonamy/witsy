@@ -2023,7 +2023,7 @@
         "errorEmpty": "JSON no puede estar vacío.",
         "errorFormat": "Error al analizar la definición del servidor JSON.",
         "errorMultiple": "Se encontraron múltiples servidores. Por favor, pega un servidor a la vez.",
-        "menu": "@:{'settings.mcp.importJson.title'}rom",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
         "title": "Importar desde Json"
       },
       "importSmitheryServer": "Importar servidor de Smithery.ai…",

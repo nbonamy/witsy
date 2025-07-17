@@ -2051,7 +2051,7 @@
         "errorEmpty": "JSON nie może być pusty.",
         "errorFormat": "Błąd podczas analizowania definicji serwera JSON.",
         "errorMultiple": "Znaleziono wiele serwerów. Proszę wkleić jeden serwer naraz.",
-        "menu": "@:{'settings.mcp.importJson.title'}rom",
+        "menu": "@:{'settings.mcp.importJson.title'}…",
         "title": "Importuj z Json"
       },
       "importSmitheryServer": "Import serwera Smithery.ai...",
