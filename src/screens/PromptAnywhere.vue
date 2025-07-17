@@ -660,8 +660,6 @@ const onResponseResize = (deltaX: number) => {
 
     .input {
 
-      margin-bottom: 0px;
-      
       .textarea-wrapper {
         textarea {
           max-height: 100px;
@@ -687,7 +685,8 @@ const onResponseResize = (deltaX: number) => {
     .actions {
       
       width: calc(100% - 0.75rem);
-      padding: 0.25rem 0 0.5rem 0.5rem;
+      padding: 0 0 0.5rem 0.5rem;
+      margin-top: 0.25rem;
       
       .icon {
         margin-right: 0.5rem;
