@@ -49,6 +49,7 @@ export type ProxyMode = 'default' | 'bypass' | 'custom'
 
 export type GeneralConfig = {
   firstRun: boolean
+  onboardingDone: boolean
   hideOnStartup: boolean
   keepRunning: boolean
   proxyMode: ProxyMode

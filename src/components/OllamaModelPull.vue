@@ -3,7 +3,16 @@
     <label>{{ t('modelPull.label') }}</label>
     <div class="subgroup">
       <div class="control-group">
-        <Combobox :items="pullableModels" :placeholder="t('modelPull.placeholder')" :show-help="false" name="pull_model" v-model="pull_model" />
+        <ModelSelectPlus
+          v-if="'capabilities' in pullableModels[0]"
+          id="pull_model"
+          :engine="'ollama'"
+          :models="pullableModels as ChatModel[]"
+          :default-text="t('modelPull.placeholder')"
+          :show-ids="true"
+          :caps-hover-only="true"
+          v-model="pull_model" />
+        <Combobox v-else :items="pullableModels" :placeholder="t('modelPull.placeholder')" :show-help="false" name="pull_model" v-model="pull_model" />
         <button v-if="pullStream" name="stop" @click.prevent="onStop">{{ t('common.stop') }}</button>
         <button v-else name="pull" @click.prevent="onPull" :disabled="!pull_model">{{ t('common.pull') }}</button>
         <div class="progress" v-if="pull_progress">{{ pull_progress }}</div>
@@ -16,11 +25,12 @@
 <script setup lang="ts">
 
 import { ref, nextTick, Ref } from 'vue'
-import { Ollama } from 'multi-llm-ts'
+import { ChatModel, Ollama } from 'multi-llm-ts'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import Dialog from '../composables/dialog'
 import Combobox from './Combobox.vue'
+import ModelSelectPlus from './ModelSelectPlus.vue'
 import { ProgressResponse } from 'ollama'
 import type { A as AbortableAsyncIterator } from 'ollama/dist/shared/ollama.e009de91.cjs'
 
@@ -31,7 +41,7 @@ type Model = {
 
 const props = defineProps({
   pullableModels: {
-    type: Array<Model>,
+    type: Array<Model|ChatModel>,
     required: true,
   },
   infoUrl: String,

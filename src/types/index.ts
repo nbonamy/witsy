@@ -297,6 +297,7 @@ declare global {
       off: (signal: string, callback: (value: any) => void) => void
       setAppearanceTheme(theme: string): void
       showAbout(): void
+      getAssetPath(assetPath: string): string
       showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
       listFonts(): string[]
       fullscreen(window: string, state: boolean): void

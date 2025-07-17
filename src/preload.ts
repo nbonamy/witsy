@@ -33,6 +33,7 @@ contextBridge.exposeInMainWorld(
     showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
     listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },
     showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
+    getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },
     main: {
       setMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_MODE, mode) },
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
@@ -76,6 +77,7 @@ contextBridge.exposeInMainWorld(
       exists: (filePath: string): boolean => { return ipcRenderer.sendSync(IPC.FILE.FILE_EXISTS, filePath) },
       write: (filePath: string, content: string): any => { return ipcRenderer.sendSync(IPC.FILE.WRITE_FILE, filePath, content) },
       normalize: (filePath: string): string => { return ipcRenderer.sendSync(IPC.FILE.NORMALIZE_PATH, filePath) },
+      openInExplorer: (filePath: string): { success: boolean; error?: string } => { return ipcRenderer.sendSync(IPC.FILE.OPEN_IN_EXPLORER, filePath) },
     },
     settings: {
       open: (payload?: OpenSettingsPayload): void => { return ipcRenderer.send(IPC.SETTINGS.OPEN, payload) },
@@ -212,6 +214,14 @@ contextBridge.exposeInMainWorld(
     backup: {
       export: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.EXPORT) },
       import: (): boolean => { return ipcRenderer.sendSync(IPC.BACKUP.IMPORT) },
-    }
+    },
+    ollama: {
+      downloadStart: (targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }> => { 
+        return ipcRenderer.invoke(IPC.OLLAMA.DOWNLOAD_START, targetDirectory) 
+      },
+      downloadCancel: (): Promise<{ success: boolean }> => { 
+        return ipcRenderer.invoke(IPC.OLLAMA.DOWNLOAD_CANCEL) 
+      },
+    },
   },
 );

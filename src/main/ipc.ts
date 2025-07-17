@@ -7,6 +7,7 @@ import { McpInstallStatus, McpTool } from '../types/mcp';
 import { LlmTool } from 'multi-llm-ts';
 
 import process from 'node:process';
+import path from 'node:path';
 import fontList from 'font-list';
 import { app, ipcMain, nativeImage, clipboard, dialog, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
@@ -39,6 +40,7 @@ import * as i18n from './i18n';
 import * as debug from './network';
 import * as interpreter from './interpreter';
 import * as backup from './backup';
+import * as ollama from './ollama';
 
 export const installIpc = (
   store: Store,
@@ -103,6 +105,11 @@ export const installIpc = (
 
   ipcMain.on(IPC.APP.GET_APP_PATH, (event) => {
     event.returnValue = app.getPath('userData');
+  });
+
+  ipcMain.on(IPC.APP.GET_ASSET_PATH, (event, assetPath) => {
+    const assetsFolder = process.env.DEBUG ? 'assets' : process.resourcesPath;
+    event.returnValue = path.join(assetsFolder, assetPath.replace('./assets/', ''));
   });
 
   ipcMain.on(IPC.APP.FONTS_LIST, async (event) => {
@@ -356,6 +363,15 @@ export const installIpc = (
 
   ipcMain.on(IPC.FILE.NORMALIZE_PATH, (event, filePath) => {
     event.returnValue = file.normalizePath(app, filePath);
+  });
+
+  ipcMain.on(IPC.FILE.OPEN_IN_EXPLORER, (event, filePath) => {
+    try {
+      ollama.openInFileExplorer(filePath);
+      event.returnValue = { success: true };
+    } catch (error) {
+      event.returnValue = { success: false, error: error.message };
+    }
   });
 
   ipcMain.on(IPC.MARKDOWN.RENDER, (event, payload) => {
@@ -652,6 +668,21 @@ export const installIpc = (
   ipcMain.on(IPC.VOICE_MODE.START, () => {
     window.openRealtimeChatWindow();
   })
+
+  // Ollama download handlers
+  ipcMain.handle(IPC.OLLAMA.DOWNLOAD_START, async (event, targetDirectory: string) => {
+    try {
+      const downloadId = ollama.startDownload(targetDirectory);
+      return { success: true, downloadId };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle(IPC.OLLAMA.DOWNLOAD_CANCEL, async () => {
+    const cancelled = ollama.cancelDownload();
+    return { success: cancelled };
+  });
 
 }
 

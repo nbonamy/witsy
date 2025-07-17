@@ -2,6 +2,7 @@
 {
   "general": {
     "firstRun": true,
+    "onboardingDone": false,
     "keepRunning": true,
     "hideOnStartup": false,
     "proxyMode": "default",
@@ -171,7 +172,7 @@
         "image": []
       },
       "model": {
-        "chat": "gpt-4o",
+        "chat": "gpt-4.1",
         "image": "gpt-image-1",
         "vision": "gpt-4.1"
       },
@@ -186,7 +187,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "claude-3-5-haiku-20241022",
         "image": "",
         "vision": "claude-3-5-haiku-20241022"
       }
@@ -197,7 +198,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "gemini-2.5-flash",
         "image": "gemini-2.0-flash-exp",
         "imageEdit": "gemini-2.0-flash-exp",
         "vision": "gemini-1.5-pro-latest"
@@ -209,7 +210,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "qwen/qwen3-32b",
         "image": "",
         "vision": "meta-llama/llama-4-scout-17b-16e-instruct"
       }
@@ -220,7 +221,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "grok-4-0709",
         "image": "",
         "vision": "grok-2-vision-1212"
       }
@@ -231,7 +232,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "google/gemini-2.0-flash-exp:free",
         "image": "",
         "vision": "meta-llama/llama-4-maverick:free"
       }
@@ -242,7 +243,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "deepseek-chat",
         "image": ""
       }
     },
@@ -252,7 +253,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "qwen-3-32b",
         "image": ""
       }
     },
@@ -263,7 +264,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "Llama-4-Maverick-17B-128E-Instruct-FP8",
         "image": "",
         "vision": "Llama-4-Scout-17B-16E-Instruct-FP8"
       }
@@ -274,7 +275,7 @@
         "image": []
       },
       "model": {
-        "chat": "",
+        "chat": "mistral-medium-latest",
         "image": "",
         "vision": "pixtral-large-latest"
       }

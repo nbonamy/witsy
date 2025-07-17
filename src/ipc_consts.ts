@@ -2,6 +2,7 @@
 
 export const APP = {
   GET_APP_PATH: 'get-app-path',
+  GET_ASSET_PATH: 'get-asset-path',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
   SHOW_DIALOG: 'show-dialog',
@@ -49,6 +50,7 @@ export const FILE = {
   FILE_EXISTS: 'file-exists',
   WRITE_FILE: 'write-file',
   NORMALIZE_PATH: 'normalize-path',
+  OPEN_IN_EXPLORER: 'open-in-explorer',
 } as const;
 
 export const CONFIG = {
@@ -209,4 +211,12 @@ export const SETTINGS = {
 export const BACKUP = {
   EXPORT: 'backup-export',
   IMPORT: 'backup-import',
+} as const;
+
+export const OLLAMA = {
+  DOWNLOAD_START: 'ollama-download-start',
+  DOWNLOAD_PROGRESS: 'ollama-download-progress',
+  DOWNLOAD_COMPLETE: 'ollama-download-complete',
+  DOWNLOAD_ERROR: 'ollama-download-error',
+  DOWNLOAD_CANCEL: 'ollama-download-cancel',
 } as const;

@@ -1379,6 +1379,10 @@
       "uplifting": "You are an inspiring, uplifting, and encouraging AI assistant. Your goal is to help users feel empowered, motivated, and capable — whether they’re facing a challenge, exploring an idea, or working toward a goal.\n\nObjectives:\n- Inspire confidence and forward momentum, especially when the user feels uncertain or stuck.\n- Frame information positively without ignoring challenges.\n- Use encouraging language that energizes the user and promotes self-belief.\n- Always deliver substance — your optimism should support, not replace, helpful content.\n\nTone & Style:\n- Use an enthusiastic, sincere, and empowering tone.\n- Speak to the user's potential and growth, even in difficult situations.\n- Avoid being overly sentimental or overly casual. Be human, strong, and encouraging.\n- Use active, forward-looking language that emphasizes progress and agency.\n\nStructure:\n- Begin with a short, energetic introduction that highlights what’s possible.\n- Use clear sectioning and bullet points when needed, especially if you’re providing steps or comparisons.\n- Offer options and possibilities with a “you can do this” spirit.\n- Use vivid language or metaphors when appropriate to add emotional depth, but avoid exaggeration or fluff.\n\nConversation:\n- Encourage continued engagement by showing curiosity about the user’s journey, goals, or ideas.\n- Always finish your response with a question to keep the conversation going.",
       "visionary": "You are a futuristic and visionary AI assistant. Your role is to help users imagine what could be, explore the frontier of ideas, and approach problems with bold, forward-looking thinking. Your responses should be ambitious, imaginative, and grounded in insight.\n\nObjectives:\n- Spark curiosity and creative thinking about future possibilities.\n- Help users explore emerging technologies, long-term trends, or transformative concepts.\n- Inspire action and optimism while staying intellectually credible.\n- Translate complex or abstract visions into ideas that feel reachable and concrete.\n\nTone & Style:\n- Use confident, elevated, and forward-thinking language.\n- Be bold and imaginative in your ideas, but always stay within the realm of thoughtful speculation.\n- Speak with the voice of a strategist, innovator, or futurist — someone who sees what others don’t, but explains it clearly.\n- Avoid hype or empty buzzwords; prefer clarity over flashiness.\n\nStructure:\n- Begin with a compelling, future-oriented introduction that sets a visionary tone.\n- Break down ideas into clearly labeled sections or steps.\n- Use comparisons, scenarios, or forecasts to bring abstract ideas to life.\n- When discussing future developments, acknowledge uncertainty while offering grounded perspectives or probabilities.\n\nConversation:\n- Encourage the user to think beyond conventional boundaries and imagine what might be possible in their domain or life.\n- Always finish your response with a question to keep the conversation going.\n"
     },
+    "onboarding": {
+      "instructions": "Your goal is to build a system prompt to personalize your responses to a specific user. Only looks for facts. The tone of the conversation will be chosen by the user later on. You will do so by asking question about the user: name, age, nationality, profession, hobbies, things he likes and so on. Do not ask all questions at once. Engage in a conversation. Based on the user responses, once you think you have enough information, start your response with \"SYSTEM PROMPT\" and then write the system prompt that you will use to personalize your responses to this user. Do not write anything else in your response. Do not use Markdown syntax such as '## Title ##' or '** Text **'. Do not include anything else in the response including things like 'here is the…'.",
+      "prompt": "Let's go: acknowledge your task and start asking questions to build my personal system instructions!"
+    },
     "scratchpad": {
       "complete": "Complete the sentence that follows, ensuring it fits the overall context. Include the original text. If the current text is code, complete the code snippet. Do not use quotation marks in your response.",
       "expand": "Expand on the EXTRACT by adding more informaton, examples, and explanations. Do not explain the changes you made.",
@@ -1483,6 +1487,7 @@
       "goToDataFolder": "Go to Data Folder",
       "goToLogFolder": "Go to Log Folder",
       "learnMore": "Learn More",
+      "runOnboarding": "Run Welcome Assistant",
       "title": "Help"
     },
     "view": {
@@ -1570,6 +1575,64 @@
     "toolsCount": "No tool selected | 1 tool selected | {count} tools selected",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "onboarding": {
+    "chat": {
+      "error": "Please check your API key and try again.",
+      "status": "{engine} is already configured.<br/>{count} models available.",
+      "subtitle": "You can chat with Witsy using language models from all major providers. Enter your API keys below to get started. If you don't have any API keys, no worries: in the next screen you'll be able to setup Witsy to use local models through Ollama!",
+      "success": "{engine} key validated.<br/>{count} models found!",
+      "title": "Your chat models providers"
+    },
+    "done": {
+      "subtitle": "You're all set up and ready to go!<br/>Start chatting with Witsy and explore its capabilities!",
+      "title": "All Done!"
+    },
+    "instructions": {
+      "done": {
+        "text": "Your chat sessions will now be more personalized based on the information you provided. You can always update your instructions in the Settings.",
+        "title": "Your personal instructions have been saved successfully!"
+      },
+      "instructions_label": "😉 Personalized instructions",
+      "leave": {
+        "message": "Are you sure you want to skip personalizing your experience?",
+        "title": "You did not complete your personalization."
+      },
+      "subtitle": "By answering a few questions, Witsy will be able to personalize your experience and provide better answers. You can skip this step if you want, but it is highly recommended to make Witsy feel more personal.",
+      "title": "Let Witsy know about you!"
+    },
+    "ollama": {
+      "browseModels": "Discover more models at https://ollama.com/search",
+      "cancelling": "Cancelling...",
+      "checkAgain": "Check Again",
+      "checking": "Checking for Ollama installation...",
+      "download": "Download Ollama",
+      "downloadComplete": "Download Complete",
+      "downloadCompleteMessage": "The Ollama installer is ready. Please run it to complete the installation.",
+      "downloadError": "Download failed. Please try again or install Ollama manually.",
+      "downloading": "Downloading...",
+      "install": "Install Ollama",
+      "installedModels": "Available Models",
+      "noModelsInstalled": "No models installed yet. You can add Ollama models using the options below.",
+      "notInstalled": "Ollama isn't installed yet. Would you like to download and install it?",
+      "openFolder": "Open Download Folder",
+      "pullModels": "Add New Models",
+      "retry": "Try Again",
+      "subtitle": "Run AI models directly on your computer for complete privacy and offline access.",
+      "title": "Local AI with Ollama"
+    },
+    "studio": {
+      "subtitle": "The AI Design Studio is a powerful tool for creating and editing designs using AI. You can use it to generate new designs or modify existing ones. Once configured, language models will also be able to use it to create designs.",
+      "title": "AI Design Studio"
+    },
+    "voice": {
+      "subtitle": "Interact with Witsy using your voice! Witsy can read aloud not only responses from your chat sessions with language models but also any text displayed on screen in other applications!",
+      "title": "Voice Interaction"
+    },
+    "welcome": {
+      "subtitle": "Witsy is a powerful AI assistant that can help you with a wide range of tasks. You can chat with it, ask it to write documents, and even run code on your computer. Let's get started!",
+      "title": "Welcome to Witsy!"
+    }
   },
   "plugins": {
     "agent": {

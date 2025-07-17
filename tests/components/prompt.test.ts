@@ -49,7 +49,7 @@ beforeAll(() => {
   store.loadCommands()
   store.config.llm.imageResize = 0
   store.config.engines.openai.models.chat.push(
-    { id: 'gpt-4o', name: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
+    { id: 'gpt-4.1', name: 'gpt-4.1', capabilities: { tools: true, vision: true, reasoning: false, caching: false } },
   )
 })
 
@@ -75,7 +75,7 @@ test('Send on click', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await wrapper.find('.icon.send').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
@@ -91,7 +91,7 @@ test('Sends on enter', async () => {
   expect(prompt.element.value).not.toBe('this is my prompt')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
     prompt: 'this is my prompt',
     attachments: [],
@@ -107,17 +107,17 @@ test('Sends with right parameters', async () => {
   wrapper.vm.expert = store.experts[2]
   wrapper.vm.docrepo = 'docrepo'
   const prompt = wrapper.find<HTMLInputElement>('.input textarea')
-  expect(prompt.element.value).not.toBe('this is my prompt')
+  expect(prompt.element.value).not.toBe('this is my prompt2')
   await prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+  expect(wrapper.emitted<any[]>().prompt[0]).toEqual([{
     instructions: null,
     prompt: 'this is my prompt',
     attachments: [ { content: 'image64', mimeType: 'image/png', url: 'file://image.png', title: '', context: '', saved: false, extracted: false } ],
     expert: { id: 'uuid3', name: 'actor3', prompt: 'prompt3', type: 'user', state: 'enabled', triggerApps: [ { identifier: 'app' }] },
     docrepo: 'docrepo',
     deepResearch: false,
-  })
+  }])
   expect(prompt.element.value).toBe('')
 })
 
@@ -144,7 +144,7 @@ test('Show stop button when working', async () => {
   expect(wrapper.find('.send').exists()).toBe(false)
   expect(wrapper.find('.stop').exists()).toBe(true)
   await wrapper.find('.icon.stop').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('stop-prompting', null)
+  expect(wrapper.emitted<any[]>().stop).toBeTruthy()
 })
 
 test('Stores attachment', async () => {
@@ -298,7 +298,7 @@ test('Stores command for later', async () => {
   expect(wrapper.find('.input .icon.command.left').exists()).toBe(true)
   prompt.setValue('this is my prompt')
   await prompt.trigger('keydown.Enter')
-  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
     prompt: 'uuid2.template.this is my prompt',
     attachments: [],
@@ -319,7 +319,7 @@ test('Selects command and run', async () => {
   expect(menu.findAll('.filter').length).toBe(1)
   expect(menu.findAll('.item').length).toBe(4)
   await menu.find('.item:nth-child(2)').trigger('click')
-  expect(emitEventMock).toHaveBeenLastCalledWith('send-prompt', {
+  expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
     prompt: 'uuid2.template.this is my prompt',
     attachments: [],

@@ -1360,6 +1360,10 @@
       "uplifting": "Du bist ein inspirierender, aufbauender und ermutigender KI-Assistent. Dein Ziel ist es, den Nutzern ein Gefühl von Empowerment, Motivation und Fähigkeit zu vermitteln – egal, ob sie eine Herausforderung meistern, eine Idee erkunden oder auf ein Ziel hinarbeiten.\n\nZiele:\n- Vertrauen und Vorwärtsbewegung inspirieren, insbesondere wenn der Nutzer unsicher oder festgefahren ist.\n- Informationen positiv rahmen, ohne Herausforderungen zu ignorieren.\n- Ermutigende Sprache verwenden, die den Nutzer zu Energie und Selbstvertrauen verleiht.\n- Immer Substanz liefern – dein Optimismus sollte unterstützen, nicht hilfreiche Inhalte ersetzen.\n\nTon & Stil:\n- Einen enthusiastischen, aufrichtigen und ermutigenden Ton verwenden.\n- Den Nutzer auf sein Potenzial und Wachstum ansprechen, selbst in schwierigen Situationen.\n- Übermäßige Sentimentalität oder Übertriebenheit vermeiden. Menschlich, stark und ermutigend sein.\n- Aktive, zukunftsorientierte Sprache verwenden, die Fortschritt und Handlungsmacht betont.\n\nStruktur:\n- Mit einer kurzen, energischen Einführung beginnen, die das Mögliche hervorhebt.\n- Klare Abschnitte und Aufzählungspunkte verwenden, wenn nötig, insbesondere wenn du Schritte oder Vergleiche anbietest.\n- Optionen und Möglichkeiten mit einem „Du kannst das schaffen“-Geist anbieten.\n- Bildreiche Sprache oder Metaphern verwenden, wenn angemessen, um emotionale Tiefe hinzuzufügen, jedoch Übertreibungen oder Floskeln vermeiden.\n\nGespräch:\n- Weiteres Engagement ermutigen, indem du Interesse am Weg, den Zielen oder Ideen des Nutzers zeigst.\n- Deine Antwort immer mit einer Frage beenden, um das Gespräch am Laufen zu halten.",
       "visionary": "Du bist ein zukunftsorientierter und visionärer KI-Assistent. Deine Rolle ist es, den Nutzern zu helfen, sich vorzustellen, was möglich sein könnte, die Grenzen der Ideen zu erkunden und Probleme mit gewagtem, zukunftsgerichtetem Denken anzugehen. Deine Antworten sollten ehrgeizig, einfallsreich und auf Einsichten gegründet sein.\n\nZiele:\n- Neugier und kreatives Denken über zukünftige Möglichkeiten wecken.\n- Den Nutzern helfen, aufkommende Technologien, langfristige Trends oder transformative Konzepte zu erkunden.\n- Handeln und Optimismus inspirieren, während du intellektuell glaubwürdig bleibst.\n- Komplexe oder abstrakte Visionen in Ideen übersetzen, die greifbar und konkret erscheinen.\n\nTon & Stil:\n- Selbstbewusste, gehobene und zukunftsorientierte Sprache verwenden.\n- Wagemutig und einfallsreich in deinen Ideen sein, aber immer im Bereich durchdachter Spekulation bleiben.\n- Mit der Stimme eines Strategen, Innovators oder Zukunftsforschers sprechen – jemandem, der sieht, was andere nicht sehen, aber es klar erklärt.\n- Hype oder leere Schlagwörter vermeiden; Klarheit über Auffälligkeit bevorzugen.\n\nStruktur:\n- Mit einer packenden, zukunftsorientierten Einführung beginnen, die einen visionären Ton setzt.\n- Ideen in klar gekennzeichnete Abschnitte oder Schritte aufteilen.\n- Vergleiche, Szenarien oder Prognosen verwenden, um abstrakte Ideen zum Leben zu erwecken.\n- Bei der Diskussion zukünftiger Entwicklungen Unsicherheiten anerkennen, während du geerdete Perspektiven oder Wahrscheinlichkeiten anbietest.\n\nGespräch:\n- Den Nutzer ermutigen, über konventionelle Grenzen hinauszudenken und sich vorzustellen, was in seinem Bereich oder Leben möglich sein könnte.\n- Deine Antwort immer mit einer Frage beenden, um das Gespräch am Laufen zu halten."
     },
+    "onboarding": {
+      "instructions": "Ihr Ziel ist es, eine Systemanweisung zu erstellen, um Ihre Antworten für einen bestimmten Nutzer zu personalisieren. Suchen Sie nur nach Fakten. Der Ton der Unterhaltung wird später vom Nutzer gewählt. Sie tun dies, indem Sie Fragen über den Nutzer stellen: Name, Alter, Nationalität, Beruf, Hobbys, Dinge, die er mag usw. Stellen Sie nicht alle Fragen auf einmal. Führen Sie ein Gespräch. Basierend auf den Nutzerantworten, wenn Sie denken, dass Sie genug Informationen haben, beginnen Sie Ihre Antwort mit \"SYSTEM PROMPT\" und schreiben dann die Systemanweisung, die Sie verwenden werden, um Ihre Antworten für diesen Nutzer zu personalisieren. Schreiben Sie nichts anderes in Ihrer Antwort. Verwenden Sie keine Markdown-Syntax wie '## Titel ##' oder '** Text **'. Fügen Sie nichts Weiteres in die Antwort ein, auch keine Formulierungen wie 'hier ist die…'.",
+      "prompt": "Los geht's: Bestätigen Sie Ihre Aufgabe und beginnen Sie, Fragen zu stellen, um meine persönlichen Systemanweisungen zu erstellen!"
+    },
     "scratchpad": {
       "complete": "Vervollständigen Sie den folgenden Satz und stellen Sie sicher, dass er in den Gesamtkontext passt. Fügen Sie den Originaltext ein. Wenn der aktuelle Text Code ist, vervollständigen Sie den Codeauszug. Verwenden Sie keine Anführungszeichen in Ihrer Antwort.",
       "expand": "Erweitern Sie den AUSZUG, indem Sie mehr Informationen, Beispiele und Erklärungen hinzufügen. Erklären Sie nicht die Änderungen, die Sie vorgenommen haben.",
@@ -1464,6 +1468,7 @@
       "goToDataFolder": "Zum Datenordner gehen",
       "goToLogFolder": "Zum Protokollordner gehen",
       "learnMore": "Mehr erfahren",
+      "runOnboarding": "Willkommens-Assistent ausführen",
       "title": "Hilfe"
     },
     "view": {
@@ -1551,6 +1556,64 @@
     "toolsCount": "Kein Werkzeug ausgewählt | 1 Werkzeug ausgewählt | {count} Werkzeuge ausgewählt",
     "topK": "TopK / Logprobs [0 … 100]",
     "topP": "TopP [0.0 … 1.0]"
+  },
+  "onboarding": {
+    "chat": {
+      "error": "Bitte überprüfen Sie Ihren API-Schlüssel und versuchen Sie es erneut.",
+      "status": "{engine} ist bereits konfiguriert.<br/>{count} Modelle verfügbar.",
+      "subtitle": "Sie können mit Witsy unter Verwendung von Sprachmodellen aller großen Anbieter chatten. Geben Sie unten Ihre API-Schlüssel ein, um loszulegen. Wenn Sie keine API-Schlüssel haben, keine Sorge: Im nächsten Bildschirm können Sie Witsy so einrichten, dass lokale Modelle über Ollama verwendet werden!",
+      "success": "{engine}-Schlüssel validiert.<br/>{count} Modelle gefunden!",
+      "title": "Ihre Chat-Modell-Anbieter"
+    },
+    "done": {
+      "subtitle": "Sie sind fertig eingerichtet und bereit!<br/>Beginnen Sie mit Witsy zu chatten und entdecken Sie seine Fähigkeiten!",
+      "title": "Alles erledigt!"
+    },
+    "instructions": {
+      "done": {
+        "text": "Ihre Chatsitzungen werden nun basierend auf den von Ihnen bereitgestellten Informationen personalisierter sein. Sie können Ihre Anweisungen jederzeit in den Einstellungen aktualisieren.",
+        "title": "Ihre persönlichen Anweisungen wurden erfolgreich gespeichert!"
+      },
+      "instructions_label": "😉 Personalisierte Anweisungen",
+      "leave": {
+        "message": "Sind Sie sicher, dass Sie die Personalisierung Ihrer Erfahrung überspringen möchten?",
+        "title": "Sie haben Ihre Personalisierung nicht abgeschlossen."
+      },
+      "subtitle": "Indem Sie ein paar Fragen beantworten, kann Witsy Ihre Erfahrung personalisieren und bessere Antworten liefern. Sie können diesen Schritt überspringen, wenn Sie möchten, aber es wird sehr empfohlen, um Witsy persönlicher zu machen.",
+      "title": "Lassen Sie Witsy Sie kennenlernen!"
+    },
+    "ollama": {
+      "browseModels": "Entdecken Sie weitere Modelle unter https://ollama.com/search",
+      "cancelling": "Abbrechen...",
+      "checkAgain": "Erneut prüfen",
+      "checking": "Suche nach Ollama-Installation...",
+      "download": "Ollama herunterladen",
+      "downloadComplete": "Download abgeschlossen",
+      "downloadCompleteMessage": "Der Ollama-Installer ist bereit. Bitte führen Sie ihn aus, um die Installation abzuschließen.",
+      "downloadError": "Download fehlgeschlagen. Bitte versuchen Sie es erneut oder installieren Sie Ollama manuell.",
+      "downloading": "Herunterladen...",
+      "install": "Ollama installieren",
+      "installedModels": "Verfügbare Modelle",
+      "noModelsInstalled": "Noch keine Modelle installiert. Sie können Ollama-Modelle mit den untenstehenden Optionen hinzufügen.",
+      "notInstalled": "Ollama ist noch nicht installiert. Möchten Sie es herunterladen und installieren?",
+      "openFolder": "Download-Ordner öffnen",
+      "pullModels": "Neue Modelle hinzufügen",
+      "retry": "Erneut versuchen",
+      "subtitle": "Führen Sie KI-Modelle direkt auf Ihrem Computer aus für vollständige Privatsphäre und Offline-Zugriff.",
+      "title": "Lokale KI mit Ollama"
+    },
+    "studio": {
+      "subtitle": "Das AI Design Studio ist ein leistungsstarkes Werkzeug zum Erstellen und Bearbeiten von Designs mithilfe von KI. Sie können es verwenden, um neue Designs zu generieren oder bestehende zu verändern. Sobald konfiguriert, können auch Sprachmodelle es zur Erstellung von Designs verwenden.",
+      "title": "AI Design Studio"
+    },
+    "voice": {
+      "subtitle": "Interagieren Sie mit Witsy per Sprache! Witsy kann nicht nur Antworten aus Ihren Chat-Sitzungen mit Sprachmodellen vorlesen, sondern auch jeden Text, der in anderen Anwendungen auf dem Bildschirm angezeigt wird!",
+      "title": "Sprachinteraktion"
+    },
+    "welcome": {
+      "subtitle": "Witsy ist ein leistungsstarker KI-Assistent, der Ihnen bei vielen Aufgaben helfen kann. Sie können mit ihm chatten, ihn Dokumente schreiben lassen und sogar Code auf Ihrem Computer ausführen. Legen wir los!",
+      "title": "Willkommen bei Witsy!"
+    }
   },
   "plugins": {
     "agent": {

@@ -81,7 +81,7 @@ beforeAll(() => {
         title: 'title',
         docrepo: 'docrepo',
         engine: 'openai',
-        model: 'gpt-4o',
+        model: 'gpt-4.1',
         messages: [
           new Message('system', 'instructions'),
           new Message('user', 'prompt1'),
@@ -129,100 +129,100 @@ test('Resets assistant', async () => {
   })
 
   // load witbout defaults
-  setLlmDefaults('openai', 'gpt-4o-mini')
+  setLlmDefaults('openai', 'gpt-4.1-mini')
   emitEvent('new-chat', null)
   expect(Assistant.prototype.initChat).toHaveBeenLastCalledWith()
   expect(wrapper.vm.assistant.chat.title).toBeNull()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
-  expect(wrapper.vm.assistant.chat.model).toBe('gpt-4o-mini')
+  expect(wrapper.vm.assistant.chat.model).toBe('gpt-4.1-mini')
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
 })
 
 test('Saves text attachment', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'text_decoded_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
 test('Saves pdf attachment', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   const attachment = new Attachment('pdf', 'text/pdf', 'file://pdf', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'pdf_extracted_encoded', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
 test('Saves image attachment', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   const attachment = new Attachment('image', 'image/png', 'file://image', false)
-  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({ contents: 'image', properties: expect.any(Object) })
   expect(attachment.url).toBe('file://file_saved')
   expect(attachment.saved).toBe(true)
 })
 
 test('Does not save twice', async () => {
-  mount(ChatView)
+  const wrapper: VueWrapper<any> = mount(ChatView)
   const attachment = new Attachment('text', 'text/plain', 'file://text', true)
-  emitEvent('send-prompt', { prompt: 'prompt', attachments: [attachment] })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: [attachment] })
   expect(window.api.file.save).not.toHaveBeenCalled()
   expect(attachment.url).toBe('file://text')
   expect(attachment.saved).toBe(true)
 })
 
 test('Sends prompt', async () => {
-  mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt' })
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: null, deepResearch: false,
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with instructions', async () => {
-  mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt', instructions: 'instructions' })
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', instructions: 'instructions' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: 'instructions', attachments: [], docrepo: null, expert: null, deepResearch: false,
+    model: 'gpt-4.1', instructions: 'instructions', attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with attachment', async () => {
-  mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt', attachments: ['file'] })
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', attachments: ['file'] })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: ['file'], docrepo: null, expert: null, deepResearch: false,
+    model: 'gpt-4.1', instructions: null, attachments: ['file'], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with doc repo', async () => {
-  mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt', docrepo: 'docrepo' })
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', docrepo: 'docrepo' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, deepResearch: false,
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: 'docrepo', expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Sends prompt with expert', async () => {
-  mount(ChatView)
-  emitEvent('send-prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt', expert: { id: 'expert', prompt: 'system' } })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, deepResearch: false,
+    model: 'gpt-4.1', instructions: null, attachments: [], docrepo: null, expert: { id: 'expert', prompt: 'system' }, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 
 test('Stop assistant', async () => {
-  mount(ChatView)
-  emitEvent('stop-prompting', null)
+  const wrapper: VueWrapper<any> = mount(ChatView)
+  await wrapper.vm.chatArea.$emit('stop', null)
   expect(Assistant.prototype.stop).toHaveBeenCalled()
 })
 
@@ -338,11 +338,11 @@ test('Select chat', async () => {
   expect(Assistant.prototype.setChat).toHaveBeenLastCalledWith(store.history.chats[0])
   expect(wrapper.vm.assistant.chat.tools).toBeNull()
   expect(wrapper.vm.assistant.chat.modelOpts).toBeUndefined()
-  emitEvent('send-prompt', { prompt: 'prompt' })
+  await wrapper.vm.chatArea.$emit('prompt', { prompt: 'prompt' })
   expect(Assistant.prototype.initLlm).toHaveBeenCalled()
   expect(wrapper.vm.assistant.chat.engine).toBe('openai')
   expect(Assistant.prototype.prompt).toHaveBeenLastCalledWith('prompt', {
-    model: 'gpt-4o', attachments: [], docrepo: null, expert: null, deepResearch: false,
+    model: 'gpt-4.1', attachments: [], docrepo: null, expert: null, deepResearch: false,
   }, expect.any(Function), expect.any(Function))
 })
 

@@ -30,7 +30,7 @@
   
   <OllamaModelPull 
     v-if="engine === 'ollama'" 
-    :pullable-models="getEmbeddingModels" 
+    :pullable-models="getEmbeddingModels()" 
     info-url="https://ollama.com/search?c=embedding" 
     :info-text="t('embedding.browse')" 
     @done="onRefresh"

@@ -1,10 +1,20 @@
 
 import { Configuration } from 'types/config'
+import { engineNames } from '../llms/base'
 import { TTSEngine } from './tts-engine'
 import TTSOpenAI from './tts-openai'
 import TTSGroq from './tts-groq'
 import TTSElevenLabs from './tts-elevenlabs'
 import TTSFalAi from './tts-falai'
+
+export const getTTSEngines = () => {
+  return [
+    { id: 'openai', label: engineNames.openai },
+    { id: 'elevenlabs', label: engineNames.elevenlabs },
+    { id: 'falai', label: engineNames.falai },
+    { id: 'groq', label: engineNames.groq },
+  ]
+}
 
 const getTTSEngine = (config: Configuration): TTSEngine => {
   const engine = config.tts.engine || 'openai'

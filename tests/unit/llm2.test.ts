@@ -5,7 +5,8 @@ import { store } from '../../src/services/store'
 import LlmFactory, { ILlmManager } from '../../src/llms/llm'
 import {
   ModelsList, loadAnthropicModels, loadCerebrasModels, loadGoogleModels, loadGroqModels, loadMistralAIModels,
-  loadOllamaModels, loadOpenAIModels, loadAzureModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels
+  loadOllamaModels, loadOpenAIModels, loadAzureModels, loadXAIModels, loadDeepSeekModels, loadOpenRouterModels,
+  defaultCapabilities
 } from 'multi-llm-ts'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
@@ -14,13 +15,13 @@ vi.mock('multi-llm-ts', async (importOriginal) => {
     ...mod,
     loadAnthropicModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadAzureModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [] })),
+    loadCerebrasModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: defaultCapabilities.capabilities } ], image: [] })),
     loadDeepSeekModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadGoogleModels: vi.fn((): ModelsList => ({ chat: [], image: [ { id: 'image', name: 'image' } ] })),
-    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [{ id: 'image', name: 'image' }] })),
+    loadGroqModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: defaultCapabilities.capabilities } ], image: [{ id: 'image', name: 'image' }] })),
     loadMistralAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadOllamaModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
-    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: { tools: true, vision: true, reasoning: false } } ], image: [{ id: 'image', name: 'image' }] })),
+    loadOpenAIModels: vi.fn((): ModelsList => ({ chat: [ { id: 'chat', name: 'chat', capabilities: defaultCapabilities.capabilities } ], image: [{ id: 'image', name: 'image' }] })),
     loadOpenRouterModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
     loadXAIModels: vi.fn((): ModelsList => ({ chat: [], image: [] })),
   }
@@ -65,43 +66,43 @@ test('Init models', async () => {
 test('Load models', async () => {
   await llmManager.loadModels('anthropic')
   expect(loadAnthropicModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(0)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(1)
   
   await llmManager.loadModels('cerebras')
   expect(loadCerebrasModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(1)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(2)
   
   await llmManager.loadModels('google')
   expect(loadGoogleModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(2)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
   
   await llmManager.loadModels('groq')
   expect(loadGroqModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
-  
+  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+
   await llmManager.loadModels('mistralai')
   expect(loadMistralAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
-  
+  expect(window.api.config?.save).toHaveBeenCalledTimes(5)
+
   await llmManager.loadModels('ollama')
   expect(loadOllamaModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(3)
-  
+  expect(window.api.config?.save).toHaveBeenCalledTimes(5)
+
   await llmManager.loadModels('openai')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(6)
   
   await llmManager.loadModels('xai')
   expect(loadXAIModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(7)
 
   await llmManager.loadModels('deepseek')
   expect(loadDeepSeekModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(8)
 
   await llmManager.loadModels('openrouter')
   expect(loadOpenRouterModels).toHaveBeenCalledTimes(1)
-  expect(window.api.config?.save).toHaveBeenCalledTimes(4)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(9)
 
   await llmManager.loadModels('custom1')
   expect(loadOpenAIModels).toHaveBeenCalledTimes(2)
@@ -110,7 +111,7 @@ test('Load models', async () => {
     baseURL: 'http://localhost/api/v1',
     models: { chat: [], image: [] }
   })
-  expect(window.api.config?.save).toHaveBeenCalledTimes(5)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(10)
 
   await llmManager.loadModels('custom2')
   expect(loadAzureModels).toHaveBeenCalledTimes(1)
@@ -120,7 +121,7 @@ test('Load models', async () => {
     deployment: 'witsy_deployment',
     apiVersion: '2024-04-03',
   })
-  expect(window.api.config?.save).toHaveBeenCalledTimes(6)
+  expect(window.api.config?.save).toHaveBeenCalledTimes(11)
 
 })
 
@@ -129,8 +130,8 @@ test('Can process format', async () => {
   store.config.engines.openrouter = {
     models: {
       chat: [
-        { id: 'chat', name: 'chat', capabilities: { vision: false, tools: true, reasoning: false } }, 
-        { id: 'vision', name: 'vision', capabilities: { vision: true, tools: true, reasoning: false } }, 
+        { id: 'chat', name: 'chat', capabilities: { vision: false, tools: true, reasoning: false, caching: false } }, 
+        { id: 'vision', name: 'vision', capabilities: { vision: true, tools: true, reasoning: false, caching: false } }, 
       ],
       image: []
     },

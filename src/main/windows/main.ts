@@ -40,7 +40,7 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     x: bounds?.x,
     y: bounds?.y,
     width: bounds?.width ?? 1400,
-    height: bounds?.height ?? 800,
+    height: bounds?.height ?? 1000,
     minWidth: 800,
     minHeight: 600,
     ...titleBarOptions({

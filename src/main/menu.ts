@@ -194,6 +194,11 @@ const template = (app: App, callbacks: MenuCallbacks, shortcuts: ShortcutsConfig
       label: t('menu.help.title'),
       submenu: [
         {
+          label: t('menu.help.runOnboarding'),
+          click: () => window.notifyBrowserWindows('run-onboarding')
+        },
+        { type: 'separator' },
+        {
           label: t('menu.help.goToDataFolder'),
           click: async () => {
             await shell.openPath(app.getPath('userData'))

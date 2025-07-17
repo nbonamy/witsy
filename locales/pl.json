@@ -1379,6 +1379,10 @@
       "uplifting": "Jesteś inspirującym, podnoszącym na duchu i wspierającym asystentem AI. Twoim celem jest pomaganie użytkownikom w poczuciu mocy, motywacji i zdolności - niezależnie od tego, czy stają w obliczu wyzwania, eksplorując pomysł, czy dążąc do celu.\n\nCele:\n- Inspirować pewność siebie i pozytywny pęd, zwłaszcza gdy użytkownik czuje się niepewności lub utknął.\n- Ramowanie informacji w sposób pozytywny, nie ignorując wyzwań.\n- Używać zachęcającego języka, który energetyzuje użytkownika i promuje wiarę w siebie.\n- Zawsze dostarczać treści — twój optymizm powinien wspierać, a nie zastępować pomocne treści.\n\nTon i styl:\n- Używaj entuzjastycznego, szczerego i wzmacniającego tonu.\n- Mów o potencjale i wzroście użytkownika, nawet w trudnych sytuacjach.\n- Unikaj bycia zbyt sentymentalnym lub zbyt swobodnym. Bądź ludzki, silny i wspierający.\n- Używaj aktywnego, perspektywicznego języka, który podkreśla postęp i sprawczość.\n\nStruktura:\n- Rozpocznij od krótkiego, energetyzującego wprowadzenia, które podkreśla, co jest możliwe.\n- Używaj wyraźnych sekcji i punktów, gdy to potrzebne, zwłaszcza jeśli podajesz kroki lub porównania.\n- Oferuj opcje i możliwości z duchem „możesz to zrobić”.\n- Używaj wyrazistego języka lub metafor, gdy to stosowne, aby dodać głębi emocjonalnej, ale unikaj przesady i pustek.\n\nRozmowa:\n- Zachęcaj do kontynuacji zaangażowania, pokazując ciekawość ścieżki, celów lub pomysłów użytkownika.\n- Zawsze kończ swoją odpowiedź pytaniem, aby prowadzić rozmowę dalej.",
       "visionary": "Jesteś futurystycznym i wizjonerskim asystentem AI. Twoją rolą jest pomoc użytkownikom w wyobrażeniu sobie, co może być, eksploracji nowatorskich pomysłów oraz podejścia do problemów z odważnym, przyszłościowym myśleniem. Twoje odpowiedzi powinny być ambitne, pomysłowe i osadzone w wglądach.\n\nCele:\n- Zasiewać ciekawość i kreatywne myślenie o przyszłych możliwościach.\n- Pomagać użytkownikom w eksploracji nowo pojawiających się technologii, długoterminowych trendów lub przełomowych koncepcji.\n- Inspirować działania i optymizm, jednocześnie pozostając intelektualnie wiarygodnym.\n- Tłumaczyć złożone lub abstrakcyjne wizje na pomysły, które czują się osiągalne i konkretne.\n\nTon i styl:\n- Używaj pewnego, wzniosłego i przyszłościowego języka.\n- Bądź odważny i pomysłowy w swoich ideach, ale zawsze pozostawaj w obrębie przemyślanej spekulacji.\n- Mów głosem stratega, innowatora lub wizjonera — kogoś, kto dostrzega to, czego inni nie widzą, ale tłumaczy to jasno.\n- Unikaj szumów lub pustych sloganów; preferuj klarowność nad przesadnym blaskiem.\n\nStruktura:\n- Rozpocznij od przyciągającego wzrok, przyszłościowego wprowadzenia, które ustawia wizjonerski ton.\n- Rozłoż pomysły na jasno oznaczone sekcje lub kroki.\n- Używaj porównań, scenariuszy lub prognoz, aby ożywić abstrakcyjne pomysły.\n- Przy omawianiu przyszłych rozwoju, uznawaj niepewność, oferując ugruntowane perspektywy lub prawdopodobieństwa.\n\nRozmowa:\n- Zachęcaj użytkownika do myślenia poza konwencjonalnymi granicami i wyobrażania sobie, co może być możliwe w ich domenie lub życiu.\n- Zawsze kończ swoją odpowiedź pytaniem, aby prowadzić rozmowę dalej.\n"
     },
+    "onboarding": {
+      "instructions": "Twoim celem jest stworzenie systemowego promptu do personalizacji odpowiedzi dla konkretnego użytkownika. Szukaj tylko faktów. Ton rozmowy zostanie wybrany później przez użytkownika. Będziesz to robić, zadając pytania o użytkownika: imię, wiek, narodowość, zawód, hobby, rzeczy które lubi i tak dalej. Nie zadawaj wszystkich pytań na raz. Angażuj się w rozmowę. Na podstawie odpowiedzi użytkownika, gdy uznasz, że masz wystarczająco informacji, rozpocznij swoją odpowiedź od \"SYSTEM PROMPT\", a następnie napisz systemowy prompt, którego użyjesz do personalizowania odpowiedzi dla tego użytkownika. Nie pisz nic więcej w swojej odpowiedzi. Nie używaj składni Markdown, takiej jak '## Tytuł ##' czy '** Tekst **'. Nie dołączaj nic więcej w odpowiedzi, w tym zwrotów typu 'oto jest...'. ",
+      "prompt": "Zaczynajmy: potwierdź swoje zadanie i zacznij zadawać pytania, aby stworzyć moje osobiste instrukcje systemowe!"
+    },
     "scratchpad": {
       "complete": "Dokończ poniższe zdanie, upewniając się, że pasuje do ogólnego kontekstu. Dołącz oryginalny tekst. Jeśli bieżący tekst jest kodem, uzupełnij fragment kodu. Nie używaj cudzysłowów w odpowiedzi.",
       "expand": "Rozwiń EKSTRAKT, dodając więcej informacji, przykładów i wyjaśnień. Nie wyjaśniaj wprowadzonych zmian.",
@@ -1483,6 +1487,7 @@
       "goToDataFolder": "Przejdź do folderu danych",
       "goToLogFolder": "Przejdź do folderu dziennika",
       "learnMore": "Dowiedz się więcej",
+      "runOnboarding": "Uruchom Asystenta powitalnego",
       "title": "Pomoc"
     },
     "view": {
@@ -1570,6 +1575,64 @@
     "toolsCount": "Brak wybranego narzędzia | Wybrane 1 narzędzie | Wybrane {count} narzędzi",
     "topK": "Top K",
     "topP": "Top P"
+  },
+  "onboarding": {
+    "chat": {
+      "error": "Proszę sprawdzić swój klucz API i spróbować ponownie.",
+      "status": "{engine} jest już skonfigurowany.<br/>{count} modeli dostępnych.",
+      "subtitle": "Możesz rozmawiać z Witsy, korzystając z modeli językowych od wszystkich głównych dostawców. Wprowadź poniżej swoje klucze API, aby rozpocząć. Jeśli nie masz żadnych kluczy API, bez obaw: na następnym ekranie będziesz mógł skonfigurować Witsy do korzystania z lokalnych modeli przez Ollama!",
+      "success": "Klucz {engine} zweryfikowany.<br/>{count} modeli znaleziono!",
+      "title": "Dostawcy modeli czatu"
+    },
+    "done": {
+      "subtitle": "Jesteś gotowy do działania!<br/>Zacznij rozmowę z Witsy i odkryj jego możliwości!",
+      "title": "Wszystko gotowe!"
+    },
+    "instructions": {
+      "done": {
+        "text": "Twoje sesje czatu będą teraz bardziej spersonalizowane na podstawie podanych informacji. Zawsze możesz zaktualizować swoje instrukcje w Ustawieniach.",
+        "title": "Twoje osobiste instrukcje zostały pomyślnie zapisane!"
+      },
+      "instructions_label": "😉 Spersonalizowane instrukcje",
+      "leave": {
+        "message": "Czy na pewno chcesz pominąć personalizację swojego doświadczenia?",
+        "title": "Nie ukończyłeś personalizacji."
+      },
+      "subtitle": "Odpowiadając na kilka pytań, Witsy będzie mógł spersonalizować Twoje doświadczenie i zapewnić lepsze odpowiedzi. Możesz pominąć ten krok, ale zdecydowanie zalecamy, aby Witsy był bardziej osobisty.",
+      "title": "Poznaj Witsy!"
+    },
+    "ollama": {
+      "browseModels": "Odkryj więcej modeli na https://ollama.com/search",
+      "cancelling": "Anulowanie...",
+      "checkAgain": "Sprawdź ponownie",
+      "checking": "Sprawdzanie instalacji Ollama...",
+      "download": "Pobierz Ollama",
+      "downloadComplete": "Pobieranie zakończone",
+      "downloadCompleteMessage": "Instalator Ollama jest gotowy. Uruchom go, aby zakończyć instalację.",
+      "downloadError": "Pobieranie nie powiodło się. Spróbuj ponownie lub zainstaluj Ollama ręcznie.",
+      "downloading": "Pobieranie...",
+      "install": "Zainstaluj Ollama",
+      "installedModels": "Dostępne modele",
+      "noModelsInstalled": "Brak zainstalowanych modeli. Możesz dodać modele Ollama korzystając z poniższych opcji.",
+      "notInstalled": "Ollama nie jest jeszcze zainstalowany. Czy chcesz pobrać i zainstalować?",
+      "openFolder": "Otwórz folder pobierania",
+      "pullModels": "Dodaj nowe modele",
+      "retry": "Spróbuj ponownie",
+      "subtitle": "Uruchamiaj modele AI bezpośrednio na swoim komputerze dla pełnej prywatności i dostępu offline.",
+      "title": "Lokalna AI z Ollama"
+    },
+    "studio": {
+      "subtitle": "AI Design Studio to potężne narzędzie do tworzenia i edycji projektów za pomocą AI. Możesz używać go do generowania nowych projektów lub modyfikowania istniejących. Po konfiguracji modele językowe również będą mogły z niego korzystać do tworzenia projektów.",
+      "title": "AI Design Studio"
+    },
+    "voice": {
+      "subtitle": "Rozmawiaj z Witsy za pomocą głosu! Witsy może czytać na głos nie tylko odpowiedzi z twoich sesji czatu z modelami językowymi, ale także dowolny tekst wyświetlany na ekranie w innych aplikacjach!",
+      "title": "Interakcja głosowa"
+    },
+    "welcome": {
+      "subtitle": "Witsy to potężny asystent AI, który może pomóc Ci w szerokim zakresie zadań. Możesz z nim rozmawiać, prosić o pisanie dokumentów, a nawet uruchamiać kod na swoim komputerze. Zaczynajmy!",
+      "title": "Witamy w Witsy!"
+    }
   },
   "plugins": {
     "agent": {
