@@ -96,7 +96,7 @@ test('Updates configuration', async () => {
   await wrapper.find('.list-large-with-header .header .icon.config').trigger('click')
   await vi.waitUntil(() => wrapper.find('.sliding-pane.editor.visible').exists())
 
-  const config = wrapper.findComponent({ name: 'DocRepoConfig' })
+  const config = wrapper.findComponent({ name: 'Config' })
 
   expect(config.find<HTMLInputElement>('[name=maxDocumentSizeMB]').element.value).toBe('1')
   expect(config.find<HTMLInputElement>('[name=chunkSize]').element.value).toBe('500')
