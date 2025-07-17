@@ -105,6 +105,7 @@
     "provider": "Provider",
     "pull": "Pull",
     "read": "Read",
+    "recommended": "Recommended",
     "record": "Record",
     "redo": "Redo",
     "refresh": "Refresh",
@@ -641,6 +642,8 @@
     },
     "repositories": {
       "clickToCreate": "Click on the + button to create one.",
+      "createTitle": "Create Repository",
+      "documentsCount": "No document|1 document|{count} documents",
       "noDocuments": "You don't have any documents yet. Click on the icons above to add documents or folders.",
       "noRepositories": "You don't have any repositories yet.",
       "title": "Document Repositories"
@@ -1598,6 +1601,7 @@
         "message": "Are you sure you want to skip personalizing your experience?",
         "title": "You did not complete your personalization."
       },
+      "selectStyle": "Now choose how you'd like your assistant to respond.<br/>This will be combined with your personal information to create the perfect instructions.",
       "subtitle": "By answering a few questions, Witsy will be able to personalize your experience and provide better answers. You can skip this step if you want, but it is highly recommended to make Witsy feel more personal.",
       "title": "Let Witsy know about you!"
     },
@@ -1620,6 +1624,26 @@
       "retry": "Try Again",
       "subtitle": "Run AI models directly on your computer for complete privacy and offline access.",
       "title": "Local AI with Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Required for Witsy to read text from other applications and integrate seamlessly with your workflow.",
+        "title": "Accessibility"
+      },
+      "automation": {
+        "description": "Make sure you grant the \"System Events\" permission to Witsy in the Automation settings screen.",
+        "title": "Automation"
+      },
+      "denied": "Not Granted",
+      "granted": "Granted",
+      "info": "These permissions allow Witsy to provide its full range of features. You can grant them now or later in System Preferences.",
+      "leave": {
+        "message": "Are you sure you want to continue without granting all permissions? Some features may not work properly.",
+        "title": "Permissions not fully granted"
+      },
+      "openSettings": "Open Settings",
+      "subtitle": "On macOS, Witsy needs certain permissions to provide the best experience.",
+      "title": "System Permissions"
     },
     "studio": {
       "subtitle": "The AI Design Studio is a powerful tool for creating and editing designs using AI. You can use it to generate new designs or modify existing ones. Once configured, language models will also be able to use it to create designs.",

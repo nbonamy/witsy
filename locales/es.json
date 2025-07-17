@@ -86,6 +86,7 @@
     "provider": "Proveedor",
     "pull": "Descargar",
     "read": "Leer",
+    "recommended": "Recomendado",
     "record": "Grabar",
     "redo": "Rehacer",
     "refresh": "Actualizar",
@@ -1579,6 +1580,7 @@
         "message": "¿Estás seguro de que deseas omitir la personalización de tu experiencia?",
         "title": "No completaste tu personalización."
       },
+      "selectStyle": "Ahora elige cómo te gustaría que tu asistente responda.<br/>Esto se combinará con tu información personal para crear las instrucciones perfectas.",
       "subtitle": "Al responder unas pocas preguntas, Witsy podrá personalizar tu experiencia y ofrecer mejores respuestas. Puedes saltarte este paso si quieres, pero se recomienda mucho para que Witsy se sienta más personal.",
       "title": "¡Que Witsy sepa sobre ti!"
     },
@@ -1601,6 +1603,26 @@
       "retry": "Intentar de nuevo",
       "subtitle": "Ejecuta modelos de IA directamente en tu computadora para completa privacidad y acceso sin conexión.",
       "title": "IA Local con Ollama"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Requerido para que Witsy lea texto de otras aplicaciones e integre perfectamente con tu flujo de trabajo.",
+        "title": "Accesibilidad"
+      },
+      "automation": {
+        "description": "Asegúrate de conceder el permiso \"Eventos del sistema\" a Witsy en la pantalla de configuración de Automatización.",
+        "title": "Automatización"
+      },
+      "denied": "No concedido",
+      "granted": "Concedido",
+      "info": "Estos permisos permiten que Witsy ofrezca toda su gama de funciones. Puedes concederlos ahora o más tarde en Preferencias del Sistema.",
+      "leave": {
+        "message": "¿Seguro que quieres continuar sin conceder todos los permisos? Algunas funciones pueden no funcionar correctamente.",
+        "title": "Permisos no concedidos completamente"
+      },
+      "openSettings": "Abrir configuración",
+      "subtitle": "En macOS, Witsy necesita ciertos permisos para brindar la mejor experiencia.",
+      "title": "Permisos del sistema"
     },
     "studio": {
       "subtitle": "El Estudio de Diseño con IA es una herramienta poderosa para crear y editar diseños usando IA. Puedes usarlo para generar diseños nuevos o modificar existentes. Una vez configurado, los modelos de lenguaje también podrán usarlo para crear diseños.",

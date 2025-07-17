@@ -193,7 +193,7 @@
       
         box-sizing: border-box;
         position: absolute;
-        height: 100%;
+        /* height: -webkit-fill-available; */
         top: var(--window-toolbar-height);
         z-index: 20;
         display: flex;

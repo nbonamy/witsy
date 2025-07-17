@@ -105,6 +105,7 @@
     "provider": "提供者",
     "pull": "拉取",
     "read": "读取",
+    "recommended": "推荐",
     "record": "记录",
     "redo": "重做",
     "refresh": "刷新",
@@ -1598,6 +1599,7 @@
         "message": "您确定要跳过个性化体验吗？",
         "title": "您尚未完成个性化设置。"
       },
+      "selectStyle": "现在选择您希望助手如何响应。<br/>这将与您的个人信息结合，创建完美的指令。",
       "subtitle": "通过回答几个问题，Witsy将能够个性化您的体验并提供更好的回答。您可以跳过此步骤，但强烈建议这样做，以使Witsy更加贴近您个人。",
       "title": "让Witsy了解您！"
     },
@@ -1620,6 +1622,26 @@
       "retry": "再试一次",
       "subtitle": "直接在您的电脑上运行AI模型，实现完全隐私和离线访问。",
       "title": "使用Ollama的本地AI"
+    },
+    "permissions": {
+      "accessibility": {
+        "description": "Witsy 需要此权限以读取其他应用程序中的文本，并无缝集成您的工作流程。",
+        "title": "辅助功能"
+      },
+      "automation": {
+        "description": "请确保在自动化设置界面中授予 Witsy “系统事件” 权限。",
+        "title": "自动化"
+      },
+      "denied": "未授权",
+      "granted": "已授权",
+      "info": "这些权限使 Witsy 能够提供全功能。您可以现在或稍后在系统偏好设置中授权。",
+      "leave": {
+        "message": "您确定要在未授权所有权限的情况下继续吗？部分功能可能无法正常使用。",
+        "title": "权限未完全授权"
+      },
+      "openSettings": "打开设置",
+      "subtitle": "在 macOS 上，Witsy 需要某些权限以提供最佳体验。",
+      "title": "系统权限"
     },
     "studio": {
       "subtitle": "AI设计工作室是一个强大的工具，可使用AI创建和编辑设计。您可以用它生成新设计或修改现有设计。配置完成后，语言模型也能使用它来创建设计。",

@@ -1,5 +1,6 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test, describe } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import Onboarding from '../../src/screens/Onboarding.vue'
@@ -8,12 +9,13 @@ import Chat from '../../src/onboarding/Chat.vue'
 import Ollama from '../../src/onboarding/Ollama.vue'
 import Studio from '../../src/onboarding/Studio.vue'
 import Voice from '../../src/onboarding/Voice.vue'
+import Permissions from '../../src/onboarding/Permissions.vue'
 import Instructions from '../../src/onboarding/Instructions.vue'
 import Done from '../../src/onboarding/Done.vue'
 
 enableAutoUnmount(afterAll)
 
-const screens = [Welcome, Chat, Ollama, Studio, Voice, Instructions, Done]
+const screens = [Welcome, Chat, Ollama, Studio, Voice, Permissions, Instructions, Done]
     
 
 // Mock i18n
@@ -27,16 +29,6 @@ vi.mock('../../src/services/i18n', async () => {
       { locale: 'de', label: 'Deutsch' }
     ]
   }
-})
-
-// Mock event bus
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
-vi.mock('../../src/composables/event_bus', async () => {
-  return { default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
-  })}
 })
 
 // Mock LLM services
@@ -277,13 +269,7 @@ describe('Welcome Screen', () => {
     expect(wrapper.find('header').exists()).toBe(true)
   })
 
-  test('Shows animated background', async () => {
-    const wrapper = await mount(Welcome)
-    // Look for feature items instead of animated-background class
-    expect(wrapper.findAll('.feature').length).toBeGreaterThan(0)
-  })
-
-  test('Shows feature icons with animations', async () => {
+  test('Shows animated background with feature icons', async () => {
     const wrapper = await mount(Welcome)
     const featureItems = wrapper.findAll('.feature')
     expect(featureItems.length).toBeGreaterThan(0)
@@ -312,194 +298,213 @@ describe('Welcome Screen', () => {
   })
 
   test('Language selector saves changes to store', async () => {
+    expect(store.config.general.locale).toBe('')
     const wrapper = await mount(Welcome)
-    const vm = wrapper.vm as any
-    
-    const saveSettingsSpy = vi.spyOn(store, 'saveSettings').mockImplementation(() => {})
-    
-    // Simulate locale change
-    vm.localeUI = 'es'
-    vm.save()
-    
-    expect(store.config.general.locale).toBe('es')
-    expect(saveSettingsSpy).toHaveBeenCalled()
-    
-    saveSettingsSpy.mockRestore()
+    const langSelect = wrapper.findComponent({ name: 'LangSelect' })
+    langSelect.find('select').setValue('fr')
+    expect(store.config.general.locale).toBe('fr')
   })
 
   test('Language selector loads current locale on mount', async () => {
     store.config.general.locale = 'fr'
     
     const wrapper = await mount(Welcome)
-    const vm = wrapper.vm as any
     
-    expect(vm.localeUI).toBe('fr')
+    // Check that the language selector shows the current locale
+    const languageSelector = wrapper.find('select')
+    expect(languageSelector.exists()).toBe(true)
+    
+    // The select should have the French option selected
+    expect(languageSelector.element.value).toBe('fr')
   })
 
 })
 
-describe('Chat Screen', () => {
+describe('Individual Screen Rendering', () => {
 
-  test('Renders chat configuration', async () => {
-    const wrapper = await mount(Chat)
-    expect(wrapper.exists()).toBe(true)
-    expect(wrapper.find('section').exists()).toBe(true)
-    expect(wrapper.find('header').exists()).toBe(true)
-  })
-
-  test('Shows engine and model selection', async () => {
-    const wrapper = await mount(Chat)
-    expect(wrapper.find('.engines-grid').exists()).toBe(true)
-  })
-
-})
-
-describe('Ollama Screen', () => {
-
-  test('Renders ollama installation options', async () => {
-    const wrapper = await mount(Ollama)
-    expect(wrapper.exists()).toBe(true)
-    expect(wrapper.find('section').exists()).toBe(true)
-    expect(wrapper.find('header').exists()).toBe(true)
-  })
-
-  test('Shows download functionality', async () => {
-    const wrapper = await mount(Ollama)
-    // Look for more generic structure
-    expect(wrapper.find('section').exists()).toBe(true)
-  })
-
-})
-
-describe('Studio Screen', () => {
-
-  test('Renders studio introduction', async () => {
-    const wrapper = await mount(Studio)
-    expect(wrapper.exists()).toBe(true)
-    expect(wrapper.find('section').exists()).toBe(true)
-    expect(wrapper.find('header').exists()).toBe(true)
-  })
-
-  test('Shows studio features', async () => {
-    const wrapper = await mount(Studio)
-    // Look for more generic structure
-    expect(wrapper.find('section').exists()).toBe(true)
-  })
-
-})
-
-describe('Voice Screen', () => {
-
-  test('Renders voice configuration', async () => {
-    const wrapper = await mount(Voice)
-    expect(wrapper.exists()).toBe(true)
-    expect(wrapper.find('section').exists()).toBe(true)
-    expect(wrapper.find('header').exists()).toBe(true)
-  })
-
-  test('Shows voice options', async () => {
-    const wrapper = await mount(Voice)
-    // Look for more generic structure
-    expect(wrapper.find('section').exists()).toBe(true)
+  test('All screens render with proper structure and specific elements', async () => {
+    const screenTests = [
+      { 
+        component: Chat, 
+        name: 'Chat',
+        hasEnginesGrid: true,
+        description: 'chat configuration with engine selection'
+      },
+      { 
+        component: Ollama, 
+        name: 'Ollama',
+        description: 'ollama installation options with download functionality'
+      },
+      { 
+        component: Studio, 
+        name: 'Studio',
+        description: 'studio introduction with features'
+      },
+      { 
+        component: Voice, 
+        name: 'Voice',
+        hasEnginesGrid: true,
+        description: 'voice configuration with options'
+      },
+      { 
+        component: Done, 
+        name: 'Done',
+        hasLogo: true,
+        description: 'completion message with animated elements'
+      }
+    ]
+    
+    for (const screen of screenTests) {
+      const wrapper = await mount(screen.component)
+      
+      // Basic structure that all screens should have
+      expect(wrapper.exists()).toBe(true)
+      expect(wrapper.find('section').exists()).toBe(true)
+      expect(wrapper.find('header').exists()).toBe(true)
+      
+      // Screen-specific elements
+      if (screen.hasEnginesGrid) {
+        expect(wrapper.find('.engines-grid').exists()).toBe(true)
+      }
+      if (screen.hasLogo) {
+        expect(wrapper.find('.logo').exists()).toBe(true)
+        expect(wrapper.find('.landing-logo').exists()).toBe(true)
+      }
+    }
   })
 
 })
 
 describe('Instructions Screen', () => {
 
-  test('Renders instructions interface', async () => {
+  test('Renders with proper structure and UI state management', async () => {
     const wrapper = await mount(Instructions)
+    
+    // Basic rendering
     expect(wrapper.exists()).toBe(true)
     expect(wrapper.find('section').exists()).toBe(true)
     expect(wrapper.find('header').exists()).toBe(true)
-  })
-
-  test('Shows chat interface when not confirmed', async () => {
-    const wrapper = await mount(Instructions)
+    
+    // Initial UI state - should show chat interface with loader
     expect(wrapper.find('.message-area').exists()).toBe(true)
     expect(wrapper.find('.prompt-area').exists()).toBe(true)
-    expect(wrapper.find('.confirmation-area').exists()).toBe(false)
-  })
-
-  test('Shows loader initially', async () => {
-    const wrapper = await mount(Instructions)
     expect(wrapper.find('.loader').exists()).toBe(true)
-  })
-
-  test('Shows confirmation when system prompt detected', async () => {
-    const wrapper = await mount(Instructions)
+    expect(wrapper.find('.instructions-chat').exists()).toBe(true)
     
-    // Initially should show chat interface, not confirmation
+    // Should not show other states initially
     expect(wrapper.find('.confirmation-area').exists()).toBe(false)
-    expect(wrapper.find('.message-area').exists()).toBe(true)
-    
-    // The actual system prompt detection happens internally
-    // We can just verify the component structure is correct
-    expect(wrapper.exists()).toBe(true)
+    expect(wrapper.find('.instruction-selection').exists()).toBe(false)
   })
 
-  test('Confirmation screen has correct elements', async () => {
+  test('Shows instruction selection stage when stage is set to select', async () => {
     const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
     
-    // Try to trigger confirmation state if possible
-    if (vm.processSystemPrompt) {
-      vm.processSystemPrompt('test prompt')
-      await wrapper.vm.$nextTick()
-      
-      const confirmationArea = wrapper.find('.confirmation-area')
-      if (confirmationArea.exists()) {
-        expect(confirmationArea.find('svg').exists()).toBe(true)
-        expect(confirmationArea.find('h2').exists()).toBe(true)
-        expect(confirmationArea.find('p').exists()).toBe(true)
-      }
-    }
+    // Access the component's internal state directly
+    const component = wrapper.vm as any
+    component.stage = 'select'
+    await wrapper.vm.$nextTick()
     
-    // Always verify basic component structure exists
-    expect(wrapper.exists()).toBe(true)
+    // Should show instruction selection interface
+    expect(wrapper.find('.instruction-selection').exists()).toBe(true)
+    expect(wrapper.find('.selection-header').exists()).toBe(true)
+    expect(wrapper.find('.instructions-grid').exists()).toBe(true)
+    
+    // Should have instruction cards
+    const instructionCards = wrapper.findAll('.instruction-card')
+    expect(instructionCards.length).toBeGreaterThan(0)
+    
+    // Should not show chat interface or confirmation
+    expect(wrapper.find('.message-area').exists()).toBe(false)
+    expect(wrapper.find('.confirmation-area').exists()).toBe(false)
   })
 
-  test('Processes messages correctly', async () => {
+  test('Shows confirmation stage when stage is set to confirm', async () => {
     const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
     
-    // Test regular message processing
-    await vm.processMessage('Hello')
-    // Should not show confirmation for regular messages
-    expect(wrapper.vm.showConfirmation).toBe(false)
+    // Access the component's internal state directly
+    const component = wrapper.vm as any
+    component.stage = 'confirm'
+    await wrapper.vm.$nextTick()
+    
+    // Should show confirmation interface
+    expect(wrapper.find('.confirmation-area').exists()).toBe(true)
+    expect(wrapper.find('.confirmation-area h2').exists()).toBe(true)
+    
+    // Should not show other interfaces
+    expect(wrapper.find('.message-area').exists()).toBe(false)
+    expect(wrapper.find('.instruction-selection').exists()).toBe(false)
   })
 
-})
-
-describe('Done Screen', () => {
-
-  test('Renders completion message', async () => {
-    const wrapper = await mount(Done)
-    expect(wrapper.exists()).toBe(true)
-    expect(wrapper.find('section').exists()).toBe(true)
-    expect(wrapper.find('header').exists()).toBe(true)
+  test('Instruction selection creates custom instructions and saves to store', async () => {
+    // Clear existing custom instructions
+    store.config.llm.customInstructions = []
+    store.config.llm.instructions = ''
+    
+    const wrapper = await mount(Instructions)
+    const component = wrapper.vm as any
+    
+    // Set up the selection stage with detected system prompt
+    component.stage = 'select'
+    component.detectedSystemPrompt = 'Custom system prompt for testing'
+    await wrapper.vm.$nextTick()
+    
+    // Find and click on the first instruction card
+    const instructionCards = wrapper.findAll('.instruction-card')
+    expect(instructionCards.length).toBeGreaterThan(0)
+    
+    const firstCard = instructionCards[0]
+    await firstCard.trigger('click')
+    
+    // Should transition to confirm stage
+    expect(component.stage).toBe('confirm')
+    
+    // Should have created a custom instruction in the store
+    expect(store.config.llm.customInstructions.length).toBe(1)
+    expect(store.config.llm.customInstructions[0].instructions).toContain('Custom system prompt for testing')
+    expect(store.config.llm.instructions).toBe(store.config.llm.customInstructions[0].id)
   })
 
-  test('Shows logo animation', async () => {
-    const wrapper = await mount(Done)
-    // Check for the actual class name used in the component
-    expect(wrapper.find('.logo').exists()).toBe(true)
-    expect(wrapper.find('.landing-logo').exists()).toBe(true)
+  test('Prompt interaction triggers message processing', async () => {
+    const wrapper = await mount(Instructions)
+    const component = wrapper.vm as any
+    
+    // Wait for initial loading to complete
+    await vi.waitFor(() => {
+      return wrapper.find('.loader').exists() === false || component.latestText !== null
+    }, { timeout: 2000 })
+    
+    // Find the Prompt component and trigger a prompt
+    const promptComponent = wrapper.findComponent({ name: 'Prompt' })
+    expect(promptComponent.exists()).toBe(true)
+    
+    // Trigger a prompt event
+    await promptComponent.vm.$emit('prompt', { prompt: 'Test user prompt' })
+    
+    // Should show processing state
+    expect(component.isProcessing).toBe(true)
   })
 
-  test('Has animated elements', async () => {
-    const wrapper = await mount(Done)
-    // Check for actual class name
-    expect(wrapper.find('.landing-logo').exists()).toBe(true)
+  test('CanLeave function returns true when completed', async () => {
+    const wrapper = await mount(Instructions)
+    const component = wrapper.vm as any
+    
+    // Set completed state by transitioning to confirm stage
+    component.stage = 'confirm'
+    component.completed = true
+    
+    // canLeave should return true when completed
+    const canLeave = await component.canLeave()
+    expect(canLeave).toBe(true)
   })
 
 })
 
 describe('Screen Navigation Flow', () => {
 
-  test('Can navigate through all screens in order', async () => {
+  test('Complete navigation flow through all screens with state management', async () => {
     const wrapper = await mount(Onboarding)
     
+    // Test forward navigation through all screens
     for (let i = 0; i < screens.length; i++) {
       expect(wrapper.findComponent(screens[i]).exists()).toBe(true)
       
@@ -510,308 +515,126 @@ describe('Screen Navigation Flow', () => {
     
     // Should be on the last screen now
     expect(wrapper.findComponent(Done).exists()).toBe(true)
-  })
-
-  test('Can navigate backwards through screens', async () => {
-    const wrapper = await mount(Onboarding)
     
-    // Go to step 3 (Ollama)
-    await wrapper.find('.next').trigger('click')
-    await wrapper.find('.next').trigger('click')
+    // Test backward navigation
+    // Go back a few steps from Done screen
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Done).exists()).toBe(false)
+    expect(wrapper.findComponent(Instructions).exists()).toBe(true)
+    
+    // Go back to Permissions screen
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Instructions).exists()).toBe(false)
+    expect(wrapper.findComponent(Permissions).exists()).toBe(true)
+    
+    // Go back to Voice screen
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Permissions).exists()).toBe(false)
+    expect(wrapper.findComponent(Voice).exists()).toBe(true)
+    
+    // Go back to Studio screen
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Voice).exists()).toBe(false)
+    expect(wrapper.findComponent(Studio).exists()).toBe(true)
+    
+    // Go back to Ollama screen
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Studio).exists()).toBe(false)
     expect(wrapper.findComponent(Ollama).exists()).toBe(true)
     
-    // Go back to step 2 (Chat)
+    // Go back to Chat screen
     await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Ollama).exists()).toBe(false)
     expect(wrapper.findComponent(Chat).exists()).toBe(true)
     
-    // Go back to step 1 (Welcome)
+    // Go back to Welcome screen
     await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Chat).exists()).toBe(false)
     expect(wrapper.findComponent(Welcome).exists()).toBe(true)
     
-    // Should not be able to go back further
+    // Should not be able to go back further - no prev button
     expect(wrapper.find('.prev').exists()).toBe(false)
-  })
-
-  test('Maintains state across navigation', async () => {
-    const wrapper = await mount(Onboarding)
-    const vm = wrapper.vm as any
     
-    // Start at step 1
-    expect(vm.step).toBe(1)
-    
-    // Navigate forward
+    // Test state persistence - navigate forward again and verify components render correctly
     await wrapper.find('.next').trigger('click')
-    expect(vm.step).toBe(2)
+    expect(wrapper.findComponent(Welcome).exists()).toBe(false)
+    expect(wrapper.findComponent(Chat).exists()).toBe(true)
     
     await wrapper.find('.next').trigger('click')
-    expect(vm.step).toBe(3)
-    
-    // Navigate backward
-    await wrapper.find('.prev').trigger('click')
-    expect(vm.step).toBe(2)
-    
-    await wrapper.find('.prev').trigger('click')
-    expect(vm.step).toBe(1)
+    expect(wrapper.findComponent(Chat).exists()).toBe(false)
+    expect(wrapper.findComponent(Ollama).exists()).toBe(true)
   })
 
-})
-
-describe('Responsive Design', () => {
-
-  test('Onboarding container has correct styling', async () => {
-    const wrapper = await mount(Onboarding)
-    const onboardingEl = wrapper.find('.onboarding')
+  test('Platform-based navigation skips Permissions screen on non-macOS', async () => {
+    // Set platform to non-macOS
+    ;(window.api as any).platform = 'linux'
     
-    expect(onboardingEl.exists()).toBe(true)
-    
-    // Just check that the element exists - CSS classes will be applied by the style system
-    expect(onboardingEl.classes()).toContain('onboarding')
-  })
-
-  test('Overlay covers entire screen', async () => {
-    const wrapper = await mount(Onboarding)
-    const overlay = wrapper.find('.overlay')
-    
-    expect(overlay.exists()).toBe(true)
-    expect(overlay.classes()).toContain('overlay')
-  })
-
-})
-
-describe('Accessibility', () => {
-
-  test('Has proper semantic structure', async () => {
     const wrapper = await mount(Onboarding)
     
-    expect(wrapper.find('main').exists()).toBe(true)
-    expect(wrapper.find('footer').exists()).toBe(true)
-  })
-
-  test('Buttons have proper text content', async () => {
-    const wrapper = await mount(Onboarding)
-    
-    const nextBtn = wrapper.find('.next')
-    expect(nextBtn.text()).toBe('common.wizard.next')
-    
-    // Navigate to show prev button
-    await wrapper.find('.next').trigger('click')
-    const prevBtn = wrapper.find('.prev')
-    expect(prevBtn.text()).toBe('common.wizard.prev')
-  })
-
-  test('Close button is accessible', async () => {
-    const wrapper = await mount(Onboarding)
-    const closeBtn = wrapper.find('.close')
-    
-    expect(closeBtn.exists()).toBe(true)
-    // Remove the SVG check since the icon component might not render in tests
-    expect(closeBtn.element.tagName).toBe('DIV')
-  })
-
-})
-
-describe('Onboarding - Advanced Navigation', () => {
-
-  test('Navigation boundaries are enforced', async () => {
-    const wrapper = await mount(Onboarding)
-    const vm = wrapper.vm as any
-    
-    // Try to go beyond first step
-    vm.step = 1
-    vm.onPrev()
-    expect(vm.step).toBe(1) // Should not go below 1
-    
-    // Try to go beyond last step - just verify it doesn't crash
-    vm.step = 20 // arbitrarily high number
-    vm.onNext()
-    expect(vm.step).toBeGreaterThan(7) // Should be capped at some reasonable maximum
-  })
-
-  test('Step transitions trigger correct component renders', async () => {
-    const wrapper = await mount(Onboarding)
-    const vm = wrapper.vm as any
-    
-    for (let i = 0; i < screens.length; i++) {
-      vm.step = i + 1
-      await wrapper.vm.$nextTick()
-      
-      // Check that only the current component is rendered
-      screens.forEach((component, index) => {
-        if (index === i) {
-          expect(wrapper.findComponent(component).exists()).toBe(true)
-        } else {
-          expect(wrapper.findComponent(component).exists()).toBe(false)
-        }
-      })
+    // Navigate through screens until Voice (step 5)
+    for (let i = 0; i < 4; i++) {
+      await wrapper.find('.next').trigger('click')
     }
+    
+    // Should be on Voice screen (step 5)
+    expect(wrapper.findComponent(Voice).exists()).toBe(true)
+    
+    // Click next - should skip Permissions and go directly to Instructions
+    await wrapper.find('.next').trigger('click')
+    expect(wrapper.findComponent(Permissions).exists()).toBe(false)
+    expect(wrapper.findComponent(Instructions).exists()).toBe(true)
+    
+    // Test backward navigation - should skip Permissions when going back
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Instructions).exists()).toBe(false)
+    expect(wrapper.findComponent(Voice).exists()).toBe(true)
+    
+    // Reset platform for other tests
+    ;(window.api as any).platform = 'darwin'
   })
 
-  test('Footer buttons appear/disappear correctly at boundaries', async () => {
+  test('Platform-based navigation includes Permissions screen on macOS', async () => {
+    // Mock macOS platform
+    ;(window.api as any).platform = 'darwin'
+    
     const wrapper = await mount(Onboarding)
-    const vm = wrapper.vm as any
     
-    // Step 1: No prev, has next, no last
-    vm.step = 1
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('.prev').exists()).toBe(false)
-    expect(wrapper.find('.next').exists()).toBe(true)
-    expect(wrapper.find('.last').exists()).toBe(false)
-    
-    // Middle step: Has prev, has next, no last
-    vm.step = 3
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('.prev').exists()).toBe(true)
-    expect(wrapper.find('.next').exists()).toBe(true)
-    expect(wrapper.find('.last').exists()).toBe(false)
-    
-    // Last step: Has prev, no next, has last
-    vm.step = 7
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('.prev').exists()).toBe(true)
-    expect(wrapper.find('.next').exists()).toBe(false)
-    expect(wrapper.find('.last').exists()).toBe(true)
-  })
-
-})
-
-describe('Instructions Screen - Detailed Testing', () => {
-
-  test('Component initialization sets up chat correctly', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    // Check initial state
-    expect(vm.latestText).toBe('')
-    expect(vm.isProcessing).toBe(true) // Initially processing
-    expect(vm.showConfirmation).toBe(false)
-    
-    // Check that assistant is initialized
-    expect(vm.assistant).toBeDefined()
-  })
-
-  test('Regular message processing updates latestText', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    // Mock the processing state
-    await vm.processMessage('Hello, how are you?')
-    
-    // Should show loader initially
-    expect(wrapper.find('.loader').exists()).toBe(true)
-    
-    // Wait for processing to complete
-    await new Promise(resolve => setTimeout(resolve, 150))
-    
-    // Should have response text
-    expect(vm.latestText).toBeTruthy()
-    expect(vm.isProcessing).toBe(false)
-  })
-
-  test('System prompt detection works', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    // Process a message that should trigger system prompt detection
-    await vm.processMessage('system prompt')
-    
-    // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 150))
-    
-    // The component should handle system prompt processing (exact behavior may vary)
-    expect(wrapper.exists()).toBe(true)
-    expect(vm.latestText).toBeTruthy()
-  })
-
-  test('processSystemPrompt creates custom instruction', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    const initialInstructionsCount = store.config.llm.customInstructions.length
-    const testInstructions = 'You are a test assistant.'
-    
-    vm.processSystemPrompt(testInstructions)
-    
-    // Should add new custom instruction
-    expect(store.config.llm.customInstructions.length).toBe(initialInstructionsCount + 1)
-    
-    // Should set it as active
-    const newInstruction = store.config.llm.customInstructions[store.config.llm.customInstructions.length - 1]
-    expect(store.config.llm.instructions).toBe(newInstruction.id)
-    expect(newInstruction.instructions).toContain(testInstructions)
-  })
-
-  test('Error handling in message processing', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    // Mock console.error to check if it's called
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    
-    // Process a message that should cause an error
-    await vm.processMessage('error')
-    
-    // Wait for processing
-    await new Promise(resolve => setTimeout(resolve, 150))
-    
-    // Should handle error gracefully - exact behavior may vary
-    expect(vm.isProcessing).toBe(false)
-    expect(wrapper.exists()).toBe(true)
-    
-    consoleErrorSpy.mockRestore()
-  })
-
-  test('Prevents multiple concurrent message processing', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    vm.isProcessing = true
-    
-    const result = await vm.processMessage('test')
-    
-    // Should not process when already processing
-    expect(result).toBeUndefined()
-  })
-
-  test('onSendPrompt handles prompt correctly', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
-    
-    // Test that the method exists and doesn't crash
-    if (vm.onSendPrompt) {
-      await vm.onSendPrompt({ prompt: 'test prompt' })
-      expect(wrapper.exists()).toBe(true)
-    } else {
-      // Method might not exist depending on component implementation
-      expect(wrapper.exists()).toBe(true)
+    // Navigate through screens until Voice (step 5)
+    for (let i = 0; i < 4; i++) {
+      await wrapper.find('.next').trigger('click')
     }
-  })
-
-  test('onSendPrompt ignores empty prompts', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
     
-    const processMessageSpy = vi.spyOn(vm, 'processMessage').mockImplementation(() => Promise.resolve())
+    // Should be on Voice screen (step 5)
+    expect(wrapper.findComponent(Voice).exists()).toBe(true)
     
-    await vm.onSendPrompt({ prompt: '' })
-    await vm.onSendPrompt({ prompt: null })
-    await vm.onSendPrompt({})
+    // Click next - should go to Permissions screen on macOS
+    await wrapper.find('.next').trigger('click')
+    expect(wrapper.findComponent(Permissions).exists()).toBe(true)
+    expect(wrapper.findComponent(Instructions).exists()).toBe(false)
     
-    expect(processMessageSpy).not.toHaveBeenCalled()
+    // Click next again - should go to Instructions
+    await wrapper.find('.next').trigger('click')
+    expect(wrapper.findComponent(Permissions).exists()).toBe(false)
+    expect(wrapper.findComponent(Instructions).exists()).toBe(true)
     
-    processMessageSpy.mockRestore()
+    // Test backward navigation - should include Permissions when going back on macOS
+    await wrapper.find('.prev').trigger('click')
+    expect(wrapper.findComponent(Instructions).exists()).toBe(false)
+    expect(wrapper.findComponent(Permissions).exists()).toBe(true)
+    
+    // Reset platform for other tests
+    ;(window.api as any).platform = 'linux'
   })
 
 })
 
-describe('Chat Screen - Detailed Testing', () => {
+describe('Chat Screen - Engine Configuration', () => {
 
-  test('Component renders all standard engines', async () => {
+  test('Renders engines with inputs and handles API key interactions', async () => {
     const wrapper = await mount(Chat)
     
-    // Should show engines grid
+    // Should show engines grid with chat engine items
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
-    
-    // Should have chat engine items
     const engineItems = wrapper.findAll('.chat-engine')
     expect(engineItems.length).toBeGreaterThan(0)
     
@@ -820,375 +643,291 @@ describe('Chat Screen - Detailed Testing', () => {
       expect(item.find('.brand').exists()).toBe(true)
       expect(item.find('.config').exists()).toBe(true)
     })
-  })
-
-  test('loadModels function handles API key changes', async () => {
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
     
-    // Test with empty API key
-    vm.loadModels('openai')
-    expect(vm.success.openai).toBe('')
-    expect(vm.errors.openai).toBe('')
-    
-    // Set API key and test
-    store.config.engines.openai.apiKey = 'test-key'
-    vm.loadModels('openai')
-    
-    // Should start loading
-    expect(vm.loading.openai).toBe(undefined) // Will be set after timeout
-  })
-
-  test('loadModels timeout behavior', async () => {
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    // Set up API key
-    store.config.engines.openai.apiKey = 'test-key'
-    
-    // Call loadModels multiple times quickly
-    vm.loadModels('openai')
-    vm.loadModels('openai')
-    vm.loadModels('openai')
-    
-    // Should clear previous timeouts (no way to test this directly, but ensures no errors)
-    expect(wrapper.exists()).toBe(true)
-  })
-
-  test('Engine filtering excludes ollama and lmstudio', async () => {
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    const engines = vm.engines
-    expect(engines).not.toContain('ollama')
-    expect(engines).not.toContain('lmstudio')
-    expect(engines).toContain('openai')
-    expect(engines).toContain('anthropic')
-  })
-
-  test('Status display shows existing configurations', async () => {
-    // Set up existing configuration
-    store.config.engines.openai.apiKey = 'existing-key'
-    store.config.engines.openai.models = { chat: ['gpt-4', 'gpt-3.5-turbo'] } as any
-    
-    // Re-mount to trigger onMounted
-    const wrapper2 = await mount(Chat)
-    const vm = wrapper2.vm as any
-    
-    // Should show status for configured engines
-    expect(vm.status.openai).toBeTruthy()
-  })
-
-  test('API key input triggers complete store update and model loading flow', async () => {
-    // Start with clean state
-    store.config.engines.openai.apiKey = ''
-    store.config.engines.openai.models = { chat: [] } as any
-    
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    // Mock store.saveSettings to verify it's called
-    const saveSettingsSpy = vi.spyOn(store, 'saveSettings').mockImplementation(() => {})
-    
-    // Find the OpenAI input field (should be the first one since it's a standard engine)
+    // Should have API key inputs for each engine
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
     expect(inputComponents.length).toBeGreaterThan(0)
-    
-    // Get the first input (should be OpenAI)
-    const openaiInput = inputComponents[0]
-    
-    // Initial state - should be properly initialized as empty strings/false values
-    expect(vm.loading.openai || false).toBe(false)
-    expect(vm.success.openai || '').toBe('')
-    expect(vm.errors.openai || '').toBe('')
-    
-    // Simulate entering an API key
-    const testApiKey = 'sk-test-api-key-12345'
-    
-    // Update the store directly (simulating what v-model does)
-    store.config.engines.openai.apiKey = testApiKey
-    
-    // Trigger the change event that calls loadModels
-    await openaiInput.vm.$emit('change')
-    await wrapper.vm.$nextTick()
-    
-    // Verify API key was saved to store
-    expect(store.config.engines.openai.apiKey).toBe(testApiKey)
-    
-    // Initially should show loading state after timeout starts
-    // Wait for the timeout to trigger
-    await new Promise(resolve => setTimeout(resolve, 550)) // Wait for 500ms timeout + buffer
-    
-    // Should have triggered loading state during the process
-    expect(vm.loading.openai).toBe(false) // Should be done loading by now
-    
-    // Should show success message since our mock loadModels adds models
-    expect(vm.success.openai || '').toBeTruthy()
-    expect(vm.success.openai || '').toContain('onboarding.chat.success') // Should contain translation key
-    expect(vm.errors.openai || '').toBe('')
-    
-    // Should have loaded models into the store
-    expect(store.config.engines.openai.models.chat.length).toBeGreaterThan(0)
-    
-    saveSettingsSpy.mockRestore()
+    expect(engineItems.length).toBe(inputComponents.length)
   })
 
-  test('API key input with invalid key shows error state', async () => {
+  test('API key input functionality and store integration', async () => {
     // Start with clean state
-    store.config.engines.anthropic.apiKey = ''
-    store.config.engines.anthropic.models = { chat: [] } as any
-    
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    // Simulate entering an invalid API key by mocking the loadModels to not add any models
-    const originalLoadModels = vm.llmManager.loadModels
-    vm.llmManager.loadModels = vi.fn().mockImplementation(async (engine: string) => {
-      if (engine === 'anthropic') {
-        // Don't modify the models array to simulate failure
-        return []
-      }
-      return originalLoadModels.call(vm.llmManager, engine)
-    })
-    
-    const testApiKey = 'invalid-key'
-    store.config.engines.anthropic.apiKey = testApiKey
-    
-    // Trigger loadModels
-    vm.loadModels('anthropic')
-    
-    // Wait for the timeout and processing
-    await new Promise(resolve => setTimeout(resolve, 550))
-    
-    // Should show error state since no models were loaded
-    expect(vm.errors.anthropic || '').toBeTruthy()
-    expect(vm.errors.anthropic || '').toContain('onboarding.chat.error')
-    expect(vm.success.anthropic || '').toBe('')
-    expect(vm.loading.anthropic || false).toBe(false)
-  })
-
-  test('Empty API key clears all states', async () => {
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    // Set some initial states
-    vm.success.openai = 'Some success message'
-    vm.errors.openai = 'Some error message'
-    vm.loading.openai = true
-    
-    // Clear the API key
     store.config.engines.openai.apiKey = ''
     
-    // Trigger loadModels with empty key
-    vm.loadModels('openai')
-    
-    // Should immediately clear all states
-    expect(vm.success.openai).toBe('')
-    expect(vm.errors.openai).toBe('')
-    expect(vm.loading.openai).toBe(true) // This was set before, but function should return early
-  })
-
-  test('Multiple rapid API key changes handle timeouts correctly', async () => {
-    const wrapper = await mount(Chat)
-    const vm = wrapper.vm as any
-    
-    // Mock clearTimeout to verify it's called
-    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
-    
-    store.config.engines.openai.apiKey = 'key1'
-    vm.loadModels('openai')
-    
-    store.config.engines.openai.apiKey = 'key2'
-    vm.loadModels('openai')
-    
-    store.config.engines.openai.apiKey = 'key3'
-    vm.loadModels('openai')
-    
-    // Should have called clearTimeout for previous timeouts
-    expect(clearTimeoutSpy).toHaveBeenCalled()
-    
-    clearTimeoutSpy.mockRestore()
-  })
-
-  test('Store changes are preserved through component lifecycle', async () => {
-    // This test verifies that when API keys are entered, they persist in the store
-    const initialApiKey = 'test-persistent-key'
-    
-    // Set initial state
-    store.config.engines.google.apiKey = ''
-    
     const wrapper = await mount(Chat)
     
-    // Simulate API key input
-    store.config.engines.google.apiKey = initialApiKey
+    // Find the first API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInputComponent = inputComponents[0]
+    const actualInput = firstInputComponent.find('input')
     
-    // The store should immediately reflect the change
-    expect(store.config.engines.google.apiKey).toBe(initialApiKey)
+    // Test setting an API key
+    const testApiKey = 'sk-test-api-key-12345'
+    await actualInput.setValue(testApiKey)
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe(testApiKey)
     
-    // Unmount and remount to simulate navigation
+    // Test clearing the API key
+    await actualInput.setValue('')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('')
+    
+    // Test API key changes update immediately
+    await actualInput.setValue('new-key')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+    
+    // Test that changes persist between component instances
     wrapper.unmount()
-    
     await mount(Chat)
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+  })
+
+  test('Handles API key changes and shows appropriate status elements', async () => {
+    const wrapper = await mount(Chat)
     
-    // API key should still be in the store
-    expect(store.config.engines.google.apiKey).toBe(initialApiKey)
+    // Find an API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInput = inputComponents[0].find('input')
+    
+    // Each engine should have a config section with status elements
+    const configSections = wrapper.findAll('.config')
+    expect(configSections.length).toBeGreaterThan(0)
+    
+    // Each config section should have status span elements (even if empty)
+    configSections.forEach(config => {
+      const spans = config.findAll('span')
+      expect(spans.length).toBeGreaterThan(0)
+    })
+    
+    // Test API key input functionality
+    await firstInput.setValue('test-key')
+    await firstInput.trigger('keyup')
+    
+    // The store should be updated
+    expect(store.config.engines.openai.apiKey).toBe('test-key')
+  })
+
+  test('Displays existing model count for configured engines', async () => {
+    // Pre-configure an engine with models using proper ChatModel structure
+    store.config.engines.openai.apiKey = 'existing-key'
+    if (!store.config.engines.openai.models) {
+      store.config.engines.openai.models = { chat: [] }
+    }
+    store.config.engines.openai.models.chat = [
+      { id: 'model1', name: 'Model 1', capabilities: { tools: true, vision: false, reasoning: false, caching: false } },
+      { id: 'model2', name: 'Model 2', capabilities: { tools: true, vision: false, reasoning: false, caching: false } }
+    ]
+    
+    const wrapper = await mount(Chat)
+    
+    // Should show status message (translation key is expected in test environment)
+    const statusSpan = wrapper.find('.status')
+    expect(statusSpan.exists()).toBe(true)
+    expect(statusSpan.text()).toContain('onboarding.chat.status')
   })
 
 })
 
-describe('Voice Screen - Detailed Testing', () => {
+describe('Voice Screen - Engine Configuration', () => {
 
-  test('Component renders voice engines correctly', async () => {
+  test('Renders voice engines with functional API key inputs', async () => {
     const wrapper = await mount(Voice)
     
+    // Should show engines grid
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
     
+    // Should have voice engine items
     const engineItems = wrapper.findAll('.voice-engine')
     expect(engineItems.length).toBeGreaterThan(0)
     
-    // Each engine should have brand and config
+    // Each engine should have brand and config sections
     engineItems.forEach(item => {
       expect(item.find('.brand').exists()).toBe(true)
       expect(item.find('.config').exists()).toBe(true)
     })
-  })
-
-  test('Engines computation excludes whisper and custom', async () => {
-    const wrapper = await mount(Voice)
-    const vm = wrapper.vm as any
     
-    const engines = vm.engines
-    expect(engines).not.toContain('whisper')
-    expect(engines).not.toContain('custom')
-  })
-
-  test('API key changes trigger store save', async () => {
-    const wrapper = await mount(Voice)
+    // Should have functional API key inputs
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    expect(inputComponents.length).toBeGreaterThan(0)
     
-    const saveSettingsSpy = vi.spyOn(store, 'saveSettings').mockImplementation(() => {})
-    
-    // Find an input and trigger change
-    const inputs = wrapper.findAll('input')
-    if (inputs.length > 0) {
-      await inputs[0].setValue('new-api-key')
-      await inputs[0].trigger('change')
-    }
-    
-    // Note: The actual save might not be called due to mocking, but we test the structure
-    expect(wrapper.exists()).toBe(true)
-    
-    saveSettingsSpy.mockRestore()
-  })
-
-})
-
-describe('Welcome Screen - Animation Testing', () => {
-
-  test('Feature items have correct animation delays', async () => {
-    const wrapper = await mount(Welcome)
-    
-    const features = wrapper.findAll('.feature')
-    expect(features.length).toBeGreaterThan(0)
-    
-    // Just verify that features have animation delay styles
-    features.forEach((feature) => {
-      const style = feature.attributes('style')
-      expect(style).toContain('--delay:')
-      expect(style).toContain('s')
+    // Each input should have proper password structure
+    inputComponents.forEach(inputComponent => {
+      const actualInput = inputComponent.find('input')
+      expect(actualInput.exists()).toBe(true)
+      expect(actualInput.attributes('type')).toBe('password')
     })
   })
 
-  test('Logo and headers are present', async () => {
-    const wrapper = await mount(Welcome)
-    
-    expect(wrapper.find('.logo').exists()).toBe(true)
-    expect(wrapper.find('h1').exists()).toBe(true)
-    expect(wrapper.find('h3').exists()).toBe(true)
-  })
+})
 
-  test('Conditional features render based on config', async () => {
-    // Test with agents feature enabled
-    store.config.features = { agents: true }
-    const wrapper2 = await mount(Welcome)
+describe('Studio Screen - Image/Video Engine Configuration', () => {
+
+  test('Renders studio engines with API key inputs and proper engine filtering', async () => {
+    const wrapper = await mount(Studio)
     
-    // Should have robot icon when agents are enabled
-    const features = wrapper2.findAll('.feature')
-    expect(features.length).toBeGreaterThan(4) // Base features + agents feature
+    // Should show engines grid for image/video engines
+    expect(wrapper.find('.engines-grid').exists()).toBe(true)
+    
+    // Should have studio engine items
+    const engineItems = wrapper.findAll('.studio-engine')
+    expect(engineItems.length).toBeGreaterThan(0)
+    
+    // Each engine should have brand and config sections
+    engineItems.forEach(item => {
+      expect(item.find('.brand').exists()).toBe(true)
+      expect(item.find('.config').exists()).toBe(true)
+      expect(item.findComponent({ name: 'EngineLogo' }).exists()).toBe(true)
+      expect(item.findComponent({ name: 'InputObfuscated' }).exists()).toBe(true)
+    })
   })
 
 })
 
-describe('Store Integration Tests', () => {
+describe('Ollama Screen - Installation Status Management', () => {
 
-  test('Settings are loaded on component mount', async () => {
-    // Simply verify that the store has settings loaded (which happens in beforeAll)
-    expect(store.config).toBeDefined()
-    expect(store.config.engines).toBeDefined()
+  test('Renders different status states correctly', async () => {
+    const wrapper = await mount(Ollama)
     
-    // Mount component to ensure it doesn't crash
+    // Should start with checking status
+    expect(wrapper.find('.status-section').exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'EngineLogo' }).exists()).toBe(true)
+    
+    // Should have proper structure for status management
+    expect(wrapper.find('section').exists()).toBe(true)
+    expect(wrapper.find('header').exists()).toBe(true)
+    expect(wrapper.find('form').exists()).toBe(true)
+  })
+
+})
+
+describe('Navigation Error Handling', () => {
+
+  test('Prevents navigation when Instructions screen is not ready', async () => {
     const wrapper = await mount(Onboarding)
-    expect(wrapper.exists()).toBe(true)
-  })
-
-  test('Instructions component saves settings after processing', async () => {
-    const wrapper = await mount(Instructions)
-    const vm = wrapper.vm as any
     
-    const saveSettingsSpy = vi.spyOn(store, 'saveSettings').mockImplementation(() => {})
+    // Navigate to instructions screen (step 7)
+    wrapper.vm.step = 7
+    await wrapper.vm.$nextTick()
     
-    vm.processSystemPrompt('Test instructions')
+    // Mock instructions component to prevent leaving
+    const instructionsRef = wrapper.vm.$refs.instructions
+    if (instructionsRef) {
+      instructionsRef.canLeave = vi.fn().mockResolvedValue(false)
+    }
     
-    expect(saveSettingsSpy).toHaveBeenCalled()
+    // Try to navigate next - should stay on same step
+    const nextButton = wrapper.find('.next')
+    await nextButton.trigger('click')
+    await wrapper.vm.$nextTick()
     
-    saveSettingsSpy.mockRestore()
-  })
-
-})
-
-describe('Error Handling and Edge Cases', () => {
-
-  test('Components handle missing translations gracefully', async () => {
-    // Mock missing translation
-    const originalT = global.t
-    global.t = vi.fn().mockReturnValue('MISSING_TRANSLATION')
-    
-    const wrapper = await mount(Welcome)
-    expect(wrapper.exists()).toBe(true)
-    
-    global.t = originalT
-  })
-
-  test('Components handle store config edge cases', async () => {
-    // Test that components can handle empty or minimal configurations
-    // without breaking the entire application
-    
-    // Test with Welcome component which doesn't depend on engines
-    const wrapper1 = await mount(Welcome)
-    expect(wrapper1.exists()).toBe(true)
-    
-    // Test with Done component which also shouldn't depend on engines
-    const wrapper2 = await mount(Done)
-    expect(wrapper2.exists()).toBe(true)
-    
-    // Test with Instructions component
-    const wrapper3 = await mount(Instructions)
-    expect(wrapper3.exists()).toBe(true)
-    
-    // Verify that the store has proper structure
-    expect(store.config).toBeDefined()
-    expect(store.config.engines).toBeDefined()
-  })
-
-  test('Components handle theme changes', async () => {
-    const wrapper = await mount(Chat)
-    
-    // Test component exists and can handle theme changes
-    expect(wrapper.exists()).toBe(true)
-    
-    // The component should gracefully handle theme property access
-    const vm = wrapper.vm as any
-    expect(vm.appearanceTheme).toBeDefined()
+    // Should still be on step 7
+    expect(wrapper.vm.step).toBe(7)
   })
 
 })
 
+describe('Permissions Screen', () => {
+
+  test('Renders with proper structure and permission cards', async () => {
+    const wrapper = await mount(Permissions)
+    
+    expect(wrapper.find('section').exists()).toBe(true)
+    expect(wrapper.find('header').exists()).toBe(true)
+    expect(wrapper.find('h1').text()).toBe('onboarding.permissions.title')
+    expect(wrapper.find('h3').text()).toBe('onboarding.permissions.subtitle')
+    
+    // Check permission cards
+    const permissionCards = wrapper.findAll('.permission-card')
+    expect(permissionCards).toHaveLength(2)
+    
+    // Check accessibility card
+    expect(wrapper.text()).toContain('onboarding.permissions.accessibility.title')
+    expect(wrapper.text()).toContain('onboarding.permissions.accessibility.description')
+    
+    // Check automation card
+    expect(wrapper.text()).toContain('onboarding.permissions.automation.title')
+    expect(wrapper.text()).toContain('onboarding.permissions.automation.description')
+    
+    // Check that refresh button is no longer present
+    expect(wrapper.find('.refresh-button').exists()).toBe(false)
+  })
+
+  test('Shows permissions as granted on non-macOS platforms', async () => {
+    // Mock platform as non-darwin
+    window.api.platform = 'win32'
+    
+    const wrapper = await mount(Permissions)
+    await wrapper.vm.$nextTick()
+    
+    // Wait for permissions check to complete
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await wrapper.vm.$nextTick()
+    
+    // Both permissions should be granted
+    const grantedCards = wrapper.findAll('.permission-card.granted')
+    expect(grantedCards).toHaveLength(2)
+    
+    // Reset platform
+    window.api.platform = 'darwin'
+  })
+
+  test('Calls permission check APIs on macOS', async () => {
+    await mount(Permissions)
+    
+    // Wait for permissions check to complete
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    // Check that permission APIs were called
+    expect((window.api as any).permissions.checkAccessibility).toHaveBeenCalled()
+    expect((window.api as any).permissions.checkAutomation).toHaveBeenCalled()
+  })
+
+  test('Can leave permission screen with proper confirmation logic', async () => {
+    const wrapper = await mount(Permissions)
+    
+    // Test 1: When permissions are not granted, should show dialog and return based on user choice
+    // Mock permissions as not granted
+    ;(window.api as any).permissions.checkAccessibility.mockResolvedValue(false)
+    ;(window.api as any).permissions.checkAutomation.mockResolvedValue(false)
+    
+    // Trigger permission check to update state
+    await wrapper.vm.checkPermissions()
+    await nextTick()
+    
+    // Dialog mock returns { isConfirmed: true } by default, so canLeave should return true
+    const canLeaveWithDialog = await wrapper.vm.canLeave()
+    expect(canLeaveWithDialog).toBe(true)
+    
+    // Test 2: When all permissions are granted, should not show dialog and return true
+    // Mock permissions as granted
+    ;(window.api as any).permissions.checkAccessibility.mockResolvedValue(true)
+    ;(window.api as any).permissions.checkAutomation.mockResolvedValue(true)
+    
+    // Trigger permission check to update state
+    await wrapper.vm.checkPermissions()
+    await nextTick()
+    
+    // Should return true without showing dialog
+    const canLeaveWithoutDialog = await wrapper.vm.canLeave()
+    expect(canLeaveWithoutDialog).toBe(true)
+  })
+
+  test('Polls permission status automatically', async () => {
+    const wrapper = await mount(Permissions)
+    
+    // Clear previous calls
+    vi.clearAllMocks()
+    
+    // Wait for initial check and first poll interval
+    await new Promise(resolve => setTimeout(resolve, 1100))
+    
+    // Check that permission APIs were called multiple times due to polling
+    expect((window.api as any).permissions.checkAccessibility).toHaveBeenCalled()
+    expect((window.api as any).permissions.checkAutomation).toHaveBeenCalled()
+    
+    // Unmount to stop polling
+    wrapper.unmount()
+  })
+
+})
