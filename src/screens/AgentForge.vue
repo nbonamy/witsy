@@ -17,11 +17,11 @@
         {{ t('agent.forge.empty') }}
       </main>
       <main class="list sliding-root" :class="{ visible: mode === 'list' }" v-else>
-        <AgentList :agents="store.agents" @create="onCreate" @run="onRun" @view="viewAgent" @delete="deleteAgent" />
+        <List :agents="store.agents" @create="onCreate" @run="onRun" @view="viewAgent" @delete="deleteAgent" />
       </main>
       <main class="sliding-pane" :class="{ visible: mode !== 'list' }" @transitionend="onTransitionEnd">
-        <AgentEditor :style="{ display: isPaneVisible('create') ? 'flex' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
-        <AgentView :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
+        <Editor :style="{ display: isPaneVisible('create') ? 'flex' : 'none' }" mode="create" :agent="selected" @cancel="selectAgent(null)" @save="onSaved" />
+        <View :style="{ display: isPaneVisible('view') ? 'flex' : 'none' }" :agent="selected" @run="onRun" @delete="deleteAgent" />
       </main>
     </div>
   </div>
@@ -32,9 +32,9 @@ import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
-import AgentList from '../components/AgentList.vue'
-import AgentView from '../components/AgentView.vue'
-import AgentEditor from '../components/AgentEditor.vue'
+import List from '../agent/List.vue'
+import View from '../agent/View.vue'
+import Editor from '../agent/Editor.vue'
 import AgentRunner from '../services/runner'
 import Agent from '../models/agent'
 
