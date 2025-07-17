@@ -8,6 +8,7 @@ import { store } from '../../src/services/store'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
+import { defaultCapabilities } from 'multi-llm-ts'
 
 enableAutoUnmount(afterAll)
 
@@ -35,12 +36,12 @@ beforeAll(() => {
   store.load()
   store.config.engines.mock = {
     label: 'mock',
-    models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
+    models: { chat: [ { id: 'chat', name: 'chat', capabilities: defaultCapabilities.capabilities } ], image: [] },
     model: { chat: 'chat', image: '' }
   }
   store.config.engines.openai = {
     label: 'openai',
-    models: { chat: [ { id: 'chat', name: 'chat'} ], image: [] },
+    models: { chat: [ { id: 'chat', name: 'chat', capabilities: defaultCapabilities.capabilities } ], image: [] },
     model: { chat: 'chat', image: '' }
   }
 
