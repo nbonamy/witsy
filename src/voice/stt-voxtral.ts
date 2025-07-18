@@ -36,14 +36,17 @@ export default class STTVoxtral implements STTEngine {
     return STTVoxtral.requiresDownload()
   }
 
+   
   async initialize(callback?: ProgressCallback): Promise<void> {
     callback?.({ status: 'ready', task: 'voxtral', model: this.config.stt.model })
   }
 
+   
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
     
     // Check if we have an API key
@@ -166,10 +169,12 @@ export default class STTVoxtral implements STTEngine {
     return { text: transcription }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async isModelDownloaded(model: string): Promise<boolean> {
     return false
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteModel(model: string): Promise<void> {
     return Promise.resolve()
   }
