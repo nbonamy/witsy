@@ -50,7 +50,7 @@ export default class STTVoxtral implements STTEngine {
   async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
     
     // Check if we have an API key
-    if (!this.config.engines.voxtral?.apiKey) {
+    if (!this.config.engines.mistral?.apiKey) {
       throw new Error('Missing API key. Please check your Voxtral configuration.')
     }
 
