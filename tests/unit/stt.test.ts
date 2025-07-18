@@ -1,6 +1,6 @@
-
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
+import STTVoxtral from '../../src/voice/stt-voxtral'
 import defaults from '../../defaults/settings.json'
 import { getSTTEngine, requiresDownload } from '../../src/voice/stt'
 import STTFalAi from '../../src/voice/stt-falai'
@@ -25,6 +25,48 @@ const initCallback = vi.fn()
 // @ts-expect-error mocking
 global.fetch = async (url) => {
   console.log('fetch', url)
+  if (url.includes('mistral')) {
+    // Simulate Mistral API responses for Voxtral
+    // Always return ok: true for any Mistral endpoint
+    if (url.includes('/files') && url.includes('audio/transcriptions')) {
+      // Initial file upload
+      return {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({ id: 'mock-file-id' }),
+        text: async () => ''
+      }
+    }
+    if (url.includes('/files/') && url.includes('/url')) {
+      // Signed URL fetch
+      return {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({ url: 'https://mock-signed-url' }),
+        text: async () => ''
+      }
+    }
+    if (url.includes('/chat/completions')) {
+      // Chat completion
+      return {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({ choices: [{ message: { content: 'transcribed' } }] }),
+        text: async () => ''
+      }
+    }
+    // Default for any other Mistral endpoint
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: async () => ({}),
+      text: async () => ''
+    }
+  }
   if (url.includes('gladia') && url.includes('pre-recorded')) {
     return {
       json: () => ({
@@ -138,6 +180,32 @@ test('Instantiates OpenAI by default', async () => {
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'openai', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Instantiates Voxtral', async () => {
+  store.config.stt.engine = 'voxtral'
+  store.config.engines.mistral = { apiKey: 'dummy-mistral-key' }
+  store.config.engines.voxtral = { 
+    apiKey: 'voxtral-api-key',
+    models: {
+      stt: [
+        { 
+          id: 'voxtral-mini-2507',
+          name: 'Voxtral Mini (online)'
+        }
+      ]
+    },
+    model: 'voxtral-mini-2507'
+  }
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTVoxtral)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'voxtral', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
