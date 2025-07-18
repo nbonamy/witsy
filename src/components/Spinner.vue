@@ -26,6 +26,10 @@
   display: inline-block;
   width: 1em;
   height: 1em;
+
+  &.large {
+    transform: scale(1.5);
+  }
 }
 
 .spinner-blade {

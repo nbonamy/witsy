@@ -22,9 +22,7 @@
             <span v-else-if="errors[engine]" class="error" v-html="errors[engine]"></span>
             <span v-else>
               <template v-if="loading[engine]">
-                <Loader  />
-                <Loader  />
-                <Loader  />
+                <Spinner />
               </template>
               <template v-else>&nbsp;</template>
               <br/>
@@ -45,7 +43,7 @@ import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { engineNames } from '../llms/base'
 import LlmManager from '../llms/manager'
-import Loader from '../components/Loader.vue'
+import Spinner from '../components/Spinner.vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
@@ -163,6 +161,10 @@ const loadModels = (engine: string) => {
       
       font-size: 0.8rem;
       height: 30px;
+
+      .spinner {
+        margin-left: 0.5rem;
+      }
 
       &.status {
         color: var(--faded-text-color);
