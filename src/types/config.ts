@@ -213,6 +213,9 @@ export type STTConfig = {
   nvidia: {
     prompt: string
   }
+  voxtral: {
+    prompt: string
+  }
   whisper: {
     gpu: boolean
   }

@@ -44,6 +44,10 @@
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
+    <div class="group" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
+      <label>{{ t('common.prompt') }}</label>
+      <textarea v-model="voxtralPrompt" @blur="save" />
+    </div>
     <div class="group horizontal" v-if="engine == 'whisper'">
       <input type="checkbox" v-model="whisperGPU" @change="save" />
       <label>{{ t('settings.voice.useWebGpu') }}</label>
@@ -102,6 +106,10 @@
       <label></label>
       <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
     </div>
+    <div class="group" v-if="engine === 'voxtral'">
+      <label></label>
+      <span>{{ t('settings.voice.voxtralApiKeyReminder') }}</span>
+    </div>
   </div>
 </template>
 
@@ -133,6 +141,7 @@ const huggingFaceAPIKey = ref(null)
 const speechmaticsAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
+const voxtralPrompt = ref(null)
 const whisperGPU = ref(true)
 const baseURL = ref('')
 const duration = ref(null)
@@ -185,6 +194,7 @@ const load = () => {
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
+  voxtralPrompt.value = store.config.stt.voxtral?.prompt || null
   whisperGPU.value = store.config.stt.whisper.gpu ?? true
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
@@ -202,6 +212,7 @@ const save = () => {
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
+  store.config.stt.voxtral.prompt = voxtralPrompt.value
   store.config.stt.whisper.gpu = whisperGPU.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()
