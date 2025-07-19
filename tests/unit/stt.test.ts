@@ -1,6 +1,6 @@
-
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
+import STTVoxtral from '../../src/voice/stt-voxtral'
 import defaults from '../../defaults/settings.json'
 import { getSTTEngine, requiresDownload } from '../../src/voice/stt'
 import STTFalAi from '../../src/voice/stt-falai'
@@ -22,9 +22,52 @@ const initCallback = vi.fn()
 // that api methods are indeed called correctly
 // which poses the question: what are we really testing here?
 
-// @ts-expect-error mocking
-global.fetch = async (url) => {
-  console.log('fetch', url)
+// @ts-expect-error mocking: support (url, init)
+global.fetch = vi.fn(async (url: string | Request, init?: any) => {
+  if (typeof url !== 'string') url = url.url // handle Request object
+
+  // 1) Direct transcription endpoint
+  if (url.includes('/v1/audio/transcriptions')) {
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: async () => ({ text: 'mocked transcript' }),
+      text: async () => ''
+    }
+  }
+
+  // 2) File upload (chat-completion path)
+  if (url.includes('/v1/files') && init?.method === 'POST') {
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: async () => ({ id: 'mock-file-id' }),
+      text: async () => ''
+    }
+  }
+  // 3) Signed URL fetch
+  if (url.includes('/v1/files/') && url.includes('/url')) {
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: async () => ({ url: 'https://mock-signed-url' }),
+      text: async () => ''
+    }
+  }
+  // 4) Chat completion
+  if (url.includes('/v1/chat/completions')) {
+    return {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: async () => ({ choices: [{ message: { content: 'transcribed' } }] }),
+      text: async () => ''
+    }
+  }
+
   if (url.includes('gladia') && url.includes('pre-recorded')) {
     return {
       json: () => ({
@@ -48,7 +91,16 @@ global.fetch = async (url) => {
       })
     }
   }
-}
+
+  // Default fallback for unmatched requests
+  return {
+    ok: false,
+    status: 404,
+    statusText: 'Not Found',
+    json: async () => ({}),
+    text: async () => ''
+  }
+})
 
 vi.mock('openai', async () => {
   const OpenAI = vi.fn((opts: any) => {
@@ -141,6 +193,25 @@ test('Instantiates OpenAI by default', async () => {
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
+test('Instantiates Voxtral', async () => {
+  store.config.stt.engine = 'voxtral'
+  store.config.stt.model = 'voxtral-mini-2507' // explicit chat-completion model
+  store.config.engines.mistral = {
+    apiKey: 'dummy-mistral-key',
+    models: { chat: [] },      // minimal valid ModelsConfig
+    model: { chat: '' }        // minimal valid ModelConfig
+  }
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTVoxtral)
+  expect(engine).toHaveProperty('transcribe')
+  expect(engine.isReady()).toBe(true)
+  expect(engine.requiresDownload()).toBe(false)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'voxtral', status: 'ready', model: expect.any(String) })
+  await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
 test('Instantiates Groq', async () => {
   store.config.stt.engine = 'groq'
   const engine = getSTTEngine(store.config)
@@ -196,6 +267,18 @@ test('Instantiates Gladia', async () => {
     // @ts-expect-error mocking
     arrayBuffer: async () => ([])
   })).resolves.toStrictEqual({ text: 'transcribed' })
+})
+
+test('Direct Voxtral transcription endpoint returns mocked transcript', async () => {
+  store.config.stt.engine = 'voxtral'
+  store.config.stt.model = 'voxtral-mini-latest' // triggers direct endpoint
+  const engine = getSTTEngine(store.config)
+  expect(engine).toBeDefined()
+  expect(engine).toBeInstanceOf(STTVoxtral)
+  await engine.initialize(initCallback)
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'voxtral', status: 'ready', model: expect.any(String) })
+  // @ts-expect-error mocking
+  await expect(engine.transcribe({ type: 'audio/wav', arrayBuffer: async () => ([]) })).resolves.toStrictEqual({ text: 'mocked transcript' })
 })
 
 test('Instantiates HuggingFace', async () => {
