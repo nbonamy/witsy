@@ -26,13 +26,13 @@ In all cases, implementation should be done in small increments: code, lint, tes
 
 Tests should be written or updated as soon as possible and kept passing before moving on to the next task. This ensures that the codebase remains stable and maintainable. Always assume when starting a new feature, that the code is already in a good state and that all existing tests are passing. Be mindful of that when fixing non-passing tests.
 
-Linting can be done with `npm run lint`, which will also check for Vue type errors. It is mandatory to run this command before committing any changes to ensure code quality.
+Linting can be done with `npm run lint`, which will also check for Vue type errors. It is mandatory to run this command before running tests to ensure code quality. When this command produces no output, it means that the code is properly formatted and does not contain any linting errors.
 
 Tests can be run using `npm test --run` followed by the test name or path. Don't forget the `--run` flag to execute the tests, otherwise the test runner will not stop and wait for user input.
 
 Never run end-to-end tests during your process.
-
 Never try to build the application during your process.
+Never try to run the application during your process.
 
 ## Key Patterns & Conventions
 
