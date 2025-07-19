@@ -1,14 +1,30 @@
 
 {
-  "openai-image-editing": [
+  "image-create": [
+    {
+      "label": "Swirly abstract",
+      "prompt": "A dynamic, colorful abstract background designed for a modern SaaS website. The image features flowing gradients with vibrant hues of blue, purple, pink, and orange, blending seamlessly to create depth and energy. Subtle geometric shapes like waves, circles, and polygons add structure without overwhelming the design. Light flares, soft glows, and particle effects provide a futuristic and engaging atmosphere. The overall composition is clean and balanced, ensuring readability for overlaid text and elements, while exuding innovation and creativity. No text or logos are included, allowing for versatile use across various digital platforms."
+    }
+  ],
+  "image-edit": [
     {
       "label": "Ghibili style",
-      "prompt": "Turn this image into a Studio Ghibli-style anime illustration",
-      "enabled": true
+      "prompt": "Turn this image into a Studio Ghibli-style anime illustration"
     },
+    {
+      "label": "Hanna-Barbera style (@gnrlyxyz)",
+      "prompt": "Turn this image into a a full-body cartoon portrait, illustrated in a 1960s Hanna-Barbera mid-century modern style with bold, simplified shapes and clean black outlines. The character has exaggerated features (such as a large nose or chin) and a minimal color palette. The outfit reflects the character's typical style or personality and is rendered in flat colors with no shading or texture effects. Hands are behind the back, and the posture is upright and slightly leaning back for a pompous or dignified expression. Background is a solid muted green. No smudging. No shading. Vector friendly. No paper textures or grain effects. Bold and crisp vector lines. Keep the illustration vector-friendly and clean. Square aspect ratio."
+    }
+  ],
+  "openai-image-edit": [
     {
       "label": "3D Playful icon (@egeberkina)",
       "prompt": "retexture the image attached based on the json below: { \"style_name\": \"Playful 3D Emoji Plastic\", \"retexture_mode\": \"shape_lock\", \"object_analysis\": { \"preserve_silhouette\": true, \"geometry_sensitive_mapping\": true, \"detail_retention\": \"emphasize rounded edges and simple form contrast\" }, \"material_properties\": { \"base_material\": [ \"smooth matte plastic\", \"semi-gloss vinyl\", \"lightly rubberized eraser\" ], \"surface_details\": [ \"minimal surface texture\", \"clean color blocks\", \"slight plastic sheen\" ] }, \"lighting\": { \"type\": \"soft ambient with single frontal source\", \"shadows\": \"light and diffused\", \"highlights\": \"gentle specular on curves\" }, \"background\": { \"color\": \"pastel blue\", \"texture\": \"flat and solid\", \"elements\": \"no added geometry or props\" }, \"rendering\": { \"style\": \"emoji-like 3D render\", \"depth_of_field\": \"none\", \"focus\": \"sharp across the object\" } }",
+      "enabled": false
+    },
+    {
+      "label": "3D Collectible toy (@egeberkina)",
+      "prompt": "retexture the image attached based on the JSON below: { \"style_name\": \"Soft Minimal 3D Plastic\", \"retexture_mode\": \"shape_lock\", \"object_analysis\": { \"preserve_silhouette\": true, \"geometry_sensitive_mapping\": true, \"detail_retention\": \"flatten complex details into simplified geometry blocks\" }, \"material_properties\": { \"base_material\": [ \"smooth matte plastic\", \"metallic edge trim with satin finish\", \"semi-reflective black screen surface\" ], \"surface_details\": [ \"subtle color gradient\", \"rounded bevels and corners\", \"soft transition between surfaces\" ] }, \"lighting\": { \"type\": \"soft gradient ambient light\", \"shadows\": \"minimal, soft-edged shadows\", \"highlights\": \"diffused, low-intensity reflections\" }, \"background\": { \"color\": \"pastel gradient (blue to cream)\", \"texture\": \"smooth and untextured\", \"elements\": \"clean background with no added geometry\" }, \"rendering\": { \"style\": \"isometric 3D render\", \"resolution\": \"high, with slight bloom\", \"focus\": \"central object, no depth blur\" }, \"color_palette\": { \"primary\": [\"cool grey\", \"steel blue\", \"soft charcoal\"], \"accents\": [\"light lavender\", \"pastel yellow\"] } }",
       "enabled": false
     }
   ]
