@@ -2221,6 +2221,7 @@
       "groqApiKeyReminder": "Certifique-se de inserir sua chave de API Groq no painel Modelos.",
       "initializationError": "Ocorreu um erro durante a inicialização. Por favor, tente novamente.",
       "initializing": "Inicializando…",
+      "mistralApiKeyReminder": "Certifique-se de inserir sua chave API Mistral no painel Modelos.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Certifique-se de inserir sua chave de API OpenAI no painel Modelos.",
       "selectModel": "Selecionar um modelo",
@@ -2247,8 +2248,7 @@
       },
       "useWebGpu": "Usar WebGPU",
       "verificationComplete": "Verificação concluída!",
-      "verifying": "Verificando: {percent}%",
-      "mistralApiKeyReminder": "Certifique-se de inserir sua chave API Mistral no painel Modelos."
+      "verifying": "Verificando: {percent}%"
     }
   },
   "sidebar": {
