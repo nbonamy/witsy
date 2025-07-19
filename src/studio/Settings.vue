@@ -56,7 +56,7 @@
       </div>
 
       <div class="form-field">
-        <label>{{ t('common.prompt') }}</label>
+        <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary" @click="onShowPromptLibrary"/></label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
@@ -128,6 +128,8 @@
 
     <VariableEditor ref="editor" id="studio-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
+    <ContextMenu v-if="showPromptLibrary" :actions="promptLibrary" :x="menuX" :y="menuY" @action-clicked="onRunPromptLibrary" @close="showPromptLibrary = false"/>
+
   </div>
 </template>
 
@@ -143,12 +145,15 @@ import VariableEditor from '../screens/VariableEditor.vue'
 import ComboBox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
+import ContextMenu, { MenuAction } from '../components/ContextMenu.vue'
 import VariableTable from '../components/VariableTable.vue'
 import { baseURL as SDWebUIBaseURL } from '../services/sdwebui'
 import ModelLoaderFactory from '../services/model_loader'
+import promptsLibrary from './prompts.json'
 
 import useEventBus from '../composables/event_bus'
 import { Model } from 'multi-llm-ts'
+import { BIconMagic } from 'bootstrap-icons-vue'
 const { onEvent } = useEventBus()
 
 type Parameter = {
@@ -182,6 +187,9 @@ const preserve = ref(false)
 const showParams = ref(false)
 const selectedParam = ref(null)
 const refreshLabel = ref(t('common.refresh'))
+const showPromptLibrary = ref(false)
+const menuX = ref(0)
+const menuY = ref(0)
 
 const imageCreator = new ImageCreator()
 const videoCreator = new VideoCreator()
@@ -204,6 +212,15 @@ const hasFixedModels = computed(() => {
 
 const allowModelEntry = computed(() => {
   return ['replicate', 'falai', 'sdwebui', 'huggingface' ].includes(engine.value)
+})
+
+const promptLibrary = computed(() => {
+  // if (engine.value === 'openai' && model.value.startsWith('gpt-image-') && transform.value) {
+  //   return promptsLibrary['openai-edits'].map((p) => {
+  //     return { ...p, action: p.label }
+  //   })
+  // }
+  return null
 })
 
 const addCurrentModel = (models: Model[]): Model[] => {
@@ -477,6 +494,18 @@ const getModels = async () => {
 
 }
 
+const onShowPromptLibrary = (event: MouseEvent) => {
+  showPromptLibrary.value = true
+  menuX.value = event.clientX + 16
+  menuY.value = event.clientY - 12
+}
+
+const onRunPromptLibrary = (action: string) => {
+  showPromptLibrary.value = false
+  const libraryPrompt = promptLibrary.value.find((a: MenuAction) => a.action === action)
+  if (libraryPrompt) prompt.value = libraryPrompt.prompt
+}
+
 const onSelectParam = (key: string) => {
   selectedParam.value = { key, value: params.value[key] }
 }
@@ -606,6 +635,14 @@ defineExpose({
 
 .studio-settings > * {
   padding: 0px 1.5rem;
+}
+
+.studio-settings .form .form-field label:has(svg) {
+  width: 100%;
+  svg {
+    float: right;
+    cursor: pointer;
+  }
 }
 
 .studio-settings .form .form-field .form-subgroup {
