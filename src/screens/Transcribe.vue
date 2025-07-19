@@ -465,9 +465,6 @@ const onKeyDown = (event: KeyboardEvent) => {
     }
   }
 
-  // this is the only shortcut that should work when the textarea is focused
-  
-
   // process
   if (event.code === 'Space' && !isTextAreaFocused) {
     if (state.value !== 'recording') {
