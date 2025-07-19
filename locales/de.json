@@ -557,12 +557,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "Sind Sie sicher, dass Sie diese Medien löschen möchten?",
     "confirmDeleteSingle": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
+    "dropzone": "Legen Sie Ihre Bilder hier ab, um sie mit KI zum Leben zu erwecken!",
     "emptyPlaceholder": "Lassen Sie Ihrer Kreativität freien Lauf!",
     "error": {
+      "invalidFileType": "Ungültiger Dateityp. Bitte wählen Sie eine Bilddatei (jpg, png, gif).",
       "invalidParams": "Ein Fehler wurde bezüglich Ihrer Parameter gemeldet: {detail}. Bitte überprüfen Sie die Parameter und versuchen Sie es erneut.",
       "noDetailsProvided": "keine Details verfügbar",
       "promptRequired": "Stellen Sie sicher, dass Sie einen Prompt eingeben.",
-      "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+      "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "uploadFailed": "Datei-Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
     },
     "generate": "Generieren",
     "generating": "Generieren…",

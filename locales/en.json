@@ -576,12 +576,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "Are you sure you want to delete these media?",
     "confirmDeleteSingle": "Are you sure you want to delete this media?",
+    "dropzone": "Drop your images here to bring them to life with AI!",
     "emptyPlaceholder": "Let your creativity go wild!",
     "error": {
+      "invalidFileType": "Invalid file type. Please select an image file (jpg, png, gif).",
       "invalidParams": "An error was reported about your parameters: {detail}. Please check the parameters and try again.",
       "noDetailsProvided": "no details available",
       "promptRequired": "Make sure you enter a prompt.",
-      "unknown": "An unknown error occurred. Please try again."
+      "unknown": "An unknown error occurred. Please try again.",
+      "uploadFailed": "Failed to upload file. Please try again."
     },
     "generate": "Generate",
     "generating": "Generating…",

@@ -557,12 +557,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "Êtes-vous sûr de vouloir supprimer ces médias ?",
     "confirmDeleteSingle": "Êtes-vous sûr de vouloir supprimer ce média ?",
+    "dropzone": "Déposez vos images ici pour leur donner vie avec l'IA !",
     "emptyPlaceholder": "Laissez libre cours à votre créativité !",
     "error": {
+      "invalidFileType": "Type de fichier invalide. Veuillez sélectionner un fichier image (jpg, png, gif).",
       "invalidParams": "Une erreur a été signalée concernant vos paramètres : {detail}. Veuillez vérifier les paramètres et réessayer.",
       "noDetailsProvided": "aucun détail disponible",
       "promptRequired": "Assurez-vous de saisir une requête.",
-      "unknown": "Une erreur inconnue s'est produite. Veuillez réessayer."
+      "unknown": "Une erreur inconnue s'est produite. Veuillez réessayer.",
+      "uploadFailed": "Échec du téléchargement du fichier. Veuillez réessayer."
     },
     "generate": "Générer",
     "generating": "Génération…",

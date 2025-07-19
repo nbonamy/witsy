@@ -557,12 +557,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "¿Está seguro de que desea eliminar estos medios?",
     "confirmDeleteSingle": "¿Estás seguro de que deseas eliminar este medio?",
+    "dropzone": "¡Suelta tus imágenes aquí para darles vida con IA!",
     "emptyPlaceholder": "¡Deja volar tu creatividad!",
     "error": {
+      "invalidFileType": "Tipo de archivo no válido. Por favor selecciona un archivo de imagen (jpg, png, gif).",
       "invalidParams": "Se reportó un error sobre tus parámetros: {detail}. Por favor, verifica los parámetros y vuelve a intentarlo.",
       "noDetailsProvided": "no hay detalles disponibles",
       "promptRequired": "Asegúrate de ingresar una solicitud.",
-      "unknown": "Ocurrió un error desconocido. Por favor, vuelve a intentarlo."
+      "unknown": "Ocurrió un error desconocido. Por favor, vuelve a intentarlo.",
+      "uploadFailed": "Error al subir el archivo. Por favor, intenta de nuevo."
     },
     "generate": "Generar",
     "generating": "Generando…",
