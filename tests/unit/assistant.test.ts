@@ -47,6 +47,7 @@ vi.mock('../../src/services/i18n', async (importOriginal) => {
 })
 
 beforeAll(() => {
+  Generator.addCapabilitiesToSystemInstr = false
   Generator.addDateAndTimeToSystemInstr = false
   useWindowMock()
   store.loadExperts()
@@ -474,3 +475,13 @@ test('Custom instructions with chat override', async () => {
   // Chat override should take precedence over custom instructions
   expect(instructions).toBe('Chat override instructions')
 })
+
+test('Assistant instructions with capabilities', async () => {
+  Generator.addCapabilitiesToSystemInstr = true
+  store.config.llm.instructions = 'standard'
+  store.config.llm.locale = ''
+  await prompt('Hello LLM')
+  const instructions1 = await assistant!.chat.messages[0].content
+  expect(instructions1).toBe('instructions.chat.standard.en-US\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.')
+})
+

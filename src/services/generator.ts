@@ -34,6 +34,7 @@ export type GenerationResult =
   stream: AsyncIterable<LlmChunk>|null
   llm: LlmEngine|null
 
+  static addCapabilitiesToSystemInstr = true
   static addDateAndTimeToSystemInstr = true
 
   constructor(config: Configuration) {
@@ -330,7 +331,12 @@ export type GenerationResult =
       }
     }
 
-    // // add date and time
+    // add info about capabilities
+    if (Generator.addCapabilitiesToSystemInstr) {
+      instr += '\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.'
+    }
+
+    // add date and time
     if (Generator.addDateAndTimeToSystemInstr) {
       instr += '\n\n' + i18nInstructions(this.config, 'instructions.utils.setDate', { date: new Date().toLocaleString() })
     }
