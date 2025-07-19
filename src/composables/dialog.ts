@@ -120,7 +120,7 @@ const Dialog = {
       cancelId: indices.cancel,
     }
 
-    const value: { response: number } = await window.api.showDialog(sysopts)
+    const value: { response: number } = await window.api.app.showDialog(sysopts)
 
     return {
       isConfirmed: value.response === indices.confirm,

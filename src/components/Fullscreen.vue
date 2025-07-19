@@ -33,13 +33,13 @@ const onFullscreen = (payload: string|strDict) => {
   fullScreenImageUrl.value = payload.url ?? payload
   // @ts-expect-error yeah that's not super elegant
   fullScreenTheme.value = payload.theme
-  window.api.fullscreen(props.window, true)
+  window.api.app.fullscreen(props.window, true)
 }
 
 const onCloseFullScreen = () => {
   document.removeEventListener('keydown', onCloseFullScreen)
   fullScreenImageUrl.value = null
-  window.api.fullscreen(props.window, false)
+  window.api.app.fullscreen(props.window, false)
 }
 
 </script>

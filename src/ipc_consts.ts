@@ -14,6 +14,7 @@ export const APP = {
 
 export const MAIN_WINDOW = {
   SET_MODE: 'main-window-set-mode',
+  SET_CONTEXT_MENU_CONTEXT: 'main-window-set-menu-context',
   CLOSE: 'main-window-close',
 } as const;
 

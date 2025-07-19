@@ -14,7 +14,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint '**/*.ts' ; vue-tsc --noEmit",
+    "lint": "eslint '**/*.ts' && echo '0 linting error' && vue-tsc --noEmit && echo '0 TypeScript error'",
     "credits": "npx @opengovsg/credits-generator",
     "test": "vitest",
     "test-ci": "vitest --coverage.enabled=true --coverage.reporter='text-summary'",

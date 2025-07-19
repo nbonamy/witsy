@@ -61,8 +61,8 @@ const logos: { [key: string]: any } = {
 }
 
 const pngLogos: { [key: string]: string } = {
-  gladia: window.api.getAssetPath('./assets/gladia.png'),
-  speechmatics: window.api.getAssetPath('./assets/speechmatics.png')
+  gladia: window.api.app.getAssetPath('./assets/gladia.png'),
+  speechmatics: window.api.app.getAssetPath('./assets/speechmatics.png')
 }
 
 const props = defineProps({

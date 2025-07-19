@@ -199,7 +199,7 @@ const onExportMarkdown = async () => {
     })
   } catch (e) {
     console.error('Error exporting Markdown:', e)
-    window.api.showDialog({
+    window.api.app.showDialog({
       message: t('common.error'),
       detail: t('chat.export.error'),
     })
@@ -226,7 +226,7 @@ const onExportPdf = async () => {
     document.body.appendChild(image)
 
     // switch to light for export
-    window.api.setAppearanceTheme('light')
+    window.api.app.setAppearanceTheme('light')
 
     // copy and clean-up
     const content: HTMLElement = document.querySelector<HTMLElement>('.chat-area').cloneNode(true) as HTMLElement
@@ -273,14 +273,14 @@ const onExportPdf = async () => {
 
   } catch (e) {
     console.error('Error exporting PDF:', e)
-    window.api.showDialog({
+    window.api.app.showDialog({
       message: t('common.error'),
       detail: t('chat.export.error'),
     })
   }
 
   // restore theme
-  window.api.setAppearanceTheme(theme)
+  window.api.app.setAppearanceTheme(theme)
 
   // remove image
   await new Promise((resolve) => setTimeout(resolve, 500));

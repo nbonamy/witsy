@@ -59,6 +59,11 @@ export const installIpc = (
     installMenu();
   });
 
+  ipcMain.on(IPC.MAIN_WINDOW.SET_CONTEXT_MENU_CONTEXT, (event, id) => {
+    window.setMainContextMenuContext(id);
+    installMenu();
+  });
+
   ipcMain.on(IPC.MAIN_WINDOW.CLOSE, () => {
     window.mainWindow.close();
   });

@@ -85,7 +85,7 @@ const fontSize = ref(null)
 const fontFamily = ref('')
 const showToolCalls = ref<ChatToolMode>('calling')
 const layout = ref<ChatListLayout>('normal')
-const fonts = ref(window.api.listFonts())
+const fonts = ref(window.api.app.listFonts())
 
 const chatTheme = computed(() => store.config.appearance.chat.theme)
 const fontStyle = computed(() => {

@@ -26,6 +26,52 @@ const mdOptions: MarkdownIt.Options = {
   }
 }
 
+// function addSourceOffsets(md: MarkdownIt) {
+//   const originalParse = md.parse.bind(md);
+
+//   md.parse = (srcText, env) => {
+//     const tokens = originalParse(srcText, env);
+//     const lines = srcText.split('\n');
+
+//     for (const token of tokens) {
+//       if (token.map) {
+//         const [startLine, endLine] = token.map;
+//         const startOffset = lines.slice(0, startLine).join('\n').length + (startLine > 0 ? 1 : 0);
+//         const endOffset = lines.slice(0, endLine).join('\n').length;
+//         token.attrSet('data-md-start', startOffset.toString());
+//         token.attrSet('data-md-end', endOffset.toString());
+//       }
+
+//       if (token.children) {
+//         let offset = token.attrGet('data-md-start') ? parseInt(token.attrGet('data-md-start')!) : 0;
+//         for (const child of token.children) {
+//           const len = child.content.length;
+//           child.attrSet('data-md-start', offset.toString());
+//           child.attrSet('data-md-end', (offset + len).toString());
+//           offset += len;
+//         }
+//       }
+//     }
+
+//     return tokens;
+//   };
+
+//   const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
+
+//   md.renderer.renderToken = function (tokens, idx, options) {
+//     const token = tokens[idx];
+//     if (token.attrs) {
+//       const start = token.attrGet('data-md-start');
+//       const end = token.attrGet('data-md-end');
+//       if (start && end) {
+//         token.attrSet('data-md-start', start);
+//         token.attrSet('data-md-end', end);
+//       }
+//     }
+//     return originalRenderToken(tokens, idx, options);
+//   };
+// }
+
 const mdPreprocess = (markdown: string) => {
   // for katex processing, we need to replace \[ and \] with $$ to trigger processing
   // we also need to handle inline equations \(x\) and \( x \)
@@ -63,6 +109,7 @@ export const renderMarkdown = (markdown: string): string => {
     md.use(MarkdownItKatex)
     md.use(MarkdownItMark)
     md.use(MarkdownItDiagram)
+    // addSourceOffsets(md)
   
   }
 
