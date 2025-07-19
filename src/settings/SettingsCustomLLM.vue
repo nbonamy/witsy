@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div class="group">
+  <div class="form form-vertical form-large">
+    <div class="form-field">
       <label>{{ t('common.name') }}</label>
       <input name="label" v-model="label" @keydown.enter.prevent="save" @change="save"/>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.custom.apiSpecification') }}</label>
       <select name="api"v-model="api" :disabled="true">
         <option value="openai">OpenAI</option>
@@ -12,25 +12,25 @@
       </select>
     </div>
     <template v-if="api === 'openai'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
         <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.apiKey') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <InputObfuscated name="apiKey" v-model="apiKey" @blur="onKeyChange" />
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.chatModel') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <Combobox name="models" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save">
             <button name="refresh"@click.prevent="onRefresh">{{ refreshLabel }}</button>
           </Combobox>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.vision.model') }}</label>
         <select name="vision_model" v-model="vision_model" :disabled="vision_models.length == 0" @change="save">
           <option v-for="model in vision_models" :key="model.id" :value="model.id">{{ model.name }}
@@ -39,24 +39,24 @@
       </div>
     </template>
     <template v-if="api === 'azure'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.custom.endpoint') }}</label>
         <input name="baseURL" v-model="baseURL" placeholder="https://xxx.openai.azure.com/" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.apiKey') }}</label>
         <InputObfuscated name="apiKey" v-model="apiKey" @blur="onKeyChange" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.custom.deployment') }}</label>
         <input name="deployment" v-model="deployment" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.custom.apiVersion') }}</label>
         <input name="apiVersion" v-model="apiVersion" />
       </div>
     </template>
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
       <label>{{  t('settings.engines.disableTools') }}</label>
     </div>
@@ -204,7 +204,3 @@ defineExpose({ load, loadModels: onRefresh })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

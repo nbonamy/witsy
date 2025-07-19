@@ -1,13 +1,13 @@
 
 <template>
-  <div class="list-large-with-header" v-if="visible">
-    <div class="header">
+  <div class="panel" v-if="visible">
+    <div class="panel-header">
       <slot name="header"></slot>
       <BIconChevronDoubleDown v-if="!expanded" />
     </div>
-    <div class="list" v-if="expanded">
+    <div class="panel-body" v-if="expanded">
       <slot name="content"></slot>
-      <div class="footer group">
+      <div class="footer form-field">
         <slot name="footer">
           <div class="error" v-if="error">{{ error }}</div>
           <button @click.prevent.stop="emit('next')">{{ t('common.wizard.next') }}</button>
@@ -41,14 +41,11 @@ defineProps({
 
 </script>
 
-<style scoped>
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 
 
-.list-large-with-header {
+.panel {
 
   margin: 0 !important;
   padding: 0.75rem 0 !important;

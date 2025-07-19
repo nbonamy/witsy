@@ -1,7 +1,7 @@
 <template>
-  <form onsubmit="return false">
+  <div class="form">
 
-    <div class="toolbar group">
+    <div class="toolbar form-field">
     
       <button class="tool" @click="emitEvent('action', 'clear')">
         <BIconFileEarmark /><span>{{ t('common.clear') }}</span>
@@ -34,7 +34,7 @@
 
     </div>
 
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -94,26 +94,23 @@ const onChangeModel = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-.macos form .toolbar {
+.macos .form .toolbar {
   padding-left: 90px;
 }
 
-.windows form .toolbar {
+.windows .form .toolbar {
   padding-top: 32px;
 }
 
-.linux form .toolbar {
+.linux .form .toolbar {
   padding-top: 24px;
 }
 
-form .toolbar {
-  
+.form .toolbar {
+
   display: flex;
   flex-direction: row;
   height: 32px;

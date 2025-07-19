@@ -1,24 +1,24 @@
 <template>
-  <form class="tab-content vertical large">
+  <div class="form tab-content form-vertical form-large">
     <header>
       <div class="title">{{ t('settings.tabs.chat') }}</div>
     </header>
     <main>
-      <div class="group layout">
+      <div class="form-field layout">
         <label>{{ t('settings.chat.listLayout') }}</label>
         <select v-model="layout" @change="save">
           <option value="normal">{{ t('settings.chat.listLayouts.cozy') }}</option>
           <option value="compact">{{ t('settings.chat.listLayouts.compact') }}</option>
         </select>
       </div>
-      <div class="group theme">
+      <div class="form-field theme">
         <label>{{ t('settings.chat.theme') }}</label>
         <select v-model="theme" @change="save">
           <option value="openai">{{ t('settings.chat.themes.openai') }}</option>
           <option value="conversation">{{ t('settings.chat.themes.conversation') }}</option>
         </select>
       </div>
-      <div class="group tools">
+      <div class="form-field tools">
         <label>{{ t('settings.chat.showToolCalls.title') }}</label>
         <select v-model="showToolCalls" @change="save">
           <option value="never">{{ t('settings.chat.showToolCalls.never') }}</option>
@@ -26,14 +26,14 @@
           <option value="always">{{ t('settings.chat.showToolCalls.always') }}</option>
         </select>
       </div>
-      <div class="group font-family" v-if="!isMas">
+      <div class="form-field font-family" v-if="!isMas">
         <label>{{ t('settings.chat.font') }}</label>
         <select v-model="fontFamily" @change="save">
           <option value="">{{ t('common.default') }}</option>
           <option v-for="font in fonts" :value="font">{{ font.replaceAll('"', '') }}</option>
         </select>
       </div>
-      <div class="group font-size">
+      <div class="form-field font-size">
         <label>{{ t('settings.chat.fontSize') }}</label>
         <div class="control-group">
           <span class="slider-label small">A</span>
@@ -50,7 +50,7 @@
           <span class="slider-label large">A</span>
         </div>
       </div>
-      <div class="group example">
+      <div class="form-field example">
         <label>{{ t('settings.chat.fontExample.title') }}</label>
         <div class="sample messages" :class="[ chatTheme, 'size' + store.config.appearance.chat.fontSize ]" :style="fontStyle">
           <MessageItem
@@ -67,7 +67,7 @@
         </div>
       </div>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -117,14 +117,6 @@ defineExpose({ load })
 </script>
 
 <style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/themes/base.css';
-@import '../../css/themes/openai.css';
-@import '../../css/themes/conversation.css';
-</style>
-
-<style scoped>
 
 .slider-label.small {
   font-size: 8pt;
@@ -135,6 +127,7 @@ defineExpose({ load })
 }
 
 .sample {
+  box-sizing: border-box;
   margin-top: 0.5rem;
   width: 100%;
   border: 1px solid var(--sidebar-border-color);

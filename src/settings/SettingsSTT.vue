@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="group language">
+    <div class="form-field language">
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
       <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
     </div>
-    <div class="group vocabulary">
+    <div class="form-field vocabulary">
       <label>{{ t('settings.voice.customVocabulary.label') }}</label>
       <textarea v-model="vocabulary" name="vocabulary" @change="save" :placeholder="t('settings.voice.customVocabulary.placeholder')"></textarea>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
         <option v-for="engine in getSTTEngines()" :key="engine.id" :value="engine.id">
@@ -16,45 +16,45 @@
         </option>
       </select>
     </div>
-    <div class="group" v-if="engine == 'falai'">
+    <div class="form-field" v-if="engine == 'falai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'fireworks'">
+    <div class="form-field" v-if="engine == 'fireworks'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="fireworksAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'speechmatics'">
+    <div class="form-field" v-if="engine == 'speechmatics'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="speechmaticsAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'huggingface'">
+    <div class="form-field" v-if="engine == 'huggingface'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="huggingFaceAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'gladia'">
+    <div class="form-field" v-if="engine == 'gladia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="gladiaAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'nvidia'">
+    <div class="form-field" v-if="engine == 'nvidia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="nvidiaAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'nvidia'">
+    <div class="form-field" v-if="engine == 'nvidia'">
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
+    <div class="form-field" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="voxtralPrompt" @blur="save" />
     </div>
-    <div class="group horizontal" v-if="engine == 'whisper'">
+    <div class="form-field horizontal" v-if="engine == 'whisper'">
       <input type="checkbox" v-model="whisperGPU" @change="save" />
       <label>{{ t('settings.voice.useWebGpu') }}</label>
     </div>
-    <div class="group" v-if="engine != 'custom'">
+    <div class="form-field" v-if="engine != 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <select name="model" v-model="model" @change="onChangeModel">
           <option v-for="model in models" :key="model.id" :value="model.id">
             {{ model.label }}
@@ -65,16 +65,16 @@
       </div>
     </div>
     <template v-else>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
         <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.voice.model') }}</label>
         <input name="model" v-model="model" @change="onChangeModel"/>
       </div>
     </template>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
       <select name="duration" v-model="duration" @change="save">
         <option value="0">{{ t('settings.voice.silenceOptions.disabled') }}</option>
@@ -85,7 +85,7 @@
         <option value="5000">{{ t('settings.voice.silenceOptions.fiveSeconds') }}</option>
       </select>
     </div>
-    <!-- <div class="group">
+    <!-- <div class="form-field">
       <label>Silence Action<br/>(depends on context)</label>
       <select v-model="action" @change="save">
         <option value="nothing">Continue recording</option>
@@ -94,15 +94,15 @@
         <option value="execute_continue">Execute and continue recording</option>
       </select>
     </div> -->
-    <div class="group">
+    <div class="form-field">
       <label></label>
       <button @click.prevent="deleteLocalModels">{{ t('settings.voice.deleteLocalModels') }}</button>
     </div>
-    <div class="group" v-if="engine === 'openai'">
+    <div class="form-field" v-if="engine === 'openai'">
       <label></label>
       <span>{{ t('settings.voice.openaiApiKeyReminder') }}</span>
     </div>
-    <div class="group" v-if="engine === 'groq'">
+    <div class="form-field" v-if="engine === 'groq'">
       <label></label>
       <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
     </div>
@@ -346,16 +346,12 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 .progress {
   margin-top: 8px;
 }
-.settings form.vertical .group textarea {
+.settings .form.vertical .form-field textarea {
   flex: 1 0 100px;
 }
 </style>

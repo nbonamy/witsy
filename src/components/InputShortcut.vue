@@ -1,6 +1,6 @@
 
 <template>
-  <div class="wrapper">
+  <div class="form-subgroup">
     <input type="text" v-model="display" spellcheck="false" @keydown.prevent="onKeyDown" />
     <button class="clear" :class="{ disabled: !display }" @click.prevent="onDelete"><BIconXCircleFill /></button>
   </div>
@@ -98,14 +98,11 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-.wrapper {
-  flex: 1;
+.form-subgroup {
+  white-space: nowrap;
 }
 
 input {

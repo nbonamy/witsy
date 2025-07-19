@@ -4,11 +4,11 @@
       <div class="title">{{ t(title) }}</div>
     </template>
     <template #body>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.key') }}</label>
         <input type="text" name="key" v-model="key" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.value') }}</label>
         <input type="text" name="value" v-model="value" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
@@ -99,11 +99,6 @@ defineExpose({
 })
 
 </script>
-
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style>
 .variable-editor {

@@ -1,5 +1,5 @@
 <template>
-  <form class="commands tab-content vertical large"  @keyup.escape.prevent="onEdit(null)">
+  <div class="form commands tab-content form-vertical form-large"  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ edited.label || commandI18n(edited, 'label') }}</div>
@@ -13,7 +13,7 @@
     <main class="editor sliding-pane" :class="{ visible: edited }"> 
       <CommandEditor ref="editor" :command="edited" @command-modified="onCommandModified"/>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -107,10 +107,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/sticky-header-table.css';
-</style>
 
 <style scoped>
 

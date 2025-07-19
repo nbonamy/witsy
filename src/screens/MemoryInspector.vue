@@ -85,10 +85,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/sticky-header-table.css';
-</style>
 
 <style scoped>
 

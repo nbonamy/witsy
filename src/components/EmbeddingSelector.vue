@@ -1,21 +1,21 @@
 <template>
   
-  <div class="group">
+  <div class="form-field">
     <label>{{ t('embedding.provider') }}</label>
     <select v-model="engine" @change="onChangeEngine" required :disabled="disabled">
       <option v-for="e in engines" :key="e.id" :value="e.id">{{ e.name }}</option>
     </select>
   </div>
   
-  <div class="group" v-if="llmManager.isCustomEngine(engine)">
+  <div class="form-field" v-if="llmManager.isCustomEngine(engine)">
     <label>{{ t('embedding.model') }}</label>
-    <div class="subgroup">
+    <div class="form-subgroup">
       <Combobox v-model="model" :items="models"@change="onChangeModel" required :disabled="disabled" />
     </div>
     <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
   </div>
   
-  <div class="group" v-else>
+  <div class="form-field" v-else>
     <label>{{ t('embedding.model') }}</label>
     <select v-model="model" @change="onChangeModel" required :disabled="disabled">
       <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
@@ -23,7 +23,7 @@
     <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
   </div>
   
-  <div class="group" style="margin-top: -8px" v-if="engine !== 'ollama'">
+  <div class="form-field" style="margin-top: -8px" v-if="engine !== 'ollama'">
     <label></label>
     <span>{{ t('embedding.apiKeyReminder') }}</span>
   </div>
@@ -143,7 +143,3 @@ const getModels = async () => {
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

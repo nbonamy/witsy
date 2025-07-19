@@ -3,8 +3,8 @@
     <div class="description">
       {{ t('settings.engines.azure.description') }}
     </div>
-    <div class="description group">
-      <button @click.prevent="createAzureConnection">{{ t('settings.engines.azure.create') }}</button>
+    <div class="description">
+      <button class="large" @click.prevent="createAzureConnection">{{ t('settings.engines.azure.create') }}</button>
     </div>
   </div>
 </template>
@@ -26,7 +26,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

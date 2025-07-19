@@ -148,12 +148,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/sticky-header-table.css';
-</style>
-
 <style>
 
 #tool-selector {

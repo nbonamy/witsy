@@ -1,21 +1,21 @@
 
 <template>
-  <form class="agent-editor large" @keydown.enter.prevent="onSave">
+  <div class="form agent-editor form-large" @keydown.enter.prevent="onSave">
 
     <WizardStep :visible="isStepVisible(0)" :expanded="isStepExpanded(0)" :error="informationError" @click="onStepClick(0)" @next="validateInformation">
       <template #header>
         <label>{{ t('agent.create.information') }}</label>
       </template>
       <template #content>
-        <div class="group">
+        <div class="form-field">
           <label for="name">{{ t('agent.name') }}</label>
           <input type="text" v-model="agent.name" name="name" required />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label for="description">{{ t('agent.description') }}</label>
           <textarea v-model="agent.description" name="description" rows="4" required></textarea>
         </div>
-        <div class="group">
+        <div class="form-field">
           <label for="goal">{{ t('agent.goal') }}</label>
           <textarea v-model="agent.instructions" name="goal" rows="4" required></textarea>
         </div>
@@ -27,15 +27,15 @@
         <label>{{ t('agent.create.llm') }}</label>
       </template>
       <template #content>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('common.llmProvider') }}</label>
           <EngineSelect v-model="agent.engine" :default-text="t('agent.create.lastOneUsed')" @change="onChangeEngine"/>
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('common.llmModel') }}</label>
           <ModelSelect v-model="agent.model" :engine="agent.engine" :default-text="t('agent.create.lastOneUsed')" @change="onChangeModel"/>
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.locale') }}</label>
           <LangSelect name="locale" v-model="agent.locale" default-text="modelSettings.localeDefault" />
         </div>
@@ -47,30 +47,30 @@
         <label>{{ t('agent.create.settings') }}</label>
       </template>
       <template #content>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.streaming') }}</label>
           <select name="streaming" v-model="agent.disableStreaming">
         <option :value="false">{{ t('common.enabled') }}</option>
         <option :value="true">{{ t('common.disabled') }}</option>
           </select>
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.contextWindowSize') }}</label>
           <input type="text" name="contextWindowSize" v-model="agent.modelOpts.contextWindowSize" :placeholder="t('modelSettings.defaultModelValue')" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.maxCompletionTokens') }}</label>
           <input type="text" name="maxTokens" v-model="agent.modelOpts.maxTokens" :placeholder="t('modelSettings.defaultModelValue')" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.temperature') }}</label>
           <input type="text" name="temperature" v-model="agent.modelOpts.temperature" :placeholder="t('modelSettings.defaultModelValue')" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.topK') }}</label>
           <input type="text" name="top_k" v-model="agent.modelOpts.top_k" :placeholder="t('modelSettings.defaultModelValue')" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('modelSettings.topP') }}</label>
           <input type="text" name="top_p" v-model="agent.modelOpts.top_p" :placeholder="t('modelSettings.defaultModelValue')" />
         </div>
@@ -82,12 +82,12 @@
         <label>{{ t('agent.create.tools.title') }}</label>
       </template>
       <template #content>
-        <div class="group custom-tools">
+        <div class="form-field custom-tools">
           <input type="checkbox" v-model="customTools" @change="onCustomTools"/>
           {{ t('agent.create.tools.custom') }}
         </div>
 
-        <div class="group custom-tools">
+        <div class="form-field custom-tools">
           <button class="all" @click.prevent="agent.tools = null">{{ t('agent.create.tools.selectAll') }}</button>
           <button class="none" @click.prevent="agent.tools = []">{{ t('agent.create.tools.selectNone') }}</button>
         </div>
@@ -118,27 +118,27 @@
         <label>{{ t('agent.create.invocation') }}</label>
       </template>
       <template #content>
-        <div class="group">
+        <div class="form-field">
           <label for="manual">{{ t('agent.trigger.manual') }}</label>
           {{  t('agent.trigger.manual_description') }}
         </div>
 
-        <div class="group">
+        <div class="form-field">
           <label for="schedule">{{ t('agent.trigger.schedule') }}</label>
           <Scheduler v-model="agent.schedule" />
         </div>
 
-        <div class="group" v-if="nextRuns">
+        <div class="form-field" v-if="nextRuns">
           <label for="next">{{ t('agent.trigger.nextRuns') }}</label>
           <span v-html="nextRuns"></span>
         </div>
 
-        <div class="group">
+        <div class="form-field">
           <label for="webhook">{{ t('agent.trigger.webhook') }}</label>
           <input type="text" name="webhook" v-model="webhook" />
         </div>
 
-        <div class="group">
+        <div class="form-field">
           <label for="prompt">{{ t('agent.prompt') }}</label>
           <textarea v-model="agent.prompt" name="prompt" rows="4"></textarea>
         </div>
@@ -157,7 +157,7 @@
         </div>
       </template> -->
 
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -352,11 +352,6 @@ const save = async () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-@import '../../css/sticky-header-table.css';
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 
@@ -373,7 +368,7 @@ const save = async () => {
     font-size: 11pt;
   }
 
-  .group {
+  .form-field {
     align-items: baseline;
   }
 

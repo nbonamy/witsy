@@ -4,15 +4,15 @@
       <div class="title">{{ t(dialogTitle || 'common.chat') }}</div>
     </template>
     <template #body>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('chat.editor.title') }}</label>
         <input type="text" v-model="title" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" />
       </div>
@@ -110,8 +110,3 @@ defineExpose({
 })
 
 </script>
-
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

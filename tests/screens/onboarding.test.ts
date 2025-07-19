@@ -796,7 +796,7 @@ describe('Ollama Screen - Installation Status Management', () => {
     // Should have proper structure for status management
     expect(wrapper.find('section').exists()).toBe(true)
     expect(wrapper.find('header').exists()).toBe(true)
-    expect(wrapper.find('form').exists()).toBe(true)
+    expect(wrapper.find('.form').exists()).toBe(true)
   })
 
 })

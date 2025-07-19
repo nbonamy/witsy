@@ -1,10 +1,10 @@
 <template>
-  <div class="panel chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
+  <div class="sp-sidebar chat-sidebar" :class="{ 'manual-resize': manualResize }" :style="`flex-basis: ${visible ? width : 0}px`">
     <header>
-      <form><div class="group search">
+      <div class="form"><div class="form-field search">
         <input id="filter" v-model="filter" :placeholder="t('common.search')" @keyup="onFilterChange" />
         <BIconXCircleFill v-if="filter" class="clear-filter" @click="onClearFilter" />
-      </div></form>
+      </div></div>
       <div id="new-chat" class="icon" @click="onNewChat">
         <IconNewChat />
       </div>
@@ -176,16 +176,12 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-.panel-content {
+.split-pane {
   
-  .panel {
+  .sp-sidebar {
     flex: 0 0 0px;
     position: relative;
 
@@ -196,7 +192,7 @@ defineExpose({
     }
 
     header {
-      form {
+      .form {
         .search input {
           background-color: var(--sidebar-search-bg-color);
           border: 0.5px solid var(--sidebar-search-border-color);

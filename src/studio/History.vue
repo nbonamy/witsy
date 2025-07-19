@@ -48,9 +48,6 @@ const showContextMenu = (event: MouseEvent, msg: Message) => {
 
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 

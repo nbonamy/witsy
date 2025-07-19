@@ -1,21 +1,21 @@
 <template>
-  <div>
-    <div class="group">
+  <div class="form form-vertical form-large">
+    <div class="form-field">
       <label>{{ t('settings.engines.chatModel') }}</label>
       <div class="control-group">
         <ModelSelectPlus v-model="chat_model" :models="chat_models" :disabled="chat_models.length == 0" @change="save" />
         <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
       </div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :height="300" :disabled="vision_models.length == 0" @change="save" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.lmstudio.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.lmstudio.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
       <label>{{ t('settings.engines.disableTools') }}</label>
     </div>
@@ -97,7 +97,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

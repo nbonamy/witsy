@@ -636,15 +636,18 @@
       "title": "Document Repositories defaults"
     },
     "create": {
-      "embeddingWarning": "embedding model cannot be changed once repository is created"
+      "embeddingWarning": "embedding model cannot be changed once repository is created",
+      "title": "Create Repository"
     },
-    "repositories": {
+    "list": {
       "clickToCreate": "Click on the + button to create one.",
-      "createTitle": "Create Repository",
       "documentsCount": "No document|1 document|{count} documents",
-      "noDocuments": "You don't have any documents yet. Click on the icons above to add documents or folders.",
       "noRepositories": "You don't have any repositories yet.",
       "title": "Document Repositories"
+    },
+    "view": {
+      "noDocuments": "You don't have any documents yet. Click on the icons above to add documents or folders.",
+      "title": "Document Repository"
     }
   },
   "embedding": {
