@@ -1,7 +1,7 @@
-import { Configuration } from 'types/config'
+import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 
-export default class STTVoxtral implements STTEngine {
+export default class STTMistral implements STTEngine {
 
   config: Configuration
 
@@ -16,7 +16,7 @@ export default class STTVoxtral implements STTEngine {
   }
 
   get name(): string {
-    return 'voxtral'
+    return 'mistralai'
   }
 
   isReady(): boolean {
@@ -33,15 +33,13 @@ export default class STTVoxtral implements STTEngine {
   }
 
   requiresDownload(): boolean {
-    return STTVoxtral.requiresDownload()
+    return STTMistral.requiresDownload()
   }
-
    
   async initialize(callback?: ProgressCallback): Promise<void> {
-    callback?.({ status: 'ready', task: 'voxtral', model: this.config.stt.model })
+    callback?.({ status: 'ready', task: 'mistralai', model: this.config.stt.model })
   }
 
-   
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
     return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
   }
@@ -50,8 +48,8 @@ export default class STTVoxtral implements STTEngine {
   async transcribeFile(file: File, opts?: object): Promise<TranscribeResponse> {
     
     // Check if we have an API key
-    if (!this.config.engines.mistral?.apiKey) {
-      throw new Error('Missing API key. Please check your Voxtral configuration.')
+    if (!this.config.engines.mistralai?.apiKey) {
+      throw new Error('Missing API key. Please check your Mistral configuration.')
     }
 
     // For transcription-only models, use the transcription endpoint
@@ -75,14 +73,14 @@ export default class STTVoxtral implements STTEngine {
     const response = await fetch('https://api.mistral.ai/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.config.engines.mistral.apiKey}`,
+        'Authorization': `Bearer ${this.config.engines.mistralai.apiKey}`,
       },
       body: formData
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      throw new Error(`Voxtral API error: ${response.status} ${response.statusText} - ${errorText}`)
+      throw new Error(`Mistral API error: ${response.status} ${response.statusText} - ${errorText}`)
     }
 
     const result = await response.json()
@@ -98,14 +96,14 @@ export default class STTVoxtral implements STTEngine {
     const uploadResponse = await fetch('https://api.mistral.ai/v1/files', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.config.engines.mistral.apiKey}`,
+        'Authorization': `Bearer ${this.config.engines.mistralai.apiKey}`,
       },
       body: formData
     })
 
     if (!uploadResponse.ok) {
       const errorText = await uploadResponse.text()
-      throw new Error(`Voxtral file upload error: ${uploadResponse.status} ${uploadResponse.statusText} - ${errorText}`)
+      throw new Error(`Mistral file upload error: ${uploadResponse.status} ${uploadResponse.statusText} - ${errorText}`)
     }
 
     const uploadResult = await uploadResponse.json()
@@ -115,13 +113,13 @@ export default class STTVoxtral implements STTEngine {
     const urlResponse = await fetch(`https://api.mistral.ai/v1/files/${fileId}/url?expiry=24`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.config.engines.mistral.apiKey}`,
+        'Authorization': `Bearer ${this.config.engines.mistralai.apiKey}`,
       }
     })
 
     if (!urlResponse.ok) {
       const errorText = await urlResponse.text()
-      throw new Error(`Voxtral URL error: ${urlResponse.status} ${urlResponse.statusText} - ${errorText}`)
+      throw new Error(`Mistral URL error: ${urlResponse.status} ${urlResponse.statusText} - ${errorText}`)
     }
 
     const urlResult = await urlResponse.json()
@@ -131,7 +129,7 @@ export default class STTVoxtral implements STTEngine {
     const chatResponse = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.config.engines.mistral.apiKey}`,
+        'Authorization': `Bearer ${this.config.engines.mistralai.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -149,7 +147,7 @@ export default class STTVoxtral implements STTEngine {
               },
               {
                 type: 'text',
-                text: this.config.stt.voxtral?.prompt || 'Please transcribe this audio file.'
+                text: this.config.stt.mistralai?.prompt || 'Please transcribe this audio file.'
               }
             ]
           }
@@ -160,7 +158,7 @@ export default class STTVoxtral implements STTEngine {
 
     if (!chatResponse.ok) {
       const errorText = await chatResponse.text()
-      throw new Error(`Voxtral chat API error: ${chatResponse.status} ${chatResponse.statusText} - ${errorText}`)
+      throw new Error(`Mistral chat API error: ${chatResponse.status} ${chatResponse.statusText} - ${errorText}`)
     }
 
     const chatResult = await chatResponse.json()

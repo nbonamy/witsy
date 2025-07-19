@@ -2254,7 +2254,7 @@
       "useWebGpu": "WebGPUを使用する",
       "verificationComplete": "検証完了！",
       "verifying": "検証中: {percent}%",
-      "voxtralApiKeyReminder": "モデルペインにVoxtralのAPIキーを入力してください。"
+      "mistralApiKeyReminder": "モデルペインにMistralのAPIキーを入力してください。"
     }
   },
   "sidebar": {

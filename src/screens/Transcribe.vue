@@ -438,12 +438,11 @@ const transcribe = async (audioChunks: any[]) => {
     }
     transcription.value += response.text
 
-    // done
-    state.value = 'idle'
-
   } catch (error) {
     console.error('Error:', error)
     Dialog.alert(t('transcribe.errors.transcription'), error.message)
+  } finally {
+    state.value = 'idle'
   }
 
 }
