@@ -58,7 +58,7 @@ import Message from '../models/message'
 import Loader from './Loader.vue'
 import AttachmentView from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
-import { getMarkdownSelection } from '../services/markdown'
+// import { getMarkdownSelection } from '../services/markdown'
 
 // events
 import useEventBus from '../composables/event_bus'
@@ -181,10 +181,10 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
 }
 
 const onCopyMarkdown = (payload: { context: string, selection: string }) => {
-  if (payload.context === props.message.uuid) {
-    const selected = getMarkdownSelection(props.message.content)
-    console.log('selected', selected)
-  }
+  // if (payload.context === props.message.uuid) {
+  //   const selected = getMarkdownSelection(props.message.content)
+  //   console.log('selected', selected)
+  // }
 }
 
 const onReadAloud = async (message: Message) => {

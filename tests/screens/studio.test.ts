@@ -404,7 +404,7 @@ test('Preview', async () => {
 
   // info
   await preview.find<HTMLElement>('.icon.info').trigger('click')
-  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'prompt1',
     detail: 'Engine: openai\nModel: dall-e-3',
   }))
