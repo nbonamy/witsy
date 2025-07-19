@@ -450,18 +450,26 @@ const transcribe = async (audioChunks: any[]) => {
 
 const onKeyDown = (event: KeyboardEvent) => {
 
-  // if focus is on textarea, ignore
+  // modifiers
+  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+  const isShiftCommand = event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+
+  // check if focus is on a textarea
+  let isTextAreaFocused = false
+  let isTextAreaSelected = false
   if ((event.target as HTMLElement).nodeName === 'TEXTAREA') {
+    isTextAreaFocused = true
     const textarea = event.target as HTMLTextAreaElement
     if (textarea.selectionStart !== textarea.selectionEnd) {
-      return
+      isTextAreaSelected = true
     }
   }
 
+  // this is the only shortcut that should work when the textarea is focused
+  
+
   // process
-  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
-  const isShiftCommand = event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
-  if (event.code === 'Space') {
+  if (event.code === 'Space' && !isTextAreaFocused) {
     if (state.value !== 'recording') {
       onRecord(pushToTalk.value)
     } else if (!pushToTalk.value) {
@@ -470,18 +478,16 @@ const onKeyDown = (event: KeyboardEvent) => {
   } else if (isCommand && event.key === 'Enter') {
     event.preventDefault()
     onInsert()
-  // } else if (event.key === 'Backspace') {
-  //   transcription.value = transcription.value.slice(0, -1)
-  } else if (isCommand && event.key === 'x') {
+  } else if (isCommand && event.key === 'x' && !isTextAreaSelected) {
     onClear()
-  } else if (isCommand && event.key === 'c') {
+  } else if (isCommand && event.key === 'c' && !isTextAreaSelected) {
     onCopy()
+  } else if (isCommand && event.key === 'i') {
+    onInsert()
   } else if (isShiftCommand && event.key.toLocaleLowerCase() === 'c') {
     if (onCopy()) {
       window.api.main.close()
     }
-  } else if (isCommand && event.key === 'i') {
-    onInsert()
   }
 }
 
