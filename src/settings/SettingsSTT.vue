@@ -106,7 +106,7 @@
       <label></label>
       <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
     </div>
-    <div class="group" v-if="engine === 'voxtral'">
+    <div class="form-field" v-if="engine === 'voxtral'">
       <label></label>
       <span>{{ t('settings.voice.voxtralApiKeyReminder') }}</span>
     </div>
