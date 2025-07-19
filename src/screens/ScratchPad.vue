@@ -119,7 +119,7 @@ onMounted(() => {
     } else if (isCommand && ev.key == 'z') {
       ev.preventDefault()
       onUndo()
-    } else if ((isCommand && ev.key == 'y') || (isShiftCommand && ev.key == 'z')) {
+    } else if ((isCommand && ev.key == 'y') || (isShiftCommand && ev.key.toLocaleLowerCase() == 'z')) {
       ev.preventDefault()
       onRedo()
     } else if (isCommand && ev.key == 'r') {

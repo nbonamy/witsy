@@ -338,7 +338,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
   } else if (isCommand && ev.key == 's') {
     ev.preventDefault()
     onChat()
-  } else */if (isShiftCommand && ev.key == 's') {
+  } else */if (isShiftCommand && ev.key.toLocaleLowerCase() == 's') {
     ev.preventDefault()
     saveChat()
   }
