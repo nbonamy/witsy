@@ -2199,6 +2199,7 @@
       "groqApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Groq-API-Schlüssel im Modellbereich eingegeben haben.",
       "initializationError": "Während der Initialisierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "initializing": "Initialisiere…",
+      "mistralApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Mistral API-Schlüssel im Bereich Modelle eingeben.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren OpenAI-API-Schlüssel im Modellbereich eingegeben haben.",
       "selectModel": "Wählen Sie ein Modell aus",
@@ -2225,8 +2226,7 @@
       },
       "useWebGpu": "WebGPU verwenden",
       "verificationComplete": "Verifizierung abgeschlossen!",
-      "verifying": "Verifying: {percent}%",
-      "mistralApiKeyReminder": "Stellen Sie sicher, dass Sie Ihren Mistral API-Schlüssel im Bereich Modelle eingeben."
+      "verifying": "Verifying: {percent}%"
     }
   },
   "sidebar": {

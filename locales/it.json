@@ -2199,6 +2199,7 @@
       "groqApiKeyReminder": "Assicurati di inserire la tua chiave API Groq nel pannello Modelli.",
       "initializationError": "Si è verificato un errore durante l'inizializzazione. Riprova.",
       "initializing": "Inizializzazione…",
+      "mistralApiKeyReminder": "Assicurati di inserire la tua chiave API Mistral nel pannello Modelli.",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Assicurati di inserire la tua chiave API OpenAI nel pannello Modelli.",
       "selectModel": "Seleziona un modello",
@@ -2225,8 +2226,7 @@
       },
       "useWebGpu": "Utilizza WebGPU",
       "verificationComplete": "Verifica completata!",
-      "verifying": "Verifica: {percent}%",
-      "mistralApiKeyReminder": "Assicurati di inserire la tua chiave API Mistral nel pannello Modelli."
+      "verifying": "Verifica: {percent}%"
     }
   },
   "sidebar": {

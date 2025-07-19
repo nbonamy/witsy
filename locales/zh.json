@@ -2221,6 +2221,7 @@
       "groqApiKeyReminder": "确保你在模型面板中输入了 Groq API 密钥。",
       "initializationError": "初始化过程中出现错误。请重试。",
       "initializing": "正在初始化…",
+      "mistralApiKeyReminder": "请确保在模型面板中输入您的Mistral API密钥。",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "确保你在模型面板中输入了 OpenAI API 密钥。",
       "selectModel": "选择模型",
@@ -2247,8 +2248,7 @@
       },
       "useWebGpu": "使用 WebGPU",
       "verificationComplete": "验证完成！",
-      "verifying": "正在验证：{percent}%",
-      "mistralApiKeyReminder": "请确保在模型面板中输入您的Mistral API密钥。"
+      "verifying": "正在验证：{percent}%"
     }
   },
   "sidebar": {

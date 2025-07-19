@@ -2227,6 +2227,7 @@
       "groqApiKeyReminder": "モデルペインにGroq APIキーを入力していることを確認してください。",
       "initializationError": "初期化中にエラーが発生しました。もう一度お試しください。",
       "initializing": "初期化中…",
+      "mistralApiKeyReminder": "モデルペインにMistralのAPIキーを入力してください。",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "モデルペインにOpenAI APIキーを入力していることを確認してください。",
       "selectModel": "モデルを選択",
@@ -2253,8 +2254,7 @@
       },
       "useWebGpu": "WebGPUを使用する",
       "verificationComplete": "検証完了！",
-      "verifying": "検証中: {percent}%",
-      "mistralApiKeyReminder": "モデルペインにMistralのAPIキーを入力してください。"
+      "verifying": "検証中: {percent}%"
     }
   },
   "sidebar": {
