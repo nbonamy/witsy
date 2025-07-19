@@ -1,5 +1,5 @@
 <template>
-  <div class="chat panel-content">
+  <div class="chat split-pane">
     <ChatSidebar :chat="assistant.chat" ref="sidebar" />
     <ChatArea :chat="assistant.chat" :is-left-most="!sidebar?.isVisible()" ref="chatArea" @prompt="onSendPrompt" @stop="onStopGeneration" />
     <ChatEditor :chat="assistant.chat" :dialog-title="chatEditorTitle" :confirm-button-text="chatEditorConfirmButtonText" :on-confirm="chatEditorCallback" ref="chatEditor" />
@@ -612,12 +612,6 @@ defineExpose({
 })
 
 </script>
-
-<style>
-@import '../../css/panel-content.css';
-@import 'sweetalert2/dist/sweetalert2.css';
-@import '../../css/swal2.css';
-</style>
 
 <style scoped>
 

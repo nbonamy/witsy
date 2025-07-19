@@ -1,23 +1,23 @@
 <template>
-  <form class="tab-content vertical large">
+  <div class="form tab-content form-vertical form-large">
     <header>
       <div class="title">{{ t('settings.tabs.plugins') }}</div>
     </header>
     <main>
-      <div class="list-panel">
-        <div class="master">
-          <div class="list">
-            <div class="item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
+      <div class="master-detail">
+        <div class="md-master">
+          <div class="md-master-list">
+            <div class="md-master-list-item" v-for="plugin in plugins" :key="plugin.id" :class="{ selected: currentPlugin == plugin.id }" :data-id="plugin.id" @click="selectPlugin(plugin)">
               <img :src="plugin.logo.image" class="logo image" v-if="plugin.logo.image" />
               <component :is="plugin.logo.icon" class="logo icon" v-if="plugin.logo.icon" />
               {{ plugin.label }}
             </div>
           </div>
         </div>
-        <component :is="currentView" class="panel" ref="pluginSettings" />
+        <component :is="currentView" class="md-detail" ref="pluginSettings" />
       </div>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -98,7 +98,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

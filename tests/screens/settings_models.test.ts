@@ -62,8 +62,8 @@ beforeEach(async () => {
 
 test('should render', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  expect(tab.find('.list-panel').exists()).toBeTruthy()
-  expect(tab.findAll('.list-panel .master .list .item').length).toBe(14)
+  expect(tab.find('.master-detail').exists()).toBeTruthy()
+  expect(tab.findAll('.master-detail .md-master-list .md-master-list-item').length).toBe(14)
   expect(tab.findComponent({ name: 'SettingsOpenAI' }).exists()).toBeTruthy()
 })
 
@@ -91,7 +91,7 @@ test('openai settings', async () => {
 
 test('anthropic settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(3)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(3)').trigger('click')
   const anthropic = tab.findComponent({ name: 'SettingsAnthropic' })
   await anthropic.find('input').setValue('api-key')
   await anthropic.find('input').trigger('blur')
@@ -111,7 +111,7 @@ test('anthropic settings', async () => {
 
 test('google settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(4)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(4)').trigger('click')
   await tab.vm.$nextTick()
   const google = tab.findComponent({ name: 'SettingsGoogle' })
   await google.find('input').setValue('api-key')
@@ -131,7 +131,7 @@ test('google settings', async () => {
 
 test('xai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(5)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(5)').trigger('click')
   await tab.vm.$nextTick()
   const xai = tab.findComponent({ name: 'SettingsXAI' })
   await xai.find('input').setValue('api-key')
@@ -151,7 +151,7 @@ test('xai settings', async () => {
 
 test('meta settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(6)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(6)').trigger('click')
   await tab.vm.$nextTick()
   const meta = tab.findComponent({ name: 'SettingsMeta' })
   await meta.find('input').setValue('api-key')
@@ -171,7 +171,7 @@ test('meta settings', async () => {
 
 test('ollama settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(7)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(7)').trigger('click')
   await tab.vm.$nextTick()
   const ollama = tab.findComponent({ name: 'SettingsOllama' })
   await ollama.find('input[name=baseURL]').setValue('base-url')
@@ -191,7 +191,7 @@ test('ollama settings', async () => {
 
 test('lmstudio settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(8)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(8)').trigger('click')
   await tab.vm.$nextTick()
   const lmstudio = tab.findComponent({ name: 'SettingsLMStudio' })
   await lmstudio.find('input[name=baseURL]').setValue('base-url')
@@ -212,7 +212,7 @@ test('lmstudio settings', async () => {
 
 test('mistralai settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(9)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(9)').trigger('click')
   await tab.vm.$nextTick()
   const mistralai = tab.findComponent({ name: 'SettingsMistralAI' })
   await mistralai.find('input').setValue('api-key')
@@ -232,7 +232,7 @@ test('mistralai settings', async () => {
 
 test('azure settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(10)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(10)').trigger('click')
   await tab.vm.$nextTick()
   const azure = tab.findComponent({ name: 'SettingsAzure' })
   expect(azure.exists()).toBeTruthy()
@@ -240,7 +240,7 @@ test('azure settings', async () => {
 
 test('deepseek settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(11)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(11)').trigger('click')
   await tab.vm.$nextTick()
   const deepseek = tab.findComponent({ name: 'SettingsDeepSeek' })
   await deepseek.find('input').setValue('api-key')
@@ -260,7 +260,7 @@ test('deepseek settings', async () => {
 
 test('openrouter settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(12)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(12)').trigger('click')
   await tab.vm.$nextTick()
   const openrouter = tab.findComponent({ name: 'SettingsOpenRouter' })
   await openrouter.find('input').setValue('api-key')
@@ -280,7 +280,7 @@ test('openrouter settings', async () => {
 
 test('groq settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(13)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(13)').trigger('click')
   await tab.vm.$nextTick()
   const groq = tab.findComponent({ name: 'SettingsGroq' })
   await groq.find('input').setValue('api-key')
@@ -300,7 +300,7 @@ test('groq settings', async () => {
 
 test('cerebras settings', async () => {
   const tab = await switchToTab(wrapper, llmIndex)
-  await tab.find('.list-panel .list .item:nth-child(14)').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item:nth-child(14)').trigger('click')
   await tab.vm.$nextTick()
   const cerebras = tab.findComponent({ name: 'SettingsCerebras' })
   await cerebras.find('input').setValue('api-key')

@@ -1,12 +1,12 @@
 <template>
-  <form class="tab-content vertical large">
+  <div class="tab-content form form-vertical form-large">
     <header>
       <div class="title">{{ t('settings.tabs.general') }}</div>
     </header>
     <main>
-      <div class="group appearance">
+      <div class="form-field appearance">
         <label>{{ t('settings.general.theme') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <div @click="setAppearanceTheme('light')" :class="{ selected: appearance == 'light' }">
             <img src="/assets/appearance-light.png" />
             {{ t('settings.general.themes.light') }}
@@ -21,42 +21,42 @@
           </div>
         </div>
       </div>
-      <div class="group lightTint" v-if="appearanceTheme.getTheme() === 'light'">
+      <div class="form-field lightTint" v-if="appearanceTheme.getTheme() === 'light'">
         <label>{{ t('settings.general.lightTint') }}</label>
         <select v-model="lightTint" @change="onTintChange">
           <option value="white">{{ t('settings.general.tints.white') }}</option>
           <option value="gray">{{ t('settings.general.tints.gray') }}</option>
         </select>
       </div>
-      <div class="group darkTint" v-if="appearanceTheme.getTheme() === 'dark'">
+      <div class="form-field darkTint" v-if="appearanceTheme.getTheme() === 'dark'">
         <label>{{ t('settings.general.darkTint') }}</label>
         <select v-model="darkTint" @change="onTintChange">
           <option value="black">{{ t('settings.general.tints.black') }}</option>
           <option value="blue">{{ t('settings.general.tints.blue') }}</option>
         </select>
       </div>
-      <div class="group localeUI">
+      <div class="form-field localeUI">
         <label>{{ t('settings.general.localeUI') }}</label>
         <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
       </div>
-      <div class="group reset-tips">
+      <div class="form-field reset-tips">
         <label>{{ t('settings.general.resetTips') }}</label>
         <button @click.prevent="onResetTips">{{ t('common.reset') }}</button>
       </div>
-      <div class="group horizontal run-at-login">
+      <div class="form-field horizontal run-at-login">
         <input type="checkbox" v-model="runAtLogin" @change="save" />
         <label>{{ t('settings.general.runAtLogin') }}</label>
       </div>
-      <div class="group horizontal hide-on-startup">
+      <div class="form-field horizontal hide-on-startup">
         <input type="checkbox" v-model="hideOnStartup" @change="save" />
         <label>{{ t('settings.general.hideOnStartup') }}</label>
       </div>
-      <div class="group horizontal keep-running">
+      <div class="form-field horizontal keep-running">
         <input type="checkbox" v-model="keepRunning" @change="save" />
         <label>{{ t('settings.general.keepInStatusBar') }}</label>
       </div>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -125,18 +125,14 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-dialog.settings .content {
+dialog.settings .sp-main {
   width: 480px;
 }
 
-form .group label {
+.form .form-field label {
   min-width: 170px;
 }
 
@@ -145,7 +141,7 @@ form .group label {
   margin-top: 0px;
 }
 
-.appearance .subgroup {
+.appearance .form-subgroup {
   margin-top: 1rem;
   display: flex;
   flex-direction: row;
@@ -153,7 +149,7 @@ form .group label {
   gap: 3rem;
 }
 
-.appearance .subgroup div {
+.appearance .form-subgroup div {
   display: flex;
   flex-direction: column;
   align-items: center;

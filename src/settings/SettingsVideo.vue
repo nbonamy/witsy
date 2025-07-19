@@ -1,30 +1,30 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
     
     <div class="description">
       {{ t('settings.plugins.video.description') }}
     </div>
     
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
     
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.video.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
       </select>
     </div>
 
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.apiKey') }}</label>
         <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
         <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.video.videoModel') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
         </Combobox>
@@ -113,7 +113,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

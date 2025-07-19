@@ -636,15 +636,18 @@
       "title": "Padrões de Repositórios de Documentos"
     },
     "create": {
-      "embeddingWarning": "o modelo de embedding não pode ser alterado após a criação do repositório"
+      "embeddingWarning": "o modelo de embedding não pode ser alterado após a criação do repositório",
+      "title": "Criar Repositório"
     },
-    "repositories": {
+    "list": {
       "clickToCreate": "Clique no botão + para criar um.",
-      "createTitle": "Criar Repositório",
       "documentsCount": "Nenhum documento|1 documento|{count} documentos",
-      "noDocuments": "Você ainda não tem nenhum documento. Clique nos ícones acima para adicionar documentos ou pastas.",
       "noRepositories": "Você ainda não tem nenhum repositório.",
       "title": "Repositórios de Documentos"
+    },
+    "view": {
+      "noDocuments": "Você ainda não tem nenhum documento. Clique nos ícones acima para adicionar documentos ou pastas.",
+      "title": "Repositório de Documentos"
     }
   },
   "embedding": {

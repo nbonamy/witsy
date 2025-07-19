@@ -1,5 +1,5 @@
 <template>
-  <form class="mcp tab-content vertical large" @keyup.escape.prevent="onEdit(null)">
+  <div class="form mcp tab-content form-vertical form-large" @keyup.escape.prevent="onEdit(null)">
     <header v-if="selected">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ t('mcp.serverEditor.title') }}</div>
@@ -13,7 +13,7 @@
     <main class="editor sliding-pane" :class="{ visible: selected }"> 
       <McpServerEditor ref="editor" :type="type" :server="selected" :apiKey="apiKey" @cancel="onEdit(null)" @save="onEdited" @install="onInstall" />
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -164,10 +164,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

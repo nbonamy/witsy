@@ -98,9 +98,6 @@ const onKeyDown = (event: KeyboardEvent) => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

@@ -43,7 +43,7 @@
 
       <MenuBarItem action="docrepo" :active="mode === 'docrepo'" @click="emit('change', 'docrepo')">
         <BIconDatabase />
-        <span>{{ t('docRepo.repositories.title') }}</span>
+        <span>{{ t('docRepo.list.title') }}</span>
       </MenuBarItem>
 
       <MenuBarItem action="computer-use" :active="mode === 'computer-use'" @click="emit('change', 'computer-use')" v-if="hasComputerUse">

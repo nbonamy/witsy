@@ -1,49 +1,49 @@
 <template>
-  <form class="tab-content large">
+  <div class="form tab-content form-large">
     <header>
       <div class="title">{{ t('settings.tabs.shortcuts') }}</div>
     </header>
     <main>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.quickPrompt') }}</label>
         <InputShortcut v-model="prompt" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.newChat') }}</label>
         <InputShortcut v-model="chat" @change="save "/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.scratchpad') }}</label>
         <InputShortcut v-model="scratchpad" @change="save "/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.aiCommands') }}</label>
         <InputShortcut v-model="command" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <span>{{ t('settings.shortcuts.aiCommandsUsage') }}</span>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.designStudio') }}</label>
         <InputShortcut v-model="studio" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.readAloud') }}</label>
         <InputShortcut v-model="readaloud" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <span>{{ t('settings.shortcuts.readAloudUsage') }}</span>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.dictation') }}</label>
         <InputShortcut v-model="transcribe" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.shortcuts.voiceMode') }}</label>
         <InputShortcut v-model="realtime" @change="save" />
       </div>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -90,10 +90,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -103,7 +99,7 @@ defineExpose({ load })
   
   max-width: 600px;
   
-  .group {
+  .form-field {
     label {
       width: var(--label-width);
       font-weight: bold;

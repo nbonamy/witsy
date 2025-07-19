@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
     <div class="description">
       <b>{{ t('settings.plugins.python.warning') }}</b> {{ t('settings.plugins.python.description1') }}
       {{ t('settings.plugins.python.description2') }}
       <b>{{ t('settings.plugins.python.useAtOwnRisk') }}</b>!
     </div>
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.python.binaryPath') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <input type="text" v-model="binpath" @change="save">
         <div class="actions">
           <button @click.prevent="search" class="search">{{ t('settings.plugins.python.search') }}</button>
@@ -62,10 +62,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

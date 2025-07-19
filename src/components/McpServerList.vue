@@ -14,21 +14,21 @@
         <span v-else><br/>{{ t('settings.mcp.noTools') }}</span>
       </b></span>
     </div-->
-    <!-- <div class="group horizontal">
+    <!-- <div class="form-field horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div> -->
-    <div class="servers list-large-with-header">
-      <div class="header">
+    <div class="servers panel">
+      <div class="panel-header">
         <label>{{ t('settings.mcp.mcpServers') }}</label>
         <Spinner v-if="loading" />
         <BIconPlusLg class="icon add large" ref="addButton" @click.prevent="onAdd"></BIconPlusLg>
         <BIconArrowClockwise class="icon reload" @click.prevent="onReload" />
         <BIconArrowRepeat class="icon restart" @click.prevent="onRestart" />
       </div>
-      <div class="list" v-if="servers.length">
+      <div class="panel-body" v-if="servers.length">
         <template v-for="server in servers" :key="server.uuid">
-          <div class="item">
+          <div class="panel-item">
 
             <div class="icon leading center">
               <a @click.prevent="showLogs(server)" v-if="hasLogs(server)">{{ getStatus(server) }}</a>
@@ -52,7 +52,7 @@
           </div>
         </template>
       </div>
-      <div class="empty" v-else>
+      <div class="panel-empty" v-else>
         {{ t('settings.mcp.noServersFound') }}
       </div>
     </div>
@@ -317,11 +317,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 

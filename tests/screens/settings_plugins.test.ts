@@ -80,12 +80,12 @@ beforeEach(async () => {
 
 test('should render', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  expect(tab.find('.list-panel').exists()).toBeTruthy()
+  expect(tab.find('.master-detail').exists()).toBeTruthy()
 })
 
 test('image settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=image]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=image]').trigger('click')
   const image = tab.findComponent({ name: 'SettingsImage' })
   expect(image.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(image.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -130,14 +130,14 @@ test('image settings', async () => {
 
 test('image settings reload', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=image]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=image]').trigger('click')
   const image = tab.findComponent({ name: 'SettingsImage' })
   expect(image.vm.model).toBe('falai-image2')
 })
 
 test('video settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=video]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=video]').trigger('click')
   const video = tab.findComponent({ name: 'SettingsVideo' })
   expect(video.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(video.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -165,14 +165,14 @@ test('video settings', async () => {
 
 test('video settings reload', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=video]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=video]').trigger('click')
   const video = tab.findComponent({ name: 'SettingsVideo' })
   expect(video.vm.model).toBe('falai-video2')
 })
 
 test('browse settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=browse').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=browse').trigger('click')
   const browse = tab.findComponent({ name: 'SettingsBrowse' })
   expect(browse.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(browse.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -182,7 +182,7 @@ test('browse settings', async () => {
 
 test('youtube settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=youtube]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=youtube]').trigger('click')
   const youtube = tab.findComponent({ name: 'SettingsYouTube' })
   expect(youtube.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(youtube.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(true)
@@ -192,7 +192,7 @@ test('youtube settings', async () => {
 
 test('search settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=search]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=search]').trigger('click')
   const tavily = tab.findComponent({ name: 'SettingsSearch' })
   expect(tavily.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(tavily.find<HTMLInputElement>('input[name=enabled]').element.checked).toBe(false)
@@ -205,7 +205,7 @@ test('search settings', async () => {
 test('memory settings', async () => {
   
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=memory]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=memory]').trigger('click')
   const memory = tab.findComponent({ name: 'SettingsMemory' })
   expect(memory.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(memory.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
@@ -227,7 +227,7 @@ test('memory settings', async () => {
 
 test('python settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=python]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=python]').trigger('click')
   const python = tab.findComponent({ name: 'SettingsPython' })
   expect(python.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(python.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)
@@ -246,7 +246,7 @@ test('python settings', async () => {
 
 test('filesystem settings', async () => {
   const tab = await switchToTab(wrapper, pluginIndex)
-  await tab.find('.list-panel .list .item[data-id=filesystem]').trigger('click')
+  await tab.find('.master-detail .md-master-list .md-master-list-item[data-id=filesystem]').trigger('click')
   const filesystem = tab.findComponent({ name: 'SettingsFilesystem' })
   expect(filesystem.find('input[type=checkbox]').exists()).toBeTruthy()
   expect(filesystem.find<HTMLInputElement>('input[type=checkbox]').element.checked).toBe(false)

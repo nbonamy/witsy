@@ -81,21 +81,21 @@ test('Settings LLM basic functionality', async () => {
   
   const manager = LlmFactory.manager(store.config)
   const tab = await switchToTab(wrapper, tabs.indexOf('settingsLLM'))
-  expect(tab.findAll('.group')).toHaveLength(6) // Updated to account for new groups
-  expect(tab.findAll('.group.localeLLM select option')).toHaveLength(21)
+  expect(tab.findAll('.form-field')).toHaveLength(7)
+  expect(tab.findAll('.form-field.localeLLM select option')).toHaveLength(21)
   expect(findModelSelectoPlus(wrapper).exists()).toBe(true)
   expect(store.config.prompt.engine).toBe('')
   expect(store.config.prompt.model).toBe('')
-  expect(tab.findAll('.group.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
+  expect(tab.findAll('.form-field.quick-prompt select.engine option')).toHaveLength(manager.getStandardEngines().length+1)
 
   // set default prompt
   expect(store.config.llm.instructions).toBe('standard')
-  tab.find('.group.chat-prompt select').setValue('playful')
+  tab.find('.form-field.chat-prompt select').setValue('playful')
   expect(store.config.llm.instructions).toBe('playful')
   vi.clearAllMocks()
 
   // set prompt engine
-  tab.find('.group.quick-prompt select.engine').setValue('anthropic')
+  tab.find('.form-field.quick-prompt select.engine').setValue('anthropic')
   await wrapper.vm.$nextTick()
   expect(store.config.llm.forceLocale).toBe(false)
   expect(store.config.prompt.engine).toBe('anthropic')
@@ -113,30 +113,30 @@ test('Settings LLM basic functionality', async () => {
   // set llm locale to french: translation exists so forceLocale is false
   expect(store.config.llm.locale).toBe('')
   expect(store.config.llm.forceLocale).toBe(false)
-  tab.find('.group.localeLLM select').setValue('fr-FR')
+  tab.find('.form-field.localeLLM select').setValue('fr-FR')
   expect(store.config.llm.locale).toBe('fr-FR')
   expect(store.config.llm.forceLocale).toBe(false)
   vi.clearAllMocks()
 
   // set forceLocale to true
-  tab.find('.group.localeLLM input').setValue(true)
+  tab.find('.form-field.localeLLM input').setValue(true)
   expect(store.config.llm.forceLocale).toBe(true)
   vi.clearAllMocks()
 
   // set it back to false
-  tab.find('.group.localeLLM input').setValue(false)
+  tab.find('.form-field.localeLLM input').setValue(false)
   expect(store.config.llm.forceLocale).toBe(false)
   vi.clearAllMocks()
 
   // set llm locale to spanish: translation does not exist so forceLocale is true
   expect(store.config.llm.locale).not.toBe('es-ES')
-  tab.find('.group.localeLLM select').setValue('es-ES')
+  tab.find('.form-field.localeLLM select').setValue('es-ES')
   expect(store.config.llm.locale).toBe('es-ES')
   expect(store.config.llm.forceLocale).toBe(true)
   vi.clearAllMocks()
 
   expect(store.config.llm.conversationLength).not.toBe(10)
-  tab.find('.group.length input').setValue(10)
+  tab.find('.form-field.length input').setValue(10)
   expect(store.config.llm.conversationLength).toBe(10)
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
@@ -162,7 +162,7 @@ test('Settings LLM custom instructions initialization', async () => {
   expect(buttons[2].attributes('disabled')).toBeDefined()
   
   // Instructions dropdown should only have default options
-  const options = tab.find('.group.chat-prompt select').findAll('option')
+  const options = tab.find('.form-field.chat-prompt select').findAll('option')
   expect(options).toHaveLength(7) // 7 default instruction types
 })
 
@@ -237,7 +237,7 @@ test('Settings LLM custom instruction appears in dropdown', async () => {
   await wrapper.vm.$nextTick()
   
   // Check that custom instruction appears in dropdown
-  const options = tab.find('.group.chat-prompt select').findAll('option')
+  const options = tab.find('.form-field.chat-prompt select').findAll('option')
   expect(options).toHaveLength(8) // 7 default + 1 custom
   
   const customOption = options.find(option => option.attributes('value') === 'custom1')
@@ -264,7 +264,7 @@ test('Settings LLM edit/delete buttons enabled for custom instruction', async ()
   await wrapper.vm.$nextTick()
   
   // Set the select value to custom instruction
-  await tab.find('.group.chat-prompt select').setValue('custom1')
+  await tab.find('.form-field.chat-prompt select').setValue('custom1')
   await wrapper.vm.$nextTick()
   
   const buttons = tab.findAll('.actions button')
@@ -293,7 +293,7 @@ test('Settings LLM edit custom instruction', async () => {
   await wrapper.vm.$nextTick()
   
   // Set the select value to custom instruction
-  await tab.find('.group.chat-prompt select').setValue('custom1')
+  await tab.find('.form-field.chat-prompt select').setValue('custom1')
   await wrapper.vm.$nextTick()
   
   // Click Edit button
@@ -325,7 +325,7 @@ test('Settings LLM delete custom instruction with confirmation', async () => {
   await wrapper.vm.$nextTick()
   
   // Set the select value to custom instruction
-  await tab.find('.group.chat-prompt select').setValue('custom1')
+  await tab.find('.form-field.chat-prompt select').setValue('custom1')
   await wrapper.vm.$nextTick()
   
   // Mock dialog confirmation
@@ -370,7 +370,7 @@ test('Settings LLM delete custom instruction canceled', async () => {
   await wrapper.vm.$nextTick()
   
   // Set the select value to custom instruction
-  await tab.find('.group.chat-prompt select').setValue('custom1')
+  await tab.find('.form-field.chat-prompt select').setValue('custom1')
   await wrapper.vm.$nextTick()
   
   // Mock dialog cancellation
@@ -397,7 +397,7 @@ test('Settings LLM edit/delete disabled for default instructions', async () => {
   const defaultInstructions = ['standard', 'structured', 'playful', 'empathic', 'uplifting', 'reflective', 'visionary']
   
   for (const instruction of defaultInstructions) {
-    await tab.find('.group.chat-prompt select').setValue(instruction)
+    await tab.find('.form-field.chat-prompt select').setValue(instruction)
     await wrapper.vm.$nextTick()
     
     const buttons = tab.findAll('.actions button')
@@ -473,7 +473,7 @@ test('Settings LLM edit default instruction', async () => {
   const settingsComponent = wrapper.getComponent({ ref: 'settingsLLM' })
   
   // Set to standard instruction
-  await tab.find('.group.chat-prompt select').setValue('standard')
+  await tab.find('.form-field.chat-prompt select').setValue('standard')
   await wrapper.vm.$nextTick()
   
   // Click Edit button for default instruction

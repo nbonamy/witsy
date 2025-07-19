@@ -17,12 +17,10 @@
       <Done v-if="step === 8" />
     </main>
 
-    <footer>
-      <form class="large">
-        <button v-if="step !== 1" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
-        <button v-if="step !== 8" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
-        <button v-if="step === 8" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
-      </form>
+    <footer class="form form-large">
+      <button v-if="step !== 1" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
+      <button v-if="step !== 8" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
+      <button v-if="step === 8" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
     </footer>
 
   </div>
@@ -88,9 +86,6 @@ const onNext = async () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -186,14 +181,12 @@ const onNext = async () => {
 
   footer {
     width: 100%;
-    form {
-      display: flex;
-      button {
-        outline: none;
-      }
-      .next, .last {
-        margin-left: auto;
-      }
+    display: flex;
+    button {
+      outline: none;
+    }
+    .next, .last {
+      margin-left: auto;
     }
   }
 }

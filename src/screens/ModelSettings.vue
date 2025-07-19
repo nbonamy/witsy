@@ -1,15 +1,15 @@
 <template>
   <div class="model-settings">
-    <form class="vertical">
-      <div class="group">
+    <div class="form form-vertical">
+      <div class="form-field">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelectPlus v-model="model" :caps-hover-only="true" :engine="engine" @change="onChangeModel"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.plugins') }}</label>
         <select name="plugins" v-model="disableTools" @change="onChangeTools">
           <option :value="false">{{ t('common.enabled') }}</option>
@@ -21,15 +21,15 @@
           <div style="color: var(--dimmed-text-color)" v-if="areAllToolsEnabled(tools)">&nbsp;{{ t('modelSettings.allToolsEnabled') }}</div>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.locale') }}</label>
         <LangSelect name="locale" v-model="locale" default-text="modelSettings.localeDefault" @change="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.prompt') }}</label>
         <textarea name="instructions" v-model="instructions" :placeholder="t('modelSettings.promptPlaceholder')" rows="4" @change="save"></textarea>
       </div>
-      <div class="group" v-if="isReasoningFlagSupported">
+      <div class="form-field" v-if="isReasoningFlagSupported">
         <label>{{ t('modelSettings.extendedThinking') }}</label>
         <select name="reasoning" v-model="reasoning" @change="save">
           <option :value="undefined">{{ t('common.default') }}</option>
@@ -37,7 +37,7 @@
           <option :value="false">{{ t('common.disabled') }}</option>
         </select>
       </div>
-      <div class="group" v-if="isReasoningEffortSupported">
+      <div class="form-field" v-if="isReasoningEffortSupported">
         <label>{{ t('modelSettings.reasoningEffort') }}</label>
         <select name="reasoningEffort" v-model="reasoningEffort" @change="save">
           <option :value="undefined">{{ t('common.default') }}</option>
@@ -53,35 +53,35 @@
           {{ t('modelSettings.advancedSettings') }}
         </span>
       </div>
-      <div class="group" v-if="showAdvanced">
+      <div class="form-field" v-if="showAdvanced">
         <label>{{ t('modelSettings.streaming') }}</label>
         <select name="streaming" v-model="disableStreaming" @change="save">
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
         </select>
       </div>
-      <div class="group" v-if="showAdvanced && isContextWindowSupported">
+      <div class="form-field" v-if="showAdvanced && isContextWindowSupported">
         <label>{{ t('modelSettings.contextWindowSize') }}</label>
         <input type="text" name="contextWindowSize" v-model="contextWindowSize" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="showAdvanced && isMaxTokensSupported">
+      <div class="form-field" v-if="showAdvanced && isMaxTokensSupported">
         <label>{{ t('modelSettings.maxCompletionTokens') }}</label>
         <input type="text" name="maxTokens" v-model="maxTokens" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="showAdvanced && isTemperatureSupported">
+      <div class="form-field" v-if="showAdvanced && isTemperatureSupported">
         <label>{{ t('modelSettings.temperature') }}</label>
         <input type="text" name="temperature" v-model="temperature" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="showAdvanced && isTopKSupported">
+      <div class="form-field" v-if="showAdvanced && isTopKSupported">
         <label>{{ t('modelSettings.topK') }}</label>
         <input type="text" name="top_k" v-model="top_k" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
-      <div class="group" v-if="showAdvanced && isTopPSupported">
+      <div class="form-field" v-if="showAdvanced && isTopPSupported">
         <label>{{ t('modelSettings.topP') }}</label>
         <input type="text" name="top_p" v-model="top_p" :placeholder="t('modelSettings.defaultModelValue')" @change="save"/>
       </div>
 
-      <div class="group custom" v-if="showAdvanced && modelHasCustomParams">
+      <div class="form-field custom" v-if="showAdvanced && modelHasCustomParams">
         <label>{{ t('modelSettings.customParams') }}</label>
         <VariableTable
             :variables="customParams"
@@ -93,22 +93,19 @@
           />
       </div>
 
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.defaultForModel') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
           <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
           <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">{{ t('common.clear') }}</button>
         </div>
       </div>
-      <div class="group" v-if="engine === 'ollama'">
+      <div class="form-field" v-if="engine === 'ollama'">
         <label>{{ t('modelSettings.createNewModel') }}</label>
         <button type="button" name="create" @click="onCreateOllamaModel" :disabled="!canCreateOllamaModel">{{ t('common.create') }}</button>
       </div>
-      <div class="group">
-        <a href="#" @click="openDebugConsole()">{{ t('menu.view.debug') }}</a>
-      </div>
-    </form>
+    </div>
 
     <ToolSelector ref="selector" :tools="tools" @save="onSaveTools" />
     <VariableEditor ref="editor" id="model-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
@@ -538,15 +535,7 @@ const onCreateOllamaModel = async () => {
 
 }
 
-const openDebugConsole = () => {
-  window.api.debug.showConsole()
-}
-
 </script>
-
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -557,7 +546,7 @@ const openDebugConsole = () => {
   display: flex;
   flex-direction: column;
 
-  form {
+  .form {
     padding: 16px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -571,7 +560,7 @@ const openDebugConsole = () => {
       margin-bottom: 4px;
     }
 
-    .subgroup {
+    .form-subgroup {
       white-space: nowrap;
     }
 

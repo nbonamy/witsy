@@ -2,11 +2,9 @@
   <Teleport to="body" :disabled="!teleport">
     <Overlay @click="onOverlay" />
     <div class="context-menu" :style="position" @keydown="onKeyDown" @keyup="onKeyUp">
-      <form v-if="showFilter">
-        <div class="group filter">
-          <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
-        </div>
-      </form>
+      <div class="filter" v-if="showFilter">
+        <input v-model="filter" :placeholder="t('common.search')" autofocus="true" @keydown.stop="onKeyDown" @keyup.stop="onKeyUp" />
+      </div>
       <div class="actions" ref="list">
         <template v-for="action in visibleActions" :key="action.action">
           <div class="item separator disabled" v-if="action.separator">
@@ -212,9 +210,6 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -290,19 +285,22 @@ const scrollToBeVisible = function (ele: HTMLElement, container: HTMLElement) {
   border-radius: 4px;
 }
 
-form {
+.filter {
+  
   position: static;
-}
+  padding: 0.25rem;
+  padding-bottom: 0.5rem;
+  width: calc(100% - 1rem);
 
-form .group input {
-  background-color: var(--context-menu-filter-bg-color);
-  color: var(--context-menu-filter-text-color);
-  border-radius: 6px;
+  input {
+    background-color: var(--context-menu-filter-bg-color);
+    color: var(--context-menu-filter-text-color);
+    border-radius: 6px;
 
-}
-
-form .group input:focus {
-  outline-width: 1px; 
+    &:focus {
+      outline-width: 1px;
+    }
+  }
 }
 
 </style>
