@@ -177,7 +177,9 @@ export const loadSettings = (source: App|string): Configuration => {
     for (const engine of Object.keys(jsonConfig.engines)) {
 
       // initialize models
-      jsonConfig.engines[engine].models = { chat: [] } 
+      if (!jsonConfig.engines[engine].models) {
+        jsonConfig.engines[engine].models = { chat: [] } 
+      }
 
       // now load the models file
       const engineConfigFile = engineConfigFilePath(source, engine)
