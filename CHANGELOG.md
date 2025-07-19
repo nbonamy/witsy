@@ -9,7 +9,6 @@ All notable changes to this project will be documented in this file.
 - Backup/Restore of data and settings
 - Onboarding experience
 - Japanese localization (https://github.com/nbonamy/witsy/pull/326)
-- Add Voxtral (Mistral) as STT provider (https://github.com/nbonamy/witsy/issues/330) (https://github.com/nbonamy/witsy/pull/337)
 
 ### Changed
 - Document Repository UI update 
