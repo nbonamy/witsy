@@ -295,14 +295,17 @@ declare global {
       userDataPath: string
       on: (signal: string, callback: (value: any) => void) => void
       off: (signal: string, callback: (value: any) => void) => void
-      setAppearanceTheme(theme: string): void
-      showAbout(): void
-      getAssetPath(assetPath: string): string
-      showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
-      listFonts(): string[]
-      fullscreen(window: string, state: boolean): void
+      app: {
+        setAppearanceTheme(theme: string): void
+        showAbout(): void
+        getAssetPath(assetPath: string): string
+        showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
+        listFonts(): string[]
+        fullscreen(window: string, state: boolean): void
+      }
       main: {
         setMode(mode: MainWindowMode): void
+        setContextMenuContext(id: string): void
         close(): void
       }
       debug: {

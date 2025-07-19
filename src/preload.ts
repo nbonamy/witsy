@@ -29,13 +29,17 @@ contextBridge.exposeInMainWorld(
         ipcRenderer.removeAllListeners(signal)
       }
     },
-    setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync(IPC.APP.SET_APPEARANCE_THEME, theme) },
-    showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
-    listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },
-    showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
-    getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },
+    app: {
+      setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync(IPC.APP.SET_APPEARANCE_THEME, theme) },
+      showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
+      listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },
+      showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
+      getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },
+      fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send(IPC.APP.FULLSCREEN, { window, state }) },
+    },
     main: {
       setMode: (mode: MainWindowMode): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_MODE, mode) },
+      setContextMenuContext: (id: string): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.SET_CONTEXT_MENU_CONTEXT, id) },
       close: (): void => { return ipcRenderer.send(IPC.MAIN_WINDOW.CLOSE) },
     },
     debug: {
@@ -57,7 +61,6 @@ contextBridge.exposeInMainWorld(
       get: (): boolean => { return ipcRenderer.sendSync(IPC.APP.RUN_AT_LOGIN_GET).openAtLogin },
       set: (state: boolean): void => { return ipcRenderer.send(IPC.APP.RUN_AT_LOGIN_SET, state) }
     },
-    fullscreen: (window: string, state: boolean): void => { return ipcRenderer.send(IPC.APP.FULLSCREEN, { window, state }) },
     base64: {
       encode: (data: string): string => { return Buffer.from(data).toString('base64') },
       decode: (data: string): string => { return Buffer.from(data, 'base64').toString() },

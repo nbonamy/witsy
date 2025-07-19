@@ -1,7 +1,7 @@
 
 import { MainWindowMode } from '../../types/index';
 import { CreateWindowOpts } from '../../types/window';
-import { app, BrowserWindow, Menu, MenuItem, Notification } from 'electron';
+import { app, BrowserWindow, ContextMenuParams, Menu, MenuItem, Notification } from 'electron';
 import { electronStore, createWindow, titleBarOptions, ensureOnCurrentScreen, undockWindow } from './index';
 import { loadSettings, saveSettings } from '../config';
 import { useI18n } from '../i18n';
@@ -9,8 +9,9 @@ import { useI18n } from '../i18n';
 const storeBoundsId = 'main.bounds'
 
 let firstOpen = true;
-export let mainWindow: BrowserWindow = null;
+let contextMenuContext: string | null = null;
 let mainWindowMode: MainWindowMode = 'none';
+export let mainWindow: BrowserWindow = null;
 
 export const getMainWindowMode = (): MainWindowMode => mainWindowMode
 
@@ -22,6 +23,10 @@ export const mainWindowCanDictate = (): boolean => {
 
 export const setMainWindowMode = (mode: MainWindowMode): void => {
   mainWindowMode = mode;
+}
+
+export const setMainContextMenuContext = (id: string | null): void => {
+  contextMenuContext = id;
 }
 
 export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
@@ -51,13 +56,44 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
     ...opts,
   });
 
-  // spellchecker context menu
-  // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
-  if (process.platform !== 'darwin') {
-    mainWindow.webContents.on('context-menu', (event, params) => {
+  mainWindow.webContents.on('context-menu', (event, params: ContextMenuParams) => {
     
-      // init
-      const menu = new Menu();
+    // init
+    const menu = new Menu();
+    menu.addListener('menu-will-close', () => {
+      setTimeout(() => {
+        contextMenuContext = null;
+      }, 500);
+    })
+
+    // if we have a selection add options
+    if (contextMenuContext && params.selectionText.length > 0) {
+
+      menu.append(new MenuItem({
+        label: useI18n(app)('common.copy'),
+        click: () => mainWindow.webContents.copy(),
+      }));
+
+      // menu.append(new MenuItem({
+      //   label: useI18n(app)('common.copyMd'),
+      //   click: () => mainWindow.webContents.send('copy-as-markdown', { context: contextMenuContext, selection: params.selectionText }),
+      // }));
+
+      // Add a paste option
+      menu.append(new MenuItem({
+        label: useI18n(app)('tray.menu.readAloud'),
+        click: () => mainWindow.webContents.send('read-aloud-selection', { context: contextMenuContext, selection: params.selectionText }),
+      }));
+
+      menu.append(new MenuItem({
+        type: 'separator',
+      }));
+
+    }
+
+    // spellchecker context menu
+    // not reliable in macOS so disabled there (https://github.com/electron/electron/issues/24455)
+    if (process.platform !== 'darwin') {
 
       // Add each spelling suggestion
       for (const suggestion of params.dictionarySuggestions) {
@@ -76,9 +112,20 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
           })
         )
       }
+
+    }
+
+    // if last item is separator, remove it
+    if (menu.items.length > 0 && menu.items[menu.items.length - 1].type === 'separator') {
+      menu.items.pop();
+    }
+    
+    // only if populated
+    if (menu.items.length > 0) {
       menu.popup();
-    })
-  }
+    }
+    
+  })
 
   // show a tip
   mainWindow.on('close', (event) => {

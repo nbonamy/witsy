@@ -1,11 +1,11 @@
 <template>
-  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false) ">
+  <div class="message" :class="[ message.role, message.type ]" @mouseenter="onHover(true)" @mouseleave="onHover(false)">
     <div class="role" :class="message.role" v-if="showRole">
       <EngineLogo :engine="message.engine || chat.engine!" :grayscale="theme == 'dark'" class="avatar" v-if="message.role == 'assistant'" />
       <UserAvatar class="avatar" v-else />
       <div class="name variable-font-size">{{ authorName }}</div>
     </div>
-    <div class="body">
+    <div class="body" @contextmenu="onContextMenu">
 
       <!-- attachments -->
       <div class="attachments">
@@ -58,6 +58,7 @@ import Message from '../models/message'
 import Loader from './Loader.vue'
 import AttachmentView from './Attachment.vue'
 import EngineLogo from './EngineLogo.vue'
+import { getMarkdownSelection } from '../services/markdown'
 
 // events
 import useEventBus from '../composables/event_bus'
@@ -118,6 +119,10 @@ onMounted(() => {
     showToolCalls.value = value
   })
 
+  // selection related context menu stuff 
+  window.api.on('copy-as-markdown', onCopyMarkdown)
+  window.api.on('read-aloud-selection', onReadAloudSelection)
+  
 })
 
 onUnmounted(() => {
@@ -125,6 +130,8 @@ onUnmounted(() => {
     clearInterval(updateLinkInterval)
   }
   audioPlayer.removeListener(onAudioPlayerStatus)
+  window.api.off('copy-as-markdown', onCopyMarkdown)
+  window.api.off('read-aloud-selection', onReadAloudSelection)
 })
 
 const authorName = computed(() => {
@@ -173,8 +180,21 @@ const onAudioPlayerStatus = (status: AudioStatus) => {
   audioState.value = { state: status.state, messageId: status.uuid }
 }
 
+const onCopyMarkdown = (payload: { context: string, selection: string }) => {
+  if (payload.context === props.message.uuid) {
+    const selected = getMarkdownSelection(props.message.content)
+    console.log('selected', selected)
+  }
+}
+
 const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value!, message.uuid, message.content)
+}
+
+const onReadAloudSelection = (payload: { context: string, selection: string }) => {
+  if (payload.context === props.message.uuid) {
+    audioPlayer.play(audio.value!, props.message.uuid, payload.selection)
+  }
 }
 
 const onShowTools = () => {
@@ -183,6 +203,10 @@ const onShowTools = () => {
   } else {
     showToolCalls.value = 'never'
   }
+}
+
+const onContextMenu = (event: MouseEvent) => {
+  window.api.main.setContextMenuContext(props.message.uuid)
 }
 
 defineExpose({

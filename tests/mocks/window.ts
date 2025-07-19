@@ -39,14 +39,17 @@ const useWindowMock = (opts?: WindowMockOpts) => {
     userDataPath: '/tmp',
     on: vi.fn((signal, listener) => listeners.push(listener)),
     off: vi.fn(),
-    setAppearanceTheme: vi.fn(),
-    showAbout: vi.fn(),
-    showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
-    getAssetPath: vi.fn(() => ''),
-    listFonts: vi.fn(() => []),
-    fullscreen: vi.fn(),
+    app: {
+      setAppearanceTheme: vi.fn(),
+      showAbout: vi.fn(),
+      showDialog: vi.fn(async () => { return { response: opts.dialogResponse || 0, checkboxChecked: false }}),
+      getAssetPath: vi.fn(() => ''),
+      listFonts: vi.fn(() => []),
+      fullscreen: vi.fn(),
+    },
     main: {
       setMode: vi.fn(),
+      setContextMenuContext: vi.fn(),
       close: vi.fn(),
     },
     debug: {

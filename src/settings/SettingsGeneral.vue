@@ -85,7 +85,7 @@ const keepRunning = ref(false)
 
 const setAppearanceTheme = (value: string) => {
   appearance.value = value
-  window.api.setAppearanceTheme(value)
+  window.api.app.setAppearanceTheme(value)
   save()
 }
 
