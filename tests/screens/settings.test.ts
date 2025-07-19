@@ -87,7 +87,7 @@ test('Settings General', async () => {
 
   await tab.find('.form-field.appearance div:nth-of-type(2)').trigger('click')
   expect(store.config.appearance.theme).toBe('dark')
-  expect(window.api.setAppearanceTheme).toHaveBeenLastCalledWith('dark')
+  expect(window.api.app.setAppearanceTheme).toHaveBeenLastCalledWith('dark')
   expect(store.saveSettings).toHaveBeenCalledOnce()
   vi.clearAllMocks()
 

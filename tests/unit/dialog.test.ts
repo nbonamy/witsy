@@ -29,7 +29,7 @@ beforeEach(() => {
 
 test('Basic confirm', () => {
   Dialog.alert('Hello')
-  expect(window.api.showDialog).toHaveBeenLastCalledWith({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
     type: 'none',
     message: 'Hello',
     detail: undefined,
@@ -41,7 +41,7 @@ test('Basic confirm', () => {
 
 test('Confirm/Cancel', () => {
   Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, confirmButtonText: 'Yes' })
-  expect(window.api.showDialog).toHaveBeenLastCalledWith({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
     type: 'none',
     message: 'Hello',
     detail: 'World',
@@ -53,7 +53,7 @@ test('Confirm/Cancel', () => {
 
 test('Confirm/Deny/Cancel', () => {
   Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, showDenyButton: true, confirmButtonText: 'Da', denyButtonText: 'Nein', cancelButtonText: 'Abbrechen' })
-  expect(window.api.showDialog).toHaveBeenLastCalledWith({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
     type: 'none',
     message: 'Hello',
     detail: 'World',

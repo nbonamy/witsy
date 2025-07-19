@@ -334,19 +334,19 @@ test('Error server add', async () => {
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
-  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: 'mcp.serverEditor.validation.requiredFields' }))
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(1)
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: 'mcp.serverEditor.validation.requiredFields' }))
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('smithery')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(3)
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(3)
   expect(window.api.mcp.installServer).not.toHaveBeenCalled()
 })
 

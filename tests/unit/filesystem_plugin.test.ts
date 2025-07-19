@@ -159,7 +159,7 @@ test('Filesystem plugin write file - overwrite allowed', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.showDialog).toHaveBeenCalled()
+  expect(window.api.app.showDialog).toHaveBeenCalled()
   expect(window.api.file.write).toHaveBeenCalled()
 })
 
@@ -172,7 +172,7 @@ test('Filesystem plugin write file - overwrite allowed and skipped', async () =>
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.showDialog).not.toHaveBeenCalled()
+  expect(window.api.app.showDialog).not.toHaveBeenCalled()
   expect(window.api.file.write).toHaveBeenCalled()
 })
 
@@ -194,7 +194,7 @@ test('Filesystem plugin delete file - allowed', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.showDialog).toHaveBeenCalled()
+  expect(window.api.app.showDialog).toHaveBeenCalled()
   expect(window.api.file.delete).toHaveBeenCalled()
 })
 
@@ -207,7 +207,7 @@ test('Filesystem plugin delete file - allowed and skipped', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.showDialog).not.toHaveBeenCalled()
+  expect(window.api.app.showDialog).not.toHaveBeenCalled()
   expect(window.api.file.delete).toHaveBeenCalled()
 })
 

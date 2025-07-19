@@ -1,51 +1,51 @@
-export const getMarkdownSelection = (markdownSource: string): string | null => {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) return null;
+// export const getMarkdownSelection = (markdownSource: string): string | null => {
+//   const selection = window.getSelection();
+//   if (!selection || selection.rangeCount === 0) return null;
 
-  const range = selection.getRangeAt(0);
+//   const range = selection.getRangeAt(0);
 
-  function getAbsoluteOffset(container: Node, offsetInNode: number): number | null {
-    const el = findParentWithMarkdownOffsets(container);
-    if (!el) return null;
+//   function getAbsoluteOffset(container: Node, offsetInNode: number): number | null {
+//     const el = findParentWithMarkdownOffsets(container);
+//     if (!el) return null;
 
-    const base = parseInt(el.getAttribute('data-md-start')!);
-    let offset = 0;
+//     const base = parseInt(el.getAttribute('data-md-start')!);
+//     let offset = 0;
 
-    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+//     const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
 
-    while (walk.nextNode()) {
-      const node = walk.currentNode as Text;
+//     while (walk.nextNode()) {
+//       const node = walk.currentNode as Text;
 
-      if (node === container) {
-        return base + offset + offsetInNode;
-      } else {
-        offset += node.textContent?.length || 0;
-      }
-    }
+//       if (node === container) {
+//         return base + offset + offsetInNode;
+//       } else {
+//         offset += node.textContent?.length || 0;
+//       }
+//     }
 
-    return null;
-  }
+//     return null;
+//   }
 
-  function findParentWithMarkdownOffsets(node: Node): HTMLElement | null {
-    while (node && node !== document.body) {
-      const el = node.nodeType === 1 ? node as HTMLElement : node.parentElement;
-      if (el?.hasAttribute('data-md-start') && el.hasAttribute('data-md-end')) {
-        return el;
-      }
-      node = el?.parentNode;
-    }
-    return null;
-  }
+//   function findParentWithMarkdownOffsets(node: Node): HTMLElement | null {
+//     while (node && node !== document.body) {
+//       const el = node.nodeType === 1 ? node as HTMLElement : node.parentElement;
+//       if (el?.hasAttribute('data-md-start') && el.hasAttribute('data-md-end')) {
+//         return el;
+//       }
+//       node = el?.parentNode;
+//     }
+//     return null;
+//   }
 
-  const startOffset = getAbsoluteOffset(range.startContainer, range.startOffset);
-  const endOffset = getAbsoluteOffset(range.endContainer, range.endOffset);
+//   const startOffset = getAbsoluteOffset(range.startContainer, range.startOffset);
+//   const endOffset = getAbsoluteOffset(range.endContainer, range.endOffset);
 
-  if (startOffset == null || endOffset == null) return null;
+//   if (startOffset == null || endOffset == null) return null;
 
-  const [from, to] = [startOffset, endOffset].sort((a, b) => a - b);
+//   const [from, to] = [startOffset, endOffset].sort((a, b) => a - b);
 
-  return markdownSource.slice(from, to);
-}
+//   return markdownSource.slice(from, to);
+// }
 
 export const closeOpenMarkdownTags = (input: string): string => {
 

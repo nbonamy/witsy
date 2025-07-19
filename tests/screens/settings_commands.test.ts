@@ -149,12 +149,12 @@ test('Edit user command', async () => {
   await editor.find('[name=shortcut]').setValue('S')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.showDialog as Mock).mock.calls[0][0].message).toBe('commands.editor.validation.requiredFields')
+  expect((window.api.app.showDialog as Mock).mock.calls[0][0].message).toBe('commands.editor.validation.requiredFields')
 
   await editor.find('[name=label]').setValue('command2')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.showDialog as Mock).mock.calls[1][0].message).toBe('commands.editor.validation.inputPlaceholder')
+  expect((window.api.app.showDialog as Mock).mock.calls[1][0].message).toBe('commands.editor.validation.inputPlaceholder')
 
   expect(store.commands[41]).toStrictEqual({
     id: expect.any(String),

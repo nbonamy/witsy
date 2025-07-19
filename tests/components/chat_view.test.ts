@@ -299,7 +299,7 @@ test('Move chat', async () => {
 test('Delete chat', async () => {
   mount(ChatView)
   emitEvent('delete-chat', 'chat')
-  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'main.chat.confirmDeleteSingle',
     detail: 'common.confirmation.cannotUndo',
   }))
@@ -323,7 +323,7 @@ test('Rename folder', async () => {
 test('Delete folder', async () => {
   mount(ChatView)
   emitEvent('delete-folder', 'folder1')
-  expect(window.api.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
     message: 'main.folder.confirmDelete',
     detail: 'common.confirmation.cannotUndo',
   }))

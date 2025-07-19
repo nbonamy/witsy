@@ -339,7 +339,7 @@ test('Run assistant text actions', async () => {
 
   // usage
   await wrapper.find('.actions .usage').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(1)
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(1)
 
   // read aloud
   await wrapper.find('.actions .read').trigger('click')
@@ -347,13 +347,13 @@ test('Run assistant text actions', async () => {
 
   // retry
   await wrapper.find('.actions .retry').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
   expect(store.config.general.confirm.retryGeneration).toBe(false)
   expect(emitEventMock).toHaveBeenLastCalledWith('retry-generation', botMessageText)
 
   // retry again
   await wrapper.find('.actions .retry').trigger('click')
-  expect(window.api.showDialog).toHaveBeenCalledTimes(2)
+  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
 
   // fork
   await wrapper.find('.actions .fork').trigger('click')

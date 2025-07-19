@@ -139,7 +139,7 @@ test('Edit user prompt', async () => {
   await editor.find('[name=prompt]').setValue('prompt2')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.showDialog as Mock).mock.calls[0][0].message).toBe('experts.editor.validation.requiredFields')
+  expect((window.api.app.showDialog as Mock).mock.calls[0][0].message).toBe('experts.editor.validation.requiredFields')
 
   await editor.find('[name=name]').setValue('expert2')
   await editor.find('button.default').trigger('click')
