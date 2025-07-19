@@ -13,7 +13,35 @@
     },
     {
       "label": "Hanna-Barbera style (@gnrlyxyz)",
-      "prompt": "Turn this image into a a full-body cartoon portrait, illustrated in a 1960s Hanna-Barbera mid-century modern style with bold, simplified shapes and clean black outlines. The character has exaggerated features (such as a large nose or chin) and a minimal color palette. The outfit reflects the character's typical style or personality and is rendered in flat colors with no shading or texture effects. Hands are behind the back, and the posture is upright and slightly leaning back for a pompous or dignified expression. Background is a solid muted green. No smudging. No shading. Vector friendly. No paper textures or grain effects. Bold and crisp vector lines. Keep the illustration vector-friendly and clean. Square aspect ratio."
+      "prompt": "Turn this image into a a full-body cartoon portrait, illustrated in a 1960s Hanna-Barbera mid-century modern style with bold, simplified shapes and clean black outlines. The character has exaggerated features (such as a large nose or chin) and a minimal color palette. The outfit reflects the character's typical style or personality and is rendered in flat colors with no shading or texture effects. Hands are behind the back, and the posture is upright and slightly leaning back for a pompous or dignified expression. Background is a solid muted green. No smudging. No shading. Vector friendly. No paper textures or grain effects. Bold and crisp vector lines. Keep the illustration vector-friendly and clean. Square aspect ratio.",
+      "enabled": false
+    },
+    {
+      "label": "Cyberpunk Glow-up",
+      "prompt": "Transform this photo into a neon-lit cyberpunk city at night — neon lights, dark sky, rainy reflections on metal, and glowing signs in the background. Keep the original subject, but add a futuristic, dramatic atmosphere.",
+      "enabled": false
+    },
+    {
+      "label": "Pixar 3D Cartoon",
+      "prompt": "Convert this image into a Pixar 3D animation style. Use big expressive eyes, soft cinematic lighting, and vibrant colors. The background should be playful and colorful."
+    },
+    {
+      "label": "Wes Anderson Aesthetic",
+      "prompt": "Turn this image into a Wes Anderson movie still, using a pastel color palette, perfect symmetry, quirky props, and a retro vibe.",
+      "enabled": false
+    },
+    {
+      "label": "Vintage Anime Frame",
+      "prompt": "Stylize this photo like a 1980s anime frame — bold outlines, retro cel shading, halftone textures, and a cinematic Japanese subtitle. Keep the composition dynamic and nostalgic."
+    },
+    {
+      "label": "Oil Painting Portrait",
+      "prompt": "Apply an oil painting effect to this image — visible brush strokes, warm color palette, and subtle canvas texture for a timeless, artistic look."
+    },
+    {
+      "label": "Surreal Dreamscape",
+      "prompt": "Remix this image into a surreal dreamscape with floating objects, blurred pastel clouds, and soft glowing light sources. Maintain a magical, dreamy, and ethereal feeling.",
+      "enabled": false
     }
   ],
   "openai-image-edit": [
