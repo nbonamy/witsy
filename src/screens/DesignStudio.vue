@@ -102,11 +102,13 @@ onMounted(() => {
   window.api.on('delete-media', onDeleteMedia)
   window.api.on('select-all-media', onSelectAll)
   document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('paste', onPaste)
 
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('paste', onPaste)
   window.api.off('delete-media', onDeleteMedia)
   window.api.off('select-all-media', onSelectAll)
 })
@@ -378,18 +380,30 @@ const onUpload = () => {
 
 const onDragOver = (event: DragEvent) => {
   if (isGenerating.value) return
+  
+  // Only handle if dragging files from outside the app
+  if (!event.dataTransfer?.types.includes('Files')) return
+  
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'copy'
 }
 
 const onDragEnter = (event: DragEvent) => {
   if (isGenerating.value) return
+  
+  // Only handle if dragging files from outside the app
+  if (!event.dataTransfer?.types.includes('Files')) return
+  
   event.preventDefault()
   isDragOver.value = true
 }
 
 const onDragLeave = (event: DragEvent) => {
   if (isGenerating.value) return
+  
+  // Only handle if we were tracking a file drag
+  if (!isDragOver.value) return
+  
   event.preventDefault()
   // Only set to false if we're leaving the dropzone itself, not a child element
   if (!(event.currentTarget as HTMLElement)?.contains(event.relatedTarget as Node)) {
@@ -403,8 +417,11 @@ const onDragLeave = (event: DragEvent) => {
 }
 
 const onDrop = async (event: DragEvent) => {
-  
   if (isGenerating.value) return
+  
+  // Only handle if dragging files from outside the app
+  if (!event.dataTransfer?.types.includes('Files')) return
+  
   event.preventDefault()
   isDragOver.value = false
   
@@ -429,6 +446,32 @@ const onDrop = async (event: DragEvent) => {
   
   // Process the file using the same logic as onUpload
   await processImageFile(file)
+  mode.value = 'create'
+}
+
+const onPaste = async (event: ClipboardEvent) => {
+  if (isGenerating.value) return
+  
+  // Check if there are files in the clipboard
+  const items = event.clipboardData?.items
+  if (!items) return
+  
+  // Find the first image item
+  let imageFile: File | null = null
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (item.type.startsWith('image/')) {
+      imageFile = item.getAsFile()
+      break
+    }
+  }
+  
+  if (!imageFile) return
+  
+  event.preventDefault()
+  
+  // Process the pasted image
+  await processImageFile(imageFile)
   mode.value = 'create'
 }
 
