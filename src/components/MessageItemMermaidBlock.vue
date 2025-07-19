@@ -18,6 +18,7 @@
 
 import { ref, onMounted } from 'vue'
 import mermaid, { RenderResult } from 'mermaid'
+import { BIconCircleHalf, BIconCodeSlash, BIconDownload } from 'bootstrap-icons-vue'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -34,7 +35,16 @@ const viewCode = ref(false)
 const copyLabel = ref('Copy Code')
 const theme = ref('light')
 
-mermaid.initialize({ startOnLoad: false })
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  // themeVariables: {
+  //   darkMode: 'true',
+  //   background: '#282a35',
+  //   primaryColor: '#404145',
+  //   lineColor: '#F8B229'
+  // }
+})
 
 onMounted(async () => {
   try {

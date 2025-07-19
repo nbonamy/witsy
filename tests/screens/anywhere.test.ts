@@ -35,6 +35,7 @@ vi.mock('../../src/llms/manager.ts', async () => {
 enableAutoUnmount(afterEach)
 
 beforeAll(() => {
+  Generator.addCapabilitiesToSystemInstr = false
   Generator.addDateAndTimeToSystemInstr = false
   useWindowMock({ modelDefaults: true })
   useBrowserMock()
