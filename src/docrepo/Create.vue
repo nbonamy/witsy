@@ -1,12 +1,12 @@
 <template>
   
-  <form class="docrepo-create large vertical" @submit.prevent>
+  <div class="form docrepo-create form-large form-vertical">
   
     <div class="warning">
       <b>{{ t('common.warning') }}</b>: {{ t('docRepo.create.embeddingWarning') }}
     </div>
     
-    <div class="group name">
+    <div class="form-field name">
       <label>{{ t('common.name') }}</label>
       <input type="text" ref="nameInput" v-model="name" required />
     </div>
@@ -18,7 +18,7 @@
       <button type="submit" class="default" @click="onSave">{{ t('common.create') }}</button>
     </div>
 
-  </form>
+  </div>
 
 </template>
 
@@ -63,7 +63,6 @@ const onCancel = () => {
 </script>
 
 <style scoped>
-@import '../../css/form.css';
 
 .docrepo-create {
   padding: 2rem 17%;

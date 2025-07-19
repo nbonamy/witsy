@@ -8,9 +8,9 @@
       <h3>{{ t('onboarding.chat.subtitle') }}</h3>
     </header>
 
-    <form class="large" @submit.prevent>
+    <div class="form form-large">
       <div class="engines-grid">
-        <div class="chat-engine group" v-for="engine in engines" :key="engine">
+        <div class="chat-engine form-field" v-for="engine in engines" :key="engine">
           <div class="brand">
             <EngineLogo :engine="engine" :grayscale="appearanceTheme.isDark" />
             <span>{{ engineNames[engine] }}</span>
@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
   </section>
 
@@ -110,9 +110,6 @@ const loadModels = (engine: string) => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

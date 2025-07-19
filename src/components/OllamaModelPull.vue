@@ -1,7 +1,7 @@
 <template>
-  <div class="group pull">
+  <div class="form-field pull">
     <label>{{ t('modelPull.label') }}</label>
-    <div class="subgroup">
+    <div class="form-subgroup">
       <div class="control-group">
         <ModelSelectPlus
           v-if="'capabilities' in pullableModels[0]"
@@ -109,14 +109,10 @@ const onStop = async () => {
 }
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-.pull .subgroup {
+.pull .form-subgroup {
   flex: 1;
 }
 

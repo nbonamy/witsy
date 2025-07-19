@@ -1,7 +1,7 @@
 <template>
   <div class="list-with-actions">
     <div class="sticky-table-container">
-      <table class="list">
+      <table class="lwa-list">
         <thead>
           <tr>
             <th>{{ t('common.key') }}</th>
@@ -16,7 +16,7 @@
         </tbody>
       </table>
     </div>
-    <div class="actions">
+    <div class="lwa-actions">
       <button ref="addButton" class="button add" @click.prevent="onAddVariable"><BIconPlus /></button>
       <button class="button remove" @click.prevent="onDeleteVariable" :disabled="!selectedVariable"><BIconDash /></button>
     </div>
@@ -69,8 +69,6 @@ const onEditVariable = (key: string) => {
 </script>
 
 <style scoped>
-@import '../../css/list-with-actions.css';
-@import '../../css/sticky-header-table.css';
 
 .sticky-table-container {
   height: 100px;

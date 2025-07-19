@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
 
     <div class="description">
       {{ t('settings.plugins.search.description') }}
     </div>
 
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
 
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.search.engine') }}</label>
       <select v-model="engine" name="engine" @change="save">
         <option value="local">{{ t('settings.plugins.search.engines.local') }}</option>
@@ -20,33 +20,33 @@
       </select>
     </div>
 
-    <div class="group" v-if="engine == 'exa'">
+    <div class="form-field" v-if="engine == 'exa'">
       <label>{{ t('settings.plugins.search.exaApiKey') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <InputObfuscated v-model="exaApiKey" name="exaApiKey" @change="save" />
         <a href="https://dashboard.exa.ai/home" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
       </div>
     </div>
 
-    <div class="group" v-if="engine == 'tavily'">
+    <div class="form-field" v-if="engine == 'tavily'">
       <label>{{ t('settings.plugins.search.tavilyApiKey') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <InputObfuscated v-model="tavilyApiKey" name="tavilyApiKey" @change="save" />
         <a href="https://app.tavily.com/home" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
       </div>
     </div>
 
-    <div class="group" v-if="engine == 'brave'">
+    <div class="form-field" v-if="engine == 'brave'">
       <label>{{ t('settings.plugins.search.braveApiKey') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <InputObfuscated v-model="braveApiKey" name="braveApiKey" @change="save" />
         <a href="https://brave.com/search/api/" target="_blank">{{ t('settings.plugins.search.getApiKey') }}</a>
       </div>
     </div>
 
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.search.contentLength') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <div>{{ t('settings.plugins.search.truncateTo') }}&nbsp; <input type="text" name="contentLength" v-model="contentLength" @change="save" />&nbsp; {{ t('settings.plugins.search.characters') }}</div>
         <p>{{ t('settings.plugins.search.truncationWarning') }}</p>
       </div>
@@ -91,14 +91,10 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-form .group .subgroup input {
+.form .form-field .form-subgroup input {
   width: 40px;
 }
 

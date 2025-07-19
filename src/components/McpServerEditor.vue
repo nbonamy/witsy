@@ -1,6 +1,6 @@
 <template>
   <div class="mcp-server-editor" @keydown.enter.prevent="onSave">
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.type') }}</label>
       <select name="type" v-model="type">
         <option value="stdio">{{ t('mcp.serverEditor.type.stdio') }}</option>
@@ -9,29 +9,29 @@
         <option value="smithery" v-if="!server?.uuid">{{ t('mcp.serverEditor.type.smithery') }}</option>
       </select>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.label') }}</label>
       <input type="text" name="label" v-model="label" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
     </div>
-    <div class="group" v-if="['http', 'sse'].includes(type)">
+    <div class="form-field" v-if="['http', 'sse'].includes(type)">
       <label>{{ t('common.url') }}</label>
       <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
     </div>
     <template v-if="type === 'smithery'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('mcp.serverEditor.serverPackage') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <input type="text" name="url" v-model="url" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <a href="https://smithery.ai" target="_blank">{{ t('common.browse') }} Smithery.ai</a>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('mcp.serverEditor.smitheryApiKey') }}</label>
         <input type="text" name="apiKey" v-model="apiKey" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
       </div>
     </template>
     <template v-if="type === 'stdio'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.command') }}</label>
         <div class="control-group">
           <input type="text" name="command" v-model="command" autofocus spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
@@ -49,21 +49,21 @@
           </select>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.arguments') }}</label>
         <div class="control-group">
           <input type="text" name="url" v-model="url" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button name="pickScript" @click.prevent="pickScript">{{ t('common.pick') }}</button>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('mcp.serverEditor.workingDirectory') }}</label>
         <div class="control-group">
           <input type="text" name="cwd" v-model="cwd" spellcheck="false" autocapitalize="false" autocomplete="false" autocorrect="false" />
           <button name="pickWorkDir" @click.prevent="pickWorkDir">{{ t('common.pick') }}</button>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('mcp.serverEditor.environmentVariables') }}</label>
         <VariableTable 
           :variables="env"
@@ -76,7 +76,7 @@
       </div>
     </template>
     <template v-if="type === 'http'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('mcp.serverEditor.httpHeaders') }}</label>
         <VariableTable 
           :variables="headers"
@@ -309,9 +309,6 @@ const onSave = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

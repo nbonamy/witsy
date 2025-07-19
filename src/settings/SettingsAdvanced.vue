@@ -1,18 +1,18 @@
 <template>
-  <form class="tab-content vertical large">
+  <div class="form tab-content form-vertical form-large">
     <header>
       <div class="title">{{ t('settings.tabs.advanced') }}</div>
     </header>
     <main>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.advanced.header') }}</label>
       </div>
-      <div class="group autosave horizontal">
+      <div class="form-field autosave horizontal">
         <input type="checkbox" v-model="autoSavePrompt" @change="save" />
         <label>{{ t('settings.advanced.autoSavePrompt') }}</label>
       </div>
       <label>&nbsp;</label>
-      <div class="group proxy">
+      <div class="form-field proxy">
         <label>{{ t('settings.advanced.proxy.title') }}</label>
         <select name="proxyMode" v-model="proxyMode" @change="save">
           <option value="default">{{ t('settings.advanced.proxy.default') }}</option>
@@ -20,11 +20,11 @@
           <option value="custom">{{ t('settings.advanced.proxy.custom') }}</option>
         </select>
       </div>
-      <div class="group custom-proxy" v-if="proxyMode === 'custom'">
+      <div class="form-field custom-proxy" v-if="proxyMode === 'custom'">
         <label>{{ t('settings.advanced.proxy.custom') }}</label>
         <input type="text" name="customProxy" v-model="customProxy" @change="save">
       </div>
-      <div class="group size">
+      <div class="form-field size">
         <label>{{ t('settings.advanced.imageResize') }}</label>
         <select v-model="imageResize" @change="save">
           <option value="0">{{ t('settings.advanced.imageResizeOptions.none') }}</option>
@@ -34,9 +34,9 @@
           <option value="2048">{{ t('settings.advanced.imageResizeOptions.size', { size: 2048 }) }}</option>
         </select>
       </div>
-      <div class="group instruction">
+      <div class="form-field instruction">
         <label>{{ t('settings.advanced.systemInstructions') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <select v-model="instructions" @change="onChangeInstructions">
             <!-- <option value="instructions.chat.standard">{{ t('settings.advanced.instructions.chat_standard') }}</option>
             <option value="instructions.chat.structured">{{ t('settings.advanced.instructions.chat_structured') }}</option>
@@ -67,7 +67,7 @@
         </div>
       </div>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -135,10 +135,6 @@ const save = () => {
 defineExpose({ load })
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -152,16 +148,16 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.subgroup select {
+.form-subgroup select {
   margin-bottom: 0.5rem;
 }
 
-.subgroup textarea {
+.form-subgroup textarea {
   height: 150px;
   resize: vertical !important;
 }
 
-form .group span, form .group a {
+.form .form-field span, .form .form-field a {
   display: block;
 }
 

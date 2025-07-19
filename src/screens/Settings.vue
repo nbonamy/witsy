@@ -1,6 +1,6 @@
 <template>
-  <div class="settings panel-content tabs" ref="tabs">
-    <div class="panel">
+  <div class="settings split-pane tabs" ref="tabs">
+    <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('common.settings') }}</div>
       </header>
@@ -21,7 +21,7 @@
         </ul>
       </main>
   </div>
-    <div class="content">
+    <div class="sp-main">
       <SettingsGeneral ref="settingsGeneral" />
       <SettingsLLM ref="settingsLLM" />
       <SettingsChat ref="settingsChat" />
@@ -174,12 +174,3 @@ const load = (tab: any) => {
 }
 
 </script>
-
-<style scoped>
-@import '../../css/panel-content.css';
-@import '../../css/form.css';
-</style>
-
-<style>
-@import '../../css/settings.css';
-</style>

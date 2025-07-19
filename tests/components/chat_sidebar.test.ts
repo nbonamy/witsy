@@ -33,16 +33,16 @@ beforeEach(() => {
 test('No chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.panel').exists()).toBe(true)
-  expect(wrapper.find('.panel .chats').exists()).toBe(true)
-  expect(wrapper.find('.panel footer').exists()).toBe(true)
-  expect(wrapper.find('.panel footer.actions').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar').exists()).toBe(true)
+  expect(wrapper.find('.sp-sidebar .chats').exists()).toBe(true)
+  expect(wrapper.find('.sp-sidebar footer').exists()).toBe(true)
+  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(false)
   expect(wrapper.find('.resizer').exists()).toBe(true)
 })
 
 test('New Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.panel header #new-chat').trigger('click')
+  await wrapper.find('.sp-sidebar header #new-chat').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('new-chat', null)
 })
 
@@ -55,42 +55,42 @@ test('New Chat', async () => {
 
 test('Start and Cancel Delete', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.panel footer #select').trigger('click')
+  await wrapper.find('.sp-sidebar footer #select').trigger('click')
   expect(wrapper.vm.selectMode).toBe(true)
-  expect(wrapper.find('.panel footer.actions').exists()).toBe(true)
-  await wrapper.find('.panel footer.actions #cancel-delete').trigger('click')  
+  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(true)
+  await wrapper.find('.sp-sidebar footer.actions #cancel-delete').trigger('click')  
   expect(wrapper.vm.selectMode).toBe(false)
-  expect(wrapper.find('.panel footer.actions').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(false)
 })
 
 test('Delete Chat', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.panel footer #select').trigger('click')
-  await wrapper.findAll('.panel .chats .chat')[0].trigger('click')
-  await wrapper.find('.panel footer.actions #delete').trigger('click')
+  await wrapper.find('.sp-sidebar footer #select').trigger('click')
+  await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
+  await wrapper.find('.sp-sidebar footer.actions #delete').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('delete-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)
-  expect(wrapper.find('.panel footer.actions').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar footer.actions').exists()).toBe(false)
 })
 
 test('Move Chat', async () => {
   store.config.appearance.chatList.mode = 'folder'
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.panel footer #select').trigger('click')
-  await wrapper.findAll('.panel .chats .chat')[0].trigger('click')
-  await wrapper.find('.panel footer #move').trigger('click')
+  await wrapper.find('.sp-sidebar footer #select').trigger('click')
+  await wrapper.findAll('.sp-sidebar .chats .chat')[0].trigger('click')
+  await wrapper.find('.sp-sidebar footer #move').trigger('click')
   expect(emitEventMock).toHaveBeenLastCalledWith('move-chat', [store.history.chats[0].uuid])
   wrapper.vm.cancelSelectMode()
   await wrapper.vm.$nextTick()
   expect(wrapper.vm.selectMode).toBe(false)
-  expect(wrapper.find('.panel footer #move').exists()).toBe(false)
+  expect(wrapper.find('.sp-sidebar footer #move').exists()).toBe(false)
 })
 
 test('Filter Textbox', async () => {
   const wrapper: VueWrapper<any> = mount(ChatSidebar)
-  await wrapper.find('.panel header #filter').setValue('Test')
-  await wrapper.find('.panel header #filter').trigger('keyup')
+  await wrapper.find('.sp-sidebar header #filter').setValue('Test')
+  await wrapper.find('.sp-sidebar header #filter').trigger('keyup')
   expect(store.chatState.filter).toBe('Test')
 })

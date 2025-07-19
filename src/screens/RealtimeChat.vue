@@ -1,38 +1,38 @@
 <template>
-  <div class="realtime panel-content">
+  <div class="realtime split-pane">
 
-    <div class="panel">
+    <div class="sp-sidebar">
 
       <header>
         <div class="title">{{ t('realtimeChat.title') }}</div>
       </header>
 
       <main>
-        <form class="vertical">
-          <div class="panel-title">{{ t('common.settings') }}</div>
-          <div class="group">
+        <div class="form form-vertical">
+          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
+          <div class="form-field">
             <label>{{ t('common.provider') }}</label>
             <select class="tool" v-model="engine" @change="onChangeEngine">
               <option v-for="engine in engines" :value="engine.id" :key="engine.id">{{ engine.name }}</option>
             </select>
           </div>
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('common.model') }}</label>
             <select class="tool" v-model="model" @change="save">
               <option v-for="model in models" :value="model.id" :key="model.id">{{ model.name }}</option>
             </select>
           </div>
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('common.voice') }}</label>
             <select class="tool" v-model="voice" @change="save">
               <option v-for="voice in voices" :value="voice.id" :key="voice.id">{{ voice.name }}</option>
             </select>
           </div>
-        </form>
+        </div>
       </main>
     </div>
 
-    <div class="content">
+    <div class="sp-main">
 
       <header>
       </header>
@@ -383,10 +383,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 
@@ -396,14 +392,14 @@ defineExpose({
   color: var(--text-color);
   font-size: 14pt;
 
-  .panel {
+  .sp-sidebar {
     flex-basis: 280px;
     main {
       padding: 2rem 1.5rem;
     }
   }
 
-  .content {
+  .sp-main {
 
     main {
       justify-content: center;

@@ -2,7 +2,7 @@
 <template>
   <Teleport to="body">
     <dialog :id="id" class="dialog show" :class="[ type ]" v-bind="$attrs">
-      <form :class="{ medium: true, vertical: form === 'vertical' }" method="dialog" @submit.prevent>
+      <form :class="{ form: true, medium: true, 'form-vertical': form === 'vertical' }" method="dialog" @submit.prevent>
         <div class="icon" v-if="icon && type === 'alert'">
           <img src="/assets/icon.png" />
         </div>
@@ -86,10 +86,6 @@ defineExpose({ show, close })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

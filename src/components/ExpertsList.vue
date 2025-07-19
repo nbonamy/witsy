@@ -41,7 +41,6 @@ import { newExpert, saveExperts } from '../services/experts'
 import useReorderTable from '../composables/reorder_table'
 import ContextMenu from '../components/ContextMenu.vue'
 import Dialog from '../composables/dialog'
-import { BIconThreeDotsVertical } from 'bootstrap-icons-vue'
 
 const experts= ref<Expert[]>(null)
 const selected= ref<Expert>(null)
@@ -234,10 +233,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/sticky-header-table.css';
-</style>
 
 <style scoped>
 

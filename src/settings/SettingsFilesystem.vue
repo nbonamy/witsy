@@ -1,22 +1,22 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
     <div class="description">
       {{ t('settings.plugins.filesystem.description') }}
     </div>
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" name="enabled" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
     <template v-if="enabled">
-      <div class="group horizontal">
+      <div class="form-field horizontal">
         <input type="checkbox" name="enabled" v-model="allowWrite" @change="onAllowWrite" />
         <label>{{ t('settings.plugins.filesystem.allowWrite') }}</label>
       </div>
-      <div class="group horizontal">
+      <div class="form-field horizontal">
         <input type="checkbox" name="enabled" :disabled="!allowWrite" v-model="skipConfirmation" @change="onSkipConfirmation" />
         <label>{{ t('settings.plugins.filesystem.skipConfirmation') }}</label>
       </div>
-      <div class="group vertical">
+      <div class="form-field form-vertical">
         <label>{{ t('settings.plugins.filesystem.allowedPaths') }}</label>
         <div class="list-with-actions">
           <div class="sticky-table-container">
@@ -138,10 +138,6 @@ defineExpose({ load })
 </script>
 
 <style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/list-with-actions.css';
-@import '../../css/sticky-header-table.css';
 
 .list-with-actions {
   width: 100%;

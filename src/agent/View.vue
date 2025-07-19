@@ -5,35 +5,35 @@
 
     <div class="viewer" v-if="!editing">
     
-      <div class="header list-large-with-header">
-        <div class="header">
+      <div class="header panel">
+        <div class="panel-header">
           <label>{{ t('agent.view.header') }}</label>
           <BIconPlayCircle v-if="agent.type === 'runnable'" class="icon run" @click="onRun" />
           <BIconPencil class="icon edit" @click="onEdit" />
           <BIconTrash class="icon delete" @click="onDelete" />
         </div>
-        <form class="list large">
-          <div class="group">
+        <div class="form panel-body form-large">
+          <div class="form-field">
             <label>{{ t('agent.description') }}</label>
             {{ agent.description }}
           </div>
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('agent.runCount') }}</label>
             {{ runs.length }}
           </div>
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('agent.lastRun') }}</label>
             {{ lastRun }}
           </div>
-          <div class="group" v-if="agent.schedule">
+          <div class="form-field" v-if="agent.schedule">
             <label>{{ t('agent.nextRun') }}</label>
             {{ nextRun }}
           </div>
-        </form>
+        </div>
 
       </div>
 
-      <div class="runs list-large-with-header">
+      <div class="runs panel">
         <div class="header">
           <label>{{ t('agent.view.history') }}</label>
           <BIconCalendarX class="icon clear" v-if="agent.schedule" @click="onClearHistory" />
@@ -116,10 +116,6 @@ const onDelete = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 
@@ -137,7 +133,7 @@ const onDelete = () => {
         gap: 0px;
       }
 
-      .group {
+      .form-field {
         align-items: flex-start;
         font-size: 10.5pt;
 

@@ -1,38 +1,38 @@
 <template>
   <div class="command-editor" @keydown.enter.prevent="onSave">
-    <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+    <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
       <label class="no-colon"><BIconExclamationCircle /></label>
       <div>{{ t('common.differentLocales') }}</div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.name') }}</label>
       <input type="text" name="label" v-model="label" required @keyup="onChangeText" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('commands.editor.prompt') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <textarea name="template" v-model="template" required @keyup="onChangeText" v-if="isEditable"></textarea>
         <textarea name="template" disabled="true" v-else>{{ t('commands.editor.notEditable') }}</textarea>
         <span>{{ t('commands.editor.inputPlaceholder') }}</span>
         <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
       </div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.llmProvider') }}</label>
       <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.editor.useDefault')" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.llmModel') }}</label>
       <ModelSelectPlus id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.editor.useDefault') : ''" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.icon') }}</label>
       <!-- maxlength=1 prevents emojis to be "pasted" from mac system window -->
       <input type="text" name="icon" v-model="icon" class="icon" @keydown="onIconKeyDown" @keyup="onIconKeyUp"/>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.shortcut') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <input type="text" name="shortcut" v-model="shortcut" class="shortcut" maxlength="1" @keydown="onShortcutKeyDown" @keyup="onShortcutKeyUp" />
         {{ t('commands.editor.shortcutDescription') }}
       </div>
@@ -180,10 +180,6 @@ const onSave = (event: Event) => {
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -194,12 +190,12 @@ const onSave = (event: Event) => {
     resize: vertical !important;
   }
 
-  .group input.icon {
+  .form-field input.icon {
     width: 32px;
     text-align: center;
   }
 
-  .group .subgroup:has(.shortcut) {
+  .form-field .form-subgroup:has(.shortcut) {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;

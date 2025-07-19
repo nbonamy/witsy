@@ -12,8 +12,8 @@
     th, td {
       border: 0.5px solid rgba(192, 192, 192, 0.5);
       background-color: var(--background-color);
+      padding: 0.1875rem 0.25rem;
       white-space: nowrap;
-      padding: 2px 4px;
     }
 
     tr.selected td {
@@ -36,17 +36,12 @@
     td.enabled {
       width: 1rem;
     }
-
-    td input[type=checkbox] {
-      width: 12px;
-      height: 12px;
-    }
   
   }
 
 }
 
+
 .windows .sticky-table-container td.icon {
   font-family: 'NotoColorEmojiLimited';
 }
-

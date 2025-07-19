@@ -1,6 +1,6 @@
 <template>
-  <div class="panel-content">
-    <div class="content">
+  <div class="split-pane">
+    <div class="sp-main">
       <header v-if="mode === 'create'">
         <BIconChevronLeft class="icon back" @click="selectAgent(null)" />
         <div class="title">{{ t('agent.forge.create') }}</div>
@@ -106,21 +106,16 @@ const deleteAgent = (agent: Agent) => {
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 
-.panel-content {
+.split-pane {
   
-  .panel {
+  .sp-sidebar {
     flex-basis: 1rem;
   }
   
-  .content {
+  .sp-main {
 
     header {
       padding-left: 2rem;
@@ -151,7 +146,7 @@ const deleteAgent = (agent: Agent) => {
         }
       }
 
-      &:deep() .list-large-with-header {
+      &:deep() .panel {
         padding: 1rem 0;
 
         &:first-child {

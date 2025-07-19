@@ -34,6 +34,3 @@ const emit = defineEmits(['change']);
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>

@@ -1,18 +1,18 @@
 <template>
-  <div class="transcribe panel-content">
+  <div class="transcribe split-pane">
 
-    <div class="panel">
+    <div class="sp-sidebar">
 
       <header>
         <div class="title">{{ t('transcribe.title') }}</div>
       </header>
 
       <main>
-        <form class="vertical">
+        <div class="form form-vertical">
 
-          <div class="panel-title">{{ t('common.settings') }}</div>
+          <div class="sp-sidebar-title">{{ t('common.settings') }}</div>
 
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('settings.voice.engine') }}</label>
             <select name="engine" v-model="engine" @change="onChangeEngine">
               <option v-for="engine in getSTTEngines()" :key="engine.id" :value="engine.id">
@@ -21,7 +21,7 @@
             </select>
           </div>
           
-          <div class="group">
+          <div class="form-field">
             <label>{{ t('settings.voice.model') }}</label>
             <select name="model" v-model="model" @change="onChangeModel">
               <option v-for="model in getSTTModels(engine)" :key="model.id" :value="model.id">
@@ -30,28 +30,28 @@
             </select>
           </div>
 
-          <div class="group language">
+          <div class="form-field language">
             <label>{{ t('settings.voice.spokenLanguage') }}</label>
             <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
           </div>
 
-          <div class="group horizontal">
+          <div class="form-field horizontal">
             <input type="checkbox" name="autoStart" v-model="autoStart" @change="save" />
             <label class="no-colon">{{ t('transcribe.autoStart') }}</label>
           </div>
           
-          <div class="group horizontal">
+          <div class="form-field horizontal">
             <input type="checkbox" name="pushToTalk" v-model="pushToTalk" @change="save" />
             <label class="no-colon">{{ t('transcribe.spaceToTalk') }}</label>
           </div>
 
-        </form>
+        </div>
 
       </main>
 
     </div>
 
-    <div class="content" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" >
+    <div class="sp-main" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" >
 
       <header>
 
@@ -60,7 +60,7 @@
       <main>
 
         <div class="controls">
-          <form class="large" @submit.prevent>
+          <div class="form form-large">
             <button name="stop" class="button" v-if="state == 'recording'" @click="onStop()">{{ t('common.stop') }}</button>
             <button name="record" class="button" v-else @click="onRecord(false)" :disabled="state === 'processing'"><BIconMic />&nbsp;{{ t('common.record') }}</button>
             <input ref="fileInput" type="file" accept=".mp3,.wav,audio/mp3,audio/wav" @change="onFileSelected" class="file-input" />
@@ -69,14 +69,14 @@
             >
               <BIconSoundwave />&nbsp;{{ t('transcribe.dropzone') }}
             </div>
-          </form>
+          </div>
         </div>
 
         <div class="visualizer">
           <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
           <Loader class="loader" v-else-if="state === 'processing'" />
           <BIconRecordCircle v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
-          <Waveform :width="450" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+          <Waveform :width="500" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
         </div>
         
         <div class="result">
@@ -84,7 +84,7 @@
         </div>
         
         <div class="actions">
-          <form class="large" @submit.prevent>
+          <div class="form form-large">
             <button name="summarize" class="button" @click="onSummarize" :disabled="!transcription || state === 'processing'"><BIconChevronBarContract /> {{ t('transcribe.summarize') }}</button>
             <button name="translate" class="button" @click="onTranslate" :disabled="!transcription || state === 'processing'"><BIconGlobe /></button>
             <button name="commands" class="button" @click="onCommands" :disabled="!transcription || state === 'processing'"><BIconMagic /></button>
@@ -92,7 +92,7 @@
             <button name="clear" class="button" @click="onClear" :disabled="!transcription || state === 'processing'">{{ t('common.clear') }}</button>
             <button name="insert" class="button" @click="onInsert" :disabled="!transcription || state === 'processing'" v-if="!isMas">{{ t('common.insert') }}</button>
             <button name="copy" class="button" @click="onCopy" :disabled="!transcription || state === 'processing'">{{ copying ? t('common.copied') : t('common.copy') }}</button>
-          </form>
+          </div>
         </div>
 
         <div class="help">
@@ -450,38 +450,41 @@ const transcribe = async (audioChunks: any[]) => {
 
 const onKeyDown = (event: KeyboardEvent) => {
 
-  // if focus is on textarea, ignore
+  // modifiers
+  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+  const isShiftCommand = event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
+
+  // check if focus is on a textarea
+  let isTextAreaFocused = false
+  let isTextAreaSelected = false
   if ((event.target as HTMLElement).nodeName === 'TEXTAREA') {
+    isTextAreaFocused = true
     const textarea = event.target as HTMLTextAreaElement
     if (textarea.selectionStart !== textarea.selectionEnd) {
-      return
+      isTextAreaSelected = true
     }
   }
 
   // process
-  const isCommand = !event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
-  const isShiftCommand = event.shiftKey && !event.altKey && (event.metaKey || event.ctrlKey)
-  if (event.code === 'Space') {
+  if (event.code === 'Space' && !isTextAreaFocused) {
     if (state.value !== 'recording') {
       onRecord(pushToTalk.value)
     } else if (!pushToTalk.value) {
       onStop()
     }
-  } else if (event.key === 'Enter' && isCommand) {
+  } else if (isCommand && event.key === 'Enter') {
     event.preventDefault()
     onInsert()
-  // } else if (event.key === 'Backspace') {
-  //   transcription.value = transcription.value.slice(0, -1)
-  } else if (event.key === 'x' && isCommand) {
+  } else if (isCommand && event.key === 'x' && !isTextAreaSelected) {
     onClear()
-  } else if (event.key === 'c' && isCommand && !event.shiftKey) {
+  } else if (isCommand && event.key === 'c' && !isTextAreaSelected) {
     onCopy()
-  } else if (event.key === 'c' && isShiftCommand) {
+  } else if (isCommand && event.key === 'i') {
+    onInsert()
+  } else if (isShiftCommand && event.key.toLocaleLowerCase() === 'c') {
     if (onCopy()) {
       window.api.main.close()
     }
-  } else if (event.key === 'i' && isCommand) {
-    onInsert()
   }
 }
 
@@ -634,7 +637,7 @@ const onSummarize = async () => {
 
 const onTranslate = async (ev: MouseEvent) => {
   const rcButton = (ev.currentTarget as HTMLElement).getBoundingClientRect()
-  const rcContent = (ev.currentTarget as HTMLElement).closest('.panel-content').getBoundingClientRect()
+  const rcContent = (ev.currentTarget as HTMLElement).closest('.split-pane').getBoundingClientRect()
   menuX.value = rcButton.right + 8
   menuY.value = rcContent.bottom - rcButton.bottom
   showTranslateMenu.value = true
@@ -653,7 +656,7 @@ const handleTranslateClick = async (action: string) => {
 
 const onCommands = async (ev: MouseEvent) => {
   const rcButton = (ev.currentTarget as HTMLElement).getBoundingClientRect()
-  const rcContent = (ev.currentTarget as HTMLElement).closest('.panel-content').getBoundingClientRect()
+  const rcContent = (ev.currentTarget as HTMLElement).closest('.split-pane').getBoundingClientRect()
   menuX.value = rcButton.right + 8
   menuY.value = rcContent.bottom - rcButton.bottom
   showCommandsMenu.value = true
@@ -676,10 +679,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 
@@ -692,26 +691,26 @@ button {
 
 .transcribe {
 
-  .panel {
+  .sp-sidebar {
     flex-basis: 240px;
     main {
       padding: 2rem 1.5rem;
     }
   }
 
-  .content {
+  .sp-main {
 
     main {
 
-      padding: 15% 0;
+      padding: 10% 1rem;
       align-items: stretch;
       margin: 0 auto;
-      width: 500px;
+      width: 600px;
 
       .controls {
         margin-bottom: 3rem;
         
-        form {
+        .form {
           display: flex;
           flex-direction: row;
           justify-content: center;
@@ -734,7 +733,6 @@ button {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--form-font-size);
             color: var(--control-text-color);
             background-color: var(--control-bg-color);
             
@@ -806,7 +804,7 @@ button {
         
         margin-top: 1rem;
 
-        form {
+        .form {
           display: flex;
           flex-direction: row;
         }

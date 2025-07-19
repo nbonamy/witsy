@@ -7,7 +7,7 @@
       <h3>{{ t('onboarding.ollama.subtitle') }}</h3>
     </header>
 
-    <form class="large" @submit.prevent>
+    <div class="form form-large">
       
       <!-- Checking Ollama installation -->
       <div v-if="status === 'checking'" class="status-section">
@@ -22,7 +22,7 @@
             
           <p class="section-status">{{ t(downloading ? 'onboarding.ollama.downloading' : 'onboarding.ollama.notInstalled') }}</p>
           
-          <div class="group">
+          <div class="form-field">
             
             <!-- Download/Check buttons-->
             <template v-if="!downloading">
@@ -104,7 +104,7 @@
         </div>
       </div>
 
-    </form>
+    </div>
 
   </section>
 
@@ -281,9 +281,6 @@ const cancelDownload = async () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -339,7 +336,7 @@ const cancelDownload = async () => {
   align-items: center;
   gap: 1rem;
   
-  .group {
+  .form-field {
     display: flex;
     align-items: center;
     justify-content: center;

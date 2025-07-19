@@ -1,19 +1,19 @@
 <template>
-  <div class="docrepo-list list-large-with-header">
-    <div class="header">
-      <label>{{ t('docRepo.repositories.title') }}</label>
+  <div class="docrepo-list panel">
+    <div class="panel-header">
+      <label>{{ t('docRepo.list.title') }}</label>
       <BIconSliders class="icon config" @click="onConfig" />
       <BIconPlusLg class="icon create" @click="onCreate" />
     </div>
-    <div class="list" v-if="docRepos.length">
+    <div class="panel-body" v-if="docRepos.length">
       <template v-for="repo in docRepos" :key="repo.uuid">
-        <div class="item" @click="selectRepo(repo)">
+        <div class="panel-item" @click="selectRepo(repo)">
           <div class="icon leading">
             <BIconArchive />
           </div>
           <div class="info">
             <div class="text">{{ repo.name }}</div>
-            <div class="subtext">{{ t('docRepo.repositories.documentsCount', { count: documentCount(repo) }) }}</div>
+            <div class="subtext">{{ t('docRepo.list.documentsCount', { count: documentCount(repo) }) }}</div>
           </div>
           <div class="actions">
             <BIconSearch class="view" @click.prevent.stop="selectRepo(repo)" />
@@ -22,8 +22,8 @@
         </div>
       </template>
     </div>
-    <div class="empty" v-else>
-      {{ t('docRepo.repositories.noRepositories') }}<br />{{ t('docRepo.repositories.clickToCreate') }}
+    <div class="panel-empty" v-else>
+      {{ t('docRepo.list.noRepositories') }}<br />{{ t('docRepo.list.clickToCreate') }}
     </div>
   </div>
 </template>
@@ -72,9 +72,6 @@ const onDelete = (repo: DocumentBase) => {
 
 </script>
 
-<style scoped>
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 

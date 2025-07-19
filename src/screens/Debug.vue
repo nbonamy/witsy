@@ -1,7 +1,7 @@
 
 <template>
-  <div class="debug panel-content window">
-    <div class="panel">
+  <div class="debug split-pane window">
+    <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('debugConsole.title') }}</div>
         <BIconTrash class="icon" @click="clearRequests"/>
@@ -25,7 +25,7 @@
       </main>
     </div>
 
-    <div class="details content">
+    <div class="details sp-main">
       <header>
         <template v-if="selected">
           <div class="title">{{ selected.method }} {{ selected.url }}</div>
@@ -78,12 +78,12 @@
             </div>
           </div>
           <div class="section" v-if="selected.frames.length > 0">
-            <form class="header">
+            <div class="form header">
               <h3>Frames</h3>
               <input type="checkbox" v-model="showSent" /> Sent
               &nbsp;&nbsp;&nbsp;
               <input type="checkbox" v-model="showReceived" /> Received
-            </form>
+            </div>
             <template v-for="frame in selected.frames">
               <div v-if="(showSent && frame.type === 'sent') || (showReceived && frame.type === 'received')" class="json">
                 <JsonViewer :value="jsonFrame(frame)" :expand-depth="2" :copyable="copyable" theme="jv-dark" :expanded="true" />
@@ -213,16 +213,12 @@ const selectRequest = (request: NetworkRequest) => {
 
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-.panel-content {
+.split-pane {
 
-  .panel {
+  .sp-sidebar {
     flex: 0 0 250px;
     main {
       padding-top: 0px;

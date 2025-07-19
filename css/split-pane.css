@@ -1,5 +1,5 @@
 
-.panel-content {
+.split-pane {
   
   display: flex;
   height: 100vh;
@@ -11,7 +11,7 @@
     scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
   }
 
-  .panel {
+  .sp-sidebar {
     
     /* concrete windows should probably override
       the flex with their desired width */
@@ -51,11 +51,11 @@
       align-items: center;
       -webkit-app-region: drag;
 
-      form, input, select, .icon {
+      .form, input, select, .icon {
         -webkit-app-region: no-drag;
       }
 
-      form {
+      .form {
         flex: 1;
       }
 
@@ -83,7 +83,7 @@
       display: flex;
       flex-direction: column;
 
-      .panel-title {
+      .sp-sidebar-title {
         font-size: 110%;
         font-weight: bold;
         color: var(--sidebar-text-color);
@@ -105,7 +105,7 @@
 
   }
 
-  .content {
+  .sp-main {
     
     flex: 1;
     height: 100vh;
@@ -208,7 +208,7 @@
       
       }
 
-      &:has(.list-panel) {
+      &:has(.master-detail) {
         padding: 0;
         min-width: auto;
         align-self: stretch;
@@ -257,7 +257,6 @@
         .sticky-table-container {
           
           th, td {
-            padding: 0.25rem 0.5rem;
             font-size: var(--settings-font-size);
           }
 
@@ -280,8 +279,8 @@
 }
 
 .macos {
-  .panel-content {
-    .panel {
+  .split-pane {
+    .sp-sidebar {
       header {
         padding-left: 1.5rem;
       }
@@ -291,7 +290,7 @@
 
 .macos {
   .window {
-    .panel {
+    .sp-sidebar {
       header {
         padding-left: 5rem;
       }
@@ -300,8 +299,8 @@
 }
 
 .windows {
-  .panel-content {
-    .content {
+  .split-pane {
+    .sp-main {
       header {
         padding-right: 148px;
         .menu {
@@ -313,8 +312,8 @@
 }
 
 .linux {
-  .panel-content {
-    .content {
+  .split-pane {
+    .sp-main {
       header {
         padding-right: 92px;
         .menu {
@@ -324,4 +323,3 @@
     }
   }
 }
-

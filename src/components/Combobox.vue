@@ -65,9 +65,6 @@ const onSelect = (event: Event) => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -77,7 +74,7 @@ const onSelect = (event: Event) => {
   margin-bottom: 6px;
 }
 
-form .group .wrapper {
+.form .form-field .wrapper {
   position: relative;
   width: 100%;
 

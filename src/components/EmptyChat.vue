@@ -18,15 +18,15 @@
         </div>
         <template v-else-if="!showAllEngines">
           <div class="help apiKey" v-if="!llmManager.isEngineConfigured(engine)">
-            <form class="vertical large">
-              <div class="group">
+            <div class="form form-vertical form-large">
+              <div class="form-field">
                 <label>{{ t('emptyChat.settings.needsApiKey') }}</label>
                 <div class="control-group">
                   <InputObfuscated name="apiKey" v-model="apiKey"/>
                   <button name="saveApiKey" @click="saveApiKey">{{ t('common.save') }}</button>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
           <div class="help loading" v-else-if="isRefreshing">
             {{ t('emptyChat.settings.refreshingModels') }}
@@ -353,9 +353,6 @@ const removeFavorite = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

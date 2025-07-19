@@ -1,10 +1,10 @@
 <template>
   <div class="instruction-editor">
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.llm.instructions.editor.label') }}</label>
       <input type="text" v-model="localInstruction.label" :disabled="isDefaultInstruction" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.llm.instructions.editor.instructions') }}</label>
       <textarea v-model="localInstruction.instructions"></textarea>
     </div>
@@ -87,16 +87,12 @@ const onSave = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
 .instruction-editor {
   
-  .group textarea {
+  .form-field textarea {
     min-height: 400px !important;
   }
 

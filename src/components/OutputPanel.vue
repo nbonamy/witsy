@@ -117,7 +117,7 @@ const onKeyDown = (ev: KeyboardEvent) => {
   //if (!message.value) return
 
   const isCommand = !ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
-  const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
+  //const isShiftCommand = ev.shiftKey && !ev.altKey && (ev.metaKey || ev.ctrlKey)
 
   // now check
   if (isCommand && ev.key == 'c') {

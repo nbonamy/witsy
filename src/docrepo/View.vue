@@ -1,40 +1,45 @@
 <template>
   <main v-if="selectedRepo">
-    <form class="header large">
-      <div class="group name">
-        <label>{{ t('common.name') }}</label>
-        <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
+    <div class="info panel">
+      <div class="panel-header">
+        {{ t('docRepo.view.title') }}
       </div>
-      <div class="group embeddings">
-        <label>{{ t('common.embeddings') }}</label>
-        <input type="text" :value="embeddingModel" disabled />
-        <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
-      </div>
-    </form>
-      <div class="group documents list-large-with-header">
-        <div class="header">
-          <label>{{ t('common.documents') }}</label>
-          <Spinner v-if="loading" />
-          <BIconFilePlus class="icon add-file" @click="onAddDocs" />
-          <BIconFolderPlus class="icon add-folder" @click="onAddFolder" />
+      <div class="panel-body form form-large">
+        <div class="form-field name">
+          <label>{{ t('common.name') }}</label>
+          <input type="text" v-model="selectedRepo.name" @change="onChangeRepoName" />
         </div>
-        <div class="list" v-if="selectedRepo.documents.length">
-          <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
-            <div class="item">
-              <div class="icon leading"><Component :is="docIcon(doc)" /></div>
-              <div class="info">
-                <div class="text">{{ docLabel(doc) }}</div>
-                <div class="subtext">{{ doc.origin }}</div>
-              </div>
-              <div class="actions">
-                <!-- <BIconArrowClockwise class="icon" @click="onRefreshDoc(doc)" /> -->
-                <BIconTrash class="icon remove" @click="onDelDoc(doc)" />
-              </div>
+        <div class="form-field embeddings">
+          <label>{{ t('common.embeddings') }}</label>
+          <input type="text" :value="embeddingModel" disabled />
+          <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
+        </div>
+      </div>
+    </div>
+    <div class="documents panel">
+      <div class="panel-header">
+        <label>{{ t('common.documents') }}</label>
+        <Spinner v-if="loading" />
+        <BIconFilePlus class="icon add-file" @click="onAddDocs" />
+        <BIconFolderPlus class="icon add-folder" @click="onAddFolder" />
+      </div>
+      <div class="panel-body" v-if="selectedRepo.documents.length">
+        <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
+          <div class="panel-item">
+            <div class="icon leading"><Component :is="docIcon(doc)" /></div>
+            <div class="info">
+              <div class="text">{{ docLabel(doc) }}</div>
+              <div class="subtext">{{ doc.origin }}</div>
             </div>
-          </template>
-        </div>
-        <div class="empty" v-else>
-          <div>{{ t('docRepo.repositories.noDocuments') }}</div>
+            <div class="actions">
+              <!-- <BIconArrowClockwise class="icon" @click="onRefreshDoc(doc)" /> -->
+              <BIconTrash class="icon remove" @click="onDelDoc(doc)" />
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="panel-empty" v-else>
+        <div>{{ t('docRepo.view.noDocuments') }}</div>
       </div>
     </div>
   </main>
@@ -183,8 +188,6 @@ const onDelDoc = (doc: DocumentSource) => {
 </script>
 
 <style scoped>
-@import '../../css/form.css';
-@import '../../css/list-large-with-header.css';
 
 main {
   overflow: hidden;
@@ -192,30 +195,29 @@ main {
   min-width: 800px;
 }
 
-form.header {
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  padding-bottom: 1rem;
-}
+.info {
 
-form.header .group label {
-  min-width: 100px;
-}
+  .form {
 
-.embeddings {
-  margin-top: 0px;
-}
+    gap: 0px;
 
-.embeddings input {
-  background-color: var(--control-bg-color);
-  outline: none;
-  border: none;
-}
+    .embeddings {
+      margin-top: 0px;
+    }
 
-.embedding-warning {
-  color: red;
-  margin-left: 4px;
+    .embeddings input {
+      background-color: var(--control-bg-color);
+      outline: none;
+      border: none;
+    }
+
+    .embedding-warning {
+      color: red;
+      margin-left: 4px;
+    }
+
+  }
+
 }
 
 .documents {

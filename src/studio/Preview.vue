@@ -160,9 +160,6 @@ const onDelete = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 

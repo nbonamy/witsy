@@ -1,9 +1,9 @@
 <template>
-  <div class="docrepo panel-content" v-bind="$attrs">
-    <div class="content">
+  <div class="docrepo split-pane" v-bind="$attrs">
+    <div class="sp-main">
       <header v-if="mode === 'create'">
         <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
-        <div class="title">{{ t('docRepo.repositories.createTitle') }}</div>
+        <div class="title">{{ t('docRepo.create.title') }}</div>
       </header>
       <header v-else-if="mode === 'config'">
         <BIconChevronLeft class="icon back" @click="selectRepo(null)" />
@@ -14,7 +14,7 @@
         <div class="title">{{ selectedRepo?.name }}</div>
       </header>
       <header v-else>
-        <div class="title">{{ t('docRepo.repositories.title') }}</div>
+        <div class="title">{{ t('docRepo.list.title') }}</div>
       </header>
       <main class="list sliding-root" :class="{ visible: mode === 'list' }">
         <List :docRepos="docRepos || []" @selectRepo="selectRepo" @create="onCreate" @config="onConfig" @delete="onDeleteRepo" />
@@ -134,15 +134,14 @@ const onChangeRepoName = (event: Event) => {
 </script>
 
 <style scoped>
-@import '../../css/panel-content.css';
 
-.panel-content {
+.split-pane {
   
-  .panel {
+  .sp-sidebar {
     flex-basis: 1rem;
   }
   
-  .content {
+  .sp-main {
   
     position: relative;
   
