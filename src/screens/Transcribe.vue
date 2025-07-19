@@ -467,20 +467,20 @@ const onKeyDown = (event: KeyboardEvent) => {
     } else if (!pushToTalk.value) {
       onStop()
     }
-  } else if (event.key === 'Enter' && isCommand) {
+  } else if (isCommand && event.key === 'Enter') {
     event.preventDefault()
     onInsert()
   // } else if (event.key === 'Backspace') {
   //   transcription.value = transcription.value.slice(0, -1)
-  } else if (event.key === 'x' && isCommand) {
+  } else if (isCommand && event.key === 'x') {
     onClear()
-  } else if (event.key === 'c' && isCommand && !event.shiftKey) {
+  } else if (isCommand && event.key === 'c') {
     onCopy()
-  } else if (event.key === 'c' && isShiftCommand) {
+  } else if (isShiftCommand && event.key.toLocaleLowerCase() === 'c') {
     if (onCopy()) {
       window.api.main.close()
     }
-  } else if (event.key === 'i' && isCommand) {
+  } else if (isCommand && event.key === 'i') {
     onInsert()
   }
 }
