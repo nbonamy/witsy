@@ -1,6 +1,5 @@
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
-import STTVoxtral from '../../src/voice/stt-voxtral'
 import defaults from '../../defaults/settings.json'
 import { getSTTEngine, requiresDownload } from '../../src/voice/stt'
 import STTFalAi from '../../src/voice/stt-falai'
@@ -8,11 +7,13 @@ import STTFireworks from '../../src/voice/stt-fireworks'
 import STTGladia from '../../src/voice/stt-gladia'
 import STTGroq from '../../src/voice/stt-groq'
 import STTHuggingFace from '../../src/voice/stt-huggingface'
-import STTSpeechmatics from '../../src/voice/stt-speechmatics'
+import STTMistral from '../../src/voice/stt-mistral'
 import STTNvidia from '../../src/voice/stt-nvidia'
 import STTOpenAI from '../../src/voice/stt-openai'
+import STTSpeechmatics from '../../src/voice/stt-speechmatics'
 import STTWhisper from '../../src/voice/stt-whisper'
 import { fal } from '@fal-ai/client'
+import { Configuration } from '../../src/types/config'
 
 const initCallback = vi.fn()
 
@@ -169,7 +170,7 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
-  store.config = defaults
+  store.config = defaults as unknown as Configuration
   store.config.engines.falai.apiKey = 'falai-api-key'
   vi.resetAllMocks()
 })
@@ -193,8 +194,8 @@ test('Instantiates OpenAI by default', async () => {
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
-test('Instantiates Voxtral', async () => {
-  store.config.stt.engine = 'voxtral'
+test('Instantiates Mistral', async () => {
+  store.config.stt.engine = 'mistralai'
   store.config.stt.model = 'voxtral-mini-2507' // explicit chat-completion model
   store.config.engines.mistral = {
     apiKey: 'dummy-mistral-key',
@@ -203,12 +204,12 @@ test('Instantiates Voxtral', async () => {
   }
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
-  expect(engine).toBeInstanceOf(STTVoxtral)
+  expect(engine).toBeInstanceOf(STTMistral)
   expect(engine).toHaveProperty('transcribe')
   expect(engine.isReady()).toBe(true)
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
-  expect(initCallback).toHaveBeenLastCalledWith({ task: 'voxtral', status: 'ready', model: expect.any(String) })
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'mistralai', status: 'ready', model: expect.any(String) })
   await expect(engine.transcribe(new Blob())).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
@@ -269,14 +270,14 @@ test('Instantiates Gladia', async () => {
   })).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
-test('Direct Voxtral transcription endpoint returns mocked transcript', async () => {
-  store.config.stt.engine = 'voxtral'
+test('Direct Mistral transcription endpoint returns mocked transcript', async () => {
+  store.config.stt.engine = 'mistralai'
   store.config.stt.model = 'voxtral-mini-latest' // triggers direct endpoint
   const engine = getSTTEngine(store.config)
   expect(engine).toBeDefined()
-  expect(engine).toBeInstanceOf(STTVoxtral)
+  expect(engine).toBeInstanceOf(STTMistral)
   await engine.initialize(initCallback)
-  expect(initCallback).toHaveBeenLastCalledWith({ task: 'voxtral', status: 'ready', model: expect.any(String) })
+  expect(initCallback).toHaveBeenLastCalledWith({ task: 'mistralai', status: 'ready', model: expect.any(String) })
   // @ts-expect-error mocking
   await expect(engine.transcribe({ type: 'audio/wav', arrayBuffer: async () => ([]) })).resolves.toStrictEqual({ text: 'mocked transcript' })
 })

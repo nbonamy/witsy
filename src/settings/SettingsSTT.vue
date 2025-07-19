@@ -70,9 +70,9 @@
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
-    <div class="form-field" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
+    <div class="form-field" v-if="engine == 'mistralai' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
       <label>{{ t('common.prompt') }}</label>
-      <textarea v-model="voxtralPrompt" @blur="save" />
+      <textarea v-model="mistralPrompt" @blur="save" />
     </div>
     <div class="form-field">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
@@ -106,9 +106,9 @@
       <label></label>
       <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
     </div>
-    <div class="form-field" v-if="engine === 'voxtral'">
+    <div class="form-field" v-if="engine === 'mistralai'">
       <label></label>
-      <span>{{ t('settings.voice.voxtralApiKeyReminder') }}</span>
+      <span>{{ t('settings.voice.mistralApiKeyReminder') }}</span>
     </div>
   </div>
 </template>
@@ -141,7 +141,7 @@ const huggingFaceAPIKey = ref(null)
 const speechmaticsAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
-const voxtralPrompt = ref(null)
+const mistralPrompt = ref(null)
 const whisperGPU = ref(true)
 const baseURL = ref('')
 const duration = ref(null)
@@ -194,7 +194,7 @@ const load = () => {
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
-  voxtralPrompt.value = store.config.stt.voxtral?.prompt || null
+  mistralPrompt.value = store.config.stt.mistralai?.prompt || null
   whisperGPU.value = store.config.stt.whisper.gpu ?? true
   // action.value = store.config.stt.silenceAction || 'stop_transcribe'
 }
@@ -212,7 +212,7 @@ const save = () => {
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
-  store.config.stt.voxtral.prompt = voxtralPrompt.value
+  store.config.stt.mistralai.prompt = mistralPrompt.value
   store.config.stt.whisper.gpu = whisperGPU.value
   //store.config.stt.silenceAction = action.value
   store.saveSettings()

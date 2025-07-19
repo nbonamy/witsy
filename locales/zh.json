@@ -2248,7 +2248,7 @@
       "useWebGpu": "使用 WebGPU",
       "verificationComplete": "验证完成！",
       "verifying": "正在验证：{percent}%",
-      "voxtralApiKeyReminder": "请确保在模型面板中输入您的Voxtral API密钥。"
+      "mistralApiKeyReminder": "请确保在模型面板中输入您的Mistral API密钥。"
     }
   },
   "sidebar": {

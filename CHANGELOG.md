@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Backup/Restore of data and settings
 - Onboarding experience
 - Japanese localization (https://github.com/nbonamy/witsy/pull/326)
+- Add Voxtral (Mistral) as STT provider (https://github.com/nbonamy/witsy/issues/330) (https://github.com/nbonamy/witsy/pull/337)
 
 ### Changed
 - Document Repository UI update 
@@ -16,6 +17,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Design Studio History label overflow fix
 - Duplicated models (https://github.com/nbonamy/witsy/issues/331)
+- Ctrl+Shift+C does not copy transcript and close transcript window (https://github.com/nbonamy/witsy/issues/336)
+- Error when using Eleven Labs for Transcription (https://github.com/nbonamy/witsy/issues/335)
+- Wrong position of delete shortcut buttons at shortcut settings (https://github.com/nbonamy/witsy/issues/334)
 
 ### Removed
 - N/A

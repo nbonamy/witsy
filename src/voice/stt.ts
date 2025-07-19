@@ -9,7 +9,7 @@ import STTHuggingFace from './stt-huggingface'
 import STTNvidia from './stt-nvidia'
 import STTOpenAI from './stt-openai'
 import STTSpeechmatics from './stt-speechmatics'
-import STTVoxtral from './stt-voxtral'
+import STTMistral from './stt-mistral'
 import STTWhisper from './stt-whisper'
 
 export type DownloadStatus = {
@@ -99,7 +99,7 @@ export const getSTTEngines = () => {
     { id: 'falai', label: engineNames.falai },
     //{ id: 'huggingface', label: engineNames.huggingface },
     { id: 'groq', label: engineNames.groq },
-    { id: 'voxtral', label: engineNames.voxtral },
+    // { id: 'mistralai', label: engineNames.mistralai },
     { id: 'whisper', label: engineNames.whisper },
     { id: 'custom', label: 'Custom OpenAI' },
   ]
@@ -122,8 +122,8 @@ export const getSTTModels = (engine: string) => {
     return STTHuggingFace.models
   } else if (engine === 'nvidia') {
     return STTNvidia.models
-  } else if (engine === 'voxtral') {
-    return STTVoxtral.models
+  } else if (engine === 'mistralai') {
+    return STTMistral.models
   } else if (engine === 'whisper') {
     return STTWhisper.models
   } else if (engine === 'custom') {
@@ -151,8 +151,8 @@ export const getSTTEngine = (config: Configuration): STTEngine => {
     return new STTFireworks(config)
   } else if (engine === 'speechmatics') {
     return new STTSpeechmatics(config)
-  } else if (engine === 'voxtral') {
-    return new STTVoxtral(config)
+  } else if (engine === 'mistralai') {
+    return new STTMistral(config)
   } else if (engine === 'custom') {
     return new STTOpenAI(config, config.stt.customOpenAI.baseURL)
   } else {
@@ -179,8 +179,8 @@ export const requiresDownload = (engine: string): boolean => {
     return STTFireworks.requiresDownload()
   } else if (engine === 'speechmatics') {
     return STTSpeechmatics.requiresDownload()
-  } else if (engine === 'voxtral') {
-    return STTVoxtral.requiresDownload()
+  } else if (engine === 'mistralai') {
+    return STTMistral.requiresDownload()
   } else if (engine === 'custom') {
     return STTOpenAI.requiresDownload()
   } else {

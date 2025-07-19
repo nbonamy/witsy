@@ -213,7 +213,7 @@ export type STTConfig = {
   nvidia: {
     prompt: string
   }
-  voxtral: {
+  mistralai: {
     prompt: string
   }
   whisper: {

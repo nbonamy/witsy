@@ -2226,7 +2226,7 @@
       "useWebGpu": "Utilizza WebGPU",
       "verificationComplete": "Verifica completata!",
       "verifying": "Verifica: {percent}%",
-      "voxtralApiKeyReminder": "Assicurati di inserire la tua chiave API Voxtral nel pannello Modelli."
+      "mistralApiKeyReminder": "Assicurati di inserire la tua chiave API Mistral nel pannello Modelli."
     }
   },
   "sidebar": {
