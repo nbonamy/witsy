@@ -22,7 +22,7 @@
     />
     <div v-if="isDragOver" class="drop-wrapper">
       <div class="drop-overlay"></div>  
-      <div class="drop-indicator">{{ t('designStudio.dropzone') }}</div>
+      <div class="drop-indicator"><BIconImage />{{ t('designStudio.dropzone') }}</div>
     </div>
   </div>
   <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
@@ -709,6 +709,10 @@ const onFullScreen = (url: string) => {
 
 .drop-indicator {
   padding: 3rem 6rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
   border: 1px dashed var(--highlight-color);
   background-color: var(--background-color);
   border-radius: 12px;
