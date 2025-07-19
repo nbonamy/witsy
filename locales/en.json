@@ -2229,7 +2229,7 @@
       "initializing": "Initializing…",
       "model": "@:{'common.model'}",
       "openaiApiKeyReminder": "Make sure you enter your OpenAI API key in the Models pane.",
-      "voxtralApiKeyReminder": "Make sure you enter your Mistral API key in the Models pane.",
+      "voxtralApiKeyReminder": "Make sure you enter your Voxtral API key in the Models pane.",
       "selectModel": "Select a model",
       "silenceDetection": "Silence Detection",
       "silenceOptions": {
