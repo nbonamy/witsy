@@ -1,5 +1,5 @@
 <template>
-  <div class="studio split-pane" @keydown="onKeyDown" v-bind="$attrs">
+  <div class="studio split-pane" @keydown="onKeyDown" @drop="onDrop" @dragover="onDragOver" @dragenter="onDragEnter" @dragleave="onDragLeave" v-bind="$attrs">
     <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('designStudio.title') }}</div>
@@ -10,7 +10,7 @@
           <button :class="{active: mode === 'create'}" @click="mode = 'create'">{{ t('common.create') }}</button>
           <button :class="{active: mode === 'history'}" @click="mode = 'history'">{{ t('designStudio.history.title') }}</button>
         </div>
-        <Settings :class="{ hidden: mode !== 'create' }" ref="settingsPanel" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
+        <Settings :class="{ hidden: mode !== 'create' }" ref="settings" :current-media="currentMedia" :is-generating="isGenerating" @upload="onUpload" @generate="onMediaGenerationRequest" />
         <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-messages="selection" @select-message="selectMessage" @context-menu="showContextMenu" />
       </main>
     </div>
@@ -20,6 +20,10 @@
       @fullscreen="onFullScreen" @delete="onDelete"
       @undo="onUndo" @redo="onRedo"
     />
+    <div v-if="isDragOver" class="drop-wrapper">
+      <div class="drop-overlay"></div>  
+      <div class="drop-indicator">{{ t('designStudio.dropzone') }}</div>
+    </div>
   </div>
   <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
 </template>
@@ -48,7 +52,7 @@ defineProps({
   extra: Object
 })
 
-const settingsPanel = ref(null)
+const settings = ref(null)
 const mode = ref<'create'|'history'>('create')
 const chat = ref<Chat>(null)
 const selection = ref<Message[]>([])
@@ -60,6 +64,7 @@ const showMenu = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
 const targetRow = ref<Message|null>(null)
+const isDragOver = ref(false)
 
 const contextMenuActions = () => {
   return [
@@ -175,7 +180,7 @@ const handleActionClick = async (action: string) => {
     mode.value = 'create'
     clearStacks()
     nextTick(() => {
-      settingsPanel.value.loadSettings({
+      settings.value.loadSettings({
         mediaType: msg.isVideo() ? 'video' : 'image',
         engine: msg.engine,
         model: msg.model,
@@ -348,6 +353,17 @@ const updateMessage = (msg: Message) => {
   message.usage = msg.usage
 }
 
+const processUpload = (fileName: string, mimeType: string, fileUrl: string) => {
+  const message = new Message('user', t('common.upload'))
+  message.engine = 'upload'
+  message.model = fileName
+  message.attach(new Attachment('', mimeType, fileUrl))
+  selection.value = [message]
+  mode.value = 'create'
+  settings.value.setTransform(true)
+  clearStacks()
+}
+
 const onUpload = () => {
   let file = window.api.file.pick({ filters: [
     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
@@ -355,12 +371,87 @@ const onUpload = () => {
   if (file) {
     const fileContents = file as FileContents
     const fileUrl = saveFileContents(fileContents.url.split('.').pop(), fileContents.contents)
-    const message = new Message('user', t('common.upload'))
-    message.engine = 'upload'
-    message.model = fileContents.url.split(/[\\/]/).pop()
-    message.attach(new Attachment('', fileContents.mimeType, fileUrl))
-    selection.value = [message]
-    clearStacks()
+    const fileName = fileContents.url.split(/[\\/]/).pop()
+    processUpload(fileName, fileContents.mimeType, fileUrl)
+  }
+}
+
+const onDragOver = (event: DragEvent) => {
+  if (isGenerating.value) return
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'copy'
+}
+
+const onDragEnter = (event: DragEvent) => {
+  if (isGenerating.value) return
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const onDragLeave = (event: DragEvent) => {
+  if (isGenerating.value) return
+  event.preventDefault()
+  // Only set to false if we're leaving the dropzone itself, not a child element
+  if (!(event.currentTarget as HTMLElement)?.contains(event.relatedTarget as Node)) {
+    // for a very strange reason, when dragging over the textarea, the relatedTarget is a div with no parent and no children
+    const relatedTarget = event.relatedTarget as HTMLElement
+    if (relatedTarget && relatedTarget.nodeName === 'DIV' && relatedTarget.parentElement === null && relatedTarget.children.length === 0) {
+      return
+    }
+    isDragOver.value = false
+  }
+}
+
+const onDrop = async (event: DragEvent) => {
+  
+  if (isGenerating.value) return
+  event.preventDefault()
+  isDragOver.value = false
+  
+  const files = event.dataTransfer?.files
+  if (!files || files.length === 0) return
+  
+  const file = files[0]
+  
+  // Check if it's an image file
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif']
+  const isValidType = validTypes.includes(file.type) || 
+                     validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+  
+  if (!isValidType) {
+    Dialog.show({
+      title: t('common.error'),
+      text: t('designStudio.error.invalidFileType'),
+    })
+    return
+  }
+  
+  // Process the file using the same logic as onUpload
+  await processImageFile(file)
+  mode.value = 'create'
+}
+
+const processImageFile = async (file: File) => {
+  try {
+    // Convert File to base64 format (like onUpload does)
+    const dataUrl = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(file)
+    })
+    
+    // Extract base64 content from data URL (remove "data:image/jpeg;base64," prefix)
+    const base64Content = dataUrl.split(',')[1]
+    const extension = file.name.split('.').pop()
+    
+    const fileUrl = saveFileContents(extension, base64Content)
+    processUpload(file.name, file.type, fileUrl)
+  } catch (error) {
+    Dialog.show({
+      title: t('common.error'),
+      text: t('designStudio.error.uploadFailed'),
+    })
   }
 }
 
@@ -558,7 +649,7 @@ const onFullScreen = (url: string) => {
 
 <style scoped>
 
-.split-pane {
+.studio {
   
   .sp-sidebar {
   
@@ -591,6 +682,40 @@ const onFullScreen = (url: string) => {
     }
   }
 
+}
+
+.drop-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background-color);
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+.drop-indicator {
+  padding: 3rem 6rem;
+  border: 1px dashed var(--highlight-color);
+  background-color: var(--background-color);
+  border-radius: 12px;
+  color: var(--highlight-color);
+  font-family: var(--font-family-serif);
+  font-size: 1.25rem;
+  z-index: 1001;
 }
 
 </style>

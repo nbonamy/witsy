@@ -376,10 +376,10 @@ const removeFavorite = () => {
 }
 
 .empty .tip {
-  font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
   text-align: center;
   font-style: italic;
   font-size: 11pt;
+  font-family: var(--font-family-serif);
   color: var(--message-list-tip-text-color);
   margin-bottom: 0px;
 

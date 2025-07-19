@@ -214,13 +214,12 @@ const allowModelEntry = computed(() => {
   return ['replicate', 'falai', 'sdwebui', 'huggingface' ].includes(engine.value)
 })
 
-const promptLibrary = computed(() => {
-  // if (engine.value === 'openai' && model.value.startsWith('gpt-image-') && transform.value) {
-  //   return promptsLibrary['openai-edits'].map((p) => {
-  //     return { ...p, action: p.label }
-  //   })
-  // }
-  return null
+const promptLibrary = computed((): any => {
+  let prompts = null
+  if (engine.value === 'openai' && model.value.startsWith('gpt-image-') && transform.value) {
+    prompts = promptsLibrary['openai-image-editing']
+  }
+  return prompts?.filter(p => p.enabled)?.map((p) => ({ ...p, action: p.label }))
 })
 
 const addCurrentModel = (models: Model[]): Model[] => {
@@ -621,7 +620,10 @@ const generateMedia = async () => {
 
 defineExpose({
   loadSettings,
-  generateMedia
+  generateMedia,
+  setTransform: (value: boolean) => {
+    transform.value = value
+  },
 })
 
 </script>

@@ -581,7 +581,7 @@ const onStopPrompting = async () => {
   }
 
   .document.serif, .document.serif * {
-    font-family: Garamond, Georgia, Times, 'Times New Roman', serif;
+    font-family: var(--font-family-serif);
   }
 
   .document.monospace, .document.monospace * {

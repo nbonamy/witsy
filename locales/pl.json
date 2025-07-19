@@ -576,12 +576,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "Czy na pewno chcesz usunąć te media?",
     "confirmDeleteSingle": "Czy na pewno chcesz usunąć ten nośnik?",
+    "dropzone": "Upuść tutaj swoje obrazy, aby ożywić je za pomocą AI!",
     "emptyPlaceholder": "Daj się ponieść kreatywności!",
     "error": {
+      "invalidFileType": "Nieprawidłowy typ pliku. Proszę wybrać plik obrazu (jpg, png, gif).",
       "invalidParams": "Zgłoszono błąd dotyczący parametrów: {detail}. Sprawdź parametry i spróbuj ponownie.",
       "noDetailsProvided": "brak dostępnych szczegółów",
       "promptRequired": "Upewnij się, że wprowadziłeś monit.",
-      "unknown": "Wystąpił nieznany błąd. Spróbuj ponownie."
+      "unknown": "Wystąpił nieznany błąd. Spróbuj ponownie.",
+      "uploadFailed": "Nie udało się przesłać pliku. Spróbuj ponownie."
     },
     "generate": "Generowanie",
     "generating": "Generowanie...",

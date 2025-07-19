@@ -576,12 +576,15 @@
   "designStudio": {
     "confirmDeleteMultiple": "これらのメディアを削除してもよろしいですか？",
     "confirmDeleteSingle": "このメディアを削除してもよろしいですか？",
+    "dropzone": "ここに画像をドロップして、AIで命を吹き込みましょう！",
     "emptyPlaceholder": "創造性を自由に発揮してください！",
     "error": {
+      "invalidFileType": "無効なファイルタイプです。画像ファイル（jpg、png、gif）を選択してください。",
       "invalidParams": "パラメータについてエラーが報告されました：{detail}。パラメータを確認して再試行してください。",
       "noDetailsProvided": "詳細情報がありません",
       "promptRequired": "プロンプトを入力してください。",
-      "unknown": "不明なエラーが発生しました。もう一度お試しください。"
+      "unknown": "不明なエラーが発生しました。もう一度お試しください。",
+      "uploadFailed": "ファイルのアップロードに失敗しました。もう一度お試しください。"
     },
     "generate": "生成",
     "generating": "生成中…",
