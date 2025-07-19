@@ -139,6 +139,9 @@
     "nvidia": {
       "prompt": "Transcribe the audio clip into text.\nFormat sentences with clear line breaks and paragraphs for natural reading. Remove filler words like um, uh.\nYour response should be formatted as follows:\n\"transcribed text here\""
     },
+    "voxtral": {
+      "prompt": "Transcribe the audio clip into text.\nFormat sentences with clear line breaks and paragraphs for natural reading. Remove filler words like um, uh.\nYour response should be formatted as follows:\n\"transcribed text here\""
+    },
     "whisper": {
       "gpu": true
     }

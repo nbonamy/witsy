@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
     <div class="form-field">
       <label>{{ t('settings.voice.engine') }}</label>
       <select v-model="engine" @change="onChangeEngine">
