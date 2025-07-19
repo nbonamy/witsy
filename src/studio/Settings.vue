@@ -56,7 +56,7 @@
       </div>
 
       <div class="form-field">
-        <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary" @click="onShowPromptLibrary"/></label>
+        <label>{{ t('common.prompt') }}<BIconMagic v-if="promptLibrary.length" @click="onShowPromptLibrary"/></label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
@@ -215,11 +215,25 @@ const allowModelEntry = computed(() => {
 })
 
 const promptLibrary = computed((): any => {
-  let prompts = null
-  if (engine.value === 'openai' && model.value.startsWith('gpt-image-') && transform.value) {
-    prompts = promptsLibrary['openai-image-editing']
+
+  // for typing
+  let prompts = []
+  const library = promptsLibrary as Record<string, { label: string, prompt: string, enabled?: boolean }[]>
+  
+  // dynamic build ids
+  const transformType = transform.value ? 'edit' : 'create'
+  const genericId = `${mediaType.value}-${transformType}`
+  const engineId = `${engine.value}-${genericId}`
+  if (library[genericId]) {
+    prompts.push(...library[genericId])
   }
-  return prompts?.filter(p => p.enabled)?.map((p) => ({ ...p, action: p.label }))
+  if (library[engineId]) {
+    prompts.push(...library[engineId])
+  }
+
+  // filter and map
+  return prompts.filter(p => p.enabled ?? true).map((p) => ({ ...p, action: p.label }))
+
 })
 
 const addCurrentModel = (models: Model[]): Model[] => {
