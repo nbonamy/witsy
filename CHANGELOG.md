@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Ctrl+Shift+C does not copy transcript and close transcript window (https://github.com/nbonamy/witsy/issues/336)
 - Error when using Eleven Labs for Transcription (https://github.com/nbonamy/witsy/issues/335)
 - Wrong position of delete shortcut buttons at shortcut settings (https://github.com/nbonamy/witsy/issues/334)
+- Mermaid chart fixes and improvements (https://github.com/nbonamy/witsy/issues/333)
 
 ### Removed
 - N/A
