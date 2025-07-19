@@ -85,9 +85,9 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
         click: () => mainWindow.webContents.send('read-aloud-selection', { context: contextMenuContext, selection: params.selectionText }),
       }));
 
-      menu.append(new MenuItem({
-        type: 'separator',
-      }));
+      // menu.append(new MenuItem({
+      //   type: 'separator',
+      // }));
 
     }
 
@@ -113,11 +113,6 @@ export const prepareMainWindow = (opts: CreateWindowOpts = {}): void => {
         )
       }
 
-    }
-
-    // if last item is separator, remove it
-    if (menu.items.length > 0 && menu.items[menu.items.length - 1].type === 'separator') {
-      menu.items.pop();
     }
     
     // only if populated
