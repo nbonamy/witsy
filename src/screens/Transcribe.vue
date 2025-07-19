@@ -76,7 +76,7 @@
           <BIconRecordCircle v-if="state == 'recording'" class="stop" color="red" @click="onStop()" />
           <Loader class="loader" v-else-if="state === 'processing'" />
           <BIconRecordCircle v-else class="record" :color="state === 'initializing' ? 'orange' : ''" @click="onRecord(false)" />
-          <Waveform :width="450" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
+          <Waveform :width="500" :height="32" :foreground-color-inactive="foregroundColorInactive" :foreground-color-active="foregroundColorActive" :audio-recorder="audioRecorder" :is-recording="state == 'recording'"/>
         </div>
         
         <div class="result">
@@ -699,10 +699,10 @@ button {
 
     main {
 
-      padding: 15% 0;
+      padding: 10% 1rem;
       align-items: stretch;
       margin: 0 auto;
-      width: 500px;
+      width: 600px;
 
       .controls {
         margin-bottom: 3rem;
