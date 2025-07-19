@@ -1,7 +1,8 @@
 
-import { anyDict } from 'types/index';
-import { Configuration } from 'types/config';
+import { anyDict } from '../types/index'
+import { Configuration } from '../types/config'
 import { App } from 'electron'
+import { favoriteMockEngine } from '../llms/llm'
 import defaultSettings from '../../defaults/settings.json'
 import Monitor from './monitor'
 import path from 'path'
@@ -23,6 +24,13 @@ export const settingsFilePath = (app: App): string => {
   const userDataPath = app.getPath('userData')
   const settingsFilePath = path.join(userDataPath, 'settings.json')
   return settingsFilePath
+}
+
+const engineConfigFilePath = (app: App, engine: string): string => {
+  const userDataPath = app.getPath('userData')
+  const engineModelsFilePath = path.join(userDataPath, 'engines')
+  fs.mkdirSync(engineModelsFilePath, { recursive: true })
+  return path.join(engineModelsFilePath, `${engine}.json`)
 }
 
 export const settingsFileHadError = (): boolean => errorLoadingConfig
@@ -163,6 +171,31 @@ export const loadSettings = (source: App|string): Configuration => {
 
   }
 
+  // now load engine models
+  if (typeof source !== 'string' && jsonConfig.engines) {
+    
+    for (const engine of Object.keys(jsonConfig.engines)) {
+
+      // initialize models
+      jsonConfig.engines[engine].models = { chat: [] } 
+
+      // now load the models file
+      const engineConfigFile = engineConfigFilePath(source, engine)
+      if (fs.existsSync(engineConfigFile)) {
+        try {
+          const engineConfig = fs.readFileSync(engineConfigFile, 'utf-8')
+          jsonConfig.engines[engine] = {
+            ...jsonConfig.engines[engine],
+            ...JSON.parse(engineConfig)
+          }
+        } catch (error) {
+          console.log('Error loading engine models for', engine, error)
+        }
+      }
+
+    }
+  }
+
   // now build config
   const config = buildConfig(defaultSettings, jsonConfig)
 
@@ -185,9 +218,38 @@ export const saveSettings = (dest: App|string, config: Configuration) => {
     // nullify defaults
     nullifyDefaults(config)
 
+    // make a copy
+    const clone: Configuration = JSON.parse(JSON.stringify(config))
+    if (typeof dest !== 'string') {
+
+      for (const engine of Object.keys(clone.engines)) {
+
+        // skip the favorite mock engine
+        if (engine === favoriteMockEngine) {
+          continue
+        }
+
+        // clone user data
+        const engineConfig = {
+          models: clone.engines[engine].models,
+          voices: clone.engines[engine].voices,
+        }
+
+        // now save it
+        const engineConfigFile = engineConfigFilePath(dest, engine)
+        fs.writeFileSync(engineConfigFile, JSON.stringify(engineConfig, null, 2))
+
+        // clear clone
+        delete clone.engines[engine].models
+        delete clone.engines[engine].voices
+
+      }
+
+    }
+
     // save
     const settingsFile = typeof dest === 'string' ? dest : settingsFilePath(dest)
-    fs.writeFileSync(settingsFile, JSON.stringify(config, null, 2))
+    fs.writeFileSync(settingsFile, JSON.stringify(clone, null, 2))
 
   } catch (error) {
     console.log('Error saving settings data', error)

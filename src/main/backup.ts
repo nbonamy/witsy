@@ -11,6 +11,20 @@ import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
 
+// Files to backup with their respective path functions
+const filesToBackup = (app: App) => ([
+  { name: 'settings.json', path: settingsFilePath(app) },
+  { name: 'history.json', path: historyFilePath(app) },
+  { name: 'experts.json', path: expertsFilePath(app) },
+  { name: 'commands.json', path: commandsFilePath(app) }
+])
+
+// Folders to backup
+const foldersToBackup = (app: App) => ([
+  { name: 'engines', path: path.join(app.getPath('userData'), 'engines') },
+  { name: 'images', path: path.join(app.getPath('userData'), 'images') }
+])
+
 export const exportBackup = async (app: App): Promise<boolean> => {
   try {
     // Pick a directory to save the backup
@@ -19,9 +33,6 @@ export const exportBackup = async (app: App): Promise<boolean> => {
       return false
     }
 
-    // Get userData path
-    const userDataPath = app.getPath('userData')
-    
     // Create backup filename with timestamp
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0]
     const backupFilename = `witsy-backup-${timestamp}.zip`
@@ -50,25 +61,18 @@ export const exportBackup = async (app: App): Promise<boolean> => {
     // Pipe archive data to the file
     archive.pipe(output)
 
-    // Files to backup with their respective path functions
-    const filesToBackup = [
-      { path: settingsFilePath(app), name: 'settings.json' },
-      { path: historyFilePath(app), name: 'history.json' },
-      { path: expertsFilePath(app), name: 'experts.json' },
-      { path: commandsFilePath(app), name: 'commands.json' }
-    ]
-
     // Add individual files
-    for (const fileInfo of filesToBackup) {
+    for (const fileInfo of filesToBackup(app)) {
       if (fs.existsSync(fileInfo.path)) {
         archive.file(fileInfo.path, { name: fileInfo.name })
       }
     }
 
-    // Add images folder if it exists
-    const imagesPath = path.join(userDataPath, 'images')
-    if (fs.existsSync(imagesPath)) {
-      archive.directory(imagesPath, 'images')
+    // Add folders if they exist
+    for (const folder of foldersToBackup(app)) {
+      if (fs.existsSync(folder.path)) {
+        archive.directory(folder.path, folder.name)
+      }
     }
 
     // Wait for stream to close
@@ -134,45 +138,32 @@ export const importBackup = async (app: App, quitApp: () => void): Promise<boole
       await extractZip(backupFile as string, { dir: tempDir })
 
       // Get target file paths
-      const targetFiles = [
-        { source: path.join(tempDir, 'settings.json'), target: settingsFilePath(app) },
-        { source: path.join(tempDir, 'history.json'), target: historyFilePath(app) },
-        { source: path.join(tempDir, 'experts.json'), target: expertsFilePath(app) },
-        { source: path.join(tempDir, 'commands.json'), target: commandsFilePath(app) }
-      ]
+      const targetFiles = filesToBackup(app).map(fileInfo => ({
+        source: path.join(tempDir, fileInfo.name),
+        target: fileInfo.path,
+      }))
 
       // Restore individual files
       for (const fileInfo of targetFiles) {
         if (fs.existsSync(fileInfo.source)) {
-          // Create backup of current file before overwriting
-          if (fs.existsSync(fileInfo.target)) {
-            const backupPath = `${fileInfo.target}.backup-${Date.now()}`
-            fs.copyFileSync(fileInfo.target, backupPath)
-            console.log(`Backed up existing file: ${backupPath}`)
-          }
-
-          // Copy the restored file
           fs.copyFileSync(fileInfo.source, fileInfo.target)
           console.log(`Restored: ${fileInfo.target}`)
         }
       }
 
-      // Restore images folder if it exists
-      const sourceImagesPath = path.join(tempDir, 'images')
-      const targetImagesPath = path.join(app.getPath('userData'), 'images')
-      
-      if (fs.existsSync(sourceImagesPath)) {
-        // Create backup of existing images folder
-        if (fs.existsSync(targetImagesPath)) {
-          const backupImagesPath = `${targetImagesPath}.backup-${Date.now()}`
-          fs.renameSync(targetImagesPath, backupImagesPath)
-          console.log(`Backed up existing images folder: ${backupImagesPath}`)
-        }
+      const targetFolders = foldersToBackup(app).map(folderInfo => ({
+        source: path.join(tempDir, folderInfo.name),
+        target: folderInfo.path,
+      }))
 
-        // Copy the restored images folder
-        fs.mkdirSync(targetImagesPath, { recursive: true })
-        copyDirectoryRecursive(sourceImagesPath, targetImagesPath)
-        console.log(`Restored images folder: ${targetImagesPath}`)
+      // Restore folders if they exist
+      for (const folderInfo of targetFolders) {
+        const { source, target } = folderInfo
+        if (fs.existsSync(source)) {
+          fs.mkdirSync(target, { recursive: true })
+          copyDirectoryRecursive(source, target)
+          console.log(`Restored folder: ${target}`)
+        }
       }
 
       // Show success message
