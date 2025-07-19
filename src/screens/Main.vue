@@ -147,6 +147,11 @@ const onOnboardingDone = () => {
 
 </script>
 
+<style>
+@import 'sweetalert2/dist/sweetalert2.css';
+@import '../../css/swal2.css';
+</style>
+
 <style scoped>
 
 .main {

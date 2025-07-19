@@ -1,22 +1,22 @@
 <template>
   <ModalDialog id="engine-model-picker" ref="dialog" @save="onSave">
     <template #body>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect :favorites="favorites" v-model="engine" @change="onChangeEngine"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelect v-model="model" :engine="engine" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.streaming') }}</label>
         <select name="streaming" v-model="disableStreaming">
           <option :value="false">{{ t('common.enabled') }}</option>
           <option :value="true">{{ t('common.disabled') }}</option>
         </select>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('modelSettings.plugins') }}</label>
         <select name="plugins" v-model="disableTools">
           <option :value="false">{{ t('common.enabled') }}</option>
@@ -127,7 +127,3 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

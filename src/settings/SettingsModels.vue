@@ -1,28 +1,28 @@
 <template>
-  <form class="tab-content vertical large">
+  <div class="tab-content">
     <header>
       <div class="title">{{ t('settings.tabs.models') }}</div>
       <BIconTrash class="icon delete" @click="onDeleteCustom" v-if="isCustom" />
     </header>
     <main>
-      <div class="list-panel">
-        <div class="master">
-          <div class="list">
-            <div class="item" @click="showCreateCustom()">
+      <div class="master-detail">
+        <div class="md-master">
+          <div class="md-master-list">
+            <div class="md-master-list-item" @click="showCreateCustom()">
               <BIconPlusCircle class="logo create" />
               {{ t('settings.engines.custom.create') }}
             </div>
-            <div class="item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
+            <div class="md-master-list-item" v-for="engine in engines" :key="engine.id" :class="{ selected: currentEngine == engine.id }" @click="selectEngine(engine)">
               <EngineLogo :engine="engine.id" :grayscale="true" />
               {{ engine.label }}
             </div>
           </div>
         </div>
-        <component :is="currentView" class="panel" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
+        <component :is="currentView" class="md-detail" ref="engineSettings" :engine="currentEngine" @createCustom="showCreateCustom"/>
       </div>
       <CreateEngine ref="createEngine" @create="onCreateCustom" />
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -177,7 +177,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

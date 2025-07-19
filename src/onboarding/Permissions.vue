@@ -10,7 +10,7 @@
     <main class="permissions">
       
       <!-- Permissions status display -->
-      <form class="permissions-grid large" @submit.prevent>
+      <div class="form permissions-grid form-large">
         
         <!-- Accessibility Permission -->
         <div class="permission-card" :class="{ 'granted': accessibilityGranted, 'denied': !accessibilityGranted }">
@@ -50,7 +50,7 @@
           </button>
         </div>
         
-      </form>
+      </div>
 
       <div class="permissions-info">
         <div class="info-icon">

@@ -1,15 +1,15 @@
 <template>
-  <div>
-    <div class="group">
+  <div class="form form-vertical form-large">
+    <div class="form-field">
       <label>{{ t('settings.engines.apiKey') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <InputObfuscated v-model="apiKey" @blur="onKeyChange" />
         <a href="https://platform.openai.com/api-keys" target="_blank">{{ t('settings.engines.getApiKey') }}</a>
       </div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.chatModel') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <div class="control-group">
           <ModelSelectPlus id="chat" v-model="chat_model" :models="chat_models" :height="300" :disabled="chat_models.length == 0" @change="save" />
           <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
@@ -18,15 +18,15 @@
         <a href="https://openai.com/api/pricing/" target="_blank">{{ t('settings.engines.openai.pricing') }}</a>
       </div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus id="vision" v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.engines.openai.apiBaseURL') }}</label>
       <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @keydown.enter.prevent="save" @change="save"/>
     </div>
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" name="disableTools" v-model="disableTools" @change="save" />
       <label>{{  t('settings.engines.disableTools') }}</label>
     </div>
@@ -119,7 +119,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

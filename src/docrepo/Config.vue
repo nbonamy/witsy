@@ -1,51 +1,55 @@
 <template>
   
-  <form class="docrepo-config large vertical" @submit.prevent>
-    
-    <div class="group">
-      <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
-      <div class="input-with-suffix">
-        <input name="maxDocumentSizeMB" v-model="maxDocumentSizeMB" />
-        <span class="suffix">{{ t('docRepo.config.millionCharacters') }}</span>
+  <div class="form docrepo-config form-large form-vertical">
+
+    <div class="form-field-container">
+
+      <div class="form-field">
+        <label>{{ t('docRepo.config.maxDocumentSize') }}</label>
+        <div class="input-with-suffix">
+          <input name="maxDocumentSizeMB" v-model="maxDocumentSizeMB" />
+          <span class="suffix">{{ t('docRepo.config.millionCharacters') }}</span>
+        </div>
       </div>
-    </div>
-    
-    <div class="group">
-      <label>{{ t('docRepo.config.chunkSize') }}</label>
-      <div class="input-with-suffix">
-        <input name="chunkSize" v-model="chunkSize" />
-        <span class="suffix">{{ t('docRepo.config.characters') }}</span>
+      
+      <div class="form-field">
+        <label>{{ t('docRepo.config.chunkSize') }}</label>
+        <div class="input-with-suffix">
+          <input name="chunkSize" v-model="chunkSize" />
+          <span class="suffix">{{ t('docRepo.config.characters') }}</span>
+        </div>
       </div>
-    </div>
-    
-    <div class="group">
-      <label>{{ t('docRepo.config.chunkOverlap') }}</label>
-      <div class="input-with-suffix">
-        <input name="chunkOverlap" v-model="chunkOverlap" />
-        <span class="suffix">{{ t('docRepo.config.characters') }}</span>
+      
+      <div class="form-field">
+        <label>{{ t('docRepo.config.chunkOverlap') }}</label>
+        <div class="input-with-suffix">
+          <input name="chunkOverlap" v-model="chunkOverlap" />
+          <span class="suffix">{{ t('docRepo.config.characters') }}</span>
+        </div>
       </div>
-    </div>
-    
-    <div class="group">
-      <label>{{ t('docRepo.config.searchResultCount') }}</label>
-      <input name="searchResultCount" v-model="searchResultCount" />
-    </div>
-    
-    <div class="group">
-      <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
-      <div class="input-with-suffix">
-        <input name="relevanceCutOff" v-model="relevanceCutOff" />
-        <span class="suffix">0 ≤ x ≤ 1</span>
+      
+      <div class="form-field">
+        <label>{{ t('docRepo.config.searchResultCount') }}</label>
+        <input name="searchResultCount" v-model="searchResultCount" />
       </div>
-    </div>
+      
+      <div class="form-field">
+        <label>{{ t('docRepo.config.relevanceCutOff') }}</label>
+        <div class="input-with-suffix">
+          <input name="relevanceCutOff" v-model="relevanceCutOff" />
+          <span class="suffix">0 ≤ x ≤ 1</span>
+        </div>
+      </div>
+
+      </div>
 
     <div class="buttons">
-      <button type="submit" class="default" @click="onSave">{{ t('common.save') }}</button>
-      <button type="button" class="reset" @click="onReset" formnovalidate>{{ t('common.reset') }}</button>
       <button type="button" class="cancel" @click="onCancel" formnovalidate>{{ t('common.cancel') }}</button>
+      <button type="button" class="reset" @click="onReset" formnovalidate>{{ t('common.reset') }}</button>
+      <button type="submit" class="default" @click="onSave">{{ t('common.save') }}</button>
     </div>
 
-  </form>
+  </div>
 
 </template>
 
@@ -102,12 +106,10 @@ const onCancel = () => {
 </script>
 
 <style scoped>
-@import '../../css/form.css';
 
 .docrepo-config {
 
   padding: 4rem;
-  width: 240px;
   margin: 0 auto;
   
   .input-with-suffix {
@@ -129,10 +131,6 @@ const onCancel = () => {
   input[name="searchResultCount"] {
     max-width: 100px;
     text-align: right;
-  }
-
-  .buttons {
-    justify-content: flex-start !important;
   }
 
 }

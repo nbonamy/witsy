@@ -1,5 +1,5 @@
 <template>
-  <form class="experts tab-content vertical large"  @keyup.escape.prevent="onEdit(null)">
+  <div class="form experts tab-content "  @keyup.escape.prevent="onEdit(null)">
     <header v-if="edited">
       <BIconChevronLeft class="icon back" @click="onEdit(null)" />
       <div class="title">{{ edited.name || expertI18n(edited, 'name') }}</div>
@@ -13,7 +13,7 @@
     <main class="editor sliding-pane" :class="{ visible: edited }"> 
       <ExpertEditor ref="editor" :expert="edited" @expert-modified="onExpertModified"/>
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -91,10 +91,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/sticky-header-table.css';
-</style>
 
 <style scoped>
 

@@ -1,24 +1,24 @@
 <template>
   <div class="expert-editor" @keydown.enter.prevent="onSave">
-    <div class="group" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
+    <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
       <label class="no-colon"><BIconExclamationCircle /></label>
       <div>{{ t('common.differentLocales') }}</div>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.name') }}</label>
       <input type="text" name="name" v-model="name" required @keyup="onChangeText" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('common.prompt') }}</label>
-      <div class="subgroup">
+      <div class="form-subgroup">
         <textarea name="prompt" v-model="prompt" required @keyup="onChangeText"></textarea>
         <a href="#" name="reset" @click="onReset" v-if="isEdited">{{ t('commands.editor.resetToDefault') }}</a>
       </div>
     </div>
-    <div class="group" v-if="supportTriggerApps">
+    <div class="form-field" v-if="supportTriggerApps">
       <label>{{ t('experts.editor.triggerApps') }}</label>
-      <div class="subgroup list-with-actions">
-        <div class="list">
+      <div class="form-subgroup list-with-actions">
+        <div class="lwa-list">
           <template v-for="app in triggerApps" :key="app.identifier">
           <div :class="{ item: true, selected: app.identifier == selectedApp?.identifier }" @click="selectApp(app)">
             <img class="icon" :src="iconData(app)" />
@@ -26,7 +26,7 @@
           </div>
         </template>
         </div>
-        <div class="actions">
+        <div class="lwa-actions">
           <button class="button add" @click.prevent="onAddApp"><BIconPlus /></button>
           <button class="button del" @click.prevent="onDelApp"><BIconDash /></button>
         </div>
@@ -160,12 +160,6 @@ const onSave = (event: Event) => {
 </script>
 
 <style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/list-with-actions.css';
-</style>
-
-<style scoped>
 
 .expert-editor {
 
@@ -176,7 +170,7 @@ const onSave = (event: Event) => {
 
   .list-with-actions {
 
-    .list {
+    .lwa-list {
 
       height: 100px;
       overflow-y: auto;
@@ -205,7 +199,7 @@ const onSave = (event: Event) => {
 
 }
 
-.windows .expert-editor .list-with-actions .list .item .icon {
+.windows .expert-editor .list-with-actions .lwa-list .item .icon {
   transform: scale(0.8);
 }
 

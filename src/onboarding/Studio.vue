@@ -8,9 +8,9 @@
       <h3>{{ t('onboarding.studio.subtitle') }}</h3>
     </header>
 
-    <form class="large" @submit.prevent>
+    <div class="form form-large">
       <div class="engines-grid">
-        <div class="studio-engine group" v-for="engine in engines" :key="engine">
+        <div class="studio-engine form-field" v-for="engine in engines" :key="engine">
           <div class="brand">
             <EngineLogo :engine="engine" :grayscale="appearanceTheme.isDark" />
             <span>{{ engineNames[engine] || engine }}</span>
@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
   </section>
 
@@ -51,9 +51,6 @@ const engines = computed(() => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 

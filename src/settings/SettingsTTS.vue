@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.voice.engine') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :key="engine.id" :value="engine.id">
@@ -8,23 +8,23 @@
         </option>
       </select>
     </div>
-    <div class="group" v-if="engine == 'openai'">
+    <div class="form-field" v-if="engine == 'openai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="openaiAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'groq'">
+    <div class="form-field" v-if="engine == 'groq'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="groqAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine == 'elevenlabs'">
+    <div class="form-field" v-if="engine == 'elevenlabs'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="elevenlabsAPIKey" @blur="save" />
     </div>
-    <div class="group" v-if="engine === 'falai'">
+    <div class="form-field" v-if="engine === 'falai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falaiAPIKey" @blur="save" />
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.voice.model') }}</label>
       <select v-model="model" @change="onChangeModel">
         <option v-for="model in models" :key="model.id" :value="model.id">
@@ -32,7 +32,7 @@
         </option>
       </select>
     </div>
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.voice.tts.voice') }}</label>
       <div class="control-group">
         <select v-model="voice" @change="save">
@@ -50,11 +50,11 @@
       </div>
       <audio ref="audio" />
     </div>
-    <!-- <div class="group" v-if="engine === 'kokoro'">
+    <!-- <div class="form-field" v-if="engine === 'kokoro'">
       <label></label>
       <span>{{ t('settings.voice.tts.kokoroReminder') }} <a href="https://kokorotts.com" target="_blank">Kokoro TTS</a>. {{ t('settings.voice.tts.serviceDisclaimer') }}</span>
     </div> -->
-    <div class="group" v-if="engine === 'groq'">
+    <div class="form-field" v-if="engine === 'groq'">
       <label></label>
       <span v-html="t('settings.voice.tts.groqAcceptTermsReminder')"></span>
     </div>
@@ -212,10 +212,6 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 .control {

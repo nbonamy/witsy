@@ -2,11 +2,9 @@
 <template>
 
   <div class="language-selector">
-    <form>
-      <div class="group localeUI">
-        <LangSelect v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
-      </div>
-    </form>
+    <div class="localeUI">
+      <LangSelect class="large" v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
+    </div>
   </div>
 
   <section>
@@ -84,15 +82,12 @@ const save = () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
 .language-selector {
   position: absolute;
-  top: 0.5rem;
+  top: 0.85rem;
   right: 3rem;
   z-index: 10;
 }

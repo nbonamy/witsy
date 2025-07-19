@@ -111,9 +111,6 @@ const onMenuOpened = async () => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -122,7 +119,7 @@ const onMenuOpened = async () => {
   --vs-min-height: auto;
   --vs-menu-height: v-bind(`${height}px`);
   --vs-padding: 2.75px 12px;
-  --vs-font-size: var(--form-font-size);
+  --vs-font-size: var(--form-large-font-size);
   --vs-text-color: var(--control-text-color);
   --vs-background-color: var(--control-bg-color);
   --vs-border: 1px solid var(--control-border-color);
@@ -163,6 +160,7 @@ const onMenuOpened = async () => {
       button {
         box-shadow: none;
         filter: brightness(2.0);
+        padding: 0 !important;
       }
     }
 
@@ -184,6 +182,11 @@ const onMenuOpened = async () => {
           }
         }
 
+      }
+
+      .search-input {
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
     }
@@ -259,7 +262,7 @@ const onMenuOpened = async () => {
 
 }
 
-form.large .vue-select .menu .menu-option {
+.form.large .vue-select .menu .menu-option {
   .capability {
     width: 0.9em;
   }

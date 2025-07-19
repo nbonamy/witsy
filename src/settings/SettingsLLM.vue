@@ -1,5 +1,5 @@
 <template>
-  <form class="tab-content vertical large" @keyup.escape.prevent="onEditInstruction(null)">
+  <div class="form tab-content form-vertical form-large" @keyup.escape.prevent="onEditInstruction(null)">
     <header v-if="selectedInstruction">
       <BIconChevronLeft class="icon back" @click="onEditInstruction(null)" />
       <div class="title">{{ t('settings.llm.instructions.editor.title') }}</div>
@@ -8,7 +8,7 @@
       <div class="title">{{ t('settings.tabs.llm') }}</div>
     </header>
     <main class="list sliding-root" :class="{ visible: !selectedInstruction }">
-      <div class="group chat-prompt">
+      <div class="form-field chat-prompt">
         <label>{{ t('settings.llm.instructions.label') }}</label>
         <select v-model="instructions" @change="save">
           <option value="standard">{{ t('settings.llm.instructions.standard') }}</option>
@@ -26,22 +26,22 @@
           <button type="button" @click="onDeleteInstruction" :disabled="!isCustomInstructionSelected">{{ t('common.delete') }}</button>
         </div>
       </div>
-      <div class="group quick-prompt">
+      <div class="form-field quick-prompt">
         <label>{{ t('settings.general.promptLLMModel') }}</label>
         <EngineSelect class="engine" v-model="engine" @change="onChangeEngine" :default-text="t('settings.general.lastOneUsed')" />
         <ModelSelectPlus class="model" v-model="model" @change="onChangeModel" :engine="engine" :default-text="!models.length ? t('settings.general.lastOneUsed') : ''" />
       </div>
-      <div class="group localeLLM">
+      <div class="form-field localeLLM">
         <label>{{ t('settings.general.localeLLM') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <LangSelect v-model="localeLLM" @change="onChangeLocaleLLM" />
-          <div class="checkbox">
+          <div class="form-field horizontal">
             <input type="checkbox" v-model="forceLocale" :disabled="!isLocalized" @change="save" />
             <div class="label">{{ t('settings.general.forceLocale') }}</div>
           </div>
         </div>
       </div>
-      <div class="group length">
+      <div class="form-field length">
         <label>{{ t('settings.advanced.conversationLength') }}</label>
         <input type="number" min="1" v-model="conversationLength" @change="save">
       </div>
@@ -49,7 +49,7 @@
     <main class="editor sliding-pane" :class="{ visible: selectedInstruction }">
       <InstructionEditor :instruction="selectedInstruction" @cancel="onEditInstruction(null)" @save="onInstructionSaved" />
     </main>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -236,14 +236,6 @@ const onInstructionSaved = (instruction: CustomInstruction) => {
 defineExpose({ load })
 
 </script>
-
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-@import '../../css/themes/base.css';
-@import '../../css/themes/openai.css';
-@import '../../css/themes/conversation.css';
-</style>
 
 <style scoped>
 

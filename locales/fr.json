@@ -617,15 +617,18 @@
       "title": "Paramètres par défaut des dépôts de documents"
     },
     "create": {
-      "embeddingWarning": "le modèle ne peut pas être modifié une fois le dépôt créé"
+      "embeddingWarning": "le modèle ne peut pas être modifié une fois le dépôt créé",
+      "title": "Créer un dépôt"
     },
-    "repositories": {
+    "list": {
       "clickToCreate": "Cliquez sur le bouton + pour en créer un.",
-      "createTitle": "Créer un dépôt",
       "documentsCount": "Aucun document|1 document|{count} documents",
-      "noDocuments": "Vous n'avez pas encore de documents. Cliquez sur les icônes ci-dessus pour ajouter des documents ou des dossiers.",
       "noRepositories": "Vous n'avez pas encore de dépôts.",
       "title": "Dépôts de documents"
+    },
+    "view": {
+      "noDocuments": "Vous n'avez pas encore de documents. Cliquez sur les icônes ci-dessus pour ajouter des documents ou des dossiers.",
+      "title": "Répertoire de documents"
     }
   },
   "embedding": {

@@ -194,13 +194,6 @@ defineExpose({
 </script>
 
 <style>
-@import '../../css/highlight.css';
-@import '../../css/themes/base.css';
-@import '../../css/themes/openai.css';
-@import '../../css/themes/conversation.css';
-</style>
-
-<style>
 
 .message .body .katex-mathml {
   font-family: 'STIX Two Math';

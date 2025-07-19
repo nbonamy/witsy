@@ -116,19 +116,13 @@
 
 }
 
-.settings form {
+.settings .form {
   
   overflow: hidden;
   font-size: var(--settings-font-size);
 
-  &.vertical {
-    
-    .group {
-
-      &.horizontal {
-        gap: 0.125rem !important;
-      }
-      
+  &.form-vertical {
+    .form-field {
       textarea {
         resize: none;
       }
@@ -151,59 +145,61 @@
   text-align: right;
 }
 
-.settings .list-panel {
+.settings .master-detail {
 
   display: flex;
   flex-direction: row;
   align-items: stretch;
   height: 100vh;
 
-  .master {
+  .md-master {
+    
     padding: 0.5rem;
     border-right: 1px solid var(--sidebar-border-color);
     background-color: color-mix(in srgb, var(--sidebar-bg-color), var(--background-color) 50%);
-  }
 
-  .master .list {
+    .md-master-list {
   
-    width: 200px;
-    overflow-y: auto;
-    scrollbar-gutter: stable;
-    scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
+      width: 200px;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      scrollbar-color: var(--sidebar-scroll-thumb-color) var(--sidebar-bg-color);
 
-    .item {
-      
-      flex-direction: row;
-      align-items: center;
-      height: auto;
-      padding: 0.5rem;
-      display: flex;
-      border-radius: 4px;
-      font-size: var(--settings-list-font-size);
-      color: var(--settings-normal-text-color);
-      cursor: pointer;
-
-      .logo {
-        height: var(--settings-list-font-size);
-        margin-right: 0.5rem;
-      }
-
-      .icon {
+      .md-master-list-item {
+        
+        flex-direction: row;
+        align-items: center;
+        height: auto;
+        padding: 0.5rem;
+        display: flex;
+        border-radius: 4px;
+        font-size: var(--settings-list-font-size);
         color: var(--settings-normal-text-color);
+        cursor: pointer;
+
+        .logo {
+          height: var(--settings-list-font-size);
+          margin-right: 0.5rem;
+        }
+
+        .icon {
+          color: var(--settings-normal-text-color);
+        }
+
+        &.selected {
+          background-color: var(--settings-selected-bg-color);
+        }
       }
 
-      &.selected {
-        background-color: var(--settings-selected-bg-color);
-      }
+    }
+
+    .md-master-actions button {
+      box-shadow: none;
     }
 
   }
 
-  .actions button {
-    box-shadow: none;
-  }
-
-  .panel {
+  .md-detail {
     flex: 1;
     padding: 1rem 1.5rem;
     background-color: inherit;
@@ -213,10 +209,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .settings .list-panel .list .item .image {
+  .settings .master-detail .md-master .list .item .image {
     filter: invert(1);
   }
-  .settings .list-panel .list .item .icon {
+  .settings .master-detail .md-master .list .item .icon {
     fill: var(--text-color);
   }
 }

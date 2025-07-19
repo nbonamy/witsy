@@ -53,9 +53,6 @@ const props = defineProps({
 
 </script>
 
-<style scoped>
-@import '../../css/sticky-header-table.css';
-</style>
 
 <style scoped>
 

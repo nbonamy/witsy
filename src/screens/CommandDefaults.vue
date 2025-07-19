@@ -4,15 +4,15 @@
       <div class="title">{{ t('commands.defaults.title') }}</div>
     </template>
     <template #body>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmProvider') }}</label>
         <EngineSelect v-model="engine" @change="onChangeEngine" :default-text="t('commands.defaults.lastOneUsed')" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.llmModel') }}</label>
         <ModelSelect id="model" v-model="model" :engine="engine" :default-text="!models.length ? t('commands.defaults.lastOneUsed') : ''" />
       </div>
-      <div class="group" v-if="isWindows">
+      <div class="form-field" v-if="isWindows">
         <label>{{ t('commands.defaults.altWinCopyPaste') }}</label>
         <input type="checkbox" v-model="altWinCopyPaste" />
       </div>
@@ -85,14 +85,10 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
-dialog.editor form .group label {
+dialog.editor .form .form-field label {
   min-width: 200px;
   max-width: 200px;
 }

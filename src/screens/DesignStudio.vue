@@ -1,6 +1,6 @@
 <template>
-  <div class="studio panel-content" @keydown="onKeyDown" v-bind="$attrs">
-    <div class="panel">
+  <div class="studio split-pane" @keydown="onKeyDown" v-bind="$attrs">
+    <div class="sp-sidebar">
       <header>
         <div class="title">{{ t('designStudio.title') }}</div>
         <BIconArrowCounterclockwise class="icon reset" @click="onReset" v-if="currentMedia" />
@@ -14,7 +14,7 @@
         <History :class="{ hidden: mode !== 'history' }" :history="history" :selected-messages="selection" @select-message="selectMessage" @context-menu="showContextMenu" />
       </main>
     </div>
-    <Preview class="content"
+    <Preview class="sp-main"
       :message="currentMedia" :is-generating="isGenerating"
       :can-undo="undoStack.length > 0" :can-redo="redoStack.length > 0"
       @fullscreen="onFullScreen" @delete="onDelete"
@@ -555,15 +555,12 @@ const onFullScreen = (url: string) => {
 }
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 
-.panel-content {
+.split-pane {
   
-  .panel {
+  .sp-sidebar {
   
     flex: 0 0 var(--create-panel-width);
 

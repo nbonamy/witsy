@@ -14,9 +14,10 @@
     border-bottom: 0px;
   }
 
-  .list {
-    width: calc(100%);
+  .lwa-list {
+    
     scrollbar-color: var(--scrollbar-thumb-color) var(--control-list-bg-color);
+    border: 1px solid var(--control-list-border-color);
     background-color: var(--control-list-bg-color);
     border-bottom: 0px;
     flex-grow: 1;
@@ -33,6 +34,10 @@
 
   }
 
+  .sticky-table-container .lwa-list {
+    border: none;
+  }
+
   :not(table).list {
     display: flex;
     flex-direction: column;
@@ -40,7 +45,7 @@
     align-items: start;
   }
 
-  .actions {
+  .lwa-actions {
     display: flex;
     flex-direction: row;
     justify-content: start;

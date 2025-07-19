@@ -1,14 +1,14 @@
 
 <template>
   <div v-for="agents in [runnableAgents, supportAgents]" :set="type = agents[0]?.type":key="type">
-    <div class="agents list-large-with-header" v-if="agents.length">
-      <div class="header">
+    <div class="agents panel" v-if="agents.length">
+      <div class="panel-header">
         <label>{{ t(`agent.forge.list.${type}`) }}</label>
         <BIconPlusLg class="icon create" @click.prevent="$emit('create')" />
       </div>
-      <div class="list" v-if="agents.length">
+      <div class="panel-body" v-if="agents.length">
         <template v-for="agent in agents" :key="agent.uuid">
-          <div class="item" @click="$emit('view', agent)">
+          <div class="panel-item" @click="$emit('view', agent)">
             <div class="info">
               <div class="text">{{ agent.name }}</div>
               <div class="subtext">{{ agent.name }}</div>
@@ -48,10 +48,6 @@ const props = defineProps({
 })
 
 </script>
-
-<style scoped>
-@import '../../css/list-large-with-header.css';
-</style>
 
 <style scoped>
 

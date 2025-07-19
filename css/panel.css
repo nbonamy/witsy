@@ -1,5 +1,5 @@
 
-.list-large-with-header {
+.panel {
   
   padding: 2rem;
   padding-top: 0px;
@@ -8,7 +8,7 @@
   margin: 8px 6px 8px 6px;
   overflow: hidden;
 
-  .header {
+  .panel-header {
     
     display: flex;
     flex-direction: row;
@@ -44,14 +44,14 @@
 
   }
 
-  .list, .empty {
+  .panel-body, .panel-empty {
     flex-grow: 1;
     border: 1px solid var(--control-border-color);
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
   }
 
-  .list {
+  .panel-body {
 
     padding: 1rem;
     display: flex;
@@ -59,7 +59,7 @@
     overflow: auto;
     gap: 1rem;
 
-    .item {
+    .panel-item {
 
       padding: 1rem;
       font-size: 9.5pt;
@@ -140,7 +140,7 @@
     }
   }
 
-  .empty {
+  .panel-empty {
     padding: 3rem 15%;
     text-align: center;
   }

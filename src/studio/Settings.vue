@@ -1,8 +1,8 @@
 <template>
   <div class="studio-settings">
-    <form class="vertical">
+    <div class="form form-vertical">
 
-      <div class="group media-type">
+      <div class="form-field media-type">
         <label>{{ t('designStudio.mediaType.label') }}</label>
         <select name="type" v-model="mediaType" @change="onChangeMediaType">
           <option value="image">{{ t('designStudio.mediaType.image') }}</option>
@@ -10,14 +10,14 @@
         </select>
       </div>
 
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('designStudio.provider') }}</label>
         <select v-model="engine" name="engine" @change="onChangeEngine">
           <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
         </select>
       </div>
 
-      <div class="group">
+      <div class="form-field">
         
         <label>{{ t('designStudio.model') }}</label>
 
@@ -35,7 +35,7 @@
         </template>
 
         <template v-else>
-          <div class="subgroup">
+          <div class="form-subgroup">
             <select v-model="model" name="model" @change="onChangeModel">
               <option v-for="model in models" :value="model.id">{{ model.name }}</option>
             </select>
@@ -45,23 +45,23 @@
       
       </div>
 
-      <div class="group horizontal checkbox" v-if="currentMedia != null && canTransform">
+      <div class="form-field horizontal" v-if="currentMedia != null && canTransform">
         <input type="checkbox" v-model="transform" name="transform" @change="onChangeTransform"/>
         <label>{{ t('designStudio.transform') }}</label>
       </div>
 
-      <div class="group horizontal checkbox" v-if="isEditing && !isGenerating">
+      <div class="form-field horizontal" v-if="isEditing && !isGenerating">
         <input type="checkbox" v-model="preserve" name="preserve" />
         <label>{{ t('designStudio.preserveOriginal') }}</label>
       </div>
 
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.prompt') }}</label>
         <textarea v-model="prompt" name="prompt" class="prompt" :placeholder="t('designStudio.promptPlaceholder')">
         </textarea>
       </div>
 
-      <div v-if="modelHasParams" class="group">
+      <div v-if="modelHasParams" class="form-field">
         
         <label class="expander" @click="showParams = !showParams">
           <span>
@@ -81,7 +81,7 @@
         <div v-if="engine == 'sdwebui'" class="info"><a :href="`${SDWebUIBaseURL}/docs#/default/text2imgapi_sdapi_v1_txt2img_post`" target="_blank">{{ t('designStudio.moreAboutSDWebUIParameters') }}</a></div>
         
         <template v-if="modelHasCustomParams">
-          <div class="group" v-for="param in customParams">
+          <div class="form-field" v-for="param in customParams">
             <label>{{ param.label }}</label>
             <input v-if="param.type === 'input'" :name="`custom-${param.key}`" v-model="params[param.key]" type="text" />
             <textarea v-if="param.type === 'textarea'" :name="`custom-${param.key}`" v-model="params[param.key]"></textarea>
@@ -105,9 +105,9 @@
           @delete="onDelParam"
         />
 
-        <div v-if="modelHasParams" class="group">
+        <div v-if="modelHasParams" class="form-field">
           <label>{{ t('designStudio.modelDefaults') }}</label>
-          <div class="subgroup">
+          <div class="form-subgroup">
             <button type="button" name="load" @click="onLoadDefaults" :disabled="!modelHasDefaults">{{ t('common.load') }}</button>
             <button type="button" name="save" @click="onSaveDefaults" :disabled="!canSaveAsDefaults">{{ t('common.save') }}</button>
             <button type="button" name="clear" @click="onClearDefaults" :disabled="!modelHasDefaults">{{ t('common.clear') }}</button>
@@ -116,15 +116,15 @@
 
       </template>
 
-      <div class="group">
-        <div class="subgroup">
+      <div class="form-field">
+        <div class="form-subgroup">
           <button name="generate" class="generate-button" type="button" @click="generateMedia()" :disabled="isGenerating">
             {{ isGenerating ? t('designStudio.generating') : isEditing ? t('common.edit') : t('designStudio.generate') }}
           </button>
           <button v-if="canUpload" name="upload" type="button" @click="$emit('upload')" :disabled="isGenerating">{{ t('common.upload') }}</button>
         </div>
       </div>
-    </form>
+    </div>
 
     <VariableEditor ref="editor" id="studio-variable-editor" title="designStudio.variableEditor.title" :variable="selectedParam" @save="onSaveParam" />
 
@@ -598,13 +598,6 @@ defineExpose({
 </script>
 
 <style scoped>
-@import '../../css/form.css';
-@import '../../css/list-with-actions.css';
-@import '../../css/sticky-header-table.css';
-@import '../../css/panel-content.css';
-</style>
-
-<style scoped>
 
 .studio-settings {
   overflow-y: auto;
@@ -615,12 +608,12 @@ defineExpose({
   padding: 0px 1.5rem;
 }
 
-.studio-settings form .group .subgroup {
+.studio-settings .form .form-field .form-subgroup {
   display: flex;
   width: 100%;
 }
 
-.studio-settings form .group textarea {
+.studio-settings .form .form-field textarea {
   flex: auto;
   min-height: 2rem;
   height: 4rem;
@@ -639,7 +632,7 @@ defineExpose({
   width: 100%;
 }
 
-.studio-settings form .group label.expander {
+.studio-settings .form .form-field label.expander {
   margin-top: -0.5rem;
   cursor: pointer;
 }

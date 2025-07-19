@@ -40,12 +40,12 @@
 
   form {
     
-    &.vertical {
+    &.form-vertical {
       align-items: stretch;
     }
 
-    &:not(.vertical) {
-      .group label {
+    &:not(.form-vertical) {
+      .form-field label {
         min-width: 140px;        
       }
       textarea {
@@ -120,7 +120,6 @@
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
-      font-size: var(--form-font-size);
       gap: 0.5rem;
 
       button {

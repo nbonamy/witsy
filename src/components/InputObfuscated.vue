@@ -44,9 +44,6 @@ const onKeyUp = (event: KeyboardEvent) => {
 
 </script>
 
-<style scoped>
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
@@ -55,7 +52,7 @@ const onKeyUp = (event: KeyboardEvent) => {
   position: relative;
 }
 
-form .group .wrapper input {
+.form .form-field .wrapper input {
   width: 100%;
   box-sizing: border-box;
   padding-left: 6px;

@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
 
     <div class="description">
       {{ t('settings.plugins.image.description') }}
     </div>
 
-    <div class="group horizontal">
+    <div class="form-field horizontal">
       <input type="checkbox" v-model="enabled" @change="save" />
       <label>{{ t('common.enabled') }}</label>
     </div>
 
-    <div class="group">
+    <div class="form-field">
       <label>{{ t('settings.plugins.image.provider') }}</label>
       <select v-model="engine" @change="onChangeEngine">
         <option v-for="engine in engines" :value="engine.id">{{ engine.name }}</option>
@@ -18,9 +18,9 @@
     </div>
 
     <template v-if="['openai', 'google', 'xai'].includes(engine)">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <div class="control-group">
             <select v-model="model" :disabled="models.length == 0" @change="save">
               <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
@@ -34,14 +34,14 @@
     </template>
 
     <template v-else-if="engine == 'sdwebui'">
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.sdwebui.baseURL') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <input type="text" v-model="sdwebuiBaseURL" :placeholder="sdwebuiDefaultBaseURL" @blur="save" />
           <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API" target="_blank">{{ t('settings.engines.sdwebui.ensureApiMode') }}</a>
         </div>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="control-group">
           <select v-model="model" :disabled="models.length == 0" @change="save">
@@ -54,15 +54,15 @@
     </template>
 
     <template v-else>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.engines.apiKey') }}</label>
         <InputObfuscated v-if="engine === 'falai'" v-model="falaiAPIKey" @blur="save" />
         <InputObfuscated v-if="engine === 'huggingface'" v-model="huggingAPIKey" @blur="save" />
         <InputObfuscated v-if="engine === 'replicate'" v-model="replicateAPIKey" @blur="save" />
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
-        <div class="subgroup">
+        <div class="form-subgroup">
           <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
             <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
           </Combobox>
@@ -160,7 +160,3 @@ defineExpose({ load })
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>

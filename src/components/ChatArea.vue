@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-area content">
+  <div class="chat-area sp-main">
     <header :class="{ 'is-left-most': isLeftMost }">
       <IconSideBar class="icon toggle-sidebar" @click="toggleSideBar" />
       <IconNewChat class="icon new-chat" :class="{ hidden: !isLeftMost }" @click="onNewChat" />
@@ -322,9 +322,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/panel-content.css';
-</style>
 
 <style scoped>
 
@@ -332,13 +329,13 @@ defineExpose({
   padding-left: 40px;
 }
 
-.windows .panel-content .content header .toggle-sidebar {
+.windows .split-pane .content header .toggle-sidebar {
   top: -4.5px;
 }
 
-.panel-content {
+.split-pane {
   
-  .content {
+  .sp-main {
 
     background-color: var(--message-list-bg-color);
 
@@ -415,22 +412,23 @@ defineExpose({
 
     }
 
-    .model-settings {
-      flex: 0 0 0px;
-      transition: flex-basis 0.15s ease-in-out;
-      overflow: hidden;
-
-      &:deep() label {
-        white-space: nowrap;
-      }
-
-      &.visible {
-        flex: 0 0 var(--info-panel-width);
-      }
-    }
 
   }
 
 }
 
+.model-settings {
+  
+  flex: 0 0 0px;
+  transition: flex-basis 0.15s ease-in-out;
+  overflow: hidden;
+
+  &:deep() label {
+    white-space: nowrap;
+  }
+
+  &.visible {
+    flex: 0 0 var(--info-panel-width);
+  }
+}
 </style>

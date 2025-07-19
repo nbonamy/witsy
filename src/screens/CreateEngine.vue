@@ -5,11 +5,11 @@
       <div class="text">{{ t('engine.create.description') }}</div>
     </template> 
     <template #body>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('common.name') }}</label>
         <input name="label" v-model="label" placeholder="e.g. Together.ai"/>
       </div>
-      <div class="group">
+      <div class="form-field">
         <label>{{ t('engine.create.apiSpecification') }}</label>
         <select name="api" v-model="api">
           <option value="openai">OpenAI</option>
@@ -17,29 +17,29 @@
         </select>
       </div>
       <template v-if="api === 'openai'">
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.apiBaseURL') }}</label>
           <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.apiKey') }}</label>
           <InputObfuscated name="apiKey" v-model="apiKey" />
         </div>
       </template>
       <template v-if="api === 'azure'">
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.endpoint') }}</label>
           <input name="baseURL" v-model="baseURL" placeholder="https://xxx.openai.azure.com/" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.apiKey') }}</label>
           <InputObfuscated name="apiKey" v-model="apiKey" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.deployment') }}</label>
           <input name="deployment" v-model="deployment" />
         </div>
-        <div class="group">
+        <div class="form-field">
           <label>{{ t('engine.create.apiVersion') }}</label>
           <input name="apiVersion" v-model="apiVersion" />
         </div>
@@ -122,10 +122,6 @@ defineExpose({
 
 </script>
 
-<style scoped>
-@import '../../css/dialog.css';
-@import '../../css/form.css';
-</style>
 
 <style scoped>
 
