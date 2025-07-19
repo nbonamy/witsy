@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="form form-vertical form-large">
     <div class="form-field language">
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
       <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
@@ -40,14 +40,6 @@
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="nvidiaAPIKey" @blur="save" />
     </div>
-    <div class="form-field" v-if="engine == 'nvidia'">
-      <label>{{ t('common.prompt') }}</label>
-      <textarea v-model="nvidiaPrompt" @blur="save" />
-    </div>
-    <div class="form-field" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
-      <label>{{ t('common.prompt') }}</label>
-      <textarea v-model="voxtralPrompt" @blur="save" />
-    </div>
     <div class="form-field horizontal" v-if="engine == 'whisper'">
       <input type="checkbox" v-model="whisperGPU" @change="save" />
       <label>{{ t('settings.voice.useWebGpu') }}</label>
@@ -74,6 +66,14 @@
         <input name="model" v-model="model" @change="onChangeModel"/>
       </div>
     </template>
+    <div class="form-field" v-if="engine == 'nvidia'">
+      <label>{{ t('common.prompt') }}</label>
+      <textarea v-model="nvidiaPrompt" @blur="save" />
+    </div>
+    <div class="form-field" v-if="engine == 'voxtral' && (model === 'voxtral-mini-2507' || model === 'voxtral-small-2507')">
+      <label>{{ t('common.prompt') }}</label>
+      <textarea v-model="voxtralPrompt" @blur="save" />
+    </div>
     <div class="form-field">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
       <select name="duration" v-model="duration" @change="save">
@@ -346,12 +346,14 @@ defineExpose({ load })
 
 </script>
 
-
 <style scoped>
+
 .progress {
   margin-top: 8px;
 }
-.settings .form.vertical .form-field textarea {
+
+.settings .form.form-vertical .form-field textarea {
   flex: 1 0 100px;
 }
+
 </style>
