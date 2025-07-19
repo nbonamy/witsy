@@ -197,7 +197,7 @@ test('Instantiates OpenAI by default', async () => {
 test('Instantiates Mistral', async () => {
   store.config.stt.engine = 'mistralai'
   store.config.stt.model = 'voxtral-mini-2507' // explicit chat-completion model
-  store.config.engines.mistral = {
+  store.config.engines.mistralai = {
     apiKey: 'dummy-mistral-key',
     models: { chat: [] },      // minimal valid ModelsConfig
     model: { chat: '' }        // minimal valid ModelConfig
