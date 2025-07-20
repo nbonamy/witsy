@@ -22,7 +22,10 @@
     />
     <div v-if="isDragOver" class="drop-wrapper">
       <div class="drop-overlay"></div>  
-      <div class="drop-indicator"><BIconImage />{{ t('designStudio.dropzone') }}</div>
+      <div class="drop-indicator">
+        <BIconImageFill />
+        {{ t('designStudio.dropzone') }}
+      </div>
     </div>
   </div>
   <ContextMenu v-if="showMenu" @close="closeContextMenu" :actions="contextMenuActions()" @action-clicked="handleActionClick" :x="menuX" :y="menuY" />
@@ -746,23 +749,29 @@ const onFullScreen = (url: string) => {
   right: 0;
   bottom: 0;
   background-color: var(--background-color);
-  opacity: 0.8;
+  opacity: 0.9;
   z-index: 1000;
 }
 
 .drop-indicator {
-  padding: 3rem 6rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  border: 1px dashed var(--highlight-color);
-  background-color: var(--background-color);
-  border-radius: 12px;
-  color: var(--highlight-color);
-  font-family: var(--font-family-serif);
-  font-size: 1.25rem;
   z-index: 1001;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 150%;
+
+  svg {
+    width: 4rem;
+    height: 4rem;
+    fill: var(--highlight-color);
+    border-radius: 0.5rem;
+    transform: scaleX(1.1) rotate(5deg);
+  }
 }
 
 </style>
