@@ -15,10 +15,10 @@
     <div class="container">
       <main :style="{ transform: `translateX(-${step * 100}%)` }">
         <Welcome />
-        <Chat />
+        <Chat ref="chat" />
         <Ollama ref="ollama" />
-        <Studio />
-        <Voice />
+        <Studio ref="studio" />
+        <Voice ref="voice" />
         <Permissions ref="permissions" />
         <Instructions ref="instructions" />
         <Done ref="done" />
@@ -49,13 +49,17 @@ import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
 import Done from '../onboarding/Done.vue'
+import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
 defineEmits(['close']);
 
 const step = ref(0)
 const locales = ref([])
 const localeUI = ref(null)
+const chat = ref<typeof Chat>(null)
 const ollama = ref<typeof Ollama>(null)
+const studio = ref<typeof Studio>(null)
+const voice = ref<typeof Voice>(null)
 const instructions = ref<typeof Instructions>(null)
 const permissions = ref<typeof Permissions>(null)
 const done = ref<typeof Done>(null)
@@ -129,7 +133,7 @@ const onNext = async () => {
 }
 
 const notifyVisible = () => {
-  const screens = [ null, null, ollama.value, null, null, permissions.value, instructions.value, done.value ]
+  const screens = [ null, chat.value, ollama.value, studio.value, voice.value, permissions.value, instructions.value, done.value ]
   screens[step.value]?.onVisible?.()
 }
 

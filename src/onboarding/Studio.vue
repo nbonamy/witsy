@@ -70,7 +70,7 @@ const engines = computed(() => {
   }).sort()
 })
 
-onMounted(() => {
+const onVisible = () => {
   engines.value.forEach(engine => {
     const totalModels = getTotalModelsCount(engine)
     if (store.config.engines[engine].apiKey && totalModels > 0) {
@@ -81,7 +81,7 @@ onMounted(() => {
       })
     }
   })
-})
+}
 
 const getTotalModelsCount = (engine: string) => {
   const models = store.config.engines[engine]?.models
@@ -104,6 +104,8 @@ const loadModels = (engine: string) => {
     errors.value[engine] = ''
     return
   }
+
+  store.saveSettings()
 
   timeouts[engine] = setTimeout(async () => {
 
@@ -149,6 +151,10 @@ const loadModels = (engine: string) => {
   
   }, 500)
 }
+
+defineExpose({
+  onVisible,
+})
 
 </script>
 

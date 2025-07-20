@@ -1589,6 +1589,7 @@
       "already": "{engine} is already configured.",
       "count": "No model found.|1 model available!|{count} models available!",
       "error": "Please check your API key and try again.",
+      "showMore": "Show more",
       "subtitle": "You can chat with Witsy using language models from all major providers. Enter your API keys below to get started. If you don't have any API keys, no worries: in the next screen you'll be able to setup Witsy to use local models through Ollama!",
       "success": "{engine} key validated.",
       "title": "Your chat models providers"

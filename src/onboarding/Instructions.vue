@@ -7,7 +7,7 @@
       <h3>{{ t('onboarding.instructions.subtitle') }}</h3>
     </header>
 
-    <main class="instructions-chat">
+    <main class="instructions-chat" :class="[ stage ]">
       
       <!-- Confirmation screen when system prompt is detected -->
       <div v-if="stage === 'confirm'" class="confirmation-area">
@@ -117,9 +117,14 @@ const onVisible = async () => {
   if (assistant.chat.instructions) {
     return
   }
+
+  // select openai if we can
+  const llmManager = new LlmManager(store.config)
+  if (llmManager.isEngineReady('openai')) {
+    store.config.llm.engine = 'openai'
+  }
  
   // we need to select the 1st configured engine
-  const llmManager = new LlmManager(store.config)
   if (!llmManager.isEngineReady(store.config.llm.engine)) {
     for (const engine of llmManager.getStandardEngines()) {
       if (llmManager.isEngineReady(engine)) {
@@ -287,7 +292,7 @@ section {
 
 header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .instructions-chat {
@@ -299,6 +304,10 @@ header {
   margin: 0 auto;
   width: 100%;
   gap: 1rem;
+  
+  &.prompt {
+    justify-content: flex-end;
+  }
 }
 
 .message-area {
@@ -308,11 +317,12 @@ header {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem 4rem;
   border: 1px solid var(--prompt-input-border-color);
   text-align: center;
   box-sizing: border-box;
   border-radius: 1rem;
+  overflow: auto;
 }
 
 .confirmation-area {
@@ -353,7 +363,6 @@ header {
   --messages-font: Garamond, Georgia, Times, 'Times New Roman', serif;
   font-size: 1.2rem;
   border-radius: 1rem;
-  padding: 1.5rem;
   max-width: 100%;
 }
 
@@ -374,15 +383,15 @@ header {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem 2rem;
   box-sizing: border-box;
   border: 1px solid var(--prompt-input-border-color);
   border-radius: 1rem;
 }
 
 .selection-header {
-  margin: 3rem 0;
   margin-top: 1rem;
+  margin-bottom: 2rem;
   font-size: 1.2em;
   font-weight: 400;
   color: var(--dimmed-text-color);

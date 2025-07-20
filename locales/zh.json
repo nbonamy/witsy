@@ -1589,6 +1589,7 @@
       "already": "{engine} 已经配置完成。",
       "count": "未找到模型。|1 个模型可用！|{count} 个模型可用！",
       "error": "请检查您的API密钥并重试。",
+      "showMore": "显示更多",
       "subtitle": "您可以使用所有主要提供商的语言模型与Witsy聊天。在下面输入您的API密钥以开始。如果您没有任何API密钥，不用担心：在下一屏中，您将能够设置Witsy通过Ollama使用本地模型！",
       "success": "{engine} 密钥验证成功。<br/>{count} 个模型已找到！",
       "title": "您的聊天模型提供商"
