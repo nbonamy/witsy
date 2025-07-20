@@ -144,11 +144,6 @@ const canLeave = async (): Promise<boolean> => {
   return rc.isConfirmed
 }
 
-onMounted(() => {
-  checkPermissions()
-  pollInterval = setInterval(checkPermissions, 1000)
-})
-
 // Clean up polling on unmount
 onUnmounted(() => {
   if (pollInterval) {
@@ -160,7 +155,14 @@ onUnmounted(() => {
 // Expose methods for parent component
 defineExpose({
   canLeave,
-  allPermissionsGranted
+  allPermissionsGranted,
+  onVisible: async () => {
+    if (!pollInterval) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      checkPermissions()
+      pollInterval = setInterval(checkPermissions, 1000)
+    }
+  }
 })
 
 </script>

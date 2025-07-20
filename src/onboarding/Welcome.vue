@@ -1,12 +1,6 @@
 
 <template>
 
-  <div class="language-selector">
-    <div class="localeUI">
-      <LangSelect class="large" v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
-    </div>
-  </div>
-
   <section>
 
     <header>
@@ -47,53 +41,24 @@
         <span class="feature-text">{{ t('agent.forge.title') }}</span>
       </div>
 
-
     </main>
 
-
   </section>
-
-  
 
 </template>
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
-import LangSelect from '../components/LangSelect.vue'
-
-const locales = ref([])
-const localeUI = ref(null)
-
-onMounted(() => {
-  // Load available locales
-  locales.value = Object.keys(window.api.config.getI18nMessages())
-  
-  // Load current locale setting
-  localeUI.value = store.config.general.locale
-})
-
-const save = () => {
-  store.config.general.locale = localeUI.value
-  store.saveSettings()
-}
 
 </script>
 
-
 <style scoped>
-
-.language-selector {
-  position: absolute;
-  top: 0.85rem;
-  right: 3rem;
-  z-index: 10;
-}
 
 section {
   
+  align-self: center;
   justify-content: center;
 
   header {

@@ -10,13 +10,13 @@
     <div class="form form-large">
       
       <!-- Checking Ollama installation -->
-      <div v-if="status === 'checking'" class="status-section">
+      <div v-if="state === 'checking'" class="status-section">
         <EngineLogo engine="ollama" class="ollama-logo animated" :grayscale="true" />
         <p class="section-status">{{ t('onboarding.ollama.checking') }}</p>
       </div>
 
       <!-- Ollama not installed -->
-      <div v-else-if="status === 'not-installed'" class="status-section">
+      <div v-else-if="state === 'not-installed'" class="status-section">
         <EngineLogo engine="ollama" class="ollama-logo" :class="{ animated: downloading}" />
         <div class="install-prompt">
             
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Ollama installed - show models and pull interface -->
-      <div v-else-if="status === 'installed'" class="ollama-content">
+      <div v-else-if="state === 'installed'" class="ollama-content">
         
         <!-- Installed models -->
         <div class="models-section">
@@ -94,7 +94,7 @@
       </div>
 
       <!-- Error state -->
-      <div v-else-if="status === 'error'" class="status-section error">
+      <div v-else-if="state === 'error'" class="status-section error">
         <EngineLogo engine="ollama" class="ollama-logo" />
         <div class="error-prompt">
           <p>{{ errorMessage }}</p>
@@ -139,7 +139,7 @@ declare const window: {
   }
 }
 
-const status = ref<'checking' | 'not-installed' | 'installed' | 'error'>('checking')
+const state = ref<'hidden' | 'checking' | 'not-installed' | 'installed' | 'error'>('hidden')
 const downloading = ref(false)
 const cancelling = ref(false)
 const downloadProgress = ref(0)
@@ -151,7 +151,6 @@ const downloadedFilePath = ref<string | null>(null)
 const llmManager = new LlmManager(store.config)
 
 onMounted(() => {
-  checkOllamaStatus()
   setupIpcListeners()
 })
 
@@ -191,7 +190,7 @@ const onDownloadComplete = async (event: any) => {
 const onDownloadError = (event: any) => {
   downloading.value = false
   cancelling.value = false
-  status.value = 'error'
+  state.value = 'error'
   errorMessage.value = t('onboarding.ollama.downloadError')
   currentDownloadId.value = null
 }
@@ -210,7 +209,7 @@ const removeIpcListeners = () => {
 
 const checkOllamaStatus = () => {
 
-  status.value = 'checking'
+  state.value = 'checking'
 
   setTimeout(async () => {
 
@@ -222,10 +221,10 @@ const checkOllamaStatus = () => {
 
       await client.ps()
       await loadInstalledModels()
-      status.value = 'installed'
+      state.value = 'installed'
 
     } catch (error) {
-      status.value = 'not-installed'
+      state.value = 'not-installed'
     }
 
   }, 500)
@@ -258,7 +257,7 @@ const downloadOllama = async () => {
     
   } catch (error) {
     downloading.value = false
-    status.value = 'error'
+    state.value = 'error'
     errorMessage.value = t('onboarding.ollama.downloadError')
     currentDownloadId.value = null
   }
@@ -278,6 +277,14 @@ const cancelDownload = async () => {
     }
   }
 }
+
+defineExpose({
+  onVisible: () => {
+    if (state.value === 'hidden') {
+      checkOllamaStatus()
+    }
+  }
+})
 
 </script>
 

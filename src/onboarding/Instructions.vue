@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import Dialog from '../composables/dialog'
@@ -111,8 +111,13 @@ const assistant = new Assistant(store.config)
 
 let completed = false
 
-onMounted(async () => {
-  
+const onVisible = async () => {
+
+  // not twice
+  if (assistant.chat.instructions) {
+    return
+  }
+ 
   // we need to select the 1st configured engine
   const llmManager = new LlmManager(store.config)
   if (!llmManager.isEngineReady(store.config.llm.engine)) {
@@ -134,7 +139,7 @@ onMounted(async () => {
   // and start the conversation
   await processMessage(t('instructions.onboarding.prompt'))
 
-})
+}
 
 const onSendPrompt = (payload: { prompt: string }) => {
   if (payload.prompt) {
@@ -246,27 +251,28 @@ const processSystemPrompt = (instructionId: string, customInstructions: string) 
   store.saveSettings()
 
 }
+const canLeave = async () => {
+
+  if (completed) {
+    return true
+  }
+
+  const rc = await Dialog.show({
+    title: t('onboarding.instructions.leave.title'),
+    text: t('onboarding.instructions.leave.message'),
+    showCancelButton: true,
+    confirmButtonText: t('common.yes'),
+    cancelButtonText: t('common.no'),
+  })
+
+  return rc.isConfirmed
+
+}
 
 defineExpose({
-  canLeave: async () => {
-
-    if (completed) {
-      return true
-    }
-
-    const rc = await Dialog.show({
-      title: t('onboarding.instructions.leave.title'),
-      text: t('onboarding.instructions.leave.message'),
-      showCancelButton: true,
-      confirmButtonText: t('common.yes'),
-      cancelButtonText: t('common.no'),
-    })
-
-    return rc.isConfirmed
-
-  }
+  onVisible,
+  canLeave,
 })
-
 
 
 </script>
