@@ -1,10 +1,11 @@
 
-import { Configuration, CustomEngineConfig, EngineConfig, ModelType } from '../types/config'
+import { Configuration, CustomEngineConfig, EngineConfig } from '../types/config'
 import { GetChatEnginesOpts, ILlmManager, ToolSelection } from '../types/llm'
 import { isSpecializedModel as isSpecialAnthropicModel, getFallbackModel as getAnthropicFallbackModel } from './anthropic'
 import { areAllToolsEnabled, areToolsDisabled, favoriteMockEngine } from './llm'
 import { imageFormats, textFormats } from '../models/attachment'
 import { PluginInstance, PluginsList } from '../plugins/plugins'
+import defaults from '../../defaults/settings.json'
 import { store } from '../services/store'
 import * as llm from 'multi-llm-ts'
 
@@ -404,8 +405,10 @@ export default class LlmManagerBase implements ILlmManager {
       image: [],
       ...models
     }
-    engineConfig.model.chat = this.getValidModelId(engineConfig, 'chat', engineConfig.model?.chat) || ''
-    engineConfig.model.image = this.getValidModelId(engineConfig, 'image', engineConfig.model?.image) || ''
+
+    // now select valid models
+    this.selectValidModel(engine, engineConfig, 'chat')
+    this.selectValidModel(engine, engineConfig, 'image')
     
     // save only if modified
     const updatedConfig = JSON.stringify(engineConfig)
@@ -418,10 +421,27 @@ export default class LlmManagerBase implements ILlmManager {
   
   }  
   
-  getValidModelId = (engineConfig: EngineConfig, type: ModelType, modelId: string) => {
+  selectValidModel = (engine: string, engineConfig: EngineConfig, type: 'chat'|'image'): void => {
+
+    // get models
     const models: llm.Model[] = engineConfig?.models?.[type]
-    const m = models?.find(m => m.id == modelId)
-    return m ? modelId : (models?.[0]?.id || null)
+    if (!models || !models.length) {
+      return null
+    }
+
+    // we try models in that order: currently configured then app defaults
+    for (const modelId of [
+      engineConfig?.model?.[type],
+      (defaults as unknown as Configuration).engines[engine]?.model?.[type]
+    ]) {
+      if (models.find(m => m.id == modelId)) {
+        engineConfig.model[type] = modelId
+        return
+      }
+    }
+
+    // if not found, return the first one
+    engineConfig.model[type] = models[0].id
   }
 
   loadTools = async (engine: llm.LlmEngine, availablePlugins: PluginsList, toolSelection: ToolSelection): Promise<void> => {
