@@ -35,6 +35,23 @@ const getTTSEngine = (config: Configuration): TTSEngine => {
   }
 }
 
+export const getTTSModels = (engine: string) => {
+  // get models
+  if (engine === 'openai') {
+    return TTSOpenAI.models
+  } else if (engine === 'groq') {
+    return TTSGroq.models
+  } else if (engine === 'elevenlabs') {
+    return TTSElevenLabs.models
+  } else if (engine === 'falai') {
+    return TTSFalAi.models
+  // } else if (engine === 'replicate') {
+  //   return TTSReplicate.models
+  // } else if (engine === 'kokoro') {
+  //   return TTSKokoro.models
+  }
+}
+
 export const textMaxLength = 4096
 
 export default getTTSEngine

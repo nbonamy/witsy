@@ -68,6 +68,7 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import useAudioPlayer, { AudioStatus } from '../composables/audio_player'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import { getTTSModels } from '../voice/tts'
 import TTSOpenAI from '../voice/tts-openai'
 import TTSGroq from '../voice/tts-groq'
 import TTSElevenLabs from '../voice/tts-elevenlabs'
@@ -98,22 +99,7 @@ const engines = [
 ]
 
 const models = computed(() => {
-
-  // get models
-  if (engine.value === 'openai') {
-    return TTSOpenAI.models
-  } else if (engine.value === 'groq') {
-    return TTSGroq.models
-  } else if (engine.value === 'elevenlabs') {
-    return TTSElevenLabs.models
-  } else if (engine.value === 'falai') {
-    return TTSFalAi.models
-  // } else if (engine.value === 'replicate') {
-  //   return TTSReplicate.models
-  // } else if (engine.value === 'kokoro') {
-  //   return TTSKokoro.models
-  }
-
+  return getTTSModels(engine.value)
 })
 
 const canRefreshVoices = computed(() => {
