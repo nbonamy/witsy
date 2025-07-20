@@ -1,0 +1,7 @@
+{
+  "models": {
+    "chat": [
+      { "id": "model", "name": "models" }
+    ]
+  }
+}
