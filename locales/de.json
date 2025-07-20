@@ -1567,8 +1567,9 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} ist bereits konfiguriert.",
+      "count": "Kein Modell gefunden.|1 Modell verfügbar!|{count} Modelle verfügbar!",
       "error": "Bitte überprüfen Sie Ihren API-Schlüssel und versuchen Sie es erneut.",
-      "status": "{engine} ist bereits konfiguriert.<br/>{count} Modelle verfügbar.",
       "subtitle": "Sie können mit Witsy unter Verwendung von Sprachmodellen aller großen Anbieter chatten. Geben Sie unten Ihre API-Schlüssel ein, um loszulegen. Wenn Sie keine API-Schlüssel haben, keine Sorge: Im nächsten Bildschirm können Sie Witsy so einrichten, dass lokale Modelle über Ollama verwendet werden!",
       "success": "{engine}-Schlüssel validiert.<br/>{count} Modelle gefunden!",
       "title": "Ihre Chat-Modell-Anbieter"
@@ -1632,11 +1633,19 @@
       "title": "Systemberechtigungen"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "Das AI Design Studio ist ein leistungsstarkes Werkzeug zum Erstellen und Bearbeiten von Designs mithilfe von KI. Sie können es verwenden, um neue Designs zu generieren oder bestehende zu verändern. Sobald konfiguriert, können auch Sprachmodelle es zur Erstellung von Designs verwenden.",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "AI Design Studio"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "Interagieren Sie mit Witsy per Sprache! Witsy kann nicht nur Antworten aus Ihren Chat-Sitzungen mit Sprachmodellen vorlesen, sondern auch jeden Text, der in anderen Anwendungen auf dem Bildschirm angezeigt wird!",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "Sprachinteraktion"
     },
     "welcome": {

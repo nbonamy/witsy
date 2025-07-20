@@ -1586,8 +1586,9 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} は既に設定されています。",
+      "count": "モデルが見つかりません。|1つのモデルがあります！|{count} 個のモデルがあります！",
       "error": "APIキーを確認して再試行してください。",
-      "status": "{engine}はすでに設定されています。<br/>{count}個のモデルが利用可能です。",
       "subtitle": "Witsyは主要なプロバイダーの言語モデルを使ってチャットができます。下にAPIキーを入力して始めてください。APIキーがなくても心配いりません：次の画面でOllamaを使ってローカルモデルを設定できます！",
       "success": "{engine}のキーが検証されました。<br/>{count}個のモデルが見つかりました！",
       "title": "あなたのチャットモデルプロバイダー"
@@ -1651,11 +1652,19 @@
       "title": "システムの権限"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "AIデザインスタジオは、AIを使ってデザインを作成・編集する強力なツールです。新しいデザインを生成したり、既存のデザインを修正したりできます。一度設定すれば、言語モデルもこれを使ってデザインを作成できます。",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "AIデザインスタジオ"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "声を使ってWitsyとやり取りしましょう！ Witsyは言語モデルとのチャットの応答だけでなく、他のアプリケーションに表示されるテキストも読み上げることができます！",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "音声インタラクション"
     },
     "welcome": {

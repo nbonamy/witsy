@@ -1586,8 +1586,9 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} jest już skonfigurowany.",
+      "count": "Nie znaleziono modelu.|Dostępny jest 1 model!|Dostępne są {count} modele!",
       "error": "Proszę sprawdzić swój klucz API i spróbować ponownie.",
-      "status": "{engine} jest już skonfigurowany.<br/>{count} modeli dostępnych.",
       "subtitle": "Możesz rozmawiać z Witsy, korzystając z modeli językowych od wszystkich głównych dostawców. Wprowadź poniżej swoje klucze API, aby rozpocząć. Jeśli nie masz żadnych kluczy API, bez obaw: na następnym ekranie będziesz mógł skonfigurować Witsy do korzystania z lokalnych modeli przez Ollama!",
       "success": "Klucz {engine} zweryfikowany.<br/>{count} modeli znaleziono!",
       "title": "Dostawcy modeli czatu"
@@ -1651,11 +1652,19 @@
       "title": "Uprawnienia systemowe"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "AI Design Studio to potężne narzędzie do tworzenia i edycji projektów za pomocą AI. Możesz używać go do generowania nowych projektów lub modyfikowania istniejących. Po konfiguracji modele językowe również będą mogły z niego korzystać do tworzenia projektów.",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "AI Design Studio"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "Rozmawiaj z Witsy za pomocą głosu! Witsy może czytać na głos nie tylko odpowiedzi z twoich sesji czatu z modelami językowymi, ale także dowolny tekst wyświetlany na ekranie w innych aplikacjach!",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "Interakcja głosowa"
     },
     "welcome": {

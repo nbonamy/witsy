@@ -1567,8 +1567,9 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} ya está configurado.",
+      "count": "No se encontró ningún modelo.|¡1 modelo disponible!|¡{count} modelos disponibles!",
       "error": "Por favor revisa tu clave API y vuelve a intentarlo.",
-      "status": "{engine} ya está configurado.<br/>{count} modelos disponibles.",
       "subtitle": "Puedes chatear con Witsy usando modelos de lenguaje de todos los proveedores principales. Ingresa tus claves API abajo para comenzar. Si no tienes claves API, no te preocupes: en la siguiente pantalla podrás configurar Witsy para usar modelos locales a través de Ollama.",
       "success": "Clave de {engine} validada.<br/>{count} modelos encontrados!",
       "title": "Tus proveedores de modelos de chat"
@@ -1632,11 +1633,19 @@
       "title": "Permisos del sistema"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "El Estudio de Diseño con IA es una herramienta poderosa para crear y editar diseños usando IA. Puedes usarlo para generar diseños nuevos o modificar existentes. Una vez configurado, los modelos de lenguaje también podrán usarlo para crear diseños.",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "Estudio de Diseño con IA"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "¡Interactúa con Witsy usando tu voz! Witsy puede leer en voz alta no solo las respuestas de tus sesiones de chat con modelos de lenguaje, sino también cualquier texto mostrado en pantalla en otras aplicaciones.",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "Interacción por Voz"
     },
     "welcome": {
