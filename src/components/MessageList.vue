@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, useTemplateRef, nextTick } from 'vue'
+import { ref, computed, onMounted, useTemplateRef, nextTick, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { LlmChunk } from 'multi-llm-ts'
 import MessageItem from './MessageItem.vue'
@@ -48,8 +48,23 @@ const props = defineProps({
 
 onMounted(() => {
   onEvent('new-llm-chunk', onNewChunk)
+  window.api.on('read-aloud-selection', onReadAloudSelection)
   scrollDown()
 })
+
+onUnmounted(() => {
+  window.api.off('read-aloud-selection', onReadAloudSelection)
+})
+
+const onReadAloudSelection = (payload: { context: string, selection: string }) => {
+  for (const index in itemRefs.value) {
+    const item = itemRefs.value[index]
+    if (item.message.uuid === payload.context) {
+      item.readAloud(payload.selection)
+      return
+    }
+  }
+}
 
 const onMediaLoaded = () => {
   if (!overflown.value) {

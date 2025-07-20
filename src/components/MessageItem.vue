@@ -120,8 +120,7 @@ onMounted(() => {
   })
 
   // selection related context menu stuff 
-  window.api.on('copy-as-markdown', onCopyMarkdown)
-  window.api.on('read-aloud-selection', onReadAloudSelection)
+  // window.api.on('copy-as-markdown', onCopyMarkdown)
   
 })
 
@@ -130,8 +129,7 @@ onUnmounted(() => {
     clearInterval(updateLinkInterval)
   }
   audioPlayer.removeListener(onAudioPlayerStatus)
-  window.api.off('copy-as-markdown', onCopyMarkdown)
-  window.api.off('read-aloud-selection', onReadAloudSelection)
+  // window.api.off('copy-as-markdown', onCopyMarkdown)
 })
 
 const authorName = computed(() => {
@@ -191,10 +189,8 @@ const onReadAloud = async (message: Message) => {
   await audioPlayer.play(audio.value!, message.uuid, message.content)
 }
 
-const onReadAloudSelection = (payload: { context: string, selection: string }) => {
-  if (payload.context === props.message.uuid) {
-    audioPlayer.play(audio.value!, props.message.uuid, payload.selection)
-  }
+const readAloudText = async (text: string) => {
+  await audioPlayer.play(audio.value!, props.message.uuid, text)
 }
 
 const onShowTools = () => {
@@ -210,8 +206,13 @@ const onContextMenu = (event: MouseEvent) => {
 }
 
 defineExpose({
-  readAloud: () => {
-    onReadAloud(props.message)
+  message: props.message,
+  readAloud: (text?: string) => {
+    if (text) {
+      readAloudText(text)
+    } else {  
+      onReadAloud(props.message)
+    }
   }
 })
 
