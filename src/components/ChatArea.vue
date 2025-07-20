@@ -325,11 +325,11 @@ defineExpose({
 
 <style scoped>
 
-.macos .content header.is-left-most {
+.macos .split-pane .sp-main header.is-left-most {
   padding-left: 40px;
 }
 
-.windows .split-pane .content header .toggle-sidebar {
+.windows .split-pane .sp-main header .toggle-sidebar {
   top: -4.5px;
 }
 
