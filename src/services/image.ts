@@ -1,6 +1,7 @@
 import { xAIBaseURL } from 'multi-llm-ts'
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index'
 import { saveFileContents, download } from '../services/download'
+import { engineNames } from '../llms/base'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
 import { GoogleGenAI } from '@google/genai'
@@ -14,24 +15,24 @@ export default class ImageCreator implements MediaCreator {
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
     if (!checkApiKey || store.config.engines.openai.apiKey) {
-      engines.push({ id: 'openai', name: 'OpenAI' })
+      engines.push({ id: 'openai', name: engineNames.openai })
     }
     if (!checkApiKey || store.config.engines.google.apiKey) {
-      engines.push({ id: 'google', name: 'Google' })
+      engines.push({ id: 'google', name: engineNames.google })
     }
     if (!checkApiKey || store.config.engines.xai.apiKey) {
-      engines.push({ id: 'xai', name: 'xAI' })
+      engines.push({ id: 'xai', name: engineNames.xai })
     }
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
-      engines.push({ id: 'replicate', name: 'Replicate' })
+      engines.push({ id: 'replicate', name: engineNames.replicate })
     }
     if (!checkApiKey || store.config.engines.falai.apiKey) {
-      engines.push({ id: 'falai', name: 'fal.ai' })
+      engines.push({ id: 'falai', name: engineNames.falai })
     }
     if (!checkApiKey || store.config.engines.huggingface.apiKey) {
-      engines.push({ id: 'huggingface', name: 'HuggingFace' })
+      engines.push({ id: 'huggingface', name: engineNames.huggingface })
     }
-    engines.push({ id: 'sdwebui', name: 'Stable Diffusion web UI' })
+    engines.push({ id: 'sdwebui', name: engineNames.sdwebui })
     return engines
   }
 

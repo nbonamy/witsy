@@ -1,7 +1,8 @@
 
 import { anyDict, MediaCreator, MediaCreationEngine, MediaReference } from '../types/index'
-import { store } from '../services/store'
 import { saveFileContents, download } from '../services/download'
+import { engineNames } from '../llms/base'
+import { store } from '../services/store'
 import Replicate, { FileOutput } from 'replicate'
 import { fal } from '@fal-ai/client'
 
@@ -10,10 +11,10 @@ export default class VideoCreator implements MediaCreator {
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
-      engines.push({ id: 'replicate', name: 'Replicate' })
+      engines.push({ id: 'replicate', name: engineNames.replicate })
     }
     if (!checkApiKey || store.config.engines.falai.apiKey) {
-      engines.push({ id: 'falai', name: 'fal.ai' })
+      engines.push({ id: 'falai', name: engineNames.falai })
     }
     return engines
   }
