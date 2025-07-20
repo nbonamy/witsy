@@ -6,21 +6,29 @@
 
     <div class="close"><BIconXLg @click="$emit('close')" /></div>
 
-    <main>
-      <Welcome v-if="step === 1" />
-      <Chat v-if="step === 2" />
-      <Ollama v-if="step === 3" />
-      <Studio v-if="step === 4" />
-      <Voice v-if="step === 5" />
-      <Permissions ref="permissions" v-if="step === 6 && isMacOS" />
-      <Instructions ref="instructions" v-if="step === 7" />
-      <Done v-if="step === 8" />
-    </main>
+    <div class="language-selector" v-if="step === 0">
+      <div class="localeUI">
+        <LangSelect class="large" v-model="localeUI" default-text="common.language.system" :filter="locales" @change="save" />
+      </div>
+    </div>
+
+    <div class="container">
+      <main :style="{ transform: `translateX(-${step * 100}%)` }">
+        <Welcome />
+        <Chat />
+        <Ollama ref="ollama" />
+        <Studio />
+        <Voice />
+        <Permissions ref="permissions" />
+        <Instructions ref="instructions" />
+        <Done ref="done" />
+      </main>
+    </div>
 
     <footer class="form form-large">
-      <button v-if="step !== 1" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
-      <button v-if="step !== 8" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
-      <button v-if="step === 8" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
+      <button v-if="step !== 0" class="prev" @click.prevent="onPrev">{{ t('common.wizard.prev')}}</button>
+      <button v-if="step !== 7" class="next default" @click.prevent="onNext">{{ t('common.wizard.next')}}</button>
+      <button v-if="step === 7" class="last" @click.prevent="$emit('close')">{{ t('common.close')}}</button>
     </footer>
 
   </div>
@@ -29,8 +37,10 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { t } from '../services/i18n'
+import { store } from '../services/store'
+import LangSelect from '../components/LangSelect.vue'
 import Welcome from '../onboarding/Welcome.vue'
 import Chat from '../onboarding/Chat.vue'
 import Ollama from '../onboarding/Ollama.vue'
@@ -42,46 +52,85 @@ import Done from '../onboarding/Done.vue'
 
 defineEmits(['close']);
 
-const step = ref(1);
-const instructions = ref<typeof Instructions>(null);
-const permissions = ref<typeof Permissions>(null);
+const step = ref(0)
+const locales = ref([])
+const localeUI = ref(null)
+const ollama = ref<typeof Ollama>(null)
+const instructions = ref<typeof Instructions>(null)
+const permissions = ref<typeof Permissions>(null)
+const done = ref<typeof Done>(null)
+
+const indexWelcome = 0
+const indexChat = 1
+const indexOllama = 2
+const indexStudio = 3
+const indexVoice = 4
+const indexPermissions = 5
+const indexInstructions = 6
+const indexDone = 7
 
 // Check if we're on macOS
-const isMacOS = computed(() => window.api?.platform === 'darwin');
+const isMacOS = computed(() => window.api?.platform === 'darwin')
+
+onMounted(() => {
+  // Load available locales
+  locales.value = Object.keys(window.api.config.getI18nMessages())
+  
+  // Load current locale setting
+  localeUI.value = store.config.general.locale
+})
+
+const save = () => {
+  store.config.general.locale = localeUI.value
+  store.saveSettings()
+}
 
 const onPrev = () => {
-  if (step.value === 1) return;
   
-  // If going back from Instructions (step 7) to Permissions (step 6) on non-macOS, skip to step 5
-  if (step.value === 7 && !isMacOS.value) {
-    step.value = 5;
+  if (step.value === indexWelcome) return
+
+  // If going back from Instructions to Permissions on non-macOS, skip to step 4
+  if (step.value === indexInstructions && !isMacOS.value) {
+    step.value = indexVoice
   } else {
-    step.value--;
+    step.value--
   }
+
+  // notify
+  notifyVisible()
 }
 
 const onNext = async () => {
 
-  // Check canLeave for Permissions screen (step 6) on macOS
-  if (permissions.value && step.value === 6 && isMacOS.value) {
+  // Check canLeave for Permissions screen on macOS
+  if (permissions.value && step.value === indexPermissions && isMacOS.value) {
     if (!await permissions.value.canLeave()) {
-      return;
+      return
     }
   }
 
-  // Check canLeave for Instructions screen (step 7)
-  if (instructions.value && step.value === 7) {
+  // Check canLeave for Instructions screen
+  if (instructions.value && step.value === indexInstructions) {
     if (!await instructions.value.canLeave()) {
-      return;
+      return
     }
   }
 
-  // If advancing from Voice (step 5) on non-macOS, skip Permissions and go to Instructions (step 7)
-  if (step.value === 5 && !isMacOS.value) {
-    step.value = 7;
+  // If advancing from Voice on non-macOS, skip Permissions and go to Instructions
+  if (step.value === indexVoice && !isMacOS.value) {
+    step.value = indexInstructions
   } else {
-    step.value++;
+    step.value++
   }
+
+  // notify
+  notifyVisible()
+
+}
+
+const notifyVisible = () => {
+  const screens = [ null, null, ollama.value, null, null, permissions.value, instructions.value, done.value ]
+  screens[step.value]?.onVisible?.()
 }
 
 </script>
@@ -102,10 +151,11 @@ const onNext = async () => {
 
 .onboarding {
 
+  --onboarding-width: 850px;
   --onboarding-bg-color: var(--background-color);/*rgb(255, 254, 255);*/
   
   position: absolute;
-  width: 850px;
+  width: var(--onboarding-width);
   top: 10%;
   bottom: 10%;
   left: 50%;
@@ -115,24 +165,46 @@ const onNext = async () => {
   background-color: var(--onboarding-bg-color);
   border-color: 1px solid var(--dialog-border-color);
   padding: 4rem;
-  padding-top: 2rem;
+  padding-top: 3rem;
   color: var(--text-color);
+
+  .close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.5rem;
+    cursor: pointer;
+  }
+
+  .language-selector {
+    position: absolute;
+    top: 0.85rem;
+    right: 3rem;
+    z-index: 10;
+  }
+
+  .container {
+    overflow: hidden;
+    height: 100%;
+  }
   
   main {
     
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-start;
     justify-content: flex-start;
     margin-bottom: 3rem;
     height: calc(100% - 3rem);
+    width: 100%;
+
+    transition: all 0.3s ease;
 
     &:deep() section {
 
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
+      min-width: var(--onboarding-width);
       height: 100%;
 
       header {
@@ -170,13 +242,6 @@ const onNext = async () => {
 
     }
 
-  }
-
-  .close {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.5rem;
-    cursor: pointer;
   }
 
   footer {
