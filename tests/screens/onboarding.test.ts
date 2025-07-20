@@ -111,8 +111,10 @@ vi.mock('../../src/voice/stt', async () => {
   return {
     getSTTEngines: () => [
       { id: 'openai', name: 'OpenAI Whisper' },
-      { id: 'azure', name: 'Azure Speech' }
-    ]
+    ],
+    getSTTModels: () => [
+      { id: 'whisper-1', label: 'OpenAI Whisper V2' },
+    ],
   }
 })
 
@@ -120,11 +122,28 @@ vi.mock('../../src/voice/tts', async () => {
   return {
     getTTSEngines: () => [
       { id: 'openai', name: 'OpenAI TTS' },
-      { id: 'azure', name: 'Azure Speech' },
-      { id: 'elevenlabs', name: 'ElevenLabs' }
-    ]
+    ],
+    getTTSModels: () => [
+      { id: 'openai-tts', label: 'OpenAI TTS' },
+    ],
   }
 })
+
+vi.mock('../../src/services/image', async () => ({
+  default: {
+    getEngines: () => [
+      { id: 'openai', name: 'OpenAI' }
+    ]
+  }
+}))
+
+vi.mock('../../src/services/video', async () => ({
+  default: {
+    getEngines: () => [
+      { id: 'openai', name: 'OpenAI' }
+    ]
+  }
+}))
 
 vi.mock('../../src/composables/dialog.ts', () => ({
   default: {
@@ -138,7 +157,7 @@ beforeAll(() => {
   store.loadSettings()
   
   // Ensure all engines have proper configuration structure for both chat and voice
-  const allEngines = ['openai', 'anthropic', 'google', 'azure', 'elevenlabs', 'deepseek', 'mistralai', 'groq', 'xai', 'meta', 'cerebras']
+  const allEngines = ['openai', 'anthropic', 'google' ]
   allEngines.forEach(engine => {
     if (!store.config.engines[engine]) {
       store.config.engines[engine] = { apiKey: '' } as any
@@ -635,7 +654,7 @@ describe('Chat Screen - Engine Configuration', () => {
     
     // Should show engines grid with chat engine items
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
-    const engineItems = wrapper.findAll('.chat-engine')
+    const engineItems = wrapper.findAll('.engine')
     expect(engineItems.length).toBeGreaterThan(0)
     
     // Each engine should have brand and config sections
@@ -724,7 +743,7 @@ describe('Chat Screen - Engine Configuration', () => {
     // Should show status message (translation key is expected in test environment)
     const statusSpan = wrapper.find('.status')
     expect(statusSpan.exists()).toBe(true)
-    expect(statusSpan.text()).toContain('onboarding.chat.status')
+    expect(statusSpan.text()).toContain('onboarding.chat.alreadyonboarding.chat.count')
   })
 
 })
@@ -738,7 +757,7 @@ describe('Voice Screen - Engine Configuration', () => {
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
     
     // Should have voice engine items
-    const engineItems = wrapper.findAll('.voice-engine')
+    const engineItems = wrapper.findAll('.engine')
     expect(engineItems.length).toBeGreaterThan(0)
     
     // Each engine should have brand and config sections
@@ -759,6 +778,91 @@ describe('Voice Screen - Engine Configuration', () => {
     })
   })
 
+  test('API key input functionality and store integration', async () => {
+    // Start with clean state
+    store.config.engines.openai.apiKey = ''
+    
+    const wrapper = await mount(Voice)
+    
+    // Find the first API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInputComponent = inputComponents[0]
+    const actualInput = firstInputComponent.find('input')
+    
+    // Test setting an API key
+    const testApiKey = 'sk-test-api-key-12345'
+    await actualInput.setValue(testApiKey)
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe(testApiKey)
+    
+    // Test clearing the API key
+    await actualInput.setValue('')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('')
+    
+    // Test API key changes update immediately
+    await actualInput.setValue('new-key')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+    
+    // Test that changes persist between component instances
+    wrapper.unmount()
+    await mount(Voice)
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+  })
+
+  test('Handles API key changes and shows appropriate status elements', async () => {
+    const wrapper = await mount(Voice)
+    
+    // Find an API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInput = inputComponents[0].find('input')
+    
+    // Each engine should have a config section with status elements
+    const configSections = wrapper.findAll('.config')
+    expect(configSections.length).toBeGreaterThan(0)
+    
+    // Each config section should have status span elements (even if empty)
+    configSections.forEach(config => {
+      const spans = config.findAll('span')
+      expect(spans.length).toBeGreaterThan(0)
+    })
+    
+    // Test API key input functionality
+    await firstInput.setValue('test-key')
+    await firstInput.trigger('keyup')
+    
+    // The store should be updated
+    expect(store.config.engines.openai.apiKey).toBe('test-key')
+  })
+
+  test('Displays existing model count for configured engines', async () => {
+    // Pre-configure an engine with models for voice (STT/TTS)
+    store.config.engines.openai.apiKey = 'existing-key'
+    if (!store.config.engines.openai.models) {
+      store.config.engines.openai.models = { chat: [], stt: [], tts: [] }
+    }
+    if (!store.config.engines.openai.models.stt) {
+      store.config.engines.openai.models.stt = []
+    }
+    if (!store.config.engines.openai.models.tts) {
+      store.config.engines.openai.models.tts = []
+    }
+    store.config.engines.openai.models.stt = [
+      { id: 'whisper-1', name: 'Whisper V2' }
+    ]
+    store.config.engines.openai.models.tts = [
+      { id: 'tts-1', name: 'TTS HD' }
+    ]
+    
+    const wrapper = await mount(Voice)
+    
+    // Should show status message (Voice component uses chat translations)
+    const statusSpan = wrapper.find('.status')
+    expect(statusSpan.exists()).toBe(true)
+    expect(statusSpan.text()).toBe('onboarding.voice.alreadyonboarding.voice.count')
+  })
+
 })
 
 describe('Studio Screen - Image/Video Engine Configuration', () => {
@@ -770,7 +874,7 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
     
     // Should have studio engine items
-    const engineItems = wrapper.findAll('.studio-engine')
+    const engineItems = wrapper.findAll('.engine')
     expect(engineItems.length).toBeGreaterThan(0)
     
     // Each engine should have brand and config sections
@@ -780,6 +884,92 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
       expect(item.findComponent({ name: 'EngineLogo' }).exists()).toBe(true)
       expect(item.findComponent({ name: 'InputObfuscated' }).exists()).toBe(true)
     })
+  })
+
+  test('API key input functionality and store integration', async () => {
+    // Start with clean state
+    store.config.engines.openai.apiKey = ''
+    
+    const wrapper = await mount(Studio)
+    
+    // Find the first API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInputComponent = inputComponents[0]
+    const actualInput = firstInputComponent.find('input')
+    
+    // Test setting an API key
+    const testApiKey = 'sk-test-api-key-12345'
+    await actualInput.setValue(testApiKey)
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe(testApiKey)
+    
+    // Test clearing the API key
+    await actualInput.setValue('')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('')
+    
+    // Test API key changes update immediately
+    await actualInput.setValue('new-key')
+    await actualInput.trigger('keyup')
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+    
+    // Test that changes persist between component instances
+    wrapper.unmount()
+    await mount(Studio)
+    expect(store.config.engines.openai.apiKey).toBe('new-key')
+  })
+
+  test('Handles API key changes and shows appropriate status elements', async () => {
+    const wrapper = await mount(Studio)
+    
+    // Find an API key input
+    const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
+    const firstInput = inputComponents[0].find('input')
+    
+    // Each engine should have a config section with status elements
+    const configSections = wrapper.findAll('.config')
+    expect(configSections.length).toBeGreaterThan(0)
+    
+    // Each config section should have status span elements (even if empty)
+    configSections.forEach(config => {
+      const spans = config.findAll('span')
+      expect(spans.length).toBeGreaterThan(0)
+    })
+    
+    // Test API key input functionality
+    await firstInput.setValue('test-key')
+    await firstInput.trigger('keyup')
+    
+    // The store should be updated
+    expect(store.config.engines.openai.apiKey).toBe('test-key')
+  })
+
+  test('Displays existing model count for configured engines', async () => {
+    // Pre-configure an engine with models for studio (image/video)
+    store.config.engines.openai.apiKey = 'existing-key'
+    if (!store.config.engines.openai.models) {
+      store.config.engines.openai.models = { chat: [], image: [], video: [] }
+    }
+    if (!store.config.engines.openai.models.image) {
+      store.config.engines.openai.models.image = []
+    }
+    if (!store.config.engines.openai.models.video) {
+      store.config.engines.openai.models.video = []
+    }
+    store.config.engines.openai.models.image = [
+      { id: 'dall-e-3', name: 'DALL-E 3' },
+      { id: 'dall-e-2', name: 'DALL-E 2' }
+    ]
+    store.config.engines.openai.models.video = [
+      { id: 'sora-1', name: 'Sora V1' }
+    ]
+    
+    const wrapper = await mount(Studio)
+    
+    // Should show status message (Studio component uses chat translations)
+    const statusSpan = wrapper.find('.status')
+    expect(statusSpan.exists()).toBe(true)
+    expect(statusSpan.text()).toBe('onboarding.studio.alreadyonboarding.studio.count')
   })
 
 })

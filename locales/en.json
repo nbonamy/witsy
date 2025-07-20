@@ -1586,10 +1586,11 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} is already configured.",
+      "count": "No model found.|1 model available!|{count} models available!",
       "error": "Please check your API key and try again.",
-      "status": "{engine} is already configured.<br/>{count} models available.",
       "subtitle": "You can chat with Witsy using language models from all major providers. Enter your API keys below to get started. If you don't have any API keys, no worries: in the next screen you'll be able to setup Witsy to use local models through Ollama!",
-      "success": "{engine} key validated.<br/>{count} models found!",
+      "success": "{engine} key validated.",
       "title": "Your chat models providers"
     },
     "done": {
@@ -1651,11 +1652,19 @@
       "title": "System Permissions"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "The AI Design Studio is a powerful tool for creating and editing designs using AI. You can use it to generate new designs or modify existing ones. Once configured, language models will also be able to use it to create designs.",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "AI Design Studio"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "Interact with Witsy using your voice! Witsy can read aloud not only responses from your chat sessions with language models but also any text displayed on screen in other applications!",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "Voice Interaction"
     },
     "welcome": {

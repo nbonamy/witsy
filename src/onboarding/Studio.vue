@@ -10,13 +10,23 @@
 
     <div class="form form-large">
       <div class="engines-grid">
-        <div class="studio-engine form-field" v-for="engine in engines" :key="engine">
+        <div class="engine form-field" v-for="engine in engines" :key="engine">
           <div class="brand">
             <EngineLogo :engine="engine" :grayscale="appearanceTheme.isDark" />
             <span>{{ engineNames[engine] || engine }}</span>
           </div>
           <div class="config">
-            <InputObfuscated v-model="store.config.engines[engine].apiKey" @change="store.saveSettings"/>
+            <InputObfuscated v-model="store.config.engines[engine].apiKey" @change="loadModels(engine)"/>
+            <span v-if="status[engine]" class="status" v-html="status[engine]"></span>
+            <span v-else-if="success[engine]" class="success" v-html="success[engine]"></span>
+            <span v-else-if="errors[engine]" class="error" v-html="errors[engine]"></span>
+            <span v-else>
+              <template v-if="loading[engine]">
+                <Spinner />
+              </template>
+              <template v-else>&nbsp;</template>
+              <br/>
+              &nbsp;</span>
           </div>
         </div>
       </div>
@@ -28,17 +38,28 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { t } from '../services/i18n'
 import { store } from '../services/store'
 import { engineNames } from '../llms/base'
 import ImageCreator from '../services/image'
 import VideoCreator from '../services/video'
+import LlmManager from '../llms/manager'
+import ModelLoaderFactory from '../services/model_loader'
+import Spinner from '../components/Spinner.vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 
 import useAppearanceTheme from '../composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
+
+const status = ref<Record<string, string>>({})
+const success = ref<Record<string, string>>({})
+const errors = ref<Record<string, string>>({})
+const loading = ref<Record<string, boolean>>({})
+
+const llmManager = new LlmManager(store.config)
+let timeouts: Record<string, NodeJS.Timeout> = {}
 
 const engines = computed(() => {
   const imageEngines = ImageCreator.getEngines(false).map(e => e.id)
@@ -49,47 +70,88 @@ const engines = computed(() => {
   }).sort()
 })
 
+onMounted(() => {
+  engines.value.forEach(engine => {
+    const totalModels = getTotalModelsCount(engine)
+    if (store.config.engines[engine].apiKey && totalModels > 0) {
+      status.value[engine] = t('onboarding.studio.already', {
+        engine: engineNames[engine] || engine,
+      }) + '<br/>' + t('onboarding.studio.count', {
+        count: totalModels,
+      })
+    }
+  })
+})
+
+const getTotalModelsCount = (engine: string) => {
+  const models = store.config.engines[engine]?.models
+  if (!models) return 0
+  
+  const imageCount = models.image?.length || 0
+  const imageEditCount = models.imageEdit?.length || 0
+  const videoCount = models.video?.length || 0
+  const videoEditCount = models.videoEdit?.length || 0
+  
+  return imageCount + imageEditCount + videoCount + videoEditCount
+}
+
+const loadModels = (engine: string) => {
+
+  clearTimeout(timeouts[engine])
+
+  if (!store.config.engines[engine].apiKey) {
+    success.value[engine] = ''
+    errors.value[engine] = ''
+    return
+  }
+
+  timeouts[engine] = setTimeout(async () => {
+
+    status.value[engine] = ''
+    success.value[engine] = ''
+    errors.value[engine] = ''
+    loading.value[engine] = true
+
+    try {
+      let loadResult = false
+      
+      // Use explicit instantiation for engines that need it
+      if (['replicate', 'falai', 'huggingface', 'sdwebui'].includes(engine)) {
+        const modelLoader = ModelLoaderFactory.create(store.config, engine)
+        loadResult = await modelLoader.loadModels()
+      } else {
+        // Use LlmManager for other engines
+        loadResult = await llmManager.loadModels(engine)
+      }
+
+      loading.value[engine] = false
+
+      const totalModels = getTotalModelsCount(engine)
+      if (loadResult && totalModels > 0) {
+        status.value[engine] = ''
+        success.value[engine] = t('onboarding.studio.success', {
+          engine: engineNames[engine] || engine,
+        }) + '<br/>' + t('onboarding.chat.count', {
+          count: totalModels,
+        })
+        errors.value[engine] = ''
+      } else {
+        status.value[engine] = ''
+        success.value[engine] = ''
+        errors.value[engine] = t('onboarding.studio.error')
+      }
+    } catch (error) {
+      loading.value[engine] = false
+      status.value[engine] = ''
+      success.value[engine] = ''
+      errors.value[engine] = t('onboarding.studio.error')
+    }
+  
+  }, 500)
+}
+
 </script>
 
 <style scoped>
-
-.engines-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 4rem;
-}
-
-.studio-engine {
-
-  display: flex;
-  align-items: center;
-  padding: 0rem;
-  gap: 2rem;
-
-  .brand {
-    width: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-
-    .logo {
-      width: 2rem;
-    }
-
-    span {
-      font-size: 11pt;
-    }
-  }
-
-  .config {
-    width: 250px;
-  }
-
-  &:deep() input {
-    width: 250px !important;
-  }
-  
-}
-
+@import '../../css/onboarding.css';
 </style>

@@ -1586,8 +1586,9 @@
   },
   "onboarding": {
     "chat": {
+      "already": "{engine} 已经配置完成。",
+      "count": "未找到模型。|1 个模型可用！|{count} 个模型可用！",
       "error": "请检查您的API密钥并重试。",
-      "status": "{engine} 已配置。<br/>{count} 个模型可用。",
       "subtitle": "您可以使用所有主要提供商的语言模型与Witsy聊天。在下面输入您的API密钥以开始。如果您没有任何API密钥，不用担心：在下一屏中，您将能够设置Witsy通过Ollama使用本地模型！",
       "success": "{engine} 密钥验证成功。<br/>{count} 个模型已找到！",
       "title": "您的聊天模型提供商"
@@ -1651,11 +1652,19 @@
       "title": "系统权限"
     },
     "studio": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "AI设计工作室是一个强大的工具，可使用AI创建和编辑设计。您可以用它生成新设计或修改现有设计。配置完成后，语言模型也能使用它来创建设计。",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "AI设计工作室"
     },
     "voice": {
+      "already": "@:{'onboarding.chat.already'}",
+      "count": "@:{'onboarding.chat.count'}",
+      "error": "@:{'onboarding.chat.error'}",
       "subtitle": "使用您的声音与Witsy互动！Witsy不仅可以朗读您与语言模型聊天会话中的回复，还可以朗读其他应用程序中屏幕上显示的任何文本！",
+      "success": "@:{'onboarding.chat.success'}",
       "title": "语音互动"
     },
     "welcome": {

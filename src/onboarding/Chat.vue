@@ -10,7 +10,7 @@
 
     <div class="form form-large">
       <div class="engines-grid">
-        <div class="chat-engine form-field" v-for="engine in engines" :key="engine">
+        <div class="engine form-field" v-for="engine in engines" :key="engine">
           <div class="brand">
             <EngineLogo :engine="engine" :grayscale="appearanceTheme.isDark" />
             <span>{{ engineNames[engine] }}</span>
@@ -65,8 +65,9 @@ const engines = computed(() => llmManager.getStandardEngines().filter(e => {
 onMounted(() => {
   engines.value.forEach(engine => {
     if (store.config.engines[engine].apiKey && store.config.engines[engine].models.chat.length) {
-      status.value[engine] = t('onboarding.chat.status', {
-        engine: engineNames[engine],
+      status.value[engine] = t('onboarding.chat.already', {
+        engine: engineNames[engine] || engine,
+      }) + '<br/>' + t('onboarding.chat.count', {
         count: store.config.engines[engine].models.chat.length,
       })
     }
@@ -95,7 +96,8 @@ const loadModels = (engine: string) => {
     if (store.config.engines[engine].models.chat.length) {
       status.value[engine] = ''
       success.value[engine] = t('onboarding.chat.success', {
-        engine: engineNames[engine],
+        engine: engineNames[engine] || engine,
+      }) + '<br/>' + t('onboarding.chat.count', {
         count: store.config.engines[engine].models.chat.length,
       })
       errors.value[engine] = ''
@@ -110,75 +112,6 @@ const loadModels = (engine: string) => {
 
 </script>
 
-
 <style scoped>
-
-.engines-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0rem 4rem;
-}
-
-.chat-engine {
-
-  display: flex;
-  align-items: center;
-  padding: 0rem;
-  gap: 2rem;
-
-  .brand {
-    width: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-
-    .logo {
-      width: 2rem;
-    }
-
-    span {
-      font-size: 11pt;
-    }
-  }
-
-  .config {
-
-    width: 250px;
-    padding-top: 0.5rem;
-
-    .loader {
-      margin: 0 0.25rem;
-      opacity: 0.75;
-      width: 0.375rem;
-      height: 0.375rem;
-    }
-
-    span {
-      
-      font-size: 0.8rem;
-      height: 30px;
-
-      .spinner {
-        margin-left: 0.5rem;
-      }
-
-      &.status {
-        color: var(--faded-text-color);
-      }
-
-      &.success {
-        color: green;
-      }
-
-      &.error {
-        color: red;
-      }
-
-    }
-
-  }
-  
-}
-
+@import '../../css/onboarding.css';
 </style>
