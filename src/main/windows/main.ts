@@ -190,6 +190,9 @@ export const openMainWindow = (opts: CreateWindowOpts = {}): void => {
   if (process.env.DEBUG && firstOpen) {
     mainWindow.webContents.openDevTools({ mode: 'right' });
   }
+
+  // notify
+  mainWindow.webContents.send('window-opened');
   
   // record
   firstOpen = false;

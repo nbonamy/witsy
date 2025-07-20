@@ -72,10 +72,12 @@ onMounted(() => {
   // dictation
   window.api.on('start-dictation', onDictate)
 
-  // show onboarding
-  if (!store.config.general.onboardingDone) {
-    onboard.value = true
-  }
+  // show onboarding when window opens
+  window.api.on('window-opened', () => {
+    if (!store.config.general.onboardingDone) {
+      setTimeout(() => onboard.value = true, 500)
+    }
+  })
 
   // show it again
   window.api.on('run-onboarding', onRunOnboarding)
