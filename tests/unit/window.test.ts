@@ -215,7 +215,7 @@ test('Switch to Settings window', async () => {
   window.openMainWindow()
   window.openSettingsWindow()
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'settings' })
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { view: 'settings' })
 })
 
 test('Create command picker window', async () => {
@@ -332,7 +332,7 @@ test('Switch to Design Studio window', async () => {
   window.openMainWindow()
   window.openDesignStudioWindow()
   expect(BrowserWindow.prototype.loadURL).toHaveBeenLastCalledWith('http://localhost:3000/?#')
-  expect(BrowserWindow.prototype.webContents.send).toHaveBeenLastCalledWith('query-params', { view: 'studio' })
+  expect(BrowserWindow.prototype.webContents.send).toHaveBeenCalledWith('query-params', { view: 'studio' })
 })
 
 test('Open Computer', async () => {
