@@ -631,7 +631,10 @@ describe('Ollama Screen - Installation Status Management', () => {
 describe('Studio Screen - Image/Video Engine Configuration', () => {
 
   test('Renders studio engines with API key inputs and proper engine filtering', async () => {
+    
     const wrapper = await mount(Studio)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Should show engines grid for image/video engines
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
@@ -654,6 +657,8 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
     store.config.engines.openai.apiKey = ''
     
     const wrapper = await mount(Studio)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Find the first API key input
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
@@ -684,6 +689,8 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
 
   test('Handles API key changes and shows appropriate status elements', async () => {
     const wrapper = await mount(Studio)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Find an API key input
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
@@ -728,6 +735,8 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
     ]
     
     const wrapper = await mount(Studio)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Should show status message (Studio component uses chat translations)
     const statusSpan = wrapper.find('.status')
@@ -741,6 +750,8 @@ describe('Voice Screen - Engine Configuration', () => {
 
   test('Renders voice engines with functional API key inputs', async () => {
     const wrapper = await mount(Voice)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Should show engines grid
     expect(wrapper.find('.engines-grid').exists()).toBe(true)
@@ -772,6 +783,8 @@ describe('Voice Screen - Engine Configuration', () => {
     store.config.engines.openai.apiKey = ''
     
     const wrapper = await mount(Voice)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Find the first API key input
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
@@ -802,6 +815,8 @@ describe('Voice Screen - Engine Configuration', () => {
 
   test('Handles API key changes and shows appropriate status elements', async () => {
     const wrapper = await mount(Voice)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Find an API key input
     const inputComponents = wrapper.findAllComponents({ name: 'InputObfuscated' })
@@ -845,6 +860,8 @@ describe('Voice Screen - Engine Configuration', () => {
     ]
     
     const wrapper = await mount(Voice)
+    const component = wrapper.vm as any
+    await component.onVisible?.()
     
     // Should show status message (Voice component uses chat translations)
     const statusSpan = wrapper.find('.status')

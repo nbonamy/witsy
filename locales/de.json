@@ -1570,6 +1570,7 @@
       "already": "{engine} ist bereits konfiguriert.",
       "count": "Kein Modell gefunden.|1 Modell verfügbar!|{count} Modelle verfügbar!",
       "error": "Bitte überprüfen Sie Ihren API-Schlüssel und versuchen Sie es erneut.",
+      "showMore": "Mehr anzeigen",
       "subtitle": "Sie können mit Witsy unter Verwendung von Sprachmodellen aller großen Anbieter chatten. Geben Sie unten Ihre API-Schlüssel ein, um loszulegen. Wenn Sie keine API-Schlüssel haben, keine Sorge: Im nächsten Bildschirm können Sie Witsy so einrichten, dass lokale Modelle über Ollama verwendet werden!",
       "success": "{engine}-Schlüssel validiert.<br/>{count} Modelle gefunden!",
       "title": "Ihre Chat-Modell-Anbieter"

@@ -53,12 +53,8 @@
       </div>
 
       <div class="permissions-info">
-        <div class="info-icon">
-          <BIconInfoCircle />
-        </div>
-        <div class="info-text">
-          <p>{{ t('onboarding.permissions.info') }}</p>
-        </div>
+        <BIconInfoCircle class="info-icon"/>
+        <div class="info-text">{{ t('onboarding.permissions.info') }}</div>
       </div>
 
     </main>
@@ -175,7 +171,7 @@ defineExpose({
   align-items: center;
   gap: 2rem;
   max-width: 600px;
-  margin-top: 4rem;
+  margin-top: 1rem;
 }
 
 .permissions-grid {
@@ -219,25 +215,6 @@ defineExpose({
   color: #f59e0b;
 }
 
-.permission-info {
-  text-align: center;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.permission-info h3 {
-  margin: 0 0 0.5rem 0;
-  color: var(--text-color);
-}
-
-.permission-info p {
-  margin: 0 0 1rem 0;
-  color: var(--dimmed-text-color);
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
 .permission-status {
   display: flex;
   align-items: center;
@@ -260,8 +237,9 @@ defineExpose({
 
 .permissions-info {
   display: flex;
+  align-items: center;
   gap: 1rem;
-  padding: 1.5rem;
+  padding: 0rem 1.5rem;
   background-color: var(--background-alt-color);
   border-radius: 12px;
   border: 1px solid var(--border-color);

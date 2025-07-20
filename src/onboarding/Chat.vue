@@ -9,7 +9,7 @@
     </header>
 
     <div class="form form-large">
-      <div class="engines-grid">
+      <div class="engines-grid" :class="{ expanded: isExpanded }">
         <div class="engine form-field" v-for="engine in engines" :key="engine">
           <div class="brand">
             <EngineLogo :engine="engine" :grayscale="appearanceTheme.isDark" />
@@ -29,6 +29,11 @@
               &nbsp;</span>
           </div>
         </div>
+      </div>
+      
+      <div v-if="engines.length > 4 && !isExpanded" class="show-more" @click="isExpanded = true">
+        <span>{{ t('onboarding.chat.showMore') }}</span>
+        <BIconCaretDownFill />
       </div>
     </div>
 
@@ -50,6 +55,7 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import useAppearanceTheme from '../composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
 
+const isExpanded = ref(false)
 const status = ref<Record<string, string>>({})
 const success = ref<Record<string, string>>({})
 const errors = ref<Record<string, string>>({})
@@ -84,6 +90,8 @@ const loadModels = (engine: string) => {
     return
   }
 
+  store.saveSettings()
+
   timeouts[engine] = setTimeout(async () => {
 
     status.value[engine] = ''
@@ -114,4 +122,36 @@ const loadModels = (engine: string) => {
 
 <style scoped>
 @import '../../css/onboarding.css';
+
+.engines-grid .engine:nth-child(n+7) {
+  display: none;
+}
+
+.engines-grid.expanded .engine:nth-child(n+7) {
+  display: flex;
+}
+
+.show-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.show-more:hover {
+  background-color: var(--hover-background-color);
+}
+
+.show-more svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
 </style>

@@ -1589,6 +1589,7 @@
       "already": "{engine} jest już skonfigurowany.",
       "count": "Nie znaleziono modelu.|Dostępny jest 1 model!|Dostępne są {count} modele!",
       "error": "Proszę sprawdzić swój klucz API i spróbować ponownie.",
+      "showMore": "Pokaż więcej",
       "subtitle": "Możesz rozmawiać z Witsy, korzystając z modeli językowych od wszystkich głównych dostawców. Wprowadź poniżej swoje klucze API, aby rozpocząć. Jeśli nie masz żadnych kluczy API, bez obaw: na następnym ekranie będziesz mógł skonfigurować Witsy do korzystania z lokalnych modeli przez Ollama!",
       "success": "Klucz {engine} zweryfikowany.<br/>{count} modeli znaleziono!",
       "title": "Dostawcy modeli czatu"

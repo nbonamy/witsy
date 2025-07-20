@@ -1570,6 +1570,7 @@
       "already": "{engine} ya está configurado.",
       "count": "No se encontró ningún modelo.|¡1 modelo disponible!|¡{count} modelos disponibles!",
       "error": "Por favor revisa tu clave API y vuelve a intentarlo.",
+      "showMore": "Mostrar más",
       "subtitle": "Puedes chatear con Witsy usando modelos de lenguaje de todos los proveedores principales. Ingresa tus claves API abajo para comenzar. Si no tienes claves API, no te preocupes: en la siguiente pantalla podrás configurar Witsy para usar modelos locales a través de Ollama.",
       "success": "Clave de {engine} validada.<br/>{count} modelos encontrados!",
       "title": "Tus proveedores de modelos de chat"
