@@ -446,7 +446,7 @@ defineExpose({
 
 }
 
-.macos .realtime .content header {
+.macos .realtime .sp-main header {
   padding-left: 40px;
 }
 
