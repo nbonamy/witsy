@@ -12,6 +12,10 @@
       "prompt": "Turn this image into a Studio Ghibli-style anime illustration"
     },
     {
+      "label": "Travel poster",
+      "prompt": "Transform this photo into a vintage travel poster in the style of classic U.S. National Park posters. Highlight the various features but maintain the scene composition and recognizable landscape while applying a stylized, graphic look reminiscent of mid-20th-century travel art. Use warm, saturated tones, posterized shading, and clean bold text for the location where this photo was taken."
+    },
+    {
       "label": "Hanna-Barbera style (@gnrlyxyz)",
       "prompt": "Turn this image into a a full-body cartoon portrait, illustrated in a 1960s Hanna-Barbera mid-century modern style with bold, simplified shapes and clean black outlines. The character has exaggerated features (such as a large nose or chin) and a minimal color palette. The outfit reflects the character's typical style or personality and is rendered in flat colors with no shading or texture effects. Hands are behind the back, and the posture is upright and slightly leaning back for a pompous or dignified expression. Background is a solid muted green. No smudging. No shading. Vector friendly. No paper textures or grain effects. Bold and crisp vector lines. Keep the illustration vector-friendly and clean. Square aspect ratio.",
       "enabled": false
