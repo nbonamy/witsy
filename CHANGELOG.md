@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.0] - WIP
+## [2.12.0] - 2025-07-20
 
 ### Added
 - Add, Edit & Delete System Prompts (https://github.com/nbonamy/witsy/issues/308)
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - Google image generation
 
 ### Removed
-- Google image edit (not supported by Google API)
+- Google image edit ([not supported by Google API](https://github.com/googleapis/js-genai/blob/36a14e4e05e8808ba65ed392b869be7d9840220b/src/models.ts#L985))
 
 
 ## [2.11.2] - 2025-07-14
