@@ -142,18 +142,19 @@ vi.mock('openai', async () => {
 vi.mock('@google/genai', async () => {
   const GoogleGenAI = vi.fn()
   GoogleGenAI.prototype.models = {
-    generateContent: vi.fn(() => ({
-      candidates: [{
-        content: {
-          parts: [
-            { inlineData: { data: 'base64encodedimage' } },
-          ]
-        }
+    generateImages: vi.fn(() => ({
+      generatedImages: [{
+        image: {
+          imageBytes: 'base64encodedimage',
+        } 
       }]
     }))
   }
   return {
-    GoogleGenAI
+    GoogleGenAI,
+    PersonGeneration: {
+      ALLOW_ALL: ''
+    }
   }
 })
 
@@ -427,10 +428,10 @@ test('Image Plugin google', async () => {
   store.config.plugins.image.model = 'image/model'
   const image = new Image(store.config.plugins.image)
   const result = await image.execute({ model: 'image/model' }, { prompt: 'test prompt' })
-  expect(GoogleGenAI.prototype.models.generateContent).toHaveBeenLastCalledWith({
+  expect(GoogleGenAI.prototype.models.generateImages).toHaveBeenLastCalledWith({
     model: 'image/model',
-    config: { responseModalities: ['Text', 'Image'] },
-    contents: [ { role: 'user', parts: [ { text: 'test prompt' } ] } ]
+    prompt: 'test prompt',
+    config: expect.any(Object),
   })
   expect(result).toStrictEqual({
     url: 'file://file_saved',

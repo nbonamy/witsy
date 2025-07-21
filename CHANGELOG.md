@@ -22,9 +22,10 @@ All notable changes to this project will be documented in this file.
 - Error when using Eleven Labs for Transcription (https://github.com/nbonamy/witsy/issues/335)
 - Wrong position of delete shortcut buttons at shortcut settings (https://github.com/nbonamy/witsy/issues/334)
 - Mermaid chart fixes and improvements (https://github.com/nbonamy/witsy/issues/333)
+- Google image generation
 
 ### Removed
-- N/A
+- Google image edit (not supported by Google API)
 
 
 ## [2.11.2] - 2025-07-14

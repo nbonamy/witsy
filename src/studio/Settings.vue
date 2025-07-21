@@ -268,8 +268,7 @@ const models = computed(() => {
 })
 
 const canEdit = computed(() => {
-  return ['google'].includes(engine.value) ||
-    engine.value === 'openai' && !model.value.includes('dall-e')
+  return (engine.value === 'openai' && !model.value.includes('dall-e'))
 })
 
 const modelHasDefaults = computed(() => {
@@ -389,7 +388,7 @@ const modelHasParams = computed(() => {
 
 const canTransform = computed(() => {
   return ['falai', 'replicate'].includes(engine.value) ||
-    (engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
+    //(engine.value === 'google' && mediaType.value === 'image' && !props.currentMedia?.isVideo()) ||
     (engine.value === 'openai' && model.value.startsWith('gpt-image-') && mediaType.value === 'image' && !props.currentMedia?.isVideo())
 })
 
@@ -637,6 +636,7 @@ defineExpose({
   generateMedia,
   setTransform: (value: boolean) => {
     transform.value = value
+    onChangeMediaType()
   },
 })
 

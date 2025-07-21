@@ -4,12 +4,16 @@ import { saveFileContents, download } from '../services/download'
 import { engineNames } from '../llms/base'
 import { store } from '../services/store'
 import Replicate, { FileOutput } from 'replicate'
+import { GoogleGenAI, PersonGeneration } from '@google/genai'
 import { fal } from '@fal-ai/client'
 
 export default class VideoCreator implements MediaCreator {
 
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
+    // if (!checkApiKey || store.config.engines.google.apiKey) {
+    //   engines.push({ id: 'google', name: engineNames.google })
+    // }
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: engineNames.replicate })
     }
@@ -28,6 +32,8 @@ export default class VideoCreator implements MediaCreator {
       return this.replicate(model, parameters)
     } else if (engine === 'falai') {
       return this.falai(model, parameters, reference)
+    } else if (engine == 'google') {
+      return this.google(model, parameters, reference)
     } else {
       throw new Error('Unsupported engine')
     }
@@ -86,6 +92,57 @@ export default class VideoCreator implements MediaCreator {
       return { error: error.message }
     }
   
+  }
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
+
+    const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
+  
+    try {
+
+      let operation = await client.models.generateVideos({
+        model: model,
+        prompt: parameters.prompt,
+        config: {
+          numberOfVideos: 1,
+          //safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
+          personGeneration: PersonGeneration.ALLOW_ALL,
+        },
+      });
+
+      while (!operation.done) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        operation = await client.operations.getVideosOperation({operation: operation})
+      }
+
+      // if no video was generated, return an error
+      if (!operation?.response?.generatedVideos?.[0]?.video) {
+        if (operation?.response?.raiMediaFilteredReasons) {
+          return { 
+            error: `Google Generative AI finished with reason: ${operation.response.raiMediaFilteredReasons[0]}`
+          }
+        }
+        return { 
+          error: 'Google Generative AI returned no content'
+        }
+      }
+
+      // save the content and return
+      const videoUrl = operation.response.generatedVideos[0].video.uri
+      const fileUrl = download(videoUrl)
+      return {
+        url: fileUrl,
+      }
+
+    } catch (error) {
+      console.error("Error generating content:", error);
+    }
+
+    return { 
+      error: 'Failed to generate image with Google Generative AI'
+    }
+
   }
   
   async blobToBase64(blob: Blob): Promise<string>{

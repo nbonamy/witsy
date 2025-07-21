@@ -1,10 +1,11 @@
+
 import { xAIBaseURL } from 'multi-llm-ts'
 import { anyDict, MediaCreationEngine, MediaReference, MediaCreator } from '../types/index'
 import { saveFileContents, download } from '../services/download'
 import { engineNames } from '../llms/base'
 import { store } from '../services/store'
 import { HfInference } from '@huggingface/inference'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI, PersonGeneration, SafetyFilterLevel, SubjectReferenceImage } from '@google/genai'
 import Replicate, { FileOutput } from 'replicate'
 import { fal } from '@fal-ai/client'
 import OpenAI, { toFile } from 'openai'
@@ -151,41 +152,61 @@ export default class ImageCreator implements MediaCreator {
     
   }
 
-  // monitor https://github.com/googleapis/js-genai
   async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
     const client = new GoogleGenAI({ apiKey: store.config.engines.google.apiKey })
   
     try {
-      const response = await client.models.generateContent({
-        model: model,
-        config: {
-          responseModalities: ['Text', 'Image']
-        },
-        contents: [{
-          role: 'user',
-          parts: [
-            { text: parameters.prompt },
-            ...(reference ? [ {
-              inlineData: {
-                mimeType: reference.mimeType,
-                data: reference.contents
-              }
-            }] : [] )
-          ]
-        }]
-      });
 
-      if (response.promptFeedback?.blockReason) {
-        return { 
-          error: `Google Generative AI blocked the request: ${response.promptFeedback.blockReason}`
+      let response = null
+
+      if (!reference) {
+  
+        response = await client.models.generateImages({
+          model: model,
+          prompt: parameters.prompt,
+          config: {
+            numberOfImages: 1,
+            //safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
+            personGeneration: PersonGeneration.ALLOW_ALL,
+            includeRaiReason: true,
+          },
+        });
+
+      } else {
+
+        const referenceImage = new SubjectReferenceImage()
+        referenceImage.referenceId = 1
+        referenceImage.referenceImage = {
+          imageBytes: reference.contents,
+          mimeType: reference.mimeType,
         }
+
+        response = await client.models.editImage({
+          model: model,
+          prompt: parameters.prompt,
+          referenceImages: [referenceImage],
+          config: {
+            numberOfImages: 1,
+            safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
+            personGeneration: PersonGeneration.ALLOW_ALL,
+            includeRaiReason: true,
+          },
+        });
+
       }
 
-      if (!response.candidates?.[0]?.content) {
-        if (response.candidates?.[0]?.finishReason) {
+      // if (response.promptFeedback?.blockReason) {
+      //   return { 
+      //     error: `Google Generative AI blocked the request: ${response.promptFeedback.blockReason}`
+      //   }
+      // }
+
+      // if no image was generated, return an error
+      if (!response.generatedImages?.[0]?.image) {
+        if (response.generatedImages?.[0]?.raiFilteredReason) {
           return { 
-            error: `Google Generative AI finished with reason: ${response.candidates[0].finishReason}`
+            error: `Google Generative AI finished with reason: ${response.generatedImages[0].raiFilteredReason}`
           }
         }
         return { 
@@ -193,15 +214,13 @@ export default class ImageCreator implements MediaCreator {
         }
       }
 
-      for (const part of  response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          const imageData = part.inlineData.data;
-          const fileUrl = saveFileContents('png', imageData)
-          return {
-            url: fileUrl,
-          }
-        }
+      // save the content and return
+      const imageData = response.generatedImages[0].image.imageBytes
+      const fileUrl = saveFileContents('png', imageData)
+      return {
+        url: fileUrl,
       }
+
     } catch (error) {
       console.error("Error generating content:", error);
     }
@@ -230,7 +249,7 @@ export default class ImageCreator implements MediaCreator {
       })
 
       // download
-      const image = response.data.images[0]
+      const image = response.data.images?.[0] || response.data.image
       const fileUrl = download(image.url)
       return { url: fileUrl }
 

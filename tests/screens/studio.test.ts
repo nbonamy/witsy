@@ -439,7 +439,7 @@ test('Upload', async () => {
   const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
-  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
   expect(settings.emitted()['upload']).toHaveLength(1)
   expect(window.api.file.pick).toHaveBeenLastCalledWith({ filters: [
@@ -476,18 +476,18 @@ test('Edit', async () => {
   const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
-  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
-  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
   await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
+  await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
   await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
   expect(settings.emitted()['generate']).toHaveLength(1)
   expect(settings.emitted()['generate'][0]).toStrictEqual([
     expect.objectContaining({
       action: 'edit',
       mediaType: 'image',
-      engine: 'google',
-      model: 'gemini-2',
+      engine: 'openai',
+      model: 'gpt-image-1',
       prompt: 'prompt',
       params: { },
     }),
@@ -517,10 +517,10 @@ test('Edit', async () => {
   expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload / prompt',
-    engine: 'google',
-    model: 'gemini-2',
+    engine: 'openai',
+    model: 'gpt-image-1',
     attachments: [ expect.objectContaining({
-      url: 'file://google/gemini-2/prompt'
+      url: 'file://openai/gpt-image-1/prompt'
     }) ],
     toolCalls: []
   })
@@ -532,8 +532,8 @@ test('Edit with preserve', async () => {
   const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
-  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
   await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
   await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
   await settings.find<HTMLInputElement>('[name=preserve]').setValue(true)
@@ -543,8 +543,8 @@ test('Edit with preserve', async () => {
     expect.objectContaining({
       action: 'transform',
       mediaType: 'image',
-      engine: 'google',
-      model: 'gemini-2',
+      engine: 'openai',
+      model: 'gpt-image-1',
       prompt: 'prompt',
       params: { },
     }),
@@ -562,10 +562,10 @@ test('Edit with preserve', async () => {
   expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'prompt',
-    engine: 'google',
-    model: 'gemini-2',
+    engine: 'openai',
+    model: 'gpt-image-1',
     attachments: [ expect.objectContaining({
-      url: 'file://google/gemini-2/prompt'
+      url: 'file://openai/gpt-image-1/prompt'
     }) ],
     toolCalls: []
   })
@@ -577,8 +577,8 @@ test('Undo / Redo', async () => {
   const wrapper: VueWrapper<any> = mount(DesignStudio)
   const settings = wrapper.findComponent({ name: 'Settings' })
   await settings.find<HTMLSelectElement>('[name=type]').setValue('image')
-  await settings.find<HTMLSelectElement>('[name=engine]').setValue('google')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
+  await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
   await settings.find<HTMLTextAreaElement>('[name=prompt]').setValue('prompt')
   await settings.find<HTMLInputElement>('[name=transform]').setValue(true)
   await settings.find<HTMLButtonElement>('[name=generate]').trigger('click')
@@ -591,7 +591,7 @@ test('Undo / Redo', async () => {
 
   await preview.find<HTMLElement>('.icon.undo').trigger('click')
 
-  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://google/gemini-2/prompt')
+  expect(window.api.file.delete).toHaveBeenLastCalledWith('file://openai/gpt-image-1/prompt')
 
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
@@ -615,11 +615,11 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.redoStack[0]).toMatchObject({
     role: 'user',
     content: 'common.upload / prompt',
-    engine: 'google',
-    model: 'gemini-2',
+    engine: 'openai',
+    model: 'gpt-image-1',
     attachments: [ expect.objectContaining({
-      url: 'file://google/gemini-2/prompt',
-      content: 'file://google/gemini-2/prompt_encoded',
+      url: 'file://openai/gpt-image-1/prompt',
+      content: 'file://openai/gpt-image-1/prompt_encoded',
     }) ],
     toolCalls: []
   })
@@ -653,8 +653,8 @@ test('Undo / Redo', async () => {
   expect(wrapper.vm.selection[0]).toMatchObject({
     role: 'user',
     content: 'common.upload / prompt',
-    engine: 'google',
-    model: 'gemini-2',
+    engine: 'openai',
+    model: 'gpt-image-1',
     attachments: [ expect.objectContaining({
       url: 'file://file_saved'
     }) ],
