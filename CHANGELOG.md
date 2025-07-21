@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.12.1] - WIP
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- xAI image generation
+
+### Removed
+- N/A
+
+
 ## [2.12.0] - 2025-07-20
 
 ### Added

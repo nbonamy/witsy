@@ -304,14 +304,19 @@ export default class ImageCreator implements MediaCreator {
     }
 
     // save the content on disk
-    const fileUrl = saveFileContents('png', response.data[0].b64_json)
-    //console.log('[image] saved image to', fileUrl)
-
-    // return an object
-    return {
-      url: fileUrl,
+    if (response.data[0].b64_json) {
+      const fileUrl = saveFileContents('png', response.data[0].b64_json)
+      //console.log('[image] saved image to', fileUrl)
+      return { url: fileUrl }
+    } else if (response.data[0].url) {
+      const fileUrl = download(response.data[0].url)
+      //console.log('[image] downloaded image from', fileUrl)
+      return { url: fileUrl }
+    } else {
+      console.error(`[${name}] No image returned from OpenAI API`, response)
+      return { error: `No image returned from ${name} API` }
     }
-
+    
   }
 
 
