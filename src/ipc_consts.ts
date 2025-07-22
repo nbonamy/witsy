@@ -228,3 +228,7 @@ export const OLLAMA = {
   DOWNLOAD_ERROR: 'ollama-download-error',
   DOWNLOAD_CANCEL: 'ollama-download-cancel',
 } as const;
+
+export const GOOGLE = {
+  DOWNLOAD_MEDIA: 'google-download-media',
+} as const;

@@ -233,5 +233,10 @@ contextBridge.exposeInMainWorld(
         return ipcRenderer.invoke(IPC.OLLAMA.DOWNLOAD_CANCEL) 
       },
     },
+    google: {
+      downloadMedia: (url: string, mimeType: string): Promise<string> => { 
+        return ipcRenderer.invoke(IPC.GOOGLE.DOWNLOAD_MEDIA, { url, mimeType }) 
+      },
+    }
   },
 );
