@@ -6,8 +6,8 @@ export default class STTMistral implements STTEngine {
   config: Configuration
 
   static readonly models = [
-    { id: 'voxtral-mini-2507', label: 'Voxtral Mini (online)' },
-    { id: 'voxtral-small-2507', label: 'Voxtral Small (online)' },
+    { id: 'voxtral-mini-latest', label: 'Voxtral Mini (online)' },
+    { id: 'voxtral-small-latest', label: 'Voxtral Small (online)' },
     { id: 'voxtral-mini-latest', label: 'Voxtral Mini Transcribe (online)' },
   ]
 
