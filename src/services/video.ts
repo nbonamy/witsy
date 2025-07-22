@@ -112,7 +112,7 @@ export default class VideoCreator implements MediaCreator {
       });
 
       while (!operation.done) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 2500))
         operation = await client.operations.getVideosOperation({operation: operation})
       }
 
