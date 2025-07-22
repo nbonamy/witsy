@@ -24,7 +24,7 @@
           <div class="form-field">
             <label>{{ t('settings.voice.model') }}</label>
             <select name="model" v-model="model" @change="onChangeModel">
-              <option v-for="model in getSTTModels(engine)" :key="model.id" :value="model.id">
+              <option v-for="model in models" :key="model.id" :value="model.id">
                 {{ model.label }}
               </option>
             </select>
@@ -128,6 +128,7 @@ import Dialog from '../composables/dialog'
 import Attachment from '../models/attachment'
 
 import useEventBus from '../composables/event_bus'
+import { id } from 'vega'
 const { emitEvent } = useEventBus()
 
 // init stuff
@@ -160,6 +161,14 @@ const isDragOver = ref(false)
 let previousTranscription = ''
 
 const meta = computed(() => window.api.platform === 'darwin' ? 'Cmd' : 'Ctrl')
+
+const models = computed(() => {
+  const models = getSTTModels(engine.value) ?? []
+  if (!models.find(m => m.id === store.config.stt.model)) {
+    models.unshift({ id: store.config.stt.model, label: store.config.stt.model })
+  }
+  return models
+})
 
 const translateMenuActions = computed(() => ([
   { action: '', label: t('transcribe.translate'), disabled: true },
