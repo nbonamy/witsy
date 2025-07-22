@@ -484,6 +484,9 @@ declare global {
         downloadStart(targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }>
         downloadCancel(): Promise<{ success: boolean }>
       }
+      google: {
+        downloadMedia(url: string, mimeType: string): Promise<string>
+      }
     }
   }
 }

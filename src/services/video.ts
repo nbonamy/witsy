@@ -11,9 +11,9 @@ export default class VideoCreator implements MediaCreator {
 
   static getEngines(checkApiKey: boolean): MediaCreationEngine[] {
     const engines = []
-    // if (!checkApiKey || store.config.engines.google.apiKey) {
-    //   engines.push({ id: 'google', name: engineNames.google })
-    // }
+    if (!checkApiKey || store.config.engines.google.apiKey) {
+      engines.push({ id: 'google', name: engineNames.google })
+    }
     if (!checkApiKey || store.config.engines.replicate.apiKey) {
       engines.push({ id: 'replicate', name: engineNames.replicate })
     }
@@ -130,10 +130,9 @@ export default class VideoCreator implements MediaCreator {
 
       // save the content and return
       const videoUrl = operation.response.generatedVideos[0].video.uri
-      const fileUrl = download(videoUrl)
-      return {
-        url: fileUrl,
-      }
+      const mimeType = operation.response.generatedVideos[0].video.mimeType || 'video/mp4'
+      const fileUrl = await window.api.google.downloadMedia(videoUrl, mimeType)
+      return { url: fileUrl, }
 
     } catch (error) {
       console.error("Error generating content:", error);

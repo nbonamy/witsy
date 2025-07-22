@@ -42,6 +42,7 @@ import * as debug from './network';
 import * as interpreter from './interpreter';
 import * as backup from './backup';
 import * as ollama from './ollama';
+import * as google from './google';
 
 export const installIpc = (
   store: Store,
@@ -716,6 +717,16 @@ export const installIpc = (
       return await MacOSPermissions.openAutomationSettings();
     }
   });
+
+  ipcMain.handle(IPC.GOOGLE.DOWNLOAD_MEDIA, async (event, payload: any) => {
+    try {
+      const { url, mimeType } = payload;
+      return await google.downloadMedia(app, url, mimeType);
+    } catch (error) {
+      console.error('Error downloading Google media:', error);
+      return null;
+    }
+  })
 
 }
 

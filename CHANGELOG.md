@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [2.12.1] - WIP
 
 ### Added
-- N/A
+- Google video creation
 
 ### Changed
 - N/A
 
 ### Fixed
 - xAI image generation
+- STT/Whisper: "language" parameter should not be sent (https://github.com/nbonamy/witsy/issues/340)
 
 ### Removed
 - N/A
