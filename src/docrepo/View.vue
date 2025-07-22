@@ -155,7 +155,7 @@ const onChangeRepoName = (event: Event) => {
 
 const onAddDocs = () => {
   if (!props.selectedRepo) return
-  const files = window.api.file.pick({ multiselection: true }) as string[]
+  const files = window.api.file.pickFile({ multiselection: true }) as string[]
   if (!files) return
   for (const file of files) {
     window.api.docrepo.addDocument(props.selectedRepo.uuid, 'file', file)
@@ -165,7 +165,7 @@ const onAddDocs = () => {
 
 const onAddFolder = () => {
   if (!props.selectedRepo) return
-  const folder = window.api.file.pickDir()
+  const folder = window.api.file.pickDirectory()
   if (!folder) return
   window.api.docrepo.addDocument(props.selectedRepo.uuid, 'folder', folder)
   loading.value = true

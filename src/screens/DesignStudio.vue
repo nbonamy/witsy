@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { FileContents } from '../types/index'
+import { FileContents } from '../types/file'
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { t } from '../services/i18n'
 import { store, kMediaChatId, kReferenceParamValue } from '../services/store'
@@ -370,7 +370,7 @@ const processUpload = (fileName: string, mimeType: string, fileUrl: string) => {
 }
 
 const onUpload = () => {
-  let file = window.api.file.pick({ filters: [
+  let file = window.api.file.pickFile({ filters: [
     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
   ] })
   if (file) {

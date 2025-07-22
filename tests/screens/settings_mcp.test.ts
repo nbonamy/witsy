@@ -143,7 +143,7 @@ test('Normal server add - SSE', async () => {
   // Hence "cwd: ''" in expects below
   // input and editor.vm.cwd still report the right value!
   await editor.find<HTMLButtonElement>('button[name=pickWorkDir]').trigger('click')
-  expect(window.api.file.pickDir).toHaveBeenCalledTimes(1)
+  expect(window.api.file.pickDirectory).toHaveBeenCalledTimes(1)
   expect(editor.find<HTMLInputElement>('input[name=cwd]').element.value).toBe('picked_folder')
   // @ts-expect-error mock
   expect(editor.vm.cwd).toBe('picked_folder')
@@ -422,17 +422,17 @@ test('Editor pickers', async () => {
 
   await editor.find<HTMLSelectElement>('select[name=source]').setValue('npx')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
-  expect(window.api.file.pick).toHaveBeenCalledTimes(0)
+  expect(window.api.file.pickFile).toHaveBeenCalledTimes(0)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('file.ext')
   
   await editor.find<HTMLButtonElement>('button[name=pickCommand]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
-  expect(window.api.file.pick).toHaveBeenCalledTimes(1)
+  expect(window.api.file.pickFile).toHaveBeenCalledTimes(1)
   expect(editor.find<HTMLInputElement>('input[name=command]').element.value).toBe('image.png')
   
   await editor.find<HTMLButtonElement>('button[name=pickScript]').trigger('click')
   expect(window.api.file.find).toHaveBeenCalledTimes(1)
-  expect(window.api.file.pick).toHaveBeenCalledTimes(2)
+  expect(window.api.file.pickFile).toHaveBeenCalledTimes(2)
   expect(editor.find<HTMLInputElement>('input[name=url]').element.value).toBe('image.png')
 
 })

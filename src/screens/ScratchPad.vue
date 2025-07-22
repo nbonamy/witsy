@@ -14,7 +14,7 @@
 import { t, i18nInstructions, expertI18n } from '../services/i18n'
 
 // components
-import { FileContents } from '../types'
+import { FileContents } from '../types/file'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { store } from '../services/store'
 import { LlmEngine } from 'multi-llm-ts'
@@ -344,7 +344,7 @@ const onLoad = () => {
     try {
 
       // pick
-      const file = window.api.file.pick({
+      const file = window.api.file.pickFile({
         filters: [ { name: 'Scratchpad', extensions: ['json'] }]
       })
       if (!file) return
@@ -353,6 +353,7 @@ const onLoad = () => {
       const fileContents = file as FileContents
       const scratchpad = JSON.parse(window.api.base64.decode(fileContents.contents))
       if (!scratchpad || !scratchpad.contents || !scratchpad.undoStack || !scratchpad.redoStack) {
+        console.error('Invalid scratchpad file', scratchpad)
         Dialog.alert(t('scratchpad.fileError'))
       }
 

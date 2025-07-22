@@ -2,7 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron'
-import { FileDownloadParams, FileSaveParams, Command, ComputerAction, Expert, ExternalApp, FileContents, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, Agent, AgentRun } from './types';
+import { Command, ComputerAction, Expert, ExternalApp, anyDict, strDict, NetworkRequest, OpenSettingsPayload, MainWindowMode, Agent, AgentRun } from './types';
+import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './types/file';
 import { Configuration } from './types/config';
 import { DocRepoQueryResponseItem } from './types/rag';
 import { Application, RunCommandParams } from './types/automation';
@@ -66,20 +67,20 @@ contextBridge.exposeInMainWorld(
       decode: (data: string): string => { return Buffer.from(data, 'base64').toString() },
     },
     file: {
+      normalize: (filePath: string): string => { return ipcRenderer.sendSync(IPC.FILE.NORMALIZE_PATH, filePath) },
+      exists: (filePath: string): boolean => { return ipcRenderer.sendSync(IPC.FILE.FILE_EXISTS, filePath) },
       read: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_FILE, filepath) },
       readIcon: (filepath: string): FileContents => { return ipcRenderer.sendSync(IPC.FILE.READ_ICON, filepath) },
-      save: (opts: FileSaveParams): string => { return ipcRenderer.sendSync(IPC.FILE.SAVE_FILE, JSON.stringify(opts)) },
-      pick: (opts: any): string|strDict|string[] => { return ipcRenderer.sendSync(IPC.FILE.PICK_FILE, JSON.stringify(opts)) },
-      pickDir: (): string => { return ipcRenderer.sendSync(IPC.FILE.PICK_DIRECTORY) },
-      download: (opts: FileDownloadParams): string => { return ipcRenderer.sendSync(IPC.FILE.DOWNLOAD, JSON.stringify(opts)) },
-      delete: (filepath: string): void => { return ipcRenderer.sendSync(IPC.FILE.DELETE_FILE, filepath) },
-      find: (name: string): string => { return ipcRenderer.sendSync(IPC.FILE.FIND_PROGRAM, name) },
       extractText: (contents: string, format: string): string => { return ipcRenderer.sendSync(IPC.FILE.GET_TEXT_CONTENT, contents, format) },
       getAppInfo: (filepath: string): ExternalApp => { return ipcRenderer.sendSync(IPC.FILE.GET_APP_INFO, filepath) },
-      listDirectory: (dirPath: string, includeHidden?: boolean): ListDirectoryResponse => { return ipcRenderer.sendSync(IPC.FILE.LIST_DIRECTORY, dirPath, includeHidden) },
-      exists: (filePath: string): boolean => { return ipcRenderer.sendSync(IPC.FILE.FILE_EXISTS, filePath) },
+      save: (opts: FileSaveParams): string => { return ipcRenderer.sendSync(IPC.FILE.SAVE_FILE, JSON.stringify(opts)) },
+      download: (opts: FileDownloadParams): string => { return ipcRenderer.sendSync(IPC.FILE.DOWNLOAD, JSON.stringify(opts)) },
       write: (filePath: string, content: string): any => { return ipcRenderer.sendSync(IPC.FILE.WRITE_FILE, filePath, content) },
-      normalize: (filePath: string): string => { return ipcRenderer.sendSync(IPC.FILE.NORMALIZE_PATH, filePath) },
+      delete: (filepath: string): void => { return ipcRenderer.sendSync(IPC.FILE.DELETE_FILE, filepath) },
+      find: (name: string): string => { return ipcRenderer.sendSync(IPC.FILE.FIND_PROGRAM, name) },
+      listDirectory: (dirPath: string, includeHidden?: boolean): ListDirectoryResponse => { return ipcRenderer.sendSync(IPC.FILE.LIST_DIRECTORY, dirPath, includeHidden) },
+      pickFile: (opts: FilePickParams): string|strDict|string[] => { return ipcRenderer.sendSync(IPC.FILE.PICK_FILE, JSON.stringify(opts)) },
+      pickDirectory: (): string => { return ipcRenderer.sendSync(IPC.FILE.PICK_DIRECTORY) },
       openInExplorer: (filePath: string): { success: boolean; error?: string } => { return ipcRenderer.sendSync(IPC.FILE.OPEN_IN_EXPLORER, filePath) },
     },
     settings: {
