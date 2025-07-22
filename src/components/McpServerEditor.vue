@@ -180,7 +180,7 @@ const findCommand = () => {
 }
 
 const pickCommand = () => {
-  const path = window.api.file.pick({ location: true })
+  const path = window.api.file.pickFile({ location: true })
   if (path) {
     command.value = path as string
   }
@@ -188,14 +188,14 @@ const pickCommand = () => {
 }
 
 const pickScript = () => {
-  const path = window.api.file.pick({ location: true })
+  const path = window.api.file.pickFile({ location: true })
   if (path) {
     url.value = path as string
   }
 }
 
 const pickWorkDir = () => {
-  const path = window.api.file.pickDir()
+  const path = window.api.file.pickDirectory()
   if (path) {
     cwd.value = path as string
   }

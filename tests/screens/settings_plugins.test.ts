@@ -239,7 +239,7 @@ test('python settings', async () => {
   expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('file.ext')
   expect(store.config.plugins.python.binpath).toBe('file.ext')
   await python.findAll('button')[1].trigger('click')
-  expect(window.api.file.pick).toHaveBeenCalled()
+  expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(python.find<HTMLInputElement>('input[type=text]').element.value).toBe('image.png')
   expect(store.config.plugins.python.binpath).toBe('image.png')
 })

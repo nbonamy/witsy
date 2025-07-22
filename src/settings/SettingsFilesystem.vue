@@ -108,7 +108,7 @@ const selectPath = (index: number) => {
 }
 
 const addPath = async () => {
-  const path = await window.api.file.pickDir()
+  const path = await window.api.file.pickDirectory()
   if (path) {
     allowedPaths.value.push(path)
     save()

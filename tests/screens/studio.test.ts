@@ -442,7 +442,7 @@ test('Upload', async () => {
   await settings.find<HTMLSelectElement>('[name=engine]').setValue('openai')
   await settings.find<HTMLButtonElement>('[name=upload]').trigger('click')
   expect(settings.emitted()['upload']).toHaveLength(1)
-  expect(window.api.file.pick).toHaveBeenLastCalledWith({ filters: [
+  expect(window.api.file.pickFile).toHaveBeenLastCalledWith({ filters: [
     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
   ] })
   expect(window.api.file.save).toHaveBeenLastCalledWith({

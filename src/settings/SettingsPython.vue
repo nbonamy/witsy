@@ -45,7 +45,7 @@ const search = () => {
 }
 
 const pick = () => {
-  const path = window.api.file.pick({ location: true })
+  const path = window.api.file.pickFile({ location: true })
   if (path) {
     binpath.value = path
     save()

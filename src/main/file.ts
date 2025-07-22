@@ -1,5 +1,6 @@
 
-import { ExternalApp, FileContents, anyDict } from '../types/index';
+import { ExternalApp } from '../types/index';
+import { FileContents, FileSaveParams, FileDownloadParams, FilePickParams } from '../types/file';
 import { DirectoryItem } from '../types/filesystem';
 import { App, dialog } from 'electron';
 import { extensionToMimeType } from 'multi-llm-ts';
@@ -94,7 +95,7 @@ export const deleteFile = (app: App, filepath: string): boolean => {
 
 }
 
-export const pickFile = (app: App, payload: anyDict): string|string[]|FileContents|null => {
+export const pickFile = (app: App, payload: FilePickParams): string|string[]|FileContents|null => {
 
   try {
 
@@ -283,17 +284,20 @@ export const findProgram = (app: App, program: string) => {
   return null;
 }
 
-export const writeFileContents = (app: App, payload: anyDict): string => {
+export const writeFileContents = (app: App, payload: FileSaveParams): string => {
 
   // defaults
-  const defaults = {
-    properties: {
-      directory: 'downloads',
-      prompt: false,
-      subdir: false,
-    }
+  payload = {
+    ...{
+      contents: '',
+      properties: {
+        directory: 'downloads',
+        prompt: false,
+        subdir: false,
+      },
+    },
+    ...payload
   }
-  payload = { ...defaults, ...payload }
 
   // parse properties
   const properties = payload.properties;
@@ -329,16 +333,22 @@ export const writeFileContents = (app: App, payload: anyDict): string => {
 
 }
 
-export const downloadFile = async (app: App, payload: anyDict) => {
+export const downloadFile = async (app: App, payload: FileDownloadParams) => {
+
+  const savePayload: FileSaveParams = {
+    contents: '',
+    url: payload.url,
+    properties: payload.properties
+  }
 
   try {
 
     // get contents
     if (payload.url.startsWith('file://')) {
 
-      payload.contents = fs.readFileSync(payload.url.slice(7)).toString('base64');
-      payload.filename = payload.url.split('?')[0].split(path.sep).pop();
-      payload.url = null
+      savePayload.contents = fs.readFileSync(payload.url.slice(7)).toString('base64');
+      //savePayload.properties.filename = payload.url.split('?')[0].split(path.sep).pop();
+      savePayload.url = null
 
     } else {
 
@@ -349,7 +359,7 @@ export const downloadFile = async (app: App, payload: anyDict) => {
 
       const response = await fetch(payload.url);
       const contents = await response.arrayBuffer();
-      payload.contents = Buffer.from(contents).toString('base64');
+      savePayload.contents = Buffer.from(contents).toString('base64');
 
       // reset
       // delete process.env['NODE_TLS_REJECT_UNAUTHORIZED']      
@@ -357,7 +367,7 @@ export const downloadFile = async (app: App, payload: anyDict) => {
     }
 
     // now just save
-    return await writeFileContents(app, payload);
+    return writeFileContents(app, savePayload);
 
   } catch (error) {
     console.error('Error while downloading file', error);
@@ -365,7 +375,6 @@ export const downloadFile = async (app: App, payload: anyDict) => {
   }
 
 }
-
 
 export const getAppInfo = async (app: App, filepath: string): Promise<ExternalApp | null> => {
 

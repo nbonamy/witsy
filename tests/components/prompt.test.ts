@@ -150,8 +150,8 @@ test('Show stop button when working', async () => {
 test('Stores attachment', async () => {
   const attach = wrapper.find('.attach')
   await attach.trigger('click')
-  expect(window.api.file.pick).toHaveBeenCalled()
-  expect(window.api.file.pick).toHaveBeenLastCalledWith({
+  expect(window.api.file.pickFile).toHaveBeenCalled()
+  expect(window.api.file.pickFile).toHaveBeenLastCalledWith({
     multiselection: true,
     //filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
   })

@@ -25,8 +25,8 @@ vi.mock('../../src/composables/event_bus', async () => {
 
 beforeAll(() => {
   useWindowMock()
-  window.api.file.pick = vi.fn(() => [ 'file4', 'file5' ])
-  window.api.file.pickDir = vi.fn(() => 'folder2')
+  window.api.file.pickFile = vi.fn(() => [ 'file4', 'file5' ])
+  window.api.file.pickDirectory = vi.fn(() => 'folder2')
   store.loadSettings()
 })
 
@@ -155,12 +155,12 @@ test('Adds documents', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.panel .panel-item:nth-child(1)').trigger('click')
   await wrapper.find('.sliding-pane .icon.add-file').trigger('click')
-  expect(window.api.file.pick).toHaveBeenCalled()
+  expect(window.api.file.pickFile).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(2)
   expect((window.api.docrepo.addDocument as Mock).mock.calls[0]).toStrictEqual(['uuid1', 'file', 'file4'])
   expect((window.api.docrepo.addDocument as Mock).mock.calls[1]).toStrictEqual(['uuid1', 'file', 'file5'])
   await wrapper.find('.sliding-pane .icon.add-folder').trigger('click')
-  expect(window.api.file.pickDir).toHaveBeenCalled()
+  expect(window.api.file.pickDirectory).toHaveBeenCalled()
   expect(window.api.docrepo.addDocument).toHaveBeenCalledTimes(3)
   expect((window.api.docrepo.addDocument as Mock).mock.calls[2]).toStrictEqual(['uuid1', 'folder', 'folder2'])
 })

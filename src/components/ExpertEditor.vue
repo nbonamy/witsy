@@ -42,7 +42,8 @@
 
 <script setup lang="ts">
 
-import { Expert, ExternalApp, FileContents } from '../types/index'
+import { Expert, ExternalApp } from '../types/index'
+import { FileContents } from '../types/file'
 import { onMounted, ref, computed, watch } from 'vue'
 import { expertI18n, expertI18nDefault, t } from '../services/i18n'
 import Dialog from '../composables/dialog'
@@ -105,7 +106,7 @@ const selectApp = (app: ExternalApp) => {
 }
 
 const onAddApp = () => {
-  const app = window.api.file.pick({ packages: true, location: true })
+  const app = window.api.file.pickFile({ packages: true, location: true })
   const info = window.api.file.getAppInfo(app as string)
   if (!info) {
     Dialog.alert(t('experts.editor.validation.invalidApp'))

@@ -61,7 +61,7 @@ beforeAll(() => {
   }
 
   // @ts-expect-error mock
-  window.api.file.pick = vi.fn(() => { return {
+  window.api.file.pickFile = vi.fn(() => { return {
     contents: '{ "contents": { "content": "Hello LLM" }, "undoStack": [], "redoStack": [] }',
     url: 'file://scratchpad.json',
   }})

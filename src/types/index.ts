@@ -8,6 +8,7 @@ import { LocalSearchResult } from '../main/search'
 import { McpInstallStatus, McpServer, McpStatus, McpTool } from './mcp'
 import { ToolSelection } from './llm'
 import { ListDirectoryResponse } from './filesystem'
+import { FileContents, FileDownloadParams, FilePickParams, FileSaveParams } from './file'
 
 export type strDict = Record<string, string>
 export type anyDict = Record<string, any>
@@ -235,27 +236,10 @@ export type Expert = {
   triggerApps: ExternalApp[]
 }
 
-export type FileContents = {
-  url: string
-  mimeType: string
-  contents: string
-}
-
 export type ComputerAction = {
   action: 'key' | 'type' | 'mouse_move' | 'left_click' | 'left_click_drag' | 'right_click' | 'middle_click' | 'double_click' | 'screenshot' | 'cursor_position'
   coordinate?: number[]
   text?: string
-}
-
-export type FileSaveParams = {
-  contents: string
-  url?: string
-  properties: anyDict
-}
-
-export type FileDownloadParams = {
-  url: string
-  properties: anyDict
 }
 
 export type MemoryFact = {
@@ -327,20 +311,21 @@ declare global {
         decode(data: string): string
       }
       file: {
+        normalize(filePath: string): string
+        exists(filePath: string): boolean
         read(filepath: string): FileContents
         readIcon(filepath: string): FileContents
-        save(opts: FileSaveParams): string
-        download(opts: FileDownloadParams): string
-        pick(opts: anyDict): string|string[]|FileContents
-        pickDir(): string
-        delete(filepath: string): boolean
-        find(name: string): string
         extractText(contents: string, format: string): string
         getAppInfo(filepath: string): ExternalApp
-        listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
-        exists(filePath: string): boolean
+        save(opts: FileSaveParams): string
+        download(opts: FileDownloadParams): string
         write(filePath: string, content: string): boolean
-        normalize(filePath: string): string
+        delete(filepath: string): boolean
+        find(name: string): string
+        listDirectory(dirPath: string, includeHidden?: boolean): ListDirectoryResponse
+        pickFile(opts: FilePickParams): string|string[]|FileContents
+        pickDirectory(): string
+        openInExplorer(filePath: string): void
       }
       settings: {
         open(payload?: OpenSettingsPayload): void
@@ -494,6 +479,10 @@ declare global {
       backup: {
         export(): boolean
         import(): boolean
+      }
+      ollama: {
+        downloadStart(targetDirectory: string): Promise<{ success: boolean; downloadId?: string; error?: string }>
+        downloadCancel(): Promise<{ success: boolean }>
       }
     }
   }

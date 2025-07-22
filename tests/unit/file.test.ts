@@ -123,7 +123,7 @@ test('Download remote file', async () => {
 })
 
 test('Pick file', async () => {
-  expect(file.pickFile(app, { filters: [ 'error'] })).toBeNull()
+  expect(file.pickFile(app, { filters: [ { name: 'error', extensions: ['']} ] })).toBeNull()
   const fileURL = file.pickFile(app, { location: true })
   expect(dialog.showOpenDialogSync).toHaveBeenCalled()
   expect(fileURL).toBe('file://picked.txt')

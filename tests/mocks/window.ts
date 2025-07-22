@@ -2,10 +2,11 @@
 import { vi } from 'vitest'
 import { renderMarkdown } from '../../src/main/markdown'
 import { Command, Expert } from '../../src/types/index'
-import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
-import defaultSettings from '../../defaults/settings.json'
 import { McpInstallStatus } from '../../src/types/mcp'
 import { ListDirectoryResponse } from '../../src/types/filesystem'
+import { FilePickParams } from '../../src/types/file'
+import { DocRepoQueryResponseItem, DocumentBase } from '../../src/types/rag'
+import defaultSettings from '../../defaults/settings.json'
 
 const listeners: ((signal: string) => void)[] = []
 
@@ -187,38 +188,6 @@ const useWindowMock = (opts?: WindowMockOpts) => {
       writeImage: vi.fn(() => true),
     },
     file: {
-      read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
-      readIcon: vi.fn(),
-      save: vi.fn(() => 'file://file_saved'),
-      download: vi.fn(),
-      pick: vi.fn((opts) => {
-        if (opts?.location) {
-          return 'image.png'
-        } else if (opts?.multiselection) {
-          return ['image1.png', 'image2.png']
-        } else {
-          return {
-            url: 'file://image.png',
-            mimeType: 'image/png',
-            contents: 'image64'
-          }
-        }
-      }),
-      pickDir: vi.fn(() => 'picked_folder'),
-      delete: vi.fn(() => true),
-      find: vi.fn(() => 'file.ext'),
-      extractText: vi.fn((s) => `${s}_extracted`),
-      getAppInfo: vi.fn(),
-      listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
-        success: true,
-        items: [
-          { name: 'file1.txt', fullPath: '/home/user/file1.txt', isDirectory: false, size: 100 },
-          { name: 'subdir', fullPath: '/home/user/subdir', isDirectory: true },
-          ...(includeHidden ? [{ name: '.hidden', fullPath: '/home/user/.hidden', isDirectory: false, size: 50 }] : [])
-        ]
-      })),
-      exists: vi.fn((filePath: string) => filePath.includes('existing')),
-      write: vi.fn(() => true),
       normalize: vi.fn((filePath: string) => {
         if (filePath.startsWith('~/')) {
           return filePath.replace('~', '/home/user')
@@ -228,6 +197,39 @@ const useWindowMock = (opts?: WindowMockOpts) => {
         }
         return filePath
       }),
+      exists: vi.fn((filePath: string) => filePath.includes('existing')),
+      read: vi.fn((filepath: string) => { return { url: filepath, contents: `${filepath}_encoded`, mimeType: 'whatever' } }),
+      readIcon: vi.fn(),
+      extractText: vi.fn((s) => `${s}_extracted`),
+      getAppInfo: vi.fn(),
+      save: vi.fn(() => 'file://file_saved'),
+      download: vi.fn(),
+      write: vi.fn(() => true),
+      delete: vi.fn(() => true),
+      find: vi.fn(() => 'file.ext'),
+      listDirectory: vi.fn((dirPath: string, includeHidden?: boolean): ListDirectoryResponse => ({
+        success: true,
+        items: [
+          { name: 'file1.txt', fullPath: '/home/user/file1.txt', isDirectory: false, size: 100 },
+          { name: 'subdir', fullPath: '/home/user/subdir', isDirectory: true },
+          ...(includeHidden ? [{ name: '.hidden', fullPath: '/home/user/.hidden', isDirectory: false, size: 50 }] : [])
+        ]
+      })),
+      pickFile: vi.fn((opts: FilePickParams) => {
+        if (opts.location) {
+          return 'image.png'
+        } else if (opts.multiselection) {
+          return ['image1.png', 'image2.png']
+        } else {
+          return {
+            url: 'file://image.png',
+            mimeType: 'image/png',
+            contents: 'image64'
+          }
+        }
+      }),
+      pickDirectory: vi.fn(() => 'picked_folder'),
+      openInExplorer: vi.fn(() => ({ success: true }))
     },
     docrepo: {
       open: vi.fn(),
