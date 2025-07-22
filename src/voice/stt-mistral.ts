@@ -8,7 +8,7 @@ export default class STTMistral implements STTEngine {
   static readonly models = [
     { id: 'voxtral-mini-latest', label: 'Voxtral Mini (online)' },
     { id: 'voxtral-small-latest', label: 'Voxtral Small (online)' },
-    { id: 'voxtral-mini-latest', label: 'Voxtral Mini Transcribe (online)' },
+    { id: 'voxtral-mini-latest-transcribe', label: 'Voxtral Mini Transcribe (online)' },
   ]
 
   constructor(config: Configuration) {
@@ -53,7 +53,7 @@ export default class STTMistral implements STTEngine {
     }
 
     // For transcription-only models, use the transcription endpoint
-    if (this.config.stt.model === 'voxtral-mini-latest') {
+    if (this.config.stt.model === 'voxtral-mini-latest-transcribe') {
       return this.transcribeWithTranscriptionAPI(file)
     } else {
       // For other models, use the chat completions endpoint
@@ -64,7 +64,8 @@ export default class STTMistral implements STTEngine {
   private async transcribeWithTranscriptionAPI(file: File): Promise<TranscribeResponse> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('model', this.config.stt.model)
+    //formData.append('model', this.config.stt.model) // Can't use this because it is voxtral-mini-latest-transcribe which is not actually a model name
+    formData.append('model', 'voxtral-mini-latest')
     
     if (this.config.stt.locale) {
       formData.append('language', this.config.stt.locale.substring(0, 2))
