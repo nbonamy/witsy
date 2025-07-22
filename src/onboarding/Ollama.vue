@@ -124,21 +124,6 @@ import { getChatModels } from '../llms/ollama'
 import type { ChatModel } from 'multi-llm-ts'
 import * as IPC from '../ipc_consts'
 
-declare const window: {
-  api: {
-    on: (channel: string, callback: (...args: any[]) => void) => void
-    off: (channel: string, callback: (...args: any[]) => void) => void
-    file: {
-      pickDir: () => string
-      openInExplorer: (filePath: string) => { success: boolean; error?: string }
-    }
-    ollama: {
-      downloadStart: (targetDirectory: string) => Promise<{ success: boolean; downloadId?: string; error?: string }>
-      downloadCancel: () => Promise<{ success: boolean }>
-    }
-  }
-}
-
 const state = ref<'hidden' | 'checking' | 'not-installed' | 'installed' | 'error'>('hidden')
 const downloading = ref(false)
 const cancelling = ref(false)
@@ -239,7 +224,7 @@ const loadInstalledModels = async () => {
 const downloadOllama = async () => {
   try {
     // First, let user pick a directory to download to
-    const targetDirectory = await window.api.file.pickDir()
+    const targetDirectory = await window.api.file.pickDirectory()
     if (!targetDirectory) {
       return // User cancelled directory selection
     }
