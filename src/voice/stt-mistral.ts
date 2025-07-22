@@ -1,6 +1,8 @@
 import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 
+import { getWaveBlob } from 'webm-to-wav-converter'
+
 export default class STTMistral implements STTEngine {
 
   config: Configuration
@@ -41,10 +43,9 @@ export default class STTMistral implements STTEngine {
   }
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
-    // Convert to audio/wav, which is widely supported. Unknown why the audio/webm doesn't work.
-    //console.log('[stt-mistral] '+audioBlob.type+' detected, converting to audio/wav');
-    const wavBlob = await this.convertWebmToWav(audioBlob);
-    return this.transcribeFile(new File([wavBlob], 'audio.wav', { type: 'audio/wav' }), opts);
+    // Always convert to wav using shared utility for Mistral compatibility
+    const wavBlob = await getWaveBlob(audioBlob, false)
+    return this.transcribeFile(new File([wavBlob], 'audio.wav', { type: 'audio/wav' }), opts)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -91,64 +92,7 @@ export default class STTMistral implements STTEngine {
     return { text: result.text || '' }
   }
 
-  /**
-   * Converts a WebM Blob to a WAV Blob using the Web Audio API.
-   * This is a workaround for the Mistral API not accepting audio/webm. (always thinks it's video/webm)
-   * @param blob The input Blob, likely of type video/webm.
-   * @returns A Promise that resolves to a Blob of type audio/wav.
-   */
-  private async convertWebmToWav(blob: Blob): Promise<Blob> {
-    const arrayBuffer = await blob.arrayBuffer();
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    // Minimal WAV encoder
-    const wavBuffer = (() => {
-      const numChannels = 1; // Mono
-      const sampleRate = audioBuffer.sampleRate;
-      const bitDepth = 16;
-      const samples = audioBuffer.getChannelData(0);
-      const dataLength = samples.length * (bitDepth / 8);
-      const buffer = new ArrayBuffer(44 + dataLength);
-      const view = new DataView(buffer);
-
-      const writeString = (offset: number, str: string) => {
-        for (let i = 0; i < str.length; i++) {
-          view.setUint8(offset + i, str.charCodeAt(i));
-        }
-      };
-
-      // RIFF header
-      writeString(0, 'RIFF');
-      view.setUint32(4, 36 + dataLength, true);
-      writeString(8, 'WAVE');
-
-      // fmt sub-chunk
-      writeString(12, 'fmt ');
-      view.setUint32(16, 16, true); // Sub-chunk size
-      view.setUint16(20, 1, true); // PCM format
-      view.setUint16(22, numChannels, true);
-      view.setUint32(24, sampleRate, true);
-      view.setUint32(28, sampleRate * numChannels * (bitDepth / 8), true); // Byte rate
-      view.setUint16(32, numChannels * (bitDepth / 8), true); // Block align
-      view.setUint16(34, bitDepth, true);
-
-      // data sub-chunk
-      writeString(36, 'data');
-      view.setUint32(40, dataLength, true);
-
-      // Write PCM samples
-      let offset = 44;
-      for (let i = 0; i < samples.length; i++, offset += 2) {
-        const s = Math.max(-1, Math.min(1, samples[i]));
-        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-      }
-
-      return buffer;
-    })();
-    
-    return new Blob([wavBuffer], { type: 'audio/wav' });
-  }
 
   private async transcribeWithChatAPI(file: File): Promise<TranscribeResponse> {
     // Upload the file first
