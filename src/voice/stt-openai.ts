@@ -59,7 +59,7 @@ export default class STTOpenAI implements STTEngine {
     const response = await this.client.audio.transcriptions.create({
       file: file,
       model: this.config.stt.model,
-      language: this.config.stt.locale?.substring(0, 2)
+      ...(this.config.stt.locale ? { language: this.config.stt.locale.substring(0, 2) } : {}),
     });
 
     // return
