@@ -526,8 +526,8 @@ datalist {
   display: flex;
   justify-content: space-between;
   margin-top: -16px;
-  margin-left: 4px;
-  margin-right: 4px;
+  margin-left: 2px;
+  margin-right: 12px;
   margin-top: -16px;
 }
 
