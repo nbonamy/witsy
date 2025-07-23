@@ -93,7 +93,7 @@ export default class VideoCreator implements MediaCreator {
     }
   
   }
-  
+     
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async google(model: string, parameters: anyDict, reference?: MediaReference): Promise<anyDict> {
 
@@ -104,6 +104,8 @@ export default class VideoCreator implements MediaCreator {
       let operation = await client.models.generateVideos({
         model: model,
         prompt: parameters.prompt,
+        // ...(reference && reference.mimeType.startsWith('image') ? { image: { imageBytes: reference.contents } } : {}),
+        // ...(reference && reference.mimeType.startsWith('video') ? { video: { videoBytes: reference.contents } } : {}),
         config: {
           numberOfVideos: 1,
           //safetyFilterLevel: SafetyFilterLevel.BLOCK_NONE,
