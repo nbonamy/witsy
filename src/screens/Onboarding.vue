@@ -49,7 +49,6 @@ import Permissions from '../onboarding/Permissions.vue'
 import Studio from '../onboarding/Studio.vue'
 import Voice from '../onboarding/Voice.vue'
 import Done from '../onboarding/Done.vue'
-import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
 defineEmits(['close']);
 
