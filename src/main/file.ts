@@ -1,9 +1,8 @@
-
 import { ExternalApp } from '../types/index';
 import { FileContents, FileSaveParams, FileDownloadParams, FilePickParams } from '../types/file';
 import { DirectoryItem } from '../types/filesystem';
 import { App, dialog } from 'electron';
-import { extensionToMimeType } from 'multi-llm-ts';
+import { extensionToMimeType as e2mt } from 'multi-llm-ts';
 import { execSync } from 'child_process';
 import autolib from 'autolib';
 import icns from 'icns-lib';
@@ -11,6 +10,23 @@ import plist from 'plist';
 import process from 'process'
 import path from 'node:path';
 import fs from 'node:fs';
+
+export const extensionToMimeType = (ext: string): string => {
+  if (ext === '.mp4') return 'video/mp4'
+  if (ext === '.avi') return 'video/x-msvideo'
+  if (ext === '.mov') return 'video/quicktime'
+  if (ext === '.wmv') return 'video/x-ms-wmv'
+  if (ext === '.flv') return 'video/x-flv'
+  if (ext === '.webm') return 'video/webm'
+  if (ext === '.mkv') return 'video/x-matroska'
+  if (ext === '.m4v') return 'video/x-m4v'
+  if (ext === '.3gp') return 'video/3gpp'
+  if (ext === '.ogv') return 'video/ogg'
+  if (ext === '.ts') return 'video/mp2t'
+  if (ext === '.mts') return 'video/mp2t'
+  if (ext === '.m2ts') return 'video/mp2t'
+  else return e2mt(ext)
+}
 
 export const getFileContents = (app: App, filepath: string): FileContents|null => {
 
