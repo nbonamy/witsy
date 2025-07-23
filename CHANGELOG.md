@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Google video creation
 - Mistral Voxtral STT models support (@ljbred08)
+- Support for New Gemini Embedding model (https://github.com/nbonamy/witsy/issues/322)
 
 ### Changed
 - N/A
