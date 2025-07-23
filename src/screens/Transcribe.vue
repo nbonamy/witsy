@@ -352,7 +352,7 @@ const onRecord = async (ptt: boolean) => {
   }
 
   // init
-  console.log('onRecord: push-to-talk=', ptt)
+  // console.log('onRecord: push-to-talk=', ptt)
   state.value = 'initializing'
 
   // initialize
