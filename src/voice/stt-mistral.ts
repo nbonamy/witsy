@@ -1,14 +1,16 @@
 import { Configuration } from '../types/config'
 import { STTEngine, ProgressCallback, TranscribeResponse } from './stt'
 
+import { getWaveBlob } from 'webm-to-wav-converter'
+
 export default class STTMistral implements STTEngine {
 
   config: Configuration
 
   static readonly models = [
-    { id: 'voxtral-mini-2507', label: 'Voxtral Mini (online)' },
-    { id: 'voxtral-small-2507', label: 'Voxtral Small (online)' },
-    { id: 'voxtral-mini-latest', label: 'Voxtral Mini Transcribe (online)' },
+    { id: 'voxtral-mini-latest', label: 'Voxtral Mini (online)' },
+    { id: 'voxtral-small-latest', label: 'Voxtral Small (online)' },
+    { id: 'voxtral-mini-latest-transcribe', label: 'Voxtral Mini Transcribe (online)' },
   ]
 
   constructor(config: Configuration) {
@@ -41,7 +43,9 @@ export default class STTMistral implements STTEngine {
   }
 
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
-    return this.transcribeFile(new File([audioBlob], 'audio.webm', { type: audioBlob.type }), opts)
+    // Always convert to wav using shared utility for Mistral compatibility
+    const wavBlob = await getWaveBlob(audioBlob, false)
+    return this.transcribeFile(new File([wavBlob], 'audio.wav', { type: 'audio/wav' }), opts)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,7 +57,7 @@ export default class STTMistral implements STTEngine {
     }
 
     // For transcription-only models, use the transcription endpoint
-    if (this.config.stt.model === 'voxtral-mini-latest') {
+    if (this.config.stt.model === 'voxtral-mini-latest-transcribe') {
       return this.transcribeWithTranscriptionAPI(file)
     } else {
       // For other models, use the chat completions endpoint
@@ -64,7 +68,8 @@ export default class STTMistral implements STTEngine {
   private async transcribeWithTranscriptionAPI(file: File): Promise<TranscribeResponse> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('model', this.config.stt.model)
+    //formData.append('model', this.config.stt.model) // Can't use this because it is voxtral-mini-latest-transcribe which is not actually a model name
+    formData.append('model', 'voxtral-mini-latest')
     
     if (this.config.stt.locale) {
       formData.append('language', this.config.stt.locale.substring(0, 2))
@@ -86,6 +91,8 @@ export default class STTMistral implements STTEngine {
     const result = await response.json()
     return { text: result.text || '' }
   }
+
+
 
   private async transcribeWithChatAPI(file: File): Promise<TranscribeResponse> {
     // Upload the file first
