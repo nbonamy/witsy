@@ -33,18 +33,18 @@
     "copied": "Skopiowano",
     "copy": "Kopiuj",
     "copyMd": "Kopiuj jako Markdown",
-    "costsAsOf": "koszty na dzień",
+    "costsAsOf": "koszty według stanu na",
     "create": "Utwórz",
     "customize": "Dostosuj…",
     "deepResearch": "Deep Research",
     "default": "Domyślny",
     "delete": "Usuń",
-    "differentLocales": "Ustawienia regionalne LLM różnią się od ustawień regionalnych interfejsu. Wyświetlane teksty są w języku LLM lub w twoim języku, jeśli je dostosowałeś.",
+    "differentLocales": "Język modelu LLM różni się od języka interfejsu. Teksty mogą być wyświetlane w języku modelu lub w Twoim języku, jeśli zostały przetłumaczone.",
     "disabled": "Wyłączony",
     "documents": "Dokumenty",
     "done": "Gotowe!",
     "edit": "Edytuj",
-    "embeddings": "Osadzenia",
+    "embeddings": "Embeddingi",
     "enabled": "Włączone",
     "error": "Błąd!",
     "errorCopyClipboard": "Wystąpił błąd podczas kopiowania tekstu do schowka.",
@@ -56,7 +56,7 @@
       "remove": "Usuń z ulubionych"
     },
     "files": "Pliki",
-    "fork": "Rozgałęzienie",
+    "fork": "Utwórz forka",
     "high": "Wysoki",
     "icon": "Ikona",
     "insert": "Wstaw",
@@ -89,13 +89,13 @@
       "sw-KE": "Suahili"
     },
     "learnMore": "Dowiedz się więcej…",
-    "llmModel": "Model LLM",
-    "llmProvider": "Dostawca LLM",
+    "llmModel": "Model językowy",
+    "llmProvider": "Dostawca modeli językowych",
     "load": "Wczytaj",
     "low": "Niski",
     "medium": "Średni",
     "model": "Model",
-    "modelPlaceholder": "Wprowadź nazwę modelu lub wybierz jedną z nich",
+    "modelPlaceholder": "Wpisz nazwę modelu lub wybierz z listy",
     "move": "Przenieś",
     "name": "Nazwa",
     "newChat": "Nowy czat",
@@ -114,7 +114,7 @@
     "rename": "Zmień nazwę",
     "replace": "Zastąp",
     "required": {
-      "fieldsRequired": "Upewnij się, że wprowadziłeś wartość w wymaganych polach."
+      "fieldsRequired": "Upewnij się, że wprowadziłeś wartości we wszystkich wymaganych polach."
     },
     "reset": "Resetuj",
     "retry": "Ponów próbę",
@@ -145,7 +145,7 @@
     "selectAll": "Wybierz wszystko",
     "selectNone": "Anuluj wybór wszystkich",
     "settings": "Ustawienia",
-    "shortcut": "Skrót",
+    "shortcut": "Skrót klawiaturowy",
     "spellcheck": {
       "add": "Dodaj do słownika"
     },
@@ -287,7 +287,7 @@
       "error": "Wystąpił błąd podczas próby wyeksportowania czatu."
     },
     "fork": {
-      "title": "Rozdziel czat"
+      "title": "Rozwidl czat"
     },
     "role": {
       "assistant": "Asystent",
@@ -302,12 +302,12 @@
     },
     "folder": {
       "actions": {
-        "clearDefaults": "Wyczyść domyślne folderu",
+        "clearDefaults": "Wyczyść domyślne ustawienia folderu",
         "delete": "Usuń folder",
-        "setDefaults": "Ustaw domyślne z czatu"
+        "setDefaults": "Ustaw domyślne na podstawie czatu"
       },
-      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne folderu?",
-      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne folderu?"
+      "confirmDeleteDefaults": "Czy na pewno chcesz usunąć domyślne ustawienia folderu?",
+      "confirmOverwriteDefaults": "Czy na pewno chcesz nadpisać domyślne ustawienia folderu?"
     },
     "timeline": {
       "earlier": "Wcześniej",
@@ -632,7 +632,7 @@
     "config": {
       "characters": "znaki",
       "chunkOverlap": "Nakładanie się fragmentów",
-      "chunkSize": "Rozmiar kawałka",
+      "chunkSize": "Rozmiar fragmentu",
       "maxDocumentSize": "Maksymalny rozmiar dokumentu",
       "millionCharacters": "milion znaków",
       "relevanceCutOff": "Granica trafności wyszukiwania",
@@ -640,8 +640,8 @@
       "title": "Domyślne ustawienia repozytoriów dokumentów"
     },
     "create": {
-      "embeddingWarning": "model osadzania nie może zostać zmieniony po utworzeniu repozytorium",
-      "title": "Utwórz repozytorium"
+      "embeddingWarning": "Model osadzania nie może zostać zmieniony po utworzeniu repozytorium",
+      "title": "Tworzenie repozytorium dokumentów"
     },
     "list": {
       "clickToCreate": "Kliknij przycisk +, aby go utworzyć.",
@@ -657,8 +657,8 @@
   "embedding": {
     "apiKeyReminder": "Upewnij się, że wprowadziłeś swój klucz API w panelu Modele w Ustawieniach Witsy.",
     "browse": "Przeglądaj modele",
-    "model": "Model osadzania",
-    "provider": "Dostawca osadzania"
+    "model": "Model embeddingów",
+    "provider": "Dostawca embeddingów"
   },
   "emptyChat": {
     "favorites": {
@@ -1470,7 +1470,7 @@
     "app": {
       "about": "O Witsy",
       "checkForUpdates": "Sprawdź aktualizacje...",
-      "quit": "Quit Witsy",
+      "quit": "Zamknij Witsy",
       "settings": "@:{'common.settings'}…"
     },
     "edit": {
@@ -1487,7 +1487,7 @@
       "closeWindow": "Zamknij okno",
       "designStudio": "@:{'designStudio.title'}",
       "newChat": "Nowy czat",
-      "quickPrompt": "Nowa zachęta",
+      "quickPrompt": "Szybka podpowiedź",
       "scratchpad": "@:{'scratchpad.title'}",
       "title": "Plik"
     },
@@ -1542,9 +1542,9 @@
   "modelPull": {
     "browse": "Przeglądaj modele",
     "error": "Błąd pobierania modelu. Sprawdź swoje połączenie i spróbuj ponownie.",
-    "label": "Model ciągniony",
+    "label": "Pobieranie modelu",
     "placeholder": "Wprowadź nazwę modelu, aby go pobrać lub wybrać",
-    "progress": "Model ciągnący..."
+    "progress": "Pobieranie modelu..."
   },
   "modelSettings": {
     "advancedSettings": "Ustawienia zaawansowane",
@@ -1566,7 +1566,7 @@
         "title": "Nieprawidłowa wartość"
       },
       "noProviderOrModel": {
-        "text": "Musisz wybrać dostawcę LLM i model, zanim będziesz mógł używać tej funkcji.",
+        "text": "Musisz wybrać dostawcę modeli językowych i model, zanim będziesz mógł używać tej funkcji.",
         "title": "Brak dostawcy lub modelu"
       }
     },
@@ -2291,8 +2291,8 @@
       "title": "Szybki dostęp do ulubionych modeli"
     },
     "folderDefaults": {
-      "text": "Wybierz Nowy czat w menu kontekstowym folderu, aby użyć domyślnych folderu.",
-      "title": "Domyślne folderu zapisane pomyślnie!"
+      "text": "Wybierz Nowy czat w menu kontekstowym folderu, aby użyć domyślnych ustawień folderu.",
+      "title": "Domyślne ustawienia folderu zapisane pomyślnie!"
     },
     "folderList": {
       "text": "Lista folderów to świetny sposób na organizowanie sesji czatu. Kliknij ikonę folderu na dole paska bocznego, aby utworzyć nowe foldery.\n\nMenu po prawej stronie każdego folderu umożliwia zarządzanie folderami.\n\nMenu kontekstowe czatów umożliwia przeniesienie ich do folderu.",
@@ -2331,7 +2331,7 @@
       "unknown": "Wystąpił nieznany błąd. Proszę spróbować ponownie."
     },
     "help": {
-      "clear": "{skrót} aby wyczyścić transkrypcję",
+      "clear": "{shortcut} aby wyczyścić transkrypcję",
       "copy": "{shortcut} aby skopiować transkrypcję",
       "cut": "{shortcut} aby skopiować i zamknąć okno"
     },
@@ -2354,7 +2354,7 @@
       "installUpdate": "Zainstaluj aktualizację i uruchom ponownie...",
       "newChat": "@:{'menu.file.newChat'}",
       "quickPrompt": "@:{'menu.file.quickPrompt'}",
-      "quit": "Odejdź",
+      "quit": "Zakończ",
       "readAloud": "Czytaj na głos",
       "runAiCommand": "Uruchom polecenie AI",
       "scratchpad": "@:{'menu.file.scratchpad'}",
