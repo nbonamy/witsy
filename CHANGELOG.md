@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - xAI image generation
 - STT/Whisper: "language" parameter should not be sent (https://github.com/nbonamy/witsy/issues/340)
+- Gladia STT: Maximum Call stack size exceeded (https://github.com/nbonamy/witsy/issues/341)
 
 ### Removed
 - N/A
