@@ -69,6 +69,13 @@ global.fetch = vi.fn(async (url: string | Request, init?: any) => {
     }
   }
 
+  if (url.includes('gladia') && url.includes('upload')) {
+    return {
+      json: () => ({
+        audio_url: 'https://api.gladia.io/v2/upload/1234567890',
+      })
+    }
+  }
   if (url.includes('gladia') && url.includes('pre-recorded')) {
     return {
       json: () => ({
@@ -275,11 +282,7 @@ test('Instantiates Gladia', async () => {
   expect(engine.requiresDownload()).toBe(false)
   await engine.initialize(initCallback)
   expect(initCallback).toHaveBeenLastCalledWith({ task: 'gladia', status: 'ready', model: expect.any(String) })
-  await expect(engine.transcribe({
-    type: 'audio/wav',
-    // @ts-expect-error mocking
-    arrayBuffer: async () => ([])
-  })).resolves.toStrictEqual({ text: 'transcribed' })
+  await expect(engine.transcribe(new Blob(['mock audio data'], { type: 'audio/webm' }))).resolves.toStrictEqual({ text: 'transcribed' })
 })
 
 test('Instantiates HuggingFace', async () => {

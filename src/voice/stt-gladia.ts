@@ -42,9 +42,25 @@ export default class STTGladia implements STTEngine {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribe(audioBlob: Blob, opts?: object): Promise<TranscribeResponse> {
 
-    // we can use a data uri
+    // First, upload the audio chunks
+    const uploadFormData = new FormData()
+    uploadFormData.append('audio', audioBlob, 'audio.webm')
+  
+    const uploadOptions = {
+      method: 'POST',
+      headers: { 'x-gladia-key': this.config.engines.gladia?.apiKey, },
+      body: uploadFormData
+    }
+
+    const uploadResponse = await fetch('https://api.gladia.io/v2/upload', uploadOptions)
+    const uploadJson = await uploadResponse.json()
+    if (!uploadJson.audio_url) {
+      throw new Error(uploadJson.message || 'Failed to upload audio file')
+    }
+
+    // we can translate
     const queueBody = {
-      audio_url: `data:${audioBlob.type};base64,${btoa(String.fromCharCode(...new Uint8Array(await audioBlob.arrayBuffer())))}`,
+      audio_url: uploadJson.audio_url,
       language: this.config.stt.locale?.substring(0, 2) || undefined,
     }
 
