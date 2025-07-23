@@ -17,7 +17,7 @@ export const extensionToMimeType = (ext: string): string => {
   if (ext === '.mov') return 'video/quicktime'
   if (ext === '.wmv') return 'video/x-ms-wmv'
   if (ext === '.flv') return 'video/x-flv'
-  if (ext === '.webm') return 'video/webm'
+  // if (ext === '.webm') return 'video/webm'
   if (ext === '.mkv') return 'video/x-matroska'
   if (ext === '.m4v') return 'video/x-m4v'
   if (ext === '.3gp') return 'video/3gpp'
