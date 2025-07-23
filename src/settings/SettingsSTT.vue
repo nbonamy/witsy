@@ -70,7 +70,7 @@
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
-    <div class="form-field" v-if="engine == 'mistralai' && (model === 'voxtral-mini-latest' || model === 'voxtral-small-latest')">
+    <div class="form-field" v-if="engine == 'mistralai' && (!model.includes('transcribe'))">
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="mistralPrompt" @blur="save" />
     </div>
