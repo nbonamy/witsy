@@ -29,6 +29,20 @@ vi.mock('ollama', async() => {
   return { Ollama: Ollama }
 })
 
+vi.mock('@google/genai', async () => {
+  const GoogleGenAI = vi.fn()
+  GoogleGenAI.prototype.models = {
+    embedContent: vi.fn((opts) => {
+      return {
+        embeddings: [{
+          values: opts.contents.split('').reverse().map((c) => c.charCodeAt(0))
+        }]
+      }
+    })
+  }
+  return { GoogleGenAI }
+})
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -36,6 +50,7 @@ beforeEach(() => {
 test('Model ready', async () => {
   expect(Embedder.isModelReady(app, 'openai', 'text-embedding-ada-002')).toBeTruthy()
   expect(Embedder.isModelReady(app, 'ollama', 'all-minilm')).toBeTruthy()
+  expect(Embedder.isModelReady(app, 'google', 'text-embedding-004')).toBeTruthy()
 })
 
 test('Create OpenAI', async () => {
@@ -68,3 +83,16 @@ test('Embed Ollama', async () => {
   expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
 })
 
+test('Create Google', async () => {
+  const embedder = await Embedder.init(app, defaultSettings, 'google', 'text-embedding-004')
+  expect(embedder).toBeTruthy()
+  expect(embedder.openai).toBeFalsy()
+  expect(embedder.google).toBeTruthy()
+})
+
+test('Embed Google', async () => {
+  const embedder = await Embedder.init(app, defaultSettings, 'google', 'text-embedding-004')
+  const embeddings = await embedder.embed(['hello'])
+  expect(embedder.google.models.embedContent).toHaveBeenCalled()
+  expect(embeddings).toStrictEqual([[111, 108, 108, 101, 104]])
+})
