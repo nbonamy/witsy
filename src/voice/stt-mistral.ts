@@ -57,11 +57,11 @@ export default class STTMistral implements STTEngine {
     }
 
     // For transcription-only models, use the transcription endpoint
-    if (this.config.stt.model === 'voxtral-mini-latest-transcribe') {
+    if (this.config.stt.model.includes('transcribe')) {
       return this.transcribeWithTranscriptionAPI(file)
     } else {
       // For other models, use the chat completions endpoint
-      return this.transcribeWithChatAPI(file)
+      return this.transcribeWithCompletionAPI(file)
     }
   }
 
@@ -94,7 +94,7 @@ export default class STTMistral implements STTEngine {
 
 
 
-  private async transcribeWithChatAPI(file: File): Promise<TranscribeResponse> {
+  private async transcribeWithCompletionAPI(file: File): Promise<TranscribeResponse> {
     // Upload the file first
     const formData = new FormData()
     formData.append('file', file)
