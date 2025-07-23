@@ -1754,7 +1754,8 @@
       "formatError": {
         "text": "Veuillez réessayer avec un autre fichier.",
         "title": "Ce format de fichier n'est pas pris en charge par ce modèle."
-      }
+      },
+      "tooltip": "Joindre un fichier"
     },
     "conversation": {
       "placeholders": {
@@ -1763,13 +1764,16 @@
       },
       "startAuto": "Démarrer une conversation automatique",
       "startPTT": "Démarrer une conversation push-to-talk",
-      "stop": "Arrêter la conversation"
+      "stop": "Arrêter la conversation",
+      "tooltip": "Dictée"
     },
     "docRepos": {
-      "none": "Aucun dépôt de document disponible. Voulez-vous en créer un maintenant ?"
+      "none": "Aucun dépôt de document disponible. Voulez-vous en créer un maintenant ?",
+      "tooltip": "Joindre un dépôt de documents"
     },
-    "expert": {
-      "clear": "Supprimer l'expert"
+    "experts": {
+      "clear": "Supprimer l'expert",
+      "tooltip": "Sélectionner un expert"
     },
     "instructions": {
       "default": "⚙️ Utiliser la configuration par défaut",

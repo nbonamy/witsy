@@ -1776,7 +1776,8 @@
       "formatError": {
         "text": "Por favor, tente novamente com outro arquivo.",
         "title": "Este formato de arquivo não é suportado por este modelo."
-      }
+      },
+      "tooltip": "Anexar arquivo"
     },
     "conversation": {
       "placeholders": {
@@ -1785,13 +1786,16 @@
       },
       "startAuto": "Iniciar conversa automática",
       "startPTT": "Iniciar conversa push-to-talk",
-      "stop": "Parar conversa"
+      "stop": "Parar conversa",
+      "tooltip": "Ditado"
     },
     "docRepos": {
-      "none": "Nenhum repositório de documentos disponível. Você gostaria de criar um agora?"
+      "none": "Nenhum repositório de documentos disponível. Você gostaria de criar um agora?",
+      "tooltip": "Anexar repositório de documentos"
     },
-    "expert": {
-      "clear": "Limpar especialista"
+    "experts": {
+      "clear": "Limpar especialista",
+      "tooltip": "Selecionar especialista"
     },
     "instructions": {
       "default": "⚙️ Usar configuração padrão",

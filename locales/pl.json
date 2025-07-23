@@ -1776,7 +1776,8 @@
       "formatError": {
         "text": "Spróbuj ponownie z innym plikiem.",
         "title": "Ten format pliku nie jest obsługiwany przez ten model."
-      }
+      },
+      "tooltip": "Dołącz plik"
     },
     "conversation": {
       "placeholders": {
@@ -1785,13 +1786,16 @@
       },
       "startAuto": "Zaczyna się słuchanie...",
       "startPTT": "Naciśnij i przytrzymaj, aby mówić",
-      "stop": "Stop"
+      "stop": "Stop",
+      "tooltip": "Dyktuj"
     },
     "docRepos": {
-      "none": "Brak dostępnego repozytorium dokumentów. Czy chcesz utworzyć jedno teraz?"
+      "none": "Brak dostępnego repozytorium dokumentów. Czy chcesz utworzyć jedno teraz?",
+      "tooltip": "Dołącz repozytorium dokumentów"
     },
-    "expert": {
-      "clear": "Wyczyść"
+    "experts": {
+      "clear": "Wyczyść",
+      "tooltip": "Wybierz eksperta"
     },
     "instructions": {
       "default": "⚙️ Użyj domyślnych ustawień",

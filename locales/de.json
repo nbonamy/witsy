@@ -1754,7 +1754,8 @@
       "formatError": {
         "text": "Bitte versuchen Sie es mit einer anderen Datei.",
         "title": "Dieses Dateiformat wird von diesem Modell nicht unterstützt."
-      }
+      },
+      "tooltip": "Datei anhängen"
     },
     "conversation": {
       "placeholders": {
@@ -1763,13 +1764,16 @@
       },
       "startAuto": "Automatische Konversation starten",
       "startPTT": "Push-to-Talk-Konversation starten",
-      "stop": "Konversation stoppen"
+      "stop": "Konversation stoppen",
+      "tooltip": "Diktieren"
     },
     "docRepos": {
-      "none": "Keine Dokumentensammlung verfügbar. Möchten Sie jetzt eine erstellen?"
+      "none": "Keine Dokumentensammlung verfügbar. Möchten Sie jetzt eine erstellen?",
+      "tooltip": "Dokumentenrepository anhängen"
     },
-    "expert": {
-      "clear": "Experte löschen"
+    "experts": {
+      "clear": "Experte löschen",
+      "tooltip": "Experten auswählen"
     },
     "instructions": {
       "default": "⚙️ Standardkonfiguration verwenden",

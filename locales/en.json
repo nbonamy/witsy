@@ -1776,7 +1776,8 @@
       "formatError": {
         "text": "Please try again with another file.",
         "title": "This file format is not supported by this model."
-      }
+      },
+      "tooltip": "Attach file"
     },
     "conversation": {
       "placeholders": {
@@ -1785,13 +1786,16 @@
       },
       "startAuto": "Start automatic conversation",
       "startPTT": "Start push-to-talk conversation",
-      "stop": "Stop conversation"
+      "stop": "Stop conversation",
+      "tooltip": "Dictate"
     },
     "docRepos": {
-      "none": "No document repository available. Do you want to create one now?"
+      "none": "No document repository available. Do you want to create one now?",
+      "tooltip": "Attach document repository"
     },
-    "expert": {
-      "clear": "Clear expert"
+    "experts": {
+      "clear": "Clear expert",
+      "tooltip": "Select expert"
     },
     "instructions": {
       "default": "⚙️ Use configuration default",

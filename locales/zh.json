@@ -1776,7 +1776,8 @@
       "formatError": {
         "text": "请尝试使用其他文件。",
         "title": "此文件格式不被此模型支持。"
-      }
+      },
+      "tooltip": "附加文件"
     },
     "conversation": {
       "placeholders": {
@@ -1785,13 +1786,16 @@
       },
       "startAuto": "开始自动对话",
       "startPTT": "开始按键对话",
-      "stop": "停止对话"
+      "stop": "停止对话",
+      "tooltip": "口述"
     },
     "docRepos": {
-      "none": "没有可用的文档库。您想现在创建一个吗？"
+      "none": "没有可用的文档库。您想现在创建一个吗？",
+      "tooltip": "附加文档库"
     },
-    "expert": {
-      "clear": "清除专家"
+    "experts": {
+      "clear": "清除专家",
+      "tooltip": "选择专家"
     },
     "instructions": {
       "default": "⚙️ 使用配置默认",
