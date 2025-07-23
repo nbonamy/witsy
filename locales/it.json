@@ -1754,7 +1754,8 @@
       "formatError": {
         "text": "Per favore, riprova con un altro file.",
         "title": "Questo formato di file non è supportato da questo modello."
-      }
+      },
+      "tooltip": "Allega file"
     },
     "conversation": {
       "placeholders": {
@@ -1763,13 +1764,16 @@
       },
       "startAuto": "Avvia conversazione automatica",
       "startPTT": "Avvia conversazione push-to-talk",
-      "stop": "Interrompi conversazione"
+      "stop": "Interrompi conversazione",
+      "tooltip": "Dettare"
     },
     "docRepos": {
-      "none": "Nessun repository di documenti disponibile. Vuoi crearne uno ora?"
+      "none": "Nessun repository di documenti disponibile. Vuoi crearne uno ora?",
+      "tooltip": "Allega archivio documenti"
     },
-    "expert": {
-      "clear": "Rimuovi esperto"
+    "experts": {
+      "clear": "Rimuovi esperto",
+      "tooltip": "Seleziona esperto"
     },
     "instructions": {
       "default": "⚙️ Usa la configurazione predefinita",

@@ -1,22 +1,19 @@
 
 <template>
-  <div ref="item" class="item" :class="{ active: active }" @mousemove="onMouseMove" @mouseleave="onMouseLeave" @click="onClick">
-    <slot />
-    <div class="tooltip" v-if="showTooltip">
-      {{ tooltipText }}
+  <Tooltip :tooltipText="tooltipText" position="right">
+    <div ref="item" class="item" :class="{ active: active }" @click="onClick">
+      <slot />
     </div>
-  </div>
+  </Tooltip>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref } from 'vue'
+import Tooltip from './Tooltip.vue'
 
 const item = ref<HTMLElement | null>(null)
-const showTooltip = ref(false)
 const tooltipText = ref('')
-
-let tipTimeout: NodeJS.Timeout | null = null
 
 const emit = defineEmits(['click'])
 
@@ -37,22 +34,7 @@ onMounted(() => {
 })
 
 const onClick = () => {
-  showTooltip.value = false
-  clearTimeout(tipTimeout)
   emit('click', props.action)
-}
-
-const onMouseMove = () => {
-  showTooltip.value = false
-  clearTimeout(tipTimeout)
-  tipTimeout = setTimeout(() => {
-    showTooltip.value = true
-  }, 250)
-}
-
-const onMouseLeave = () => {
-  clearTimeout(tipTimeout)
-  tipTimeout = null
 }
 
 </script>
@@ -89,29 +71,5 @@ const onMouseLeave = () => {
 
 }
 
-.tooltip {
-  position: absolute;
-  top: 4%;
-  z-index: 1000;
-  left: 140%;
-  font-size: 10pt;
-  background: var(--text-color);
-  color: var(--background-color);
-  white-space: nowrap;
-  padding: .5rem;
-  border-radius: 6px;
-
-  &::after {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    right: 100%; /* To the left of the tooltip */
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent var(--text-color) transparent transparent;
-  }
-
-}
 
 </style>

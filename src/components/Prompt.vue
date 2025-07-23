@@ -20,11 +20,21 @@
       </div>
     </div>
     <div class="actions">
-      <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" v-if="enableInstructions" />
-      <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
-      <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
-      <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
-      <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
+      <Tooltip :tooltipText="t('prompt.instructions.title')" position="top-right">
+        <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" v-if="enableInstructions" />
+      </Tooltip>
+      <Tooltip :tooltipText="t('prompt.docRepos.tooltip')" position="top-right">
+        <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
+      </Tooltip>
+      <Tooltip :tooltipText="t('prompt.experts.tooltip')" position="top">
+        <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
+      </Tooltip>
+      <Tooltip :tooltipText="t('prompt.attachment.tooltip')" position="top">
+        <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      </Tooltip>
+      <Tooltip :tooltipText="t('prompt.conversation.tooltip')" position="top">
+        <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
+      </Tooltip>
       <Waveform v-if="enableWaveform && dictating":width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       <div v-if="enableDeepResearch" class="icon research" :class="{ active: deepResearchActive }" @click="onDeepResearch">
         <BIconBinoculars />
@@ -59,6 +69,7 @@ import useTipsManager from '../composables/tips_manager'
 import useTranscriber from '../composables/transcriber'
 import ImageUtils from '../composables/image_utils'
 import Dialog from '../composables/dialog'
+import Tooltip from '../components/Tooltip.vue'
 import Waveform from '../components/Waveform.vue'
 import ContextMenu, { MenuPosition, type MenuAction } from './ContextMenu.vue'
 import AttachmentView from './Attachment.vue'
@@ -257,7 +268,7 @@ const activeExpertMenuItems = computed(() => {
     { label: expert.value.name || expertI18n(expert.value, 'name'), icon: BIconStars },
     { label: expert.value.prompt || expertI18n(expert.value, 'prompt'), disabled: true, wrap: true },
     { separator: true },
-    { label: t('prompt.expert.clear'), action: 'clear' },
+    { label: t('prompt.experts.clear'), action: 'clear' },
   ];
 })
 
