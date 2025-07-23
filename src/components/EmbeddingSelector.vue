@@ -70,7 +70,7 @@ const engines = computed(() => {
   // standard
   const engines = [
     { id: 'openai', name: 'OpenAI' },
-    //{ id: 'google', name: 'Google' },
+    { id: 'google', name: 'Google' },
     { id: 'ollama', name: 'Ollama' },
     //{ id: 'fastembed', name: 'FastEmbed-js' },
   ]

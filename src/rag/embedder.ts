@@ -124,11 +124,24 @@ export default class Embedder {
 
     // google
     if (this.google) {
-      const response = await this.google.models.embedContent({
-        model: this.model,
-        contents: texts
-      })
-      return response.embeddings!.values().toArray().map((item: any) => item.values)
+      try {
+        const embeddings: number[][] = [] 
+        for (const text of texts) {
+          const response = await this.google.models.embedContent({
+            model: this.model,
+            contents: text
+          })
+          embeddings.push(response.embeddings[0].values)
+        }
+        return embeddings
+      } catch (error) {
+        if (this.model === 'gemini-embedding-exp') {
+          console.error('[rag] google embedding error:', error)
+          throw new Error('Gemini embedding model is not supported yet. Please use a different model.')
+        } else {
+          throw error
+        }
+      }
     }
 
     // ollama
