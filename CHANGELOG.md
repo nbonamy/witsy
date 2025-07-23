@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Google video creation
+- Mistral Voxtral STT models support (@ljbred08)
 
 ### Changed
 - N/A
