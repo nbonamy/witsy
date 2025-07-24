@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.1] - WIP
+## [2.12.1] - 2025-07-23
 
 ### Added
 - Google video creation
