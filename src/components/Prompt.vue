@@ -20,22 +20,22 @@
       </div>
     </div>
     <div class="actions">
-      <Tooltip :tooltipText="t('prompt.instructions.title')" position="top-right">
-        <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" v-if="enableInstructions" />
+      <Tooltip :tooltipText="t('prompt.instructions.title')" position="top-right" v-if="enableInstructions">
+        <BIconTerminal :class="{ icon: true, instructions: true }" @click="onClickInstructions" />
       </Tooltip>
-      <Tooltip :tooltipText="t('prompt.docRepos.tooltip')" position="top-right">
-        <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" v-if="enableDocRepo" />
+      <Tooltip :tooltipText="t('prompt.docRepos.tooltip')" position="top-right" v-if="enableDocRepo">
+        <BIconDatabase :class="{ icon: true, docrepo: true, active: docRepoActive }" @click="onDocRepo" />
       </Tooltip>
-      <Tooltip :tooltipText="t('prompt.experts.tooltip')" position="top">
-        <BIconMortarboard class="icon experts" @click="onClickExperts" v-if="enableExperts" />
+      <Tooltip :tooltipText="t('prompt.experts.tooltip')" position="top" v-if="enableExperts">
+        <BIconMortarboard class="icon experts" @click="onClickExperts" />
       </Tooltip>
-      <Tooltip :tooltipText="t('prompt.attachment.tooltip')" position="top">
-        <BIconPaperclip class="icon attach" @click="onAttach" v-if="enableAttachments" />
+      <Tooltip :tooltipText="t('prompt.attachment.tooltip')" position="top" v-if="enableAttachments">
+        <BIconPaperclip class="icon attach" @click="onAttach" />
       </Tooltip>
-      <Tooltip :tooltipText="t('prompt.conversation.tooltip')" position="top">
-        <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" v-if="hasDictation"/>
+      <Tooltip :tooltipText="t('prompt.conversation.tooltip')" position="top" v-if="hasDictation">
+        <BIconMic :class="{ icon: true,  dictate: true, active: dictating }" @click="onDictate" @contextmenu="onConversationMenu" />
       </Tooltip>
-      <Waveform v-if="enableWaveform && dictating":width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
+      <Waveform v-if="enableWaveform && dictating" :width="64" :height="16" foreground-color-inactive="var(--background-color)" foreground-color-active="red" :audio-recorder="audioRecorder" :is-recording="true"/>
       <div v-if="enableDeepResearch" class="icon research" :class="{ active: deepResearchActive }" @click="onDeepResearch">
         <BIconBinoculars />
         <span>{{ t('common.deepResearch') }}</span>
