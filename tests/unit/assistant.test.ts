@@ -69,7 +69,7 @@ const prompt = async (prompt: string, opts: AssistantCompletionOpts = { model: '
   
   // call and wait
   await assistant!.prompt(prompt, opts, callback)
-  await vi.waitUntil(async () => !assistant!.chat.lastMessage().transient)
+  await vi.waitUntil(async () => !assistant!.chat.lastMessage()?.transient)
 
   // return
   return content
@@ -242,6 +242,20 @@ test('Assistant sends attachment', async () => {
   ]})
   expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
   expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Assistant sends attachment with empty prompt', async () => {
+  const content = await prompt('', { model: 'chat', attachments: [
+    new Attachment('image_content', 'image/png', 'clipboard://', false),
+    new Attachment('file_content', 'text/plain', 'clipboard://', false)
+  ]})
+  expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":" (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+})
+
+test('Assistant ignores empty prompt', async () => {
+  const content = await prompt('')
+  expect(content).toBe('')
 })
 
 test('Assistant System Expert', async () => {
