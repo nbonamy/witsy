@@ -121,6 +121,7 @@ export default class LlmManager extends LlmManagerBase {
     } else if (engine === 'openai') {
       models = await llm.loadOpenAIModels(this.config.engines.openai)
       models.chat = models.chat.filter(m => !m.id.startsWith('o3-pro'))
+      models.chat = models.chat.filter(m => !m.id.includes('codex'))
     } else if (engine === 'openrouter') {
       models = await llm.loadOpenRouterModels(this.config.engines.openrouter)
     } else if (engine === 'xai') {
