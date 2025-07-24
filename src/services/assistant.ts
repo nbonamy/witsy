@@ -82,9 +82,9 @@ export default class extends Generator {
 
   async prompt(prompt: string, opts: AssistantCompletionOpts, llmCallback: LlmChunkCallback, generationCallback?: GenerationCallback): Promise<GenerationResult> {
 
-    // check
+    // we need a prompt or at least attachments
     prompt = prompt.trim()
-    if (prompt === '') {
+    if (prompt === '' && (!opts.attachments || opts.attachments.length === 0)) {
       return null
     }
 
