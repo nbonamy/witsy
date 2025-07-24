@@ -647,11 +647,23 @@
       "clickToCreate": "点击 + 按钮创建。",
       "documentsCount": "无文档|1 个文档|{count} 个文档",
       "noRepositories": "您还没有任何仓库。",
-      "title": "文档仓库"
+      "title": "文档仓库",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "删除仓库",
+        "edit": "编辑仓库"
+      }
     },
     "view": {
       "noDocuments": "您还没有任何文档。点击上面的图标以添加文档或文件夹。",
-      "title": "文档库"
+      "title": "文档库",
+      "tooltips": {
+        "addFile": "添加文件",
+        "addFolder": "添加文件夹",
+        "embeddingNotReady": "嵌入模型不可用",
+        "removeDocument": "移除文档"
+      }
     }
   },
   "embedding": {
@@ -2102,6 +2114,17 @@
       "servers": "服务器。从",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "添加新的MCP服务器",
+        "deleteServer": "删除服务器",
+        "editServer": "编辑服务器",
+        "refreshServers": "刷新MCP服务器列表",
+        "restartServers": "重启MCP服务器",
+        "startServer": "启动服务器",
+        "stopServer": "停止服务器",
+        "viewLogs": "查看服务器日志",
+        "viewTools": "查看可用工具"
+      },
       "totalTools": "总共 {count} 个服务可用"
     },
     "plugins": {

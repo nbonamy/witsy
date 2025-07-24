@@ -628,11 +628,23 @@
       "clickToCreate": "Cliquez sur le bouton + pour en créer un.",
       "documentsCount": "Aucun document|1 document|{count} documents",
       "noRepositories": "Vous n'avez pas encore de dépôts.",
-      "title": "Dépôts de documents"
+      "title": "Dépôts de documents",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "Supprimer le dépôt",
+        "edit": "Modifier le dépôt"
+      }
     },
     "view": {
       "noDocuments": "Vous n'avez pas encore de documents. Cliquez sur les icônes ci-dessus pour ajouter des documents ou des dossiers.",
-      "title": "Répertoire de documents"
+      "title": "Répertoire de documents",
+      "tooltips": {
+        "addFile": "Ajouter des fichiers",
+        "addFolder": "Ajouter un dossier",
+        "embeddingNotReady": "Modèle d'intégration non disponible",
+        "removeDocument": "Supprimer le document"
+      }
     }
   },
   "embedding": {
@@ -2080,6 +2092,17 @@
       "servers": ". Découvrez et installez des serveurs MCP depuis",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "Ajouter un nouveau serveur MCP",
+        "deleteServer": "Supprimer le serveur",
+        "editServer": "Modifier le serveur",
+        "refreshServers": "Actualiser la liste des serveurs MCP",
+        "restartServers": "Redémarrer les serveurs MCP",
+        "startServer": "Démarrer le serveur",
+        "stopServer": "Arrêter le serveur",
+        "viewLogs": "Voir les journaux du serveur",
+        "viewTools": "Voir les outils disponibles"
+      },
       "totalTools": "Total de {count} service{count > 1 ? 's' : ''} disponible{count > 1 ? 's' : ''}"
     },
     "plugins": {

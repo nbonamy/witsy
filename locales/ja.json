@@ -647,11 +647,23 @@
       "clickToCreate": "+ ボタンをクリックして作成してください。",
       "documentsCount": "ドキュメントなし|1 件のドキュメント|{count} 件のドキュメント",
       "noRepositories": "まだリポジトリがありません。",
-      "title": "ドキュメントリポジトリ"
+      "title": "ドキュメントリポジトリ",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "リポジトリを削除",
+        "edit": "リポジトリを編集"
+      }
     },
     "view": {
       "noDocuments": "まだドキュメントがありません。上のアイコンをクリックしてドキュメントまたはフォルダを追加してください。",
-      "title": "ドキュメントリポジトリ"
+      "title": "ドキュメントリポジトリ",
+      "tooltips": {
+        "addFile": "ファイルを追加",
+        "addFolder": "フォルダーを追加",
+        "embeddingNotReady": "埋め込みモデルは利用できません",
+        "removeDocument": "ドキュメントを削除"
+      }
     }
   },
   "embedding": {
@@ -2108,6 +2120,17 @@
       "servers": "サーバー。MCPサーバーを",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "新しいMCPサーバーを追加",
+        "deleteServer": "サーバーを削除",
+        "editServer": "サーバーを編集",
+        "refreshServers": "MCPサーバーリストを更新",
+        "restartServers": "MCPサーバーを再起動",
+        "startServer": "サーバーを起動",
+        "stopServer": "サーバーを停止",
+        "viewLogs": "サーバーのログを見る",
+        "viewTools": "利用可能なツールを見る"
+      },
       "totalTools": "利用可能なサービス総数：{count}件"
     },
     "plugins": {

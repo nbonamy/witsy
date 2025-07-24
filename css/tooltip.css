@@ -1,0 +1,122 @@
+.tooltip-directive {
+  position: absolute;
+  z-index: 1000;
+  font-size: 10pt !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  background: var(--text-color);
+  color: var(--background-color);
+  white-space: nowrap;
+  padding: 0.5rem;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tooltip-directive.right {
+  top: 0px;
+  left: calc(100% + 0.5rem);
+}
+
+.tooltip-directive.left {
+  top: 0px;
+  right: calc(100% + 0.5rem);
+}
+
+.tooltip-directive.top {
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-directive.top-left {
+  bottom: calc(100% + 0.5rem);
+  right: -0.25rem;
+}
+
+.tooltip-directive.top-right {
+  bottom: calc(100% + 0.5rem);
+  left: -0.5rem;
+}
+
+.tooltip-directive.bottom {
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-directive.bottom-left {
+  top: calc(100% + 10px);
+  right: -0.5rem;
+}
+
+.tooltip-directive.bottom-right {
+  top: calc(100% + 10px);
+  left: 0;
+}
+
+.tooltip-directive .arrow {
+  position: absolute;
+  border-style: solid;
+}
+
+.tooltip-directive.right .arrow {
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-color: transparent var(--text-color) transparent transparent;
+}
+
+.tooltip-directive.left .arrow {
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-color: transparent transparent transparent var(--text-color);
+}
+
+.tooltip-directive.top .arrow {
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-color: var(--text-color) transparent transparent transparent;
+}
+
+.tooltip-directive.top-left .arrow {
+  top: 100%;
+  right: 10px;
+  border-width: 5px;
+  border-color: var(--text-color) transparent transparent transparent;
+}
+
+.tooltip-directive.top-right .arrow {
+  top: 100%;
+  left: 10px;
+  border-width: 5px;
+  border-color: var(--text-color) transparent transparent transparent;
+}
+
+.tooltip-directive.bottom .arrow {
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-color: transparent transparent var(--text-color) transparent;
+}
+
+.tooltip-directive.bottom-left .arrow {
+  bottom: 100%;
+  right: 10px;
+  border-width: 5px;
+  border-color: transparent transparent var(--text-color) transparent;
+}
+
+.tooltip-directive.bottom-right .arrow {
+  bottom: 100%;
+  left: 10px;
+  border-width: 5px;
+  border-color: transparent transparent var(--text-color) transparent;
+}

@@ -2,8 +2,16 @@
   <div class="docrepo-list panel">
     <div class="panel-header">
       <label>{{ t('docRepo.list.title') }}</label>
-      <BIconSliders class="icon config" @click="onConfig" />
-      <BIconPlusLg class="icon create" @click="onCreate" />
+      <BIconSliders 
+        class="icon config" 
+        v-tooltip="{ text: t('docRepo.list.tooltips.config'), position: 'bottom-left' }"
+        @click="onConfig" 
+      />
+      <BIconPlusLg 
+        class="icon create" 
+        v-tooltip="{ text: t('docRepo.list.tooltips.create'), position: 'bottom-left' }"
+        @click="onCreate" 
+      />
     </div>
     <div class="panel-body" v-if="docRepos.length">
       <template v-for="repo in docRepos" :key="repo.uuid">
@@ -16,8 +24,16 @@
             <div class="subtext">{{ t('docRepo.list.documentsCount', { count: documentCount(repo) }) }}</div>
           </div>
           <div class="actions">
-            <BIconSearch class="view" @click.prevent.stop="selectRepo(repo)" />
-            <BIconTrash class="delete" @click.prevent.stop="onDelete(repo)" />
+            <BIconPencil 
+              class="view" 
+              v-tooltip="{ text: t('docRepo.list.tooltips.edit'), position: 'top-left' }"
+              @click.prevent.stop="selectRepo(repo)" 
+            />
+            <BIconTrash 
+              class="delete" 
+              v-tooltip="{ text: t('docRepo.list.tooltips.delete'), position: 'top-left' }"
+              @click.prevent.stop="onDelete(repo)" 
+            />
           </div>
         </div>
       </template>
@@ -69,9 +85,7 @@ const onDelete = (repo: DocumentBase) => {
   emit('delete', repo)
 }
 
-
 </script>
-
 
 <style scoped>
 
