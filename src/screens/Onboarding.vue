@@ -19,7 +19,7 @@
         <Ollama ref="ollama" />
         <Studio ref="studio" />
         <Voice ref="voice" />
-        <Permissions ref="permissions" />
+        <Permissions ref="permissions" v-if="hasPermissions" />
         <Instructions ref="instructions" />
         <Done ref="done" />
       </main>
@@ -63,17 +63,17 @@ const instructions = ref<typeof Instructions>(null)
 const permissions = ref<typeof Permissions>(null)
 const done = ref<typeof Done>(null)
 
-const indexWelcome = 0
-const indexChat = 1
-const indexOllama = 2
-const indexStudio = 3
-const indexVoice = 4
-const indexPermissions = 5
-const indexInstructions = 6
-const indexDone = 7
+const isMacOS = window.api.platform === 'darwin'
+const hasPermissions = isMacOS
 
-// Check if we're on macOS
-const isMacOS = computed(() => window.api?.platform === 'darwin')
+const indexWelcome = 0
+const indexChat = indexWelcome + 1
+const indexOllama = indexChat + 1
+const indexStudio = indexOllama + 1
+const indexVoice = indexStudio + 1
+const indexPermissions = indexVoice + 1
+const indexInstructions = indexPermissions + (hasPermissions ? 1 : 0)
+const indexDone = indexInstructions + 1
 
 onMounted(() => {
   // Load available locales
@@ -89,15 +89,10 @@ const save = () => {
 }
 
 const onPrev = () => {
-  
-  if (step.value === indexWelcome) return
 
-  // If going back from Instructions to Permissions on non-macOS, skip to step 4
-  if (step.value === indexInstructions && !isMacOS.value) {
-    step.value = indexVoice
-  } else {
-    step.value--
-  }
+  // navigate back
+  if (step.value === indexWelcome) return
+  step.value--
 
   // notify
   notifyVisible()
@@ -106,7 +101,7 @@ const onPrev = () => {
 const onNext = async () => {
 
   // Check canLeave for Permissions screen on macOS
-  if (permissions.value && step.value === indexPermissions && isMacOS.value) {
+  if (hasPermissions && permissions.value && step.value === indexPermissions) {
     if (!await permissions.value.canLeave()) {
       return
     }
@@ -119,12 +114,8 @@ const onNext = async () => {
     }
   }
 
-  // If advancing from Voice on non-macOS, skip Permissions and go to Instructions
-  if (step.value === indexVoice && !isMacOS.value) {
-    step.value = indexInstructions
-  } else {
-    step.value++
-  }
+  // navigate forwared
+  step.value++
 
   // notify
   notifyVisible()
@@ -132,7 +123,11 @@ const onNext = async () => {
 }
 
 const notifyVisible = () => {
-  const screens = [ null, chat.value, ollama.value, studio.value, voice.value, permissions.value, instructions.value, done.value ]
+  const screens = [
+    null, chat.value, ollama.value, studio.value, voice.value,
+    ...(hasPermissions ? [permissions.value] : []),
+    instructions.value, done.value
+  ]
   screens[step.value]?.onVisible?.()
 }
 

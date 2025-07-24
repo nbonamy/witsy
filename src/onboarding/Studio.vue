@@ -16,7 +16,7 @@
             <span>{{ engineNames[engine] || engine }}</span>
           </div>
           <div class="config">
-            <InputObfuscated v-model="store.config.engines[engine].apiKey" @change="loadModels(engine)"/>
+            <InputObfuscated v-model="store.config.engines[engine].apiKey" @keydown="onKeyDown" @change="loadModels(engine)"/>
             <span v-if="status[engine]" class="status" v-html="status[engine]"></span>
             <span v-else-if="success[engine]" class="success" v-html="success[engine]"></span>
             <span v-else-if="errors[engine]" class="error" v-html="errors[engine]"></span>
@@ -49,6 +49,7 @@ import ModelLoaderFactory from '../services/model_loader'
 import Spinner from '../components/Spinner.vue'
 import EngineLogo from '../components/EngineLogo.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
+import { preventTabOnLastEngineGridInput } from './onboarding'
 
 import useAppearanceTheme from '../composables/appearance_theme'
 const appearanceTheme = useAppearanceTheme()
@@ -150,6 +151,10 @@ const loadModels = (engine: string) => {
     }
   
   }, 500)
+}
+
+const onKeyDown = (event: KeyboardEvent) => {
+  preventTabOnLastEngineGridInput(event)
 }
 
 defineExpose({
