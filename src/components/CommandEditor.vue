@@ -1,5 +1,5 @@
 <template>
-  <div class="command-editor" @keydown.enter.prevent="onSave">
+  <div class="command-editor" @keydown.enter="onSave">
     <div class="form-field" v-if="diffLang" style="margin-top: 16px; margin-bottom: 24px">
       <label class="no-colon"><BIconExclamationCircle /></label>
       <div>{{ t('common.differentLocales') }}</div>
@@ -150,6 +150,11 @@ const onReset = () => {
 }
 
 const onSave = (event: Event) => {
+
+  // not in textarea
+  if ((event.target as HTMLElement).nodeName.toLocaleLowerCase() === 'textarea') {
+    return
+  }
 
   // check
   if (!label.value || !template.value || !action.value) {
