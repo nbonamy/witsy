@@ -15,7 +15,8 @@ import Done from '../../src/onboarding/Done.vue'
 
 enableAutoUnmount(afterAll)
 
-const screens = [Welcome, Chat, Ollama, Studio, Voice, Permissions, Instructions, Done]
+const screensMacOS = [Welcome, Chat, Ollama, Studio, Voice, Permissions, Instructions, Done]
+const screensOthers = [Welcome, Chat, Ollama, Studio, Voice, Instructions, Done]
 
 // Mock i18n
 vi.mock('../../src/services/i18n', async () => {
@@ -233,7 +234,7 @@ describe('Onboarding Main Component', () => {
     const wrapper = await mount(Onboarding)
     
     // Navigate to last step
-    for (let i = 1; i < screens.length; i++) {
+    for (let i = 1; i < screensMacOS.length; i++) {
       await wrapper.find('.next').trigger('click')
     }
     
@@ -265,7 +266,7 @@ describe('Onboarding Main Component', () => {
     const wrapper = await mount(Onboarding)
     
     // Navigate to last step
-    for (let i = 1; i < screens.length; i++) {
+    for (let i = 1; i < screensMacOS.length; i++) {
       await wrapper.find('.next').trigger('click')
     }
     
@@ -337,53 +338,53 @@ describe('Screen Navigation Flow', () => {
     const component = wrapper.vm as any
     
     // Test forward navigation through all screens
-    for (let i = 0; i < screens.length; i++) {
-      if (i < screens.length - 1) {
+    for (let i = 0; i < screensMacOS.length; i++) {
+      if (i < screensMacOS.length - 1) {
         await wrapper.find('.next').trigger('click')
       }
     }
     
     // Should be on the last screen now
-    expect(component.step).toBe(screens.indexOf(Done))
+    expect(component.step).toBe(screensMacOS.indexOf(Done))
     
     // Test backward navigation
     // Go back a few steps from Done screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Instructions))
+    expect(component.step).toBe(screensMacOS.indexOf(Instructions))
     
     // Go back to Permissions screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Permissions))
+    expect(component.step).toBe(screensMacOS.indexOf(Permissions))
     
     // Go back to Voice screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Voice))
+    expect(component.step).toBe(screensMacOS.indexOf(Voice))
     
     // Go back to Studio screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Studio))
+    expect(component.step).toBe(screensMacOS.indexOf(Studio))
     
     // Go back to Ollama screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Ollama))
+    expect(component.step).toBe(screensMacOS.indexOf(Ollama))
     
     // Go back to Chat screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Chat))
+    expect(component.step).toBe(screensMacOS.indexOf(Chat))
     
     // Go back to Welcome screen
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Welcome))
+    expect(component.step).toBe(screensMacOS.indexOf(Welcome))
     
     // Should not be able to go back further - no prev button
     expect(wrapper.find('.prev').exists()).toBe(false)
     
     // Test state persistence - navigate forward again and verify components render correctly
     await wrapper.find('.next').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Chat))
+    expect(component.step).toBe(screensMacOS.indexOf(Chat))
     
     await wrapper.find('.next').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Ollama))
+    expect(component.step).toBe(screensMacOS.indexOf(Ollama))
   })
 
   test('Platform-based navigation skips Permissions screen on non-macOS', async () => {
@@ -400,15 +401,15 @@ describe('Screen Navigation Flow', () => {
     }
     
     // Should be on Voice screen (step 5)
-    expect(component.step).toBe(screens.indexOf(Voice))
+    expect(component.step).toBe(screensOthers.indexOf(Voice))
     
     // Click next - should skip Permissions and go directly to Instructions
     await wrapper.find('.next').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Instructions))
+    expect(component.step).toBe(screensOthers.indexOf(Instructions))
     
     // Test backward navigation - should skip Permissions when going back
     await wrapper.find('.prev').trigger('click')
-    expect(component.step).toBe(screens.indexOf(Voice))
+    expect(component.step).toBe(screensOthers.indexOf(Voice))
     
     // Reset platform for other tests
     ;(window.api as any).platform = 'darwin'
@@ -423,7 +424,7 @@ describe('Navigation Error Handling', () => {
     const wrapper = await mount(Onboarding)
     
     // Navigate to instructions screen
-    wrapper.vm.step = screens.indexOf(Instructions)
+    wrapper.vm.step = screensMacOS.indexOf(Instructions)
     await wrapper.vm.$nextTick()
     
     // Mock instructions component to prevent leaving
@@ -438,7 +439,7 @@ describe('Navigation Error Handling', () => {
     await wrapper.vm.$nextTick()
     
     // Should still be on same step
-    expect(wrapper.vm.step).toBe(screens.indexOf(Instructions))
+    expect(wrapper.vm.step).toBe(screensMacOS.indexOf(Instructions))
   })
 
 })
