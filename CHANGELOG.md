@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.12.2] - WIP
+
+### Added
+- Tooltips (https://github.com/nbonamy/witsy/discussions/344)
+- OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
+
+### Changed
+- N/A
+
+### Fixed
+- Create / edit commands : cannot create new line (https://github.com/nbonamy/witsy/issues/348)
+
+### Removed
+- N/A
+
+
 ## [2.12.1] - 2025-07-23
 
 ### Added
