@@ -566,7 +566,7 @@
       },
       "starting": "Syntezuję treść…"
     },
-    "usage": "[BETA] Deep Research dostarcza dogłębne informacje na wybrany temat, przeglądając wiele źródeł i podkreślając kluczowe ustalenia. Uwaga: ta funkcja wykorzystuje więcej tokenów niż zwykły czat.",
+    "usage": "Deep Research dostarcza dogłębne informacje na wybrany temat, przeglądając wiele źródeł i podkreślając kluczowe ustalenia. Uwaga: ta funkcja wykorzystuje więcej tokenów niż zwykły czat.",
     "writer": {
       "completed": "Sekcja „{title}” ukończona!",
       "error": "Wystąpił błąd podczas pisania sekcji raportu „{title}”",
@@ -647,11 +647,23 @@
       "clickToCreate": "Kliknij przycisk +, aby go utworzyć.",
       "documentsCount": "Brak dokumentów|1 dokument|{count} dokumentów",
       "noRepositories": "Nie masz jeszcze żadnych repozytoriów.",
-      "title": "Repozytoria dokumentów"
+      "title": "Repozytoria dokumentów",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "Usuń repozytorium",
+        "edit": "Edytuj repozytorium"
+      }
     },
     "view": {
       "noDocuments": "Nie masz jeszcze żadnych dokumentów. Kliknij na ikony powyżej, aby dodać dokumenty lub foldery.",
-      "title": "Repozytorium dokumentów"
+      "title": "Repozytorium dokumentów",
+      "tooltips": {
+        "addFile": "Dodaj pliki",
+        "addFolder": "Dodaj folder",
+        "embeddingNotReady": "Model osadzania niedostępny",
+        "removeDocument": "Usuń dokument"
+      }
     }
   },
   "embedding": {
@@ -2108,6 +2120,17 @@
       "servers": "serwerów. Wykrywanie i instalowanie serwerów MCP z poziomu",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "Dodaj nowy serwer MCP",
+        "deleteServer": "Usuń serwer",
+        "editServer": "Edytuj serwer",
+        "refreshServers": "Odśwież listę serwerów MCP",
+        "restartServers": "Uruchom ponownie serwery MCP",
+        "startServer": "Uruchom serwer",
+        "stopServer": "Zatrzymaj serwer",
+        "viewLogs": "Pokaż logi serwera",
+        "viewTools": "Pokaż dostępne narzędzia"
+      },
       "totalTools": "Łącznie {count} narzędzi{count > 1 ? 'i' : 'e'} dostępne"
     },
     "plugins": {

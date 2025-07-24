@@ -22,9 +22,9 @@
       <div class="panel-header">
         <label>{{ t('settings.mcp.mcpServers') }}</label>
         <Spinner v-if="loading" />
-        <BIconPlusLg class="icon add large" ref="addButton" @click.prevent="onAdd"></BIconPlusLg>
-        <BIconArrowClockwise class="icon reload" @click.prevent="onReload" />
-        <BIconArrowRepeat class="icon restart" @click.prevent="onRestart" />
+        <BIconPlusLg class="icon add large" ref="addButton" v-tooltip="{ text: t('settings.mcp.tooltips.addServer'), position: 'bottom-left' }" @click.prevent="onAdd" />
+        <BIconArrowClockwise class="icon reload" v-tooltip="{ text: t('settings.mcp.tooltips.refreshServers'), position: 'bottom-left' }" @click.prevent="onReload" />
+        <BIconArrowRepeat class="icon restart" v-tooltip="{ text: t('settings.mcp.tooltips.restartServers'), position: 'bottom-left' }" @click.prevent="onRestart" />
       </div>
       <div class="panel-body" v-if="servers.length">
         <template v-for="server in servers" :key="server.uuid">
@@ -41,13 +41,36 @@
             </div>
 
             <div class="actions">
-              <BIconPlayCircle class="start" @click="onEnabled(server)" v-if="server.state == 'disabled'"/>
-              <BIconStopCircle class="stop" @click="onEnabled(server)" v-if="server.state == 'enabled'"/>
-              <BIconJournalText class="logs" @click="showLogs(server)" v-if="hasLogs(server)"/>
-              <BIconSearch class="tools" @click="showTools(server)" :class="{ 'disabled': !isRunning(server) }"/>
-              <BIconPencil class="edit" @click="onEdit(server)" />
-              <BIconTrash class="delete" @click="onDelete(server)" />
-            </div>
+              
+              <div class="start"
+                :style="{ display: server.state == 'disabled' ? 'block' : 'none' }"
+                v-tooltip="{ text: t('settings.mcp.tooltips.startServer'), position: 'top-left' }"
+                @click="onEnabled(server)"><BIconPlayCircle /></div>
+              
+              <div class="stop" 
+                :style="{ display: server.state == 'enabled' ? 'block' : 'none' }"
+                v-tooltip="{ text: t('settings.mcp.tooltips.stopServer'), position: 'top-left' }"
+                @click="onEnabled(server)"><BIconStopCircle /></div>
+              
+              <div class="logs" :class="{ 'disabled': !isRunning(server) }"
+                :style="{ display: hasLogs(server) ? 'block' : 'none' }"
+                v-tooltip="{ text: t('settings.mcp.tooltips.viewLogs'), position: 'top-left' }"
+                @click="showLogs(server)"><BIconJournalText /></div>
+              
+              <BIconSearch class="tools" 
+                :class="{ 'disabled': !isRunning(server) }"
+                v-tooltip="{ text: t('settings.mcp.tooltips.viewTools'), position: 'top-left' }"
+                @click="showTools(server)" />
+              
+              <BIconPencil class="edit" 
+                v-tooltip="{ text: t('settings.mcp.tooltips.editServer'), position: 'top-left' }"
+                @click="onEdit(server)" />
+              
+              <BIconTrash class="delete" 
+                v-tooltip="{ text: t('settings.mcp.tooltips.deleteServer'), position: 'top-left' }"
+                @click="onDelete(server)" />
+            
+              </div>
 
           </div>
         </template>

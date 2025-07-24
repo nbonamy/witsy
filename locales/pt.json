@@ -566,7 +566,7 @@
       },
       "starting": "Sintetizando conteúdo…"
     },
-    "usage": "[BETA] A Pesquisa Profunda oferece insights detalhados sobre o tópico escolhido ao revisar múltiplas fontes e destacar descobertas chave. Por favor, note: esta funcionalidade usa mais tokens que o chat comum.",
+    "usage": "A Pesquisa Profunda oferece insights detalhados sobre o tópico escolhido ao revisar múltiplas fontes e destacar descobertas chave. Por favor, note: esta funcionalidade usa mais tokens que o chat comum.",
     "writer": {
       "completed": "Seção \"{title}\" concluída!",
       "error": "Ocorreu um erro ao escrever a seção \"{title}\" do relatório",
@@ -647,11 +647,23 @@
       "clickToCreate": "Clique no botão + para criar um.",
       "documentsCount": "Nenhum documento|1 documento|{count} documentos",
       "noRepositories": "Você ainda não tem nenhum repositório.",
-      "title": "Repositórios de Documentos"
+      "title": "Repositórios de Documentos",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "Excluir repositório",
+        "edit": "Editar repositório"
+      }
     },
     "view": {
       "noDocuments": "Você ainda não tem nenhum documento. Clique nos ícones acima para adicionar documentos ou pastas.",
-      "title": "Repositório de Documentos"
+      "title": "Repositório de Documentos",
+      "tooltips": {
+        "addFile": "Adicionar arquivos",
+        "addFolder": "Adicionar pasta",
+        "embeddingNotReady": "Modelo de embedding não disponível",
+        "removeDocument": "Remover documento"
+      }
     }
   },
   "embedding": {
@@ -2102,6 +2114,17 @@
       "servers": "servidores. Descubra e instale servidores MCP do",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "Adicionar um novo servidor MCP",
+        "deleteServer": "Excluir servidor",
+        "editServer": "Editar servidor",
+        "refreshServers": "Atualizar lista de servidores MCP",
+        "restartServers": "Reiniciar servidores MCP",
+        "startServer": "Iniciar servidor",
+        "stopServer": "Parar servidor",
+        "viewLogs": "Visualizar logs do servidor",
+        "viewTools": "Visualizar ferramentas disponíveis"
+      },
       "totalTools": "Total de {count} serviço{count > 1 ? 's' : ''} disponível{count > 1 ? 's' : ''}"
     },
     "plugins": {

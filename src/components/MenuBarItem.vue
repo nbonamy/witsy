@@ -1,16 +1,17 @@
-
 <template>
-  <Tooltip :tooltipText="tooltipText" position="right">
-    <div ref="item" class="item" :class="{ active: active }" @click="onClick">
-      <slot />
-    </div>
-  </Tooltip>
+  <div ref="item"
+    class="item" 
+    :class="{ active: active }" 
+    v-tooltip="{ text: tooltipText, position: 'right' }"
+    @click="onClick"
+  >
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref } from 'vue'
-import Tooltip from './Tooltip.vue'
 
 const item = ref<HTMLElement | null>(null)
 const tooltipText = ref('')

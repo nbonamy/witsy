@@ -566,7 +566,7 @@
       },
       "starting": "Synthesizing content…"
     },
-    "usage": "[BETA] Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
+    "usage": "Deep Research delivers thorough insights on your chosen topic by reviewing multiple sources and highlighting key findings. Please note: this feature uses more tokens than regular chat.",
     "writer": {
       "completed": "Section \"{title}\" completed!",
       "error": "An error occurred while writing the \"{title}\" report section",
@@ -637,21 +637,33 @@
       "millionCharacters": "million characters",
       "relevanceCutOff": "Search relevance cut-off",
       "searchResultCount": "Search result count",
-      "title": "Document Repositories defaults"
+      "title": "Repositories defaults"
     },
     "create": {
       "embeddingWarning": "embedding model cannot be changed once repository is created",
-      "title": "Create Repository"
+      "title": "Create repository"
     },
     "list": {
       "clickToCreate": "Click on the + button to create one.",
       "documentsCount": "No document|1 document|{count} documents",
       "noRepositories": "You don't have any repositories yet.",
-      "title": "Document Repositories"
+      "title": "Document repositories",
+      "tooltips": {
+        "config": "@:{'docRepo.config.title'}",
+        "create": "@:{'docRepo.create.title'}",
+        "delete": "Delete repository",
+        "edit": "Edit repository"
+      }
     },
     "view": {
       "noDocuments": "You don't have any documents yet. Click on the icons above to add documents or folders.",
-      "title": "Document Repository"
+      "title": "Document repository",
+      "tooltips": {
+        "addFile": "Add files",
+        "addFolder": "Add folder",
+        "embeddingNotReady": "Embedding model not available",
+        "removeDocument": "Remove document"
+      }
     }
   },
   "embedding": {
@@ -2108,6 +2120,17 @@
       "servers": "servers. Discover and install MCP servers from the",
       "smithery": "Smithery",
       "tools": "@:{'common.tools'}",
+      "tooltips": {
+        "addServer": "Add a new MCP server",
+        "deleteServer": "Delete server",
+        "editServer": "Edit server",
+        "refreshServers": "Refresh MCP servers list",
+        "restartServers": "Restart MCP servers",
+        "startServer": "Start server",
+        "stopServer": "Stop server",
+        "viewLogs": "View server logs",
+        "viewTools": "View available tools"
+      },
       "totalTools": "Total of {count} service{count > 1 ? 's' : ''} available"
     },
     "plugins": {

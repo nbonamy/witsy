@@ -12,7 +12,11 @@
         <div class="form-field embeddings">
           <label>{{ t('common.embeddings') }}</label>
           <input type="text" :value="embeddingModel" disabled />
-          <BIconPatchExclamation class="embedding-warning" v-if="!modelReady" />
+          <BIconPatchExclamation 
+            class="embedding-warning" 
+            v-if="!modelReady" 
+            v-tooltip="{ text: t('docRepo.view.tooltips.embeddingNotReady'), position: 'right' }"
+          />
         </div>
       </div>
     </div>
@@ -20,8 +24,16 @@
       <div class="panel-header">
         <label>{{ t('common.documents') }}</label>
         <Spinner v-if="loading" />
-        <BIconFilePlus class="icon add-file" @click="onAddDocs" />
-        <BIconFolderPlus class="icon add-folder" @click="onAddFolder" />
+        <BIconFilePlus 
+          class="icon add-file" 
+          v-tooltip="{ text: t('docRepo.view.tooltips.addFile'), position: 'bottom-left' }"
+          @click="onAddDocs" 
+        />
+        <BIconFolderPlus 
+          class="icon add-folder" 
+          v-tooltip="{ text: t('docRepo.view.tooltips.addFolder'), position: 'bottom-left' }"
+          @click="onAddFolder" 
+        />
       </div>
       <div class="panel-body" v-if="selectedRepo.documents.length">
         <template v-for="doc in selectedRepo.documents" :key="doc.uuid">
@@ -32,8 +44,11 @@
               <div class="subtext">{{ doc.origin }}</div>
             </div>
             <div class="actions">
-              <!-- <BIconArrowClockwise class="icon" @click="onRefreshDoc(doc)" /> -->
-              <BIconTrash class="icon remove" @click="onDelDoc(doc)" />
+              <BIconTrash 
+                class="icon remove" 
+                v-tooltip="{ text: t('docRepo.view.tooltips.removeDocument'), position: 'top-left' }"
+                @click="onDelDoc(doc)" 
+              />
             </div>
           </div>
         </template>
