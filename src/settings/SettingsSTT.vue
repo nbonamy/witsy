@@ -56,6 +56,71 @@
         </div>
       </div>
     </div>
+    <!-- === Soniox STT === -->
+<fieldset v-if="stt.engine === 'soniox'" class="fieldset">
+  <legend>Soniox</legend>
+
+  <div class="form-row">
+    <label>API Key</label>
+    <input v-model="engines.soniox.apiKey" type="password" placeholder="SONIOX_API_KEY" />
+  </div>
+
+  <div class="form-row">
+    <label>Realtime Model</label>
+    <input v-model="stt.soniox.realtimeModel" placeholder="stt-rt-preview" />
+  </div>
+
+  <div class="form-row">
+    <label>Async Model</label>
+    <input v-model="stt.soniox.asyncModel" placeholder="stt-async-preview" />
+  </div>
+
+  <div class="form-row">
+    <label>Language hints (comma separated)</label>
+    <input
+      :value="stt.soniox.languageHints?.join(',')"
+      @change="onLangHintsChange(($event.target as HTMLInputElement).value)"
+      placeholder="de,en"
+    />
+  </div>
+
+  <div class="form-row">
+    <label>Endpoint detection</label>
+    <input type="checkbox" v-model="stt.soniox.endpointDetection" />
+  </div>
+
+  <div class="form-row">
+    <label>Speaker diarization</label>
+    <input type="checkbox" v-model="stt.soniox.speakerDiarization" />
+  </div>
+
+  <div class="form-row">
+    <label>Audio format</label>
+    <select v-model="stt.soniox.audioFormat">
+      <option value="auto">auto</option>
+      <option value="pcm_s16le">pcm_s16le</option>
+      <option value="opus">opus</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label>Cleanup after async transcription</label>
+    <input type="checkbox" v-model="stt.soniox.cleanup" />
+  </div>
+
+  <div class="form-row">
+    <label>Realtime security mode</label>
+    <select v-model="stt.soniox.proxy">
+      <option value="temporary_key">temporary_key (default)</option>
+      <option value="proxy_stream">proxy_stream (own backend proxy)</option>
+    </select>
+  </div>
+
+  <div v-if="stt.soniox.proxy === 'temporary_key'" class="form-row">
+    <label>Temporary key expiry (seconds)</label>
+    <input type="number" v-model.number="stt.soniox.tempKeyExpiry" min="30" />
+  </div>
+</fieldset>
     <template v-else>
       <div class="form-field">
         <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
@@ -124,6 +189,14 @@ import InputObfuscated from '../components/InputObfuscated.vue'
 import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressInfo, DownloadProgress, STTEngine, TaskStatus } from '../voice/stt'
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
+
+const settings = useSettings()
+const stt = settings.state.stt
+const engines = settings.state.engines
+const onLangHintsChange = (value: string) => {
+  const arr = value.split(',').map(s => s.trim()).filter(Boolean)
+  stt.soniox.languageHints = arr
+}
 
 type InitModelMode = 'download' | 'verify'
 let initMode: InitModelMode = 'download'

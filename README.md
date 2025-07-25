@@ -46,7 +46,7 @@ It is the first of very few (only?) universal MCP clients:<br/>***Witsy allows y
 | **Image Creation** | OpenAI (DALL-E), Google (Imagen), xAI (Grok), Replicate, fal.ai, HuggingFace, Stable Diffusion WebUI |
 | **Video Creation** | Replicate, fal.ai |
 | **Text-to-Speech** | OpenAI, ElevenLabs, Groq |
-| **Speech-to-Text** | OpenAI (Whisper), fal.ai, Fireworks.ai, Gladia, Groq, nVidia, Speechmatics, Local Whisper, any provider who supports the OpenAI API standard |
+| **Speech-to-Text** | OpenAI (Whisper), fal.ai, Fireworks.ai, Gladia, Groq, nVidia, Speechmatics, Local Whisper, Soniox (realtime and async)  any provider who supports the OpenAI API standard |
 | **Search Engines** | Tavily, Brave, Exa, Local Google Search |
 | **MCP Repositories** | Smithery.ai
 | **Embeddings** | OpenAI, Ollama |

@@ -1,0 +1,68 @@
+diff --git a/README.md b/README.md
+index 9999999..aaaaaaa 100644
+--- a/README.md
++++ b/README.md
+@@ -50,6 +50,47 @@
+ - [ ] Proper database (SQLite3) storage (??)
+ 
++## Soniox (Speech‑to‑Text, async + realtime)
++
++Witsy unterstützt jetzt **Soniox** als STT‑Provider – sowohl **asynchron** (Datei hochladen → Transkription via REST) als auch **realtime** (WebSocket).
++
++### Setup
++
++1. Trage deinen **SONIOX_API_KEY** in den Einstellungen ein (`Settings → Engines → Soniox`) oder in `.env` (`SONIOX_API_KEY=`).  
++2. Wähle in den STT‑Einstellungen als Engine **Soniox**.  
++3. (Optional) Passe Default‑Modelle, `language_hints`, `endpoint_detection`, `audio_format`, `proxy` (temporary keys / proxy stream) etc. an.
++
++**Sicherheit**  
++Standardmäßig nutzt Witsy **Temporary API Keys** (über `/v1/auth/temporary-api-key`) für Realtime, sodass dein permanenter Key nicht im Renderer landet. Alternativ kannst du `proxy_stream` nutzen, wenn du Audio über einen eigenen Proxy tunneln möchtest.
++
++### Default-Modelle
++
++- Realtime: `stt-rt-preview`
++- Async: `stt-async-preview`
++
++### Beispiel (Async)
++
++```ts
++const engine = getSTTEngine(config)
++const blob = new Blob([...])
++const { text } = await engine.transcribe(blob)
++console.log(text)
++```
++
++### Beispiel (Realtime)
++
++```ts
++const engine = getSTTEngine(config)
++await engine.startStreaming('stt-rt-preview', (chunk) => {
++  if (chunk.type === 'text') {
++    console.log('partial/final text', chunk.content)
++  }
++})
++// sende Audioblöcke ...
++await engine.endStreaming()
++```
++
++Der frühere TODO‑Eintrag „Implement Soniox for STT“ ist damit erledigt.
++
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index bbbbbbb..ccccccc 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,3 +1,17 @@
++## [Unreleased]
++
++### Added
++- **Soniox STT (async + realtime)**:  
++  - Async via `/v1/files` + `/v1/transcriptions` + `/transcript`, inkl. optionalem Cleanup  
++  - Realtime via WebSocket (Token‑Aggregation, endpoint detection, language hints, audio_format, speaker diarization)  
++  - **Temporary API Keys** als Default, um den permanenten Key nicht im Renderer zu halten  
++  - Settings (.env, defaults), UI‑Konfiguration, Vitest‑Tests  
++  - README‑TODO „Implement Soniox for STT“ entfernt
++
++### Changed
++- UI erweitert: Soniox‑Sektion im STT‑Settings‑Panel.
++
++---
