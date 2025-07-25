@@ -276,6 +276,14 @@
 
   }
 
+  &:not(:has(.sp-sidebar)) {
+    .sp-main {
+      header {
+        padding-left: 2rem;
+      }
+    }
+  }
+
 }
 
 .macos {
