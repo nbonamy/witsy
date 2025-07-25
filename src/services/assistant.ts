@@ -257,6 +257,27 @@ export default class extends Generator {
 
     try {
 
+      // hard-coded (??)
+      const titlingModels: Record<string, string> = {
+        'anthropic': 'claude-3-5-haiku-20241022',
+        'cerebras': 'llama-3.3-70b',
+        'deepseek': 'deepseek-chat',
+        'google': 'gemini-2.5-flash-lite-preview-06-17',
+        'groq': 'meta-llama/llama-4-scout-17b-16e-instruct',
+        'mistralai': 'mistral-medium-latest',
+        'openai': 'gpt-4.1-mini',
+        'xai': 'grok-3-mini',
+      }
+
+      // we need to select a titling model
+      let titlingModel = titlingModels[this.chat.engine]
+      if (titlingModel) {
+        titlingModel = this.config.engines[this.chat.engine]?.models?.chat.find(m => m.id === titlingModel)?.id
+      }
+      if (!titlingModel) {
+        titlingModel = this.chat.model
+      }
+
       // build messages
       const messages = [
         new Message('system', i18nInstructions(this.config, 'instructions.utils.titling')),
@@ -267,7 +288,7 @@ export default class extends Generator {
 
       // now get it
       this.initLlm(this.chat.engine)
-      const model = this.llmManager.getChatModel(this.chat.engine, this.chat.model)
+      const model = this.llmManager.getChatModel(this.chat.engine, titlingModel)
       const response = await this.llm.complete(model, messages, { tools: false })
       let title = response.content.trim()
       if (title === '') {

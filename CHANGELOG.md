@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
 
 ### Changed
-- N/A
+- Specific models to create chat title
 
 ### Fixed
 - Create / edit commands : cannot create new line (https://github.com/nbonamy/witsy/issues/348)
