@@ -137,17 +137,9 @@ const onChangeRepoName = (event: Event) => {
 
 .split-pane {
   
-  .sp-sidebar {
-    flex-basis: 1rem;
-  }
-  
   .sp-main {
   
     position: relative;
-  
-    header {
-      padding-left: 2rem;
-    }
   
     .sliding-pane {
       width: 100%;

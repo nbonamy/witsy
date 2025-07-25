@@ -1255,9 +1255,8 @@ defineExpose({
   .actions {
     display: flex;
     gap: 0.25rem;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     margin-left: 0.25rem;
-    padding-bottom: 0.25rem;
 
     &:not(:has(*)) {
       display: none;

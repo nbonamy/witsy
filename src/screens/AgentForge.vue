@@ -111,15 +111,7 @@ const deleteAgent = (agent: Agent) => {
 
 .split-pane {
   
-  .sp-sidebar {
-    flex-basis: 1rem;
-  }
-  
   .sp-main {
-
-    header {
-      padding-left: 2rem;
-    }
 
     main {
     
