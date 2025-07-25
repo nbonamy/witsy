@@ -1,0 +1,29 @@
+diff --git a/defaults/settings.json b/defaults/settings.json
+index 5555555..6666666 100644
+--- a/defaults/settings.json
++++ b/defaults/settings.json
+@@ -1,6 +1,7 @@
+ {
+   "stt": {
+     ...
++    "soniox": {
++      "realtimeModel": "stt-rt-preview",
++      "asyncModel": "stt-async-preview",
++      "languageHints": [],
++      "endpointDetection": false,
++      "cleanup": true,
++      "audioFormat": "auto",
++      "proxy": "temporary_key",
++      "tempKeyExpiry": 600,
++      "speakerDiarization": false
++    }
+   },
+   "engines": {
+     ...
++    "soniox": {
++      "apiKey": "",
++      "models": { "chat": [], "image": [] },
++      "model": { "chat": "", "image": "" }
++    }
+   }
+ }
