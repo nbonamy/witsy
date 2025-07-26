@@ -6,7 +6,7 @@
       <select v-model="selected" :disabled="disabled" @mousedown="onOpen" @change="onSelect">
         <option v-for="item in items" :key="item.id" :value="item.id">{{ item.name }}</option>
       </select>
-      <input type="text" :name="name" v-model="value" :placeholder="placeholder" :disabled="disabled" :required="required" @click.stop @change="onChange" @focus="onFocus" @blur="onBlur" />
+      <input class="combobox-input" type="text" :name="name" v-model="value" :placeholder="placeholder" :disabled="disabled" :required="required" @click.stop @change="onChange" @focus="onFocus" @blur="onBlur" />
     </div>
     <slot></slot>
   </div>
@@ -82,21 +82,22 @@ const onSelect = (event: Event) => {
     outline: 2px solid #83aaf2;
   }
 
-  input {
+  .combobox-input {
     position: absolute;
     left: 0;
     background-color: transparent;
     border: none;
     width: calc(100% - 28px);
-    padding-left: 8px;
-    padding-top: 5.5px;
+    margin: 0 !important;
+    padding-left: 8px !important;
+    padding-top: 5.5px !important;
 
     &:focus {
       outline: none !important;
     }
   }
 
-  &.opened input {
+  &.opened .combobox-input {
     visibility: hidden;
   }
 }
