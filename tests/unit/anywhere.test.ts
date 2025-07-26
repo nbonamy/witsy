@@ -1,9 +1,11 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { store } from '../../src/services/store'
+import { createAutomatorMock } from '../mocks'
 import defaults from '../../defaults/settings.json'
 import PromptAnywhere from '../../src/automations/anywhere'
 import * as window from '../../src/main/window'
+import { Configuration, InstructionsConfig } from '../../src/types/config'
 
 vi.mock('electron', async() => {
   return {
@@ -31,25 +33,21 @@ vi.mock('../../src/main/window.ts', async () => {
   }
 })
 
-// mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  Automator.prototype.moveCaretBelow =  vi.fn()
-  Automator.prototype.getSelectedText = vi.fn(() => 'Grabbed text')
-  Automator.prototype.pasteText = vi.fn()
-  return { default: Automator }
+  return createAutomatorMock()
 })
 
 beforeAll(() => {
 
   // init store
-  store.config = defaults
+  store.config = defaults as unknown as Configuration
   store.config.llm.engine = 'mock'
   store.config.instructions = {
-    default: 'You are a chat assistant',
-    titling: 'You are a titling assistant'
-  }
+    chat: {
+      default: 'You are a chat assistant',
+      titling: 'You are a titling assistant'
+    }
+  } as unknown as InstructionsConfig
 
 })
 
