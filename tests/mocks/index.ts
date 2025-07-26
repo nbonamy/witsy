@@ -3,6 +3,19 @@
 import { vi } from 'vitest'
 import { store } from '../../src/services/store'
 
+export const onEventMock = vi.fn()
+export const emitEventMock = vi.fn()
+
+export const createEventBusMock = (emitMock?: (event: string, ...args: any[]) => void) => {
+  if (emitMock) {
+    emitEventMock.mockImplementation(emitMock)
+  }
+  return { default: () => ({
+    onEvent: onEventMock,
+    emitEvent: emitEventMock
+  })}
+} 
+
 export const createDialogMock = (callback?: (args) => Partial<{
   isConfirmed: boolean
   isDenied: boolean
