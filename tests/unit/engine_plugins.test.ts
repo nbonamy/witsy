@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Image from '../../src/plugins/image'
 import Video from '../../src/plugins/video'
@@ -55,26 +56,11 @@ global.fetch = vi.fn(async (url: string) => {
   }
 })
 
-// mock i18n
+
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string, args: any) => `${key}${args?' ' +JSON.stringify(args):''}`,
-    i18nInstructions: (config: any, key: string) => {
-
-      // get instructions
-      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
-      if (typeof instructions === 'string' && (instructions as string)?.length) {
-        return instructions
-      }
-
-      // default
-      return `${key}.${store.config.llm.locale}`
-
-    }
-  }
+  return createI18nMock()
 })
 
-// mock download
 vi.mock('../../src/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'file://file_saved'),
@@ -247,7 +233,7 @@ test('Browse Plugin', async () => {
   expect(browse.getDescription()).not.toBeFalsy()
   expect(browse.getPreparationDescription()).toBe('plugins.browse.running')
   expect(browse.getRunningDescription()).toBe('plugins.browse.running')
-  expect(browse.getCompletedDescription('', { url: 'url' }, { title: 'title', content: 'content' })).toBe('plugins.browse.completed {"title":"title"}')
+  expect(browse.getCompletedDescription('', { url: 'url' }, { title: 'title', content: 'content' })).toBe('plugins.browse.completed_default_title=title')
   expect(browse.getCompletedDescription('', { url: 'url' }, { error: 'error' })).toBe('plugins.browse.error')
   expect(browse.getParameters()[0].name).toBe('url')
   expect(browse.getParameters()[0].type).toBe('string')
@@ -270,8 +256,8 @@ test('Search Plugin Local', async () => {
   expect(search.getDescription()).not.toBeFalsy()
   expect(search.getPreparationDescription()).toBe('plugins.search.running')
   expect(search.getRunningDescription()).toBe('plugins.search.running')
-  expect(search.getCompletedDescription('', { query: 'query' }, { results: [] })).toBe('plugins.search.completed {"query":"query","count":0}')
-  expect(search.getCompletedDescription('', { query: 'query' }, { results: [ {} ] })).toBe('plugins.search.completed {"query":"query","count":1}')
+  expect(search.getCompletedDescription('', { query: 'query' }, { results: [] })).toBe('plugins.search.completed_default_query=query&count=0')
+  expect(search.getCompletedDescription('', { query: 'query' }, { results: [ {} ] })).toBe('plugins.search.completed_default_query=query&count=1')
   expect(search.getCompletedDescription('', { query: 'query' }, { error: 'error' })).toBe('plugins.search.error')
   expect(search.getParameters()[0].name).toBe('query')
   expect(search.getParameters()[0].type).toBe('string')
@@ -337,10 +323,10 @@ test('Image Plugin', async () => {
   const image = new Image(store.config.plugins.image)
   expect(image.isEnabled()).toBe(true)
   expect(image.getName()).toBe('image_generation')
-  expect(image.getDescription()).toBe('plugins.image.description.fr-FR')
+  expect(image.getDescription()).toBe('plugins.image.description_fr-FR')
   expect(image.getPreparationDescription()).toBe('plugins.image.running')
   expect(image.getRunningDescription()).toBe('plugins.image.running')
-  expect(image.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.image.completed {"engine":"openai","model":"gpt-image-1","prompt":"prompt"}')
+  expect(image.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.image.completed_default_engine=openai&model=gpt-image-1&prompt=prompt')
   expect(image.getCompletedDescription('', { prompt: 'prompt' }, { error: 'err' })).toBe('plugins.image.error')
   expect(image.getParameters()[0].name).toBe('prompt')
   expect(image.getParameters()[0].type).toBe('string')
@@ -444,10 +430,10 @@ test('Video Plugin', async () => {
   const video = new Video(store.config.plugins.video)
   expect(video.isEnabled()).toBe(true)
   expect(video.getName()).toBe('video_generation')
-  expect(video.getDescription()).toBe('plugins.video.description.fr-FR')
+  expect(video.getDescription()).toBe('plugins.video.description_fr-FR')
   expect(video.getPreparationDescription()).toBe('plugins.video.running')
   expect(video.getRunningDescription()).toBe('plugins.video.running')
-  expect(video.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.video.completed {"engine":"replicate","model":"video-model","prompt":"prompt"}')
+  expect(video.getCompletedDescription('', { prompt: 'prompt' }, { result: 'url' })).toBe('plugins.video.completed_default_engine=replicate&model=video-model&prompt=prompt')
   expect(video.getCompletedDescription('', { prompt: 'prompt' }, { error: 'err' })).toBe('plugins.video.error')
   expect(video.getParameters()[0].name).toBe('prompt')
   expect(video.getParameters()[0].type).toBe('string')
@@ -499,8 +485,8 @@ test('Python Plugin', async () => {
   expect(python.getDescription()).not.toBeFalsy()
   expect(python.getPreparationDescription()).toBe('plugins.python.running')
   expect(python.getRunningDescription()).toBe('plugins.python.running')
-  expect(python.getCompletedDescription('', { script: 'script' }, { result: 'result' })).toBe('plugins.python.completed {"result":"result"}')
-  expect(python.getCompletedDescription('', { script: 'script' }, { error: 'error' })).toBe('plugins.python.error {"error":"error"}')
+  expect(python.getCompletedDescription('', { script: 'script' }, { result: 'result' })).toBe('plugins.python.completed_default_result=result')
+  expect(python.getCompletedDescription('', { script: 'script' }, { error: 'error' })).toBe('plugins.python.error_default_error=error')
   expect(python.getParameters()[0].name).toBe('script')
   expect(python.getParameters()[0].type).toBe('string')
   expect(python.getParameters()[0].description).not.toBeFalsy()
@@ -516,7 +502,7 @@ test('YouTube Plugin', async () => {
   expect(youtube.getDescription()).not.toBeFalsy()
   expect(youtube.getPreparationDescription()).toBe('plugins.youtube.running')
   expect(youtube.getRunningDescription()).toBe('plugins.youtube.running')
-  expect(youtube.getCompletedDescription('', { url: 'url' }, { content: 'transcript', title: 'title' })).toBe('plugins.youtube.completed {"title":"title"}')
+  expect(youtube.getCompletedDescription('', { url: 'url' }, { content: 'transcript', title: 'title' })).toBe('plugins.youtube.completed_default_title=title')
   expect(youtube.getCompletedDescription('', { url: 'url' }, { content: '', title: 'title' })).toBe('plugins.youtube.error')
   expect(youtube.getCompletedDescription('', { url: 'url' }, { error: 'error' })).toBe('plugins.youtube.error')
   expect(youtube.getParameters()[0].name).toBe('url')
@@ -534,13 +520,13 @@ test('Memory Plugin', async () => {
   const memory = new Memory(store.config.plugins.memory)
   expect(memory.isEnabled()).toBe(false)
   expect(memory.getName()).toBe('long_term_memory')
-  expect(memory.getDescription()).toBe('plugins.memory.description.fr-FR')
+  expect(memory.getDescription()).toBe('plugins.memory.description_fr-FR')
   expect(memory.getPreparationDescription()).toBe('plugins.memory.starting')
-  expect(memory.getRunningDescription('', { action: 'store', content: [ 'fact1', 'fact2' ] })).toBe('plugins.memory.storing {"content":["fact1","fact2"]}')
-  expect(memory.getRunningDescription('', { action: 'retrieve', query: 'query' })).toBe('plugins.memory.retrieving {"query":"query"}')
+  expect(memory.getRunningDescription('', { action: 'store', content: [ 'fact1', 'fact2' ] })).toBe('plugins.memory.storing_default_content=["fact1","fact2"]')
+  expect(memory.getRunningDescription('', { action: 'retrieve', query: 'query' })).toBe('plugins.memory.retrieving_default_query=query')
   expect(memory.getCompletedDescription('', { action: 'store', content: [ 'fact1', 'fact2' ] }, { success: true })).toBe('plugins.memory.stored')
   expect(memory.getCompletedDescription('', { action: 'store', content: [ 'fact1', 'fact2' ] }, { error: 'error' })).toBe('plugins.memory.error')
-  expect(memory.getCompletedDescription('', { action: 'retrieve', query: 'query' }, { content: ['fact1'] })).toBe('plugins.memory.retrieved {"count":1}')
+  expect(memory.getCompletedDescription('', { action: 'retrieve', query: 'query' }, { content: ['fact1'] })).toBe('plugins.memory.retrieved_default_count=1')
   expect(memory.getCompletedDescription('', { action: 'retrieve', query: 'query' }, { error: 'error' })).toBe('plugins.memory.error')
   expect(memory.getParameters()[0].name).toBe('action')
   expect(memory.getParameters()[0].type).toBe('string')
@@ -598,11 +584,11 @@ test('MCP Plugin', async () => {
   expect(mcp.isEnabled()).toBe(true)
   expect(mcp).toBeInstanceOf(MultiToolPlugin)
   expect(mcp.getName()).toBe('Model Context Protocol')
-  expect(mcp.getPreparationDescription('tool')).toBe('plugins.mcp.starting {"tool":"tool"}')
-  expect(mcp.getRunningDescription('tool', {})).toBe('plugins.mcp.running {"tool":"tool"}')
-  expect(mcp.getCompletedDescription('tool', {}, { result: 'result' })).toBe('plugins.mcp.completed {"tool":"tool","args":{},"results":{"result":"result"}}')
-  expect(mcp.getCompletedDescription('tool', {}, { error: 'error' })).toBe('plugins.mcp.error {"tool":"tool","error":"error"}')
-  
+  expect(mcp.getPreparationDescription('tool')).toBe('plugins.mcp.starting_default_tool=tool')
+  expect(mcp.getRunningDescription('tool', {})).toBe('plugins.mcp.running_default_tool=tool')
+  expect(mcp.getCompletedDescription('tool', {}, { result: 'result' })).toBe('plugins.mcp.completed_default_tool=tool&args={}&results={"result":"result"}')
+  expect(mcp.getCompletedDescription('tool', {}, { error: 'error' })).toBe('plugins.mcp.error_default_tool=tool&error=error')
+
   expect(await mcp.getTools()).toStrictEqual([
     { type: 'function', function: { name: 'tool1' , description: 'description1', parameters: { type: 'object', properties: {}, required: [] } } },
     { type: 'function', function: { name: 'tool2' , description: 'description2', parameters: { type: 'object', properties: {}, required: [] } } },

@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -20,14 +20,8 @@ vi.mock('../../src/composables/dialog', async () => {
   return createDialogMock()
 })
 
-vi.mock('../../src/services/i18n', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    t: (key: string) => `${key}`,
-    commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
-    commandI18nDefault: vi.fn((command, attr) => `${command?.id}.${attr}${attr == 'template' ? ".{input}" : ""}`),
-  }
+vi.mock('../../src/services/i18n', async () => {
+  return createI18nMock()
 })
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
@@ -204,9 +198,9 @@ test('Edit system command', async () => {
   expect(store.commands[1].label).toBeUndefined()
   expect(store.commands[1].template).toBeUndefined()
 
-  expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command.label')
-  expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('command.template.{input}')
-  expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(false)
+  expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command_command_label_{input}')
+  expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('command_command_template_{input}')
+  expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(true)
 
   await editor.find('[name=label]').setValue('command')
   await editor.find('[name=template]').setValue('{input}')
@@ -231,8 +225,8 @@ test('Edit system command', async () => {
   expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(true)
 
   await editor.find('[name=reset]').trigger('click')
-  expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command.label')
-  expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('command.template.{input}')
+  expect(editor.find<HTMLInputElement>('[name=label]').element.value).toBe('command_default_command_label')
+  expect(editor.find<HTMLTextAreaElement>('[name=template]').element.value).toBe('command_default_command_template-{input}')
   expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(false)
 
   await editor.find('button.default').trigger('click')

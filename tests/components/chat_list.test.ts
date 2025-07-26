@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { createDialogMock } from '../mocks/index'
+import { createDialogMock, createI18nMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -19,9 +19,7 @@ vi.mock('../../src/composables/dialog', async () => {
 })
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-  }
+  return createI18nMock()
 })
 
 vi.mock('../../src/composables/event_bus', async () => {

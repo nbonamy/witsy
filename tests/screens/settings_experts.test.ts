@@ -3,7 +3,7 @@ import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { ChatModel } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
@@ -19,12 +19,8 @@ vi.mock('../../src/composables/dialog', async () => {
   return createDialogMock()
 })
 
-vi.mock('../../src/services/i18n', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    t: (key: string) => `${key}`,
-  }
+vi.mock('../../src/services/i18n', async () => {
+  return createI18nMock()
 })
 
 vi.mock('../../src/services/store.ts', async (importOriginal) => {
@@ -174,9 +170,9 @@ test('Edit system prompt', async () => {
   // @ts-expect-error backwards compatibility check
   expect(store.experts[1].template).toBeUndefined()
 
-  expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('experts.experts.uuid1.name')
-  expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('experts.experts.uuid1.prompt')
-  expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(false)
+  expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('expert_uuid1_name')
+  expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('expert_uuid1_prompt')
+  expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(true)
 
   await editor.find('[name=name]').setValue('expert')
   await editor.find('[name=prompt]').setValue('prompt')
@@ -202,8 +198,8 @@ test('Edit system prompt', async () => {
 
   await editor.find('[name=reset]').trigger('click')
   await editor.vm.$nextTick()
-  expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('experts.experts.uuid1.name')
-  expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('experts.experts.uuid1.prompt')
+  expect(editor.find<HTMLInputElement>('[name=name]').element.value).toBe('expert_default_uuid1_name')
+  expect(editor.find<HTMLTextAreaElement>('[name=prompt]').element.value).toBe('expert_default_uuid1_prompt')
   expect(editor.find<HTMLAnchorElement>('[name=reset]').exists()).toBe(false)
 
   await editor.find('button.default').trigger('click')
@@ -232,8 +228,8 @@ test('Copy prompt', async () => {
   expect(store.experts[1]).toStrictEqual({
     id: expect.any(String),
     type: 'user',
-    name: 'experts.experts.uuid1.name (settings.experts.copy)',
-    prompt: 'experts.experts.uuid1.prompt',
+    name: 'expert_uuid1_name (settings.experts.copy)',
+    prompt: 'expert_uuid1_prompt',
     state: 'enabled',
     triggerApps: []
   })

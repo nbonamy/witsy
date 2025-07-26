@@ -2,6 +2,7 @@
 import { LlmChunk } from 'multi-llm-ts'
 import { vi, beforeAll, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import defaults from '../../defaults/settings.json'
 import Assistant, { AssistantCompletionOpts } from '../../src/services/assistant'
@@ -10,41 +11,23 @@ import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import LlmMock, { installMockModels } from '../mocks/llm'
 
-// mock config
+vi.mock('../../src/services/i18n', async () => {
+  return createI18nMock(() => ({
+    locale: store.config.llm.locale
+  }))
+})
+
 vi.mock('../../src/main/config.ts', async () => {
   return {
     loadSettings: () => JSON.parse(JSON.stringify(defaults)),
   }
 })
 
-// mock download
 vi.mock('../../src/services/download.ts', async () => {
   return {
     saveFileContents: vi.fn(() => 'local_file.png'),
   }
 })  
-
-// mock i18n
-vi.mock('../../src/services/i18n', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    t: (key: string) => `${key}.${store.config.general.locale}`,
-    localeToLangName: (code: string) => code == 'xx-XX' ? '' : code,
-    i18nInstructions: (config: any, key: string) => {
-
-      // get instructions
-      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
-      if (typeof instructions === 'string' && (instructions as string)?.length) {
-        return instructions
-      }
-
-      // default
-      return `${key}.${store.config.llm.locale || store.config.general.locale}`
-
-    },
-  }
-})
 
 beforeAll(() => {
   Generator.addCapabilitiesToSystemInstr = false
@@ -135,13 +118,13 @@ test('Assistant instructions', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions1 = await assistant!.chat.messages[0].content
-  expect(instructions1).toContain('instructions.chat.standard.en-US')
-  expect(instructions1).not.toContain('instructions.utils.setLang.en-US')
+  expect(instructions1).toContain('instructions.chat.standard_en-US')
+  expect(instructions1).not.toContain('instructions.utils.setLang_en-US')
   store.config.llm.instructions = 'structured'
   await prompt('Hello LLM')
   const instructions2 = await assistant!.chat.messages[0].content
-  expect(instructions2).toContain('instructions.chat.structured.en-US')
-  expect(instructions2).not.toContain('instructions.utils.setLang.en-US')
+  expect(instructions2).toContain('instructions.chat.structured_en-US')
+  expect(instructions2).not.toContain('instructions.utils.setLang_en-US')
   store.config.llm.instructions = 'standard'
 })
 
@@ -149,8 +132,8 @@ test('Assistant language default', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.chat.standard.en-US')
-  expect(instructions).not.toContain('instructions.utils.setLang.en-US')
+  expect(instructions).toContain('instructions.chat.standard_en-US')
+  expect(instructions).not.toContain('instructions.utils.setLang_en-US')
 })
 
 test('Assistant language override', async () => {
@@ -158,16 +141,16 @@ test('Assistant language override', async () => {
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.chat.standard.fr-FR')
-  expect(instructions).toContain('instructions.utils.setLang.fr-FR')
+  expect(instructions).toContain('instructions.chat.standard_fr-FR')
+  expect(instructions).toContain('instructions.utils.setLang_fr-FR')
 })
 
 test('Assistant language unknown', async () => {
   store.config.llm.locale = 'xx-XX'
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toContain('instructions.chat.standard.xx-XX')
-  expect(instructions).not.toContain('instructions.utils.setLang.fr-FR')
+  expect(instructions).toContain('instructions.chat.standard_xx-XX')
+  expect(instructions).not.toContain('instructions.utils.setLang_fr-FR')
 })
 
 test('User-defined instructions', async () => {
@@ -186,37 +169,37 @@ test('User-defined instructions', async () => {
   store.config.llm.forceLocale = true
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('You are a standard assistant\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('You are a standard assistant\n\ninstructions.utils.setLang_fr-FR')
   expect(assistant!.chat.title).toBe('You are a titling assistant:\n"Title"')
 })
 
 test('Assistant Chat Streaming', async () => {
   const content = await prompt('Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
 })
 
 test('Assistant Chat No Streaming 1', async () => {
   const content = await prompt('Hello LLM', { model: 'chat', streaming: false })
-  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.standard.fr-FR:\n"Title"</b>')
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.standard_fr-FR:\n"Title"</b>')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
 })
 
 test('Assistant Chat No Streaming 2', async () => {
   assistant!.initChat()
   assistant!.chat.disableStreaming = true
   const content = await prompt('Hello LLM')
-  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.standard.fr-FR:\n"Title"</b>')
+  expect(content).toBe('<think>Reasoning...</think># <b>instructions.chat.standard_fr-FR:\n"Title"</b>')
   expect(assistant!.chat.lastMessage().type).toBe('text')
   expect(assistant!.chat.lastMessage().content).toBe(content)
   expect(assistant!.chat.messages.length).toBe(3)
-  expect(assistant!.chat.title).toBe('instructions.utils.titling.fr-FR:\n"Title"')
+  expect(assistant!.chat.title).toBe('instructions.utils.titling_fr-FR:\n"Title"')
 })
 
 test('Assistant Attachment', async () => {
@@ -241,23 +224,23 @@ test('Assistant sends attachment', async () => {
     new Attachment('file_content', 'text/plain', 'clipboard://', false)
   ]})
   expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"Hello LLM (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant System Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[0], docrepo: undefined } as AssistantCompletionOpts)
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"expert_uuid1_prompt\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant User Expert', async () => {
   const content = await prompt('Hello LLM', { expert: store.experts[2], docrepo: undefined } as AssistantCompletionOpts)
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"prompt3\\nHello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant DocRepo', async () => {
   const content = await prompt('Hello LLM', { docrepo: 'docrepo' } as AssistantCompletionOpts)
   expect(window.api.docrepo?.query).toHaveBeenLastCalledWith('docrepo', 'Hello LLM')
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":"instructions.chat.docquery.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":"instructions.chat.docquery_fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]\n\nSources:\n\n- [title](url)')
 })
 
 // test('Assistant Locale Override', async () => {
@@ -294,19 +277,19 @@ test('Conversaton Length 2', async () => {
 test('No API Key', async () => {
   await prompt('no api key')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.missingApiKey.en-US')
+  expect(content).toBe('generator.errors.missingApiKey_en-US')
 })
 
 test('Low balance', async () => {
   await prompt('no credit left')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.outOfCredits.en-US')
+  expect(content).toBe('generator.errors.outOfCredits_en-US')
 })
 
 test('Quota exceeded', async () => {
   await prompt('quota exceeded')
   const content = assistant!.chat.lastMessage().content
-  expect(content).toBe('generator.errors.quotaExceeded.en-US')
+  expect(content).toBe('generator.errors.quotaExceeded_en-US')
 })
 
 test('Stop generation', async () => {
@@ -342,7 +325,7 @@ test('Custom instructions with valid ID', async () => {
   
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang_fr-FR')
 })
 
 test('Custom instructions with second valid ID', async () => {
@@ -366,7 +349,7 @@ test('Custom instructions with second valid ID', async () => {
   
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('You are another custom assistant\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('You are another custom assistant\n\ninstructions.utils.setLang_fr-FR')
 })
 
 test('Custom instructions fallback to default when ID not found', async () => {
@@ -386,7 +369,7 @@ test('Custom instructions fallback to default when ID not found', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   // Should fallback to i18n default since custom ID not found
-  expect(instructions).toBe('instructions.chat.custom999.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('instructions.chat.custom999_fr-FR\n\ninstructions.utils.setLang_fr-FR')
 })
 
 test('Custom instructions with empty array', async () => {
@@ -400,7 +383,7 @@ test('Custom instructions with empty array', async () => {
   await prompt('Hello LLM')
   const instructions = await assistant!.chat.messages[0].content
   // Should fallback to i18n since no custom instructions exist
-  expect(instructions).toBe('instructions.chat.custom1.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('instructions.chat.custom1_fr-FR\n\ninstructions.utils.setLang_fr-FR')
 })
 
 test('Custom instructions without force locale', async () => {
@@ -439,19 +422,19 @@ test('Custom instructions mixed with defaults', async () => {
   store.config.llm.instructions = 'structured'
   await prompt('Hello LLM')
   let instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('instructions.chat.structured.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('instructions.chat.structured_fr-FR\n\ninstructions.utils.setLang_fr-FR')
   
   // Switch to custom instruction
   store.config.llm.instructions = 'custom1'
   await prompt('Hello LLM')
   instructions = await assistant!.chat.messages[0].content  
-  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('You are a test assistant with custom behavior\n\ninstructions.utils.setLang_fr-FR')
   
   // Switch back to default
   store.config.llm.instructions = 'standard'
   await prompt('Hello LLM')
   instructions = await assistant!.chat.messages[0].content
-  expect(instructions).toBe('instructions.chat.standard.fr-FR\n\ninstructions.utils.setLang.fr-FR')
+  expect(instructions).toBe('instructions.chat.standard_fr-FR\n\ninstructions.utils.setLang_fr-FR')
 })
 
 test('Custom instructions with chat override', async () => {
@@ -482,6 +465,6 @@ test('Assistant instructions with capabilities', async () => {
   store.config.llm.locale = ''
   await prompt('Hello LLM')
   const instructions1 = await assistant!.chat.messages[0].content
-  expect(instructions1).toBe('instructions.chat.standard.en-US\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.')
+  expect(instructions1).toBe('instructions.chat.standard_en-US\n\nIf you output a Mermaid chart, it will be rendered as a diagram to the user.')
 })
 

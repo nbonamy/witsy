@@ -2,11 +2,13 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
 import Chat from '../../src/models/chat'
 import Attachment from '../../src/models/attachment'
+import { getLlmLocale } from '../../src/services/i18n'
 
 enableAutoUnmount(afterAll)
 
@@ -18,17 +20,8 @@ const emitEventMock = vi.fn((event, ...args) => {
   }
 })
 
-let locale = 'default'
-
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-    getLlmLocale: vi.fn(() => locale),
-    setLlmLocale: vi.fn(l => locale = l),
-    expertI18n: vi.fn((expert, attr) => `${expert?.id}.${attr}`),
-    commandI18n: vi.fn((command, attr) => `${command?.id}.${attr}.{input}`),
-    i18nInstructions: vi.fn((config, instructions) => `${instructions}-${locale}`),
-  }
+  return createI18nMock()
 })
 
 vi.mock('../../src/composables/event_bus', async () => {
@@ -246,7 +239,7 @@ test('Selects instructions', async () => {
   await trigger.trigger('click')
   const menu2 = wrapper.find('.context-menu')
   await menu2.find('.item:nth-child(4)').trigger('click')
-  expect(wrapper.vm.instructions).toBe('instructions.chat.structured-default')
+  expect(wrapper.vm.instructions).toBe('instructions.chat.structured_default')
 })
 
 test('Selects instructions based on chat locale', async () => {
@@ -255,8 +248,8 @@ test('Selects instructions based on chat locale', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   await menu.find('.item:nth-child(5)').trigger('click')
-  expect(wrapper.vm.instructions).toBe('instructions.chat.playful-fr-FR')
-  expect(locale).toBe('default')
+  expect(wrapper.vm.instructions).toBe('instructions.chat.playful_fr-FR')
+  expect(getLlmLocale()).toBe('default')
 })
 
 test('Selects expert', async () => {
@@ -278,8 +271,8 @@ test('Clears expert', async () => {
   await trigger.trigger('click')
   const menu = wrapper.find('.context-menu')
   expect(menu.exists()).toBe(true)
-  expect(menu.find('.item:nth-child(1)').text()).toBe('uuid1.name')
-  expect(menu.find('.item:nth-child(2)').text()).toBe('uuid1.prompt')
+  expect(menu.find('.item:nth-child(1)').text()).toBe('expert_uuid1_name')
+  expect(menu.find('.item:nth-child(2)').text()).toBe('expert_uuid1_prompt')
   expect(menu.find('.item:nth-child(3)').text()).toBe('')
   expect(menu.find('.item:nth-child(4)').text()).toBe('prompt.experts.clear')
   await menu.find('.item:nth-child(4)').trigger('click')
@@ -300,7 +293,7 @@ test('Stores command for later', async () => {
   await prompt.trigger('keydown.Enter')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
-    prompt: 'uuid2.template.this is my prompt',
+    prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
     expert: null,
     docrepo: null,
@@ -321,7 +314,7 @@ test('Selects command and run', async () => {
   await menu.find('.item:nth-child(2)').trigger('click')
   expect(wrapper.emitted<any[]>().prompt[0][0]).toEqual({
     instructions: null,
-    prompt: 'uuid2.template.this is my prompt',
+    prompt: 'command_uuid2_template_this is my prompt',
     attachments: [],
     expert: null,
     docrepo: null,

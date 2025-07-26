@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import LlmMock, { installMockModels } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
@@ -34,23 +34,8 @@ vi.mock('../../src/llms/manager', async () => {
 	return { default: LlmManager }
 })
 
-vi.mock('../../src/services/i18n', async (importOriginal) => {
-  const mod: any = await importOriginal()
-  return {
-    ...mod,
-    t: (key: string) => `${key}.${store.config.llm?.locale}`,
-    i18nInstructions: (config: any, key: string) => {
-
-      // get instructions
-      const instructions = key.split('.').reduce((obj, token) => obj?.[token], config)
-      if (typeof instructions === 'string' && (instructions as string)?.length) {
-        return instructions
-      }
-      // default
-      return `${key}.${store.config.llm.locale}`
-
-    }
-  }
+vi.mock('../../src/services/i18n', async () => {
+  return createI18nMock()
 })
 
 enableAutoUnmount(afterEach)
@@ -89,7 +74,7 @@ test('Renders correctly', () => {
   expect(wrapper.findComponent(EditableText).exists()).toBe(true)
   expect(wrapper.findComponent(ActionBar).exists()).toBe(true)
   expect(wrapper.findComponent(Prompt).exists()).toBe(true)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
 })
 
 test('Initalizes correctly', async () => {
@@ -110,7 +95,7 @@ test('Sends prompt and sets modified', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
@@ -118,7 +103,7 @@ test('Sends system prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[0] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"experts.experts.uuid1.prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"expert_uuid1_prompt\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
@@ -126,7 +111,7 @@ test('Sends user prompt with params', async () => {
   const wrapper: VueWrapper<any> = mount(ScratchPad)
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM', attachments: [ new Attachment('file', 'text/plain') ], expert: store.experts[2] })
   await vi.waitUntil(async () => !wrapper.vm.processing)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"prompt3\\nHello LLM (file)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.modified).toBe(true)
 })
 
@@ -137,7 +122,7 @@ test('Clears chat', async () => {
   expect(wrapper.findComponent(EditableText).text()).not.toBe('')
   emitEvent('action', 'clear')
   await vi.waitUntil(async () => !wrapper.vm.modified)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
 })
 
 test('Undo/redo', async () => {
@@ -148,12 +133,12 @@ test('Undo/redo', async () => {
   expect(wrapper.vm.redoStack).toHaveLength(0)
   emitEvent('action', 'undo')
   await vi.waitUntil(async () => wrapper.vm.undoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder.fr-FR')
+  expect(wrapper.findComponent(EditableText).text()).toBe('scratchpad.placeholder_en-US')
   expect(wrapper.vm.undoStack).toHaveLength(0)
   expect(wrapper.vm.redoStack).toHaveLength(1)
   emitEvent('action', 'redo')
   await vi.waitUntil(async () => wrapper.vm.redoStack.length === 0)
-  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(wrapper.findComponent(EditableText).text()).toBe('[{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"Hello LLM"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
   expect(wrapper.vm.undoStack).toHaveLength(1)
   expect(wrapper.vm.redoStack).toHaveLength(0)
 })
@@ -187,7 +172,7 @@ test('Replaces selection', async () => {
   wrapper.vm.editor.setContent({ content: 'Hello SELECTED LLM', start: 6, end: 14})
   await wrapper.vm.prompt.$emit('prompt', { prompt: 'Hello LLM' })
   await vi.waitUntil(async () => !wrapper.vm.chat.lastMessage().transient)
-  expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"instructions.scratchpad.system.fr-FR"},{"role":"user","content":"instructions.scratchpad.prompt.fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
+  expect(wrapper.findComponent(EditableText).text()).toBe('Hello [{"role":"system","content":"instructions.scratchpad.system_fr-FR"},{"role":"user","content":"instructions.scratchpad.prompt_fr-FR"},{"role":"assistant","content":"Be kind. Don\'t mock me"}] LLM')
   const content = wrapper.vm.editor.getContent()
   expect(content.start).toBe(6)
   expect(content.end).toBe(195)
@@ -218,6 +203,6 @@ for (const action of ['spellcheck', 'improve', 'takeaways', 'title', 'simplify',
     wrapper.vm.editor.setContent({ content: 'Hello LLM', start: -1, end: -1})
     emitEvent('action', { type: 'magic', value: action } )
     await vi.waitUntil(async () => !wrapper.vm.processing)
-    expect(wrapper.findComponent(EditableText).text()).toContain(`instructions.scratchpad.${action}.fr`)
+    expect(wrapper.findComponent(EditableText).text()).toContain(`instructions.scratchpad.${action}_fr-FR`)
   })
 }

@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock } from '../mocks/index'
+import { createDialogMock, createI18nMock } from '../mocks/index'
 import { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
@@ -20,13 +20,7 @@ const { emitEvent } = useEventBus()
 enableAutoUnmount(afterEach)
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-    commandI18n: vi.fn(() => {}),
-    expertI18n: vi.fn(() => {}),
-    i18nInstructions: (config: any, key: string) => `${key}`,
-    allLanguages: [ { locale: 'en-US', label: 'English' }, { locale: 'fr-FR', label: 'French' } ],
-  }
+  return createI18nMock()
 })
 
 vi.mock('../../src/composables/dialog', async () => {

@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Message from '../../src/models/message'
@@ -20,9 +20,7 @@ vi.mock('../../src/composables/dialog', async () => {
 })
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-  }
+  return createI18nMock()
 })
 
 vi.mock('../../src/composables/event_bus', async () => {
