@@ -233,7 +233,7 @@ test('Assistant sends attachment with empty prompt', async () => {
     new Attachment('file_content', 'text/plain', 'clipboard://', false)
   ]})
   expect(assistant!.chat.messages[1].attachments).toHaveLength(2)
-  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard.fr-FR"},{"role":"user","content":" (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
+  expect(content).toBe('[{"role":"system","content":"instructions.chat.standard_fr-FR"},{"role":"user","content":" (image_content) (file_content)"},{"role":"assistant","content":"Be kind. Don\'t mock me"}]')
 })
 
 test('Assistant ignores empty prompt', async () => {
