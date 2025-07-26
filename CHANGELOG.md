@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Specific models to create chat title
+- Allow empty prompts with attachments (https://github.com/nbonamy/witsy/pull/351)
 
 ### Fixed
 - Create / edit commands : cannot create new line (https://github.com/nbonamy/witsy/issues/348)
