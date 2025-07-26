@@ -136,7 +136,7 @@ const Dialog = {
         })
 
         // focus 1st input
-        const input = e.querySelector('textarea')
+        const input = e.querySelector('textarea') ?? e.querySelector('input')
         if (input) {
           input.focus()
           input.select()

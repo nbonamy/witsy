@@ -8,10 +8,10 @@
             <img src="/assets/icon.png" />
           </div>
         </div>
-        <h2 class="swal2-title">
+        <h2 class="swal2-title" ref="title">
           <slot name="header"></slot>
         </h2>
-        <div class="swal2-html-container">
+        <div class="swal2-html-container" ref="content">
           <slot name="body"></slot>
         </div>
         <div class="swal2-actions" ref="actions">
@@ -24,13 +24,15 @@
 
 <script setup lang="ts">
 
-import { PropType, computed, ref } from 'vue'
+import { PropType, computed, nextTick, ref } from 'vue'
 
 export type DialogType = 'alert' | 'window'
 export type DialogForm = 'horizontal' | 'vertical'
 
 const visible = ref(false)
 const dialog = ref<HTMLElement|null>(null)
+const title = ref<HTMLElement|null>(null)
+const content = ref<HTMLElement|null>(null)
 const actions = ref<HTMLElement|null>(null)
 
 const emit = defineEmits(['save'])
@@ -72,7 +74,7 @@ const style = computed(() => {
   }
 })
 
-const show = () => {
+const show = async () => {
 
   // backwards compatibility with old dialogs
   const buttons = actions.value.querySelector('.buttons')
@@ -103,6 +105,20 @@ const show = () => {
   // now we can show it
   visible.value = true
   document.addEventListener('keydown', onKeyDown)
+
+  // wait render
+  await nextTick()
+
+  // focus 1st input
+  if (content.value) {
+    const input = content.value.querySelector('textarea') ?? content.value.querySelector('input') 
+    if (input) {
+      input.focus()
+      input.select()
+      input.scrollTo(0, 0)
+    }
+  }
+
 }
 
 const close = () => {
