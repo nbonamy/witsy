@@ -24,6 +24,7 @@ export type DialogOptions = {
   preConfirm?: (value: any) => any
   willOpen?: (e: any) => void
   didOpen?: (e: any) => void
+  didClose?: (e: any) => void
 }
 
 export type DialogResult = {
@@ -39,6 +40,27 @@ const Dialog = {
   },
 
   show: (opts: DialogOptions): Promise<DialogResult|typeof SwalDialogResult> => {
+
+    // check if there is already one open
+    if (Swal.isVisible()) {
+      if (opts.showDenyButton) {
+        throw new Error('Cannot open a new dialog while another one is open with deny button')
+      } else if (opts.showCancelButton) {
+        const rc = confirm(`${opts.title}\n\n${opts.text || ''}`)
+        return Promise.resolve({
+          isConfirmed: rc,
+          isDenied: false,
+          isDismissed: !rc
+        })
+      } else {
+        alert(`${opts.title}\n\n${opts.text || ''}`)
+        return Promise.resolve({
+          isConfirmed: true,
+          isDenied: false,
+          isDismissed: false
+        })
+      }
+    }
 
     // automatic target for dialogs
     opts.target = document.querySelector('body') as HTMLElement
@@ -123,7 +145,7 @@ const Dialog = {
 
       } catch { /* empty */ }
     }
-    
+
     // now do it
     return Swal.fire(opts)
   },

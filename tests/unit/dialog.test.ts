@@ -12,6 +12,7 @@ vi.mock('../../src/services/i18n', async () => {
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
   return { default: {
+    isVisible: vi.fn(() => false),
     fire: vi.fn(() => Promise.resolve({
       isConfirmed: true,
       isDenied: false,
