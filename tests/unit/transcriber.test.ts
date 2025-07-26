@@ -1,5 +1,6 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
+import { createAutomatorMock } from '../mocks'
 import Transcriber from '../../src/automations/transcriber'
 import Automator from '../../src/automations/automator'
 import * as window from '../../src/main/window'
@@ -17,13 +18,9 @@ vi.mock('../../src/main/window.ts', async () => {
   }
 })
 
-// mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
-  const Automator = vi.fn()
-  Automator.prototype.pasteText = vi.fn()
-  return { default: Automator }
+  return createAutomatorMock()
 })
-
 
 beforeEach(() => {
   vi.clearAllMocks()

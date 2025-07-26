@@ -1,6 +1,7 @@
 
 import { vi, beforeEach, expect, test } from 'vitest'
 import { app, Notification } from 'electron'
+import { createAutomatorMock } from '../mocks'
 import ReadAloud from '../../src/automations/readaloud'
 import * as window from '../../src/main/window'
 import * as utils from '../../src/main/utils'
@@ -38,10 +39,7 @@ vi.mock('../../src/main/utils', async () => {
 
 // mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  Automator.prototype.getSelectedText = vi.fn(() => selectedText)
-  return { default: Automator }
+  return createAutomatorMock(() => ({ selectedText }))
 })
 
 beforeEach(() => {

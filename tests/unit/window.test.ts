@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { BrowserWindow, dialog, Menu, shell, } from 'electron'
 import { useWindowMock } from '../mocks/window'
+import { createAutomatorMock } from '../mocks'
 import { store } from '../../src/services/store'
 import * as window from '../../src/main/window'
 import { Application } from '../../src/types/automation'
@@ -103,9 +104,7 @@ vi.mock('electron', async () => {
 })
 
 vi.mock('../../src/automations/automator.ts', async () => {
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  return { default: Automator }
+  return createAutomatorMock()
 })
 
 vi.mock('../../src/main/utils', async () => {

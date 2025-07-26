@@ -3,6 +3,7 @@ import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { app, Notification } from 'electron'
 import { Command } from '../../src/types/index'
 import { store } from '../../src/services/store'
+import { createAutomatorMock } from '../mocks'
 import defaults from '../../defaults/settings.json'
 import * as window from '../../src/main/window'
 import Commander, { notEditablePrompts } from '../../src/automations/commander'
@@ -39,14 +40,8 @@ vi.mock('../../src/main/window.ts', async () => {
   }
 })
 
-// mock automator
 vi.mock('../../src/automations/automator.ts', async () => {
-  const Automator = vi.fn()
-  Automator.prototype.getForemostApp = vi.fn(() => ({ id: 'appId', name: 'appName', path: 'appPath', window: 'title' }))
-  Automator.prototype.moveCaretBelow = vi.fn()
-  Automator.prototype.getSelectedText = vi.fn(() => selectedText)
-  Automator.prototype.pasteText = vi.fn()
-  return { default: Automator }
+  return createAutomatorMock(() => ({ selectedText }))
 })
 
 // mock llm
