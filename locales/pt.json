@@ -2014,7 +2014,9 @@
       },
       "openrouter": {
         "aboutModels": "Mais sobre os modelos OpenRouter",
-        "pricing": "Preços do OpenRouter"
+        "aboutOrder": "Saiba mais sobre a ordem dos provedores do OpenRouter",
+        "pricing": "Preços do OpenRouter",
+        "providerOrder": "Ordem dos provedores (um provedor por linha)"
       },
       "sdwebui": {
         "baseURL": "URL Base da API",

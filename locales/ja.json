@@ -2014,7 +2014,9 @@
       },
       "openrouter": {
         "aboutModels": "OpenRouterモデルについてさらに詳しく",
-        "pricing": "OpenRouterの料金"
+        "aboutOrder": "OpenRouterのプロバイダー順序について詳しく知る",
+        "pricing": "OpenRouterの料金",
+        "providerOrder": "プロバイダーの順序（1行に1つのプロバイダー）"
       },
       "sdwebui": {
         "baseURL": "APIベースURL",

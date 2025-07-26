@@ -30,6 +30,7 @@ export type Configuration = {
 
 export type WitsyEngineCreateOpts = EngineCreateOpts & {
   keepAlive?: string
+  providerOrder?: string
 }
 
 export type EngineConfig = WitsyEngineCreateOpts & {

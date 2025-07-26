@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Tooltips (https://github.com/nbonamy/witsy/discussions/344)
 - OpenAI responses API integration (https://github.com/nbonamy/witsy/issues/338)
+- Allow specifying allowed providers for OpenRouter (https://github.com/nbonamy/witsy/issues/350)
 
 ### Changed
 - Specific models to create chat title

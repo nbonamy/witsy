@@ -2014,7 +2014,9 @@
       },
       "openrouter": {
         "aboutModels": "了解更多关于 OpenRouter 模型的信息",
-        "pricing": "OpenRouter 定价"
+        "aboutOrder": "了解有关 OpenRouter 供应商顺序的更多信息",
+        "pricing": "OpenRouter 定价",
+        "providerOrder": "供应商顺序（每行一个供应商）"
       },
       "sdwebui": {
         "baseURL": "API 基础 URL",
