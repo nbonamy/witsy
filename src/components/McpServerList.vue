@@ -225,7 +225,7 @@ const onImportJson = async () => {
     input: 'textarea',
     inputAttributes: { rows: 10 },
     inputPlaceholder: '"mcp-server-name": {\n  "command": "",\n  "args": [ … ]\n}',
-    customClass: { icon: 'hidden', input: 'auto-height' },
+    customClass: { input: 'auto-height' },
     inputValue: '',
     showCancelButton: true,
     preConfirm: (json: any) => {

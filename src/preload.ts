@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld(
     },
     app: {
       setAppearanceTheme: (theme: string): void => { return ipcRenderer.sendSync(IPC.APP.SET_APPEARANCE_THEME, theme) },
-      showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
+      // showDialog: (opts: any): Promise<Electron.MessageBoxReturnValue> => { return ipcRenderer.invoke(IPC.APP.SHOW_DIALOG, opts) },
       listFonts: (): string[] => { return ipcRenderer.sendSync(IPC.APP.FONTS_LIST) },
       showAbout: (): void => { return ipcRenderer.send(IPC.APP.SHOW_ABOUT) },
       getAssetPath: (assetPath: string): string => { return ipcRenderer.sendSync(IPC.APP.GET_ASSET_PATH, assetPath) },

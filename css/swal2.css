@@ -1,6 +1,6 @@
 
 .alert-confirm {
-  border: 1px solid transparent !important;
+  border: 1px solid var(--highlight-color) !important;
   background-image: linear-gradient(#2991FF, #057AFF) !important;
   color: white !important;
 }
@@ -11,19 +11,15 @@
 }
 
 .alert-neutral {
-  /* border: 1px solid transparent !important; */
-  background-color: var(--control-bg-color) !important;
-  color: var(--control-text-color) !important;
-}
-
-.alert-neutral:hover {
-  background-image: none !important;
-  background-color: var(--control-bg-color) !important;
+  border: 1px solid rgb(190, 190, 190) !important;
+  background-color: rgb(236, 236, 236) !important;
+  color: black !important;
 }
 
 .alert-neutral:active {
   background-image: none !important;
-  background-color: var(--control-button-active-bg-color) !important;
+  background-color: rgb(220, 220, 220) !important;
+  color: rgb(32, 32, 32) !important;
 }
 
 .alert-danger {
@@ -42,11 +38,16 @@
   background-color: var(--control-button-active-bg-color) !important;
 }
 
+div:where(.swal2-container) {
+  --icon-size: 6rem;
+}
+
 div:where(.swal2-container) div:where(.swal2-popup) {
-  background-color: var(--dialog-body-bg-color);
-  border-radius: 8px;
-  max-width: 260px;
-  padding: 26px 16px 16px 16px;
+  padding-bottom: 0px;
+  background-color: var(--background-color);
+  border-radius: 2rem;
+  min-width: 16rem;
+  max-width: 20rem;
   box-shadow: 
     0 1px  1px  1px  rgba(0,0,0,0.06), 
     0 2px  2px  2px  rgba(0,0,0,0.06), 
@@ -56,8 +57,18 @@ div:where(.swal2-container) div:where(.swal2-popup) {
     0 24px 24px 24px rgba(0,0,0,0.06);
 }
 
+div:where(.swal2-container) div:where(.swal2-popup):has(.swal2-input:not([style*="display: none;"])) {
+  max-width: 22rem;
+}
+
 div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
-  background-color: transparent;
+  background-color: color-mix(in srgb, #bbb, transparent 30%);
+}
+
+@media (prefers-color-scheme: dark) {
+  div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
+    background-color: color-mix(in srgb, #444, transparent 30%);
+  }
 }
 
 div:where(.swal2-container) .swal2-icon.hidden {
@@ -65,52 +76,90 @@ div:where(.swal2-container) .swal2-icon.hidden {
 }
 
 div:where(.swal2-container) div:where(.swal2-icon) {
+  position: absolute;
+  top: calc(-0.33 * var(--icon-size));
+  left: calc(50% - var(--icon-size)/2);
+  width: var(--icon-size);
+  height: var(--icon-size);
   border: none;
-  width: 60px;
-  height: 60px;
   margin: 0 auto;
+  transform: rotate(5deg);
 }
 
 div:where(.swal2-container) .swal2-icon-content img {
-  width: 60px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
 }
 
 div:where(.swal2-container) h2:where(.swal2-title) {
+  padding: 3rem;
+  padding-top: calc(var(--icon-size) - 1.5rem);
+  padding-bottom: 0rem;
   text-align: center;
   color: var(--text-color);
-  font-size: 10pt;
+  font-size: 13.5pt;
   line-height: 150%;
-  font-weight: bold;
+  font-weight: 500;
   margin-top: 12px;
+  max-width: unset;
 }
 
-div:where(.swal2-container) {
-  .swal2-icon.hidden ~ h2.swal2-title {
-    margin-top: 0px;
-    padding-top: 0px;
-  }
+div:where(.swal2-container):not(:has(.swal2-icon)) h2:where(.swal2-title),
+div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title) {
+  padding-top: 2rem;
 }
 
 div:where(.swal2-container) .swal2-html-container {
   text-align: center;
-  color: var(--text-color);
-  font-size: 9pt;
+  color: var(--dimmed-text-color);
+  font-size: 11pt;
+  font-weight: 300;
   line-height: 150%;
+  padding-bottom: 1rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 
 div:where(.swal2-container) input:where(.swal2-input),
 div:where(.swal2-container) input:where(.swal2-file),
 div:where(.swal2-container) select:where(.swal2-select),
 div:where(.swal2-container) textarea:where(.swal2-textarea) {
-  margin-left: 4px;
-  margin-right: 4px;
+  margin: 2rem;
   background-color: var(--control-bg-color) !important;
   border: 1px solid var(--control-border-color) !important;
   border-radius: var(--control-border-radius) !important;
   color: var(--control-text-color) !important;
-  font-size: 10pt !important;
+  font-size: 12pt !important;
+  padding: 0.5rem;
   box-shadow: none;
+}
+
+div:where(.swal2-container) .swal2-checkbox {
+  
+  margin-bottom: 1rem;
+
+  .swal2-label {
+    font-size: 11pt;
+    color: var(--dimmed-text-color);
+  }
+
+  input[type="checkbox"] {
+    min-width: 1.1rem !important;
+    max-width: 1.1rem !important;
+    height: 1.1rem;
+    &:checked {
+      &::after {
+        top: -0.5px !important;
+        left: 2.5px !important;
+        font-size: 10pt !important;
+      }
+    }
+  }
+}
+
+div:where(.swal2-container) textarea:where(.swal2-textarea) {
+  height: 4rem;
+  resize: none;
 }
 
 div:where(.swal2-container) textarea:where(.swal2-textarea).auto-height {
@@ -126,8 +175,7 @@ div:where(.swal2-container) textarea:where(.swal2-textarea):focus {
 }
 
 div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-select {
-  height: auto;
-  padding: 2px;
+  width: auto;
 }
 
 div:where(.swal2-container) .swal2-input, div:where(.swal2-container) .swal2-checkbox {
@@ -149,17 +197,30 @@ div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror {
 
 div:where(.swal2-container) div:where(.swal2-actions) {
   width: 100%;
+  padding-bottom: 1rem;
+  padding-top: 0.75rem;
+  background-color: color-mix(in srgb, var(--window-decoration-color), var(--background-color) 40%);
+  border-top: 1px solid var(--dialog-border-color);
   flex-direction: row-reverse;
-  justify-content: space-around;
-  margin-top: 16px;
-  gap: 8px;
+  border-bottom-left-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  margin-top: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  gap: 1rem;
 }
 
-div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) {
+div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style*="display: inline-block;"]) {
   flex-direction: column;
+  align-items: stretch;
+  gap: 0rem;
+  button:where(.swal2-styled):not(.swal2-confirm) {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
 }
 
-div:where(.swal2-container) button:where(.swal2-styled) {
+/* div:where(.swal2-container) button:where(.swal2-styled) {
   box-sizing: border-box;
   width: auto !important;
   margin: 0px !important;
@@ -170,6 +231,14 @@ div:where(.swal2-container) button:where(.swal2-styled) {
   font-size: 10pt !important;
   font-weight: normal !important;
   flex: 1;
+} */
+
+div:where(.swal2-container) button:where(.swal2-styled) {
+  flex: 1;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0rem !important;
+  font-size: 10.5pt !important;
+  box-shadow: none !important;
 }
 
 div:where(.swal2-container) div:where(.swal2-actions):has(> .swal2-deny[style="display: inline-block;"]) button:where(.swal2-styled) {
@@ -202,4 +271,18 @@ div:where(.swal2-container) .swal2-html-container.list {
     margin-left: 0px;
     margin-bottom: 8px;
   }
+}
+
+div:where(.swal2-container) div:where(.swal2-popup):has(.sticky-table-container) {
+  width: 45rem;
+  max-width: 45rem;
+}
+
+div:where(.swal2-container) div:where(.swal2-html-container) div:where(.sticky-table-container) {
+  margin-top: 1rem;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--dialog-body-bg-color);
+  max-height: 400px;
+  font-size: 11pt;
+  text-align: left;
+  color: var(--text-color);
 }

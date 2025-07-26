@@ -9,7 +9,7 @@ import { LlmTool } from 'multi-llm-ts';
 import process from 'node:process';
 import path from 'node:path';
 import fontList from 'font-list';
-import { app, ipcMain, nativeImage, clipboard, dialog, nativeTheme, shell } from 'electron';
+import { app, ipcMain, nativeImage, clipboard, nativeTheme, shell } from 'electron';
 import Store from 'electron-store';
 import { getCachedText } from './utils';
 
@@ -90,9 +90,9 @@ export const installIpc = (
     event.returnValue = theme;
   });
 
-  ipcMain.handle(IPC.APP.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {
-    return dialog.showMessageBox(payload);
-  });
+  // ipcMain.handle(IPC.APP.SHOW_DIALOG, (event, payload): Promise<Electron.MessageBoxReturnValue> => {
+  //   return dialog.showMessageBox(payload);
+  // });
 
   ipcMain.on(IPC.DEBUG.SHOW_CONSOLE, () => {
     window.openDebugWindow();

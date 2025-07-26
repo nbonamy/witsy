@@ -283,7 +283,7 @@ declare global {
         setAppearanceTheme(theme: string): void
         showAbout(): void
         getAssetPath(assetPath: string): string
-        showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
+        // showDialog(opts: any): Promise<Electron.MessageBoxReturnValue>
         listFonts(): string[]
         fullscreen(window: string, state: boolean): void
       }

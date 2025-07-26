@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
+import { createDialogMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store, kMediaChatId } from '../../src/services/store'
@@ -11,8 +12,13 @@ import defaultSettings from '../../defaults/settings.json'
 import Attachment from '../../src/models/attachment'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterEach)
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/image', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -404,9 +410,9 @@ test('Preview', async () => {
 
   // info
   await preview.find<HTMLElement>('.icon.info').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
-    message: 'prompt1',
-    detail: 'Engine: openai\nModel: dall-e-3',
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'prompt1',
+    text: 'Engine: openai\nModel: dall-e-3',
   }))
 
   // fullscreen

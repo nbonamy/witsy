@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { createDialogMock } from '../mocks/index'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -13,10 +14,8 @@ enableAutoUnmount(afterAll)
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 
-vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  const Swal = vi.fn()
-  Swal['fire'] = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
-  return { default: Swal }
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
 })
 
 vi.mock('../../src/services/i18n', async () => {

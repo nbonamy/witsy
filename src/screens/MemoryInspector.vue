@@ -1,7 +1,7 @@
 <template>
-  <ModalDialog id="memory-inspector" ref="dialog" type="window" :width="400">
+  <ModalDialog id="memory-inspector" ref="dialog" type="window">
     <template #header>
-      <div class="title">{{ t('memory.inspector.title') }}</div>
+      {{ t('memory.inspector.title') }}
     </template>
     <template #body>
       <div class="empty" v-if="contents.length == 0">{{ t('memory.inspector.noFacts') }}</div>
@@ -23,7 +23,7 @@
           </tbody>
         </table>
       </div>
-      <div v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
+      <div style="margin-top: 2rem" v-if="contents.length">{{ t('memory.inspector.shiftDelete') }}</div>
     </template>
     <template #footer>
       <div class="buttons">

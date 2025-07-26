@@ -2,16 +2,22 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import MessageItem from '../../src/components/MessageItem.vue'
 import Message from '../../src/models/message'
 import Chat from '../../src/models/chat'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
 const readAloudMock = vi.fn()
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/i18n', async () => {
   return {
@@ -339,7 +345,7 @@ test('Run assistant text actions', async () => {
 
   // usage
   await wrapper.find('.actions .usage').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(1)
+  expect(Dialog.show).toHaveBeenCalledTimes(1)
 
   // read aloud
   await wrapper.find('.actions .read').trigger('click')
@@ -347,13 +353,13 @@ test('Run assistant text actions', async () => {
 
   // retry
   await wrapper.find('.actions .retry').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
+  expect(Dialog.show).toHaveBeenCalledTimes(2)
   expect(store.config.general.confirm.retryGeneration).toBe(false)
   expect(emitEventMock).toHaveBeenLastCalledWith('retry-generation', botMessageText)
 
   // retry again
   await wrapper.find('.actions .retry').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
+  expect(Dialog.show).toHaveBeenCalledTimes(2)
 
   // fork
   await wrapper.find('.actions .fork').trigger('click')

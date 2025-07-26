@@ -5,7 +5,7 @@ export const APP = {
   GET_ASSET_PATH: 'get-asset-path',
   SET_APPEARANCE_THEME: 'set-appearance-theme',
   SHOW_ABOUT: 'show-about',
-  SHOW_DIALOG: 'show-dialog',
+  // SHOW_DIALOG: 'show-dialog',
   FONTS_LIST: 'fonts-list',
   FULLSCREEN: 'fullscreen',
   RUN_AT_LOGIN_GET: 'run-at-login-get',

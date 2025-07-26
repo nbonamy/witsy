@@ -1,10 +1,10 @@
 <template>
-  <ModalDialog id="tool-selector" ref="dialog" type="window" :width="700" @save="onSave">
+  <ModalDialog id="tool-selector" ref="dialog" type="window" @save="onSave">
     <template #header>
-      <div class="title">{{ t('toolSelector.title') }}</div>
+      {{ t('toolSelector.title') }}
     </template>
     <template #body>
-      <div class="sticky-table-container">
+      <div class="tools sticky-table-container">
         <table>
           <thead>
             <tr>
@@ -14,10 +14,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="tool in tools" :key="tool.id">
-              <td class="enabled"><input type="checkbox" :checked="isToolActive(tool)" @click="toggleTool(tool)" /></td>
-              <td>{{ tool.name }}</td>
-              <td>{{ tool.description }}</td>
+            <tr v-for="tool in tools" :key="tool.id" class="tool">
+              <td class="tool-enabled"><input type="checkbox" :checked="isToolActive(tool)" @click="toggleTool(tool)" /></td>
+              <td class="tool-name">{{ tool.name }}</td>
+              <td class="tool-description"><div>{{ tool.description }}</div></td>
             </tr>
           </tbody>
         </table>
@@ -151,13 +151,23 @@ defineExpose({
 <style>
 
 #tool-selector {
-  
-  main {
-    .sticky-table-container {
-      max-height: 400px;
+  .tools {
+    .tool {
+
+      th, td {
+        vertical-align: top;
+      }
+
+      .tool-description {
+        div {
+          white-space: wrap;
+          max-height: 3lh;
+          overflow-y: clip;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
-
 }
 
 </style>

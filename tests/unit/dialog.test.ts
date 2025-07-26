@@ -12,9 +12,13 @@ vi.mock('../../src/services/i18n', async () => {
 })
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  const Swal = vi.fn()
-  Swal['fire'] = vi.fn(() => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false }))
-  return { default: Swal }
+  return { default: {
+    fire: vi.fn(() => Promise.resolve({
+      isConfirmed: true,
+      isDenied: false,
+      isDismissed: false,
+    }))
+  }}
 })
 
 beforeAll(() => {
@@ -29,53 +33,60 @@ beforeEach(() => {
 
 test('Basic confirm', () => {
   Dialog.alert('Hello')
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
-    type: 'none',
-    message: 'Hello',
-    detail: undefined,
-    buttons: [ 'common.ok' ],
-    defaultId: 0,
-    cancelId: -1,
+  expect(Swal.fire).toHaveBeenLastCalledWith({
+    target: expect.any(HTMLElement),
+    iconHtml: '<img src="">',
+    confirmButtonText: 'common.ok',
+    title: 'Hello',
+    text: undefined,
+    customClass: {
+      'cancelButton': 'alert-neutral',
+      'confirmButton': 'alert-neutral',
+      'denyButton': 'alert-danger',
+      'popup': 'form form-large',
+    },
+    didOpen: expect.any(Function),
+    willOpen: expect.any(Function),
   })
 })
 
 test('Confirm/Cancel', () => {
   Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, confirmButtonText: 'Yes' })
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
-    type: 'none',
-    message: 'Hello',
-    detail: 'World',
-    buttons: [ 'Yes', 'common.cancel' ],
-    defaultId: 0,
-    cancelId: 1,
-  })
+  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'common.cancel',
+    showCancelButton: true,
+    title: 'Hello',
+    text: 'World',
+  }))
 })
 
 test('Confirm/Deny/Cancel', () => {
   Dialog.show({ title: 'Hello', text: 'World', showCancelButton: true, showDenyButton: true, confirmButtonText: 'Da', denyButtonText: 'Nein', cancelButtonText: 'Abbrechen' })
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith({
-    type: 'none',
-    message: 'Hello',
-    detail: 'World',
-    buttons: [ 'Da', 'Nein', 'Abbrechen' ],
-    defaultId: 0,
-    cancelId: 2,
-  })
+  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+    showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText: 'Da',
+    denyButtonText: 'Nein',
+    cancelButtonText: 'Abbrechen',
+    title: 'Hello',
+    text: 'World',
+  }))
 })
 
-test('Input', () => {
+test('Input Text', () => {
   Dialog.show({ title: 'Hello', text: 'World', input: 'text' })
   expect(Swal.fire).toHaveBeenLastCalledWith({
-    customClass: {
-      cancelButton: 'alert-neutral',
-      denyButton: 'alert-danger',
-      confirmButton: 'alert-neutral',
-    },
+    target: expect.any(HTMLElement),
+    customClass: expect.objectContaining({
+      input: 'text-textarea',
+    }),
     iconHtml: '<img src="">',
-    input: 'text',
+    input: 'textarea',
     text: 'World',
     title: 'Hello',
     confirmButtonText: 'common.ok',
     willOpen: expect.any(Function),
+    didOpen: expect.any(Function),
   })
 })

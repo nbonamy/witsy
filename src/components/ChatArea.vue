@@ -43,6 +43,7 @@ import html2pdf from 'html2pdf.js'
 import IconSideBar from '../../assets/sidebar.svg?component'
 import IconNewChat from './IconNewChat.vue'
 import IconMenu from './IconMenu.vue'
+import Dialog from '../composables/dialog'
 
 import useEventBus from '../composables/event_bus'
 const { emitEvent, onEvent } = useEventBus()
@@ -199,9 +200,9 @@ const onExportMarkdown = async () => {
     })
   } catch (e) {
     console.error('Error exporting Markdown:', e)
-    window.api.app.showDialog({
-      message: t('common.error'),
-      detail: t('chat.export.error'),
+    Dialog.show({
+      title: t('common.error'),
+      text: t('chat.export.error'),
     })
   }
 }
@@ -273,9 +274,9 @@ const onExportPdf = async () => {
 
   } catch (e) {
     console.error('Error exporting PDF:', e)
-    window.api.app.showDialog({
-      message: t('common.error'),
-      detail: t('chat.export.error'),
+    Dialog.show({
+      title: t('common.error'),
+      text: t('chat.export.error'),
     })
   }
 

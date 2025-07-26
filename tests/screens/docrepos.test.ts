@@ -1,14 +1,20 @@
 
 import { vi, beforeAll, beforeEach, expect, test, afterAll, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
+import { createDialogMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import DocRepos from '../../src/screens/DocRepos.vue'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/i18n', async () => {
   return {
@@ -138,7 +144,7 @@ test('Deletes base', async () => {
   const wrapper: VueWrapper<any> = mount(DocRepos)
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.panel .panel-item:nth-child(1) .delete').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalled()
   expect(window.api.docrepo.delete).toHaveBeenLastCalledWith('uuid1')
 })
 
@@ -170,12 +176,12 @@ test('Deletes documents', async () => {
   await vi.waitUntil(async () => wrapper.vm.docRepos != null)
   await wrapper.find('.panel .panel-item:nth-child(2)').trigger('click')
   await wrapper.find('.sliding-pane .documents .panel-item:nth-child(1) .actions .icon.remove').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalled()
   // Wait for the dialog promise to resolve and the delete to be called
   await vi.waitUntil(() => (window.api.docrepo.removeDocument as Mock).mock.calls.length > 0)
   expect(window.api.docrepo.removeDocument).toHaveBeenLastCalledWith('uuid2', 'uuid3')
   await wrapper.find('.sliding-pane .documents .panel-item:nth-child(2) .actions .icon.remove').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalled()
   // Wait for the second delete call
   await vi.waitUntil(() => (window.api.docrepo.removeDocument as Mock).mock.calls.length > 1)
   expect(window.api.docrepo.removeDocument).toHaveBeenLastCalledWith('uuid2', 'uuid4')
