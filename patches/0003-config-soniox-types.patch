@@ -1,0 +1,28 @@
+diff --git a/src/types/config.ts b/src/types/config.ts
+index 3333333..4444444 100644
+--- a/src/types/config.ts
++++ b/src/types/config.ts
+@@ -100,6 +100,23 @@ export type STTConfig = {
+     gpu: boolean
+   }
++  /**
++   * Soniox-spezifische Konfiguration.
++   */
++  soniox?: {
++    /** Default realtime model (z. B. stt-rt-preview) */
++    realtimeModel?: string
++    /** Default async model (z. B. stt-async-preview) */
++    asyncModel?: string
++    /** Sprachhinweise (biasing) */
++    languageHints?: string[]
++    /** Endpoint Detection ein/aus */
++    endpointDetection?: boolean
++    /** Files+Transcriptions nach Async-Run löschen */
++    cleanup?: boolean
++    /** Audioformat: auto, pcm_s16le, opus, ... */
++    audioFormat?: string
++    proxy?: 'temporary_key' | 'proxy_stream'
++    tempKeyExpiry?: number
++    speakerDiarization?: boolean
++  }
+ }

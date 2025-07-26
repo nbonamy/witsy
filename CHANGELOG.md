@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+### Added
+- Soniox STT (async + realtime): REST + WebSocket, Token‑Aggregation partial/final, Endpoint-Detection, Temporary API Keys als Default, Settings + Tests. 
+
 ## [2.12.2] - WIP
 
 ### Added
