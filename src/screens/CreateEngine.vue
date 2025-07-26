@@ -1,20 +1,20 @@
 <template>
   <ModalDialog id="create-engine" ref="dialog" @save="onSave">
     <template #header>
-      <div class="title">{{ t('engine.create.title') }}</div>
-      <div class="text">{{ t('engine.create.description') }}</div>
+      {{ t('engine.create.title') }}
     </template> 
     <template #body>
-      <div class="form-field">
-        <label>{{ t('common.name') }}</label>
-        <input name="label" v-model="label" placeholder="e.g. Together.ai"/>
-      </div>
+      <div style="margin-bottom: 1.5rem">{{ t('engine.create.description') }}</div>
       <div class="form-field">
         <label>{{ t('engine.create.apiSpecification') }}</label>
         <select name="api" v-model="api">
           <option value="openai">OpenAI</option>
           <option value="azure">Azure OpenAI</option>
         </select>
+      </div>
+      <div class="form-field">
+        <label>{{ t('common.name') }}</label>
+        <input name="label" v-model="label" placeholder="e.g. Together.ai"/>
       </div>
       <template v-if="api === 'openai'">
         <div class="form-field">
@@ -123,10 +123,10 @@ defineExpose({
 </script>
 
 
-<style scoped>
+<style>
 
-dialog.alert-dialog {
-  width: 300px !important;
+#create-engine .swal2-popup {
+  max-width: 24rem !important;
 }
 
 </style>

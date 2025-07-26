@@ -1,25 +1,22 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
+import { createDialogMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import SettingsMcp from '../../src/settings/SettingsMcp.vue'
 import McpServerList from '../../src/components/McpServerList.vue'
 import McpServerEditor from '../../src/components/McpServerEditor.vue'
+import Dialog from '../../src/composables/dialog'
 
 let mcp: VueWrapper<any>
 
-vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  const Swal = vi.fn()
-  Swal['fire'] = vi.fn(() => Promise.resolve({
-    isConfirmed: true,
-    isDenied: false,
-    isDismissed: false,
+vi.mock('../../src/composables/dialog', async () => 
+  createDialogMock(() => ({
     value: { command: 'none', args: [ '-y', 'pkg' ], env: { key: 'value' } }
   }))
-  return { default: Swal }
-})
+)
 
 vi.mock('../../src/services/i18n', async () => {
   return {
@@ -334,19 +331,22 @@ test('Error server add', async () => {
   const editor = mcp.findComponent({ name: 'McpServerEditor' })
   expect(editor.find<HTMLSelectElement>('select[name=type]').element.value).toBe('stdio')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(1)
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({ message: 'mcp.serverEditor.validation.requiredFields' }))
+  expect(Dialog.show).toHaveBeenCalledTimes(1)
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'mcp.serverEditor.validation.requiredFields',
+    text: 'mcp.serverEditor.validation.commandRequired'
+  }))
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLInputElement>('input[name=command]').setValue('npx')
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('sse')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(2)
+  expect(Dialog.show).toHaveBeenCalledTimes(2)
   expect(window.api.mcp.editServer).not.toHaveBeenCalled()
 
   await editor.find<HTMLSelectElement>('select[name=type]').setValue('smithery')
   await editor.find<HTMLButtonElement>('button[name=save]').trigger('click')
-  expect(window.api.app.showDialog).toHaveBeenCalledTimes(3)
+  expect(Dialog.show).toHaveBeenCalledTimes(3)
   expect(window.api.mcp.installServer).not.toHaveBeenCalled()
 })
 

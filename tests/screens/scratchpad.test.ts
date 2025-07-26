@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import LlmMock, { installMockModels } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import defaultSettings from '../../defaults/settings.json'
@@ -15,7 +16,10 @@ import useEventBus  from '../../src/composables/event_bus'
 import Attachment from '../../src/models/attachment'
 const { emitEvent } = useEventBus()
 
-// mock llm
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock(() => ({ isDismissed: true }))
+})
+
 vi.mock('../../src/llms/manager', async () => {
   const LlmManager = vi.fn()
   LlmManager.prototype.initModels = vi.fn()

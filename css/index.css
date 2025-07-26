@@ -461,19 +461,23 @@ input[type=checkbox] {
   border-radius: 4px;
   background: var(--control-checkbox-bg-color);
 
+  &:after {
+    position: relative;
+    content: '\2713';
+    color: white;
+    left: 2px;
+    font-size: 8pt;
+    font-weight: bold;
+    top: -1px;
+  }
+
   &:checked {
     border: none;
     background: linear-gradient(#2991FF, #057AFF);
+  }
 
-    &:after {
-      position: relative;
-      content: '\2713';
-      color: white;
-      left: 2px;
-      font-size: 8pt;
-      font-weight: bold;
-      top: -1px;
-    }
+  &:not(:checked) {
+    font-size: 0pt;
   }
 
   &:disabled {

@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { createDialogMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -8,11 +9,16 @@ import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
 import { findModelSelectoPlus } from '../utils'
 import { ChatModel } from 'multi-llm-ts'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/i18n', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -149,12 +155,12 @@ test('Edit user command', async () => {
   await editor.find('[name=shortcut]').setValue('S')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.app.showDialog as Mock).mock.calls[0][0].message).toBe('commands.editor.validation.requiredFields')
+  expect((Dialog.alert as Mock).mock.calls[0][0]).toBe('commands.editor.validation.requiredFields')
 
   await editor.find('[name=label]').setValue('command2')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.app.showDialog as Mock).mock.calls[1][0].message).toBe('commands.editor.validation.inputPlaceholder')
+  expect((Dialog.alert as Mock).mock.calls[1][0]).toBe('commands.editor.validation.inputPlaceholder')
 
   expect(store.commands[41]).toStrictEqual({
     id: expect.any(String),

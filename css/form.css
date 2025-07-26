@@ -82,7 +82,7 @@
     }
 
     &:has([required]) label:not(:empty)::after {
-      content: ':*';
+      content: '*' !important;
     }
 
     .form-subgroup {

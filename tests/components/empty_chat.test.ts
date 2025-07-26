@@ -1,8 +1,9 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount, VueWrapper } from '@vue/test-utils'
-import { loadAnthropicModels } from 'multi-llm-ts'
+import { defaultCapabilities, loadAnthropicModels } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import { wait } from '../../src/main/utils'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
@@ -12,7 +13,10 @@ import { findModelSelectoPlus } from '../utils'
 
 enableAutoUnmount(afterAll)
 
-// mock llm
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
+
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const actual = await importOriginal() as unknown as any
   return {
@@ -41,9 +45,9 @@ beforeEach(() => {
     apiKey: 'key',
     models: {
       chat: [
-        { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo', capabilities: { tools: true, vision: false, reasoning: false } },
-        { id: 'gpt-4-turbo', name: 'gpt-4-turbo', capabilities: { tools: true, vision: false, reasoning: false } },
-        { id: 'gpt-4o', name: 'gpt-4o', capabilities: { tools: true, vision: true, reasoning: false } }
+        { id: 'gpt-3.5-turbo', name: 'gpt-3.5-turbo', capabilities: defaultCapabilities.capabilities },
+        { id: 'gpt-4-turbo', name: 'gpt-4-turbo', capabilities: defaultCapabilities.capabilities },
+        { id: 'gpt-4o', name: 'gpt-4o', capabilities: defaultCapabilities.capabilities }
       ]
     },
     model: {
@@ -53,18 +57,24 @@ beforeEach(() => {
   store.config.engines.ollama = {
     models: {
       chat: [
-        { id: 'llama3-8b', name: 'llama3-8b', capabilities: { tools: true, vision: false, reasoning: false } },
-        { id: 'llama3-70b', name: 'llama3-70b', capabilities: { tools: true, vision: false, reasoning: false } }
+        { id: 'llama3-8b', name: 'llama3-8b', capabilities: defaultCapabilities.capabilities },
+        { id: 'llama3-70b', name: 'llama3-70b', capabilities: defaultCapabilities.capabilities }
       ]
+    },
+    model: {
+      chat: 'llama3-8b'
     }
   }
   store.config.engines.mistralai =  {
     apiKey: 'test',
     models: {
       chat: [
-        { id: 'llama3-8b', name: 'llama3-8b', capabilities: { tools: true, vision: false, reasoning: false } },
-        { id: 'llama3-70b', name: 'llama3-70b', capabilities: { tools: true, vision: false, reasoning: false } }
+        { id: 'llama3-8b', name: 'llama3-8b', capabilities: defaultCapabilities.capabilities },
+        { id: 'llama3-70b', name: 'llama3-70b', capabilities: defaultCapabilities.capabilities }
       ]
+    },
+    model: {
+      chat: 'llama3-8b'
     }
   }
 

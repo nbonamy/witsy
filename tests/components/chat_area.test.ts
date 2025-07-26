@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
@@ -14,6 +15,10 @@ enableAutoUnmount(afterAll)
 
 const onEventMock = vi.fn()
 const emitEventMock = vi.fn()
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/i18n', async () => {
   return {

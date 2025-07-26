@@ -1,8 +1,10 @@
 import { vi, beforeEach, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import { store } from '../../src/services/store'
 import FilesystemPlugin from '../../src/plugins/filesystem'
 import { PluginExecutionContext } from 'multi-llm-ts'
+import Dialog from '../../src/composables/dialog'
 
 global.atob = (str: string) => str
 
@@ -10,7 +12,13 @@ const context: PluginExecutionContext = {
   model: 'mock',
 }
 
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
+
 beforeEach(() => {
+  
+  vi.clearAllMocks()
   useWindowMock()
 
   window.api.file.exists = vi.fn((path: string) => {
@@ -159,7 +167,7 @@ test('Filesystem plugin write file - overwrite allowed', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.app.showDialog).toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalled()
   expect(window.api.file.write).toHaveBeenCalled()
 })
 
@@ -172,7 +180,7 @@ test('Filesystem plugin write file - overwrite allowed and skipped', async () =>
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.app.showDialog).not.toHaveBeenCalled()
+  expect(Dialog.show).not.toHaveBeenCalled()
   expect(window.api.file.write).toHaveBeenCalled()
 })
 
@@ -194,7 +202,7 @@ test('Filesystem plugin delete file - allowed', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.app.showDialog).toHaveBeenCalled()
+  expect(Dialog.show).toHaveBeenCalled()
   expect(window.api.file.delete).toHaveBeenCalled()
 })
 
@@ -207,7 +215,7 @@ test('Filesystem plugin delete file - allowed and skipped', async () => {
     parameters: { path: '/home/user/Documents/test', content: 'test content' }
   })
   expect(result.success).toBe(true)
-  expect(window.api.app.showDialog).not.toHaveBeenCalled()
+  expect(Dialog.show).not.toHaveBeenCalled()
   expect(window.api.file.delete).toHaveBeenCalled()
 })
 

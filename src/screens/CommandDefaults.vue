@@ -1,5 +1,5 @@
 <template>
-  <ModalDialog id="command-defaults" ref="dialog">
+  <ModalDialog id="command-defaults" ref="dialog" @save="onSave">
     <template #header>
       <div class="title">{{ t('commands.defaults.title') }}</div>
     </template>

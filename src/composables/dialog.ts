@@ -23,6 +23,7 @@ export type DialogOptions = {
   denyButtonText?: string
   preConfirm?: (value: any) => any
   willOpen?: (e: any) => void
+  didOpen?: (e: any) => void
 }
 
 export type DialogResult = {
@@ -33,33 +34,40 @@ export type DialogResult = {
 
 const Dialog = {
 
+  alert: (title: string, text?: string): Promise<DialogResult> => {
+    return Dialog.show({ title, text })
+  },
+
   show: (opts: DialogOptions): Promise<DialogResult|typeof SwalDialogResult> => {
 
-    // if no input we rely on system dialogs
-    if (!opts.input && !opts.html) {
-      return Dialog.system(opts)
-    }
-
     // automatic target for dialogs
-    if (!opts.target) {
-      const dialogs = document.querySelectorAll('dialog')
-      for (const dialog of dialogs) {
-        if (dialog.attributes.getNamedItem('open')) {
-          // do not break as there could be multiple dialogs open
-          opts.target = dialog
-        }
-      }
-    }
+    opts.target = document.querySelector('body') as HTMLElement
+    // if (!opts.target) {
+    //   const dialogs = document.querySelectorAll('dialog')
+    //   for (const dialog of dialogs) {
+    //     if (dialog.attributes.getNamedItem('open')) {
+    //       // do not break as there could be multiple dialogs open
+    //       opts.target = dialog
+    //     }
+    //   }
+    // }
 
     // add the icon
     opts.iconHtml = opts.iconHtml ?? '<img src="">'
 
     // add custom classes
     opts.customClass = {
+      popup: 'form form-large',
       confirmButton: opts.showCancelButton ? 'alert-confirm' : 'alert-neutral',
       cancelButton: 'alert-neutral',
       denyButton: 'alert-danger',
       ...opts.customClass
+    }
+
+    // change text to texarea
+    if (opts.input === 'text') {
+      opts.input = 'textarea'
+      opts.customClass.input = 'text-textarea'
     }
 
     // i18n labels
@@ -73,11 +81,12 @@ const Dialog = {
       opts.denyButtonText = t('common.no')
     }
 
-    // this is not very nice but don't want to go through the hassle
-    // of getting base64 from file through preload and all of this!
-    // also tried with a hardcoded base64 but it was ugly
+    // setup
     opts.willOpen = (e: any) => {
       try {
+        // this is not very nice but don't want to go through the hassle
+        // of getting base64 from file through preload and all of this!
+        // also tried with a hardcoded base64 but it was ugly
         const icon: Element =  e.querySelector('.swal2-icon .swal2-icon-content')
         const logo: Element = document.querySelector('#logo')!.cloneNode() as Element
         logo.removeAttribute('id')
@@ -90,45 +99,34 @@ const Dialog = {
       }
     }
 
+    // setup
+    opts.didOpen = (e: any) => {
+      try {
+
+        // prevent return in fake textarea
+        e.querySelectorAll('.text-textarea').forEach((el: HTMLInputElement) => {
+          el.addEventListener('keydown', (ev: KeyboardEvent) => {
+            if (ev.key === 'Enter') {
+              ev.preventDefault()
+              e.querySelector('.swal2-confirm')?.click()
+            }
+          })
+        })
+
+        // focus 1st input
+        const input = e.querySelector('textarea')
+        if (input) {
+          input.focus()
+          input.select()
+          input.scrollTo(0, 0)
+        }
+
+      } catch { /* empty */ }
+    }
+    
     // now do it
     return Swal.fire(opts)
   },
-
-  alert: (title: string, text?: string): Promise<DialogResult> => {
-    return Dialog.show({ title, text })
-  },
-
-  system: async (opts: DialogOptions): Promise<DialogResult> => {
-
-    const buttons  = [ opts.confirmButtonText ?? t('common.ok') ]
-    const indices = { confirm: 0, deny: -1, cancel: -1 }
-    if (opts.showDenyButton) {
-      buttons.push(opts.denyButtonText)
-      indices.deny = buttons.length - 1
-    }
-    if (opts.showCancelButton) {
-      buttons.push(opts.cancelButtonText ?? t('common.cancel'))
-      indices.cancel = buttons.length - 1
-    }
-
-    const sysopts = {
-      type: 'none',
-      message: opts.title,
-      detail: opts.text,
-      buttons: buttons,
-      defaultId: indices.confirm,
-      cancelId: indices.cancel,
-    }
-
-    const value: { response: number } = await window.api.app.showDialog(sysopts)
-
-    return {
-      isConfirmed: value.response === indices.confirm,
-      isDenied: value.response === indices.deny,
-      isDismissed: value.response === indices.cancel,
-    }
-
-  }
 
 }
 

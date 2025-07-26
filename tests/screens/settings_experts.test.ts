@@ -1,17 +1,23 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { ChatModel } from 'multi-llm-ts'
 import { useWindowMock } from '../mocks/window'
+import { createDialogMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import { switchToTab, tabs } from './settings_utils'
 import Settings from '../../src/screens/Settings.vue'
-import { ChatModel } from 'multi-llm-ts'
+import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
 HTMLDialogElement.prototype.showModal = vi.fn()
 HTMLDialogElement.prototype.close = vi.fn()
+
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock()
+})
 
 vi.mock('../../src/services/i18n', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -139,7 +145,7 @@ test('Edit user prompt', async () => {
   await editor.find('[name=prompt]').setValue('prompt2')
   await editor.find('button.default').trigger('click')
 
-  expect((window.api.app.showDialog as Mock).mock.calls[0][0].message).toBe('experts.editor.validation.requiredFields')
+  expect((Dialog.alert as Mock).mock.calls[0][0]).toBe('experts.editor.validation.requiredFields')
 
   await editor.find('[name=name]').setValue('expert2')
   await editor.find('button.default').trigger('click')

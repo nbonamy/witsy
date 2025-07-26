@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach } from 'vitest'
 import { VueWrapper, enableAutoUnmount, mount, flushPromises } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { createDialogMock } from '../mocks/index'
 import { setLlmDefaults } from '../mocks/llm'
 import { store } from '../../src/services/store'
 import Chat from '../../src/models/chat'
@@ -11,7 +12,7 @@ import ChatView from '../../src/screens/Chat.vue'
 import ChatSidebar from '../../src/components/ChatSidebar.vue'
 import ChatArea from '../../src/components/ChatArea.vue'
 import Assistant from '../../src/services/assistant'
-import Swal from 'sweetalert2/dist/sweetalert2.js'
+import Dialog from '../../src/composables/dialog'
 
 import useEventBus  from '../../src/composables/event_bus'
 const { emitEvent } = useEventBus()
@@ -28,10 +29,12 @@ vi.mock('../../src/services/i18n', async () => {
   }
 })
 
-vi.mock('sweetalert2/dist/sweetalert2.js', async () => {
-  const Swal = vi.fn()
-  Swal['fire'] = vi.fn((args) => Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: args.input === 'select' ? 'folder1' : 'user-input' }))
-  return { default: Swal }
+vi.mock('../../src/composables/dialog', async () => {
+  return createDialogMock(
+    (args) => ({
+      value: args.input === 'select' ? 'folder1' : 'user-input'
+    })
+  )
 })
 
 vi.mock('../../src/services/assistant', async () => {
@@ -267,7 +270,7 @@ test('New chat in folder with defaults', async () => {
 test('Rename chat', async () => {
   mount(ChatView)
   emitEvent('rename-chat', store.history.chats[0])
-  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.rename',
     showCancelButton: true,
     input: 'text',
@@ -281,7 +284,7 @@ test('Move chat', async () => {
   expect(store.history.folders[0].chats).not.toHaveLength(1)
   mount(ChatView)
   emitEvent('move-chat', 'chat')
-  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.chat.moveToFolder',
     showCancelButton: true,
     input: 'select',
@@ -299,9 +302,9 @@ test('Move chat', async () => {
 test('Delete chat', async () => {
   mount(ChatView)
   emitEvent('delete-chat', 'chat')
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
-    message: 'main.chat.confirmDeleteSingle',
-    detail: 'common.confirmation.cannotUndo',
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'main.chat.confirmDeleteSingle',
+    text: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.chats).toHaveLength(0) 
@@ -310,7 +313,7 @@ test('Delete chat', async () => {
 test('Rename folder', async () => {
   mount(ChatView)
   emitEvent('rename-folder', 'folder1')
-  expect(Swal.fire).toHaveBeenLastCalledWith(expect.objectContaining({
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
     title: 'main.folder.rename',
     showCancelButton: true,
     input: 'text',
@@ -323,9 +326,9 @@ test('Rename folder', async () => {
 test('Delete folder', async () => {
   mount(ChatView)
   emitEvent('delete-folder', 'folder1')
-  expect(window.api.app.showDialog).toHaveBeenLastCalledWith(expect.objectContaining({
-    message: 'main.folder.confirmDelete',
-    detail: 'common.confirmation.cannotUndo',
+  expect(Dialog.show).toHaveBeenLastCalledWith(expect.objectContaining({
+    title: 'main.folder.confirmDelete',
+    text: 'common.confirmation.cannotUndo',
   }))
   await flushPromises()
   expect(store.history.folders).toHaveLength(1)
