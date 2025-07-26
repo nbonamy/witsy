@@ -115,7 +115,9 @@ const show = async () => {
     if (input) {
       input.focus()
       input.select()
-      input.scrollTo(0, 0)
+      if ('scrollTo' in input) {
+        input.scrollTo(0, 0)
+      }
     }
   }
 
