@@ -1,7 +1,7 @@
 
 import { vi, beforeAll, beforeEach, expect, test, Mock } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
@@ -19,13 +19,7 @@ vi.mock('../../src/composables/dialog', async () =>
 )
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-    commandI18n: vi.fn(() => {}),
-    expertI18n: vi.fn(() => {}),
-    i18nInstructions: vi.fn(),
-    hasLocalization: vi.fn(() => true),
-  }
+  return createI18nMock()
 })
 
 beforeAll(() => {

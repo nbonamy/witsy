@@ -2,6 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Transcribe from '../../src/screens/Transcribe.vue'
 import Waveform from '../../src/components/Waveform.vue'
@@ -10,6 +11,10 @@ import { TranscribeResponse } from '../../src/voice/stt'
 enableAutoUnmount(afterEach)
 
 const emitEventMock = vi.fn()
+
+vi.mock('../../src/services/i18n', async () => {
+  return createI18nMock()
+})
 
 vi.mock('../../src/composables/transcriber', () => {
   return { default: vi.fn(() => ({
@@ -21,14 +26,6 @@ vi.mock('../../src/composables/transcriber', () => {
     },
     processStreamingError: vi.fn(),
   })) }
-})
-
-vi.mock('../../src/services/i18n', async () => {
-  return {
-    allLanguages: [ { locale: 'en-US', label: '🇬🇧 English UK' }, { locale: 'fr-FR', label: '🇫🇷 Français' } ],
-    t: (key: string, values: Record<string, any>) => !values ? key : `${key}-${Object.values(values)}`,
-    commandI18n: vi.fn(() => 'command {input} done'),
-  }
 })
 
 vi.mock('../../src/composables/event_bus', async () => {
@@ -188,7 +185,7 @@ test('Translates transcription', async () => {
   await wrapper.find('.actions button[name=translate]').trigger('click')
   await wrapper.find('.context-menu .item:nth-child(2)').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
-    prompt: 'transcribe.translatePrompt-English UK',
+    prompt: 'transcribe.translatePrompt_default_lang=English UK',
     attachments: [ expect.objectContaining({ content: 'test_encoded' } ) ],
     submit: true,
   })
@@ -201,7 +198,7 @@ test('Commands transcription', async () => {
   await wrapper.find('.actions button[name=commands]').trigger('click')
   await wrapper.find('.context-menu .item:nth-child(3)').trigger('click')
   expect(emitEventMock).toHaveBeenCalledWith('new-chat', {
-    prompt: 'command test done',
+    prompt: 'command_uuid3_template_test',
     submit: true,
   })
 })

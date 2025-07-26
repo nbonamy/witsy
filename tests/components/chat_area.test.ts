@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createDialogMock } from '../mocks'
+import { createDialogMock, createI18nMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { findModelSelectoPlus } from '../utils'
 import { store } from '../../src/services/store'
@@ -21,11 +21,7 @@ vi.mock('../../src/composables/dialog', async () => {
 })
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => `${key}`,
-    i18nInstructions: (config: any, key: string) => `${key}`,
-    allLanguages: [ { locale: 'en-US', label: 'English' }, { locale: 'fr-FR', label: 'French' } ],
-  }
+  return createI18nMock()
 })
 
 vi.mock('../../src/composables/event_bus', async () => {

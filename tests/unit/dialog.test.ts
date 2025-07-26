@@ -1,14 +1,13 @@
 
 import { vi, beforeAll, beforeEach, test, expect } from 'vitest'
 import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Dialog from '../../src/composables/dialog'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => key,
-  }
+  return createI18nMock()
 })
 
 vi.mock('sweetalert2/dist/sweetalert2.js', async () => {

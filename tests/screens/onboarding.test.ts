@@ -1,7 +1,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test, describe } from 'vitest'
 import { mount as vtumount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
-import { nextTick } from 'vue'
 import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Onboarding from '../../src/screens/Onboarding.vue'
 import Welcome from '../../src/onboarding/Welcome.vue'
@@ -18,20 +18,10 @@ enableAutoUnmount(afterAll)
 const screensMacOS = [Welcome, Chat, Ollama, Studio, Voice, Permissions, Instructions, Done]
 const screensOthers = [Welcome, Chat, Ollama, Studio, Voice, Instructions, Done]
 
-// Mock i18n
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string) => key,
-    allLanguages: [
-      { locale: 'en', label: 'English' },
-      { locale: 'fr', label: 'Français' },
-      { locale: 'es', label: 'Español' },
-      { locale: 'de', label: 'Deutsch' }
-    ]
-  }
+  return createI18nMock()
 })
 
-// Mock LLM services
 vi.mock('../../src/llms/manager', async () => {
   return { 
     default: class {
@@ -466,12 +456,12 @@ describe('Language Selector Functionality', () => {
     expect(store.config.general.locale).toBe('')
     const wrapper = await mount(Onboarding)
     const langSelect = wrapper.findComponent({ name: 'LangSelect' })
-    langSelect.find('select').setValue('fr')
-    expect(store.config.general.locale).toBe('fr')
+    langSelect.find('select').setValue('fr-FR')
+    expect(store.config.general.locale).toBe('fr-FR')
   })
 
   test('Language selector loads current locale on mount', async () => {
-    store.config.general.locale = 'fr'
+    store.config.general.locale = 'fr-FR'
     
     const wrapper = await mount(Onboarding)
     
@@ -480,7 +470,7 @@ describe('Language Selector Functionality', () => {
     expect(languageSelector.exists()).toBe(true)
     
     // The select should have the French option selected
-    expect(languageSelector.element.value).toBe('fr')
+    expect(languageSelector.element.value).toBe('fr-FR')
   })
 
 })
@@ -604,7 +594,7 @@ describe('Chat Screen - Engine Configuration', () => {
     // Should show status message (translation key is expected in test environment)
     const statusSpan = wrapper.find('.status')
     expect(statusSpan.exists()).toBe(true)
-    expect(statusSpan.text()).toContain('onboarding.chat.alreadyonboarding.chat.count')
+    expect(statusSpan.text()).toContain('onboarding.chat.already_fr-FR_engine=OpenAIonboarding.chat.count_fr-FR_count=2')
   })
 
 })
@@ -742,7 +732,7 @@ describe('Studio Screen - Image/Video Engine Configuration', () => {
     // Should show status message (Studio component uses chat translations)
     const statusSpan = wrapper.find('.status')
     expect(statusSpan.exists()).toBe(true)
-    expect(statusSpan.text()).toBe('onboarding.studio.alreadyonboarding.studio.count')
+    expect(statusSpan.text()).toBe('onboarding.studio.already_fr-FR_engine=OpenAIonboarding.studio.count_fr-FR_count=3')
   })
 
 })
@@ -867,7 +857,7 @@ describe('Voice Screen - Engine Configuration', () => {
     // Should show status message (Voice component uses chat translations)
     const statusSpan = wrapper.find('.status')
     expect(statusSpan.exists()).toBe(true)
-    expect(statusSpan.text()).toBe('onboarding.voice.alreadyonboarding.voice.count')
+    expect(statusSpan.text()).toBe('onboarding.voice.already_fr-FR_engine=OpenAIonboarding.voice.count_fr-FR_count=2')
   })
 
 })
@@ -881,8 +871,8 @@ describe('Permissions Screen', () => {
 
     expect(wrapper.find('section').exists()).toBe(true)
     expect(wrapper.find('header').exists()).toBe(true)
-    expect(wrapper.find('h1').text()).toBe('onboarding.permissions.title')
-    expect(wrapper.find('h3').text()).toBe('onboarding.permissions.subtitle')
+    expect(wrapper.find('h1').text()).toBe('onboarding.permissions.title_fr-FR')
+    expect(wrapper.find('h3').text()).toBe('onboarding.permissions.subtitle_fr-FR')
     
     // Check permission cards
     const permissionCards = wrapper.findAll('.permission-card')
@@ -946,7 +936,7 @@ describe('Permissions Screen', () => {
     
     // Trigger permission check to update state
     await wrapper.vm.checkPermissions()
-    await nextTick()
+    await wrapper.vm.$nextTick()
     
     // Dialog mock returns { isConfirmed: true } by default, so canLeave should return true
     const canLeaveWithDialog = await wrapper.vm.canLeave()
@@ -959,7 +949,7 @@ describe('Permissions Screen', () => {
     
     // Trigger permission check to update state
     await wrapper.vm.checkPermissions()
-    await nextTick()
+    await wrapper.vm.$nextTick()
     
     // Should return true without showing dialog
     const canLeaveWithoutDialog = await wrapper.vm.canLeave()

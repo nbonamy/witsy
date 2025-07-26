@@ -2,6 +2,7 @@
 import { vi, beforeAll, afterAll, expect, test } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock } from '../mocks/window'
+import { createI18nMock } from '../mocks'
 import { store } from '../../src/services/store'
 import MessageItemToolBlock from '../../src/components/MessageItemToolBlock.vue'
 import { beforeEach } from 'node:test'
@@ -9,9 +10,7 @@ import { beforeEach } from 'node:test'
 enableAutoUnmount(afterAll)
 
 vi.mock('../../src/services/i18n', async () => {
-  return {
-    t: (key: string, values: Record<string, any>) => !values ? key : `${key}-${Object.values(values)}`,
-  }
+  return createI18nMock()
 })
 
 beforeAll(() => {
@@ -35,7 +34,7 @@ test('Basic rendering of done', async () => {
   }}})
 
   expect(wrapper.exists()).toBe(true)
-  expect(wrapper.find('.tool-header .tool-name').text()).toBe('message.toolCall.call-tool1')
+  expect(wrapper.find('.tool-header .tool-name').text()).toBe('message.toolCall.call_default_name=tool1')
   expect(wrapper.find('.tool-header .tool-loader').exists()).toBe(false)
   expect(wrapper.find('.tool-header .tool-unfold').exists()).toBe(true)
   expect(wrapper.find('.tool-header .tool-fold').exists()).toBe(false)
