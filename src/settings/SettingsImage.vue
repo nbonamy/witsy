@@ -26,7 +26,7 @@
               <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
               </option>
             </select>
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+            <RefreshButton :on-refresh="getModels" />
           </div>
           <span>{{ t('settings.plugins.image.apiKeyReminder') }}</span>
         </div>
@@ -48,7 +48,7 @@
             <option v-for="model in models" :key="model.id" :value="model.id">{{ model.name }}
             </option>
           </select>
-          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          <RefreshButton :on-refresh="getModels" />
         </div>
       </div>
     </template>
@@ -64,7 +64,7 @@
         <label>{{ t('settings.plugins.image.imageModel') }}</label>
         <div class="form-subgroup">
           <Combobox :items="models" :placeholder="t('common.modelPlaceholder')" v-model="model" @change="save">
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+            <RefreshButton :on-refresh="getModels" />
           </Combobox>
           <a v-if="engine === 'falai'" href="https://fal.ai/models?categories=text-to-image" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
           <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
@@ -81,12 +81,13 @@
 import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
-import Dialog from '../composables/dialog'
-import InputObfuscated from '../components/InputObfuscated.vue'
-import Combobox from '../components/Combobox.vue'
-import ImageCreator from '../services/image'
 import { baseURL as sdwebuiDefaultBaseURL } from '../services/sdwebui'
 import ModelLoaderFactory from '../services/model_loader'
+import Dialog from '../composables/dialog'
+import ImageCreator from '../services/image'
+import InputObfuscated from '../components/InputObfuscated.vue'
+import RefreshButton from '../components/RefreshButton.vue'
+import Combobox from '../components/Combobox.vue'
 
 const enabled = ref(false)
 const engine = ref(null)
@@ -95,7 +96,6 @@ const huggingAPIKey = ref(null)
 const replicateAPIKey = ref(null)
 const falaiAPIKey = ref(null)
 const sdwebuiBaseURL = ref('')
-const refreshLabel = ref(t('common.refresh'))
 
 const engines = computed(() => ImageCreator.getEngines(false))
 const models = computed(() => store.config.engines[engine.value]?.models?.image || [])
@@ -116,32 +116,21 @@ const onChangeEngine = async () => {
   save()
 }
 
-const onRefresh = async () => {
-  refreshLabel.value = t('common.refreshing')
-  setTimeout(() => getModels(), 500)
-}
-
-const setEphemeralRefreshLabel = (text: string) => {
-  refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
-}
-
-const getModels = async () => {
+const getModels = async (): Promise<boolean> => {
 
   // do it
   let loader = ModelLoaderFactory.create(store.config, engine.value)
   let success = await loader.loadModels()
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+    return false
   }
 
   // reload
   load()
 
   // done
-  setEphemeralRefreshLabel(t('common.done'))
+  return true
 
 }
 

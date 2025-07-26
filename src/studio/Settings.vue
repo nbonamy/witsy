@@ -28,7 +28,7 @@
               <BIconStar v-else/>
             </button>
           </ComboBox>
-          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          <RefreshButton :on-refresh="getModels" />
           <a v-if="engine === 'falai'" :href="falaiModelsLink" target="_blank">{{ t('settings.plugins.image.falai.aboutModels') }}</a>
           <a v-if="engine === 'replicate'" :href="replicateModelsLink" target="_blank">{{ t('settings.plugins.image.replicate.aboutModels' ) }}</a>
           <a v-if="engine === 'huggingface'" href="https://huggingface.co/models?pipeline_tag=text-to-image&sort=likes" target="_blank">{{ t('settings.plugins.image.huggingface.aboutModels') }}</a>
@@ -39,7 +39,7 @@
             <select v-model="model" name="model" @change="onChangeModel">
               <option v-for="model in models" :value="model.id">{{ model.name }}</option>
             </select>
-            <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+            <RefreshButton :on-refresh="getModels" />
           </div>
         </template>
       
@@ -141,6 +141,7 @@ import { t } from '../services/i18n'
 import { store, kReferenceParamValue } from '../services/store'
 import Message from '../models/message'
 import Dialog from '../composables/dialog'
+import RefreshButton from '../components/RefreshButton.vue'
 import VariableEditor from '../screens/VariableEditor.vue'
 import ComboBox from '../components/Combobox.vue'
 import ImageCreator from '../services/image'
@@ -186,7 +187,6 @@ const transform = ref(false)
 const preserve = ref(false)
 const showParams = ref(false)
 const selectedParam = ref(null)
-const refreshLabel = ref(t('common.refresh'))
 const showPromptLibrary = ref(false)
 const menuX = ref(0)
 const menuY = ref(0)
@@ -474,25 +474,14 @@ const onChangeModel = () => {
   saveSettings()
 }
 
-const onRefresh = async () => {
-  refreshLabel.value = t('common.refreshing')
-  setTimeout(() => getModels(), 500)
-}
-
-const setEphemeralRefreshLabel = (text: string) => {
-  refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
-}
-
-const getModels = async () => {
+const getModels = async (): Promise<boolean> => {
 
   // do it
   let loader = ModelLoaderFactory.create(store.config, engine.value)
   let success = await loader.loadModels()
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+    return false
   }
 
   // make sure we have a valid model
@@ -502,7 +491,7 @@ const getModels = async () => {
 
   // done
   store.saveSettings()
-  setEphemeralRefreshLabel(t('common.done'))
+  return true
 
 }
 
