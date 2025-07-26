@@ -1,7 +1,7 @@
 
 import { beforeAll, expect, test } from 'vitest'
 import { useWindowMock } from '../mocks/window'
-import { OpenAI, Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin, ChatModel } from 'multi-llm-ts'
+import { OpenAI, Anthropic, Azure, Ollama, Google, Groq, XAI, Cerebras, MistralAI, DeepSeek, OpenRouter, MultiToolPlugin, ChatModel, defaultCapabilities } from 'multi-llm-ts'
 import { Plugin1, Plugin2, Plugin3 } from '../mocks/plugins'
 import LlmFactory, { favoriteMockEngine } from '../../src/llms/llm'
 import { store } from '../../src/services/store'
@@ -16,11 +16,7 @@ beforeAll(() => {
 
 const llmManager = LlmFactory.manager(store.config)
 
-const model: ChatModel = { id: 'model-id', name: 'model-name', capabilities: {
-  tools: true,
-  vision: true,
-  reasoning: false
-} }
+const model: ChatModel = { id: 'model-id', name: 'model-name', capabilities: defaultCapabilities.capabilities }
 
 test('Custom Engine', () => {
   for (const engine of llmManager.getStandardEngines()) {
@@ -236,10 +232,10 @@ test('Reflects configuration changes', () => {
 
 test('getChatEngineModel', () => {
   store.config.llm.engine = 'mock'
-  store.config.engines.mock = { model: { chat: 'chat1' } }
+  store.config.engines.mock = { models: { chat: [] }, model: { chat: 'chat1' } }
   expect(llmManager.getChatEngineModel(true)).toStrictEqual({ engine: 'mock', model: 'chat1' })
   store.config.llm.engine = favoriteMockEngine
-  store.config.engines[favoriteMockEngine] = { model: { chat: 'mock-chat' } }
+  store.config.engines[favoriteMockEngine] = { models: { chat: [] }, model: { chat: 'mock-chat' } }
   expect(llmManager.getChatEngineModel(true)).toStrictEqual({ engine: 'mock', model: 'chat' })
 })
 

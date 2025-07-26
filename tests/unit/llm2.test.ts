@@ -9,6 +9,8 @@ import {
   defaultCapabilities
 } from 'multi-llm-ts'
 import LlmManagerBase from '../../src/llms/base'
+import OpenRouter from '../../src/llms/openrouter'
+import { EngineConfig } from '../../src/types/config'
 
 vi.mock('multi-llm-ts', async (importOriginal) => {
   const mod: any = await importOriginal()
@@ -188,5 +190,28 @@ test('Can process format', async () => {
   store.config.engines.openrouter.model.vision = 'vision'
   expect(llmManager.canProcessFormat('openrouter', 'chat', 'jpg')).toBe(true)
   expect(llmManager.canProcessFormat('openrouter', 'vision', 'jpg')).toBe(true)
+
+})
+
+test('OpenRouter getCompletionOpts', () => {
+
+  store.config.engines.openrouter = {
+    apiKey: '123',
+  } as EngineConfig
+
+  const llmManager = LlmFactory.manager(store.config)
+  const openrouter = llmManager.igniteEngine('openrouter') as OpenRouter
+  
+  const opts1 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+  // @ts-expect-error openai api
+  expect(opts1?.provider).toBeUndefined()
+  
+  store.config.engines.openrouter.providerOrder = 'provider1\nprovider2'  
+  const opts2 = openrouter.getCompletionOpts({ id: 'model', name: 'model', capabilities: defaultCapabilities.capabilities })
+
+  // @ts-expect-error openai api
+  expect(opts2.provider.allow_fallbacks).toBe(true)
+  // @ts-expect-error openai api
+  expect(opts2.provider.order).toStrictEqual(['provider1', 'provider2'])
 
 })

@@ -19,6 +19,13 @@
       </div>
     </div>
     <div class="form-field">
+      <label>{{ t('settings.engines.openrouter.providerOrder') }}</label>
+      <div class="form-subgroup">
+        <textarea name="providerOrder" v-model="providerOrder" @input="save"></textarea>
+        <a href="https://openrouter.ai/docs/features/provider-routing#ordering-specific-providers" target="_blank">{{ t('settings.engines.openrouter.aboutOrder') }}</a><br/>
+      </div>
+    </div>
+    <div class="form-field">
       <label>{{ t('settings.engines.vision.model') }}</label>
       <ModelSelectPlus v-model="vision_model" :models="vision_models" :disabled="vision_models.length == 0" @change="save" />
     </div>
@@ -46,6 +53,7 @@ const disableTools = ref(false)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
+const providerOrder = ref<string>('')
 
 const vision_models = computed(() => {
   return [
@@ -60,6 +68,7 @@ const load = () => {
   chat_model.value = store.config.engines.openrouter?.model?.chat || ''
   vision_model.value = store.config.engines.openrouter?.model?.vision || ''
   disableTools.value = store.config.engines.openrouter?.disableTools || false
+  providerOrder.value = store.config.engines.openrouter?.providerOrder || ''
 }
 
 const getModels = async (): Promise<boolean> => {
@@ -93,6 +102,7 @@ const save = () => {
   store.config.engines.openrouter.model.chat = chat_model.value
   store.config.engines.openrouter.model.vision = vision_model.value
   store.config.engines.openrouter.disableTools = disableTools.value
+  store.config.engines.openrouter.providerOrder = providerOrder.value
   store.saveSettings()
 }
 
@@ -100,3 +110,11 @@ defineExpose({ load })
 
 </script>
 
+<style scoped>
+
+textarea[name="providerOrder"] {
+  height: 4lh;
+  resize: vertical !important;
+}
+
+</style>

@@ -4,6 +4,7 @@ import { getComputerInfo } from './anthropic'
 import LlmManagerBase from './base'
 import * as llm from 'multi-llm-ts'
 import Ollama from './ollama'
+import OpenRouter from './openrouter'
 
 export default class LlmManager extends LlmManagerBase {
 
@@ -34,7 +35,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'mistralai') return llm.MistralAI.isConfigured(this.config.engines.mistralai)
     if (engine === 'ollama') return Ollama.isConfigured(this.config.engines.ollama)
     if (engine === 'openai') return llm.OpenAI.isConfigured(this.config.engines.openai)
-    if (engine === 'openrouter') return llm.OpenRouter.isConfigured(this.config.engines.openrouter)
+    if (engine === 'openrouter') return OpenRouter.isConfigured(this.config.engines.openrouter)
     if (engine === 'xai') return llm.XAI.isConfigured(this.config.engines.xai)
     if (this.isFavoriteEngine(engine)) return true
     if (this.isCustomEngine(engine)) return true
@@ -52,7 +53,7 @@ export default class LlmManager extends LlmManagerBase {
     if (engine === 'mistralai') return llm.MistralAI.isReady(this.config.engines.mistralai, this.config.engines.mistralai?.models)
     if (engine === 'ollama') return Ollama.isReady(this.config.engines.ollama, this.config.engines.ollama?.models) 
     if (engine === 'openai') return llm.OpenAI.isReady(this.config.engines.openai, this.config.engines.openai?.models)
-    if (engine === 'openrouter') return llm.OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
+    if (engine === 'openrouter') return OpenRouter.isReady(this.config.engines.openrouter, this.config.engines.openrouter?.models)
     if (engine === 'xai') return llm.XAI.isReady(this.config.engines.xai, this.config.engines.xai?.models)
     if (this.isFavoriteEngine(engine)) return true
     if (this.isCustomEngine(engine)) return true
@@ -81,7 +82,7 @@ export default class LlmManager extends LlmManagerBase {
       if (engine === 'mistralai') return new llm.MistralAI(this.config.engines.mistralai)
       if (engine === 'ollama') return new Ollama(this.config.engines.ollama)
       if (engine === 'openai') return new llm.OpenAI(this.config.engines.openai)
-      if (engine === 'openrouter') return new llm.OpenRouter(this.config.engines.openrouter)
+      if (engine === 'openrouter') return new OpenRouter(this.config.engines.openrouter)
       if (engine === 'xai') return new llm.XAI(this.config.engines.xai)
 
     } catch { /* empty */ }

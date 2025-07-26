@@ -1992,7 +1992,9 @@
       },
       "openrouter": {
         "aboutModels": "Mehr über OpenRouter-Modelle",
-        "pricing": "OpenRouter-Preise"
+        "aboutOrder": "Mehr über die Reihenfolge der OpenRouter-Anbieter erfahren",
+        "pricing": "OpenRouter-Preise",
+        "providerOrder": "Anbieterreihenfolge (jeweils ein Anbieter pro Zeile)"
       },
       "sdwebui": {
         "baseURL": "API Base URL",
