@@ -109,6 +109,11 @@ div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title) {
   padding-top: 2rem;
 }
 
+div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-title) {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 div:where(.swal2-container) .swal2-html-container {
   text-align: center;
   color: var(--dimmed-text-color);
