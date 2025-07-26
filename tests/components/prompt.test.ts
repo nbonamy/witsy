@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
+import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
 import { stubTeleport } from '../mocks/stubs'
 import { store } from '../../src/services/store'
 import Prompt from '../../src/components/Prompt.vue'
@@ -12,23 +12,17 @@ import { getLlmLocale } from '../../src/services/i18n'
 
 enableAutoUnmount(afterAll)
 
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn((event, ...args) => {
-  // this is called when mounting so discard it
-  if (event === 'prompt-resize' && args[0] === '0px') {
-    emitEventMock.mockClear()
-  }
-})
-
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
 })
 
 vi.mock('../../src/composables/event_bus', async () => {
-  return { default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
-  })}
+  return createEventBusMock((event, ...args) => {
+    // this is called when mounting so discard it
+    if (event === 'prompt-resize' && args[0] === '0px') {
+      emitEventMock.mockClear()
+    }
+  })
 })
 
 let wrapper: VueWrapper<any>

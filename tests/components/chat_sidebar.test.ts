@@ -1,6 +1,7 @@
 
 import { vi, beforeAll, beforeEach, afterAll, expect, test } from 'vitest'
 import { mount, VueWrapper, enableAutoUnmount } from '@vue/test-utils'
+import { createEventBusMock, emitEventMock } from '../mocks'
 import { useWindowMock } from '../mocks/window'
 import { store } from '../../src/services/store'
 import ChatSidebar from '../../src/components/ChatSidebar.vue'
@@ -8,14 +9,8 @@ import Chat from '../../src/models/chat'
 
 enableAutoUnmount(afterAll)
 
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
-
 vi.mock('../../src/composables/event_bus', async () => {
-  return { default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
-  })}
+  return createEventBusMock()
 })
 
 beforeAll(() => {

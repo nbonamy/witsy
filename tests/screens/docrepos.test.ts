@@ -9,22 +9,12 @@ import Dialog from '../../src/composables/dialog'
 
 enableAutoUnmount(afterAll)
 
-const onEventMock = vi.fn()
-const emitEventMock = vi.fn()
-
 vi.mock('../../src/composables/dialog', async () => {
   return createDialogMock()
 })
 
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
-})
-
-vi.mock('../../src/composables/event_bus', async () => {
-  return { default: () => ({
-    onEvent: onEventMock,
-    emitEvent: emitEventMock
-  })}
 })
 
 beforeAll(() => {

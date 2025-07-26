@@ -2,7 +2,7 @@
 import { vi, beforeAll, beforeEach, expect, test, afterEach, Mock } from 'vitest'
 import { enableAutoUnmount, mount, VueWrapper } from '@vue/test-utils'
 import { useWindowMock, useBrowserMock } from '../mocks/window'
-import { createI18nMock } from '../mocks'
+import { createEventBusMock, createI18nMock, emitEventMock } from '../mocks'
 import { store } from '../../src/services/store'
 import Transcribe from '../../src/screens/Transcribe.vue'
 import Waveform from '../../src/components/Waveform.vue'
@@ -10,10 +10,12 @@ import { TranscribeResponse } from '../../src/voice/stt'
 
 enableAutoUnmount(afterEach)
 
-const emitEventMock = vi.fn()
-
 vi.mock('../../src/services/i18n', async () => {
   return createI18nMock()
+})
+
+vi.mock('../../src/composables/event_bus', async () => {
+  return createEventBusMock()
 })
 
 vi.mock('../../src/composables/transcriber', () => {
@@ -26,12 +28,6 @@ vi.mock('../../src/composables/transcriber', () => {
     },
     processStreamingError: vi.fn(),
   })) }
-})
-
-vi.mock('../../src/composables/event_bus', async () => {
-  return { default: () => ({
-    emitEvent: emitEventMock
-  })}
 })
 
 beforeAll(() => {
