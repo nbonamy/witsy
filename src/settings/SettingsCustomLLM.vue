@@ -26,7 +26,7 @@
         <label>{{ t('settings.engines.chatModel') }}</label>
         <div class="form-subgroup">
           <Combobox name="models" :items="chat_models" :placeholder="t('common.modelPlaceholder')" v-model="chat_model" @change="save">
-            <button name="refresh"@click.prevent="onRefresh">{{ refreshLabel }}</button>
+            <RefreshButton name="refresh" :on-refresh="getModels" ref="refresh" />
           </Combobox>
         </div>
       </div>
@@ -72,6 +72,7 @@ import { store } from '../services/store'
 import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
 import defaults from '../../defaults/settings.json'
+import RefreshButton from '../components/RefreshButton.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import Combobox from '../components/Combobox.vue'
 import { ChatModel } from 'multi-llm-ts'
@@ -89,11 +90,11 @@ const apiKey = ref(null)
 const baseURL = ref(null)
 const deployment = ref(null)
 const apiVersion = ref(null)
-const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
 const chat_models = ref<ChatModel[]>([])
+const refresh = ref(null)
 
 const vision_models = computed(() => {
   return [
@@ -120,17 +121,7 @@ const load = () => {
   disableTools.value = engineConfig?.disableTools || false
 }
 
-const onRefresh = async () => {
-  refreshLabel.value = t('common.refreshing')
-  setTimeout(() => getModels(), 500)
-}
-
-const setEphemeralRefreshLabel = (text: string) => {
-  refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
-}
-
-const getModels = async () => {
+const getModels = async (): Promise<boolean> => {
 
   // // save witsy models
   // const engineConfig = store.config.engines[props.engine] as CustomEngineConfig
@@ -142,8 +133,7 @@ const getModels = async () => {
   let success = await llmManager.loadModelsCustom(props.engine)
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+    return false
   }
 
   // reload
@@ -159,7 +149,7 @@ const getModels = async () => {
   // }
 
   // done
-  setEphemeralRefreshLabel(t('common.done'))
+  return true
 
 }
 
@@ -200,7 +190,7 @@ const save = () => {
   store.saveSettings()
 }
 
-defineExpose({ load, loadModels: onRefresh })
+defineExpose({ load, loadModels: () => refresh.value?.refresh() })
 
 </script>
 

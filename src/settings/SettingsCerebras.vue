@@ -12,7 +12,7 @@
       <div class="form-subgroup">
         <div class="control-group">
           <ModelSelectPlus v-model="chat_model" :models="chat_models" :height="300" :disabled="chat_models.length == 0" @change="save" />
-          <button @click.prevent="onRefresh">{{ refreshLabel }}</button>
+          <RefreshButton :on-refresh="getModels" />
         </div>
         <a href="https://inference-docs.cerebras.ai/introduction" target="_blank">{{ t('settings.engines.cerebras.aboutModels') }}</a><br/>
         <a href="https://inference-docs.cerebras.ai/support/pricing" target="_blank">{{ t('settings.engines.cerebras.pricing') }}</a>
@@ -36,12 +36,12 @@ import { store } from '../services/store'
 import { t } from '../services/i18n'
 import LlmFactory from '../llms/llm'
 import Dialog from '../composables/dialog'
+import RefreshButton from '../components/RefreshButton.vue'
 import ModelSelectPlus from '../components/ModelSelectPlus.vue'
 import InputObfuscated from '../components/InputObfuscated.vue'
 import { ChatModel, defaultCapabilities } from 'multi-llm-ts'
 
 const apiKey = ref(null)
-const refreshLabel = ref(t('common.refresh'))
 const disableTools = ref(false)
 const chat_model = ref<string>(null)
 const vision_model = ref<string>(null)
@@ -62,32 +62,21 @@ const load = () => {
   disableTools.value = store.config.engines.cerebras?.disableTools || false
 }
 
-const onRefresh = async () => {
-  refreshLabel.value = t('common.refreshing')
-  setTimeout(() => getModels(), 500)
-}
-
-const setEphemeralRefreshLabel = (text: string) => {
-  refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
-}
-
-const getModels = async () => {
+const getModels = async (): Promise<boolean> => {
 
   // load
   const llmManager = LlmFactory.manager(store.config)
   let success = await llmManager.loadModels('cerebras')
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+    return false
   }
 
   // reload
   load()
 
   // done
-  setEphemeralRefreshLabel(t('common.done'))
+  return true
 
 }
 

@@ -12,7 +12,7 @@
     <div class="form-subgroup">
       <Combobox v-model="model" :items="models"@change="onChangeModel" required :disabled="disabled" />
     </div>
-    <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
+    <RefreshButton :on-refresh="getModels" v-if="canRefresh"/>
   </div>
   
   <div class="form-field" v-else>
@@ -20,7 +20,7 @@
     <select v-model="model" @change="onChangeModel" required :disabled="disabled">
       <option v-for="m in models" :key="m.id" :value="m.id">{{ m.name }}</option>
     </select>
-    <button @click.prevent="onRefresh" v-if="canRefresh">{{ refreshLabel }}</button>
+    <RefreshButton :on-refresh="getModels" v-if="canRefresh" ref="refresh"/>
   </div>
   
   <div class="form-field" style="margin-top: -8px" v-if="engine !== 'ollama'">
@@ -45,14 +45,16 @@ import { ref, computed, nextTick } from 'vue'
 import { store } from '../services/store'
 import { t } from '../services/i18n'
 import { getEmbeddingModels } from '../llms/ollama'
-import LlmFactory, { ILlmManager } from '../llms/llm'
+import LlmFactory from '../llms/llm'
 import OllamaModelPull from '../components/OllamaModelPull.vue'
+import RefreshButton from '../components/RefreshButton.vue'
 import Combobox from '../components/Combobox.vue'
 import Dialog from '../composables/dialog'
 
 const engine = defineModel('engine', { default: 'openai' })
 const model = defineModel('model', { default: 'text-embedding-ada-002' })
-const refreshLabel = ref('Refresh')
+
+const refresh = ref(null)
 
 defineProps({
   disabled: {
@@ -110,24 +112,19 @@ const onChangeModel = () => {
 }
 
 const onRefresh = async () => {
-  refreshLabel.value = t('common.refreshing')
-  setTimeout(() => getModels(), 500)
+  if (refresh.value) {
+    await refresh.value.refresh()
+  }
 }
 
-const setEphemeralRefreshLabel = (text: string) => {
-  refreshLabel.value = text
-  setTimeout(() => refreshLabel.value = t('common.refresh'), 2000)
-}
-
-const getModels = async () => {
+const getModels = async (): Promise<boolean> => {
 
   // load
   const llmManager = LlmFactory.manager(store.config)
   const success = await llmManager.loadModels('ollama')
   if (!success) {
     Dialog.alert(t('common.errorModelRefresh'))
-    setEphemeralRefreshLabel(t('common.error'))
-    return
+    return false
   }
 
   // reload
@@ -137,7 +134,7 @@ const getModels = async () => {
   onChangeEngine()
 
   // done
-  setEphemeralRefreshLabel(t('common.done'))
+  return true
 
 }
 
