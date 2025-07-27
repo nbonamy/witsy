@@ -75,7 +75,7 @@ div:where(.swal2-container) .swal2-icon-content img {
 
 div:where(.swal2-container) h2:where(.swal2-title) {
   padding: 3rem;
-  padding-top: calc(var(--icon-size) - 1.5rem);
+  padding-top: calc(var(--icon-size) - 1.25rem);
   padding-bottom: 0rem;
   text-align: center;
   color: var(--text-color);
@@ -92,7 +92,7 @@ div:where(.swal2-container):has(.swal2-icon.hidden) h2:where(.swal2-title) {
 }
 
 div:where(.swal2-container):has(.swal2-html-container:empty) h2:where(.swal2-title) {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 div:where(.swal2-container) .swal2-html-container {
