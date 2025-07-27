@@ -347,7 +347,7 @@ const onChangeModel = async () => {
   Dialog.show({
     target: document.querySelector('.settings .voice'),
     title: t('settings.voice.downloadConfirmation.title'),
-    confirmButtonText: t('common.continue'),
+    confirmButtonText: t('common.yes'),
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
