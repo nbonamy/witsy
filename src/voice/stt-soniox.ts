@@ -1,10 +1,6 @@
+
 import { Configuration } from 'types/config'
-import {
-  STTEngine,
-  ProgressCallback,
-  TranscribeResponse,
-  StreamingCallback,
-} from './stt'
+import { STTEngine, ProgressCallback, TranscribeResponse, StreamingCallback, } from './stt'
 
 /**
  * Soniox speech‑to‑text engine (Async + Realtime).
@@ -28,7 +24,7 @@ export default class STTSoniox implements STTEngine {
   /** Default-Modelle (können via Settings überschrieben werden) */
   static readonly models = [
     { id: 'stt-async-preview', label: 'Soniox Async Preview' },
-    { id: 'stt-rt-preview',    label: 'Soniox Realtime Preview' },
+    { id: 'stt-rt-preview', label: 'Soniox Realtime Preview' },
   ]
 
   private config: Configuration
@@ -53,33 +49,37 @@ export default class STTSoniox implements STTEngine {
     return model?.startsWith('stt-rt')
   }
 
-  requiresPcm16bits(model: string): boolean { return false }
-  static requiresDownload(): boolean { return false }
-  requiresDownload(): boolean { return STTSoniox.requiresDownload() }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  requiresPcm16bits(model: string): boolean {
+    return false
+  }
+  
+  static requiresDownload(): boolean {
+    return false
+  }
+  
+  requiresDownload(): boolean {
+    return STTSoniox.requiresDownload()
+  }
 
   async initialize(callback?: ProgressCallback): Promise<void> {
     callback?.({ status: 'ready', task: 'soniox', model: this.config.stt.model })
   }
 
-  /**
-   * Asynchrone Transkription (REST).
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transcribe(audioBlob: Blob, opts?: Record<string, any>): Promise<TranscribeResponse> {
+    
     const apiKey = this.config.engines?.soniox?.apiKey
     if (!apiKey) throw new Error('Missing Soniox API key in settings')
 
-    const asyncModel =
-      (opts?.model as string) ||
-      this.config.stt?.soniox?.asyncModel ||
-      this.config.stt.model ||
-      'stt-async-preview'
-    const languageHints: string[] | undefined = opts?.languageHints || this.config.stt?.soniox?.languageHints
-    const audioFormat: string = opts?.audioFormat || this.config.stt?.soniox?.audioFormat || 'auto'
-    const cleanup = (opts?.cleanup ?? this.config.stt?.soniox?.cleanup) !== false
+    const asyncModel =  this.config.stt.model || 'stt-async-preview'
+    const languageHints: string[] | undefined = this.config.stt?.soniox?.languageHints
+    const audioFormat: string = this.config.stt?.soniox?.audioFormat || 'auto'
+    const cleanup = this.config.stt?.soniox?.cleanup ?? false
 
     // 1) Upload
     const fd = new FormData()
-    fd.append('file', audioBlob, (opts?.fileName as string) || 'audio')
+    fd.append('file', audioBlob, 'audio')
     const up = await fetch('https://api.soniox.com/v1/files', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}` },
@@ -127,26 +127,31 @@ export default class STTSoniox implements STTEngine {
 
     // 5) Cleanup
     if (cleanup) {
+      
       try {
         await fetch(`https://api.soniox.com/v1/transcriptions/${transcriptionId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${apiKey}` },
         })
-      } catch {}
+      } catch (e) {
+        console.error('Soniox transcription DELETE failed:', e)
+      }
+      
       try {
         await fetch(`https://api.soniox.com/v1/files/${fileId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${apiKey}` },
         })
-      } catch {}
+      } catch (e) {
+        console.error('Soniox file DELETE failed:', e)
+      }
     }
     return { text }
   }
 
-  /**
-   * Realtime WebSocket.
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async startStreaming(model: string, callback: StreamingCallback, opts?: Record<string, any>): Promise<void> {
+    
     if (this.ws) return
 
     const apiKey = this.config.engines?.soniox?.apiKey
@@ -155,11 +160,11 @@ export default class STTSoniox implements STTEngine {
       return
     }
 
-    const rtModel = model || this.config.stt?.soniox?.realtimeModel || 'stt-rt-preview'
-    const languageHints: string[] | undefined = opts?.languageHints || this.config.stt?.soniox?.languageHints
-    const audioFormat: string = opts?.audioFormat || this.config.stt?.soniox?.audioFormat || 'auto'
-    const endpointDetection: boolean = opts?.endpointDetection ?? this.config.stt?.soniox?.endpointDetection ?? false
-    const speakerDiarization: boolean = opts?.speakerDiarization ?? this.config.stt?.soniox?.speakerDiarization ?? false
+    const rtModel = model || 'stt-rt-preview'
+    const languageHints: string[] | undefined = this.config.stt?.soniox?.languageHints
+    const audioFormat: string = this.config.stt?.soniox?.audioFormat || 'auto'
+    const endpointDetection: boolean = this.config.stt?.soniox?.endpointDetection ?? false
+    const speakerDiarization: boolean = this.config.stt?.soniox?.speakerDiarization ?? false
     const proxyMode: string = this.config.stt?.soniox?.proxy || 'temporary_key'
     const tempKeyExpiry: number = this.config.stt?.soniox?.tempKeyExpiry || 600
 
@@ -176,7 +181,9 @@ export default class STTSoniox implements STTEngine {
           const { api_key } = await r.json() as { api_key: string }
           if (api_key) wsApiKey = api_key
         }
-      } catch {}
+      } catch (e) {
+        console.error('Soniox temporary API key request failed:', e)
+      }
     }
 
     this.finalTranscript = ''
@@ -215,7 +222,9 @@ export default class STTSoniox implements STTEngine {
           const content = (this.finalTranscript + partial).trim()
           if (content) callback({ type: 'text', content })
         }
-      } catch {}
+      } catch (e) {
+        console.error('Soniox WebSocket message handling failed:', e)
+      }
     }
 
     this.ws.onerror = (event: Event) => {
@@ -242,7 +251,18 @@ export default class STTSoniox implements STTEngine {
     }
   }
 
-  async isModelDownloaded(model: string): Promise<boolean> { return false }
-  async deleteModel(model: string): Promise<void> { return }
-  async deleteAllModels(): Promise<void> { return }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async isModelDownloaded(model: string): Promise<boolean> {
+    return false
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deleteModel(model: string): Promise<void> {
+    return
+  }
+
+  deleteAllModels(): Promise<void> {
+    return
+  }
+
 }

@@ -146,16 +146,14 @@
       "gpu": true
     },
     "soniox": {
-  "realtimeModel": "stt-rt-preview",
-  "asyncModel": "stt-async-preview",
-  "languageHints": [],
-  "endpointDetection": false,
-  "cleanup": true,
-  "audioFormat": "auto",
-  "proxy": "temporary_key",
-  "tempKeyExpiry": 600,
-  "speakerDiarization": false
-  }
+      "languageHints": [],
+      "endpointDetection": false,
+      "cleanup": true,
+      "audioFormat": "auto",
+      "proxy": "temporary_key",
+      "tempKeyExpiry": 600,
+      "speakerDiarization": false
+    }
   },
   "tts": {
     "engine": "openai",
@@ -410,11 +408,17 @@
         "chat": [],
         "image": []
       },
-      "soniox": {
-    "apiKey": "",
-    "models": { "chat": [], "image": [] },
-    "model": { "chat": "", "image": "" }
-     },
+      "model": {
+        "chat": "",
+        "image": ""
+      }
+    },
+    "soniox": {
+      "apiKey": "",
+      "models": {
+        "chat": [],
+        "image": []
+      },
       "model": {
         "chat": "",
         "image": ""

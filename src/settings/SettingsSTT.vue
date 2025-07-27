@@ -1,13 +1,16 @@
 <template>
   <div class="form form-vertical form-large">
+    
     <div class="form-field language">
       <label>{{ t('settings.voice.spokenLanguage') }}</label>
       <LangSelect v-model="locale" default-text="settings.voice.automatic" @change="save" />
     </div>
+    
     <div class="form-field vocabulary">
       <label>{{ t('settings.voice.customVocabulary.label') }}</label>
       <textarea v-model="vocabulary" name="vocabulary" @change="save" :placeholder="t('settings.voice.customVocabulary.placeholder')"></textarea>
     </div>
+    
     <div class="form-field">
       <label>{{ t('settings.voice.engine') }}</label>
       <select name="engine" v-model="engine" @change="onChangeEngine">
@@ -16,34 +19,51 @@
         </option>
       </select>
     </div>
+    
+    <span v-if="engine === 'openai'">{{ t('settings.voice.openaiApiKeyReminder') }}</span>
+    <span v-if="engine === 'groq'">{{ t('settings.voice.groqApiKeyReminder') }}</span>
+    <span v-if="engine === 'mistralai'">{{ t('settings.voice.mistralApiKeyReminder') }}</span>
+  
     <div class="form-field" v-if="engine == 'falai'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="falAiAPIKey" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'fireworks'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="fireworksAPIKey" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'speechmatics'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="speechmaticsAPIKey" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'huggingface'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="huggingFaceAPIKey" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'gladia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="gladiaAPIKey" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'nvidia'">
       <label>{{ t('settings.engines.apiKey') }}</label>
       <InputObfuscated v-model="nvidiaAPIKey" @blur="save" />
     </div>
+    
+    <div class="form-field" v-if="engine == 'soniox'">
+      <label>{{ t('settings.engines.apiKey') }}</label>
+      <InputObfuscated v-model="sonioxAPIKey" @blur="save" />
+    </div>
+    
     <div class="form-field horizontal" v-if="engine == 'whisper'">
       <input type="checkbox" v-model="whisperGPU" @change="save" />
       <label>{{ t('settings.voice.useWebGpu') }}</label>
     </div>
+    
     <div class="form-field" v-if="engine != 'custom'">
       <label>{{ t('settings.voice.model') }}</label>
       <div class="form-subgroup">
@@ -56,72 +76,9 @@
         </div>
       </div>
     </div>
-    <!-- === Soniox STT === -->
-<fieldset v-if="stt.engine === 'soniox'" class="fieldset">
-  <legend>Soniox</legend>
-
-  <div class="form-row">
-    <label>API Key</label>
-    <input v-model="engines.soniox.apiKey" type="password" placeholder="SONIOX_API_KEY" />
-  </div>
-
-  <div class="form-row">
-    <label>Realtime Model</label>
-    <input v-model="stt.soniox.realtimeModel" placeholder="stt-rt-preview" />
-  </div>
-
-  <div class="form-row">
-    <label>Async Model</label>
-    <input v-model="stt.soniox.asyncModel" placeholder="stt-async-preview" />
-  </div>
-
-  <div class="form-row">
-    <label>Language hints (comma separated)</label>
-    <input
-      :value="stt.soniox.languageHints?.join(',')"
-      @change="onLangHintsChange(($event.target as HTMLInputElement).value)"
-      placeholder="de,en"
-    />
-  </div>
-
-  <div class="form-row">
-    <label>Endpoint detection</label>
-    <input type="checkbox" v-model="stt.soniox.endpointDetection" />
-  </div>
-
-  <div class="form-row">
-    <label>Speaker diarization</label>
-    <input type="checkbox" v-model="stt.soniox.speakerDiarization" />
-  </div>
-
-  <div class="form-row">
-    <label>Audio format</label>
-    <select v-model="stt.soniox.audioFormat">
-      <option value="auto">auto</option>
-      <option value="pcm_s16le">pcm_s16le</option>
-      <option value="opus">opus</option>
-    </select>
-  </div>
-
-  <div class="form-row">
-    <label>Cleanup after async transcription</label>
-    <input type="checkbox" v-model="stt.soniox.cleanup" />
-  </div>
-
-  <div class="form-row">
-    <label>Realtime security mode</label>
-    <select v-model="stt.soniox.proxy">
-      <option value="temporary_key">temporary_key (default)</option>
-      <option value="proxy_stream">proxy_stream (own backend proxy)</option>
-    </select>
-  </div>
-
-  <div v-if="stt.soniox.proxy === 'temporary_key'" class="form-row">
-    <label>Temporary key expiry (seconds)</label>
-    <input type="number" v-model.number="stt.soniox.tempKeyExpiry" min="30" />
-  </div>
-</fieldset>
+    
     <template v-else>
+      
       <div class="form-field">
         <label>{{ t('settings.engines.custom.apiBaseURL') }}</label>
         <input name="baseURL" v-model="baseURL" :placeholder="defaults.engines.openai.baseURL" @change="save"/>
@@ -130,15 +87,69 @@
         <label>{{ t('settings.voice.model') }}</label>
         <input name="model" v-model="model" @change="onChangeModel"/>
       </div>
+    
     </template>
+    
     <div class="form-field" v-if="engine == 'nvidia'">
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="nvidiaPrompt" @blur="save" />
     </div>
+    
     <div class="form-field" v-if="engine == 'mistralai' && (!model.includes('transcribe'))">
       <label>{{ t('common.prompt') }}</label>
       <textarea v-model="mistralPrompt" @blur="save" />
     </div>
+    
+    <template v-if="store.config.stt.engine === 'soniox'">
+
+      <div class="form-field">
+        <label>Language hints (comma separated)</label>
+        <input
+          :value="store.config.stt.soniox.languageHints?.join(',')"
+          @change="onLangHintsChange(($event.target as HTMLInputElement).value)"
+          placeholder="de,en"
+        />
+      </div>
+
+      <!-- <div class="form-field">
+        <label>Audio format</label>
+        <select v-model="store.config.stt.soniox.audioFormat">
+          <option value="auto">auto</option>
+          <option value="pcm_s16le">pcm_s16le</option>
+          <option value="opus">opus</option>
+        </select>
+      </div> -->
+
+      <!-- <div class="form-field horizontal">
+        <input type="checkbox" v-model="store.config.stt.soniox.endpointDetection" />
+        <label>Endpoint detection</label>
+      </div> -->
+
+      <div class="form-field horizontal">
+        <input type="checkbox" v-model="store.config.stt.soniox.speakerDiarization" />
+        <label>Speaker diarization</label>
+      </div>
+
+      <!-- <div class="form-field horizontal">
+        <input type="checkbox" v-model="store.config.stt.soniox.cleanup" />
+        <label>Cleanup after async transcription</label>
+      </div> -->
+
+      <div class="form-field">
+        <label>Realtime security mode</label>
+        <select v-model="store.config.stt.soniox.proxy">
+          <option value="temporary_key">temporary_key (default)</option>
+          <option value="proxy_stream">proxy_stream (own backend proxy)</option>
+        </select>
+      </div>
+
+      <div v-if="store.config.stt.soniox.proxy === 'temporary_key'" class="form-field">
+        <label>Temporary key expiry (seconds)</label>
+        <input type="number" v-model.number="store.config.stt.soniox.tempKeyExpiry" min="30" />
+      </div>
+    
+    </template>
+
     <div class="form-field">
       <label>{{ t('settings.voice.silenceDetection') }}</label>
       <select name="duration" v-model="duration" @change="save">
@@ -150,6 +161,7 @@
         <option value="5000">{{ t('settings.voice.silenceOptions.fiveSeconds') }}</option>
       </select>
     </div>
+    
     <!-- <div class="form-field">
       <label>Silence Action<br/>(depends on context)</label>
       <select v-model="action" @change="save">
@@ -159,22 +171,12 @@
         <option value="execute_continue">Execute and continue recording</option>
       </select>
     </div> -->
-    <div class="form-field">
+    
+    <div class="form-field" v-if="requiresDownload(engine)">
       <label></label>
       <button @click.prevent="deleteLocalModels">{{ t('settings.voice.deleteLocalModels') }}</button>
     </div>
-    <div class="form-field" v-if="engine === 'openai'">
-      <label></label>
-      <span>{{ t('settings.voice.openaiApiKeyReminder') }}</span>
-    </div>
-    <div class="form-field" v-if="engine === 'groq'">
-      <label></label>
-      <span>{{ t('settings.voice.groqApiKeyReminder') }}</span>
-    </div>
-    <div class="form-field" v-if="engine === 'mistralai'">
-      <label></label>
-      <span>{{ t('settings.voice.mistralApiKeyReminder') }}</span>
-    </div>
+    
   </div>
 </template>
 
@@ -190,12 +192,9 @@ import { getSTTEngines, getSTTEngine, getSTTModels, requiresDownload, ProgressIn
 import Dialog from '../composables/dialog'
 import LangSelect from '../components/LangSelect.vue'
 
-const settings = useSettings()
-const stt = settings.state.stt
-const engines = settings.state.engines
 const onLangHintsChange = (value: string) => {
   const arr = value.split(',').map(s => s.trim()).filter(Boolean)
-  stt.soniox.languageHints = arr
+  store.config.stt.soniox.languageHints = arr
 }
 
 type InitModelMode = 'download' | 'verify'
@@ -212,6 +211,7 @@ const fireworksAPIKey = ref(null)
 const gladiaAPIKey = ref(null)
 const huggingFaceAPIKey = ref(null)
 const speechmaticsAPIKey = ref(null)
+const sonioxAPIKey = ref(null)
 const nvidiaAPIKey = ref(null)
 const nvidiaPrompt = ref(null)
 const mistralPrompt = ref(null)
@@ -264,6 +264,7 @@ const load = () => {
   gladiaAPIKey.value = store.config.engines.gladia.apiKey || null
   speechmaticsAPIKey.value = store.config.engines.speechmatics.apiKey || null
   huggingFaceAPIKey.value = store.config.engines.huggingface.apiKey || null
+  sonioxAPIKey.value = store.config.engines.soniox?.apiKey || null
   baseURL.value = store.config.stt.customOpenAI.baseURL || ''
   nvidiaAPIKey.value = store.config.engines.nvidia?.apiKey || null
   nvidiaPrompt.value = store.config.stt.nvidia?.prompt || null
@@ -283,6 +284,7 @@ const save = () => {
   store.config.engines.speechmatics.apiKey = speechmaticsAPIKey.value
   store.config.engines.huggingface.apiKey = huggingFaceAPIKey.value
   store.config.engines.nvidia.apiKey = nvidiaAPIKey.value
+  store.config.engines.soniox.apiKey = sonioxAPIKey.value
   store.config.stt.customOpenAI.baseURL = baseURL.value
   store.config.stt.nvidia.prompt = nvidiaPrompt.value
   store.config.stt.mistralai.prompt = mistralPrompt.value
@@ -298,18 +300,23 @@ const onChangeEngine = () => {
 
 const onChangeModel = async () => {
 
-  // dummy selector
-  if (engine.value !== 'custom' && model.value === '') {
-    return
+  // // dummy selector
+  // if (engine.value !== 'custom' && model.value === '') {
+  //   return
+  // }
+
+  // save engine and model
+  const saveConfig = () => {
+    store.config.stt.engine = engine.value
+    store.config.stt.model = model.value
+    store.saveSettings()
   }
 
   // confirmed callback
   const changeEngine = () => {
 
     // save settings
-    store.config.stt.engine = engine.value
-    store.config.stt.model = model.value
-    store.saveSettings()
+    saveConfig()
 
     // do it
     const sttEngine = getSTTEngine(store.config)
@@ -319,6 +326,12 @@ const onChangeModel = async () => {
   // if no download required easy:
   if (!requiresDownload(engine.value)) {
     changeEngine()
+    return
+  }
+
+  // if dummy selector
+  if (model.value === '') {
+    saveConfig()
     return
   }
 

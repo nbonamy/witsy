@@ -29,10 +29,10 @@ export const engineNames: Record<string, string> = {
   'openrouter': 'OpenRouter',
   'replicate': 'Replicate',
   'sdwebui': 'Stable Diffusion web UI',
+  'soniox': 'Soniox',
   'speechmatics': 'Speechmatics',
   'whisper': 'Whisper',
   'xai': 'xAI',
-  'soniox': 'Soniox',
 }
 
 export default class LlmManagerBase implements ILlmManager {

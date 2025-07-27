@@ -203,6 +203,7 @@
     flex: 1;
     padding: 1rem 1.5rem;
     background-color: inherit;
+    overflow: auto;
     height: auto;
   } 
 

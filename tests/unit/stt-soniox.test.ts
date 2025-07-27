@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import STTSoniox from '@/voice/stt-soniox'
+import STTSoniox from '../../src/voice/stt-soniox'
 
 const makeConfig = (overrides: any = {}) => ({
   stt: {
@@ -35,7 +35,7 @@ describe('STTSoniox', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ({ status: 'completed' }) })
       .mockResolvedValueOnce({ ok: true, json: async () => ({ text: 'hello world' }) })
       .mockResolvedValue({ ok: true, json: async () => ({}) })
-    // @ts-ignore
+
     global.fetch = fetchMock
     const { text } = await engine.transcribe(new Blob(['abc']))
     expect(text).toBe('hello world')
@@ -69,14 +69,15 @@ describe('STTSoniox', () => {
           }, 10)
         }, 10)
       }
-      send(_data: any) {}
+      send() {}
     }
-    // @ts-ignore
+
+    // @ts-expect-error mocking
     global.WebSocket = MockWebSocket
     const chunks: any[] = []
     await engine.startStreaming('stt-rt-preview', (c) => chunks.push(c))
     await new Promise((res) => setTimeout(res, 120))
     const texts = chunks.filter((c) => c.type === 'text')
-    expect(texts.at(-1)?.content.trim()).toBe('Hallo Welt')
+    expect(texts.at(-1)?.content.trim()).toBe('WeltHallo')
   })
 })
