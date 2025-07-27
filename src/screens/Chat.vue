@@ -22,6 +22,7 @@ import ChatSidebar from '../components/ChatSidebar.vue'
 import ChatArea from '../components/ChatArea.vue'
 import ChatEditor, { ChatEditorCallback } from './ChatEditor.vue'
 import Assistant, { GenerationEvent } from '../services/assistant'
+import A2AAssistant from '../services/a2a-assistant'
 import Message from '../models/message'
 import Chat from '../models/chat'
 import LlmFactory from '../llms/llm'
@@ -442,7 +443,7 @@ const onDeleteFolder = async (folderId: string) => {
 const onSendPrompt = async (params: SendPromptParams) => {
 
   // deconstruct params
-  const { instructions, prompt, attachments, docrepo, expert, deepResearch } = params
+  const { instructions, prompt, attachments, docrepo, expert, deepResearch, a2a } = params
 
   // make sure we can have an llm
   assistant.value.initLlm(store.config.llm.engine)
@@ -461,6 +462,11 @@ const onSendPrompt = async (params: SendPromptParams) => {
         attachment.url = fileUrl
       }
     }
+  }
+
+  // a2a?
+  if (a2a) {
+    return await onA2APrompt(params)
   }
 
   // we will need that (function because chat may be updated later)
@@ -485,7 +491,6 @@ const onSendPrompt = async (params: SendPromptParams) => {
     if (isUsingComputer()) {
       window.api.computer.updateStatus(chunk)
     }
-  
   
   }, async (event: GenerationEvent) => {
 
@@ -525,6 +530,41 @@ const onSendPrompt = async (params: SendPromptParams) => {
   if (rc === 'success') {
     chatArea.value?.setDeepResearch(false)
   }
+
+  // save
+  store.saveHistory()
+
+}
+
+const onA2APrompt = async (params: SendPromptParams) => {
+
+  // deconstruct params
+  const { prompt } = params
+
+  const a2aa = new A2AAssistant(store.config, 'http://localhost:41241')
+  a2aa.setChat(assistant.value.chat)
+  await a2aa.prompt(prompt, (chunk) => {
+  
+    emitEvent('new-llm-chunk', chunk)
+  
+  }, async (event: GenerationEvent) => {
+
+    if (event === 'before_generation') {
+
+      // not very nice but gets the message list scrolling
+      emitEvent('new-llm-chunk', {
+        type: 'content',
+        text: '',
+        done: false,
+      } as LlmChunkContent)
+
+      // make sure the chat is part of history
+      if (!assistant.value.chat.temporary && !store.history.chats.find((c) => c.uuid === assistant.value.chat.uuid)) {
+        assistant.value.chat.initTitle()
+        store.addChat(assistant.value.chat)
+      }
+    }
+  })
 
   // save
   store.saveHistory()
