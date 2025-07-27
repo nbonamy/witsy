@@ -32,6 +32,7 @@ export const engineNames: Record<string, string> = {
   'speechmatics': 'Speechmatics',
   'whisper': 'Whisper',
   'xai': 'xAI',
+  'soniox': 'Soniox',
 }
 
 export default class LlmManagerBase implements ILlmManager {

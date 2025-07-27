@@ -220,6 +220,17 @@ export type STTConfig = {
   whisper: {
     gpu: boolean
   }
+  soniox?: {
+    realtimeModel?: string
+    asyncModel?: string
+    languageHints?: string[]
+    endpointDetection?: boolean
+    cleanup?: boolean
+    audioFormat?: string
+    proxy?: 'temporary_key' | 'proxy_stream'
+    tempKeyExpiry?: number
+    speakerDiarization?: boolean
+  }
   //silenceAction: SilenceAction
 }
 
@@ -281,3 +292,4 @@ export type McpConfig = {
   mcpServersExtra: Record<string, McpServerExtra>
   smitheryApiKey: string
 }
+
