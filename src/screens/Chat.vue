@@ -415,7 +415,6 @@ const onDeleteFolder = async (folderId: string) => {
   const result = await Dialog.show({
     title: t('main.folder.confirmDelete'),
     text: t('common.confirmation.cannotUndo'),
-    customClass: { denyButton: 'alert-neutral' },
     confirmButtonText: t('main.folder.keepConversations'),
     denyButtonText: t('main.folder.deleteConversations'),
     showCancelButton: true,

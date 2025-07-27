@@ -42,7 +42,7 @@ test('Basic confirm', () => {
     customClass: {
       'cancelButton': 'alert-neutral',
       'confirmButton': 'alert-neutral',
-      'denyButton': 'alert-danger',
+      'denyButton': 'alert-neutral',
       'popup': 'form form-large',
     },
     didOpen: expect.any(Function),
